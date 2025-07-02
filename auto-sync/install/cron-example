@@ -1,0 +1,35 @@
+# Claude Code Documentation Auto-Sync Cron Configuration
+#
+# Add this to your crontab to automatically sync documentation updates
+# Run: crontab -e
+# Then add one of the following lines (uncomment the one you want)
+#
+
+# Option 1: Sync every 6 hours (matches repository update schedule)
+0 */6 * * * cd /path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
+
+# Option 2: Sync every hour (more frequent checks)
+0 * * * * cd /path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
+
+# Option 3: Sync twice daily (morning and evening)
+0 9,18 * * * cd /path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
+
+# Option 4: Sync once daily at 3 AM
+0 3 * * * cd /path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
+
+# Option 5: Check for updates every 30 minutes, only sync if needed
+*/30 * * * * cd /path/to/claude-code-docs && ./auto-sync/check-updates.sh && ./auto-sync/auto-sync.sh --quiet
+
+#
+# IMPORTANT NOTES:
+#
+# 1. Replace /path/to/claude-code-docs with your actual repository path
+# 2. The --quiet flag suppresses output (logs still written to auto-sync/sync.log)
+# 3. Make sure you have git credentials configured for the repository
+# 4. To view logs: tail -f /path/to/claude-code-docs/auto-sync/sync.log
+# 5. To disable: run 'crontab -e' and comment out or remove the line
+#
+# For macOS users:
+# - Cron may require Full Disk Access permission in System Settings
+# - Alternatively, consider using launchd for better macOS integration
+#

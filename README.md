@@ -20,7 +20,12 @@ ls docs/
 git pull
 ```
 
-**Note**: No special download tools needed - just use standard git commands to stay updated.
+**NEW: Auto-sync available!** Set up automatic updates with our [auto-sync scripts](auto-sync/). Just run:
+```bash
+./auto-sync/auto-sync.sh  # One-time sync
+# OR
+crontab -e  # Set up automatic syncing (see auto-sync/README.md)
+```
 
 ### Option 2: Direct URL Access (No Download Required)
 Reference docs directly from GitHub using raw URLs:
@@ -175,6 +180,10 @@ python fetch_claude_docs.py
 claude-code-docs/
 ├── docs/                    # All documentation markdown files
 │   └── docs_manifest.json   # Index of all docs with metadata
+├── auto-sync/              # Optional automatic sync scripts
+│   ├── auto-sync.sh        # Main sync script
+│   ├── check-updates.sh    # Check for updates
+│   └── README.md           # Setup instructions
 ├── fetch_claude_docs.py     # Script to dynamically fetch from Anthropic
 ├── requirements.txt         # Python dependencies
 ├── .github/
