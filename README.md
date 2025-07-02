@@ -43,8 +43,8 @@ The `docs/` directory contains all Claude Code documentation:
 ## 🔄 How It Works
 
 1. **This GitHub repository** fetches the latest docs from Anthropic every 3 hours (see the status badges above)
-2. **Your local copy** gets updated when Claude runs `git pull` before reading docs
-3. **You** get documentation that's always current - Claude pulls fresh updates from this mirror automatically
+2. **Your local copy** gets updated when Claude automatically runs `git pull` before reading docs
+3. **You** get documentation that's always current (within 3 hours) - Claude pulls fresh updates from this mirror automatically
 
 ## 💡 Usage Examples
 
@@ -125,7 +125,14 @@ git log --oneline -10 docs/
 
 ### Need a fresh start?
 ```bash
+# Remove the repository
 rm -rf ~/.claude/claude-code-docs
+
+# Remove the configuration from CLAUDE.md
+# Either edit ~/.claude/CLAUDE.md manually to remove the 4 lines about Claude Code Documentation
+# Or use sed (backup your CLAUDE.md first!):
+sed -i.bak '/# Claude Code Documentation/,+3d' ~/.claude/CLAUDE.md
+
 # Then run the setup again
 ```
 
