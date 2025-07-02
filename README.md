@@ -40,18 +40,28 @@ For example:
 ### Option 3: Fork for Your Own Copy
 Fork this repository to maintain your own synchronized copy that updates automatically via GitHub Actions.
 
-## 🤖 Using with Claude Code
+## 🤖 Using with Claude Code CLI
 
-This repository includes a `CLAUDE.md` file that provides context to Claude Code about the documentation structure. To use it:
+For best results, point Claude Code to the **repository root** (not just the docs folder):
 
-### If you've cloned/forked the repo:
-Claude Code will automatically detect and use the CLAUDE.md file when you run it in the repository directory.
+### Option A: Local Repository
+```bash
+# Clone the repo
+git clone https://github.com/ericbuess/claude-code-docs.git
 
-### If you're using Claude Code remotely:
-You can reference the CLAUDE.md file directly:
+# Tell Claude to use it
+"Use the Claude Code docs at /path/to/claude-code-docs"
 ```
-https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/CLAUDE.md
+
+### Option B: Direct GitHub Reference
+```bash
+"Use the Claude Code docs at github.com/ericbuess/claude-code-docs"
 ```
+
+**Why the repository root?** The `CLAUDE.md` file provides Claude with:
+- Understanding of the repository structure
+- How to search and navigate docs efficiently  
+- Access to both documentation and manifest
 
 ### Using the Documentation Manifest (Advanced)
 

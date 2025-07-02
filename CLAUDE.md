@@ -4,20 +4,32 @@ This repository is an automatically-updated mirror of the official Claude Code d
 
 ## 🚀 How to Use These Docs with Claude Code CLI
 
-### Direct Commands You Can Give Claude:
+### Recommended: Point Claude to the Repository Root
 
 ```bash
-# Ask about a specific topic
-"Read the setup guide from https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/setup.md"
+# For local clone
+"Use the Claude Code docs at /Users/myname/claude-code-docs"
 
-# Reference the entire documentation set
-"Use the docs at github.com/ericbuess/claude-code-docs to help me understand MCP"
+# For GitHub reference  
+"Use the docs at github.com/ericbuess/claude-code-docs"
+```
 
-# Check available documentation
-"What Claude Code docs are available at https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/docs_manifest.json?"
+This gives Claude access to:
+- This CLAUDE.md file for context
+- The docs/ directory with all documentation
+- The manifest for efficient searching
 
-# If you've cloned the repo locally
-"Look at the troubleshooting guide in ./claude-code-docs/docs/troubleshooting.md"
+### Example Commands After Setup:
+
+```bash
+# Search across all docs
+"Search the Claude Code docs for information about MCP"
+
+# Read specific documentation
+"Show me the troubleshooting guide"
+
+# List available docs
+"What documentation is available?"
 ```
 
 ## 📋 Documentation Manifest
