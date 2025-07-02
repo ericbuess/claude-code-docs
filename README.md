@@ -124,16 +124,19 @@ git log --oneline -10 docs/
 ```
 
 ### Need a fresh start?
+
+#### Let Claude Uninstall It (Easiest!)
+```
+claude "uninstall the claude code docs mirror from ~/.claude"
+```
+
+#### Or Uninstall Manually
 ```bash
 # Remove the repository
 rm -rf ~/.claude/claude-code-docs
 
 # Remove the configuration from CLAUDE.md
-# Either edit ~/.claude/CLAUDE.md manually to remove the 4 lines about Claude Code Documentation
-# Or use sed (backup your CLAUDE.md first!):
 sed -i.bak '/# Claude Code Documentation/,+3d' ~/.claude/CLAUDE.md
-
-# Then run the setup again
 ```
 
 ## 📝 License
