@@ -62,8 +62,17 @@ def save_manifest(docs_dir: Path, manifest: dict) -> None:
 
 def url_to_safe_filename(url_path: str) -> str:
     """Convert a URL path to a safe filename that preserves hierarchy only when needed."""
-    # Remove /en/docs/claude-code/ prefix
-    path = url_path.replace('/en/docs/claude-code/', '')
+    # Remove any known prefix patterns
+    for prefix in ['/en/docs/claude-code/', '/docs/claude-code/', '/claude-code/']:
+        if prefix in url_path:
+            path = url_path.split(prefix)[-1]
+            break
+    else:
+        # If no known prefix, take everything after the last occurrence of 'claude-code/'
+        if 'claude-code/' in url_path:
+            path = url_path.split('claude-code/')[-1]
+        else:
+            path = url_path
     
     # If no subdirectories, just use the filename
     if '/' not in path:
@@ -112,9 +121,16 @@ def discover_claude_code_pages(session: requests.Session) -> List[str]:
         # Filter for ENGLISH Claude Code documentation pages only
         claude_code_pages = []
         
+        # Try multiple possible URL patterns for robustness
+        patterns = [
+            '/en/docs/claude-code/',
+            '/docs/claude-code/',
+            '/claude-code/',
+        ]
+        
         for url in urls:
-            # Only look for English docs
-            if '/en/docs/claude-code/' in url:
+            # Check if URL matches any known pattern
+            if any(pattern in url for pattern in patterns):
                 parsed = urlparse(url)
                 path = parsed.path
                 
@@ -129,6 +145,8 @@ def discover_claude_code_pages(session: requests.Session) -> List[str]:
                     '/tool-use/',  # Tool-specific pages
                     '/examples/',  # Example pages
                     '/legacy/',    # Legacy documentation
+                    '/api/',       # API reference pages
+                    '/reference/', # Reference pages that aren't core docs
                 ]
                 
                 if not any(skip in path for skip in skip_patterns):

@@ -11,8 +11,10 @@ This repository is an automatically-updated mirror of the official Claude Code d
 ## Key Features
 - **Automatic Updates**: GitHub Actions fetches latest docs daily at 2 AM UTC
 - **Dynamic Discovery**: Uses sitemap.xml to find new documentation pages
+- **URL Pattern Robustness**: Automatically handles multiple URL patterns for Claude Code docs
 - **Change Detection**: Only downloads modified files using SHA-256 hashing
 - **Failure Notifications**: Creates GitHub issues if updates fail
+- **Graceful Degradation**: If Anthropic changes URLs, existing docs remain available while an issue is created
 
 ## Working with This Repository
 
