@@ -104,6 +104,21 @@ fi
 
 log "Starting auto-sync check for Claude Code docs..."
 
+# macOS cron permission check
+if [[ "$OSTYPE" == "darwin"* ]] && [[ -n "${TERM_PROGRAM:-}" ]]; then
+    # We're on macOS and running from a terminal (not cron)
+    # Skip the check - user is running manually
+    :
+elif [[ "$OSTYPE" == "darwin"* ]] && [[ -z "${TERM_PROGRAM:-}" ]]; then
+    # We're on macOS and likely running from cron
+    # Quick test to see if we can write to a test location
+    TEST_FILE="/tmp/.claude_docs_cron_test_$$"
+    if ! touch "$TEST_FILE" 2>/dev/null; then
+        error_exit "macOS cron lacks Full Disk Access. See auto-sync/README.md for setup instructions."
+    fi
+    rm -f "$TEST_FILE"
+fi
+
 # Detect the default branch
 DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
 if [[ -z "$DEFAULT_BRANCH" ]]; then

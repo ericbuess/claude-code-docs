@@ -148,12 +148,26 @@ When asked to search, read, or analyze Claude Code documentation:
 
 When the user agrees to set up automatic updates (or asks for it), follow these steps:
 
-1. **Check their system**: Run `uname` to see if they're on macOS or Linux
-2. **Test the sync script**: Run `./auto-sync/auto-sync.sh` to ensure it works
-3. **Get the repository path**: Run `pwd` to get the full path
-4. **Set up cron**: 
-   - For macOS: First remind them about Full Disk Access for cron (System Settings → Privacy & Security → Full Disk Access → Add `/usr/sbin/cron`)
-   - Run `crontab -e` and add: `30 */6 * * * cd [FULL_PATH] && ./auto-sync/auto-sync.sh --quiet`
-5. **Verify**: Run `crontab -l` to confirm it was added
+1. **Run the installer with Claude mode**:
+   ```bash
+   CLAUDE_CODE_CLI=true ./install.sh
+   ```
 
-For detailed instructions, see `auto-sync/README.md`.
+2. **Handle the response**:
+   - If you see `CLAUDE_SUCCESS: AUTO_SYNC_CONFIGURED` - setup is complete!
+   - If you see `CLAUDE_ERROR: MACOS_CRON_PERMISSION_REQUIRED` - guide the user through macOS Full Disk Access setup:
+     ```
+     To complete setup on macOS:
+     1. Open System Settings → Privacy & Security → Full Disk Access
+     2. Click the lock and authenticate
+     3. Click + and navigate to /usr/sbin/cron
+     4. Ensure it's checked
+     5. Run "setup auto sync" again
+     ```
+
+3. **Verify setup**:
+   ```bash
+   crontab -l | grep claude-code-docs && echo "✓ Auto-sync is configured"
+   ```
+
+The installer handles all complexity including git connectivity, permissions, and cron setup.

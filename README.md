@@ -15,7 +15,19 @@ A community-maintained mirror of Claude Code documentation with automatic update
 
 ## 🚀 Quick Start
 
-### 1. Clone & Open
+### Option 1: Automatic Setup (Recommended)
+```bash
+# Clone and setup in one command
+git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && ./install.sh
+```
+
+That's it! The installer will:
+- ✓ Check prerequisites 
+- ✓ Test git connectivity
+- ✓ Handle macOS permissions
+- ✓ Configure automatic updates
+
+### Option 2: Setup with Claude Code
 ```bash
 # Clone this repository
 git clone https://github.com/ericbuess/claude-code-docs.git
@@ -23,23 +35,17 @@ cd claude-code-docs
 
 # Open in Claude Code
 claude
+
+# Tell Claude to set it up
+"setup auto sync"
 ```
 
-### 2. Enable Auto-Sync (Optional but Recommended)
-Once in Claude Code, simply say:
-```
-setup auto sync
-```
-
-Claude will configure automatic updates that keep your local docs in sync with the latest changes. That's it!
-
-### 3. Use the Docs
+### Option 3: Manual Setup
 ```bash
-# All documentation is in the docs/ directory
-ls docs/
-
-# Manual update (if not using auto-sync):
-git pull
+# Clone and pull updates manually when needed
+git clone https://github.com/ericbuess/claude-code-docs.git
+cd claude-code-docs
+git pull  # Run this whenever you want updates
 ```
 
 ## 📖 Alternative Access Methods
@@ -174,19 +180,33 @@ git log -1 --format="%ai" -- docs/setup.md
 
 ## 🔍 Troubleshooting
 
+### Quick Diagnosis
+
+Run the diagnostic script to check your setup:
+```bash
+./diagnose.sh
+```
+
+This will check all prerequisites and common issues automatically.
+
 ### Auto-sync not working?
 
-1. **Check if auto-sync is set up:**
+1. **Run the installer to fix most issues:**
+   ```bash
+   ./install.sh
+   ```
+
+2. **Check if auto-sync is set up:**
    ```bash
    crontab -l | grep claude-code-docs
    ```
 
-2. **View sync logs:**
+3. **View sync logs:**
    ```bash
    tail -20 auto-sync/sync.log
    ```
 
-3. **Common issues:**
+4. **Common issues:**
    - **macOS**: Ensure cron has Full Disk Access (System Settings → Privacy & Security)
    - **Git authentication**: Run `git pull` manually to check credentials
    - **Wrong path**: Verify the path in your crontab is correct
