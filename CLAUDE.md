@@ -22,32 +22,29 @@ This repository has two update mechanisms:
 
 When the user asks to setup automatic syncing (phrases like "setup auto sync", "enable auto updates", "configure automatic updates"), follow these steps:
 
-1. **Check current status:**
+1. **First, verify we're in the claude-code-docs repository:**
    ```bash
-   crontab -l 2>/dev/null | grep -q "claude-code-docs.*auto-sync" && echo "CONFIGURED" || echo "NOT_CONFIGURED"
+   pwd | grep -q "claude-code-docs" && [ -f "./install.sh" ] && echo "IN_REPO" || echo "NOT_IN_REPO"
    ```
+   
+   If NOT_IN_REPO, tell the user:
+   > Please navigate to the claude-code-docs directory first:
+   > `cd /path/to/claude-code-docs`
 
-2. **If NOT_CONFIGURED, show this message:**
+2. **If IN_REPO, show this message:**
    > **📚 Setting up Automatic Sync for Claude Code Docs**
    > 
-   > This will keep your local copy automatically updated with the latest documentation.
+   > I'll configure your local copy to automatically stay updated with the latest Claude Code documentation.
    > 
    > **What this will do:**
-   > - ✓ Add a cron job that runs `git pull` every 6 hours
-   > - ✓ Only pull when updates are available
-   > - ✓ Log all updates to `auto-sync/sync.log`
-   > - ✓ Include safety checks to prevent conflicts
+   > - ✓ Run pre-flight checks (git, connectivity, permissions)
+   > - ✓ Set up automatic updates every 6 hours
+   > - ✓ Handle macOS-specific requirements automatically
+   > - ✓ Create sync logs for troubleshooting
    > 
-   > **Note for macOS users**: You'll need to grant cron Full Disk Access in System Settings → Privacy & Security → Full Disk Access → Add `/usr/sbin/cron`
-   > 
-   > **Shall I proceed with the setup?** (yes/no)
+   > Ready to proceed? (yes/no)
 
-3. **If CONFIGURED, show:**
-   > ✅ Auto-sync is already configured! Your docs will update automatically every 6 hours.
-   > 
-   > To check sync status: `tail auto-sync/sync.log`
-
-4. **If user says yes to setup, follow the auto-setup instructions below.**
+3. **If user says yes, run the installer (see Auto-Setup Instructions below)**
 
 ## 🚀 How to Use These Docs with Claude Code CLI
 

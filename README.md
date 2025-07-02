@@ -1,17 +1,23 @@
-# Claude Code Documentation
+# Claude Code Documentation Mirror
 
 [![Update Status](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml/badge.svg)](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml)
 [![Last Update](https://img.shields.io/github/last-commit/ericbuess/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/ericbuess/claude-code-docs/commits/main)
 
-A community-maintained mirror of Claude Code documentation with automatic updates.
+Keep Claude Code documentation on your local machine, always up-to-date. This mirror automatically syncs with Anthropic's official docs every 6 hours.
 
-> **✨ Quick Setup:** Clone → Open in Claude Code → Say "setup auto sync" → Done!
+> **✨ Quick Setup:** `git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && ./install.sh`
+
+## Why Use This?
+
+- 📚 **Offline Access**: Read Claude Code docs without internet
+- 🔄 **Always Current**: Automatically pulls latest updates
+- 📝 **Version History**: See how docs changed over time with git
+- 🚀 **Claude Integration**: Works seamlessly with Claude Code CLI
 
 ## 📋 Prerequisites
 
 - **Git**: Must be installed and configured
-- **Claude Code CLI** (optional): For automatic sync setup
-- **Python 3.8+** (optional): Only needed if you want to manually update docs
+- **Python 3.8+** (optional): Only needed if you want to manually fetch docs from Anthropic's servers
 
 ## 🚀 Quick Start
 
@@ -27,17 +33,14 @@ That's it! The installer will:
 - ✓ Handle macOS permissions
 - ✓ Configure automatic updates
 
-### Option 2: Setup with Claude Code
+### Option 2: Let Claude Code Set It Up
 ```bash
 # Clone this repository
 git clone https://github.com/ericbuess/claude-code-docs.git
 cd claude-code-docs
 
-# Open in Claude Code
-claude
-
-# Tell Claude to set it up
-"setup auto sync"
+# Open in Claude Code and tell it to set up auto-sync
+claude "setup auto sync"
 ```
 
 ### Option 3: Manual Setup
@@ -117,10 +120,10 @@ The documentation is automatically updated on GitHub every 6 hours:
    - Commits changes to this GitHub repository
    - Creates issues if updates fail
 
-2. **Your Local Copy** (requires manual or automated pull):
-   - Run `git pull` to get the latest updates
-   - OR use auto-sync to automate this (see Option 1 above)
-   - Updates come from GitHub, not directly from Anthropic
+2. **Your Local Copy** (requires setup):
+   - **With auto-sync**: Updates automatically 30 minutes after each GitHub update
+   - **Without auto-sync**: Run `git pull` manually whenever you want updates
+   - Updates flow: Anthropic → GitHub → Your machine
 
 **Key Features:**
 - **Fully Autonomous**: Uses sitemap.xml to automatically discover new pages
@@ -235,19 +238,21 @@ python fetch_claude_docs.py
 ### Repository Structure
 ```
 claude-code-docs/
-├── docs/                    # All documentation markdown files
-│   └── docs_manifest.json   # Index of all docs with metadata
-├── auto-sync/              # Optional scripts to automate git pull
-│   ├── auto-sync.sh        # Automated git pull with safety checks
-│   ├── check-updates.sh    # Check if updates are available
-│   └── README.md           # Setup instructions for cron
-├── fetch_claude_docs.py     # Script to dynamically fetch from Anthropic
-├── requirements.txt         # Python dependencies
+├── docs/                    # All Claude Code documentation files
+│   └── docs_manifest.json   # Index with metadata for all docs
+├── install.sh              # One-command setup script
+├── diagnose.sh             # Troubleshooting helper
+├── auto-sync/              # Auto-update scripts
+│   ├── auto-sync.sh        # Main sync script (runs via cron)
+│   ├── check-updates.sh    # Check for available updates
+│   └── README.md           # Detailed sync documentation
+├── fetch_claude_docs.py     # Fetches docs from Anthropic (used by GitHub Actions)
+├── requirements.txt         # Python dependencies (for manual fetching only)
 ├── .github/
 │   └── workflows/
-│       └── update-docs.yml  # Automatic update workflow
-├── CLAUDE.md               # Context file for Claude Code CLI
-└── README.md               # This file
+│       └── update-docs.yml  # GitHub Actions automation
+├── CLAUDE.md               # Instructions for Claude Code CLI (not user docs)
+└── README.md               # You are here
 ```
 
 ## 🔗 Stable URLs
