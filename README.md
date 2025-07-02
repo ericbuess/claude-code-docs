@@ -46,15 +46,17 @@ The `docs/` directory contains all 27 Claude Code documentation pages:
 
 This repository automatically updates daily via GitHub Actions. The workflow:
 - Runs every day at 2 AM UTC
+- **Dynamically discovers all Claude Code pages from the sitemap**
 - Fetches the latest documentation from Anthropic
 - Commits any changes automatically
 - Removes obsolete documentation files
 - Can also be triggered manually from the Actions tab
 
-### Known Limitations
-- The documentation page list is currently hardcoded in `fetch_claude_docs.py`
-- If Anthropic adds new documentation sections, they need to be manually added to the `DOCUMENTATION_PAGES` list
-- The script will continue working even if some pages fail to download
+### Key Features
+- **Fully Autonomous**: Uses sitemap.xml to automatically discover new pages
+- **Handles Changes**: Automatically adapts to added, removed, or renamed pages
+- **Resilient**: Falls back to essential pages if sitemap is unavailable
+- **Partial Success**: Continues working even if some pages fail to download
 
 ## 📖 For Contributors
 
@@ -75,7 +77,7 @@ python fetch_claude_docs.py
 ```
 claude-code-docs/
 ├── docs/                    # All documentation markdown files
-├── fetch_claude_docs.py     # Script to fetch from Anthropic
+├── fetch_claude_docs.py     # Script to dynamically fetch from Anthropic
 ├── fetch_from_github.py     # Script to fetch from this repo
 ├── requirements.txt         # Python dependencies
 ├── .github/

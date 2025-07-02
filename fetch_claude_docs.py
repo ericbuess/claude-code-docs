@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """
 Fetch all Claude Code documentation pages as markdown files.
-This script downloads the latest versions without caching.
+This script dynamically discovers pages from the sitemap and downloads the latest versions.
 """
 
 import requests
 import time
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Set
 import logging
 from datetime import datetime
 import sys
+import xml.etree.ElementTree as ET
+from urllib.parse import urlparse
 
 # Configure logging
 logging.basicConfig(
@@ -22,54 +24,11 @@ logger = logging.getLogger(__name__)
 
 # Base URL for the documentation
 BASE_URL = "https://docs.anthropic.com"
-
-# All Claude Code documentation pages
-# NOTE: This list is hardcoded. If Anthropic adds/removes pages, update this list.
-# TODO: Consider implementing dynamic page discovery if/when an API becomes available.
-DOCUMENTATION_PAGES = [
-    # Getting started
-    "/en/docs/claude-code/overview",
-    "/en/docs/claude-code/setup",
-    "/en/docs/claude-code/quickstart",
-    "/en/docs/claude-code/memory",
-    "/en/docs/claude-code/common-workflows",
-    
-    # Build with Claude
-    "/en/docs/claude-code/ide-integrations",
-    "/en/docs/claude-code/mcp",
-    "/en/docs/claude-code/github-actions",
-    "/en/docs/claude-code/sdk",
-    "/en/docs/claude-code/troubleshooting",
-    
-    # Deployment
-    "/en/docs/claude-code/third-party-integrations",
-    "/en/docs/claude-code/amazon-bedrock",
-    "/en/docs/claude-code/google-vertex-ai",
-    "/en/docs/claude-code/corporate-proxy",
-    "/en/docs/claude-code/llm-gateway",
-    "/en/docs/claude-code/devcontainer",
-    
-    # Administration
-    "/en/docs/claude-code/iam",
-    "/en/docs/claude-code/security",
-    "/en/docs/claude-code/monitoring-usage",
-    "/en/docs/claude-code/costs",
-    
-    # Reference
-    "/en/docs/claude-code/cli-reference",
-    "/en/docs/claude-code/interactive-mode",
-    "/en/docs/claude-code/slash-commands",
-    "/en/docs/claude-code/settings",
-    "/en/docs/claude-code/hooks",
-    
-    # Resources
-    "/en/docs/claude-code/data-usage",
-    "/en/docs/claude-code/legal-and-compliance"
-]
+SITEMAP_URL = f"{BASE_URL}/sitemap.xml"
 
 # Headers to bypass caching and identify the script
 HEADERS = {
-    'User-Agent': 'Claude-Code-Docs-Fetcher/1.0',
+    'User-Agent': 'Claude-Code-Docs-Fetcher/2.0',
     'Cache-Control': 'no-cache, no-store, must-revalidate',
     'Pragma': 'no-cache',
     'Expires': '0'
@@ -79,6 +38,99 @@ HEADERS = {
 MAX_RETRIES = 3
 RETRY_DELAY = 2  # seconds
 RATE_LIMIT_DELAY = 0.5  # seconds between requests
+
+
+def discover_claude_code_pages(session: requests.Session) -> List[str]:
+    """
+    Dynamically discover all Claude Code documentation pages from the sitemap.
+    
+    Args:
+        session: The requests session to use
+        
+    Returns:
+        List of documentation page paths
+    """
+    logger.info("Fetching sitemap to discover documentation pages...")
+    
+    try:
+        response = session.get(SITEMAP_URL, headers=HEADERS, timeout=30)
+        response.raise_for_status()
+        
+        # Parse XML sitemap
+        root = ET.fromstring(response.content)
+        
+        # Extract all URLs from sitemap
+        urls = []
+        
+        # Try with namespace first
+        namespace = {'ns': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+        for url_elem in root.findall('.//ns:url', namespace):
+            loc_elem = url_elem.find('ns:loc', namespace)
+            if loc_elem is not None and loc_elem.text:
+                urls.append(loc_elem.text)
+        
+        # If no URLs found, try without namespace
+        if not urls:
+            for loc_elem in root.findall('.//loc'):
+                if loc_elem.text:
+                    urls.append(loc_elem.text)
+        
+        logger.info(f"Found {len(urls)} total URLs in sitemap")
+        
+        # Filter for English Claude Code documentation pages
+        claude_code_pages = []
+        claude_code_urls = 0
+        
+        for url in urls:
+            # Check if it's a Claude Code page in English
+            if '/en/docs/claude-code/' in url:
+                claude_code_urls += 1
+                # Convert full URL to path
+                parsed = urlparse(url)
+                path = parsed.path
+                
+                # Remove any file extension
+                if path.endswith('.html'):
+                    path = path[:-5]
+                elif path.endswith('/'):
+                    path = path[:-1]
+                
+                # Skip certain types of pages
+                skip_patterns = [
+                    '/tool-use/',  # Tool-specific pages
+                    '/examples/',  # Example pages
+                    '/legacy/',    # Legacy documentation
+                ]
+                
+                if not any(pattern in path for pattern in skip_patterns):
+                    claude_code_pages.append(path)
+        
+        logger.info(f"Found {claude_code_urls} Claude Code URLs, kept {len(claude_code_pages)} after filtering")
+        
+        # Sort for consistent ordering
+        claude_code_pages.sort()
+        
+        logger.info(f"Discovered {len(claude_code_pages)} Claude Code documentation pages")
+        
+        return claude_code_pages
+        
+    except Exception as e:
+        logger.error(f"Failed to discover pages from sitemap: {e}")
+        logger.warning("Falling back to hardcoded list...")
+        
+        # Fallback to essential pages if sitemap fails
+        return [
+            "/en/docs/claude-code/overview",
+            "/en/docs/claude-code/setup",
+            "/en/docs/claude-code/quickstart",
+            "/en/docs/claude-code/memory",
+            "/en/docs/claude-code/common-workflows",
+            "/en/docs/claude-code/ide-integrations",
+            "/en/docs/claude-code/mcp",
+            "/en/docs/claude-code/github-actions",
+            "/en/docs/claude-code/sdk",
+            "/en/docs/claude-code/troubleshooting",
+        ]
 
 
 def fetch_markdown_content(path: str, session: requests.Session) -> Tuple[str, str]:
@@ -151,7 +203,7 @@ def save_markdown_file(docs_dir: Path, filename: str, content: str) -> None:
         raise
 
 
-def cleanup_old_files(docs_dir: Path, current_files: set) -> None:
+def cleanup_old_files(docs_dir: Path, current_files: Set[str]) -> None:
     """
     Remove markdown files that no longer exist in the documentation.
     
@@ -171,7 +223,7 @@ def cleanup_old_files(docs_dir: Path, current_files: set) -> None:
 def main():
     """Main function to orchestrate the documentation fetching."""
     start_time = datetime.now()
-    logger.info("Starting Claude Code documentation fetch")
+    logger.info("Starting Claude Code documentation fetch (dynamic discovery)")
     
     # Create docs directory
     docs_dir = Path(__file__).parent / 'docs'
@@ -186,8 +238,16 @@ def main():
     
     # Create a session for connection pooling
     with requests.Session() as session:
-        for i, page_path in enumerate(DOCUMENTATION_PAGES, 1):
-            logger.info(f"Processing {i}/{len(DOCUMENTATION_PAGES)}: {page_path}")
+        # Discover documentation pages dynamically
+        documentation_pages = discover_claude_code_pages(session)
+        
+        if not documentation_pages:
+            logger.error("No documentation pages discovered!")
+            sys.exit(1)
+        
+        # Fetch each discovered page
+        for i, page_path in enumerate(documentation_pages, 1):
+            logger.info(f"Processing {i}/{len(documentation_pages)}: {page_path}")
             
             try:
                 filename, content = fetch_markdown_content(page_path, session)
@@ -196,7 +256,7 @@ def main():
                 successful += 1
                 
                 # Rate limiting
-                if i < len(DOCUMENTATION_PAGES):
+                if i < len(documentation_pages):
                     time.sleep(RATE_LIMIT_DELAY)
                     
             except Exception as e:
@@ -212,7 +272,8 @@ def main():
     duration = datetime.now() - start_time
     logger.info("\n" + "="*50)
     logger.info(f"Fetch completed in {duration}")
-    logger.info(f"Successful: {successful}/{len(DOCUMENTATION_PAGES)}")
+    logger.info(f"Discovered pages: {len(documentation_pages)}")
+    logger.info(f"Successful: {successful}/{len(documentation_pages)}")
     logger.info(f"Failed: {failed}")
     
     if failed_pages:
