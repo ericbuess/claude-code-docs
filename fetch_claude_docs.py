@@ -315,7 +315,7 @@ def main():
                     logger.info(f"Unchanged: {filename}")
                 
                 new_manifest["files"][filename] = {
-                    "url": page_path,
+                    "original_url": f"https://docs.anthropic.com{page_path}",
                     "hash": content_hash,
                     "last_updated": datetime.now().isoformat()
                 }
