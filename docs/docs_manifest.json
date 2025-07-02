@@ -136,5 +136,7 @@
       "last_updated": "2025-07-01T23:49:35.297033"
     }
   },
-  "last_updated": "2025-07-01T23:49:35.297122"
+  "last_updated": "2025-07-01T23:49:35.297122",
+  "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
+  "description": "Claude Code documentation manifest. Keys are filenames, append to base_url for full URL."
 }

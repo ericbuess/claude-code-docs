@@ -57,6 +57,8 @@ def save_manifest(docs_dir: Path, manifest: dict) -> None:
     """Save the manifest of fetched files."""
     manifest_path = docs_dir / MANIFEST_FILE
     manifest["last_updated"] = datetime.now().isoformat()
+    manifest["base_url"] = "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/"
+    manifest["description"] = "Claude Code documentation manifest. Keys are filenames, append to base_url for full URL."
     manifest_path.write_text(json.dumps(manifest, indent=2))
 
 

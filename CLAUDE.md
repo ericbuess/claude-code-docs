@@ -2,6 +2,18 @@
 
 This repository is an automatically-updated mirror of the official Claude Code documentation from Anthropic. It provides offline access and version tracking for Claude Code docs.
 
+## 📋 Quick Access - Documentation Manifest
+
+The repository includes a `docs_manifest.json` file that provides a complete index:
+- **Manifest URL**: `https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/docs_manifest.json`
+- **Contents**: All documentation filenames, their source URLs, and last update times
+- **Usage**: The manifest keys are the actual filenames. Combine the `base_url` field with any filename to get the direct URL.
+
+Example: To access the settings documentation:
+1. Check manifest for available files
+2. Find `"settings.md"` in the files list
+3. Use: `manifest["base_url"] + "settings.md"` to get the full URL
+
 ## Repository Purpose
 - Mirrors official Claude Code documentation daily
 - Provides stable URLs for documentation access

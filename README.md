@@ -37,7 +37,7 @@ For example:
 - Overview: `https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/overview.md`
 - Setup: `https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/setup.md`
 
-## 🤖 Using with Claude Code (CLAUDE.md Integration)
+## 🤖 Using with Claude Code
 
 This repository includes a `CLAUDE.md` file that provides context to Claude Code about the documentation structure. To use it:
 
@@ -48,6 +48,29 @@ Claude Code will automatically detect and use the CLAUDE.md file when you run it
 You can reference the CLAUDE.md file directly:
 ```
 https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/CLAUDE.md
+```
+
+### Using the Documentation Manifest (Advanced)
+
+The repository includes a `docs_manifest.json` file that serves as a complete index of all documentation:
+
+```
+https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/docs_manifest.json
+```
+
+This manifest can be used by Claude Code to:
+1. Discover all available documentation files
+2. Get direct URLs to any doc by combining the `base_url` with filenames
+3. Check when docs were last updated
+
+Example usage:
+```python
+# Fetch the manifest
+manifest = fetch_json("https://raw.githubusercontent.com/.../docs_manifest.json")
+
+# Get a specific doc
+doc_url = manifest["base_url"] + "setup.md"
+content = fetch(doc_url)
 ```
 
 The CLAUDE.md file helps Claude Code understand:
