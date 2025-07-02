@@ -1,7 +1,0 @@
-# Auto-sync log files
-sync.log
-sync.log.*
-sync.log.old
-
-# Lock files
-.sync.lock
