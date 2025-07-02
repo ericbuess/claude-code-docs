@@ -1,5 +1,8 @@
 # Claude Code Documentation
 
+[![Update Status](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml/badge.svg)](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml)
+[![Last Update](https://img.shields.io/github/last-commit/ericbuess/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/ericbuess/claude-code-docs/commits/main)
+
 A community-maintained mirror of Claude Code documentation with automatic updates.
 
 ## 🚀 Quick Start for Users
@@ -13,6 +16,8 @@ cd claude-code-docs
 # The docs/ directory contains all documentation files
 ls docs/
 ```
+
+**Note**: Git IS the autodownloader! Once cloned, just run `git pull` to get the latest docs. No special tools needed.
 
 ### Option 2: Fetch Latest from This Repo
 ```bash
@@ -80,6 +85,22 @@ This repository automatically updates daily via GitHub Actions. The workflow:
 - **Better Error Handling**: Continues working even if some pages fail
 - **Failure Notifications**: Creates GitHub issues when updates fail
 - **Manifest Tracking**: Maintains a manifest of all fetched files with metadata
+
+## 📊 Track Changes
+
+Stay informed about documentation updates:
+
+- **[📅 View Update History](https://github.com/ericbuess/claude-code-docs/commits/main/docs)** - See all documentation changes with descriptive commit messages
+- **[🔍 Latest Changes](https://github.com/ericbuess/claude-code-docs/commit/main)** - View the most recent documentation update
+- **[📈 Compare Versions](https://github.com/ericbuess/claude-code-docs/compare/main@{7.days.ago}...main)** - See what changed in the last week
+- **[⚙️ Workflow Runs](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml)** - Check update status and history
+
+### Understanding Commit Messages
+
+Starting today, commit messages show exactly what changed:
+- `Updated: setup.md, quickstart.md` - Files that were modified
+- `Added: new-feature.md` - New documentation added
+- `Removed: deprecated.md` - Documentation removed
 
 ## 📖 For Contributors
 

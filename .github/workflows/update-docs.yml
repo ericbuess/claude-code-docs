@@ -38,14 +38,42 @@ jobs:
       run: |
         git diff --exit-code || echo "changed=true" >> $GITHUB_OUTPUT
     
+    - name: Generate commit message
+      if: steps.verify-changed-files.outputs.changed == 'true'
+      id: commit-msg
+      run: |
+        # Stage changes to see what will be committed
+        git add -A docs/ docs_manifest.json
+        
+        # Get list of changed files
+        CHANGED_FILES=$(git diff --name-status --cached | grep "^M" | cut -f2 | grep -E "\.md$" | sed 's/docs\///' | paste -sd ", " -)
+        ADDED_FILES=$(git diff --name-status --cached | grep "^A" | cut -f2 | grep -E "\.md$" | sed 's/docs\///' | paste -sd ", " -)
+        DELETED_FILES=$(git diff --name-status --cached | grep "^D" | cut -f2 | grep -E "\.md$" | sed 's/docs\///' | paste -sd ", " -)
+        
+        # Build commit message
+        COMMIT_MSG="Update Claude Code docs - $(date +'%Y-%m-%d')"
+        
+        if [ -n "$CHANGED_FILES" ]; then
+          COMMIT_MSG="$COMMIT_MSG | Updated: $CHANGED_FILES"
+        fi
+        
+        if [ -n "$ADDED_FILES" ]; then
+          COMMIT_MSG="$COMMIT_MSG | Added: $ADDED_FILES"
+        fi
+        
+        if [ -n "$DELETED_FILES" ]; then
+          COMMIT_MSG="$COMMIT_MSG | Removed: $DELETED_FILES"
+        fi
+        
+        echo "message=$COMMIT_MSG" >> $GITHUB_OUTPUT
+    
     - name: Commit and push if changed
       if: steps.verify-changed-files.outputs.changed == 'true'
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add -A docs/
-        git add docs_manifest.json
-        git commit -m "Update Claude Code documentation - $(date +'%Y-%m-%d')"
+        # Files already staged in previous step
+        git commit -m "${{ steps.commit-msg.outputs.message }}"
         git push
     
     - name: Create issue on failure
