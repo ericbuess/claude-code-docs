@@ -33,10 +33,12 @@ That's it! Claude will now:
 **Note**: After installation, start a new Claude session for the changes to take effect:
 - Exit current session: `/exit`
 - Start fresh: `claude`
+- Continue last session: `claude -c` or `claude --continue`
+- Resume from list: `claude --resume` (shows conversation picker)
 
 ## 📚 What's Included
 
-The `docs/` directory contains all Claude Code documentation:
+The `docs/` directory contains markdown versions of all Claude Code documentation from https://docs.anthropic.com/en/docs/claude-code/:
 - **Getting Started**: Overview, setup, quickstart, memory management, common workflows
 - **Development**: IDE integrations, MCP, GitHub Actions, SDK, troubleshooting
 - **Deployment**: Third-party integrations, Amazon Bedrock, Google Vertex AI, and more
@@ -47,16 +49,17 @@ The `docs/` directory contains all Claude Code documentation:
 ## 🔄 How It Works
 
 1. **This GitHub repository** fetches the latest docs from Anthropic every 3 hours (see the status badges above)
-2. **Your local copy** gets updated when Claude automatically runs `git pull` before reading docs
-3. **You** get documentation that's always current (within 3 hours) - Claude pulls fresh updates from this mirror automatically
+2. **Your local Claude Code CLI** automatically runs `git pull` when it needs to check Claude Code documentation
+3. **You** get documentation that's always current (within 3 hours)
 
 ## 💡 Usage Examples
 
 Once installed, just ask Claude naturally:
 ```
-"How do I use MCP servers?"
-"Show me the troubleshooting guide"
-"Search claude docs for hooks"
+"How do I use MCP servers in Claude Code?"
+"What are Claude Code hooks?"
+"How do I set up Claude Code with GitHub Actions?"
+"Explain Claude Code's memory management"
 ```
 
 Claude will automatically pull the latest docs and answer your questions.
