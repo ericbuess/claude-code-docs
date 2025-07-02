@@ -7,18 +7,22 @@ Keep Claude Code documentation on your local machine, always up-to-date. This mi
 
 ## 🚀 Quick Setup
 
+### Let Claude Install It (Easiest!)
+```
+claude "install the claude code docs from github.com/ericbuess/claude-code-docs"
+```
+
+### Or Install Manually
+Copy and run this entire block:
 ```bash
-# 1. Clone to Claude's directory
-cd ~/.claude && git clone https://github.com/ericbuess/claude-code-docs.git
-
-# 2. Add to ~/.claude/CLAUDE.md:
-cat >> ~/.claude/CLAUDE.md << 'EOF'
-
-# Claude Code Documentation  
-Location: ~/.claude/claude-code-docs/
-Docs: All Claude Code documentation files
-Update: cd ~/.claude/claude-code-docs && git pull --quiet
-EOF
+cd ~/.claude && \
+git clone https://github.com/ericbuess/claude-code-docs.git && \
+echo "" >> ~/.claude/CLAUDE.md && \
+echo "# Claude Code Documentation" >> ~/.claude/CLAUDE.md && \
+echo "Location: ~/.claude/claude-code-docs/" >> ~/.claude/CLAUDE.md && \
+echo "Docs: All Claude Code documentation files" >> ~/.claude/CLAUDE.md && \
+echo "Update: cd ~/.claude/claude-code-docs && git pull --quiet" >> ~/.claude/CLAUDE.md && \
+echo "✅ Installation complete!"
 ```
 
 That's it! Claude will now:
@@ -56,15 +60,16 @@ Claude will automatically pull the latest docs and answer your questions.
 ## 📖 Alternative Access Methods
 
 ### Online Access (No Installation)
+Claude can read directly from GitHub:
 ```
-claude "use the claude code docs at github.com/ericbuess/claude-code-docs"
+claude "check the claude code docs at github.com/ericbuess/claude-code-docs for MCP server setup"
 ```
 
-### Manual Installation
-If you prefer a different location:
+### Custom Installation Location
+If you prefer a different directory:
 ```bash
-git clone https://github.com/ericbuess/claude-code-docs.git
-# Then tell Claude where you put it
+git clone https://github.com/ericbuess/claude-code-docs.git ~/my-docs-location
+# Then update your CLAUDE.md with the new path
 ```
 
 ### Direct URLs
