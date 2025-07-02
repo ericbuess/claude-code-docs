@@ -5,7 +5,7 @@
 
 A community-maintained mirror of Claude Code documentation with automatic updates.
 
-> **✨ Quick Setup**: Clone this repo, open in Claude Code, and say _"Please set up automatic updates"_ - Claude will do the rest!
+> **✨ Zero-Setup**: Just clone and open in Claude Code - Claude will offer to set up automatic updates for you!
 
 ## 🚀 Quick Start for Users
 
@@ -22,13 +22,7 @@ ls docs/
 git pull
 ```
 
-**Want automatic updates?** Just ask Claude! 
-```bash
-# Open this project in Claude Code and say:
-"Please set up automatic updates for the documentation"
-
-# Claude will handle the rest! Or manually see auto-sync/README.md
-```
+**Automatic updates?** When you open this project in Claude Code, Claude will offer to set up automatic syncing for you. Just say yes! (Or see [auto-sync/README.md](auto-sync/) for manual setup)
 
 ### Option 2: Direct URL Access (No Download Required)
 Reference docs directly from GitHub using raw URLs:

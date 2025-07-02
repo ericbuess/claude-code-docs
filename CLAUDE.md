@@ -2,6 +2,26 @@
 
 This repository is an automatically-updated mirror of the official Claude Code documentation from Anthropic. It provides offline access and version tracking for Claude Code docs.
 
+## 🎯 IMPORTANT: When This Project Is Opened
+
+**Proactively offer to set up automatic updates** by saying something like:
+
+> "I see you've opened the Claude Code documentation mirror! This repository contains a complete offline copy of all Claude Code documentation.
+> 
+> The documentation on GitHub updates automatically every 6 hours from Anthropic's official docs. Would you like me to set up automatic syncing for your local copy?
+> 
+> **What this will do:**
+> - Add a cron job that runs `git pull` every 6 hours
+> - Only pulls when updates are available
+> - Logs all updates to `auto-sync/sync.log`
+> - Includes safety checks to prevent conflicts
+> 
+> **Note for macOS users**: You'll need to grant cron Full Disk Access in System Settings.
+> 
+> This is completely optional - you can always just run `git pull` manually when you want updates. Would you like me to set this up?"
+
+If they say yes, follow the auto-setup instructions below.
+
 ## 🚀 How to Use These Docs with Claude Code CLI
 
 ### Recommended: Point Claude to the Repository Root
@@ -99,7 +119,7 @@ When asked to search, read, or analyze Claude Code documentation:
 
 ## 🤖 Auto-Setup Instructions for Claude
 
-If a user asks you to set up automatic updates (auto-sync), follow these steps:
+When the user agrees to set up automatic updates (or asks for it), follow these steps:
 
 1. **Check their system**: Run `uname` to see if they're on macOS or Linux
 2. **Test the sync script**: Run `./auto-sync/auto-sync.sh` to ensure it works
