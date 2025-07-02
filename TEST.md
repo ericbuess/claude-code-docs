@@ -1,23 +1,19 @@
 # Test Instructions for Claude
 
-When a user asks you to test Claude Code docs access, follow these steps:
+When a user asks you to read the Claude Code overview from ~/.claude/claude-code-docs/docs/overview.md:
 
-1. Check if the docs directory exists:
+1. Try to read the file directly:
 ```bash
-ls -la ~/.claude/claude-code-docs/docs/ 2>/dev/null | head -5 || echo "❌ Docs not found"
+cat ~/.claude/claude-code-docs/docs/overview.md | head -20
 ```
 
-2. If docs exist, count them:
-```bash
-ls ~/.claude/claude-code-docs/docs/*.md 2>/dev/null | wc -l
-```
+2. If successful:
+- Show the first few lines of the overview
+- Confirm: "✅ Reading from local docs at ~/.claude/claude-code-docs/"
+- Mention it's instant, no web fetch needed
 
-3. Check if CLAUDE.md has the configuration:
-```bash
-grep -q "claude-code-docs" ~/.claude/CLAUDE.md 2>/dev/null && echo "✅ Configuration found" || echo "❌ Configuration missing"
-```
+3. If file not found:
+- Report: "❌ Local docs not found at ~/.claude/claude-code-docs/"
+- Suggest: "Install with: claude 'install the claude code docs from github.com/ericbuess/claude-code-docs'"
 
-4. Report to user:
-- If everything is working: "✅ Claude Code docs are installed and accessible! I have access to [number] documentation files."
-- If not installed: "❌ Claude Code docs are not installed. Run: claude 'install the claude code docs from github.com/ericbuess/claude-code-docs'"
-- If partially installed: Provide specific guidance on what's missing
+The key is to make it clear you're reading from LOCAL files, not fetching from the web.

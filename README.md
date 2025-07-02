@@ -12,11 +12,13 @@ claude "install the claude code docs from github.com/ericbuess/claude-code-docs"
 
 That's it! Claude now has access to all its documentation.
 
-## Test It Works
+## Verify Local Access
 
 ```
-claude "test claude code docs access"
+claude "read the Claude Code overview from ~/.claude/claude-code-docs/docs/overview.md"
 ```
+
+If Claude reads it instantly from disk (not WebFetch), it's working!
 
 ## What You Can Now Ask
 
@@ -26,29 +28,14 @@ claude "test claude code docs access"
 - "Explain Claude Code's memory management system"
 - "Show me all Claude Code slash commands"
 
-## Alternative Installation
+## Start New Session After Install
 
-If you prefer to install manually:
-
-```bash
-# Clone and configure
-cd ~/.claude && \
-git clone https://github.com/ericbuess/claude-code-docs.git && \
-echo "" >> ~/.claude/CLAUDE.md && \
-echo "# Claude Code Docs" >> ~/.claude/CLAUDE.md && \
-echo "" >> ~/.claude/CLAUDE.md && \
-echo "Local mirror of Claude Code documentation." >> ~/.claude/CLAUDE.md && \
-echo "" >> ~/.claude/CLAUDE.md && \
-echo "Pull latest: cd ~/.claude/claude-code-docs && git pull --quiet" >> ~/.claude/CLAUDE.md && \
-echo "Docs location: ~/.claude/claude-code-docs/docs/" >> ~/.claude/CLAUDE.md && \
-echo "✅ Installation complete!"
+After installation, restart Claude to load the changes:
 ```
-
-**Note**: Start a new Claude session for changes to take effect:
-- Exit: `/exit`  
-- Start fresh: `claude`
-- Continue last: `claude -c`
-- Resume from list: `claude -r`
+/exit              # Exit current session
+claude             # Start fresh
+claude -c          # Or continue your last session
+```
 
 ## Uninstall
 
@@ -58,9 +45,15 @@ claude "uninstall the claude code docs mirror"
 
 ## What This Does
 
-- Gives Claude offline access to all its documentation (27+ markdown files)
-- Updates automatically every 3 hours from Anthropic's official docs
-- Works instantly - no web fetching needed when you ask questions
+- Gives Claude instant local access to all its documentation
+- No more web fetching - reads directly from disk
+- Updates automatically every 3 hours from Anthropic
+
+## Details
+
+- Installation steps: See [INSTALL.md](INSTALL.md)
+- Uninstall steps: See [UNINSTALL.md](UNINSTALL.md)
+- Contributing: See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 

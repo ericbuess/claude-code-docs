@@ -20,10 +20,12 @@ cd ~/.claude && git clone https://github.com/ericbuess/claude-code-docs.git
 4. Append the documentation configuration:
 ```bash
 echo "" >> ~/.claude/CLAUDE.md
-echo "# Claude Code Documentation" >> ~/.claude/CLAUDE.md
-echo "Location: ~/.claude/claude-code-docs/" >> ~/.claude/CLAUDE.md
-echo "Docs: All Claude Code documentation files" >> ~/.claude/CLAUDE.md
-echo "Update: cd ~/.claude/claude-code-docs && git pull --quiet" >> ~/.claude/CLAUDE.md
+echo "# Claude Code Docs" >> ~/.claude/CLAUDE.md
+echo "" >> ~/.claude/CLAUDE.md
+echo "Local mirror of Claude Code documentation." >> ~/.claude/CLAUDE.md
+echo "" >> ~/.claude/CLAUDE.md
+echo "Pull latest: cd ~/.claude/claude-code-docs && git pull --quiet" >> ~/.claude/CLAUDE.md
+echo "Docs location: ~/.claude/claude-code-docs/docs/" >> ~/.claude/CLAUDE.md
 ```
 
 5. Verify installation:
