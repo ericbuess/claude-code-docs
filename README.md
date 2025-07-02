@@ -111,21 +111,15 @@ The documentation is automatically updated on GitHub every 6 hours:
    - OR use auto-sync to automate this (see Option 1 above)
    - Updates come from GitHub, not directly from Anthropic
 
-**Key Points:**
-- **Dynamically discovers all Claude Code pages from the sitemap**
-- **Only downloads files that have changed**
-- **Removes obsolete documentation files**
-- **Can be triggered manually from the Actions tab**
-
-### Key Features (v3.0)
+**Key Features:**
 - **Fully Autonomous**: Uses sitemap.xml to automatically discover new pages
-- **Smart File Naming**: Preserves directory structure to prevent collisions
-- **Change Detection**: Only downloads files that have changed (SHA-256 hash comparison)
+- **Smart Updates**: Only downloads files that have changed (SHA-256 hash comparison)
 - **Safe Cleanup**: Only removes files it previously tracked (preserves manual additions)
 - **Flexible URL Matching**: Handles URL structure changes gracefully
-- **Better Error Handling**: Continues working even if some pages fail
+- **Error Resilient**: Continues working even if some pages fail
 - **Failure Notifications**: Creates GitHub issues when updates fail
-- **Manifest Tracking**: Maintains a manifest of all fetched files with metadata
+- **Manual Trigger**: Can be triggered manually from the Actions tab
+
 
 ## 📊 Status & Change Tracking
 

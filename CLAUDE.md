@@ -36,7 +36,7 @@ content = fetch(doc_url)
 ```
 
 ## Repository Purpose
-- Mirrors official Claude Code documentation daily
+- Mirrors official Claude Code documentation every 6 hours
 - Provides stable URLs for documentation access
 - Enables offline documentation viewing
 - Tracks documentation changes over time

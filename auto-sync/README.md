@@ -17,7 +17,7 @@ This directory contains scripts that automate `git pull` to keep your local copy
 ### 1. Test the sync manually
 ```bash
 # Navigate to your repository (example path - yours may differ)
-cd ~/Projects/claude-code-docs
+cd ~/path/to/claude-code-docs
 ./auto-sync/auto-sync.sh
 ```
 
