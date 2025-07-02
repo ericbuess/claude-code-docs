@@ -172,6 +172,31 @@ git log --oneline -10 docs/
 git log -1 --format="%ai" -- docs/setup.md
 ```
 
+## 🔍 Troubleshooting
+
+### Auto-sync not working?
+
+1. **Check if auto-sync is set up:**
+   ```bash
+   crontab -l | grep claude-code-docs
+   ```
+
+2. **View sync logs:**
+   ```bash
+   tail -20 auto-sync/sync.log
+   ```
+
+3. **Common issues:**
+   - **macOS**: Ensure cron has Full Disk Access (System Settings → Privacy & Security)
+   - **Git authentication**: Run `git pull` manually to check credentials
+   - **Wrong path**: Verify the path in your crontab is correct
+
+### Updates not appearing?
+
+- Check GitHub Actions status: https://github.com/ericbuess/claude-code-docs/actions
+- Manual update: `git pull`
+- The GitHub repo updates every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+
 ## 📖 For Contributors
 
 ### Fetching Documentation from Source

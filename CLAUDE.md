@@ -1,7 +1,10 @@
-# ⚠️ CLAUDE CODE CLI INTERNAL INSTRUCTIONS ONLY
+# ⛔ INTERNAL CLAUDE CODE CLI INSTRUCTIONS
 
-**This file contains instructions for Claude's behavior when working with this repository.**  
-**Users should refer to README.md for documentation.**
+> ### ⚠️ WARNING: This file is NOT user documentation!
+> 
+> This file contains behavioral instructions for Claude when working with this repository.
+> 
+> **🚨 Users should refer to [README.md](README.md) for all documentation.**
 
 ---
 

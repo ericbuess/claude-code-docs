@@ -35,7 +35,7 @@ SITEMAP_URLS = [
 MANIFEST_FILE = "docs_manifest.json"
 
 # Base URL will be discovered from sitemap
-BASE_URL = None
+# No longer using global variable
 
 # Headers to bypass caching and identify the script
 HEADERS = {
@@ -421,12 +421,10 @@ def main():
         # Discover sitemap and base URL
         try:
             sitemap_url, base_url = discover_sitemap_and_base_url(session)
-            global BASE_URL
-            BASE_URL = base_url
         except Exception as e:
             logger.error(f"Failed to discover sitemap: {e}")
             logger.info("Using fallback configuration...")
-            BASE_URL = "https://docs.anthropic.com"
+            base_url = "https://docs.anthropic.com"
             sitemap_url = None
         
         # Discover documentation pages dynamically
@@ -461,7 +459,7 @@ def main():
             logger.info(f"Processing {i}/{len(documentation_pages)}: {page_path}")
             
             try:
-                filename, content = fetch_markdown_content(page_path, session, BASE_URL)
+                filename, content = fetch_markdown_content(page_path, session, base_url)
                 
                 # Check if content has changed
                 old_hash = manifest.get("files", {}).get(filename, {}).get("hash", "")
@@ -473,8 +471,8 @@ def main():
                     logger.info(f"Unchanged: {filename}")
                 
                 new_manifest["files"][filename] = {
-                    "original_url": f"{BASE_URL}{page_path}",
-                    "original_md_url": f"{BASE_URL}{page_path}.md",
+                    "original_url": f"{base_url}{page_path}",
+                    "original_md_url": f"{base_url}{page_path}.md",
                     "hash": content_hash,
                     "last_updated": datetime.now().isoformat()
                 }
@@ -503,7 +501,7 @@ def main():
         "pages_failed": failed,
         "failed_pages": failed_pages,
         "sitemap_url": sitemap_url,
-        "base_url": BASE_URL,
+        "base_url": base_url,
         "total_files": len(fetched_files),
         "fetch_tool_version": "3.0"
     }
