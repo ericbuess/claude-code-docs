@@ -9,17 +9,17 @@ This repository automatically mirrors Claude Code documentation from Anthropic's
 ```
 claude-code-docs/
 ├── docs/                          # Mirrored documentation files
+├── scripts/
+│   ├── fetch_claude_docs.py      # Documentation fetcher
+│   └── requirements.txt          # Python dependencies
 ├── .github/
-│   ├── workflows/
-│   │   └── update-docs.yml       # GitHub Actions workflow
-│   └── scripts/
-│       ├── fetch_claude_docs.py  # Documentation fetcher
-│       └── requirements.txt      # Python dependencies
+│   └── workflows/
+│       └── update-docs.yml       # GitHub Actions workflow
 ├── README.md                     # User-facing documentation
 ├── CLAUDE.md                     # Instructions for Claude
 ├── INSTALL.md                    # Installation steps for Claude
 ├── UNINSTALL.md                  # Uninstallation steps for Claude
-└── TEST.md                       # Test steps for Claude
+└── CONTRIBUTING.md               # This file
 ```
 
 ## Manual Documentation Fetching
@@ -27,7 +27,7 @@ claude-code-docs/
 If you want to test the fetching process locally:
 
 ```bash
-cd .github/scripts
+cd scripts
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -53,5 +53,5 @@ python fetch_claude_docs.py
 ## Important Notes
 
 - Don't modify files in the `docs/` directory directly - they're auto-generated
-- The fetch script is in `.github/scripts/` to keep the root clean
+- The fetch script is in `scripts/` for easy discovery by Claude
 - Focus on user experience - most users just want working docs

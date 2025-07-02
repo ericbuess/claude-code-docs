@@ -12,13 +12,13 @@ claude "install the claude code docs from github.com/ericbuess/claude-code-docs"
 
 That's it! Claude now has access to all its documentation.
 
-## Verify Local Access
+## Verify Installation
 
 ```
-claude "read the Claude Code overview from ~/.claude/claude-code-docs/docs/overview.md"
+claude "are my claude code docs installed?"
 ```
 
-If Claude reads it instantly from disk (not WebFetch), it's working!
+Claude will check if the local docs exist and confirm.
 
 ## What You Can Now Ask
 
