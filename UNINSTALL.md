@@ -30,6 +30,10 @@ echo "- Repository from ~/.claude/claude-code-docs"
 echo "- Configuration from ~/.claude/CLAUDE.md"
 echo ""
 echo "Your CLAUDE.md backup is at: ~/.claude/CLAUDE.md.backup"
+echo ""
+echo "⚠️ IMPORTANT: For the changes to take effect:"
+echo "1. Exit any existing Claude sessions with Ctrl+D"
+echo "2. Start fresh with: claude"
 ```
 
 Note: On Linux, use `sed -i` instead of `sed -i ''`

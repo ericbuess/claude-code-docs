@@ -35,6 +35,12 @@ ls -la ~/.claude/claude-code-docs/docs/ | head -5
 ```
 ✅ Claude Code documentation mirror installed successfully!
 
+⚠️ IMPORTANT: For the changes to take effect in other Claude sessions:
+1. Exit any existing Claude sessions with Ctrl+D
+2. Start fresh with: claude
+
+The current session (this one) already knows about the docs, but other running Claude instances need to be restarted to see the changes.
+
 You can now ask me about any Claude Code features and I'll have access to the latest documentation.
 
 Try asking: "How do I use MCP servers?" or "What are Claude Code hooks?"

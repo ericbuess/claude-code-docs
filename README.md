@@ -30,6 +30,10 @@ That's it! Claude will now:
 - Pull fresh updates from this mirror before answering Claude Code questions
 - Always have access to documentation that's at most 3 hours old
 
+**Note**: After installation, start a new Claude session for the changes to take effect:
+- Exit current session: `Ctrl+D`
+- Start fresh: `claude`
+
 ## 📚 What's Included
 
 The `docs/` directory contains all Claude Code documentation:
@@ -138,6 +142,8 @@ rm -rf ~/.claude/claude-code-docs
 # Remove the configuration from CLAUDE.md
 sed -i.bak '/# Claude Code Documentation/,+3d' ~/.claude/CLAUDE.md
 ```
+
+**Note**: After uninstalling, start a new Claude session to apply changes (`Ctrl+D` then `claude`).
 
 ## 📝 License
 
