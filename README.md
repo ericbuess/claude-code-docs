@@ -4,38 +4,60 @@
 
 Give Claude instant access to its own documentation.
 
-## Install in 5 Seconds
+## Quick Setup
 
-```
-claude 'install the claude code docs from github.com/ericbuess/claude-code-docs'
-```
-
-That's it! Claude will handle the rest.
-
-## Verify Installation
-
-```
-claude 'are my claude code docs installed?'
+Run this command:
+```bash
+curl -sSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/setup.sh | bash
 ```
 
-Claude will check if the local docs exist and confirm.
+That's it! Now when you ask Claude about Claude Code features, it will:
+- Check if docs exist locally
+- Auto-install them if needed
+- Read from local files (fast!)
+
+## How It Works
+
+The setup script adds instructions to your `~/.claude/CLAUDE.md` that tell Claude:
+1. Where to find local docs (`~/.claude/claude-code-docs/docs/`)
+2. How to install them if missing
+3. How to update them
 
 ## What You Can Now Ask
 
 - "How do I use MCP servers in Claude Code?"
-- "What are Claude Code hooks and how do I set them up?"
-- "How do I configure Claude Code with GitHub Actions?"
-- "Explain Claude Code's memory management system"
-- "Show me all Claude Code slash commands"
+- "What are Claude Code hooks?"
+- "Show me Claude Code's memory management"
+- "Explain Claude Code slash commands"
 
-## Start New Session After Install
+Claude will automatically install the docs on first use!
 
-After installation, restart Claude to load the changes:
+## Manual Setup
+
+If you prefer to set up manually:
+
+1. Add to `~/.claude/CLAUDE.md`:
 ```
-/exit              # Exit current session
-claude             # Start fresh
-claude -c          # Or continue your last session
+# Claude Code Docs
+
+Local mirror: ~/.claude/claude-code-docs/docs/
+Update: cd ~/.claude/claude-code-docs && git pull --quiet
+
+If user asks about Claude Code features and docs not found locally:
+1. Check if ~/.claude/claude-code-docs exists
+2. If not, install: cd ~/.claude && git clone https://github.com/ericbuess/claude-code-docs.git
+3. Then read from ~/.claude/claude-code-docs/docs/
 ```
+
+2. Start a new Claude session (`/exit` then `claude`)
+
+## Verify It Works
+
+```
+claude 'what are claude code hooks?'
+```
+
+Claude will check for local docs, install if needed, then answer from local files.
 
 ## Uninstall
 
@@ -45,15 +67,9 @@ claude 'uninstall the claude code docs mirror'
 
 ## What This Does
 
-- Gives Claude instant local access to all its documentation
-- No more web fetching - reads directly from disk
-- Updates automatically every 3 hours from Anthropic
-
-## Details
-
-- Installation steps: See [INSTALL.md](INSTALL.md)
-- Uninstall steps: See [UNINSTALL.md](UNINSTALL.md)
-- Contributing: See [CONTRIBUTING.md](CONTRIBUTING.md)
+- Gives Claude instructions to auto-install docs when needed
+- Docs update automatically every 3 hours (via GitHub Actions)
+- Everything runs locally after first install
 
 ## License
 
