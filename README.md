@@ -16,9 +16,8 @@ cat >> ~/.claude/CLAUDE.md << 'EOF'
 
 # Claude Code Documentation  
 Location: ~/.claude/claude-code-docs/
-Available: overview, setup, quickstart, memory, mcp, settings, troubleshooting, 25+ more
+Docs: 27 files covering all Claude Code features (see CLAUDE.md for complete list)
 Update: cd ~/.claude/claude-code-docs && git pull --quiet
-Details: See CLAUDE.md in that directory if needed
 EOF
 ```
 
