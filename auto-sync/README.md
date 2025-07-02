@@ -1,12 +1,23 @@
 # Auto-Sync for Claude Code Documentation
 
-This directory contains scripts to automatically sync Claude Code documentation updates to your local repository.
+This directory contains scripts that automate `git pull` to keep your local copy of the documentation up-to-date.
+
+## 🎯 What This Does
+
+**Auto-sync is simply an automated `git pull` with safety checks.** It:
+- Checks if the GitHub repository has updates
+- Verifies you have no local changes that would conflict
+- Pulls the latest documentation changes
+- Logs what was updated
+
+**Important:** The actual documentation updates happen on GitHub via GitHub Actions every 6 hours. This script just pulls those updates to your local copy.
 
 ## 🚀 Quick Start
 
 ### 1. Test the sync manually
 ```bash
-cd /path/to/claude-code-docs
+# Navigate to your repository (example path - yours may differ)
+cd ~/Projects/claude-code-docs
 ./auto-sync/auto-sync.sh
 ```
 
@@ -15,11 +26,11 @@ cd /path/to/claude-code-docs
 # Open your crontab
 crontab -e
 
-# Add this line (replace path with your actual repository path)
-30 */6 * * * cd /path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
+# Add this line (replace with YOUR actual repository path)
+30 */6 * * * cd /Users/YOUR_USERNAME/path/to/repo && ./auto-sync/auto-sync.sh --quiet
 ```
 
-That's it! Your documentation will automatically update 30 minutes after each GitHub Action run.
+Your local copy will automatically update 30 minutes after each GitHub Action run.
 
 ## 📋 What's Included
 
@@ -48,13 +59,19 @@ That's it! Your documentation will automatically update 30 minutes after each Gi
 - Repository must be cloned locally
 - Git credentials configured (if using HTTPS)
 
-### macOS Specific Notes
+## ⚠️ macOS Users - Important!
 
-1. **Cron Permission**: On macOS, you may need to grant cron "Full Disk Access":
-   - System Settings → Privacy & Security → Full Disk Access
-   - Add `/usr/sbin/cron`
+**Before setting up cron on macOS:**
 
-2. **Alternative for macOS**: Consider using `launchd` instead of cron for better integration
+1. **Grant Full Disk Access to cron** (required on macOS 10.14+):
+   - Open System Settings → Privacy & Security → Full Disk Access
+   - Click the lock to make changes
+   - Click + and navigate to `/usr/sbin/cron`
+   - Add it and ensure it's checked
+
+Without this, cron jobs will silently fail on macOS!
+
+2. **Alternative**: Use `launchd` instead of cron (more macOS-native but more complex)
 
 ### Basic Setup
 
@@ -68,19 +85,31 @@ That's it! Your documentation will automatically update 30 minutes after each Gi
    ```bash
    ./auto-sync/auto-sync.sh
    ```
+   
+   You should see output like:
+   ```
+   [2025-07-02 10:30:00] Starting auto-sync check for Claude Code docs...
+   [2025-07-02 10:30:00] Using branch: main
+   [2025-07-02 10:30:01] Already up to date. No changes to pull.
+   ```
 
-3. Add to crontab to sync automatically:
+3. Find your repository's full path:
+   ```bash
+   pwd  # This will show something like: /Users/yourname/Projects/claude-code-docs
+   ```
+
+4. Add to crontab to sync automatically:
    ```bash
    crontab -e
    ```
    
-   Add this line:
+   Add this line (using YOUR path from step 3):
    ```bash
    # Sync 30 minutes after each GitHub Action run
-   30 */6 * * * cd /full/path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
+   30 */6 * * * cd /Users/yourname/Projects/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
    ```
    
-   This runs at 00:30, 06:30, 12:30, and 18:30 UTC - giving the GitHub Action time to complete.
+   This runs at 00:30, 06:30, 12:30, and 18:30 UTC.
 
 ## 📊 Monitoring
 

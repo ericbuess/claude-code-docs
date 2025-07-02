@@ -30,17 +30,22 @@ fi
 # Detect the default branch
 DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
 if [[ -z "$DEFAULT_BRANCH" ]]; then
-    # Fallback to common branch names
-    for branch in main master; do
-        if git show-ref --verify --quiet "refs/remotes/origin/$branch"; then
-            DEFAULT_BRANCH="$branch"
-            break
-        fi
-    done
+    # Try to set the remote HEAD automatically
+    if git remote set-head origin -a >/dev/null 2>&1; then
+        DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+    else
+        # Fallback to common branch names
+        for branch in main master; do
+            if git show-ref --verify --quiet "refs/remotes/origin/$branch"; then
+                DEFAULT_BRANCH="$branch"
+                break
+            fi
+        done
+    fi
 fi
 
 if [[ -z "$DEFAULT_BRANCH" ]]; then
-    echo "ERROR: Could not determine default branch" >&2
+    echo "ERROR: Could not determine default branch. Please run: git remote set-head origin -a" >&2
     exit 2
 fi
 

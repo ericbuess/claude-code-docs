@@ -75,17 +75,25 @@ log "Starting auto-sync check for Claude Code docs..."
 # Detect the default branch
 DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
 if [[ -z "$DEFAULT_BRANCH" ]]; then
-    # Fallback to common branch names
-    for branch in main master; do
-        if git show-ref --verify --quiet "refs/remotes/origin/$branch"; then
-            DEFAULT_BRANCH="$branch"
-            break
-        fi
-    done
+    log "Remote HEAD not set. Setting it now..."
+    # Try to set the remote HEAD automatically
+    if git remote set-head origin -a >/dev/null 2>&1; then
+        DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+        log "Remote HEAD set to: $DEFAULT_BRANCH"
+    else
+        # Fallback to common branch names
+        for branch in main master; do
+            if git show-ref --verify --quiet "refs/remotes/origin/$branch"; then
+                DEFAULT_BRANCH="$branch"
+                log "Using detected branch: $DEFAULT_BRANCH"
+                break
+            fi
+        done
+    fi
 fi
 
 if [[ -z "$DEFAULT_BRANCH" ]]; then
-    error_exit "Could not determine default branch"
+    error_exit "Could not determine default branch. Please run: git remote set-head origin -a"
 fi
 
 log "Using branch: $DEFAULT_BRANCH"

@@ -20,11 +20,11 @@ ls docs/
 git pull
 ```
 
-**NEW: Auto-sync available!** Set up automatic updates with our [auto-sync scripts](auto-sync/). Just run:
+**Optional: Auto-sync** - Automatically run `git pull` on a schedule with our [auto-sync scripts](auto-sync/):
 ```bash
-./auto-sync/auto-sync.sh  # One-time sync
+./auto-sync/auto-sync.sh  # Manually pull latest changes (same as git pull but with safety checks)
 # OR
-crontab -e  # Set up automatic syncing (see auto-sync/README.md)
+crontab -e  # Set up automatic git pull every 6 hours (see auto-sync/README.md)
 ```
 
 ### Option 2: Direct URL Access (No Download Required)
@@ -96,16 +96,26 @@ The `docs/` directory contains all 27 Claude Code documentation pages:
 - Reference documentation (cli-reference, interactive-mode, slash-commands, settings, hooks)
 - Legal and compliance information
 
-## 🔄 Automatic Updates
+## 🔄 How Updates Work
 
-This repository automatically updates every 6 hours via GitHub Actions. The workflow:
-- Runs 4 times daily (00:00, 06:00, 12:00, 18:00 UTC)
+The documentation is automatically updated on GitHub every 6 hours:
+
+1. **GitHub Actions** (runs on GitHub's servers):
+   - Runs 4 times daily (00:00, 06:00, 12:00, 18:00 UTC)
+   - Fetches latest docs from Anthropic's website
+   - Commits changes to this GitHub repository
+   - Creates issues if updates fail
+
+2. **Your Local Copy** (requires manual or automated pull):
+   - Run `git pull` to get the latest updates
+   - OR use auto-sync to automate this (see Option 1 above)
+   - Updates come from GitHub, not directly from Anthropic
+
+**Key Points:**
 - **Dynamically discovers all Claude Code pages from the sitemap**
-- Fetches the latest documentation from Anthropic
-- Commits any changes automatically
-- Removes obsolete documentation files
-- Can also be triggered manually from the Actions tab
-- **Creates GitHub issues on failures** for notification
+- **Only downloads files that have changed**
+- **Removes obsolete documentation files**
+- **Can be triggered manually from the Actions tab**
 
 ### Key Features (v3.0)
 - **Fully Autonomous**: Uses sitemap.xml to automatically discover new pages
@@ -180,10 +190,10 @@ python fetch_claude_docs.py
 claude-code-docs/
 ├── docs/                    # All documentation markdown files
 │   └── docs_manifest.json   # Index of all docs with metadata
-├── auto-sync/              # Optional automatic sync scripts
-│   ├── auto-sync.sh        # Main sync script
-│   ├── check-updates.sh    # Check for updates
-│   └── README.md           # Setup instructions
+├── auto-sync/              # Optional scripts to automate git pull
+│   ├── auto-sync.sh        # Automated git pull with safety checks
+│   ├── check-updates.sh    # Check if updates are available
+│   └── README.md           # Setup instructions for cron
 ├── fetch_claude_docs.py     # Script to dynamically fetch from Anthropic
 ├── requirements.txt         # Python dependencies
 ├── .github/
