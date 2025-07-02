@@ -42,7 +42,7 @@ content = fetch(doc_url)
 - Tracks documentation changes over time
 
 ## Key Features
-- **Automatic Updates**: GitHub Actions fetches latest docs daily at 2 AM UTC
+- **Automatic Updates**: GitHub Actions fetches latest docs every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
 - **Dynamic Discovery**: Uses sitemap.xml to find new documentation pages
 - **URL Pattern Robustness**: Automatically handles multiple URL patterns for Claude Code docs
 - **Change Detection**: Only downloads modified files using SHA-256 hashing
@@ -59,7 +59,7 @@ When asked to search, read, or analyze Claude Code documentation:
 
 ### Quick Tips for Claude Code Users
 - **No setup required**: Just reference the GitHub URLs directly
-- **Always up-to-date**: Documentation updates daily at 2 AM UTC
+- **Always fresh**: Documentation updates every 6 hours
 - **Offline access**: Clone the repo for local use without internet
 - **Version history**: Use git history to see how docs changed over time
 

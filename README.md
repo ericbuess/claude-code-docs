@@ -93,8 +93,8 @@ The `docs/` directory contains all 27 Claude Code documentation pages:
 
 ## 🔄 Automatic Updates
 
-This repository automatically updates daily via GitHub Actions. The workflow:
-- Runs every day at 2 AM UTC
+This repository automatically updates every 6 hours via GitHub Actions. The workflow:
+- Runs 4 times daily (00:00, 06:00, 12:00, 18:00 UTC)
 - **Dynamically discovers all Claude Code pages from the sitemap**
 - Fetches the latest documentation from Anthropic
 - Commits any changes automatically
@@ -112,21 +112,48 @@ This repository automatically updates daily via GitHub Actions. The workflow:
 - **Failure Notifications**: Creates GitHub issues when updates fail
 - **Manifest Tracking**: Maintains a manifest of all fetched files with metadata
 
-## 📊 Track Changes
+## 📊 Status & Change Tracking
 
-Stay informed about documentation updates:
+### Current Status
+- **Last Check**: View the timestamp on the [latest workflow run](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml)
+- **Last Update**: See the [most recent commit](https://github.com/ericbuess/claude-code-docs/commits/main) that changed documentation
+- **Update Frequency**: Every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
 
-- **[📅 View Update History](https://github.com/ericbuess/claude-code-docs/commits/main/docs)** - See all documentation changes with descriptive commit messages
-- **[🔍 Latest Changes](https://github.com/ericbuess/claude-code-docs/commit/main)** - View the most recent documentation update
-- **[📈 Compare Versions](https://github.com/ericbuess/claude-code-docs/compare/main@{7.days.ago}...main)** - See what changed in the last week
-- **[⚙️ Workflow Runs](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml)** - Check update status and history
+### Track Documentation Changes
+
+- **[📅 Full History](https://github.com/ericbuess/claude-code-docs/commits/main/docs)** - Browse all documentation updates with descriptive commit messages
+- **[🔍 Latest Changes](https://github.com/ericbuess/claude-code-docs/commit/main)** - View the most recent changes in detail
+- **[📈 Compare Versions](https://github.com/ericbuess/claude-code-docs/compare/main@{1.day.ago}...main)** - See what changed in the last 24 hours
+- **[⚙️ Workflow Status](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml)** - Check if updates are running successfully
+
+### View Specific Changes
+
+To see what changed in a specific file:
+```bash
+# View history of a specific doc
+git log -p docs/setup.md
+
+# Compare current version with previous
+git diff HEAD~1 docs/setup.md
+
+# See when a doc was last modified
+git log -1 --format="%ai" -- docs/setup.md
+```
 
 ### Understanding Commit Messages
 
-Starting today, commit messages show exactly what changed:
+Commit messages clearly indicate what changed:
 - `Updated: setup.md, quickstart.md` - Files that were modified
 - `Added: new-feature.md` - New documentation added
 - `Removed: deprecated.md` - Documentation removed
+
+### Check Freshness
+
+The `docs_manifest.json` file contains exact timestamps for each document:
+```bash
+# Check when each doc was last fetched
+cat docs/docs_manifest.json | jq '.files["setup.md"].last_updated'
+```
 
 ## 📖 For Contributors
 
