@@ -33,13 +33,16 @@ log() {
 # Error handling
 error_exit() {
     log "ERROR: $1"
-    rm -f "$LOCK_FILE"
+    # Cleanup will be handled by the trap
     exit 1
 }
 
 # Cleanup function
 cleanup() {
-    rm -f "$LOCK_FILE"
+    # Only remove lock file if not using flock
+    if ! command -v flock >/dev/null 2>&1; then
+        rm -f "$LOCK_FILE"
+    fi
 }
 
 # Set up cleanup trap
@@ -53,16 +56,45 @@ if ! git rev-parse --git-dir > /dev/null 2>&1; then
     error_exit "Not in a git repository: $REPO_DIR"
 fi
 
-# Check for lock file (prevent concurrent execution)
-if [[ -f "$LOCK_FILE" ]]; then
-    if [[ "$QUIET_MODE" == "false" ]]; then
-        echo "Another sync process is already running (lock file exists). Exiting."
+# Use flock for better lock handling if available
+if command -v flock >/dev/null 2>&1; then
+    # Try to acquire lock with flock
+    exec 200>"$LOCK_FILE"
+    if ! flock -n 200; then
+        if [[ "$QUIET_MODE" == "false" ]]; then
+            echo "Another sync process is already running (could not acquire lock). Exiting."
+        fi
+        exit 0
     fi
-    exit 0
+    # Lock acquired, no need to manually remove lock file as it will be released on exit
+else
+    # Fallback to traditional lock file with improved atomicity
+    if ! (set -C; echo $$ > "$LOCK_FILE") 2>/dev/null; then
+        if [[ "$QUIET_MODE" == "false" ]]; then
+            # Check if the process that created the lock is still running
+            if [[ -f "$LOCK_FILE" ]]; then
+                OLD_PID=$(cat "$LOCK_FILE" 2>/dev/null || echo "")
+                if [[ -n "$OLD_PID" ]] && kill -0 "$OLD_PID" 2>/dev/null; then
+                    echo "Another sync process is already running (PID: $OLD_PID). Exiting."
+                else
+                    # Stale lock file, remove it
+                    log "Removing stale lock file from PID $OLD_PID"
+                    rm -f "$LOCK_FILE"
+                    # Try again
+                    if ! (set -C; echo $$ > "$LOCK_FILE") 2>/dev/null; then
+                        echo "Failed to acquire lock after removing stale lock. Exiting."
+                        exit 1
+                    fi
+                fi
+            else
+                echo "Another sync process is already running. Exiting."
+                exit 0
+            fi
+        else
+            exit 0
+        fi
+    fi
 fi
-
-# Create lock file
-touch "$LOCK_FILE"
 
 # Rotate log if needed
 if [[ -f "$LOG_FILE" ]] && [[ $(stat -f%z "$LOG_FILE" 2>/dev/null || stat -c%s "$LOG_FILE" 2>/dev/null || echo 0) -gt $MAX_LOG_SIZE ]]; then

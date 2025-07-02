@@ -23,3 +23,5 @@ Thumbs.db
 # Project specific
 *.log
 fetch_claude_docs_old.py
+auto-sync/sync.log
+auto-sync/sync.log.*

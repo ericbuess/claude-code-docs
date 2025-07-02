@@ -1,26 +1,50 @@
-# Claude Code Documentation Mirror - Project Context
+# ⚠️ CLAUDE CODE CLI INTERNAL INSTRUCTIONS ONLY
+
+**This file contains instructions for Claude's behavior when working with this repository.**  
+**Users should refer to README.md for documentation.**
+
+---
+
+## Claude Code Documentation Mirror - Project Context
 
 This repository is an automatically-updated mirror of the official Claude Code documentation from Anthropic. It provides offline access and version tracking for Claude Code docs.
 
-## 🎯 IMPORTANT: When This Project Is Opened
+## 🔄 Automatic Updates
 
-**Proactively offer to set up automatic updates** by saying something like:
+This repository has two update mechanisms:
+1. **GitHub Actions**: Updates the GitHub repository every 6 hours automatically
+2. **Local Auto-Sync**: Optional cron job to pull updates to your local copy
 
-> "I see you've opened the Claude Code documentation mirror! This repository contains a complete offline copy of all Claude Code documentation.
-> 
-> The documentation on GitHub updates automatically every 6 hours from Anthropic's official docs. Would you like me to set up automatic syncing for your local copy?
-> 
-> **What this will do:**
-> - Add a cron job that runs `git pull` every 6 hours
-> - Only pulls when updates are available
-> - Logs all updates to `auto-sync/sync.log`
-> - Includes safety checks to prevent conflicts
-> 
-> **Note for macOS users**: You'll need to grant cron Full Disk Access in System Settings.
-> 
-> This is completely optional - you can always just run `git pull` manually when you want updates. Would you like me to set this up?"
+## 📋 When User Says "setup auto sync" or Similar
 
-If they say yes, follow the auto-setup instructions below.
+When the user asks to setup automatic syncing (phrases like "setup auto sync", "enable auto updates", "configure automatic updates"), follow these steps:
+
+1. **Check current status:**
+   ```bash
+   crontab -l 2>/dev/null | grep -q "claude-code-docs.*auto-sync" && echo "CONFIGURED" || echo "NOT_CONFIGURED"
+   ```
+
+2. **If NOT_CONFIGURED, show this message:**
+   > **📚 Setting up Automatic Sync for Claude Code Docs**
+   > 
+   > This will keep your local copy automatically updated with the latest documentation.
+   > 
+   > **What this will do:**
+   > - ✓ Add a cron job that runs `git pull` every 6 hours
+   > - ✓ Only pull when updates are available
+   > - ✓ Log all updates to `auto-sync/sync.log`
+   > - ✓ Include safety checks to prevent conflicts
+   > 
+   > **Note for macOS users**: You'll need to grant cron Full Disk Access in System Settings → Privacy & Security → Full Disk Access → Add `/usr/sbin/cron`
+   > 
+   > **Shall I proceed with the setup?** (yes/no)
+
+3. **If CONFIGURED, show:**
+   > ✅ Auto-sync is already configured! Your docs will update automatically every 6 hours.
+   > 
+   > To check sync status: `tail auto-sync/sync.log`
+
+4. **If user says yes to setup, follow the auto-setup instructions below.**
 
 ## 🚀 How to Use These Docs with Claude Code CLI
 

@@ -14,6 +14,9 @@ import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
 import json
 import hashlib
+import os
+import re
+import random
 
 # Configure logging
 logging.basicConfig(
@@ -44,7 +47,8 @@ HEADERS = {
 
 # Retry configuration
 MAX_RETRIES = 3
-RETRY_DELAY = 2  # seconds
+RETRY_DELAY = 2  # initial delay in seconds
+MAX_RETRY_DELAY = 30  # maximum delay in seconds
 RATE_LIMIT_DELAY = 0.5  # seconds between requests
 
 
@@ -53,7 +57,11 @@ def load_manifest(docs_dir: Path) -> dict:
     manifest_path = docs_dir / MANIFEST_FILE
     if manifest_path.exists():
         try:
-            return json.loads(manifest_path.read_text())
+            manifest = json.loads(manifest_path.read_text())
+            # Ensure required keys exist
+            if "files" not in manifest:
+                manifest["files"] = {}
+            return manifest
         except Exception as e:
             logger.warning(f"Failed to load manifest: {e}")
     return {"files": {}, "last_updated": None}
@@ -63,7 +71,24 @@ def save_manifest(docs_dir: Path, manifest: dict) -> None:
     """Save the manifest of fetched files."""
     manifest_path = docs_dir / MANIFEST_FILE
     manifest["last_updated"] = datetime.now().isoformat()
-    manifest["base_url"] = "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/"
+    
+    # Get GitHub repository from environment or use default
+    github_repo = os.environ.get('GITHUB_REPOSITORY', 'ericbuess/claude-code-docs')
+    github_ref = os.environ.get('GITHUB_REF_NAME', 'main')
+    
+    # Validate repository name format (owner/repo)
+    if not re.match(r'^[\w.-]+/[\w.-]+$', github_repo):
+        logger.warning(f"Invalid repository format: {github_repo}, using default")
+        github_repo = 'ericbuess/claude-code-docs'
+    
+    # Validate branch/ref name
+    if not re.match(r'^[\w.-]+$', github_ref):
+        logger.warning(f"Invalid ref format: {github_ref}, using default")
+        github_ref = 'main'
+    
+    manifest["base_url"] = f"https://raw.githubusercontent.com/{github_repo}/{github_ref}/docs/"
+    manifest["github_repository"] = github_repo
+    manifest["github_ref"] = github_ref
     manifest["description"] = "Claude Code documentation manifest. Keys are filenames, append to base_url for full URL."
     manifest_path.write_text(json.dumps(manifest, indent=2))
 
@@ -172,16 +197,14 @@ def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> L
         # Filter for ENGLISH Claude Code documentation pages only
         claude_code_pages = []
         
-        # Try multiple possible URL patterns for robustness
-        patterns = [
+        # Only accept English documentation patterns
+        english_patterns = [
             '/en/docs/claude-code/',
-            '/docs/claude-code/',
-            '/claude-code/',
         ]
         
         for url in urls:
-            # Check if URL matches any known pattern
-            if any(pattern in url for pattern in patterns):
+            # Check if URL matches English pattern specifically
+            if any(pattern in url for pattern in english_patterns):
                 parsed = urlparse(url)
                 path = parsed.path
                 
@@ -234,9 +257,59 @@ def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> L
         ]
 
 
+def validate_markdown_content(content: str, filename: str) -> None:
+    """
+    Validate that content is proper markdown.
+    Raises ValueError if validation fails.
+    """
+    # Check for HTML content
+    if not content or content.startswith('<!DOCTYPE') or '<html' in content[:100]:
+        raise ValueError("Received HTML instead of markdown")
+    
+    # Check minimum length
+    if len(content.strip()) < 50:
+        raise ValueError(f"Content too short ({len(content)} bytes)")
+    
+    # Check for common markdown elements
+    lines = content.split('\n')
+    markdown_indicators = [
+        '# ',      # Headers
+        '## ',
+        '### ',
+        '```',     # Code blocks
+        '- ',      # Lists
+        '* ',
+        '1. ',
+        '[',       # Links
+        '**',      # Bold
+        '_',       # Italic
+        '> ',      # Quotes
+    ]
+    
+    # Count markdown indicators
+    indicator_count = 0
+    for line in lines[:50]:  # Check first 50 lines
+        for indicator in markdown_indicators:
+            if line.strip().startswith(indicator) or indicator in line:
+                indicator_count += 1
+                break
+    
+    # Require at least some markdown formatting
+    if indicator_count < 3:
+        raise ValueError(f"Content doesn't appear to be markdown (only {indicator_count} markdown indicators found)")
+    
+    # Check for common documentation patterns
+    doc_patterns = ['installation', 'usage', 'example', 'api', 'configuration', 'claude', 'code']
+    content_lower = content.lower()
+    pattern_found = any(pattern in content_lower for pattern in doc_patterns)
+    
+    if not pattern_found:
+        logger.warning(f"Content for {filename} doesn't contain expected documentation patterns")
+
+
 def fetch_markdown_content(path: str, session: requests.Session, base_url: str) -> Tuple[str, str]:
     """
-    Fetch markdown content with better error handling.
+    Fetch markdown content with better error handling and validation.
     """
     markdown_url = f"{base_url}{path}.md"
     filename = url_to_safe_filename(path)
@@ -256,22 +329,22 @@ def fetch_markdown_content(path: str, session: requests.Session, base_url: str) 
             
             response.raise_for_status()
             
-            # Verify we got markdown content
+            # Get content and validate
             content = response.text
-            if not content or content.startswith('<!DOCTYPE') or '<html' in content[:100]:
-                raise ValueError("Received HTML instead of markdown")
+            validate_markdown_content(content, filename)
             
-            # Additional validation
-            if len(content.strip()) < 50:
-                raise ValueError(f"Content too short ({len(content)} bytes)")
-            
-            logger.info(f"Successfully fetched {filename} ({len(content)} bytes)")
+            logger.info(f"Successfully fetched and validated {filename} ({len(content)} bytes)")
             return filename, content
             
         except requests.exceptions.RequestException as e:
             logger.warning(f"Attempt {attempt + 1}/{MAX_RETRIES} failed for {filename}: {e}")
             if attempt < MAX_RETRIES - 1:
-                time.sleep(RETRY_DELAY * (attempt + 1))
+                # Exponential backoff with jitter
+                delay = min(RETRY_DELAY * (2 ** attempt), MAX_RETRY_DELAY)
+                # Add jitter to prevent thundering herd
+                jittered_delay = delay * random.uniform(0.5, 1.0)
+                logger.info(f"Retrying in {jittered_delay:.1f} seconds...")
+                time.sleep(jittered_delay)
             else:
                 raise Exception(f"Failed to fetch {filename} after {MAX_RETRIES} attempts: {e}")
         
@@ -323,6 +396,10 @@ def main():
     start_time = datetime.now()
     logger.info("Starting Claude Code documentation fetch (improved version)")
     
+    # Log configuration
+    github_repo = os.environ.get('GITHUB_REPOSITORY', 'ericbuess/claude-code-docs')
+    logger.info(f"GitHub repository: {github_repo}")
+    
     # Create docs directory
     docs_dir = Path(__file__).parent / 'docs'
     docs_dir.mkdir(exist_ok=True)
@@ -339,6 +416,7 @@ def main():
     new_manifest = {"files": {}}
     
     # Create a session for connection pooling
+    sitemap_url = None
     with requests.Session() as session:
         # Discover sitemap and base URL
         try:
@@ -415,6 +493,20 @@ def main():
     
     # Clean up old files (only those we previously fetched)
     cleanup_old_files(docs_dir, fetched_files, manifest)
+    
+    # Add metadata to manifest
+    new_manifest["fetch_metadata"] = {
+        "last_fetch_completed": datetime.now().isoformat(),
+        "fetch_duration_seconds": (datetime.now() - start_time).total_seconds(),
+        "total_pages_discovered": len(documentation_pages),
+        "pages_fetched_successfully": successful,
+        "pages_failed": failed,
+        "failed_pages": failed_pages,
+        "sitemap_url": sitemap_url,
+        "base_url": BASE_URL,
+        "total_files": len(fetched_files),
+        "fetch_tool_version": "3.0"
+    }
     
     # Save new manifest
     save_manifest(docs_dir, new_manifest)

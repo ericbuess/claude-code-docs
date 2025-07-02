@@ -5,26 +5,46 @@
 
 A community-maintained mirror of Claude Code documentation with automatic updates.
 
-> **✨ Zero-Setup**: Just clone and open in Claude Code - Claude will offer to set up automatic updates for you!
+> **✨ Quick Setup:** Clone → Open in Claude Code → Say "setup auto sync" → Done!
 
-## 🚀 Quick Start for Users
+## 📋 Prerequisites
 
-### Option 1: Clone the Repository (Recommended)
+- **Git**: Must be installed and configured
+- **Claude Code CLI** (optional): For automatic sync setup
+- **Python 3.8+** (optional): Only needed if you want to manually update docs
+
+## 🚀 Quick Start
+
+### 1. Clone & Open
 ```bash
 # Clone this repository
 git clone https://github.com/ericbuess/claude-code-docs.git
 cd claude-code-docs
 
-# The docs/ directory contains all documentation files
+# Open in Claude Code
+claude
+```
+
+### 2. Enable Auto-Sync (Optional but Recommended)
+Once in Claude Code, simply say:
+```
+setup auto sync
+```
+
+Claude will configure automatic updates that keep your local docs in sync with the latest changes. That's it!
+
+### 3. Use the Docs
+```bash
+# All documentation is in the docs/ directory
 ls docs/
 
-# To update to latest docs:
+# Manual update (if not using auto-sync):
 git pull
 ```
 
-**Automatic updates?** When you open this project in Claude Code, Claude will offer to set up automatic syncing for you. Just say yes! (Or see [auto-sync/README.md](auto-sync/) for manual setup)
+## 📖 Alternative Access Methods
 
-### Option 2: Direct URL Access (No Download Required)
+### Direct URL Access (No Clone Required)
 Reference docs directly from GitHub using raw URLs:
 ```
 https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/[filename].md
@@ -34,64 +54,40 @@ For example:
 - Overview: `https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/overview.md`
 - Setup: `https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/setup.md`
 
-### Option 3: Fork for Your Own Copy
+### Fork for Your Own Copy
 Fork this repository to maintain your own synchronized copy that updates automatically via GitHub Actions.
 
-## 🤖 Using with Claude Code CLI
+## 🤖 Using with Claude Code
 
-For best results, point Claude Code to the **repository root** (not just the docs folder):
+### After Setup
+Once you've cloned the repo and optionally set up auto-sync, you can:
 
-### Option A: Local Repository
 ```bash
-# Clone the repo
-git clone https://github.com/ericbuess/claude-code-docs.git
+# Ask Claude about any Claude Code feature
+"How do I use MCP servers?"
+"Show me the troubleshooting guide"
+"What are hooks?"
 
-# Tell Claude to use it
+# Search across all docs
+"Search for information about GitHub Actions"
+
+# Get specific docs
+"Show me the settings documentation"
+```
+
+### Pointing Claude to the Docs
+If you want Claude to reference these docs in another project:
+```bash
+# Local reference
 "Use the Claude Code docs at /path/to/claude-code-docs"
+
+# GitHub reference
+"Use the docs at github.com/ericbuess/claude-code-docs"
 ```
 
-### Option B: Direct GitHub Reference
-```bash
-"Use the Claude Code docs at github.com/ericbuess/claude-code-docs"
-```
+### Documentation Index
 
-**Why the repository root?** The `CLAUDE.md` file provides Claude with:
-- Understanding of the repository structure
-- How to search and navigate docs efficiently  
-- Access to both documentation and manifest
-
-### Using the Documentation Manifest (Advanced)
-
-The repository includes a `docs_manifest.json` file that serves as a complete index of all documentation:
-
-```
-https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/docs_manifest.json
-```
-
-This manifest provides comprehensive metadata for each doc:
-- **`base_url` + filename**: Get the mirrored doc from this repo
-- **`original_url`**: View the doc on Anthropic's website
-- **`original_md_url`**: Get the raw markdown from Anthropic
-- **`hash`**: SHA-256 hash to verify content integrity
-- **`last_updated`**: When this doc was last fetched
-
-Example usage:
-```python
-# Fetch the manifest
-manifest = fetch_json("https://raw.githubusercontent.com/.../docs_manifest.json")
-
-# Get a specific doc from this mirror
-doc_url = manifest["base_url"] + "setup.md"
-content = fetch(doc_url)
-
-# Compare with original source
-original = fetch(manifest["files"]["setup.md"]["original_md_url"])
-```
-
-The CLAUDE.md file helps Claude Code understand:
-- The purpose and structure of this documentation mirror
-- How to search and navigate the documentation efficiently
-- Important maintenance and update information
+The repository includes a `docs_manifest.json` file that lists all available documentation with metadata. This is primarily used by Claude Code for efficient searching and by the update scripts.
 
 ## 📚 Available Documentation
 
@@ -165,15 +161,15 @@ Commit messages clearly indicate what changed:
 - `Added: new-feature.md` - New documentation added
 - `Removed: deprecated.md` - Documentation removed
 
-### Check Freshness
+### Check Update History
 
-The `docs_manifest.json` file contains metadata for all documents:
+View the commit history to see when docs were last updated:
 ```bash
-# View all available docs
-cat docs/docs_manifest.json | jq '.files | keys'
+# See recent updates
+git log --oneline -10 docs/
 
-# Check when a specific doc was last fetched
-cat docs/docs_manifest.json | jq '.files["setup.md"].last_updated'
+# Check when a specific doc was last modified
+git log -1 --format="%ai" -- docs/setup.md
 ```
 
 ## 📖 For Contributors

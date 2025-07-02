@@ -29,6 +29,9 @@ jobs:
     
     - name: Fetch latest documentation
       id: fetch-docs
+      env:
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_REF_NAME: ${{ github.ref_name }}
       run: |
         python fetch_claude_docs.py || echo "fetch_failed=true" >> $GITHUB_OUTPUT
       continue-on-error: true
