@@ -115,7 +115,7 @@ This repository automatically updates every 6 hours via GitHub Actions. The work
 ## 📊 Status & Change Tracking
 
 ### Current Status
-- **Last Check**: View the timestamp on the [latest workflow run](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml) (runs every 6 hours starting from repo creation)
+- **Last Check**: View the timestamp on the [latest workflow run](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml)
 - **Last Update**: See the [most recent documentation changes](https://github.com/ericbuess/claude-code-docs/commits/main/docs)
 - **Update Frequency**: Every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
 
