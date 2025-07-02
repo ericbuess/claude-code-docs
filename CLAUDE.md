@@ -2,17 +2,38 @@
 
 This repository is an automatically-updated mirror of the official Claude Code documentation from Anthropic. It provides offline access and version tracking for Claude Code docs.
 
-## 📋 Quick Access - Documentation Manifest
+## 🚀 How to Use These Docs with Claude Code CLI
+
+### Direct Commands You Can Give Claude:
+
+```bash
+# Ask about a specific topic
+"Read the setup guide from https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/setup.md"
+
+# Reference the entire documentation set
+"Use the docs at github.com/ericbuess/claude-code-docs to help me understand MCP"
+
+# Check available documentation
+"What Claude Code docs are available at https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/docs_manifest.json?"
+
+# If you've cloned the repo locally
+"Look at the troubleshooting guide in ./claude-code-docs/docs/troubleshooting.md"
+```
+
+## 📋 Documentation Manifest
 
 The repository includes a `docs_manifest.json` file that provides a complete index:
 - **Manifest URL**: `https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/docs_manifest.json`
 - **Contents**: All documentation filenames, their source URLs, and last update times
 - **Usage**: The manifest keys are the actual filenames. Combine the `base_url` field with any filename to get the direct URL.
 
-Example: To access the settings documentation:
-1. Check manifest for available files
-2. Find `"settings.md"` in the files list
-3. Use: `manifest["base_url"] + "settings.md"` to get the full URL
+Example programmatic usage:
+```python
+# Claude can use the manifest to find specific docs
+manifest = fetch_json("https://raw.githubusercontent.com/.../docs_manifest.json")
+doc_url = manifest["base_url"] + "settings.md"
+content = fetch(doc_url)
+```
 
 ## Repository Purpose
 - Mirrors official Claude Code documentation daily
@@ -36,6 +57,12 @@ When asked to search, read, or analyze Claude Code documentation:
 2. Use `docs_manifest.json` to see file metadata and last update times
 3. Documentation files use consistent markdown formatting
 
+### Quick Tips for Claude Code Users
+- **No setup required**: Just reference the GitHub URLs directly
+- **Always up-to-date**: Documentation updates daily at 2 AM UTC
+- **Offline access**: Clone the repo for local use without internet
+- **Version history**: Use git history to see how docs changed over time
+
 ### Common Patterns
 - **Search across docs**: Use grep/glob patterns in the `docs/` directory
 - **Find specific topics**: File names generally match their content (e.g., `setup.md` for setup instructions)
@@ -56,5 +83,4 @@ When asked to search, read, or analyze Claude Code documentation:
 - **All docs**: `/docs/*.md`
 - **Manifest**: `/docs/docs_manifest.json`
 - **Fetcher**: `/fetch_claude_docs.py`
-- **GitHub fetcher**: `/fetch_from_github.py`
 - **Automation**: `/.github/workflows/update-docs.yml`

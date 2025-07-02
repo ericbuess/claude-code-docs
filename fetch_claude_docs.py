@@ -23,10 +23,16 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Base URL for the documentation
-BASE_URL = "https://docs.anthropic.com"
-SITEMAP_URL = f"{BASE_URL}/sitemap.xml"
+# Sitemap URLs to try (in order of preference)
+SITEMAP_URLS = [
+    "https://docs.anthropic.com/sitemap.xml",
+    "https://docs.anthropic.com/sitemap_index.xml",
+    "https://anthropic.com/sitemap.xml"
+]
 MANIFEST_FILE = "docs_manifest.json"
+
+# Base URL will be discovered from sitemap
+BASE_URL = None
 
 # Headers to bypass caching and identify the script
 HEADERS = {
@@ -88,15 +94,58 @@ def url_to_safe_filename(url_path: str) -> str:
     return safe_name
 
 
-def discover_claude_code_pages(session: requests.Session) -> List[str]:
+def discover_sitemap_and_base_url(session: requests.Session) -> Tuple[str, str]:
+    """
+    Discover the sitemap URL and extract the base URL from it.
+    
+    Returns:
+        Tuple of (sitemap_url, base_url)
+    """
+    for sitemap_url in SITEMAP_URLS:
+        try:
+            logger.info(f"Trying sitemap: {sitemap_url}")
+            response = session.get(sitemap_url, headers=HEADERS, timeout=30)
+            if response.status_code == 200:
+                # Extract base URL from the first URL in sitemap
+                root = ET.fromstring(response.content)
+                
+                # Try with namespace first
+                namespace = {'ns': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+                first_url = None
+                for url_elem in root.findall('.//ns:url', namespace):
+                    loc_elem = url_elem.find('ns:loc', namespace)
+                    if loc_elem is not None and loc_elem.text:
+                        first_url = loc_elem.text
+                        break
+                
+                # If no URLs found, try without namespace
+                if not first_url:
+                    for loc_elem in root.findall('.//loc'):
+                        if loc_elem.text:
+                            first_url = loc_elem.text
+                            break
+                
+                if first_url:
+                    parsed = urlparse(first_url)
+                    base_url = f"{parsed.scheme}://{parsed.netloc}"
+                    logger.info(f"Found sitemap at {sitemap_url}, base URL: {base_url}")
+                    return sitemap_url, base_url
+        except Exception as e:
+            logger.warning(f"Failed to fetch {sitemap_url}: {e}")
+            continue
+    
+    raise Exception("Could not find a valid sitemap")
+
+
+def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> List[str]:
     """
     Dynamically discover all Claude Code documentation pages from the sitemap.
     Now with better pattern matching flexibility.
     """
-    logger.info("Fetching sitemap to discover documentation pages...")
+    logger.info("Discovering documentation pages from sitemap...")
     
     try:
-        response = session.get(SITEMAP_URL, headers=HEADERS, timeout=30)
+        response = session.get(sitemap_url, headers=HEADERS, timeout=30)
         response.raise_for_status()
         
         # Parse XML sitemap
@@ -185,11 +234,11 @@ def discover_claude_code_pages(session: requests.Session) -> List[str]:
         ]
 
 
-def fetch_markdown_content(path: str, session: requests.Session) -> Tuple[str, str]:
+def fetch_markdown_content(path: str, session: requests.Session, base_url: str) -> Tuple[str, str]:
     """
     Fetch markdown content with better error handling.
     """
-    markdown_url = f"{BASE_URL}{path}.md"
+    markdown_url = f"{base_url}{path}.md"
     filename = url_to_safe_filename(path)
     
     logger.info(f"Fetching: {markdown_url} -> {filename}")
@@ -291,8 +340,39 @@ def main():
     
     # Create a session for connection pooling
     with requests.Session() as session:
+        # Discover sitemap and base URL
+        try:
+            sitemap_url, base_url = discover_sitemap_and_base_url(session)
+            global BASE_URL
+            BASE_URL = base_url
+        except Exception as e:
+            logger.error(f"Failed to discover sitemap: {e}")
+            logger.info("Using fallback configuration...")
+            BASE_URL = "https://docs.anthropic.com"
+            sitemap_url = None
+        
         # Discover documentation pages dynamically
-        documentation_pages = discover_claude_code_pages(session)
+        if sitemap_url:
+            documentation_pages = discover_claude_code_pages(session, sitemap_url)
+        else:
+            # Use fallback pages if sitemap discovery failed
+            documentation_pages = [
+                "/en/docs/claude-code/overview",
+                "/en/docs/claude-code/setup",
+                "/en/docs/claude-code/quickstart",
+                "/en/docs/claude-code/memory",
+                "/en/docs/claude-code/common-workflows",
+                "/en/docs/claude-code/ide-integrations",
+                "/en/docs/claude-code/mcp",
+                "/en/docs/claude-code/github-actions",
+                "/en/docs/claude-code/sdk",
+                "/en/docs/claude-code/troubleshooting",
+                "/en/docs/claude-code/security",
+                "/en/docs/claude-code/settings",
+                "/en/docs/claude-code/hooks",
+                "/en/docs/claude-code/costs",
+                "/en/docs/claude-code/monitoring-usage",
+            ]
         
         if not documentation_pages:
             logger.error("No documentation pages discovered!")
@@ -303,7 +383,7 @@ def main():
             logger.info(f"Processing {i}/{len(documentation_pages)}: {page_path}")
             
             try:
-                filename, content = fetch_markdown_content(page_path, session)
+                filename, content = fetch_markdown_content(page_path, session, BASE_URL)
                 
                 # Check if content has changed
                 old_hash = manifest.get("files", {}).get(filename, {}).get("hash", "")
@@ -315,7 +395,8 @@ def main():
                     logger.info(f"Unchanged: {filename}")
                 
                 new_manifest["files"][filename] = {
-                    "original_url": f"https://docs.anthropic.com{page_path}",
+                    "original_url": f"{BASE_URL}{page_path}",
+                    "original_md_url": f"{BASE_URL}{page_path}.md",
                     "hash": content_hash,
                     "last_updated": datetime.now().isoformat()
                 }
