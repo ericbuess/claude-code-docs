@@ -3,7 +3,7 @@
 [![Update Status](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml/badge.svg)](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml)
 [![Last Update](https://img.shields.io/github/last-commit/ericbuess/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/ericbuess/claude-code-docs/commits/main)
 
-Keep Claude Code documentation on your local machine, always up-to-date. This mirror automatically syncs with Anthropic's official docs every 6 hours, and Claude pulls fresh updates from this mirror whenever you ask about Claude Code features.
+Keep Claude Code documentation on your local machine, always up-to-date. This mirror automatically syncs with Anthropic's official docs every 3 hours, and Claude pulls fresh updates from this mirror whenever you ask about Claude Code features.
 
 ## 🚀 Quick Setup
 
@@ -28,7 +28,7 @@ echo "✅ Installation complete!"
 That's it! Claude will now:
 - Know where the docs are located  
 - Pull fresh updates from this mirror before answering Claude Code questions
-- Always have access to documentation that's at most 6 hours old
+- Always have access to documentation that's at most 3 hours old
 
 ## 📚 What's Included
 
@@ -42,7 +42,7 @@ The `docs/` directory contains all Claude Code documentation:
 
 ## 🔄 How It Works
 
-1. **This GitHub repository** fetches the latest docs from Anthropic every 6 hours (see the status badges above)
+1. **This GitHub repository** fetches the latest docs from Anthropic every 3 hours (see the status badges above)
 2. **Your local copy** gets updated when Claude runs `git pull` before reading docs
 3. **You** get documentation that's always current - Claude pulls fresh updates from this mirror automatically
 
@@ -105,7 +105,7 @@ python fetch_claude_docs.py
 
 ## 📊 Status & Updates
 
-- **Update Frequency**: Every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+- **Update Frequency**: Every 3 hours (00:00, 03:00, 06:00, 09:00, 12:00, 15:00, 18:00, 21:00 UTC)
 - **Last Update**: See the [commit history](https://github.com/ericbuess/claude-code-docs/commits/main/docs)
 - **Update Status**: Check the [GitHub Actions workflow](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml)
 

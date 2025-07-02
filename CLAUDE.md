@@ -1,6 +1,6 @@
 # Claude Code Documentation Mirror
 
-This repository contains a local mirror of Claude Code documentation, automatically updated every 6 hours via GitHub Actions.
+This repository contains a local mirror of Claude Code documentation, automatically updated every 3 hours via GitHub Actions.
 
 ## For Claude: Using These Docs
 
