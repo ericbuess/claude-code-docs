@@ -3,7 +3,7 @@
 [![Update Status](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml/badge.svg)](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml)
 [![Last Update](https://img.shields.io/github/last-commit/ericbuess/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/ericbuess/claude-code-docs/commits/main)
 
-Keep Claude Code documentation on your local machine, always up-to-date. This mirror automatically syncs with Anthropic's official docs every 6 hours.
+Keep Claude Code documentation on your local machine, always up-to-date. This mirror automatically syncs with Anthropic's official docs every 6 hours, and Claude pulls fresh updates from this mirror whenever you ask about Claude Code features.
 
 ## 🚀 Quick Setup
 
@@ -26,9 +26,9 @@ echo "✅ Installation complete!"
 ```
 
 That's it! Claude will now:
-- Know where the docs are located
-- Pull updates automatically when you ask about Claude Code
-- Have instant access to all documentation
+- Know where the docs are located  
+- Pull fresh updates from this mirror before answering Claude Code questions
+- Always have access to documentation that's at most 6 hours old
 
 ## 📚 What's Included
 
@@ -42,9 +42,9 @@ The `docs/` directory contains all Claude Code documentation:
 
 ## 🔄 How It Works
 
-1. **GitHub Actions** updates this repository every 6 hours from Anthropic's official docs
-2. **Claude** pulls updates via `git pull` when you ask questions
-3. **You** get always-current documentation with zero maintenance
+1. **This GitHub repository** fetches the latest docs from Anthropic every 6 hours (see the status badges above)
+2. **Your local copy** gets updated when Claude runs `git pull` before reading docs
+3. **You** get documentation that's always current - Claude pulls fresh updates from this mirror automatically
 
 ## 💡 Usage Examples
 
