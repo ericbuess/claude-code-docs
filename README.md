@@ -88,13 +88,15 @@ The CLAUDE.md file helps Claude Code understand:
 
 ## 📚 Available Documentation
 
-The `docs/` directory contains all 27 Claude Code documentation pages:
-- Getting started guides (overview, setup, quickstart, memory, common-workflows)
-- Build with Claude resources (ide-integrations, mcp, github-actions, sdk, troubleshooting)
-- Deployment options (third-party-integrations, amazon-bedrock, google-vertex-ai, etc.)
-- Administration tools (iam, security, monitoring-usage, costs)
-- Reference documentation (cli-reference, interactive-mode, slash-commands, settings, hooks)
-- Legal and compliance information
+The `docs/` directory contains all Claude Code documentation organized by category:
+- **Getting Started**: Overview, setup, quickstart, memory management, common workflows
+- **Development**: IDE integrations, MCP, GitHub Actions, SDK, troubleshooting
+- **Deployment**: Third-party integrations, Amazon Bedrock, Google Vertex AI, and more
+- **Administration**: IAM, security, monitoring, usage tracking, costs
+- **Reference**: CLI reference, interactive mode, slash commands, settings, hooks
+- **Compliance**: Legal and data usage policies
+
+Check `docs/` for the complete list of available documentation.
 
 ## 🔄 How Updates Work
 
@@ -158,9 +160,12 @@ Commit messages clearly indicate what changed:
 
 ### Check Freshness
 
-The `docs_manifest.json` file contains exact timestamps for each document:
+The `docs_manifest.json` file contains metadata for all documents:
 ```bash
-# Check when each doc was last fetched
+# View all available docs
+cat docs/docs_manifest.json | jq '.files | keys'
+
+# Check when a specific doc was last fetched
 cat docs/docs_manifest.json | jq '.files["setup.md"].last_updated'
 ```
 
