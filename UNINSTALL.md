@@ -32,7 +32,7 @@ echo ""
 echo "Your CLAUDE.md backup is at: ~/.claude/CLAUDE.md.backup"
 echo ""
 echo "⚠️ IMPORTANT: For the changes to take effect:"
-echo "1. Exit any existing Claude sessions with Ctrl+D"
+echo "1. Exit any existing Claude sessions with: /exit (type it twice)"
 echo "2. Start fresh with: claude"
 ```
 

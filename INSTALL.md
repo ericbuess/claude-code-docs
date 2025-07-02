@@ -36,7 +36,7 @@ ls -la ~/.claude/claude-code-docs/docs/ | head -5
 ✅ Claude Code documentation mirror installed successfully!
 
 ⚠️ IMPORTANT: For the changes to take effect in other Claude sessions:
-1. Exit any existing Claude sessions with Ctrl+D
+1. Exit any existing Claude sessions with: /exit (type it twice)
 2. Start fresh with: claude
 
 The current session (this one) already knows about the docs, but other running Claude instances need to be restarted to see the changes.
