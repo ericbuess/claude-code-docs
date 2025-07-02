@@ -60,11 +60,17 @@ claude 'what are claude code hooks?'
 
 Claude will check for local docs, install if needed, then answer from local files.
 
+## Updating or Reinstalling
+
+The setup script won't add duplicate entries. If you run it again, it will tell you the configuration already exists.
+
 ## Uninstall
 
 ```
 claude 'uninstall the claude code docs mirror'
 ```
+
+Or manually remove from `~/.claude/CLAUDE.md` the section starting with `# Claude Code Docs`.
 
 ## What This Does
 

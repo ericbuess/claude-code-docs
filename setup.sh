@@ -1,6 +1,15 @@
 #!/bin/bash
 # Add Claude Code docs instructions to ~/.claude/CLAUDE.md
 
+# Check if instructions already exist
+if grep -q "Claude Code Docs" ~/.claude/CLAUDE.md 2>/dev/null; then
+    echo "✅ Claude Code docs configuration already exists in ~/.claude/CLAUDE.md"
+    echo ""
+    echo "To reinstall, first remove the existing configuration."
+    exit 0
+fi
+
+# Add the instructions
 cat >> ~/.claude/CLAUDE.md << 'EOF'
 
 # Claude Code Docs
