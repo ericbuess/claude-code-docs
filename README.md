@@ -7,12 +7,16 @@ Give Claude instant access to its own documentation.
 ## Install in 5 Seconds
 
 ```
-claude 'install claude code docs to ~/.claude/ from github.com/ericbuess/claude-code-docs'
+claude 'install claude docs: mkdir -p ~/.claude && cd ~/.claude && git clone https://github.com/ericbuess/claude-code-docs.git'
 ```
 
-That's it! Claude now has access to all its documentation.
+Then add to your `~/.claude/CLAUDE.md`:
+```
+# Claude Code Docs
 
-**Important**: The docs must be installed in `~/.claude/claude-code-docs/` to work correctly.
+Local mirror: ~/.claude/claude-code-docs/docs/
+Update: cd ~/.claude/claude-code-docs && git pull --quiet
+```
 
 ## Verify Installation
 
