@@ -14,14 +14,12 @@ cat >> ~/.claude/CLAUDE.md << 'EOF'
 
 # Claude Code Docs
 
-When asked about Claude Code features:
-1. Check if .claude-code-docs/ exists in current directory or any parent
-2. If not found, suggest: git clone https://github.com/ericbuess/claude-code-docs.git .claude-code-docs
-3. Then read from .claude-code-docs/docs/
-4. The docs auto-update every 3 hours via GitHub
+Local docs: ~/.claude-code-docs/docs/
+When asked about Claude Code features, read from there.
+If missing, tell user: cd ~ && git clone https://github.com/ericbuess/claude-code-docs.git .claude-code-docs
 EOF
 
 echo "✅ Added Claude Code docs configuration to ~/.claude/CLAUDE.md"
 echo ""
-echo "Now clone the docs in any project where you want to use them:"
-echo "git clone https://github.com/ericbuess/claude-code-docs.git .claude-code-docs"
+echo "Now install the docs:"
+echo "cd ~ && git clone https://github.com/ericbuess/claude-code-docs.git .claude-code-docs"
