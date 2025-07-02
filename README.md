@@ -31,7 +31,7 @@ That's it! Claude will now:
 - Always have access to documentation that's at most 3 hours old
 
 **Note**: After installation, start a new Claude session for the changes to take effect:
-- Exit current session: `/exit` (type it twice)
+- Exit current session: `/exit`
 - Start fresh: `claude`
 
 ## 📚 What's Included
@@ -143,7 +143,7 @@ rm -rf ~/.claude/claude-code-docs
 sed -i.bak '/# Claude Code Documentation/,+3d' ~/.claude/CLAUDE.md
 ```
 
-**Note**: After uninstalling, start a new Claude session to apply changes (`/exit` twice, then `claude`).
+**Note**: After uninstalling, start a new Claude session to apply changes (`/exit` then `claude`).
 
 ## 📝 License
 
