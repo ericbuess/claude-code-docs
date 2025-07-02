@@ -16,10 +16,10 @@ cd /path/to/claude-code-docs
 crontab -e
 
 # Add this line (replace path with your actual repository path)
-0 */6 * * * cd /path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
+30 */6 * * * cd /path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
 ```
 
-That's it! Your documentation will now automatically update every 6 hours.
+That's it! Your documentation will automatically update 30 minutes after each GitHub Action run.
 
 ## 📋 What's Included
 
@@ -69,22 +69,18 @@ That's it! Your documentation will now automatically update every 6 hours.
    ./auto-sync/auto-sync.sh
    ```
 
-3. Choose your sync schedule and add to crontab:
+3. Add to crontab to sync automatically:
    ```bash
    crontab -e
    ```
    
-   Add one of these lines:
+   Add this line:
    ```bash
-   # Every 6 hours (matches repository update schedule)
-   0 */6 * * * cd /full/path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
-   
-   # Every hour
-   0 * * * * cd /full/path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
-   
-   # Twice daily (9 AM and 6 PM)
-   0 9,18 * * * cd /full/path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
+   # Sync 30 minutes after each GitHub Action run
+   30 */6 * * * cd /full/path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
    ```
+   
+   This runs at 00:30, 06:30, 12:30, and 18:30 UTC - giving the GitHub Action time to complete.
 
 ## 📊 Monitoring
 
@@ -159,16 +155,12 @@ git config credential.helper cache
 
 ## 📝 Advanced Usage
 
-### Custom Notifications
-
-Add this to your crontab to get notifications on updates:
-```bash
-0 */6 * * * cd /path/to/claude-code-docs && ./auto-sync/check-updates.sh && (./auto-sync/auto-sync.sh --quiet && echo "Claude Code docs updated" | mail -s "Docs Updated" you@example.com)
-```
-
 ### Only Sync When Updates Available
+
+If you want to check more frequently but only pull when needed:
 ```bash
-*/30 * * * * cd /path/to/claude-code-docs && ./auto-sync/check-updates.sh && ./auto-sync/auto-sync.sh --quiet
+# Check every hour, only sync if updates exist
+0 * * * * cd /path/to/claude-code-docs && ./auto-sync/check-updates.sh && ./auto-sync/auto-sync.sh --quiet
 ```
 
 ### Log Rotation

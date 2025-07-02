@@ -2,23 +2,11 @@
 #
 # Add this to your crontab to automatically sync documentation updates
 # Run: crontab -e
-# Then add one of the following lines (uncomment the one you want)
+# Then add the following line:
 #
 
-# Option 1: Sync every 6 hours (matches repository update schedule)
-0 */6 * * * cd /path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
-
-# Option 2: Sync every hour (more frequent checks)
-0 * * * * cd /path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
-
-# Option 3: Sync twice daily (morning and evening)
-0 9,18 * * * cd /path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
-
-# Option 4: Sync once daily at 3 AM
-0 3 * * * cd /path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
-
-# Option 5: Check for updates every 30 minutes, only sync if needed
-*/30 * * * * cd /path/to/claude-code-docs && ./auto-sync/check-updates.sh && ./auto-sync/auto-sync.sh --quiet
+# Sync 30 minutes after each GitHub Action run (00:30, 06:30, 12:30, 18:30 UTC)
+30 */6 * * * cd /path/to/claude-code-docs && ./auto-sync/auto-sync.sh --quiet
 
 #
 # IMPORTANT NOTES:
