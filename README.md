@@ -5,14 +5,14 @@
 
 Keep Claude Code documentation on your local machine, always up-to-date. This mirror automatically syncs with Anthropic's official docs every 6 hours.
 
-> **✨ Quick Setup:** `git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && ./install.sh`
+> **✨ Quick Setup:** Just tell Claude: `"install claude code docs"`
 
 ## Why Use This?
 
 - 📚 **Offline Access**: Read Claude Code docs without internet
-- 🔄 **Always Current**: Automatically pulls latest updates
+- 🔄 **Always Current**: Automatically pulls latest updates  
 - 📝 **Version History**: See how docs changed over time with git
-- 🚀 **Claude Integration**: Works seamlessly with Claude Code CLI
+- 🚀 **Zero Configuration**: Claude handles everything for you
 
 ## 📋 Prerequisites
 
@@ -21,34 +21,28 @@ Keep Claude Code documentation on your local machine, always up-to-date. This mi
 
 ## 🚀 Quick Start
 
-### Option 1: Automatic Setup (Recommended)
+### Option 1: Let Claude Do Everything (Recommended)
 ```bash
-# Clone and setup in one command
+# Just tell Claude to install the docs
+claude "install claude code docs"
+```
+
+Claude will:
+- ✓ Clone to ~/.claude/claude-code-docs/
+- ✓ Set up automatic updates
+- ✓ Handle all permissions
+- ✓ Add to Claude's memory for instant access
+
+### Option 2: Manual Installation
+```bash
+# If you prefer to do it yourself
 git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && ./install.sh
 ```
 
-That's it! The installer will:
-- ✓ Check prerequisites 
-- ✓ Test git connectivity
-- ✓ Handle macOS permissions
-- ✓ Configure automatic updates
-
-### Option 2: Let Claude Code Set It Up
+### Option 3: No Installation Needed
 ```bash
-# Clone this repository
-git clone https://github.com/ericbuess/claude-code-docs.git
-cd claude-code-docs
-
-# Open in Claude Code and tell it to set up auto-sync
-claude "setup auto sync"
-```
-
-### Option 3: Manual Setup
-```bash
-# Clone and pull updates manually when needed
-git clone https://github.com/ericbuess/claude-code-docs.git
-cd claude-code-docs
-git pull  # Run this whenever you want updates
+# Just ask Claude to use the GitHub version
+claude "use the claude code docs at github.com/ericbuess/claude-code-docs"
 ```
 
 ## 📖 Alternative Access Methods
@@ -68,31 +62,38 @@ Fork this repository to maintain your own synchronized copy that updates automat
 
 ## 🤖 Using with Claude Code
 
-### After Setup
-Once you've cloned the repo and optionally set up auto-sync, you can:
+### After Installation
+Once Claude installs the docs (or you do it manually), just ask questions naturally:
 
 ```bash
-# Ask Claude about any Claude Code feature
+# Ask about any Claude Code feature
 "How do I use MCP servers?"
-"Show me the troubleshooting guide"
+"Show me the troubleshooting guide"  
 "What are hooks?"
 
 # Search across all docs
-"Search for information about GitHub Actions"
+"Search claude docs for GitHub Actions"
 
 # Get specific docs
-"Show me the settings documentation"
+"Show me the settings documentation from claude docs"
 ```
 
-### Pointing Claude to the Docs
-If you want Claude to reference these docs in another project:
+### If You Haven't Installed Yet
+You can still use the docs directly from GitHub:
 ```bash
-# Local reference
-"Use the Claude Code docs at /path/to/claude-code-docs"
+# Tell Claude to use the online version
+"Use the claude code docs at github.com/ericbuess/claude-code-docs"
 
-# GitHub reference
-"Use the docs at github.com/ericbuess/claude-code-docs"
+# Or just install them for offline access
+"Install claude code docs"
 ```
+
+### How Claude Knows About The Docs
+
+After installation, Claude automatically imports the documentation into its memory using the CLAUDE.md import feature. This means:
+- Claude always knows where your docs are located
+- You don't need to specify paths when asking questions
+- The docs are part of Claude's context in every conversation
 
 ### Documentation Index
 
@@ -187,7 +188,11 @@ git log -1 --format="%ai" -- docs/setup.md
 
 Run the diagnostic script to check your setup:
 ```bash
-./diagnose.sh
+# If Claude installed it
+~/.claude/claude-code-docs/diagnose.sh
+
+# If you installed it elsewhere
+cd /path/to/claude-code-docs && ./diagnose.sh
 ```
 
 This will check all prerequisites and common issues automatically.
@@ -260,6 +265,15 @@ claude-code-docs/
 - **Main branch**: Always contains the latest stable documentation
 - **Direct docs folder**: https://github.com/ericbuess/claude-code-docs/tree/main/docs
 - **Raw file access**: `https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/[filename].md`
+
+## 📍 Default Installation Location
+
+When Claude installs the docs, they go to:
+```
+~/.claude/claude-code-docs/
+```
+
+This follows Claude Code's convention of storing user-level resources in `~/.claude/`.
 
 ## 📝 License
 

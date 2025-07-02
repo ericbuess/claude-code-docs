@@ -18,33 +18,45 @@ This repository has two update mechanisms:
 1. **GitHub Actions**: Updates the GitHub repository every 6 hours automatically
 2. **Local Auto-Sync**: Optional cron job to pull updates to your local copy
 
-## 📋 When User Says "setup auto sync" or Similar
+## 📋 When User Says "install claude code docs" or Similar
 
-When the user asks to setup automatic syncing (phrases like "setup auto sync", "enable auto updates", "configure automatic updates"), follow these steps:
+When the user asks to install/setup Claude Code documentation (phrases like "install claude code docs", "set up claude documentation", "keep claude docs updated"), follow these steps:
 
-1. **First, verify we're in the claude-code-docs repository:**
+### Option A: Full Automated Install (Recommended)
+
+1. **Check if already installed:**
+   ```bash
+   [ -d "$HOME/.claude/claude-code-docs" ] && echo "ALREADY_INSTALLED" || echo "NOT_INSTALLED"
+   ```
+
+2. **If NOT_INSTALLED, show this message:**
+   > **📚 Installing Claude Code Documentation**
+   > 
+   > I'll set up a local copy of Claude Code documentation that stays automatically updated.
+   > 
+   > **What I'll do:**
+   > - ✓ Clone docs to ~/.claude/claude-code-docs/
+   > - ✓ Configure automatic updates every 6 hours
+   > - ✓ Add to your Claude memory for easy access
+   > - ✓ Handle all setup complexity
+   > 
+   > This will take about 30 seconds. Proceed? (yes/no)
+
+3. **If ALREADY_INSTALLED:**
+   > ✅ Claude Code docs are already installed at ~/.claude/claude-code-docs/
+   > 
+   > To check for updates: `cd ~/.claude/claude-code-docs && git pull`
+
+### Option B: Setup Existing Clone
+
+If the user already cloned the repo and asks to "setup auto sync", follow these steps:
+
+1. **Verify we're in the claude-code-docs repository:**
    ```bash
    pwd | grep -q "claude-code-docs" && [ -f "./install.sh" ] && echo "IN_REPO" || echo "NOT_IN_REPO"
    ```
-   
-   If NOT_IN_REPO, tell the user:
-   > Please navigate to the claude-code-docs directory first:
-   > `cd /path/to/claude-code-docs`
 
-2. **If IN_REPO, show this message:**
-   > **📚 Setting up Automatic Sync for Claude Code Docs**
-   > 
-   > I'll configure your local copy to automatically stay updated with the latest Claude Code documentation.
-   > 
-   > **What this will do:**
-   > - ✓ Run pre-flight checks (git, connectivity, permissions)
-   > - ✓ Set up automatic updates every 6 hours
-   > - ✓ Handle macOS-specific requirements automatically
-   > - ✓ Create sync logs for troubleshooting
-   > 
-   > Ready to proceed? (yes/no)
-
-3. **If user says yes, run the installer (see Auto-Setup Instructions below)**
+2. **If IN_REPO, run the installer (see Auto-Setup Instructions below)**
 
 ## 🚀 How to Use These Docs with Claude Code CLI
 
@@ -143,28 +155,55 @@ When asked to search, read, or analyze Claude Code documentation:
 
 ## 🤖 Auto-Setup Instructions for Claude
 
-When the user agrees to set up automatic updates (or asks for it), follow these steps:
+### For Full Automated Install (Option A):
+
+When the user agrees to install, execute these steps:
+
+1. **Create ~/.claude directory if needed**:
+   ```bash
+   mkdir -p "$HOME/.claude"
+   ```
+
+2. **Clone the repository**:
+   ```bash
+   cd "$HOME/.claude" && git clone https://github.com/ericbuess/claude-code-docs.git
+   ```
+
+3. **Run the installer**:
+   ```bash
+   cd "$HOME/.claude/claude-code-docs" && CLAUDE_CODE_CLI=true ./install.sh
+   ```
+
+4. **Add to user's Claude memory** (if not already present):
+   ```bash
+   # Check if already imported
+   if ! grep -q "@$HOME/.claude/claude-code-docs/CLAUDE.md" "$HOME/.claude/CLAUDE.md" 2>/dev/null; then
+       echo -e "\n# Claude Code Documentation\n@$HOME/.claude/claude-code-docs/CLAUDE.md" >> "$HOME/.claude/CLAUDE.md"
+   fi
+   ```
+
+5. **Handle installer responses**:
+   - If `CLAUDE_SUCCESS: AUTO_SYNC_CONFIGURED` - installation complete!
+   - If `CLAUDE_ERROR: MACOS_CRON_PERMISSION_REQUIRED` - guide user through macOS setup
+
+6. **Confirm success**:
+   > ✅ Claude Code documentation installed successfully!
+   > 
+   > The docs are now available at ~/.claude/claude-code-docs/ and will update automatically.
+   > 
+   > You can now ask me questions like:
+   > - "How do I use MCP servers?"
+   > - "Show me the troubleshooting guide"
+   > - "Search claude docs for hooks"
+
+### For Existing Clone Setup (Option B):
 
 1. **Run the installer with Claude mode**:
    ```bash
    CLAUDE_CODE_CLI=true ./install.sh
    ```
 
-2. **Handle the response**:
-   - If you see `CLAUDE_SUCCESS: AUTO_SYNC_CONFIGURED` - setup is complete!
-   - If you see `CLAUDE_ERROR: MACOS_CRON_PERMISSION_REQUIRED` - guide the user through macOS Full Disk Access setup:
-     ```
-     To complete setup on macOS:
-     1. Open System Settings → Privacy & Security → Full Disk Access
-     2. Click the lock and authenticate
-     3. Click + and navigate to /usr/sbin/cron
-     4. Ensure it's checked
-     5. Run "setup auto sync" again
-     ```
-
-3. **Verify setup**:
+2. **Verify setup**:
    ```bash
    crontab -l | grep claude-code-docs && echo "✓ Auto-sync is configured"
    ```
-
-The installer handles all complexity including git connectivity, permissions, and cron setup.
