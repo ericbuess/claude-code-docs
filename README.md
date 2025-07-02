@@ -7,7 +7,7 @@ Give Claude instant access to its own documentation.
 ## Install in 5 Seconds
 
 ```
-claude "install the claude code docs from github.com/ericbuess/claude-code-docs"
+claude 'install the claude code docs from github.com/ericbuess/claude-code-docs'
 ```
 
 That's it! Claude now has access to all its documentation.
@@ -15,7 +15,7 @@ That's it! Claude now has access to all its documentation.
 ## Verify Installation
 
 ```
-claude "are my claude code docs installed?"
+claude 'are my claude code docs installed?'
 ```
 
 Claude will check if the local docs exist and confirm.
@@ -40,7 +40,7 @@ claude -c          # Or continue your last session
 ## Uninstall
 
 ```
-claude "uninstall the claude code docs mirror"
+claude 'uninstall the claude code docs mirror'
 ```
 
 ## What This Does

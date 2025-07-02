@@ -7,10 +7,12 @@ When a user asks you to install the Claude Code docs from this repository, follo
 mkdir -p ~/.claude
 ```
 
-2. Clone the repository:
+2. Clone the repository to the correct location:
 ```bash
 cd ~/.claude && git clone https://github.com/ericbuess/claude-code-docs.git
 ```
+
+IMPORTANT: Always clone to ~/.claude/ directory, not the current directory!
 
 3. Check if CLAUDE.md exists and back it up if it does:
 ```bash
