@@ -6,77 +6,75 @@ Give Claude instant access to its own documentation.
 
 ## Quick Setup
 
-Run this command:
+1. Configure Claude (one time):
 ```bash
 curl -sSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/setup.sh | bash
 ```
 
-That's it! Now when you ask Claude about Claude Code features, it will:
-- Check if docs exist locally
-- Auto-install them if needed
-- Read from local files (fast!)
+2. In any project where you want docs:
+```bash
+git clone https://github.com/ericbuess/claude-code-docs.git .claude-code-docs
+```
+
+That's it! Now ask Claude about any Claude Code feature.
 
 ## How It Works
 
-The setup script adds instructions to your `~/.claude/CLAUDE.md` that tell Claude:
-1. Where to find local docs (`~/.claude/claude-code-docs/docs/`)
-2. How to install them if missing
-3. How to update them
+- The setup script tells Claude to look for `.claude-code-docs/` in your project
+- Clone the docs to any project where you need them
+- Claude reads from local files (fast, works offline)
+- Docs auto-update every 3 hours via GitHub Actions
 
-## What You Can Now Ask
+## What You Can Ask
 
 - "How do I use MCP servers in Claude Code?"
 - "What are Claude Code hooks?"
 - "Show me Claude Code's memory management"
 - "Explain Claude Code slash commands"
 
-Claude will automatically install the docs on first use!
+## Alternative: Global Install
+
+If you have a directory that's always accessible (like `~/` or `~/Projects`), you can clone there once:
+
+```bash
+cd ~
+git clone https://github.com/ericbuess/claude-code-docs.git .claude-code-docs
+```
+
+Then Claude can access the docs from any subdirectory.
 
 ## Manual Setup
 
-If you prefer to set up manually:
-
-1. Add to `~/.claude/CLAUDE.md`:
+Add to `~/.claude/CLAUDE.md`:
 ```
 # Claude Code Docs
 
-Local mirror: ~/.claude/claude-code-docs/docs/
-Update: cd ~/.claude/claude-code-docs && git pull --quiet
-
 When asked about Claude Code features:
-1. ALWAYS check if ~/.claude/claude-code-docs/docs/ exists first
-2. If missing, install it: cd ~/.claude && git clone https://github.com/ericbuess/claude-code-docs.git
-3. Then read from local files at ~/.claude/claude-code-docs/docs/
-4. NEVER use WebFetch for docs.anthropic.com/en/docs/claude-code/ if local docs available
+1. Check if .claude-code-docs/ exists in current directory or any parent
+2. If not found, suggest: git clone https://github.com/ericbuess/claude-code-docs.git .claude-code-docs
+3. Then read from .claude-code-docs/docs/
+4. The docs auto-update every 3 hours via GitHub
 ```
 
-2. Start a new Claude session (`/exit` then `claude`)
+## Why This Approach?
 
-## Verify It Works
+Claude Code has security restrictions - it can only access files within the current working directory tree. This approach works within those constraints by putting docs in your project directory.
 
+## Updating
+
+The docs auto-update via GitHub Actions. To get the latest:
+```bash
+cd .claude-code-docs && git pull
 ```
-claude 'what are claude code hooks?'
-```
-
-Claude will check for local docs, install if needed, then answer from local files.
-
-## Updating or Reinstalling
-
-The setup script won't add duplicate entries. If you run it again, it will tell you the configuration already exists.
 
 ## Uninstall
 
+Remove the docs:
+```bash
+rm -rf .claude-code-docs
 ```
-claude 'uninstall the claude code docs mirror'
-```
 
-Or manually remove from `~/.claude/CLAUDE.md` the section starting with `# Claude Code Docs`.
-
-## What This Does
-
-- Gives Claude instructions to auto-install docs when needed
-- Docs update automatically every 3 hours (via GitHub Actions)
-- Everything runs locally after first install
+Remove from `~/.claude/CLAUDE.md`: Delete the "Claude Code Docs" section.
 
 ## License
 
