@@ -20,7 +20,7 @@ ls docs/
 git pull
 ```
 
-**Note**: Git IS the autodownloader! No special tools needed - just `git pull` to get updates.
+**Note**: No special download tools needed - just use standard git commands to stay updated.
 
 ### Option 2: Direct URL Access (No Download Required)
 Reference docs directly from GitHub using raw URLs:
