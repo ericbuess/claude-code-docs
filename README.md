@@ -48,7 +48,13 @@ This repository automatically updates daily via GitHub Actions. The workflow:
 - Runs every day at 2 AM UTC
 - Fetches the latest documentation from Anthropic
 - Commits any changes automatically
+- Removes obsolete documentation files
 - Can also be triggered manually from the Actions tab
+
+### Known Limitations
+- The documentation page list is currently hardcoded in `fetch_claude_docs.py`
+- If Anthropic adds new documentation sections, they need to be manually added to the `DOCUMENTATION_PAGES` list
+- The script will continue working even if some pages fail to download
 
 ## 📖 For Contributors
 

@@ -40,6 +40,6 @@ jobs:
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add docs/
+        git add -A docs/
         git commit -m "Update Claude Code documentation - $(date +'%Y-%m-%d')"
         git push

@@ -24,6 +24,8 @@ logger = logging.getLogger(__name__)
 BASE_URL = "https://docs.anthropic.com"
 
 # All Claude Code documentation pages
+# NOTE: This list is hardcoded. If Anthropic adds/removes pages, update this list.
+# TODO: Consider implementing dynamic page discovery if/when an API becomes available.
 DOCUMENTATION_PAGES = [
     # Getting started
     "/en/docs/claude-code/overview",
@@ -108,8 +110,12 @@ def fetch_markdown_content(path: str, session: requests.Session) -> Tuple[str, s
             
             # Verify we got markdown content
             content = response.text
-            if not content or content.startswith('<!DOCTYPE'):
+            if not content or content.startswith('<!DOCTYPE') or '<html' in content[:100]:
                 raise ValueError("Received HTML instead of markdown")
+            
+            # Additional validation - markdown files should have some content
+            if len(content.strip()) < 50:
+                raise ValueError(f"Content too short ({len(content)} bytes) - might be an error page")
             
             logger.info(f"Successfully fetched {filename} ({len(content)} bytes)")
             return filename, content
@@ -145,6 +151,23 @@ def save_markdown_file(docs_dir: Path, filename: str, content: str) -> None:
         raise
 
 
+def cleanup_old_files(docs_dir: Path, current_files: set) -> None:
+    """
+    Remove markdown files that no longer exist in the documentation.
+    
+    Args:
+        docs_dir: The directory containing documentation files
+        current_files: Set of filenames that should exist
+    """
+    existing_files = set(f.name for f in docs_dir.glob('*.md'))
+    files_to_remove = existing_files - current_files
+    
+    for filename in files_to_remove:
+        file_path = docs_dir / filename
+        logger.info(f"Removing obsolete file: {filename}")
+        file_path.unlink()
+
+
 def main():
     """Main function to orchestrate the documentation fetching."""
     start_time = datetime.now()
@@ -159,6 +182,7 @@ def main():
     successful = 0
     failed = 0
     failed_pages = []
+    fetched_files = set()
     
     # Create a session for connection pooling
     with requests.Session() as session:
@@ -168,6 +192,7 @@ def main():
             try:
                 filename, content = fetch_markdown_content(page_path, session)
                 save_markdown_file(docs_dir, filename, content)
+                fetched_files.add(filename)
                 successful += 1
                 
                 # Rate limiting
@@ -178,6 +203,10 @@ def main():
                 logger.error(f"Failed to process {page_path}: {e}")
                 failed += 1
                 failed_pages.append(page_path)
+                # Continue processing other pages instead of stopping
+    
+    # Clean up old files that no longer exist
+    cleanup_old_files(docs_dir, fetched_files)
     
     # Summary
     duration = datetime.now() - start_time
@@ -187,10 +216,13 @@ def main():
     logger.info(f"Failed: {failed}")
     
     if failed_pages:
-        logger.error("\nFailed pages:")
+        logger.warning("\nFailed pages (will retry next run):")
         for page in failed_pages:
-            logger.error(f"  - {page}")
-        sys.exit(1)
+            logger.warning(f"  - {page}")
+        # Don't exit with error - partial success is OK
+        if successful == 0:
+            logger.error("No pages were fetched successfully!")
+            sys.exit(1)
     else:
         logger.info("\nAll pages fetched successfully!")
 
