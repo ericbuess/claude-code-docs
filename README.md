@@ -51,12 +51,17 @@ This repository automatically updates daily via GitHub Actions. The workflow:
 - Commits any changes automatically
 - Removes obsolete documentation files
 - Can also be triggered manually from the Actions tab
+- **Creates GitHub issues on failures** for notification
 
-### Key Features
+### Key Features (v3.0)
 - **Fully Autonomous**: Uses sitemap.xml to automatically discover new pages
-- **Handles Changes**: Automatically adapts to added, removed, or renamed pages
-- **Resilient**: Falls back to essential pages if sitemap is unavailable
-- **Partial Success**: Continues working even if some pages fail to download
+- **Smart File Naming**: Preserves directory structure to prevent collisions
+- **Change Detection**: Only downloads files that have changed (SHA-256 hash comparison)
+- **Safe Cleanup**: Only removes files it previously tracked (preserves manual additions)
+- **Flexible URL Matching**: Handles URL structure changes gracefully
+- **Better Error Handling**: Continues working even if some pages fail
+- **Failure Notifications**: Creates GitHub issues when updates fail
+- **Manifest Tracking**: Maintains a manifest of all fetched files with metadata
 
 ## 📖 For Contributors
 

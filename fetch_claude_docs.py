@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 """
-Fetch all Claude Code documentation pages as markdown files.
-This script dynamically discovers pages from the sitemap and downloads the latest versions.
+Improved Claude Code documentation fetcher with better robustness.
 """
 
 import requests
 import time
 from pathlib import Path
-from typing import List, Tuple, Set
+from typing import List, Tuple, Set, Optional
 import logging
 from datetime import datetime
 import sys
 import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
+import json
+import hashlib
 
 # Configure logging
 logging.basicConfig(
@@ -25,10 +26,11 @@ logger = logging.getLogger(__name__)
 # Base URL for the documentation
 BASE_URL = "https://docs.anthropic.com"
 SITEMAP_URL = f"{BASE_URL}/sitemap.xml"
+MANIFEST_FILE = "docs_manifest.json"
 
 # Headers to bypass caching and identify the script
 HEADERS = {
-    'User-Agent': 'Claude-Code-Docs-Fetcher/2.0',
+    'User-Agent': 'Claude-Code-Docs-Fetcher/3.0',
     'Cache-Control': 'no-cache, no-store, must-revalidate',
     'Pragma': 'no-cache',
     'Expires': '0'
@@ -40,15 +42,45 @@ RETRY_DELAY = 2  # seconds
 RATE_LIMIT_DELAY = 0.5  # seconds between requests
 
 
+def load_manifest(docs_dir: Path) -> dict:
+    """Load the manifest of previously fetched files."""
+    manifest_path = docs_dir / MANIFEST_FILE
+    if manifest_path.exists():
+        try:
+            return json.loads(manifest_path.read_text())
+        except Exception as e:
+            logger.warning(f"Failed to load manifest: {e}")
+    return {"files": {}, "last_updated": None}
+
+
+def save_manifest(docs_dir: Path, manifest: dict) -> None:
+    """Save the manifest of fetched files."""
+    manifest_path = docs_dir / MANIFEST_FILE
+    manifest["last_updated"] = datetime.now().isoformat()
+    manifest_path.write_text(json.dumps(manifest, indent=2))
+
+
+def url_to_safe_filename(url_path: str) -> str:
+    """Convert a URL path to a safe filename that preserves hierarchy only when needed."""
+    # Remove /en/docs/claude-code/ prefix
+    path = url_path.replace('/en/docs/claude-code/', '')
+    
+    # If no subdirectories, just use the filename
+    if '/' not in path:
+        return path + '.md' if not path.endswith('.md') else path
+    
+    # For subdirectories, replace slashes with double underscores
+    # e.g., "advanced/setup" becomes "advanced__setup.md"
+    safe_name = path.replace('/', '__')
+    if not safe_name.endswith('.md'):
+        safe_name += '.md'
+    return safe_name
+
+
 def discover_claude_code_pages(session: requests.Session) -> List[str]:
     """
     Dynamically discover all Claude Code documentation pages from the sitemap.
-    
-    Args:
-        session: The requests session to use
-        
-    Returns:
-        List of documentation page paths
+    Now with better pattern matching flexibility.
     """
     logger.info("Fetching sitemap to discover documentation pages...")
     
@@ -77,15 +109,12 @@ def discover_claude_code_pages(session: requests.Session) -> List[str]:
         
         logger.info(f"Found {len(urls)} total URLs in sitemap")
         
-        # Filter for English Claude Code documentation pages
+        # Filter for ENGLISH Claude Code documentation pages only
         claude_code_pages = []
-        claude_code_urls = 0
         
         for url in urls:
-            # Check if it's a Claude Code page in English
+            # Only look for English docs
             if '/en/docs/claude-code/' in url:
-                claude_code_urls += 1
-                # Convert full URL to path
                 parsed = urlparse(url)
                 path = parsed.path
                 
@@ -102,13 +131,11 @@ def discover_claude_code_pages(session: requests.Session) -> List[str]:
                     '/legacy/',    # Legacy documentation
                 ]
                 
-                if not any(pattern in path for pattern in skip_patterns):
+                if not any(skip in path for skip in skip_patterns):
                     claude_code_pages.append(path)
         
-        logger.info(f"Found {claude_code_urls} Claude Code URLs, kept {len(claude_code_pages)} after filtering")
-        
-        # Sort for consistent ordering
-        claude_code_pages.sort()
+        # Remove duplicates and sort
+        claude_code_pages = sorted(list(set(claude_code_pages)))
         
         logger.info(f"Discovered {len(claude_code_pages)} Claude Code documentation pages")
         
@@ -116,9 +143,9 @@ def discover_claude_code_pages(session: requests.Session) -> List[str]:
         
     except Exception as e:
         logger.error(f"Failed to discover pages from sitemap: {e}")
-        logger.warning("Falling back to hardcoded list...")
+        logger.warning("Falling back to essential pages...")
         
-        # Fallback to essential pages if sitemap fails
+        # More comprehensive fallback list
         return [
             "/en/docs/claude-code/overview",
             "/en/docs/claude-code/setup",
@@ -130,34 +157,34 @@ def discover_claude_code_pages(session: requests.Session) -> List[str]:
             "/en/docs/claude-code/github-actions",
             "/en/docs/claude-code/sdk",
             "/en/docs/claude-code/troubleshooting",
+            "/en/docs/claude-code/security",
+            "/en/docs/claude-code/settings",
+            "/en/docs/claude-code/hooks",
+            "/en/docs/claude-code/costs",
+            "/en/docs/claude-code/monitoring-usage",
         ]
 
 
 def fetch_markdown_content(path: str, session: requests.Session) -> Tuple[str, str]:
     """
-    Fetch markdown content for a given documentation path.
-    
-    Args:
-        path: The documentation path (e.g., "/en/docs/claude-code/overview")
-        session: The requests session to use
-        
-    Returns:
-        Tuple of (filename, content)
-        
-    Raises:
-        Exception: If the content cannot be fetched after retries
+    Fetch markdown content with better error handling.
     """
-    # Convert path to markdown URL
     markdown_url = f"{BASE_URL}{path}.md"
+    filename = url_to_safe_filename(path)
     
-    # Extract filename from path
-    filename = path.split('/')[-1] + '.md'
-    
-    logger.info(f"Fetching: {markdown_url}")
+    logger.info(f"Fetching: {markdown_url} -> {filename}")
     
     for attempt in range(MAX_RETRIES):
         try:
-            response = session.get(markdown_url, headers=HEADERS, timeout=30)
+            response = session.get(markdown_url, headers=HEADERS, timeout=30, allow_redirects=True)
+            
+            # Handle specific HTTP errors
+            if response.status_code == 429:  # Rate limited
+                wait_time = int(response.headers.get('Retry-After', 60))
+                logger.warning(f"Rate limited. Waiting {wait_time} seconds...")
+                time.sleep(wait_time)
+                continue
+            
             response.raise_for_status()
             
             # Verify we got markdown content
@@ -165,9 +192,9 @@ def fetch_markdown_content(path: str, session: requests.Session) -> Tuple[str, s
             if not content or content.startswith('<!DOCTYPE') or '<html' in content[:100]:
                 raise ValueError("Received HTML instead of markdown")
             
-            # Additional validation - markdown files should have some content
+            # Additional validation
             if len(content.strip()) < 50:
-                raise ValueError(f"Content too short ({len(content)} bytes) - might be an error page")
+                raise ValueError(f"Content too short ({len(content)} bytes)")
             
             logger.info(f"Successfully fetched {filename} ({len(content)} bytes)")
             return filename, content
@@ -184,57 +211,63 @@ def fetch_markdown_content(path: str, session: requests.Session) -> Tuple[str, s
             raise
 
 
-def save_markdown_file(docs_dir: Path, filename: str, content: str) -> None:
-    """
-    Save markdown content to a file.
-    
-    Args:
-        docs_dir: The directory to save files in
-        filename: The filename to save as
-        content: The markdown content to save
-    """
+def content_has_changed(content: str, old_hash: str) -> bool:
+    """Check if content has changed based on hash."""
+    new_hash = hashlib.sha256(content.encode('utf-8')).hexdigest()
+    return new_hash != old_hash
+
+
+def save_markdown_file(docs_dir: Path, filename: str, content: str) -> str:
+    """Save markdown content and return its hash."""
     file_path = docs_dir / filename
     
     try:
         file_path.write_text(content, encoding='utf-8')
+        content_hash = hashlib.sha256(content.encode('utf-8')).hexdigest()
         logger.info(f"Saved: {filename}")
+        return content_hash
     except Exception as e:
         logger.error(f"Failed to save {filename}: {e}")
         raise
 
 
-def cleanup_old_files(docs_dir: Path, current_files: Set[str]) -> None:
+def cleanup_old_files(docs_dir: Path, current_files: Set[str], manifest: dict) -> None:
     """
-    Remove markdown files that no longer exist in the documentation.
-    
-    Args:
-        docs_dir: The directory containing documentation files
-        current_files: Set of filenames that should exist
+    Remove only files that were previously fetched but no longer exist.
+    Preserves manually added files.
     """
-    existing_files = set(f.name for f in docs_dir.glob('*.md'))
-    files_to_remove = existing_files - current_files
+    previous_files = set(manifest.get("files", {}).keys())
+    files_to_remove = previous_files - current_files
     
     for filename in files_to_remove:
+        if filename == MANIFEST_FILE:  # Never delete the manifest
+            continue
+            
         file_path = docs_dir / filename
-        logger.info(f"Removing obsolete file: {filename}")
-        file_path.unlink()
+        if file_path.exists():
+            logger.info(f"Removing obsolete file: {filename}")
+            file_path.unlink()
 
 
 def main():
-    """Main function to orchestrate the documentation fetching."""
+    """Main function with improved robustness."""
     start_time = datetime.now()
-    logger.info("Starting Claude Code documentation fetch (dynamic discovery)")
+    logger.info("Starting Claude Code documentation fetch (improved version)")
     
     # Create docs directory
     docs_dir = Path(__file__).parent / 'docs'
     docs_dir.mkdir(exist_ok=True)
     logger.info(f"Output directory: {docs_dir}")
     
+    # Load manifest
+    manifest = load_manifest(docs_dir)
+    
     # Statistics
     successful = 0
     failed = 0
     failed_pages = []
     fetched_files = set()
+    new_manifest = {"files": {}}
     
     # Create a session for connection pooling
     with requests.Session() as session:
@@ -251,7 +284,22 @@ def main():
             
             try:
                 filename, content = fetch_markdown_content(page_path, session)
-                save_markdown_file(docs_dir, filename, content)
+                
+                # Check if content has changed
+                old_hash = manifest.get("files", {}).get(filename, {}).get("hash", "")
+                if content_has_changed(content, old_hash):
+                    content_hash = save_markdown_file(docs_dir, filename, content)
+                    logger.info(f"Updated: {filename}")
+                else:
+                    content_hash = old_hash
+                    logger.info(f"Unchanged: {filename}")
+                
+                new_manifest["files"][filename] = {
+                    "url": page_path,
+                    "hash": content_hash,
+                    "last_updated": datetime.now().isoformat()
+                }
+                
                 fetched_files.add(filename)
                 successful += 1
                 
@@ -263,10 +311,12 @@ def main():
                 logger.error(f"Failed to process {page_path}: {e}")
                 failed += 1
                 failed_pages.append(page_path)
-                # Continue processing other pages instead of stopping
     
-    # Clean up old files that no longer exist
-    cleanup_old_files(docs_dir, fetched_files)
+    # Clean up old files (only those we previously fetched)
+    cleanup_old_files(docs_dir, fetched_files, manifest)
+    
+    # Save new manifest
+    save_manifest(docs_dir, new_manifest)
     
     # Summary
     duration = datetime.now() - start_time
