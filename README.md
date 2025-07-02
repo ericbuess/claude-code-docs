@@ -32,6 +32,24 @@ For example:
 - Overview: `https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/overview.md`
 - Setup: `https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/setup.md`
 
+## 🤖 Using with Claude Code (CLAUDE.md Integration)
+
+This repository includes a `CLAUDE.md` file that provides context to Claude Code about the documentation structure. To use it:
+
+### If you've cloned/forked the repo:
+Claude Code will automatically detect and use the CLAUDE.md file when you run it in the repository directory.
+
+### If you're using Claude Code remotely:
+You can reference the CLAUDE.md file directly:
+```
+https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/CLAUDE.md
+```
+
+The CLAUDE.md file helps Claude Code understand:
+- The purpose and structure of this documentation mirror
+- How to search and navigate the documentation efficiently
+- Important maintenance and update information
+
 ## 📚 Available Documentation
 
 The `docs/` directory contains all 27 Claude Code documentation pages:
