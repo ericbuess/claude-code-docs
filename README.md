@@ -1,153 +1,67 @@
 # Claude Code Documentation Mirror
 
-[![Update Status](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml/badge.svg)](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml)
 [![Last Update](https://img.shields.io/github/last-commit/ericbuess/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/ericbuess/claude-code-docs/commits/main)
 
-Keep Claude Code documentation on your local machine, always up-to-date. This mirror automatically syncs with Anthropic's official docs every 3 hours, and Claude pulls fresh updates from this mirror whenever you ask about Claude Code features.
+Give Claude instant access to its own documentation.
 
-## 🚀 Quick Setup
+## Install in 5 Seconds
 
-### Let Claude Install It (Easiest!)
 ```
 claude "install the claude code docs from github.com/ericbuess/claude-code-docs"
 ```
 
-### Or Install Manually
-Copy and run this entire block:
+That's it! Claude now has access to all its documentation.
+
+## Test It Works
+
+```
+claude "test claude code docs access"
+```
+
+## What You Can Now Ask
+
+- "How do I use MCP servers in Claude Code?"
+- "What are Claude Code hooks and how do I set them up?"
+- "How do I configure Claude Code with GitHub Actions?"
+- "Explain Claude Code's memory management system"
+- "Show me all Claude Code slash commands"
+
+## Alternative Installation
+
+If you prefer to install manually:
+
 ```bash
+# Clone and configure
 cd ~/.claude && \
 git clone https://github.com/ericbuess/claude-code-docs.git && \
 echo "" >> ~/.claude/CLAUDE.md && \
-echo "# Claude Code Documentation" >> ~/.claude/CLAUDE.md && \
-echo "Location: ~/.claude/claude-code-docs/" >> ~/.claude/CLAUDE.md && \
-echo "Docs: All Claude Code documentation files" >> ~/.claude/CLAUDE.md && \
-echo "Update: cd ~/.claude/claude-code-docs && git pull --quiet" >> ~/.claude/CLAUDE.md && \
+echo "# Claude Code Docs" >> ~/.claude/CLAUDE.md && \
+echo "" >> ~/.claude/CLAUDE.md && \
+echo "Local mirror of Claude Code documentation." >> ~/.claude/CLAUDE.md && \
+echo "" >> ~/.claude/CLAUDE.md && \
+echo "Pull latest: cd ~/.claude/claude-code-docs && git pull --quiet" >> ~/.claude/CLAUDE.md && \
+echo "Docs location: ~/.claude/claude-code-docs/docs/" >> ~/.claude/CLAUDE.md && \
 echo "✅ Installation complete!"
 ```
 
-That's it! Claude will now:
-- Know where the docs are located  
-- Pull fresh updates from this mirror before answering Claude Code questions
-- Always have access to documentation that's at most 3 hours old
-
-**Note**: After installation, start a new Claude session for the changes to take effect:
-- Exit current session: `/exit`
+**Note**: Start a new Claude session for changes to take effect:
+- Exit: `/exit`  
 - Start fresh: `claude`
-- Continue last session: `claude -c` or `claude --continue`
-- Resume from list: `claude --resume` (shows conversation picker)
+- Continue last: `claude -c`
+- Resume from list: `claude -r`
 
-## 📚 What's Included
+## Uninstall
 
-The `docs/` directory contains markdown versions of all Claude Code documentation from https://docs.anthropic.com/en/docs/claude-code/:
-- **Getting Started**: Overview, setup, quickstart, memory management, common workflows
-- **Development**: IDE integrations, MCP, GitHub Actions, SDK, troubleshooting
-- **Deployment**: Third-party integrations, Amazon Bedrock, Google Vertex AI, and more
-- **Administration**: IAM, security, monitoring, usage tracking, costs
-- **Reference**: CLI reference, interactive mode, slash commands, settings, hooks
-- **Compliance**: Legal and data usage policies
-
-## 🔄 How It Works
-
-1. **This GitHub repository** fetches the latest docs from Anthropic every 3 hours (see the status badges above)
-2. **Your local Claude Code CLI** automatically runs `git pull` when it needs to check Claude Code documentation
-3. **You** get documentation that's always current (within 3 hours)
-
-## 💡 Usage Examples
-
-Once installed, just ask Claude naturally:
 ```
-"How do I use MCP servers in Claude Code?"
-"What are Claude Code hooks?"
-"How do I set up Claude Code with GitHub Actions?"
-"Explain Claude Code's memory management"
+claude "uninstall the claude code docs mirror"
 ```
 
-Claude will automatically pull the latest docs and answer your questions.
+## What This Does
 
-## 📖 Alternative Access Methods
+- Gives Claude offline access to all its documentation (27+ markdown files)
+- Updates automatically every 3 hours from Anthropic's official docs
+- Works instantly - no web fetching needed when you ask questions
 
-### Online Access (No Installation)
-Claude can read directly from GitHub:
-```
-claude "check the claude code docs at github.com/ericbuess/claude-code-docs for MCP server setup"
-```
-
-### Custom Installation Location
-If you prefer a different directory:
-```bash
-git clone https://github.com/ericbuess/claude-code-docs.git ~/my-docs-location
-# Then update your CLAUDE.md with the new path
-```
-
-### Direct URLs
-Access specific docs without cloning:
-```
-https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/[filename].md
-```
-
-## 🛠️ For Contributors
-
-### Repository Structure
-```
-claude-code-docs/
-├── docs/                    # All Claude Code documentation files
-│   └── docs_manifest.json   # Index with metadata for all docs
-├── fetch_claude_docs.py     # Fetches docs from Anthropic (used by GitHub Actions)
-├── requirements.txt         # Python dependencies (for manual fetching only)
-├── .github/
-│   └── workflows/
-│       └── update-docs.yml  # GitHub Actions automation
-├── CLAUDE.md               # Instructions for Claude (not user docs)
-└── README.md               # You are here
-```
-
-### Manual Documentation Fetching
-If you want to update docs from Anthropic yourself:
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python fetch_claude_docs.py
-```
-
-## 📊 Status & Updates
-
-- **Update Frequency**: Every 3 hours (00:00, 03:00, 06:00, 09:00, 12:00, 15:00, 18:00, 21:00 UTC)
-- **Last Update**: See the [commit history](https://github.com/ericbuess/claude-code-docs/commits/main/docs)
-- **Update Status**: Check the [GitHub Actions workflow](https://github.com/ericbuess/claude-code-docs/actions/workflows/update-docs.yml)
-
-## 🔍 Troubleshooting
-
-### Docs not updating?
-```bash
-cd ~/.claude/claude-code-docs
-git pull
-```
-
-### Want to see what changed?
-```bash
-cd ~/.claude/claude-code-docs
-git log --oneline -10 docs/
-```
-
-### Need a fresh start?
-
-#### Let Claude Uninstall It (Easiest!)
-```
-claude "uninstall the claude code docs mirror from ~/.claude"
-```
-
-#### Or Uninstall Manually
-```bash
-# Remove the repository
-rm -rf ~/.claude/claude-code-docs
-
-# Remove the configuration from CLAUDE.md
-sed -i.bak '/# Claude Code Documentation/,+3d' ~/.claude/CLAUDE.md
-```
-
-**Note**: After uninstalling, start a new Claude session to apply changes (`/exit` then `claude`).
-
-## 📝 License
+## License
 
 This is a community project. The documentation content belongs to Anthropic.

@@ -2,7 +2,7 @@
 
 When a user asks you to install the Claude Code docs from this repository, follow these steps:
 
-1. Check if ~/.claude directory exists, create if needed:
+1. Create ~/.claude directory if it doesn't exist:
 ```bash
 mkdir -p ~/.claude
 ```
