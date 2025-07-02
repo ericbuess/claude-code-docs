@@ -96,3 +96,17 @@ When asked to search, read, or analyze Claude Code documentation:
 - **Manifest**: `/docs/docs_manifest.json`
 - **Fetcher**: `/fetch_claude_docs.py`
 - **Automation**: `/.github/workflows/update-docs.yml`
+
+## 🤖 Auto-Setup Instructions for Claude
+
+If a user asks you to set up automatic updates (auto-sync), follow these steps:
+
+1. **Check their system**: Run `uname` to see if they're on macOS or Linux
+2. **Test the sync script**: Run `./auto-sync/auto-sync.sh` to ensure it works
+3. **Get the repository path**: Run `pwd` to get the full path
+4. **Set up cron**: 
+   - For macOS: First remind them about Full Disk Access for cron (System Settings → Privacy & Security → Full Disk Access → Add `/usr/sbin/cron`)
+   - Run `crontab -e` and add: `30 */6 * * * cd [FULL_PATH] && ./auto-sync/auto-sync.sh --quiet`
+5. **Verify**: Run `crontab -l` to confirm it was added
+
+For detailed instructions, see `auto-sync/README.md`.
