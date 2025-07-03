@@ -60,15 +60,20 @@ Claude reads from your local docs instantly and can search across all documentat
 
 ## What's Included
 
-All Claude Code documentation files from https://docs.anthropic.com/en/docs/claude-code/
+Local mirror of Claude Code documentation files from https://docs.anthropic.com/en/docs/claude-code/, updated every 3 hours.
 
-## Updating
+## Keeping Docs Updated
+
+The GitHub repository automatically updates every 3 hours. To update your local copy:
 
 ```bash
 cd claude-code-docs && git pull
 ```
 
-The docs auto-update every 3 hours, so you'll always have the latest.
+However, manual updates shouldn't be needed because Claude automatically runs `git pull` before reading the docs. This behavior is configured in [CLAUDE.md](./CLAUDE.md) which tells Claude to:
+
+> 1. Always run: git pull --quiet (to get latest docs)
+> 2. Then read from docs/ directory
 
 ## License
 
