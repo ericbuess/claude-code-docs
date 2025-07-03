@@ -50,7 +50,7 @@ Claude reads from your local docs instantly and can search across all documentat
 The GitHub repository automatically updates every 3 hours. To update your local copy manually:
 
 ```bash
-cd /path/to/where/you/cloned/claude-code-docs && git pull
+cd /path/to/claude-code-docs && git pull
 ```
 
 However, manual updates shouldn't be needed because Claude automatically runs `git pull` before reading the docs. This behavior is configured in [CLAUDE.md](./CLAUDE.md) which tells Claude to:
