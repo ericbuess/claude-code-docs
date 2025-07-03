@@ -13,19 +13,13 @@ git clone https://github.com/ericbuess/claude-code-docs.git
 
 ## Usage
 
-When you want Claude to read from local docs instead of fetching from the web:
+Just tell Claude where to look:
 
 ```
-You: what are hooks?
-Claude: [tries to WebFetch]
-You: look locally
-Claude: [reads from local docs]
+You: read about hooks from ~/claude-code-docs
 ```
 
-Or be explicit from the start:
-```
-You: read about hooks from the local claude-code-docs
-```
+That's it. Claude reads from your local files instead of fetching from the web.
 
 ## Why This Exists
 
@@ -33,14 +27,14 @@ You: read about hooks from the local claude-code-docs
 - Works offline
 - Always up-to-date (auto-updates every 3 hours)
 
-## Optional: Environment Variable
+## Optional: Create a Slash Command
 
-If you want to set a default location:
-```bash
-export CLAUDE_DOCS_PATH="$HOME/claude-code-docs"
+For frequent use, create `~/.claude/commands/docs.md`:
+```markdown
+Read Claude Code docs about $ARGUMENTS from ~/claude-code-docs/docs/
 ```
 
-Then tell Claude: "check $CLAUDE_DOCS_PATH for docs"
+Then use: `/user:docs hooks`
 
 ## What's Included
 
