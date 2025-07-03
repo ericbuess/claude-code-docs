@@ -31,22 +31,32 @@ echo "Read Claude Code docs about \$ARGUMENTS from /path/to/claude-code-docs/doc
 echo "Read Claude Code docs about \$ARGUMENTS from ~/claude-code-docs/docs/" > ~/.claude/commands/docs.md
 ```
 
-**Example:** If you cloned to `~/Documents`:
+**Example:** If you cloned to `~/Projects`:
 ```bash
-echo "Read Claude Code docs about \$ARGUMENTS from ~/Documents/claude-code-docs/docs/" > ~/.claude/commands/docs.md
+echo "Read Claude Code docs about \$ARGUMENTS from ~/Projects/claude-code-docs/docs/" > ~/.claude/commands/docs.md
 ```
 
 ## Usage
 
 Now you can use the slash command:
 
+### Basic usage:
 ```
 /user:docs hooks
 /user:docs mcp
 /user:docs memory
 ```
 
-That's it! Claude reads from your local docs instantly.
+### Creative examples:
+```
+/user:docs what environment variables exist and how do I use them?
+/user:docs recommend some useful slash commands based on my usage so far
+/user:docs please explain all recent changes to the docs
+/user:docs how do I trigger custom commands on demand
+/user:docs search all docs and find unique ways to use Claude Code CLI
+```
+
+Claude reads from your local docs instantly and can search across all documentation to answer complex questions!
 
 ## What's Included
 
