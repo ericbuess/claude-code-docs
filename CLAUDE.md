@@ -1,5 +1,5 @@
-# Claude Code Docs
+# Claude Code Documentation Mirror
 
-Local docs should be at: ~/.claude-code-docs/docs/
-When asked about Claude Code features, read from there.
-If missing, tell user: cd ~ && git clone https://github.com/ericbuess/claude-code-docs.git .claude-code-docs
+This repository contains local copies of Claude Code documentation from https://docs.anthropic.com/en/docs/claude-code/
+
+The docs are automatically updated every 3 hours via GitHub Actions.

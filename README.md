@@ -2,68 +2,56 @@
 
 [![Last Update](https://img.shields.io/github/last-commit/ericbuess/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/ericbuess/claude-code-docs/commits/main)
 
-Give Claude instant access to its own documentation.
+Local mirror of Claude Code documentation, updated every 3 hours.
 
-## Quick Setup (2 steps)
+## Installation
 
-1. **Configure Claude** (one time):
+Clone anywhere you like:
 ```bash
-curl -sSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/setup.sh | bash
+git clone https://github.com/ericbuess/claude-code-docs.git
 ```
 
-2. **Install docs** to your home directory:
+## Usage
+
+When you want Claude to read from local docs instead of fetching from the web:
+
+```
+You: what are hooks?
+Claude: [tries to WebFetch]
+You: look locally
+Claude: [reads from local docs]
+```
+
+Or be explicit from the start:
+```
+You: read about hooks from the local claude-code-docs
+```
+
+## Why This Exists
+
+- Faster than web fetching
+- Works offline
+- Always up-to-date (auto-updates every 3 hours)
+
+## Optional: Environment Variable
+
+If you want to set a default location:
 ```bash
-cd ~ && git clone https://github.com/ericbuess/claude-code-docs.git .claude-code-docs
+export CLAUDE_DOCS_PATH="$HOME/claude-code-docs"
 ```
 
-Done! Now Claude can access the docs from anywhere in your home directory.
+Then tell Claude: "check $CLAUDE_DOCS_PATH for docs"
 
-## Test It
+## What's Included
 
-```bash
-cd ~/any/project
-claude 'what are claude code hooks?'
-```
-
-Claude will read from the local docs instantly.
-
-## How It Works
-
-- Docs live at `~/.claude-code-docs/`
-- Claude can access them from any subdirectory of `~`
-- No web fetching - reads directly from disk
-- Auto-updates every 3 hours via GitHub Actions
-
-## Manual Setup
-
-If you prefer to configure manually, add to `~/.claude/CLAUDE.md`:
-```
-# Claude Code Docs
-
-Local docs: ~/.claude-code-docs/docs/
-When asked about Claude Code features, read from there.
-If missing, tell user: cd ~ && git clone https://github.com/ericbuess/claude-code-docs.git .claude-code-docs
-```
+All 27+ Claude Code documentation files from https://docs.anthropic.com/en/docs/claude-code/
 
 ## Updating
 
-The GitHub repo updates automatically. To pull latest changes:
 ```bash
-cd ~/.claude-code-docs && git pull
+cd claude-code-docs && git pull
 ```
-
-## Uninstall
-
-```bash
-rm -rf ~/.claude-code-docs
-```
-
-Then remove the "Claude Code Docs" section from `~/.claude/CLAUDE.md`.
-
-## Why Home Directory?
-
-Claude Code can only access files within the current working directory tree. By installing in your home directory, the docs are accessible from any project under `~/`.
 
 ## License
 
-This is a community project. The documentation content belongs to Anthropic.
+Documentation content belongs to Anthropic.

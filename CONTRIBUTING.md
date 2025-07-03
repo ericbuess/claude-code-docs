@@ -53,5 +53,5 @@ python fetch_claude_docs.py
 ## Important Notes
 
 - Don't modify files in the `docs/` directory directly - they're auto-generated
-- The fetch script is in `scripts/` for easy discovery by Claude
-- Focus on user experience - most users just want working docs
+- The fetch script is in `scripts/` 
+- Keep it simple - users just clone and tell Claude to "look locally"
