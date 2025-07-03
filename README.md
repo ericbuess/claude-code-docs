@@ -29,12 +29,22 @@ That's it. Claude reads from your local files instead of fetching from the web.
 
 ## Optional: Create a Slash Command
 
-For frequent use, create `~/.claude/commands/docs.md`:
-```markdown
-Read Claude Code docs about $ARGUMENTS from ~/claude-code-docs/docs/
+For frequent use, you can create a shortcut:
+
+```bash
+# Create the commands directory if it doesn't exist
+mkdir -p ~/.claude/commands
+
+# Create the command (replace PATH with where you cloned)
+echo "Read Claude Code docs about \$ARGUMENTS from PATH/claude-code-docs/docs/" > ~/.claude/commands/docs.md
 ```
 
-Then use: `/user:docs hooks`
+Example if you cloned to your home directory:
+```bash
+echo "Read Claude Code docs about \$ARGUMENTS from ~/claude-code-docs/docs/" > ~/.claude/commands/docs.md
+```
+
+Now you can use: `/user:docs hooks` instead of typing the full path each time.
 
 ## What's Included
 
