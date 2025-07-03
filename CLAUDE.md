@@ -4,5 +4,6 @@ This repository contains local copies of Claude Code documentation from https://
 
 The docs are automatically updated every 3 hours via GitHub Actions.
 
-When asked about Claude Code features, read from docs/ directory.
-To update: cd into repo and run git pull
+When working with this repo:
+1. Always run: git pull --quiet (to get latest docs)
+2. Then read from docs/ directory
