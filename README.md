@@ -4,6 +4,12 @@
 
 Local mirror of Claude Code documentation, updated every 3 hours.
 
+## Why This Exists
+
+- **Faster than web fetching** - Read from local files instantly
+- **Works offline** - No internet required after cloning
+- **Always up-to-date** - Auto-updates every 3 hours via GitHub Actions
+
 ## Installation
 
 Clone anywhere you like:
@@ -20,12 +26,6 @@ You: read about hooks from ~/claude-code-docs
 ```
 
 That's it. Claude reads from your local files instead of fetching from the web.
-
-## Why This Exists
-
-- Faster than web fetching
-- Works offline
-- Always up-to-date (auto-updates every 3 hours)
 
 ## Optional: Create a Slash Command
 
