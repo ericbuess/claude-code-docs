@@ -27,7 +27,7 @@ You: read about hooks from ~/claude-code-docs
 
 That's it. Claude reads from your local files instead of fetching from the web.
 
-## Optional: Create a Slash Command
+## Recommended: Create a Slash Command
 
 For frequent use, you can create a shortcut:
 
