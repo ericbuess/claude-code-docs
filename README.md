@@ -12,36 +12,41 @@ Local mirror of Claude Code documentation, updated every 3 hours.
 
 ## Installation
 
-Clone anywhere you like:
+### Step 1: Clone the repository
+
 ```bash
 git clone https://github.com/ericbuess/claude-code-docs.git
 ```
 
-## Usage
+### Step 2: Create the slash command
 
-Just tell Claude where to look:
-
-```
-You: read about hooks from ~/claude-code-docs
-```
-
-That's it. Claude reads from your local files instead of fetching from the web.
-
-## Recommended: Create a Slash Command
-
-For frequent use, you can create a shortcut:
+**⚠️ IMPORTANT: Replace `/path/to/claude-code-docs` with YOUR actual path where you cloned the repo!**
 
 ```bash
-# Create the command (replace PATH with where you cloned)
-echo "Read Claude Code docs about \$ARGUMENTS from PATH/claude-code-docs/docs/" > ~/.claude/commands/docs.md
+echo "Read Claude Code docs about \$ARGUMENTS from /path/to/claude-code-docs/docs/" > ~/.claude/commands/docs.md
 ```
 
-Example if you cloned to your home directory:
+**Example:** If you cloned to your home directory:
 ```bash
 echo "Read Claude Code docs about \$ARGUMENTS from ~/claude-code-docs/docs/" > ~/.claude/commands/docs.md
 ```
 
-Now you can use: `/user:docs hooks` instead of typing the full path each time.
+**Example:** If you cloned to `~/Documents`:
+```bash
+echo "Read Claude Code docs about \$ARGUMENTS from ~/Documents/claude-code-docs/docs/" > ~/.claude/commands/docs.md
+```
+
+## Usage
+
+Now you can use the slash command:
+
+```
+/user:docs hooks
+/user:docs mcp
+/user:docs memory
+```
+
+That's it! Claude reads from your local docs instantly.
 
 ## What's Included
 
@@ -52,6 +57,8 @@ All Claude Code documentation files from https://docs.anthropic.com/en/docs/clau
 ```bash
 cd claude-code-docs && git pull
 ```
+
+The docs auto-update every 3 hours, so you'll always have the latest.
 
 ## License
 
