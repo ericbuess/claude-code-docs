@@ -32,9 +32,6 @@ That's it. Claude reads from your local files instead of fetching from the web.
 For frequent use, you can create a shortcut:
 
 ```bash
-# Create the commands directory if it doesn't exist
-mkdir -p ~/.claude/commands
-
 # Create the command (replace PATH with where you cloned)
 echo "Read Claude Code docs about \$ARGUMENTS from PATH/claude-code-docs/docs/" > ~/.claude/commands/docs.md
 ```
@@ -48,7 +45,7 @@ Now you can use: `/user:docs hooks` instead of typing the full path each time.
 
 ## What's Included
 
-All 27+ Claude Code documentation files from https://docs.anthropic.com/en/docs/claude-code/
+All Claude Code documentation files from https://docs.anthropic.com/en/docs/claude-code/
 
 ## Updating
 
