@@ -12,29 +12,16 @@ Local mirror of Claude Code documentation files from https://docs.anthropic.com/
 
 ## Installation
 
-### Step 1: Clone the repository
+Run this single command from wherever you want to store the docs:
 
 ```bash
-git clone https://github.com/ericbuess/claude-code-docs.git
+git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && echo "Read Claude Code docs about \$ARGUMENTS from $(pwd)/docs/" > ~/.claude/commands/docs.md && cd .. && echo "✅ Installation complete! Use /user:docs to access documentation."
 ```
 
-### Step 2: Create the slash command
-
-**⚠️ IMPORTANT: Replace `/path/to/claude-code-docs` with YOUR actual path where you cloned the repo!**
-
-```bash
-echo "Read Claude Code docs about \$ARGUMENTS from /path/to/claude-code-docs/docs/" > ~/.claude/commands/docs.md
-```
-
-**Example:** If you cloned to your home directory:
-```bash
-echo "Read Claude Code docs about \$ARGUMENTS from ~/claude-code-docs/docs/" > ~/.claude/commands/docs.md
-```
-
-**Example:** If you cloned to `~/Projects`:
-```bash
-echo "Read Claude Code docs about \$ARGUMENTS from ~/Projects/claude-code-docs/docs/" > ~/.claude/commands/docs.md
-```
+That's it! The command will:
+1. Clone the repository
+2. Create the slash command with the correct path automatically
+3. Return to your original directory
 
 ## Usage
 
