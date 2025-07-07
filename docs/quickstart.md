@@ -8,11 +8,19 @@ This quickstart guide will have you using AI-powered coding assistance in just a
 
 Make sure you have:
 
-* [Installed Claude Code](/en/docs/claude-code/setup)
 * A terminal or command prompt open
+* [Node.js 18 or newer installed](https://nodejs.org/en/download/)
 * A code project to work with
 
-## Step 1: Start your first session
+## Step 1: Install Claude Code
+
+To install Claude Code, run the following command:
+
+```sh
+npm install -g @anthropic-ai/claude-code
+```
+
+## Step 2: Start your first session
 
 Open your terminal in any project directory and start Claude Code:
 
@@ -31,7 +39,7 @@ You'll see the Claude Code prompt inside a new interactive session:
 > Try "create a util logging.py that..." 
 ```
 
-## Step 2: Ask your first question
+## Step 3: Ask your first question
 
 Let's start with understanding your codebase. Try one of these commands:
 
@@ -57,7 +65,7 @@ Claude will analyze your files and provide a summary. You can also ask more spec
   Claude Code reads your files as needed - you don't have to manually add context.
 </Note>
 
-## Step 3: Make your first code change
+## Step 4: Make your first code change
 
 Now let's make Claude Code do some actual coding. Try a simple task:
 
@@ -76,7 +84,7 @@ Claude Code will:
   Claude Code always asks for permission before modifying files. You can approve individual changes or enable "Accept all" mode for a session.
 </Note>
 
-## Step 4: Use Git with Claude Code
+## Step 5: Use Git with Claude Code
 
 Claude Code makes Git operations conversational:
 
@@ -102,7 +110,7 @@ You can also prompt for more complex Git operations:
 > help me resolve merge conflicts
 ```
 
-## Step 5: Fix a bug or add a feature
+## Step 6: Fix a bug or add a feature
 
 Claude is proficient at debugging and feature implementation.
 
@@ -125,7 +133,7 @@ Claude Code will:
 * Implement a solution
 * Run tests if available
 
-## Step 6: Test out other common workflows
+## Step 7: Test out other common workflows
 
 There are a number of ways to work with Claude:
 
@@ -173,6 +181,8 @@ Here are the most important commands for daily use:
 | `/help`             | Show available commands           | `> /help`                           |
 | `exit` or Ctrl+C    | Exit Claude Code                  | `> exit`                            |
 
+See the [CLI reference](/en/docs/claude-code/cli-reference) for a complete list of commands.
+
 ## Pro tips for beginners
 
 <AccordionGroup>
@@ -186,15 +196,15 @@ Here are the most important commands for daily use:
     Break complex tasks into steps:
 
     ```
-    > 1. create a new API endpoint for user profiles
+    > 1. create a new database table for user profiles
     ```
 
     ```
-    > 2. add validation for required fields
+    > 2. create an API endpoint to get and update user profiles
     ```
 
     ```
-    > 3. write tests for the endpoint
+    > 3. build a webpage that allows users to see and edit their information
     ```
   </Accordion>
 
@@ -206,7 +216,7 @@ Here are the most important commands for daily use:
     ```
 
     ```
-    > how does error handling work in this app?
+    > build a dashboard showing products that are most frequently returned by our UK customers
     ```
   </Accordion>
 
@@ -222,16 +232,16 @@ Here are the most important commands for daily use:
 Now that you've learned the basics, explore more advanced features:
 
 <CardGroup cols={3}>
+  <Card title="Common workflows" icon="graduation-cap" href="/en/docs/claude-code/common-workflows">
+    Step-by-step guides for common tasks
+  </Card>
+
   <Card title="CLI reference" icon="terminal" href="/en/docs/claude-code/cli-reference">
     Master all commands and options
   </Card>
 
   <Card title="Configuration" icon="gear" href="/en/docs/claude-code/settings">
     Customize Claude Code for your workflow
-  </Card>
-
-  <Card title="Common workflows" icon="graduation-cap" href="/en/docs/claude-code/common-workflows">
-    Learn advanced techniques
   </Card>
 </CardGroup>
 

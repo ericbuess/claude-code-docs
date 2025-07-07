@@ -2,17 +2,12 @@
 
 > Learn how to add Claude Code to your favorite IDE
 
-Claude Code seamlessly integrates with popular Integrated Development
-Environments (IDEs) to enhance your coding workflow. This integration allows you
-to leverage Claude's capabilities directly within your preferred development
-environment.
+Claude Code works great with any Integrated Development Environment (IDE) that has a terminal. Just run `claude`, and you're ready to go.
 
-## Supported IDEs
+In addition, Claude Code provides dedicated integrations for popular IDEs, which provide features like interactive diff viewing, selection context sharing, and more. These integrations currently exist for:
 
-Claude Code currently supports two major IDE families:
-
-* **Visual Studio Code** (including popular forks like Cursor and Windsurf)
-* **JetBrains IDEs** (including PyCharm, WebStorm, IntelliJ, and GoLand)
+* **Visual Studio Code** (including popular forks like Cursor, Windsurf, and VSCodium)
+* **JetBrains IDEs** (including IntelliJ, PyCharm, Android Studio, WebStorm, PhpStorm and GoLand)
 
 ## Features
 
@@ -30,57 +25,47 @@ Claude Code currently supports two major IDE families:
 
 ## Installation
 
-### VS Code
+<Tabs>
+  <Tab title="VS Code+">
+    To install Claude Code on VS Code and popular forks like Cursor, Windsurf, and VSCodium:
 
-1. Open VSCode
-2. Open the integrated terminal
-3. Run `claude` - the extension will auto-install
+    1. Open VS Code
+    2. Open the integrated terminal
+    3. Run `claude` - the extension will auto-install
+  </Tab>
 
-Going forward you can also use the `/ide` command in any external terminal to
-connect to the IDE.
+  <Tab title="JetBrains">
+    To install Claude Code on JetBrains IDEs like IntelliJ, PyCharm, Android Studio, WebStorm, PhpStorm and GoLand, find and install the [Claude Code plugin](https://docs.anthropic.com/s/claude-code-jetbrains) from the marketplace and restart your IDE.
 
-<Note>
-  These installation instructions also apply to VS Code forks like Cursor and
-  Windsurf.
-</Note>
+    <Note>
+      The plugin may also be auto-installed when you run `claude` in the integrated terminal. The IDE must be restarted completely to take effect.
+    </Note>
 
-### JetBrains IDEs
+    <Warning>
+      **Remote Development Limitations**: When using JetBrains Remote Development, you must install the plugin in the remote host via `Settings > Plugin (Host)`.
+    </Warning>
+  </Tab>
+</Tabs>
 
-Install the
-[Claude Code plugin](https://docs.anthropic.com/s/claude-code-jetbrains) from
-the marketplace and restart your IDE.
+## Usage
 
-<Note>
-  The plugin may also be auto-installed when you run `claude` in the integrated
-  terminal. The IDE must be restarted completely to take effect.
-</Note>
+### From your IDE
 
-<Warning>
-  **Remote Development Limitations**: When using JetBrains Remote Development,
-  you must install the plugin in the remote host via `Settings > Plugin (Host)`.
-</Warning>
+Run `claude` from your IDE's integrated terminal, and all features will be active.
+
+### From external terminals
+
+Use the `/ide` command in any external terminal to connect Claude Code to your IDE and activate all features.
+
+If you want Claude to have access to the same files as your IDE, start Claude Code from the same directory as your IDE project root.
 
 ## Configuration
 
-Both integrations work with Claude Code's configuration system. To enable
-IDE-specific features:
+IDE integrations work with Claude Code's configuration system:
 
-1. Connect Claude Code to your IDE by running `claude` in the built-in terminal
-2. Run the `/config` command
-3. Set the diff tool to `auto` for automatic IDE detection
-4. Claude Code will automatically use the appropriate viewer based on your IDE
-
-If you're using an external terminal (not the IDE's built-in terminal), you can
-still connect to your IDE by using the `/ide` command after launching Claude
-Code. This allows you to benefit from IDE integration features even when running
-Claude from a separate terminal application. This works for both VS Code and
-JetBrains IDEs.
-
-<Note>
-  When using an external terminal, to ensure Claude has default access to the
-  same files as your IDE, start Claude from the same directory as your IDE
-  project root.
-</Note>
+1. Run `claude`
+2. Enter the `/config` command
+3. Adjust your preferences. Setting the diff tool to `auto` will enable automatic IDE detection
 
 ## Troubleshooting
 
@@ -91,6 +76,7 @@ JetBrains IDEs.
   * For VS Code: `code` command should be available
   * For Cursor: `cursor` command should be available
   * For Windsurf: `windsurf` command should be available
+  * For VSCodium: `codium` command should be available
   * If not installed, use `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux)
     and search for "Shell Command: Install 'code' command in PATH" (or the
     equivalent for your IDE)
@@ -105,5 +91,4 @@ JetBrains IDEs.
   installed in the remote host and not locally on the client
 
 For additional help, refer to our
-[troubleshooting guide](/en/docs/claude-code/troubleshooting) or reach out to
-support.
+[troubleshooting guide](/en/docs/claude-code/troubleshooting).

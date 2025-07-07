@@ -4,7 +4,20 @@
 
 ## Common installation issues
 
-### Linux permission issues
+### Windows installation issues: errors in WSL
+
+Currently, Claude Code does not run directly in Windows, and instead requires WSL.
+
+You might encounter the following issues in WSL:
+
+**OS/platform detection issues**: If you receive an error during installation, WSL may be using Windows `npm`. Try:
+
+* Run `npm config set os linux` before installation
+* Install with `npm install -g @anthropic-ai/claude-code --force --no-os-check` (Do NOT use `sudo`)
+
+**Node not found errors**: If you see `exec: node: not found` when running `claude`, your WSL environment may be using a Windows installation of Node.js. You can confirm this with `which npm` and `which node`, which should point to Linux paths starting with `/usr/` rather than `/mnt/c/`. To fix this, try installing Node via your Linux distribution's package manager or via [`nvm`](https://github.com/nvm-sh/nvm).
+
+### Linux installation issues: permission errors
 
 When installing Claude Code with npm, you may encounter permission errors if your npm global prefix is not user writable (eg. `/usr`, or `/usr/local`).
 
