@@ -403,8 +403,8 @@ def main():
     github_repo = os.environ.get('GITHUB_REPOSITORY', 'ericbuess/claude-code-docs')
     logger.info(f"GitHub repository: {github_repo}")
     
-    # Create docs directory
-    docs_dir = Path(__file__).parent / 'docs'
+    # Create docs directory at repository root
+    docs_dir = Path(__file__).parent.parent / 'docs'
     docs_dir.mkdir(exist_ok=True)
     logger.info(f"Output directory: {docs_dir}")
     
