@@ -683,7 +683,7 @@ Suppose you want to create reusable slash commands for your project that all tea
 
   <Step title="Use your custom command in Claude Code">
     ```
-    > /project:optimize 
+    > /optimize 
     ```
   </Step>
 </Steps>
@@ -691,8 +691,8 @@ Suppose you want to create reusable slash commands for your project that all tea
 <Tip>
   Tips:
 
-  * Command names are derived from the filename (e.g., `optimize.md` becomes `/project:optimize`)
-  * You can organize commands in subdirectories (e.g., `.claude/commands/frontend/component.md` becomes `/project:frontend:component`)
+  * Command names are derived from the filename (e.g., `optimize.md` becomes `/optimize`)
+  * You can organize commands in subdirectories (e.g., `.claude/commands/frontend/component.md` creates `/component` with "(project:frontend)" shown in the description)
   * Project commands are available to everyone who clones the repository
   * The Markdown file content becomes the prompt sent to Claude when the command is invoked
 </Tip>
@@ -716,7 +716,7 @@ Suppose you want to create flexible slash commands that can accept additional in
     In your Claude session, use the command with arguments.
 
     ```
-    > /project:fix-issue 123 
+    > /fix-issue 123 
     ```
 
     This will replace \$ARGUMENTS with "123" in the prompt.
@@ -751,7 +751,7 @@ Suppose you want to create personal slash commands that work across all your pro
 
   <Step title="Use your personal custom command">
     ```
-    > /user:security-review 
+    > /security-review 
     ```
   </Step>
 </Steps>
@@ -759,7 +759,7 @@ Suppose you want to create personal slash commands that work across all your pro
 <Tip>
   Tips:
 
-  * Personal commands are prefixed with `/user:` instead of `/project:`
+  * Personal commands show "(user)" in their description when listed with `/help`
   * Personal commands are only available to you and not shared with your team
   * Personal commands work across all your projects
   * You can use these for consistent workflows across different codebases

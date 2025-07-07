@@ -28,6 +28,11 @@
       security risks. If you encounter permission errors, see [configure Claude
       Code](/en/docs/claude-code/troubleshooting#linux-permission-issues) for recommended solutions.
     </Warning>
+
+    <Note>
+      Some users may be automatically migrated to an improved installation
+      method. Run `claude doctor` after installation to check your installation type.
+    </Note>
   </Step>
 
   <Step title="Navigate to your project">
@@ -53,6 +58,34 @@
        for enterprise deployments with your existing cloud infrastructure.
   </Step>
 </Steps>
+
+### Installation methods
+
+Claude Code offers multiple installation methods to suit different environments:
+
+#### Global npm installation
+
+* Traditional method shown in the install steps above
+* May encounter permission issues on some systems
+* See [troubleshooting guide](/en/docs/claude-code/troubleshooting#linux-permission-issues) for solutions
+
+#### Recommended: Local installation
+
+* After global install via npm, use `claude migrate-installer` to move to local
+* Avoids npm global permission issues
+* No sudo required for installation or updates
+* Some users may be automatically migrated to this method
+
+#### Native binary installation (Alpha)
+
+* Use `claude install` from an existing installation
+* or `curl -fsSL claude.ai/install.sh | bash` for a fresh install
+* Currently in alpha testing
+* Platform support: macOS, Linux, Windows (via WSL)
+
+<Note>
+  Run `claude doctor` after installation to check your installation type and version.
+</Note>
 
 ## Initialize your project
 
@@ -82,7 +115,56 @@ For first-time users, we recommend:
   </Step>
 </Steps>
 
+## Update Claude Code
+
+### Auto updates
+
+Claude Code automatically keeps itself up to date to ensure you have the latest features and security fixes.
+
+* **Update checks**: Performed on startup and periodically while running
+* **Update process**: Downloads and installs automatically in the background
+* **Notifications**: You'll see a notification when updates are installed
+* **Applying updates**: Updates take effect the next time you start Claude Code
+
+<Note>
+  Global npm installations may require manual updates if automatic updates fail due to permissions.
+</Note>
+
+**Disable auto-updates:**
+
+```bash
+# Via configuration
+claude config set autoUpdates false --global
+
+# Or via environment variable
+export DISABLE_AUTOUPDATER=1
+```
+
+### Update manually
+
+**Check for updates:**
+
+```bash
+claude update
+```
+
+**Check your current version:**
+
+```bash
+claude --version
+```
+
 ## Troubleshooting
+
+### Debug issues
+
+To check the health of your Claude Code installation and diagnose common problems:
+
+```bash
+claude doctor
+```
+
+For more troubleshooting help, see our [complete troubleshooting guide](/en/docs/claude-code/troubleshooting).
 
 ### Troubleshooting WSL installation
 

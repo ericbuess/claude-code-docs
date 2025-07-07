@@ -271,8 +271,9 @@ server.tool(
   "approval_prompt",
   'Simulate a permission check - approve if the input contains "allow", otherwise deny',
   {
-    tool_name: z.string().describe("The tool requesting permission"),
+    tool_name: z.string().describe("The name of the tool requesting permission"),
     input: z.object({}).passthrough().describe("The input for the tool"),
+    tool_use_id: z.string().optional().describe("The unique tool use request ID"),
   },
   async ({ tool_name, input }) => {
     return {

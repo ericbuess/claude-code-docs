@@ -74,18 +74,20 @@ Then press Esc until you return to the REPL. Your hook is now registered!
 Run `/hooks` again or check `~/.claude/settings.json` to see your configuration:
 
 ```json
-"hooks": {
-  "PreToolUse": [
-    {
-      "matcher": "Bash",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "jq -r '\"\\(.tool_input.command) - \\(.tool_input.description // \"No description\")\"' >> ~/.claude/bash-command-log.txt"
-        }
-      ]
-    }
-  ]
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '\"\\(.tool_input.command) - \\(.tool_input.description // \"No description\")\"' >> ~/.claude/bash-command-log.txt"
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -129,6 +131,8 @@ Hooks are organized by matchers, where each matcher can have multiple hooks:
 * **hooks**: Array of commands to execute when the pattern matches
   * `type`: Currently only `"command"` is supported
   * `command`: The bash command to execute
+  * `timeout`: (Optional) How long a command should run, in seconds, before
+    canceling that specific command.
 
 ## Hook Events
 
@@ -159,7 +163,11 @@ Runs when Claude Code sends notifications.
 
 ### Stop
 
-Runs when Claude Code has finished responding.
+Runs when the main Claude Code agent has finished responding.
+
+### SubagentStop
+
+Runs when a Claude Code subagent (Task tool call) has finished responding.
 
 ## Hook Input
 
@@ -173,6 +181,7 @@ event-specific data:
   transcript_path: string  // Path to conversation JSON
 
   // Event-specific fields
+  hook_event_name: string
   ...
 }
 ```
@@ -185,6 +194,7 @@ The exact schema for `tool_input` depends on the tool.
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "hook_event_name": "PreToolUse",
   "tool_name": "Write",
   "tool_input": {
     "file_path": "/path/to/file.txt",
@@ -201,6 +211,7 @@ The exact schema for `tool_input` and `tool_response` depends on the tool.
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "hook_event_name": "PostToolUse",
   "tool_name": "Write",
   "tool_input": {
     "file_path": "/path/to/file.txt",
@@ -219,12 +230,12 @@ The exact schema for `tool_input` and `tool_response` depends on the tool.
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
-  "message": "Task completed successfully",
-  "title": "Claude Code"
+  "hook_event_name": "Notification",
+  "message": "Task completed successfully"
 }
 ```
 
-### Stop Input
+### Stop and SubagentStop Input
 
 `stop_hook_active` is true when Claude Code is already continuing as a result of
 a stop hook. Check this value or process the transcript to prevent Claude Code
@@ -234,6 +245,7 @@ from running indefinitely.
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "hook_event_name": "Stop",
   "stop_hook_active": true
 }
 ```
@@ -255,14 +267,19 @@ Hooks communicate status through exit codes, stdout, and stderr:
 * **Other exit codes**: Non-blocking error. `stderr` is shown to the user and
   execution continues.
 
+<Warning>
+  Reminder: Claude Code does not see stdout if the exit code is 0.
+</Warning>
+
 #### Exit Code 2 Behavior
 
-| Hook Event     | Behavior                                    |
-| -------------- | ------------------------------------------- |
-| `PreToolUse`   | Blocks the tool call, shows error to Claude |
-| `PostToolUse`  | Shows error to Claude (tool already ran)    |
-| `Notification` | N/A, shows stderr to user only              |
-| `Stop`         | Blocks stoppage, shows error to Claude      |
+| Hook Event     | Behavior                                        |
+| -------------- | ----------------------------------------------- |
+| `PreToolUse`   | Blocks the tool call, shows error to Claude     |
+| `PostToolUse`  | Shows error to Claude (tool already ran)        |
+| `Notification` | N/A, shows stderr to user only                  |
+| `Stop`         | Blocks stoppage, shows error to Claude          |
+| `SubagentStop` | Blocks stoppage, shows error to Claude subagent |
 
 ### Advanced: JSON Output
 
@@ -286,7 +303,8 @@ If `continue` is false, Claude stops processing after the hooks run.
   blocks a specific tool call and provides automatic feedback to Claude.
 * For `PostToolUse`, this is different from `"decision": "block"`, which
   provides automated feedback to Claude.
-* For `Stop`, this takes precedence over any `"decision": "block"` output.
+* For `Stop` and `SubagentStop`, this takes precedence over any
+  `"decision": "block"` output.
 * In all cases, `"continue" = false` takes precedence over any
   `"decision": "block"` output.
 
@@ -323,9 +341,9 @@ to Claude.
 }
 ```
 
-#### `Stop` Decision Control
+#### `Stop`/`SubagentStop` Decision Control
 
-`Stop` hooks can control whether Claude must continue.
+`Stop` and `SubagentStop` hooks can control whether Claude must continue.
 
 * "block" prevents Claude from stopping. You must populate `reason` for Claude
   to know how to proceed.
@@ -388,17 +406,6 @@ if issues:
         print(f"• {message}", file=sys.stderr)
     # Exit code 2 blocks tool call and shows stderr to Claude
     sys.exit(2)
-```
-
-#### `Stop` Decision Control
-
-`Stop` hooks can control tool execution:
-
-```json
-{
-  "decision": "approve" | "block",
-  "reason": "Human-readable explanation"
-}
 ```
 
 ## Working with MCP Tools
@@ -535,7 +542,8 @@ This prevents malicious hook modifications from affecting your current session.
 
 ## Hook Execution Details
 
-* **Timeout**: 60-second execution limit
+* **Timeout**: 60-second execution limit by default, configurable per command.
+  * A timeout for an individual command does not affect the other commands.
 * **Parallelization**: All matching hooks run in parallel
 * **Environment**: Runs in current directory with Claude Code's environment
 * **Input**: JSON via stdin
@@ -554,6 +562,18 @@ To troubleshoot hooks:
 4. Check exit codes
 5. Review stdout and stderr format expectations
 6. Ensure proper quote escaping
+7. Use `claude --debug` to debug your hooks. The output of a successful hook
+   appears like below.
+
+```
+[DEBUG] Executing hooks for PostToolUse:Write
+[DEBUG] Getting matching hook commands for PostToolUse with query: Write
+[DEBUG] Found 1 hook matchers in settings
+[DEBUG] Matched 1 hooks for query "Write"
+[DEBUG] Found 1 hook commands to execute
+[DEBUG] Executing hook command: <Your command> with timeout 60000ms
+[DEBUG] Hook command completed with status 0: <Your stdout>
+```
 
 Progress messages appear in transcript mode (Ctrl-R) showing:
 

@@ -8,9 +8,26 @@
 
 When installing Claude Code with npm, you may encounter permission errors if your npm global prefix is not user writable (eg. `/usr`, or `/usr/local`).
 
-#### Recommended solution: Create a user-writable npm prefix
+#### Recommended solution: Migrate to local installation
 
-The safest approach is to configure npm to use a directory within your home folder:
+The simplest solution is to migrate to a local installation:
+
+```bash
+claude migrate-installer
+```
+
+This moves Claude Code to `~/.claude/local/` and sets up an alias in your shell configuration. No `sudo` is required for future updates.
+
+After migration, restart your shell, and then verify your installation:
+
+```bash
+which claude  # Should show an alias to ~/.claude/local/claude
+claude doctor # Check installation health
+```
+
+#### Alternative solution: Create a user-writable npm prefix for global installs
+
+You can configure npm to use a directory within your home folder:
 
 ```bash
 # First, save a list of your existing global packages for later migration
@@ -35,7 +52,7 @@ npm install -g @anthropic-ai/claude-code
 # Look at ~/npm-global-packages.txt and install packages you want to keep
 ```
 
-This solution is recommended because it:
+This solution:
 
 * Avoids modifying system directory permissions
 * Creates a clean, dedicated location for your global npm packages
@@ -139,10 +156,34 @@ After restoring your system, follow the recommended solution above to set up a u
 
 ## Auto-updater issues
 
-If Claude Code can't update automatically, it may be due to permission issues with your npm global prefix directory. Follow the [recommended solution](#recommended-solution-create-a-user-writable-npm-prefix) above to fix this.
+If Claude Code can't update automatically (see [Update Claude Code](/en/docs/claude-code/setup#update-claude-code) for how updates work):
 
-If you prefer to disable the auto-updater instead, you can
-set the `DISABLE_AUTOUPDATER` [environment variable](settings#environment-variables) to `1`
+### For permission errors
+
+This is typically due to permission issues with your npm global prefix directory. You have several options:
+
+1. **Migrate to local installation** (recommended): Run `claude migrate-installer` to move to a local installation that avoids permission issues entirely
+2. **Update manually**: Run `claude update` with appropriate permissions
+3. **Fix npm permissions**: Follow the [recommended solution](#recommended-solution-create-a-user-writable-npm-prefix) above (more complex)
+
+### To disable auto-updates
+
+If you prefer to control when Claude Code updates:
+
+```bash
+# Via configuration
+claude config set autoUpdates false --global
+
+# Or via environment variable
+export DISABLE_AUTOUPDATER=1
+```
+
+### To check your installation
+
+* **Current version and diagnostics**: Run `claude doctor`
+* **Check for updates**: Run `claude update`
+* **View update settings**: Run `claude config get autoUpdates --global`
+* **Verify installation location**: Run `which claude` - if this shows an alias pointing to `~/.claude/local/claude`, you're using the recommended local installation
 
 ## Permissions and authentication
 
