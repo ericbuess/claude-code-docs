@@ -46,7 +46,7 @@ jobs:
       id: commit-msg
       run: |
         # Stage changes to see what will be committed
-        git add -A docs/ docs_manifest.json
+        git add -A docs/
         
         # Get list of changed files
         CHANGED_FILES=$(git diff --name-status --cached | grep "^M" | cut -f2 | grep -E "\.md$" | sed 's/docs\///' | paste -sd ", " -)
