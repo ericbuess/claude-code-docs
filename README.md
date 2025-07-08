@@ -12,16 +12,26 @@ Local mirror of Claude Code documentation files from https://docs.anthropic.com/
 
 ## Installation
 
+### Quick Install (Command Only)
+
 Run this single command from wherever you want to store the docs:
 
 ```bash
-git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && echo "Read Claude Code docs about \$ARGUMENTS from $(pwd)/" > ~/.claude/commands/docs.md && cd .. && echo "✅ Installation complete! Use /user:docs to access documentation."
+git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && echo "$(pwd)/ contains a local update copy of all docs for Claude Code and is faster for you to access. Please use a Read task to research Claude Code docs there (rather than a web fetch) and tell me about the following: \$ARGUMENTS" > ~/.claude/commands/docs.md && cd .. && echo "✅ Installation complete! Use /user:docs to access documentation."
 ```
 
-That's it! The command will:
+### Full Install (With Auto-Updates)
+
+For automatic git pull before reading docs, also run:
+
+```bash
+DOCS_PATH="$(cd claude-code-docs && pwd)" && jq --arg path "$DOCS_PATH" '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[] | select(.matcher != "Read")] + [{"matcher": "Read", "hooks": [{"type": "command", "command": ("if [[ $(jq -r .tool_input.file_path 2>/dev/null) == *" + $path + "/* ]]; then cd " + $path + " && git pull --quiet; fi")}]}]' ~/.claude/settings.json > ~/.claude/settings.json.tmp && mv ~/.claude/settings.json.tmp ~/.claude/settings.json 2>/dev/null || echo '{"hooks":{"PreToolUse":[{"matcher":"Read","hooks":[{"type":"command","command":"if [[ $(jq -r .tool_input.file_path 2>/dev/null) == *'$DOCS_PATH'/* ]]; then cd '$DOCS_PATH' && git pull --quiet; fi"}]}]}}' > ~/.claude/settings.json && echo "✅ Auto-update hook installed!"
+```
+
+This will:
 1. Clone the repository
-2. Create the slash command with the correct path automatically
-3. Return to your original directory
+2. Create the slash command with the correct path
+3. Add a hook to automatically pull updates when reading docs
 
 ## Usage
 
@@ -47,16 +57,38 @@ Claude reads from your local docs instantly and can search across all documentat
 
 ## Keeping Docs Updated
 
-The GitHub repository automatically updates every 3 hours. To update your local copy manually:
+The GitHub repository automatically updates every 3 hours. To keep your local copy in sync:
 
+### Automatic Updates (Recommended)
+
+Add this hook to your `~/.claude/settings.json` to automatically pull updates before reading docs:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ $(jq -r '.tool_input.file_path' 2>/dev/null) == */claude-code-docs/* ]]; then cd /path/to/claude-code-docs && git pull --quiet; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Replace `/path/to/claude-code-docs` with your actual path. This hook runs `git pull` automatically whenever Claude reads from the docs directory.
+
+### Manual Updates
+
+To update manually:
 ```bash
 cd /path/to/claude-code-docs && git pull
 ```
-
-However, manual updates shouldn't be needed because Claude automatically runs `git pull` before reading the docs. This behavior is configured in [CLAUDE.md](./CLAUDE.md) which tells Claude to:
-
-> 1. Always run: git pull --quiet (to get latest docs)
-> 2. Then read from docs/ directory
 
 ## License
 
