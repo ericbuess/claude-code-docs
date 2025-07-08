@@ -15,23 +15,14 @@ Local mirror of Claude Code documentation files from https://docs.anthropic.com/
 Run this single command from wherever you want to store the docs:
 
 ```bash
-git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && DOCS_PATH="$(pwd)" && mkdir -p ~/.claude/commands && echo "$DOCS_PATH/ contains a local update copy of all docs for Claude Code and is faster for you to access. Please use a Read task to research Claude Code docs there (rather than a web fetch) and tell me about the following: \$ARGUMENTS" > ~/.claude/commands/docs.md && cd .. && echo "✅ Installation complete!" && echo "   📁 Docs location: $DOCS_PATH" && echo "   💬 Command: /user:docs" && echo "" && echo "To enable auto-updates, run:" && echo "~/claude-code-docs/setup-hook.sh"
+git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && DOCS_PATH="$(pwd)" && mkdir -p ~/.claude/commands && echo "$DOCS_PATH/ contains a local update copy of all docs for Claude Code and is faster for you to access. Please use a Read task to research Claude Code docs there (rather than a web fetch) and tell me about the following: \$ARGUMENTS" > ~/.claude/commands/docs.md && ./setup-hook.sh && cd .. && echo "✅ Installation complete with auto-updates!" && echo "   📁 Docs: $DOCS_PATH" && echo "   💬 Use: /user:docs"
 ```
 
 This single command will:
 1. Clone the repository
-2. Create the `/user:docs` slash command with the correct path
-3. Return to your original directory
-
-### Enable Auto-Updates (Optional)
-
-After installation, run the setup script to enable automatic git pull:
-
-```bash
-~/claude-code-docs/setup-hook.sh
-```
-
-This adds a hook that automatically updates the docs whenever Claude reads from them.
+2. Create the `/user:docs` slash command
+3. Set up automatic git pull when reading docs
+4. Return to your original directory
 
 ## Usage
 
