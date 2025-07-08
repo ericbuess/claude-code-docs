@@ -15,7 +15,7 @@ Local mirror of Claude Code documentation files from https://docs.anthropic.com/
 Run this single command from wherever you want to store the docs:
 
 ```bash
-git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && DOCS_PATH=$(pwd) && mkdir -p ~/.claude/commands && echo "$DOCS_PATH/ contains a local update copy of all docs for Claude Code and is faster for you to access. Please use a Read task to research Claude Code docs there (rather than a web fetch) and tell me about the following: \$ARGUMENTS" > ~/.claude/commands/docs.md && bash setup-hook.sh && cd .. && echo "Installation complete with auto-updates!" && echo "Docs location: $DOCS_PATH" && echo "Command: /user:docs"
+git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && DOCS_PATH=$(pwd) && mkdir -p ~/.claude/commands && printf '%s\n' "$DOCS_PATH/ contains a local update copy of all docs for Claude Code and is faster for you to access. Please use a Read task to research Claude Code docs there (rather than a web fetch) and tell me about the following: \$ARGUMENTS" > ~/.claude/commands/docs.md && bash setup-hook.sh && cd .. && echo "Installation complete!"
 ```
 
 This single command will:
