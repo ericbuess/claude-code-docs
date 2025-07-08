@@ -12,26 +12,17 @@ Local mirror of Claude Code documentation files from https://docs.anthropic.com/
 
 ## Installation
 
-### Quick Install (Command Only)
-
 Run this single command from wherever you want to store the docs:
 
 ```bash
-git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && echo "$(pwd)/ contains a local update copy of all docs for Claude Code and is faster for you to access. Please use a Read task to research Claude Code docs there (rather than a web fetch) and tell me about the following: \$ARGUMENTS" > ~/.claude/commands/docs.md && cd .. && echo "✅ Installation complete! Use /user:docs to access documentation."
+git clone https://github.com/ericbuess/claude-code-docs.git && cd claude-code-docs && DOCS_PATH="$(pwd)" && mkdir -p ~/.claude/commands && echo "$DOCS_PATH/ contains a local update copy of all docs for Claude Code and is faster for you to access. Please use a Read task to research Claude Code docs there (rather than a web fetch) and tell me about the following: \$ARGUMENTS" > ~/.claude/commands/docs.md && ([ -f ~/.claude/settings.json ] && jq --arg path "$DOCS_PATH" '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[] | select(.matcher != "Read")] + [{"matcher": "Read", "hooks": [{"type": "command", "command": ("if [[ $(jq -r .tool_input.file_path 2>/dev/null) == *" + $path + "/* ]]; then cd " + $path + " && git pull --quiet; fi")}]}]' ~/.claude/settings.json > ~/.claude/settings.json.tmp && mv ~/.claude/settings.json.tmp ~/.claude/settings.json || echo '{"hooks":{"PreToolUse":[{"matcher":"Read","hooks":[{"type":"command","command":"if [[ $(jq -r .tool_input.file_path 2>/dev/null) == *'"$DOCS_PATH"'/* ]]; then cd '"$DOCS_PATH"' && git pull --quiet; fi"}]}]}}' > ~/.claude/settings.json) && cd .. && echo -e "✅ Installation complete!\n   📁 Docs location: $DOCS_PATH\n   💬 Command: /user:docs\n   🔄 Auto-updates: Enabled"
 ```
 
-### Full Install (With Auto-Updates)
-
-For automatic git pull before reading docs, also run:
-
-```bash
-DOCS_PATH="$(cd claude-code-docs && pwd)" && jq --arg path "$DOCS_PATH" '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[] | select(.matcher != "Read")] + [{"matcher": "Read", "hooks": [{"type": "command", "command": ("if [[ $(jq -r .tool_input.file_path 2>/dev/null) == *" + $path + "/* ]]; then cd " + $path + " && git pull --quiet; fi")}]}]' ~/.claude/settings.json > ~/.claude/settings.json.tmp && mv ~/.claude/settings.json.tmp ~/.claude/settings.json 2>/dev/null || echo '{"hooks":{"PreToolUse":[{"matcher":"Read","hooks":[{"type":"command","command":"if [[ $(jq -r .tool_input.file_path 2>/dev/null) == *'$DOCS_PATH'/* ]]; then cd '$DOCS_PATH' && git pull --quiet; fi"}]}]}}' > ~/.claude/settings.json && echo "✅ Auto-update hook installed!"
-```
-
-This will:
+This single command will:
 1. Clone the repository
-2. Create the slash command with the correct path
-3. Add a hook to automatically pull updates when reading docs
+2. Create the `/user:docs` slash command with the correct path
+3. Add a hook to automatically `git pull` when reading docs
+4. Return to your original directory
 
 ## Usage
 
