@@ -15,14 +15,13 @@ Local mirror of Claude Code documentation files from https://docs.anthropic.com/
 Run this single command from wherever you want to store the docs:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/quick-install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash
 ```
 
-This single command will:
+This will:
 1. Clone the repository
 2. Create the `/user:docs` slash command
 3. Set up automatic git pull when reading docs
-4. Return to your original directory
 
 ## Usage
 
@@ -46,40 +45,12 @@ Now you can use the slash command:
 
 Claude reads from your local docs instantly and can search across all documentation to answer complex questions!
 
-## Keeping Docs Updated
+## How Updates Work
 
-The GitHub repository automatically updates every 3 hours. To keep your local copy in sync:
-
-### Automatic Updates (Recommended)
-
-Add this hook to your `~/.claude/settings.json` to automatically pull updates before reading docs:
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Read",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [[ $(jq -r '.tool_input.file_path' 2>/dev/null) == */claude-code-docs/* ]]; then cd /path/to/claude-code-docs && git pull --quiet; fi"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-Replace `/path/to/claude-code-docs` with your actual path. This hook runs `git pull` automatically whenever Claude reads from the docs directory.
-
-### Manual Updates
-
-To update manually:
-```bash
-cd /path/to/claude-code-docs && git pull
-```
+The docs automatically stay up-to-date:
+- GitHub Actions updates the repository every 3 hours
+- The installer sets up a hook that pulls updates before reading docs
+- No manual updates needed!
 
 ## License
 
