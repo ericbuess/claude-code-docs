@@ -71,11 +71,14 @@ The `-t` flag shows:
 
 The docs automatically stay up-to-date:
 - GitHub Actions updates the repository every 3 hours
-- The installer sets up a smart hook that pulls updates at most once every 3 hours
-- The hook tracks when it last pulled to avoid unnecessary git operations
+- The hook compares GitHub's timestamp with your local sync time
+- If GitHub has newer content, it automatically syncs before reading
+- You'll see "🔄 Updating docs to latest version..." when this happens
 - No manual updates needed!
 
-**Performance**: By default, `/user:docs` reads instantly with no checks. Use `/user:docs -t` when you want to verify documentation freshness or trigger an update.
+**Performance**: 
+- `/user:docs` reads instantly and the hook ensures content is always current
+- `/user:docs -t` shows you exact timestamps of GitHub updates vs local sync
 
 ## License
 

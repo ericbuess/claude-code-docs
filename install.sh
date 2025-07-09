@@ -34,8 +34,9 @@ Default behavior (no -t flag):
 With -t flag:
 1. Read $DOCS_PATH/docs/docs_manifest.json (if it fails, suggest re-running install.sh)
 2. Calculate and show when GitHub last updated and when local docs last synced
-3. If been 3+ hours since last sync, the hook will trigger a git pull
-4. Then read the requested topic (if provided)
+3. Then read the requested topic (if provided)
+
+Note: The hook automatically keeps docs up-to-date by checking if GitHub has newer content before each read. You'll see "🔄 Updating docs to latest version..." when it syncs.
 
 Error handling:
 - If any files are missing or commands fail, show: "❌ Error accessing docs. Try re-running: curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash"
@@ -79,9 +80,9 @@ IMPORTANT: This freshness check only happens when using /user:docs command. If c
 User query: \$ARGUMENTS
 EOF
 
-# Setup hook for auto-updates (pulls at most once every 3 hours)
-# The hook checks a timestamp file and only pulls if 3 hours have passed
-HOOK_COMMAND="if [[ \$(jq -r .tool_input.file_path 2>/dev/null) == *$DOCS_PATH/* ]]; then LAST_PULL=\"$DOCS_PATH/.last_pull\"; NOW=\$(date +%s); if [[ -f \"\$LAST_PULL\" ]]; then LAST=\$(cat \"\$LAST_PULL\"); DIFF=\$((NOW - LAST)); if [[ \$DIFF -gt 10800 ]]; then cd $DOCS_PATH && git pull --quiet && echo \$NOW > \"\$LAST_PULL\"; fi; else cd $DOCS_PATH && git pull --quiet && echo \$NOW > \"\$LAST_PULL\"; fi; fi"
+# Setup hook for auto-updates (checks if GitHub has newer content)
+# The hook compares GitHub's last update with local sync time and pulls if outdated
+HOOK_COMMAND="if [[ \$(jq -r .tool_input.file_path 2>/dev/null) == *$DOCS_PATH/* ]]; then cd $DOCS_PATH; LAST_PULL=\".last_pull\"; NOW=\$(date +%s); GITHUB_TS=\$(jq -r .last_updated docs/docs_manifest.json 2>/dev/null | cut -d. -f1); GITHUB_UNIX=\$(date -j -u -f \"%Y-%m-%dT%H:%M:%S\" \"\$GITHUB_TS\" \"+%s\" 2>/dev/null || echo 0); if [[ -f \"\$LAST_PULL\" ]]; then LAST=\$(cat \"\$LAST_PULL\"); if [[ \$GITHUB_UNIX -gt \$LAST ]]; then echo \"🔄 Updating docs to latest version...\" >&2; git pull --quiet && echo \$NOW > \"\$LAST_PULL\"; fi; else echo \"🔄 Syncing docs for the first time...\" >&2; git pull --quiet && echo \$NOW > \"\$LAST_PULL\"; fi; fi"
 
 if [ -f ~/.claude/settings.json ]; then
     # Update existing settings.json
