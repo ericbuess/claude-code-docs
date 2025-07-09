@@ -25,31 +25,47 @@ This will:
 
 ## Usage
 
-Now you can use the slash command:
+The `/user:docs` command provides instant access to documentation with optional freshness checking.
 
-### Basic usage (instant, no checks):
-```
-/user:docs hooks        # Read hooks documentation instantly
-/user:docs mcp          # Read MCP documentation instantly  
-/user:docs memory       # Read memory documentation instantly
+### Default: Lightning-fast access (no checks)
+```bash
+/user:docs hooks        # Instantly read hooks documentation
+/user:docs mcp          # Instantly read MCP documentation  
+/user:docs memory       # Instantly read memory documentation
 ```
 
-### Check documentation freshness:
-```
+You'll see: `📚 Reading from local docs (run /user:docs -t to check freshness)`
+
+### Optional: Check documentation freshness with -t flag
+```bash
 /user:docs -t           # Show when docs were last updated
 /user:docs -t hooks     # Check freshness, then read hooks docs
+/user:docs -t mcp       # Check freshness, then read MCP docs
 ```
 
-### Creative examples:
-```
+The `-t` flag shows:
+- When GitHub last updated the docs
+- When your local copy last synced
+- Triggers a sync if it's been 3+ hours
+
+### Creative usage examples
+```bash
+# Natural language queries work great
 /user:docs what environment variables exist and how do I use them?
-/user:docs recommend some useful slash commands based on my usage so far
-/user:docs -t please explain all recent changes to the docs
-/user:docs how do I trigger custom commands on demand?
-/user:docs search all docs and find unique ways to use Claude Code CLI
+/user:docs explain the differences between hooks and MCP
+
+# Check for recent changes
+/user:docs -t what's new in the latest documentation?
+
+# Search across all docs
+/user:docs find all mentions of authentication
+/user:docs how do I customize Claude Code's behavior?
 ```
 
-Claude reads from your local docs instantly and can search across all documentation to answer complex questions!
+### Performance notes
+- **Default mode**: Zero overhead - reads docs instantly
+- **With -t flag**: Checks timestamps and syncs if needed (only every 3 hours)
+- **Error handling**: If docs are missing, you'll see instructions to reinstall
 
 ## How Updates Work
 
