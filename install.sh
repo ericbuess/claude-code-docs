@@ -1,21 +1,20 @@
 #!/bin/bash
 set -e
 
-# Set up in a central location
-INSTALL_DIR="$HOME/.claude-code-docs"
-
-# Clone or update the central installation
-if [ -d "$INSTALL_DIR" ]; then
-    echo "Updating existing installation..."
-    cd "$INSTALL_DIR"
-    git pull --quiet
+# Get the docs path
+if [ -f "docs/docs_manifest.json" ]; then
+    # We're already in the claude-code-docs directory
+    DOCS_PATH=$(pwd)
+elif [ -d "claude-code-docs" ]; then
+    # The directory already exists
+    cd claude-code-docs
+    DOCS_PATH=$(pwd)
 else
-    echo "Installing to $INSTALL_DIR..."
-    git clone https://github.com/ericbuess/claude-code-docs.git "$INSTALL_DIR"
-    cd "$INSTALL_DIR"
+    # Clone it
+    git clone https://github.com/ericbuess/claude-code-docs.git
+    cd claude-code-docs
+    DOCS_PATH=$(pwd)
 fi
-
-DOCS_PATH="$INSTALL_DIR"
 
 # Create command
 mkdir -p ~/.claude/commands
