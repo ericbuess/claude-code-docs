@@ -21,9 +21,16 @@ mkdir -p ~/.claude/commands
 cat > ~/.claude/commands/docs.md << EOF
 $DOCS_PATH/docs/ contains a local updated copy of all Claude Code documentation.
 
-First, check when the docs were last updated:
-1. Read $DOCS_PATH/docs/docs_manifest.json and report the "last_updated" field (when GitHub Actions last fetched docs)
-2. If $DOCS_PATH/.last_pull exists, read it and convert the timestamp to show when you last checked for updates
+First, report the update status:
+1. Read $DOCS_PATH/docs/docs_manifest.json and report when GitHub Actions last updated the documentation (the "last_updated" field). GitHub Actions updates the docs every 3 hours.
+2. If $DOCS_PATH/.last_pull exists, read it and convert the timestamp to show when your local copy last synchronized with GitHub. Your local copy automatically syncs at most once every 3 hours when you use this command.
+3. If .last_pull doesn't exist, mention this is the first sync.
+
+Format the timestamps clearly, e.g.:
+📅 Documentation last updated on GitHub: 2025-01-09 03:26:34 (updates every 3 hours)
+📅 Your local copy last synced: 2025-01-09 00:06:28 (syncs automatically when needed)
+   -or if first sync-
+📅 Your local copy: First sync today
 
 Then answer the user's question by reading from the docs/ subdirectory (e.g. $DOCS_PATH/docs/hooks.md).
 
