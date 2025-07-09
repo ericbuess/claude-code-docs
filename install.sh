@@ -184,4 +184,6 @@ echo "🔄 Auto-updates: Enabled - syncs automatically when GitHub has newer con
 echo ""
 echo "Available topics: overview, quickstart, memory, hooks, mcp, settings, etc."
 echo ""
+echo "⚠️  Note: Restart Claude Code for auto-updates to take effect"
+echo ""
 echo "Note: This installer is macOS-only. For other platforms, please contribute a tested version."
