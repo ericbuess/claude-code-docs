@@ -49,7 +49,8 @@ Claude reads from your local docs instantly and can search across all documentat
 
 The docs automatically stay up-to-date:
 - GitHub Actions updates the repository every 3 hours
-- The installer sets up a hook that pulls updates before reading docs
+- The installer sets up a smart hook that pulls updates at most once every 3 hours
+- The hook tracks when it last pulled to avoid unnecessary git operations
 - No manual updates needed!
 
 ## License
