@@ -11,5 +11,7 @@ If the user has configured the PreToolUse hook as described in README.md, git pu
 ## Important Instructions
 
 When working with this repo:
-1. Read from docs/ directory to answer questions
-2. IMPORTANT: Only read files from the docs/ directory to answer questions about Claude Code
+1. ALWAYS read from the docs/ subdirectory, never from the root directory
+2. The documentation files are in docs/*.md (e.g., docs/hooks.md, docs/settings.md)
+3. IMPORTANT: Only read files from the docs/ directory to answer questions about Claude Code
+4. Do NOT read CLAUDE.md, README.md, or install.sh when answering user questions

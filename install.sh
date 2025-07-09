@@ -1,24 +1,25 @@
 #!/bin/bash
 set -e
 
-# Get the docs path
-if [ -f "docs/docs_manifest.json" ]; then
-    # We're already in the claude-code-docs directory
-    DOCS_PATH=$(pwd)
-elif [ -d "claude-code-docs" ]; then
-    # The directory already exists
-    cd claude-code-docs
-    DOCS_PATH=$(pwd)
+# Set up in a central location
+INSTALL_DIR="$HOME/.claude-code-docs"
+
+# Clone or update the central installation
+if [ -d "$INSTALL_DIR" ]; then
+    echo "Updating existing installation..."
+    cd "$INSTALL_DIR"
+    git pull --quiet
 else
-    # Clone it
-    git clone https://github.com/ericbuess/claude-code-docs.git
-    cd claude-code-docs
-    DOCS_PATH=$(pwd)
+    echo "Installing to $INSTALL_DIR..."
+    git clone https://github.com/ericbuess/claude-code-docs.git "$INSTALL_DIR"
+    cd "$INSTALL_DIR"
 fi
+
+DOCS_PATH="$INSTALL_DIR"
 
 # Create command
 mkdir -p ~/.claude/commands
-echo "$DOCS_PATH/ contains a local updated copy of all docs for Claude Code and is faster for you to access. Please use a Read task to research Claude Code docs there (rather than a web fetch) and tell me about the following: \$ARGUMENTS" > ~/.claude/commands/docs.md
+echo "$DOCS_PATH/docs/ contains a local updated copy of all Claude Code documentation and is faster for you to access. IMPORTANT: Read from the docs/ subdirectory (e.g. $DOCS_PATH/docs/hooks.md). Please use a Read task to research Claude Code docs there (rather than a web fetch) and tell me about the following: \$ARGUMENTS" > ~/.claude/commands/docs.md
 
 # Setup hook for auto-updates (pulls at most once every 3 hours)
 # The hook checks a timestamp file and only pulls if 3 hours have passed
