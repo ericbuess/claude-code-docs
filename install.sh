@@ -26,19 +26,24 @@ First, check the documentation status:
 2. Check if $DOCS_PATH/.last_pull exists
 3. If it doesn't exist OR if it's been more than 3 hours since last check, say:
    "Since this is the first time checking docs from this directory in a while, let me verify the documentation status..."
-4. Convert the UTC timestamp to local time. First extract just the datetime part (before the decimal), then:
-   TZ=\$LOCALTZ date -j -u -f "%Y-%m-%dT%H:%M:%S" "<timestamp>" "+%Y-%m-%d %I:%M %p %Z"
-   where \$LOCALTZ is the user's timezone (e.g., America/Chicago for CDT)
+4. Convert the UTC timestamp to local time:
+   - Extract datetime before decimal: "2025-07-09T09:03:16.797180" → "2025-07-09T09:03:16"
+   - Convert UTC to unix: date -j -u -f "%Y-%m-%dT%H:%M:%S" "2025-07-09T09:03:16" "+%s"
+   - Convert unix to local: date -r <unix_timestamp> "+%Y-%m-%d %I:%M %p %Z"
 5. If .last_pull exists, convert using: date -r <timestamp> "+%Y-%m-%d %I:%M %p %Z"
 6. If .last_pull doesn't exist, note this is the first sync
 
 GitHub Actions updates the docs every 3 hours. Your local copy automatically syncs at most once every 3 hours when you use this command.
 
 IMPORTANT: If less than 3 hours have passed since the last check (based on .last_pull timestamp):
-- Still show when GitHub last updated the docs (convert the manifest timestamp to local time)
-- Show when you last checked locally
-- If GitHub's last update is more than 3 hours old, add a note like "(normally updates every 3 hours)"
 - Skip the git pull since it was done recently
+- Convert GitHub's timestamp from manifest to local time:
+  1. Extract datetime before decimal: "2025-07-09T09:03:16.797180" → "2025-07-09T09:03:16"
+  2. Convert to unix: date -j -u -f "%Y-%m-%dT%H:%M:%S" "<datetime>" "+%s"
+  3. Convert to local: date -r <unix_timestamp> "+%Y-%m-%d %I:%M %p %Z"
+- Calculate how long ago GitHub updated: current_time - github_unix_time
+- If >3 hours (10800 seconds) old, show: "X hours ago - normally updates every 3 hours"
+- Show local check as "X minutes/hours ago"
 
 Examples:
 
