@@ -21,15 +21,15 @@ mkdir -p ~/.claude/commands
 cat > ~/.claude/commands/docs.md << EOF
 $DOCS_PATH/docs/ contains a local updated copy of all Claude Code documentation.
 
-First, check the documentation status:
+First, check the documentation status efficiently:
 1. Read $DOCS_PATH/docs/docs_manifest.json to get the "last_updated" field
-2. Check if $DOCS_PATH/.last_pull exists
-3. Calculate how long ago each update was:
-   - For GitHub: Convert manifest UTC timestamp to unix and compare with current time
-   - For local pull: Compare .last_pull timestamp with current time
-4. If local pull was >3 hours ago OR .last_pull doesn't exist:
-   - Say "Since this is the first time checking docs from this directory in a while, let me verify the documentation status..."
-   - The hook will trigger a git pull
+2. After extracting the timestamp (e.g., "2025-07-09T09:03:16"), run ONE bash command:
+   
+   bash -c 'NOW=\$(date +%s); GITHUB=\$(date -j -u -f "%Y-%m-%dT%H:%M:%S" "TIMESTAMP_HERE" "+%s"); echo "GitHub updated \$(( (NOW-GITHUB)/3600 )) hours ago"; if [ -f "$DOCS_PATH/.last_pull" ]; then LOCAL=\$(cat "$DOCS_PATH/.last_pull"); echo "Local synced \$(( (NOW-LOCAL)/60 )) minutes ago"; else echo "Local never synced"; fi'
+   
+3. Based on the output:
+   - If GitHub >3 hours old, add "(normally updates every 3 hours)"
+   - If local >180 minutes old OR never synced, show the "first time checking" message
 
 GitHub Actions updates the docs every 3 hours. Your local copy automatically syncs at most once every 3 hours when you use this command.
 
