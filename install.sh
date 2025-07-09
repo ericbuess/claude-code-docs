@@ -24,40 +24,34 @@ $DOCS_PATH/docs/ contains a local updated copy of all Claude Code documentation.
 First, check the documentation status:
 1. Read $DOCS_PATH/docs/docs_manifest.json to get the "last_updated" field
 2. Check if $DOCS_PATH/.last_pull exists
-3. If it doesn't exist OR if it's been more than 3 hours since last check, say:
-   "Since this is the first time checking docs from this directory in a while, let me verify the documentation status..."
-4. Convert the UTC timestamp to local time:
-   - Extract datetime before decimal: "2025-07-09T09:03:16.797180" → "2025-07-09T09:03:16"
-   - Convert UTC to unix: date -j -u -f "%Y-%m-%dT%H:%M:%S" "2025-07-09T09:03:16" "+%s"
-   - Convert unix to local: date -r <unix_timestamp> "+%Y-%m-%d %I:%M %p %Z"
-5. If .last_pull exists, convert using: date -r <timestamp> "+%Y-%m-%d %I:%M %p %Z"
-6. If .last_pull doesn't exist, note this is the first sync
+3. Calculate how long ago each update was:
+   - For GitHub: Convert manifest UTC timestamp to unix and compare with current time
+   - For local pull: Compare .last_pull timestamp with current time
+4. If local pull was >3 hours ago OR .last_pull doesn't exist:
+   - Say "Since this is the first time checking docs from this directory in a while, let me verify the documentation status..."
+   - The hook will trigger a git pull
 
 GitHub Actions updates the docs every 3 hours. Your local copy automatically syncs at most once every 3 hours when you use this command.
 
-IMPORTANT: If less than 3 hours have passed since the last check (based on .last_pull timestamp):
-- Skip the git pull since it was done recently
-- Convert GitHub's timestamp from manifest to local time:
-  1. Extract datetime before decimal: "2025-07-09T09:03:16.797180" → "2025-07-09T09:03:16"
-  2. Convert to unix: date -j -u -f "%Y-%m-%dT%H:%M:%S" "<datetime>" "+%s"
-  3. Convert to local: date -r <unix_timestamp> "+%Y-%m-%d %I:%M %p %Z"
-- Calculate how long ago GitHub updated: current_time - github_unix_time
-- If >3 hours (10800 seconds) old, show: "X hours ago - normally updates every 3 hours"
-- Show local check as "X minutes/hours ago"
+IMPORTANT: Show relative times only (no timezone conversions needed):
+- GitHub last updated: Calculate hours/minutes since manifest timestamp
+- Local docs last synced: Calculate hours/minutes since .last_pull timestamp
+- If GitHub hasn't updated in >3 hours, add note "(normally updates every 3 hours)"
+- Be clear about wording: "local docs last synced" not "last checked"
 
 Examples:
 
-When checking for the first time or after 3+ hours:
-📅 Documentation last updated on GitHub: 2025-01-09 6:03 AM CDT (updates every 3 hours)
-📅 Your local copy last synced: 2025-01-09 6:25 AM CDT (syncs automatically when needed)
+When everything is fresh:
+📅 Documentation last updated on GitHub: 2 hours ago
+📅 Your local docs last synced: 25 minutes ago
 
-When checked recently (within 3 hours):
-📅 Documentation last updated on GitHub: 2025-01-08 9:03 PM CDT (20 hours ago - normally updates every 3 hours)
-📅 Your local copy last checked: 16 minutes ago
+When GitHub hasn't updated recently:
+📅 Documentation last updated on GitHub: 5 hours ago (normally updates every 3 hours)
+📅 Your local docs last synced: 25 minutes ago
 
 When it's the first sync:
-📅 Documentation last updated on GitHub: 2025-01-09 6:03 AM CDT (updates every 3 hours)
-📅 Your local copy: First sync today
+📅 Documentation last updated on GitHub: 2 hours ago
+📅 Your local docs: Syncing for the first time...
 
 Then answer the user's question by reading from the docs/ subdirectory (e.g. $DOCS_PATH/docs/hooks.md).
 
