@@ -26,9 +26,14 @@ First, report the update status:
 2. If $DOCS_PATH/.last_pull exists, read it and convert the timestamp to show when your local copy last synchronized with GitHub. Your local copy automatically syncs at most once every 3 hours when you use this command.
 3. If .last_pull doesn't exist, mention this is the first sync.
 
-Format the timestamps clearly, e.g.:
-📅 Documentation last updated on GitHub: 2025-01-09 03:26:34 (updates every 3 hours)
-📅 Your local copy last synced: 2025-01-09 00:06:28 (syncs automatically when needed)
+Format the timestamps in the user's local time:
+- For the GitHub timestamp from docs_manifest.json (which is UTC), convert it to local time
+- For the .last_pull timestamp (Unix epoch), use date -r to convert to local time
+- Include timezone info for clarity
+
+Examples:
+📅 Documentation last updated on GitHub: 2025-01-09 6:03 AM PST (updates every 3 hours)
+📅 Your local copy last synced: 2025-01-09 12:42 AM PST (syncs automatically when needed)
    -or if first sync-
 📅 Your local copy: First sync today
 
