@@ -18,7 +18,19 @@ fi
 
 # Create command
 mkdir -p ~/.claude/commands
-echo "$DOCS_PATH/docs/ contains a local updated copy of all Claude Code documentation and is faster for you to access. IMPORTANT: Read from the docs/ subdirectory (e.g. $DOCS_PATH/docs/hooks.md). Please use a Read task to research Claude Code docs there (rather than a web fetch) and tell me about the following: \$ARGUMENTS" > ~/.claude/commands/docs.md
+cat > ~/.claude/commands/docs.md << EOF
+$DOCS_PATH/docs/ contains a local updated copy of all Claude Code documentation.
+
+First, check when the docs were last updated:
+1. Read $DOCS_PATH/docs/docs_manifest.json and report the "last_updated" field (when GitHub Actions last fetched docs)
+2. If $DOCS_PATH/.last_pull exists, read it and convert the timestamp to show when you last checked for updates
+
+Then answer the user's question by reading from the docs/ subdirectory (e.g. $DOCS_PATH/docs/hooks.md).
+
+Available docs: overview, quickstart, setup, memory, common-workflows, ide-integrations, mcp, github-actions, sdk, troubleshooting, security, settings, monitoring-usage, costs, hooks
+
+User query: \$ARGUMENTS
+EOF
 
 # Setup hook for auto-updates (pulls at most once every 3 hours)
 # The hook checks a timestamp file and only pulls if 3 hours have passed
