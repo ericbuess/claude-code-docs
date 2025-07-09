@@ -21,19 +21,18 @@ mkdir -p ~/.claude/commands
 cat > ~/.claude/commands/docs.md << EOF
 $DOCS_PATH/docs/ contains a local updated copy of all Claude Code documentation.
 
-First, report the update status:
-1. Read $DOCS_PATH/docs/docs_manifest.json and report when GitHub Actions last updated the documentation (the "last_updated" field). GitHub Actions updates the docs every 3 hours.
-2. If $DOCS_PATH/.last_pull exists, read it and convert the timestamp to show when your local copy last synchronized with GitHub. Your local copy automatically syncs at most once every 3 hours when you use this command.
-3. If .last_pull doesn't exist, mention this is the first sync.
+First, check the update status:
+1. Read $DOCS_PATH/docs/docs_manifest.json - the "last_updated" field shows when GitHub Actions last updated docs (UTC time)
+2. Check if $DOCS_PATH/.last_pull exists - it contains a Unix timestamp of the last sync
 
-Format the timestamps in the user's local time:
-- For the GitHub timestamp from docs_manifest.json (which is UTC), convert it to local time
-- For the .last_pull timestamp (Unix epoch), use date -r to convert to local time
-- Include timezone info for clarity
+Then report the status clearly (you can do the time conversions internally without showing bash commands):
+- Convert the UTC timestamp from docs_manifest.json to local time
+- Convert the Unix timestamp from .last_pull to local time  
+- If .last_pull doesn't exist, this is the first sync
 
-Examples:
-📅 Documentation last updated on GitHub: 2025-01-09 6:03 AM PST (updates every 3 hours)
-📅 Your local copy last synced: 2025-01-09 12:42 AM PST (syncs automatically when needed)
+Example output:
+📅 Documentation last updated on GitHub: 2025-01-09 4:03 AM CDT (updates every 3 hours)
+📅 Your local copy last synced: 2025-01-09 6:09 AM CDT (syncs automatically when needed)
    -or if first sync-
 📅 Your local copy: First sync today
 
