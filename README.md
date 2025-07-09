@@ -25,7 +25,7 @@ This tool requires the following to be installed:
 Run this single command from wherever you want to store the docs:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/dev/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash
 ```
 
 This will:
