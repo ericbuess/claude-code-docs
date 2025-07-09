@@ -10,12 +10,22 @@ Local mirror of Claude Code documentation files from https://docs.anthropic.com/
 - **Works offline** - No internet required after cloning
 - **Always up-to-date** - Auto-updates every 3 hours via GitHub Actions
 
+## Prerequisites
+
+This tool requires the following to be installed:
+- **git** - For cloning and updating the repository
+- **jq** - For JSON processing in the auto-update hook
+- **curl** - For downloading the installation script
+- **Claude Code** - Obviously :)
+
+**Platform Support**: Currently macOS only. Linux support contributions welcome!
+
 ## Installation
 
 Run this single command from wherever you want to store the docs:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/dev/install.sh | bash
 ```
 
 This will:
@@ -79,6 +89,58 @@ The docs automatically stay up-to-date:
 **Performance**: 
 - `/user:docs` reads instantly and the hook ensures content is always current
 - `/user:docs -t` shows you exact timestamps of GitHub updates vs local sync
+
+## Troubleshooting
+
+### Command not found
+If `/user:docs` returns "command not found":
+1. Check if the command file exists: `ls ~/.claude/commands/docs.md`
+2. Restart Claude Code to reload commands
+3. Re-run the installation script
+
+### Documentation not updating
+If documentation seems outdated:
+1. Run `/user:docs -t` to check sync status and force an update
+2. Manually update: `cd /path/to/claude-code-docs && git pull`
+3. Check if GitHub Actions are running: [View Actions](https://github.com/ericbuess/claude-code-docs/actions)
+
+### Installation errors
+- **"git/jq/curl not found"**: Install the missing tool first
+- **"Failed to clone repository"**: Check your internet connection
+- **"Failed to update settings.json"**: Check file permissions on `~/.claude/settings.json`
+
+### Hook not working
+If docs aren't auto-updating:
+1. Check your Claude settings: `cat ~/.claude/settings.json | jq .hooks`
+2. Look for error messages when using `/user:docs`
+3. Re-run the installer to reset the hook
+
+## Uninstalling
+
+To completely remove the docs integration:
+
+```bash
+# 1. Remove the command
+rm ~/.claude/commands/docs.md
+
+# 2. Remove the hook from settings.json
+# This removes all "Read" hooks - be careful if you have other Read hooks!
+jq '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[] | select(.matcher != "Read")]' ~/.claude/settings.json > ~/.claude/settings.json.tmp && mv ~/.claude/settings.json.tmp ~/.claude/settings.json
+
+# 3. Delete the repository (replace with your actual path)
+rm -rf /path/to/claude-code-docs
+```
+
+## Security Notes
+
+- The installer modifies `~/.claude/settings.json` to add an auto-update hook
+- The hook only runs `git pull` when reading documentation files
+- All operations are limited to the documentation directory
+- No data is sent externally - everything is local
+- **Repository Trust**: The installer clones from GitHub over HTTPS. For additional security, you can:
+  - Fork the repository and install from your own fork
+  - Clone manually and run the installer from the local directory
+  - Review all code before installation
 
 ## License
 

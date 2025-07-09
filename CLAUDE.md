@@ -4,6 +4,14 @@ This repository contains local copies of Claude Code documentation from https://
 
 The docs are automatically updated every 3 hours via GitHub Actions.
 
+## Development Workflow
+
+**IMPORTANT**: All changes MUST be made on the `dev` branch first:
+1. Create/switch to dev branch: `git checkout -b dev` or `git checkout dev`
+2. Make and test all changes on dev branch
+3. Only merge to main after user approval
+4. The install.sh script is macOS-only (untested on other platforms)
+
 ## For /user:docs Command
 
 When responding to /user:docs commands:
