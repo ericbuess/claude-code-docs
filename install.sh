@@ -21,16 +21,15 @@ mkdir -p ~/.claude/commands
 cat > ~/.claude/commands/docs.md << EOF
 $DOCS_PATH/docs/ contains a local updated copy of all Claude Code documentation.
 
-First, report the update status (let the user know you're checking documentation freshness):
-1. Say something like "Checking documentation status..." before running any commands
-2. Read $DOCS_PATH/docs/docs_manifest.json and report when GitHub Actions last updated the documentation (the "last_updated" field). GitHub Actions updates the docs every 3 hours.
-3. If $DOCS_PATH/.last_pull exists, read it and convert the timestamp to show when your local copy last synchronized with GitHub. Your local copy automatically syncs at most once every 3 hours when you use this command.
-4. If .last_pull doesn't exist, mention this is the first sync.
+First, check the documentation status:
+1. Read $DOCS_PATH/docs/docs_manifest.json to get the "last_updated" field
+2. After reading the manifest, say "Checking documentation freshness..." to explain the upcoming timestamp conversions
+3. Convert the UTC timestamp to local time using macOS date command: 
+   date -j -u -f "%Y-%m-%dT%H:%M:%S" "2025-07-09T09:03:16" "+%Y-%m-%d %I:%M %p %Z"
+4. If $DOCS_PATH/.last_pull exists, read it and convert using: date -r <timestamp> "+%Y-%m-%d %I:%M %p %Z"
+5. If .last_pull doesn't exist, mention this is the first sync
 
-Format the timestamps in the user's local time:
-- For the GitHub timestamp from docs_manifest.json (which is UTC), convert it to local time
-- For the .last_pull timestamp (Unix epoch), use date -r to convert to local time
-- Include timezone info for clarity
+GitHub Actions updates the docs every 3 hours. Your local copy automatically syncs at most once every 3 hours when you use this command.
 
 Examples:
 📅 Documentation last updated on GitHub: 2025-01-09 6:03 AM PST (updates every 3 hours)
