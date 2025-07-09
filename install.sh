@@ -21,10 +21,11 @@ mkdir -p ~/.claude/commands
 cat > ~/.claude/commands/docs.md << EOF
 $DOCS_PATH/docs/ contains a local updated copy of all Claude Code documentation.
 
-First, report the update status:
-1. Read $DOCS_PATH/docs/docs_manifest.json and report when GitHub Actions last updated the documentation (the "last_updated" field). GitHub Actions updates the docs every 3 hours.
-2. If $DOCS_PATH/.last_pull exists, read it and convert the timestamp to show when your local copy last synchronized with GitHub. Your local copy automatically syncs at most once every 3 hours when you use this command.
-3. If .last_pull doesn't exist, mention this is the first sync.
+First, report the update status (let the user know you're checking documentation freshness):
+1. Say something like "Checking documentation status..." before running any commands
+2. Read $DOCS_PATH/docs/docs_manifest.json and report when GitHub Actions last updated the documentation (the "last_updated" field). GitHub Actions updates the docs every 3 hours.
+3. If $DOCS_PATH/.last_pull exists, read it and convert the timestamp to show when your local copy last synchronized with GitHub. Your local copy automatically syncs at most once every 3 hours when you use this command.
+4. If .last_pull doesn't exist, mention this is the first sync.
 
 Format the timestamps in the user's local time:
 - For the GitHub timestamp from docs_manifest.json (which is UTC), convert it to local time
