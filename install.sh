@@ -44,10 +44,11 @@ Error handling:
 GitHub Actions updates the docs every 3 hours. Your local copy automatically syncs at most once every 3 hours when you use this command.
 
 IMPORTANT: Show relative times only (no timezone conversions needed):
-- GitHub last updated: Calculate hours/minutes since manifest timestamp
-- Local docs last synced: Calculate hours/minutes since .last_pull timestamp
+- GitHub last updated: Extract timestamp from manifest, convert to unix time, then calculate (current_time - github_time) / 3600 for hours or / 60 for minutes
+- Local docs last synced: Read .last_pull timestamp, then calculate (current_time - last_pull) / 60 for minutes
 - If GitHub hasn't updated in >3 hours, add note "(normally updates every 3 hours)"
 - Be clear about wording: "local docs last synced" not "last checked"
+- For calculations: Use proper parentheses like \$(((NOW - GITHUB) / 3600)) for hours
 
 First, check if user passed -t flag:
 - If "\$ARGUMENTS" starts with "-t", extract it and treat the rest as the topic
