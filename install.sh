@@ -34,12 +34,24 @@ First, check the documentation status:
 
 GitHub Actions updates the docs every 3 hours. Your local copy automatically syncs at most once every 3 hours when you use this command.
 
-IMPORTANT: If less than 3 hours have passed since the last check (based on .last_pull timestamp), skip the timestamp conversions entirely and just report "Documentation is up to date (last checked X time ago)" before answering the query.
+IMPORTANT: If less than 3 hours have passed since the last check (based on .last_pull timestamp):
+- Still show when GitHub last updated the docs (convert the manifest timestamp to local time)
+- Show when you last checked locally
+- If GitHub's last update is more than 3 hours old, add a note like "(normally updates every 3 hours)"
+- Skip the git pull since it was done recently
 
 Examples:
-📅 Documentation last updated on GitHub: 2025-01-09 6:03 AM PST (updates every 3 hours)
-📅 Your local copy last synced: 2025-01-09 12:42 AM PST (syncs automatically when needed)
-   -or if first sync-
+
+When checking for the first time or after 3+ hours:
+📅 Documentation last updated on GitHub: 2025-01-09 6:03 AM CDT (updates every 3 hours)
+📅 Your local copy last synced: 2025-01-09 6:25 AM CDT (syncs automatically when needed)
+
+When checked recently (within 3 hours):
+📅 Documentation last updated on GitHub: 2025-01-08 9:03 PM CDT (20 hours ago - normally updates every 3 hours)
+📅 Your local copy last checked: 16 minutes ago
+
+When it's the first sync:
+📅 Documentation last updated on GitHub: 2025-01-09 6:03 AM CDT (updates every 3 hours)
 📅 Your local copy: First sync today
 
 Then answer the user's question by reading from the docs/ subdirectory (e.g. $DOCS_PATH/docs/hooks.md).
