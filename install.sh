@@ -57,6 +57,8 @@ Then answer the user's question by reading from the docs/ subdirectory (e.g. $DO
 
 Available docs: overview, quickstart, setup, memory, common-workflows, ide-integrations, mcp, github-actions, sdk, troubleshooting, security, settings, monitoring-usage, costs, hooks
 
+IMPORTANT: This freshness check only happens when using /user:docs command. If continuing a conversation from a previous session, use /user:docs again to ensure docs are current.
+
 User query: \$ARGUMENTS
 EOF
 

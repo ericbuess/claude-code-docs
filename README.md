@@ -53,6 +53,8 @@ The docs automatically stay up-to-date:
 - The hook tracks when it last pulled to avoid unnecessary git operations
 - No manual updates needed!
 
+**Note**: The freshness check only happens when you use `/user:docs`. If resuming a Claude Code session after a break, run `/user:docs` again to ensure you have the latest documentation.
+
 ## License
 
 Documentation content belongs to Anthropic.
