@@ -21,15 +21,17 @@ mkdir -p ~/.claude/commands
 cat > ~/.claude/commands/docs.md << EOF
 $DOCS_PATH/docs/ contains a local updated copy of all Claude Code documentation.
 
-First, check the documentation status efficiently:
-1. Read $DOCS_PATH/docs/docs_manifest.json to get the "last_updated" field
-2. After extracting the timestamp (e.g., "2025-07-09T09:03:16"), run ONE bash command:
-   
-   bash -c 'NOW=\$(date +%s); GITHUB=\$(date -j -u -f "%Y-%m-%dT%H:%M:%S" "TIMESTAMP_HERE" "+%s"); echo "GitHub updated \$(( (NOW-GITHUB)/3600 )) hours ago"; if [ -f "$DOCS_PATH/.last_pull" ]; then LOCAL=\$(cat "$DOCS_PATH/.last_pull"); echo "Local synced \$(( (NOW-LOCAL)/60 )) minutes ago"; else echo "Local never synced"; fi'
-   
-3. Based on the output:
-   - If GitHub >3 hours old, add "(normally updates every 3 hours)"
-   - If local >180 minutes old OR never synced, show the "first time checking" message
+Check if documentation status needs updating:
+1. Quick check: if [ -f "$DOCS_PATH/.last_pull" ] && [ \$(( \$(date +%s) - \$(cat "$DOCS_PATH/.last_pull") )) -lt 10800 ]; then SKIP_CHECK=true
+2. If SKIP_CHECK is true:
+   - Don't read manifest, don't calculate times, don't show any status
+   - Just go straight to reading the requested documentation
+3. If SKIP_CHECK is false (3+ hours OR no file):
+   - Read $DOCS_PATH/docs/docs_manifest.json
+   - Calculate and show the status messages
+   - The hook will trigger a git pull if needed
+
+This ensures repeated /user:docs commands within 3 hours are instant!
 
 GitHub Actions updates the docs every 3 hours. Your local copy automatically syncs at most once every 3 hours when you use this command.
 
