@@ -1,13 +1,20 @@
 #!/bin/bash
 set -e
 
-# Clone if needed
-if [ ! -d "claude-code-docs" ]; then
+# Get the docs path
+if [ -f "docs/docs_manifest.json" ]; then
+    # We're already in the claude-code-docs directory
+    DOCS_PATH=$(pwd)
+elif [ -d "claude-code-docs" ]; then
+    # The directory already exists
+    cd claude-code-docs
+    DOCS_PATH=$(pwd)
+else
+    # Clone it
     git clone https://github.com/ericbuess/claude-code-docs.git
+    cd claude-code-docs
+    DOCS_PATH=$(pwd)
 fi
-
-cd claude-code-docs
-DOCS_PATH=$(pwd)
 
 # Create command
 mkdir -p ~/.claude/commands
@@ -38,7 +45,6 @@ else
 EOF
 fi
 
-cd ..
 echo "✓ Claude Code docs installed!"
 echo "✓ Command: /user:docs"
 echo "✓ Auto-updates: enabled"
