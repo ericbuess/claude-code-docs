@@ -18,7 +18,7 @@ fi
 
 # Create command
 mkdir -p ~/.claude/commands
-echo "$DOCS_PATH/ contains a local update copy of all docs for Claude Code and is faster for you to access. Please use a Read task to research Claude Code docs there (rather than a web fetch) and tell me about the following: \$ARGUMENTS" > ~/.claude/commands/docs.md
+echo "$DOCS_PATH/ contains a local updated copy of all docs for Claude Code and is faster for you to access. Please use a Read task to research Claude Code docs there (rather than a web fetch) and tell me about the following: \$ARGUMENTS" > ~/.claude/commands/docs.md
 
 # Setup hook for auto-updates (pulls at most once every 3 hours)
 # The hook checks a timestamp file and only pulls if 3 hours have passed
