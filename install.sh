@@ -23,13 +23,18 @@ $DOCS_PATH/docs/ contains a local updated copy of all Claude Code documentation.
 
 First, check the documentation status:
 1. Read $DOCS_PATH/docs/docs_manifest.json to get the "last_updated" field
-2. After reading the manifest, say "Checking documentation freshness..." to explain the upcoming timestamp conversions
-3. Convert the UTC timestamp to local time using macOS date command: 
-   date -j -u -f "%Y-%m-%dT%H:%M:%S" "2025-07-09T09:03:16" "+%Y-%m-%d %I:%M %p %Z"
-4. If $DOCS_PATH/.last_pull exists, read it and convert using: date -r <timestamp> "+%Y-%m-%d %I:%M %p %Z"
-5. If .last_pull doesn't exist, mention this is the first sync
+2. Check if $DOCS_PATH/.last_pull exists
+3. If it doesn't exist OR if it's been more than 3 hours since last check, say:
+   "Since this is the first time checking docs from this directory in a while, let me verify the documentation status..."
+4. Convert the UTC timestamp to local time. First extract just the datetime part (before the decimal), then:
+   TZ=\$LOCALTZ date -j -u -f "%Y-%m-%dT%H:%M:%S" "<timestamp>" "+%Y-%m-%d %I:%M %p %Z"
+   where \$LOCALTZ is the user's timezone (e.g., America/Chicago for CDT)
+5. If .last_pull exists, convert using: date -r <timestamp> "+%Y-%m-%d %I:%M %p %Z"
+6. If .last_pull doesn't exist, note this is the first sync
 
 GitHub Actions updates the docs every 3 hours. Your local copy automatically syncs at most once every 3 hours when you use this command.
+
+IMPORTANT: If less than 3 hours have passed since the last check (based on .last_pull timestamp), skip the timestamp conversions entirely and just report "Documentation is up to date (last checked X time ago)" before answering the query.
 
 Examples:
 📅 Documentation last updated on GitHub: 2025-01-09 6:03 AM PST (updates every 3 hours)
