@@ -30,9 +30,9 @@ Then report the status clearly (you can do the time conversions internally witho
 - Convert the Unix timestamp from .last_pull to local time  
 - If .last_pull doesn't exist, this is the first sync
 
-Example output:
-📅 Documentation last updated on GitHub: 2025-01-09 4:03 AM CDT (updates every 3 hours)
-📅 Your local copy last synced: 2025-01-09 6:09 AM CDT (syncs automatically when needed)
+Example output (format the dates naturally):
+📅 Documentation last updated on GitHub: July 9, 2025 at 4:03 AM CDT (updates every 3 hours)
+📅 Your local copy last synced: July 9, 2025 at 6:09 AM CDT (syncs automatically when needed)
    -or if first sync-
 📅 Your local copy: First sync today
 
