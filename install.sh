@@ -21,17 +21,24 @@ mkdir -p ~/.claude/commands
 cat > ~/.claude/commands/docs.md << EOF
 $DOCS_PATH/docs/ contains a local updated copy of all Claude Code documentation.
 
-Check if documentation status needs updating:
-1. Quick check: if [ -f "$DOCS_PATH/.last_pull" ] && [ \$(( \$(date +%s) - \$(cat "$DOCS_PATH/.last_pull") )) -lt 10800 ]; then SKIP_CHECK=true
-2. If SKIP_CHECK is true:
-   - Don't read manifest, don't calculate times, don't show any status
-   - Just go straight to reading the requested documentation
-3. If SKIP_CHECK is false (3+ hours OR no file):
-   - Read $DOCS_PATH/docs/docs_manifest.json
-   - Calculate and show the status messages
-   - The hook will trigger a git pull if needed
+Usage:
+- /user:docs <topic> - Read documentation instantly (no checks)
+- /user:docs -t - Check documentation freshness and sync status
+- /user:docs -t <topic> - Check freshness, then read documentation
 
-This ensures repeated /user:docs commands within 3 hours are instant!
+Default behavior (no -t flag):
+1. Skip ALL checks for maximum speed
+2. Go straight to reading the requested documentation
+3. Add note: "📚 Reading from local docs (run /user:docs -t to check freshness)"
+
+With -t flag:
+1. Read $DOCS_PATH/docs/docs_manifest.json (if it fails, suggest re-running install.sh)
+2. Calculate and show when GitHub last updated and when local docs last synced
+3. If been 3+ hours since last sync, the hook will trigger a git pull
+4. Then read the requested topic (if provided)
+
+Error handling:
+- If any files are missing or commands fail, show: "❌ Error accessing docs. Try re-running: curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash"
 
 GitHub Actions updates the docs every 3 hours. Your local copy automatically syncs at most once every 3 hours when you use this command.
 
@@ -41,19 +48,27 @@ IMPORTANT: Show relative times only (no timezone conversions needed):
 - If GitHub hasn't updated in >3 hours, add note "(normally updates every 3 hours)"
 - Be clear about wording: "local docs last synced" not "last checked"
 
+First, check if user passed -t flag:
+- If "\$ARGUMENTS" starts with "-t", extract it and treat the rest as the topic
+- Parse carefully: "-t hooks" → flag=true, topic=hooks; "hooks" → flag=false, topic=hooks
+
 Examples:
 
-When everything is fresh:
+Default usage (no -t):
+> /user:docs hooks
+📚 Reading from local docs (run /user:docs -t to check freshness)
+[Immediately shows hooks documentation]
+
+With -t flag:
+> /user:docs -t
 📅 Documentation last updated on GitHub: 2 hours ago
 📅 Your local docs last synced: 25 minutes ago
 
-When GitHub hasn't updated recently:
+> /user:docs -t hooks  
 📅 Documentation last updated on GitHub: 5 hours ago (normally updates every 3 hours)
-📅 Your local docs last synced: 25 minutes ago
-
-When it's the first sync:
-📅 Documentation last updated on GitHub: 2 hours ago
-📅 Your local docs: Syncing for the first time...
+📅 Your local docs last synced: 3 hours 15 minutes ago
+🔄 Syncing latest documentation...
+[Then shows hooks documentation]
 
 Then answer the user's question by reading from the docs/ subdirectory (e.g. $DOCS_PATH/docs/hooks.md).
 

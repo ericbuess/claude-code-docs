@@ -27,18 +27,24 @@ This will:
 
 Now you can use the slash command:
 
-### Basic usage:
+### Basic usage (instant, no checks):
 ```
-/user:docs hooks
-/user:docs mcp
-/user:docs memory
+/user:docs hooks        # Read hooks documentation instantly
+/user:docs mcp          # Read MCP documentation instantly  
+/user:docs memory       # Read memory documentation instantly
+```
+
+### Check documentation freshness:
+```
+/user:docs -t           # Show when docs were last updated
+/user:docs -t hooks     # Check freshness, then read hooks docs
 ```
 
 ### Creative examples:
 ```
 /user:docs what environment variables exist and how do I use them?
 /user:docs recommend some useful slash commands based on my usage so far
-/user:docs please explain all recent changes to the docs
+/user:docs -t please explain all recent changes to the docs
 /user:docs how do I trigger custom commands on demand?
 /user:docs search all docs and find unique ways to use Claude Code CLI
 ```
@@ -53,7 +59,7 @@ The docs automatically stay up-to-date:
 - The hook tracks when it last pulled to avoid unnecessary git operations
 - No manual updates needed!
 
-**Note**: The freshness check only happens when you use `/user:docs`. If resuming a Claude Code session after a break, run `/user:docs` again to ensure you have the latest documentation.
+**Performance**: By default, `/user:docs` reads instantly with no checks. Use `/user:docs -t` when you want to verify documentation freshness or trigger an update.
 
 ## License
 
