@@ -29,9 +29,11 @@ curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/ins
 ```
 
 This will:
-1. Clone the repository
+1. Clone the repository (or use existing if found)
 2. Create the `/user:docs` slash command
 3. Set up automatic git pull when reading docs
+
+**Note**: The command is `/user:docs` (not `/docs`). If you have a different docs command from another installation, both will coexist.
 
 ## Usage
 

@@ -130,7 +130,8 @@ echo "Setting up automatic updates..."
 
 # Create the hook command with proper escaping
 # Using printf to safely construct the command with escaped variables
-HOOK_COMMAND=$(printf 'if [[ $(jq -r .tool_input.file_path 2>/dev/null) == *%s/* ]]; then cd %s && LAST_PULL=".last_pull" && NOW=$(date +%%s) && GITHUB_TS=$(jq -r .last_updated docs/docs_manifest.json 2>/dev/null | cut -d. -f1) && GITHUB_UNIX=$(date -j -u -f "%%Y-%%m-%%dT%%H:%%M:%%S" "$GITHUB_TS" "+%%s" 2>/dev/null || echo 0) && if [[ -f "$LAST_PULL" ]]; then LAST=$(cat "$LAST_PULL"); if [[ $GITHUB_UNIX -gt $LAST ]]; then echo "🔄 Updating docs to latest version..." >&2 && git pull --quiet && echo $NOW > "$LAST_PULL"; fi; else echo "🔄 Syncing docs for the first time..." >&2 && git pull --quiet && echo $NOW > "$LAST_PULL"; fi; fi' "$DOCS_PATH_ESCAPED" "$DOCS_PATH_ESCAPED")
+# Note: Using pushd/popd to avoid cd restrictions in Claude Code
+HOOK_COMMAND=$(printf 'if [[ $(jq -r .tool_input.file_path 2>/dev/null) == *%s/* ]]; then LAST_PULL="%s/.last_pull" && NOW=$(date +%%s) && GITHUB_TS=$(jq -r .last_updated "%s/docs/docs_manifest.json" 2>/dev/null | cut -d. -f1) && GITHUB_UNIX=$(date -j -u -f "%%Y-%%m-%%dT%%H:%%M:%%S" "$GITHUB_TS" "+%%s" 2>/dev/null || echo 0) && if [[ -f "$LAST_PULL" ]]; then LAST=$(cat "$LAST_PULL"); if [[ $GITHUB_UNIX -gt $LAST ]]; then echo "🔄 Updating docs to latest version..." >&2 && (cd %s && git pull --quiet) && echo $NOW > "$LAST_PULL"; fi; else echo "🔄 Syncing docs for the first time..." >&2 && (cd %s && git pull --quiet) && echo $NOW > "$LAST_PULL"; fi; fi' "$DOCS_PATH_ESCAPED" "$DOCS_PATH_ESCAPED" "$DOCS_PATH_ESCAPED" "$DOCS_PATH_ESCAPED" "$DOCS_PATH_ESCAPED")
 
 if [ -f ~/.claude/settings.json ]; then
     # Update existing settings.json
@@ -171,9 +172,15 @@ fi
 echo ""
 echo "✅ Claude Code docs installed successfully!"
 echo ""
-echo "📚 Usage: /user:docs <topic>"
-echo "🔍 Check freshness: /user:docs -t"
-echo "🔄 Auto-updates: enabled (syncs when GitHub has newer content)"
+echo "📚 Command: /user:docs (not /docs)"
+echo "📂 Location: $DOCS_PATH"
+echo ""
+echo "Usage examples:"
+echo "  /user:docs hooks         # Read hooks documentation"
+echo "  /user:docs -t           # Check when docs were last updated"
+echo "  /user:docs -t memory    # Check updates, then read memory docs"
+echo ""
+echo "🔄 Auto-updates: Enabled - syncs automatically when GitHub has newer content"
 echo ""
 echo "Available topics: overview, quickstart, memory, hooks, mcp, settings, etc."
 echo ""
