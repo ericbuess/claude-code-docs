@@ -119,23 +119,20 @@ If docs aren't auto-updating:
 
 To completely remove the docs integration:
 
-```bash
-# 1. Remove the command
-rm ~/.claude/commands/docs.md
+1. **Remove the command file:**
+   ```bash
+   rm ~/.claude/commands/docs.md
+   ```
 
-# 2. Remove the hook using Claude Code's /hooks command
-# Look for "PreToolUse - Matcher: Read" and remove the auto-update hook
-/hooks
+2. **Remove the auto-update hook:**
+   - Run `/hooks` in Claude Code
+   - Find "PreToolUse - Matcher: Read"
+   - Select the hook and remove it
 
-# 3. Delete the repository (replace with your actual path)
-rm -rf /path/to/claude-code-docs
-```
-
-Alternative for step 2 (command-line removal):
-```bash
-# This removes all "Read" hooks - be careful if you have other Read hooks!
-jq '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[] | select(.matcher != "Read")]' ~/.claude/settings.json > ~/.claude/settings.json.tmp && mv ~/.claude/settings.json.tmp ~/.claude/settings.json
-```
+3. **Delete the repository:**
+   ```bash
+   rm -rf /path/to/claude-code-docs
+   ```
 
 ## Security Notes
 
