@@ -383,13 +383,7 @@ else
     echo "✓ Created Claude settings"
 fi
 
-# Add installer version to manifest
-if [[ -f "$INSTALL_DIR/docs/docs_manifest.json" ]]; then
-    # Update manifest with installer version
-    jq '. + {"installer_version": "0.3.1"}' "$INSTALL_DIR/docs/docs_manifest.json" > "$INSTALL_DIR/docs/docs_manifest.json.tmp"
-    mv "$INSTALL_DIR/docs/docs_manifest.json.tmp" "$INSTALL_DIR/docs/docs_manifest.json"
-    echo "✓ Updated manifest with installer version"
-fi
+# Note: Do NOT modify docs_manifest.json - it's tracked by git and would break updates
 
 # Clean up old installations now that v0.3 is set up
 cleanup_old_installations

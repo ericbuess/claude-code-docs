@@ -51,9 +51,30 @@ auto_update() {
     local BEHIND=$(git rev-list HEAD..origin/"$BRANCH" --count 2>/dev/null || echo "0")
     
     if [[ "$LOCAL" != "$REMOTE" ]] && [[ "$BEHIND" -gt 0 ]]; then
-        # We're behind - safe to pull
+        # We're behind - need to update
         echo "🔄 Updating documentation..." >&2
-        git pull --quiet origin "$BRANCH" 2>&1 | grep -v "Merge made by" || true
+        
+        # Check for local changes
+        if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
+            # Local changes detected - handle them gracefully
+            # Try to stash changes first
+            if git stash push -m "Auto-stash before update $(date)" >/dev/null 2>&1; then
+                # Pull updates
+                if git pull --quiet origin "$BRANCH" 2>&1 | grep -v "Merge made by"; then
+                    # Try to restore stashed changes
+                    git stash pop >/dev/null 2>&1 || true
+                else
+                    # Pull failed, try reset approach
+                    git reset --hard origin/"$BRANCH" >/dev/null 2>&1
+                fi
+            else
+                # Stash failed, just reset to remote
+                git reset --hard origin/"$BRANCH" >/dev/null 2>&1
+            fi
+        else
+            # No local changes, normal pull
+            git pull --quiet origin "$BRANCH" 2>&1 | grep -v "Merge made by" || true
+        fi
         
         # Check if installer needs updating
         local INSTALLER_VERSION=$(jq -r '.installer_version // "0.2"' "$MANIFEST" 2>/dev/null)
