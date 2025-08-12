@@ -1,891 +1,329 @@
-# 通过 MCP 将 Claude Code 连接到工具
+# 子代理
 
-> 了解如何通过 Model Context Protocol 将 Claude Code 连接到您的工具。
+> 在Claude Code中创建和使用专门的AI子代理，用于特定任务的工作流程和改进的上下文管理。
 
-export const MCPServersTable = ({platform = "all"}) => {
-  const generateClaudeCodeCommand = server => {
-    if (server.customCommands && server.customCommands.claudeCode) {
-      return server.customCommands.claudeCode;
-    }
-    if (server.urls.http) {
-      return `claude mcp add --transport http ${server.name.toLowerCase().replace(/[^a-z0-9]/g, '-')} ${server.urls.http}`;
-    }
-    if (server.urls.sse) {
-      return `claude mcp add --transport sse ${server.name.toLowerCase().replace(/[^a-z0-9]/g, '-')} ${server.urls.sse}`;
-    }
-    if (server.urls.stdio) {
-      const envFlags = server.authentication && server.authentication.envVars ? server.authentication.envVars.map(v => `--env ${v}=YOUR_${v.split('_').pop()}`).join(' ') : '';
-      const baseCommand = `claude mcp add ${server.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
-      return envFlags ? `${baseCommand} ${envFlags} -- ${server.urls.stdio}` : `${baseCommand} -- ${server.urls.stdio}`;
-    }
-    return null;
-  };
-  const servers = [{
-    name: "Airtable",
-    category: "Databases & Data Management",
-    description: "Read/write records, manage bases and tables",
-    documentation: "https://github.com/domdomegg/airtable-mcp-server",
-    urls: {
-      stdio: "npx -y airtable-mcp-server"
-    },
-    authentication: {
-      type: "api_key",
-      envVars: ["AIRTABLE_API_KEY"]
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: false,
-      claudeDesktop: true
-    }
-  }, {
-    name: "Figma",
-    category: "Design & Media",
-    description: "Access designs, export assets",
-    documentation: "https://help.figma.com/hc/en-us/articles/32132100833559",
-    urls: {
-      sse: "http://127.0.0.1:3845/sse"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: false,
-      claudeDesktop: false
-    },
-    notes: "Requires Figma Desktop with Dev Mode MCP Server"
-  }, {
-    name: "Asana",
-    category: "Project Management & Documentation",
-    description: "Interact with your Asana workspace to keep projects on track",
-    documentation: "https://developers.asana.com/docs/using-asanas-model-control-protocol-mcp-server",
-    urls: {
-      sse: "https://mcp.asana.com/sse"
-    },
-    authentication: {
-      type: "oauth"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: true,
-      claudeDesktop: false
-    }
-  }, {
-    name: "Atlassian",
-    category: "Project Management & Documentation",
-    description: "Manage your Jira tickets and Confluence docs",
-    documentation: "https://www.atlassian.com/platform/remote-mcp-server",
-    urls: {
-      sse: "https://mcp.atlassian.com/v1/sse"
-    },
-    authentication: {
-      type: "oauth"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: true,
-      claudeDesktop: false
-    }
-  }, {
-    name: "ClickUp",
-    category: "Project Management & Documentation",
-    description: "Task management, project tracking",
-    documentation: "https://github.com/hauptsacheNet/clickup-mcp",
-    urls: {
-      stdio: "npx -y @hauptsache.net/clickup-mcp"
-    },
-    authentication: {
-      type: "api_key",
-      envVars: ["CLICKUP_API_KEY", "CLICKUP_TEAM_ID"]
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: false,
-      claudeDesktop: true
-    }
-  }, {
-    name: "Cloudflare",
-    category: "Infrastructure & DevOps",
-    description: "Build applications, analyze traffic, monitor performance, and manage security settings through Cloudflare",
-    documentation: "https://developers.cloudflare.com/agents/model-context-protocol/mcp-servers-for-cloudflare/",
-    urls: {},
-    availability: {
-      claudeCode: true,
-      mcpConnector: true,
-      claudeDesktop: false
-    },
-    notes: "Multiple services available. See documentation for specific server URLs. Claude Code can use the Cloudflare CLI if installed."
-  }, {
-    name: "Intercom",
-    category: "Project Management & Documentation",
-    description: "Access real-time customer conversations, tickets, and user data",
-    documentation: "https://developers.intercom.com/docs/guides/mcp",
-    urls: {
-      sse: "https://mcp.intercom.com/sse",
-      http: "https://mcp.intercom.com/mcp"
-    },
-    authentication: {
-      type: "oauth"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: true,
-      claudeDesktop: false
-    }
-  }, {
-    name: "invideo",
-    category: "Design & Media",
-    description: "Build video creation capabilities into your applications",
-    documentation: "https://invideo.io/ai/mcp",
-    urls: {
-      sse: "https://mcp.invideo.io/sse"
-    },
-    authentication: {
-      type: "oauth"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: true,
-      claudeDesktop: false
-    }
-  }, {
-    name: "Linear",
-    category: "Project Management & Documentation",
-    description: "Integrate with Linear's issue tracking and project management",
-    documentation: "https://linear.app/docs/mcp",
-    urls: {
-      sse: "https://mcp.linear.app/sse"
-    },
-    authentication: {
-      type: "oauth"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: true,
-      claudeDesktop: false
-    }
-  }, {
-    name: "Notion",
-    category: "Project Management & Documentation",
-    description: "Read docs, update pages, manage tasks",
-    documentation: "https://developers.notion.com/docs/mcp",
-    urls: {
-      http: "https://mcp.notion.com/mcp"
-    },
-    authentication: {
-      type: "oauth"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: false,
-      claudeDesktop: false
-    }
-  }, {
-    name: "PayPal",
-    category: "Payments & Commerce",
-    description: "Integrate PayPal commerce capabilities, payment processing, transaction management",
-    documentation: "https://www.paypal.ai/",
-    urls: {
-      sse: "https://mcp.paypal.com/sse",
-      http: "https://mcp.paypal.com/mcp"
-    },
-    authentication: {
-      type: "oauth"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: true,
-      claudeDesktop: false
-    }
-  }, {
-    name: "Plaid",
-    category: "Payments & Commerce",
-    description: "Analyze, troubleshoot, and optimize Plaid integrations. Banking data, financial account linking",
-    documentation: "https://plaid.com/blog/plaid-mcp-ai-assistant-claude/",
-    urls: {
-      sse: "https://api.dashboard.plaid.com/mcp/sse"
-    },
-    authentication: {
-      type: "oauth"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: true,
-      claudeDesktop: false
-    }
-  }, {
-    name: "Sentry",
-    category: "Development & Testing Tools",
-    description: "Monitor errors, debug production issues",
-    documentation: "https://docs.sentry.io/product/sentry-mcp/",
-    urls: {
-      sse: "https://mcp.sentry.dev/sse",
-      http: "https://mcp.sentry.dev/mcp"
-    },
-    authentication: {
-      type: "oauth"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: false,
-      claudeDesktop: false
-    }
-  }, {
-    name: "Square",
-    category: "Payments & Commerce",
-    description: "Use an agent to build on Square APIs. Payments, inventory, orders, and more",
-    documentation: "https://developer.squareup.com/docs/mcp",
-    urls: {
-      sse: "https://mcp.squareup.com/sse"
-    },
-    authentication: {
-      type: "oauth"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: true,
-      claudeDesktop: false
-    }
-  }, {
-    name: "Socket",
-    category: "Development & Testing Tools",
-    description: "Security analysis for dependencies",
-    documentation: "https://github.com/SocketDev/socket-mcp",
-    urls: {
-      http: "https://mcp.socket.dev/"
-    },
-    authentication: {
-      type: "oauth"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: false,
-      claudeDesktop: false
-    }
-  }, {
-    name: "Stripe",
-    category: "Payments & Commerce",
-    description: "Payment processing, subscription management, and financial transactions",
-    documentation: "https://docs.stripe.com/mcp",
-    urls: {
-      http: "https://mcp.stripe.com"
-    },
-    authentication: {
-      type: "oauth"
-    },
-    availability: {
-      claudeCode: true,
-      mcpConnector: true,
-      claudeDesktop: false
-    }
-  }, {
-    name: "Workato",
-    category: "Automation & Integration",
-    description: "Access any application, workflows or data via Workato, made accessible for AI",
-    documentation: "https://docs.workato.com/mcp.html",
-    urls: {},
-    availability: {
-      claudeCode: true,
-      mcpConnector: true,
-      claudeDesktop: false
-    },
-    notes: "MCP servers are programmatically generated"
-  }, {
-    name: "Zapier",
-    category: "Automation & Integration",
-    description: "Connect to nearly 8,000 apps through Zapier's automation platform",
-    documentation: "https://help.zapier.com/hc/en-us/articles/36265392843917",
-    urls: {},
-    availability: {
-      claudeCode: true,
-      mcpConnector: true,
-      claudeDesktop: false
-    },
-    notes: "Generate a user-specific URL at mcp.zapier.com"
-  }];
-  const filteredServers = servers.filter(server => {
-    if (platform === "claudeCode") {
-      return server.availability.claudeCode;
-    } else if (platform === "mcpConnector") {
-      return server.availability.mcpConnector;
-    } else if (platform === "claudeDesktop") {
-      return server.availability.claudeDesktop;
-    } else if (platform === "all") {
-      return true;
-    } else {
-      throw new Error(`Unknown platform: ${platform}`);
-    }
-  });
-  const serversByCategory = filteredServers.reduce((acc, server) => {
-    if (!acc[server.category]) {
-      acc[server.category] = [];
-    }
-    acc[server.category].push(server);
-    return acc;
-  }, {});
-  const categoryOrder = ["Development & Testing Tools", "Project Management & Documentation", "Databases & Data Management", "Payments & Commerce", "Design & Media", "Infrastructure & DevOps", "Automation & Integration"];
-  return <>
-      <style jsx>{`
-        .cards-container {
-          display: grid;
-          gap: 1rem;
-          margin-bottom: 2rem;
-        }
-        .server-card {
-          border: 1px solid var(--border-color, #e5e7eb);
-          border-radius: 6px;
-          padding: 1rem;
-        }
-        .command-row {
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-        }
-        .command-row code {
-          font-size: 0.75rem;
-          overflow-x: auto;
-        }
-      `}</style>
-      
-      {categoryOrder.map(category => {
-    if (!serversByCategory[category]) return null;
-    return <div key={category}>
-            <h3>{category}</h3>
-            <div className="cards-container">
-              {serversByCategory[category].map(server => {
-      const claudeCodeCommand = generateClaudeCodeCommand(server);
-      const mcpUrl = server.urls.http || server.urls.sse;
-      const commandToShow = platform === "claudeCode" ? claudeCodeCommand : mcpUrl;
-      return <div key={server.name} className="server-card">
-                    <div>
-                      {server.documentation ? <a href={server.documentation}>
-                          <strong>{server.name}</strong>
-                        </a> : <strong>{server.name}</strong>}
-                    </div>
-                    
-                    <p style={{
-        margin: '0.5rem 0',
-        fontSize: '0.9rem'
-      }}>
-                      {server.description}
-                      {server.notes && <span style={{
-        display: 'block',
-        marginTop: '0.25rem',
-        fontSize: '0.8rem',
-        fontStyle: 'italic',
-        opacity: 0.7
-      }}>
-                          {server.notes}
-                        </span>}
-                    </p>
-                    
-                    {commandToShow && <>
-                      <p style={{
-        display: 'block',
-        fontSize: '0.75rem',
-        fontWeight: 500,
-        minWidth: 'fit-content',
-        marginTop: '0.5rem',
-        marginBottom: 0
-      }}>
-                        {platform === "claudeCode" ? "Command" : "URL"}
-                      </p>
-                      <div className="command-row">
-                        <code>
-                          {commandToShow}
-                        </code>
-                      </div>
-                    </>}
-                  </div>;
-    })}
-            </div>
-          </div>;
-  })}
-    </>;
-};
+Claude Code中的自定义子代理是专门的AI助手，可以被调用来处理特定类型的任务。它们通过提供具有自定义系统提示、工具和独立上下文窗口的特定任务配置，实现更高效的问题解决。
 
-Claude Code 可以通过 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) 连接到数百个外部工具和数据源，这是一个用于 AI 工具集成的开源标准。MCP 服务器为 Claude Code 提供对您的工具、数据库和 API 的访问。
+## 什么是子代理？
 
-## 您可以使用 MCP 做什么
+子代理是Claude Code可以委托任务的预配置AI个性。每个子代理：
 
-连接 MCP 服务器后，您可以要求 Claude Code：
+* 具有特定的目的和专业领域
+* 使用与主对话分离的自己的上下文窗口
+* 可以配置允许使用的特定工具
+* 包含指导其行为的自定义系统提示
 
-* **从问题跟踪器实现功能**："添加 JIRA 问题 ENG-4521 中描述的功能并在 GitHub 上创建 PR。"
-* **分析监控数据**："检查 Sentry 和 Statsig 以查看 ENG-4521 中描述的功能的使用情况。"
-* **查询数据库**："根据我们的 Postgres 数据库，找到 10 个使用功能 ENG-4521 的随机用户的电子邮件。"
-* **集成设计**："根据在 Slack 中发布的新 Figma 设计更新我们的标准电子邮件模板"
-* **自动化工作流程**："创建 Gmail 草稿，邀请这 10 个用户参加关于新功能的反馈会议。"
+当Claude Code遇到与子代理专业知识匹配的任务时，它可以将该任务委托给专门的子代理，该子代理独立工作并返回结果。
 
-## 流行的 MCP 服务器
+## 主要优势
 
-以下是一些您可以连接到 Claude Code 的常用 MCP 服务器：
+<CardGroup cols={2}>
+  <Card title="上下文保护" icon="layer-group">
+    每个子代理在自己的上下文中操作，防止主对话的污染，并保持其专注于高级目标。
+  </Card>
 
-<Warning>
-  使用第三方 MCP 服务器需要您自担风险 - Anthropic 未验证所有这些服务器的正确性或安全性。
-  确保您信任正在安装的 MCP 服务器。
-  在使用可能获取不受信任内容的 MCP 服务器时要特别小心，因为这些可能会使您面临提示注入风险。
-</Warning>
+  <Card title="专业知识" icon="brain">
+    子代理可以通过特定领域的详细指令进行微调，在指定任务上获得更高的成功率。
+  </Card>
 
-<MCPServersTable platform="claudeCode" />
+  <Card title="可重用性" icon="rotate">
+    一旦创建，子代理可以在不同项目中使用，并与您的团队共享以实现一致的工作流程。
+  </Card>
 
-<Note>
-  **需要特定集成？** [在 GitHub 上查找数百个更多的 MCP 服务器](https://github.com/modelcontextprotocol/servers)，或使用 [MCP SDK](https://modelcontextprotocol.io/quickstart/server) 构建您自己的服务器。
-</Note>
+  <Card title="灵活权限" icon="shield-check">
+    每个子代理可以有不同的工具访问级别，允许您将强大的工具限制在特定的子代理类型上。
+  </Card>
+</CardGroup>
 
-## 安装 MCP 服务器
+## 快速开始
 
-根据您的需求，MCP 服务器可以通过三种不同的方式进行配置：
-
-### 选项 1：添加本地 stdio 服务器
-
-Stdio 服务器作为本地进程在您的机器上运行。它们非常适合需要直接系统访问或自定义脚本的工具。
-
-```bash
-# 基本语法
-claude mcp add <name> <command> [args...]
-
-# 实际示例：添加 Airtable 服务器
-claude mcp add airtable --env AIRTABLE_API_KEY=YOUR_KEY \
-  -- npx -y airtable-mcp-server
-```
-
-### 选项 2：添加远程 SSE 服务器
-
-SSE（服务器发送事件）服务器提供实时流连接。许多云服务使用此方式进行实时更新。
-
-```bash
-# 基本语法
-claude mcp add --transport sse <name> <url>
-
-# 实际示例：连接到 Linear
-claude mcp add --transport sse linear https://mcp.linear.app/sse
-
-# 带认证头的示例
-claude mcp add --transport sse private-api https://api.company.com/mcp \
-  --header "X-API-Key: your-key-here"
-```
-
-### 选项 3：添加远程 HTTP 服务器
-
-HTTP 服务器使用标准的请求/响应模式。大多数 REST API 和 Web 服务使用此传输方式。
-
-```bash
-# 基本语法
-claude mcp add --transport http <name> <url>
-
-# 实际示例：连接到 Notion
-claude mcp add --transport http notion https://mcp.notion.com/mcp
-
-# 带 Bearer 令牌的示例
-claude mcp add --transport http secure-api https://api.example.com/mcp \
-  --header "Authorization: Bearer your-token"
-```
-
-### 管理您的服务器
-
-配置完成后，您可以使用以下命令管理您的 MCP 服务器：
-
-```bash
-# 列出所有已配置的服务器
-claude mcp list
-
-# 获取特定服务器的详细信息
-claude mcp get github
-
-# 删除服务器
-claude mcp remove github
-
-# （在 Claude Code 中）检查服务器状态
-/mcp
-```
-
-<Tip>
-  提示：
-
-  * 使用 `--scope` 标志指定配置存储位置：
-    * `local`（默认）：仅在当前项目中对您可用（在旧版本中称为 `project`）
-    * `project`：通过 `.mcp.json` 文件与项目中的每个人共享
-    * `user`：在所有项目中对您可用（在旧版本中称为 `global`）
-  * 使用 `--env` 标志设置环境变量（例如，`--env KEY=value`）
-  * 使用 MCP\_TIMEOUT 环境变量配置 MCP 服务器启动超时（例如，`MCP_TIMEOUT=10000 claude` 设置 10 秒超时）
-  * 使用 `/mcp` 与需要 OAuth 2.0 认证的远程服务器进行身份验证
-</Tip>
-
-<Warning>
-  **Windows 用户**：在原生 Windows（非 WSL）上，使用 `npx` 的本地 MCP 服务器需要 `cmd /c` 包装器以确保正确执行。
-
-  ```bash
-  # 这创建了 Windows 可以执行的 command="cmd"
-  claude mcp add my-server -- cmd /c npx -y @some/package
-  ```
-
-  没有 `cmd /c` 包装器，您会遇到"连接关闭"错误，因为 Windows 无法直接执行 `npx`。
-</Warning>
-
-## MCP 安装范围
-
-MCP 服务器可以在三个不同的范围级别进行配置，每个级别都有不同的目的来管理服务器可访问性和共享。了解这些范围有助于您确定为特定需求配置服务器的最佳方式。
-
-### 本地范围
-
-本地范围的服务器代表默认配置级别，存储在您的项目特定用户设置中。这些服务器对您保持私有，仅在当前项目目录中工作时可访问。此范围非常适合个人开发服务器、实验性配置或包含不应共享的敏感凭据的服务器。
-
-```bash
-# 添加本地范围的服务器（默认）
-claude mcp add my-private-server /path/to/server
-
-# 明确指定本地范围
-claude mcp add my-private-server --scope local /path/to/server
-```
-
-### 项目范围
-
-项目范围的服务器通过在项目根目录存储配置到 `.mcp.json` 文件中来实现团队协作。此文件设计为检入版本控制，确保所有团队成员都能访问相同的 MCP 工具和服务。当您添加项目范围的服务器时，Claude Code 会自动创建或更新此文件，使用适当的配置结构。
-
-```bash
-# 添加项目范围的服务器
-claude mcp add shared-server --scope project /path/to/server
-```
-
-生成的 `.mcp.json` 文件遵循标准化格式：
-
-```json
-{
-  "mcpServers": {
-    "shared-server": {
-      "command": "/path/to/server",
-      "args": [],
-      "env": {}
-    }
-  }
-}
-```
-
-出于安全原因，Claude Code 在使用来自 `.mcp.json` 文件的项目范围服务器之前会提示批准。如果您需要重置这些批准选择，请使用 `claude mcp reset-project-choices` 命令。
-
-### 用户范围
-
-用户范围的服务器提供跨项目可访问性，使它们在您机器上的所有项目中可用，同时对您的用户帐户保持私有。此范围适用于个人实用程序服务器、开发工具或您在不同项目中经常使用的服务。
-
-```bash
-# 添加用户服务器
-claude mcp add my-user-server --scope user /path/to/server
-```
-
-### 选择正确的范围
-
-根据以下情况选择您的范围：
-
-* **本地范围**：个人服务器、实验性配置或特定于一个项目的敏感凭据
-* **项目范围**：团队共享服务器、项目特定工具或协作所需的服务
-* **用户范围**：多个项目需要的个人实用程序、开发工具或经常使用的服务
-
-### 范围层次结构和优先级
-
-MCP 服务器配置遵循清晰的优先级层次结构。当多个范围中存在同名服务器时，系统通过优先考虑本地范围的服务器，然后是项目范围的服务器，最后是用户范围的服务器来解决冲突。这种设计确保个人配置可以在需要时覆盖共享配置。
-
-### `.mcp.json` 中的环境变量扩展
-
-Claude Code 支持在 `.mcp.json` 文件中进行环境变量扩展，允许团队共享配置，同时为机器特定路径和 API 密钥等敏感值保持灵活性。
-
-**支持的语法：**
-
-* `${VAR}` - 扩展为环境变量 `VAR` 的值
-* `${VAR:-default}` - 如果设置了 `VAR` 则扩展为 `VAR`，否则使用 `default`
-
-**扩展位置：**
-环境变量可以在以下位置扩展：
-
-* `command` - 服务器可执行文件路径
-* `args` - 命令行参数
-* `env` - 传递给服务器的环境变量
-* `url` - 用于 SSE/HTTP 服务器类型
-* `headers` - 用于 SSE/HTTP 服务器认证
-
-**带变量扩展的示例：**
-
-```json
-{
-  "mcpServers": {
-    "api-server": {
-      "type": "sse",
-      "url": "${API_BASE_URL:-https://api.example.com}/mcp",
-      "headers": {
-        "Authorization": "Bearer ${API_KEY}"
-      }
-    }
-  }
-}
-```
-
-如果未设置所需的环境变量且没有默认值，Claude Code 将无法解析配置。
-
-## 实际示例
-
-{/* These are commented out while waiting for approval in https://anthropic.slack.com/archives/C08R8A6SZEX/p1754320373845919. I'm expecting/hoping to get this approval soon, so keeping this here for easy uncommenting. Reviewer: feel free to just delete this if you'd prefer. */}
-
-{/* ### 示例：连接到 GitHub 进行代码审查
-
-  ```bash
-  # 1. 添加 GitHub MCP 服务器
-  claude mcp add --transport http github https://api.githubcopilot.com/mcp/
-
-  # 2. 在 Claude Code 中，如果需要则进行身份验证
-  > /mcp
-  # 为 GitHub 选择"身份验证"
-
-  # 3. 现在您可以要求 Claude 与 GitHub 协作
-  > "审查 PR #456 并建议改进"
-  > "为我们刚发现的错误创建新问题"
-  > "显示分配给我的所有开放 PR"
-  ```
-
-  <Tip>
-  提示：
-  - 另请参阅 [GitHub Actions](/zh-CN/docs/claude-code/github-actions) 集成以自动运行此功能。
-  - 如果您安装了 GitHub CLI，对于某些操作，您可能更喜欢直接使用 Claude Code 的 bash 工具而不是 MCP 服务器。
-  </Tip>
-
-  ### 示例：查询您的 PostgreSQL 数据库
-
-  ```bash
-  # 1. 使用您的连接字符串添加数据库服务器
-  claude mcp add db -- npx -y @bytebase/dbhub \
-  --dsn "postgresql://readonly:pass@prod.db.com:5432/analytics"
-
-  # 2. 自然地查询您的数据库
-  > "这个月我们的总收入是多少？"
-  > "显示订单表的架构"
-  > "找到 90 天内没有购买的客户"
-  ``` */}
-
-### 示例：使用 Sentry 监控错误
-
-```bash
-# 1. 添加 Sentry MCP 服务器
-claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
-
-# 2. 使用 /mcp 与您的 Sentry 帐户进行身份验证
-> /mcp
-
-# 3. 调试生产问题
-> "过去 24 小时内最常见的错误是什么？"
-> "显示错误 ID abc123 的堆栈跟踪"
-> "哪个部署引入了这些新错误？"
-```
-
-{/* ### 示例：使用 Playwright 自动化浏览器测试
-
-  ```bash
-  # 1. 添加 Playwright MCP 服务器
-  claude mcp add playwright -- npx -y @playwright/mcp@latest
-
-  # 2. 编写并运行浏览器测试
-  > "测试使用 test@example.com 的登录流程是否有效"
-  > "在移动设备上截取结账页面的屏幕截图"
-  > "验证搜索功能是否返回结果"
-  ``` */}
-
-## 与远程 MCP 服务器进行身份验证
-
-许多基于云的 MCP 服务器需要身份验证。Claude Code 支持 OAuth 2.0 进行安全连接。
+创建您的第一个子代理：
 
 <Steps>
-  <Step title="添加需要身份验证的服务器">
-    例如：
+  <Step title="打开子代理界面">
+    运行以下命令：
 
-    ```bash
-    claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
+    ```
+    /agents
     ```
   </Step>
 
-  <Step title="在 Claude Code 中使用 /mcp 命令">
-    在 Claude Code 中，使用命令：
-
-    ```
-    > /mcp
-    ```
-
-    然后按照浏览器中的步骤进行登录。
-  </Step>
-</Steps>
-
-<Tip>
-  提示：
-
-  * 身份验证令牌安全存储并自动刷新
-  * 在 `/mcp` 菜单中使用"清除身份验证"来撤销访问
-  * 如果您的浏览器没有自动打开，请复制提供的 URL
-  * OAuth 身份验证适用于 SSE 和 HTTP 传输
-</Tip>
-
-## 从 JSON 配置添加 MCP 服务器
-
-如果您有 MCP 服务器的 JSON 配置，可以直接添加：
-
-<Steps>
-  <Step title="从 JSON 添加 MCP 服务器">
-    ```bash
-    # 基本语法
-    claude mcp add-json <name> '<json>'
-
-    # 示例：使用 JSON 配置添加 stdio 服务器
-    claude mcp add-json weather-api '{"type":"stdio","command":"/path/to/weather-cli","args":["--api-key","abc123"],"env":{"CACHE_DIR":"/tmp"}}'
-    ```
+  <Step title="选择'创建新代理'">
+    选择是创建项目级还是用户级子代理
   </Step>
 
-  <Step title="验证服务器已添加">
-    ```bash
-    claude mcp get weather-api
+  <Step title="定义子代理">
+    * **推荐**：首先用Claude生成，然后自定义使其成为您的
+    * 详细描述您的子代理以及何时应该使用它
+    * 选择您想要授予访问权限的工具（或留空以继承所有工具）
+    * 界面显示所有可用工具，使选择变得容易
+    * 如果您正在用Claude生成，您也可以通过按`e`在自己的编辑器中编辑系统提示
+  </Step>
+
+  <Step title="保存并使用">
+    您的子代理现在可用了！Claude会在适当时自动使用它，或者您可以显式调用它：
+
+    ```
+    > 使用代码审查员子代理检查我最近的更改
     ```
   </Step>
 </Steps>
 
-<Tip>
-  提示：
+## 子代理配置
 
-  * 确保 JSON 在您的 shell 中正确转义
-  * JSON 必须符合 MCP 服务器配置架构
-  * 您可以使用 `--scope global` 将服务器添加到全局配置而不是项目特定配置
+### 文件位置
+
+子代理存储为带有YAML前言的Markdown文件，位于两个可能的位置：
+
+| 类型        | 位置                  | 范围       | 优先级 |
+| :-------- | :------------------ | :------- | :-- |
+| **项目子代理** | `.claude/agents/`   | 在当前项目中可用 | 最高  |
+| **用户子代理** | `~/.claude/agents/` | 在所有项目中可用 | 较低  |
+
+当子代理名称冲突时，项目级子代理优先于用户级子代理。
+
+### 文件格式
+
+每个子代理在Markdown文件中定义，具有以下结构：
+
+```markdown
+---
+name: your-sub-agent-name
+description: Description of when this subagent should be invoked
+tools: tool1, tool2, tool3  # Optional - inherits all tools if omitted
+---
+
+Your subagent's system prompt goes here. This can be multiple paragraphs
+and should clearly define the subagent's role, capabilities, and approach
+to solving problems.
+
+Include specific instructions, best practices, and any constraints
+the subagent should follow.
+```
+
+#### 配置字段
+
+| 字段            | 必需 | 描述                          |
+| :------------ | :- | :-------------------------- |
+| `name`        | 是  | 使用小写字母和连字符的唯一标识符            |
+| `description` | 是  | 子代理目的的自然语言描述                |
+| `tools`       | 否  | 特定工具的逗号分隔列表。如果省略，从主线程继承所有工具 |
+
+### 可用工具
+
+子代理可以被授予访问Claude Code的任何内部工具。请参阅[工具文档](/zh-CN/docs/claude-code/settings#tools-available-to-claude)获取可用工具的完整列表。
+
+<Tip>
+  \*\*推荐：\*\*使用`/agents`命令修改工具访问权限 - 它提供了一个交互式界面，列出所有可用工具，包括任何连接的MCP服务器工具，使您更容易选择所需的工具。
 </Tip>
 
-## 从 Claude Desktop 导入 MCP 服务器
+您有两个配置工具的选项：
 
-如果您已经在 Claude Desktop 中配置了 MCP 服务器，可以导入它们：
+* **省略`tools`字段**以从主线程继承所有工具（默认），包括MCP工具
+* **指定单个工具**作为逗号分隔列表以获得更精细的控制（可以手动编辑或通过`/agents`）
 
-<Steps>
-  <Step title="从 Claude Desktop 导入服务器">
-    ```bash
-    # 基本语法 
-    claude mcp add-from-claude-desktop 
-    ```
-  </Step>
+**MCP工具**：子代理可以访问来自配置的MCP服务器的MCP工具。当省略`tools`字段时，子代理继承主线程可用的所有MCP工具。
 
-  <Step title="选择要导入的服务器">
-    运行命令后，您将看到一个交互式对话框，允许您选择要导入的服务器。
-  </Step>
+## 管理子代理
 
-  <Step title="验证服务器已导入">
-    ```bash
-    claude mcp list 
-    ```
-  </Step>
-</Steps>
+### 使用/agents命令（推荐）
 
-<Tip>
-  提示：
+`/agents`命令为子代理管理提供了一个全面的界面：
 
-  * 此功能仅在 macOS 和 Windows Subsystem for Linux (WSL) 上有效
-  * 它从这些平台上的标准位置读取 Claude Desktop 配置文件
-  * 使用 `--scope global` 标志将服务器添加到全局配置
-  * 导入的服务器将具有与 Claude Desktop 中相同的名称
-  * 如果已存在同名服务器，它们将获得数字后缀（例如，`server_1`）
-</Tip>
+```
+/agents
+```
 
-## 将 Claude Code 用作 MCP 服务器
+这会打开一个交互式菜单，您可以：
 
-您可以将 Claude Code 本身用作其他应用程序可以连接的 MCP 服务器：
+* 查看所有可用的子代理（内置、用户和项目）
+* 通过引导设置创建新的子代理
+* 编辑现有的自定义子代理，包括它们的工具访问权限
+* 删除自定义子代理
+* 查看当存在重复时哪些子代理是活动的
+* **轻松管理工具权限**，提供可用工具的完整列表
+
+### 直接文件管理
+
+您也可以通过直接处理子代理文件来管理它们：
 
 ```bash
-# 将 Claude 启动为 stdio MCP 服务器
-claude mcp serve
+# 创建项目子代理
+mkdir -p .claude/agents
+echo '---
+name: test-runner
+description: Use proactively to run tests and fix failures
+---
+
+You are a test automation expert. When you see code changes, proactively run the appropriate tests. If tests fail, analyze the failures and fix them while preserving the original test intent.' > .claude/agents/test-runner.md
+
+# 创建用户子代理
+mkdir -p ~/.claude/agents
+# ... 创建子代理文件
 ```
 
-您可以通过将此配置添加到 claude\_desktop\_config.json 在 Claude Desktop 中使用：
+## 有效使用子代理
 
-```json
-{
-  "mcpServers": {
-    "claude-code": {
-      "command": "claude",
-      "args": ["mcp", "serve"],
-      "env": {}
-    }
-  }
-}
+### 自动委托
+
+Claude Code基于以下内容主动委托任务：
+
+* 您请求中的任务描述
+* 子代理配置中的`description`字段
+* 当前上下文和可用工具
+
+<Tip>
+  为了鼓励更主动的子代理使用，在您的`description`字段中包含"主动使用"或"必须使用"等短语。
+</Tip>
+
+### 显式调用
+
+通过在命令中提及特定子代理来请求它：
+
+```
+> 使用测试运行器子代理修复失败的测试
+> 让代码审查员子代理查看我最近的更改
+> 请调试器子代理调查这个错误
 ```
 
-<Tip>
-  提示：
+## 示例子代理
 
-  * 服务器提供对 Claude 工具的访问，如 View、Edit、LS 等
-  * 在 Claude Desktop 中，尝试要求 Claude 读取目录中的文件、进行编辑等
-  * 请注意，此 MCP 服务器只是将 Claude Code 的工具暴露给您的 MCP 客户端，因此您自己的客户端负责为单个工具调用实现用户确认
-</Tip>
+### 代码审查员
 
-## 使用 MCP 资源
+```markdown
+---
+name: code-reviewer
+description: Expert code review specialist. Proactively reviews code for quality, security, and maintainability. Use immediately after writing or modifying code.
+tools: Read, Grep, Glob, Bash
+---
 
-MCP 服务器可以公开您可以使用 @ 提及引用的资源，类似于引用文件的方式。
+You are a senior code reviewer ensuring high standards of code quality and security.
 
-### 引用 MCP 资源
+When invoked:
+1. Run git diff to see recent changes
+2. Focus on modified files
+3. Begin review immediately
 
-<Steps>
-  <Step title="列出可用资源">
-    在提示中输入 `@` 以查看所有连接的 MCP 服务器的可用资源。资源与文件一起出现在自动完成菜单中。
-  </Step>
+Review checklist:
+- Code is simple and readable
+- Functions and variables are well-named
+- No duplicated code
+- Proper error handling
+- No exposed secrets or API keys
+- Input validation implemented
+- Good test coverage
+- Performance considerations addressed
 
-  <Step title="引用特定资源">
-    使用格式 `@server:protocol://resource/path` 引用资源：
+Provide feedback organized by priority:
+- Critical issues (must fix)
+- Warnings (should fix)
+- Suggestions (consider improving)
 
-    ```
-    > 您能分析 @github:issue://123 并建议修复吗？
-    ```
+Include specific examples of how to fix issues.
+```
 
-    ```
-    > 请查看 @docs:file://api/authentication 的 API 文档
-    ```
-  </Step>
+### 调试器
 
-  <Step title="多个资源引用">
-    您可以在单个提示中引用多个资源：
+```markdown
+---
+name: debugger
+description: Debugging specialist for errors, test failures, and unexpected behavior. Use proactively when encountering any issues.
+tools: Read, Edit, Bash, Grep, Glob
+---
 
-    ```
-    > 比较 @postgres:schema://users 与 @docs:file://database/user-model
-    ```
-  </Step>
-</Steps>
+You are an expert debugger specializing in root cause analysis.
 
-<Tip>
-  提示：
+When invoked:
+1. Capture error message and stack trace
+2. Identify reproduction steps
+3. Isolate the failure location
+4. Implement minimal fix
+5. Verify solution works
 
-  * 引用时资源会自动获取并作为附件包含
-  * 资源路径在 @ 提及自动完成中可进行模糊搜索
-  * 当服务器支持时，Claude Code 自动提供列出和读取 MCP 资源的工具
-  * 资源可以包含 MCP 服务器提供的任何类型的内容（文本、JSON、结构化数据等）
-</Tip>
+Debugging process:
+- Analyze error messages and logs
+- Check recent code changes
+- Form and test hypotheses
+- Add strategic debug logging
+- Inspect variable states
 
-## 将 MCP 提示用作斜杠命令
+For each issue, provide:
+- Root cause explanation
+- Evidence supporting the diagnosis
+- Specific code fix
+- Testing approach
+- Prevention recommendations
 
-MCP 服务器可以公开在 Claude Code 中作为斜杠命令可用的提示。
+Focus on fixing the underlying issue, not just symptoms.
+```
 
-### 执行 MCP 提示
+### 数据科学家
 
-<Steps>
-  <Step title="发现可用提示">
-    输入 `/` 查看所有可用命令，包括来自 MCP 服务器的命令。MCP 提示以格式 `/mcp__servername__promptname` 出现。
-  </Step>
+```markdown
+---
+name: data-scientist
+description: Data analysis expert for SQL queries, BigQuery operations, and data insights. Use proactively for data analysis tasks and queries.
+tools: Bash, Read, Write
+---
 
-  <Step title="执行不带参数的提示">
-    ```
-    > /mcp__github__list_prs
-    ```
-  </Step>
+You are a data scientist specializing in SQL and BigQuery analysis.
 
-  <Step title="执行带参数的提示">
-    许多提示接受参数。在命令后用空格分隔传递它们：
+When invoked:
+1. Understand the data analysis requirement
+2. Write efficient SQL queries
+3. Use BigQuery command line tools (bq) when appropriate
+4. Analyze and summarize results
+5. Present findings clearly
 
-    ```
-    > /mcp__github__pr_review 456
-    ```
+Key practices:
+- Write optimized SQL queries with proper filters
+- Use appropriate aggregations and joins
+- Include comments explaining complex logic
+- Format results for readability
+- Provide data-driven recommendations
 
-    ```
-    > /mcp__jira__create_issue "登录流程中的错误" high
-    ```
-  </Step>
-</Steps>
+For each analysis:
+- Explain the query approach
+- Document any assumptions
+- Highlight key findings
+- Suggest next steps based on data
 
-<Tip>
-  提示：
+Always ensure queries are efficient and cost-effective.
+```
 
-  * MCP 提示从连接的服务器动态发现
-  * 参数根据提示定义的参数进行解析
-  * 提示结果直接注入到对话中
-  * 服务器和提示名称已标准化（空格变为下划线）
-</Tip>
+## 最佳实践
+
+* **从Claude生成的代理开始**：我们强烈建议用Claude生成您的初始子代理，然后对其进行迭代以使其成为您个人的。这种方法为您提供最佳结果 - 一个您可以根据特定需求自定义的坚实基础。
+
+* **设计专注的子代理**：创建具有单一、明确职责的子代理，而不是试图让一个子代理做所有事情。这提高了性能并使子代理更可预测。
+
+* **编写详细的提示**：在系统提示中包含具体指令、示例和约束。您提供的指导越多，子代理的表现就越好。
+
+* **限制工具访问**：只授予子代理目的所必需的工具。这提高了安全性并帮助子代理专注于相关操作。
+
+* **版本控制**：将项目子代理检入版本控制，这样您的团队就可以从中受益并协作改进它们。
+
+## 高级用法
+
+### 链接子代理
+
+对于复杂的工作流程，您可以链接多个子代理：
+
+```
+> 首先使用代码分析器子代理找到性能问题，然后使用优化器子代理修复它们
+```
+
+### 动态子代理选择
+
+Claude Code基于上下文智能选择子代理。使您的`description`字段具体且面向行动，以获得最佳结果。
+
+## 性能考虑
+
+* **上下文效率**：代理帮助保护主上下文，实现更长的整体会话
+* **延迟**：子代理每次被调用时都从干净的状态开始，可能会增加延迟，因为它们需要收集有效完成工作所需的上下文。
+
+## 相关文档
+
+* [斜杠命令](/zh-CN/docs/claude-code/slash-commands) - 了解其他内置命令
+* [设置](/zh-CN/docs/claude-code/settings) - 配置Claude Code行为
+* [钩子](/zh-CN/docs/claude-code/hooks) - 使用事件处理程序自动化工作流程
