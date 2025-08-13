@@ -41,7 +41,7 @@ echo "✓ All dependencies satisfied"
 # Function to find existing installations from configs
 find_existing_installations() {
     local paths=()
-
+    
     # Check command file for paths
     if [[ -f ~/.claude/commands/docs.md ]]; then
         # Look for paths in the command file
@@ -59,7 +59,7 @@ find_existing_installations() {
                 # Extract path from various formats
                 local path=$(echo "$line" | grep -o '[^ "]*claude-code-docs[^ "]*' | head -1)
                 path="${path/#\~/$HOME}"
-
+                
                 # Get directory part
                 if [[ -d "$path" ]]; then
                     paths+=("$path")
@@ -69,7 +69,7 @@ find_existing_installations() {
             fi
         done < ~/.claude/commands/docs.md
     fi
-
+    
     # Check settings.json hooks for paths
     if [[ -f ~/.claude/settings.json ]]; then
         local hooks=$(jq -r '.hooks.PreToolUse[]?.hooks[]?.command // empty' ~/.claude/settings.json 2>/dev/null)
@@ -87,7 +87,7 @@ find_existing_installations() {
                         [[ -d "$path" ]] && paths+=("$path")
                     fi
                 done <<< "$v01_paths"
-
+                
                 # Also try v0.2+ simpler format
                 local found=$(echo "$cmd" | grep -o '[^ "]*claude-code-docs[^ "]*' || true)
                 while IFS= read -r path; do
@@ -102,12 +102,12 @@ find_existing_installations() {
             fi
         done <<< "$hooks"
     fi
-
+    
     # Also check current directory if running from an installation
     if [[ -f "./docs/docs_manifest.json" && "$(pwd)" != "$INSTALL_DIR" ]]; then
         paths+=("$(pwd)")
     fi
-
+    
     # Deduplicate and exclude new location
     printf '%s\n' "${paths[@]}" | grep -v "^$INSTALL_DIR$" | sort -u
 }
@@ -115,11 +115,11 @@ find_existing_installations() {
 # Function to migrate from old location
 migrate_installation() {
     local old_dir="$1"
-
+    
     echo "📦 Found existing installation at: $old_dir"
     echo "   Migrating to: $INSTALL_DIR"
     echo ""
-
+    
     # Check if old dir has uncommitted changes
     local should_preserve=false
     if [[ -d "$old_dir/.git" ]]; then
@@ -130,12 +130,12 @@ migrate_installation() {
         fi
         cd - >/dev/null
     fi
-
+    
     # Fresh install at new location
     echo "Installing fresh at ~/.claude-code-docs..."
     git clone -b "$INSTALL_BRANCH" https://github.com/ericbuess/claude-code-docs.git "$INSTALL_DIR"
     cd "$INSTALL_DIR"
-
+    
     # Remove old directory if safe
     if [[ "$should_preserve" == "false" ]]; then
         echo "Removing old installation..."
@@ -146,7 +146,7 @@ migrate_installation() {
         echo "ℹ️  Old installation preserved at: $old_dir"
         echo "   (has uncommitted changes)"
     fi
-
+    
     echo ""
     echo "✅ Migration complete!"
 }
@@ -155,7 +155,7 @@ migrate_installation() {
 safe_git_update() {
     local repo_dir="$1"
     cd "$repo_dir"
-
+    
     # Check if this is a v0.3.1 installation with dirty manifest (need to upgrade to v0.3.2)
     local needs_v032_upgrade=false
     if [[ -n "$(git status --porcelain docs/docs_manifest.json 2>/dev/null)" ]]; then
@@ -165,7 +165,7 @@ safe_git_update() {
             echo "  Detected v0.3.1 with manifest bug, upgrading to v0.3.2..."
         fi
     fi
-
+    
     # Determine which branch to use
     local target_branch
     if [[ "$needs_v032_upgrade" == "true" ]]; then
@@ -177,14 +177,14 @@ safe_git_update() {
         # Stay on current branch (for normal updates)
         target_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
     fi
-
+    
     # Set git config for pull strategy if not set
     if ! git config pull.rebase >/dev/null 2>&1; then
         git config pull.rebase false
     fi
-
+    
     echo "Updating to latest version..."
-
+    
     # For v0.3.1 upgrade, we need to handle dirty files
     if [[ "$needs_v032_upgrade" == "true" ]]; then
         # Restore manifest to clean state
@@ -196,21 +196,21 @@ safe_git_update() {
         echo "  ✓ Upgraded to v0.3.2 (fixed manifest bug)"
         return 0
     fi
-
+    
     # Try regular pull first (use target branch)
     if git pull --quiet origin "$target_branch" 2>/dev/null; then
         return 0
     fi
-
+    
     # If pull failed, try more aggressive approach
     echo "  Standard update failed, trying harder..."
-
+    
     # Fetch latest
     if ! git fetch origin "$target_branch" 2>/dev/null; then
         echo "  ⚠️  Could not fetch from GitHub (offline?)"
         return 1
     fi
-
+    
     # Check if we have local changes
     if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
         echo "  ⚠️  Local changes detected, preserving them..."
@@ -224,7 +224,7 @@ safe_git_update() {
         git reset --hard origin/"$target_branch" >/dev/null 2>&1
         echo "  ✓ Updated successfully"
     fi
-
+    
     return 0
 }
 
@@ -234,19 +234,19 @@ cleanup_old_installations() {
     if [[ ${#OLD_INSTALLATIONS[@]} -eq 0 ]]; then
         return
     fi
-
+    
     echo ""
     echo "Cleaning up old installations..."
     echo "Found ${#OLD_INSTALLATIONS[@]} old installation(s) to remove:"
-
+    
     for old_dir in "${OLD_INSTALLATIONS[@]}"; do
         # Skip empty paths
         if [[ -z "$old_dir" ]]; then
             continue
         fi
-
+        
         echo "  - $old_dir"
-
+        
         # Check if it has uncommitted changes
         if [[ -d "$old_dir/.git" ]]; then
             cd "$old_dir"
@@ -284,7 +284,7 @@ fi
 if [[ -d "$INSTALL_DIR" && -f "$INSTALL_DIR/docs/docs_manifest.json" ]]; then
     echo "✓ Found installation at ~/.claude-code-docs"
     echo "  Updating to latest version..."
-
+    
     # Update it safely
     safe_git_update "$INSTALL_DIR"
     cd "$INSTALL_DIR"
@@ -298,7 +298,7 @@ else
         # Fresh installation
         echo "No existing installation found"
         echo "Installing fresh to ~/.claude-code-docs..."
-
+        
         git clone -b "$INSTALL_BRANCH" https://github.com/ericbuess/claude-code-docs.git "$INSTALL_DIR"
         cd "$INSTALL_DIR"
     fi
@@ -387,11 +387,11 @@ HOOK_COMMAND="~/.claude-code-docs/claude-docs-helper.sh hook-check"
 if [ -f ~/.claude/settings.json ]; then
     # Update existing settings.json
     echo "  Updating Claude settings..."
-
+    
     # First remove ALL hooks that contain "claude-code-docs" anywhere in the command
     # This catches old installations at any path
     jq '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[] | select(.hooks[0].command | contains("claude-code-docs") | not)]' ~/.claude/settings.json > ~/.claude/settings.json.tmp
-
+    
     # Then add our new hook
     jq --arg cmd "$HOOK_COMMAND" '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[]] + [{"matcher": "Read", "hooks": [{"type": "command", "command": $cmd}]}]' ~/.claude/settings.json.tmp > ~/.claude/settings.json
     rm -f ~/.claude/settings.json.tmp
