@@ -159,7 +159,17 @@ curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/ins
 - 改进本地仓库变更处理
 - 提升更新过程的错误恢复
 
+## 中文内容
+`/docs` 命令提供开箱即用的本地文档访问，并可按需检查新鲜度。
+
+### 默认：极速访问（不检查）
+```bash
+/docs hooks-cn
+/docs mcp-cn
+/docs memory-cn
+```
+### 本地安装不更新
+用scripts/install-local.sh安装...
 ## 许可证
 
 文档内容归 Anthropic 所有。
-

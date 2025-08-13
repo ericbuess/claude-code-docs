@@ -1,16 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 
-# Claude Code Docs Installer v0.3.2 - Fixed auto-update issues
+# Claude Code Docs Installer v0.3.2-local - Uses local files only, no GitHub updates
 # This script installs/migrates claude-code-docs to ~/.claude-code-docs
 
-echo "Claude Code Docs Installer v0.3.2"
-echo "==============================="
+echo "Claude Code Docs Installer v0.3.2-local"
+echo "======================================"
 
 # Fixed installation location
 INSTALL_DIR="$HOME/.claude-code-docs"
 
-# Branch to use for installation
+# Branch to use for installation (not used in local mode)
 INSTALL_BRANCH="main"
 
 # Detect OS type
@@ -131,9 +131,10 @@ migrate_installation() {
         cd - >/dev/null
     fi
 
-    # Fresh install at new location
+    # Fresh install at new location - copy from current directory
     echo "Installing fresh at ~/.claude-code-docs..."
-    git clone -b "$INSTALL_BRANCH" https://github.com/ericbuess/claude-code-docs.git "$INSTALL_DIR"
+    mkdir -p "$INSTALL_DIR"
+    rsync -av --exclude='.git' "$(pwd)"/ "$INSTALL_DIR"/
     cd "$INSTALL_DIR"
 
     # Remove old directory if safe
@@ -152,79 +153,15 @@ migrate_installation() {
 }
 
 # Function to safely update git repository
+# DEL: Removed auto-update functionality to use local files only
 safe_git_update() {
     local repo_dir="$1"
     cd "$repo_dir"
-
-    # Check if this is a v0.3.1 installation with dirty manifest (need to upgrade to v0.3.2)
-    local needs_v032_upgrade=false
-    if [[ -n "$(git status --porcelain docs/docs_manifest.json 2>/dev/null)" ]]; then
-        # Check if manifest has installer_version (v0.3.1 bug)
-        if grep -q '"installer_version"' docs/docs_manifest.json 2>/dev/null; then
-            needs_v032_upgrade=true
-            echo "  Detected v0.3.1 with manifest bug, upgrading to v0.3.2..."
-        fi
-    fi
-
-    # Determine which branch to use
-    local target_branch
-    if [[ "$needs_v032_upgrade" == "true" ]]; then
-        # Force upgrade to v0.3.2-release for bugfix
-        target_branch="$INSTALL_BRANCH"
-        # Fetch the v0.3.2-release branch
-        git fetch origin "$target_branch" 2>/dev/null || true
-    else
-        # Stay on current branch (for normal updates)
-        target_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
-    fi
-
-    # Set git config for pull strategy if not set
-    if ! git config pull.rebase >/dev/null 2>&1; then
-        git config pull.rebase false
-    fi
-
-    echo "Updating to latest version..."
-
-    # For v0.3.1 upgrade, we need to handle dirty files
-    if [[ "$needs_v032_upgrade" == "true" ]]; then
-        # Restore manifest to clean state
-        git checkout -- docs/docs_manifest.json 2>/dev/null || true
-        # Switch to v0.3.2-release branch
-        git checkout "$target_branch" 2>/dev/null || git checkout -b "$target_branch" origin/"$target_branch" 2>/dev/null
-        # Pull latest
-        git pull origin "$target_branch" 2>/dev/null || true
-        echo "  ✓ Upgraded to v0.3.2 (fixed manifest bug)"
-        return 0
-    fi
-
-    # Try regular pull first (use target branch)
-    if git pull --quiet origin "$target_branch" 2>/dev/null; then
-        return 0
-    fi
-
-    # If pull failed, try more aggressive approach
-    echo "  Standard update failed, trying harder..."
-
-    # Fetch latest
-    if ! git fetch origin "$target_branch" 2>/dev/null; then
-        echo "  ⚠️  Could not fetch from GitHub (offline?)"
-        return 1
-    fi
-
-    # Check if we have local changes
-    if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
-        echo "  ⚠️  Local changes detected, preserving them..."
-        # Stash changes
-        git stash push -m "Installer auto-stash $(date)" >/dev/null 2>&1
-        # Reset to origin
-        git reset --hard origin/"$target_branch" >/dev/null 2>&1
-        echo "  ✓ Updated (local changes stashed)"
-    else
-        # No local changes, just reset
-        git reset --hard origin/"$target_branch" >/dev/null 2>&1
-        echo "  ✓ Updated successfully"
-    fi
-
+    
+    # Just copy files from current directory instead of updating from GitHub
+    echo "Copying files from local repository..."
+    rsync -av --exclude='.git' "$(pwd)"/ "$repo_dir"/
+    
     return 0
 }
 
@@ -269,7 +206,12 @@ echo ""
 
 # Always find old installations first (before any config changes)
 echo "Checking for existing installations..."
-mapfile -t existing_installs < <(find_existing_installations)
+# mapfile -t existing_installs < <(find_existing_installations)
+# 替换mapfile为兼容的while循环
+existing_installs=()
+while IFS= read -r line; do
+    existing_installs+=("$line")
+done < <(find_existing_installations)
 OLD_INSTALLATIONS=("${existing_installs[@]}")  # Save for later cleanup
 
 if [[ ${#existing_installs[@]} -gt 0 ]]; then
@@ -283,11 +225,11 @@ fi
 # Check if already installed at new location
 if [[ -d "$INSTALL_DIR" && -f "$INSTALL_DIR/docs/docs_manifest.json" ]]; then
     echo "✓ Found installation at ~/.claude-code-docs"
-    echo "  Updating to latest version..."
-
-    # Update it safely
-    safe_git_update "$INSTALL_DIR"
+    echo "  Copying files from local repo..."
+    
+    # Copy files from current directory to installation directory
     cd "$INSTALL_DIR"
+    rsync -av --exclude='.git' "$(pwd)"/ "$INSTALL_DIR"/
 else
     # Need to install at new location
     if [[ ${#existing_installs[@]} -gt 0 ]]; then
@@ -295,11 +237,15 @@ else
         old_install="${existing_installs[0]}"
         migrate_installation "$old_install"
     else
-        # Fresh installation
+        # Fresh installation - copy from current directory
         echo "No existing installation found"
         echo "Installing fresh to ~/.claude-code-docs..."
-
-        git clone -b "$INSTALL_BRANCH" https://github.com/ericbuess/claude-code-docs.git "$INSTALL_DIR"
+        
+        # Create installation directory
+        mkdir -p "$INSTALL_DIR"
+        
+        # Copy all files from current directory to installation directory
+        rsync -av --exclude='.git' "$(pwd)"/ "$INSTALL_DIR"/
         cd "$INSTALL_DIR"
     fi
 fi
@@ -316,10 +262,10 @@ if [[ -f "$INSTALL_DIR/scripts/claude-docs-helper.sh.template" ]]; then
     echo "✓ Helper script installed"
 else
     echo "  ⚠️  Template file missing, attempting recovery..."
-    # Try to fetch just the template file
-    if curl -fsSL "https://raw.githubusercontent.com/ericbuess/claude-code-docs/$INSTALL_BRANCH/scripts/claude-docs-helper.sh.template" -o "$INSTALL_DIR/claude-docs-helper.sh" 2>/dev/null; then
+    # Try to copy from current directory instead of downloading
+    if cp "./scripts/claude-docs-helper.sh.template" "$INSTALL_DIR/claude-docs-helper.sh" 2>/dev/null; then
         chmod +x "$INSTALL_DIR/claude-docs-helper.sh"
-        echo "  ✓ Helper script downloaded directly"
+        echo "  ✓ Helper script copied from local directory"
     else
         echo "  ❌ Failed to install helper script"
         echo "  Please check your installation and try again"
@@ -370,8 +316,7 @@ When showing what's new:
 📎 Full changelog: https://github.com/ericbuess/claude-code-docs/commits/main/docs
 📚 COMMUNITY MIRROR - NOT AFFILIATED WITH ANTHROPIC
 
-Every request checks for the latest documentation from GitHub (takes ~0.4s).
-The helper script handles all functionality including auto-updates.
+The helper script handles all functionality using local files only (no GitHub updates).
 
 Execute: ~/.claude-code-docs/claude-docs-helper.sh "$ARGUMENTS"
 EOF
@@ -434,9 +379,10 @@ echo "  /docs hooks         # Read hooks documentation"
 echo "  /docs -t           # Check when docs were last updated"
 echo "  /docs what's new  # See recent documentation changes"
 echo ""
-echo "🔄 Auto-updates: Enabled - syncs automatically when GitHub has newer content"
+echo "🔄 Updates: Using local files - no auto-updates from GitHub"
 echo ""
 echo "Available topics:"
-ls "$INSTALL_DIR/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 60
+ls "$INSTALL_DIR/docs" | grep '\.md
+ | sed 's/\.md$//' | sort | column -c 60
 echo ""
-echo "⚠️  Note: Restart Claude Code for auto-updates to take effect"
+echo "⚠️  Note: Run the install script again to update from local changes"
