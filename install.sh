@@ -109,7 +109,9 @@ find_existing_installations() {
     fi
     
     # Deduplicate and exclude new location
-    printf '%s\n' "${paths[@]}" | grep -v "^$INSTALL_DIR$" | sort -u
+    if [[ ${#paths[@]} -gt 0 ]]; then
+        printf '%s\n' "${paths[@]}" | grep -v "^$INSTALL_DIR$" | sort -u
+    fi
 }
 
 # Function to migrate from old location
@@ -339,9 +341,11 @@ existing_installs=()
 while IFS= read -r line; do
     [[ -n "$line" ]] && existing_installs+=("$line")
 done < <(find_existing_installations)
-OLD_INSTALLATIONS=("${existing_installs[@]}")  # Save for later cleanup
 
+# Initialize OLD_INSTALLATIONS and mark all of them for cleanup
+OLD_INSTALLATIONS=()
 if [[ ${#existing_installs[@]} -gt 0 ]]; then
+    OLD_INSTALLATIONS=("${existing_installs[@]}")
     echo "Found ${#existing_installs[@]} existing installation(s):"
     for install in "${existing_installs[@]}"; do
         echo "  - $install"
