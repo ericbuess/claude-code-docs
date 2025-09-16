@@ -11,12 +11,12 @@ When responding to /docs commands:
 2. Read documentation files from the docs/ directory only
 3. Use the manifest to know available topics
 
-## Files to ultrathink about
+## Project Structure
 
-@install.sh
-@README.md
-@uninstall.sh
-@UNINSTALL.md
-@claude-docs-helper.md
-@scripts/
-@.github/workflows/
+- **install.sh** - Installation script that sets up the tool
+- **README.md** - Main documentation and user guide
+- **uninstall.sh** - Smart uninstaller that finds all installations
+- **UNINSTALL.md** - Uninstallation documentation
+- **scripts/** - Core scripts including helper and fetcher
+- **.github/workflows/** - GitHub Actions for auto-updates
+- **docs/** - Mirrored documentation files from Anthropic
