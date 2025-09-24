@@ -13,6 +13,9 @@ INSTALL_DIR="$HOME/.claude-code-docs"
 # Branch to use for installation
 INSTALL_BRANCH="main"
 
+# Initialize global arrays to avoid unbound errors under set -u
+OLD_INSTALLATIONS=()
+
 # Detect OS type
 if [[ "$OSTYPE" == "darwin"* ]]; then
     OS_TYPE="macos"
@@ -108,8 +111,10 @@ find_existing_installations() {
         paths+=("$(pwd)")
     fi
     
-    # Deduplicate and exclude new location
-    printf '%s\n' "${paths[@]}" | grep -v "^$INSTALL_DIR$" | sort -u
+    # Deduplicate and exclude new location (guard empty/unset array)
+    if [[ ${#paths[@]-0} -gt 0 ]]; then
+        printf '%s\n' "${paths[@]}" | grep -v "^$INSTALL_DIR$" | sort -u
+    fi
 }
 
 # Function to migrate from old location
@@ -339,7 +344,12 @@ existing_installs=()
 while IFS= read -r line; do
     [[ -n "$line" ]] && existing_installs+=("$line")
 done < <(find_existing_installations)
-OLD_INSTALLATIONS=("${existing_installs[@]}")  # Save for later cleanup
+# Save for later cleanup, guard empty expansion under set -u
+if [[ ${#existing_installs[@]} -gt 0 ]]; then
+    OLD_INSTALLATIONS=("${existing_installs[@]}")
+else
+    OLD_INSTALLATIONS=()
+fi
 
 if [[ ${#existing_installs[@]} -gt 0 ]]; then
     echo "Found ${#existing_installs[@]} existing installation(s):"
