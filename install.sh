@@ -43,7 +43,7 @@ echo "✓ All dependencies satisfied"
 
 # Function to find existing installations from configs
 find_existing_installations() {
-    local -a paths=()
+    local paths=()
     
     # Check command file for paths
     if [[ -f ~/.claude/commands/docs.md ]]; then
