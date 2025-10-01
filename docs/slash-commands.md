@@ -4,29 +4,31 @@
 
 ## Built-in slash commands
 
-| Command                   | Purpose                                                                        |
-| :------------------------ | :----------------------------------------------------------------------------- |
-| `/add-dir`                | Add additional working directories                                             |
-| `/agents`                 | Manage custom AI subagents for specialized tasks                               |
-| `/bug`                    | Report bugs (sends conversation to Anthropic)                                  |
-| `/clear`                  | Clear conversation history                                                     |
-| `/compact [instructions]` | Compact conversation with optional focus instructions                          |
-| `/config`                 | View/modify configuration                                                      |
-| `/cost`                   | Show token usage statistics                                                    |
-| `/doctor`                 | Checks the health of your Claude Code installation                             |
-| `/help`                   | Get usage help                                                                 |
-| `/init`                   | Initialize project with CLAUDE.md guide                                        |
-| `/login`                  | Switch Anthropic accounts                                                      |
-| `/logout`                 | Sign out from your Anthropic account                                           |
-| `/mcp`                    | Manage MCP server connections and OAuth authentication                         |
-| `/memory`                 | Edit CLAUDE.md memory files                                                    |
-| `/model`                  | Select or change the AI model                                                  |
-| `/permissions`            | View or update [permissions](/en/docs/claude-code/iam#configuring-permissions) |
-| `/pr_comments`            | View pull request comments                                                     |
-| `/review`                 | Request code review                                                            |
-| `/status`                 | View account and system statuses                                               |
-| `/terminal-setup`         | Install Shift+Enter key binding for newlines (iTerm2 and VSCode only)          |
-| `/vim`                    | Enter vim mode for alternating insert and command modes                        |
+| Command                   | Purpose                                                                                                                                      |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/add-dir`                | Add additional working directories                                                                                                           |
+| `/agents`                 | Manage custom AI subagents for specialized tasks                                                                                             |
+| `/bug`                    | Report bugs (sends conversation to Anthropic)                                                                                                |
+| `/clear`                  | Clear conversation history                                                                                                                   |
+| `/compact [instructions]` | Compact conversation with optional focus instructions                                                                                        |
+| `/config`                 | Open the Settings interface (Config tab)                                                                                                     |
+| `/cost`                   | Show token usage statistics (see [cost tracking guide](/en/docs/claude-code/costs#using-the-cost-command) for subscription-specific details) |
+| `/doctor`                 | Checks the health of your Claude Code installation                                                                                           |
+| `/help`                   | Get usage help                                                                                                                               |
+| `/init`                   | Initialize project with CLAUDE.md guide                                                                                                      |
+| `/login`                  | Switch Anthropic accounts                                                                                                                    |
+| `/logout`                 | Sign out from your Anthropic account                                                                                                         |
+| `/mcp`                    | Manage MCP server connections and OAuth authentication                                                                                       |
+| `/memory`                 | Edit CLAUDE.md memory files                                                                                                                  |
+| `/model`                  | Select or change the AI model                                                                                                                |
+| `/permissions`            | View or update [permissions](/en/docs/claude-code/iam#configuring-permissions)                                                               |
+| `/pr_comments`            | View pull request comments                                                                                                                   |
+| `/review`                 | Request code review                                                                                                                          |
+| `/rewind`                 | Rewind the conversation and/or code                                                                                                          |
+| `/status`                 | Open the Settings interface (Status tab) showing version, model, account, and connectivity                                                   |
+| `/terminal-setup`         | Install Shift+Enter key binding for newlines (iTerm2 and VSCode only)                                                                        |
+| `/usage`                  | Show plan usage limits and rate limit status (subscription plans only)                                                                       |
+| `/vim`                    | Enter vim mode for alternating insert and command modes                                                                                      |
 
 ## Custom slash commands
 
@@ -79,29 +81,48 @@ echo "Review this code for security vulnerabilities:" > ~/.claude/commands/secur
 
 #### Namespacing
 
-Organize commands in subdirectories. The subdirectories determine the command's
-full name. The description will show whether the command comes from the project
-directory (`.claude/commands`) or the user-level directory (`~/.claude/commands`).
+Organize commands in subdirectories. The subdirectories are used for organization and appear in the command description, but they do not affect the command name itself. The description will show whether the command comes from the project directory (`.claude/commands`) or the user-level directory (`~/.claude/commands`), along with the subdirectory name.
 
-Conflicts between user and project level commands are not supported. Otherwise,
-multiple commands with the same base file name can coexist.
+Conflicts between user and project level commands are not supported. Otherwise, multiple commands with the same base file name can coexist.
 
-For example, a file at `.claude/commands/frontend/component.md` creates the command `/frontend:component` with description showing "(project)".
+For example, a file at `.claude/commands/frontend/component.md` creates the command `/component` with description showing "(project:frontend)".
 Meanwhile, a file at `~/.claude/commands/component.md` creates the command `/component` with description showing "(user)".
 
 #### Arguments
 
-Pass dynamic values to commands using the `$ARGUMENTS` placeholder.
+Pass dynamic values to commands using argument placeholders:
 
-For example:
+##### All arguments with `$ARGUMENTS`
+
+The `$ARGUMENTS` placeholder captures all arguments passed to the command:
 
 ```bash
 # Command definition
 echo 'Fix issue #$ARGUMENTS following our coding standards' > .claude/commands/fix-issue.md
 
 # Usage
-> /fix-issue 123
+> /fix-issue 123 high-priority
+# $ARGUMENTS becomes: "123 high-priority"
 ```
+
+##### Individual arguments with `$1`, `$2`, etc.
+
+Access specific arguments individually using positional parameters (similar to shell scripts):
+
+```bash
+# Command definition  
+echo 'Review PR #$1 with priority $2 and assign to $3' > .claude/commands/review-pr.md
+
+# Usage
+> /review-pr 456 high alice
+# $1 becomes "456", $2 becomes "high", $3 becomes "alice"
+```
+
+Use positional arguments when you need to:
+
+* Access arguments individually in different parts of your command
+* Provide defaults for missing arguments
+* Build more structured commands with specific parameter roles
 
 #### Bash command execution
 
@@ -151,12 +172,13 @@ Slash commands can trigger extended thinking by including [extended thinking key
 
 Command files support frontmatter, useful for specifying metadata about the command:
 
-| Frontmatter     | Purpose                                                                                                                                                                               | Default                             |
-| :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------- |
-| `allowed-tools` | List of tools the command can use                                                                                                                                                     | Inherits from the conversation      |
-| `argument-hint` | The arguments expected for the slash command. Example: `argument-hint: add [tagId] \| remove [tagId] \| list`. This hint is shown to the user when auto-completing the slash command. | None                                |
-| `description`   | Brief description of the command                                                                                                                                                      | Uses the first line from the prompt |
-| `model`         | Specific model string (see [Models overview](/en/docs/about-claude/models/overview))                                                                                                  | Inherits from the conversation      |
+| Frontmatter                | Purpose                                                                                                                                                                               | Default                             |
+| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------- |
+| `allowed-tools`            | List of tools the command can use                                                                                                                                                     | Inherits from the conversation      |
+| `argument-hint`            | The arguments expected for the slash command. Example: `argument-hint: add [tagId] \| remove [tagId] \| list`. This hint is shown to the user when auto-completing the slash command. | None                                |
+| `description`              | Brief description of the command                                                                                                                                                      | Uses the first line from the prompt |
+| `model`                    | Specific model string (see [Models overview](/en/docs/about-claude/models/overview))                                                                                                  | Inherits from the conversation      |
+| `disable-model-invocation` | Whether to prevent `SlashCommand` tool from calling this command                                                                                                                      | false                               |
 
 For example:
 
@@ -168,7 +190,19 @@ description: Create a git commit
 model: claude-3-5-haiku-20241022
 ---
 
-An example command
+Create a git commit with message: $ARGUMENTS
+```
+
+Example using positional arguments:
+
+```markdown
+---
+argument-hint: [pr-number] [priority] [assignee]
+description: Review pull request
+---
+
+Review PR #$1 with priority $2 and assign to $3.
+Focus on security, performance, and code style.
 ```
 
 ## MCP slash commands
@@ -222,8 +256,87 @@ Use the `/mcp` command to:
 * Clear authentication tokens
 * View available tools and prompts from each server
 
+### MCP permissions and wildcards
+
+When configuring [permissions for MCP tools](/en/docs/claude-code/iam#tool-specific-permission-rules), note that **wildcards are not supported**:
+
+* ✅ **Correct**: `mcp__github` (approves ALL tools from the github server)
+* ✅ **Correct**: `mcp__github__get_issue` (approves specific tool)
+* ❌ **Incorrect**: `mcp__github__*` (wildcards not supported)
+
+To approve all tools from an MCP server, use just the server name: `mcp__servername`. To approve specific tools only, list each tool individually.
+
+## `SlashCommand` tool
+
+The `SlashCommand` tool allows Claude to execute [custom slash commands](/en/docs/claude-code/slash-commands#custom-slash-commands) programmatically
+during a conversation. This gives Claude the ability to invoke custom commands
+on your behalf when appropriate.
+
+To encourage Claude to trigger `SlashCommand` tool, your instructions (prompts,
+CLAUDE.md, etc.) generally need to reference the command by name with its slash.
+
+Example:
+
+```
+> Run /write-unit-test when you are about to start writing tests.
+```
+
+This tool puts each available custom slash command's metadata into context up to the
+character budget limit. You can use `/context` to monitor token usage and follow
+the operations below to manage context.
+
+### `SlashCommand` tool supported commands
+
+`SlashCommand` tool only supports custom slash commands that:
+
+* Are user-defined. Built-in commands like `/compact` and `/init` are *not* supported.
+* Have the `description` frontmatter field populated. We use the `description` in the context.
+
+For Claude Code versions >= 1.0.124, you can see which custom slash commands
+`SlashCommand` tool can invoke by running `claude --debug` and triggering a query.
+
+### Disable `SlashCommand` tool
+
+To prevent Claude from executing any slash commands via the tool:
+
+```bash
+/permissions
+# Add to deny rules: SlashCommand
+```
+
+This will also remove SlashCommand tool (and the slash command descriptions) from context.
+
+### Disable specific commands only
+
+To prevent a specific slash command from becoming available, add
+`disable-model-invocation: true` to the slash command's frontmatter.
+
+This will also remove the command's metadata from context.
+
+### `SlashCommand` permission rules
+
+The permission rules support:
+
+* **Exact match**: `SlashCommand:/commit` (allows only `/commit` with no arguments)
+* **Prefix match**: `SlashCommand:/review-pr:*` (allows `/review-pr` with any arguments)
+
+### Character budget limit
+
+The `SlashCommand` tool includes a character budget to limit the size of command
+descriptions shown to Claude. This prevents token overflow when many commands
+are available.
+
+The budget includes each custom slash command's name, args, and description.
+
+* **Default limit**: 15,000 characters
+* **Custom limit**: Set via `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable
+
+When the character budget is exceeded, Claude will see only a subset of the
+available commands. In `/context`, a warning will show with "M of N commands".
+
 ## See also
 
+* [Identity and Access Management](/en/docs/claude-code/iam) - Complete guide to permissions, including MCP tool permissions
 * [Interactive mode](/en/docs/claude-code/interactive-mode) - Shortcuts, input modes, and interactive features
 * [CLI reference](/en/docs/claude-code/cli-reference) - Command-line flags and options
 * [Settings](/en/docs/claude-code/settings) - Configuration options

@@ -35,16 +35,6 @@ Run `/terminal-setup` within Claude Code to automatically configure Shift+Enter.
 
 Never miss when Claude completes a task with proper notification configuration:
 
-#### Terminal bell notifications
-
-Enable sound alerts when tasks complete:
-
-```sh
-claude config set --global preferredNotifChannel terminal_bell
-```
-
-**For macOS users**: Don't forget to enable notification permissions in System Settings → Notifications → \[Your Terminal App].
-
 #### iTerm 2 system notifications
 
 For iTerm 2 alerts when tasks complete:

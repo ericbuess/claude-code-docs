@@ -219,6 +219,72 @@ Suppose you want to use specialized AI subagents to handle specific tasks more e
 
 ***
 
+## Use Plan Mode for safe code analysis
+
+Plan Mode instructs Claude to create a plan by analyzing the codebase with read-only operations, perfect for exploring codebases, planning complex changes, or reviewing code safely.
+
+### When to use Plan Mode
+
+* **Multi-step implementation**: When your feature requires making edits to many files
+* **Code exploration**: When you want to research the codebase thoroughly before changing anything
+* **Interactive development**: When you want to iterate on the direction with Claude
+
+### How to use Plan Mode
+
+**Turn on Plan Mode during a session**
+
+You can switch into Plan Mode during a session using **Shift+Tab** to cycle through permission modes.
+
+If you are in Normal Mode, **Shift+Tab** will first switch into Auto-Accept Mode, indicated by `⏵⏵ accept edits on` at the bottom of the terminal. A subsequent **Shift+Tab** will switch into Plan Mode, indicated by `⏸ plan mode on`.
+
+**Start a new session in Plan Mode**
+
+To start a new session in Plan Mode, use the `--permission-mode plan` flag:
+
+```bash
+claude --permission-mode plan
+```
+
+**Run "headless" queries in Plan Mode**
+
+You can also run a query in Plan Mode directly with `-p` (i.e., in ["headless mode"](/en/docs/claude-code/sdk/sdk-headless)):
+
+```bash
+claude --permission-mode plan -p "Analyze the authentication system and suggest improvements"
+```
+
+### Example: Planning a complex refactor
+
+```bash
+claude --permission-mode plan
+```
+
+```
+> I need to refactor our authentication system to use OAuth2. Create a detailed migration plan.
+```
+
+Claude will analyze the current implementation and create a comprehensive plan. Refine with follow-ups:
+
+```
+> What about backward compatibility?
+> How should we handle database migration?
+```
+
+### Configure Plan Mode as default
+
+```json
+// .claude/settings.json
+{
+  "permissions": {
+    "defaultMode": "plan"
+  }
+}
+```
+
+See [settings documentation](/en/docs/claude-code/settings#available-settings) for more configuration options.
+
+***
+
 ## Work with tests
 
 Suppose you need to add tests for uncovered code.
@@ -441,10 +507,14 @@ Use @ to quickly include files or directories without waiting for Claude to read
 
 Suppose you're working on complex architectural decisions, challenging bugs, or planning multi-step implementations that require deep reasoning.
 
+<Note>
+  [Extended thinking](/en/docs/build-with-claude/extended-thinking) is disabled by default in Claude Code. You can enable it on-demand by using `Tab` to toggle Thinking on, or by using prompts like "think" or "think hard". You can also enable it permanently by setting the [`MAX_THINKING_TOKENS` environment variable](/en/docs/claude-code/settings#environment-variables) in your settings.
+</Note>
+
 <Steps>
   <Step title="Provide context and ask Claude to think">
     ```
-    > I need to implement a new authentication system using OAuth2 for our API. Think deeply about the best approach for implementing this in our codebase. 
+    > I need to implement a new authentication system using OAuth2 for our API. Think deeply about the best approach for implementing this in our codebase.
     ```
 
     Claude will gather relevant information from your codebase and
@@ -457,7 +527,7 @@ Suppose you're working on complex architectural decisions, challenging bugs, or 
     ```
 
     ```
-    > think harder about edge cases we should handle 
+    > think hard about edge cases we should handle 
     ```
   </Step>
 </Steps>
@@ -465,7 +535,7 @@ Suppose you're working on complex architectural decisions, challenging bugs, or 
 <Tip>
   Tips to get the most value out of extended thinking:
 
-  Extended thinking is most valuable for complex tasks such as:
+  [Extended thinking](/en/docs/build-with-claude/extended-thinking) is most valuable for complex tasks such as:
 
   * Planning complex architectural changes
   * Debugging intricate issues
@@ -473,10 +543,12 @@ Suppose you're working on complex architectural decisions, challenging bugs, or 
   * Understanding complex codebases
   * Evaluating tradeoffs between different approaches
 
+  Use `Tab` to toggle Thinking on and off during a session.
+
   The way you prompt for thinking results in varying levels of thinking depth:
 
   * "think" triggers basic extended thinking
-  * intensifying phrases such as "think more", "think a lot", "think harder", or "think longer" triggers deeper thinking
+  * intensifying phrases such as "keep hard", "think more", "think a lot", or "think longer" triggers deeper thinking
 
   For more extended thinking prompting tips, see [Extended thinking tips](/en/docs/build-with-claude/prompt-engineering/extended-thinking-tips).
 </Tip>
@@ -519,13 +591,12 @@ Claude Code provides two options for resuming previous conversations:
     claude --resume
     ```
 
-    This displays an interactive conversation selector showing:
+    This displays an interactive conversation selector with a clean list view showing:
 
-    * Conversation start time
-    * Initial prompt or conversation summary
-    * Message count
+    * Session summary (or initial prompt)
+    * Metadata: time elapsed, message count, and git branch
 
-    Use arrow keys to navigate and press Enter to select a conversation.
+    Use arrow keys to navigate and press Enter to select a conversation. Press Esc to exit.
   </Step>
 </Steps>
 

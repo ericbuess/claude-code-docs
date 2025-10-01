@@ -10,6 +10,7 @@ Make sure you have:
 
 * A terminal or command prompt open
 * A code project to work with
+* A [Claude.ai](https://claude.ai) (recommended) or [Claude Console](https://console.anthropic.com/) account
 
 ## Step 1: Install Claude Code
 
@@ -30,7 +31,7 @@ npm install -g @anthropic-ai/claude-code
 **macOS, Linux, WSL:**
 
 ```bash
-curl -fsSL claude.ai/install.sh | bash
+curl -fsSL https://claude.ai/install.sh | bash
 ```
 
 **Windows PowerShell:**
@@ -39,7 +40,42 @@ curl -fsSL claude.ai/install.sh | bash
 irm https://claude.ai/install.ps1 | iex
 ```
 
-## Step 2: Start your first session
+**Windows CMD:**
+
+```batch
+curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+```
+
+## Step 2: Log in to your account
+
+Claude Code requires an account to use. When you start an interactive session with the `claude` command, you'll need to log in:
+
+```bash
+claude
+# You'll be prompted to log in on first use
+```
+
+```bash
+/login
+# Follow the prompts to log in with your account
+```
+
+You can log in using either account type:
+
+* [Claude.ai](https://claude.ai) (subscription plans - recommended)
+* [Claude Console](https://console.anthropic.com/) (API access with pre-paid credits)
+
+Once logged in, your credentials are stored and you won't need to log in again.
+
+<Note>
+  When you first authenticate Claude Code with your Claude Console account, a workspace called "Claude Code" is automatically created for you. This workspace provides centralized cost tracking and management for all Claude Code usage in your organization.
+</Note>
+
+<Note>
+  You can have both account types under the same email address. If you need to log in again or switch accounts, use the `/login` command within Claude Code.
+</Note>
+
+## Step 3: Start your first session
 
 Open your terminal in any project directory and start Claude Code:
 
@@ -48,21 +84,13 @@ cd /path/to/your/project
 claude
 ```
 
-You'll see the Claude Code prompt inside a new interactive session:
-
-```
-✻ Welcome to Claude Code!
-
-...
-
-> Try "create a util logging.py that..." 
-```
+You'll see the Claude Code welcome screen with your session information, recent conversations, and latest updates. Type `/help` for available commands or `/resume` to continue a previous conversation.
 
 <Tip>
-  Your credentials are securely stored on your system. Learn more in [Credential Management](/en/docs/claude-code/iam#credential-management).
+  After logging in (Step 2), your credentials are stored on your system. Learn more in [Credential Management](/en/docs/claude-code/iam#credential-management).
 </Tip>
 
-## Step 3: Ask your first question
+## Step 4: Ask your first question
 
 Let's start with understanding your codebase. Try one of these commands:
 
@@ -102,7 +130,7 @@ You can also ask Claude about its own capabilities:
   Claude Code reads your files as needed - you don't have to manually add context. Claude also has access to its own documentation and can answer questions about its features and capabilities.
 </Note>
 
-## Step 4: Make your first code change
+## Step 5: Make your first code change
 
 Now let's make Claude Code do some actual coding. Try a simple task:
 
@@ -121,7 +149,7 @@ Claude Code will:
   Claude Code always asks for permission before modifying files. You can approve individual changes or enable "Accept all" mode for a session.
 </Note>
 
-## Step 5: Use Git with Claude Code
+## Step 6: Use Git with Claude Code
 
 Claude Code makes Git operations conversational:
 
@@ -147,7 +175,7 @@ You can also prompt for more complex Git operations:
 > help me resolve merge conflicts
 ```
 
-## Step 6: Fix a bug or add a feature
+## Step 7: Fix a bug or add a feature
 
 Claude is proficient at debugging and feature implementation.
 
@@ -170,7 +198,7 @@ Claude Code will:
 * Implement a solution
 * Run tests if available
 
-## Step 7: Test out other common workflows
+## Step 8: Test out other common workflows
 
 There are a number of ways to work with Claude:
 

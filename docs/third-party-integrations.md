@@ -69,7 +69,7 @@ This page provides an overview of available deployment options and helps you cho
 ## Corporate infrastructure
 
 <CardGroup cols={2}>
-  <Card title="Corporate Proxy" icon="shield" href="/en/docs/claude-code/corporate-proxy">
+  <Card title="Enterprise Network" icon="shield" href="/en/docs/claude-code/network-config">
     Configure Claude Code to work with your organization's proxy servers and SSL/TLS requirements
   </Card>
 
@@ -217,6 +217,6 @@ At Anthropic, we trust Claude Code to power development across every Anthropic c
 
 * [Set up Amazon Bedrock](/en/docs/claude-code/amazon-bedrock) for AWS-native deployment
 * [Configure Google Vertex AI](/en/docs/claude-code/google-vertex-ai) for GCP deployment
-* [Implement Corporate Proxy](/en/docs/claude-code/corporate-proxy) for network requirements
+* [Configure Enterprise Network](/en/docs/claude-code/network-config) for network requirements
 * [Deploy LLM Gateway](/en/docs/claude-code/llm-gateway) for enterprise management
 * [Settings](/en/docs/claude-code/settings) for configuration options and environment variables

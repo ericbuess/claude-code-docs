@@ -99,7 +99,7 @@ export ANTHROPIC_BASE_URL=https://litellm-server:4000
 
 #### Provider-specific pass-through endpoints (alternative)
 
-##### Anthropic API through LiteLLM
+##### Claude API through LiteLLM
 
 Using [pass-through endpoint](https://docs.litellm.ai/docs/pass_through/anthropic_completion):
 
@@ -141,5 +141,5 @@ For more detailed information, refer to the [LiteLLM documentation](https://docs
 
 * [LiteLLM documentation](https://docs.litellm.ai/)
 * [Claude Code settings](/en/docs/claude-code/settings)
-* [Corporate proxy setup](/en/docs/claude-code/corporate-proxy)
+* [Enterprise network configuration](/en/docs/claude-code/network-config)
 * [Third-party integrations overview](/en/docs/claude-code/third-party-integrations)

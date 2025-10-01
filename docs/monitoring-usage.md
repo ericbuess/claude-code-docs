@@ -436,7 +436,7 @@ The `claude_code.cost.usage` metric helps with:
 * Identifying high-usage sessions for optimization
 
 <Note>
-  Cost metrics are approximations. For official billing data, refer to your API provider (Anthropic Console, AWS Bedrock, or Google Cloud Vertex).
+  Cost metrics are approximations. For official billing data, refer to your API provider (Claude Console, AWS Bedrock, or Google Cloud Vertex).
 </Note>
 
 ### Alerting and Segmentation
@@ -501,3 +501,7 @@ For a comprehensive guide on measuring return on investment for Claude Code, inc
 * Telemetry is opt-in and requires explicit configuration
 * Sensitive information like API keys or file contents are never included in metrics or events
 * User prompt content is redacted by default - only prompt length is recorded. To enable user prompt logging, set `OTEL_LOG_USER_PROMPTS=1`
+
+## Monitoring Claude Code on Amazon Bedrock
+
+For detailed Claude Code usage monitoring guidance for Amazon Bedrock, see [Claude Code Monitoring Implementation (Bedrock)](https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock/blob/main/assets/docs/MONITORING.md).

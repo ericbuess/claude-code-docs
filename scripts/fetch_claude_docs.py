@@ -247,11 +247,11 @@ def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> L
         logger.info(f"Discovered {len(claude_code_pages)} Claude Code documentation pages")
         
         return claude_code_pages
-        
+
     except Exception as e:
         logger.error(f"Failed to discover pages from sitemap: {e}")
         logger.warning("Falling back to essential pages...")
-        
+
         # More comprehensive fallback list
         return [
             "/en/docs/claude-code/overview",
@@ -270,6 +270,42 @@ def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> L
             "/en/docs/claude-code/costs",
             "/en/docs/claude-code/monitoring-usage",
         ]
+
+
+def discover_claude_code_pages_from_llms_txt(session: requests.Session, base_url: str) -> List[str]:
+    """
+    Discover Claude Code documentation pages from llms.txt file.
+    This is simpler and more reliable than parsing the sitemap.
+
+    Returns:
+        List of page paths like ["/en/docs/claude-code/overview", ...]
+    """
+    logger.info("Discovering documentation pages from llms.txt...")
+
+    try:
+        llms_txt_url = f"{base_url}/llms.txt"
+        response = session.get(llms_txt_url, headers=HEADERS, timeout=30)
+        response.raise_for_status()
+
+        pages = []
+        pattern = re.compile(r'^\- \[.*\]\((https://[^)]+/en/docs/claude-code/([^)]+))\.md\)')
+
+        for line in response.text.splitlines():
+            match = pattern.match(line)
+            if match:
+                full_url = match.group(1)
+                page_path = match.group(2)
+                # Construct the path format expected by the rest of the script
+                pages.append(f"/en/docs/claude-code/{page_path}")
+
+        pages = sorted(list(set(pages)))  # Remove duplicates and sort
+        logger.info(f"Discovered {len(pages)} Claude Code documentation pages from llms.txt")
+
+        return pages
+
+    except Exception as e:
+        logger.error(f"Failed to discover pages from llms.txt: {e}")
+        raise
 
 
 def validate_markdown_content(content: str, filename: str) -> None:
@@ -490,38 +526,47 @@ def main():
     
     # Create a session for connection pooling
     sitemap_url = None
+    discovery_method = None
     with requests.Session() as session:
-        # Discover sitemap and base URL
+        # Try to discover from docs.claude.com first (new domain)
+        base_url = "https://docs.claude.com"
+
+        # Try llms.txt first (simpler, more reliable)
         try:
-            sitemap_url, base_url = discover_sitemap_and_base_url(session)
+            documentation_pages = discover_claude_code_pages_from_llms_txt(session, base_url)
+            discovery_method = "llms.txt"
         except Exception as e:
-            logger.error(f"Failed to discover sitemap: {e}")
-            logger.info("Using fallback configuration...")
-            base_url = "https://docs.anthropic.com"
-            sitemap_url = None
-        
-        # Discover documentation pages dynamically
-        if sitemap_url:
-            documentation_pages = discover_claude_code_pages(session, sitemap_url)
-        else:
-            # Use fallback pages if sitemap discovery failed
-            documentation_pages = [
-                "/en/docs/claude-code/overview",
-                "/en/docs/claude-code/setup",
-                "/en/docs/claude-code/quickstart",
-                "/en/docs/claude-code/memory",
-                "/en/docs/claude-code/common-workflows",
-                "/en/docs/claude-code/ide-integrations",
-                "/en/docs/claude-code/mcp",
-                "/en/docs/claude-code/github-actions",
-                "/en/docs/claude-code/sdk",
-                "/en/docs/claude-code/troubleshooting",
-                "/en/docs/claude-code/security",
-                "/en/docs/claude-code/settings",
-                "/en/docs/claude-code/hooks",
-                "/en/docs/claude-code/costs",
-                "/en/docs/claude-code/monitoring-usage",
-            ]
+            logger.warning(f"Failed to discover from llms.txt: {e}")
+            logger.info("Falling back to sitemap discovery...")
+
+            # Fall back to sitemap discovery
+            try:
+                sitemap_url, base_url = discover_sitemap_and_base_url(session)
+                documentation_pages = discover_claude_code_pages(session, sitemap_url)
+                discovery_method = "sitemap"
+            except Exception as e2:
+                logger.error(f"Failed to discover from sitemap: {e2}")
+                logger.warning("Using hardcoded fallback page list...")
+
+                # Last resort: hardcoded list
+                documentation_pages = [
+                    "/en/docs/claude-code/overview",
+                    "/en/docs/claude-code/setup",
+                    "/en/docs/claude-code/quickstart",
+                    "/en/docs/claude-code/memory",
+                    "/en/docs/claude-code/common-workflows",
+                    "/en/docs/claude-code/ide-integrations",
+                    "/en/docs/claude-code/mcp",
+                    "/en/docs/claude-code/github-actions",
+                    "/en/docs/claude-code/sdk",
+                    "/en/docs/claude-code/troubleshooting",
+                    "/en/docs/claude-code/security",
+                    "/en/docs/claude-code/settings",
+                    "/en/docs/claude-code/hooks",
+                    "/en/docs/claude-code/costs",
+                    "/en/docs/claude-code/monitoring-usage",
+                ]
+                discovery_method = "hardcoded"
         
         if not documentation_pages:
             logger.error("No documentation pages discovered!")
@@ -613,10 +658,11 @@ def main():
         "pages_fetched_successfully": successful,
         "pages_failed": failed,
         "failed_pages": failed_pages,
-        "sitemap_url": sitemap_url,
+        "discovery_method": discovery_method,
+        "sitemap_url": sitemap_url if sitemap_url else None,
         "base_url": base_url,
         "total_files": len(fetched_files),
-        "fetch_tool_version": "3.0"
+        "fetch_tool_version": "3.1"
     }
     
     # Save new manifest

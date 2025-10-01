@@ -13,7 +13,7 @@
 
 ### Additional dependencies
 
-* **ripgrep**: Claude Code depends on `ripgrep` for core functionality. While it is typically included in your Claude Code installation, you may need to independently install `ripgrep` on some distributions (like Alpine Linux or other musl-based distributions).
+* **ripgrep**: Usually included with Claude Code. If search functionality fails, see [search troubleshooting](/en/docs/claude-code/troubleshooting#search-and-discovery-issues).
 
 ## Standard installation
 
@@ -42,8 +42,8 @@ claude
 
 Claude Code offers the following authentication options:
 
-1. **Anthropic Console**: The default option. Connect through the Anthropic Console and complete the OAuth process. Requires active billing at [console.anthropic.com](https://console.anthropic.com).
-2. **Claude App (with Pro or Max plan)**: Subscribe to Claude's [Pro or Max plan](https://www.anthropic.com/pricing) for a unified subscription that includes both Claude Code and the web interface. Get more value at the same price point while managing your account in one place. Log in with your Claude.ai account. During launch, choose the option that matches your subscription type.
+1. **Claude Console**: The default option. Connect through the Claude Console and complete the OAuth process. Requires active billing at [console.anthropic.com](https://console.anthropic.com). A "Claude Code" workspace will be automatically created for usage tracking and cost management. Note that you cannot create API keys for the Claude Code workspace - it is dedicated exclusively for Claude Code usage.
+2. **Claude App (with Pro or Max plan)**: Subscribe to Claude's [Pro or Max plan](https://claude.com/pricing) for a unified subscription that includes both Claude Code and the web interface. Get more value at the same price point while managing your account in one place. Log in with your Claude.ai account. During launch, choose the option that matches your subscription type.
 3. **Enterprise platforms**: Configure Claude Code to use [Amazon Bedrock or Google Vertex AI](/en/docs/claude-code/third-party-integrations) for enterprise deployments with your existing cloud infrastructure.
 
 <Note>
@@ -97,6 +97,10 @@ curl -fsSL https://claude.ai/install.sh | bash -s latest
 curl -fsSL https://claude.ai/install.sh | bash -s 1.0.58
 ```
 
+<Note>
+  **Alpine Linux and other musl/uClibc-based distributions**: The native build requires you to install `libgcc`, `libstdc++`, and `ripgrep`. Install (Alpine: `apk add libgcc libstdc++ ripgrep`) and set `USE_BUILTIN_RIPGREP=0`.
+</Note>
+
 **Windows PowerShell:**
 
 ```powershell
@@ -109,6 +113,19 @@ irm https://claude.ai/install.ps1 | iex
 # Install specific version number
 & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 1.0.58
 
+```
+
+**Windows CMD:**
+
+```batch
+REM Install stable version (default)
+curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+
+REM Install latest version
+curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd latest && del install.cmd
+
+REM Install specific version number
+curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 1.0.58 && del install.cmd
 ```
 
 The native Claude Code installer is supported on macOS, Linux, and Windows.
@@ -126,7 +143,7 @@ The native Claude Code installer is supported on macOS, Linux, and Windows.
 
 ## Running on AWS or GCP
 
-By default, Claude Code uses Anthropic's API.
+By default, Claude Code uses the Claude API.
 
 For details on running Claude Code on AWS or GCP, see [third-party integrations](/en/docs/claude-code/third-party-integrations).
 
@@ -143,11 +160,9 @@ Claude Code automatically keeps itself up to date to ensure you have the latest 
 
 **Disable auto-updates:**
 
-```bash
-# Via configuration
-claude config set autoUpdates false --global
+Set the `DISABLE_AUTOUPDATER` environment variable in your shell or [settings.json file](/en/docs/claude-code/settings):
 
-# Or via environment variable
+```bash
 export DISABLE_AUTOUPDATER=1
 ```
 

@@ -43,14 +43,17 @@ export const MCPServersTable = ({platform = "all"}) => {
     description: "Access designs, export assets",
     documentation: "https://help.figma.com/hc/en-us/articles/32132100833559",
     urls: {
-      sse: "http://127.0.0.1:3845/sse"
+      http: "http://127.0.0.1:3845/mcp"
+    },
+    customCommands: {
+      claudeCode: "claude mcp add --transport http figma-dev-mode-mcp-server http://127.0.0.1:3845/mcp"
     },
     availability: {
       claudeCode: true,
       mcpConnector: false,
       claudeDesktop: false
     },
-    notes: "Requires Figma Desktop with Dev Mode MCP Server"
+    notes: "Requires latest Figma Desktop with Dev Mode MCP Server. If you have an existing server at http://127.0.0.1:3845/sse, delete it first before adding the new one."
   }, {
     name: "Asana",
     category: "Project Management & Documentation",
@@ -112,6 +115,21 @@ export const MCPServersTable = ({platform = "all"}) => {
       claudeDesktop: false
     },
     notes: "Multiple services available. See documentation for specific server URLs. Claude Code can use the Cloudflare CLI if installed."
+  }, {
+    name: "Cloudinary",
+    category: "Design & Media",
+    description: "Upload, manage, transform, and analyze your media assets",
+    documentation: "https://cloudinary.com/documentation/cloudinary_llm_mcp#mcp_servers",
+    urls: {},
+    authentication: {
+      type: "oauth"
+    },
+    availability: {
+      claudeCode: true,
+      mcpConnector: true,
+      claudeDesktop: false
+    },
+    notes: "Multiple services available. See documentation for specific server URLs."
   }, {
     name: "Intercom",
     category: "Project Management & Documentation",
@@ -299,6 +317,182 @@ export const MCPServersTable = ({platform = "all"}) => {
       claudeDesktop: false
     },
     notes: "Generate a user-specific URL at mcp.zapier.com"
+  }, {
+    name: "Box",
+    category: "Project Management & Documentation",
+    description: "Ask questions about your enterprise content, get insights from unstructured data, automate content workflows",
+    documentation: "https://box.dev/guides/box-mcp/remote/",
+    urls: {
+      http: "https://mcp.box.com/"
+    },
+    authentication: {
+      type: "oauth"
+    },
+    availability: {
+      claudeCode: true,
+      mcpConnector: true,
+      claudeDesktop: false
+    }
+  }, {
+    name: "Canva",
+    category: "Design & Media",
+    description: "Browse, summarize, autofill, and even generate new Canva designs directly from Claude",
+    documentation: "https://www.canva.dev/docs/connect/canva-mcp-server-setup/",
+    urls: {
+      http: "https://mcp.canva.com/mcp"
+    },
+    authentication: {
+      type: "oauth"
+    },
+    availability: {
+      claudeCode: true,
+      mcpConnector: true,
+      claudeDesktop: false
+    }
+  }, {
+    name: "Daloopa",
+    category: "Databases & Data Management",
+    description: "Supplies high quality fundamental financial data sourced from SEC Filings, investor presentations",
+    documentation: "https://docs.daloopa.com/docs/daloopa-mcp",
+    urls: {
+      http: "https://mcp.daloopa.com/server/mcp"
+    },
+    authentication: {
+      type: "oauth"
+    },
+    availability: {
+      claudeCode: true,
+      mcpConnector: true,
+      claudeDesktop: false
+    }
+  }, {
+    name: "Fireflies",
+    category: "Project Management & Documentation",
+    description: "Extract valuable insights from meeting transcripts and summaries",
+    documentation: "https://guide.fireflies.ai/articles/8272956938-learn-about-the-fireflies-mcp-server-model-context-protocol",
+    urls: {
+      http: "https://api.fireflies.ai/mcp"
+    },
+    authentication: {
+      type: "oauth"
+    },
+    availability: {
+      claudeCode: true,
+      mcpConnector: true,
+      claudeDesktop: false
+    }
+  }, {
+    name: "HubSpot",
+    category: "Databases & Data Management",
+    description: "Access and manage HubSpot CRM data by fetching contacts, companies, and deals, and creating and updating records",
+    documentation: "https://developers.hubspot.com/mcp",
+    urls: {
+      http: "https://mcp.hubspot.com/anthropic"
+    },
+    authentication: {
+      type: "oauth"
+    },
+    availability: {
+      claudeCode: true,
+      mcpConnector: true,
+      claudeDesktop: false
+    }
+  }, {
+    name: "Hugging Face",
+    category: "Development & Testing Tools",
+    description: "Provides access to Hugging Face Hub information and Gradio AI Applications",
+    documentation: "https://huggingface.co/settings/mcp",
+    urls: {
+      http: "https://huggingface.co/mcp"
+    },
+    authentication: {
+      type: "oauth"
+    },
+    availability: {
+      claudeCode: true,
+      mcpConnector: true,
+      claudeDesktop: false
+    }
+  }, {
+    name: "Jam",
+    category: "Development & Testing Tools",
+    description: "Debug faster with AI agents that can access Jam recordings like video, console logs, network requests, and errors",
+    documentation: "https://jam.dev/docs/debug-a-jam/mcp",
+    urls: {
+      http: "https://mcp.jam.dev/mcp"
+    },
+    authentication: {
+      type: "oauth"
+    },
+    availability: {
+      claudeCode: true,
+      mcpConnector: true,
+      claudeDesktop: false
+    }
+  }, {
+    name: "Monday",
+    category: "Project Management & Documentation",
+    description: "Manage monday.com boards by creating items, updating columns, assigning owners, setting timelines, adding CRM activities, and writing summaries",
+    documentation: "https://developer.monday.com/apps/docs/mondaycom-mcp-integration",
+    urls: {
+      sse: "https://mcp.monday.com/sse"
+    },
+    authentication: {
+      type: "oauth"
+    },
+    availability: {
+      claudeCode: true,
+      mcpConnector: true,
+      claudeDesktop: false
+    }
+  }, {
+    name: "Netlify",
+    category: "Infrastructure & DevOps",
+    description: "Create, deploy, and manage websites on Netlify. Control all aspects of your site from creating secrets to enforcing access controls to aggregating form submissions",
+    documentation: "https://docs.netlify.com/build/build-with-ai/netlify-mcp-server/",
+    urls: {
+      http: "https://netlify-mcp.netlify.app/mcp"
+    },
+    authentication: {
+      type: "oauth"
+    },
+    availability: {
+      claudeCode: true,
+      mcpConnector: true,
+      claudeDesktop: false
+    }
+  }, {
+    name: "Stytch",
+    category: "Infrastructure & DevOps",
+    description: "Configure and manage Stytch authentication services, redirect URLs, email templates, and workspace settings",
+    documentation: "https://stytch.com/docs/workspace-management/stytch-mcp",
+    urls: {
+      http: "http://mcp.stytch.dev/mcp"
+    },
+    authentication: {
+      type: "oauth"
+    },
+    availability: {
+      claudeCode: true,
+      mcpConnector: true,
+      claudeDesktop: false
+    }
+  }, {
+    name: "Vercel",
+    category: "Infrastructure & DevOps",
+    description: "Vercel's official MCP server, allowing you to search and navigate documentation, manage projects and deployments, and analyze deployment logs—all in one place",
+    documentation: "https://vercel.com/docs/mcp/vercel-mcp",
+    urls: {
+      http: "https://mcp.vercel.com/"
+    },
+    authentication: {
+      type: "oauth"
+    },
+    availability: {
+      claudeCode: true,
+      mcpConnector: true,
+      claudeDesktop: false
+    }
   }];
   const filteredServers = servers.filter(server => {
     if (platform === "claudeCode") {
@@ -448,6 +642,18 @@ claude mcp add airtable --env AIRTABLE_API_KEY=YOUR_KEY \
   -- npx -y airtable-mcp-server
 ```
 
+<Note>
+  **Understanding the "--" parameter:**
+  The `--` (double dash) separates Claude's own CLI flags from the command and arguments that get passed to the MCP server. Everything before `--` are options for Claude (like `--env`, `--scope`), and everything after `--` is the actual command to run the MCP server.
+
+  For example:
+
+  * `claude mcp add myserver -- npx server` → runs `npx server`
+  * `claude mcp add myserver --env KEY=value -- python server.py --port 8080` → runs `python server.py --port 8080` with `KEY=value` in environment
+
+  This prevents conflicts between Claude's flags and the server's flags.
+</Note>
+
 ### Option 2: Add a remote SSE server
 
 SSE (Server-Sent Events) servers provide real-time streaming connections. Many cloud services use this for live updates.
@@ -507,6 +713,7 @@ claude mcp remove github
     * `user`: Available to you across all projects (was called `global` in older versions)
   * Set environment variables with `--env` flags (e.g., `--env KEY=value`)
   * Configure MCP server startup timeout using the MCP\_TIMEOUT environment variable (e.g., `MCP_TIMEOUT=10000 claude` sets a 10-second timeout)
+  * Claude Code will display a warning when MCP tool output exceeds 10,000 tokens. To increase this limit, set the `MAX_MCP_OUTPUT_TOKENS` environment variable (e.g., `MAX_MCP_OUTPUT_TOKENS=50000`)
   * Use `/mcp` to authenticate with remote servers that require OAuth 2.0 authentication
 </Tip>
 
@@ -518,7 +725,7 @@ claude mcp remove github
   claude mcp add my-server -- cmd /c npx -y @some/package
   ```
 
-  Without the `cmd /c` wrapper, you'll encounter "Connection closed" errors because Windows cannot directly execute `npx`.
+  Without the `cmd /c` wrapper, you'll encounter "Connection closed" errors because Windows cannot directly execute `npx`. (See the note above for an explanation of the `--` parameter.)
 </Warning>
 
 ## MCP installation scopes
@@ -745,7 +952,7 @@ If you have a JSON configuration for an MCP server, you can add it directly:
 
   * Make sure the JSON is properly escaped in your shell
   * The JSON must conform to the MCP server configuration schema
-  * You can use `--scope global` to add the server to your global configuration instead of the project-specific one
+  * You can use `--scope user` to add the server to your user configuration instead of the project-specific one
 </Tip>
 
 ## Import MCP servers from Claude Desktop
@@ -776,7 +983,7 @@ If you've already configured MCP servers in Claude Desktop, you can import them:
 
   * This feature only works on macOS and Windows Subsystem for Linux (WSL)
   * It reads the Claude Desktop configuration file from its standard location on those platforms
-  * Use the `--scope global` flag to add servers to your global configuration
+  * Use the `--scope user` flag to add servers to your user configuration
   * Imported servers will have the same names as in Claude Desktop
   * If servers with the same names already exist, they will get a numerical suffix (e.g., `server_1`)
 </Tip>
@@ -811,6 +1018,32 @@ You can use this in Claude Desktop by adding this configuration to claude\_deskt
   * In Claude Desktop, try asking Claude to read files in a directory, make edits, and more.
   * Note that this MCP server is simply exposing Claude Code's tools to your MCP client, so your own client is responsible for implementing user confirmation for individual tool calls.
 </Tip>
+
+## MCP output limits and warnings
+
+When MCP tools produce large outputs, Claude Code helps manage the token usage to prevent overwhelming your conversation context:
+
+* **Output warning threshold**: Claude Code displays a warning when any MCP tool output exceeds 10,000 tokens
+* **Configurable limit**: You can adjust the maximum allowed MCP output tokens using the `MAX_MCP_OUTPUT_TOKENS` environment variable
+* **Default limit**: The default maximum is 25,000 tokens
+
+To increase the limit for tools that produce large outputs:
+
+```bash
+# Set a higher limit for MCP tool outputs
+export MAX_MCP_OUTPUT_TOKENS=50000
+claude
+```
+
+This is particularly useful when working with MCP servers that:
+
+* Query large datasets or databases
+* Generate detailed reports or documentation
+* Process extensive log files or debugging information
+
+<Warning>
+  If you frequently encounter output warnings with specific MCP servers, consider increasing the limit or configuring the server to paginate or filter its responses.
+</Warning>
 
 ## Use MCP resources
 
