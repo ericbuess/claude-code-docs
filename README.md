@@ -94,7 +94,7 @@ The changelog feature fetches the latest release notes directly from the officia
 
 ### Uninstall
 ```bash
-/docs uninstall    # Get commnd to remove claude-code-docs completely
+/docs uninstall    # Get command to remove claude-code-docs completely
 ```
 
 ### Creative usage examples
