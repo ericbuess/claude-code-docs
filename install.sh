@@ -109,7 +109,9 @@ find_existing_installations() {
     fi
     
     # Deduplicate and exclude new location
-    printf '%s\n' "${paths[@]}" | grep -v "^$INSTALL_DIR$" | sort -u
+    if [[ ${#paths[@]} -gt 0 ]]; then
+        printf '%s\n' "${paths[@]}" | grep -v "^$INSTALL_DIR$" | sort -u
+    fi
 }
 
 # Function to migrate from old location
@@ -297,7 +299,7 @@ safe_git_update() {
 # Function to cleanup old installations
 cleanup_old_installations() {
     # Use the global OLD_INSTALLATIONS array that was populated before config updates
-    if [[ ${#OLD_INSTALLATIONS[@]} -eq 0 ]]; then
+    if [[ -z "${OLD_INSTALLATIONS+x}" ]] || [[ ${#OLD_INSTALLATIONS[@]} -eq 0 ]]; then
         return
     fi
     
@@ -339,7 +341,11 @@ existing_installs=()
 while IFS= read -r line; do
     [[ -n "$line" ]] && existing_installs+=("$line")
 done < <(find_existing_installations)
-OLD_INSTALLATIONS=("${existing_installs[@]}")  # Save for later cleanup
+if [[ ${#existing_installs[@]} -gt 0 ]]; then
+    OLD_INSTALLATIONS=("${existing_installs[@]}")  # Save for later cleanup
+else
+    OLD_INSTALLATIONS=()  # Initialize as empty array
+fi
 
 if [[ ${#existing_installs[@]} -gt 0 ]]; then
     echo "Found ${#existing_installs[@]} existing installation(s):"
