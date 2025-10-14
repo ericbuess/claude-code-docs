@@ -8,7 +8,7 @@ Before configuring Claude Code with Vertex AI, ensure you have:
 
 * A Google Cloud Platform (GCP) account with billing enabled
 * A GCP project with Vertex AI API enabled
-* Access to desired Claude models (e.g., Claude Sonnet 4)
+* Access to desired Claude models (e.g., Claude Sonnet 4.5)
 * Google Cloud SDK (`gcloud`) installed and configured
 * Quota allocated in desired GCP region
 
@@ -30,7 +30,7 @@ Claude Code can be used with both Vertex AI [global](https://cloud.google.com/bl
 
 Enable the Vertex AI API in your GCP project:
 
-```bash
+```bash  theme={null}
 # Set your project ID
 gcloud config set project YOUR-PROJECT-ID
 
@@ -44,7 +44,7 @@ Request access to Claude models in Vertex AI:
 
 1. Navigate to the [Vertex AI Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
 2. Search for "Claude" models
-3. Request access to desired Claude models (e.g., Claude Sonnet 4)
+3. Request access to desired Claude models (e.g., Claude Sonnet 4.5)
 4. Wait for approval (may take 24-48 hours)
 
 ### 3. Configure GCP credentials
@@ -61,7 +61,7 @@ For more information, see [Google Cloud authentication documentation](https://cl
 
 Set the following environment variables:
 
-```bash
+```bash  theme={null}
 # Enable Vertex AI integration
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=global
@@ -93,14 +93,14 @@ export VERTEX_REGION_CLAUDE_4_1_OPUS=europe-west1
 
 Claude Code uses these default models for Vertex AI:
 
-| Model type       | Default value               |
-| :--------------- | :-------------------------- |
-| Primary model    | `claude-sonnet-4@20250514`  |
-| Small/fast model | `claude-3-5-haiku@20241022` |
+| Model type       | Default value                |
+| :--------------- | :--------------------------- |
+| Primary model    | `claude-sonnet-4-5@20250929` |
+| Small/fast model | `claude-3-5-haiku@20241022`  |
 
 To customize models:
 
-```bash
+```bash  theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-1@20250805'
 export ANTHROPIC_SMALL_FAST_MODEL='claude-3-5-haiku@20241022'
 ```
@@ -124,7 +124,7 @@ For details, see [Vertex IAM documentation](https://cloud.google.com/vertex-ai/d
 
 ### 1M token context window
 
-Claude Sonnet 4 supports the [1M token context window](/en/docs/build-with-claude/context-windows#1m-token-context-window) on Vertex AI.
+Claude Sonnet 4 and Sonnet 4.5 support the [1M token context window](/en/docs/build-with-claude/context-windows#1m-token-context-window) on Vertex AI.
 
 <Note>
   The 1M token context window is currently in beta. To use the extended context window, include the `context-1m-2025-08-07` beta header in your Vertex AI requests.

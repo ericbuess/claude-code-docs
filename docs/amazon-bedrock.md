@@ -7,7 +7,7 @@
 Before configuring Claude Code with Bedrock, ensure you have:
 
 * An AWS account with Bedrock access enabled
-* Access to desired Claude models (e.g., Claude Sonnet 4) in Bedrock
+* Access to desired Claude models (e.g., Claude Sonnet 4.5) in Bedrock
 * AWS CLI installed and configured (optional - only needed if you don't have another mechanism for getting credentials)
 * Appropriate IAM permissions
 
@@ -19,7 +19,7 @@ First, ensure you have access to the required Claude models in your AWS account:
 
 1. Navigate to the [Amazon Bedrock console](https://console.aws.amazon.com/bedrock/)
 2. Go to **Model access** in the left navigation
-3. Request access to desired Claude models (e.g., Claude Sonnet 4)
+3. Request access to desired Claude models (e.g., Claude Sonnet 4.5)
 4. Wait for approval (usually instant for most regions)
 
 ### 2. Configure AWS credentials
@@ -28,13 +28,13 @@ Claude Code uses the default AWS SDK credential chain. Set up your credentials u
 
 **Option A: AWS CLI configuration**
 
-```bash
+```bash  theme={null}
 aws configure
 ```
 
 **Option B: Environment variables (access key)**
 
-```bash
+```bash  theme={null}
 export AWS_ACCESS_KEY_ID=your-access-key-id
 export AWS_SECRET_ACCESS_KEY=your-secret-access-key
 export AWS_SESSION_TOKEN=your-session-token
@@ -42,7 +42,7 @@ export AWS_SESSION_TOKEN=your-session-token
 
 **Option C: Environment variables (SSO profile)**
 
-```bash
+```bash  theme={null}
 aws sso login --profile=<your-profile-name>
 
 export AWS_PROFILE=your-profile-name
@@ -50,7 +50,7 @@ export AWS_PROFILE=your-profile-name
 
 **Option D: Bedrock API keys**
 
-```bash
+```bash  theme={null}
 export AWS_BEARER_TOKEN_BEDROCK=your-bedrock-api-key
 ```
 
@@ -64,7 +64,7 @@ When Claude Code detects that your AWS credentials are expired (either locally b
 
 ##### Example configuration
 
-```json
+```json  theme={null}
 {
   "awsAuthRefresh": "aws sso login --profile myprofile",
   "env": {
@@ -79,7 +79,7 @@ When Claude Code detects that your AWS credentials are expired (either locally b
 
 **`awsCredentialExport`**: Only use this if you cannot modify `.aws` and must directly return credentials. Output is captured silently (not shown to the user). The command must output JSON in this format:
 
-```json
+```json  theme={null}
 {
   "Credentials": {
     "AccessKeyId": "value",
@@ -93,7 +93,7 @@ When Claude Code detects that your AWS credentials are expired (either locally b
 
 Set the following environment variables to enable Bedrock:
 
-```bash
+```bash  theme={null}
 # Enable Bedrock integration
 export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1  # or your preferred region
@@ -112,16 +112,16 @@ When enabling Bedrock for Claude Code, keep the following in mind:
 
 Claude Code uses these default models for Bedrock:
 
-| Model type       | Default value                                  |
-| :--------------- | :--------------------------------------------- |
-| Primary model    | `us.anthropic.claude-3-7-sonnet-20250219-v1:0` |
-| Small/fast model | `us.anthropic.claude-3-5-haiku-20241022-v1:0`  |
+| Model type       | Default value                                      |
+| :--------------- | :------------------------------------------------- |
+| Primary model    | `global.anthropic.claude-sonnet-4-5-20250929-v1:0` |
+| Small/fast model | `us.anthropic.claude-3-5-haiku-20241022-v1:0`      |
 
 To customize models, use one of these methods:
 
-```bash
+```bash  theme={null}
 # Using inference profile ID
-export ANTHROPIC_MODEL='us.anthropic.claude-opus-4-1-20250805-v1:0'
+export ANTHROPIC_MODEL='global.anthropic.claude-sonnet-4-5-20250929-v1:0'
 export ANTHROPIC_SMALL_FAST_MODEL='us.anthropic.claude-3-5-haiku-20241022-v1:0'
 
 # Using application inference profile ARN
@@ -139,7 +139,7 @@ export DISABLE_PROMPT_CACHING=1
 
 When using Claude Code with Amazon Bedrock, we recommend the following token settings:
 
-```bash
+```bash  theme={null}
 # Recommended output token settings for Bedrock
 export CLAUDE_CODE_MAX_OUTPUT_TOKENS=4096
 export MAX_THINKING_TOKENS=1024
@@ -155,7 +155,7 @@ export MAX_THINKING_TOKENS=1024
 
 Create an IAM policy with the required permissions for Claude Code:
 
-```json
+```json  theme={null}
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -195,9 +195,11 @@ If you receive an error "on-demand throughput isn’t supported":
 
 * Specify the model as an [inference profile](https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-support.html) ID
 
+Claude Code uses the Bedrock [Invoke API](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_InvokeModelWithResponseStream.html) and does not support the Converse API.
+
 ## Additional resources
 
 * [Bedrock documentation](https://docs.aws.amazon.com/bedrock/)
 * [Bedrock pricing](https://aws.amazon.com/bedrock/pricing/)
 * [Bedrock inference profiles](https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-support.html)
-* [Claude Code on Amazon Bedrock: Quick Setup Guide](https://community.aws/content/2tXkZKrZzlrlu0KfH8gST5Dkppq/claude-code-on-amazon-bedrock-quick-setup-guide)
+* [Claude Code on Amazon Bedrock: Quick Setup Guide](https://community.aws/content/2tXkZKrZzlrlu0KfH8gST5Dkppq/claude-code-on-amazon-bedrock-quick-setup-guide)- [Claude Code Monitoring Implementation (Bedrock)](https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock/blob/main/assets/docs/MONITORING.md)

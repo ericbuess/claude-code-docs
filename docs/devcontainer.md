@@ -41,7 +41,7 @@ The devcontainer setup consists of three primary components:
 
 The container implements a multi-layered security approach with its firewall configuration:
 
-* **Precise access control**: Restricts outbound connections to whitelisted domains only (npm registry, GitHub, Anthropic API, etc.)
+* **Precise access control**: Restricts outbound connections to whitelisted domains only (npm registry, GitHub, Claude API, etc.)
 * **Allowed outbound connections**: The firewall permits outbound DNS and SSH connections
 * **Default-deny policy**: Blocks all other external network access
 * **Startup verification**: Validates firewall rules when the container initializes
@@ -74,4 +74,4 @@ Mirror your devcontainer configuration in CI/CD pipelines to ensure development 
 
 * [VS Code devcontainers documentation](https://code.visualstudio.com/docs/devcontainers/containers)
 * [Claude Code security best practices](/en/docs/claude-code/security)
-* [Corporate proxy configuration](/en/docs/claude-code/corporate-proxy)
+* [Enterprise network configuration](/en/docs/claude-code/network-config)

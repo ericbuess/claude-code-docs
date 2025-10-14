@@ -8,6 +8,174 @@
 
 # Changelog
 
+## 2.0.14
+
+- Fix @-mentioning MCP servers to toggle them on/off
+- Improve permission checks for bash with inline env vars
+- Fix ultrathink + thinking toggle
+- Reduce unnecessary logins
+- Document --system-prompt
+- Several improvements to rendering
+- Plugins UI polish
+
+## 2.0.13
+
+- Fixed `/plugin` not working on native build
+
+## 2.0.12
+
+- **Plugin System Released**: Extend Claude Code with custom commands, agents, hooks, and MCP servers from marketplaces
+- `/plugin install`, `/plugin enable/disable`, `/plugin marketplace` commands for plugin management
+- Repository-level plugin configuration via `extraKnownMarketplaces` for team collaboration
+- `/plugin validate` command for validating plugin structure and configuration
+- Plugin announcement blog post at https://www.anthropic.com/news/claude-code-plugins
+- Plugin documentation available at https://docs.claude.com/en/docs/claude-code/plugins
+- Comprehensive error messages and diagnostics via `/doctor` command
+- Avoid flickering in `/model` selector
+- Improvements to `/help`
+- Avoid mentioning hooks in `/resume` summaries
+- Changes to the "verbose" setting in `/config` now persist across sessions
+
+## 2.0.11
+
+- Reduced system prompt size by 1.4k tokens
+- IDE: Fixed keyboard shortcuts and focus issues for smoother interaction
+- Fixed Opus fallback rate limit errors appearing incorrectly
+- Fixed /add-dir command selecting wrong default tab
+
+## 2.0.10
+
+- Rewrote terminal renderer for buttery smooth UI
+- Enable/disable MCP servers by @mentioning, or in /mcp
+- Added tab completion for shell commands in bash mode
+- PreToolUse hooks can now modify tool inputs
+- Press Ctrl-G to edit your prompt in your system's configured text editor
+- Fixes for bash permission checks with environment variables in the command
+
+## 2.0.9
+
+- Fix regression where bash backgrounding stopped working
+
+## 2.0.8
+
+- Update Bedrock default Sonnet model to `global.anthropic.claude-sonnet-4-5-20250929-v1:0`
+- IDE: Add drag-and-drop support for files and folders in chat
+- /context: Fix counting for thinking blocks
+- Improve message rendering for users with light themes on dark terminals
+- Remove deprecated .claude.json allowedTools, ignorePatterns, env, and todoFeatureEnabled config options (instead, configure these in your settings.json)
+
+## 2.0.5
+
+- IDE: Fix IME unintended message submission with Enter and Tab
+- IDE: Add "Open in Terminal" link in login screen
+- Fix unhandled OAuth expiration 401 API errors
+- SDK: Added SDKUserMessageReplay.isReplay to prevent duplicate messages
+
+## 2.0.1
+
+- Skip Sonnet 4.5 default model setting change for Bedrock and Vertex
+- Various bug fixes and presentation improvements
+
+## 2.0.0
+
+- New native VS Code extension
+- Fresh coat of paint throughout the whole app
+- /rewind a conversation to undo code changes
+- /usage command to see plan limits
+- Tab to toggle thinking (sticky across sessions)
+- Ctrl-R to search history
+- Unshipped claude config command
+- Hooks: Reduced PostToolUse 'tool_use' ids were found without 'tool_result' blocks errors
+- SDK: The Claude Code SDK is now the Claude Agent SDK
+- Add subagents dynamically with `--agents` flag
+
+## 1.0.126
+
+- Enable /context command for Bedrock and Vertex
+- Add mTLS support for HTTP-based OpenTelemetry exporters
+
+## 1.0.124
+
+- Set `CLAUDE_BASH_NO_LOGIN` environment variable to 1 or true to to skip login shell for BashTool
+- Fix Bedrock and Vertex environment variables evaluating all strings as truthy
+- No longer inform Claude of the list of allowed tools when permission is denied
+- Fixed security vulnerability in Bash tool permission checks
+- Improved VSCode extension performance for large files
+
+## 1.0.123
+
+- Bash permission rules now support output redirections when matching (e.g., `Bash(python:*)` matches `python script.py > output.txt`)
+- Fixed thinking mode triggering on negation phrases like "don't think"
+- Fixed rendering performance degradation during token streaming
+- Added SlashCommand tool, which enables Claude to invoke your slash commands. https://docs.claude.com/en/docs/claude-code/slash-commands#SlashCommand-tool
+- Enhanced BashTool environment snapshot logging
+- Fixed a bug where resuming a conversation in headless mode would sometimes enable thinking unnecessarily
+- Migrated --debug logging to a file, to enable easy tailing & filtering
+
+## 1.0.120
+
+- Fix input lag during typing, especially noticeable with large prompts
+- Improved VSCode extension command registry and sessions dialog user experience
+- Enhanced sessions dialog responsiveness and visual feedback
+- Fixed IDE compatibility issue by removing worktree support check
+- Fixed security vulnerability where Bash tool permission checks could be bypassed using prefix matching
+
+## 1.0.119
+
+- Fix Windows issue where process visually freezes on entering interactive mode
+- Support dynamic headers for MCP servers via headersHelper configuration
+- Fix thinking mode not working in headless sessions
+- Fix slash commands now properly update allowed tools instead of replacing them
+
+## 1.0.117
+
+- Add Ctrl-R history search to recall previous commands like bash/zsh
+- Fix input lag while typing, especially on Windows
+- Add sed command to auto-allowed commands in acceptEdits mode
+- Fix Windows PATH comparison to be case-insensitive for drive letters
+- Add permissions management hint to /add-dir output
+
+## 1.0.115
+
+- Improve thinking mode display with enhanced visual effects
+- Type /t to temporarily disable thinking mode in your prompt
+- Improve path validation for glob and grep tools
+- Show condensed output for post-tool hooks to reduce visual clutter
+- Fix visual feedback when loading state completes
+- Improve UI consistency for permission request dialogs
+
+## 1.0.113
+
+- Deprecated piped input in interactive mode
+- Move Ctrl+R keybinding for toggling transcript to Ctrl+O
+
+## 1.0.112
+
+- Transcript mode (Ctrl+R): Added the model used to generate each assistant message
+- Addressed issue where some Claude Max users were incorrectly recognized as Claude Pro users
+- Hooks: Added systemMessage support for SessionEnd hooks
+- Added `spinnerTipsEnabled` setting to disable spinner tips
+- IDE: Various improvements and bug fixes
+
+## 1.0.111
+
+- /model now validates provided model names
+- Fixed Bash tool crashes caused by malformed shell syntax parsing
+
+## 1.0.110
+
+- /terminal-setup command now supports WezTerm
+- MCP: OAuth tokens now proactively refresh before expiration
+- Fixed reliability issues with background Bash processes
+
+## 1.0.109
+
+- SDK: Added partial message streaming support via `--include-partial-messages` CLI flag
+
+## 1.0.106
+
+- Windows: Fixed path permission matching to consistently use POSIX format (e.g., `Read(//c/Users/...)`)
+
 ## 1.0.97
 
 - Settings: /doctor now validates permission rule syntax and suggests corrections
@@ -69,7 +237,7 @@
 
 ## 1.0.81
 
-- Released output styles, including new built-in educational output styles "Explanatory" and "Learning". Docs: https://docs.anthropic.com/en/docs/claude-code/output-styles
+- Released output styles, including new built-in educational output styles "Explanatory" and "Learning". Docs: https://docs.claude.com/en/docs/claude-code/output-styles
 - Agents: Fix custom agent loading when agent files are unparsable
 
 ## 1.0.80
@@ -274,7 +442,7 @@
 
 ## 1.0.38
 
-- Released hooks. Special thanks to community input in https://github.com/anthropics/claude-code/issues/712. Docs: https://docs.anthropic.com/en/docs/claude-code/hooks
+- Released hooks. Special thanks to community input in https://github.com/anthropics/claude-code/issues/712. Docs: https://docs.claude.com/en/docs/claude-code/hooks
 
 ## 1.0.37
 

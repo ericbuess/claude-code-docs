@@ -14,7 +14,7 @@ All metrics are time series data exported via OpenTelemetry's standard metrics p
 
 Configure OpenTelemetry using environment variables:
 
-```bash
+```bash  theme={null}
 # 1. Enable telemetry
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 
@@ -55,7 +55,7 @@ The managed settings file is located at:
 
 Example managed settings configuration:
 
-```json
+```json  theme={null}
 {
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
@@ -114,7 +114,7 @@ For enterprise environments that require dynamic authentication, you can configu
 
 Add to your `.claude/settings.json`:
 
-```json
+```json  theme={null}
 {
   "otelHeadersHelper": "/bin/generate_opentelemetry_headers.sh"
 }
@@ -124,7 +124,7 @@ Add to your `.claude/settings.json`:
 
 The script must output valid JSON with string key-value pairs representing HTTP headers:
 
-```bash
+```bash  theme={null}
 #!/bin/bash
 # Example: Multiple headers
 echo "{\"Authorization\": \"Bearer $(get-token.sh)\", \"X-API-Key\": \"$(get-api-key.sh)\"}"
@@ -140,7 +140,7 @@ For scenarios requiring frequent token refresh, use an OpenTelemetry Collector a
 
 Organizations with multiple teams or departments can add custom attributes to distinguish between different groups using the `OTEL_RESOURCE_ATTRIBUTES` environment variable:
 
-```bash
+```bash  theme={null}
 # Add custom attributes for team identification
 export OTEL_RESOURCE_ATTRIBUTES="department=engineering,team.id=platform,cost_center=eng-123"
 ```
@@ -164,7 +164,7 @@ These custom attributes will be included in all metrics and events, allowing you
 
   **Examples:**
 
-  ```bash
+  ```bash  theme={null}
   # ❌ Invalid - contains spaces
   export OTEL_RESOURCE_ATTRIBUTES="org.name=John's Organization"
 
@@ -181,7 +181,7 @@ These custom attributes will be included in all metrics and events, allowing you
 
 ### Example Configurations
 
-```bash
+```bash  theme={null}
 # Console debugging (1-second intervals)
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 export OTEL_METRICS_EXPORTER=console
@@ -309,12 +309,12 @@ Incremented after each API request.
 
 #### Code Edit Tool Decision Counter
 
-Incremented when user accepts or rejects Edit, MultiEdit, Write, or NotebookEdit tool usage.
+Incremented when user accepts or rejects Edit, Write, or NotebookEdit tool usage.
 
 **Attributes**:
 
 * All [standard attributes](#standard-attributes)
-* `tool`: Tool name (`"Edit"`, `"MultiEdit"`, `"Write"`, `"NotebookEdit"`)
+* `tool`: Tool name (`"Edit"`, `"Write"`, `"NotebookEdit"`)
 * `decision`: User decision (`"accept"`, `"reject"`)
 * `language`: Programming language of the edited file (e.g., `"TypeScript"`, `"Python"`, `"JavaScript"`, `"Markdown"`). Returns `"unknown"` for unrecognized file extensions.
 
@@ -411,7 +411,7 @@ Logged when a tool permission decision is made (accept/reject).
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"tool_decision"`
 * `event.timestamp`: ISO 8601 timestamp
-* `tool_name`: Name of the tool (e.g., "Read", "Edit", "MultiEdit", "Write", "NotebookEdit", etc.)
+* `tool_name`: Name of the tool (e.g., "Read", "Edit", "Write", "NotebookEdit", etc.)
 * `decision`: Either `"accept"` or `"reject"`
 * `source`: Decision source - `"config"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, or `"user_reject"`
 
@@ -436,7 +436,7 @@ The `claude_code.cost.usage` metric helps with:
 * Identifying high-usage sessions for optimization
 
 <Note>
-  Cost metrics are approximations. For official billing data, refer to your API provider (Anthropic Console, AWS Bedrock, or Google Cloud Vertex).
+  Cost metrics are approximations. For official billing data, refer to your API provider (Claude Console, AWS Bedrock, or Google Cloud Vertex).
 </Note>
 
 ### Alerting and Segmentation
@@ -501,3 +501,7 @@ For a comprehensive guide on measuring return on investment for Claude Code, inc
 * Telemetry is opt-in and requires explicit configuration
 * Sensitive information like API keys or file contents are never included in metrics or events
 * User prompt content is redacted by default - only prompt length is recorded. To enable user prompt logging, set `OTEL_LOG_USER_PROMPTS=1`
+
+## Monitoring Claude Code on Amazon Bedrock
+
+For detailed Claude Code usage monitoring guidance for Amazon Bedrock, see [Claude Code Monitoring Implementation (Bedrock)](https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock/blob/main/assets/docs/MONITORING.md).

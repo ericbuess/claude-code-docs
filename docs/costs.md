@@ -4,7 +4,7 @@
 
 Claude Code consumes tokens for each interaction. The average cost is \$6 per developer per day, with daily costs remaining below \$12 for 90% of users.
 
-For team usage, Claude Code charges by API token consumption. On average, Claude Code costs \~\$100-200/developer per month with Sonnet 4 though there is large variance depending on how many instances users are running and whether they're using it in automation.
+For team usage, Claude Code charges by API token consumption. On average, Claude Code costs \~\$100-200/developer per month with Sonnet 4.5 though there is large variance depending on how many instances users are running and whether they're using it in automation.
 
 ## Track your costs
 
@@ -25,15 +25,15 @@ Total code changes:    0 lines added, 0 lines removed
 
 ### Additional tracking options
 
-Check [historical usage](https://support.anthropic.com/en/articles/9534590-cost-and-usage-reporting-in-console) in the Anthropic Console (requires Admin or Billing role) and set [workspace spend limits](https://support.anthropic.com/en/articles/9796807-creating-and-managing-workspaces) for the Claude Code workspace (requires Admin role).
+Check [historical usage](https://support.claude.com/en/articles/9534590-cost-and-usage-reporting-in-console) in the Claude Console (requires Admin or Billing role) and set [workspace spend limits](https://support.claude.com/en/articles/9796807-creating-and-managing-workspaces) for the Claude Code workspace (requires Admin role).
 
 <Note>
-  When you first authenticate Claude Code with your Anthropic Console account, a workspace called "Claude Code" is automatically created for you. This workspace provides centralized cost tracking and management for all Claude Code usage in your organization.
+  When you first authenticate Claude Code with your Claude Console account, a workspace called "Claude Code" is automatically created for you. This workspace provides centralized cost tracking and management for all Claude Code usage in your organization. You cannot create API keys for this workspace - it is exclusively for Claude Code authentication and usage.
 </Note>
 
 ## Managing costs for teams
 
-When using Anthropic API, you can limit the total Claude Code workspace spend. To configure, [follow these instructions](https://support.anthropic.com/en/articles/9796807-creating-and-managing-workspaces). Admins can view cost and usage reporting by [following these instructions](https://support.anthropic.com/en/articles/9534590-cost-and-usage-reporting-in-console).
+When using Claude API, you can limit the total Claude Code workspace spend. To configure, [follow these instructions](https://support.claude.com/en/articles/9796807-creating-and-managing-workspaces). Admins can view cost and usage reporting by [following these instructions](https://support.claude.com/en/articles/9534590-cost-and-usage-reporting-in-console).
 
 On Bedrock and Vertex, Claude Code does not send metrics from your cloud. In order to get cost metrics, several large enterprises reported using [LiteLLM](/en/docs/claude-code/bedrock-vertex-proxies#litellm), which is an open-source tool that helps companies [track spend by key](https://docs.litellm.ai/docs/proxy/virtual_keys#tracking-spend). This project is unaffiliated with Anthropic and we have not audited its security.
 
@@ -68,7 +68,7 @@ The TPM per user decreases as team size grows because we expect fewer users to u
   * Add custom instructions: `/compact Focus on code samples and API usage`
   * Customize compaction by adding to CLAUDE.md:
 
-    ```markdown
+    ```markdown  theme={null}
     # Summary instructions
 
     When you are using compact, please focus on test output and code changes
@@ -87,13 +87,11 @@ Costs can vary significantly based on:
 * Number of files being searched or modified
 * Length of conversation history
 * Frequency of compacting conversations
-* Background processes (haiku generation, conversation summarization)
 
 ## Background token usage
 
 Claude Code uses tokens for some background functionality even when idle:
 
-* **Haiku generation**: Small creative messages that appear while you type (approximately 1 cent per day)
 * **Conversation summarization**: Background jobs that summarize previous conversations for the `claude --resume` feature
 * **Command processing**: Some commands like `/cost` may generate requests to check status
 
@@ -105,7 +103,7 @@ These background processes consume a small amount of tokens (typically under \$0
 
 To check your current Claude Code version and installation details:
 
-```bash
+```bash  theme={null}
 claude doctor
 ```
 

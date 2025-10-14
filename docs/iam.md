@@ -6,18 +6,18 @@
 
 Setting up Claude Code requires access to Anthropic models. For teams, you can set up Claude Code access in one of three ways:
 
-* Anthropic API via the Anthropic Console
+* Claude API via the Claude Console
 * Amazon Bedrock
 * Google Vertex AI
 
-### Anthropic API authentication
+### Claude API authentication
 
-**To set up Claude Code access for your team via Anthropic API:**
+**To set up Claude Code access for your team via Claude API:**
 
-1. Use your existing Anthropic Console account or create a new Anthropic Console account
+1. Use your existing Claude Console account or create a new Claude Console account
 2. You can add users through either method below:
    * Bulk invite users from within the Console (Console -> Settings -> Members -> Invite)
-   * [Set up SSO](https://support.anthropic.com/en/articles/10280258-setting-up-single-sign-on-on-the-api-console)
+   * [Set up SSO](https://support.claude.com/en/articles/10280258-setting-up-single-sign-on-on-the-api-console)
 3. When inviting users, they need one of the following roles:
    * "Claude Code" role means users can only create Claude Code API keys
    * "Developer" role means users can create any kind of API key
@@ -91,11 +91,31 @@ Some tools support more fine-grained permission controls:
 **Bash**
 
 * `Bash(npm run build)` Matches the exact Bash command `npm run build`
-* `Bash(npm run test:*)` Matches Bash commands starting with `npm run test`.
+* `Bash(npm run test:*)` Matches Bash commands starting with `npm run test`
+* `Bash(curl http://site.com/:*)` Matches curl commands that start with exactly `curl http://site.com/`
 
 <Tip>
   Claude Code is aware of shell operators (like `&&`) so a prefix match rule like `Bash(safe-cmd:*)` won't give it permission to run the command `safe-cmd && other-cmd`
 </Tip>
+
+<Warning>
+  Important limitations of Bash permission patterns:
+
+  1. This tool uses **prefix matches**, not regex or glob patterns
+  2. The wildcard `:*` only works at the end of a pattern to match any continuation
+  3. Patterns like `Bash(curl http://github.com/:*)` can be bypassed in many ways:
+     * Options before URL: `curl -X GET http://github.com/...` won't match
+     * Different protocol: `curl https://github.com/...` won't match
+     * Redirects: `curl -L http://bit.ly/xyz` (redirects to github)
+     * Variables: `URL=http://github.com && curl $URL` won't match
+     * Extra spaces: `curl  http://github.com` won't match
+
+  For more reliable URL filtering, consider:
+
+  * Using the WebFetch tool with `WebFetch(domain:github.com)` permission
+  * Instructing Claude Code about your allowed curl patterns via CLAUDE.md
+  * Using hooks for custom permission validation
+</Warning>
 
 **Read & Edit**
 
@@ -175,6 +195,6 @@ This hierarchy ensures that organizational policies are always enforced while st
 Claude Code securely manages your authentication credentials:
 
 * **Storage location**: On macOS, API keys, OAuth tokens, and other credentials are stored in the encrypted macOS Keychain.
-* **Supported authentication types**: Claude.ai credentials, Anthropic API credentials, Bedrock Auth, and Vertex Auth.
+* **Supported authentication types**: Claude.ai credentials, Claude API credentials, Bedrock Auth, and Vertex Auth.
 * **Custom credential scripts**: The [`apiKeyHelper`](/en/docs/claude-code/settings#available-settings) setting can be configured to run a shell script that returns an API key.
 * **Refresh intervals**: By default, `apiKeyHelper` is called after 5 minutes or on HTTP 401 response. Set `CLAUDE_CODE_API_KEY_HELPER_TTL_MS` environment variable for custom refresh intervals.

@@ -10,7 +10,7 @@ Make sure you have:
 
 * A terminal or command prompt open
 * A code project to work with
-* A [Claude.ai](https://claude.ai) (recommended) or [Anthropic Console](https://console.anthropic.com/) account
+* A [Claude.ai](https://claude.ai) (recommended) or [Claude Console](https://console.anthropic.com/) account
 
 ## Step 1: Install Claude Code
 
@@ -18,7 +18,7 @@ Make sure you have:
 
 If you have [Node.js 18 or newer installed](https://nodejs.org/en/download/):
 
-```sh
+```sh  theme={null}
 npm install -g @anthropic-ai/claude-code
 ```
 
@@ -28,28 +28,40 @@ npm install -g @anthropic-ai/claude-code
   Alternatively, try our new native install, now in beta.
 </Tip>
 
+**Homebrew (macOS, Linux):**
+
+```sh  theme={null}
+brew install --cask claude-code
+```
+
 **macOS, Linux, WSL:**
 
-```bash
-curl -fsSL claude.ai/install.sh | bash
+```bash  theme={null}
+curl -fsSL https://claude.ai/install.sh | bash
 ```
 
 **Windows PowerShell:**
 
-```powershell
+```powershell  theme={null}
 irm https://claude.ai/install.ps1 | iex
+```
+
+**Windows CMD:**
+
+```batch  theme={null}
+curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
 ```
 
 ## Step 2: Log in to your account
 
 Claude Code requires an account to use. When you start an interactive session with the `claude` command, you'll need to log in:
 
-```bash
+```bash  theme={null}
 claude
 # You'll be prompted to log in on first use
 ```
 
-```bash
+```bash  theme={null}
 /login
 # Follow the prompts to log in with your account
 ```
@@ -57,12 +69,12 @@ claude
 You can log in using either account type:
 
 * [Claude.ai](https://claude.ai) (subscription plans - recommended)
-* [Anthropic Console](https://console.anthropic.com/) (API access with pre-paid credits)
+* [Claude Console](https://console.anthropic.com/) (API access with pre-paid credits)
 
 Once logged in, your credentials are stored and you won't need to log in again.
 
 <Note>
-  When you first authenticate Claude Code with your Anthropic Console account, a workspace called "Claude Code" is automatically created for you. This workspace provides centralized cost tracking and management for all Claude Code usage in your organization.
+  When you first authenticate Claude Code with your Claude Console account, a workspace called "Claude Code" is automatically created for you. This workspace provides centralized cost tracking and management for all Claude Code usage in your organization.
 </Note>
 
 <Note>
@@ -73,20 +85,12 @@ Once logged in, your credentials are stored and you won't need to log in again.
 
 Open your terminal in any project directory and start Claude Code:
 
-```bash
+```bash  theme={null}
 cd /path/to/your/project
 claude
 ```
 
-You'll see the Claude Code prompt inside a new interactive session:
-
-```
-✻ Welcome to Claude Code!
-
-...
-
-> Try "create a util logging.py that..." 
-```
+You'll see the Claude Code welcome screen with your session information, recent conversations, and latest updates. Type `/help` for available commands or `/resume` to continue a previous conversation.
 
 <Tip>
   After logging in (Step 2), your credentials are stored on your system. Learn more in [Credential Management](/en/docs/claude-code/iam#credential-management).
@@ -288,6 +292,7 @@ See the [CLI reference](/en/docs/claude-code/cli-reference) for a complete list 
   </Accordion>
 
   <Accordion title="Save time with shortcuts">
+    * Press `?` to see all available keyboard shortcuts
     * Use Tab for command completion
     * Press ↑ for command history
     * Type `/` to see all slash commands

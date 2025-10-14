@@ -1,16 +1,20 @@
-# Corporate proxy configuration
+# Enterprise network configuration
 
-> Learn how to configure Claude Code to work with corporate proxy servers, including environment variable configuration, authentication, and SSL/TLS certificate handling.
+> Configure Claude Code for enterprise environments with proxy servers, custom Certificate Authorities (CA), and mutual Transport Layer Security (mTLS) authentication.
 
-Claude Code supports standard HTTP/HTTPS proxy configurations through environment variables. This allows you to route all Claude Code traffic through your organization's proxy servers for security, compliance, and monitoring purposes.
+Claude Code supports various enterprise network and security configurations through environment variables. This includes routing traffic through corporate proxy servers, trusting custom Certificate Authorities (CA), and authenticating with mutual Transport Layer Security (mTLS) certificates for enhanced security.
 
-## Basic proxy configuration
+<Note>
+  All environment variables shown on this page can also be configured in [`settings.json`](/en/docs/claude-code/settings).
+</Note>
+
+## Proxy configuration
 
 ### Environment variables
 
 Claude Code respects standard proxy environment variables:
 
-```bash
+```bash  theme={null}
 # HTTPS proxy (recommended)
 export HTTPS_PROXY=https://proxy.example.com:8080
 
@@ -29,13 +33,11 @@ export NO_PROXY="*"
   Claude Code does not support SOCKS proxies.
 </Note>
 
-## Authentication
-
 ### Basic authentication
 
 If your proxy requires basic authentication, include credentials in the proxy URL:
 
-```bash
+```bash  theme={null}
 export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 ```
 
@@ -47,15 +49,27 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
   For proxies requiring advanced authentication (NTLM, Kerberos, etc.), consider using an LLM Gateway service that supports your authentication method.
 </Tip>
 
-### SSL certificate issues
+## Custom CA certificates
 
-If your proxy uses custom SSL certificates, you may encounter certificate errors.
+If your enterprise environment uses custom CAs for HTTPS connections (whether through a proxy or direct API access), configure Claude Code to trust them:
 
-Ensure that you set the correct certificate bundle path:
+```bash  theme={null}
+export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
+```
 
-```bash
-export SSL_CERT_FILE=/path/to/certificate-bundle.crt
-export NODE_EXTRA_CA_CERTS=/path/to/certificate-bundle.crt
+## mTLS authentication
+
+For enterprise environments requiring client certificate authentication:
+
+```bash  theme={null}
+# Client certificate for authentication
+export CLAUDE_CODE_CLIENT_CERT=/path/to/client-cert.pem
+
+# Client private key
+export CLAUDE_CODE_CLIENT_KEY=/path/to/client-key.pem
+
+# Optional: Passphrase for encrypted private key
+export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 ```
 
 ## Network access requirements
@@ -63,6 +77,7 @@ export NODE_EXTRA_CA_CERTS=/path/to/certificate-bundle.crt
 Claude Code requires access to the following URLs:
 
 * `api.anthropic.com` - Claude API endpoints
+* `claude.ai` - WebFetch safeguards
 * `statsig.anthropic.com` - Telemetry and metrics
 * `sentry.io` - Error reporting
 

@@ -8,12 +8,12 @@
 
 Your use of Claude Code is subject to:
 
-* [Commercial Terms](https://www.anthropic.com/legal/commercial-terms) - for Team, Enterprise, and Anthropic API users
+* [Commercial Terms](https://www.anthropic.com/legal/commercial-terms) - for Team, Enterprise, and Claude API users
 * [Consumer Terms](https://www.anthropic.com/legal/consumer-terms) - for Free, Pro, and Max users
 
 ### Commercial agreements
 
-Whether you're using Anthropic's API directly (1P) or accessing it through AWS Bedrock or Google Vertex (3P), your existing commercial agreement will apply to Claude Code usage, unless we've mutually agreed otherwise.
+Whether you're using the Claude API directly (1P) or accessing it through AWS Bedrock or Google Vertex (3P), your existing commercial agreement will apply to Claude Code usage, unless we've mutually agreed otherwise.
 
 ## Compliance
 
