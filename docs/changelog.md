@@ -14,6 +14,8 @@
 - Haiku 4.5 automatically uses Sonnet in plan mode, and Haiku for execution (i.e. SonnetPlan by default)
 - 3P (Bedrock and Vertex) are not automatically upgraded yet. Manual upgrading can be done through setting `ANTHROPIC_DEFAULT_HAIKU_MODEL`
 - Introducing the Explore subagent. Powered by Haiku it'll search through your codebase efficiently to save context!
+- OTEL: support HTTP_PROXY and HTTPS_PROXY
+- `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` now disables release notes fetching
 
 ## 2.0.15
 
