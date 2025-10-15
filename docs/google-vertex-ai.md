@@ -96,13 +96,13 @@ Claude Code uses these default models for Vertex AI:
 | Model type       | Default value                |
 | :--------------- | :--------------------------- |
 | Primary model    | `claude-sonnet-4-5@20250929` |
-| Small/fast model | `claude-3-5-haiku@20241022`  |
+| Small/fast model | `claude-haiku-4-5@20251001`  |
 
 To customize models:
 
 ```bash  theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-1@20250805'
-export ANTHROPIC_SMALL_FAST_MODEL='claude-3-5-haiku@20241022'
+export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
 ```
 
 ## IAM configuration

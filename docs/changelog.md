@@ -8,6 +8,13 @@
 
 # Changelog
 
+## 2.0.17
+
+- Added Haiku 4.5 to model selector!
+- Haiku 4.5 automatically uses Sonnet in plan mode, and Haiku for execution (i.e. SonnetPlan by default)
+- 3P (Bedrock and Vertex) are not automatically upgraded yet. Manual upgrading can be done through setting `ANTHROPIC_DEFAULT_HAIKU_MODEL`
+- Introducing the Explore subagent. Powered by Haiku it'll search through your codebase efficiently to save context!
+
 ## 2.0.15
 
 - Fixed bug with resuming where previously created files needed to be read again before writing
