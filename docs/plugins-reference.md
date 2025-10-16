@@ -10,7 +10,7 @@ This reference provides complete technical specifications for the Claude Code pl
 
 ## Plugin components reference
 
-This section documents the four types of components that plugins can provide.
+This section documents the five types of components that plugins can provide.
 
 ### Commands
 
@@ -57,6 +57,37 @@ Provide examples of when this agent should be used and what kinds of problems it
 * Claude can invoke agents automatically based on task context
 * Agents can be invoked manually by users
 * Plugin agents work alongside built-in Claude agents
+
+### Skills
+
+Plugins can provide Agent Skills that extend Claude's capabilities. Skills are model-invoked—Claude autonomously decides when to use them based on the task context.
+
+**Location**: `skills/` directory in plugin root
+
+**File format**: Directories containing `SKILL.md` files with frontmatter
+
+**Skill structure**:
+
+```
+skills/
+├── pdf-processor/
+│   ├── SKILL.md
+│   ├── reference.md (optional)
+│   └── scripts/ (optional)
+└── code-reviewer/
+    └── SKILL.md
+```
+
+**Integration behavior**:
+
+* Plugin Skills are automatically discovered when the plugin is installed
+* Claude autonomously invokes Skills based on matching task context
+* Skills can include supporting files alongside SKILL.md
+
+For SKILL.md format and complete Skill authoring guidance, see:
+
+* [Use Skills in Claude Code](/en/docs/claude-code/skills)
+* [Agent Skills overview](/en/docs/agents-and-tools/agent-skills/overview#skill-structure)
 
 ### Hooks
 
@@ -260,6 +291,12 @@ enterprise-plugin/
 │   ├── security-reviewer.md
 │   ├── performance-tester.md
 │   └── compliance-checker.md
+├── skills/                   # Agent Skills
+│   ├── code-reviewer/
+│   │   └── SKILL.md
+│   └── pdf-processor/
+│       ├── SKILL.md
+│       └── scripts/
 ├── hooks/                    # Hook configurations
 │   ├── hooks.json           # Main hook config
 │   └── security-hooks.json  # Additional hooks
@@ -273,18 +310,19 @@ enterprise-plugin/
 ```
 
 <Warning>
-  The `.claude-plugin/` directory contains the `plugin.json` file. All other directories (commands/, agents/, hooks/) must be at the plugin root, not inside `.claude-plugin/`.
+  The `.claude-plugin/` directory contains the `plugin.json` file. All other directories (commands/, agents/, skills/, hooks/) must be at the plugin root, not inside `.claude-plugin/`.
 </Warning>
 
 ### File locations reference
 
-| Component       | Default Location             | Purpose                      |
-| :-------------- | :--------------------------- | :--------------------------- |
-| **Manifest**    | `.claude-plugin/plugin.json` | Required metadata file       |
-| **Commands**    | `commands/`                  | Slash command markdown files |
-| **Agents**      | `agents/`                    | Subagent markdown files      |
-| **Hooks**       | `hooks/hooks.json`           | Hook configuration           |
-| **MCP servers** | `.mcp.json`                  | MCP server definitions       |
+| Component       | Default Location             | Purpose                          |
+| :-------------- | :--------------------------- | :------------------------------- |
+| **Manifest**    | `.claude-plugin/plugin.json` | Required metadata file           |
+| **Commands**    | `commands/`                  | Slash command markdown files     |
+| **Agents**      | `agents/`                    | Subagent markdown files          |
+| **Skills**      | `skills/`                    | Agent Skills with SKILL.md files |
+| **Hooks**       | `hooks/hooks.json`           | Hook configuration               |
+| **MCP servers** | `.mcp.json`                  | MCP server definitions           |
 
 ***
 
@@ -331,6 +369,7 @@ Follow semantic versioning for plugin releases:
 - [Plugin marketplaces](/en/docs/claude-code/plugin-marketplaces) - Creating and managing marketplaces
 - [Slash commands](/en/docs/claude-code/slash-commands) - Command development details
 - [Subagents](/en/docs/claude-code/sub-agents) - Agent configuration and capabilities
+- [Agent Skills](/en/docs/claude-code/skills) - Extend Claude's capabilities
 - [Hooks](/en/docs/claude-code/hooks) - Event handling and automation
 - [MCP](/en/docs/claude-code/mcp) - External tool integration
 - [Settings](/en/docs/claude-code/settings) - Configuration options for plugins
