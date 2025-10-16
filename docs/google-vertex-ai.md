@@ -98,6 +98,10 @@ Claude Code uses these default models for Vertex AI:
 | Primary model    | `claude-sonnet-4-5@20250929` |
 | Small/fast model | `claude-haiku-4-5@20251001`  |
 
+<Note>
+  For Vertex AI users, Claude Code will not automatically upgrade from Haiku 3.5 to Haiku 4.5. To manually switch to a newer Haiku model, set the `ANTHROPIC_DEFAULT_HAIKU_MODEL` environment variable to the full model name (e.g., `claude-haiku-4-5@20251001`).
+</Note>
+
 To customize models:
 
 ```bash  theme={null}

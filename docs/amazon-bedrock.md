@@ -117,6 +117,10 @@ Claude Code uses these default models for Bedrock:
 | Primary model    | `global.anthropic.claude-sonnet-4-5-20250929-v1:0` |
 | Small/fast model | `us.anthropic.claude-haiku-4-5-20251001-v1:0`      |
 
+<Note>
+  For Bedrock users, Claude Code will not automatically upgrade from Haiku 3.5 to Haiku 4.5. To manually switch to a newer Haiku model, set the `ANTHROPIC_DEFAULT_HAIKU_MODEL` environment variable to the full model name (e.g., `us.anthropic.claude-haiku-4-5-20251001-v1:0`).
+</Note>
+
 To customize models, use one of these methods:
 
 ```bash  theme={null}

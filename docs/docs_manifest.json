@@ -3,8 +3,8 @@
     "amazon-bedrock.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/amazon-bedrock",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/amazon-bedrock.md",
-      "hash": "67b6f40302e105bf2cfd678cd72e8c66c1b693e0e0837b3c8d48e3d32fdd8118",
-      "last_updated": "2025-10-15T18:04:34.038194"
+      "hash": "2e43fea82c5eb0fb1be8b4487daa2535ad62e27584d4d3c2cddf42339b31fc0b",
+      "last_updated": "2025-10-16T00:12:26.167073"
     },
     "analytics.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/analytics",
@@ -63,8 +63,8 @@
     "google-vertex-ai.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/google-vertex-ai",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/google-vertex-ai.md",
-      "hash": "968e316605a43dea5816ccadd3a6b7ea13b5a0f6e74da10c0cb5249c7e90298c",
-      "last_updated": "2025-10-15T18:04:39.280728"
+      "hash": "84dac59a5f1107f689428fb0870ffc281f99ea07cc60b64d0bbe72df1fb2bccb",
+      "last_updated": "2025-10-16T00:12:31.444886"
     },
     "headless.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/headless",
@@ -249,14 +249,14 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "b652db6db4aa778c6ef80d902fabf84fd577d3239da63810fe145828605ca295",
-      "last_updated": "2025-10-15T21:03:51.056972",
+      "hash": "d48d9871a41934ea52393ed87b87e94081afe2639afe9057dae7e1f114d45d96",
+      "last_updated": "2025-10-16T00:12:47.340306",
       "source": "claude-code-repository"
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-10-15T21:03:51.057004",
-    "fetch_duration_seconds": 22.845588,
+    "last_fetch_completed": "2025-10-16T00:12:47.340325",
+    "fetch_duration_seconds": 24.264379,
     "total_pages_discovered": 41,
     "pages_fetched_successfully": 42,
     "pages_failed": 0,
@@ -266,7 +266,7 @@
     "total_files": 42,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-10-15T21:03:51.057029",
+  "last_updated": "2025-10-16T00:12:47.340346",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",
