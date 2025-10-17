@@ -39,8 +39,8 @@
     "data-usage.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/data-usage",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/data-usage.md",
-      "hash": "5323ab0a66f750940fa59a13a506478c7242cdbca4409857b65a2976abbbacc7",
-      "last_updated": "2025-10-14T17:18:55.467784"
+      "hash": "c21f6a5d68bb855fc6acf0884ad2ff2fc31ba1ac30c9a58821345ad32b233a5f",
+      "last_updated": "2025-10-17T18:04:24.666629"
     },
     "devcontainer.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/devcontainer",
@@ -261,8 +261,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-10-17T15:04:22.053433",
-    "fetch_duration_seconds": 24.526746,
+    "last_fetch_completed": "2025-10-17T18:04:43.181041",
+    "fetch_duration_seconds": 23.211157,
     "total_pages_discovered": 42,
     "pages_fetched_successfully": 43,
     "pages_failed": 0,
@@ -272,7 +272,7 @@
     "total_files": 43,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-10-17T15:04:22.053480",
+  "last_updated": "2025-10-17T18:04:43.181067",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",

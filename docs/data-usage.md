@@ -25,7 +25,7 @@ If you explicitly opt in to methods to provide us with materials to train on, su
 
 ### Feedback using the `/bug` command
 
-If you choose to send us feedback about Claude Code using the `/bug` command, we may use your feedback to improve our products and services. Transcripts shared via `/bug` are retained for 30 days.
+If you choose to send us feedback about Claude Code using the `/bug` command, we may use your feedback to improve our products and services. Transcripts shared via `/bug` are retained for 5 years.
 
 ### Data retention
 
