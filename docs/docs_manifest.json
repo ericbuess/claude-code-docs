@@ -261,8 +261,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-10-19T18:04:45.548217",
-    "fetch_duration_seconds": 22.953678,
+    "last_fetch_completed": "2025-10-19T21:03:46.486563",
+    "fetch_duration_seconds": 22.902832,
     "total_pages_discovered": 42,
     "pages_fetched_successfully": 43,
     "pages_failed": 0,
@@ -272,7 +272,7 @@
     "total_files": 43,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-10-19T18:04:45.548242",
+  "last_updated": "2025-10-19T21:03:46.486589",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",
