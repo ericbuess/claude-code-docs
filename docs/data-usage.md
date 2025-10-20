@@ -55,6 +55,22 @@ Claude Code is installed from [NPM](https://www.npmjs.com/package/@anthropic-ai/
 
 Claude Code is built on Anthropic's APIs. For details regarding our API's security controls, including our API logging procedures, please refer to compliance artifacts offered in the [Anthropic Trust Center](https://trust.anthropic.com).
 
+### Cloud execution
+
+<Note>
+  The above data flow diagram and description applies to Claude Code CLI running locally on your machine. For cloud-based sessions using Claude Code on the web, see the section below.
+</Note>
+
+When using [Claude Code on the web](/en/docs/claude-code/claude-code-on-the-web), sessions run in Anthropic-managed virtual machines instead of locally. In cloud environments:
+
+* **Code storage**: Your repository is cloned to an isolated VM and automatically deleted after session completion
+* **Credentials**: GitHub authentication is handled through a secure proxy; your GitHub credentials never enter the sandbox
+* **Network traffic**: All outbound traffic goes through a security proxy for audit logging and abuse prevention
+* **Data retention**: Code and session data are subject to the retention and usage policies for your account type
+* **Session data**: Prompts, code changes, and outputs follow the same data policies as local Claude Code usage
+
+For security details about cloud execution, see [Security](/en/docs/claude-code/security#cloud-execution-security).
+
 ## Telemetry services
 
 Claude Code connects from users' machines to the Statsig service to log operational metrics such as latency, reliability, and usage patterns. This logging does not include any code or file paths. Data is encrypted in transit using TLS and at rest using 256-bit AES encryption. Read more in the [Statsig security documentation](https://www.statsig.com/trust/security). To opt out of Statsig telemetry, set the `DISABLE_TELEMETRY` environment variable.

@@ -315,6 +315,10 @@ Now that you've learned the basics, explore more advanced features:
   <Card title="Configuration" icon="gear" href="/en/docs/claude-code/settings">
     Customize Claude Code for your workflow
   </Card>
+
+  <Card title="Claude Code on the web" icon="cloud" href="/en/docs/claude-code/claude-code-on-the-web">
+    Run tasks asynchronously in the cloud
+  </Card>
 </CardGroup>
 
 ## Getting help

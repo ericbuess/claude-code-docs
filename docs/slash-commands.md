@@ -24,6 +24,7 @@
 | `/permissions`            | View or update [permissions](/en/docs/claude-code/iam#configuring-permissions)                                                               |
 | `/pr_comments`            | View pull request comments                                                                                                                   |
 | `/review`                 | Request code review                                                                                                                          |
+| `/sandbox`                | Enable sandboxed bash tool with filesystem and network isolation for safer, more autonomous execution                                        |
 | `/rewind`                 | Rewind the conversation and/or code                                                                                                          |
 | `/status`                 | Open the Settings interface (Status tab) showing version, model, account, and connectivity                                                   |
 | `/terminal-setup`         | Install Shift+Enter key binding for newlines (iTerm2 and VSCode only)                                                                        |

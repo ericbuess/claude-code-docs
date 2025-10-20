@@ -86,6 +86,58 @@ Code through hierarchical settings:
 | `defaultMode`                  | Default [permission mode](iam#permission-modes) when opening Claude Code                                                                                                                                                                                                                                                      | `"acceptEdits"`                                                        |
 | `disableBypassPermissionsMode` | Set to `"disable"` to prevent `bypassPermissions` mode from being activated. This disables the `--dangerously-skip-permissions` command-line flag. See [managed policy settings](iam#enterprise-managed-policy-settings)                                                                                                      | `"disable"`                                                            |
 
+### Sandbox settings
+
+Configure advanced sandboxing behavior. Sandboxing isolates bash commands from your filesystem and network. See [Sandboxing](/en/docs/claude-code/sandboxing) for details.
+
+**Filesystem and network restrictions** are configured via Read, Edit, and WebFetch permission rules, not via these sandbox settings.
+
+| Keys                        | Description                                                                                                   | Example                   |
+| :-------------------------- | :------------------------------------------------------------------------------------------------------------ | :------------------------ |
+| `enabled`                   | Enable bash sandboxing (macOS/Linux only). Default: false                                                     | `true`                    |
+| `autoAllowBashIfSandboxed`  | Auto-approve bash commands when sandboxed. Default: true                                                      | `true`                    |
+| `excludedCommands`          | Commands that should run outside of the sandbox                                                               | `["git", "docker"]`       |
+| `network.allowUnixSockets`  | Unix socket paths accessible in sandbox (for SSH agents, etc.)                                                | `["~/.ssh/agent-socket"]` |
+| `network.allowLocalBinding` | Allow binding to localhost ports (MacOS only). Default: false                                                 | `true`                    |
+| `network.httpProxyPort`     | HTTP proxy port used if you wish to bring your own proxy. If not specified, Claude will run its own proxy.    | `8080`                    |
+| `network.socksProxyPort`    | SOCKS5 proxy port used if you wish to bring your own proxy. If not specified, Claude will run its own proxy.  | `8081`                    |
+| `enableWeakerNestedSandbox` | Enable weaker sandbox for unprivileged Docker environments (Linux only). **Reduces security.** Default: false | `true`                    |
+
+**Configuration example:**
+
+```json  theme={null}
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "excludedCommands": ["docker"],
+    "network": {
+      "allowUnixSockets": [
+        "/var/run/docker.sock"
+      ],
+      "allowLocalBinding": true
+    }
+  },
+  "permissions": {
+    "deny": [
+      "Read(.envrc)",
+      "Read(~/.aws/**)"
+    ]
+  }
+}
+```
+
+**Filesystem access** is controlled via Read/Edit permissions:
+
+* Read deny rules block file reads in sandbox
+* Edit allow rules permit file writes (in addition to the defaults, e.g. the current working directory)
+* Edit deny rules block writes within allowed paths
+
+**Network access** is controlled via WebFetch permissions:
+
+* WebFetch allow rules permit network domains
+* WebFetch deny rules block network domains
+
 ### Settings precedence
 
 Settings are applied in order of precedence (highest to lowest):
