@@ -249,8 +249,8 @@
     "vs-code.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/vs-code",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/vs-code.md",
-      "hash": "9a6c80a65dc9d42b41b0d285437aadd91c6f70a818b24726f1a62122ec2c43fc",
-      "last_updated": "2025-10-14T17:19:13.797037"
+      "hash": "fccba6bd07226961d62bb07c580e2ef1dd3f92c5323eb7557c9ed8f6c1f662c0",
+      "last_updated": "2025-10-20T00:14:14.535163"
     },
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
@@ -261,8 +261,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-10-19T21:03:46.486563",
-    "fetch_duration_seconds": 22.902832,
+    "last_fetch_completed": "2025-10-20T00:14:14.603030",
+    "fetch_duration_seconds": 26.304072,
     "total_pages_discovered": 42,
     "pages_fetched_successfully": 43,
     "pages_failed": 0,
@@ -272,7 +272,7 @@
     "total_files": 43,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-10-19T21:03:46.486589",
+  "last_updated": "2025-10-20T00:14:14.603056",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",
