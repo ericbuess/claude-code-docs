@@ -117,8 +117,8 @@
     "mcp.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/mcp",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/mcp.md",
-      "hash": "7ae96d5865d4fe65865cde74ea104e72c43cee086faec187bcb9bc7361219624",
-      "last_updated": "2025-10-14T17:19:02.456637"
+      "hash": "12ede98fec8dfff99f671023789ed1d9d797ef8662d44ba68a2523833707b2e1",
+      "last_updated": "2025-10-20T15:04:32.167932"
     },
     "memory.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/memory",
@@ -195,8 +195,8 @@
     "settings.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/settings",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/settings.md",
-      "hash": "b2301f567449dc4234cf451683992d26d6ce246c1f0456b7faf37563695e9578",
-      "last_updated": "2025-10-17T12:06:08.286225"
+      "hash": "030a6e7493f33f6cd800b7f5ed41cf8d367a94bc13a36a46b5b1e650623e6519",
+      "last_updated": "2025-10-20T15:04:45.728468"
     },
     "setup.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/setup",
@@ -261,8 +261,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-10-20T12:06:19.621232",
-    "fetch_duration_seconds": 27.272393,
+    "last_fetch_completed": "2025-10-20T15:04:52.278432",
+    "fetch_duration_seconds": 47.653077,
     "total_pages_discovered": 42,
     "pages_fetched_successfully": 43,
     "pages_failed": 0,
@@ -272,7 +272,7 @@
     "total_files": 43,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-10-20T12:06:19.621258",
+  "last_updated": "2025-10-20T15:04:52.278464",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",

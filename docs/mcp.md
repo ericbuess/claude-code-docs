@@ -1226,6 +1226,44 @@ The `managed-mcp.json` file uses the same format as a standard `.mcp.json` file:
 }
 ```
 
+### Restricting MCP servers with allowlists and denylists
+
+In addition to providing enterprise-managed servers, administrators can control which MCP servers users are allowed to configure using `allowedMcpServers` and `deniedMcpServers` in the `managed-settings.json` file:
+
+* **macOS**: `/Library/Application Support/ClaudeCode/managed-settings.json`
+* **Windows**: `C:\ProgramData\ClaudeCode\managed-settings.json`
+* **Linux**: `/etc/claude-code/managed-settings.json`
+
+```json  theme={null}
+{
+  "allowedMcpServers": [
+    { "serverName": "github" },
+    { "serverName": "sentry" },
+    { "serverName": "company-internal" }
+  ],
+  "deniedMcpServers": [
+    { "serverName": "filesystem" }
+  ]
+}
+```
+
+**Allowlist behavior (`allowedMcpServers`)**:
+
+* `undefined` (default): No restrictions - users can configure any MCP server
+* Empty array `[]`: Complete lockdown - users cannot configure any MCP servers
+* List of server names: Users can only configure the specified servers
+
+**Denylist behavior (`deniedMcpServers`)**:
+
+* `undefined` (default): No servers are blocked
+* Empty array `[]`: No servers are blocked
+* List of server names: Specified servers are explicitly blocked across all scopes
+
+**Important notes**:
+
+* These restrictions apply to all scopes: user, project, local, and even enterprise servers from `managed-mcp.json`
+* **Denylist takes absolute precedence**: If a server appears in both lists, it will be blocked
+
 <Note>
   **Enterprise configuration precedence**: The enterprise MCP configuration has the highest precedence and cannot be overridden by user, local, or project configurations when `useEnterpriseMcpConfigOnly` is enabled.
 </Note>
