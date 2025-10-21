@@ -129,18 +129,18 @@ When you start a session in Claude Code on the web, here's what happens under th
 
 ### Dependency management
 
-Configure automatic dependency installation using the `sessionStart` hook:
+Configure automatic dependency installation using [SessionStart hooks](/en/docs/claude-code/hooks#sessionstart). This can be configured in your repository's `.claude/settings.json` file:
 
 ```json  theme={null}
 {
   "hooks": {
-    "sessionStart": [
+    "SessionStart": [
       {
-        "matcher": "",
+        "matcher": "startup",
         "hooks": [
           {
             "type": "command",
-            "command": "./scripts/install_pkgs.sh"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/scripts/install_pkgs.sh"
           }
         ]
       }
@@ -149,7 +149,36 @@ Configure automatic dependency installation using the `sessionStart` hook:
 }
 ```
 
-This ensures dependencies are installed automatically when a new session starts with proper network access.
+Create the corresponding script at `scripts/install_pkgs.sh`:
+
+```bash  theme={null}
+#!/bin/bash
+npm install
+pip install -r requirements.txt
+exit 0
+```
+
+Make it executable: `chmod +x scripts/install_pkgs.sh`
+
+#### Local vs remote execution
+
+By default, all hooks execute both locally and in remote (web) environments. To run a hook only in one environment, check the `CLAUDE_CODE_REMOTE` environment variable in your hook script.
+
+```bash  theme={null}
+#!/bin/bash
+
+# Example: Only run in remote environments
+if [ "$CLAUDE_CODE_REMOTE" != "true" ]; then
+  exit 0
+fi
+
+npm install
+pip install -r requirements.txt
+```
+
+#### Persisting environment variables
+
+SessionStart hooks can persist environment variables for subsequent bash commands by writing to the file specified in the `CLAUDE_ENV_FILE` environment variable. For details, see [SessionStart hooks](/en/docs/claude-code/hooks#sessionstart) in the hooks reference.
 
 ## Network access and security
 
@@ -430,7 +459,7 @@ Claude Code on the web shares rate limits with all other Claude and Claude Code 
 
 ## Best practices
 
-1. **Use Claude Code hooks**: Configure [sessionStart hooks](/en/docs/claude-code/hooks#sessionstart) to automate environment setup, dependency installation, and network configuration
+1. **Use Claude Code hooks**: Configure [sessionStart hooks](/en/docs/claude-code/hooks#sessionstart) to automate environment setup and dependency installation.
 2. **Document requirements**: Clearly specify dependencies and commands in your `CLAUDE.md` file. If you have an `AGENTS.md` file, you can source it in your `CLAUDE.md` using `@AGENTS.md` to maintain a single source of truth.
 
 ## Related resources

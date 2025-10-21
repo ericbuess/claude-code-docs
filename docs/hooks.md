@@ -203,7 +203,7 @@ Runs before Claude Code is about to run a compact operation.
 
 Runs when Claude Code starts a new session or resumes an existing session (which
 currently does start a new session under the hood). Useful for loading in
-development context like existing issues or recent changes to your codebase.
+development context like existing issues or recent changes to your codebase, installing dependencies, or setting up environment variables.
 
 **Matchers:**
 
@@ -211,6 +211,51 @@ development context like existing issues or recent changes to your codebase.
 * `resume` - Invoked from `--resume`, `--continue`, or `/resume`
 * `clear` - Invoked from `/clear`
 * `compact` - Invoked from auto or manual compact.
+
+#### Persisting environment variables
+
+SessionStart hooks have access to the `CLAUDE_ENV_FILE` environment variable, which provides a file path where you can persist environment variables for subsequent bash commands.
+
+**Example: Setting individual environment variables**
+
+```bash  theme={null}
+#!/bin/bash
+
+if [ -n "$CLAUDE_ENV_FILE" ]; then
+  echo 'export NODE_ENV=production' >> "$CLAUDE_ENV_FILE"
+  echo 'export API_KEY=your-api-key' >> "$CLAUDE_ENV_FILE"
+  echo 'export PATH="$PATH:./node_modules/.bin"' >> "$CLAUDE_ENV_FILE"
+fi
+
+exit 0
+```
+
+**Example: Persisting all environment changes from the hook**
+
+When your setup modifies the environment (e.g., `nvm use`), capture and persist all changes by diffing the environment:
+
+```bash  theme={null}
+#!/bin/bash
+
+ENV_BEFORE=$(export -p | sort)
+
+# Run your setup commands that modify the environment
+source ~/.nvm/nvm.sh
+nvm use 20
+
+if [ -n "$CLAUDE_ENV_FILE" ]; then
+  ENV_AFTER=$(export -p | sort)
+  comm -13 <(echo "$ENV_BEFORE") <(echo "$ENV_AFTER") >> "$CLAUDE_ENV_FILE"
+fi
+
+exit 0
+```
+
+Any variables written to this file will be available in all subsequent bash commands that Claude Code executes during the session.
+
+<Note>
+  `CLAUDE_ENV_FILE` is only available for SessionStart hooks. Other hook types do not have access to this variable.
+</Note>
 
 ### SessionEnd
 
@@ -778,6 +823,7 @@ This prevents malicious hook modifications from affecting your current session.
 * **Environment**: Runs in current directory with Claude Code's environment
   * The `CLAUDE_PROJECT_DIR` environment variable is available and contains the
     absolute path to the project root directory (where Claude Code was started)
+  * The `CLAUDE_CODE_REMOTE` environment variable indicates whether the hook is running in a remote (web) environment (`"true"`) or local CLI environment (not set or empty). Use this to run different logic based on execution context.
 * **Input**: JSON via stdin
 * **Output**:
   * PreToolUse/PostToolUse/Stop/SubagentStop: Progress shown in transcript (Ctrl-R)
