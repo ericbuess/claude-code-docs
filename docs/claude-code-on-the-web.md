@@ -445,6 +445,11 @@ Claude Code on the web provides strong security guarantees:
 
 * **Isolated virtual machines**: Each session runs in an isolated, Anthropic-managed VM
 * **Network access controls**: Network access is limited by default, and can be disabled
+
+<Note>
+  When running with network access disabled, Claude Code is allowed to communicate with the Anthropic API which may still allow data to exit the isolated Claude Code VM.
+</Note>
+
 * **Credential protection**: Sensitive credentials (such as git credentials or signing keys) are never inside the sandbox with Claude Code. Authentication is handled through a secure proxy using scoped credentials
 * **Secure analysis**: Code is analyzed and modified within isolated VMs before creating PRs
 

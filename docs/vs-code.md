@@ -30,14 +30,6 @@ The VS Code extension provides:
 
 Download and install the extension from the [Visual Studio Code Extension Marketplace](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code).
 
-### Updating
-
-To update the VS Code extension:
-
-1. Open the VS Code command palette with `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux)
-2. Search for "Claude Code: Update"
-3. Select the command to update to the latest version
-
 ### How It Works
 
 Once installed, you can start using Claude Code through the VS Code interface:
@@ -69,6 +61,7 @@ The VS Code extension supports using Claude Code with third-party providers like
 | `ANTHROPIC_VERTEX_PROJECT_ID` | GCP project ID for Vertex AI           |                        | `"your-project-id"`                              |
 | `ANTHROPIC_MODEL`             | Override primary model                 | Override model ID      | `"us.anthropic.claude-3-7-sonnet-20250219-v1:0"` |
 | `ANTHROPIC_SMALL_FAST_MODEL`  | Override small/fast model              | Optional               | `"us.anthropic.claude-3-5-haiku-20241022-v1:0"`  |
+| `CLAUDE_CODE_SKIP_AUTH_LOGIN` | Disable all prompts to login           | Optional               | `"1"` or `"true"`                                |
 
 For detailed setup instructions and additional configuration options, see:
 
