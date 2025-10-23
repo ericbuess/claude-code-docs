@@ -219,8 +219,8 @@
     "skills.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/skills",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/skills.md",
-      "hash": "8cd24d583576623dea0ed3d62064f49b946ae1a4ffcea3498489cc7ee440e322",
-      "last_updated": "2025-10-23T09:04:35.085570"
+      "hash": "8da5989342f2600b8659c692922a14499645a0a03669920d18ebeaad7c9cd883",
+      "last_updated": "2025-10-23T15:04:30.530600"
     },
     "slash-commands.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/slash-commands",
@@ -273,8 +273,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-10-23T12:06:33.882040",
-    "fetch_duration_seconds": 31.172934,
+    "last_fetch_completed": "2025-10-23T15:04:34.336875",
+    "fetch_duration_seconds": 24.178649,
     "total_pages_discovered": 44,
     "pages_fetched_successfully": 45,
     "pages_failed": 0,
@@ -284,7 +284,7 @@
     "total_files": 45,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-10-23T12:06:33.882067",
+  "last_updated": "2025-10-23T15:04:34.336905",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",
