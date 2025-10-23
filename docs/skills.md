@@ -72,7 +72,7 @@ Create a `SKILL.md` file with YAML frontmatter and Markdown content:
 
 ```yaml  theme={null}
 ---
-name: Your Skill Name
+name: your-skill-name
 description: Brief description of what this Skill does and when to use it
 ---
 
@@ -85,9 +85,14 @@ Provide clear, step-by-step guidance for Claude.
 Show concrete examples of using this Skill.
 ```
 
+**Field requirements**:
+
+* `name`: Must use lowercase letters, numbers, and hyphens only (max 64 characters)
+* `description`: Brief description of what the Skill does and when to use it (max 1024 characters)
+
 The `description` field is critical for Claude to discover when to use your Skill. It should include both what the Skill does and when Claude should use it.
 
-See the [best practices guide](/en/docs/agents-and-tools/agent-skills/best-practices) for complete authoring guidance.
+See the [best practices guide](/en/docs/agents-and-tools/agent-skills/best-practices) for complete authoring guidance including validation rules.
 
 ## Add supporting files
 
@@ -123,7 +128,7 @@ Use the `allowed-tools` frontmatter field to limit which tools Claude can use wh
 
 ```yaml  theme={null}
 ---
-name: Safe File Reader
+name: safe-file-reader
 description: Read files without making changes. Use when you need read-only file access.
 allowed-tools: Read, Grep, Glob
 ---
@@ -481,7 +486,7 @@ commit-helper/
 
 ```yaml  theme={null}
 ---
-name: Generating Commit Messages
+name: generating-commit-messages
 description: Generates clear commit messages from git diffs. Use when writing commit messages or reviewing staged changes.
 ---
 
@@ -510,7 +515,7 @@ code-reviewer/
 
 ```yaml  theme={null}
 ---
-name: Code Reviewer
+name: code-reviewer
 description: Review code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
 allowed-tools: Read, Grep, Glob
 ---
@@ -549,7 +554,7 @@ pdf-processing/
 
 ````yaml  theme={null}
 ---
-name: PDF Processing
+name: pdf-processing
 description: Extract text, fill forms, merge PDFs. Use when working with PDF files, forms, or document extraction. Requires pypdf and pdfplumber packages.
 ---
 
@@ -590,6 +595,10 @@ Claude loads additional files only when needed.
 
   <Card title="Agent Skills overview" icon="book" href="/en/docs/agents-and-tools/agent-skills/overview">
     Learn how Skills work across Claude products
+  </Card>
+
+  <Card title="Use Skills in the Agent SDK" icon="cube" href="/en/api/agent-sdk/skills">
+    Use Skills programmatically with TypeScript and Python
   </Card>
 
   <Card title="Get started with Agent Skills" icon="rocket" href="/en/docs/agents-and-tools/agent-skills/quickstart">
