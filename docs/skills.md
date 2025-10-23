@@ -72,7 +72,7 @@ Create a `SKILL.md` file with YAML frontmatter and Markdown content:
 
 ```yaml  theme={null}
 ---
-name: your-skill-name
+name: Your Skill Name
 description: Brief description of what this Skill does and when to use it
 ---
 
@@ -85,14 +85,9 @@ Provide clear, step-by-step guidance for Claude.
 Show concrete examples of using this Skill.
 ```
 
-**Field requirements**:
-
-* `name`: Must use lowercase letters, numbers, and hyphens only (max 64 characters)
-* `description`: Brief description of what the Skill does and when to use it (max 1024 characters)
-
 The `description` field is critical for Claude to discover when to use your Skill. It should include both what the Skill does and when Claude should use it.
 
-See the [best practices guide](/en/docs/agents-and-tools/agent-skills/best-practices) for complete authoring guidance including validation rules.
+See the [best practices guide](/en/docs/agents-and-tools/agent-skills/best-practices) for complete authoring guidance.
 
 ## Add supporting files
 
@@ -128,7 +123,7 @@ Use the `allowed-tools` frontmatter field to limit which tools Claude can use wh
 
 ```yaml  theme={null}
 ---
-name: safe-file-reader
+name: Safe File Reader
 description: Read files without making changes. Use when you need read-only file access.
 allowed-tools: Read, Grep, Glob
 ---
@@ -486,7 +481,7 @@ commit-helper/
 
 ```yaml  theme={null}
 ---
-name: generating-commit-messages
+name: Generating Commit Messages
 description: Generates clear commit messages from git diffs. Use when writing commit messages or reviewing staged changes.
 ---
 
@@ -515,7 +510,7 @@ code-reviewer/
 
 ```yaml  theme={null}
 ---
-name: code-reviewer
+name: Code Reviewer
 description: Review code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
 allowed-tools: Read, Grep, Glob
 ---
@@ -554,7 +549,7 @@ pdf-processing/
 
 ````yaml  theme={null}
 ---
-name: pdf-processing
+name: PDF Processing
 description: Extract text, fill forms, merge PDFs. Use when working with PDF files, forms, or document extraction. Requires pypdf and pdfplumber packages.
 ---
 
