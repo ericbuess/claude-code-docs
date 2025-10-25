@@ -280,6 +280,7 @@ event-specific data:
   session_id: string
   transcript_path: string  // Path to conversation JSON
   cwd: string              // The current working directory when the hook is invoked
+  permission_mode: string  // Current permission mode: "default", "plan", "acceptEdits", or "bypassPermissions"
 
   // Event-specific fields
   hook_event_name: string
@@ -296,6 +297,7 @@ The exact schema for `tool_input` depends on the tool.
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
+  "permission_mode": "default",
   "hook_event_name": "PreToolUse",
   "tool_name": "Write",
   "tool_input": {
@@ -314,6 +316,7 @@ The exact schema for `tool_input` and `tool_response` depends on the tool.
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
+  "permission_mode": "default",
   "hook_event_name": "PostToolUse",
   "tool_name": "Write",
   "tool_input": {
@@ -334,6 +337,7 @@ The exact schema for `tool_input` and `tool_response` depends on the tool.
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
+  "permission_mode": "default",
   "hook_event_name": "Notification",
   "message": "Task completed successfully"
 }
@@ -346,6 +350,7 @@ The exact schema for `tool_input` and `tool_response` depends on the tool.
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
+  "permission_mode": "default",
   "hook_event_name": "UserPromptSubmit",
   "prompt": "Write a function to calculate the factorial of a number"
 }
@@ -361,6 +366,7 @@ from running indefinitely.
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "permission_mode": "default",
   "hook_event_name": "Stop",
   "stop_hook_active": true
 }
@@ -375,6 +381,7 @@ For `manual`, `custom_instructions` comes from what the user passes into
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "permission_mode": "default",
   "hook_event_name": "PreCompact",
   "trigger": "manual",
   "custom_instructions": ""
@@ -387,6 +394,7 @@ For `manual`, `custom_instructions` comes from what the user passes into
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "permission_mode": "default",
   "hook_event_name": "SessionStart",
   "source": "startup"
 }
@@ -399,6 +407,7 @@ For `manual`, `custom_instructions` comes from what the user passes into
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
+  "permission_mode": "default",
   "hook_event_name": "SessionEnd",
   "reason": "exit"
 }
