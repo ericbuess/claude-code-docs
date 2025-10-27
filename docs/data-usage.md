@@ -13,19 +13,19 @@ We will train new models using data from Free, Pro, and Max accounts when this s
 
 * If you're a current user, you can select your preference now and your selection will immediately go into effect.
   This setting will only apply to new or resumed chats and coding sessions on Claude. Previous chats with no additional activity will not be used for model training.
-* You have until September 28, 2025 to make your selection.
+* You have until October 8, 2025 to make your selection.
   If you're a new user, you can pick your setting for model training during the signup process.
   You can change your selection at any time in your Privacy Settings.
 
-**Commercial users**: (Team and Enterprise plans, API, 3rd-party platforms, and Claude Gov) maintain existing policies: Anthropic does not train generative models using code or prompts sent to Claude Code under commercial terms, unless the customer has chosen to provide their data to us for model improvement (e.g. [Developer Partner Program](https://support.anthropic.com/en/articles/11174108-about-the-development-partner-program)).
+**Commercial users**: (Team and Enterprise plans, API, 3rd-party platforms, and Claude Gov) maintain existing policies: Anthropic does not train generative models using code or prompts sent to Claude Code under commercial terms, unless the customer has chosen to provide their data to us for model improvement (e.g. [Developer Partner Program](https://support.claude.com/en/articles/11174108-about-the-development-partner-program)).
 
 ### Development Partner Program
 
-If you explicitly opt in to methods to provide us with materials to train on, such as via the [Development Partner Program](https://support.anthropic.com/en/articles/11174108-about-the-development-partner-program), we may use those materials provided to train our models. An organization admin can expressly opt-in to the Development Partner Program for their organization. Note that this program is available only for Anthropic first-party API, and not for Bedrock or Vertex users.
+If you explicitly opt in to methods to provide us with materials to train on, such as via the [Development Partner Program](https://support.claude.com/en/articles/11174108-about-the-development-partner-program), we may use those materials provided to train our models. An organization admin can expressly opt-in to the Development Partner Program for their organization. Note that this program is available only for Anthropic first-party API, and not for Bedrock or Vertex users.
 
 ### Feedback using the `/bug` command
 
-If you choose to send us feedback about Claude Code using the `/bug` command, we may use your feedback to improve our products and services. Transcripts shared via `/bug` are retained for 30 days.
+If you choose to send us feedback about Claude Code using the `/bug` command, we may use your feedback to improve our products and services. Transcripts shared via `/bug` are retained for 5 years.
 
 ### Data retention
 
@@ -49,11 +49,27 @@ For full details, please review our [Commercial Terms of Service](https://www.an
 
 ## Data flow and dependencies
 
-<img src="https://mintcdn.com/anthropic/PF_69UDRSEsLpN9D/images/claude-code-data-flow.png?fit=max&auto=format&n=PF_69UDRSEsLpN9D&q=85&s=413237a4d6564f162590c4fea074f234" alt="Claude Code data flow diagram" width="1597" height="1285" data-path="images/claude-code-data-flow.png" srcset="https://mintcdn.com/anthropic/PF_69UDRSEsLpN9D/images/claude-code-data-flow.png?w=280&fit=max&auto=format&n=PF_69UDRSEsLpN9D&q=85&s=dcb43f2e6408c33275a51747682804b2 280w, https://mintcdn.com/anthropic/PF_69UDRSEsLpN9D/images/claude-code-data-flow.png?w=560&fit=max&auto=format&n=PF_69UDRSEsLpN9D&q=85&s=f5bb343bddf038c62c8c7c8ff574df37 560w, https://mintcdn.com/anthropic/PF_69UDRSEsLpN9D/images/claude-code-data-flow.png?w=840&fit=max&auto=format&n=PF_69UDRSEsLpN9D&q=85&s=a25ba8e1c632bb02de4cf68e96ac5a8c 840w, https://mintcdn.com/anthropic/PF_69UDRSEsLpN9D/images/claude-code-data-flow.png?w=1100&fit=max&auto=format&n=PF_69UDRSEsLpN9D&q=85&s=434fb120de78f63df663268636485646 1100w, https://mintcdn.com/anthropic/PF_69UDRSEsLpN9D/images/claude-code-data-flow.png?w=1650&fit=max&auto=format&n=PF_69UDRSEsLpN9D&q=85&s=9baeb74ab4c1c8255e510c2c8b521e32 1650w, https://mintcdn.com/anthropic/PF_69UDRSEsLpN9D/images/claude-code-data-flow.png?w=2500&fit=max&auto=format&n=PF_69UDRSEsLpN9D&q=85&s=f4314f4067f037b57fe851d063ac2b77 2500w" data-optimize="true" data-opv="2" />
+<img src="https://mintcdn.com/anthropic-claude-docs/LF5WV0SNF6oudpT5/images/claude-code-data-flow.png?fit=max&auto=format&n=LF5WV0SNF6oudpT5&q=85&s=4b30069d702719e7bfb974eaaafab21c" alt="Claude Code data flow diagram" data-og-width="1597" width="1597" data-og-height="1285" height="1285" data-path="images/claude-code-data-flow.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/anthropic-claude-docs/LF5WV0SNF6oudpT5/images/claude-code-data-flow.png?w=280&fit=max&auto=format&n=LF5WV0SNF6oudpT5&q=85&s=067676caa12f89051cb193e6b3f7d0a0 280w, https://mintcdn.com/anthropic-claude-docs/LF5WV0SNF6oudpT5/images/claude-code-data-flow.png?w=560&fit=max&auto=format&n=LF5WV0SNF6oudpT5&q=85&s=5506197deff927f54f2fb5a349f358a8 560w, https://mintcdn.com/anthropic-claude-docs/LF5WV0SNF6oudpT5/images/claude-code-data-flow.png?w=840&fit=max&auto=format&n=LF5WV0SNF6oudpT5&q=85&s=bb4febe7974dde5b76b88744f89ab472 840w, https://mintcdn.com/anthropic-claude-docs/LF5WV0SNF6oudpT5/images/claude-code-data-flow.png?w=1100&fit=max&auto=format&n=LF5WV0SNF6oudpT5&q=85&s=b51af3074f87b33ccc342aaad655dcbf 1100w, https://mintcdn.com/anthropic-claude-docs/LF5WV0SNF6oudpT5/images/claude-code-data-flow.png?w=1650&fit=max&auto=format&n=LF5WV0SNF6oudpT5&q=85&s=8fd96f1dde615877d4e4bbe1874af12d 1650w, https://mintcdn.com/anthropic-claude-docs/LF5WV0SNF6oudpT5/images/claude-code-data-flow.png?w=2500&fit=max&auto=format&n=LF5WV0SNF6oudpT5&q=85&s=056deded541ec30e9b67a67d620f6aaf 2500w" />
 
 Claude Code is installed from [NPM](https://www.npmjs.com/package/@anthropic-ai/claude-code). Claude Code runs locally. In order to interact with the LLM, Claude Code sends data over the network. This data includes all user prompts and model outputs. The data is encrypted in transit via TLS and is not encrypted at rest. Claude Code is compatible with most popular VPNs and LLM proxies.
 
 Claude Code is built on Anthropic's APIs. For details regarding our API's security controls, including our API logging procedures, please refer to compliance artifacts offered in the [Anthropic Trust Center](https://trust.anthropic.com).
+
+### Cloud execution
+
+<Note>
+  The above data flow diagram and description applies to Claude Code CLI running locally on your machine. For cloud-based sessions using Claude Code on the web, see the section below.
+</Note>
+
+When using [Claude Code on the web](/en/docs/claude-code/claude-code-on-the-web), sessions run in Anthropic-managed virtual machines instead of locally. In cloud environments:
+
+* **Code storage**: Your repository is cloned to an isolated VM and automatically deleted after session completion
+* **Credentials**: GitHub authentication is handled through a secure proxy; your GitHub credentials never enter the sandbox
+* **Network traffic**: All outbound traffic goes through a security proxy for audit logging and abuse prevention
+* **Data retention**: Code and session data are subject to the retention and usage policies for your account type
+* **Session data**: Prompts, code changes, and outputs follow the same data policies as local Claude Code usage
+
+For security details about cloud execution, see [Security](/en/docs/claude-code/security#cloud-execution-security).
 
 ## Telemetry services
 
@@ -67,10 +83,10 @@ When users run the `/bug` command, a copy of their full conversation history inc
 
 By default, we disable all non-essential traffic (including error reporting, telemetry, and bug reporting functionality) when using Bedrock or Vertex. You can also opt out of all of these at once by setting the `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` environment variable. Here are the full default behaviors:
 
-| Service                            | Anthropic API                                            | Vertex API                                            | Bedrock API                                            |
-| ---------------------------------- | -------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
-| **Statsig (Metrics)**              | Default on.<br />`DISABLE_TELEMETRY=1` to disable.       | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1. | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1. |
-| **Sentry (Errors)**                | Default on.<br />`DISABLE_ERROR_REPORTING=1` to disable. | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1. | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1. |
-| **Anthropic API (`/bug` reports)** | Default on.<br />`DISABLE_BUG_COMMAND=1` to disable.     | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1. | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1. |
+| Service                         | Claude API                                               | Vertex API                                            | Bedrock API                                            |
+| ------------------------------- | -------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
+| **Statsig (Metrics)**           | Default on.<br />`DISABLE_TELEMETRY=1` to disable.       | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1. | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1. |
+| **Sentry (Errors)**             | Default on.<br />`DISABLE_ERROR_REPORTING=1` to disable. | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1. | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1. |
+| **Claude API (`/bug` reports)** | Default on.<br />`DISABLE_BUG_COMMAND=1` to disable.     | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1. | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1. |
 
 All environment variables can be checked into `settings.json` ([read more](/en/docs/claude-code/settings)).

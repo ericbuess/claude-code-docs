@@ -28,7 +28,7 @@ To resolve this issue, fix your Linux PATH to ensure the Linux node/npm versions
 
 The most common cause is that nvm isn't loaded in non-interactive shells. Add the following to your shell configuration file (`~/.bashrc`, `~/.zshrc`, etc.):
 
-```bash
+```bash  theme={null}
 # Load nvm if it exists
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -37,7 +37,7 @@ export NVM_DIR="$HOME/.nvm"
 
 Or run directly in your current session:
 
-```bash
+```bash  theme={null}
 source ~/.nvm/nvm.sh
 ```
 
@@ -45,7 +45,7 @@ source ~/.nvm/nvm.sh
 
 If nvm is properly loaded but Windows paths still take priority, you can explicitly prepend your Linux paths to PATH in your shell configuration:
 
-```bash
+```bash  theme={null}
 export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 ```
 
@@ -70,7 +70,7 @@ Use the following command to run the native installer.
 
 **macOS, Linux, WSL:**
 
-```bash
+```bash  theme={null}
 # Install stable version (default)
 curl -fsSL https://claude.ai/install.sh | bash
 
@@ -83,7 +83,7 @@ curl -fsSL https://claude.ai/install.sh | bash -s 1.0.58
 
 **Windows PowerShell:**
 
-```powershell
+```powershell  theme={null}
 # Install stable version (default)
 irm https://claude.ai/install.ps1 | iex
 
@@ -105,7 +105,7 @@ This command installs the appropriate build of Claude Code for your operating sy
 
 Alternatively, if Claude Code will run, you can migrate to a local installation:
 
-```bash
+```bash  theme={null}
 claude migrate-installer
 ```
 
@@ -115,19 +115,19 @@ After migration, restart your shell, and then verify your installation:
 
 On macOS/Linux/WSL:
 
-```bash
+```bash  theme={null}
 which claude  # Should show an alias to ~/.claude/local/claude
 ```
 
 On Windows:
 
-```powershell
+```powershell  theme={null}
 where claude  # Should show path to claude executable
 ```
 
 Verify installation:
 
-```bash
+```bash  theme={null}
 claude doctor # Check installation health
 ```
 
@@ -148,7 +148,7 @@ If you're experiencing authentication problems:
 
 If problems persist, try:
 
-```bash
+```bash  theme={null}
 rm -rf ~/.config/claude-code/auth.json
 claude
 ```
@@ -176,7 +176,7 @@ If Claude Code seems unresponsive:
 
 If Search tool, `@file` mentions, custom agents, and custom slash commands aren't working, install system `ripgrep`:
 
-```bash
+```bash  theme={null}
 # macOS (Homebrew)  
 brew install ripgrep
 
@@ -224,13 +224,13 @@ WSL2 uses NAT networking by default, which can prevent IDE detection. You have t
 **Option 1: Configure Windows Firewall** (recommended)
 
 1. Find your WSL2 IP address:
-   ```bash
+   ```bash  theme={null}
    wsl hostname -I
    # Example output: 172.21.123.456
    ```
 
 2. Open PowerShell as Administrator and create a firewall rule:
-   ```powershell
+   ```powershell  theme={null}
    New-NetFirewallRule -DisplayName "Allow WSL2 Internal Traffic" -Direction Inbound -Protocol TCP -Action Allow -RemoteAddress 172.21.0.0/16 -LocalAddress 172.21.0.0/16
    ```
    (Adjust the IP range based on your WSL2 subnet from step 1)
@@ -241,7 +241,7 @@ WSL2 uses NAT networking by default, which can prevent IDE detection. You have t
 
 Add to `.wslconfig` in your Windows user directory:
 
-```ini
+```ini  theme={null}
 [wsl2]
 networkingMode=mirrored
 ```
@@ -280,7 +280,7 @@ Claude Code sometimes generates markdown files with missing language tags on cod
 
 If you notice code blocks like this in generated markdown:
 
-````markdown
+````markdown  theme={null}
 ```
 function example() {
   return "hello";
@@ -290,7 +290,7 @@ function example() {
 
 Instead of properly tagged blocks like:
 
-````markdown
+````markdown  theme={null}
 ```javascript
 function example() {
   return "hello";

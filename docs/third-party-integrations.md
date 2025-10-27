@@ -95,7 +95,7 @@ Claude Code supports flexible configuration options that allow you to combine di
 
 Route Bedrock traffic through a corporate HTTP/HTTPS proxy:
 
-```bash
+```bash  theme={null}
 # Enable Bedrock
 export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1
@@ -108,7 +108,7 @@ export HTTPS_PROXY='https://proxy.example.com:8080'
 
 Use a gateway service that provides Bedrock-compatible endpoints:
 
-```bash
+```bash  theme={null}
 # Enable Bedrock
 export CLAUDE_CODE_USE_BEDROCK=1
 
@@ -121,7 +121,7 @@ export CLAUDE_CODE_SKIP_BEDROCK_AUTH=1  # If gateway handles AWS auth
 
 Route Vertex AI traffic through a corporate HTTP/HTTPS proxy:
 
-```bash
+```bash  theme={null}
 # Enable Vertex
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
@@ -135,7 +135,7 @@ export HTTPS_PROXY='https://proxy.example.com:8080'
 
 Combine Google Vertex AI models with an LLM gateway for centralized management:
 
-```bash
+```bash  theme={null}
 # Enable Vertex
 export CLAUDE_CODE_USE_VERTEX=1
 

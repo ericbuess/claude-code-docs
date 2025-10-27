@@ -4,16 +4,24 @@
 
 ## Keyboard shortcuts
 
+<Note>
+  Keyboard shortcuts may vary by platform and terminal. Press `?` to see available shortcuts for your environment.
+</Note>
+
 ### General controls
 
-| Shortcut         | Description                        | Context                                                     |
-| :--------------- | :--------------------------------- | :---------------------------------------------------------- |
-| `Ctrl+C`         | Cancel current input or generation | Standard interrupt                                          |
-| `Ctrl+D`         | Exit Claude Code session           | EOF signal                                                  |
-| `Ctrl+L`         | Clear terminal screen              | Keeps conversation history                                  |
-| `Up/Down arrows` | Navigate command history           | Recall previous inputs                                      |
-| `Esc` + `Esc`    | Edit previous message              | Double-escape to modify                                     |
-| `Shift+Tab`      | Toggle permission modes            | Switch between Auto-Accept Mode, Plan Mode, and normal mode |
+| Shortcut                                     | Description                                                              | Context                                                     |
+| :------------------------------------------- | :----------------------------------------------------------------------- | :---------------------------------------------------------- |
+| `Ctrl+C`                                     | Cancel current input or generation                                       | Standard interrupt                                          |
+| `Ctrl+D`                                     | Exit Claude Code session                                                 | EOF signal                                                  |
+| `Ctrl+L`                                     | Clear terminal screen                                                    | Keeps conversation history                                  |
+| `Ctrl+O`                                     | Toggle verbose output                                                    | Shows detailed tool usage and execution                     |
+| `Ctrl+R`                                     | Reverse search command history                                           | Search through previous commands interactively              |
+| `Ctrl+V` (macOS/Linux) or `Alt+V` (Windows)  | Paste image from clipboard                                               | Pastes an image or path to an image file                    |
+| `Up/Down arrows`                             | Navigate command history                                                 | Recall previous inputs                                      |
+| `Esc` + `Esc`                                | Rewind the code/conversation                                             | Restore the code and/or conversation to a previous point    |
+| `Tab`                                        | Toggle [extended thinking](/en/docs/build-with-claude/extended-thinking) | Switch between Thinking on and Thinking off                 |
+| `Shift+Tab` or `Alt+M` (some configurations) | Toggle permission modes                                                  | Switch between Auto-Accept Mode, Plan Mode, and normal mode |
 
 ### Multiline input
 
@@ -36,6 +44,7 @@
 | `#` at start | Memory shortcut - add to CLAUDE.md | Prompts for file selection                                    |
 | `/` at start | Slash command                      | See [slash commands](/en/docs/claude-code/slash-commands)     |
 | `!` at start | Bash mode                          | Run commands directly and add execution output to the session |
+| `@`          | File path mention                  | Trigger file path autocomplete                                |
 
 ## Vim editor mode
 
@@ -87,12 +96,74 @@ Claude Code maintains command history for the current session:
 * History is stored per working directory
 * Cleared with `/clear` command
 * Use Up/Down arrows to navigate (see keyboard shortcuts above)
-* **Ctrl+R**: Reverse search through history (if supported by terminal)
 * **Note**: History expansion (`!`) is disabled by default
+
+### Reverse search with Ctrl+R
+
+Press `Ctrl+R` to interactively search through your command history:
+
+1. **Start search**: Press `Ctrl+R` to activate reverse history search
+2. **Type query**: Enter text to search for in previous commands - the search term will be highlighted in matching results
+3. **Navigate matches**: Press `Ctrl+R` again to cycle through older matches
+4. **Accept match**:
+   * Press `Tab` or `Esc` to accept the current match and continue editing
+   * Press `Enter` to accept and execute the command immediately
+5. **Cancel search**:
+   * Press `Ctrl+C` to cancel and restore your original input
+   * Press `Backspace` on empty search to cancel
+
+The search displays matching commands with the search term highlighted, making it easy to find and reuse previous inputs.
+
+## Background bash commands
+
+Claude Code supports running bash commands in the background, allowing you to continue working while long-running processes execute.
+
+### How backgrounding works
+
+When Claude Code runs a command in the background, it runs the command asynchronously and immediately returns a background task ID. Claude Code can respond to new prompts while the command continues executing in the background.
+
+To run commands in the background, you can either:
+
+* Prompt Claude Code to run a command in the background
+* Press Ctrl+B to move a regular Bash tool invocation to the background. (Tmux users must press Ctrl+B twice due to tmux's prefix key.)
+
+**Key features:**
+
+* Output is buffered and Claude can retrieve it using the BashOutput tool
+* Background tasks have unique IDs for tracking and output retrieval
+* Background tasks are automatically cleaned up when Claude Code exits
+
+**Common backgrounded commands:**
+
+* Build tools (webpack, vite, make)
+* Package managers (npm, yarn, pnpm)
+* Test runners (jest, pytest)
+* Development servers
+* Long-running processes (docker, terraform)
+
+### Bash mode with `!` prefix
+
+Run bash commands directly without going through Claude by prefixing your input with `!`:
+
+```bash  theme={null}
+! npm test
+! git status
+! ls -la
+```
+
+Bash mode:
+
+* Adds the command and its output to the conversation context
+* Shows real-time progress and output
+* Supports the same `Ctrl+B` backgrounding for long-running commands
+* Does not require Claude to interpret or approve the command
+
+This is useful for quick shell operations while maintaining conversation context.
 
 ## See also
 
 * [Slash commands](/en/docs/claude-code/slash-commands) - Interactive session commands
+* [Checkpointing](/en/docs/claude-code/checkpointing) - Rewind Claude's edits and restore previous states
 * [CLI reference](/en/docs/claude-code/cli-reference) - Command-line flags and options
 * [Settings](/en/docs/claude-code/settings) - Configuration options
 * [Memory management](/en/docs/claude-code/memory) - Managing CLAUDE.md files

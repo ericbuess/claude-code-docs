@@ -6,18 +6,18 @@
 
 Setting up Claude Code requires access to Anthropic models. For teams, you can set up Claude Code access in one of three ways:
 
-* Anthropic API via the Anthropic Console
+* Claude API via the Claude Console
 * Amazon Bedrock
 * Google Vertex AI
 
-### Anthropic API authentication
+### Claude API authentication
 
-**To set up Claude Code access for your team via Anthropic API:**
+**To set up Claude Code access for your team via Claude API:**
 
-1. Use your existing Anthropic Console account or create a new Anthropic Console account
+1. Use your existing Claude Console account or create a new Claude Console account
 2. You can add users through either method below:
    * Bulk invite users from within the Console (Console -> Settings -> Members -> Invite)
-   * [Set up SSO](https://support.anthropic.com/en/articles/10280258-setting-up-single-sign-on-on-the-api-console)
+   * [Set up SSO](https://support.claude.com/en/articles/10280258-setting-up-single-sign-on-on-the-api-console)
 3. When inviting users, they need one of the following roles:
    * "Claude Code" role means users can only create Claude Code API keys
    * "Developer" role means users can create any kind of API key
@@ -195,6 +195,6 @@ This hierarchy ensures that organizational policies are always enforced while st
 Claude Code securely manages your authentication credentials:
 
 * **Storage location**: On macOS, API keys, OAuth tokens, and other credentials are stored in the encrypted macOS Keychain.
-* **Supported authentication types**: Claude.ai credentials, Anthropic API credentials, Bedrock Auth, and Vertex Auth.
+* **Supported authentication types**: Claude.ai credentials, Claude API credentials, Bedrock Auth, and Vertex Auth.
 * **Custom credential scripts**: The [`apiKeyHelper`](/en/docs/claude-code/settings#available-settings) setting can be configured to run a shell script that returns an API key.
 * **Refresh intervals**: By default, `apiKeyHelper` is called after 5 minutes or on HTTP 401 response. Set `CLAUDE_CODE_API_KEY_HELPER_TTL_MS` environment variable for custom refresh intervals.

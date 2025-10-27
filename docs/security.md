@@ -20,6 +20,7 @@ For detailed permission configuration, see [Identity and Access Management](/en/
 
 To mitigate risks in agentic systems:
 
+* **Sandboxed bash tool**: [Sandbox](/en/docs/claude-code/sandboxing) bash commands with filesystem and network isolation, reducing permission prompts while maintaining security. Enable with `/sandbox` to define boundaries where Claude Code can work autonomously
 * **Write access restriction**: Claude Code can only write to the folder where it was started and its subfolders—it cannot modify files in parent directories without explicit permission. While Claude Code can read files outside the working directory (useful for accessing system libraries and dependencies), write operations are strictly confined to the project scope, creating a clear security boundary
 * **Prompt fatigue mitigation**: Support for allowlisting frequently used safe commands per-user, per-codebase, or per-organization
 * **Accept Edits mode**: Batch accept multiple edits while maintaining permission prompts for commands with side effects
@@ -60,6 +61,10 @@ For full details, please review our [Commercial Terms of Service](https://www.an
 * **Natural language descriptions**: Complex bash commands include explanations for user understanding
 * **Secure credential storage**: API keys and tokens are encrypted. See [Credential Management](/en/docs/claude-code/iam#credential-management)
 
+<Warning>
+  **Windows WebDAV security risk**: We recommend against enabling WebDAV when running Claude Code on Windows. [WebDAV has been deprecated by Microsoft](https://learn.microsoft.com/en-us/windows/whats-new/deprecated-features#:~:text=The%20Webclient%20\(WebDAV\)%20service%20is%20deprecated) due to security risks. Enabling WebDAV may allow Claude Code to trigger network requests to remote hosts, bypassing the permission system.
+</Warning>
+
 **Best practices for working with untrusted content**:
 
 1. Review suggested commands before approval
@@ -82,7 +87,20 @@ We encourage either writing your own MCP servers or using MCP servers from provi
 
 ## IDE security
 
-See [here](https://docs.anthropic.com/en/docs/claude-code/ide-integrations#security) for more information on the security of running Claude Code in an IDE.
+See [here](/en/docs/claude-code/ide-integrations#security) for more information on the security of running Claude Code in an IDE.
+
+## Cloud execution security
+
+When using [Claude Code on the web](/en/docs/claude-code/claude-code-on-the-web), additional security controls are in place:
+
+* **Isolated virtual machines**: Each cloud session runs in an isolated, Anthropic-managed VM
+* **Network access controls**: Network access is limited by default and can be configured to be disabled or allow only specific domains
+* **Credential protection**: Authentication is handled through a secure proxy that uses a scoped credential inside the sandbox, which is then translated to your actual GitHub authentication token
+* **Branch restrictions**: Git push operations are restricted to the current working branch
+* **Audit logging**: All operations in cloud environments are logged for compliance and audit purposes
+* **Automatic cleanup**: Cloud environments are automatically terminated after session completion
+
+For more details on cloud execution, see [Claude Code on the web](/en/docs/claude-code/claude-code-on-the-web).
 
 ## Security best practices
 
@@ -111,6 +129,7 @@ If you discover a security vulnerability in Claude Code:
 
 ## Related resources
 
+* [Sandboxing](/en/docs/claude-code/sandboxing) - Filesystem and network isolation for bash commands
 * [Identity and Access Management](/en/docs/claude-code/iam) - Configure permissions and access controls
 * [Monitoring usage](/en/docs/claude-code/monitoring-usage) - Track and audit Claude Code activity
 * [Development containers](/en/docs/claude-code/devcontainer) - Secure, isolated environments

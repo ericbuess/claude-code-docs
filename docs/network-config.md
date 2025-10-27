@@ -14,7 +14,7 @@ Claude Code supports various enterprise network and security configurations thro
 
 Claude Code respects standard proxy environment variables:
 
-```bash
+```bash  theme={null}
 # HTTPS proxy (recommended)
 export HTTPS_PROXY=https://proxy.example.com:8080
 
@@ -37,7 +37,7 @@ export NO_PROXY="*"
 
 If your proxy requires basic authentication, include credentials in the proxy URL:
 
-```bash
+```bash  theme={null}
 export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 ```
 
@@ -53,7 +53,7 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 
 If your enterprise environment uses custom CAs for HTTPS connections (whether through a proxy or direct API access), configure Claude Code to trust them:
 
-```bash
+```bash  theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
 ```
 
@@ -61,7 +61,7 @@ export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
 
 For enterprise environments requiring client certificate authentication:
 
-```bash
+```bash  theme={null}
 # Client certificate for authentication
 export CLAUDE_CODE_CLIENT_CERT=/path/to/client-cert.pem
 
