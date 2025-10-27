@@ -115,8 +115,7 @@ Assign the required IAM permissions:
 
 The `roles/aiplatform.user` role includes the required permissions:
 
-* `aiplatform.endpoints.predict` - Required for model invocation
-* `aiplatform.endpoints.computeTokens` - Required for token counting
+* `aiplatform.endpoints.predict` - Required for model invocation and token counting
 
 For more restrictive permissions, create a custom role with only the permissions above.
 
@@ -126,7 +125,7 @@ For details, see [Vertex IAM documentation](https://cloud.google.com/vertex-ai/d
   We recommend creating a dedicated GCP project for Claude Code to simplify cost tracking and access control.
 </Note>
 
-### 1M token context window
+## 1M token context window
 
 Claude Sonnet 4 and Sonnet 4.5 support the [1M token context window](/en/docs/build-with-claude/context-windows#1m-token-context-window) on Vertex AI.
 

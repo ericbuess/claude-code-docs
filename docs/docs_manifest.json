@@ -45,8 +45,8 @@
     "data-usage.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/data-usage",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/data-usage.md",
-      "hash": "886d232c2c9eaa7bc2002586abcb8eb52a6f437194889362375ea06521d5a5d4",
-      "last_updated": "2025-10-20T21:03:41.847700"
+      "hash": "06df328ccdc44d1924899d2e289d256e71a631c20ded5267a2a129f73bd8cbaf",
+      "last_updated": "2025-10-27T18:04:54.571251"
     },
     "devcontainer.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/devcontainer",
@@ -69,8 +69,8 @@
     "google-vertex-ai.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/google-vertex-ai",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/google-vertex-ai.md",
-      "hash": "84dac59a5f1107f689428fb0870ffc281f99ea07cc60b64d0bbe72df1fb2bccb",
-      "last_updated": "2025-10-16T00:12:31.444886"
+      "hash": "311d46a93f31aed07078b01411954247c7a44bc16374edb31d476e32ed1d7d65",
+      "last_updated": "2025-10-27T18:04:56.690634"
     },
     "headless.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/headless",
@@ -273,8 +273,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-10-27T15:04:54.048146",
-    "fetch_duration_seconds": 24.07015,
+    "last_fetch_completed": "2025-10-27T18:05:13.789708",
+    "fetch_duration_seconds": 24.641762,
     "total_pages_discovered": 44,
     "pages_fetched_successfully": 45,
     "pages_failed": 0,
@@ -284,7 +284,7 @@
     "total_files": 45,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-10-27T15:04:54.048177",
+  "last_updated": "2025-10-27T18:05:13.789738",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",
