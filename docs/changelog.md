@@ -14,6 +14,7 @@
 - Subagents: claude can now choose to resume subagents
 - Subagents: claude can dynamically choose the model used by its subagents
 - SDK: added --max-budget-usd flag
+- Discovery of custom slash commands, subagents, and output styles no longer respects .gitignore
 - Stop `/terminal-setup` from adding backslash to `Shift + Enter` in VS Code
 - Add branch and tag support for git-based plugins and marketplaces using fragment syntax (e.g., `owner/repo#branch`)
 - Fixed a bug where macOS permission prompts would show up upon initial launch when launching from home directory
@@ -36,6 +37,7 @@
 - Fixed a bug where project-level skills were not loading when --setting-sources 'project' was specified
 - Claude Code Web: Support for Web -> CLI teleport
 - Sandbox: Releasing a sandbox mode for the BashTool on Linux & Mac
+- Bedrock: Display awsAuthRefresh output when auth is required
 
 ## 2.0.22
 
