@@ -59,7 +59,7 @@ The VS Code extension supports using Claude Code with third-party providers like
 | `AWS_PROFILE`                 | AWS profile for Bedrock authentication |                        | `"your-profile"`                                 |
 | `CLOUD_ML_REGION`             | Region for Vertex AI                   |                        | `"global"` or `"us-east5"`                       |
 | `ANTHROPIC_VERTEX_PROJECT_ID` | GCP project ID for Vertex AI           |                        | `"your-project-id"`                              |
-| `ANTHROPIC_MODEL`             | Override primary model                 | Override model ID      | `"us.anthropic.claude-3-7-sonnet-20250219-v1:0"` |
+| `ANTHROPIC_MODEL`             | Override primary model                 | Override model ID      | `"us.anthropic.claude-sonnet-4-5-20250929-v1:0"` |
 | `ANTHROPIC_SMALL_FAST_MODEL`  | Override small/fast model              | Optional               | `"us.anthropic.claude-3-5-haiku-20241022-v1:0"`  |
 | `CLAUDE_CODE_SKIP_AUTH_LOGIN` | Disable all prompts to login           | Optional               | `"1"` or `"true"`                                |
 

@@ -432,7 +432,7 @@ export const MCPServersTable = ({platform = "all"}) => {
     description: "Manage monday.com boards by creating items, updating columns, assigning owners, setting timelines, adding CRM activities, and writing summaries",
     documentation: "https://developer.monday.com/apps/docs/mondaycom-mcp-integration",
     urls: {
-      sse: "https://mcp.monday.com/sse"
+      http: "https://mcp.monday.com/mcp"
     },
     authentication: {
       type: "oauth"

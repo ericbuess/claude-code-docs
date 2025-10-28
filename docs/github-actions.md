@@ -110,7 +110,7 @@ All beta users must make these changes to their workflow files in order to upgra
     anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
     custom_instructions: "Follow our coding standards"
     max_turns: "10"
-    model: "claude-3-5-sonnet-20241022"
+    model: "claude-sonnet-4-5-20250929"
 ```
 
 **GA version (v1.0):**

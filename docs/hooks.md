@@ -494,12 +494,20 @@ to Claude.
 * `"ask"` asks the user to confirm the tool call in the UI.
   `permissionDecisionReason` is shown to the user but not to Claude.
 
+Additionally, hooks can modify tool inputs before execution using `updatedInput`:
+
+* `updatedInput` allows you to modify the tool's input parameters before the tool executes. This is a `Record<string, unknown>` object containing the fields you want to change or add.
+* This is most useful with `"permissionDecision": "allow"` to modify and approve tool calls.
+
 ```json  theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PreToolUse",
-    "permissionDecision": "allow" | "deny" | "ask",
-    "permissionDecisionReason": "My reason here"
+    "permissionDecision": "allow"
+    "permissionDecisionReason": "My reason here",
+    "updatedInput": {
+      "field_to_modify": "new value"
+    }
   }
 }
 ```
