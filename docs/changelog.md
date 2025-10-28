@@ -8,6 +8,17 @@
 
 # Changelog
 
+## 2.0.28
+
+- Plan mode: introduced new Plan subagent
+- Subagents: claude can now choose to resume subagents
+- Subagents: claude can dynamically choose the model used by its subagents
+- SDK: added --max-budget-usd flag
+- Stop `/terminal-setup` from adding backslash to `Shift + Enter` in VS Code
+- Add branch and tag support for git-based plugins and marketplaces using fragment syntax (e.g., `owner/repo#branch`)
+- Fixed a bug where macOS permission prompts would show up upon initial launch when launching from home directory
+- Various other bug fixes
+
 ## 2.0.27
 
 - New UI for permission prompts
