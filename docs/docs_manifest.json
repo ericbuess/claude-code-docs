@@ -3,8 +3,8 @@
     "amazon-bedrock.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/amazon-bedrock",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/amazon-bedrock.md",
-      "hash": "2e43fea82c5eb0fb1be8b4487daa2535ad62e27584d4d3c2cddf42339b31fc0b",
-      "last_updated": "2025-10-16T00:12:26.167073"
+      "hash": "13974bcd8ab635c6ca257d53bb8178c189b23294c5a1db6354c3f7827102b0b4",
+      "last_updated": "2025-10-30T18:03:58.784577"
     },
     "analytics.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/analytics",
@@ -159,8 +159,8 @@
     "overview.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/overview",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/overview.md",
-      "hash": "f58b8d855c1f48b40f221687def89053353105ed8aced73630694b31abf69b18",
-      "last_updated": "2025-10-14T17:19:05.666341"
+      "hash": "b4ac412d052afde1cb2a71e8990802eb9791c73c32f18cf273d604a8440f66e7",
+      "last_updated": "2025-10-30T18:04:12.740561"
     },
     "plugin-marketplaces.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/plugin-marketplaces",
@@ -213,8 +213,8 @@
     "setup.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/setup",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/setup.md",
-      "hash": "a17b4ec01ef34d4f3c18f1a0842b4e49a19a58b08f50eb300fe396b6b63fc4c2",
-      "last_updated": "2025-10-14T17:19:10.002156"
+      "hash": "760b55a04983b46d2afc8d359a61228a64bef2b907c6ee151ec8095fdd0f055c",
+      "last_updated": "2025-10-30T18:04:17.538742"
     },
     "skills.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/skills",
@@ -273,8 +273,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-10-30T15:04:31.032274",
-    "fetch_duration_seconds": 23.797878,
+    "last_fetch_completed": "2025-10-30T18:04:21.890430",
+    "fetch_duration_seconds": 30.065821,
     "total_pages_discovered": 44,
     "pages_fetched_successfully": 45,
     "pages_failed": 0,
@@ -284,7 +284,7 @@
     "total_files": 45,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-10-30T15:04:31.032303",
+  "last_updated": "2025-10-30T18:04:21.890459",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",

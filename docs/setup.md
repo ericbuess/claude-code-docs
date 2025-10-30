@@ -6,7 +6,7 @@
 
 * **Operating Systems**: macOS 10.15+, Ubuntu 20.04+/Debian 10+, or Windows 10+ (with WSL 1, WSL 2, or Git for Windows)
 * **Hardware**: 4GB+ RAM
-* **Software**: [Node.js 18+](https://nodejs.org/en/download)
+* **Software**: [Node.js 18+](https://nodejs.org/en/download) (only required for NPM installation)
 * **Network**: Internet connection required for authentication and AI processing
 * **Shell**: Works best in Bash, Zsh or Fish
 * **Location**: [Anthropic supported countries](https://www.anthropic.com/supported-countries)
@@ -17,20 +17,46 @@
 
 ## Standard installation
 
-To install Claude Code, run the following command:
+To install Claude Code, use one of the following methods:
 
-```sh  theme={null}
-npm install -g @anthropic-ai/claude-code
-```
+<Tabs>
+  <Tab title="Native Install (Recommended)">
+    **Homebrew (macOS, Linux):**
 
-<Warning>
-  Do NOT use `sudo npm install -g` as this can lead to permission issues and security risks.
-  If you encounter permission errors, see [configure Claude Code](/en/docs/claude-code/troubleshooting#linux-permission-issues) for recommended solutions.
-</Warning>
+    ```sh  theme={null}
+    brew install --cask claude-code
+    ```
+
+    **macOS, Linux, WSL:**
+
+    ```bash  theme={null}
+    curl -fsSL https://claude.ai/install.sh | bash
+    ```
+
+    **Windows PowerShell:**
+
+    ```powershell  theme={null}
+    irm https://claude.ai/install.ps1 | iex
+    ```
+
+    **Windows CMD:**
+
+    ```batch  theme={null}
+    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+    ```
+  </Tab>
+
+  <Tab title="NPM">
+    If you have [Node.js 18 or newer installed](https://nodejs.org/en/download/):
+
+    ```sh  theme={null}
+    npm install -g @anthropic-ai/claude-code
+    ```
+  </Tab>
+</Tabs>
 
 <Note>
   Some users may be automatically migrated to an improved installation method.
-  Run `claude doctor` after installation to check your installation type.
 </Note>
 
 After the installation process completes, navigate to your project and start Claude Code:
@@ -74,25 +100,17 @@ If you encounter any issues during installation, consult the [troubleshooting gu
   Run `claude doctor` after installation to check your installation type and version.
 </Tip>
 
-### Global npm installation
+### Native installation options
 
-Traditional method shown in the [install steps above](#standard-installation)
+The native installation is the recommended method and offers several benefits:
 
-### Native binary installation (Beta)
+* One self-contained executable
+* No Node.js dependency
+* Improved auto-updater stability
 
-If you have an existing installation of Claude Code, use `claude install` to start the native binary installation.
+If you have an existing installation of Claude Code, use `claude install` to migrate to the native binary installation.
 
-For a fresh install, run one of the following commands:
-
-**Homebrew (macOS, Linux):**
-
-```sh  theme={null}
-brew install --cask claude-code
-```
-
-<Note>
-  Claude Code installed via Homebrew will auto-update outside of the brew directory unless explicitly disabled with the `DISABLE_AUTOUPDATER` environment variable (see [Auto updates](#auto-updates) section).
-</Note>
+For advanced installation options with the native installer:
 
 **macOS, Linux, WSL:**
 
@@ -109,6 +127,10 @@ curl -fsSL https://claude.ai/install.sh | bash -s 1.0.58
 
 <Note>
   **Alpine Linux and other musl/uClibc-based distributions**: The native build requires you to install `libgcc`, `libstdc++`, and `ripgrep`. Install (Alpine: `apk add libgcc libstdc++ ripgrep`) and set `USE_BUILTIN_RIPGREP=0`.
+</Note>
+
+<Note>
+  Claude Code installed via Homebrew will auto-update outside of the brew directory unless explicitly disabled with the `DISABLE_AUTOUPDATER` environment variable (see [Auto updates](#auto-updates) section).
 </Note>
 
 **Windows PowerShell:**
@@ -137,12 +159,22 @@ REM Install specific version number
 curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 1.0.58 && del install.cmd
 ```
 
-The native Claude Code installer is supported on macOS, Linux, and Windows.
-
 <Tip>
-  Make sure that you remove any outdated aliases or symlinks.
-  Once your installation is complete, run `claude doctor` to verify the installation.
+  Make sure that you remove any outdated aliases or symlinks before installing.
 </Tip>
+
+### NPM installation
+
+For environments where NPM is preferred or required:
+
+```sh  theme={null}
+npm install -g @anthropic-ai/claude-code
+```
+
+<Warning>
+  Do NOT use `sudo npm install -g` as this can lead to permission issues and security risks.
+  If you encounter permission errors, see [configure Claude Code](/en/docs/claude-code/troubleshooting#linux-permission-issues) for recommended solutions.
+</Warning>
 
 ### Local installation
 
