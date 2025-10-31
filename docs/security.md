@@ -62,7 +62,7 @@ For full details, please review our [Commercial Terms of Service](https://www.an
 * **Secure credential storage**: API keys and tokens are encrypted. See [Credential Management](/en/docs/claude-code/iam#credential-management)
 
 <Warning>
-  **Windows WebDAV security risk**: We recommend against enabling WebDAV when running Claude Code on Windows. [WebDAV has been deprecated by Microsoft](https://learn.microsoft.com/en-us/windows/whats-new/deprecated-features#:~:text=The%20Webclient%20\(WebDAV\)%20service%20is%20deprecated) due to security risks. Enabling WebDAV may allow Claude Code to trigger network requests to remote hosts, bypassing the permission system.
+  **Windows WebDAV security risk**: When running Claude Code on Windows, we recommend against enabling WebDAV or allowing Claude Code to access paths such as `\\*` that may contain WebDAV subdirectories. [WebDAV has been deprecated by Microsoft](https://learn.microsoft.com/en-us/windows/whats-new/deprecated-features#:~:text=The%20Webclient%20\(WebDAV\)%20service%20is%20deprecated) due to security risks. Enabling WebDAV may allow Claude Code to trigger network requests to remote hosts, bypassing the permission system.
 </Warning>
 
 **Best practices for working with untrusted content**:

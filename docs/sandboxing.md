@@ -82,6 +82,8 @@ Customize sandbox behavior through your `settings.json` file. See [Settings](/en
 
 <Note>
   Claude Code includes an intentional escape hatch mechanism that allows commands to run outside the sandbox when necessary. When a command fails due to sandbox restrictions (such as network connectivity issues or incompatible tools), Claude is prompted to analyze the failure and may retry the command with the `dangerouslyDisableSandbox` parameter. Commands that use this parameter go through the normal Claude Code permissions flow requiring user permission to execute. This allows Claude Code to handle edge cases where certain tools or network operations cannot function within sandbox constraints.
+
+  You can disable this escape hatch by setting `"allowUnsandboxedCommands": false` in your [sandbox settings](/en/docs/claude-code/settings#sandbox-settings). When disabled, the `dangerouslyDisableSandbox` parameter is completely ignored and all commands must run sandboxed or be explicitly listed in `excludedCommands`.
 </Note>
 
 ## Security benefits
@@ -155,8 +157,10 @@ For organizations requiring advanced network security, you can implement a custo
 ```json  theme={null}
 {
   "sandbox": {
-    "httpProxyPort": 8080,
-    "socksProxyPort": 8081,
+    "network": {
+      "httpProxyPort": 8080,
+      "socksProxyPort": 8081
+    }
   }
 }
 ```

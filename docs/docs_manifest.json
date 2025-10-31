@@ -183,14 +183,14 @@
     "quickstart.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/quickstart",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/quickstart.md",
-      "hash": "62c8ded2c3f4b0ef50cea0a43797c8384643305eb5076e1340ed2baeeb319fb6",
-      "last_updated": "2025-10-20T21:03:54.281896"
+      "hash": "4f6f335c297e9d57c9a195666c2a113f55074d0222e785936653849eb893ef5e",
+      "last_updated": "2025-10-31T00:13:16.238952"
     },
     "sandboxing.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/sandboxing",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/sandboxing.md",
-      "hash": "942d6d1bba4c0b55b8f04bcddb31f1ecf6864d9ecf1a18384ba9db05e006e075",
-      "last_updated": "2025-10-23T00:12:47.631858"
+      "hash": "a18c80cba1b5c931552de255b43b15f40d0329cc73e3f0c7a9a9c701061f3ea1",
+      "last_updated": "2025-10-31T00:13:16.760787"
     },
     "sdk__migration-guide.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/sdk/migration-guide",
@@ -201,14 +201,14 @@
     "security.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/security",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/security.md",
-      "hash": "745eba4010c53a81d8555d77d68d051b73657e0a39e3d2633bf3fb28ef128290",
-      "last_updated": "2025-10-23T00:12:48.676098"
+      "hash": "e50248a47c9eff5675d33af4d8ba2c7478f9d5bbf159ae2d063e509556e5bb50",
+      "last_updated": "2025-10-31T00:13:17.838793"
     },
     "settings.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/settings",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/settings.md",
-      "hash": "ee5fdeb5cb8aaa076fb880c74fa1621008dcc5268b1a299f37cdcdfdc7512b00",
-      "last_updated": "2025-10-28T18:05:12.644392"
+      "hash": "5f241f306c5448d23fe061291dbf0e73f8b5bfd651d2f4251ea941a26d734222",
+      "last_updated": "2025-10-31T00:13:18.367779"
     },
     "setup.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/setup",
@@ -267,14 +267,14 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "67e266bb395e52f0e60e97c101773b24de9d6b7b1be38467bd2bc08623f53a56",
-      "last_updated": "2025-10-28T03:20:46.408719",
+      "hash": "cb4103aaab2d852bb320f22102c287b080230570b90a0cf5d984cd2394db3d33",
+      "last_updated": "2025-10-31T00:13:23.319791",
       "source": "claude-code-repository"
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-10-30T21:04:09.407385",
-    "fetch_duration_seconds": 24.081447,
+    "last_fetch_completed": "2025-10-31T00:13:23.319814",
+    "fetch_duration_seconds": 24.355029,
     "total_pages_discovered": 44,
     "pages_fetched_successfully": 45,
     "pages_failed": 0,
@@ -284,7 +284,7 @@
     "total_files": 45,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-10-30T21:04:09.407415",
+  "last_updated": "2025-10-31T00:13:23.319834",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",
