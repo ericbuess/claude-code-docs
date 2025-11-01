@@ -3,29 +3,28 @@
 > [DEPRECATED] Adapt Claude Code for uses beyond software engineering
 
 <Warning>
-  Output styles are **DEPRECATED.** On **November 5, 2025** or later, we'll
-  automatically convert your **user-level** output style files to plugins and
-  stop supporting the output styles feature. Use
-  [plugins](/en/docs/claude-code/plugins) instead. ([example
+  Output styles are **DEPRECATED.**  On **November 5, 2025** or later, we'll
+  stop supporting the output styles feature. Use `--system-prompt-file`,
+  `--system-prompt`, `--append-system-prompt`, CLAUDE.md, or [plugins](/en/docs/claude-code/plugins) instead.
+  For **Explanatory** output style users, you can reference the ([explanatory-output-style
   plugin](https://github.com/anthropics/claude-code/tree/main/plugins/explanatory-output-style)
-  for the built-in Explanatory output style)
+  in our public repository.)
 </Warning>
 
 ## Deprecation timeline
 
 As of **November 5, 2025**, Claude Code will:
 
-* Automatically convert user-level output style files
-  (`~/.claude/output-styles`) to plugins
 * Stop supporting the output styles feature
 * Remove the `/output-style` command and related functionality
 
-**What you need to do:**
+## Alternative for Custom Output Styles
 
-* Migrate to plugins before November 5, 2025 for a smoother transition
-* Review the migration guide below to understand your options
+Use `--system-prompt-file` to start a Claude Code session with your own system
+prompt. You can also use `--system-prompt` to pass in a string to use as the system prompt, or
+`--append-system-prompt` to add to the default Claude Code system prompt.
 
-## Alternative: Use plugins instead
+## Alternative for Explanatory Output Style: explanatory-output-style Plugin
 
 Plugins provide more powerful and flexible ways to customize Claude Code's
 behavior. The
@@ -71,37 +70,6 @@ To install a plugin like `explanatory-output-style`:
 
 For more details on plugins, see the
 [Plugins documentation](/en/docs/claude-code/plugins).
-
-## Migration guide
-
-Output styles directly modified Claude Code's system prompt. Here's how to
-achieve similar effects with hooks and subagents, both available through Claude
-Code plugins:
-
-### Use SessionStart hooks for context injection
-
-If you used output styles to add context at the start of sessions, use
-[SessionStart hooks](/en/docs/claude-code/hooks#sessionstart) instead.
-
-The hook's output (stdout) is added to the conversation context. You can also:
-
-* Run scripts that dynamically generate context
-* Load project-specific information
-
-<Note>
-  SessionStart hooks, just like CLAUDE.md, do not change the system prompt.
-</Note>
-
-### Use Subagents for different system prompts
-
-If you used output styles to change Claude's behavior for specific tasks, use
-[Subagents](/en/docs/claude-code/sub-agents) instead.
-
-Subagents are specialized AI assistants with:
-
-* Custom system prompts (must be in a separate context window from main loop)
-* Specific tool access permissions
-* Optional model to use, if not the main loop model
 
 ***
 
@@ -163,13 +131,21 @@ the user level (`~/.claude/output-styles`) or the project level
 
 ### Comparisons to related features
 
-#### Output Styles vs. CLAUDE.md vs. --append-system-prompt
+#### Output Styles vs. CLAUDE.md vs. System Prompt Flags
 
-Output styles completely “turn off” the parts of Claude Code’s default system
-prompt specific to software engineering. Neither CLAUDE.md nor
-`--append-system-prompt` edit Claude Code’s default system prompt. CLAUDE.md
-adds the contents as a user message *following* Claude Code’s default system
-prompt. `--append-system-prompt` appends the content to the system prompt.
+Output styles completely "turn off" the parts of Claude Code's default system
+prompt specific to software engineering.
+
+**CLAUDE.md** adds the contents as a user message *following* Claude Code's default system
+prompt, rather than modifying the system prompt itself.
+
+**System prompt CLI flags** provide different levels of control:
+
+* `--append-system-prompt`: Appends text to the end of the default system prompt
+* `--system-prompt`: Replaces the entire default system prompt with custom text
+* `--system-prompt-file`: Loads a custom system prompt from a file
+
+See the [CLI reference](/en/docs/claude-code/cli-reference#system-prompt-flags) for detailed guidance on when to use each flag.
 
 #### Output Styles vs. [Agents](/en/docs/claude-code/sub-agents)
 
