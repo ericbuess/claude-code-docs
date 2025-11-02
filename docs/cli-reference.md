@@ -27,7 +27,9 @@ Customize Claude Code's behavior with these command-line flags:
 | `--allowedTools`                 | A list of tools that should be allowed without prompting the user for permission, in addition to [settings.json files](/en/docs/claude-code/settings)    | `"Bash(git log:*)" "Bash(git diff:*)" "Read"`                                                      |
 | `--disallowedTools`              | A list of tools that should be disallowed without prompting the user for permission, in addition to [settings.json files](/en/docs/claude-code/settings) | `"Bash(git log:*)" "Bash(git diff:*)" "Edit"`                                                      |
 | `--print`, `-p`                  | Print response without interactive mode (see [SDK documentation](/en/docs/claude-code/sdk) for programmatic usage details)                               | `claude -p "query"`                                                                                |
-| `--append-system-prompt`         | Append to system prompt (only with `--print`)                                                                                                            | `claude --append-system-prompt "Custom instruction"`                                               |
+| `--system-prompt`                | Replace the entire system prompt with custom text (works in both interactive and print modes; added in v2.0.14)                                          | `claude --system-prompt "You are a Python expert"`                                                 |
+| `--system-prompt-file`           | Load system prompt from a file, replacing the default prompt (print mode only; added in v1.0.54)                                                         | `claude -p --system-prompt-file ./custom-prompt.txt "query"`                                       |
+| `--append-system-prompt`         | Append custom text to the end of the default system prompt (works in both interactive and print modes; added in v1.0.55)                                 | `claude --append-system-prompt "Always use TypeScript"`                                            |
 | `--output-format`                | Specify output format for print mode (options: `text`, `json`, `stream-json`)                                                                            | `claude -p "query" --output-format json`                                                           |
 | `--input-format`                 | Specify input format for print mode (options: `text`, `stream-json`)                                                                                     | `claude -p --output-format json --input-format stream-json`                                        |
 | `--include-partial-messages`     | Include partial streaming events in output (requires `--print` and `--output-format=stream-json`)                                                        | `claude -p --output-format stream-json --include-partial-messages "query"`                         |
@@ -74,6 +76,41 @@ claude --agents '{
 ```
 
 For more details on creating and using subagents, see the [subagents documentation](/en/docs/claude-code/sub-agents).
+
+### System prompt flags
+
+Claude Code provides three flags for customizing the system prompt, each serving a different purpose:
+
+| Flag                     | Behavior                           | Modes               | Use Case                                                             |
+| :----------------------- | :--------------------------------- | :------------------ | :------------------------------------------------------------------- |
+| `--system-prompt`        | **Replaces** entire default prompt | Interactive + Print | Complete control over Claude's behavior and instructions             |
+| `--system-prompt-file`   | **Replaces** with file contents    | Print only          | Load prompts from files for reproducibility and version control      |
+| `--append-system-prompt` | **Appends** to default prompt      | Interactive + Print | Add specific instructions while keeping default Claude Code behavior |
+
+**When to use each:**
+
+* **`--system-prompt`**: Use when you need complete control over Claude's system prompt. This removes all default Claude Code instructions, giving you a blank slate.
+  ```bash  theme={null}
+  claude --system-prompt "You are a Python expert who only writes type-annotated code"
+  ```
+
+* **`--system-prompt-file`**: Use when you want to load a custom prompt from a file, useful for team consistency or version-controlled prompt templates.
+  ```bash  theme={null}
+  claude -p --system-prompt-file ./prompts/code-review.txt "Review this PR"
+  ```
+
+* **`--append-system-prompt`**: Use when you want to add specific instructions while keeping Claude Code's default capabilities intact. This is the safest option for most use cases.
+  ```bash  theme={null}
+  claude --append-system-prompt "Always use TypeScript and include JSDoc comments"
+  ```
+
+<Note>
+  `--system-prompt` and `--system-prompt-file` are mutually exclusive. You cannot use both flags simultaneously.
+</Note>
+
+<Tip>
+  For most use cases, `--append-system-prompt` is recommended as it preserves Claude Code's built-in capabilities while adding your custom requirements. Use `--system-prompt` or `--system-prompt-file` only when you need complete control over the system prompt.
+</Tip>
 
 For detailed information about print mode (`-p`) including output formats,
 streaming, verbose logging, and programmatic usage, see the
