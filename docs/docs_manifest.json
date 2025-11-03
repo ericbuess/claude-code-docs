@@ -27,8 +27,8 @@
     "cli-reference.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/cli-reference",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/cli-reference.md",
-      "hash": "b7dea04c98ac96b2536d1fcb4a5bc4e2be92e455ea9de71006ad5168d0383ce6",
-      "last_updated": "2025-11-03T00:13:43.470758"
+      "hash": "ef2dfb8d671dd8f2e7ec539d15389f01b3c07665c524d2587e0d4dee31cbbbd4",
+      "last_updated": "2025-11-03T03:26:32.932139"
     },
     "common-workflows.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/common-workflows",
@@ -237,8 +237,8 @@
     "sub-agents.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/sub-agents",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/sub-agents.md",
-      "hash": "f9a1dcb65feba5e28dca31ad809989ee5945f738d426fc417b68b0c02c392aaa",
-      "last_updated": "2025-11-03T00:14:02.443784"
+      "hash": "546106ce96f8191be82f3e980ffdbf2c4f544c68f1d498cf78c5d9b7a0342d78",
+      "last_updated": "2025-11-03T03:26:51.279433"
     },
     "terminal-config.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/terminal-config",
@@ -273,8 +273,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-03T00:14:04.660093",
-    "fetch_duration_seconds": 24.857162,
+    "last_fetch_completed": "2025-11-03T03:26:53.423222",
+    "fetch_duration_seconds": 23.843033,
     "total_pages_discovered": 44,
     "pages_fetched_successfully": 45,
     "pages_failed": 0,
@@ -284,7 +284,7 @@
     "total_files": 45,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-03T00:14:04.660119",
+  "last_updated": "2025-11-03T03:26:53.423248",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",
