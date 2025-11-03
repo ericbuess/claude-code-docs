@@ -35,8 +35,24 @@ Thumbs.db
 .coverage
 htmlcov/
 .pytest_cache/
+reports/coverage/
+
+# Reports directory (all generated)
+reports/
+
+# Temporary files directory
+temp/
 
 # Development artifacts
 extracted_paths.txt
+extracted_paths_clean.txt
+sample_paths.txt
 *.bak
 *.orig
+
+# Log files
+*.log
+
+# Backup files
+*.backup
+*.backup.*

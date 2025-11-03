@@ -1817,7 +1817,7 @@ Link to DEVELOPMENT.md
 
 ## Acknowledgments
 
-Credit to costiash/claude-code-docs
+Credit to ericbuess/claude-code-docs
 
 ## License
 
@@ -2346,7 +2346,7 @@ Review workflows for:
 **5. Security Scan**:
 ```bash
 # Install security tools
-pip install bandit safety
+uv add install bandit safety
 
 # Run scans
 bandit -r scripts/

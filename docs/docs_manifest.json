@@ -288,5 +288,15 @@
   "base_url": "https://raw.githubusercontent.com/costiash/claude-code-docs/main/docs/",
   "github_repository": "costiash/claude-code-docs",
   "github_ref": "main",
-  "description": "Claude Code documentation manifest. Keys are filenames, append to base_url for full URL."
+  "description": "Claude Code documentation manifest. Keys are filenames, append to base_url for full URL.",
+  "/en/release-notes/overview": {
+    "hash": "f5f9c73d9fe5a84a7ac3b39927a09b14ba18cc3f44f2deb014c667bd9eaef53b",
+    "last_updated": "2025-11-03T19:44:49.430655+00:00",
+    "size": 26208
+  },
+  "/en/release-notes/system-prompts": {
+    "hash": "664e8ba3ec4ec4e2699163fddfc321ea92948bc659318fa7da8574df14d3cbb5",
+    "last_updated": "2025-11-03T19:44:50.032569+00:00",
+    "size": 239858
+  }
 }

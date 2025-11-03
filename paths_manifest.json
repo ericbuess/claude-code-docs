@@ -1,9 +1,10 @@
 {
   "metadata": {
     "generated_at": "2025-11-03T17:09:47.026869+00:00",
-    "total_paths": 459,
-    "source": "temp.html",
-    "categories_count": 7
+    "total_paths": 449,
+    "cleaned_at": "2025-11-03T20:37:20Z",
+    "removed_broken_paths": 10,
+    "original_total_paths": 459
   },
   "categories": {
     "core_documentation": [
@@ -134,13 +135,8 @@
       "/en/docs/reducing-latency",
       "/en/docs/reducing-prompt-leaks",
       "/en/docs/resources/api-features",
-      "/en/docs/resources/claude-3-7-system-card",
-      "/en/docs/resources/claude-3-model-card",
-      "/en/docs/resources/courses",
       "/en/docs/resources/glossary",
-      "/en/docs/resources/model-card",
       "/en/docs/resources/model-deprecations",
-      "/en/docs/resources/status",
       "/en/docs/system-prompts",
       "/en/docs/test-and-evaluate/define-success",
       "/en/docs/test-and-evaluate/develop-tests",
@@ -334,9 +330,6 @@
     ],
     "resources": [
       "/en/resources/api-features",
-      "/en/resources/claude-3-7-system-card",
-      "/en/resources/claude-3-model-card",
-      "/en/resources/courses",
       "/en/resources/glossary",
       "/en/resources/overview",
       "/en/resources/prompt-library/adaptive-editor",
@@ -403,13 +396,11 @@
       "/en/resources/prompt-library/trivia-generator",
       "/en/resources/prompt-library/tweet-tone-detector",
       "/en/resources/prompt-library/vr-fitness-innovator",
-      "/en/resources/prompt-library/website-wizard",
-      "/en/resources/status"
+      "/en/resources/prompt-library/website-wizard"
     ],
     "release_notes": [
       "/en/release-notes/api",
       "/en/release-notes/claude-apps",
-      "/en/release-notes/claude-code",
       "/en/release-notes/overview",
       "/en/release-notes/system-prompts"
     ],

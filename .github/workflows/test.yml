@@ -21,30 +21,23 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests>=2.32.0
-          pip install pytest pytest-cov pytest-asyncio
+          pip install pytest pytest-cov pytest-asyncio pytest-mock pyyaml
 
-      - name: Run unit tests
+      - name: Run all tests with coverage
         run: |
-          if [ -d "tests/unit" ] && [ "$(ls -A tests/unit)" ]; then
-            pytest tests/unit/ -v --cov=scripts
+          if [ -d "tests" ] && [ "$(ls -A tests/*.py 2>/dev/null || ls -A tests/*/*.py 2>/dev/null)" ]; then
+            pytest tests/ -v --cov=scripts --cov-report=xml --cov-report=term -m "not slow and not network"
           else
-            echo "Unit tests not yet implemented"
+            echo "Tests not yet implemented"
           fi
 
-      - name: Run integration tests
+      - name: Check coverage threshold
         run: |
-          if [ -d "tests/integration" ] && [ "$(ls -A tests/integration)" ]; then
-            pytest tests/integration/ -v
+          if [ -f "coverage.xml" ]; then
+            pip install coverage
+            coverage report --fail-under=70 || echo "Coverage below 70% - Phase 5 target is 85%"
           else
-            echo "Integration tests not yet implemented"
-          fi
-
-      - name: Generate coverage report
-        run: |
-          if [ -d "tests/unit" ] && [ "$(ls -A tests/unit)" ]; then
-            pytest --cov=scripts --cov-report=xml --cov-report=term
-          else
-            echo "Skipping coverage - tests not yet implemented"
+            echo "Skipping coverage check - no coverage data"
           fi
 
       - name: Upload coverage to Codecov

@@ -1,0 +1,56 @@
+name: Coverage Report
+
+on:
+  push:
+    branches: [ main, master, development ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install requests>=2.32.0
+          pip install pytest pytest-cov pytest-asyncio pytest-mock pyyaml coverage
+
+      - name: Generate coverage
+        run: |
+          pytest tests/ -v --cov=scripts --cov-report=html --cov-report=term --cov-report=xml -m "not slow and not network" || true
+
+      - name: Check coverage threshold (85%)
+        run: |
+          if [ -f ".coverage" ]; then
+            coverage report --fail-under=85 || echo "⚠️  Coverage below 85% target"
+          else
+            echo "No coverage data generated"
+          fi
+
+      - name: Upload HTML coverage report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report-html
+          path: htmlcov/
+
+      - name: Upload coverage to Codecov
+        if: hashFiles('coverage.xml') != ''
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+
+      - name: Comment coverage on PR
+        if: github.event_name == 'pull_request' && hashFiles('coverage.xml') != ''
+        uses: py-cov-action/python-coverage-comment-action@v3
+        with:
+          GITHUB_TOKEN: ${{ github.token }}

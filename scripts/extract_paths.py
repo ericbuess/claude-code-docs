@@ -6,7 +6,7 @@ Extracts and cleans documentation paths from HTML sitemap, categorizes them,
 and exports to multiple formats for downstream processing.
 
 Usage:
-    python extract_paths.py --source temp.html --output paths_manifest.json
+    python extract_paths.py --source temp/temp.html --output paths_manifest.json
     python extract_paths.py --stats
     python extract_paths.py --validate
 """
@@ -449,7 +449,7 @@ def main():
         epilog="""
 Examples:
   # Extract paths and generate manifest
-  python extract_paths.py --source temp.html --output paths_manifest.json
+  python extract_paths.py --source temp/temp.html --output paths_manifest.json
 
   # Show statistics from existing manifest
   python extract_paths.py --stats
@@ -462,8 +462,8 @@ Examples:
     parser.add_argument(
         '--source',
         type=Path,
-        default=Path('temp.html'),
-        help='Input HTML file (default: temp.html)'
+        default=Path('temp/temp.html'),
+        help='Input HTML file (default: temp/temp.html)'
     )
 
     parser.add_argument(
@@ -516,7 +516,7 @@ Examples:
     export_manifest(categorized_paths, args.output, args.source)
 
     # Export to clean text file
-    clean_txt_file = Path('extracted_paths_clean.txt')
+    clean_txt_file = Path('temp/extracted_paths_clean.txt')
     export_clean_txt(categorized_paths, clean_txt_file)
 
     print("\n" + "=" * 60)

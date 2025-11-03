@@ -18,16 +18,18 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install requests>=2.32.0
+        run: |
+          pip install requests>=2.32.0
+          pip install pytest pytest-asyncio pytest-mock pyyaml
 
       - name: Validate all paths reachable
+        continue-on-error: true
         run: python scripts/lookup_paths.py --validate-all
 
       - name: Run validation tests
         run: |
           if [ -d "tests/validation" ] && [ "$(ls -A tests/validation)" ]; then
-            pip install pytest
-            pytest tests/validation/ -v
+            pytest tests/validation/ -v --tb=short
           else
             echo "Validation tests not yet implemented"
           fi

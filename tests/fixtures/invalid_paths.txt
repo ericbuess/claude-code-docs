@@ -1,0 +1,9 @@
+/en/docs/:slug*
+/en/api/),
+/en/docs/test\
+/en/docs/test\\
+
+
+
+/en/docs//double-slash
+/en/docs/bad path with spaces

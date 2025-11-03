@@ -1,4754 +1,1379 @@
 {
-  "/en/docs/about-claude/glossary": {
-    "title": "Glossary",
-    "keywords": [
-      "about-claude",
-      "glossary"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/model-deprecations": {
-    "title": "Model Deprecations",
-    "keywords": [
-      "about-claude",
-      "model-deprecations"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/models": {
-    "title": "Models",
-    "keywords": [
-      "about-claude",
-      "models"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/models/all-models": {
-    "title": "All Models",
-    "keywords": [
-      "about-claude",
-      "models",
-      "all-models"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/models/choosing-a-model": {
-    "title": "Choosing A Model",
-    "keywords": [
-      "about-claude",
-      "models",
-      "choosing-a-model"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/models/extended-thinking-models": {
-    "title": "Extended Thinking Models",
-    "keywords": [
-      "about-claude",
-      "models",
-      "extended-thinking-models"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/models/migrating-to-claude-4": {
-    "title": "Migrating To Claude 4",
-    "keywords": [
-      "about-claude",
-      "models",
-      "migrating-to-claude-4"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/models/overview": {
-    "title": "Overview",
-    "keywords": [
-      "about-claude",
-      "models",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/models/whats-new-claude-4-5": {
-    "title": "Whats New Claude 4 5",
-    "keywords": [
-      "about-claude",
-      "models",
-      "whats-new-claude-4-5"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/models/whats-new-sonnet-4-5": {
-    "title": "Whats New Sonnet 4 5",
-    "keywords": [
-      "about-claude",
-      "models",
-      "whats-new-sonnet-4-5"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/pricing": {
-    "title": "Pricing",
-    "keywords": [
-      "about-claude",
-      "pricing"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/security-compliance": {
-    "title": "Security Compliance",
-    "keywords": [
-      "about-claude",
-      "security-compliance"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/use-case-guides/content-moderation": {
-    "title": "Content Moderation",
-    "keywords": [
-      "about-claude",
-      "use-case-guides",
-      "content-moderation"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/use-case-guides/customer-support-chat": {
-    "title": "Customer Support Chat",
-    "keywords": [
-      "about-claude",
-      "use-case-guides",
-      "customer-support-chat"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/use-case-guides/legal-summarization": {
-    "title": "Legal Summarization",
-    "keywords": [
-      "about-claude",
-      "use-case-guides",
-      "legal-summarization"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/use-case-guides/overview": {
-    "title": "Overview",
-    "keywords": [
-      "about-claude",
-      "use-case-guides",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/use-case-guides/ticket-routing": {
-    "title": "Ticket Routing",
-    "keywords": [
-      "about-claude",
-      "use-case-guides",
-      "ticket-routing"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/use-cases": {
-    "title": "Use Cases",
-    "keywords": [
-      "about-claude",
-      "use-cases"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/about-claude/use-cases/classification": {
-    "title": "Classification",
-    "keywords": [
-      "about-claude",
-      "use-cases",
-      "classification"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/administration/administration-api": {
-    "title": "Administration Api",
-    "keywords": [
-      "administration",
-      "administration-api"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/agent-skills/best-practices": {
-    "title": "Best Practices",
-    "keywords": [
-      "agents-and-tools",
-      "agent-skills",
-      "best-practices"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/agent-skills/overview": {
-    "title": "Overview",
-    "keywords": [
-      "agents-and-tools",
-      "agent-skills",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/agent-skills/quickstart": {
-    "title": "Quickstart",
-    "keywords": [
-      "agents-and-tools",
-      "agent-skills",
-      "quickstart"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/claude-code/bedrock-vertex": {
-    "title": "Bedrock Vertex",
-    "keywords": [
-      "agents-and-tools",
-      "claude-code",
-      "bedrock-vertex"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/claude-code/common-workflows": {
-    "title": "Common Workflows",
-    "keywords": [
-      "agents-and-tools",
-      "claude-code",
-      "common-workflows"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/claude-code/overview": {
-    "title": "Overview",
-    "keywords": [
-      "agents-and-tools",
-      "claude-code",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/claude-code/troubleshooting": {
-    "title": "Troubleshooting",
-    "keywords": [
-      "agents-and-tools",
-      "claude-code",
-      "troubleshooting"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/claude-code/tutorials": {
-    "title": "Tutorials",
-    "keywords": [
-      "agents-and-tools",
-      "claude-code",
-      "tutorials"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/claude-for-sheets": {
-    "title": "Claude For Sheets",
-    "keywords": [
-      "agents-and-tools",
-      "claude-for-sheets"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/computer-use": {
-    "title": "Computer Use",
-    "keywords": [
-      "agents-and-tools",
-      "computer-use"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/mcp": {
-    "title": "Mcp",
-    "keywords": [
-      "agents-and-tools",
-      "mcp"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/mcp-connector": {
-    "title": "Mcp Connector",
-    "keywords": [
-      "agents-and-tools",
-      "mcp-connector"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/remote-mcp-servers": {
-    "title": "Remote Mcp Servers",
-    "keywords": [
-      "agents-and-tools",
-      "remote-mcp-servers"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/tool-use/bash-tool": {
-    "title": "Bash Tool",
-    "keywords": [
-      "agents-and-tools",
-      "tool-use",
-      "bash-tool"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/tool-use/code-execution-tool": {
-    "title": "Code Execution Tool",
-    "keywords": [
-      "agents-and-tools",
-      "tool-use",
-      "code-execution-tool"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/tool-use/computer-use-tool": {
-    "title": "Computer Use Tool",
-    "keywords": [
-      "agents-and-tools",
-      "tool-use",
-      "computer-use-tool"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/tool-use/fine-grained-tool-streaming": {
-    "title": "Fine Grained Tool Streaming",
-    "keywords": [
-      "agents-and-tools",
-      "tool-use",
-      "fine-grained-tool-streaming"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/tool-use/implement-tool-use": {
-    "title": "Implement Tool Use",
-    "keywords": [
-      "agents-and-tools",
-      "tool-use",
-      "implement-tool-use"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/tool-use/memory-tool": {
-    "title": "Memory Tool",
-    "keywords": [
-      "agents-and-tools",
-      "tool-use",
-      "memory-tool"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/tool-use/overview": {
-    "title": "Overview",
-    "keywords": [
-      "agents-and-tools",
-      "tool-use",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/tool-use/text-editor-tool": {
-    "title": "Text Editor Tool",
-    "keywords": [
-      "agents-and-tools",
-      "tool-use",
-      "text-editor-tool"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/tool-use/token-efficient-tool-use": {
-    "title": "Token Efficient Tool Use",
-    "keywords": [
-      "agents-and-tools",
-      "tool-use",
-      "token-efficient-tool-use"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/tool-use/web-fetch-tool": {
-    "title": "Web Fetch Tool",
-    "keywords": [
-      "agents-and-tools",
-      "tool-use",
-      "web-fetch-tool"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/agents-and-tools/tool-use/web-search-tool": {
-    "title": "Web Search Tool",
-    "keywords": [
-      "agents-and-tools",
-      "tool-use",
-      "web-search-tool"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/ask-claude-for-rewrites": {
-    "title": "Ask Claude For Rewrites",
-    "keywords": [
-      "ask-claude-for-rewrites"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/be-clear-direct": {
-    "title": "Be Clear Direct",
-    "keywords": [
-      "be-clear-direct"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/batch-processing": {
-    "title": "Batch Processing",
-    "keywords": [
-      "build-with-claude",
-      "batch-processing"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/citations": {
-    "title": "Citations",
-    "keywords": [
-      "build-with-claude",
-      "citations"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/claude-for-sheets": {
-    "title": "Claude For Sheets",
-    "keywords": [
-      "build-with-claude",
-      "claude-for-sheets"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/computer-use": {
-    "title": "Computer Use",
-    "keywords": [
-      "build-with-claude",
-      "computer-use"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/context-editing": {
-    "title": "Context Editing",
-    "keywords": [
-      "build-with-claude",
-      "context-editing"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/context-windows": {
-    "title": "Context Windows",
-    "keywords": [
-      "build-with-claude",
-      "context-windows"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/define-success": {
-    "title": "Define Success",
-    "keywords": [
-      "build-with-claude",
-      "define-success"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/develop-tests": {
-    "title": "Develop Tests",
-    "keywords": [
-      "build-with-claude",
-      "develop-tests"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/embeddings": {
-    "title": "Embeddings",
-    "keywords": [
-      "build-with-claude",
-      "embeddings"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/extended-thinking": {
-    "title": "Extended Thinking",
-    "keywords": [
-      "build-with-claude",
-      "extended-thinking"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/files": {
-    "title": "Files",
-    "keywords": [
-      "build-with-claude",
-      "files"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/handling-stop-reasons": {
-    "title": "Handling Stop Reasons",
-    "keywords": [
-      "build-with-claude",
-      "handling-stop-reasons"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/mcp": {
-    "title": "Mcp",
-    "keywords": [
-      "build-with-claude",
-      "mcp"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/message-batches": {
-    "title": "Message Batches",
-    "keywords": [
-      "build-with-claude",
-      "message-batches"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/multilingual-support": {
-    "title": "Multilingual Support",
-    "keywords": [
-      "build-with-claude",
-      "multilingual-support"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/overview": {
-    "title": "Overview",
-    "keywords": [
-      "build-with-claude",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/pdf-support": {
-    "title": "Pdf Support",
-    "keywords": [
-      "build-with-claude",
-      "pdf-support"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-caching": {
-    "title": "Prompt Caching",
-    "keywords": [
-      "build-with-claude",
-      "prompt-caching"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering": {
-    "title": "Prompt Engineering",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/be-clear-and-direct": {
-    "title": "Be Clear And Direct",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "be-clear-and-direct"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/chain-of-thought": {
-    "title": "Chain Of Thought",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "chain-of-thought"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/chain-prompts": {
-    "title": "Chain Prompts",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "chain-prompts"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices": {
-    "title": "Claude 4 Best Practices",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "claude-4-best-practices"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/extended-thinking-tips": {
-    "title": "Extended Thinking Tips",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "extended-thinking-tips"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/long-context-tips": {
-    "title": "Long Context Tips",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "long-context-tips"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/multishot-prompting": {
-    "title": "Multishot Prompting",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "multishot-prompting"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/overview": {
-    "title": "Overview",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/prefill-claudes-response": {
-    "title": "Prefill Claudes Response",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "prefill-claudes-response"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/prompt-generator": {
-    "title": "Prompt Generator",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "prompt-generator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/prompt-improver": {
-    "title": "Prompt Improver",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "prompt-improver"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/prompt-templates-and-variables": {
-    "title": "Prompt Templates And Variables",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "prompt-templates-and-variables"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/system-prompts": {
-    "title": "System Prompts",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "system-prompts"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/prompt-engineering/use-xml-tags": {
-    "title": "Use Xml Tags",
-    "keywords": [
-      "build-with-claude",
-      "prompt-engineering",
-      "use-xml-tags"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/search-results": {
-    "title": "Search Results",
-    "keywords": [
-      "build-with-claude",
-      "search-results"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/streaming": {
-    "title": "Streaming",
-    "keywords": [
-      "build-with-claude",
-      "streaming"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/text-generation": {
-    "title": "Text Generation",
-    "keywords": [
-      "build-with-claude",
-      "text-generation"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/token-counting": {
-    "title": "Token Counting",
-    "keywords": [
-      "build-with-claude",
-      "token-counting"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/tool-use": {
-    "title": "Tool Use",
-    "keywords": [
-      "build-with-claude",
-      "tool-use"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/tool-use/implement-tool-use": {
-    "title": "Implement Tool Use",
-    "keywords": [
-      "build-with-claude",
-      "tool-use",
-      "implement-tool-use"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/tool-use/overview": {
-    "title": "Overview",
-    "keywords": [
-      "build-with-claude",
-      "tool-use",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/tool-use/text-editor-tool": {
-    "title": "Text Editor Tool",
-    "keywords": [
-      "build-with-claude",
-      "tool-use",
-      "text-editor-tool"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/tool-use/token-efficient-tool-use": {
-    "title": "Token Efficient Tool Use",
-    "keywords": [
-      "build-with-claude",
-      "tool-use",
-      "token-efficient-tool-use"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/tool-use/web-search-tool": {
-    "title": "Web Search Tool",
-    "keywords": [
-      "build-with-claude",
-      "tool-use",
-      "web-search-tool"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/vision": {
-    "title": "Vision",
-    "keywords": [
-      "build-with-claude",
-      "vision"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/build-with-claude/working-with-messages": {
-    "title": "Working With Messages",
-    "keywords": [
-      "build-with-claude",
-      "working-with-messages"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/chain-prompts": {
-    "title": "Chain Prompts",
-    "keywords": [
-      "chain-prompts"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/classification": {
-    "title": "Classification",
-    "keywords": [
-      "classification"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/content-moderation": {
-    "title": "Content Moderation",
-    "keywords": [
-      "content-moderation"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/control-output-format": {
-    "title": "Control Output Format",
-    "keywords": [
-      "control-output-format"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/embeddings": {
-    "title": "Embeddings",
-    "keywords": [
-      "embeddings"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/empirical-performance-evaluations": {
-    "title": "Empirical Performance Evaluations",
-    "keywords": [
-      "empirical-performance-evaluations"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/get-started": {
-    "title": "Get Started",
-    "keywords": [
-      "get-started"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/getting-access-to-claude": {
-    "title": "Getting Access To Claude",
-    "keywords": [
-      "getting-access-to-claude"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/give-claude-a-role": {
-    "title": "Give Claude A Role",
-    "keywords": [
-      "give-claude-a-role"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/glossary": {
-    "title": "Glossary",
-    "keywords": [
-      "glossary"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/google-shets-add-on": {
-    "title": "Google Shets Add On",
-    "keywords": [
-      "google-shets-add-on"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/helper-metaprompt-experimental": {
-    "title": "Helper Metaprompt Experimental",
-    "keywords": [
-      "helper-metaprompt-experimental"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/initial-setup": {
-    "title": "Initial Setup",
-    "keywords": [
-      "initial-setup"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/intro": {
-    "title": "Intro",
-    "keywords": [
-      "intro"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/intro-to-claude": {
-    "title": "Intro To Claude",
-    "keywords": [
-      "intro-to-claude"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/intro-to-prompting": {
-    "title": "Intro To Prompting",
-    "keywords": [
-      "intro-to-prompting"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/keep-claude-in-character": {
-    "title": "Keep Claude In Character",
-    "keywords": [
-      "keep-claude-in-character"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/legacy-model-guide": {
-    "title": "Legacy Model Guide",
-    "keywords": [
-      "legacy-model-guide"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/legacy-tool-use": {
-    "title": "Legacy Tool Use",
-    "keywords": [
-      "legacy-tool-use"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/legal-center/security-compliance": {
-    "title": "Security Compliance",
-    "keywords": [
-      "legal-center",
-      "security-compliance"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/let-claude-think": {
-    "title": "Let Claude Think",
-    "keywords": [
-      "let-claude-think"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/long-context-window-tips": {
-    "title": "Long Context Window Tips",
-    "keywords": [
-      "long-context-window-tips"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/mcp": {
-    "title": "Mcp",
-    "keywords": [
-      "mcp"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/migrating-from-other-models": {
-    "title": "Migrating From Other Models",
-    "keywords": [
-      "migrating-from-other-models"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/minimizing-hallucinations": {
-    "title": "Minimizing Hallucinations",
-    "keywords": [
-      "minimizing-hallucinations"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/mitigating-jailbreaks-prompt-injections": {
-    "title": "Mitigating Jailbreaks Prompt Injections",
-    "keywords": [
-      "mitigating-jailbreaks-prompt-injections"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/models-overview": {
-    "title": "Models Overview",
-    "keywords": [
-      "models-overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/prefill-claudes-response": {
-    "title": "Prefill Claudes Response",
-    "keywords": [
-      "prefill-claudes-response"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/prompt-engineering": {
-    "title": "Prompt Engineering",
-    "keywords": [
-      "prompt-engineering"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/prompt-generator": {
-    "title": "Prompt Generator",
-    "keywords": [
-      "prompt-generator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/quickstart": {
-    "title": "Quickstart",
-    "keywords": [
-      "quickstart"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/quickstart-guide": {
-    "title": "Quickstart Guide",
-    "keywords": [
-      "quickstart-guide"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/reduce-hallucinations": {
-    "title": "Reduce Hallucinations",
-    "keywords": [
-      "reduce-hallucinations"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/reducing-latency": {
-    "title": "Reducing Latency",
-    "keywords": [
-      "reducing-latency"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/reducing-prompt-leaks": {
-    "title": "Reducing Prompt Leaks",
-    "keywords": [
-      "reducing-prompt-leaks"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/resources/api-features": {
-    "title": "Api Features",
-    "keywords": [
-      "resources",
-      "api-features"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/resources/claude-3-7-system-card": {
-    "title": "Claude 3 7 System Card",
-    "keywords": [
-      "resources",
-      "claude-3-7-system-card"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/resources/claude-3-model-card": {
-    "title": "Claude 3 Model Card",
-    "keywords": [
-      "resources",
-      "claude-3-model-card"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/resources/courses": {
-    "title": "Courses",
-    "keywords": [
-      "resources",
-      "courses"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/resources/glossary": {
-    "title": "Glossary",
-    "keywords": [
-      "resources",
-      "glossary"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/resources/model-card": {
-    "title": "Model Card",
-    "keywords": [
-      "resources",
-      "model-card"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/resources/model-deprecations": {
-    "title": "Model Deprecations",
-    "keywords": [
-      "resources",
-      "model-deprecations"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/resources/status": {
-    "title": "Status",
-    "keywords": [
-      "resources",
-      "status"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/system-prompts": {
-    "title": "System Prompts",
-    "keywords": [
-      "system-prompts"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/test-and-evaluate/define-success": {
-    "title": "Define Success",
-    "keywords": [
-      "test-and-evaluate",
-      "define-success"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/test-and-evaluate/develop-tests": {
-    "title": "Develop Tests",
-    "keywords": [
-      "test-and-evaluate",
-      "develop-tests"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/test-and-evaluate/eval-tool": {
-    "title": "Eval Tool",
-    "keywords": [
-      "test-and-evaluate",
-      "eval-tool"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/test-and-evaluate/strengthen-guardrails": {
-    "title": "Strengthen Guardrails",
-    "keywords": [
-      "test-and-evaluate",
-      "strengthen-guardrails"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/test-and-evaluate/strengthen-guardrails/handle-streaming-refusals": {
-    "title": "Handle Streaming Refusals",
-    "keywords": [
-      "test-and-evaluate",
-      "strengthen-guardrails",
-      "handle-streaming-refusals"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/test-and-evaluate/strengthen-guardrails/increase-consistency": {
-    "title": "Increase Consistency",
-    "keywords": [
-      "test-and-evaluate",
-      "strengthen-guardrails",
-      "increase-consistency"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/test-and-evaluate/strengthen-guardrails/keep-claude-in-character": {
-    "title": "Keep Claude In Character",
-    "keywords": [
-      "test-and-evaluate",
-      "strengthen-guardrails",
-      "keep-claude-in-character"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks": {
-    "title": "Mitigate Jailbreaks",
-    "keywords": [
-      "test-and-evaluate",
-      "strengthen-guardrails",
-      "mitigate-jailbreaks"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/test-and-evaluate/strengthen-guardrails/reduce-hallucinations": {
-    "title": "Reduce Hallucinations",
-    "keywords": [
-      "test-and-evaluate",
-      "strengthen-guardrails",
-      "reduce-hallucinations"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/test-and-evaluate/strengthen-guardrails/reduce-latency": {
-    "title": "Reduce Latency",
-    "keywords": [
-      "test-and-evaluate",
-      "strengthen-guardrails",
-      "reduce-latency"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/test-and-evaluate/strengthen-guardrails/reduce-prompt-leak": {
-    "title": "Reduce Prompt Leak",
-    "keywords": [
-      "test-and-evaluate",
-      "strengthen-guardrails",
-      "reduce-prompt-leak"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/text-generation": {
-    "title": "Text Generation",
-    "keywords": [
-      "text-generation"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/tool-use": {
-    "title": "Tool Use",
-    "keywords": [
-      "tool-use"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/tool-use-examples": {
-    "title": "Tool Use Examples",
-    "keywords": [
-      "tool-use-examples"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/tool-use-pricing-and-tokens": {
-    "title": "Tool Use Pricing And Tokens",
-    "keywords": [
-      "tool-use-pricing-and-tokens"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/troubleshooting": {
-    "title": "Troubleshooting",
-    "keywords": [
-      "troubleshooting"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/upgrading-to-the-messages-api": {
-    "title": "Upgrading To The Messages Api",
-    "keywords": [
-      "upgrading-to-the-messages-api"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/use-cases-and-capabilities": {
-    "title": "Use Cases And Capabilities",
-    "keywords": [
-      "use-cases-and-capabilities"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/use-xml-tags": {
-    "title": "Use Xml Tags",
-    "keywords": [
-      "use-xml-tags"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/vision": {
-    "title": "Vision",
-    "keywords": [
-      "vision"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/welcome": {
-    "title": "Welcome",
-    "keywords": [
-      "welcome"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs_site_map.md": {
-    "title": "Docs_Site_Map.Md",
-    "keywords": [
-      "docs_site_map.md"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/home": {
-    "title": "Home",
-    "keywords": [
-      "home"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library": {
-    "title": "Prompt Library",
-    "keywords": [
-      "prompt-library"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/apikeys/get-api-key": {
-    "title": "Get Api Key",
-    "keywords": [
-      "api",
-      "admin-api",
-      "apikeys",
-      "get-api-key"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/apikeys/list-api-keys": {
-    "title": "List Api Keys",
-    "keywords": [
-      "api",
-      "admin-api",
-      "apikeys",
-      "list-api-keys"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/apikeys/update-api-key": {
-    "title": "Update Api Key",
-    "keywords": [
-      "api",
-      "admin-api",
-      "apikeys",
-      "update-api-key"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/claude-code/get-claude-code-usage-report": {
-    "title": "Get Claude Code Usage Report",
-    "keywords": [
-      "api",
-      "admin-api",
-      "claude-code",
-      "get-claude-code-usage-report"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/invites/create-invite": {
-    "title": "Create Invite",
-    "keywords": [
-      "api",
-      "admin-api",
-      "invites",
-      "create-invite"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/invites/delete-invite": {
-    "title": "Delete Invite",
-    "keywords": [
-      "api",
-      "admin-api",
-      "invites",
-      "delete-invite"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/invites/get-invite": {
-    "title": "Get Invite",
-    "keywords": [
-      "api",
-      "admin-api",
-      "invites",
-      "get-invite"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/invites/list-invites": {
-    "title": "List Invites",
-    "keywords": [
-      "api",
-      "admin-api",
-      "invites",
-      "list-invites"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/organization/get-me": {
-    "title": "Get Me",
-    "keywords": [
-      "api",
-      "admin-api",
-      "organization",
-      "get-me"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/usage-cost/get-cost-report": {
-    "title": "Get Cost Report",
-    "keywords": [
-      "api",
-      "admin-api",
-      "usage-cost",
-      "get-cost-report"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/usage-cost/get-messages-usage-report": {
-    "title": "Get Messages Usage Report",
-    "keywords": [
-      "api",
-      "admin-api",
-      "usage-cost",
-      "get-messages-usage-report"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/users/get-user": {
-    "title": "Get User",
-    "keywords": [
-      "api",
-      "admin-api",
-      "users",
-      "get-user"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/users/list-users": {
-    "title": "List Users",
-    "keywords": [
-      "api",
-      "admin-api",
-      "users",
-      "list-users"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/users/remove-user": {
-    "title": "Remove User",
-    "keywords": [
-      "api",
-      "admin-api",
-      "users",
-      "remove-user"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/users/update-user": {
-    "title": "Update User",
-    "keywords": [
-      "api",
-      "admin-api",
-      "users",
-      "update-user"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/workspace_members/create-workspace-member": {
-    "title": "Create Workspace Member",
-    "keywords": [
-      "api",
-      "admin-api",
-      "workspace_members",
-      "create-workspace-member"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/workspace_members/delete-workspace-member": {
-    "title": "Delete Workspace Member",
-    "keywords": [
-      "api",
-      "admin-api",
-      "workspace_members",
-      "delete-workspace-member"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/workspace_members/get-workspace-member": {
-    "title": "Get Workspace Member",
-    "keywords": [
-      "api",
-      "admin-api",
-      "workspace_members",
-      "get-workspace-member"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/workspace_members/list-workspace-members": {
-    "title": "List Workspace Members",
-    "keywords": [
-      "api",
-      "admin-api",
-      "workspace_members",
-      "list-workspace-members"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/workspace_members/update-workspace-member": {
-    "title": "Update Workspace Member",
-    "keywords": [
-      "api",
-      "admin-api",
-      "workspace_members",
-      "update-workspace-member"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/workspaces/archive-workspace": {
-    "title": "Archive Workspace",
-    "keywords": [
-      "api",
-      "admin-api",
-      "workspaces",
-      "archive-workspace"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/workspaces/create-workspace": {
-    "title": "Create Workspace",
-    "keywords": [
-      "api",
-      "admin-api",
-      "workspaces",
-      "create-workspace"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/workspaces/get-workspace": {
-    "title": "Get Workspace",
-    "keywords": [
-      "api",
-      "admin-api",
-      "workspaces",
-      "get-workspace"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/workspaces/list-workspaces": {
-    "title": "List Workspaces",
-    "keywords": [
-      "api",
-      "admin-api",
-      "workspaces",
-      "list-workspaces"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/admin-api/workspaces/update-workspace": {
-    "title": "Update Workspace",
-    "keywords": [
-      "api",
-      "admin-api",
-      "workspaces",
-      "update-workspace"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/administration-api": {
-    "title": "Administration Api",
-    "keywords": [
-      "api",
-      "administration-api"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/cost-tracking": {
-    "title": "Cost Tracking",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "cost-tracking"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/custom-tools": {
-    "title": "Custom Tools",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "custom-tools"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/hosting": {
-    "title": "Hosting",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "hosting"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/mcp": {
-    "title": "Mcp",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "mcp"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/modifying-system-prompts": {
-    "title": "Modifying System Prompts",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "modifying-system-prompts"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/overview": {
-    "title": "Overview",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/permissions": {
-    "title": "Permissions",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "permissions"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/plugins": {
-    "title": "Plugins",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "plugins"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/python": {
-    "title": "Python",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "python"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/sessions": {
-    "title": "Sessions",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "sessions"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/skills": {
-    "title": "Skills",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "skills"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/slash-commands": {
-    "title": "Slash Commands",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "slash-commands"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/streaming-vs-single-mode": {
-    "title": "Streaming Vs Single Mode",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "streaming-vs-single-mode"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/subagents": {
-    "title": "Subagents",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "subagents"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/todo-tracking": {
-    "title": "Todo Tracking",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "todo-tracking"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/agent-sdk/typescript": {
-    "title": "Typescript",
-    "keywords": [
-      "api",
-      "agent-sdk",
-      "typescript"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/beta-headers": {
-    "title": "Beta Headers",
-    "keywords": [
-      "api",
-      "beta-headers"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/canceling-message-batches": {
-    "title": "Canceling Message Batches",
-    "keywords": [
-      "api",
-      "canceling-message-batches"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/claude-code-analytics-api": {
-    "title": "Claude Code Analytics Api",
-    "keywords": [
-      "api",
-      "claude-code-analytics-api"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/claude-on-amazon-bedrock": {
-    "title": "Claude On Amazon Bedrock",
-    "keywords": [
-      "api",
-      "claude-on-amazon-bedrock"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/claude-on-vertex-ai": {
-    "title": "Claude On Vertex Ai",
-    "keywords": [
-      "api",
-      "claude-on-vertex-ai"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/client-sdks": {
-    "title": "Client Sdks",
-    "keywords": [
-      "api",
-      "client-sdks"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/complete": {
-    "title": "Complete",
-    "keywords": [
-      "api",
-      "complete"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/creating-message-batches": {
-    "title": "Creating Message Batches",
-    "keywords": [
-      "api",
-      "creating-message-batches"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/data-usage-cost-api": {
-    "title": "Data Usage Cost Api",
-    "keywords": [
-      "api",
-      "data-usage-cost-api"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/deleting-message-batches": {
-    "title": "Deleting Message Batches",
-    "keywords": [
-      "api",
-      "deleting-message-batches"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/errors": {
-    "title": "Errors",
-    "keywords": [
-      "api",
-      "errors"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/files-content": {
-    "title": "Files Content",
-    "keywords": [
-      "api",
-      "files-content"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/files-create": {
-    "title": "Files Create",
-    "keywords": [
-      "api",
-      "files-create"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/files-delete": {
-    "title": "Files Delete",
-    "keywords": [
-      "api",
-      "files-delete"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/files-list": {
-    "title": "Files List",
-    "keywords": [
-      "api",
-      "files-list"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/files-metadata": {
-    "title": "Files Metadata",
-    "keywords": [
-      "api",
-      "files-metadata"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/getting-help": {
-    "title": "Getting Help",
-    "keywords": [
-      "api",
-      "getting-help"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/getting-started": {
-    "title": "Getting Started",
-    "keywords": [
-      "api",
-      "getting-started"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/handling-stop-reasons": {
-    "title": "Handling Stop Reasons",
-    "keywords": [
-      "api",
-      "handling-stop-reasons"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/ip-addresses": {
-    "title": "Ip Addresses",
-    "keywords": [
-      "api",
-      "ip-addresses"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/listing-message-batches": {
-    "title": "Listing Message Batches",
-    "keywords": [
-      "api",
-      "listing-message-batches"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/messages": {
-    "title": "Messages",
-    "keywords": [
-      "api",
-      "messages"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/messages-count-tokens": {
-    "title": "Messages Count Tokens",
-    "keywords": [
-      "api",
-      "messages-count-tokens"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/messages-streaming": {
-    "title": "Messages Streaming",
-    "keywords": [
-      "api",
-      "messages-streaming"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/migrating-from-text-completions-to-messages": {
-    "title": "Migrating From Text Completions To Messages",
-    "keywords": [
-      "api",
-      "migrating-from-text-completions-to-messages"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/models": {
-    "title": "Models",
-    "keywords": [
-      "api",
-      "models"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/models-list": {
-    "title": "Models List",
-    "keywords": [
-      "api",
-      "models-list"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/openai-sdk": {
-    "title": "Openai Sdk",
-    "keywords": [
-      "api",
-      "openai-sdk"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/overview": {
-    "title": "Overview",
-    "keywords": [
-      "api",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/prompt-tools-generate": {
-    "title": "Prompt Tools Generate",
-    "keywords": [
-      "api",
-      "prompt-tools-generate"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/prompt-tools-improve": {
-    "title": "Prompt Tools Improve",
-    "keywords": [
-      "api",
-      "prompt-tools-improve"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/prompt-tools-templatize": {
-    "title": "Prompt Tools Templatize",
-    "keywords": [
-      "api",
-      "prompt-tools-templatize"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/rate-limits": {
-    "title": "Rate Limits",
-    "keywords": [
-      "api",
-      "rate-limits"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/retrieving-message-batch-results": {
-    "title": "Retrieving Message Batch Results",
-    "keywords": [
-      "api",
-      "retrieving-message-batch-results"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/retrieving-message-batches": {
-    "title": "Retrieving Message Batches",
-    "keywords": [
-      "api",
-      "retrieving-message-batches"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/service-tiers": {
-    "title": "Service Tiers",
-    "keywords": [
-      "api",
-      "service-tiers"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/skills-guide": {
-    "title": "Skills Guide",
-    "keywords": [
-      "api",
-      "skills-guide"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/skills/create-skill": {
-    "title": "Create Skill",
-    "keywords": [
-      "api",
-      "skills",
-      "create-skill"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/skills/create-skill-version": {
-    "title": "Create Skill Version",
-    "keywords": [
-      "api",
-      "skills",
-      "create-skill-version"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/skills/delete-skill": {
-    "title": "Delete Skill",
-    "keywords": [
-      "api",
-      "skills",
-      "delete-skill"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/skills/delete-skill-version": {
-    "title": "Delete Skill Version",
-    "keywords": [
-      "api",
-      "skills",
-      "delete-skill-version"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/skills/get-skill": {
-    "title": "Get Skill",
-    "keywords": [
-      "api",
-      "skills",
-      "get-skill"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/skills/get-skill-version": {
-    "title": "Get Skill Version",
-    "keywords": [
-      "api",
-      "skills",
-      "get-skill-version"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/skills/list-skill-versions": {
-    "title": "List Skill Versions",
-    "keywords": [
-      "api",
-      "skills",
-      "list-skill-versions"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/skills/list-skills": {
-    "title": "List Skills",
-    "keywords": [
-      "api",
-      "skills",
-      "list-skills"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/streaming": {
-    "title": "Streaming",
-    "keywords": [
-      "api",
-      "streaming"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/supported-regions": {
-    "title": "Supported Regions",
-    "keywords": [
-      "api",
-      "supported-regions"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/usage-cost-api": {
-    "title": "Usage Cost Api",
-    "keywords": [
-      "api",
-      "usage-cost-api"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/api/versioning": {
-    "title": "Versioning",
-    "keywords": [
-      "api",
-      "versioning"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/amazon-bedrock": {
-    "title": "Amazon Bedrock",
-    "keywords": [
-      "claude-code",
-      "amazon-bedrock"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/analytics": {
-    "title": "Analytics",
-    "keywords": [
-      "claude-code",
-      "analytics"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/bedrock-vertex": {
-    "title": "Bedrock Vertex",
-    "keywords": [
-      "claude-code",
-      "bedrock-vertex"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/bedrock-vertex-proxies": {
-    "title": "Bedrock Vertex Proxies",
-    "keywords": [
-      "claude-code",
-      "bedrock-vertex-proxies"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/checkpointing": {
-    "title": "Checkpointing",
-    "keywords": [
-      "claude-code",
-      "checkpointing"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/claude-code-on-the-web": {
-    "title": "Claude Code On The Web",
-    "keywords": [
-      "claude-code",
-      "claude-code-on-the-web"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/cli-reference": {
-    "title": "Cli Reference",
-    "keywords": [
-      "claude-code",
-      "cli-reference"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/cli-usage": {
-    "title": "Cli Usage",
-    "keywords": [
-      "claude-code",
-      "cli-usage"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/common-workflows": {
-    "title": "Common Workflows",
-    "keywords": [
-      "claude-code",
-      "common-workflows"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/corporate-proxy": {
-    "title": "Corporate Proxy",
-    "keywords": [
-      "claude-code",
-      "corporate-proxy"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/costs": {
-    "title": "Costs",
-    "keywords": [
-      "claude-code",
-      "costs"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/data-usage": {
-    "title": "Data Usage",
-    "keywords": [
-      "claude-code",
-      "data-usage"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/devcontainer": {
-    "title": "Devcontainer",
-    "keywords": [
-      "claude-code",
-      "devcontainer"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/getting-started": {
-    "title": "Getting Started",
-    "keywords": [
-      "claude-code",
-      "getting-started"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/github-actions": {
-    "title": "Github Actions",
-    "keywords": [
-      "claude-code",
-      "github-actions"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/gitlab-ci-cd": {
-    "title": "Gitlab Ci Cd",
-    "keywords": [
-      "claude-code",
-      "gitlab-ci-cd"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/google-vertex-ai": {
-    "title": "Google Vertex Ai",
-    "keywords": [
-      "claude-code",
-      "google-vertex-ai"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/headless": {
-    "title": "Headless",
-    "keywords": [
-      "claude-code",
-      "headless"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/hooks": {
-    "title": "Hooks",
-    "keywords": [
-      "claude-code",
-      "hooks"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/hooks-guide": {
-    "title": "Hooks Guide",
-    "keywords": [
-      "claude-code",
-      "hooks-guide"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/iam": {
-    "title": "Iam",
-    "keywords": [
-      "claude-code",
-      "iam"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/ide-integrations": {
-    "title": "Ide Integrations",
-    "keywords": [
-      "claude-code",
-      "ide-integrations"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/interactive-mode": {
-    "title": "Interactive Mode",
-    "keywords": [
-      "claude-code",
-      "interactive-mode"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/jetbrains": {
-    "title": "Jetbrains",
-    "keywords": [
-      "claude-code",
-      "jetbrains"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/legal-and-compliance": {
-    "title": "Legal And Compliance",
-    "keywords": [
-      "claude-code",
-      "legal-and-compliance"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/llm-gateway": {
-    "title": "Llm Gateway",
-    "keywords": [
-      "claude-code",
-      "llm-gateway"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/mcp": {
-    "title": "Mcp",
-    "keywords": [
-      "claude-code",
-      "mcp"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/memory": {
-    "title": "Memory",
-    "keywords": [
-      "claude-code",
-      "memory"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/model-config": {
-    "title": "Model Config",
-    "keywords": [
-      "claude-code",
-      "model-config"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/monitoring-usage": {
-    "title": "Monitoring Usage",
-    "keywords": [
-      "claude-code",
-      "monitoring-usage"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/network-config": {
-    "title": "Network Config",
-    "keywords": [
-      "claude-code",
-      "network-config"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/output-styles": {
-    "title": "Output Styles",
-    "keywords": [
-      "claude-code",
-      "output-styles"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/overview": {
-    "title": "Overview",
-    "keywords": [
-      "claude-code",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/plugin-marketplaces": {
-    "title": "Plugin Marketplaces",
-    "keywords": [
-      "claude-code",
-      "plugin-marketplaces"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/plugins": {
-    "title": "Plugins",
-    "keywords": [
-      "claude-code",
-      "plugins"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/plugins-reference": {
-    "title": "Plugins Reference",
-    "keywords": [
-      "claude-code",
-      "plugins-reference"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/quickstart": {
-    "title": "Quickstart",
-    "keywords": [
-      "claude-code",
-      "quickstart"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sandboxing": {
-    "title": "Sandboxing",
-    "keywords": [
-      "claude-code",
-      "sandboxing"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk": {
-    "title": "Sdk",
-    "keywords": [
-      "claude-code",
-      "sdk"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/custom-tools": {
-    "title": "Custom Tools",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "custom-tools"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/migration-guide": {
-    "title": "Migration Guide",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "migration-guide"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/modifying-system-prompts": {
-    "title": "Modifying System Prompts",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "modifying-system-prompts"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/sdk-cost-tracking": {
-    "title": "Sdk Cost Tracking",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "sdk-cost-tracking"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/sdk-headless": {
-    "title": "Sdk Headless",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "sdk-headless"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/sdk-mcp": {
-    "title": "Sdk Mcp",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "sdk-mcp"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/sdk-overview": {
-    "title": "Sdk Overview",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "sdk-overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/sdk-permissions": {
-    "title": "Sdk Permissions",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "sdk-permissions"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/sdk-python": {
-    "title": "Sdk Python",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "sdk-python"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/sdk-sessions": {
-    "title": "Sdk Sessions",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "sdk-sessions"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/sdk-slash-commands": {
-    "title": "Sdk Slash Commands",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "sdk-slash-commands"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/sdk-typescript": {
-    "title": "Sdk Typescript",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "sdk-typescript"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/streaming-vs-single-mode": {
-    "title": "Streaming Vs Single Mode",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "streaming-vs-single-mode"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/subagents": {
-    "title": "Subagents",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "subagents"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sdk/todo-tracking": {
-    "title": "Todo Tracking",
-    "keywords": [
-      "claude-code",
-      "sdk",
-      "todo-tracking"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/security": {
-    "title": "Security",
-    "keywords": [
-      "claude-code",
-      "security"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/settings": {
-    "title": "Settings",
-    "keywords": [
-      "claude-code",
-      "settings"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/setup": {
-    "title": "Setup",
-    "keywords": [
-      "claude-code",
-      "setup"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/skills": {
-    "title": "Skills",
-    "keywords": [
-      "claude-code",
-      "skills"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/slash-commands": {
-    "title": "Slash Commands",
-    "keywords": [
-      "claude-code",
-      "slash-commands"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/statusline": {
-    "title": "Statusline",
-    "keywords": [
-      "claude-code",
-      "statusline"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/sub-agents": {
-    "title": "Sub Agents",
-    "keywords": [
-      "claude-code",
-      "sub-agents"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/subagents": {
-    "title": "Subagents",
-    "keywords": [
-      "claude-code",
-      "subagents"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/team": {
-    "title": "Team",
-    "keywords": [
-      "claude-code",
-      "team"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/terminal-config": {
-    "title": "Terminal Config",
-    "keywords": [
-      "claude-code",
-      "terminal-config"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/third-party-integrations": {
-    "title": "Third Party Integrations",
-    "keywords": [
-      "claude-code",
-      "third-party-integrations"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/troubleshooting": {
-    "title": "Troubleshooting",
-    "keywords": [
-      "claude-code",
-      "troubleshooting"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/tutorials": {
-    "title": "Tutorials",
-    "keywords": [
-      "claude-code",
-      "tutorials"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/docs/claude-code/vs-code": {
-    "title": "Vs Code",
-    "keywords": [
-      "claude-code",
-      "vs-code"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/api-features": {
-    "title": "Api Features",
-    "keywords": [
-      "resources",
-      "api-features"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/claude-3-7-system-card": {
-    "title": "Claude 3 7 System Card",
-    "keywords": [
-      "resources",
-      "claude-3-7-system-card"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/claude-3-model-card": {
-    "title": "Claude 3 Model Card",
-    "keywords": [
-      "resources",
-      "claude-3-model-card"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/courses": {
-    "title": "Courses",
-    "keywords": [
-      "resources",
-      "courses"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/glossary": {
-    "title": "Glossary",
-    "keywords": [
-      "resources",
-      "glossary"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/overview": {
-    "title": "Overview",
-    "keywords": [
-      "resources",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/adaptive-editor": {
-    "title": "Adaptive Editor",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "adaptive-editor"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/airport-code-analyst": {
-    "title": "Airport Code Analyst",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "airport-code-analyst"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/alien-anthropologist": {
-    "title": "Alien Anthropologist",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "alien-anthropologist"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/alliteration-alchemist": {
-    "title": "Alliteration Alchemist",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "alliteration-alchemist"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/babels-broadcasts": {
-    "title": "Babels Broadcasts",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "babels-broadcasts"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/brand-builder": {
-    "title": "Brand Builder",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "brand-builder"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/career-coach": {
-    "title": "Career Coach",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "career-coach"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/cite-your-sources": {
-    "title": "Cite Your Sources",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "cite-your-sources"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/code-clarifier": {
-    "title": "Code Clarifier",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "code-clarifier"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/code-consultant": {
-    "title": "Code Consultant",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "code-consultant"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/corporate-clairvoyant": {
-    "title": "Corporate Clairvoyant",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "corporate-clairvoyant"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/cosmic-keystrokes": {
-    "title": "Cosmic Keystrokes",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "cosmic-keystrokes"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/csv-converter": {
-    "title": "Csv Converter",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "csv-converter"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/culinary-creator": {
-    "title": "Culinary Creator",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "culinary-creator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/data-organizer": {
-    "title": "Data Organizer",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "data-organizer"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/direction-decoder": {
-    "title": "Direction Decoder",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "direction-decoder"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/dream-interpreter": {
-    "title": "Dream Interpreter",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "dream-interpreter"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/efficiency-estimator": {
-    "title": "Efficiency Estimator",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "efficiency-estimator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/email-extractor": {
-    "title": "Email Extractor",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "email-extractor"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/emoji-encoder": {
-    "title": "Emoji Encoder",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "emoji-encoder"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/ethical-dilemma-navigator": {
-    "title": "Ethical Dilemma Navigator",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "ethical-dilemma-navigator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/excel-formula-expert": {
-    "title": "Excel Formula Expert",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "excel-formula-expert"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/function-fabricator": {
-    "title": "Function Fabricator",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "function-fabricator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/futuristic-fashion-advisor": {
-    "title": "Futuristic Fashion Advisor",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "futuristic-fashion-advisor"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/git-gud": {
-    "title": "Git Gud",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "git-gud"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/google-apps-scripter": {
-    "title": "Google Apps Scripter",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "google-apps-scripter"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/grading-guru": {
-    "title": "Grading Guru",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "grading-guru"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/grammar-genie": {
-    "title": "Grammar Genie",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "grammar-genie"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/hal-the-humorous-helper": {
-    "title": "Hal The Humorous Helper",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "hal-the-humorous-helper"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/idiom-illuminator": {
-    "title": "Idiom Illuminator",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "idiom-illuminator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/interview-question-crafter": {
-    "title": "Interview Question Crafter",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "interview-question-crafter"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/latex-legend": {
-    "title": "Latex Legend",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "latex-legend"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/lesson-planner": {
-    "title": "Lesson Planner",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "lesson-planner"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/library": {
-    "title": "Library",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "library"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/master-moderator": {
-    "title": "Master Moderator",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "master-moderator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/meeting-scribe": {
-    "title": "Meeting Scribe",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "meeting-scribe"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/memo-maestro": {
-    "title": "Memo Maestro",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "memo-maestro"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/mindfulness-mentor": {
-    "title": "Mindfulness Mentor",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "mindfulness-mentor"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/mood-colorizer": {
-    "title": "Mood Colorizer",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "mood-colorizer"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/motivational-muse": {
-    "title": "Motivational Muse",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "motivational-muse"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/neologism-creator": {
-    "title": "Neologism Creator",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "neologism-creator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/perspectives-ponderer": {
-    "title": "Perspectives Ponderer",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "perspectives-ponderer"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/philosophical-musings": {
-    "title": "Philosophical Musings",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "philosophical-musings"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/pii-purifier": {
-    "title": "Pii Purifier",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "pii-purifier"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/polyglot-superpowers": {
-    "title": "Polyglot Superpowers",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "polyglot-superpowers"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/portmanteau-poet": {
-    "title": "Portmanteau Poet",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "portmanteau-poet"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/product-naming-pro": {
-    "title": "Product Naming Pro",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "product-naming-pro"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/prose-polisher": {
-    "title": "Prose Polisher",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "prose-polisher"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/pun-dit": {
-    "title": "Pun Dit",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "pun-dit"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/python-bug-buster": {
-    "title": "Python Bug Buster",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "python-bug-buster"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/review-classifier": {
-    "title": "Review Classifier",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "review-classifier"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/riddle-me-this": {
-    "title": "Riddle Me This",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "riddle-me-this"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/sci-fi-scenario-simulator": {
-    "title": "Sci Fi Scenario Simulator",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "sci-fi-scenario-simulator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/second-grade-simplifier": {
-    "title": "Second Grade Simplifier",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "second-grade-simplifier"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/simile-savant": {
-    "title": "Simile Savant",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "simile-savant"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/socratic-sage": {
-    "title": "Socratic Sage",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "socratic-sage"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/spreadsheet-sorcerer": {
-    "title": "Spreadsheet Sorcerer",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "spreadsheet-sorcerer"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/sql-sorcerer": {
-    "title": "Sql Sorcerer",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "sql-sorcerer"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/storytelling-sidekick": {
-    "title": "Storytelling Sidekick",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "storytelling-sidekick"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/time-travel-consultant": {
-    "title": "Time Travel Consultant",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "time-travel-consultant"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/tongue-twister": {
-    "title": "Tongue Twister",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "tongue-twister"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/trivia-generator": {
-    "title": "Trivia Generator",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "trivia-generator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/tweet-tone-detector": {
-    "title": "Tweet Tone Detector",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "tweet-tone-detector"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/vr-fitness-innovator": {
-    "title": "Vr Fitness Innovator",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "vr-fitness-innovator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/prompt-library/website-wizard": {
-    "title": "Website Wizard",
-    "keywords": [
-      "resources",
-      "prompt-library",
-      "website-wizard"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/resources/status": {
-    "title": "Status",
-    "keywords": [
-      "resources",
-      "status"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/release-notes/api": {
-    "title": "Api",
-    "keywords": [
-      "release-notes",
-      "api"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/release-notes/claude-apps": {
-    "title": "Claude Apps",
-    "keywords": [
-      "release-notes",
-      "claude-apps"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/release-notes/claude-code": {
-    "title": "Claude Code",
-    "keywords": [
-      "release-notes",
-      "claude-code"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/release-notes/overview": {
-    "title": "Overview",
-    "keywords": [
-      "release-notes",
-      "overview"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/release-notes/system-prompts": {
-    "title": "System Prompts",
-    "keywords": [
-      "release-notes",
-      "system-prompts"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/adaptive-editor": {
-    "title": "Adaptive Editor",
-    "keywords": [
-      "prompt-library",
-      "adaptive-editor"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/airport-code-analyst": {
-    "title": "Airport Code Analyst",
-    "keywords": [
-      "prompt-library",
-      "airport-code-analyst"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/alien-anthropologist": {
-    "title": "Alien Anthropologist",
-    "keywords": [
-      "prompt-library",
-      "alien-anthropologist"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/alliteration-alchemist": {
-    "title": "Alliteration Alchemist",
-    "keywords": [
-      "prompt-library",
-      "alliteration-alchemist"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/babels-broadcasts": {
-    "title": "Babels Broadcasts",
-    "keywords": [
-      "prompt-library",
-      "babels-broadcasts"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/brand-builder": {
-    "title": "Brand Builder",
-    "keywords": [
-      "prompt-library",
-      "brand-builder"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/career-coach": {
-    "title": "Career Coach",
-    "keywords": [
-      "prompt-library",
-      "career-coach"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/cite-your-sources": {
-    "title": "Cite Your Sources",
-    "keywords": [
-      "prompt-library",
-      "cite-your-sources"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/code-clarifier": {
-    "title": "Code Clarifier",
-    "keywords": [
-      "prompt-library",
-      "code-clarifier"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/code-consultant": {
-    "title": "Code Consultant",
-    "keywords": [
-      "prompt-library",
-      "code-consultant"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/corporate-clairvoyant": {
-    "title": "Corporate Clairvoyant",
-    "keywords": [
-      "prompt-library",
-      "corporate-clairvoyant"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/cosmic-keystrokes": {
-    "title": "Cosmic Keystrokes",
-    "keywords": [
-      "prompt-library",
-      "cosmic-keystrokes"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/csv-converter": {
-    "title": "Csv Converter",
-    "keywords": [
-      "prompt-library",
-      "csv-converter"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/culinary-creator": {
-    "title": "Culinary Creator",
-    "keywords": [
-      "prompt-library",
-      "culinary-creator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/data-organizer": {
-    "title": "Data Organizer",
-    "keywords": [
-      "prompt-library",
-      "data-organizer"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/direction-decoder": {
-    "title": "Direction Decoder",
-    "keywords": [
-      "prompt-library",
-      "direction-decoder"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/dream-interpreter": {
-    "title": "Dream Interpreter",
-    "keywords": [
-      "prompt-library",
-      "dream-interpreter"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/efficiency-estimator": {
-    "title": "Efficiency Estimator",
-    "keywords": [
-      "prompt-library",
-      "efficiency-estimator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/email-extractor": {
-    "title": "Email Extractor",
-    "keywords": [
-      "prompt-library",
-      "email-extractor"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/emoji-encoder": {
-    "title": "Emoji Encoder",
-    "keywords": [
-      "prompt-library",
-      "emoji-encoder"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/ethical-dilemma-navigator": {
-    "title": "Ethical Dilemma Navigator",
-    "keywords": [
-      "prompt-library",
-      "ethical-dilemma-navigator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/excel-formula-expert": {
-    "title": "Excel Formula Expert",
-    "keywords": [
-      "prompt-library",
-      "excel-formula-expert"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/function-fabricator": {
-    "title": "Function Fabricator",
-    "keywords": [
-      "prompt-library",
-      "function-fabricator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/futuristic-fashion-advisor": {
-    "title": "Futuristic Fashion Advisor",
-    "keywords": [
-      "prompt-library",
-      "futuristic-fashion-advisor"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/git-gud": {
-    "title": "Git Gud",
-    "keywords": [
-      "prompt-library",
-      "git-gud"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/google-apps-scripter": {
-    "title": "Google Apps Scripter",
-    "keywords": [
-      "prompt-library",
-      "google-apps-scripter"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/grading-guru": {
-    "title": "Grading Guru",
-    "keywords": [
-      "prompt-library",
-      "grading-guru"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/grammar-genie": {
-    "title": "Grammar Genie",
-    "keywords": [
-      "prompt-library",
-      "grammar-genie"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/hal-the-humorous-helper": {
-    "title": "Hal The Humorous Helper",
-    "keywords": [
-      "prompt-library",
-      "hal-the-humorous-helper"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/idiom-illuminator": {
-    "title": "Idiom Illuminator",
-    "keywords": [
-      "prompt-library",
-      "idiom-illuminator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/interview-question-crafter": {
-    "title": "Interview Question Crafter",
-    "keywords": [
-      "prompt-library",
-      "interview-question-crafter"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/latex-legend": {
-    "title": "Latex Legend",
-    "keywords": [
-      "prompt-library",
-      "latex-legend"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/lesson-planner": {
-    "title": "Lesson Planner",
-    "keywords": [
-      "prompt-library",
-      "lesson-planner"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/master-moderator": {
-    "title": "Master Moderator",
-    "keywords": [
-      "prompt-library",
-      "master-moderator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/meeting-scribe": {
-    "title": "Meeting Scribe",
-    "keywords": [
-      "prompt-library",
-      "meeting-scribe"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/memo-maestro": {
-    "title": "Memo Maestro",
-    "keywords": [
-      "prompt-library",
-      "memo-maestro"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/mindfulness-mentor": {
-    "title": "Mindfulness Mentor",
-    "keywords": [
-      "prompt-library",
-      "mindfulness-mentor"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/mood-colorizer": {
-    "title": "Mood Colorizer",
-    "keywords": [
-      "prompt-library",
-      "mood-colorizer"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/motivational-muse": {
-    "title": "Motivational Muse",
-    "keywords": [
-      "prompt-library",
-      "motivational-muse"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/neologism-creator": {
-    "title": "Neologism Creator",
-    "keywords": [
-      "prompt-library",
-      "neologism-creator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/perspectives-ponderer": {
-    "title": "Perspectives Ponderer",
-    "keywords": [
-      "prompt-library",
-      "perspectives-ponderer"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/philosophical-musings": {
-    "title": "Philosophical Musings",
-    "keywords": [
-      "prompt-library",
-      "philosophical-musings"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/pii-purifier": {
-    "title": "Pii Purifier",
-    "keywords": [
-      "prompt-library",
-      "pii-purifier"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/polyglot-superpowers": {
-    "title": "Polyglot Superpowers",
-    "keywords": [
-      "prompt-library",
-      "polyglot-superpowers"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/portmanteau-poet": {
-    "title": "Portmanteau Poet",
-    "keywords": [
-      "prompt-library",
-      "portmanteau-poet"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/product-naming-pro": {
-    "title": "Product Naming Pro",
-    "keywords": [
-      "prompt-library",
-      "product-naming-pro"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/prose-polisher": {
-    "title": "Prose Polisher",
-    "keywords": [
-      "prompt-library",
-      "prose-polisher"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/pun-dit": {
-    "title": "Pun Dit",
-    "keywords": [
-      "prompt-library",
-      "pun-dit"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/python-bug-buster": {
-    "title": "Python Bug Buster",
-    "keywords": [
-      "prompt-library",
-      "python-bug-buster"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/review-classifier": {
-    "title": "Review Classifier",
-    "keywords": [
-      "prompt-library",
-      "review-classifier"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/riddle-me-this": {
-    "title": "Riddle Me This",
-    "keywords": [
-      "prompt-library",
-      "riddle-me-this"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/sci-fi-scenario-simulator": {
-    "title": "Sci Fi Scenario Simulator",
-    "keywords": [
-      "prompt-library",
-      "sci-fi-scenario-simulator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/second-grade-simplifier": {
-    "title": "Second Grade Simplifier",
-    "keywords": [
-      "prompt-library",
-      "second-grade-simplifier"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/simile-savant": {
-    "title": "Simile Savant",
-    "keywords": [
-      "prompt-library",
-      "simile-savant"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/socratic-sage": {
-    "title": "Socratic Sage",
-    "keywords": [
-      "prompt-library",
-      "socratic-sage"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/spreadsheet-sorcerer": {
-    "title": "Spreadsheet Sorcerer",
-    "keywords": [
-      "prompt-library",
-      "spreadsheet-sorcerer"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/sql-sorcerer": {
-    "title": "Sql Sorcerer",
-    "keywords": [
-      "prompt-library",
-      "sql-sorcerer"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/storytelling-sidekick": {
-    "title": "Storytelling Sidekick",
-    "keywords": [
-      "prompt-library",
-      "storytelling-sidekick"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/time-travel-consultant": {
-    "title": "Time Travel Consultant",
-    "keywords": [
-      "prompt-library",
-      "time-travel-consultant"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/tongue-twister": {
-    "title": "Tongue Twister",
-    "keywords": [
-      "prompt-library",
-      "tongue-twister"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/trivia-generator": {
-    "title": "Trivia Generator",
-    "keywords": [
-      "prompt-library",
-      "trivia-generator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/tweet-tone-detector": {
-    "title": "Tweet Tone Detector",
-    "keywords": [
-      "prompt-library",
-      "tweet-tone-detector"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/vr-fitness-innovator": {
-    "title": "Vr Fitness Innovator",
-    "keywords": [
-      "prompt-library",
-      "vr-fitness-innovator"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
-  },
-  "/en/prompt-library/website-wizard": {
-    "title": "Website Wizard",
-    "keywords": [
-      "prompt-library",
-      "website-wizard"
-    ],
-    "content_preview": "",
-    "size": 0,
-    "last_updated": null
+  "version": "1.0",
+  "generated_at": "2025-11-03T20:41:15Z",
+  "indexed_files": 49,
+  "index": {
+    "/CAPABILITIES": {
+      "title": "Documentation Mirror Capabilities",
+      "content_preview": "# Documentation Mirror Capabilities  Complete documentation of features, coverage, and capabilities of the Claude Code Documentation Mirror.  ## Table of Contents  - [Overview](#overview) - [Complete Path Coverage](#complete-path-coverage) - [Features](#features) - [Usage Examples](#usage-examples)",
+      "keywords": [
+        "api",
+        "paths",
+        "documentation",
+        "code",
+        "admin",
+        "claude",
+        "features",
+        "usage",
+        "get",
+        "search",
+        "model",
+        "examples",
+        "configuration",
+        "workspace",
+        "integration",
+        "overview",
+        "performance",
+        "tool",
+        "guides",
+        "pages"
+      ],
+      "word_count": 3105,
+      "file_path": "docs/CAPABILITIES.md"
+    },
+    "/EXAMPLES": {
+      "title": "Usage Examples",
+      "content_preview": "# Usage Examples  Practical examples, troubleshooting guides, and frequently asked questions for the Claude Code Documentation Mirror.  ## Table of Contents  - [Common Queries](#common-queries) - [Content Search Examples](#content-search-examples) - [Update Examples](#update-examples) - [Validation",
+      "keywords": [
+        "documentation",
+        "search",
+        "solution",
+        "update",
+        "case",
+        "path",
+        "content",
+        "paths",
+        "check",
+        "code",
+        "issue",
+        "examples",
+        "workflow",
+        "claude",
+        "problem",
+        "errors",
+        "find",
+        "pages",
+        "symptoms",
+        "github"
+      ],
+      "word_count": 2867,
+      "file_path": "docs/EXAMPLES.md"
+    },
+    "/amazon-bedrock": {
+      "title": "Claude Code on Amazon Bedrock",
+      "content_preview": "# Claude Code on Amazon Bedrock  > Learn about configuring Claude Code through Amazon Bedrock, including setup, IAM configuration, and troubleshooting.  ## Prerequisites  Before configuring Claude Cod...",
+      "keywords": [
+        "bedrock",
+        "claude",
+        "code",
+        "aws",
+        "model",
+        "credentials",
+        "configuration",
+        "settings",
+        "iam",
+        "environment",
+        "note",
+        "amazon",
+        "access",
+        "uses",
+        "these",
+        "api",
+        "when",
+        "output",
+        "models",
+        "permissions"
+      ],
+      "word_count": 989,
+      "file_path": "docs/amazon-bedrock.md"
+    },
+    "/analytics": {
+      "title": "Analytics",
+      "content_preview": "# Analytics  > View detailed usage insights and productivity metrics for your organization's Claude Code deployment.  Claude Code provides an analytics dashboard that helps organizations understand de...",
+      "keywords": [
+        "code",
+        "claude",
+        "users",
+        "analytics",
+        "number",
+        "metrics",
+        "usage",
+        "track",
+        "note",
+        "user",
+        "lines",
+        "total",
+        "active",
+        "given",
+        "day",
+        "axis",
+        "spend",
+        "month",
+        "productivity",
+        "developer"
+      ],
+      "word_count": 339,
+      "file_path": "docs/analytics.md"
+    },
+    "/changelog": {
+      "title": "Claude Code Changelog",
+      "content_preview": "# Claude Code Changelog  > **Source**: https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md >  > This is the official Claude Code release changelog, automatically fetched from the Claude C...",
+      "keywords": [
+        "claude",
+        "fixed",
+        "added",
+        "mcp",
+        "now",
+        "support",
+        "tool",
+        "mode",
+        "commands",
+        "where",
+        "code",
+        "improved",
+        "add",
+        "files",
+        "fix",
+        "bash",
+        "command",
+        "bug",
+        "sdk",
+        "file"
+      ],
+      "word_count": 5151,
+      "file_path": "docs/changelog.md"
+    },
+    "/checkpointing": {
+      "title": "Checkpointing",
+      "content_preview": "# Checkpointing  > Automatically track and rewind Claude's edits to quickly recover from unwanted changes.  Claude Code automatically tracks Claude's file edits as you work, allowing you to quickly un...",
+      "keywords": [
+        "changes",
+        "code",
+        "claude",
+        "checkpoints",
+        "file",
+        "rewind",
+        "session",
+        "checkpointing",
+        "automatically",
+        "edits",
+        "only",
+        "files",
+        "version",
+        "track",
+        "quickly",
+        "tracks",
+        "work",
+        "undo",
+        "sessions",
+        "command"
+      ],
+      "word_count": 418,
+      "file_path": "docs/checkpointing.md"
+    },
+    "/claude-code-on-the-web": {
+      "title": "Claude Code on the web",
+      "content_preview": "# Claude Code on the web  > Run Claude Code tasks asynchronously on secure cloud infrastructure  <Note>   Claude Code on the web is currently in research preview. </Note>  ## What is Claude Code on th...",
+      "keywords": [
+        "org",
+        "com",
+        "www",
+        "claude",
+        "code",
+        "environment",
+        "access",
+        "web",
+        "network",
+        "github",
+        "security",
+        "note",
+        "hooks",
+        "default",
+        "package",
+        "managers",
+        "proxy",
+        "api",
+        "repo",
+        "net"
+      ],
+      "word_count": 1918,
+      "file_path": "docs/claude-code-on-the-web.md"
+    },
+    "/cli-reference": {
+      "title": "CLI reference",
+      "content_preview": "# CLI reference  > Complete reference for Claude Code command-line interface, including commands and flags.  ## CLI commands  | Command                            | Description                        ...",
+      "keywords": [
+        "interactive",
+        "mode",
+        "claude",
+        "model",
+        "see",
+        "sdk",
+        "documentation",
+        "permission",
+        "print",
+        "subagent",
+        "code",
+        "commands",
+        "description",
+        "session",
+        "flag",
+        "subagents",
+        "json",
+        "format",
+        "tools",
+        "output"
+      ],
+      "word_count": 847,
+      "file_path": "docs/cli-reference.md"
+    },
+    "/common-workflows": {
+      "title": "Common workflows",
+      "content_preview": "# Common workflows  > Learn about common workflows with Claude Code.  Each task in this document includes clear instructions, example commands, and best practices to help you get the most from Claude Code.  ## Understand new codebases  ### Get a quick codebase overview  Suppose you've just joined a",
+      "keywords": [
+        "step",
+        "claude",
+        "title",
+        "tip",
+        "code",
+        "steps",
+        "tips",
+        "create",
+        "conversation",
+        "suppose",
+        "mode",
+        "commands",
+        "specific",
+        "when",
+        "thinking",
+        "project",
+        "need",
+        "documentation",
+        "plan",
+        "file"
+      ],
+      "word_count": 3610,
+      "file_path": "docs/common-workflows.md"
+    },
+    "/costs": {
+      "title": "Manage costs effectively",
+      "content_preview": "# Manage costs effectively  > Learn how to track and optimize token usage and costs when using Claude Code.  Claude Code consumes tokens for each interaction. The average cost is \\$6 per developer per...",
+      "keywords": [
+        "claude",
+        "code",
+        "per",
+        "usage",
+        "users",
+        "when",
+        "costs",
+        "note",
+        "version",
+        "current",
+        "user",
+        "token",
+        "using",
+        "cost",
+        "command",
+        "workspace",
+        "tpm",
+        "large",
+        "these",
+        "changes"
+      ],
+      "word_count": 898,
+      "file_path": "docs/costs.md"
+    },
+    "/data-usage": {
+      "title": "Data usage",
+      "content_preview": "# Data usage  > Learn about Anthropic's data usage policies for Claude  ## Data policies  ### Data training policy  **Consumer users (Free, Pro, and Max plans)**: Starting August 28, 2025, we're givin...",
+      "keywords": [
+        "data",
+        "claude",
+        "code",
+        "anthropic",
+        "snf",
+        "oudpt",
+        "users",
+        "api",
+        "default",
+        "max",
+        "using",
+        "flow",
+        "our",
+        "session",
+        "retention",
+        "images",
+        "png",
+        "model",
+        "https",
+        "mintcdn"
+      ],
+      "word_count": 1152,
+      "file_path": "docs/data-usage.md"
+    },
+    "/devcontainer": {
+      "title": "Development containers",
+      "content_preview": "# Development containers  > Learn about the Claude Code development container for teams that need consistent, secure environments.  The reference [devcontainer setup](https://github.com/anthropics/cla...",
+      "keywords": [
+        "code",
+        "container",
+        "development",
+        "devcontainer",
+        "security",
+        "claude",
+        "environments",
+        "firewall",
+        "network",
+        "configuration",
+        "containers",
+        "tools",
+        "when",
+        "devcontainers",
+        "access",
+        "secure",
+        "rules",
+        "only",
+        "extensions",
+        "settings"
+      ],
+      "word_count": 488,
+      "file_path": "docs/devcontainer.md"
+    },
+    "/en/release-notes/overview": {
+      "title": "Claude Developer Platform",
+      "content_preview": "# Claude Developer Platform  > Updates to the Claude Developer Platform, including the Claude API, client SDKs, and the Claude Console.  <Tip>   For release notes on Claude Apps, see the [Release note...",
+      "keywords": [
+        "claude",
+        "api",
+        "our",
+        "more",
+        "documentation",
+        "tool",
+        "beta",
+        "launched",
+        "now",
+        "learn",
+        "models",
+        "sonnet",
+        "read",
+        "console",
+        "usage",
+        "added",
+        "model",
+        "new",
+        "sdk",
+        "support"
+      ],
+      "word_count": 3223,
+      "file_path": "docs/en__release-notes__overview.md"
+    },
+    "/en/release-notes/system-prompts": {
+      "title": "System Prompts",
+      "content_preview": "# System Prompts  > See updates to the core system prompts on [Claude.ai](https://www.claude.ai) and the Claude [iOS](http://anthropic.com/ios) and [Android](http://anthropic.com/android) apps.  Claud...",
+      "keywords": [
+        "claude",
+        "about",
+        "person",
+        "human",
+        "should",
+        "information",
+        "does",
+        "anthropic",
+        "questions",
+        "they",
+        "asks",
+        "them",
+        "asked",
+        "any",
+        "user",
+        "know",
+        "even",
+        "when",
+        "response",
+        "code"
+      ],
+      "word_count": 36525,
+      "file_path": "docs/en__release-notes__system-prompts.md"
+    },
+    "/github-actions": {
+      "title": "Claude Code GitHub Actions",
+      "content_preview": "# Claude Code GitHub Actions  > Learn about integrating Claude Code into your development workflow with Claude Code GitHub Actions  Claude Code GitHub Actions brings AI-powered automation to your GitH...",
+      "keywords": [
+        "github",
+        "claude",
+        "app",
+        "code",
+        "actions",
+        "repository",
+        "api",
+        "bedrock",
+        "workflow",
+        "permissions",
+        "aws",
+        "create",
+        "vertex",
+        "required",
+        "key",
+        "action",
+        "setup",
+        "secrets",
+        "using",
+        "google"
+      ],
+      "word_count": 3136,
+      "file_path": "docs/github-actions.md"
+    },
+    "/gitlab-ci-cd": {
+      "title": "Claude Code GitLab CI/CD",
+      "content_preview": "# Claude Code GitLab CI/CD  > Learn about integrating Claude Code into your development workflow with GitLab CI/CD  <Info>   Claude Code for GitLab CI/CD is currently in beta. Features and functionali...",
+      "keywords": [
+        "claude",
+        "gitlab",
+        "bedrock",
+        "job",
+        "code",
+        "vertex",
+        "api",
+        "aws",
+        "variables",
+        "project",
+        "google",
+        "provider",
+        "oidc",
+        "note",
+        "add",
+        "setup",
+        "runs",
+        "example",
+        "iam",
+        "role"
+      ],
+      "word_count": 2347,
+      "file_path": "docs/gitlab-ci-cd.md"
+    },
+    "/google-vertex-ai": {
+      "title": "Claude Code on Google Vertex AI",
+      "content_preview": "# Claude Code on Google Vertex AI  > Learn about configuring Claude Code through Google Vertex AI, including setup, IAM configuration, and troubleshooting.  ## Prerequisites  Before configuring Claude...",
+      "keywords": [
+        "vertex",
+        "claude",
+        "model",
+        "note",
+        "code",
+        "models",
+        "google",
+        "cloud",
+        "gcp",
+        "access",
+        "support",
+        "supported",
+        "region",
+        "endpoints",
+        "may",
+        "environment",
+        "set",
+        "iam",
+        "configuration",
+        "project"
+      ],
+      "word_count": 720,
+      "file_path": "docs/google-vertex-ai.md"
+    },
+    "/headless": {
+      "title": "Headless mode",
+      "content_preview": "# Headless mode  > Run Claude Code programmatically without interactive UI  ## Overview  The headless mode allows you to run Claude Code programmatically from command line scripts and automation tools...",
+      "keywords": [
+        "json",
+        "message",
+        "output",
+        "list",
+        "each",
+        "mode",
+        "tools",
+        "cli",
+        "format",
+        "turn",
+        "input",
+        "run",
+        "claude",
+        "code",
+        "interactive",
+        "conversation",
+        "separated",
+        "multi",
+        "conversations",
+        "headless"
+      ],
+      "word_count": 947,
+      "file_path": "docs/headless.md"
+    },
+    "/hooks-guide": {
+      "title": "Get started with Claude Code hooks",
+      "content_preview": "# Get started with Claude Code hooks  > Learn how to customize and extend Claude Code's behavior by registering shell commands  Claude Code hooks are user-defined shell commands that execute at variou...",
+      "keywords": [
+        "hooks",
+        "claude",
+        "code",
+        "run",
+        "file",
+        "hook",
+        "path",
+        "runs",
+        "command",
+        "content",
+        "see",
+        "when",
+        "reference",
+        "json",
+        "markdown",
+        "sys",
+        "get",
+        "input",
+        "formatting",
+        "data"
+      ],
+      "word_count": 1137,
+      "file_path": "docs/hooks-guide.md"
+    },
+    "/hooks": {
+      "title": "Hooks reference",
+      "content_preview": "# Hooks reference  > This page provides reference documentation for implementing hooks in Claude Code.  <Tip>   For a quickstart guide with examples, see [Get started with Claude Code hooks](/en/docs/...",
+      "keywords": [
+        "hooks",
+        "claude",
+        "hook",
+        "tool",
+        "code",
+        "user",
+        "prompt",
+        "environment",
+        "context",
+        "input",
+        "output",
+        "when",
+        "only",
+        "execution",
+        "plugin",
+        "mcp",
+        "json",
+        "shown",
+        "runs",
+        "session"
+      ],
+      "word_count": 4468,
+      "file_path": "docs/hooks.md"
+    },
+    "/iam": {
+      "title": "Identity and Access Management",
+      "content_preview": "# Identity and Access Management  > Learn how to configure user authentication, authorization, and access controls for Claude Code in your organization.  ## Authentication methods  Setting up Claude C...",
+      "keywords": [
+        "claude",
+        "code",
+        "permission",
+        "settings",
+        "tool",
+        "rules",
+        "access",
+        "files",
+        "matches",
+        "user",
+        "api",
+        "users",
+        "file",
+        "console",
+        "system",
+        "permissions",
+        "directory",
+        "warning",
+        "authentication",
+        "set"
+      ],
+      "word_count": 1453,
+      "file_path": "docs/iam.md"
+    },
+    "/interactive-mode": {
+      "title": "Interactive mode",
+      "content_preview": "# Interactive mode  > Complete reference for keyboard shortcuts, input modes, and interactive features in Claude Code sessions.  ## Keyboard shortcuts  <Note>   Keyboard shortcuts may vary by platform...",
+      "keywords": [
+        "command",
+        "mode",
+        "claude",
+        "commands",
+        "line",
+        "code",
+        "search",
+        "press",
+        "normal",
+        "background",
+        "history",
+        "end",
+        "input",
+        "previous",
+        "bash",
+        "output",
+        "shortcuts",
+        "conversation",
+        "run",
+        "insert"
+      ],
+      "word_count": 1084,
+      "file_path": "docs/interactive-mode.md"
+    },
+    "/jetbrains": {
+      "title": "JetBrains IDEs",
+      "content_preview": "# JetBrains IDEs  > Use Claude Code with JetBrains IDEs including IntelliJ, PyCharm, WebStorm, and more  Claude Code integrates with JetBrains IDEs through a dedicated plugin, providing features like ...",
+      "keywords": [
+        "claude",
+        "code",
+        "ide",
+        "plugin",
+        "jetbrains",
+        "command",
+        "settings",
+        "wsl",
+        "terminal",
+        "configuration",
+        "restart",
+        "may",
+        "ides",
+        "remote",
+        "installed",
+        "when",
+        "features",
+        "diff",
+        "automatically",
+        "auto"
+      ],
+      "word_count": 846,
+      "file_path": "docs/jetbrains.md"
+    },
+    "/legal-and-compliance": {
+      "title": "Legal and compliance",
+      "content_preview": "# Legal and compliance  > Legal agreements, compliance certifications, and security information for Claude Code.  ## Legal agreements  ### License  Your use of Claude Code is subject to:  * [Commercia...",
+      "keywords": [
+        "claude",
+        "code",
+        "baa",
+        "compliance",
+        "security",
+        "anthropic",
+        "legal",
+        "agreements",
+        "commercial",
+        "terms",
+        "api",
+        "through",
+        "customer",
+        "trust",
+        "information",
+        "subject",
+        "users",
+        "agreement",
+        "applicable",
+        "certifications"
+      ],
+      "word_count": 199,
+      "file_path": "docs/legal-and-compliance.md"
+    },
+    "/llm-gateway": {
+      "title": "LLM gateway configuration",
+      "content_preview": "# LLM gateway configuration  > Learn how to configure Claude Code with LLM gateway solutions, including LiteLLM setup, authentication methods, and enterprise features like usage tracking and budget ma...",
+      "keywords": [
+        "litellm",
+        "through",
+        "claude",
+        "code",
+        "model",
+        "api",
+        "endpoint",
+        "key",
+        "using",
+        "pass",
+        "configuration",
+        "authentication",
+        "tracking",
+        "llm",
+        "configure",
+        "usage",
+        "proxy",
+        "helper",
+        "gateway",
+        "setup"
+      ],
+      "word_count": 459,
+      "file_path": "docs/llm-gateway.md"
+    },
+    "/mcp": {
+      "title": "Connect Claude Code to tools via MCP",
+      "content_preview": "# Connect Claude Code to tools via MCP  > Learn how to connect Claude Code to your tools with the Model Context Protocol.  export const MCPServersTable = ({platform = \"all\"}) => {   const generateClaudeCodeCommand = server => {     if (server.customCommands && server.customCommands.claudeCode) {",
+      "keywords": [
+        "mcp",
+        "servers",
+        "server",
+        "true",
+        "https",
+        "documentation",
+        "claude",
+        "com",
+        "claudecode",
+        "urls",
+        "category",
+        "authentication",
+        "name",
+        "false",
+        "availability",
+        "mcpconnector",
+        "claudedesktop",
+        "description",
+        "http",
+        "type"
+      ],
+      "word_count": 4892,
+      "file_path": "docs/mcp.md"
+    },
+    "/memory": {
+      "title": "Manage Claude's memory",
+      "content_preview": "# Manage Claude's memory  > Learn how to manage Claude Code's memory across sessions with different memory locations and best practices.  Claude Code can remember your preferences across sessions, lik...",
+      "keywords": [
+        "claude",
+        "memory",
+        "code",
+        "files",
+        "project",
+        "memories",
+        "preferences",
+        "organization",
+        "across",
+        "instructions",
+        "team",
+        "specific",
+        "imports",
+        "file",
+        "commands",
+        "purpose",
+        "shared",
+        "enterprise",
+        "personal",
+        "local"
+      ],
+      "word_count": 768,
+      "file_path": "docs/memory.md"
+    },
+    "/model-config": {
+      "title": "Model configuration",
+      "content_preview": "# Model configuration  > Learn about the Claude Code model configuration, including model aliases like `opusplan`  ## Available models  For the `model` setting in Claude Code, you can either configure:  * A **model alias** * A full **[model name](/en/docs/about-claude/models/overview#model-names)**",
+      "keywords": [
+        "model",
+        "caching",
+        "models",
+        "prompt",
+        "settings",
+        "uses",
+        "setting",
+        "sonnet",
+        "mode",
+        "disable",
+        "code",
+        "opus",
+        "set",
+        "claude",
+        "aliases",
+        "behavior",
+        "context",
+        "plan",
+        "environment",
+        "when"
+      ],
+      "word_count": 692,
+      "file_path": "docs/model-config.md"
+    },
+    "/monitoring-usage": {
+      "title": "Monitoring",
+      "content_preview": "# Monitoring  > Learn how to enable and configure OpenTelemetry for Claude Code.  Claude Code supports OpenTelemetry (OTel) metrics and events for monitoring and observability.  All metrics are time s...",
+      "keywords": [
+        "attributes",
+        "metrics",
+        "claude",
+        "code",
+        "tool",
+        "events",
+        "standard",
+        "when",
+        "opentelemetry",
+        "user",
+        "event",
+        "logs",
+        "default",
+        "settings",
+        "name",
+        "monitoring",
+        "note",
+        "number",
+        "request",
+        "api"
+      ],
+      "word_count": 2321,
+      "file_path": "docs/monitoring-usage.md"
+    },
+    "/network-config": {
+      "title": "Enterprise network configuration",
+      "content_preview": "# Enterprise network configuration  > Configure Claude Code for enterprise environments with proxy servers, custom Certificate Authorities (CA), and mutual Transport Layer Security (mTLS) authenticati...",
+      "keywords": [
+        "claude",
+        "code",
+        "proxy",
+        "authentication",
+        "environment",
+        "variables",
+        "enterprise",
+        "network",
+        "custom",
+        "security",
+        "note",
+        "configuration",
+        "environments",
+        "certificate",
+        "mtls",
+        "through",
+        "access",
+        "configure",
+        "servers",
+        "authorities"
+      ],
+      "word_count": 348,
+      "file_path": "docs/network-config.md"
+    },
+    "/output-styles": {
+      "title": "Output styles",
+      "content_preview": "# Output styles  > [DEPRECATED] Adapt Claude Code for uses beyond software engineering  <Warning>   Output styles are **DEPRECATED.**  On **November 5, 2025** or later, we'll   stop supporting the out...",
+      "keywords": [
+        "output",
+        "styles",
+        "claude",
+        "code",
+        "system",
+        "prompt",
+        "style",
+        "explanatory",
+        "plugin",
+        "default",
+        "custom",
+        "plugins",
+        "deprecated",
+        "software",
+        "engineering",
+        "reference",
+        "also",
+        "insights",
+        "november",
+        "own"
+      ],
+      "word_count": 786,
+      "file_path": "docs/output-styles.md"
+    },
+    "/overview": {
+      "title": "Claude Code overview",
+      "content_preview": "# Claude Code overview  > Learn about Claude Code, Anthropic's agentic coding tool that lives in your terminal and helps you turn ideas into code faster than ever before.  ## Get started in 30 seconds...",
+      "keywords": [
+        "claude",
+        "code",
+        "card",
+        "title",
+        "docs",
+        "icon",
+        "href",
+        "tab",
+        "ide",
+        "terminal",
+        "issues",
+        "cardgroup",
+        "common",
+        "about",
+        "quickstart",
+        "troubleshooting",
+        "works",
+        "fix",
+        "codebase",
+        "google"
+      ],
+      "word_count": 591,
+      "file_path": "docs/overview.md"
+    },
+    "/plugin-marketplaces": {
+      "title": "Plugin marketplaces",
+      "content_preview": "# Plugin marketplaces  > Create and manage plugin marketplaces to distribute Claude Code extensions across teams and communities.  Plugin marketplaces are catalogs of available plugins that make it ea...",
+      "keywords": [
+        "plugin",
+        "marketplace",
+        "marketplaces",
+        "plugins",
+        "string",
+        "fields",
+        "team",
+        "file",
+        "git",
+        "repository",
+        "create",
+        "sources",
+        "github",
+        "add",
+        "field",
+        "description",
+        "code",
+        "distribution",
+        "json",
+        "required"
+      ],
+      "word_count": 1651,
+      "file_path": "docs/plugin-marketplaces.md"
+    },
+    "/plugins-reference": {
+      "title": "Plugins reference",
+      "content_preview": "# Plugins reference  > Complete technical reference for Claude Code plugin system, including schemas, CLI commands, and component specifications.  <Tip>   For hands-on tutorials and practical usage, see [Plugins](/en/docs/claude-code/plugins). For plugin management across teams and communities, see",
+      "keywords": [
+        "plugin",
+        "claude",
+        "mcp",
+        "commands",
+        "skills",
+        "string",
+        "plugins",
+        "files",
+        "paths",
+        "code",
+        "root",
+        "file",
+        "agents",
+        "when",
+        "servers",
+        "location",
+        "directory",
+        "agent",
+        "path",
+        "reference"
+      ],
+      "word_count": 1474,
+      "file_path": "docs/plugins-reference.md"
+    },
+    "/plugins": {
+      "title": "Plugins",
+      "content_preview": "# Plugins  > Extend Claude Code with custom commands, agents, hooks, Skills, and MCP servers through the plugin system.  <Tip>   For complete technical specifications and schemas, see [Plugins referen...",
+      "keywords": [
+        "plugin",
+        "plugins",
+        "step",
+        "create",
+        "see",
+        "marketplace",
+        "commands",
+        "claude",
+        "team",
+        "add",
+        "test",
+        "skills",
+        "marketplaces",
+        "title",
+        "code",
+        "install",
+        "directory",
+        "command",
+        "components",
+        "hooks"
+      ],
+      "word_count": 1553,
+      "file_path": "docs/plugins.md"
+    },
+    "/quickstart": {
+      "title": "Quickstart",
+      "content_preview": "# Quickstart  > Welcome to Claude Code!  This quickstart guide will have you using AI-powered coding assistance in just a few minutes. By the end, you'll understand how to use Claude Code for common d...",
+      "keywords": [
+        "claude",
+        "code",
+        "step",
+        "title",
+        "note",
+        "commands",
+        "accordion",
+        "card",
+        "command",
+        "account",
+        "common",
+        "tab",
+        "log",
+        "start",
+        "first",
+        "see",
+        "ask",
+        "tasks",
+        "make",
+        "one"
+      ],
+      "word_count": 1249,
+      "file_path": "docs/quickstart.md"
+    },
+    "/sandboxing": {
+      "title": "Sandboxing",
+      "content_preview": "# Sandboxing  > Learn how Claude Code's sandboxed bash tool provides filesystem and network isolation for safer, more autonomous agent execution.  ## Overview  Claude Code features native sandboxing t...",
+      "keywords": [
+        "sandbox",
+        "access",
+        "network",
+        "claude",
+        "code",
+        "security",
+        "sandboxing",
+        "permission",
+        "system",
+        "isolation",
+        "filesystem",
+        "commands",
+        "cannot",
+        "settings",
+        "through",
+        "configuration",
+        "bash",
+        "when",
+        "outside",
+        "may"
+      ],
+      "word_count": 1518,
+      "file_path": "docs/sandboxing.md"
+    },
+    "/sdk/migration-guide": {
+      "title": "Migrate to Claude Agent SDK",
+      "content_preview": "# Migrate to Claude Agent SDK  > Guide for migrating the Claude Code TypeScript and Python SDKs to the Claude Agent SDK  ## Overview  The Claude Code SDK has been renamed to the **Claude Agent SDK** a...",
+      "keywords": [
+        "sdk",
+        "claude",
+        "code",
+        "package",
+        "agent",
+        "python",
+        "agents",
+        "changed",
+        "documentation",
+        "new",
+        "changes",
+        "migration",
+        "imports",
+        "settings",
+        "name",
+        "update",
+        "guide",
+        "typescript",
+        "change",
+        "what"
+      ],
+      "word_count": 1172,
+      "file_path": "docs/sdk__migration-guide.md"
+    },
+    "/security": {
+      "title": "Security",
+      "content_preview": "# Security  > Learn about Claude Code's security safeguards and best practices for safe usage.  ## How we approach security  ### Security foundation  Your code's security is paramount. Claude Code is built with security at its core, developed according to Anthropic's comprehensive security program.",
+      "keywords": [
+        "code",
+        "security",
+        "claude",
+        "permission",
+        "commands",
+        "access",
+        "approval",
+        "mcp",
+        "when",
+        "network",
+        "user",
+        "servers",
+        "trust",
+        "users",
+        "bash",
+        "safeguards",
+        "practices",
+        "anthropic",
+        "permissions",
+        "default"
+      ],
+      "word_count": 1110,
+      "file_path": "docs/security.md"
+    },
+    "/settings": {
+      "title": "Claude Code settings",
+      "content_preview": "# Claude Code settings  > Configure Claude Code with global and project-level settings, and environment variables.  Claude Code offers a variety of settings to configure its behavior to meet your need...",
+      "keywords": [
+        "claude",
+        "settings",
+        "code",
+        "set",
+        "see",
+        "when",
+        "configuration",
+        "files",
+        "mcp",
+        "project",
+        "commands",
+        "custom",
+        "using",
+        "enterprise",
+        "model",
+        "default",
+        "tool",
+        "permission",
+        "rules",
+        "bash"
+      ],
+      "word_count": 2918,
+      "file_path": "docs/settings.md"
+    },
+    "/setup": {
+      "title": "Set up Claude Code",
+      "content_preview": "# Set up Claude Code  > Install, authenticate, and start using Claude Code on your development machine.  ## System requirements  * **Operating Systems**: macOS 10.15+, Ubuntu 20.04+/Debian 10+, or Win...",
+      "keywords": [
+        "claude",
+        "code",
+        "installation",
+        "windows",
+        "note",
+        "wsl",
+        "native",
+        "install",
+        "npm",
+        "see",
+        "updates",
+        "automatically",
+        "auto",
+        "update",
+        "macos",
+        "git",
+        "tab",
+        "linux",
+        "option",
+        "tip"
+      ],
+      "word_count": 900,
+      "file_path": "docs/setup.md"
+    },
+    "/skills": {
+      "title": "Agent Skills",
+      "content_preview": "# Agent Skills  > Create, manage, and share Skills to extend Claude's capabilities in Claude Code.  This guide shows you how to create, use, and manage Agent Skills in Claude Code. Skills are modular ...",
+      "keywords": [
+        "skills",
+        "claude",
+        "agent",
+        "skill",
+        "card",
+        "when",
+        "project",
+        "create",
+        "code",
+        "scripts",
+        "files",
+        "them",
+        "personal",
+        "tools",
+        "capabilities",
+        "team",
+        "note",
+        "agents",
+        "title",
+        "icon"
+      ],
+      "word_count": 2082,
+      "file_path": "docs/skills.md"
+    },
+    "/slash-commands": {
+      "title": "Slash commands",
+      "content_preview": "# Slash commands  > Control Claude's behavior during an interactive session with slash commands.  ## Built-in slash commands  | Command                   | Purpose                                     ...",
+      "keywords": [
+        "commands",
+        "command",
+        "slash",
+        "claude",
+        "tool",
+        "arguments",
+        "mcp",
+        "code",
+        "custom",
+        "file",
+        "when",
+        "specific",
+        "project",
+        "files",
+        "example",
+        "server",
+        "prompts",
+        "description",
+        "available",
+        "plugin"
+      ],
+      "word_count": 2275,
+      "file_path": "docs/slash-commands.md"
+    },
+    "/statusline": {
+      "title": "Status line configuration",
+      "content_preview": "# Status line configuration  > Create a custom status line for Claude Code to display contextual information  Make Claude Code your own with a custom status line that displays at the bottom of the Claude Code interface, similar to how terminal prompts (PS1) work in shells like Oh-my-zsh.  ## Create",
+      "keywords": [
+        "line",
+        "status",
+        "claude",
+        "code",
+        "json",
+        "custom",
+        "script",
+        "create",
+        "information",
+        "terminal",
+        "command",
+        "example",
+        "contextual",
+        "make",
+        "like",
+        "run",
+        "about",
+        "stdout",
+        "via",
+        "stdin"
+      ],
+      "word_count": 747,
+      "file_path": "docs/statusline.md"
+    },
+    "/sub-agents": {
+      "title": "Subagents",
+      "content_preview": "# Subagents  > Create and use specialized AI subagents in Claude Code for task-specific workflows and improved context management.  Custom subagents in Claude Code are specialized AI assistants that c...",
+      "keywords": [
+        "subagents",
+        "subagent",
+        "tools",
+        "claude",
+        "specific",
+        "available",
+        "code",
+        "agents",
+        "context",
+        "model",
+        "custom",
+        "main",
+        "plugin",
+        "when",
+        "card",
+        "title",
+        "step",
+        "level",
+        "access",
+        "project"
+      ],
+      "word_count": 2045,
+      "file_path": "docs/sub-agents.md"
+    },
+    "/terminal-config": {
+      "title": "Optimize your terminal setup",
+      "content_preview": "# Optimize your terminal setup  > Claude Code works best when your terminal is properly configured. Follow these guidelines to optimize your experience.  ### Themes and appearance  Claude cannot contr...",
+      "keywords": [
+        "code",
+        "terminal",
+        "claude",
+        "iterm",
+        "notification",
+        "set",
+        "when",
+        "enter",
+        "option",
+        "open",
+        "profiles",
+        "alerts",
+        "long",
+        "optimize",
+        "setup",
+        "configured",
+        "these",
+        "theme",
+        "via",
+        "configure"
+      ],
+      "word_count": 390,
+      "file_path": "docs/terminal-config.md"
+    },
+    "/third-party-integrations": {
+      "title": "Enterprise deployment overview",
+      "content_preview": "# Enterprise deployment overview  > Learn how Claude Code can integrate with various third-party services and infrastructure to meet enterprise deployment requirements.  This page provides an overview...",
+      "keywords": [
+        "claude",
+        "code",
+        "gateway",
+        "proxy",
+        "deployment",
+        "llm",
+        "configuration",
+        "bedrock",
+        "vertex",
+        "aws",
+        "card",
+        "corporate",
+        "enterprise",
+        "google",
+        "authentication",
+        "more",
+        "infrastructure",
+        "provider",
+        "gcp",
+        "network"
+      ],
+      "word_count": 887,
+      "file_path": "docs/third-party-integrations.md"
+    },
+    "/troubleshooting": {
+      "title": "Troubleshooting",
+      "content_preview": "# Troubleshooting  > Discover solutions to common issues with Claude Code installation and usage.  ## Common installation issues  ### Windows installation issues: errors in WSL  You might encounter th...",
+      "keywords": [
+        "wsl",
+        "code",
+        "claude",
+        "windows",
+        "issues",
+        "installation",
+        "markdown",
+        "formatting",
+        "linux",
+        "nvm",
+        "may",
+        "run",
+        "node",
+        "ide",
+        "file",
+        "native",
+        "using",
+        "when",
+        "path",
+        "shell"
+      ],
+      "word_count": 1681,
+      "file_path": "docs/troubleshooting.md"
+    },
+    "/vs-code": {
+      "title": "Visual Studio Code",
+      "content_preview": "# Visual Studio Code  > Use Claude Code with Visual Studio Code through our native extension or CLI integration  <img src=\"https://mintcdn.com/anthropic-claude-docs/Xfpgr-ckk38MZnw3/images/vs-code-ext...",
+      "keywords": [
+        "code",
+        "claude",
+        "extension",
+        "xfpgr",
+        "ckk",
+        "mznw",
+        "interface",
+        "auto",
+        "cli",
+        "images",
+        "ide",
+        "command",
+        "integration",
+        "jpg",
+        "https",
+        "mintcdn",
+        "com",
+        "anthropic",
+        "docs",
+        "fit"
+      ],
+      "word_count": 1019,
+      "file_path": "docs/vs-code.md"
+    }
   }
 }

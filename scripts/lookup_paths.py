@@ -424,6 +424,83 @@ def print_validation_report(stats: ValidationStats):
     print("="*70)
 
 
+def load_search_index() -> Optional[Dict]:
+    """Load full-text search index"""
+    index_file = Path("docs/.search_index.json")
+    if not index_file.exists():
+        return None
+
+    try:
+        with open(index_file) as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"Error loading search index: {e}")
+        return None
+
+
+def search_content(query: str, index: Dict, max_results: int = 20) -> List[Dict]:
+    """
+    Search document content for query.
+
+    Returns list of matching documents with relevance scores.
+    """
+    if not index or "index" not in index:
+        return []
+
+    query_lower = query.lower()
+    query_words = set(query_lower.split())
+
+    results = []
+
+    for path, doc in index["index"].items():
+        # Calculate relevance score
+        score = 0
+
+        # Title match (highest weight)
+        if query_lower in doc.get("title", "").lower():
+            score += 100
+
+        # Keyword match (medium weight)
+        keywords = doc.get("keywords", [])
+        keyword_matches = len(query_words & set(keywords))
+        score += keyword_matches * 10
+
+        # Preview match (low weight)
+        preview = doc.get("content_preview", "")
+        if query_lower in preview.lower():
+            score += 20
+
+        # Exact word matches in keywords (bonus)
+        for word in query_words:
+            if word in keywords:
+                score += 5
+
+        if score > 0:
+            results.append({
+                "path": path,
+                "title": doc.get("title", "Untitled"),
+                "score": score,
+                "preview": preview,
+                "file": doc.get("file_path", ""),
+                "keywords": keywords[:5]  # Top 5 keywords
+            })
+
+    # Sort by score descending
+    results.sort(key=lambda x: x["score"], reverse=True)
+
+    return results[:max_results]
+
+
+def format_content_result(result: Dict, index: int) -> str:
+    """Format content search result for display"""
+    return (
+        f"\n{index}. {result['title']} (score: {result['score']})\n"
+        f"   Path: {result['path']}\n"
+        f"   Keywords: {', '.join(result['keywords'])}\n"
+        f"   Preview: {result['preview'][:150]}{'...' if len(result['preview']) > 150 else ''}\n"
+    )
+
+
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(
@@ -431,9 +508,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Search for paths
+  # Search for paths (by name)
   %(prog)s "prompt engineering"
   %(prog)s "mcp"
+
+  # Search documentation content (full-text)
+  %(prog)s --search-content "extended thinking"
+  %(prog)s --search-content "tool use"
 
   # Validate specific path
   %(prog)s --check /en/docs/claude-code/hooks
@@ -481,6 +562,12 @@ Examples:
     )
 
     parser.add_argument(
+        '--search-content',
+        metavar='QUERY',
+        help='Search documentation content (full-text search)'
+    )
+
+    parser.add_argument(
         '--manifest',
         type=Path,
         default=Path('paths_manifest.json'),
@@ -514,7 +601,27 @@ Examples:
     logger.setLevel(getattr(logging, args.log_level))
 
     try:
-        # Load manifest
+        # Handle content search first (doesn't need manifest)
+        if args.search_content:
+            index = load_search_index()
+            if not index:
+                print("❌ Search index not found.")
+                print("Run: python scripts/build_search_index.py")
+                return 1
+
+            print(f"Searching content for: '{args.search_content}'")
+            results = search_content(args.search_content, index, args.max_results)
+
+            if results:
+                print(f"\n✅ Found {len(results)} matching documents:\n")
+                for i, result in enumerate(results, 1):
+                    print(format_content_result(result, i))
+            else:
+                print("No matching documents found.")
+
+            return 0
+
+        # Load manifest for path-based operations
         manifest = load_paths_manifest(args.manifest)
 
         # Determine operation mode
