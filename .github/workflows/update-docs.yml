@@ -1,0 +1,98 @@
+name: Update Claude Code Documentation
+
+on:
+  schedule:
+    # Run every 3 hours (at 00:00, 03:00, 06:00, 09:00, 12:00, 15:00, 18:00, 21:00 UTC)
+    - cron: '0 */3 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        ref: main
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r scripts/requirements.txt
+    
+    - name: Fetch latest documentation
+      id: fetch-docs
+      env:
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_REF_NAME: ${{ github.ref_name }}
+      run: |
+        python scripts/fetch_claude_docs.py || echo "fetch_failed=true" >> $GITHUB_OUTPUT
+      continue-on-error: true
+    
+    - name: Check for changes
+      id: verify-changed-files
+      run: |
+        git diff --exit-code || echo "changed=true" >> $GITHUB_OUTPUT
+    
+    - name: Generate commit message
+      if: steps.verify-changed-files.outputs.changed == 'true'
+      id: commit-msg
+      run: |
+        # Stage changes to see what will be committed
+        git add -A docs/
+        
+        # Get list of changed files
+        CHANGED_FILES=$(git diff --name-status --cached | grep "^M" | cut -f2 | grep -E "\.md$" | sed 's/docs\///' | paste -sd ", " -)
+        ADDED_FILES=$(git diff --name-status --cached | grep "^A" | cut -f2 | grep -E "\.md$" | sed 's/docs\///' | paste -sd ", " -)
+        DELETED_FILES=$(git diff --name-status --cached | grep "^D" | cut -f2 | grep -E "\.md$" | sed 's/docs\///' | paste -sd ", " -)
+        
+        # Build commit message
+        COMMIT_MSG="Update Claude Code docs - $(date +'%Y-%m-%d')"
+        
+        if [ -n "$CHANGED_FILES" ]; then
+          COMMIT_MSG="$COMMIT_MSG | Updated: $CHANGED_FILES"
+        fi
+        
+        if [ -n "$ADDED_FILES" ]; then
+          COMMIT_MSG="$COMMIT_MSG | Added: $ADDED_FILES"
+        fi
+        
+        if [ -n "$DELETED_FILES" ]; then
+          COMMIT_MSG="$COMMIT_MSG | Removed: $DELETED_FILES"
+        fi
+        
+        echo "message=$COMMIT_MSG" >> $GITHUB_OUTPUT
+    
+    - name: Commit and push if changed
+      if: steps.verify-changed-files.outputs.changed == 'true'
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        # Files already staged in previous step
+        git commit -m "${{ steps.commit-msg.outputs.message }}"
+        git push
+    
+    - name: Create issue on failure
+      if: steps.fetch-docs.outputs.fetch_failed == 'true'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const date = new Date().toISOString().split('T')[0];
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `Documentation update failed - ${date}`,
+            body: `The automated documentation update failed on ${date}.\n\nPlease check the [workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) for details.`,
+            labels: ['bug', 'automation']
+          })
