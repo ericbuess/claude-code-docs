@@ -10,8 +10,8 @@ Execute the `Workflow` and `Report` sections to understand the codebase then sum
 
 - Run `git ls-files` to list all files in the repository.
 - Read `README.md` for an overview of the project.
-- Read `analysis/` for an overview of the original project state and additional information.
-- Read `specs/` for an overview of the current implementation and enhancment state.
+- Read `docs-dev/analysis/` for an overview of the original project state and additional information.
+- Read `docs-dev/specs/` for an overview of the current implementation and enhancement state.
 
 ## Report
 

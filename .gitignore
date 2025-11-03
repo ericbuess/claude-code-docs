@@ -56,3 +56,9 @@ sample_paths.txt
 # Backup files
 *.backup
 *.backup.*
+
+# Keep important directories
+!docs/
+!scripts/
+!tests/
+!docs-dev/
