@@ -37,7 +37,8 @@ jobs:
         GITHUB_REPOSITORY: ${{ github.repository }}
         GITHUB_REF_NAME: ${{ github.ref_name }}
       run: |
-        python scripts/fetch_claude_docs.py || echo "fetch_failed=true" >> $GITHUB_OUTPUT
+        # Use enhanced main.py fetcher with fallback to upstream fetch_claude_docs.py
+        python scripts/main.py --update-all || python scripts/fetch_claude_docs.py || echo "fetch_failed=true" >> $GITHUB_OUTPUT
       continue-on-error: true
     
     - name: Check for changes

@@ -594,7 +594,7 @@ def update_search_index(manifest: dict, docs_dir: Path):
     }
     """
 
-def sync_with_costiash_format():
+def sync_with_ericbuess_format():
     """
     Ensure compatibility with upstream format.
     """
@@ -693,7 +693,7 @@ Ensure all functions from Task 2.1 are implemented and working.
 - [ ] All scripts have working CLI interfaces
 - [ ] Error handling works correctly
 - [ ] Rate limiting prevents server overload
-- [ ] Scripts match costiash approach
+- [ ] Scripts match ericbuess approach
 
 **Testing Checklist**:
 ```bash
@@ -744,7 +744,7 @@ Provide summary including:
 PHASE 4: INTEGRATION & ADAPTATION
 
 **Context**:
-I am implementing Phase 4 of the Claude Code Documentation Mirror project. This phase integrates everything with the costiash structure and sets up automation.
+I am implementing Phase 4 of the Claude Code Documentation Mirror project. This phase integrates everything with the ericbuess structure and sets up automation.
 
 **Prerequisites**:
 - Phases 1-3 complete
@@ -760,14 +760,14 @@ I am implementing Phase 4 of the Claude Code Documentation Mirror project. This 
 
 **Objective**:
 Complete all 4 tasks of Phase 4:
-1. Match costiash directory structure
+1. Match ericbuess directory structure
 2. Configure .claude/ integration
 3. Setup GitHub Actions workflows
 4. Configure version control
 
 **Detailed Tasks**:
 
-TASK 4.1 - Match costiash Directory Structure:
+TASK 4.1 - Match ericbuess Directory Structure:
 
 1. Create standard directory hierarchy:
 ```bash
@@ -1082,7 +1082,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Initial Release
 - Project setup and structure
 - Basic path extraction
-- Integration with costiash/claude-code-docs approach
+- Integration with ericbuess/claude-code-docs approach
 ```
 
 2. Update `.gitignore`:
@@ -1140,7 +1140,7 @@ Phase 4 complete"
 ```
 
 **Success Criteria**:
-- [ ] Directory structure matches costiash
+- [ ] Directory structure matches ericbuess
 - [ ] All scripts moved to scripts/ and working
 - [ ] `.claude/commands/` has 4 command files
 - [ ] `/docs` command functional

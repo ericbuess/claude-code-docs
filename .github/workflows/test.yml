@@ -1,0 +1,55 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, master, development ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[dev]"
+          pip install pytest pytest-cov pytest-asyncio
+
+      - name: Run unit tests
+        run: |
+          if [ -d "tests/unit" ] && [ "$(ls -A tests/unit)" ]; then
+            pytest tests/unit/ -v --cov=scripts
+          else
+            echo "Unit tests not yet implemented"
+          fi
+
+      - name: Run integration tests
+        run: |
+          if [ -d "tests/integration" ] && [ "$(ls -A tests/integration)" ]; then
+            pytest tests/integration/ -v
+          else
+            echo "Integration tests not yet implemented"
+          fi
+
+      - name: Generate coverage report
+        run: |
+          if [ -d "tests/unit" ] && [ "$(ls -A tests/unit)" ]; then
+            pytest --cov=scripts --cov-report=xml --cov-report=term
+          else
+            echo "Skipping coverage - tests not yet implemented"
+          fi
+
+      - name: Upload coverage to Codecov
+        if: hashFiles('coverage.xml') != ''
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
