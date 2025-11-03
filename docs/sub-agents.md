@@ -241,39 +241,6 @@ Request a specific subagent by mentioning it in your command:
 > Ask the debugger subagent to investigate this error
 ```
 
-## Built-in subagents
-
-Claude Code includes built-in subagents that are available out of the box:
-
-### Plan subagent
-
-The Plan subagent is a specialized built-in agent designed for use during plan mode. When Claude is operating in plan mode (non-execution mode), it uses the Plan subagent to conduct research and gather information about your codebase before presenting a plan.
-
-**Key characteristics:**
-
-* **Model**: Uses Sonnet for more capable analysis
-* **Tools**: Has access to Read, Glob, Grep, and Bash tools for codebase exploration
-* **Purpose**: Searches files, analyzes code structure, and gathers context
-* **Automatic invocation**: Claude automatically uses this agent when in plan mode and needs to research the codebase
-
-**How it works:**
-When you're in plan mode and Claude needs to understand your codebase to create a plan, it delegates research tasks to the Plan subagent. This prevents infinite nesting of agents (subagents cannot spawn other subagents) while still allowing Claude to gather the necessary context.
-
-**Example scenario:**
-
-```
-User: [In plan mode] Help me refactor the authentication module
-
-Claude: Let me research your authentication implementation first...
-[Internally invokes Plan subagent to explore auth-related files]
-[Plan subagent searches codebase and returns findings]
-Claude: Based on my research, here's my proposed plan...
-```
-
-<Tip>
-  The Plan subagent is only used in plan mode. In normal execution mode, Claude uses the general-purpose agent or other custom subagents you've created.
-</Tip>
-
 ## Example subagents
 
 ### Code reviewer
@@ -406,65 +373,6 @@ For complex workflows, you can chain multiple subagents:
 ### Dynamic subagent selection
 
 Claude Code intelligently selects subagents based on context. Make your `description` fields specific and action-oriented for best results.
-
-### Resumable subagents
-
-Subagents can be resumed to continue previous conversations, which is particularly useful for long-running research or analysis tasks that need to be continued across multiple invocations.
-
-**How it works:**
-
-* Each subagent execution is assigned a unique `agentId`
-* The agent's conversation is stored in a separate transcript file: `agent-{agentId}.jsonl`
-* You can resume a previous agent by providing its `agentId` via the `resume` parameter
-* When resumed, the agent continues with full context from its previous conversation
-
-**Example workflow:**
-
-Initial invocation:
-
-```
-> Use the code-analyzer agent to start reviewing the authentication module
-
-[Agent completes initial analysis and returns agentId: "abc123"]
-```
-
-Resume the agent:
-
-```
-> Resume agent abc123 and now analyze the authorization logic as well
-
-[Agent continues with full context from previous conversation]
-```
-
-**Use cases:**
-
-* **Long-running research**: Break down large codebase analysis into multiple sessions
-* **Iterative refinement**: Continue refining a subagent's work without losing context
-* **Multi-step workflows**: Have a subagent work on related tasks sequentially while maintaining context
-
-**Technical details:**
-
-* Agent transcripts are stored in your project directory
-* Recording is disabled during resume to avoid duplicating messages
-* Both synchronous and asynchronous agents can be resumed
-* The `resume` parameter accepts the agent ID from a previous execution
-
-**Programmatic usage:**
-
-If you're using the Agent SDK or interacting with the AgentTool directly, you can pass the `resume` parameter:
-
-```typescript  theme={null}
-{
-  "description": "Continue analysis",
-  "prompt": "Now examine the error handling patterns",
-  "subagent_type": "code-analyzer",
-  "resume": "abc123"  // Agent ID from previous execution
-}
-```
-
-<Tip>
-  Keep track of agent IDs for tasks you may want to resume later. Claude Code displays the agent ID when a subagent completes its work.
-</Tip>
 
 ## Performance considerations
 
