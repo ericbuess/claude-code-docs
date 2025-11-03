@@ -1,354 +1,221 @@
-# CLAUDE.md
+# Claude Code Documentation Mirror - Project Instructions
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+> This file provides guidance to Claude Code when working in this repository.
+>
+> **Project Goal**: Build a production-ready Claude documentation mirror (550+ pages) with automated updates, enhanced features, and comprehensive testing.
 
-## Project Overview
+## Quick Context
 
-This is a **Claude Code Documentation Mirror** project designed to create a local mirror of Anthropic's Claude documentation (550+ pages) with automated updates and fast offline access. The project is currently in the **planning/specification phase** with a 7-phase implementation plan ready for execution.
+@README.md - Project overview and status
+@REPOSITORY_STRUCTURE.md - Repository organization
+@specs/IMPLEMENTATION_PLAN.md - Complete 7-phase roadmap
+@specs/IMPLEMENTATIONMONITOR.md - Progress tracking
 
-**Status**: Phase 0 complete (specifications created). Implementation awaits execution starting with Phase 1.
+**Current Status**: Phase 1 complete. Repository restructured with upstream integration. Ready for Phase 2.
 
-**Key Goal**: Build production-ready documentation fetching, mirroring, and validation system integrated with costiash/claude-code-docs approach.
+**Current Branch**: `development` (push here)
+**Upstream Reference**: `./upstream/` (costiash/claude-code-docs clone - reference only, gitignored)
 
-## Architecture Overview
+## Project Structure
 
-### Three-Document Planning System
+* **`docs/`** - 47 mirrored Claude Code documentation files (from upstream)
+* **`scripts/`** - Python utilities
+  * `fetch_claude_docs.py` - Upstream's production fetcher (reference)
+  * `main.py` - Our enhanced fetcher (to be developed)
+  * `extract_paths.py` - Path extraction and cleaning tool
+* **`specs/`** - Implementation planning documents (7-phase plan)
+* **`analysis/`** - Phase 1 analysis of upstream implementation
+* **`upstream/`** - Reference clone of costiash/claude-code-docs (gitignored)
+* **`.github/workflows/`** - GitHub Actions for automation
 
-The project uses a structured approach with three critical specification documents in `specs/`:
+## Code Style & Standards
 
-1. **IMPLEMENTATION_PLAN.md** - Complete 7-phase roadmap (8-9 hours of work)
-   - Detailed tasks, deliverables, and success criteria for each phase
-   - Technical decisions and rationale
-   - Timeline and validation requirements
+* Use Python 3.12+ features and type hints on all functions
+* Follow PEP 8 style guide
+* Write clear docstrings for all public functions
+* Test coverage target: **85% minimum** (enforced in CI/CD)
+* Use descriptive variable names over abbreviations
 
-2. **IMPLEMENTATIONMONITOR.md** - Progress tracking with checkboxes
-   - 28 tasks across 7 phases
-   - Phase completion tracking and sign-off sections
-   - Overall project status dashboard
+## Working with This Project
 
-3. **execution_template.md** - Ready-to-use prompts for Task tool
-   - Complete template prompts for each phase
-   - Designed for autonomous execution via Task tool with general-purpose agent
-   - **Critical**: Each phase template includes mandatory instructions to update IMPLEMENTATIONMONITOR.md
+### Git Workflow
 
-### Planned Final Architecture (Post-Implementation)
+* **Development branch**: All work happens here (current)
+* **Main branch**: Production-ready code only
+* Always commit with descriptive messages
+* Reference file:line numbers when discussing code (e.g., `scripts/main.py:42`)
 
-```
-claude-code-docs/
-├── docs/              # Mirrored documentation (550+ pages)
-│   └── en/
-│       ├── docs/      # Core documentation (~280 paths)
-│       ├── api/       # API reference (~95 paths)
-│       ├── prompt-library/  # Prompt library (~105 paths)
-│       └── resources/
-├── scripts/           # Python utilities (to be created)
-│   ├── main.py           # Documentation fetcher
-│   ├── extract_paths.py  # Path extraction & cleaning
-│   ├── lookup_paths.py   # Search & validation
-│   └── update_sitemap.py # Sitemap management
-├── tests/             # Test suite (85%+ coverage target)
-│   ├── unit/
-│   ├── integration/
-│   └── validation/
-├── .github/workflows/ # CI/CD automation
-│   ├── update-docs.yml   # Auto-update every 3 hours
-│   ├── test.yml          # Test suite
-│   └── validate.yml      # Daily validation
-├── .claude/           # Claude Code integration
-│   └── commands/
-│       ├── docs.md         # Natural language doc search
-│       ├── update-docs.md  # Trigger updates
-│       └── search-docs.md  # Path search
-├── specs/             # Implementation specifications
-├── upstream/          # Reference: costiash/claude-code-docs clone
-└── analysis/          # Analysis documents (created in Phase 1)
-```
+### Before Making Changes
 
-## Current State
+1. Read relevant specs in `@specs/IMPLEMENTATION_PLAN.md`
+2. Check `@specs/IMPLEMENTATIONMONITOR.md` for current progress
+3. Review `@analysis/` documents for upstream implementation patterns
 
-### Existing Files
+### After Completing Work
 
-- **temp.html** (3.8MB) - Complete sitemap of Claude documentation
-- **extracted_paths.txt** (631 paths) - Raw extraction (needs cleaning)
-- **extract_paths.py** - Basic path extraction (needs enhancement)
-- **main.py** - Placeholder (needs full implementation)
-- **pyproject.toml** - Project config (Python 3.12+, requests library)
+1. Update `@specs/IMPLEMENTATIONMONITOR.md` checkboxes
+2. Run tests before committing
+3. Update documentation if adding features
 
-### Specifications Created
+## Phase Execution Guidelines
 
-- `specs/IMPLEMENTATION_PLAN.md` - Comprehensive 7-phase plan
-- `specs/IMPLEMENTATIONMONITOR.md` - Detailed progress tracker
-- `specs/execution_template.md` - Phase execution templates
+### How to Execute Phases
 
-## Executing the Implementation
+* **Use Task tool with general-purpose agent** for all phase execution (see `@specs/execution_template.md`)
+* Each phase has a ready-to-use prompt template
+* ALWAYS update `@specs/IMPLEMENTATIONMONITOR.md` after completing tasks
+* Phases must be executed sequentially (1→2→3→4→5→6→7)
 
-### Phase Execution Workflow
+### Current Phase: Phase 2 - Path Extraction & Cleaning
 
-**CRITICAL**: Use the Task tool with general-purpose agent for each phase:
+Next steps:
+1. Enhance `scripts/extract_paths.py` with categorization logic
+2. Clean 631 raw paths → 550 unique paths
+3. Generate `paths_manifest.json` with categories
+4. Create statistics report
 
-1. **Read the phase template** from `specs/execution_template.md`
-2. **Copy the complete prompt** for the desired phase
-3. **Invoke Task tool**:
-   ```
-   Task(
-     subagent_type="general-purpose",
-     description="Phase X: [Phase Name]",
-     prompt="[Complete phase template from execution_template.md]"
-   )
-   ```
-4. **Agent autonomously executes** all tasks in the phase
-5. **Agent MUST update** `specs/IMPLEMENTATIONMONITOR.md` checkboxes
-6. **Verify completion** before proceeding to next phase
+Estimated time: 20 minutes
 
-### Phase Sequence (Must Execute in Order)
+### Phase Completion Checklist
 
-1. **Phase 1** (30min): Repository Setup & Analysis
-   - Clone costiash/claude-code-docs to `./upstream/`
-   - Analyze their structure and fetching mechanism
-   - Create analysis documents in `./analysis/`
+Before marking any phase complete:
+* ✅ All deliverables created
+* ✅ IMPLEMENTATIONMONITOR.md updated
+* ✅ Tests pass (if applicable)
+* ✅ Changes committed to `development` branch
 
-2. **Phase 2** (20min): Path Extraction & Cleaning
-   - Enhance `extract_paths.py` with categorization
-   - Clean 631 paths → 550 unique paths
-   - Generate `paths_manifest.json` with categories
-   - Create statistics report
+### 7-Phase Implementation Plan
 
-3. **Phase 3** (2hrs): Script Development
-   - Implement `main.py` as production fetcher (500+ lines)
-   - Create `update_sitemap.py` for sitemap management
-   - Create `lookup_paths.py` for search/validation
-   - Add CLI interfaces to all scripts
+1. **Phase 1** ✅ COMPLETE - Repository Setup & Analysis (30min)
+2. **Phase 2** ⏳ NEXT - Path Extraction & Cleaning (20min)
+3. **Phase 3** - Script Development (2hrs)
+4. **Phase 4** - Integration & Adaptation (1.5hrs)
+5. **Phase 5** - Comprehensive Testing (2.5hrs)
+6. **Phase 6** - Documentation (45min)
+7. **Phase 7** - Validation & QA (1hr)
 
-4. **Phase 4** (1.5hrs): Integration & Adaptation
-   - Reorganize to match costiash directory structure
-   - Configure `.claude/commands/` integration
-   - Setup GitHub Actions workflows
-   - Configure version control
+**Total**: 8-9 hours | **Progress**: 14% (4/28 tasks complete)
 
-5. **Phase 5** (2.5hrs): Comprehensive Testing Suite
-   - Create 20+ unit tests
-   - Create 10+ integration tests
-   - Create 15+ validation tests
-   - Setup CI/CD pipelines
-   - Target: 85%+ code coverage
+## Technical Specifications
 
-6. **Phase 6** (45min): Documentation & Guidelines
-   - Update README.md with complete docs
-   - Create DEVELOPMENT.md contributor guide
-   - Create docs/CAPABILITIES.md feature docs
-   - Create docs/EXAMPLES.md with examples
+### Path Categorization
 
-7. **Phase 7** (1hr): Validation & Quality Assurance
-   - Run full test suite
-   - Manual validation (20 random paths)
-   - Performance testing
-   - Security review
-   - Final integration test
+Use these rules when working with paths:
+* `/en/docs/` (excluding claude-code) → `core_documentation`
+* `/en/api/` → `api_reference`
+* `/en/docs/claude-code/` → `claude_code`
+* `/en/prompt-library/` → `prompt_library`
 
-## Key Technical Decisions
+Target: ~550 unique paths (cleaned from 631 raw)
 
-### Documentation Scope
-- **Categories**: Core Docs + API Reference + Claude Code + Prompt Library
-- **Total paths**: ~550 (cleaned from 631 raw)
-- **Excludes**: Deprecated/legacy content
+### Fetching Implementation
 
-### Integration Strategy
-- **Approach**: Clone and adapt locally from costiash/claude-code-docs
-- **Rationale**: Learn from proven implementation
-
-### Content Fetching
-- **Method**: Match costiash approach exactly
-- **Source**: https://docs.anthropic.com
-- **Format**: HTML → Markdown conversion
+**Key Discovery from Phase 1**:
+* No HTML parsing needed! Docs site serves markdown directly at `.md` URLs
+* Only need `requests==2.32.4` - no beautifulsoup4 or markdownify
+* Use upstream's proven patterns: retry logic, rate limiting, SHA256 change detection
 
 ### Testing Requirements
-- **Coverage**: 85%+ required
-- **Suites**: Unit + Integration + Validation
-- **CI/CD**: GitHub Actions with automated testing
 
-### Update Automation
-- **Frequency**: Every 3 hours via GitHub Actions
-- **Change detection**: Content hash comparison
-- **Changelog**: Automatic generation
+* **Minimum coverage**: 85% (enforced in CI/CD)
+* **Required suites**: Unit, Integration, Validation
+* **Before marking phase complete**: All tests must pass
 
-## Development Commands (Post-Implementation)
+## Common Commands
 
-### Path Management
+### Current (Development Phase)
+
 ```bash
-# Extract and clean paths from sitemap
+# Check project status
+git status
+
+# Run Phase 2 path extraction
 python scripts/extract_paths.py --source temp.html --output paths_manifest.json
 
-# Show statistics
-python scripts/extract_paths.py --stats
-
-# Validate paths
-python scripts/extract_paths.py --validate
+# Commit changes
+git add . && git commit -m "Phase 2: Path extraction complete"
+git push origin development
 ```
 
-### Documentation Fetching
+### Future (Post-Implementation)
+
 ```bash
-# Update all documentation
-python scripts/main.py --update-all
-
-# Update specific category
-python scripts/main.py --update-category core
-python scripts/main.py --update-category api_reference
-python scripts/main.py --update-category claude_code
-python scripts/main.py --update-category prompt_library
-
-# Force re-fetch (ignore cache)
-python scripts/main.py --force
-```
-
-### Path Search & Validation
-```bash
-# Search for paths
-python scripts/lookup_paths.py "prompt engineering"
-python scripts/lookup_paths.py "mcp"
-
-# Validate specific path
-python scripts/lookup_paths.py --check /en/docs/build-with-claude
-
-# Validate all 550+ paths
-python scripts/lookup_paths.py --validate-all
-```
-
-### Testing
-```bash
-# Run all tests
+# Run tests
 pytest
 
-# Run specific test suite
-pytest tests/unit/ -v
-pytest tests/integration/ -v
-pytest tests/validation/ -v
-
-# Run with coverage
-pytest --cov=scripts --cov-report=html --cov-report=term
-
-# Check coverage threshold (85%)
-coverage report --fail-under=85
-```
-
-### Claude Code Integration
-```bash
-# Natural language documentation search
-/docs how to use tool use with python
+# Check coverage (85% minimum)
+pytest --cov=scripts --cov-report=term
 
 # Update documentation
-/update-docs
+python scripts/main.py --update-all
 
 # Search paths
-/search-docs mcp integration
-
-# Validate documentation
-/validate-docs
+python scripts/lookup_paths.py "hooks"
 ```
 
-## Critical Implementation Notes
+## Important Rules
 
-### ALWAYS Use Task Tool for Phase Execution
+### Phase Execution
 
-**Do NOT execute phases directly**. Each phase template in `execution_template.md` is designed for autonomous execution via the Task tool with the general-purpose agent. This ensures:
+* Use Task tool with general-purpose agent (see `@specs/execution_template.md`)
+* Execute phases in order: 1→2→3→4→5→6→7
+* ALWAYS update `@specs/IMPLEMENTATIONMONITOR.md` after completing work
+* Don't skip phases - each builds on the previous
 
-- Complete context is provided
-- All tasks are executed systematically
-- IMPLEMENTATIONMONITOR.md is updated properly
-- Deliverables are validated before phase completion
+### Testing
 
-### Progress Tracking is Mandatory
-
-After completing any phase or task:
-1. ✅ Mark checkboxes in `specs/IMPLEMENTATIONMONITOR.md`
-2. ✅ Fill in completion dates and durations
-3. ✅ Document any issues encountered
-4. ✅ Update overall project statistics
-
-### Sequential Phase Execution
-
-Phases MUST be executed in order (1→2→3→4→5→6→7). Each phase builds on deliverables from previous phases. Do not skip ahead.
-
-### Testing Requirements
-
-- All new code requires tests (unit tests minimum)
-- 85%+ coverage is mandatory (checked in CI/CD)
-- All tests must pass before marking phase complete
-- Integration test required before production
-
-### Path Categorization Logic
-
-When working with paths, use these category assignments:
-- `/en/docs/` (excluding claude-code) → `core_documentation`
-- `/en/api/` → `api_reference`
-- `/en/docs/claude-code/` → `claude_code`
-- `/en/prompt-library/` → `prompt_library`
+* All new code needs unit tests minimum
+* 85%+ coverage is mandatory
+* Tests must pass before marking phase complete
 
 ### Upstream Reference
 
-The costiash/claude-code-docs repository (cloned to `./upstream/` in Phase 1) is the reference implementation. Match their:
-- Directory structure
-- Fetching mechanism
-- File naming conventions
-- Documentation format
+When implementing features, reference:
+* `@upstream/scripts/fetch_claude_docs.py` - Production fetcher (646 lines)
+* `@analysis/fetch_mechanism.md` - Implementation analysis
+* `@analysis/path_mapping.md` - Path mapping rules
 
-## Project Goals & Success Metrics
+## Success Criteria
 
-### Final Deliverables (All Phases Complete)
+When all 7 phases are complete:
+* ✅ 550+ documentation pages mirrored locally
+* ✅ Auto-updates every 3 hours via GitHub Actions
+* ✅ 85%+ test coverage achieved
+* ✅ All tests passing
+* ✅ Path validation working
+* ✅ Complete documentation written
 
-- [ ] 550+ documentation pages mirrored locally
-- [ ] Automatic updates every 3 hours
-- [ ] 85%+ test coverage
-- [ ] Natural language search via `/docs` command
-- [ ] Path validation and broken link detection
-- [ ] Complete documentation (README, DEVELOPMENT, examples)
-- [ ] GitHub Actions CI/CD pipeline
-- [ ] Clean environment integration test passing
-
-### Performance Targets
-
-- Fetch time: < 2 minutes per 100 pages
-- Memory usage: < 500 MB during processing
-- Search performance: < 1 second per query
-- Path reachability: > 99%
-
-### Quality Standards
-
-- All tests passing (100%)
-- No critical security vulnerabilities
-- Documentation clear and comprehensive
-- Code follows PEP 8 style guide
-- Type hints on all functions
+Performance targets:
+* Fetch time: < 2 minutes per 100 pages
+* Memory usage: < 500 MB during processing
+* Path reachability: > 99%
 
 ## Dependencies
 
-### Current
-- Python 3.12+
-- requests==2.32.4
+**Current**:
+* Python 3.12+
+* requests==2.32.4
 
-### Planned (Phase 3+)
-- beautifulsoup4 (HTML parsing)
-- markdownify (HTML to Markdown)
-- pytest + pytest-cov (testing)
-- pytest-asyncio (async testing)
+**Future (Phase 3+)**:
+* pytest + pytest-cov (testing only)
+* No HTML parsing libraries needed (markdown served directly!)
 
-## Version Control
+## Quick Start for Contributors
 
-- Repository initialized (no commits yet)
-- No remote configured (to be added in Phase 1)
-- `.gitignore` configured for Python projects
+1. Clone and setup: `git clone <repo> && cd claude-code-docs`
+2. Check current phase: See "Current Phase" section above
+3. Read phase template: `@specs/execution_template.md`
+4. Execute with Task tool
+5. Update progress: `@specs/IMPLEMENTATIONMONITOR.md`
 
-## Next Steps
+## Useful File References
 
-**Current Status**: Ready to begin Phase 1
+* `@README.md` - Project overview
+* `@REPOSITORY_STRUCTURE.md` - Repository organization
+* `@specs/IMPLEMENTATION_PLAN.md` - Complete 7-phase plan with rationale
+* `@specs/IMPLEMENTATIONMONITOR.md` - Progress tracking
+* `@analysis/fetch_mechanism.md` - Upstream implementation analysis
 
-**To Start Implementation**:
-1. Read `specs/execution_template.md`
-2. Copy Phase 1 template prompt
-3. Invoke Task tool with general-purpose agent
-4. Monitor progress in `specs/IMPLEMENTATIONMONITOR.md`
+---
 
-**Do NOT**:
-- Execute phases manually without Task tool
-- Skip progress tracking in IMPLEMENTATIONMONITOR.md
-- Proceed to next phase without completing current phase
-- Ignore testing requirements (85%+ coverage mandatory)
+**Remember**: Use @ to reference files, update IMPLEMENTATIONMONITOR.md after completing work, and always test before committing!
