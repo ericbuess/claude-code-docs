@@ -18,9 +18,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: |
-          pip install requests
-          pip install -e .
+        run: pip install requests>=2.32.0
 
       - name: Validate all paths reachable
         run: python scripts/lookup_paths.py --validate-all

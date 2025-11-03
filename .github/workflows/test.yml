@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -e ".[dev]"
+          pip install requests>=2.32.0
           pip install pytest pytest-cov pytest-asyncio
 
       - name: Run unit tests
