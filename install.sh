@@ -10,6 +10,9 @@ echo "==============================="
 # Fixed installation location
 INSTALL_DIR="$HOME/.claude-code-docs"
 
+# Capture initial directory for enhanced features (before any cd commands)
+INITIAL_DIR="$(pwd)"
+
 # Branch to use for installation
 INSTALL_BRANCH="main"
 
@@ -509,3 +512,149 @@ echo "Available topics:"
 ls "$INSTALL_DIR/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 60
 echo ""
 echo "⚠️  Note: Restart Claude Code for auto-updates to take effect"
+echo ""
+
+# ============================================================================
+# ENHANCED EDITION - OPTIONAL INSTALLATION
+# ============================================================================
+echo "─────────────────────────────────────────────────────────────────"
+echo "📦 Enhanced Edition Features Available"
+echo "─────────────────────────────────────────────────────────────────"
+echo ""
+echo "This enhanced edition includes:"
+echo "  • 459 documentation paths (vs 47 standard)"
+echo "  • Full-text content search"
+echo "  • Fuzzy path search"
+echo "  • Path validation and testing"
+echo "  • Search index optimization"
+echo ""
+echo "Requirements: Python 3.12+"
+echo ""
+read -p "Install enhanced features? [y/N]: " -r
+echo ""
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Installing enhanced features..."
+    echo ""
+
+    # Use initial directory as source for local development
+    SOURCE_DIR="$INITIAL_DIR"
+
+    # Check Python version
+    if ! command -v python3 &> /dev/null; then
+        echo "❌ Python 3 not found"
+        echo "   Enhanced features require Python 3.12+"
+        echo "   Skipping enhanced installation"
+        echo ""
+    else
+        PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+        PYTHON_MAJOR=$(echo "$PYTHON_VERSION" | cut -d. -f1)
+        PYTHON_MINOR=$(echo "$PYTHON_VERSION" | cut -d. -f2)
+
+        if [[ "$PYTHON_MAJOR" -lt 3 ]] || [[ "$PYTHON_MAJOR" -eq 3 && "$PYTHON_MINOR" -lt 12 ]]; then
+            echo "❌ Python version $PYTHON_VERSION found (need 3.12+)"
+            echo "   Enhanced features require Python 3.12 or higher"
+            echo "   Skipping enhanced installation"
+            echo ""
+        else
+            echo "✓ Python $PYTHON_VERSION found"
+
+            # Install Python dependencies
+            echo "Checking Python dependencies..."
+
+            # Check if requests is already installed
+            if python3 -c "import requests" >/dev/null 2>&1; then
+                echo "✓ Dependencies already installed"
+            else
+                echo "Installing requests library..."
+                # Check if in virtual environment (VIRTUAL_ENV is set)
+                if [[ -n "${VIRTUAL_ENV:-}" ]]; then
+                    # In venv, don't use --user
+                    PIP_INSTALL_CMD="python3 -m pip install --quiet requests"
+                else
+                    # Not in venv, use --user
+                    PIP_INSTALL_CMD="python3 -m pip install --quiet --user requests"
+                fi
+
+                if eval "$PIP_INSTALL_CMD" >/dev/null 2>&1; then
+                    echo "✓ Dependencies installed"
+                else
+                    echo "⚠️  Could not install dependencies automatically"
+                    echo "   Please run: python3 -m pip install requests"
+                    echo "   Enhanced features will not work until dependencies are installed"
+                fi
+            fi
+
+            # Download enhanced paths manifest
+            echo "Downloading enhanced paths manifest (459 paths)..."
+
+            # Check if running from repo directory (development mode)
+            if [[ -f "$SOURCE_DIR/paths_manifest.json" && "$SOURCE_DIR" != "$INSTALL_DIR" ]]; then
+                # Local development - copy from source directory
+                if cp "$SOURCE_DIR/paths_manifest.json" "$INSTALL_DIR/paths_manifest.json" 2>/dev/null; then
+                    echo "✓ Enhanced manifest copied from local repository (459 paths)"
+                else
+                    echo "⚠️  Could not copy local manifest"
+                fi
+            else
+                # Production - download from GitHub
+                MANIFEST_URL="https://raw.githubusercontent.com/costiash/claude-code-docs/main/paths_manifest.json"
+                if curl -fsSL "$MANIFEST_URL" -o "$INSTALL_DIR/paths_manifest.json" 2>/dev/null; then
+                    echo "✓ Enhanced manifest downloaded (459 paths)"
+                else
+                    echo "⚠️  Could not download enhanced manifest"
+                    echo "   Using standard manifest (47 paths)"
+                fi
+            fi
+
+            # Copy enhanced Python scripts if in development mode
+            if [[ -d "$SOURCE_DIR/scripts" && "$SOURCE_DIR" != "$INSTALL_DIR" ]]; then
+                echo "Copying enhanced scripts..."
+                for script in main.py lookup_paths.py extract_paths.py update_sitemap.py; do
+                    if [[ -f "$SOURCE_DIR/scripts/$script" ]]; then
+                        cp "$SOURCE_DIR/scripts/$script" "$INSTALL_DIR/scripts/" 2>/dev/null && \
+                        chmod +x "$INSTALL_DIR/scripts/$script" 2>/dev/null || true
+                    fi
+                done
+                echo "✓ Enhanced scripts copied"
+            fi
+
+            # Copy enhanced helper script
+            if [[ -f "$SOURCE_DIR/scripts/claude-docs-helper.sh" && "$SOURCE_DIR" != "$INSTALL_DIR" ]]; then
+                cp "$SOURCE_DIR/scripts/claude-docs-helper.sh" "$INSTALL_DIR/scripts/" 2>/dev/null && \
+                chmod +x "$INSTALL_DIR/scripts/claude-docs-helper.sh" 2>/dev/null
+
+                # Replace the main helper with the enhanced version
+                echo "Activating enhanced helper script..."
+                cp "$INSTALL_DIR/scripts/claude-docs-helper.sh" "$INSTALL_DIR/claude-docs-helper.sh" 2>/dev/null && \
+                chmod +x "$INSTALL_DIR/claude-docs-helper.sh" 2>/dev/null
+                echo "✓ Enhanced helper activated"
+            fi
+
+            # Build search index if build script exists
+            if [[ -f "$INSTALL_DIR/scripts/build_search_index.py" ]]; then
+                echo "Building search index..."
+                if python3 "$INSTALL_DIR/scripts/build_search_index.py" >/dev/null 2>&1; then
+                    echo "✓ Search index built"
+                else
+                    echo "⚠️  Search index build failed (search may be slower)"
+                fi
+            fi
+
+            echo ""
+            echo "✅ Enhanced features installed!"
+            echo ""
+            echo "Enhanced commands available:"
+            echo "  /docs --search 'query'        # Fuzzy search 459 paths"
+            echo "  /docs --search-content 'term' # Full-text content search"
+            echo "  /docs --validate              # Validate all paths"
+            echo "  /docs --update-all            # Fetch all 459 docs"
+            echo ""
+        fi
+    fi
+else
+    echo "Skipping enhanced features (standard installation complete)"
+    echo ""
+fi
+
+echo "─────────────────────────────────────────────────────────────────"

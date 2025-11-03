@@ -23,13 +23,34 @@ This project provides a complete local mirror of 449 Claude Code documentation p
 
 ## Quick Start
 
-### Prerequisites
+### Installation Modes
 
-- Python 3.12+
-- Git
-- Claude Code (optional, for `/docs` integration)
+This project offers two installation modes:
 
-### Installation
+**Standard Mode** (No Python required):
+- 47 documentation topics
+- Shell-based commands
+- Auto-updates via git
+- Perfect for basic documentation access
+
+**Enhanced Mode** (Python 3.12+ required):
+- 449 documentation paths (10x coverage)
+- Fuzzy search & full-text search
+- Path validation
+- Advanced features
+
+### One-Line Installation
+
+```bash
+# Install to ~/.claude-code-docs with auto-updates
+curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash
+```
+
+You'll be prompted to choose:
+- **N** (default): Standard mode - 47 docs, no Python required
+- **Y**: Enhanced mode - 449 paths, Python features enabled
+
+### Manual Installation (Developer Mode)
 
 ```bash
 # Clone repository
@@ -49,6 +70,18 @@ python scripts/main.py --update-all
 # Verify installation
 python scripts/lookup_paths.py --help
 ```
+
+### Prerequisites
+
+**Standard Mode:**
+- Git
+- Bash
+- jq, curl (usually pre-installed)
+- Claude Code (for `/docs` integration)
+
+**Enhanced Mode (additional):**
+- Python 3.12+
+- pip (Python package manager)
 
 ### Quick Commands
 

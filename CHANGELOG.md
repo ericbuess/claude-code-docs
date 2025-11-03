@@ -7,6 +7,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2025-11-04
+
+### Added - Enhanced Installation System
+
+**Dual-Mode Installation:**
+- ✅ Optional enhanced features during installation
+- ✅ Standard mode: 47 docs, no Python required (upstream compatible)
+- ✅ Enhanced mode: 449 paths, Python 3.12+ features
+- ✅ Graceful degradation when Python not available
+
+**Enhanced Helper Script** (`scripts/claude-docs-helper.sh`):
+- New `--search <query>` - Fuzzy search 449 paths
+- New `--search-content <term>` - Full-text content search
+- New `--validate` - Validate all paths for reachability
+- New `--update-all` - Fetch all 449 documentation pages
+- New `--version` - Show version and feature status
+- New `--status` - Show installation status
+- New `--help` - Show all available commands
+- Auto-detection of Python availability
+- Automatic fallback to standard template when enhanced features unavailable
+
+**Installation Improvements:**
+- One-line installation with mode selection
+- Python version check (3.12+ required for enhanced features)
+- Automatic dependency installation (requests library)
+- Enhanced manifest download (459 paths)
+- Search index building (if available)
+- Detailed status reporting
+
+**Documentation Updates:**
+- Updated README.md with dual-mode installation instructions
+- Enhanced .claude/commands/docs.md with all commands documented
+- Clear distinction between standard and enhanced features
+- Installation examples for both modes
+
+### Changed
+- Modified install.sh to offer enhanced features as opt-in (line 512+)
+- .claude/commands/docs.md now documents both standard and enhanced commands
+- Helper script location: `~/.claude-code-docs/scripts/claude-docs-helper.sh`
+
+### Backward Compatibility
+- ✅ 100% backward compatible with upstream (ericbuess/claude-code-docs)
+- ✅ Standard installation unchanged (47 docs, shell-only)
+- ✅ Enhanced features only activated if user opts in
+- ✅ Graceful degradation without Python
+
+### Migration Notes
+- Existing installations unaffected
+- Re-run installer to add enhanced features
+- Answer 'Y' when prompted for enhanced edition
+- Python 3.12+ required for enhanced features
+
+## [0.3.0] - 2025-11-03
+
 ### Added
 - Initial implementation of Claude Code documentation mirror
 - 459 unique documentation paths across 6 categories
