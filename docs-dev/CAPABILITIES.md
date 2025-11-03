@@ -659,10 +659,10 @@ Use the `/docs` slash command for natural language search:
 # - Direct links
 ```
 
-**Other Slash Commands**:
-- `/update-docs` - Trigger documentation update
-- `/search-docs <query>` - Search documentation paths
-- `/validate-docs` - Run validation tests
+**Other Command Flags**:
+- `/docs --update-all` - Trigger documentation update
+- `/docs --search <query>` - Search documentation paths
+- `/docs --validate` - Run validation tests
 
 **Benefits**:
 - Natural language interface

@@ -224,13 +224,13 @@
   - **Notes**: Created standard directory hierarchy. Moved extract_paths.py to scripts/. All scripts verified working from new locations.
 
 - [x] **Task 4.2**: Configure .claude/ integration
-  - Create `.claude/commands/docs.md` for natural language queries
-  - Add `/update-docs` slash command
-  - Add `/search-docs` slash command
-  - Add `/validate-docs` slash command
+  - Create `.claude/commands/docs.md` with unified command interface
+  - Support `/docs --update-all` flag
+  - Support `/docs --search <query>` flag
+  - Support `/docs --validate` flag
   - Set up post-edit validation hooks
   - **Completed**: 2025-11-03
-  - **Notes**: Created 4 Claude Code slash commands. All commands functional and tested. `/docs` searches and returns relevant documentation paths.
+  - **Notes**: Created unified `/docs` command with multiple flags. All command modes functional and tested. Supports natural language queries and enhanced features.
 
 - [x] **Task 4.3**: GitHub Actions setup
   - Create `.github/workflows/update-docs.yml` (3-hour schedule)
@@ -251,7 +251,7 @@
 
 - [x] Directory structure matches costiash conventions
 - [x] `.claude/commands/docs.md` created and functional
-- [x] Three slash commands working (`/update-docs`, `/search-docs`, `/validate-docs`)
+- [x] Unified `/docs` command with flags (`--update-all`, `--search`, `--validate`)
 - [x] `.github/workflows/update-docs.yml` created (enhanced)
 - [x] `.github/workflows/test.yml` created
 - [x] `.github/workflows/validate.yml` created

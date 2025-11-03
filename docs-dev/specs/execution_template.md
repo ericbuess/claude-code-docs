@@ -831,67 +831,21 @@ Search utility: /home/rudycosta3/claude-code-docs/scripts/lookup_paths.py
 Always cite the specific documentation page you're referencing.
 ```
 
-2. Create `.claude/commands/update-docs.md`:
+2. The `/docs` command supports multiple flags:
+   - Standard mode: `/docs` or `/docs <topic>` - Natural language search
+   - Enhanced modes (via flags):
+     - `/docs --search <query>` - Fuzzy path search
+     - `/docs --search-content <text>` - Full-text content search
+     - `/docs --validate` - Validate all paths
+     - `/docs --update-all` - Fetch all documentation
 
-```markdown
----
-description: Update local documentation mirror
----
-
-Run the documentation update script to fetch latest changes from docs.anthropic.com.
-
-Execute:
-```bash
-cd /home/rudycosta3/claude-code-docs
-python scripts/main.py --update-all
-```
-
-Show progress and report results to the user.
-```
-
-3. Create `.claude/commands/search-docs.md`:
-
-```markdown
----
-description: Search documentation paths
----
-
-Search for documentation paths matching the user's query.
-
-Execute:
-```bash
-cd /home/rudycosta3/claude-code-docs
-python scripts/lookup_paths.py "<user_query>"
-```
-
-Display results to the user.
-```
-
-4. Create `.claude/commands/validate-docs.md`:
-
-```markdown
----
-description: Validate all documentation paths
----
-
-Run validation to check all documentation paths are reachable.
-
-Execute:
-```bash
-cd /home/rudycosta3/claude-code-docs
-python scripts/lookup_paths.py --validate-all
-```
-
-Report results to the user.
-```
-
-5. Test the commands:
+3. Test the command:
 ```bash
 # In Claude Code, test:
 /docs how to use mcp
-/update-docs
-/search-docs prompt engineering
-/validate-docs
+/docs --search prompt engineering
+/docs --validate
+/docs --update-all
 ```
 
 TASK 4.3 - Setup GitHub Actions Workflows:
@@ -1161,7 +1115,7 @@ python scripts/lookup_paths.py "test query"
 
 # Test Claude Code commands (manually in Claude Code)
 /docs how to use tool use
-/search-docs mcp
+/docs --search mcp
 
 # Validate workflows
 actionlint .github/workflows/*.yml || echo "actionlint not installed"
@@ -2396,7 +2350,7 @@ pytest tests/ -v
 
 # 10. Test Claude Code integration (if installed)
 # /docs test query
-# /search-docs mcp
+# /docs --search mcp
 
 # 11. Generate report
 echo "=== FINAL INTEGRATION TEST REPORT ===" > /tmp/integration_report.txt

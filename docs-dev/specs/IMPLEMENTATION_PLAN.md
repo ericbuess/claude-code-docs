@@ -484,10 +484,10 @@ python lookup_paths.py --check /en/docs/...  # Check specific path
    5. Suggest related pages
    ```
 
-2. Add utility slash commands:
-   - `/update-docs` - Trigger documentation update
-   - `/search-docs <query>` - Search documentation
-   - `/validate-docs` - Run validation checks
+2. Add utility command flags:
+   - `/docs --update-all` - Trigger documentation update
+   - `/docs --search <query>` - Search documentation
+   - `/docs --validate` - Run validation checks
 
 3. Set up hooks:
    ```bash
@@ -1072,7 +1072,7 @@ If you have Claude Code installed:
 /docs how do I use tool use?
 
 # Update documentation
-/update-docs
+/docs --update-all
 ```
 
 ## Architecture

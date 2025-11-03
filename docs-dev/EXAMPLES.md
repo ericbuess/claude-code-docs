@@ -491,7 +491,7 @@ Would you like me to summarize any of these pages?
 ### 2. Update Documentation from Claude Code
 
 ```
-> /update-docs
+> /docs --update-all
 
 Triggering documentation update...
 
@@ -511,7 +511,7 @@ Documentation updated successfully!
 ### 3. Search Documentation Paths
 
 ```
-> /search-docs "prompt engineering"
+> /docs --search "prompt engineering"
 
 Searching paths for "prompt engineering"...
 
@@ -530,7 +530,7 @@ Select a path to view, or ask me to summarize specific topics.
 ### 4. Validate Documentation
 
 ```
-> /validate-docs
+> /docs --validate
 
 Running validation on 459 paths...
 
