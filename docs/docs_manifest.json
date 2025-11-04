@@ -153,14 +153,14 @@
     "output-styles.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/output-styles",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/output-styles.md",
-      "hash": "ddbd33f1c86fef3be8d30faf07125e750a351340296569e2ef474c0b991df6f6",
-      "last_updated": "2025-11-01T21:03:15.222446"
+      "hash": "9dca862e35f9a990587859392c2cb330fcbf110539aec6970c0d4f5e889d4956",
+      "last_updated": "2025-11-04T18:04:43.510123"
     },
     "overview.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/overview",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/overview.md",
-      "hash": "b4ac412d052afde1cb2a71e8990802eb9791c73c32f18cf273d604a8440f66e7",
-      "last_updated": "2025-10-30T18:04:12.740561"
+      "hash": "1f2a7c46baa6d8792773a2e1566d541dd3c167df5036ec0c4baa4ed5faa9f667",
+      "last_updated": "2025-11-04T18:04:44.037769"
     },
     "plugin-marketplaces.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/plugin-marketplaces",
@@ -273,8 +273,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-04T15:04:37.834359",
-    "fetch_duration_seconds": 24.12014,
+    "last_fetch_completed": "2025-11-04T18:04:53.016191",
+    "fetch_duration_seconds": 23.804579,
     "total_pages_discovered": 44,
     "pages_fetched_successfully": 45,
     "pages_failed": 0,
@@ -284,7 +284,7 @@
     "total_files": 45,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-04T15:04:37.834385",
+  "last_updated": "2025-11-04T18:04:53.016217",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",

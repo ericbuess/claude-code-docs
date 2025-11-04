@@ -92,6 +92,10 @@ You'll be prompted to log in on first use. That's it! [Continue with Quickstart 
 ## Additional resources
 
 <CardGroup>
+  <Card title="Build with the Agent SDK" icon="code-branch" href="/en/api/agent-sdk/overview">
+    Create custom AI agents with the Claude Agent SDK
+  </Card>
+
   <Card title="Host on AWS or GCP" icon="cloud" href="/en/docs/claude-code/third-party-integrations">
     Configure Claude Code with Amazon Bedrock or Google Vertex AI
   </Card>
