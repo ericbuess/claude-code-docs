@@ -81,8 +81,8 @@
     "hooks.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/hooks",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/hooks.md",
-      "hash": "a2b34e93f4ec393eeefbd65a15a7c1b7cbc238e3e63eaaff951564306b0edf82",
-      "last_updated": "2025-11-01T21:01:25.235828"
+      "hash": "e13f8cc2c42dfc96fd7e393c4c46fd9442bc47ee432d9244b7f6c9304cfd2780",
+      "last_updated": "2025-11-04T00:23:29.864163"
     },
     "hooks-guide.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/hooks-guide",
@@ -273,8 +273,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-03T21:06:20.264120",
-    "fetch_duration_seconds": 24.416068,
+    "last_fetch_completed": "2025-11-04T00:23:45.735176",
+    "fetch_duration_seconds": 24.468461,
     "total_pages_discovered": 44,
     "pages_fetched_successfully": 45,
     "pages_failed": 0,
@@ -284,7 +284,7 @@
     "total_files": 45,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-03T21:06:20.264148",
+  "last_updated": "2025-11-04T00:23:45.735226",
   "base_url": "https://raw.githubusercontent.com/costiash/claude-code-docs/main/docs/",
   "github_repository": "costiash/claude-code-docs",
   "github_ref": "main",

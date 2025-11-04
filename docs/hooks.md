@@ -295,29 +295,6 @@ Runs immediately after a tool completes successfully.
 
 Recognizes the same matcher values as PreToolUse.
 
-### PostCustomToolCall
-
-Runs after an MCP tool completes but **before** `PostToolUse` hooks execute. This hook allows you to modify the tool's output before it's processed further or shown to the model.
-
-**Key characteristics:**
-
-* **Only runs for MCP tools** (tools starting with `mcp__`)
-* Executes after the tool completes but before `PostToolUse` hooks
-* Can modify tool output using the `updatedOutput` field
-* Original tool response is replaced with modified output
-
-**Common use cases:**
-
-* Adding metadata to MCP tool responses
-* Filtering sensitive information from tool outputs
-* Transforming response formats
-* Logging MCP tool usage with enriched data
-
-**Important**: If multiple hooks provide `updatedOutput` for the same tool call, they may conflict. Hook execution order is non-deterministic when hooks run in parallel. Only configure one hook per tool to modify output.
-
-**Matchers:**
-Recognizes the same matcher values as PreToolUse, but will only execute for MCP tools (`mcp__*`).
-
 ### Notification
 
 Runs when Claude Code sends notifications. Notifications are sent when:
@@ -478,29 +455,6 @@ The exact schema for `tool_input` and `tool_response` depends on the tool.
   "tool_response": {
     "filePath": "/path/to/file.txt",
     "success": true
-  }
-}
-```
-
-### PostCustomToolCall Input
-
-The exact schema for `tool_input` and `tool_response` depends on the MCP tool.
-
-```json  theme={null}
-{
-  "session_id": "abc123",
-  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
-  "cwd": "/Users/...",
-  "permission_mode": "default",
-  "hook_event_name": "PostCustomToolCall",
-  "tool_name": "mcp__github__create_issue",
-  "tool_input": {
-    "title": "Bug report",
-    "body": "Description of the issue"
-  },
-  "tool_response": {
-    "issue_number": 42,
-    "url": "https://github.com/org/repo/issues/42"
   }
 }
 ```
@@ -712,60 +666,6 @@ Additionally, hooks can modify tool inputs before execution using `updatedInput`
   }
 }
 ```
-
-#### `PostCustomToolCall` Output Control
-
-`PostCustomToolCall` hooks can modify MCP tool outputs before they're processed further.
-
-* `"hookSpecificOutput.updatedOutput"` replaces the original tool response
-* The modified output is shown to Claude instead of the original response
-* This runs **before** `PostToolUse` hooks, so they see the modified output
-
-```json  theme={null}
-{
-  "hookSpecificOutput": {
-    "hookEventName": "PostCustomToolCall",
-    "updatedOutput": {
-      "issue_number": 42,
-      "url": "https://github.com/org/repo/issues/42",
-      "hook_processed": true,
-      "processed_at": "2025-01-01T00:00:00Z"
-    }
-  }
-}
-```
-
-**Example: Adding metadata to MCP tool responses**
-
-```bash  theme={null}
-#!/bin/bash
-# Read JSON input from stdin
-INPUT=$(cat)
-
-# Extract tool information
-TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name')
-TOOL_RESPONSE=$(echo "$INPUT" | jq -r '.tool_response')
-
-# Only process MCP tools
-if [[ "$TOOL_NAME" != mcp__* ]]; then
-  exit 0
-fi
-
-# Add metadata to the response
-UPDATED_OUTPUT=$(echo "$TOOL_RESPONSE" | jq '. + {"hook_processed": true, "processed_at": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}')
-
-# Output the modified response
-jq -n --argjson output "$UPDATED_OUTPUT" '{
-  "hookSpecificOutput": {
-    "hookEventName": "PostCustomToolCall",
-    "updatedOutput": $output
-  }
-}'
-```
-
-<Warning>
-  If multiple hooks provide `updatedOutput` for the same tool call, conflicts may occur since hooks run in parallel. Only configure one hook per tool to modify output.
-</Warning>
 
 #### `UserPromptSubmit` Decision Control
 
