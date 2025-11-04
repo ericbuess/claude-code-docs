@@ -6,13 +6,28 @@ This repository extends [ericbuess/claude-code-docs](https://github.com/ericbues
 
 ## For /docs Command
 
-When responding to /docs commands:
+The `/docs` command is a **unified interface** that handles both standard and enhanced features automatically:
 
-1. Follow the instructions in `~/.claude/commands/docs.md`
-2. Execute `~/.claude-code-docs/claude-docs-helper.sh` with user's arguments
-3. The helper script handles both standard and enhanced modes automatically
-4. Standard mode uses shell scripts only (no Python)
-5. Enhanced mode uses Python scripts when available
+**How it works:**
+1. The command reads `~/.claude/commands/docs.md` for complete instructions
+2. It analyzes user intent (natural language OR explicit flags)
+3. Executes `~/.claude-code-docs/scripts/claude-docs-helper.sh` with appropriate arguments
+4. The helper script detects available features and routes to the right implementation:
+   - **Standard mode**: Shell scripts only (47 docs, no Python)
+   - **Enhanced mode**: Python scripts when available (459 paths, advanced search)
+
+**Key insight:** Users don't need to know which mode they're in. The command adapts automatically.
+
+**Natural language examples:**
+- `/docs search for mcp` → Auto-converts to `--search "mcp"` if enhanced mode
+- `/docs find content about hooks` → Auto-converts to `--search-content "hooks"` if enhanced mode
+- `/docs hooks` → Reads topic (works in both modes)
+
+**Explicit flags** (for power users):
+- `/docs --search "query"` → Fuzzy search (enhanced only)
+- `/docs --search-content "query"` → Full-text search (enhanced only)
+- `/docs --validate` → Path validation (enhanced only)
+- `/docs --update-all` → Fetch all docs (enhanced only)
 
 ## Project Structure
 

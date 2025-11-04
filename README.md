@@ -116,6 +116,32 @@ Additional commands when Python 3.12+ is installed:
 /docs --help
 ```
 
+### Natural Language Interface
+
+The `/docs` command understands natural language, so you don't need to remember flags:
+
+```bash
+# Search examples (auto-detects search intent)
+/docs search for mcp integration
+/docs find prompt engineering
+/docs look for tool use examples
+
+# Content search examples (searches document content)
+/docs find content about extended thinking
+/docs search inside docs for batch API
+
+# Validation examples
+/docs validate all paths
+/docs check if everything is reachable
+
+# Update examples
+/docs update everything
+/docs fetch all documentation
+/docs sync all docs
+```
+
+**How it works:** The command analyzes your intent and converts it to the appropriate action. Use whatever phrasing feels natural!
+
 ## Features
 
 ### Standard Mode
