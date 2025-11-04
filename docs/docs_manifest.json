@@ -27,8 +27,8 @@
     "cli-reference.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/cli-reference",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/cli-reference.md",
-      "hash": "b7dea04c98ac96b2536d1fcb4a5bc4e2be92e455ea9de71006ad5168d0383ce6",
-      "last_updated": "2025-11-03T21:04:05.064913"
+      "hash": "ef2dfb8d671dd8f2e7ec539d15389f01b3c07665c524d2587e0d4dee31cbbbd4",
+      "last_updated": "2025-11-04T00:13:05.075159"
     },
     "common-workflows.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/common-workflows",
@@ -81,8 +81,8 @@
     "hooks.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/hooks",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/hooks.md",
-      "hash": "a2b34e93f4ec393eeefbd65a15a7c1b7cbc238e3e63eaaff951564306b0edf82",
-      "last_updated": "2025-11-01T21:03:08.809387"
+      "hash": "e13f8cc2c42dfc96fd7e393c4c46fd9442bc47ee432d9244b7f6c9304cfd2780",
+      "last_updated": "2025-11-04T00:13:09.891558"
     },
     "hooks-guide.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/hooks-guide",
@@ -237,8 +237,8 @@
     "sub-agents.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/sub-agents",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/sub-agents.md",
-      "hash": "f9a1dcb65feba5e28dca31ad809989ee5945f738d426fc417b68b0c02c392aaa",
-      "last_updated": "2025-11-03T21:04:23.611274"
+      "hash": "546106ce96f8191be82f3e980ffdbf2c4f544c68f1d498cf78c5d9b7a0342d78",
+      "last_updated": "2025-11-04T00:13:23.730051"
     },
     "terminal-config.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/terminal-config",
@@ -273,8 +273,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-03T21:04:25.765928",
-    "fetch_duration_seconds": 24.318522,
+    "last_fetch_completed": "2025-11-04T00:13:25.894380",
+    "fetch_duration_seconds": 33.217113,
     "total_pages_discovered": 44,
     "pages_fetched_successfully": 45,
     "pages_failed": 0,
@@ -284,7 +284,7 @@
     "total_files": 45,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-03T21:04:25.765957",
+  "last_updated": "2025-11-04T00:13:25.894406",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",
