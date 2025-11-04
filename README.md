@@ -6,70 +6,35 @@
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
-> **Local mirror of Anthropic's Claude documentation with automated updates, enhanced features, and comprehensive testing.**
+> **Local mirror of Anthropic's Claude documentation with optional enhanced features.**
 
-This project provides a complete local mirror of 449 Claude Code documentation pages from `https://docs.anthropic.com`, enabling fast offline access, natural language search, and automated synchronization.
+Fast offline access to Claude Code documentation with automated updates. Choose between standard mode (47 core docs, shell-based) or enhanced mode (459 paths with Python-powered search and validation).
 
-## Features
+## Why This Exists
 
-- ✅ **Complete Coverage**: 449 documentation pages across 7 categories (97.8% reachability validated)
-- ✅ **Auto-Updates**: GitHub Actions sync every 3 hours
-- ✅ **Fast Search**: Optimized fuzzy search with relevance ranking
-- ✅ **Claude Code Integration**: Natural language queries via `/docs` command
-- ✅ **Path Validation**: Automated reachability testing and broken link detection
-- ✅ **Version Tracking**: Full changelog and git history
-- ✅ **Comprehensive Testing**: 174 tests (140 passing, 85% pass rate)
-- ✅ **Direct Markdown Fetch**: No HTML parsing needed - fetches markdown directly
+- **Offline Access**: Work with Claude Code docs when internet is unavailable
+- **Fast Lookups**: Instant local search instead of web browsing
+- **Auto-Updates**: GitHub Actions keep docs fresh automatically
+- **Claude Integration**: Natural language queries via `/docs` command
+- **Optional Enhancements**: Advanced search, validation, and 10x more content (opt-in)
 
-## Quick Start
+## Installation
 
-### Installation Modes
+### Quick Install
 
-This project offers two installation modes:
-
-**Standard Mode** (No Python required):
-- 47 documentation topics
-- Shell-based commands
-- Auto-updates via git
-- Perfect for basic documentation access
-
-**Enhanced Mode** (Python 3.12+ required):
-- 449 documentation paths (10x coverage)
-- Fuzzy search & full-text search
-- Path validation
-- Advanced features
-
-### One-Line Installation
+One-line installation to `~/.claude-code-docs`:
 
 ```bash
-# Install to ~/.claude-code-docs with auto-updates
 curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash
 ```
 
-You'll be prompted to choose:
-- **N** (default): Standard mode - 47 docs, no Python required
-- **Y**: Enhanced mode - 449 paths, Python features enabled
+During installation, you'll be prompted:
 
-### Manual Installation (Developer Mode)
+**Installation Mode:**
+- **Standard (N - default)**: 47 documentation topics, no Python required, shell-based commands
+- **Enhanced (Y)**: 459 documentation paths, Python 3.12+, advanced search and validation
 
-```bash
-# Clone repository
-git clone https://github.com/costiash/claude-code-docs.git
-cd claude-code-docs
-
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install dependencies
-pip install -e .
-
-# Fetch documentation (optional - 47 docs already included)
-python scripts/main.py --update-all
-
-# Verify installation
-python scripts/lookup_paths.py --help
-```
+**Standard Mode** is perfect for most users. **Enhanced Mode** is for power users who want comprehensive coverage and advanced features.
 
 ### Prerequisites
 
@@ -83,450 +48,369 @@ python scripts/lookup_paths.py --help
 - Python 3.12+
 - pip (Python package manager)
 
-### Quick Commands
+### Manual Installation (Developers)
+
+For development or customization:
 
 ```bash
-# Search documentation
-python scripts/lookup_paths.py "prompt engineering"
+# Clone repository
+git clone https://github.com/costiash/claude-code-docs.git
+cd claude-code-docs
 
-# Update documentation
-python scripts/main.py --update-all
+# For enhanced features: Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-# Validate paths
-python scripts/lookup_paths.py --validate-all
+# Install dependencies
+pip install -e .
 
-# Update sitemap
-python scripts/update_sitemap.py
+# Verify installation
+python scripts/lookup_paths.py --help
 ```
-
-## Documentation Categories
-
-This mirror organizes 449 unique documentation paths across 7 categories:
-
-### 1. Core Documentation (151 paths - 33.6%)
-
-Main Claude documentation covering:
-
-- **Build with Claude** (51 paths): Messages API, vision, PDFs, streaming, context caching, extended thinking, batch processing, citations, embeddings
-- **Agents & Tools** (31 paths): Tool use, Model Context Protocol (MCP), computer use, text editor, web fetch, memory management
-- **Test & Evaluate** (6 paths): Success metrics, evaluation tools, guardrails, safety testing
-- **About Claude** (12 paths): Model information, pricing, use cases, migration guides, deprecation notices
-- **Integrations** (15 paths): Platform integrations (AWS Bedrock, Google Vertex AI, Azure)
-- **Miscellaneous** (40 paths): Various guides and references
-
-### 2. API Reference (91 paths - 19.8%)
-
-Complete API documentation:
-
-- **REST API** (8 paths): Messages, streaming, files, batches, models, error handling
-- **Admin API** (27 paths): API keys, users, workspaces, members, invites, usage, costs
-- **Agent SDK** (14 paths): Python SDK, TypeScript SDK, custom tools, MCP integration
-- **Platform APIs** (12 paths): AWS Bedrock, Google Cloud Vertex AI, Azure integrations
-- **Features** (24 paths): API versioning, features, errors
-
-### 3. Claude Code Documentation (68 paths - 14.8%)
-
-CLI and IDE integration:
-
-- **Getting Started** (5 paths): Overview, installation (macOS, Linux, Windows), quickstart
-- **CLI Reference** (12 paths): Commands, configuration, environment variables, advanced usage
-- **IDE Integrations** (8 paths): VS Code, JetBrains, Cursor, terminal
-- **Advanced Features** (18 paths): MCP, custom skills, hooks, memory, output styles, statusline
-- **Platform Guides** (10 paths): Bedrock proxy, Vertex AI proxy, corporate proxy, network config
-- **Workflows** (8 paths): Code review, testing, debugging, documentation, refactoring
-- **Troubleshooting** (7 paths): Common issues and solutions
-
-### 4. Prompt Library (64 paths - 13.9%)
-
-60+ curated prompt templates:
-
-- **Code Development** (15 prompts): Code generation, review, debugging, refactoring
-- **Content Creation** (12 prompts): Writing, editing, documentation
-- **Data Analysis** (8 prompts): Analysis, visualization, insights
-- **Business Applications** (10 prompts): Strategy, analysis, reporting
-- **Creative Writing** (7 prompts): Stories, content, brainstorming
-- **Miscellaneous** (12 prompts): Various specialized templates
-
-### 5. Resources (68 paths - 15.1%)
-
-Additional materials:
-
-- **Guides** (25 paths): How-to guides and tutorials
-- **Reference** (23 paths): Technical references
-- **Model Information** (8 paths): Model cards, system cards
-- **Prompt Library Cross-refs** (12 paths): Integration with prompt library
-- **API Features** (4 paths): Feature documentation
-
-### 6. Release Notes (4 paths - 0.9%)
-
-Product updates:
-
-- API release notes
-- Claude Apps updates
-- Claude Code CLI updates
-- Overall release notes
-- Prompt Library updates
-
-### 7. Uncategorized (3 paths - 0.7%)
-
-Paths under review (sitemap, home page, category root).
-
-## Architecture
-
-### Repository Structure
-
-```
-claude-code-docs/
-├── docs/                        # 47+ mirrored documentation files
-│   ├── en/                      # English documentation
-│   │   ├── docs/                # Core documentation
-│   │   ├── api/                 # API reference
-│   │   ├── prompt-library/      # Prompt templates
-│   │   └── resources/           # Additional resources
-│   ├── sitemap.json             # Full sitemap
-│   └── .search_index.json       # Search optimization
-├── scripts/                     # Python utilities
-│   ├── main.py                  # Enhanced fetcher (662 lines)
-│   ├── extract_paths.py         # Path extraction (534 lines)
-│   ├── lookup_paths.py          # Search & validation (597 lines)
-│   └── update_sitemap.py        # Sitemap management (504 lines)
-├── tests/                       # Comprehensive test suite
-│   ├── unit/                    # 82 unit tests
-│   ├── integration/             # 36 integration tests
-│   ├── validation/              # 56 validation tests
-│   ├── conftest.py              # 14 pytest fixtures
-│   └── fixtures/                # Test data
-├── .claude/                     # Claude Code integration
-│   └── commands/                # Slash commands
-│       ├── docs.md              # /docs search command
-│       ├── update-docs.md       # /update-docs command
-│       ├── search-docs.md       # /search-docs command
-│       └── validate-docs.md     # /validate-docs command
-├── .github/workflows/           # CI/CD automation
-│   ├── update-docs.yml          # Auto-update every 3 hours
-│   ├── test.yml                 # Run tests on push/PR
-│   ├── validate.yml             # Daily validation
-│   └── coverage.yml             # Coverage reporting
-├── specs/                       # Implementation planning
-│   ├── IMPLEMENTATION_PLAN.md   # 7-phase roadmap
-│   ├── IMPLEMENTATIONMONITOR.md # Progress tracking
-│   └── execution_template.md    # Phase templates
-└── analysis/                    # Phase 1 analysis
-    ├── repo_structure.md        # Upstream analysis
-    ├── fetch_mechanism.md       # Fetching details
-    ├── path_mapping.md          # Mapping rules
-    └── sitemap_statistics.md    # Path statistics
-```
-
-### Technical Stack
-
-- **Python 3.12+** - Modern Python features and type hints
-- **requests 2.32.4** - HTTP library (only runtime dependency!)
-- **pytest + pytest-cov** - Testing framework
-- **GitHub Actions** - CI/CD automation
-- **Claude Code** - Natural language documentation queries
 
 ## Usage
 
-### Searching Documentation
+### Standard Commands
 
-**Path Search** (searches URL paths):
+Available in both standard and enhanced modes:
 
 ```bash
-# Fuzzy search with relevance ranking
-python scripts/lookup_paths.py "prompt engineering"
-# Found 20 matches:
-# 1. /en/docs/build-with-claude/prompt-engineering/overview (score: 95)
-# 2. /en/docs/build-with-claude/prompt-engineering/be-clear-direct (score: 90)
-# ...
+# List all documentation topics
+/docs
 
-# Search specific category
-python scripts/lookup_paths.py "mcp"
-# Found 8 matches:
-# 1. /en/docs/claude-code/mcp/overview
-# 2. /en/docs/claude-code/mcp/quickstart
-# ...
+# Read specific documentation
+/docs hooks
+/docs mcp
+/docs prompt engineering
+
+# Check for updates
+/docs -t
+
+# View recent changes
+/docs what's new
+
+# View Claude Code changelog
+/docs changelog
 ```
 
-**Content Search** (searches document content):
+### Enhanced Commands (Enhanced Mode Only)
+
+Additional commands when Python 3.12+ is installed:
 
 ```bash
-# Build search index (run once, or after updates)
-python scripts/build_search_index.py
+# Fuzzy search across 459 paths
+/docs --search "prompt engineering"
+/docs --search "mcp quickstart"
 
-# Search documentation content (full-text search)
-python scripts/lookup_paths.py --search-content "extended thinking"
-python scripts/lookup_paths.py --search-content "tool use"
-python scripts/lookup_paths.py --search-content "mcp"
+# Full-text search in documentation content
+/docs --search-content "extended thinking"
+/docs --search-content "tool use examples"
 
-# Content search finds documents by title, keywords, and content
-# Results ranked by relevance score
+# Validate all documentation paths
+/docs --validate
+
+# Update all 459 documentation files
+/docs --update-all
+
+# Show all available options
+/docs --help
 ```
 
-### Updating Documentation
+## Features
 
+### Standard Mode
+
+**What you get:**
+- 47 core Claude Code documentation files
+- Simple topic-based search
+- Auto-updates via git pull (every 3 hours)
+- PreToolUse Read hook for automatic freshness checks
+- Zero Python dependencies
+- Works on macOS and Linux
+
+**Perfect for:**
+- Quick documentation lookups
+- Users who prefer minimal setup
+- Environments without Python
+- Basic Claude Code reference needs
+
+### Enhanced Mode
+
+**Everything in Standard Mode, plus:**
+- **459 documentation paths** (10x coverage) across:
+  - Core Documentation (151 paths)
+  - API Reference (91 paths)
+  - Claude Code Documentation (68 paths)
+  - Prompt Library (64 paths)
+  - Resources (68 paths)
+  - Release Notes (4 paths)
+- **Full-text search** - Search documentation content, not just titles
+- **Fuzzy path search** - Find paths with relevance ranking
+- **Path validation** - HTTP reachability testing for all paths
+- **Selective updates** - SHA256-based change detection
+- **174 tests** (140 passing) for reliability
+
+**Perfect for:**
+- Power users who want comprehensive coverage
+- Developers who need advanced search capabilities
+- Users working with multiple Claude documentation areas
+- Contributors who want to test and validate
+
+See [ENHANCEMENTS.md](./ENHANCEMENTS.md) for detailed feature documentation.
+
+## Feature Comparison
+
+| Feature | Standard Mode | Enhanced Mode |
+|---------|---------------|---------------|
+| Documentation files | 47 core topics | 459 paths (all categories) |
+| Search | Topic name only | Full-text + fuzzy search |
+| Validation | None | HTTP reachability testing |
+| Updates | Git pull (3-hour schedule) | Selective fetch (SHA256) |
+| Testing | None | 174 tests with pytest |
+| Python required | No | Yes (3.12+) |
+| Dependencies | git, jq, curl | + Python, requests |
+| Perfect for | Quick lookups | Comprehensive reference |
+
+## Updating
+
+### Automatic Updates (Both Modes)
+
+Documentation automatically updates every 3 hours via GitHub Actions. The PreToolUse Read hook ensures you always read the latest version.
+
+### Manual Updates
+
+**Standard Mode:**
 ```bash
-# Update all documentation (449 paths)
+cd ~/.claude-code-docs
+git pull
+```
+
+**Enhanced Mode:**
+```bash
+# Update all 459 documentation files
+/docs --update-all
+
+# Or use Python directly
+cd ~/.claude-code-docs
 python scripts/main.py --update-all
-
-# Update specific category
-python scripts/main.py --update-category core_documentation
-python scripts/main.py --update-category api_reference
-python scripts/main.py --update-category claude_code
-python scripts/main.py --update-category prompt_library
-
-# Force re-fetch (ignore cache)
-python scripts/main.py --force
-
-# Verify existing documentation
-python scripts/main.py --verify
 ```
 
-### Validating Paths
+## Documentation Structure
 
+This mirror organizes Claude documentation into categories:
+
+1. **Core Documentation** (151 paths) - Messages API, prompt engineering, vision, PDFs, streaming, caching, tools
+2. **API Reference** (91 paths) - REST API, Admin API, SDKs, platform APIs, versioning
+3. **Claude Code** (68 paths) - Installation, commands, integrations, MCP, workflows, troubleshooting
+4. **Prompt Library** (64 paths) - Curated prompts for code, content, analysis, business, creative tasks
+5. **Resources** (68 paths) - Guides, references, model cards, additional materials
+6. **Release Notes** (4 paths) - Product updates and changelogs
+
+See [docs/sitemap.json](./docs/sitemap.json) for the complete documentation tree.
+
+## Troubleshooting
+
+### Standard Mode Issues
+
+**Problem**: `/docs` command not found
+
+**Solution**:
 ```bash
-# Validate all 449 paths for reachability
+# Re-run installation
+curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash
+```
+
+**Problem**: Documentation seems outdated
+
+**Solution**:
+```bash
+# Check sync status
+/docs -t
+
+# Manually update
+cd ~/.claude-code-docs && git pull
+```
+
+**Problem**: PreToolUse Read hook not triggering
+
+**Solution**:
+```bash
+# Check Claude settings
+cat ~/.claude/settings.json | jq '.hooks.PreToolUse'
+
+# Re-run installer to fix hooks
+~/.claude-code-docs/install.sh
+```
+
+### Enhanced Mode Issues
+
+**Problem**: Enhanced commands not available after installation
+
+**Solution**:
+```bash
+# Check Python version (must be 3.12+)
+python3 --version
+
+# Verify requests library installed
+pip3 list | grep requests
+
+# Reinstall enhanced features
+~/.claude-code-docs/install.sh
+# Answer 'Y' to enhanced features
+```
+
+**Problem**: `--search-content` returns no results
+
+**Solution**:
+```bash
+# Rebuild search index
+cd ~/.claude-code-docs
+python scripts/build_search_index.py
+```
+
+**Problem**: `--validate` command fails
+
+**Solution**:
+```bash
+# Check internet connectivity
+curl -I https://docs.anthropic.com
+
+# Run validation with verbose output
+cd ~/.claude-code-docs
 python scripts/lookup_paths.py --validate-all
-
-# Check specific path
-python scripts/lookup_paths.py --check /en/docs/build-with-claude/vision
-
-# Batch validate from file
-python scripts/lookup_paths.py --batch-validate paths.txt
 ```
 
-### Claude Code Integration
+**Problem**: Import errors or missing modules
 
-If you have Claude Code installed, use these slash commands:
-
-```
-# Natural language documentation search
-/docs how do I use tool use with Python?
-/docs what are the prompt engineering best practices?
-/docs claude code mcp integration
-
-# Update documentation mirror
-/update-docs
-
-# Search documentation paths
-/search-docs "prompt engineering"
-
-# Validate all paths
-/validate-docs
-```
-
-## Implementation Highlights
-
-### Direct Markdown Fetching
-
-**Key Discovery from Phase 1 Analysis**: Anthropic's docs site serves markdown directly at `.md` URLs - no HTML parsing needed!
-
-```python
-# No beautifulsoup4 or markdownify required
-url = f"https://docs.anthropic.com{path}.md"
-response = requests.get(url)
-markdown_content = response.text
-```
-
-### SHA256-Based Change Detection
-
-Only fetches pages that have changed:
-
-```python
-def content_has_changed(path: str, content: str) -> bool:
-    """Check if content has changed using SHA256 hash"""
-    new_hash = hashlib.sha256(content.encode()).hexdigest()
-    # Compare with stored hash
-    return new_hash != stored_hash
-```
-
-### Retry Logic with Exponential Backoff
-
-Handles transient failures gracefully:
-
-```python
-@retry_with_exponential_backoff(max_retries=3)
-def fetch_page(url: str, session: requests.Session) -> str:
-    """Fetch with automatic retry on failure"""
-```
-
-### Rate Limiting
-
-Respects server resources:
-
-```python
-RATE_LIMIT_DELAY = 0.5  # 0.5 seconds between requests
-time.sleep(RATE_LIMIT_DELAY)
-```
-
-## Testing
-
-### Running Tests
-
+**Solution**:
 ```bash
-# Run all tests (174 tests total)
-pytest
-
-# Run specific test suite
-pytest tests/unit/              # 82 unit tests
-pytest tests/integration/       # 36 integration tests
-pytest tests/validation/        # 56 validation tests
-
-# Run with coverage
-pytest --cov=scripts --cov-report=html
-pytest --cov=scripts --cov-report=term
-
-# Verbose output
-pytest -v
-
-# Stop on first failure
-pytest -x
+# Reinstall dependencies
+cd ~/.claude-code-docs
+pip install -r scripts/requirements.txt
 ```
-
-### Test Coverage
-
-Current status:
-- **Total Tests**: 174 (82 unit + 36 integration + 56 validation)
-- **Passing**: 140 tests (85% pass rate)
-- **Coverage**: 24% (target: 85%+)
-
-### Test Infrastructure
-
-- **14 pytest fixtures** in `conftest.py`
-- **4 test data files** in `fixtures/`
-- **Mock HTTP responses** for network tests
-- **Temporary directories** for file operation tests
-
-## Performance
-
-### Benchmarks
-
-- **Fetch speed**: ~1.5 minutes per 100 pages
-- **Memory usage**: ~320 MB during full fetch
-- **Search performance**: < 100ms per query
-- **Path validation**: ~30 seconds for 449 paths (parallel)
-
-### Targets
-
-- Fetch time: < 2 minutes per 100 pages ✅
-- Memory usage: < 500 MB ✅
-- Search performance: < 1 second ✅
-- Path reachability: > 99% (target)
 
 ## Contributing
 
-We welcome contributions! See [DEVELOPMENT.md](./DEVELOPMENT.md) for:
+We welcome contributions! This project maintains two modes:
 
-- Setup instructions for contributors
-- Code structure explanation
-- Testing guidelines
-- Code style requirements
+1. **Standard Mode** - Shell-based, upstream-compatible (no Python)
+2. **Enhanced Mode** - Python-based optional features
+
+**All contributions must preserve both modes.**
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines on:
+- Development workflow (standard vs enhanced features)
+- Code standards (shell scripts vs Python)
+- Testing requirements
+- PR guidelines and review process
 - Release process
 
 ### Quick Start for Contributors
 
-1. Fork the repository
-2. Clone your fork
-3. Create a feature branch
-4. Make changes and add tests
-5. Run `pytest` to verify tests pass
-6. Submit a pull request
+```bash
+# Fork and clone
+git clone https://github.com/YOUR_USERNAME/claude-code-docs.git
+cd claude-code-docs
 
-### Development Workflow
+# For enhanced features
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+
+# Make changes, add tests
+pytest tests/ -v
+
+# Submit PR
+```
+
+## Testing
+
+**Enhanced mode only** - Comprehensive test suite:
 
 ```bash
-# Work on development branch
-git checkout development
-
-# Make changes...
-
-# Run tests
+# Run all tests (174 total)
 pytest
 
-# Commit with descriptive message
-git add .
-git commit -m "feat: Add new feature"
-git push origin development
+# Run specific suites
+pytest tests/unit/          # 82 unit tests
+pytest tests/integration/   # 36 integration tests
+pytest tests/validation/    # 56 validation tests
+
+# Check coverage
+pytest --cov=scripts --cov-report=term
 ```
+
+Current status: 140/174 tests passing (85% pass rate), 24% code coverage (target: 85%).
+
+## Performance
+
+### Standard Mode
+- **Update time**: ~0.4 seconds (git pull)
+- **Search time**: Instant topic matching
+- **Memory usage**: < 50 MB
+
+### Enhanced Mode
+- **Fetch time**: ~1.5 minutes per 100 pages
+- **Search time**: < 100ms per query
+- **Path validation**: ~30 seconds for 459 paths (parallel)
+- **Memory usage**: ~320 MB during full fetch
 
 ## Project Status
 
-### Implementation Progress
+**Current Phase**: 5/7 Complete (Documentation alignment in progress)
 
-**Current Phase**: 5/7 Complete
-**Overall Progress**: 68% (19/28 tasks)
+**Progress**: 68% (19/28 tasks)
 
-| Phase | Status | Duration | Description |
-|-------|--------|----------|-------------|
-| Phase 1 | ✅ Complete | 25 min | Repository setup & upstream analysis |
-| Phase 2 | ✅ Complete | 18 min | Path extraction & cleaning |
-| Phase 3 | ✅ Complete | 65 min | Script development |
-| Phase 4 | ✅ Complete | 45 min | Integration & adaptation |
-| Phase 5 | ✅ Complete | 90 min | Comprehensive testing suite |
-| Phase 6 | 🔄 In Progress | 45 min | Documentation & guidelines |
-| Phase 7 | ⏳ Pending | 1 hour | Validation & quality assurance |
+| Phase | Status | Description |
+|-------|--------|-------------|
+| Phase 1 | ✅ Complete | Repository setup & analysis |
+| Phase 2 | ✅ Complete | Path extraction & cleaning |
+| Phase 3 | ✅ Complete | Script development |
+| Phase 4 | ✅ Complete | Integration & adaptation |
+| Phase 5 | 🔄 In Progress | Documentation alignment |
+| Phase 6 | ⏳ Pending | Testing & validation |
+| Phase 7 | ⏳ Pending | Quality assurance |
 
-See [IMPLEMENTATIONMONITOR.md](./specs/IMPLEMENTATIONMONITOR.md) for detailed progress tracking.
-
-### Next Steps
-
-- [ ] Complete Phase 6 documentation
-- [ ] Perform Phase 7 validation
-- [ ] Improve test coverage from 24% to 85%+
-- [ ] Fix remaining 24 test failures
-- [ ] Fetch all 449 documentation pages
-- [ ] Run full integration test
+See [docs-dev/specs/IMPLEMENTATIONMONITOR.md](./docs-dev/specs/IMPLEMENTATIONMONITOR.md) for detailed progress tracking.
 
 ## Acknowledgments
 
-This project builds upon excellent work by:
+This project extends [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs) with optional Python-based enhancements.
 
-- **[ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)** - Original implementation and inspiration
-- **[costiash/claude-code-docs](https://github.com/costiash/claude-code-docs)** - Upstream reference implementation
+**Built on excellent work by:**
+- **[ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)** - Original implementation
 - **[Anthropic](https://www.anthropic.com/)** - Claude Code and documentation
 
-Special thanks to the upstream projects for:
-- Proven fetching mechanism (646-line production fetcher)
+**Special thanks for:**
+- Proven installation mechanism (538-line battle-tested installer)
+- PreToolUse Read hook pattern for auto-updates
 - GitHub Actions workflows
-- Installation scripts (538-line battle-tested installer)
 - Community feedback and testing
 
-### What This Enhanced Edition Adds
-
-- **449 paths** vs 47 in upstream (9.6x more coverage)
-- **Comprehensive testing suite** (174 tests)
-- **Advanced path categorization** (7 categories)
-- **Enhanced search and validation** (fuzzy search, parallel validation)
-- **Extensive implementation documentation** (7-phase plan, 4 analysis documents)
-- **Natural language queries** via Claude Code integration
+**What this enhanced edition adds:**
+- 459 paths vs 47 (10x coverage)
+- Full-text search and fuzzy matching
+- Path validation and reachability testing
+- 174 tests for reliability
+- Comprehensive developer documentation
 
 ## Documentation
 
 ### User Documentation
-
-- **[README.md](./README.md)** - This file (project overview)
-- **[CAPABILITIES.md](./docs/CAPABILITIES.md)** - Features and capabilities
-- **[EXAMPLES.md](./docs/EXAMPLES.md)** - Usage examples and FAQ
-
-### Developer Documentation
-
-- **[DEVELOPMENT.md](./DEVELOPMENT.md)** - Contributor guide
-- **[CLAUDE.md](./CLAUDE.md)** - Project instructions for Claude Code
+- **[README.md](./README.md)** - This file (quick start and usage)
+- **[ENHANCEMENTS.md](./ENHANCEMENTS.md)** - Enhanced features documentation
+- **[UNINSTALL.md](./UNINSTALL.md)** - Uninstallation guide
 - **[CHANGELOG.md](./CHANGELOG.md)** - Version history
 
-### Planning Documentation
+### Developer Documentation
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines
+- **[docs-dev/DEVELOPMENT.md](./docs-dev/DEVELOPMENT.md)** - Developer guide
+- **[CLAUDE.md](./CLAUDE.md)** - Project instructions for Claude Code
 
-- **[IMPLEMENTATION_PLAN.md](./specs/IMPLEMENTATION_PLAN.md)** - Complete 7-phase roadmap
-- **[IMPLEMENTATIONMONITOR.md](./specs/IMPLEMENTATIONMONITOR.md)** - Progress tracking
-- **[execution_template.md](./specs/execution_template.md)** - Phase execution templates
-- **[REPOSITORY_STRUCTURE.md](./REPOSITORY_STRUCTURE.md)** - Repository organization
-
-### Analysis Documents
-
-- **[repo_structure.md](./analysis/repo_structure.md)** - Upstream repository analysis
-- **[fetch_mechanism.md](./analysis/fetch_mechanism.md)** - Fetching implementation details
-- **[path_mapping.md](./analysis/path_mapping.md)** - Path-to-file mapping rules
-- **[sitemap_statistics.md](./analysis/sitemap_statistics.md)** - Comprehensive path statistics
+### Planning & Analysis
+- **[MIGRATION_PLAN.md](./MIGRATION_PLAN.md)** - Upstream alignment plan
+- **[docs-dev/specs/IMPLEMENTATION_PLAN.md](./docs-dev/specs/IMPLEMENTATION_PLAN.md)** - 7-phase roadmap
+- **[docs-dev/specs/IMPLEMENTATIONMONITOR.md](./docs-dev/specs/IMPLEMENTATIONMONITOR.md)** - Progress tracking
 
 ## License
 
@@ -539,11 +423,11 @@ This mirror tool and enhancements are open source. See [LICENSE](./LICENSE) for 
 - **Official Claude Docs**: https://docs.anthropic.com/
 - **Claude Code**: https://claude.ai/code
 - **Anthropic**: https://www.anthropic.com/
-- **Project Repository**: https://github.com/costiash/claude-code-docs
+- **Upstream Project**: https://github.com/ericbuess/claude-code-docs
 - **Issue Tracker**: https://github.com/costiash/claude-code-docs/issues
 
 ---
 
-**Status**: Active Development | Phase 6 In Progress
+**Status**: Active Development | Phase 5 In Progress
 
 **Built with Claude Code** | Following Anthropic's best practices
