@@ -298,5 +298,1335 @@
     "hash": "664e8ba3ec4ec4e2699163fddfc321ea92948bc659318fa7da8574df14d3cbb5",
     "last_updated": "2025-11-03T19:44:50.032569+00:00",
     "size": 239858
+  },
+  "/en/docs/about-claude/glossary": {
+    "hash": "c2e9111b90c8f44fa9214277cb7265edd66f83de86138a06c22402af9c948d74",
+    "last_updated": "2025-11-05T21:27:43.098778+00:00",
+    "size": 8721
+  },
+  "/en/docs/about-claude/model-deprecations": {
+    "hash": "05c954f86e40528d258abb5dc73402ddac82ad8812d39e4f21b61eb6812f3327",
+    "last_updated": "2025-11-05T21:27:43.626754+00:00",
+    "size": 7617
+  },
+  "/en/docs/about-claude/models/choosing-a-model": {
+    "hash": "ecb48b28d16152f5c6bb91f22e2a227cf3e0f85dfb767a55b18d79b4e239ff9f",
+    "last_updated": "2025-11-05T21:27:45.329181+00:00",
+    "size": 4937
+  },
+  "/en/docs/about-claude/models/migrating-to-claude-4": {
+    "hash": "739ff42883263d27a7b1cfbf88a9143952de94767dd851e0f579b33c85371dd5",
+    "last_updated": "2025-11-05T21:27:47.328158+00:00",
+    "size": 15454
+  },
+  "/en/docs/about-claude/models/overview": {
+    "hash": "b29492bc7ef7b653db74b5f7eb5bc6f91c43a0038ece01d5198eeeb0c205c26d",
+    "last_updated": "2025-11-05T21:27:47.926772+00:00",
+    "size": 22882
+  },
+  "/en/docs/about-claude/models/whats-new-claude-4-5": {
+    "hash": "fb9e79fc01ffbe4ad257e643121a1dced5c8a971597ac0f5103b1a87539f3b0d",
+    "last_updated": "2025-11-05T21:27:48.519398+00:00",
+    "size": 19461
+  },
+  "/en/docs/about-claude/pricing": {
+    "hash": "301a9a8e79da0ed87bf61e47771dbab12da094ae598dbfdbe0af99cd2b374c8f",
+    "last_updated": "2025-11-05T21:27:49.412078+00:00",
+    "size": 20253
+  },
+  "/en/docs/about-claude/use-case-guides/content-moderation": {
+    "hash": "b342d3ae39f0685cfcff521375147dbfa6f35f840d35fc58e5310364cf990407",
+    "last_updated": "2025-11-05T21:27:50.451043+00:00",
+    "size": 25575
+  },
+  "/en/docs/about-claude/use-case-guides/customer-support-chat": {
+    "hash": "39f0468d587f89c7d4da0fa47e8d0da8e5250a88afce5b5465381df8eee0bcac",
+    "last_updated": "2025-11-05T21:27:51.054092+00:00",
+    "size": 33689
+  },
+  "/en/docs/about-claude/use-case-guides/legal-summarization": {
+    "hash": "2450bff3ba899eade7e2a30254d73749cbc96e435f7ac7853502d06ca9ce0e54",
+    "last_updated": "2025-11-05T21:27:51.660903+00:00",
+    "size": 21842
+  },
+  "/en/docs/about-claude/use-case-guides/ticket-routing": {
+    "hash": "d5b7b95547a09dc316ab95b376cf0cd4412045f836c63ce1b60b626f9dac9aec",
+    "last_updated": "2025-11-05T21:27:52.218925+00:00",
+    "size": 31016
+  },
+  "/en/docs/agents-and-tools/agent-skills/best-practices": {
+    "hash": "350a7d9e03a8b98fc1d998a020804eae58ab14371ef60f0e6afa02f9a443d994",
+    "last_updated": "2025-11-05T21:27:54.977638+00:00",
+    "size": 46269
+  },
+  "/en/docs/agents-and-tools/agent-skills/overview": {
+    "hash": "d0f4cdc191c777d8e8feb0ccaa861012f0434bc2f707f5bd0683c4a7381683e4",
+    "last_updated": "2025-11-05T21:27:55.501278+00:00",
+    "size": 20937
+  },
+  "/en/docs/agents-and-tools/agent-skills/quickstart": {
+    "hash": "7cbf4aa9de9dff82cf9cb5c1e2f99675546e7ae6d1543d471ac11ce5b021d826",
+    "last_updated": "2025-11-05T21:27:56.022514+00:00",
+    "size": 15765
+  },
+  "/en/docs/agents-and-tools/claude-for-sheets": {
+    "hash": "fa13fcbd2b17b370d90d719e6f9cc58ad886b4bb9ba0556fd0a77d84d1edf9f5",
+    "last_updated": "2025-11-05T21:27:59.052274+00:00",
+    "size": 14177
+  },
+  "/en/docs/agents-and-tools/mcp-connector": {
+    "hash": "b8a44363e618e91d3191fe5f8ce46e118402241421ff028f942c37677ddd8326",
+    "last_updated": "2025-11-05T21:28:00.820388+00:00",
+    "size": 8507
+  },
+  "/en/docs/agents-and-tools/remote-mcp-servers": {
+    "hash": "2863f7fc63f396ee0055d7c0cfdfe573d0ce950b7725a6f51abe9b20588d6db8",
+    "last_updated": "2025-11-05T21:28:01.422992+00:00",
+    "size": 19522
+  },
+  "/en/docs/agents-and-tools/tool-use/bash-tool": {
+    "hash": "f8d900ebe5c62b823402a7c6c8b54b983d8a0585ef58b34a0a97b5bd3e229993",
+    "last_updated": "2025-11-05T21:28:01.961856+00:00",
+    "size": 12197
+  },
+  "/en/docs/agents-and-tools/tool-use/code-execution-tool": {
+    "hash": "0b6cb3af0f3e28d2025fa01841fdbe75dc2c9bfe8ebd2e9b5d4331282cb1e5b4",
+    "last_updated": "2025-11-05T21:28:02.485120+00:00",
+    "size": 33292
+  },
+  "/en/docs/agents-and-tools/tool-use/computer-use-tool": {
+    "hash": "8497cc9a2369ddcfdc67a3cc20ee8a71b51c3bdfe2c3b3b1be1cbb06832d5d25",
+    "last_updated": "2025-11-05T21:28:03.112652+00:00",
+    "size": 40604
+  },
+  "/en/docs/agents-and-tools/tool-use/fine-grained-tool-streaming": {
+    "hash": "8cf6a8666d8f6a644e03e0ba52b38d5c51fbdc584f6d1971e7007ba2f83420c9",
+    "last_updated": "2025-11-05T21:28:03.658848+00:00",
+    "size": 6262
+  },
+  "/en/docs/agents-and-tools/tool-use/implement-tool-use": {
+    "hash": "dc71a82c209528a5f900ce3f9ed4d17855c8fe5974c8f98571c21c79b3c2b23e",
+    "last_updated": "2025-11-05T21:28:04.246397+00:00",
+    "size": 63282
+  },
+  "/en/docs/agents-and-tools/tool-use/memory-tool": {
+    "hash": "f2e1388fecfb8458dfafef5bceb669fa9afc90a20d75030ccc0806744d989c18",
+    "last_updated": "2025-11-05T21:28:04.771793+00:00",
+    "size": 15162
+  },
+  "/en/docs/agents-and-tools/tool-use/overview": {
+    "hash": "afce8860740e2e6de95338ea65c607a9bd88b33e31b04c2f19efdf99a6547d20",
+    "last_updated": "2025-11-05T21:28:05.310988+00:00",
+    "size": 60253
+  },
+  "/en/docs/agents-and-tools/tool-use/text-editor-tool": {
+    "hash": "cf372982a2fe6a47ef22a4c2b79e1e094c457baf70d5fa8206c89f72532ee190",
+    "last_updated": "2025-11-05T21:28:05.936545+00:00",
+    "size": 50397
+  },
+  "/en/docs/agents-and-tools/tool-use/token-efficient-tool-use": {
+    "hash": "c675d40b810ca94f3d83dc61b717798d1c8832762bd7ff06a507ebf1c67d8cea",
+    "last_updated": "2025-11-05T21:28:06.727165+00:00",
+    "size": 5892
+  },
+  "/en/docs/agents-and-tools/tool-use/web-fetch-tool": {
+    "hash": "5f0a6126b9914056c3accd3708269c0de70bef3e9ee214dffc8fc0a95a33d86f",
+    "last_updated": "2025-11-05T21:28:07.323320+00:00",
+    "size": 16156
+  },
+  "/en/docs/agents-and-tools/tool-use/web-search-tool": {
+    "hash": "50ff41add8ac3d3bc3c5a1706975b47e729d2041b078b26b3fa32d5488192b0a",
+    "last_updated": "2025-11-05T21:28:09.102137+00:00",
+    "size": 13616
+  },
+  "/en/docs/build-with-claude/batch-processing": {
+    "hash": "2eacfd4c734b0b1ec6a0aead002350f4d79ede18907bfa5019c4a9b6c0a5188e",
+    "last_updated": "2025-11-05T21:28:10.612735+00:00",
+    "size": 36960
+  },
+  "/en/docs/build-with-claude/citations": {
+    "hash": "59594480710470ff7f7c89a0b014ec89d14cb85e2f0ab7e55166e0d81469ac2e",
+    "last_updated": "2025-11-05T21:28:11.224117+00:00",
+    "size": 21908
+  },
+  "/en/docs/build-with-claude/context-editing": {
+    "hash": "152eaa8bee98a3fadc319dfd840e9f931ab16514b70c26d8cbe7070aa3e8f102",
+    "last_updated": "2025-11-05T21:28:12.726155+00:00",
+    "size": 26062
+  },
+  "/en/docs/build-with-claude/context-windows": {
+    "hash": "81de17c185c088b03d7821bce2f2553b3b5a9fb0f46e54e3c475f8429d3ca16a",
+    "last_updated": "2025-11-05T21:28:13.250136+00:00",
+    "size": 17485
+  },
+  "/en/docs/build-with-claude/embeddings": {
+    "hash": "e237aa36ab0ed8f8ef75bab5f2f444657b4013132a6b83218a5784d66b9b871a",
+    "last_updated": "2025-11-05T21:28:16.034075+00:00",
+    "size": 18180
+  },
+  "/en/docs/build-with-claude/extended-thinking": {
+    "hash": "9f0360787e4c9709017c164980ebab4bf58e268dbd835cd210a697ec80925797",
+    "last_updated": "2025-11-05T21:28:16.579757+00:00",
+    "size": 116507
+  },
+  "/en/docs/build-with-claude/files": {
+    "hash": "6d8d28406df48646f737574f7711d03f15f478d1764db74f35f6af0aeab93904",
+    "last_updated": "2025-11-05T21:28:17.162672+00:00",
+    "size": 15950
+  },
+  "/en/docs/build-with-claude/multilingual-support": {
+    "hash": "028b51950fc01970ef9fcb56853db09fb11fb4f8ba9c2b15fc750d041f8bf2dd",
+    "last_updated": "2025-11-05T21:28:19.052412+00:00",
+    "size": 6436
+  },
+  "/en/docs/build-with-claude/overview": {
+    "hash": "8df7181dc0f2822ea65daec1dfff96ea1db4a35a948712eb708275223ab2c3cf",
+    "last_updated": "2025-11-05T21:28:19.571625+00:00",
+    "size": 10510
+  },
+  "/en/docs/build-with-claude/pdf-support": {
+    "hash": "c07684d29ec0b11f49c259d5fbcd2474f1c6818d8a15c56efcdc170433064c16",
+    "last_updated": "2025-11-05T21:28:20.161619+00:00",
+    "size": 35735
+  },
+  "/en/docs/build-with-claude/prompt-caching": {
+    "hash": "ba1dab2e31f4afc9ebb1f6b4782d20c34824fd1a106d93f45b9119955a515f5b",
+    "last_updated": "2025-11-05T21:28:20.693719+00:00",
+    "size": 88476
+  },
+  "/en/docs/build-with-claude/prompt-engineering/be-clear-and-direct": {
+    "hash": "86d80524a8f53cc6478eeaa8a0cd7032c43a9f17d3b853a3755beebf469b1d95",
+    "last_updated": "2025-11-05T21:28:21.443924+00:00",
+    "size": 18929
+  },
+  "/en/docs/build-with-claude/prompt-engineering/chain-of-thought": {
+    "hash": "64d0d1b9e2b2f7dd23e94a1ad0d4f41e88b699fc58d7a485025a3ed5f5e7be7d",
+    "last_updated": "2025-11-05T21:28:22.040184+00:00",
+    "size": 22651
+  },
+  "/en/docs/build-with-claude/prompt-engineering/chain-prompts": {
+    "hash": "7c6612371ab460fce495b50e3c3103f589448ef38b3a90fa5cdcefdd666dfba2",
+    "last_updated": "2025-11-05T21:28:22.570833+00:00",
+    "size": 64188
+  },
+  "/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices": {
+    "hash": "79bc1905842b0d658544c20498401e0060b00e4649346d145890e5dd1b826361",
+    "last_updated": "2025-11-05T21:28:24.632933+00:00",
+    "size": 23050
+  },
+  "/en/docs/build-with-claude/prompt-engineering/extended-thinking-tips": {
+    "hash": "864a0c8c92caed73ca577106a8e5099d9bb16f5d2a3997e4dbb12f1b92a0dc71",
+    "last_updated": "2025-11-05T21:28:25.184588+00:00",
+    "size": 16847
+  },
+  "/en/docs/build-with-claude/prompt-engineering/long-context-tips": {
+    "hash": "e2e97b74831a58098518569aa64ae03e4d784abf1b9ce87b4893e36c094089ea",
+    "last_updated": "2025-11-05T21:28:25.800857+00:00",
+    "size": 3707
+  },
+  "/en/docs/build-with-claude/prompt-engineering/multishot-prompting": {
+    "hash": "911efed18a280a64d820d883cc9ddef9777eb02ad291424aedb29632a19e9c8f",
+    "last_updated": "2025-11-05T21:28:26.398252+00:00",
+    "size": 13087
+  },
+  "/en/docs/build-with-claude/prompt-engineering/overview": {
+    "hash": "413b72d16aee0ffee0552d973a754e5108ad43ff06449ab2460d87b4f40ab19b",
+    "last_updated": "2025-11-05T21:28:27.109052+00:00",
+    "size": 5007
+  },
+  "/en/docs/build-with-claude/prompt-engineering/prefill-claudes-response": {
+    "hash": "7b1f14bf63347b29e20aa33087cd75aed5910fa172e0f2c382d56e873f768fb3",
+    "last_updated": "2025-11-05T21:28:27.713176+00:00",
+    "size": 14948
+  },
+  "/en/docs/build-with-claude/prompt-engineering/prompt-generator": {
+    "hash": "cb68cca745ed3b674cc0c2451267aba48d3843d2814bc8e43321cc3a024fdfef",
+    "last_updated": "2025-11-05T21:28:28.297178+00:00",
+    "size": 2216
+  },
+  "/en/docs/build-with-claude/prompt-engineering/prompt-improver": {
+    "hash": "19ff81c4540c0e2504623378d50f976c409f3d04fe4c15063284795edceaffec",
+    "last_updated": "2025-11-05T21:28:28.863966+00:00",
+    "size": 7368
+  },
+  "/en/docs/build-with-claude/prompt-engineering/prompt-templates-and-variables": {
+    "hash": "9f15218238940386188d3cb9566dc64e2cb8c546fa63630beef9c0344f91f53a",
+    "last_updated": "2025-11-05T21:28:29.390162+00:00",
+    "size": 3710
+  },
+  "/en/docs/build-with-claude/prompt-engineering/system-prompts": {
+    "hash": "79a6066d3f3db90dec63ba0f0d379a89e1b5a29893c8727a2313e345fa8d2d8c",
+    "last_updated": "2025-11-05T21:28:29.999072+00:00",
+    "size": 18612
+  },
+  "/en/docs/build-with-claude/prompt-engineering/use-xml-tags": {
+    "hash": "1461408cd592a5c8a48ef78aa154d84b71a669378d0d856c88a8b745483c0d82",
+    "last_updated": "2025-11-05T21:28:30.524583+00:00",
+    "size": 22289
+  },
+  "/en/docs/build-with-claude/search-results": {
+    "hash": "6a0f32a95144168925923f35e8c03248d518831ef92b5529b84ca4728f26ba18",
+    "last_updated": "2025-11-05T21:28:31.062068+00:00",
+    "size": 24616
+  },
+  "/en/docs/build-with-claude/streaming": {
+    "hash": "048a03a66c9fc4b9331921c74c13cb191bfd3337ad912550b8930e71bdb08319",
+    "last_updated": "2025-11-05T21:28:31.588591+00:00",
+    "size": 23644
+  },
+  "/en/docs/build-with-claude/text-generation": {
+    "hash": "4302e9271c1e16aa9ec00148b9a55f3fe4da4b582fac5a12497c454b694f5b8a",
+    "last_updated": "2025-11-05T21:28:33.380271+00:00",
+    "size": 3813
+  },
+  "/en/docs/build-with-claude/token-counting": {
+    "hash": "3810f72c8a19628774476d885c57c567a7bdc94574ca4650dbc3d56bc293a175",
+    "last_updated": "2025-11-05T21:28:35.523062+00:00",
+    "size": 24577
+  },
+  "/en/docs/build-with-claude/vision": {
+    "hash": "15046b55f49d0fc12eb1284084d415153461f8e422d81d00b77c6a5c2050b2f7",
+    "last_updated": "2025-11-05T21:28:38.930890+00:00",
+    "size": 37540
+  },
+  "/en/docs/build-with-claude/working-with-messages": {
+    "hash": "cb31224da40a28bf39cc3099f9eb2960302fc1a906edf1829d43009f5657ed40",
+    "last_updated": "2025-11-05T21:28:39.541103+00:00",
+    "size": 12557
+  },
+  "/en/docs/get-started": {
+    "hash": "6939c0c82159126d61810e5783a9a4899ccb73373305c3102d4676aa475a1ca8",
+    "last_updated": "2025-11-05T21:28:42.666674+00:00",
+    "size": 11365
+  },
+  "/en/docs/intro": {
+    "hash": "ba53d650fe2990cb14698ff48086ef2c04947bf1db7eda539473e8b1046be917",
+    "last_updated": "2025-11-05T21:28:49.046420+00:00",
+    "size": 3011
+  },
+  "/en/docs/mcp": {
+    "hash": "c293a0fffcfa5341be4375a15eafb7b6c1c0b96ff256300d4bec02265ba1fe73",
+    "last_updated": "2025-11-05T21:28:53.086119+00:00",
+    "size": 1448
+  },
+  "/en/docs/test-and-evaluate/define-success": {
+    "hash": "c83fd8fbcb2cf3a78aa6bb16d3232cb11f5e83f7854cea9df49b16af8392635a",
+    "last_updated": "2025-11-05T21:29:04.415916+00:00",
+    "size": 7244
+  },
+  "/en/docs/test-and-evaluate/develop-tests": {
+    "hash": "a9ff7baca9e238a098f4c35fc7a92279c457f468e7981b4073076d8653125bf8",
+    "last_updated": "2025-11-05T21:29:06.874710+00:00",
+    "size": 22230
+  },
+  "/en/docs/test-and-evaluate/eval-tool": {
+    "hash": "3b0252124cd9683383d0d5f0a558b3ac9997186dab53b22e397de8add5f686f1",
+    "last_updated": "2025-11-05T21:29:07.419899+00:00",
+    "size": 9578
+  },
+  "/en/docs/test-and-evaluate/strengthen-guardrails/handle-streaming-refusals": {
+    "hash": "32b77fac496435a4ab3726852407fdd496b09b8f38d726b902ed9750018d75c0",
+    "last_updated": "2025-11-05T21:29:10.989819+00:00",
+    "size": 5664
+  },
+  "/en/docs/test-and-evaluate/strengthen-guardrails/increase-consistency": {
+    "hash": "00baa149cd197f33bfcbaccf11341b2f87ee9369ac4cbd1e2e306a3830071dce",
+    "last_updated": "2025-11-05T21:29:11.606032+00:00",
+    "size": 31956
+  },
+  "/en/docs/test-and-evaluate/strengthen-guardrails/keep-claude-in-character": {
+    "hash": "2e1c3204e80696eb530546635c9361e9b4a82c582cdf94439c82637b3e8fd446",
+    "last_updated": "2025-11-05T21:29:12.204823+00:00",
+    "size": 4634
+  },
+  "/en/docs/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks": {
+    "hash": "24e47d38c11a8f32f2eead6f9cd87d7d16b081888acad44e50aed8c4108e5430",
+    "last_updated": "2025-11-05T21:29:13.734763+00:00",
+    "size": 8194
+  },
+  "/en/docs/test-and-evaluate/strengthen-guardrails/reduce-hallucinations": {
+    "hash": "f8f195b8197be77465e6d832a201e6dc7a9ed2da5c2294343b2107757009808d",
+    "last_updated": "2025-11-05T21:29:14.256401+00:00",
+    "size": 6440
+  },
+  "/en/docs/test-and-evaluate/strengthen-guardrails/reduce-latency": {
+    "hash": "94b5ee74d39eca8f1b34ac469e5c21fdb3e729b30122f1b5961dfe4017b57855",
+    "last_updated": "2025-11-05T21:29:14.779944+00:00",
+    "size": 5122
+  },
+  "/en/docs/test-and-evaluate/strengthen-guardrails/reduce-prompt-leak": {
+    "hash": "f45429b7d6243fff4ece3add8f26da73c6067ffff861d0b8cb3138e0916c4242",
+    "last_updated": "2025-11-05T21:29:15.432338+00:00",
+    "size": 3886
+  },
+  "/en/api/admin-api/apikeys/get-api-key": {
+    "hash": "01197add15c5101389bb91a17331de7eaa5f4e9f97bd2ed528cc0cf88b54fe17",
+    "last_updated": "2025-11-05T21:29:21.661429+00:00",
+    "size": 12280
+  },
+  "/en/api/admin-api/apikeys/list-api-keys": {
+    "hash": "cb9e8a23973ad205a1d81c78a89a4c5b765ba59b490143d05135bf54da946787",
+    "last_updated": "2025-11-05T21:29:22.189976+00:00",
+    "size": 14788
+  },
+  "/en/api/admin-api/apikeys/update-api-key": {
+    "hash": "4d0eea0e986a89ec3fa8f5c91a2ed385766703a13cd80cfc9ba83b9b9f3f57c1",
+    "last_updated": "2025-11-05T21:29:22.713591+00:00",
+    "size": 13381
+  },
+  "/en/api/admin-api/claude-code/get-claude-code-usage-report": {
+    "hash": "c9ce7a1e1710c57a6c857f07fe1c25d5593bc87852ba309622e3d13ca45e546f",
+    "last_updated": "2025-11-05T21:29:23.328504+00:00",
+    "size": 21149
+  },
+  "/en/api/admin-api/invites/create-invite": {
+    "hash": "5a916ed3ce11c3605a2f5d986a4623141bba72e8b65f8b46f835e58877749913",
+    "last_updated": "2025-11-05T21:29:23.932547+00:00",
+    "size": 12606
+  },
+  "/en/api/admin-api/invites/delete-invite": {
+    "hash": "8dbe5bbd41067bb3191291415548bab38960d872c651c7cfcc4557e889529cce",
+    "last_updated": "2025-11-05T21:29:24.453506+00:00",
+    "size": 9259
+  },
+  "/en/api/admin-api/invites/get-invite": {
+    "hash": "7023b4bc220aca8c741532cd066b14283ddf80c32a24221c0bf2d9946c6c8fe3",
+    "last_updated": "2025-11-05T21:29:24.976473+00:00",
+    "size": 11439
+  },
+  "/en/api/admin-api/invites/list-invites": {
+    "hash": "c9506d65ffbef8e889f00c6d9c60dcf4c0662bc831f4ab3b2a6fe7bcc3ab05f0",
+    "last_updated": "2025-11-05T21:29:25.508656+00:00",
+    "size": 12885
+  },
+  "/en/api/admin-api/organization/get-me": {
+    "hash": "2def1c6f33d3ab8a95e4e22003f591864d3678f7af9edecc369e31217316cf73",
+    "last_updated": "2025-11-05T21:29:26.114259+00:00",
+    "size": 9318
+  },
+  "/en/api/admin-api/usage-cost/get-cost-report": {
+    "hash": "2579fa7c2a89ee871a0feecbea16d1ee2b787d012f175634a14ddf2728b79268",
+    "last_updated": "2025-11-05T21:29:26.635200+00:00",
+    "size": 18270
+  },
+  "/en/api/admin-api/usage-cost/get-messages-usage-report": {
+    "hash": "a796db211104639a05c3e7451567ed32118236edc395ea1cfb7cb2e324d4317f",
+    "last_updated": "2025-11-05T21:29:27.161807+00:00",
+    "size": 22782
+  },
+  "/en/api/admin-api/users/get-user": {
+    "hash": "c2f8bff3ac5aa279342c86270aa432d858642f919a038440d423fd2c4066372e",
+    "last_updated": "2025-11-05T21:29:27.750204+00:00",
+    "size": 10736
+  },
+  "/en/api/admin-api/users/list-users": {
+    "hash": "cc7e1761cd84322f370abd0c647c35c45bb3a99ea96db639a9410127a12b5e91",
+    "last_updated": "2025-11-05T21:29:28.270461+00:00",
+    "size": 12571
+  },
+  "/en/api/admin-api/users/remove-user": {
+    "hash": "ff077ce447ad46d222846111086a960db210939b1068d07b9a0d489d9f1efb22",
+    "last_updated": "2025-11-05T21:29:28.789398+00:00",
+    "size": 9217
+  },
+  "/en/api/admin-api/users/update-user": {
+    "hash": "0cf0f233e9ed191969b6db9a44efd1e44cf967a4b964ce2cd211de1560b5c9f4",
+    "last_updated": "2025-11-05T21:29:30.298321+00:00",
+    "size": 11755
+  },
+  "/en/api/admin-api/workspace_members/create-workspace-member": {
+    "hash": "7849ec0c195e7e67b423fbd3e441295b692e0d7464590955b5a5cc9d1b731d9a",
+    "last_updated": "2025-11-05T21:29:30.950761+00:00",
+    "size": 11732
+  },
+  "/en/api/admin-api/workspace_members/delete-workspace-member": {
+    "hash": "3557b1d132eab97ff78a18dd360e07febd735ab56a6c6d96e310337c1829bfe3",
+    "last_updated": "2025-11-05T21:29:31.537386+00:00",
+    "size": 9998
+  },
+  "/en/api/admin-api/workspace_members/get-workspace-member": {
+    "hash": "b65a212dc1c396e7fea831fae4b7471189ab3ebf67d49bc32db6a96d7f4a2165",
+    "last_updated": "2025-11-05T21:29:32.133204+00:00",
+    "size": 10562
+  },
+  "/en/api/admin-api/workspace_members/list-workspace-members": {
+    "hash": "360311ccb2a7b139031914192e96645222b2bed5fe2cb9a5a544c9e8debfea55",
+    "last_updated": "2025-11-05T21:29:32.721974+00:00",
+    "size": 12450
+  },
+  "/en/api/admin-api/workspace_members/update-workspace-member": {
+    "hash": "48c82e42025cd73900aaf43f228751e8f4e71108993bf5adc8eb0e9109f51b35",
+    "last_updated": "2025-11-05T21:29:33.242636+00:00",
+    "size": 11290
+  },
+  "/en/api/admin-api/workspaces/archive-workspace": {
+    "hash": "e3a45bdc1549e4903c304aabb675496c5c387e3344d7480f0b37aed532355f0a",
+    "last_updated": "2025-11-05T21:29:33.829985+00:00",
+    "size": 11017
+  },
+  "/en/api/admin-api/workspaces/create-workspace": {
+    "hash": "cb8f6f2f4d4b94d13c7d6778cd1f1b2c5a78a0b23435332740706514ff41b241",
+    "last_updated": "2025-11-05T21:29:34.368029+00:00",
+    "size": 11438
+  },
+  "/en/api/admin-api/workspaces/get-workspace": {
+    "hash": "d09217069a8b0c4fdc18ec05000ef8aadbb24f2ecf824af4f061e6bb62d80ddf",
+    "last_updated": "2025-11-05T21:29:34.893050+00:00",
+    "size": 10972
+  },
+  "/en/api/admin-api/workspaces/list-workspaces": {
+    "hash": "0dda5b4c2f16497ac04b84e6d6abeafaec3d6b5395bbc078504b4c358a607636",
+    "last_updated": "2025-11-05T21:29:35.411899+00:00",
+    "size": 12808
+  },
+  "/en/api/admin-api/workspaces/update-workspace": {
+    "hash": "13c5a6d2addc959ed433e5772a37fdfd25b67a6593f1c5456fbff420ddc304a7",
+    "last_updated": "2025-11-05T21:29:36.064425+00:00",
+    "size": 11695
+  },
+  "/en/api/administration-api": {
+    "hash": "7bd1ba6dc721b8d54583420339ef904ed3e96c49ad4b23bf80a5767f6197de2f",
+    "last_updated": "2025-11-05T21:29:36.586134+00:00",
+    "size": 11947
+  },
+  "/en/api/agent-sdk/cost-tracking": {
+    "hash": "d67e62a2f4521f5cdb920f4b6694f02ab0b425daca242e36bb15b3b80555f368",
+    "last_updated": "2025-11-05T21:29:37.110304+00:00",
+    "size": 11471
+  },
+  "/en/api/agent-sdk/custom-tools": {
+    "hash": "9c006e2527e2514e5dbe6fc98a830009a604b3b1fbf39408d88678bd0f856b13",
+    "last_updated": "2025-11-05T21:29:37.718108+00:00",
+    "size": 23077
+  },
+  "/en/api/agent-sdk/hosting": {
+    "hash": "b6617dbc977d010115c4de632aff5ebf4ed59885f35ec64245476d9b9f05570f",
+    "last_updated": "2025-11-05T21:29:38.306141+00:00",
+    "size": 6101
+  },
+  "/en/api/agent-sdk/mcp": {
+    "hash": "d6dd576f5d5bc655a68def569e6a6138a009a7c7481a500a26fbcdc5d3b2b4f8",
+    "last_updated": "2025-11-05T21:29:38.826138+00:00",
+    "size": 8418
+  },
+  "/en/api/agent-sdk/modifying-system-prompts": {
+    "hash": "79d0c7dc65f51be36bd9a1bf09317b1869a25316052bcbda0e851e9dc1bcaf06",
+    "last_updated": "2025-11-05T21:29:39.418664+00:00",
+    "size": 15604
+  },
+  "/en/api/agent-sdk/overview": {
+    "hash": "483f65b59307cb2d0401e868614e2a616ba459a26a662935c0d4a0903513be91",
+    "last_updated": "2025-11-05T21:29:39.941757+00:00",
+    "size": 7230
+  },
+  "/en/api/agent-sdk/permissions": {
+    "hash": "f72a2a28f7e66e0348e92128e0cb996be0c6f24028e3e5c3aa554d33c33aa537",
+    "last_updated": "2025-11-05T21:29:40.462717+00:00",
+    "size": 13315
+  },
+  "/en/api/agent-sdk/plugins": {
+    "hash": "8964d0350c0179fec75dab1356a3b56e2e0a54123d4c49af88d5e316a05b4cb6",
+    "last_updated": "2025-11-05T21:29:42.400533+00:00",
+    "size": 10702
+  },
+  "/en/api/agent-sdk/python": {
+    "hash": "81e650d325092eec7706774ea881496f580e9f5c3dc26ee358fd51a6363bb56c",
+    "last_updated": "2025-11-05T21:29:42.926636+00:00",
+    "size": 59273
+  },
+  "/en/api/agent-sdk/sessions": {
+    "hash": "f7fbc923178e929bff14b2739337f691355ab7bd61fbaa09860d7ea864549130",
+    "last_updated": "2025-11-05T21:29:43.443934+00:00",
+    "size": 7969
+  },
+  "/en/api/agent-sdk/skills": {
+    "hash": "fc7df0c8e8b11da98769c6759041004be8277383547f789ff16fceb46533606f",
+    "last_updated": "2025-11-05T21:29:43.967710+00:00",
+    "size": 10837
+  },
+  "/en/api/agent-sdk/slash-commands": {
+    "hash": "03d9083db02a9d6e61cc5b6eb72e3477828b9eea87f03f8510ba78641d61865d",
+    "last_updated": "2025-11-05T21:29:44.489300+00:00",
+    "size": 12991
+  },
+  "/en/api/agent-sdk/streaming-vs-single-mode": {
+    "hash": "f0a5c13a93287fd8dd10143e2cedb6f87fbbb6f9084466b255b398659bf95178",
+    "last_updated": "2025-11-05T21:29:45.024865+00:00",
+    "size": 8672
+  },
+  "/en/api/agent-sdk/subagents": {
+    "hash": "cfee5e5df28f8a39f8b559cb8b3eb54796f0036bcc04fe386dab05c230c6c0bc",
+    "last_updated": "2025-11-05T21:29:45.544940+00:00",
+    "size": 9502
+  },
+  "/en/api/agent-sdk/todo-tracking": {
+    "hash": "191712b9cb4642edfdf3d4ea8f204f2f1fd762477ede07addf06ef1f760ef11a",
+    "last_updated": "2025-11-05T21:29:46.068051+00:00",
+    "size": 6115
+  },
+  "/en/api/agent-sdk/typescript": {
+    "hash": "08add33ba1d2bdb5719db17b5c647a3e7c13c0cd9d458e4b6f73fb269be0bb43",
+    "last_updated": "2025-11-05T21:29:46.689282+00:00",
+    "size": 48131
+  },
+  "/en/api/beta-headers": {
+    "hash": "db36bfce9ff0ae8b542e592f44e611e45127d61d1b39541c98b6daf9cc17fc9f",
+    "last_updated": "2025-11-05T21:29:47.295897+00:00",
+    "size": 3124
+  },
+  "/en/api/canceling-message-batches": {
+    "hash": "1f37a5e8b1be33aaa3749857ab5c056af3f87d37b0db7c8678ec9eaca68931ef",
+    "last_updated": "2025-11-05T21:29:47.894087+00:00",
+    "size": 17360
+  },
+  "/en/api/claude-code-analytics-api": {
+    "hash": "a98a897cb3107cd07808dafd817fa2a9a54f29bc9fa723d5825be45972a6b08e",
+    "last_updated": "2025-11-05T21:29:49.716128+00:00",
+    "size": 11545
+  },
+  "/en/api/claude-on-amazon-bedrock": {
+    "hash": "a819c08cf98c9915610d97b2dac702b6e5091dd4ac826d08617b98c8b93c1c5e",
+    "last_updated": "2025-11-05T21:29:50.315579+00:00",
+    "size": 15602
+  },
+  "/en/api/claude-on-vertex-ai": {
+    "hash": "1c2f5ab17aae074211bd34e25552babb17eed31153d0507a968c764e29cdcea2",
+    "last_updated": "2025-11-05T21:29:50.920750+00:00",
+    "size": 12263
+  },
+  "/en/api/client-sdks": {
+    "hash": "2180e876d96b122230efeeeaee5992bad38f97ee0fd580a029e1ff935fd08af4",
+    "last_updated": "2025-11-05T21:29:51.517596+00:00",
+    "size": 14250
+  },
+  "/en/api/creating-message-batches": {
+    "hash": "9d37050fb886d15923838d99857d59fbe418f20c6ba4321efaf09657352c6a51",
+    "last_updated": "2025-11-05T21:29:52.528710+00:00",
+    "size": 112127
+  },
+  "/en/api/deleting-message-batches": {
+    "hash": "89364c6aba33ebcf544078fce20be5e912cde7906d140d1b863264dd3a73e341",
+    "last_updated": "2025-11-05T21:29:54.808076+00:00",
+    "size": 10073
+  },
+  "/en/api/errors": {
+    "hash": "2826a8fca2aa82712f540971d6701c2548658773a0048ccc3deba4a1a511b2b0",
+    "last_updated": "2025-11-05T21:29:55.398236+00:00",
+    "size": 5170
+  },
+  "/en/api/files-content": {
+    "hash": "289baf60f83348b81bfa41254f0922fcd7b260773acbbef4f3dca9251f0b7acd",
+    "last_updated": "2025-11-05T21:29:55.928286+00:00",
+    "size": 8940
+  },
+  "/en/api/files-create": {
+    "hash": "f661711509a7d78687f43fbde476adad04737358c84aadd1a10525858f585559",
+    "last_updated": "2025-11-05T21:29:57.722706+00:00",
+    "size": 11497
+  },
+  "/en/api/files-delete": {
+    "hash": "dfdcb3300e74ba195338655e9cec928cac774e9585a97477a4e19a71786409e6",
+    "last_updated": "2025-11-05T21:29:59.537526+00:00",
+    "size": 9584
+  },
+  "/en/api/files-list": {
+    "hash": "3168e91507273c7572d58056c4a55dfe3d1b0a9b304f9b9402bc879cba976254",
+    "last_updated": "2025-11-05T21:30:00.058550+00:00",
+    "size": 12482
+  },
+  "/en/api/files-metadata": {
+    "hash": "fee9ba5a165e71f7c6c78724faf69665280ff4ca6648e24d3ba5a4f89c373b7e",
+    "last_updated": "2025-11-05T21:30:00.672751+00:00",
+    "size": 11119
+  },
+  "/en/api/getting-help": {
+    "hash": "873e927eaa9f7ca42a1f0e95ca4317121738b9984c115625e7f78a4da817a64f",
+    "last_updated": "2025-11-05T21:30:02.177955+00:00",
+    "size": 750
+  },
+  "/en/api/handling-stop-reasons": {
+    "hash": "5da91a9e18e9d46ddcefca22eb94ea22a5b9aa02111fc7b83625b89229720617",
+    "last_updated": "2025-11-05T21:30:04.630980+00:00",
+    "size": 15151
+  },
+  "/en/api/ip-addresses": {
+    "hash": "1516d5005ccf9d0afe6c0b764fa1f1e7c2bfa4c1fc61f34460c8e4dcb8ce866f",
+    "last_updated": "2025-11-05T21:30:05.151111+00:00",
+    "size": 683
+  },
+  "/en/api/listing-message-batches": {
+    "hash": "b598c665bbea7ad0c37058361e0ae9f3e7f1f281bb9430161969f8cf72911142",
+    "last_updated": "2025-11-05T21:30:05.890209+00:00",
+    "size": 17770
+  },
+  "/en/api/messages": {
+    "hash": "c8fff6df3cc9e0947fb96f3d6b6351899f2e0da0d399d53bf03b92c07f8e03ca",
+    "last_updated": "2025-11-05T21:30:06.423247+00:00",
+    "size": 147633
+  },
+  "/en/api/messages-count-tokens": {
+    "hash": "dc23e96eb451e5f37a383f9f7f5456eb87c34832236f69c29e3bb71e9ae016b2",
+    "last_updated": "2025-11-05T21:30:07.047235+00:00",
+    "size": 98115
+  },
+  "/en/api/migrating-from-text-completions-to-messages": {
+    "hash": "a0bd5f6f63e25aa02fe2e09ddad5a824cf759e487ab944cd0b2d636717ce76cb",
+    "last_updated": "2025-11-05T21:30:08.067404+00:00",
+    "size": 5062
+  },
+  "/en/api/models": {
+    "hash": "297a27ea28ce4c0321fd457f150b575d0f642614c1c33481743ab434a9aed5e3",
+    "last_updated": "2025-11-05T21:30:08.664450+00:00",
+    "size": 10469
+  },
+  "/en/api/models-list": {
+    "hash": "b14283a28e75a98b3f008ce143096084290b94779363fc0eaa9700ec9b755c30",
+    "last_updated": "2025-11-05T21:30:09.197402+00:00",
+    "size": 12350
+  },
+  "/en/api/openai-sdk": {
+    "hash": "7419bc47b81d91af4c5745ee363d8891426eff20fa4418998a6c394412965159",
+    "last_updated": "2025-11-05T21:30:09.729236+00:00",
+    "size": 15612
+  },
+  "/en/api/overview": {
+    "hash": "f79abeb38fd9b05a403328df0f642d7c0300845ba554e2ba6c5ef6a5fb37167b",
+    "last_updated": "2025-11-05T21:30:10.381757+00:00",
+    "size": 3347
+  },
+  "/en/api/prompt-tools-generate": {
+    "hash": "5ef3795d2a4920730884983c423a2da37b4b23be66924605d3d495ef4f9aed02",
+    "last_updated": "2025-11-05T21:30:10.997689+00:00",
+    "size": 60134
+  },
+  "/en/api/prompt-tools-improve": {
+    "hash": "af240e293c6fa6764447c5e3dd57397a130f2b27e2e94b8819dfdf4c4fa7317e",
+    "last_updated": "2025-11-05T21:30:11.524582+00:00",
+    "size": 63417
+  },
+  "/en/api/prompt-tools-templatize": {
+    "hash": "07d0c36d83a242fc07dd979d234bc06e9e181a0ccd29592de94eeaefcf673cce",
+    "last_updated": "2025-11-05T21:30:12.134425+00:00",
+    "size": 62408
+  },
+  "/en/api/rate-limits": {
+    "hash": "14af8239bbdfec9e599a79ffacc3d201ed2ba457ce426b76e5d59fe99f61ac14",
+    "last_updated": "2025-11-05T21:30:12.755774+00:00",
+    "size": 25845
+  },
+  "/en/api/retrieving-message-batch-results": {
+    "hash": "da5695660149f4c78a92afe79f605f43dad30560e985d2cabf2705471780704e",
+    "last_updated": "2025-11-05T21:30:13.288033+00:00",
+    "size": 55603
+  },
+  "/en/api/retrieving-message-batches": {
+    "hash": "21c812aba5fa5cf5acf7a875b056e5307ed30e5f03f9d3b630c08709be7add55",
+    "last_updated": "2025-11-05T21:30:13.902947+00:00",
+    "size": 17018
+  },
+  "/en/api/service-tiers": {
+    "hash": "6372d7b09f78ed6cde4e91515f2591e2e7c9cbc4c34d3c0d7e16a8a996fa8d88",
+    "last_updated": "2025-11-05T21:30:14.425915+00:00",
+    "size": 5254
+  },
+  "/en/api/skills-guide": {
+    "hash": "91e433b8393843cf2d164aa545d5b8f577f23328446e9d11730490296330d4aa",
+    "last_updated": "2025-11-05T21:30:15.019289+00:00",
+    "size": 49341
+  },
+  "/en/api/skills/create-skill": {
+    "hash": "d16c78241f343ae4f5c3806ec15f14a927b4f426d590e02221f6b2cb3eb90a0f",
+    "last_updated": "2025-11-05T21:30:16.789035+00:00",
+    "size": 14910
+  },
+  "/en/api/skills/create-skill-version": {
+    "hash": "f912154f07fe749a0230e857e376aa95fd429741762a9c2925f6fb2e999b8234",
+    "last_updated": "2025-11-05T21:30:17.315079+00:00",
+    "size": 15260
+  },
+  "/en/api/skills/delete-skill": {
+    "hash": "9328af4a6cfb36489795220644c17648f1e2c6569a906fd1dd21ac4d8225f51c",
+    "last_updated": "2025-11-05T21:30:17.924333+00:00",
+    "size": 9911
+  },
+  "/en/api/skills/delete-skill-version": {
+    "hash": "d9a2ff2ca93cdd62fdcc5304895d9a9335c507178b9849132a29c1266a474e58",
+    "last_updated": "2025-11-05T21:30:18.522866+00:00",
+    "size": 10502
+  },
+  "/en/api/skills/get-skill": {
+    "hash": "e00c9e9a3df7a411597beafb429fc48514bc0ba78e385449cb592e0bd7f7a80b",
+    "last_updated": "2025-11-05T21:30:19.132967+00:00",
+    "size": 12244
+  },
+  "/en/api/skills/get-skill-version": {
+    "hash": "f4745bd5cac53f11ba8d978910ec8e89a00f1a02c9cf8a0e3588e5caa09bc34a",
+    "last_updated": "2025-11-05T21:30:19.716278+00:00",
+    "size": 13044
+  },
+  "/en/api/skills/list-skill-versions": {
+    "hash": "bc9f54a98f1b688218ddb0483ce1e3b0148d9fb712d3f286ecefeca31b217b3f",
+    "last_updated": "2025-11-05T21:30:20.301715+00:00",
+    "size": 14021
+  },
+  "/en/api/skills/list-skills": {
+    "hash": "fce21bac0f3c4898be1a38b874081634e21829a3e882f46bd54e34c28f555708",
+    "last_updated": "2025-11-05T21:30:20.827240+00:00",
+    "size": 14324
+  },
+  "/en/api/usage-cost-api": {
+    "hash": "46f967151ce80eae1afa5f0ded2beabec7c6045bf91f5a9a204787dab6aac307",
+    "last_updated": "2025-11-05T21:30:21.850786+00:00",
+    "size": 10571
+  },
+  "/en/api/versioning": {
+    "hash": "10440d9f0d61f321e4895b145cec15137b4066438c77abb63ec05f26c3a9404b",
+    "last_updated": "2025-11-05T21:30:22.441854+00:00",
+    "size": 1625
+  },
+  "/en/docs/claude-code/amazon-bedrock": {
+    "hash": "13974bcd8ab635c6ca257d53bb8178c189b23294c5a1db6354c3f7827102b0b4",
+    "last_updated": "2025-11-05T21:30:22.965772+00:00",
+    "size": 9000
+  },
+  "/en/docs/claude-code/analytics": {
+    "hash": "6b069eb34c45bdaab4fd1d666191eca96dff4d16b4811bed2868acb87f6c37c9",
+    "last_updated": "2025-11-05T21:30:23.486923+00:00",
+    "size": 2440
+  },
+  "/en/docs/claude-code/checkpointing": {
+    "hash": "9c6855dcf58268c13a1a95b8dc349d1896412ff7c12eb9def4a9d4f87562a07f",
+    "last_updated": "2025-11-05T21:30:24.851350+00:00",
+    "size": 2883
+  },
+  "/en/docs/claude-code/claude-code-on-the-web": {
+    "hash": "ba818b9e54d7b8562fafed1be91563376bf83b16a6b63275b8c3f6a4835b11da",
+    "last_updated": "2025-11-05T21:30:25.376119+00:00",
+    "size": 15060
+  },
+  "/en/docs/claude-code/cli-reference": {
+    "hash": "ef2dfb8d671dd8f2e7ec539d15389f01b3c07665c524d2587e0d4dee31cbbbd4",
+    "last_updated": "2025-11-05T21:30:25.989761+00:00",
+    "size": 12890
+  },
+  "/en/docs/claude-code/common-workflows": {
+    "hash": "008f69c56294ed43865754144095d25cf3b5b484f2c1c53ebd9332c1a6d23ae9",
+    "last_updated": "2025-11-05T21:30:26.743031+00:00",
+    "size": 26027
+  },
+  "/en/docs/claude-code/costs": {
+    "hash": "43e1f1fe96db640ca2a41fa2899e6d903d70dd2193baed7f33cb57ae10cb3470",
+    "last_updated": "2025-11-05T21:30:27.620796+00:00",
+    "size": 6451
+  },
+  "/en/docs/claude-code/data-usage": {
+    "hash": "06df328ccdc44d1924899d2e289d256e71a631c20ded5267a2a129f73bd8cbaf",
+    "last_updated": "2025-11-05T21:30:28.138600+00:00",
+    "size": 9808
+  },
+  "/en/docs/claude-code/devcontainer": {
+    "hash": "1761450d49ac4f99746965a37ca2ddafd857443212ad0f93578ab3f3c76080c0",
+    "last_updated": "2025-11-05T21:30:28.748741+00:00",
+    "size": 4411
+  },
+  "/en/docs/claude-code/github-actions": {
+    "hash": "ccb8edd06ce4413340ee02922e002870e87d5c81121a87fb128e6e92dbf13542",
+    "last_updated": "2025-11-05T21:30:29.515979+00:00",
+    "size": 27567
+  },
+  "/en/docs/claude-code/gitlab-ci-cd": {
+    "hash": "52f9cdf3fdd0251c5e3e3a7fb8938a5f82084f36f6f83d6c688112eba3700037",
+    "last_updated": "2025-11-05T21:30:30.159601+00:00",
+    "size": 17643
+  },
+  "/en/docs/claude-code/google-vertex-ai": {
+    "hash": "311d46a93f31aed07078b01411954247c7a44bc16374edb31d476e32ed1d7d65",
+    "last_updated": "2025-11-05T21:30:30.688579+00:00",
+    "size": 6336
+  },
+  "/en/docs/claude-code/headless": {
+    "hash": "625a736cc8a3127479ee2647cdde546ea0259a5798d84e1e1ad97754d2f511b6",
+    "last_updated": "2025-11-05T21:30:31.220833+00:00",
+    "size": 9017
+  },
+  "/en/docs/claude-code/hooks": {
+    "hash": "e13f8cc2c42dfc96fd7e393c4c46fd9442bc47ee432d9244b7f6c9304cfd2780",
+    "last_updated": "2025-11-05T21:30:31.745804+00:00",
+    "size": 32129
+  },
+  "/en/docs/claude-code/hooks-guide": {
+    "hash": "2d406e7b26989efc8ac8d451d4705ccaa91136623d4519e8ed9acc5737325b15",
+    "last_updated": "2025-11-05T21:30:32.339308+00:00",
+    "size": 9643
+  },
+  "/en/docs/claude-code/iam": {
+    "hash": "3b373707e7a08ee457860431e0e969be9150f39709fad802064f3babae78a2e1",
+    "last_updated": "2025-11-05T21:30:32.863093+00:00",
+    "size": 11306
+  },
+  "/en/docs/claude-code/interactive-mode": {
+    "hash": "abfaf823f45dde4c05b16044d1113da41b98aff2de695d7375b8715c439fc9c2",
+    "last_updated": "2025-11-05T21:30:33.768515+00:00",
+    "size": 8754
+  },
+  "/en/docs/claude-code/jetbrains": {
+    "hash": "8e9ca486fa1c6c0150ecda351c209084e2076e8d9721871843a0f1fed8f81cd4",
+    "last_updated": "2025-11-05T21:30:34.291626+00:00",
+    "size": 5762
+  },
+  "/en/docs/claude-code/legal-and-compliance": {
+    "hash": "2c74704f9b3f530651dfa9b56a2165d08185af357f1d77bdf1118bb08baa5a13",
+    "last_updated": "2025-11-05T21:30:34.885134+00:00",
+    "size": 1540
+  },
+  "/en/docs/claude-code/llm-gateway": {
+    "hash": "89c15e50c554725a0053cbc670687fc1c7d1f6834344c72608c3cb07ed8f74fa",
+    "last_updated": "2025-11-05T21:30:36.399005+00:00",
+    "size": 4308
+  },
+  "/en/docs/claude-code/mcp": {
+    "hash": "a4460c936b9f618597584b1ba6c0011eea8b0212199b784dd0ba249fa9d307dc",
+    "last_updated": "2025-11-05T21:30:36.943473+00:00",
+    "size": 42258
+  },
+  "/en/docs/claude-code/memory": {
+    "hash": "314250cccf38fdb518122df8df9fc8dda5176f1bdef5839813744a62ba1f076f",
+    "last_updated": "2025-11-05T21:30:37.461625+00:00",
+    "size": 6434
+  },
+  "/en/docs/claude-code/model-config": {
+    "hash": "24a0a9e32215e41ec91c8068173aafa65252d8feb00d17d3baaf8f1e1a1b007a",
+    "last_updated": "2025-11-05T21:30:37.989615+00:00",
+    "size": 6363
+  },
+  "/en/docs/claude-code/monitoring-usage": {
+    "hash": "b006dbeb99977f0ce644f5b1c2ac0388deadbcad900a7858257b0bc934b5dc67",
+    "last_updated": "2025-11-05T21:30:38.612238+00:00",
+    "size": 22285
+  },
+  "/en/docs/claude-code/network-config": {
+    "hash": "79c905aec6617d1642fb8f193e3d8998e62106dd1a120f52d86d617aea09b404",
+    "last_updated": "2025-11-05T21:30:39.137053+00:00",
+    "size": 3162
+  },
+  "/en/docs/claude-code/output-styles": {
+    "hash": "9dca862e35f9a990587859392c2cb330fcbf110539aec6970c0d4f5e889d4956",
+    "last_updated": "2025-11-05T21:30:39.655615+00:00",
+    "size": 3644
+  },
+  "/en/docs/claude-code/overview": {
+    "hash": "1f2a7c46baa6d8792773a2e1566d541dd3c167df5036ec0c4baa4ed5faa9f667",
+    "last_updated": "2025-11-05T21:30:40.189412+00:00",
+    "size": 5193
+  },
+  "/en/docs/claude-code/plugin-marketplaces": {
+    "hash": "c48b5640778f0e4ec33d63b797cf1496cad6928905412cdc57a24218ea712971",
+    "last_updated": "2025-11-05T21:30:40.825993+00:00",
+    "size": 14373
+  },
+  "/en/docs/claude-code/plugins": {
+    "hash": "76b6d7089a84f92c8a7bf14b778641fcda3bc3c05e2db370f66f698796d6bd41",
+    "last_updated": "2025-11-05T21:30:41.419721+00:00",
+    "size": 13359
+  },
+  "/en/docs/claude-code/plugins-reference": {
+    "hash": "15974637254c48b85b6b95011965a7cbb96c36357d5e419fcef882e162cd046e",
+    "last_updated": "2025-11-05T21:30:42.040206+00:00",
+    "size": 12839
+  },
+  "/en/docs/claude-code/quickstart": {
+    "hash": "4f6f335c297e9d57c9a195666c2a113f55074d0222e785936653849eb893ef5e",
+    "last_updated": "2025-11-05T21:30:42.660124+00:00",
+    "size": 8786
+  },
+  "/en/docs/claude-code/sandboxing": {
+    "hash": "a18c80cba1b5c931552de255b43b15f40d0329cc73e3f0c7a9a9c701061f3ea1",
+    "last_updated": "2025-11-05T21:30:43.181596+00:00",
+    "size": 11423
+  },
+  "/en/docs/claude-code/sdk/migration-guide": {
+    "hash": "197bd75d67fd1c5e7d519ee8c9243ef4fba6d7fa67fce0940e45e1e49525c6e3",
+    "last_updated": "2025-11-05T21:30:44.540611+00:00",
+    "size": 9610
+  },
+  "/en/docs/claude-code/security": {
+    "hash": "e50248a47c9eff5675d33af4d8ba2c7478f9d5bbf159ae2d063e509556e5bb50",
+    "last_updated": "2025-11-05T21:30:51.049134+00:00",
+    "size": 8937
+  },
+  "/en/docs/claude-code/settings": {
+    "hash": "8e5787e833f0d0f38a30b6ec59c459f2b943134334580e726d9a1cd239f1c789",
+    "last_updated": "2025-11-05T21:30:51.581446+00:00",
+    "size": 49357
+  },
+  "/en/docs/claude-code/setup": {
+    "hash": "760b55a04983b46d2afc8d359a61228a64bef2b907c6ee151ec8095fdd0f055c",
+    "last_updated": "2025-11-05T21:30:52.104594+00:00",
+    "size": 7408
+  },
+  "/en/docs/claude-code/skills": {
+    "hash": "f8d6ff86c0537528598a02e44bceca26165ba811a5170927a698467bb68cbc8b",
+    "last_updated": "2025-11-05T21:30:52.622766+00:00",
+    "size": 15158
+  },
+  "/en/docs/claude-code/slash-commands": {
+    "hash": "2cc463b1ad168ca93269c0b473d2a1d52eb5cd05aadfa62da649fcc049774b65",
+    "last_updated": "2025-11-05T21:30:53.235788+00:00",
+    "size": 21017
+  },
+  "/en/docs/claude-code/statusline": {
+    "hash": "04731600e19a80209d3c7a2a6fb58d07b2b5170aec94205fa6a812be40ae7ce0",
+    "last_updated": "2025-11-05T21:30:53.759909+00:00",
+    "size": 5772
+  },
+  "/en/docs/claude-code/sub-agents": {
+    "hash": "546106ce96f8191be82f3e980ffdbf2c4f544c68f1d498cf78c5d9b7a0342d78",
+    "last_updated": "2025-11-05T21:30:54.346524+00:00",
+    "size": 18938
+  },
+  "/en/docs/claude-code/terminal-config": {
+    "hash": "24102bbe16be8340a6712575fd76b0789f4bdbb24a02d92cdf383b9283361846",
+    "last_updated": "2025-11-05T21:30:55.450200+00:00",
+    "size": 2648
+  },
+  "/en/docs/claude-code/third-party-integrations": {
+    "hash": "8a2e5f26e5171f011951fb738e99cc448d71fec57947c4bf35006669f9de8c10",
+    "last_updated": "2025-11-05T21:30:55.973668+00:00",
+    "size": 7936
+  },
+  "/en/docs/claude-code/troubleshooting": {
+    "hash": "3e6a0d3df29d9240cad4d4a70037fffea8e96d48cacfd00aacf96a0fbfc4115a",
+    "last_updated": "2025-11-05T21:30:56.495409+00:00",
+    "size": 12292
+  },
+  "/en/docs/claude-code/vs-code": {
+    "hash": "5333996b1b527788543e52382c91f6067fd7d604883d1119b534ed7d65f239ec",
+    "last_updated": "2025-11-05T21:30:57.285313+00:00",
+    "size": 9102
+  },
+  "/en/resources/prompt-library/adaptive-editor": {
+    "hash": "6663496ec4526602628ed5cd3b50cb6e36095255f24cfb88b95b489af13326a3",
+    "last_updated": "2025-11-05T21:31:01.415059+00:00",
+    "size": 7772
+  },
+  "/en/resources/prompt-library/airport-code-analyst": {
+    "hash": "2925aa14f8c1dd7f6e0a9aa431d8e54094a94092c9633a6eaab49c9507eec1d8",
+    "last_updated": "2025-11-05T21:31:01.982290+00:00",
+    "size": 7167
+  },
+  "/en/resources/prompt-library/alien-anthropologist": {
+    "hash": "cb2293cc7356a6f2dd7d7285bcd465696b11b44d04ecdb469a851527ba7ac6cc",
+    "last_updated": "2025-11-05T21:31:03.812100+00:00",
+    "size": 7866
+  },
+  "/en/resources/prompt-library/alliteration-alchemist": {
+    "hash": "1ec2f5a2b9aad3362b38033b5b64b93231450ca4e8de9818ccbefd0b5dee5cb5",
+    "last_updated": "2025-11-05T21:31:04.333909+00:00",
+    "size": 7210
+  },
+  "/en/resources/prompt-library/babels-broadcasts": {
+    "hash": "be6669a65b2852cb6550287fc68e0d6db4bd311786835279c6431c2b056916c3",
+    "last_updated": "2025-11-05T21:31:04.853932+00:00",
+    "size": 9389
+  },
+  "/en/resources/prompt-library/brand-builder": {
+    "hash": "1d4cbfd28319d870616c5d2bd8e33c2741f428cf41a9c5e60389a9f84eaec7f1",
+    "last_updated": "2025-11-05T21:31:05.377286+00:00",
+    "size": 18019
+  },
+  "/en/resources/prompt-library/career-coach": {
+    "hash": "468ffd557ace311a3a552ab7d957ea8020eb5cd03c3860c83888efe6b6ad34c4",
+    "last_updated": "2025-11-05T21:31:05.964193+00:00",
+    "size": 16252
+  },
+  "/en/resources/prompt-library/cite-your-sources": {
+    "hash": "45133e86c9dc18a58826f9300c0a8c78210beffe6fd78684e3eddbe775545280",
+    "last_updated": "2025-11-05T21:31:06.483834+00:00",
+    "size": 19674
+  },
+  "/en/resources/prompt-library/code-clarifier": {
+    "hash": "f1b5f3b96e39899f39906e3fdb91d17ec3f8f167a9de33664833f94ac2d355eb",
+    "last_updated": "2025-11-05T21:31:07.006472+00:00",
+    "size": 13735
+  },
+  "/en/resources/prompt-library/code-consultant": {
+    "hash": "ba6f3175bf8f99be888a654fdfe887e4c22fc9c960175d5efa982bd858877c5a",
+    "last_updated": "2025-11-05T21:31:09.337810+00:00",
+    "size": 10547
+  },
+  "/en/resources/prompt-library/corporate-clairvoyant": {
+    "hash": "e24d3b25658858943b2b8267853e7f53c93296fd122c88698a814c5d8432dbfc",
+    "last_updated": "2025-11-05T21:31:09.947118+00:00",
+    "size": 12446
+  },
+  "/en/resources/prompt-library/cosmic-keystrokes": {
+    "hash": "83f9cfbe676281333efcfe445b75b8f96c98f6933d9eace78a08e73917fda9bd",
+    "last_updated": "2025-11-05T21:31:10.536647+00:00",
+    "size": 13295
+  },
+  "/en/resources/prompt-library/csv-converter": {
+    "hash": "c8ff85f39f07ce3cd735783f1b001ebf9411c10fe1785900e80c02e37240edbc",
+    "last_updated": "2025-11-05T21:31:11.159097+00:00",
+    "size": 16995
+  },
+  "/en/resources/prompt-library/culinary-creator": {
+    "hash": "18cb8998123d5229e21c5498179ff4e6302803aa4abb8f83ad1d237c5af033e3",
+    "last_updated": "2025-11-05T21:31:11.680866+00:00",
+    "size": 12593
+  },
+  "/en/resources/prompt-library/data-organizer": {
+    "hash": "a2295aa1e4af4bef17056a12c4df09fe310ddcdc0fe7bed20e0c698b5784a0fd",
+    "last_updated": "2025-11-05T21:31:12.272434+00:00",
+    "size": 16560
+  },
+  "/en/resources/prompt-library/direction-decoder": {
+    "hash": "7d12ddfc81394dc241ad7d8b00d296512ac269628eb142239a9686e9d1045268",
+    "last_updated": "2025-11-05T21:31:12.799622+00:00",
+    "size": 11927
+  },
+  "/en/resources/prompt-library/dream-interpreter": {
+    "hash": "b6bd509c1653205637a072b417b8362c9f8c5f029a6458b2c873d7318d44b9ee",
+    "last_updated": "2025-11-05T21:31:13.326732+00:00",
+    "size": 12088
+  },
+  "/en/resources/prompt-library/efficiency-estimator": {
+    "hash": "4c1dd1cadb1e39d66c4550e714a8c5c0bed31b223ab87b00ab0f8b12e63d7b83",
+    "last_updated": "2025-11-05T21:31:13.988243+00:00",
+    "size": 12062
+  },
+  "/en/resources/prompt-library/email-extractor": {
+    "hash": "a39b902faf42c76893178c8753864ae69990232a5bf207db246ada983f3a0eff",
+    "last_updated": "2025-11-05T21:31:14.512412+00:00",
+    "size": 8355
+  },
+  "/en/resources/prompt-library/emoji-encoder": {
+    "hash": "a1aaa7e4e2033dfa75e3bfd6ac24ba317f3de2c2327d567559a9dc8167b925fd",
+    "last_updated": "2025-11-05T21:31:15.045749+00:00",
+    "size": 9247
+  },
+  "/en/resources/prompt-library/ethical-dilemma-navigator": {
+    "hash": "3532fa105b04559ac93a6cdcd206d640d037e515aef186f7ce378bb26bd16cf3",
+    "last_updated": "2025-11-05T21:31:15.573698+00:00",
+    "size": 12525
+  },
+  "/en/resources/prompt-library/excel-formula-expert": {
+    "hash": "8402c68bb3440ed811421a33b35d467488c8c90f3add0a770504e12991107ccc",
+    "last_updated": "2025-11-05T21:31:17.244315+00:00",
+    "size": 16618
+  },
+  "/en/resources/prompt-library/function-fabricator": {
+    "hash": "5ed062d7fe2296308fc5457756001f35b895add8231322312c4d0b2d33d7a865",
+    "last_updated": "2025-11-05T21:31:17.775139+00:00",
+    "size": 13241
+  },
+  "/en/resources/prompt-library/futuristic-fashion-advisor": {
+    "hash": "8467c9cb81fc5b0a76d807e6f7cc39b3ea04e19288e901f196971839ea0d58e0",
+    "last_updated": "2025-11-05T21:31:18.296275+00:00",
+    "size": 16147
+  },
+  "/en/resources/prompt-library/git-gud": {
+    "hash": "efa212bbe713441d05173a3d96fe2eeb18674e0411b39f73cd5634112c01ab08",
+    "last_updated": "2025-11-05T21:31:18.840908+00:00",
+    "size": 6504
+  },
+  "/en/resources/prompt-library/google-apps-scripter": {
+    "hash": "32007c5cc2b05e58a21e3d9bf9805b1f46900486616f424ee4ff1bae818898a1",
+    "last_updated": "2025-11-05T21:31:19.444112+00:00",
+    "size": 8069
+  },
+  "/en/resources/prompt-library/grading-guru": {
+    "hash": "b8ec176eb8ebefbe5e9f974f6ed70aa8b39bbf747e6c23dd6bc1ec1e3111d6f4",
+    "last_updated": "2025-11-05T21:31:19.967648+00:00",
+    "size": 12177
+  },
+  "/en/resources/prompt-library/grammar-genie": {
+    "hash": "d5e9a6c566dcd6a1c5171c60fdfd76d395c0aa864f00c29c77a81d06c4aa3678",
+    "last_updated": "2025-11-05T21:31:20.501360+00:00",
+    "size": 7128
+  },
+  "/en/resources/prompt-library/hal-the-humorous-helper": {
+    "hash": "c9e658638f4bd4925cbe3cdb037e02a561fe7ba982ee4d2c969e434080a80d7d",
+    "last_updated": "2025-11-05T21:31:21.096479+00:00",
+    "size": 22146
+  },
+  "/en/resources/prompt-library/idiom-illuminator": {
+    "hash": "f390d1c62eeea269f06f234bdc32e850fe8422bc65439712fe5ffaeb614a4cde",
+    "last_updated": "2025-11-05T21:31:21.689330+00:00",
+    "size": 11236
+  },
+  "/en/resources/prompt-library/interview-question-crafter": {
+    "hash": "c4f1a4a0e03f08a7f47665a7ea974c96a6f8ae629e59f6d1b319c3eb6a6fd85e",
+    "last_updated": "2025-11-05T21:31:22.222226+00:00",
+    "size": 12826
+  },
+  "/en/resources/prompt-library/latex-legend": {
+    "hash": "6859173051a5276e84bc59c90c4e0569b30b17d7aee8762704fe08e725cf6a06",
+    "last_updated": "2025-11-05T21:31:22.980586+00:00",
+    "size": 10733
+  },
+  "/en/resources/prompt-library/lesson-planner": {
+    "hash": "3e73f1fc7fbacc3bf7406d83f08ef1ca422372f97c3e5bc3c0a7967ebfc465e8",
+    "last_updated": "2025-11-05T21:31:23.530424+00:00",
+    "size": 16085
+  },
+  "/en/resources/prompt-library/library": {
+    "hash": "7fd3d18723704ff633be9eb12ea8c57f3ad44451d6ce7cddf9508ca5deec6821",
+    "last_updated": "2025-11-05T21:31:24.059254+00:00",
+    "size": 1309
+  },
+  "/en/resources/prompt-library/master-moderator": {
+    "hash": "fab09ff1f8f1c15f4909e4dbfa1fa29f0b9b20444de090e4b2f9eb60b4374612",
+    "last_updated": "2025-11-05T21:31:24.651287+00:00",
+    "size": 7531
+  },
+  "/en/resources/prompt-library/meeting-scribe": {
+    "hash": "2595c3ff03f7bc8c404d3069963e537a0e19aa23e8598447ac112c1abd480858",
+    "last_updated": "2025-11-05T21:31:25.288649+00:00",
+    "size": 41860
+  },
+  "/en/resources/prompt-library/memo-maestro": {
+    "hash": "2a1cd84085f27bd8afc09f388abd00e4a2b6d12f94a717bd41788c844a8750b0",
+    "last_updated": "2025-11-05T21:31:25.893118+00:00",
+    "size": 15816
+  },
+  "/en/resources/prompt-library/mindfulness-mentor": {
+    "hash": "42914496a84533d89dbb8a6ae6dd23dad3ee20b5706cd30fefb3cc937c3c0b57",
+    "last_updated": "2025-11-05T21:31:26.413792+00:00",
+    "size": 10731
+  },
+  "/en/resources/prompt-library/mood-colorizer": {
+    "hash": "2d88b0c1b4d86d5de02f0fc271ec60b24eb9367d639140e2f23686c4987bedd7",
+    "last_updated": "2025-11-05T21:31:27.011069+00:00",
+    "size": 9455
+  },
+  "/en/resources/prompt-library/motivational-muse": {
+    "hash": "96cff13c8f217cf008c2ede701d5f7efbbaad0416c70c85db255b2f7c1dec6f8",
+    "last_updated": "2025-11-05T21:31:27.629855+00:00",
+    "size": 11022
+  },
+  "/en/resources/prompt-library/neologism-creator": {
+    "hash": "16f1f93a5eb7443a5880e95d4242afe629a56a6cbae0a56f873466b80b340c75",
+    "last_updated": "2025-11-05T21:31:28.154798+00:00",
+    "size": 5963
+  },
+  "/en/resources/prompt-library/perspectives-ponderer": {
+    "hash": "ff3e67399855db01623f55e3a5758f5d47eb3ff040fc31f4cc6cfd2825768f02",
+    "last_updated": "2025-11-05T21:31:28.748977+00:00",
+    "size": 7551
+  },
+  "/en/resources/prompt-library/philosophical-musings": {
+    "hash": "cdfcfbd0753a55921159b66192407d6550f5b4930392c231ec0bd5a851c39780",
+    "last_updated": "2025-11-05T21:31:29.274953+00:00",
+    "size": 8855
+  },
+  "/en/resources/prompt-library/pii-purifier": {
+    "hash": "61f44013cbec52b34504e1dde45c29dd25508fda02e2d1ae3b808d46d4c41d0f",
+    "last_updated": "2025-11-05T21:31:29.888901+00:00",
+    "size": 10594
+  },
+  "/en/resources/prompt-library/polyglot-superpowers": {
+    "hash": "d6cd0c8863d68ddb8ec42c35cbce4c32baedd2edebc466df84dd22574047ad6e",
+    "last_updated": "2025-11-05T21:31:30.411505+00:00",
+    "size": 7856
+  },
+  "/en/resources/prompt-library/portmanteau-poet": {
+    "hash": "b5c4b79193a7f3660ccc729ab4a8b5243a2cc74de1420bfce48c77e9c9a42da3",
+    "last_updated": "2025-11-05T21:31:30.932740+00:00",
+    "size": 8502
+  },
+  "/en/resources/prompt-library/product-naming-pro": {
+    "hash": "efed68cb767b85ffa070439b974e8492d6078d73c822e0460e1e7946c0bdab4f",
+    "last_updated": "2025-11-05T21:31:31.469821+00:00",
+    "size": 9379
+  },
+  "/en/resources/prompt-library/prose-polisher": {
+    "hash": "7936d96930a18c8060341103a823506811ab6a66eae8171d5eae784dac25959b",
+    "last_updated": "2025-11-05T21:31:31.991315+00:00",
+    "size": 21947
+  },
+  "/en/resources/prompt-library/pun-dit": {
+    "hash": "804fcec630f012e8aab687b069708fcfa9db81caf18c309948dfb9bdd219e648",
+    "last_updated": "2025-11-05T21:31:33.563954+00:00",
+    "size": 8160
+  },
+  "/en/resources/prompt-library/python-bug-buster": {
+    "hash": "53a12d3b1d38654e1a18ca6bb2c044fd13fce976bda86a6dd7a74b2b2f31a533",
+    "last_updated": "2025-11-05T21:31:34.176520+00:00",
+    "size": 9357
+  },
+  "/en/resources/prompt-library/review-classifier": {
+    "hash": "6b5e3b57a7b33ffc4e46ff57c4e0fccac4dd08d6030b2248153df1ea0ebac12a",
+    "last_updated": "2025-11-05T21:31:34.790214+00:00",
+    "size": 27340
+  },
+  "/en/resources/prompt-library/riddle-me-this": {
+    "hash": "298ad07ba4626c1b3875cf2a3bca5503f17c865258e27cb80265fb425c510770",
+    "last_updated": "2025-11-05T21:31:35.420497+00:00",
+    "size": 9701
+  },
+  "/en/resources/prompt-library/sci-fi-scenario-simulator": {
+    "hash": "38dccf11dfd7484d59ce5d6291de2135acf123b5d4647038b6676d95be793e00",
+    "last_updated": "2025-11-05T21:31:35.941562+00:00",
+    "size": 9492
+  },
+  "/en/resources/prompt-library/second-grade-simplifier": {
+    "hash": "ff67fcf8f200f3b2db47b816612094d84e38ad21a4f5d71e54c46b7cf7df34b9",
+    "last_updated": "2025-11-05T21:31:36.461461+00:00",
+    "size": 10417
+  },
+  "/en/resources/prompt-library/simile-savant": {
+    "hash": "ea7eae3c02d97af0f19cc202265d82f4471b64a26d338a09abc46734237f90f7",
+    "last_updated": "2025-11-05T21:31:37.062680+00:00",
+    "size": 5130
+  },
+  "/en/resources/prompt-library/socratic-sage": {
+    "hash": "8548cf8dd2c04954813a85841262d540d909cfb219f5f58b0255e78fff6ac588",
+    "last_updated": "2025-11-05T21:31:37.669106+00:00",
+    "size": 7828
+  },
+  "/en/resources/prompt-library/spreadsheet-sorcerer": {
+    "hash": "60101f3d8890f7d4231381ac81c6eebb18f0c7db38dc1dcb8c58a279c097335f",
+    "last_updated": "2025-11-05T21:31:38.274067+00:00",
+    "size": 10099
+  },
+  "/en/resources/prompt-library/sql-sorcerer": {
+    "hash": "af6804e22f444ddc978a580de71096b1be1d65ba780106419c7fecc96eab532f",
+    "last_updated": "2025-11-05T21:31:38.805220+00:00",
+    "size": 21018
+  },
+  "/en/resources/prompt-library/storytelling-sidekick": {
+    "hash": "ff29c33271bd491f2da1bb4cf3e17319c63fef00726f725e28c10de995f5671b",
+    "last_updated": "2025-11-05T21:31:39.406585+00:00",
+    "size": 9791
+  },
+  "/en/resources/prompt-library/time-travel-consultant": {
+    "hash": "94e9874e3590006a85ebac585010867e8169a91b6c82e56a3abfa6dbe94036f7",
+    "last_updated": "2025-11-05T21:31:40.016843+00:00",
+    "size": 10829
+  },
+  "/en/resources/prompt-library/tongue-twister": {
+    "hash": "baa0de3e11244bf4565f6e9837cd16f7108349ebed72ecb5a17aef33e6f39d4b",
+    "last_updated": "2025-11-05T21:31:40.627081+00:00",
+    "size": 7086
+  },
+  "/en/resources/prompt-library/trivia-generator": {
+    "hash": "a917eaa683aaa531fcf6ad1d49e4a49d49be707f3a6316030f6e69d5be7dcb3a",
+    "last_updated": "2025-11-05T21:31:41.152093+00:00",
+    "size": 9534
+  },
+  "/en/resources/prompt-library/tweet-tone-detector": {
+    "hash": "0b0b42d531ec3ea2fb1c1914aa39003baf1318bdb96323d0690b38afb5c345da",
+    "last_updated": "2025-11-05T21:31:41.738911+00:00",
+    "size": 9394
+  },
+  "/en/resources/prompt-library/vr-fitness-innovator": {
+    "hash": "b0faec260cd5a5be33a8b5b0dbd1a0de18b24f77fced2c207670b92b2c0e726c",
+    "last_updated": "2025-11-05T21:31:42.349203+00:00",
+    "size": 10261
+  },
+  "/en/resources/prompt-library/website-wizard": {
+    "hash": "23d02aec8f8b58d8c2204e698ebc189a2972de0668139b19505246a59db6e086",
+    "last_updated": "2025-11-05T21:31:44.621788+00:00",
+    "size": 28621
   }
 }

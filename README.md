@@ -1,8 +1,8 @@
 # Claude Code Documentation Mirror
 
 [![Build Status](https://img.shields.io/badge/build-passing-success)](https://github.com/costiash/claude-code-docs)
-[![Test Coverage](https://img.shields.io/badge/coverage-24%25-yellow)](./tests)
-[![Tests](https://img.shields.io/badge/tests-140%2F164%20passing-orange)](./tests)
+[![Test Coverage](https://img.shields.io/badge/coverage-22%25-yellow)](./tests)
+[![Tests](https://img.shields.io/badge/tests-212%2F214%20passing-brightgreen)](./tests)
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
@@ -163,7 +163,7 @@ The `/docs` command understands natural language, so you don't need to remember 
 ### Enhanced Mode
 
 **Everything in Standard Mode, plus:**
-- **459 documentation paths** (10x coverage) across:
+- **449 documentation paths** (10x coverage) across:
   - Core Documentation (151 paths)
   - API Reference (91 paths)
   - Claude Code Documentation (68 paths)
@@ -188,11 +188,11 @@ See [ENHANCEMENTS.md](./ENHANCEMENTS.md) for detailed feature documentation.
 
 | Feature | Standard Mode | Enhanced Mode |
 |---------|---------------|---------------|
-| Documentation files | 47 core topics | 459 paths (all categories) |
+| Documentation files | 47 core topics | 449 paths (all categories) |
 | Search | Topic name only | Full-text + fuzzy search |
 | Validation | None | HTTP reachability testing |
 | Updates | Git pull (3-hour schedule) | Selective fetch (SHA256) |
-| Testing | None | 174 tests with pytest |
+| Testing | None | 214 tests with pytest |
 | Python required | No | Yes (3.12+) |
 | Dependencies | git, jq, curl | + Python, requests |
 | Perfect for | Quick lookups | Comprehensive reference |
@@ -213,7 +213,7 @@ git pull
 
 **Enhanced Mode:**
 ```bash
-# Update all 459 documentation files
+# Update all 449 documentation files
 /docs --update-all
 
 # Or use Python directly
@@ -223,14 +223,14 @@ python scripts/main.py --update-all
 
 ## Documentation Structure
 
-This mirror organizes Claude documentation into categories:
+This mirror organizes Claude documentation into categories with 449 total paths:
 
-1. **Core Documentation** (151 paths) - Messages API, prompt engineering, vision, PDFs, streaming, caching, tools
-2. **API Reference** (91 paths) - REST API, Admin API, SDKs, platform APIs, versioning
-3. **Claude Code** (68 paths) - Installation, commands, integrations, MCP, workflows, troubleshooting
-4. **Prompt Library** (64 paths) - Curated prompts for code, content, analysis, business, creative tasks
-5. **Resources** (68 paths) - Guides, references, model cards, additional materials
-6. **Release Notes** (4 paths) - Product updates and changelogs
+1. **Core Documentation** - Messages API, prompt engineering, vision, PDFs, streaming, caching, tools
+2. **API Reference** - REST API, Admin API, SDKs, platform APIs, versioning
+3. **Claude Code** - Installation, commands, integrations, MCP, workflows, troubleshooting
+4. **Prompt Library** - Curated prompts for code, content, analysis, business, creative tasks
+5. **Resources** - Guides, references, model cards, additional materials
+6. **Release Notes** - Product updates and changelogs
 
 See [docs/sitemap.json](./docs/sitemap.json) for the complete documentation tree.
 
@@ -354,19 +354,19 @@ pytest tests/ -v
 **Enhanced mode only** - Comprehensive test suite:
 
 ```bash
-# Run all tests (174 total)
+# Run all tests (214 total)
 pytest
 
 # Run specific suites
-pytest tests/unit/          # 82 unit tests
-pytest tests/integration/   # 36 integration tests
-pytest tests/validation/    # 56 validation tests
+pytest tests/unit/          # Unit tests
+pytest tests/integration/   # Integration tests
+pytest tests/validation/    # Validation tests
 
 # Check coverage
 pytest --cov=scripts --cov-report=term
 ```
 
-Current status: 140/174 tests passing (85% pass rate), 24% code coverage (target: 85%).
+Current status: 212/214 tests passing (99.1% pass rate), 22% code coverage (target: 85%).
 
 ## Performance
 
@@ -378,7 +378,7 @@ Current status: 140/174 tests passing (85% pass rate), 24% code coverage (target
 ### Enhanced Mode
 - **Fetch time**: ~1.5 minutes per 100 pages
 - **Search time**: < 100ms per query
-- **Path validation**: ~30 seconds for 459 paths (parallel)
+- **Path validation**: ~30 seconds for 449 paths (parallel)
 - **Memory usage**: ~320 MB during full fetch
 
 ## Project Status
@@ -414,10 +414,10 @@ This project extends [ericbuess/claude-code-docs](https://github.com/ericbuess/c
 - Community feedback and testing
 
 **What this enhanced edition adds:**
-- 459 paths vs 47 (10x coverage)
+- 449 paths vs 47 (10x coverage)
 - Full-text search and fuzzy matching
 - Path validation and reachability testing
-- 174 tests for reliability
+- 214 tests for reliability
 - Comprehensive developer documentation
 
 ## Documentation

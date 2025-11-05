@@ -14,7 +14,7 @@ This project maintains **two modes** to serve different user needs:
 
 2. **Enhanced Mode** - Optional Python-based features (opt-in)
    - Python 3.12+ required
-   - 459 documentation paths (10x coverage)
+   - 449 documentation paths (10x coverage)
    - Full-text search and validation
    - Advanced features for power users
 
@@ -213,6 +213,47 @@ def search_paths(query: str, limit: int = 20, category: Optional[str] = None) ->
     return results
 ```
 
+## File Naming Standards
+
+All documentation files in this project follow a **consistent naming convention** for easy organization and URL mapping:
+
+### Format
+
+```
+en__section__subsection__page.md
+```
+
+### Examples
+
+Documentation URLs map directly to filenames:
+
+| URL Path | Filename |
+|----------|----------|
+| `/en/docs/claude-code/hooks` | `en__docs__claude-code__hooks.md` |
+| `/en/api/overview` | `en__api__overview.md` |
+| `/en/docs/build-with-claude/prompt-engineering/overview` | `en__docs__build-with-claude__prompt-engineering__overview.md` |
+| `/en/docs/agents-and-tools/mcp` | `en__docs__agents-and-tools__mcp.md` |
+
+### Benefits
+
+- **Flat directory structure** - All files in single `docs/` directory
+- **Direct URL↔filename mapping** - Easy to locate files by URL
+- **Consistent naming** - No ambiguity in file organization
+- **Full-text search compatible** - Easy to search and index
+- **Deduplication-friendly** - Prevents accidental duplicate files
+
+### Rules
+
+1. **Always use lowercase** - File names must be lowercase
+2. **Use double underscores** - Separate path segments with `__` (not single underscore)
+3. **No special characters** - Only alphanumeric, hyphens, and underscores
+4. **Keep file extension** - All files are `.md`
+5. **Place in docs/ directory** - All documentation files go in `/docs/` directory
+
+### Implementation Note
+
+During Phase 1 (Manifest Cleanup & Deduplication), all 270 documentation files were standardized to follow this naming convention. This ensures consistency across the repository and prevents duplicate content.
+
 ## Testing Requirements
 
 ### Standard Mode Testing
@@ -301,9 +342,9 @@ def test_search_paths_with_limit():
 ```
 
 **Current test status:**
-- Total: 174 tests (82 unit + 36 integration + 56 validation)
-- Passing: 140 tests (85% pass rate)
-- Coverage: 24% (target: 85%+)
+- Total: 214 tests
+- Passing: 212 tests (99.1% pass rate)
+- Coverage: 22% (target: 85%+)
 
 ## Pull Request Guidelines
 
