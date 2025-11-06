@@ -1,10 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-# Claude Code Docs Installer v0.3.3 - Changelog integration and compatibility improvements
+# Claude Code Docs Installer v0.3.4 - Enhanced edition with extended documentation coverage
 # This script installs/migrates claude-code-docs to ~/.claude-code-docs
 
-echo "Claude Code Docs Installer v0.3.3"
+echo "Claude Code Docs Installer v0.3.4"
 echo "==============================="
 
 # Fixed installation location
@@ -381,20 +381,20 @@ fi
 
 # Now we're in $INSTALL_DIR, set up the new script-based system
 echo ""
-echo "Setting up Claude Code Docs v0.3.3..."
+echo "Setting up Claude Code Docs v0.3.4..."
 
-# Copy helper script from template
+# Copy enhanced helper script (not the template!)
 echo "Installing helper script..."
-if [[ -f "$INSTALL_DIR/scripts/claude-docs-helper.sh.template" ]]; then
-    cp "$INSTALL_DIR/scripts/claude-docs-helper.sh.template" "$INSTALL_DIR/claude-docs-helper.sh"
+if [[ -f "$INSTALL_DIR/scripts/claude-docs-helper.sh" ]]; then
+    cp "$INSTALL_DIR/scripts/claude-docs-helper.sh" "$INSTALL_DIR/claude-docs-helper.sh"
     chmod +x "$INSTALL_DIR/claude-docs-helper.sh"
-    echo "✓ Helper script installed"
+    echo "✓ Enhanced helper script installed"
 else
-    echo "  ⚠️  Template file missing, attempting recovery..."
-    # Try to fetch just the template file
-    if curl -fsSL "https://raw.githubusercontent.com/costiash/claude-code-docs/$INSTALL_BRANCH/scripts/claude-docs-helper.sh.template" -o "$INSTALL_DIR/claude-docs-helper.sh" 2>/dev/null; then
+    echo "  ⚠️  Enhanced script missing, attempting recovery..."
+    # Try to fetch just the enhanced script
+    if curl -fsSL "https://raw.githubusercontent.com/costiash/claude-code-docs/$INSTALL_BRANCH/scripts/claude-docs-helper.sh" -o "$INSTALL_DIR/claude-docs-helper.sh" 2>/dev/null; then
         chmod +x "$INSTALL_DIR/claude-docs-helper.sh"
-        echo "  ✓ Helper script downloaded directly"
+        echo "  ✓ Enhanced helper script downloaded directly"
     else
         echo "  ❌ Failed to install helper script"
         echo "  Please check your installation and try again"
@@ -499,7 +499,7 @@ cleanup_old_installations
 
 # Success message
 echo ""
-echo "✅ Claude Code Docs v0.3.3 installed successfully!"
+echo "✅ Claude Code Docs v0.3.4 installed successfully!"
 echo ""
 echo "📚 Command: /docs (user)"
 echo "📂 Location: ~/.claude-code-docs"
