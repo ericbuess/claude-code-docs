@@ -26,6 +26,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+from functools import lru_cache
 
 import requests
 
@@ -299,6 +300,7 @@ def fetch_page(
     return False, None, "Max retries exceeded"
 
 
+@lru_cache(maxsize=1024)
 def path_to_filename(path: str) -> str:
     """
     Convert documentation path to safe filename.

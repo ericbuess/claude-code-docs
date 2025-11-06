@@ -50,6 +50,19 @@ jobs:
             echo "Validation tests not yet implemented"
           fi
 
+      - name: Generate coverage reports
+        run: |
+          if [ -f "coverage.xml" ]; then
+            pip install coverage
+            # Generate HTML coverage report
+            coverage html -d htmlcov
+            # Generate JSON coverage report
+            coverage json -o coverage.json
+            echo "Coverage reports generated successfully"
+          else
+            echo "No coverage data found"
+          fi
+
       - name: Check coverage threshold
         run: |
           if [ -f "coverage.xml" ]; then
@@ -58,6 +71,24 @@ jobs:
           else
             echo "Skipping coverage check - no coverage data"
           fi
+
+      - name: Upload coverage HTML artifact
+        if: always() && matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html-report-py312
+          path: htmlcov/
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload coverage JSON artifact
+        if: always() && matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-json-report-py312
+          path: coverage.json
+          retention-days: 30
+          if-no-files-found: warn
 
       - name: Upload coverage to Codecov
         if: matrix.python-version == '3.12' && hashFiles('coverage.xml') != ''

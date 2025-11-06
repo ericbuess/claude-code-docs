@@ -21,6 +21,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from difflib import get_close_matches
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+from functools import lru_cache
 
 import requests
 
@@ -105,6 +106,14 @@ def load_paths_manifest(manifest_path: Path) -> Dict:
     Raises:
         FileNotFoundError: If manifest doesn't exist
     """
+    return _load_paths_manifest_cached(str(manifest_path))
+
+
+@lru_cache(maxsize=4)
+def _load_paths_manifest_cached(manifest_path_str: str) -> Dict:
+    """Cached implementation of load_paths_manifest"""
+    manifest_path = Path(manifest_path_str)
+
     if not manifest_path.exists():
         raise FileNotFoundError(f"Manifest not found: {manifest_path}")
 
@@ -424,8 +433,9 @@ def print_validation_report(stats: ValidationStats):
     print("="*70)
 
 
+@lru_cache(maxsize=1)
 def load_search_index() -> Optional[Dict]:
-    """Load full-text search index"""
+    """Load full-text search index (cached)"""
     index_file = Path("docs/.search_index.json")
     if not index_file.exists():
         return None
