@@ -1,1621 +1,1615 @@
 {
-  "SEARCH_GUIDE.md": {
-    "hash": "450d1318c51cbb695ac984edcc9c4568",
-    "last_updated": "2025-11-06T02:50:08.385204",
-    "original_md_url": "https://docs.anthropic.com/SEARCH_GUIDE.md",
-    "original_url": "https://docs.anthropic.com/SEARCH_GUIDE"
-  },
   "changelog.md": {
-    "hash": "b88b5805dc9b900a8001d1942c6e262f",
-    "last_updated": "2025-11-06T02:50:08.385263",
+    "hash": "2391e6574e1d2e7cf4034700a0587f04",
+    "last_updated": "2025-11-06T03:41:52.650094",
     "original_md_url": "https://docs.anthropic.com/changelog.md",
     "original_url": "https://docs.anthropic.com/changelog"
   },
   "en__api__admin-api__apikeys__get-api-key.md": {
     "hash": "9e5957d50a89df04bee5bbbbd3b79c25",
-    "last_updated": "2025-11-06T02:50:08.385285",
+    "last_updated": "2025-11-06T03:41:52.650147",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/apikeys/get-api-key.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/apikeys/get-api-key"
   },
   "en__api__admin-api__apikeys__list-api-keys.md": {
     "hash": "0140d79dc73a5f831da8dd373c225412",
-    "last_updated": "2025-11-06T02:50:08.385309",
+    "last_updated": "2025-11-06T03:41:52.650179",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/apikeys/list-api-keys.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/apikeys/list-api-keys"
   },
   "en__api__admin-api__apikeys__update-api-key.md": {
     "hash": "5a9bc7875a81aa6fa2560c0d7a3dc084",
-    "last_updated": "2025-11-06T02:50:08.385331",
+    "last_updated": "2025-11-06T03:41:52.650205",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/apikeys/update-api-key.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/apikeys/update-api-key"
   },
   "en__api__admin-api__claude-code__get-claude-code-usage-report.md": {
     "hash": "decac390edfeb056788a0516207bd8b5",
-    "last_updated": "2025-11-06T02:50:08.385366",
+    "last_updated": "2025-11-06T03:41:52.650241",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/claude-code/get-claude-code-usage-report.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/claude-code/get-claude-code-usage-report"
   },
   "en__api__admin-api__invites__create-invite.md": {
     "hash": "46307cb5bdea26e8625e5c1fc5ab05fa",
-    "last_updated": "2025-11-06T02:50:08.385387",
+    "last_updated": "2025-11-06T03:41:52.650266",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/invites/create-invite.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/invites/create-invite"
   },
   "en__api__admin-api__invites__delete-invite.md": {
     "hash": "41f644dea12ad722e99d1ec3ce5a6948",
-    "last_updated": "2025-11-06T02:50:08.385404",
+    "last_updated": "2025-11-06T03:41:52.650287",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/invites/delete-invite.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/invites/delete-invite"
   },
   "en__api__admin-api__invites__get-invite.md": {
     "hash": "cba52f4003a91494adda59ee73e1be78",
-    "last_updated": "2025-11-06T02:50:08.385423",
+    "last_updated": "2025-11-06T03:41:52.650309",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/invites/get-invite.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/invites/get-invite"
   },
   "en__api__admin-api__invites__list-invites.md": {
     "hash": "618ae810772a19ef006a075744d0655e",
-    "last_updated": "2025-11-06T02:50:08.385444",
+    "last_updated": "2025-11-06T03:41:52.650333",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/invites/list-invites.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/invites/list-invites"
   },
   "en__api__admin-api__organization__get-me.md": {
     "hash": "6dfa01627c671f8226f623b38731014b",
-    "last_updated": "2025-11-06T02:50:08.385461",
+    "last_updated": "2025-11-06T03:41:52.650357",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/organization/get-me.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/organization/get-me"
   },
   "en__api__admin-api__usage-cost__get-cost-report.md": {
     "hash": "3d7e9fb59f4c8c1aff7da866ded9717d",
-    "last_updated": "2025-11-06T02:50:08.385488",
+    "last_updated": "2025-11-06T03:41:52.650388",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/usage-cost/get-cost-report.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/usage-cost/get-cost-report"
   },
   "en__api__admin-api__usage-cost__get-messages-usage-report.md": {
     "hash": "15eb36f91ca49d88b355590470c6012a",
-    "last_updated": "2025-11-06T02:50:08.385521",
+    "last_updated": "2025-11-06T03:41:52.650434",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/usage-cost/get-messages-usage-report.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/usage-cost/get-messages-usage-report"
   },
   "en__api__admin-api__users__get-user.md": {
     "hash": "99f7d01cd984d90d590c524b556edfd4",
-    "last_updated": "2025-11-06T02:50:08.385539",
+    "last_updated": "2025-11-06T03:41:52.650456",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/users/get-user.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/users/get-user"
   },
   "en__api__admin-api__users__list-users.md": {
     "hash": "7fdd6031700783d013c3af57bbb96d07",
-    "last_updated": "2025-11-06T02:50:08.385560",
+    "last_updated": "2025-11-06T03:41:52.650479",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/users/list-users.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/users/list-users"
   },
   "en__api__admin-api__users__remove-user.md": {
     "hash": "365e57969336c0bb0780bcf514dbf923",
-    "last_updated": "2025-11-06T02:50:08.385576",
+    "last_updated": "2025-11-06T03:41:52.650498",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/users/remove-user.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/users/remove-user"
   },
   "en__api__admin-api__users__update-user.md": {
     "hash": "a2030f27a324526ed3bcf75268e92199",
-    "last_updated": "2025-11-06T02:50:08.385596",
+    "last_updated": "2025-11-06T03:41:52.650521",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/users/update-user.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/users/update-user"
   },
   "en__api__admin-api__workspace_members__create-workspace-member.md": {
     "hash": "1934cfe95f164f8d1cbba8d2d34040f9",
-    "last_updated": "2025-11-06T02:50:08.385615",
+    "last_updated": "2025-11-06T03:41:52.650543",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/workspace_members/create-workspace-member.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/workspace_members/create-workspace-member"
   },
   "en__api__admin-api__workspace_members__delete-workspace-member.md": {
     "hash": "3c2b2ba1147cf5138e9f33227e924a6f",
-    "last_updated": "2025-11-06T02:50:08.385633",
+    "last_updated": "2025-11-06T03:41:52.650564",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/workspace_members/delete-workspace-member.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/workspace_members/delete-workspace-member"
   },
   "en__api__admin-api__workspace_members__get-workspace-member.md": {
     "hash": "3bf3e2869a14d58886ce27db67ab2fc0",
-    "last_updated": "2025-11-06T02:50:08.385650",
+    "last_updated": "2025-11-06T03:41:52.650585",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/workspace_members/get-workspace-member.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/workspace_members/get-workspace-member"
   },
   "en__api__admin-api__workspace_members__list-workspace-members.md": {
     "hash": "8ebdf454280bb2bab29242031022c57b",
-    "last_updated": "2025-11-06T02:50:08.385670",
+    "last_updated": "2025-11-06T03:41:52.650608",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/workspace_members/list-workspace-members.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/workspace_members/list-workspace-members"
   },
   "en__api__admin-api__workspace_members__update-workspace-member.md": {
     "hash": "5ccd98ff990fafda76a8901ad8e1fb8e",
-    "last_updated": "2025-11-06T02:50:08.385689",
+    "last_updated": "2025-11-06T03:41:52.650630",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/workspace_members/update-workspace-member.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/workspace_members/update-workspace-member"
   },
   "en__api__admin-api__workspaces__archive-workspace.md": {
     "hash": "2441531b9034dbf57cd1bd9629bfa355",
-    "last_updated": "2025-11-06T02:50:08.385708",
+    "last_updated": "2025-11-06T03:41:52.650651",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/workspaces/archive-workspace.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/workspaces/archive-workspace"
   },
   "en__api__admin-api__workspaces__create-workspace.md": {
     "hash": "d36a1af120c6d3d3e4237ce37f23f6fa",
-    "last_updated": "2025-11-06T02:50:08.385726",
+    "last_updated": "2025-11-06T03:41:52.650675",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/workspaces/create-workspace.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/workspaces/create-workspace"
   },
   "en__api__admin-api__workspaces__get-workspace.md": {
     "hash": "f1c04c3b9a94da5bb799e41da7b75f92",
-    "last_updated": "2025-11-06T02:50:08.385745",
+    "last_updated": "2025-11-06T03:41:52.650696",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/workspaces/get-workspace.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/workspaces/get-workspace"
   },
   "en__api__admin-api__workspaces__list-workspaces.md": {
     "hash": "f2d9e60bd0a86433aab049c11e0e1f9b",
-    "last_updated": "2025-11-06T02:50:08.385765",
+    "last_updated": "2025-11-06T03:41:52.650721",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/workspaces/list-workspaces.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/workspaces/list-workspaces"
   },
   "en__api__admin-api__workspaces__update-workspace.md": {
     "hash": "d1c039c065ecc6a6f23d4c908070d11a",
-    "last_updated": "2025-11-06T02:50:08.385784",
+    "last_updated": "2025-11-06T03:41:52.650743",
     "original_md_url": "https://docs.anthropic.com/en/api/admin-api/workspaces/update-workspace.md",
     "original_url": "https://docs.anthropic.com/en/api/admin-api/workspaces/update-workspace"
   },
   "en__api__administration-api.md": {
     "hash": "9fd6754830ee4f9669780e08f352f54c",
-    "last_updated": "2025-11-06T02:50:08.385804",
+    "last_updated": "2025-11-06T03:41:52.650771",
     "original_md_url": "https://docs.anthropic.com/en/api/administration-api.md",
     "original_url": "https://docs.anthropic.com/en/api/administration-api"
   },
   "en__api__agent-sdk__cost-tracking.md": {
     "hash": "a9409a3c06906b9fd1c51267f24f1978",
-    "last_updated": "2025-11-06T02:50:08.385823",
+    "last_updated": "2025-11-06T03:41:52.650794",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/cost-tracking.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/cost-tracking"
   },
   "en__api__agent-sdk__custom-tools.md": {
     "hash": "9f8aef5e2c6af7504337bceea7555527",
-    "last_updated": "2025-11-06T02:50:08.385855",
+    "last_updated": "2025-11-06T03:41:52.650835",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/custom-tools.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/custom-tools"
   },
   "en__api__agent-sdk__hosting.md": {
     "hash": "b468b326ec8bf1e3179e447fd7fff23a",
-    "last_updated": "2025-11-06T02:50:08.385868",
+    "last_updated": "2025-11-06T03:41:52.650855",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/hosting.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/hosting"
   },
   "en__api__agent-sdk__mcp.md": {
     "hash": "30ef82b977fff9c3f0e77f52839f94f1",
-    "last_updated": "2025-11-06T02:50:08.385883",
+    "last_updated": "2025-11-06T03:41:52.650873",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/mcp.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/mcp"
   },
   "en__api__agent-sdk__modifying-system-prompts.md": {
     "hash": "aaa666bdd6a47cea4c923cdcf18f2f46",
-    "last_updated": "2025-11-06T02:50:08.385908",
+    "last_updated": "2025-11-06T03:41:52.650907",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/modifying-system-prompts.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/modifying-system-prompts"
   },
   "en__api__agent-sdk__overview.md": {
     "hash": "9f733de7e0464258920e516a629b429f",
-    "last_updated": "2025-11-06T02:50:08.385923",
+    "last_updated": "2025-11-06T03:41:52.650925",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/overview.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/overview"
   },
   "en__api__agent-sdk__permissions.md": {
     "hash": "075bb19210717513131a976e05bab555",
-    "last_updated": "2025-11-06T02:50:08.385944",
+    "last_updated": "2025-11-06T03:41:52.650959",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/permissions.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/permissions"
   },
   "en__api__agent-sdk__plugins.md": {
     "hash": "e1921dd4961fd76a04605aa47e68b510",
-    "last_updated": "2025-11-06T02:50:08.385962",
+    "last_updated": "2025-11-06T03:41:52.650986",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/plugins.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/plugins"
   },
   "en__api__agent-sdk__python.md": {
     "hash": "b6e485eb995341d3eaeac8756e884422",
-    "last_updated": "2025-11-06T02:50:08.386043",
+    "last_updated": "2025-11-06T03:41:52.651213",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/python.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/python"
   },
   "en__api__agent-sdk__sessions.md": {
     "hash": "ccd5b3054f3c480dcfa836e0c17c90c0",
-    "last_updated": "2025-11-06T02:50:08.386058",
+    "last_updated": "2025-11-06T03:41:52.651242",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/sessions.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/sessions"
   },
   "en__api__agent-sdk__skills.md": {
     "hash": "17b50fd458fcbba6043f181a564a0172",
-    "last_updated": "2025-11-06T02:50:08.386077",
+    "last_updated": "2025-11-06T03:41:52.651270",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/skills.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/skills"
   },
   "en__api__agent-sdk__slash-commands.md": {
     "hash": "0f36c0937d839de74ef4d7d3e28a38bf",
-    "last_updated": "2025-11-06T02:50:08.386098",
+    "last_updated": "2025-11-06T03:41:52.651301",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/slash-commands.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/slash-commands"
   },
   "en__api__agent-sdk__streaming-vs-single-mode.md": {
     "hash": "18aa190394c21fc42d2e5d0914d4dd4a",
-    "last_updated": "2025-11-06T02:50:08.386115",
+    "last_updated": "2025-11-06T03:41:52.651320",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/streaming-vs-single-mode.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/streaming-vs-single-mode"
   },
   "en__api__agent-sdk__subagents.md": {
     "hash": "c004a224ee66fcbaf960385d2ba7bdd1",
-    "last_updated": "2025-11-06T02:50:08.386132",
+    "last_updated": "2025-11-06T03:41:52.651340",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/subagents.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/subagents"
   },
   "en__api__agent-sdk__todo-tracking.md": {
     "hash": "6d19f39dc51cf969f57716f7386b7c23",
-    "last_updated": "2025-11-06T02:50:08.386145",
+    "last_updated": "2025-11-06T03:41:52.651363",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/todo-tracking.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/todo-tracking"
   },
   "en__api__agent-sdk__typescript.md": {
     "hash": "1439ccd76762dffbfbcde28521202d4a",
-    "last_updated": "2025-11-06T02:50:08.386206",
+    "last_updated": "2025-11-06T03:41:52.651438",
     "original_md_url": "https://docs.anthropic.com/en/api/agent-sdk/typescript.md",
     "original_url": "https://docs.anthropic.com/en/api/agent-sdk/typescript"
   },
   "en__api__beta-headers.md": {
     "hash": "095ea7a0e94e139bf2510f9536ae5b24",
-    "last_updated": "2025-11-06T02:50:08.386216",
+    "last_updated": "2025-11-06T03:41:52.651451",
     "original_md_url": "https://docs.anthropic.com/en/api/beta-headers.md",
     "original_url": "https://docs.anthropic.com/en/api/beta-headers"
   },
   "en__api__canceling-message-batches.md": {
     "hash": "ca8df502ce660331cd6820301cfeee8e",
-    "last_updated": "2025-11-06T02:50:08.386242",
+    "last_updated": "2025-11-06T03:41:52.651483",
     "original_md_url": "https://docs.anthropic.com/en/api/canceling-message-batches.md",
     "original_url": "https://docs.anthropic.com/en/api/canceling-message-batches"
   },
   "en__api__claude-code-analytics-api.md": {
     "hash": "b51eacbc6f5fa24a9a001131ca844e57",
-    "last_updated": "2025-11-06T02:50:08.386262",
+    "last_updated": "2025-11-06T03:41:52.651510",
     "original_md_url": "https://docs.anthropic.com/en/api/claude-code-analytics-api.md",
     "original_url": "https://docs.anthropic.com/en/api/claude-code-analytics-api"
   },
   "en__api__claude-on-amazon-bedrock.md": {
     "hash": "56372608c85b7103eccf5cd63d59e0cb",
-    "last_updated": "2025-11-06T02:50:08.386286",
+    "last_updated": "2025-11-06T03:41:52.651545",
     "original_md_url": "https://docs.anthropic.com/en/api/claude-on-amazon-bedrock.md",
     "original_url": "https://docs.anthropic.com/en/api/claude-on-amazon-bedrock"
   },
   "en__api__claude-on-vertex-ai.md": {
     "hash": "a5a6d21341029637177a9067464ca668",
-    "last_updated": "2025-11-06T02:50:08.386306",
+    "last_updated": "2025-11-06T03:41:52.651574",
     "original_md_url": "https://docs.anthropic.com/en/api/claude-on-vertex-ai.md",
     "original_url": "https://docs.anthropic.com/en/api/claude-on-vertex-ai"
   },
   "en__api__client-sdks.md": {
     "hash": "f56e5a5d8f29d0d8eaaba9fa00c4ff73",
-    "last_updated": "2025-11-06T02:50:08.386331",
+    "last_updated": "2025-11-06T03:41:52.651600",
     "original_md_url": "https://docs.anthropic.com/en/api/client-sdks.md",
     "original_url": "https://docs.anthropic.com/en/api/client-sdks"
   },
   "en__api__creating-message-batches.md": {
     "hash": "8e1856c2223bf3527ee7929e28c6d068",
-    "last_updated": "2025-11-06T02:50:08.386493",
+    "last_updated": "2025-11-06T03:41:52.651875",
     "original_md_url": "https://docs.anthropic.com/en/api/creating-message-batches.md",
     "original_url": "https://docs.anthropic.com/en/api/creating-message-batches"
   },
   "en__api__deleting-message-batches.md": {
     "hash": "b4a1c33c1532cdbd8f7dfc9ac2348877",
-    "last_updated": "2025-11-06T02:50:08.386511",
+    "last_updated": "2025-11-06T03:41:52.651907",
     "original_md_url": "https://docs.anthropic.com/en/api/deleting-message-batches.md",
     "original_url": "https://docs.anthropic.com/en/api/deleting-message-batches"
   },
   "en__api__errors.md": {
     "hash": "163cfed665d0bf4e370a5a84ed8c37d6",
-    "last_updated": "2025-11-06T02:50:08.386523",
+    "last_updated": "2025-11-06T03:41:52.651924",
     "original_md_url": "https://docs.anthropic.com/en/api/errors.md",
     "original_url": "https://docs.anthropic.com/en/api/errors"
   },
   "en__api__files-content.md": {
     "hash": "bd0add11e33ea7c96ff4cfe8844ad19d",
-    "last_updated": "2025-11-06T02:50:08.386539",
+    "last_updated": "2025-11-06T03:41:52.651944",
     "original_md_url": "https://docs.anthropic.com/en/api/files-content.md",
     "original_url": "https://docs.anthropic.com/en/api/files-content"
   },
   "en__api__files-create.md": {
     "hash": "fc2d124a38da8cec72e3301ac5e3b664",
-    "last_updated": "2025-11-06T02:50:08.386558",
+    "last_updated": "2025-11-06T03:41:52.651966",
     "original_md_url": "https://docs.anthropic.com/en/api/files-create.md",
     "original_url": "https://docs.anthropic.com/en/api/files-create"
   },
   "en__api__files-delete.md": {
     "hash": "34b4a2df9c20f40d70b5f8d6cb607c18",
-    "last_updated": "2025-11-06T02:50:08.386575",
+    "last_updated": "2025-11-06T03:41:52.651986",
     "original_md_url": "https://docs.anthropic.com/en/api/files-delete.md",
     "original_url": "https://docs.anthropic.com/en/api/files-delete"
   },
   "en__api__files-list.md": {
     "hash": "a27426d9f0a168e518d2902b31e7cc86",
-    "last_updated": "2025-11-06T02:50:08.386596",
+    "last_updated": "2025-11-06T03:41:52.652010",
     "original_md_url": "https://docs.anthropic.com/en/api/files-list.md",
     "original_url": "https://docs.anthropic.com/en/api/files-list"
   },
   "en__api__files-metadata.md": {
     "hash": "a8ee34545d6388e5f6eec53d5198ddc4",
-    "last_updated": "2025-11-06T02:50:08.386615",
+    "last_updated": "2025-11-06T03:41:52.652032",
     "original_md_url": "https://docs.anthropic.com/en/api/files-metadata.md",
     "original_url": "https://docs.anthropic.com/en/api/files-metadata"
   },
   "en__api__getting-help.md": {
     "hash": "16d4cf04249610b5c8adc466cf21509c",
-    "last_updated": "2025-11-06T02:50:08.386622",
+    "last_updated": "2025-11-06T03:41:52.652041",
     "original_md_url": "https://docs.anthropic.com/en/api/getting-help.md",
     "original_url": "https://docs.anthropic.com/en/api/getting-help"
   },
   "en__api__handling-stop-reasons.md": {
     "hash": "598f9dc3b5d985599fba589131bc8e5d",
-    "last_updated": "2025-11-06T02:50:08.386645",
+    "last_updated": "2025-11-06T03:41:52.652068",
     "original_md_url": "https://docs.anthropic.com/en/api/handling-stop-reasons.md",
     "original_url": "https://docs.anthropic.com/en/api/handling-stop-reasons"
   },
   "en__api__ip-addresses.md": {
     "hash": "4839bbe73e973d89b67156e48020580d",
-    "last_updated": "2025-11-06T02:50:08.386652",
+    "last_updated": "2025-11-06T03:41:52.652077",
     "original_md_url": "https://docs.anthropic.com/en/api/ip-addresses.md",
     "original_url": "https://docs.anthropic.com/en/api/ip-addresses"
   },
   "en__api__listing-message-batches.md": {
     "hash": "f18dff13c4aa7145b77dc7a11d65db33",
-    "last_updated": "2025-11-06T02:50:08.386678",
+    "last_updated": "2025-11-06T03:41:52.652107",
     "original_md_url": "https://docs.anthropic.com/en/api/listing-message-batches.md",
     "original_url": "https://docs.anthropic.com/en/api/listing-message-batches"
   },
   "en__api__messages-count-tokens.md": {
     "hash": "abc6d9b6cc7caab23010e589255eb1cf",
-    "last_updated": "2025-11-06T02:50:08.386796",
+    "last_updated": "2025-11-06T03:41:52.652341",
     "original_md_url": "https://docs.anthropic.com/en/api/messages-count-tokens.md",
     "original_url": "https://docs.anthropic.com/en/api/messages-count-tokens"
   },
   "en__api__messages.md": {
     "hash": "3eb63a40859a4bfa03e888700b6a1223",
-    "last_updated": "2025-11-06T02:50:08.387022",
+    "last_updated": "2025-11-06T03:41:52.652708",
     "original_md_url": "https://docs.anthropic.com/en/api/messages.md",
     "original_url": "https://docs.anthropic.com/en/api/messages"
   },
   "en__api__migrating-from-text-completions-to-messages.md": {
     "hash": "ff410433eadec64bb6591853f58a54d3",
-    "last_updated": "2025-11-06T02:50:08.387036",
+    "last_updated": "2025-11-06T03:41:52.652736",
     "original_md_url": "https://docs.anthropic.com/en/api/migrating-from-text-completions-to-messages.md",
     "original_url": "https://docs.anthropic.com/en/api/migrating-from-text-completions-to-messages"
   },
   "en__api__models-list.md": {
     "hash": "d4b9cc06d35cac4f5957fb1341026e05",
-    "last_updated": "2025-11-06T02:50:08.387057",
+    "last_updated": "2025-11-06T03:41:52.652764",
     "original_md_url": "https://docs.anthropic.com/en/api/models-list.md",
     "original_url": "https://docs.anthropic.com/en/api/models-list"
   },
   "en__api__models.md": {
     "hash": "322b4b70e3b58b15e776eeac218bdb1e",
-    "last_updated": "2025-11-06T02:50:08.387075",
+    "last_updated": "2025-11-06T03:41:52.652787",
     "original_md_url": "https://docs.anthropic.com/en/api/models.md",
     "original_url": "https://docs.anthropic.com/en/api/models"
   },
   "en__api__openai-sdk.md": {
     "hash": "b135a0833aa03071f0565004277a6771",
-    "last_updated": "2025-11-06T02:50:08.387099",
+    "last_updated": "2025-11-06T03:41:52.652822",
     "original_md_url": "https://docs.anthropic.com/en/api/openai-sdk.md",
     "original_url": "https://docs.anthropic.com/en/api/openai-sdk"
   },
   "en__api__overview.md": {
     "hash": "4bfea5ac565d03ebaf5a0f7a207ff303",
-    "last_updated": "2025-11-06T02:50:08.387109",
+    "last_updated": "2025-11-06T03:41:52.652835",
     "original_md_url": "https://docs.anthropic.com/en/api/overview.md",
     "original_url": "https://docs.anthropic.com/en/api/overview"
   },
   "en__api__prompt-tools-generate.md": {
     "hash": "5a1996a427ef1dae134e4295e10a7c71",
-    "last_updated": "2025-11-06T02:50:08.387185",
+    "last_updated": "2025-11-06T03:41:52.652919",
     "original_md_url": "https://docs.anthropic.com/en/api/prompt-tools-generate.md",
     "original_url": "https://docs.anthropic.com/en/api/prompt-tools-generate"
   },
   "en__api__prompt-tools-improve.md": {
     "hash": "953f421f1cdf96f420325b37f4ae22fa",
-    "last_updated": "2025-11-06T02:50:08.387265",
+    "last_updated": "2025-11-06T03:41:52.653031",
     "original_md_url": "https://docs.anthropic.com/en/api/prompt-tools-improve.md",
     "original_url": "https://docs.anthropic.com/en/api/prompt-tools-improve"
   },
   "en__api__prompt-tools-templatize.md": {
     "hash": "b9d3dbba54b83ac853f28fc5bbf0a83a",
-    "last_updated": "2025-11-06T02:50:08.387344",
+    "last_updated": "2025-11-06T03:41:52.653169",
     "original_md_url": "https://docs.anthropic.com/en/api/prompt-tools-templatize.md",
     "original_url": "https://docs.anthropic.com/en/api/prompt-tools-templatize"
   },
   "en__api__rate-limits.md": {
     "hash": "0338f763e711102907e787ebd8e4d73d",
-    "last_updated": "2025-11-06T02:50:08.387383",
+    "last_updated": "2025-11-06T03:41:52.653221",
     "original_md_url": "https://docs.anthropic.com/en/api/rate-limits.md",
     "original_url": "https://docs.anthropic.com/en/api/rate-limits"
   },
   "en__api__retrieving-message-batch-results.md": {
     "hash": "ba260e5506b6a50b8c440dfd744db64f",
-    "last_updated": "2025-11-06T02:50:08.387453",
+    "last_updated": "2025-11-06T03:41:52.653297",
     "original_md_url": "https://docs.anthropic.com/en/api/retrieving-message-batch-results.md",
     "original_url": "https://docs.anthropic.com/en/api/retrieving-message-batch-results"
   },
   "en__api__retrieving-message-batches.md": {
     "hash": "7f2ffed4dba9c7d42fadb485a9d8111a",
-    "last_updated": "2025-11-06T02:50:08.387479",
+    "last_updated": "2025-11-06T03:41:52.653327",
     "original_md_url": "https://docs.anthropic.com/en/api/retrieving-message-batches.md",
     "original_url": "https://docs.anthropic.com/en/api/retrieving-message-batches"
   },
   "en__api__service-tiers.md": {
     "hash": "c4f4dda1c4114c324907fea077aa86fa",
-    "last_updated": "2025-11-06T02:50:08.387491",
+    "last_updated": "2025-11-06T03:41:52.653342",
     "original_md_url": "https://docs.anthropic.com/en/api/service-tiers.md",
     "original_url": "https://docs.anthropic.com/en/api/service-tiers"
   },
   "en__api__skills-guide.md": {
     "hash": "fb21805fac7687d98be237b0817c19fb",
-    "last_updated": "2025-11-06T02:50:08.387554",
+    "last_updated": "2025-11-06T03:41:52.653434",
     "original_md_url": "https://docs.anthropic.com/en/api/skills-guide.md",
     "original_url": "https://docs.anthropic.com/en/api/skills-guide"
   },
   "en__api__skills__create-skill-version.md": {
     "hash": "737c0d2c7df3d17a01bba726d8cff9bd",
-    "last_updated": "2025-11-06T02:50:08.387577",
+    "last_updated": "2025-11-06T03:41:52.653461",
     "original_md_url": "https://docs.anthropic.com/en/api/skills/create-skill-version.md",
     "original_url": "https://docs.anthropic.com/en/api/skills/create-skill-version"
   },
   "en__api__skills__create-skill.md": {
     "hash": "596de12564ed8d16b8ae6b108ae07ca3",
-    "last_updated": "2025-11-06T02:50:08.387600",
+    "last_updated": "2025-11-06T03:41:52.653489",
     "original_md_url": "https://docs.anthropic.com/en/api/skills/create-skill.md",
     "original_url": "https://docs.anthropic.com/en/api/skills/create-skill"
   },
   "en__api__skills__delete-skill-version.md": {
     "hash": "4da7315a49c7007795488ce839827b07",
-    "last_updated": "2025-11-06T02:50:08.387618",
+    "last_updated": "2025-11-06T03:41:52.653510",
     "original_md_url": "https://docs.anthropic.com/en/api/skills/delete-skill-version.md",
     "original_url": "https://docs.anthropic.com/en/api/skills/delete-skill-version"
   },
   "en__api__skills__delete-skill.md": {
     "hash": "b900d717a062240b9051f31109f686e2",
-    "last_updated": "2025-11-06T02:50:08.387635",
+    "last_updated": "2025-11-06T03:41:52.653531",
     "original_md_url": "https://docs.anthropic.com/en/api/skills/delete-skill.md",
     "original_url": "https://docs.anthropic.com/en/api/skills/delete-skill"
   },
   "en__api__skills__get-skill-version.md": {
     "hash": "0b26fe6e52c95e77c36224245d7d8c76",
-    "last_updated": "2025-11-06T02:50:08.387656",
+    "last_updated": "2025-11-06T03:41:52.653555",
     "original_md_url": "https://docs.anthropic.com/en/api/skills/get-skill-version.md",
     "original_url": "https://docs.anthropic.com/en/api/skills/get-skill-version"
   },
   "en__api__skills__get-skill.md": {
     "hash": "b2f3b4376c9b6fd64f45a7990d283f18",
-    "last_updated": "2025-11-06T02:50:08.387676",
+    "last_updated": "2025-11-06T03:41:52.653578",
     "original_md_url": "https://docs.anthropic.com/en/api/skills/get-skill.md",
     "original_url": "https://docs.anthropic.com/en/api/skills/get-skill"
   },
   "en__api__skills__list-skill-versions.md": {
     "hash": "a0a13ff6e2f0bad7b0c98f03487fe210",
-    "last_updated": "2025-11-06T02:50:08.387700",
+    "last_updated": "2025-11-06T03:41:52.653605",
     "original_md_url": "https://docs.anthropic.com/en/api/skills/list-skill-versions.md",
     "original_url": "https://docs.anthropic.com/en/api/skills/list-skill-versions"
   },
   "en__api__skills__list-skills.md": {
     "hash": "d540720c013de8a569a1c013d1c15502",
-    "last_updated": "2025-11-06T02:50:08.387723",
+    "last_updated": "2025-11-06T03:41:52.653631",
     "original_md_url": "https://docs.anthropic.com/en/api/skills/list-skills.md",
     "original_url": "https://docs.anthropic.com/en/api/skills/list-skills"
   },
   "en__api__usage-cost-api.md": {
     "hash": "e7538accf8b318f6f73c7327e9e172d7",
-    "last_updated": "2025-11-06T02:50:08.387741",
+    "last_updated": "2025-11-06T03:41:52.653656",
     "original_md_url": "https://docs.anthropic.com/en/api/usage-cost-api.md",
     "original_url": "https://docs.anthropic.com/en/api/usage-cost-api"
   },
   "en__api__versioning.md": {
     "hash": "ec87c8a6c2c9c88a6eca04f69be262dd",
-    "last_updated": "2025-11-06T02:50:08.387749",
+    "last_updated": "2025-11-06T03:41:52.653667",
     "original_md_url": "https://docs.anthropic.com/en/api/versioning.md",
     "original_url": "https://docs.anthropic.com/en/api/versioning"
   },
   "en__docs__about-claude__glossary.md": {
     "hash": "edb0a209e4a1e32c3eb6a2869c628bb9",
-    "last_updated": "2025-11-06T02:50:08.387766",
+    "last_updated": "2025-11-06T03:41:52.653690",
     "original_md_url": "https://docs.anthropic.com/en/docs/about-claude/glossary.md",
     "original_url": "https://docs.anthropic.com/en/docs/about-claude/glossary"
   },
   "en__docs__about-claude__model-deprecations.md": {
     "hash": "7883ecd928496e405347de49156410ef",
-    "last_updated": "2025-11-06T02:50:08.387781",
+    "last_updated": "2025-11-06T03:41:52.653708",
     "original_md_url": "https://docs.anthropic.com/en/docs/about-claude/model-deprecations.md",
     "original_url": "https://docs.anthropic.com/en/docs/about-claude/model-deprecations"
   },
   "en__docs__about-claude__models__choosing-a-model.md": {
     "hash": "3458b43f4ec46667ee415ca4c7099aae",
-    "last_updated": "2025-11-06T02:50:08.387793",
+    "last_updated": "2025-11-06T03:41:52.653723",
     "original_md_url": "https://docs.anthropic.com/en/docs/about-claude/models/choosing-a-model.md",
     "original_url": "https://docs.anthropic.com/en/docs/about-claude/models/choosing-a-model"
   },
   "en__docs__about-claude__models__migrating-to-claude-4.md": {
     "hash": "3a4bfe68215060b8f9c8da02c0211143",
-    "last_updated": "2025-11-06T02:50:08.387817",
+    "last_updated": "2025-11-06T03:41:52.653757",
     "original_md_url": "https://docs.anthropic.com/en/docs/about-claude/models/migrating-to-claude-4.md",
     "original_url": "https://docs.anthropic.com/en/docs/about-claude/models/migrating-to-claude-4"
   },
   "en__docs__about-claude__models__overview.md": {
     "hash": "d393008d1680b44b7e01cc2335c8af96",
-    "last_updated": "2025-11-06T02:50:08.387851",
+    "last_updated": "2025-11-06T03:41:52.653803",
     "original_md_url": "https://docs.anthropic.com/en/docs/about-claude/models/overview.md",
     "original_url": "https://docs.anthropic.com/en/docs/about-claude/models/overview"
   },
   "en__docs__about-claude__models__whats-new-claude-4-5.md": {
     "hash": "1aa1f215ab4eae8d7392003e2fdcd9a5",
-    "last_updated": "2025-11-06T02:50:08.387879",
+    "last_updated": "2025-11-06T03:41:52.653844",
     "original_md_url": "https://docs.anthropic.com/en/docs/about-claude/models/whats-new-claude-4-5.md",
     "original_url": "https://docs.anthropic.com/en/docs/about-claude/models/whats-new-claude-4-5"
   },
   "en__docs__about-claude__pricing.md": {
     "hash": "4f9d3410d3741c0dbfce4b2ab1fe72d5",
-    "last_updated": "2025-11-06T02:50:08.387909",
+    "last_updated": "2025-11-06T03:41:52.653885",
     "original_md_url": "https://docs.anthropic.com/en/docs/about-claude/pricing.md",
     "original_url": "https://docs.anthropic.com/en/docs/about-claude/pricing"
   },
   "en__docs__about-claude__use-case-guides__content-moderation.md": {
     "hash": "1e39693abac13d75711c4d080e387b9e",
-    "last_updated": "2025-11-06T02:50:08.387945",
+    "last_updated": "2025-11-06T03:41:52.653935",
     "original_md_url": "https://docs.anthropic.com/en/docs/about-claude/use-case-guides/content-moderation.md",
     "original_url": "https://docs.anthropic.com/en/docs/about-claude/use-case-guides/content-moderation"
   },
   "en__docs__about-claude__use-case-guides__customer-support-chat.md": {
     "hash": "5babf7185c7be00c118c2a241319d62c",
-    "last_updated": "2025-11-06T02:50:08.387991",
+    "last_updated": "2025-11-06T03:41:52.654004",
     "original_md_url": "https://docs.anthropic.com/en/docs/about-claude/use-case-guides/customer-support-chat.md",
     "original_url": "https://docs.anthropic.com/en/docs/about-claude/use-case-guides/customer-support-chat"
   },
   "en__docs__about-claude__use-case-guides__legal-summarization.md": {
     "hash": "2a4bc69704b15f473c1fefb81032d49c",
-    "last_updated": "2025-11-06T02:50:08.388023",
+    "last_updated": "2025-11-06T03:41:52.654049",
     "original_md_url": "https://docs.anthropic.com/en/docs/about-claude/use-case-guides/legal-summarization.md",
     "original_url": "https://docs.anthropic.com/en/docs/about-claude/use-case-guides/legal-summarization"
   },
   "en__docs__about-claude__use-case-guides__ticket-routing.md": {
     "hash": "e4f0318e2600cfacc485c20c05f78667",
-    "last_updated": "2025-11-06T02:50:08.388065",
+    "last_updated": "2025-11-06T03:41:52.654110",
     "original_md_url": "https://docs.anthropic.com/en/docs/about-claude/use-case-guides/ticket-routing.md",
     "original_url": "https://docs.anthropic.com/en/docs/about-claude/use-case-guides/ticket-routing"
   },
   "en__docs__agents-and-tools__agent-skills__best-practices.md": {
     "hash": "124886f93bad18af81ad07ef6b748646",
-    "last_updated": "2025-11-06T02:50:08.388126",
+    "last_updated": "2025-11-06T03:41:52.654200",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/best-practices.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/best-practices"
   },
   "en__docs__agents-and-tools__agent-skills__overview.md": {
     "hash": "3f5e77f141aa4f9bfdcfd0905607f51d",
-    "last_updated": "2025-11-06T02:50:08.388159",
+    "last_updated": "2025-11-06T03:41:52.654244",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/overview.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/overview"
   },
   "en__docs__agents-and-tools__agent-skills__quickstart.md": {
     "hash": "2d9e791f330be7cd9133d45edb5687d3",
-    "last_updated": "2025-11-06T02:50:08.388184",
+    "last_updated": "2025-11-06T03:41:52.654272",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/quickstart.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/quickstart"
   },
   "en__docs__agents-and-tools__claude-for-sheets.md": {
     "hash": "311b74daa893ef33c49dd9a3dc90ce76",
-    "last_updated": "2025-11-06T02:50:08.388210",
+    "last_updated": "2025-11-06T03:41:52.654304",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/claude-for-sheets.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/claude-for-sheets"
   },
   "en__docs__agents-and-tools__mcp-connector.md": {
     "hash": "403fadb1d04bd4e1a4e8b29aa8b5e428",
-    "last_updated": "2025-11-06T02:50:08.388227",
+    "last_updated": "2025-11-06T03:41:52.654323",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/mcp-connector.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/mcp-connector"
   },
   "en__docs__agents-and-tools__remote-mcp-servers.md": {
     "hash": "ae5aa5c6088c102fa4567b36ccb2dfd5",
-    "last_updated": "2025-11-06T02:50:08.388256",
+    "last_updated": "2025-11-06T03:41:52.654365",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/remote-mcp-servers.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/remote-mcp-servers"
   },
   "en__docs__agents-and-tools__tool-use__bash-tool.md": {
     "hash": "391e50e796783b1ec7b2f6ce7d84b0c2",
-    "last_updated": "2025-11-06T02:50:08.388279",
+    "last_updated": "2025-11-06T03:41:52.654389",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/bash-tool.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/bash-tool"
   },
   "en__docs__agents-and-tools__tool-use__code-execution-tool.md": {
     "hash": "f9fe99fc59775fd855357d931bb5471b",
-    "last_updated": "2025-11-06T02:50:08.388325",
+    "last_updated": "2025-11-06T03:41:52.654438",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/code-execution-tool.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/code-execution-tool"
   },
   "en__docs__agents-and-tools__tool-use__computer-use-tool.md": {
     "hash": "b6b77f153d0823c6d1cc67a8b208dda7",
-    "last_updated": "2025-11-06T02:50:08.388380",
+    "last_updated": "2025-11-06T03:41:52.654495",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/computer-use-tool.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/computer-use-tool"
   },
   "en__docs__agents-and-tools__tool-use__fine-grained-tool-streaming.md": {
     "hash": "0e5a2d62b89e99d538f58c2bb64bc70a",
-    "last_updated": "2025-11-06T02:50:08.388394",
+    "last_updated": "2025-11-06T03:41:52.654515",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/fine-grained-tool-streaming.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/fine-grained-tool-streaming"
   },
   "en__docs__agents-and-tools__tool-use__implement-tool-use.md": {
     "hash": "43aee95210fad4a4ce5f126a50cd9f6b",
-    "last_updated": "2025-11-06T02:50:08.388473",
+    "last_updated": "2025-11-06T03:41:52.654664",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/implement-tool-use.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/implement-tool-use"
   },
   "en__docs__agents-and-tools__tool-use__memory-tool.md": {
     "hash": "ea786d8c068fb8ddc29fe2019bdfbf98",
-    "last_updated": "2025-11-06T02:50:08.388496",
+    "last_updated": "2025-11-06T03:41:52.654698",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/memory-tool.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/memory-tool"
   },
   "en__docs__agents-and-tools__tool-use__overview.md": {
     "hash": "150603bb198d18227ebaf5133d34bf4f",
-    "last_updated": "2025-11-06T02:50:08.388571",
+    "last_updated": "2025-11-06T03:41:52.654807",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview"
   },
   "en__docs__agents-and-tools__tool-use__text-editor-tool.md": {
     "hash": "7f64d7ada5382b10cf97966f55e2793f",
-    "last_updated": "2025-11-06T02:50:08.388636",
+    "last_updated": "2025-11-06T03:41:52.654877",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/text-editor-tool.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/text-editor-tool"
   },
   "en__docs__agents-and-tools__tool-use__token-efficient-tool-use.md": {
     "hash": "7ba33a77ee858ff9a1f9e31a01d2d961",
-    "last_updated": "2025-11-06T02:50:08.388650",
+    "last_updated": "2025-11-06T03:41:52.654894",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/token-efficient-tool-use.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/token-efficient-tool-use"
   },
   "en__docs__agents-and-tools__tool-use__web-fetch-tool.md": {
     "hash": "962b334604d4b6a79803412dd7c2d399",
-    "last_updated": "2025-11-06T02:50:08.388674",
+    "last_updated": "2025-11-06T03:41:52.654929",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/web-fetch-tool.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/web-fetch-tool"
   },
   "en__docs__agents-and-tools__tool-use__web-search-tool.md": {
     "hash": "b65ca26201f19234ad33975a50d40e62",
-    "last_updated": "2025-11-06T02:50:08.388696",
+    "last_updated": "2025-11-06T03:41:52.654960",
     "original_md_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/web-search-tool.md",
     "original_url": "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/web-search-tool"
   },
   "en__docs__build-with-claude__batch-processing.md": {
     "hash": "a84741e1d227e2b4d164be699584ce18",
-    "last_updated": "2025-11-06T02:50:08.388745",
+    "last_updated": "2025-11-06T03:41:52.655028",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/batch-processing.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/batch-processing"
   },
   "en__docs__build-with-claude__citations.md": {
     "hash": "6a745bd91de6cc31ab2472c5f8edddea",
-    "last_updated": "2025-11-06T02:50:08.388776",
+    "last_updated": "2025-11-06T03:41:52.655063",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/citations.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/citations"
   },
   "en__docs__build-with-claude__context-editing.md": {
     "hash": "fce4a11a85378f914e1427ad08623cfa",
-    "last_updated": "2025-11-06T02:50:08.388812",
+    "last_updated": "2025-11-06T03:41:52.655114",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/context-editing.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/context-editing"
   },
   "en__docs__build-with-claude__context-windows.md": {
     "hash": "01585ca4d7d7a5cdee31fae622487cbc",
-    "last_updated": "2025-11-06T02:50:08.388838",
+    "last_updated": "2025-11-06T03:41:52.655144",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/context-windows.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/context-windows"
   },
   "en__docs__build-with-claude__embeddings.md": {
     "hash": "7d735a46008a54e0deb6a7e34675f449",
-    "last_updated": "2025-11-06T02:50:08.388866",
+    "last_updated": "2025-11-06T03:41:52.655184",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/embeddings.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/embeddings"
   },
   "en__docs__build-with-claude__extended-thinking.md": {
     "hash": "625c3e39d07078fe5446692b8c4d99c7",
-    "last_updated": "2025-11-06T02:50:08.389008",
+    "last_updated": "2025-11-06T03:41:52.655474",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking"
   },
   "en__docs__build-with-claude__files.md": {
     "hash": "d8737f047464f1c247bd76ca02dbff23",
-    "last_updated": "2025-11-06T02:50:08.389033",
+    "last_updated": "2025-11-06T03:41:52.655505",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/files.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/files"
   },
   "en__docs__build-with-claude__multilingual-support.md": {
     "hash": "be738084488852979f060cd9bbb25cba",
-    "last_updated": "2025-11-06T02:50:08.389048",
+    "last_updated": "2025-11-06T03:41:52.655523",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/multilingual-support.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/multilingual-support"
   },
   "en__docs__build-with-claude__overview.md": {
     "hash": "d9b0eb98036ed047ba9239244ab3f32a",
-    "last_updated": "2025-11-06T02:50:08.389066",
+    "last_updated": "2025-11-06T03:41:52.655544",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/overview.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/overview"
   },
   "en__docs__build-with-claude__pdf-support.md": {
     "hash": "08e2f407a2df025653039416b7c745cf",
-    "last_updated": "2025-11-06T02:50:08.389113",
+    "last_updated": "2025-11-06T03:41:52.655597",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/pdf-support.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/pdf-support"
   },
   "en__docs__build-with-claude__prompt-caching.md": {
     "hash": "eab493c8df8a8650d0933a2138e2b9ce",
-    "last_updated": "2025-11-06T02:50:08.389222",
+    "last_updated": "2025-11-06T03:41:52.655775",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching"
   },
   "en__docs__build-with-claude__prompt-engineering__be-clear-and-direct.md": {
     "hash": "5a315c23785bd8345c9abf510fcce2fa",
-    "last_updated": "2025-11-06T02:50:08.389252",
+    "last_updated": "2025-11-06T03:41:52.655816",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/be-clear-and-direct.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/be-clear-and-direct"
   },
   "en__docs__build-with-claude__prompt-engineering__chain-of-thought.md": {
     "hash": "8ae077efbbaf7533d8c6a00a53f1236c",
-    "last_updated": "2025-11-06T02:50:08.389286",
+    "last_updated": "2025-11-06T03:41:52.655864",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/chain-of-thought.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/chain-of-thought"
   },
   "en__docs__build-with-claude__prompt-engineering__chain-prompts.md": {
     "hash": "45912b368d8117807abb80bcb243b349",
-    "last_updated": "2025-11-06T02:50:08.389372",
+    "last_updated": "2025-11-06T03:41:52.655979",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/chain-prompts.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/chain-prompts"
   },
   "en__docs__build-with-claude__prompt-engineering__claude-4-best-practices.md": {
     "hash": "35506f88ccd7ea7c262fce9eb83ef59b",
-    "last_updated": "2025-11-06T02:50:08.389407",
+    "last_updated": "2025-11-06T03:41:52.656026",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices"
   },
   "en__docs__build-with-claude__prompt-engineering__extended-thinking-tips.md": {
     "hash": "436184bc7f717664848bd56417ff8391",
-    "last_updated": "2025-11-06T02:50:08.389434",
+    "last_updated": "2025-11-06T03:41:52.656063",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/extended-thinking-tips.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/extended-thinking-tips"
   },
   "en__docs__build-with-claude__prompt-engineering__long-context-tips.md": {
     "hash": "1a405ac610cc0627ac133ae612d2c40e",
-    "last_updated": "2025-11-06T02:50:08.389445",
+    "last_updated": "2025-11-06T03:41:52.656077",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/long-context-tips.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/long-context-tips"
   },
   "en__docs__build-with-claude__prompt-engineering__multishot-prompting.md": {
     "hash": "b22499135933112919000ea061aa9468",
-    "last_updated": "2025-11-06T02:50:08.389466",
+    "last_updated": "2025-11-06T03:41:52.656103",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/multishot-prompting.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/multishot-prompting"
   },
   "en__docs__build-with-claude__prompt-engineering__overview.md": {
     "hash": "1c06e4911702633c41d7d31a2a7b1315",
-    "last_updated": "2025-11-06T02:50:08.389479",
+    "last_updated": "2025-11-06T03:41:52.656119",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview"
   },
   "en__docs__build-with-claude__prompt-engineering__prefill-claudes-response.md": {
     "hash": "56b7012345b97a1c0289eea656ca1189",
-    "last_updated": "2025-11-06T02:50:08.389503",
+    "last_updated": "2025-11-06T03:41:52.656153",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/prefill-claudes-response.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/prefill-claudes-response"
   },
   "en__docs__build-with-claude__prompt-engineering__prompt-generator.md": {
     "hash": "09ea096d994f932311c01d6135b79ddf",
-    "last_updated": "2025-11-06T02:50:08.389512",
+    "last_updated": "2025-11-06T03:41:52.656164",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/prompt-generator.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/prompt-generator"
   },
   "en__docs__build-with-claude__prompt-engineering__prompt-improver.md": {
     "hash": "9011b100c2523b7df92d25297825a5ee",
-    "last_updated": "2025-11-06T02:50:08.389526",
+    "last_updated": "2025-11-06T03:41:52.656181",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/prompt-improver.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/prompt-improver"
   },
   "en__docs__build-with-claude__prompt-engineering__prompt-templates-and-variables.md": {
     "hash": "3ecf0aeba04c16420ac4cbe670aead45",
-    "last_updated": "2025-11-06T02:50:08.389537",
+    "last_updated": "2025-11-06T03:41:52.656194",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/prompt-templates-and-variables.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/prompt-templates-and-variables"
   },
   "en__docs__build-with-claude__prompt-engineering__system-prompts.md": {
     "hash": "0822f71f6716c7bd77733cae2e01e865",
-    "last_updated": "2025-11-06T02:50:08.389566",
+    "last_updated": "2025-11-06T03:41:52.656233",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/system-prompts.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/system-prompts"
   },
   "en__docs__build-with-claude__prompt-engineering__use-xml-tags.md": {
     "hash": "5d8ad38433536cda7ea12489ca902dac",
-    "last_updated": "2025-11-06T02:50:08.389599",
+    "last_updated": "2025-11-06T03:41:52.656278",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-tags.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-tags"
   },
   "en__docs__build-with-claude__search-results.md": {
     "hash": "a1caef2cb791afc6364a0cbe103da291",
-    "last_updated": "2025-11-06T02:50:08.389635",
+    "last_updated": "2025-11-06T03:41:52.656316",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/search-results.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/search-results"
   },
   "en__docs__build-with-claude__streaming.md": {
     "hash": "5f86c90df58df0c69cfce0fc255eba4f",
-    "last_updated": "2025-11-06T02:50:08.389671",
+    "last_updated": "2025-11-06T03:41:52.656355",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/streaming.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/streaming"
   },
   "en__docs__build-with-claude__text-generation.md": {
     "hash": "c7e9436fe928d495574867e21f081eb1",
-    "last_updated": "2025-11-06T02:50:08.389681",
+    "last_updated": "2025-11-06T03:41:52.656368",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/text-generation.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/text-generation"
   },
   "en__docs__build-with-claude__token-counting.md": {
     "hash": "b9b20424915b3bfac2919c75f4111da2",
-    "last_updated": "2025-11-06T02:50:08.389716",
+    "last_updated": "2025-11-06T03:41:52.656406",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/token-counting.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/token-counting"
   },
   "en__docs__build-with-claude__vision.md": {
     "hash": "9cfc1413812005f6b27becf24d906401",
-    "last_updated": "2025-11-06T02:50:08.389765",
+    "last_updated": "2025-11-06T03:41:52.656475",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/vision.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/vision"
   },
   "en__docs__build-with-claude__working-with-messages.md": {
     "hash": "c859faef29dac2553d76444f1a9c02a1",
-    "last_updated": "2025-11-06T02:50:08.389788",
+    "last_updated": "2025-11-06T03:41:52.656504",
     "original_md_url": "https://docs.anthropic.com/en/docs/build-with-claude/working-with-messages.md",
     "original_url": "https://docs.anthropic.com/en/docs/build-with-claude/working-with-messages"
   },
   "en__docs__claude-code__amazon-bedrock.md": {
     "hash": "0e36a404e8dac1db3483ca08bb9e81b5",
-    "last_updated": "2025-11-06T02:50:08.389805",
+    "last_updated": "2025-11-06T03:41:52.656528",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/amazon-bedrock.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/amazon-bedrock"
   },
   "en__docs__claude-code__analytics.md": {
     "hash": "ac7e9f45ea9e2b5eaa3aaf878247b610",
-    "last_updated": "2025-11-06T02:50:08.389813",
+    "last_updated": "2025-11-06T03:41:52.656539",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/analytics.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/analytics"
   },
   "en__docs__claude-code__checkpointing.md": {
     "hash": "05dfb42b943ebf2464ab361406ec77ee",
-    "last_updated": "2025-11-06T02:50:08.389823",
+    "last_updated": "2025-11-06T03:41:52.656551",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/checkpointing.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/checkpointing"
   },
   "en__docs__claude-code__claude-code-on-the-web.md": {
     "hash": "c6f56c715378058bb96aa2d03c1c02f0",
-    "last_updated": "2025-11-06T02:50:08.389847",
+    "last_updated": "2025-11-06T03:41:52.656577",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/claude-code-on-the-web.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/claude-code-on-the-web"
   },
   "en__docs__claude-code__cli-reference.md": {
     "hash": "8c70a6bd59033c7706b9157e0cdcd04c",
-    "last_updated": "2025-11-06T02:50:08.389868",
+    "last_updated": "2025-11-06T03:41:52.656601",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/cli-reference.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/cli-reference"
   },
   "en__docs__claude-code__common-workflows.md": {
     "hash": "2f8b646e09eec1abe6980bee2a9fdaf8",
-    "last_updated": "2025-11-06T02:50:08.389904",
+    "last_updated": "2025-11-06T03:41:52.656652",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/common-workflows.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/common-workflows"
   },
   "en__docs__claude-code__costs.md": {
     "hash": "b5e7aa6357356dc876f82cb8a9d6bfe6",
-    "last_updated": "2025-11-06T02:50:08.389917",
+    "last_updated": "2025-11-06T03:41:52.656668",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/costs.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/costs"
   },
   "en__docs__claude-code__data-usage.md": {
     "hash": "1b10d9b684b6ad786a2e6ee97779b996",
-    "last_updated": "2025-11-06T02:50:08.389935",
+    "last_updated": "2025-11-06T03:41:52.656688",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/data-usage.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/data-usage"
   },
   "en__docs__claude-code__devcontainer.md": {
     "hash": "807f3dd6e0adad1d65b3efbc9dc687cb",
-    "last_updated": "2025-11-06T02:50:08.389946",
+    "last_updated": "2025-11-06T03:41:52.656703",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/devcontainer.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/devcontainer"
   },
   "en__docs__claude-code__github-actions.md": {
     "hash": "8e85ffc81196e9c2c4856abc034a3834",
-    "last_updated": "2025-11-06T02:50:08.389984",
+    "last_updated": "2025-11-06T03:41:52.656757",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/github-actions.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/github-actions"
   },
   "en__docs__claude-code__gitlab-ci-cd.md": {
     "hash": "f0a86531f43be57c2888214574464f04",
-    "last_updated": "2025-11-06T02:50:08.390011",
+    "last_updated": "2025-11-06T03:41:52.656796",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/gitlab-ci-cd.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/gitlab-ci-cd"
   },
   "en__docs__claude-code__google-vertex-ai.md": {
     "hash": "20d5f88999222804f7b80865de0e71a3",
-    "last_updated": "2025-11-06T02:50:08.390024",
+    "last_updated": "2025-11-06T03:41:52.656812",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/google-vertex-ai.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/google-vertex-ai"
   },
   "en__docs__claude-code__headless.md": {
     "hash": "f46a06608c89564ce8b694856102b094",
-    "last_updated": "2025-11-06T02:50:08.390040",
+    "last_updated": "2025-11-06T03:41:52.656832",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/headless.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/headless"
   },
   "en__docs__claude-code__hooks-guide.md": {
     "hash": "091225578e2f5dd7e46ca79e2d30e765",
-    "last_updated": "2025-11-06T02:50:08.390058",
+    "last_updated": "2025-11-06T03:41:52.656857",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/hooks-guide.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/hooks-guide"
   },
   "en__docs__claude-code__hooks.md": {
     "hash": "890fa95f7ca6d4538a045b38a1ecd17c",
-    "last_updated": "2025-11-06T02:50:08.390101",
+    "last_updated": "2025-11-06T03:41:52.656917",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/hooks.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/hooks"
   },
   "en__docs__claude-code__iam.md": {
     "hash": "af585c348fe1709337dc21733d8b55df",
-    "last_updated": "2025-11-06T02:50:08.390120",
+    "last_updated": "2025-11-06T03:41:52.656944",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/iam.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/iam"
   },
   "en__docs__claude-code__interactive-mode.md": {
     "hash": "40f31f7fdbe718bef6436c676080dc07",
-    "last_updated": "2025-11-06T02:50:08.390136",
+    "last_updated": "2025-11-06T03:41:52.656963",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/interactive-mode.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/interactive-mode"
   },
   "en__docs__claude-code__jetbrains.md": {
     "hash": "dcac211e67f1055dd184dc146b7ba235",
-    "last_updated": "2025-11-06T02:50:08.390149",
+    "last_updated": "2025-11-06T03:41:52.656980",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/jetbrains.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/jetbrains"
   },
   "en__docs__claude-code__legal-and-compliance.md": {
     "hash": "d4c367120d8c48f56d199fa72e42e99e",
-    "last_updated": "2025-11-06T02:50:08.390157",
+    "last_updated": "2025-11-06T03:41:52.656992",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/legal-and-compliance.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/legal-and-compliance"
   },
   "en__docs__claude-code__llm-gateway.md": {
     "hash": "1b01f06e4327a8ef5bcbc498044c53c8",
-    "last_updated": "2025-11-06T02:50:08.390169",
+    "last_updated": "2025-11-06T03:41:52.657005",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/llm-gateway.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/llm-gateway"
   },
   "en__docs__claude-code__mcp.md": {
     "hash": "70fcf49601434db2883e961d4a94f35c",
-    "last_updated": "2025-11-06T02:50:08.390225",
+    "last_updated": "2025-11-06T03:41:52.657081",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/mcp.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/mcp"
   },
   "en__docs__claude-code__memory.md": {
     "hash": "eda02fffa45942ebd194ddb73dfb6b67",
-    "last_updated": "2025-11-06T02:50:08.390241",
+    "last_updated": "2025-11-06T03:41:52.657097",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/memory.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/memory"
   },
   "en__docs__claude-code__model-config.md": {
     "hash": "6b821a143fe7cea4ec9ceed49b65642f",
-    "last_updated": "2025-11-06T02:50:08.390254",
+    "last_updated": "2025-11-06T03:41:52.657113",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/model-config.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/model-config"
   },
   "en__docs__claude-code__monitoring-usage.md": {
     "hash": "181d9e96acbcefb4dd5e873aa6ab667a",
-    "last_updated": "2025-11-06T02:50:08.390286",
+    "last_updated": "2025-11-06T03:41:52.657158",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/monitoring-usage.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/monitoring-usage"
   },
   "en__docs__claude-code__network-config.md": {
     "hash": "469b202c96782fc7ab022506f1c2893a",
-    "last_updated": "2025-11-06T02:50:08.390297",
+    "last_updated": "2025-11-06T03:41:52.657171",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/network-config.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/network-config"
   },
   "en__docs__claude-code__output-styles.md": {
     "hash": "2a5fd7c4046c2253222f4c66cf7078b7",
-    "last_updated": "2025-11-06T02:50:08.390309",
+    "last_updated": "2025-11-06T03:41:52.657183",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/output-styles.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/output-styles"
   },
   "en__docs__claude-code__overview.md": {
     "hash": "d1df7e1f921699e9878544e3792abf06",
-    "last_updated": "2025-11-06T02:50:08.390321",
+    "last_updated": "2025-11-06T03:41:52.657201",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/overview.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/overview"
   },
   "en__docs__claude-code__plugin-marketplaces.md": {
     "hash": "6750aa684d2140d2ecca8c6fafc2bd52",
-    "last_updated": "2025-11-06T02:50:08.390343",
+    "last_updated": "2025-11-06T03:41:52.657227",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/plugin-marketplaces.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/plugin-marketplaces"
   },
   "en__docs__claude-code__plugins-reference.md": {
     "hash": "779ad1c97cdc224ffc893f8f3ae3c0a2",
-    "last_updated": "2025-11-06T02:50:08.390368",
+    "last_updated": "2025-11-06T03:41:52.657258",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/plugins-reference.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/plugins-reference"
   },
   "en__docs__claude-code__plugins.md": {
     "hash": "c3c5b7b1c6caafd5a7f2589497fab8d8",
-    "last_updated": "2025-11-06T02:50:08.390390",
+    "last_updated": "2025-11-06T03:41:52.657290",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/plugins.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/plugins"
   },
   "en__docs__claude-code__quickstart.md": {
     "hash": "2749d73d8477bc157e8866031f759e79",
-    "last_updated": "2025-11-06T02:50:08.390406",
+    "last_updated": "2025-11-06T03:41:52.657312",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/quickstart.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/quickstart"
   },
   "en__docs__claude-code__sandboxing.md": {
     "hash": "4fc80f76355bb52c13d315e9ef4583fd",
-    "last_updated": "2025-11-06T02:50:08.390426",
+    "last_updated": "2025-11-06T03:41:52.657334",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/sandboxing.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/sandboxing"
   },
   "en__docs__claude-code__sdk__migration-guide.md": {
     "hash": "a41b50c653306860fc75c32bb5f1ce7b",
-    "last_updated": "2025-11-06T02:50:08.390445",
+    "last_updated": "2025-11-06T03:41:52.657359",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/sdk/migration-guide.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/sdk/migration-guide"
   },
   "en__docs__claude-code__security.md": {
     "hash": "7cbef1c52bdd3a5c94a6b6ab57c029f1",
-    "last_updated": "2025-11-06T02:50:08.390461",
+    "last_updated": "2025-11-06T03:41:52.657384",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/security.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/security"
   },
   "en__docs__claude-code__settings.md": {
     "hash": "f134cdc999108e38d49fa4019ce147e6",
-    "last_updated": "2025-11-06T02:50:08.390525",
+    "last_updated": "2025-11-06T03:41:52.657452",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/settings.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/settings"
   },
   "en__docs__claude-code__setup.md": {
     "hash": "555f2a7786d6ae3772b63512cd3c3bef",
-    "last_updated": "2025-11-06T02:50:08.390541",
+    "last_updated": "2025-11-06T03:41:52.657470",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/setup.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/setup"
   },
   "en__docs__claude-code__skills.md": {
     "hash": "2b24ca3802e0f2741f4a3771ab42631d",
-    "last_updated": "2025-11-06T02:50:08.390565",
+    "last_updated": "2025-11-06T03:41:52.657504",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/skills.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/skills"
   },
   "en__docs__claude-code__slash-commands.md": {
     "hash": "68df48d427053de4f0977f2c8b46640e",
-    "last_updated": "2025-11-06T02:50:08.390595",
+    "last_updated": "2025-11-06T03:41:52.657547",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/slash-commands.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/slash-commands"
   },
   "en__docs__claude-code__statusline.md": {
     "hash": "a65929fb4fac3e8baa471ff73c54b0c3",
-    "last_updated": "2025-11-06T02:50:08.390608",
+    "last_updated": "2025-11-06T03:41:52.657568",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/statusline.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/statusline"
   },
   "en__docs__claude-code__sub-agents.md": {
     "hash": "1a05174469d19bbc402483871752d44e",
-    "last_updated": "2025-11-06T02:50:08.390636",
+    "last_updated": "2025-11-06T03:41:52.657599",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/sub-agents.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/sub-agents"
   },
   "en__docs__claude-code__terminal-config.md": {
     "hash": "af1f19697293316177e55c135ae6b7ca",
-    "last_updated": "2025-11-06T02:50:08.390646",
+    "last_updated": "2025-11-06T03:41:52.657611",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/terminal-config.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/terminal-config"
   },
   "en__docs__claude-code__third-party-integrations.md": {
     "hash": "24f52d5a324e168ee952f79a61fdf600",
-    "last_updated": "2025-11-06T02:50:08.390662",
+    "last_updated": "2025-11-06T03:41:52.657629",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/third-party-integrations.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/third-party-integrations"
   },
   "en__docs__claude-code__troubleshooting.md": {
     "hash": "2fb818b3b802438e5a8f1b97c4bbe445",
-    "last_updated": "2025-11-06T02:50:08.390683",
+    "last_updated": "2025-11-06T03:41:52.657659",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/troubleshooting.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/troubleshooting"
   },
   "en__docs__claude-code__vs-code.md": {
     "hash": "e074a34bf48daa34c4d6388381cf0c05",
-    "last_updated": "2025-11-06T02:50:08.390699",
+    "last_updated": "2025-11-06T03:41:52.657678",
     "original_md_url": "https://docs.anthropic.com/en/docs/claude-code/vs-code.md",
     "original_url": "https://docs.anthropic.com/en/docs/claude-code/vs-code"
   },
   "en__docs__get-started.md": {
     "hash": "63fd07c7c716805d6f666eb8a7f98846",
-    "last_updated": "2025-11-06T02:50:08.390718",
+    "last_updated": "2025-11-06T03:41:52.657700",
     "original_md_url": "https://docs.anthropic.com/en/docs/get-started.md",
     "original_url": "https://docs.anthropic.com/en/docs/get-started"
   },
   "en__docs__intro.md": {
     "hash": "0d455b91f4bf5e7caf8988a036dae42d",
-    "last_updated": "2025-11-06T02:50:08.390728",
+    "last_updated": "2025-11-06T03:41:52.657713",
     "original_md_url": "https://docs.anthropic.com/en/docs/intro.md",
     "original_url": "https://docs.anthropic.com/en/docs/intro"
   },
   "en__docs__mcp.md": {
     "hash": "d02fea7fcbe3b34a4bb64f7013111cf6",
-    "last_updated": "2025-11-06T02:50:08.390736",
+    "last_updated": "2025-11-06T03:41:52.657724",
     "original_md_url": "https://docs.anthropic.com/en/docs/mcp.md",
     "original_url": "https://docs.anthropic.com/en/docs/mcp"
   },
   "en__docs__test-and-evaluate__define-success.md": {
     "hash": "a1268489c2312a54bc2338b556a8f074",
-    "last_updated": "2025-11-06T02:50:08.390751",
+    "last_updated": "2025-11-06T03:41:52.657740",
     "original_md_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/define-success.md",
     "original_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/define-success"
   },
   "en__docs__test-and-evaluate__develop-tests.md": {
     "hash": "1164abc0770a7329bc727443a3443f11",
-    "last_updated": "2025-11-06T02:50:08.390783",
+    "last_updated": "2025-11-06T03:41:52.657787",
     "original_md_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/develop-tests.md",
     "original_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/develop-tests"
   },
   "en__docs__test-and-evaluate__eval-tool.md": {
     "hash": "acc6cc94dd79429b9d10c01d18d556ad",
-    "last_updated": "2025-11-06T02:50:08.390801",
+    "last_updated": "2025-11-06T03:41:52.657807",
     "original_md_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/eval-tool.md",
     "original_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/eval-tool"
   },
   "en__docs__test-and-evaluate__strengthen-guardrails__handle-streaming-refusals.md": {
     "hash": "86b010a196133d6058972233e36433e4",
-    "last_updated": "2025-11-06T02:50:08.390813",
+    "last_updated": "2025-11-06T03:41:52.657823",
     "original_md_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/handle-streaming-refusals.md",
     "original_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/handle-streaming-refusals"
   },
   "en__docs__test-and-evaluate__strengthen-guardrails__increase-consistency.md": {
     "hash": "3c4a0eac0da58798a8f34cf4f0a500ea",
-    "last_updated": "2025-11-06T02:50:08.390857",
+    "last_updated": "2025-11-06T03:41:52.657870",
     "original_md_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/increase-consistency.md",
     "original_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/increase-consistency"
   },
   "en__docs__test-and-evaluate__strengthen-guardrails__keep-claude-in-character.md": {
     "hash": "664cfcbfac00fba07bc0a78757c89ce8",
-    "last_updated": "2025-11-06T02:50:08.390870",
+    "last_updated": "2025-11-06T03:41:52.657884",
     "original_md_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/keep-claude-in-character.md",
     "original_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/keep-claude-in-character"
   },
   "en__docs__test-and-evaluate__strengthen-guardrails__mitigate-jailbreaks.md": {
     "hash": "ca3d2898caf29838e9adac72e083a2c9",
-    "last_updated": "2025-11-06T02:50:08.390886",
+    "last_updated": "2025-11-06T03:41:52.657907",
     "original_md_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks.md",
     "original_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"
   },
   "en__docs__test-and-evaluate__strengthen-guardrails__reduce-hallucinations.md": {
     "hash": "ae075d5c4f1c8954e3ae8f9ddddfb0c2",
-    "last_updated": "2025-11-06T02:50:08.390900",
+    "last_updated": "2025-11-06T03:41:52.657923",
     "original_md_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/reduce-hallucinations.md",
     "original_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/reduce-hallucinations"
   },
   "en__docs__test-and-evaluate__strengthen-guardrails__reduce-latency.md": {
     "hash": "5dc1f4e5e211914732ffeb3cfe2f776a",
-    "last_updated": "2025-11-06T02:50:08.390912",
+    "last_updated": "2025-11-06T03:41:52.657937",
     "original_md_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/reduce-latency.md",
     "original_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/reduce-latency"
   },
   "en__docs__test-and-evaluate__strengthen-guardrails__reduce-prompt-leak.md": {
     "hash": "7bd3417cbdc2fccd72ec0fc0f1540494",
-    "last_updated": "2025-11-06T02:50:08.390923",
+    "last_updated": "2025-11-06T03:41:52.657951",
     "original_md_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/reduce-prompt-leak.md",
     "original_url": "https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/reduce-prompt-leak"
   },
   "en__release-notes__overview.md": {
     "hash": "9b4322fc31658d1ca16c024b953a8bb6",
-    "last_updated": "2025-11-06T02:50:08.390959",
+    "last_updated": "2025-11-06T03:41:52.658003",
     "original_md_url": "https://docs.anthropic.com/en/release-notes/overview.md",
     "original_url": "https://docs.anthropic.com/en/release-notes/overview"
   },
   "en__release-notes__system-prompts.md": {
     "hash": "08d5d09bb27a508c5d722a9757b767d1",
-    "last_updated": "2025-11-06T02:50:08.391310",
+    "last_updated": "2025-11-06T03:41:52.658622",
     "original_md_url": "https://docs.anthropic.com/en/release-notes/system-prompts.md",
     "original_url": "https://docs.anthropic.com/en/release-notes/system-prompts"
   },
   "en__resources__prompt-library__adaptive-editor.md": {
     "hash": "b9bcbd4f18de5d5964bab90327e6e4a2",
-    "last_updated": "2025-11-06T02:50:08.391329",
+    "last_updated": "2025-11-06T03:41:52.658659",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/adaptive-editor.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/adaptive-editor"
   },
   "en__resources__prompt-library__airport-code-analyst.md": {
     "hash": "cf12f2caebd646c2893b16c4492d13cb",
-    "last_updated": "2025-11-06T02:50:08.391343",
+    "last_updated": "2025-11-06T03:41:52.658677",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/airport-code-analyst.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/airport-code-analyst"
   },
   "en__resources__prompt-library__alien-anthropologist.md": {
     "hash": "ffd6d775f9ea44d545373e9e7b6b9d82",
-    "last_updated": "2025-11-06T02:50:08.391362",
+    "last_updated": "2025-11-06T03:41:52.658696",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/alien-anthropologist.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/alien-anthropologist"
   },
   "en__resources__prompt-library__alliteration-alchemist.md": {
     "hash": "ba8b33a98cf95ada8fbf0373e4395612",
-    "last_updated": "2025-11-06T02:50:08.391377",
+    "last_updated": "2025-11-06T03:41:52.658712",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/alliteration-alchemist.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/alliteration-alchemist"
   },
   "en__resources__prompt-library__babels-broadcasts.md": {
     "hash": "73761c27277465d061cc0b687f63209d",
-    "last_updated": "2025-11-06T02:50:08.391397",
+    "last_updated": "2025-11-06T03:41:52.658745",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/babels-broadcasts.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/babels-broadcasts"
   },
   "en__resources__prompt-library__brand-builder.md": {
     "hash": "60e35c125b53f0be038db9562eda8e06",
-    "last_updated": "2025-11-06T02:50:08.391425",
+    "last_updated": "2025-11-06T03:41:52.658785",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/brand-builder.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/brand-builder"
   },
   "en__resources__prompt-library__career-coach.md": {
     "hash": "79e5a509b8f822876e78a103760ba13b",
-    "last_updated": "2025-11-06T02:50:08.391450",
+    "last_updated": "2025-11-06T03:41:52.658817",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/career-coach.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/career-coach"
   },
   "en__resources__prompt-library__cite-your-sources.md": {
     "hash": "00acc8a1c0ddfe261fcfb727fc393900",
-    "last_updated": "2025-11-06T02:50:08.391480",
+    "last_updated": "2025-11-06T03:41:52.658849",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/cite-your-sources.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/cite-your-sources"
   },
   "en__resources__prompt-library__code-clarifier.md": {
     "hash": "ebd7c316bbac2a572b8d2bae68dbafb4",
-    "last_updated": "2025-11-06T02:50:08.391503",
+    "last_updated": "2025-11-06T03:41:52.658874",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/code-clarifier.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/code-clarifier"
   },
   "en__resources__prompt-library__code-consultant.md": {
     "hash": "614067445f6e37dbca26ec60660ea3b5",
-    "last_updated": "2025-11-06T02:50:08.391522",
+    "last_updated": "2025-11-06T03:41:52.658895",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/code-consultant.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/code-consultant"
   },
   "en__resources__prompt-library__corporate-clairvoyant.md": {
     "hash": "637e0dc76e6495b6d9f1de76de1b4a9e",
-    "last_updated": "2025-11-06T02:50:08.391544",
+    "last_updated": "2025-11-06T03:41:52.658918",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/corporate-clairvoyant.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/corporate-clairvoyant"
   },
   "en__resources__prompt-library__cosmic-keystrokes.md": {
     "hash": "1d3baf615659bd02245ae5537b4de50f",
-    "last_updated": "2025-11-06T02:50:08.391566",
+    "last_updated": "2025-11-06T03:41:52.658942",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/cosmic-keystrokes.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/cosmic-keystrokes"
   },
   "en__resources__prompt-library__csv-converter.md": {
     "hash": "1cef6f55f3f26f02dea0d842a46504d1",
-    "last_updated": "2025-11-06T02:50:08.391592",
+    "last_updated": "2025-11-06T03:41:52.658974",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/csv-converter.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/csv-converter"
   },
   "en__resources__prompt-library__culinary-creator.md": {
     "hash": "94b438782d88aa31b36f27f150020395",
-    "last_updated": "2025-11-06T02:50:08.391614",
+    "last_updated": "2025-11-06T03:41:52.659000",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/culinary-creator.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/culinary-creator"
   },
   "en__resources__prompt-library__data-organizer.md": {
     "hash": "0981ec5df1cd1ea5e0a1845b680b17a8",
-    "last_updated": "2025-11-06T02:50:08.391640",
+    "last_updated": "2025-11-06T03:41:52.659028",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/data-organizer.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/data-organizer"
   },
   "en__resources__prompt-library__direction-decoder.md": {
     "hash": "cda1649240d1e1afcfc0f63a842b26fd",
-    "last_updated": "2025-11-06T02:50:08.391660",
+    "last_updated": "2025-11-06T03:41:52.659051",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/direction-decoder.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/direction-decoder"
   },
   "en__resources__prompt-library__dream-interpreter.md": {
     "hash": "06925e61d2b80413bfb000d0dad8db74",
-    "last_updated": "2025-11-06T02:50:08.391680",
+    "last_updated": "2025-11-06T03:41:52.659073",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/dream-interpreter.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/dream-interpreter"
   },
   "en__resources__prompt-library__efficiency-estimator.md": {
     "hash": "7f07ac5449df75f865c9e2e119cc6263",
-    "last_updated": "2025-11-06T02:50:08.391700",
+    "last_updated": "2025-11-06T03:41:52.659100",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/efficiency-estimator.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/efficiency-estimator"
   },
   "en__resources__prompt-library__email-extractor.md": {
     "hash": "c110c3174e53b1d3203238b2fed74c47",
-    "last_updated": "2025-11-06T02:50:08.391716",
+    "last_updated": "2025-11-06T03:41:52.659120",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/email-extractor.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/email-extractor"
   },
   "en__resources__prompt-library__emoji-encoder.md": {
     "hash": "be1960d37128a419ba1e7359cf2670b6",
-    "last_updated": "2025-11-06T02:50:08.391733",
+    "last_updated": "2025-11-06T03:41:52.659153",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/emoji-encoder.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/emoji-encoder"
   },
   "en__resources__prompt-library__ethical-dilemma-navigator.md": {
     "hash": "02743af0615416db6bcc3c72dea80299",
-    "last_updated": "2025-11-06T02:50:08.391754",
+    "last_updated": "2025-11-06T03:41:52.659177",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/ethical-dilemma-navigator.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/ethical-dilemma-navigator"
   },
   "en__resources__prompt-library__excel-formula-expert.md": {
     "hash": "08ec406a310240439e415a6dd22b516f",
-    "last_updated": "2025-11-06T02:50:08.391779",
+    "last_updated": "2025-11-06T03:41:52.659205",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/excel-formula-expert.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/excel-formula-expert"
   },
   "en__resources__prompt-library__function-fabricator.md": {
     "hash": "a3ad29906e5987d8196ed5099fecb692",
-    "last_updated": "2025-11-06T02:50:08.391801",
+    "last_updated": "2025-11-06T03:41:52.659228",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/function-fabricator.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/function-fabricator"
   },
   "en__resources__prompt-library__futuristic-fashion-advisor.md": {
     "hash": "cddcfd3a308efc595f865d85477abecc",
-    "last_updated": "2025-11-06T02:50:08.391826",
+    "last_updated": "2025-11-06T03:41:52.659256",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/futuristic-fashion-advisor.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/futuristic-fashion-advisor"
   },
   "en__resources__prompt-library__git-gud.md": {
     "hash": "5f698e50ded258afa61ef3a5184c030f",
-    "last_updated": "2025-11-06T02:50:08.391840",
+    "last_updated": "2025-11-06T03:41:52.659271",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/git-gud.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/git-gud"
   },
   "en__resources__prompt-library__google-apps-scripter.md": {
     "hash": "7e2454347a77ee6ec32dece5ccd64151",
-    "last_updated": "2025-11-06T02:50:08.391856",
+    "last_updated": "2025-11-06T03:41:52.659289",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/google-apps-scripter.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/google-apps-scripter"
   },
   "en__resources__prompt-library__grading-guru.md": {
     "hash": "9bb3431ed71c340f8469c058f7f1fb28",
-    "last_updated": "2025-11-06T02:50:08.391876",
+    "last_updated": "2025-11-06T03:41:52.659311",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/grading-guru.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/grading-guru"
   },
   "en__resources__prompt-library__grammar-genie.md": {
     "hash": "d707ecfaeca42c60b78d03734d6ba2ea",
-    "last_updated": "2025-11-06T02:50:08.391890",
+    "last_updated": "2025-11-06T03:41:52.659328",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/grammar-genie.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/grammar-genie"
   },
   "en__resources__prompt-library__hal-the-humorous-helper.md": {
     "hash": "e1d72290cee82a37c785280b0758490e",
-    "last_updated": "2025-11-06T02:50:08.391922",
+    "last_updated": "2025-11-06T03:41:52.659388",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/hal-the-humorous-helper.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/hal-the-humorous-helper"
   },
   "en__resources__prompt-library__idiom-illuminator.md": {
     "hash": "c1ef5764df8e96448ffc8dce050b3dd6",
-    "last_updated": "2025-11-06T02:50:08.391941",
+    "last_updated": "2025-11-06T03:41:52.659410",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/idiom-illuminator.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/idiom-illuminator"
   },
   "en__resources__prompt-library__interview-question-crafter.md": {
     "hash": "4734fd0064eaaf140a35c4051da380bb",
-    "last_updated": "2025-11-06T02:50:08.391962",
+    "last_updated": "2025-11-06T03:41:52.659434",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/interview-question-crafter.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/interview-question-crafter"
   },
   "en__resources__prompt-library__latex-legend.md": {
     "hash": "55930bba83a1048f77728e614c43fee5",
-    "last_updated": "2025-11-06T02:50:08.391980",
+    "last_updated": "2025-11-06T03:41:52.659454",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/latex-legend.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/latex-legend"
   },
   "en__resources__prompt-library__lesson-planner.md": {
     "hash": "02a3e3056a9814f6a9734011a7304e79",
-    "last_updated": "2025-11-06T02:50:08.392005",
+    "last_updated": "2025-11-06T03:41:52.659481",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/lesson-planner.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/lesson-planner"
   },
   "en__resources__prompt-library__library.md": {
     "hash": "0e172a0def27cc63630b96c775414fc4",
-    "last_updated": "2025-11-06T02:50:08.392013",
+    "last_updated": "2025-11-06T03:41:52.659491",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/library.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/library"
   },
   "en__resources__prompt-library__master-moderator.md": {
     "hash": "2eec0446dc9abc61c724f5e7f3ad811a",
-    "last_updated": "2025-11-06T02:50:08.392028",
+    "last_updated": "2025-11-06T03:41:52.659509",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/master-moderator.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/master-moderator"
   },
   "en__resources__prompt-library__meeting-scribe.md": {
     "hash": "dac6fdfcbb51d983aa1a7c8db2a2c6ca",
-    "last_updated": "2025-11-06T02:50:08.392083",
+    "last_updated": "2025-11-06T03:41:52.659567",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/meeting-scribe.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/meeting-scribe"
   },
   "en__resources__prompt-library__memo-maestro.md": {
     "hash": "db5bb42eff010cf4b53708886e70fa89",
-    "last_updated": "2025-11-06T02:50:08.392107",
+    "last_updated": "2025-11-06T03:41:52.659595",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/memo-maestro.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/memo-maestro"
   },
   "en__resources__prompt-library__mindfulness-mentor.md": {
     "hash": "6139cd71d42833268cfc53f1e6a2c0ca",
-    "last_updated": "2025-11-06T02:50:08.392125",
+    "last_updated": "2025-11-06T03:41:52.659616",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/mindfulness-mentor.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/mindfulness-mentor"
   },
   "en__resources__prompt-library__mood-colorizer.md": {
     "hash": "8ba5b2f3c4a3052ed5eb938e8e72ba76",
-    "last_updated": "2025-11-06T02:50:08.392143",
+    "last_updated": "2025-11-06T03:41:52.659636",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/mood-colorizer.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/mood-colorizer"
   },
   "en__resources__prompt-library__motivational-muse.md": {
     "hash": "1a93a50088517ea6fa900e5479ef668e",
-    "last_updated": "2025-11-06T02:50:08.392162",
+    "last_updated": "2025-11-06T03:41:52.659658",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/motivational-muse.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/motivational-muse"
   },
   "en__resources__prompt-library__neologism-creator.md": {
     "hash": "42fe44aef4be096a87ec51b293da425d",
-    "last_updated": "2025-11-06T02:50:08.392176",
+    "last_updated": "2025-11-06T03:41:52.659676",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/neologism-creator.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/neologism-creator"
   },
   "en__resources__prompt-library__perspectives-ponderer.md": {
     "hash": "e549eb29a2f65fd158ea882bfa3bf0ad",
-    "last_updated": "2025-11-06T02:50:08.392191",
+    "last_updated": "2025-11-06T03:41:52.659693",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/perspectives-ponderer.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/perspectives-ponderer"
   },
   "en__resources__prompt-library__philosophical-musings.md": {
     "hash": "7a8fe8a650c08b5c9d172793416f89f6",
-    "last_updated": "2025-11-06T02:50:08.392207",
+    "last_updated": "2025-11-06T03:41:52.659712",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/philosophical-musings.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/philosophical-musings"
   },
   "en__resources__prompt-library__pii-purifier.md": {
     "hash": "8a2cf7b06e72f3c44a19cbef7431faad",
-    "last_updated": "2025-11-06T02:50:08.392226",
+    "last_updated": "2025-11-06T03:41:52.659733",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/pii-purifier.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/pii-purifier"
   },
   "en__resources__prompt-library__polyglot-superpowers.md": {
     "hash": "b5ff4f23160e1bf4f69dae3818ba4a5f",
-    "last_updated": "2025-11-06T02:50:08.392241",
+    "last_updated": "2025-11-06T03:41:52.659753",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/polyglot-superpowers.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/polyglot-superpowers"
   },
   "en__resources__prompt-library__portmanteau-poet.md": {
     "hash": "7e222abdc3cad8fe792d76fecf3b6d03",
-    "last_updated": "2025-11-06T02:50:08.392257",
+    "last_updated": "2025-11-06T03:41:52.659771",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/portmanteau-poet.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/portmanteau-poet"
   },
   "en__resources__prompt-library__product-naming-pro.md": {
     "hash": "21a97c013d5d7eb89090084e2b848e59",
-    "last_updated": "2025-11-06T02:50:08.392274",
+    "last_updated": "2025-11-06T03:41:52.659790",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/product-naming-pro.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/product-naming-pro"
   },
   "en__resources__prompt-library__prose-polisher.md": {
     "hash": "c0b752c5b248f916ec989bc60b7e8cc8",
-    "last_updated": "2025-11-06T02:50:08.392306",
+    "last_updated": "2025-11-06T03:41:52.659824",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/prose-polisher.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/prose-polisher"
   },
   "en__resources__prompt-library__pun-dit.md": {
     "hash": "05426e7984270220db20761582f98210",
-    "last_updated": "2025-11-06T02:50:08.392321",
+    "last_updated": "2025-11-06T03:41:52.659843",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/pun-dit.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/pun-dit"
   },
   "en__resources__prompt-library__python-bug-buster.md": {
     "hash": "76c496ee6d767c4306ac7a98fc19c4db",
-    "last_updated": "2025-11-06T02:50:08.392337",
+    "last_updated": "2025-11-06T03:41:52.659862",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/python-bug-buster.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/python-bug-buster"
   },
   "en__resources__prompt-library__review-classifier.md": {
     "hash": "e1f0a26d35d2680d249dfe221e3ec00e",
-    "last_updated": "2025-11-06T02:50:08.392378",
+    "last_updated": "2025-11-06T03:41:52.659902",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/review-classifier.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/review-classifier"
   },
   "en__resources__prompt-library__riddle-me-this.md": {
     "hash": "9b5a848650d190060b3420bdbbc9fa27",
-    "last_updated": "2025-11-06T02:50:08.392396",
+    "last_updated": "2025-11-06T03:41:52.659922",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/riddle-me-this.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/riddle-me-this"
   },
   "en__resources__prompt-library__sci-fi-scenario-simulator.md": {
     "hash": "894dbc56ce8a7e41c1c3a097be4c3881",
-    "last_updated": "2025-11-06T02:50:08.392413",
+    "last_updated": "2025-11-06T03:41:52.659942",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/sci-fi-scenario-simulator.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/sci-fi-scenario-simulator"
   },
   "en__resources__prompt-library__second-grade-simplifier.md": {
     "hash": "f77f75dfec8b3ddea9e7ea84456f2828",
-    "last_updated": "2025-11-06T02:50:08.392432",
+    "last_updated": "2025-11-06T03:41:52.659962",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/second-grade-simplifier.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/second-grade-simplifier"
   },
   "en__resources__prompt-library__simile-savant.md": {
     "hash": "1ffb9227a2290457621edb3be4aeccbb",
-    "last_updated": "2025-11-06T02:50:08.392444",
+    "last_updated": "2025-11-06T03:41:52.659978",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/simile-savant.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/simile-savant"
   },
   "en__resources__prompt-library__socratic-sage.md": {
     "hash": "144032d126d601f4acd09af7a2df8c92",
-    "last_updated": "2025-11-06T02:50:08.392459",
+    "last_updated": "2025-11-06T03:41:52.659996",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/socratic-sage.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/socratic-sage"
   },
   "en__resources__prompt-library__spreadsheet-sorcerer.md": {
     "hash": "41125c5771ac1d4d00987e7bae7885f9",
-    "last_updated": "2025-11-06T02:50:08.392477",
+    "last_updated": "2025-11-06T03:41:52.660016",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/spreadsheet-sorcerer.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/spreadsheet-sorcerer"
   },
   "en__resources__prompt-library__sql-sorcerer.md": {
     "hash": "2285684cf80c286c0defc19de977b2e8",
-    "last_updated": "2025-11-06T02:50:08.392507",
+    "last_updated": "2025-11-06T03:41:52.660049",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/sql-sorcerer.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/sql-sorcerer"
   },
   "en__resources__prompt-library__storytelling-sidekick.md": {
     "hash": "1bd4837af6c536f295ba19fea765d13b",
-    "last_updated": "2025-11-06T02:50:08.392525",
+    "last_updated": "2025-11-06T03:41:52.660069",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/storytelling-sidekick.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/storytelling-sidekick"
   },
   "en__resources__prompt-library__time-travel-consultant.md": {
     "hash": "b01daf5bc499ca2317966838daeb802a",
-    "last_updated": "2025-11-06T02:50:08.392544",
+    "last_updated": "2025-11-06T03:41:52.660090",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/time-travel-consultant.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/time-travel-consultant"
   },
   "en__resources__prompt-library__tongue-twister.md": {
     "hash": "ae23eccb05296da75a9d29a17d277a5e",
-    "last_updated": "2025-11-06T02:50:08.392558",
+    "last_updated": "2025-11-06T03:41:52.660106",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/tongue-twister.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/tongue-twister"
   },
   "en__resources__prompt-library__trivia-generator.md": {
     "hash": "b8377f6edc91a3c99f7dcd41ade6bf7b",
-    "last_updated": "2025-11-06T02:50:08.392575",
+    "last_updated": "2025-11-06T03:41:52.660126",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/trivia-generator.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/trivia-generator"
   },
   "en__resources__prompt-library__tweet-tone-detector.md": {
     "hash": "9fbb2175e8f05cc4b827350740166143",
-    "last_updated": "2025-11-06T02:50:08.392593",
+    "last_updated": "2025-11-06T03:41:52.660151",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/tweet-tone-detector.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/tweet-tone-detector"
   },
   "en__resources__prompt-library__vr-fitness-innovator.md": {
     "hash": "2d4242cf03beb6a5fedac5c7ebcfd524",
-    "last_updated": "2025-11-06T02:50:08.392611",
+    "last_updated": "2025-11-06T03:41:52.660172",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/vr-fitness-innovator.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/vr-fitness-innovator"
   },
   "en__resources__prompt-library__website-wizard.md": {
     "hash": "6ac26eafe596a30f9f980533928de459",
-    "last_updated": "2025-11-06T02:50:08.392652",
+    "last_updated": "2025-11-06T03:41:52.660214",
     "original_md_url": "https://docs.anthropic.com/en/resources/prompt-library/website-wizard.md",
     "original_url": "https://docs.anthropic.com/en/resources/prompt-library/website-wizard"
   }
