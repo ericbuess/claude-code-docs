@@ -414,6 +414,8 @@ python ~/.claude-code-docs/scripts/lookup_paths.py --validate
 | `--category <cat>` | Filter by category | `--category api_reference` |
 | `--validate` | Validate paths | `--validate` |
 | `--list-categories` | List all categories | `--list-categories` |
+| `--version` | Show version info | `--version` |
+| `--status` | Show installation status | `--status` |
 | `--quiet` | Minimal output | `--validate --quiet` |
 | `--verbose` | Detailed output | `--update-all --verbose` |
 
@@ -529,6 +531,34 @@ or view the paths_manifest.json directly:
 ```bash
 jq '.categories' ~/.claude-code-docs/paths_manifest.json
 ```
+
+### How do I check which version I have installed?
+
+Check version and feature availability:
+
+```bash
+~/.claude-code-docs/scripts/claude-docs-helper.sh --version
+```
+
+This shows:
+- Helper script version
+- Template version
+- Python version (if available)
+- Enhanced features status
+- Available feature list
+
+For installation status:
+
+```bash
+~/.claude-code-docs/scripts/claude-docs-helper.sh --status
+```
+
+This displays:
+- Installation location
+- Standard features status
+- Enhanced features status
+- Documentation file counts
+- Manifest statistics
 
 ## Getting Help
 
