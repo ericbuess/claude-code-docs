@@ -14,7 +14,7 @@ This repository supports TWO modes:
    - Works exactly like upstream
 
 2. **Enhanced Mode** (Python-powered, optional)
-   - 449 documentation paths
+   - 449 documentation paths (269 physical files map to 449 unique URL paths)
    - Full-text search capabilities
    - Validation tools
    - Extended API reference and prompt library
