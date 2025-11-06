@@ -64,7 +64,7 @@ sample_paths.txt
 *.backup.*
 
 # Project specific (from upstream)
-.claude/settings.local.json
+.claude/
 .last_pull
 .last_check
 claude-docs-helper.sh
@@ -74,8 +74,39 @@ test_*.txt
 test_*.md
 *.test
 
+# Development tracking files (DO NOT COMMIT)
+*_SUMMARY.md
+*_SUMMARY.txt
+*_REPORT.md
+*_REPORT.txt
+*_COMPLETION.md
+*_INDEX.md
+*_DELIVERABLES*.md
+PHASE*.md
+TASK*.md
+MIGRATION_*.md
+VALIDATION_*.md
+TESTING_*.md
+CACHING_*.md
+COVERAGE_*.md
+GIT_*_SUMMARY.md
+CLEANUP_*.md
+
+# Analysis and execution tracking
+analysis/execution/*.md
+analysis/execution/*.txt
+analysis/execution/*.json
+analysis/execution/*.py
+
+# Test helper scripts in root only
+/test_*.py
+/demo_*.py
+/verify_*.py
+/verify_*.sh
+/comprehensive_*.py
+
 # Keep important directories
 !docs/
 !scripts/
 !tests/
-!docs-dev/
+!enhancements/

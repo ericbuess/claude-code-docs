@@ -1,36 +1,8 @@
 {
   "version": "1.0",
-  "generated_at": "2025-11-05T22:42:56Z",
-  "indexed_files": 270,
+  "generated_at": "2025-11-06T02:33:42Z",
+  "indexed_files": 269,
   "index": {
-    "/SEARCH_GUIDE": {
-      "title": "Search Guide",
-      "content_preview": "# Search Guide  Quick reference for searching the Claude Code Documentation Mirror.  ## Two Search Types  ### 1. Path Search (Default)  Searches **URL path names** only.  ```bash python scripts/lookup...",
-      "keywords": [
-        "search",
-        "content",
-        "index",
-        "path",
-        "results",
-        "documentation",
-        "keywords",
-        "relevance",
-        "know",
-        "api",
-        "paths",
-        "title",
-        "points",
-        "searches",
-        "section",
-        "specific",
-        "examples",
-        "query",
-        "score",
-        "tips"
-      ],
-      "word_count": 616,
-      "file_path": "docs/SEARCH_GUIDE.md"
-    },
     "/changelog": {
       "title": "Claude Code Changelog",
       "content_preview": "# Claude Code Changelog  > **Source**: https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md >  > This is the official Claude Code release changelog, automatically fetched from the Claude C...",
@@ -53,10 +25,10 @@
         "bash",
         "command",
         "bug",
-        "sdk",
-        "file"
+        "file",
+        "sdk"
       ],
-      "word_count": 5151,
+      "word_count": 5273,
       "file_path": "docs/changelog.md"
     },
     "/en/api/admin-api/apikeys/get-api-key": {

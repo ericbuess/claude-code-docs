@@ -4,9 +4,9 @@ This fork extends [ericbuess/claude-code-docs](https://github.com/ericbuess/clau
 
 ## What's Enhanced
 
-### 1. Extended Path Coverage (449 paths vs 47)
+### 1. Extended Path Coverage (449 paths vs 269)
 
-**Standard Edition**: 47 core Claude Code documentation files
+**Standard Edition**: 269 core documentation files
 **Enhanced Edition**: 449 documentation paths covering:
 - Core Documentation (151 paths - 33.6%)
 - API Reference (91 paths - 19.8%)
@@ -61,8 +61,9 @@ Fuzzy search across all 449 paths with relevance ranking.
 **Location**: `tests/` directory
 
 **Coverage**:
-- 174 total tests (82 unit + 36 integration + 56 validation)
-- 140 passing (85% pass rate)
+- 566 total tests (459 unit + 53 integration + 57 validation)
+- 561 passing (99.1% pass rate)
+- 81.55% code coverage (target: 82%)
 - pytest + pytest-cov
 - 14 fixtures in conftest.py
 
@@ -122,7 +123,7 @@ python scripts/main.py --verify              # Check what needs updating
 - `update-docs.yml` - Fetch docs every 3 hours
 
 **Enhanced Workflows** (ours):
-- `test.yml` - Run 174 tests on push/PR
+- `test.yml` - Run 566 tests on push/PR
 - `validate.yml` - Daily path validation
 - `coverage.yml` - Coverage reporting
 
@@ -136,7 +137,7 @@ curl -fsSL https://raw.githubusercontent.com/YOUR_FORK/claude-code-docs/main/ins
 ```
 
 **Features**:
-- 47 core documentation files
+- 269 core documentation files
 - Standard `/docs` command
 - Auto-updates via git pull
 - No Python required
@@ -163,11 +164,11 @@ curl -fsSL https://raw.githubusercontent.com/YOUR_FORK/claude-code-docs/main/ins
 
 | Feature | Standard | Enhanced |
 |---------|----------|----------|
-| Documentation files | 47 | 449 |
+| Documentation files | 269 | 449 |
 | Search | Topic name only | Full-text + fuzzy |
 | Validation | None | HTTP reachability |
 | Updates | Git pull | Selective fetch (SHA256) |
-| Testing | None | 174 tests |
+| Testing | None | 566 tests |
 | Python required | No | Yes (3.12+) |
 | Dependencies | git, jq, curl | + Python, requests |
 
@@ -185,7 +186,7 @@ These enhancements are designed to be contributed back to upstream as optional f
 **Design Principles**:
 - All enhancements are **optional** (don't break standard mode)
 - **Backward compatible** with upstream
-- **Well tested** (174 tests)
+- **Well tested** (566 tests, 99.1% pass rate)
 - **Documented** (comprehensive docs)
 - **Modular** (can adopt pieces independently)
 

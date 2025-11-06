@@ -1,6 +1,6 @@
 [project]
 name = "claude-code-docs"
-version = "0.1.0"
+version = "0.3.4"
 description = "Claude Code documentation mirror with automated updates and enhanced features"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -43,4 +43,38 @@ addopts = [
     "--cov=scripts",
     "--cov-report=html:reports/coverage/htmlcov",
     "--cov-report=term-missing",
+]
+
+[tool.coverage.run]
+# Use relative file paths in coverage data
+relative_files = true
+source = ["scripts"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+]
+
+[tool.coverage.report]
+# Reporting configuration
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+
+[tool.coverage.paths]
+# Map absolute paths to relative paths for better portability
+source = [
+    "scripts/",
+    "*/claude-code-docs/scripts/",
+    "*/work/claude-code-docs/claude-code-docs/scripts/",
 ]
