@@ -9,7 +9,7 @@ This project maintains **two modes** to serve different user needs:
 1. **Standard Mode** - Fully compatible with upstream ([ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs))
    - Shell-based (bash) implementation
    - No Python dependencies required
-   - 47 core documentation files
+   - 269 core documentation files
    - Perfect for basic documentation access
 
 2. **Enhanced Mode** - Optional Python-based features (opt-in)
@@ -19,6 +19,57 @@ This project maintains **two modes** to serve different user needs:
    - Advanced features for power users
 
 **All contributions must preserve both modes.** Standard mode must continue to work without Python.
+
+## Repository URL Strategy
+
+This project uses a clear strategy for repository URLs across documentation:
+
+### Functional URLs (Fork)
+
+URLs for **functional purposes** point to this fork (`costiash/claude-code-docs`):
+- **Installation scripts**: Users install from the fork
+- **Issue tracking**: Bug reports and feature requests go to the fork
+- **GitHub Actions**: CI/CD runs on the fork
+- **Pull requests**: Contributions are made to the fork
+- **Version badges**: Status indicators link to the fork
+
+**Examples:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash
+# Issues: https://github.com/costiash/claude-code-docs/issues
+# Actions: https://github.com/costiash/claude-code-docs/actions
+```
+
+### Attribution URLs (Upstream)
+
+URLs for **attribution and credit** point to upstream (`ericbuess/claude-code-docs`):
+- **"Built on" acknowledgments**: Credit to original author
+- **"Forked from" references**: Clear lineage documentation
+- **Upstream compatibility notes**: Explain relationship to original
+- **Upstream contribution guidance**: Direct contributors to original project
+
+**Examples:**
+```markdown
+This is an enhanced fork of [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)
+Built on the excellent foundation of [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)
+For upstream contributions, see [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)
+```
+
+### Rationale
+
+This dual-URL strategy achieves:
+1. **Clear functionality**: Users interact with the fork for installation and support
+2. **Proper attribution**: Original author receives credit for foundational work
+3. **Upstream compatibility**: Clear path for contributing improvements back to original
+4. **Community clarity**: Contributors understand relationship between projects
+
+### When Making Changes
+
+When updating documentation:
+- **Use fork URLs** for anything users will click/execute (install, issues, actions)
+- **Use upstream URLs** for credit, attribution, and original project references
+- **Be consistent**: Follow existing patterns in each document
+- **Ask if unsure**: Open a discussion if URL choice is ambiguous
 
 ## Getting Started
 
@@ -289,7 +340,7 @@ cd ~/.claude-code-docs && git pull
 - All new Python code must have unit tests
 - Integration tests for workflows
 - Validation tests for external APIs
-- **Target: 82%+ code coverage** (currently 81.55%)
+- **Target: 82%+ code coverage** (currently 81.41%)
 
 **Running tests:**
 ```bash
@@ -343,8 +394,14 @@ def test_search_paths_with_limit():
 
 **Current test status:**
 - Total: 566 tests
-- Passing: 561 tests (99.1% pass rate)
-- Coverage: 81.55% (target: 82%+)
+- Passing: 564 tests (99.6% pass rate)
+- Skipped: 2 tests (intentional - require development-time artifacts)
+- Failing: 0 tests
+- Coverage: 81.41% (target: 82%+)
+
+**Skipped tests:**
+- `tests/unit/test_manifest_validation.py:45` - Requires `broken_paths_categorized.json` (only created during manifest cleaning)
+- `tests/validation/test_link_integrity.py:37` - Requires internal links in sample markdown files
 
 ## Pull Request Guidelines
 

@@ -62,8 +62,9 @@ Fuzzy search across all 449 paths with relevance ranking.
 
 **Coverage**:
 - 566 total tests (459 unit + 53 integration + 57 validation)
-- 561 passing (99.1% pass rate)
-- 81.55% code coverage (target: 82%)
+- 564 passing (99.6% pass rate)
+- 2 skipped (intentional - require development-time artifacts)
+- 81.41% code coverage (target: 82%)
 - pytest + pytest-cov
 - 14 fixtures in conftest.py
 
@@ -186,7 +187,7 @@ These enhancements are designed to be contributed back to upstream as optional f
 **Design Principles**:
 - All enhancements are **optional** (don't break standard mode)
 - **Backward compatible** with upstream
-- **Well tested** (566 tests, 99.1% pass rate)
+- **Well tested** (566 tests, 99.6% pass rate - 564 passing, 2 skipped)
 - **Documented** (comprehensive docs)
 - **Modular** (can adopt pieces independently)
 
