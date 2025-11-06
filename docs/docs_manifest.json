@@ -225,8 +225,8 @@
     "slash-commands.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/slash-commands",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/slash-commands.md",
-      "hash": "2cc463b1ad168ca93269c0b473d2a1d52eb5cd05aadfa62da649fcc049774b65",
-      "last_updated": "2025-10-20T21:03:58.002304"
+      "hash": "c0f08799c267928304bc0422e3037d13495ec36a57e1d779cb020c25baafecec",
+      "last_updated": "2025-11-06T06:04:52.053303"
     },
     "statusline.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/statusline",
@@ -273,8 +273,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-06T03:24:56.764648",
-    "fetch_duration_seconds": 27.24405,
+    "last_fetch_completed": "2025-11-06T06:04:55.464217",
+    "fetch_duration_seconds": 25.690998,
     "total_pages_discovered": 44,
     "pages_fetched_successfully": 45,
     "pages_failed": 0,
@@ -284,7 +284,7 @@
     "total_files": 45,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-06T03:24:56.764667",
+  "last_updated": "2025-11-06T06:04:55.464246",
   "base_url": "https://raw.githubusercontent.com/jonandreas/claude-code-docs/main/docs/",
   "github_repository": "jonandreas/claude-code-docs",
   "github_ref": "main",
