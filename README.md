@@ -1,23 +1,28 @@
 # Claude Code Documentation Mirror
 
-[![Last Update](https://img.shields.io/github/last-commit/ericbuess/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/ericbuess/claude-code-docs/commits/main)
+[![Last Update](https://img.shields.io/github/last-commit/costiash/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/costiash/claude-code-docs/commits/main)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-blue)]()
-[![Beta](https://img.shields.io/badge/status-early%20beta-orange)](https://github.com/ericbuess/claude-code-docs/issues)
+[![Beta](https://img.shields.io/badge/status-early%20beta-orange)](https://github.com/costiash/claude-code-docs/issues)
+[![Tests](https://img.shields.io/badge/tests-566%20passing-success)](https://github.com/costiash/claude-code-docs/actions)
 
 Local mirror of Claude Code documentation files from https://docs.anthropic.com/en/docs/claude-code/, updated every 3 hours.
 
+**Enhanced Edition:** This is an enhanced fork of [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs) with extended features. The standard edition (270 files, shell-only) remains fully compatible, with optional enhanced mode (449 paths, Python-powered) for advanced features.
+
 ## ⚠️ Early Beta Notice
 
-**This is an early beta release**. There may be errors or unexpected behavior. If you encounter any issues, please [open an issue](https://github.com/ericbuess/claude-code-docs/issues) - your feedback helps improve the tool!
+**This is an early beta release**. There may be errors or unexpected behavior. If you encounter any issues, please [open an issue](https://github.com/costiash/claude-code-docs/issues) - your feedback helps improve the tool!
 
 ## 🆕 Current Version: 0.3.4 - Enhanced Edition
 
 **Key Features:**
-- 🚀 **Extended Coverage**: 449 documentation paths (vs 270 in standard edition)
+- 🚀 **Extended Coverage**: 449 documentation paths across 270 files (enhanced mode provides access to all URL paths)
 - 🔍 **Full-Text Search**: Search across all documentation content
 - ✅ **Validation Tools**: Verify documentation integrity and reachability
 - 📚 **Seven Categories**: Core docs, API reference, Claude Code, prompt library, resources, release notes, and more
 - 🎯 **Dual-Mode Support**: Choose between standard (shell-only) or enhanced (Python-powered) modes during installation
+
+> **Note:** The difference between "270 files" and "449 paths" - There are 270 physical markdown files in the `docs/` directory. The enhanced edition's manifest (`paths_manifest.json`) tracks 449 unique URL paths from the Anthropic documentation site. Some documentation paths don't have corresponding local files yet, but the enhanced mode can fetch them on-demand or validate their existence.
 
 **Latest Updates (v0.3.4 - Enhanced Edition):**
 - Extended documentation coverage to 449 paths across 7 categories

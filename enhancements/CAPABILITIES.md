@@ -245,7 +245,7 @@ Enhanced features integrate seamlessly:
 - **Detection**: Automatic feature detection at runtime
 - **Fallback**: Graceful degradation to standard mode
 - **Compatibility**: Works with existing upstream scripts
-- **Testing**: Comprehensive test suite (174 tests)
+- **Testing**: Comprehensive test suite (566 tests)
 
 ## Performance Characteristics
 
@@ -279,7 +279,7 @@ Enhanced features integrate seamlessly:
 | Validation | None | HTTP reachability |
 | Update method | Git pull all | Selective by hash |
 | Category support | No | Yes (7 categories) |
-| Testing | None | 174 tests |
+| Testing | None | 566 tests |
 | Python required | No | Yes (3.12+) |
 
 ## Use Cases

@@ -15,7 +15,7 @@ The enhanced edition extends [ericbuess/claude-code-docs](https://github.com/eri
   - Full-text search capabilities
   - Path validation tools
   - Advanced search and filtering
-  - Comprehensive testing (174 tests)
+  - Comprehensive testing (566 tests)
   - Performance benchmarks
 
 - **[CAPABILITIES.md](CAPABILITIES.md)** - Detailed capability documentation
@@ -155,7 +155,7 @@ enhancements/
 ### For Developers
 
 - **docs-dev/** - Developer documentation (if exists)
-- **tests/** - Test suite (174 tests)
+- **tests/** - Test suite (566 tests)
 - **scripts/** - Python implementation scripts
 
 ## Use Cases
@@ -203,7 +203,7 @@ All enhancements are designed to be:
 
 - **Optional**: Standard mode works without Python
 - **Backward compatible**: Doesn't break upstream functionality
-- **Well tested**: 174 tests with 85%+ pass rate
+- **Well tested**: 566 tests with 99.1% pass rate (12.31% coverage, target: 85%)
 - **Documented**: Comprehensive documentation
 - **Modular**: Can adopt features independently
 

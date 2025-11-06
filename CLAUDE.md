@@ -71,7 +71,7 @@ See `enhancements/` directory for comprehensive feature documentation and exampl
 │   ├── FEATURES.md        # Technical specs
 │   ├── CAPABILITIES.md    # Detailed capabilities
 │   └── EXAMPLES.md        # Usage examples
-├── tests/                 # Test suite (174 tests)
+├── tests/                 # Test suite (566 tests)
 ├── install.sh            # Dual-mode installer
 └── CLAUDE.md             # This file
 

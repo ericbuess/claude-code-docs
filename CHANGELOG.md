@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `enhancements/FEATURES.md` - Technical feature specifications
   - `enhancements/CAPABILITIES.md` - Detailed capability documentation
   - `enhancements/EXAMPLES.md` - Practical usage examples
-- **Test Suite**: 174 tests with 80% code coverage
+- **Test Suite**: 566 tests with 12.31% code coverage (target: 85%)
 - **Performance Benchmarks**: Documented search, fetch, and validation performance characteristics
 
 ### Changed
@@ -69,7 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | Category Filtering | ✗ | ✓ |
 | Validation Tools | ✗ | ✓ |
 | Dependencies | Shell, git, jq | + Python 3.12+ |
-| Test Coverage | ✗ | 174 tests (80%) |
+| Test Coverage | ✗ | 566 tests (12.31%) |
 
 ---
 
