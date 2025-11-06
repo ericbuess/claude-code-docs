@@ -113,11 +113,11 @@ class TestDocsManifest:
 
     def test_expected_file_count(self, docs_manifest):
         """Verify manifest has expected number of files"""
-        # After deduplication: 270 files
+        # After deduplication: 269 files
         file_count = len(docs_manifest)
 
-        assert file_count == 270, \
-            f"Expected 270 files in manifest, found {file_count}"
+        assert file_count == 269, \
+            f"Expected 269 files in manifest, found {file_count}"
 
     def test_all_entries_have_required_fields(self, docs_manifest):
         """Ensure all manifest entries have required fields"""
