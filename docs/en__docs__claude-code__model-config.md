@@ -7,7 +7,7 @@
 For the `model` setting in Claude Code, you can either configure:
 
 * A **model alias**
-* A full **[model name](/en/docs/about-claude/models/overview#model-names)**
+* A full **[model name](https://docs.claude.com/en/docs/about-claude/models/overview#model-names)**
 * For Bedrock, an ARN
 
 ### Model aliases
@@ -15,14 +15,14 @@ For the `model` setting in Claude Code, you can either configure:
 Model aliases provide a convenient way to select model settings without
 remembering exact version numbers:
 
-| Model alias      | Behavior                                                                                                                                         |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **`default`**    | Recommended model setting, depending on your account type                                                                                        |
-| **`sonnet`**     | Uses the latest Sonnet model (currently Sonnet 4.5) for daily coding tasks                                                                       |
-| **`opus`**       | Uses Opus model (currently Opus 4.1) for specialized complex reasoning tasks                                                                     |
-| **`haiku`**      | Uses the fast and efficient Haiku model for simple tasks                                                                                         |
-| **`sonnet[1m]`** | Uses Sonnet with a [1 million token context window](/en/docs/build-with-claude/context-windows#1m-token-context-window) window for long sessions |
-| **`opusplan`**   | Special mode that uses `opus` during plan mode, then switches to `sonnet` for execution                                                          |
+| Model alias      | Behavior                                                                                                                                                                |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`default`**    | Recommended model setting, depending on your account type                                                                                                               |
+| **`sonnet`**     | Uses the latest Sonnet model (currently Sonnet 4.5) for daily coding tasks                                                                                              |
+| **`opus`**       | Uses Opus model (currently Opus 4.1) for specialized complex reasoning tasks                                                                                            |
+| **`haiku`**      | Uses the fast and efficient Haiku model for simple tasks                                                                                                                |
+| **`sonnet[1m]`** | Uses Sonnet with a [1 million token context window](https://docs.claude.com/en/docs/build-with-claude/context-windows#1m-token-context-window) window for long sessions |
+| **`opusplan`**   | Special mode that uses `opus` during plan mode, then switches to `sonnet` for execution                                                                                 |
 
 ### Setting your model
 
@@ -80,7 +80,7 @@ and Sonnet's efficiency for execution.
 
 For Console/API users, the `[1m]` suffix can be added to full model names to
 enable a
-[1 million token context window](/en/docs/build-with-claude/context-windows#1m-token-context-window).
+[1 million token context window](https://docs.claude.com/en/docs/build-with-claude/context-windows#1m-token-context-window).
 
 ```bash  theme={null}
 # Example of using a full model name with the [1m] suffix
@@ -88,7 +88,7 @@ enable a
 ```
 
 Note: Extended context models have
-[different pricing](/en/docs/about-claude/pricing#long-context-pricing).
+[different pricing](https://docs.claude.com/en/docs/about-claude/pricing#long-context-pricing).
 
 ## Checking your current model
 
@@ -114,7 +114,7 @@ Note: `ANTHROPIC_SMALL_FAST_MODEL` is deprecated in favor of
 
 ### Prompt caching configuration
 
-Claude Code automatically uses [prompt caching](/en/docs/build-with-claude/prompt-caching) to optimize performance and reduce costs. You can disable prompt caching globally or for specific model tiers:
+Claude Code automatically uses [prompt caching](https://docs.claude.com/en/docs/build-with-claude/prompt-caching) to optimize performance and reduce costs. You can disable prompt caching globally or for specific model tiers:
 
 | Env var                         | Description                                                                                    |
 | ------------------------------- | ---------------------------------------------------------------------------------------------- |

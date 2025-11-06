@@ -72,19 +72,19 @@ You'll be prompted to log in on first use. That's it! [Continue with Quickstart 
 ## Next steps
 
 <CardGroup>
-  <Card title="Quickstart" icon="rocket" href="/en/docs/claude-code/quickstart">
+  <Card title="Quickstart" icon="rocket" href="/en/quickstart">
     See Claude Code in action with practical examples
   </Card>
 
-  <Card title="Common workflows" icon="graduation-cap" href="/en/docs/claude-code/common-workflows">
+  <Card title="Common workflows" icon="graduation-cap" href="/en/common-workflows">
     Step-by-step guides for common workflows
   </Card>
 
-  <Card title="Troubleshooting" icon="wrench" href="/en/docs/claude-code/troubleshooting">
+  <Card title="Troubleshooting" icon="wrench" href="/en/troubleshooting">
     Solutions for common issues with Claude Code
   </Card>
 
-  <Card title="IDE setup" icon="laptop" href="/en/docs/claude-code/ide-integrations">
+  <Card title="IDE setup" icon="laptop" href="/en/vs-code">
     Add Claude Code to your IDE
   </Card>
 </CardGroup>
@@ -92,19 +92,19 @@ You'll be prompted to log in on first use. That's it! [Continue with Quickstart 
 ## Additional resources
 
 <CardGroup>
-  <Card title="Build with the Agent SDK" icon="code-branch" href="https://docs.claude.com/en/api/agent-sdk/overview">
+  <Card title="Build with the Agent SDK" icon="code-branch" href="https://docs.claude.com/enhttps://docs.claude.com/en/api/agent-sdk/overview">
     Create custom AI agents with the Claude Agent SDK
   </Card>
 
-  <Card title="Host on AWS or GCP" icon="cloud" href="/en/docs/claude-code/third-party-integrations">
+  <Card title="Host on AWS or GCP" icon="cloud" href="/en/third-party-integrations">
     Configure Claude Code with Amazon Bedrock or Google Vertex AI
   </Card>
 
-  <Card title="Settings" icon="gear" href="/en/docs/claude-code/settings">
+  <Card title="Settings" icon="gear" href="/en/settings">
     Customize Claude Code for your workflow
   </Card>
 
-  <Card title="Commands" icon="terminal" href="/en/docs/claude-code/cli-reference">
+  <Card title="Commands" icon="terminal" href="/en/cli-reference">
     Learn about CLI commands and controls
   </Card>
 
@@ -112,11 +112,11 @@ You'll be prompted to log in on first use. That's it! [Continue with Quickstart 
     Clone our development container reference implementation
   </Card>
 
-  <Card title="Security" icon="shield" href="/en/docs/claude-code/security">
+  <Card title="Security" icon="shield" href="/en/security">
     Discover Claude Code's safeguards and best practices for safe usage
   </Card>
 
-  <Card title="Privacy and data usage" icon="lock" href="/en/docs/claude-code/data-usage">
+  <Card title="Privacy and data usage" icon="lock" href="/en/data-usage">
     Understand how Claude Code handles your data
   </Card>
 </CardGroup>

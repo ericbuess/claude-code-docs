@@ -15,7 +15,7 @@ The Claude Code SDK has been renamed to the **Claude Agent SDK** and its documen
 | **Documentation Location** | Claude Code docs → SDK section | API Guide → Agent SDK section    |
 
 <Note>
-  **Documentation Changes:** The Agent SDK documentation has moved from the Claude Code docs to the API Guide under a dedicated [Agent SDK](https://docs.claude.com/en/api/agent-sdk/overview) section. The Claude Code docs now focus on the CLI tool and automation features.
+  **Documentation Changes:** The Agent SDK documentation has moved from the Claude Code docs to the API Guide under a dedicated [Agent SDK](https://docs.claude.com/enhttps://docs.claude.com/en/api/agent-sdk/overview) section. The Claude Code docs now focus on the CLI tool and automation features.
 </Note>
 
 ## Migration Steps
@@ -321,7 +321,7 @@ See the [Troubleshooting](/en/troubleshooting) guide for common issues.
 
 ## Next Steps
 
-* Explore the [Agent SDK Overview](https://docs.claude.com/en/api/agent-sdk/overview) to learn about available features
-* Check out the [TypeScript SDK Reference](https://docs.claude.com/en/api/agent-sdk/typescript) for detailed API documentation
-* Review the [Python SDK Reference](https://docs.claude.com/en/api/agent-sdk/python) for Python-specific documentation
-* Learn about [Custom Tools](https://docs.claude.com/en/api/agent-sdk/custom-tools) and [MCP Integration](https://docs.claude.com/en/api/agent-sdk/mcp)
+* Explore the [Agent SDK Overview](https://docs.claude.com/enhttps://docs.claude.com/en/api/agent-sdk/overview) to learn about available features
+* Check out the [TypeScript SDK Reference](https://docs.claude.com/enhttps://docs.claude.com/en/api/agent-sdk/typescript) for detailed API documentation
+* Review the [Python SDK Reference](https://docs.claude.com/enhttps://docs.claude.com/en/api/agent-sdk/python) for Python-specific documentation
+* Learn about [Custom Tools](https://docs.claude.com/enhttps://docs.claude.com/en/api/agent-sdk/custom-tools) and [MCP Integration](https://docs.claude.com/enhttps://docs.claude.com/en/api/agent-sdk/mcp)

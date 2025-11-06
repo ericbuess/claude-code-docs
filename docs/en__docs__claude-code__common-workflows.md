@@ -247,7 +247,7 @@ claude --permission-mode plan
 
 **Run "headless" queries in Plan Mode**
 
-You can also run a query in Plan Mode directly with `-p` (i.e., in ["headless mode"](/en/sdk/sdk-headless)):
+You can also run a query in Plan Mode directly with `-p` (i.e., in ["headless mode"](/en/headless)):
 
 ```bash  theme={null}
 claude --permission-mode plan -p "Analyze the authentication system and suggest improvements"
@@ -508,7 +508,7 @@ Use @ to quickly include files or directories without waiting for Claude to read
 Suppose you're working on complex architectural decisions, challenging bugs, or planning multi-step implementations that require deep reasoning.
 
 <Note>
-  [Extended thinking](/en/docs/build-with-claude/extended-thinking) is disabled by default in Claude Code. You can enable it on-demand by using `Tab` to toggle Thinking on, or by using prompts like "think" or "think hard". You can also enable it permanently by setting the [`MAX_THINKING_TOKENS` environment variable](/en/settings#environment-variables) in your settings.
+  [Extended thinking](https://docs.claude.com/en/docs/build-with-claude/extended-thinking) is disabled by default in Claude Code. You can enable it on-demand by using `Tab` to toggle Thinking on, or by using prompts like "think" or "think hard". You can also enable it permanently by setting the [`MAX_THINKING_TOKENS` environment variable](/en/settings#environment-variables) in your settings.
 </Note>
 
 <Steps>
@@ -535,7 +535,7 @@ Suppose you're working on complex architectural decisions, challenging bugs, or 
 <Tip>
   Tips to get the most value out of extended thinking:
 
-  [Extended thinking](/en/docs/build-with-claude/extended-thinking) is most valuable for complex tasks such as:
+  [Extended thinking](https://docs.claude.com/en/docs/build-with-claude/extended-thinking) is most valuable for complex tasks such as:
 
   * Planning complex architectural changes
   * Debugging intricate issues
@@ -550,7 +550,7 @@ Suppose you're working on complex architectural decisions, challenging bugs, or 
   * "think" triggers basic extended thinking
   * intensifying phrases such as "keep hard", "think more", "think a lot", or "think longer" triggers deeper thinking
 
-  For more extended thinking prompting tips, see [Extended thinking tips](/en/docs/build-with-claude/prompt-engineering/extended-thinking-tips).
+  For more extended thinking prompting tips, see [Extended thinking tips](https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/extended-thinking-tips).
 </Tip>
 
 <Note>

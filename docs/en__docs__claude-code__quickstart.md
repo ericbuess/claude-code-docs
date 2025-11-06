@@ -20,25 +20,25 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **Homebrew (macOS, Linux):**
 
-    ```sh theme={null} theme={null} theme={null}
+    ```sh  theme={null}
     brew install --cask claude-code
     ```
 
     **macOS, Linux, WSL:**
 
-    ```bash theme={null} theme={null} theme={null}
+    ```bash  theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell theme={null} theme={null} theme={null}
+    ```powershell  theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch theme={null} theme={null} theme={null}
+    ```batch  theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
   </Tab>
@@ -46,7 +46,7 @@ To install Claude Code, use one of the following methods:
   <Tab title="NPM">
     If you have [Node.js 18 or newer installed](https://nodejs.org/en/download/):
 
-    ```sh theme={null} theme={null} theme={null}
+    ```sh  theme={null}
     npm install -g @anthropic-ai/claude-code
     ```
   </Tab>
@@ -304,19 +304,19 @@ See the [CLI reference](/en/cli-reference) for a complete list of commands.
 Now that you've learned the basics, explore more advanced features:
 
 <CardGroup cols={3}>
-  <Card title="Common workflows" icon="graduation-cap" href="/en/docs/claude-code/common-workflows">
+  <Card title="Common workflows" icon="graduation-cap" href="/en/common-workflows">
     Step-by-step guides for common tasks
   </Card>
 
-  <Card title="CLI reference" icon="terminal" href="/en/docs/claude-code/cli-reference">
+  <Card title="CLI reference" icon="terminal" href="/en/cli-reference">
     Master all commands and options
   </Card>
 
-  <Card title="Configuration" icon="gear" href="/en/docs/claude-code/settings">
+  <Card title="Configuration" icon="gear" href="/en/settings">
     Customize Claude Code for your workflow
   </Card>
 
-  <Card title="Claude Code on the web" icon="cloud" href="/en/docs/claude-code/claude-code-on-the-web">
+  <Card title="Claude Code on the web" icon="cloud" href="/en/claude-code-on-the-web">
     Run tasks asynchronously in the cloud
   </Card>
 </CardGroup>

@@ -57,11 +57,11 @@ This page provides an overview of available deployment options and helps you cho
 ## Cloud providers
 
 <CardGroup cols={2}>
-  <Card title="Amazon Bedrock" icon="aws" href="/en/docs/claude-code/amazon-bedrock">
+  <Card title="Amazon Bedrock" icon="aws" href="/en/amazon-bedrock">
     Use Claude models through AWS infrastructure with IAM-based authentication and AWS-native monitoring
   </Card>
 
-  <Card title="Google Vertex AI" icon="google" href="/en/docs/claude-code/google-vertex-ai">
+  <Card title="Google Vertex AI" icon="google" href="/en/google-vertex-ai">
     Access Claude models via Google Cloud Platform with enterprise-grade security and compliance
   </Card>
 </CardGroup>
@@ -69,11 +69,11 @@ This page provides an overview of available deployment options and helps you cho
 ## Corporate infrastructure
 
 <CardGroup cols={2}>
-  <Card title="Enterprise Network" icon="shield" href="/en/docs/claude-code/network-config">
+  <Card title="Enterprise Network" icon="shield" href="/en/network-config">
     Configure Claude Code to work with your organization's proxy servers and SSL/TLS requirements
   </Card>
 
-  <Card title="LLM Gateway" icon="server" href="/en/docs/claude-code/llm-gateway">
+  <Card title="LLM Gateway" icon="server" href="/en/llm-gateway">
     Deploy centralized model access with usage tracking, budgeting, and audit logging
   </Card>
 </CardGroup>
