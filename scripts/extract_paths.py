@@ -289,6 +289,9 @@ def export_clean_txt(paths_dict: Dict[str, List[str]], output_file: Path):
         all_paths.extend(paths)
     all_paths = sorted(set(all_paths))
 
+    # Ensure parent directory exists
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+
     with open(output_file, 'w', encoding='utf-8') as f:
         for path in all_paths:
             f.write(f"{path}\n")

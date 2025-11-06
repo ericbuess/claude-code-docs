@@ -10,7 +10,7 @@ This repository supports TWO modes:
 
 1. **Standard Mode** (upstream-compatible)
    - Shell scripts only
-   - 270 documentation files
+   - 269 documentation files
    - Works exactly like upstream
 
 2. **Enhanced Mode** (Python-powered, optional)
@@ -57,7 +57,7 @@ See `enhancements/` directory for comprehensive feature documentation and exampl
 
 ```
 /
-├── docs/                   # 270 documentation files (standard edition)
+├── docs/                   # 269 documentation files (standard edition)
 │   ├── docs_manifest.json  # Standard manifest
 │   └── .search_index.json  # Full-text search index (enhanced mode)
 ├── scripts/

@@ -9,7 +9,7 @@ This document describes the actual capabilities of the enhanced edition of claud
 The enhanced edition provides comprehensive coverage of Anthropic's documentation:
 
 - **Total Paths**: 449 documentation paths
-- **Upstream Coverage**: 270 documentation files (vs upstream's standard coverage)
+- **Upstream Coverage**: 269 documentation files (vs upstream's standard coverage)
 - **Coverage Increase**: ~1.7x more paths than standard edition
 
 ### Category Breakdown
@@ -274,7 +274,7 @@ Enhanced features integrate seamlessly:
 
 | Capability | Standard | Enhanced |
 |-----------|----------|----------|
-| Documentation paths | 270 files | 449 paths |
+| Documentation paths | 269 files | 449 paths |
 | Search method | File name only | Path + content search |
 | Validation | None | HTTP reachability |
 | Update method | Git pull all | Selective by hash |

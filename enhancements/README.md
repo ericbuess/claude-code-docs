@@ -11,7 +11,7 @@ The enhanced edition extends [ericbuess/claude-code-docs](https://github.com/eri
 ### Core Documentation
 
 - **[FEATURES.md](FEATURES.md)** - Complete feature list and technical details
-  - Extended path coverage (449 vs 270 paths)
+  - Extended path coverage (449 vs 269 paths)
   - Full-text search capabilities
   - Path validation tools
   - Advanced search and filtering
@@ -62,7 +62,7 @@ If you're working on the codebase:
 The enhanced edition supports two installation modes:
 
 **Standard Mode** (upstream-compatible):
-- 270 documentation files
+- 269 documentation files
 - Shell scripts only
 - No Python dependencies
 - Works exactly like upstream

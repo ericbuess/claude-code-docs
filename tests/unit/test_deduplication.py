@@ -51,8 +51,8 @@ class TestNoDuplicateContent:
         # Exclude docs_manifest.json
         md_files = [f for f in docs_files if f.name != 'docs_manifest.json']
 
-        # Expected: 270 files (314 - 44 duplicates)
-        assert len(md_files) == 270, f"Expected 270 files, found {len(md_files)}"
+        # Expected: 269 files (after deduplication and cleanup)
+        assert len(md_files) == 269, f"Expected 269 files, found {len(md_files)}"
 
 class TestNamingConvention:
     """Verify file naming standards"""

@@ -252,7 +252,7 @@ Documentation URLs map directly to filenames:
 
 ### Implementation Note
 
-During Phase 1 (Manifest Cleanup & Deduplication), all 270 documentation files were standardized to follow this naming convention. This ensures consistency across the repository and prevents duplicate content.
+During Phase 1 (Manifest Cleanup & Deduplication), all 269 documentation files were standardized to follow this naming convention. This ensures consistency across the repository and prevents duplicate content.
 
 ## Testing Requirements
 

@@ -7,7 +7,7 @@
 
 Local mirror of Claude Code documentation files from https://docs.anthropic.com/en/docs/claude-code/, updated every 3 hours.
 
-**Enhanced Edition:** This is an enhanced fork of [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs) with extended features. The standard edition (270 files, shell-only) remains fully compatible, with optional enhanced mode (449 paths, Python-powered) for advanced features.
+**Enhanced Edition:** This is an enhanced fork of [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs) with extended features. The standard edition (269 files, shell-only) remains fully compatible, with optional enhanced mode (449 paths, Python-powered) for advanced features.
 
 ## ⚠️ Early Beta Notice
 
@@ -16,13 +16,13 @@ Local mirror of Claude Code documentation files from https://docs.anthropic.com/
 ## 🆕 Current Version: 0.3.4 - Enhanced Edition
 
 **Key Features:**
-- 🚀 **Extended Coverage**: 449 documentation paths across 270 files (enhanced mode provides access to all URL paths)
+- 🚀 **Extended Coverage**: 449 documentation paths across 269 files (enhanced mode provides access to all URL paths)
 - 🔍 **Full-Text Search**: Search across all documentation content
 - ✅ **Validation Tools**: Verify documentation integrity and reachability
 - 📚 **Seven Categories**: Core docs, API reference, Claude Code, prompt library, resources, release notes, and more
 - 🎯 **Dual-Mode Support**: Choose between standard (shell-only) or enhanced (Python-powered) modes during installation
 
-> **Note:** The difference between "270 files" and "449 paths" - There are 270 physical markdown files in the `docs/` directory. The enhanced edition's manifest (`paths_manifest.json`) tracks 449 unique URL paths from the Anthropic documentation site. Some documentation paths don't have corresponding local files yet, but the enhanced mode can fetch them on-demand or validate their existence.
+> **Note:** The difference between "269 files" and "449 paths" - There are 269 physical markdown files in the `docs/` directory. The enhanced edition's manifest (`paths_manifest.json`) tracks 449 unique URL paths from the Anthropic documentation site. Some documentation paths don't have corresponding local files yet, but the enhanced mode can fetch them on-demand or validate their existence.
 
 **Latest Updates (v0.3.4 - Enhanced Edition):**
 - Extended documentation coverage to 449 paths across 7 categories

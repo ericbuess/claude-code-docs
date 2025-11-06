@@ -164,7 +164,7 @@ curl -fsSL https://raw.githubusercontent.com/YOUR_FORK/claude-code-docs/main/ins
 
 | Feature | Standard | Enhanced |
 |---------|----------|----------|
-| Documentation files | 270 | 449 |
+| Documentation files | 269 | 449 |
 | Search | Topic name only | Full-text + fuzzy |
 | Validation | None | HTTP reachability |
 | Updates | Git pull | Selective fetch (SHA256) |

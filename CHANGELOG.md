@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Dual-Mode Architecture**: Choose between standard (shell-only) or enhanced (Python-powered) modes during installation
-- **Extended Documentation Coverage**: 449 documentation paths across 7 categories (vs 270 in standard mode)
+- **Extended Documentation Coverage**: 449 documentation paths across 7 categories (vs 269 in standard mode)
 - **Full-Text Search**: Search across all documentation content using `--search` flag
 - **Validation Tools**: Verify documentation integrity with `--validate` command
 - **Category Organization**: Documentation organized into core docs, API reference, Claude Code, prompt library, resources, release notes
@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **File Count Accuracy**: Corrected documentation references from outdated counts to actual values
-- **Manifest Alignment**: docs_manifest.json now accurately reflects 270 documentation files
+- **Manifest Alignment**: docs_manifest.json now accurately reflects 269 documentation files
 - **Category Counts**: All category counts verified against paths_manifest.json
 
 ### Removed
@@ -62,8 +62,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Feature | Standard Mode | Enhanced Mode |
 |---------|--------------|---------------|
-| Documentation Files | 270 | 270 |
-| Documentation Paths | 270 | 449 |
+| Documentation Files | 269 | 270 |
+| Documentation Paths | 269 | 449 |
 | Basic Search | ✓ | ✓ |
 | Full-Text Search | ✗ | ✓ |
 | Category Filtering | ✗ | ✓ |
