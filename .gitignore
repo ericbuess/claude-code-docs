@@ -64,7 +64,7 @@ sample_paths.txt
 *.backup.*
 
 # Project specific (from upstream)
-.claude/settings.local.json
+.claude/
 .last_pull
 .last_check
 claude-docs-helper.sh
