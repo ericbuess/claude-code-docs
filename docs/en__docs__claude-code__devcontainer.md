@@ -73,5 +73,5 @@ Mirror your devcontainer configuration in CI/CD pipelines to ensure development 
 ## Related resources
 
 * [VS Code devcontainers documentation](https://code.visualstudio.com/docs/devcontainers/containers)
-* [Claude Code security best practices](/en/docs/claude-code/security)
-* [Enterprise network configuration](/en/docs/claude-code/network-config)
+* [Claude Code security best practices](/en/security)
+* [Enterprise network configuration](/en/network-config)

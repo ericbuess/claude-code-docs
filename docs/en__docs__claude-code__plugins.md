@@ -3,10 +3,10 @@
 > Extend Claude Code with custom commands, agents, hooks, Skills, and MCP servers through the plugin system.
 
 <Tip>
-  For complete technical specifications and schemas, see [Plugins reference](/en/docs/claude-code/plugins-reference). For marketplace management, see [Plugin marketplaces](/en/docs/claude-code/plugin-marketplaces).
+  For complete technical specifications and schemas, see [Plugins reference](/en/plugins-reference). For marketplace management, see [Plugin marketplaces](/en/plugin-marketplaces).
 </Tip>
 
-Plugins let you extend Claude Code with custom functionality that can be shared across projects and teams. Install plugins from [marketplaces](/en/docs/claude-code/plugin-marketplaces) to add pre-built commands, agents, hooks, Skills, and MCP servers, or create your own to automate your workflows.
+Plugins let you extend Claude Code with custom functionality that can be shared across projects and teams. Install plugins from [marketplaces](/en/plugin-marketplaces) to add pre-built commands, agents, hooks, Skills, and MCP servers, or create your own to automate your workflows.
 
 ## Quickstart
 
@@ -145,7 +145,7 @@ my-first-plugin/
 * **MCP servers**: Create `.mcp.json` for external tool integration
 
 <Note>
-  **Next steps**: Ready to add more features? Jump to [Develop more complex plugins](#develop-more-complex-plugins) to add agents, hooks, and MCP servers. For complete technical specifications of all plugin components, see [Plugins reference](/en/docs/claude-code/plugins-reference).
+  **Next steps**: Ready to add more features? Jump to [Develop more complex plugins](#develop-more-complex-plugins) to add agents, hooks, and MCP servers. For complete technical specifications of all plugin components, see [Plugins reference](/en/plugins-reference).
 </Note>
 
 ***
@@ -171,7 +171,7 @@ Marketplaces are catalogs of available plugins. Add them to discover and install
 /plugin
 ```
 
-For detailed marketplace management including Git repositories, local development, and team distribution, see [Plugin marketplaces](/en/docs/claude-code/plugin-marketplaces).
+For detailed marketplace management including Git repositories, local development, and team distribution, see [Plugin marketplaces](/en/plugin-marketplaces).
 
 ### Install plugins
 
@@ -219,7 +219,7 @@ Configure plugins at the repository level to ensure consistent tooling across yo
 2. Team members trust the repository folder
 3. Plugins install automatically for all team members
 
-For complete instructions including configuration examples, marketplace setup, and rollout best practices, see [Configure team marketplaces](/en/docs/claude-code/plugin-marketplaces#how-to-configure-team-marketplaces).
+For complete instructions including configuration examples, marketplace setup, and rollout best practices, see [Configure team marketplaces](/en/plugin-marketplaces#how-to-configure-team-marketplaces).
 
 ***
 
@@ -229,15 +229,15 @@ Once you're comfortable with basic plugins, you can create more sophisticated ex
 
 ### Add Skills to your plugin
 
-Plugins can include [Agent Skills](/en/docs/claude-code/skills) to extend Claude's capabilities. Skills are model-invoked—Claude autonomously uses them based on the task context.
+Plugins can include [Agent Skills](/en/skills) to extend Claude's capabilities. Skills are model-invoked—Claude autonomously uses them based on the task context.
 
 To add Skills to your plugin, create a `skills/` directory at your plugin root and add Skill folders with `SKILL.md` files. Plugin Skills are automatically available when the plugin is installed.
 
-For complete Skill authoring guidance, see [Agent Skills](/en/docs/claude-code/skills).
+For complete Skill authoring guidance, see [Agent Skills](/en/skills).
 
 ### Organize complex plugins
 
-For plugins with many components, organize your directory structure by functionality. For complete directory layouts and organization patterns, see [Plugin directory structure](/en/docs/claude-code/plugins-reference#plugin-directory-structure).
+For plugins with many components, organize your directory structure by functionality. For complete directory layouts and organization patterns, see [Plugin directory structure](/en/plugins-reference#plugin-directory-structure).
 
 ### Test your plugins locally
 
@@ -324,7 +324,7 @@ When developing plugins, use a local marketplace to test changes iteratively. Th
 </Steps>
 
 <Note>
-  **For multiple plugins**: Organize plugins in subdirectories like `./plugins/plugin-name` and update your marketplace.json accordingly. See [Plugin sources](/en/docs/claude-code/plugin-marketplaces#plugin-sources) for organization patterns.
+  **For multiple plugins**: Organize plugins in subdirectories like `./plugins/plugin-name` and update your marketplace.json accordingly. See [Plugin sources](/en/plugin-marketplaces#plugin-sources) for organization patterns.
 </Note>
 
 ### Debug plugin issues
@@ -333,7 +333,7 @@ If your plugin isn't working as expected:
 
 1. **Check the structure**: Ensure your directories are at the plugin root, not inside `.claude-plugin/`
 2. **Test components individually**: Check each command, agent, and hook separately
-3. **Use validation and debugging tools**: See [Debugging and development tools](/en/docs/claude-code/plugins-reference#debugging-and-development-tools) for CLI commands and troubleshooting techniques
+3. **Use validation and debugging tools**: See [Debugging and development tools](/en/plugins-reference#debugging-and-development-tools) for CLI commands and troubleshooting techniques
 
 ### Share your plugins
 
@@ -345,7 +345,7 @@ When your plugin is ready to share:
 4. **Test with others**: Have team members test the plugin before wider distribution
 
 <Note>
-  For complete technical specifications, debugging techniques, and distribution strategies, see [Plugins reference](/en/docs/claude-code/plugins-reference).
+  For complete technical specifications, debugging techniques, and distribution strategies, see [Plugins reference](/en/plugins-reference).
 </Note>
 
 ***
@@ -363,13 +363,13 @@ Now that you understand Claude Code's plugin system, here are suggested paths fo
 
 ### For plugin developers
 
-* **Create your first marketplace**: [Plugin marketplaces guide](/en/docs/claude-code/plugin-marketplaces)
+* **Create your first marketplace**: [Plugin marketplaces guide](/en/plugin-marketplaces)
 * **Advanced components**: Dive deeper into specific plugin components:
-  * [Slash commands](/en/docs/claude-code/slash-commands) - Command development details
-  * [Subagents](/en/docs/claude-code/sub-agents) - Agent configuration and capabilities
-  * [Agent Skills](/en/docs/claude-code/skills) - Extend Claude's capabilities
-  * [Hooks](/en/docs/claude-code/hooks) - Event handling and automation
-  * [MCP](/en/docs/claude-code/mcp) - External tool integration
+  * [Slash commands](/en/slash-commands) - Command development details
+  * [Subagents](/en/sub-agents) - Agent configuration and capabilities
+  * [Agent Skills](/en/skills) - Extend Claude's capabilities
+  * [Hooks](/en/hooks) - Event handling and automation
+  * [MCP](/en/mcp) - External tool integration
 * **Distribution strategies**: Package and share your plugins effectively
 * **Community contribution**: Consider contributing to community plugin collections
 
@@ -382,10 +382,10 @@ Now that you understand Claude Code's plugin system, here are suggested paths fo
 
 ## See also
 
-* [Plugin marketplaces](/en/docs/claude-code/plugin-marketplaces) - Creating and managing plugin catalogs
-* [Slash commands](/en/docs/claude-code/slash-commands) - Understanding custom commands
-* [Subagents](/en/docs/claude-code/sub-agents) - Creating and using specialized agents
-* [Agent Skills](/en/docs/claude-code/skills) - Extend Claude's capabilities
-* [Hooks](/en/docs/claude-code/hooks) - Automating workflows with event handlers
-* [MCP](/en/docs/claude-code/mcp) - Connecting to external tools and services
-* [Settings](/en/docs/claude-code/settings) - Configuration options for plugins
+* [Plugin marketplaces](/en/plugin-marketplaces) - Creating and managing plugin catalogs
+* [Slash commands](/en/slash-commands) - Understanding custom commands
+* [Subagents](/en/sub-agents) - Creating and using specialized agents
+* [Agent Skills](/en/skills) - Extend Claude's capabilities
+* [Hooks](/en/hooks) - Automating workflows with event handlers
+* [MCP](/en/mcp) - Connecting to external tools and services
+* [Settings](/en/settings) - Configuration options for plugins

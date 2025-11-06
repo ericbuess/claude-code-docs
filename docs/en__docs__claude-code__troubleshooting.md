@@ -136,7 +136,7 @@ claude doctor # Check installation health
 ### Repeated permission prompts
 
 If you find yourself repeatedly approving the same commands, you can allow specific tools
-to run without approval using the `/permissions` command. See [Permissions docs](/en/docs/claude-code/iam#configuring-permissions).
+to run without approval using the `/permissions` command. See [Permissions docs](/en/iam#configuring-permissions).
 
 ### Authentication issues
 
@@ -193,7 +193,7 @@ apk add ripgrep
 pacman -S ripgrep
 ```
 
-Then set `USE_BUILTIN_RIPGREP=0` in your [environment](/en/docs/claude-code/settings#environment-variables).
+Then set `USE_BUILTIN_RIPGREP=0` in your [environment](/en/settings#environment-variables).
 
 ### Slow or incomplete search results on WSL
 
@@ -252,7 +252,7 @@ Then restart WSL with `wsl --shutdown` from PowerShell.
   These networking issues only affect WSL2. WSL1 uses the host's network directly and doesn't require these configurations.
 </Note>
 
-For additional JetBrains configuration tips, see our [IDE integration guide](/en/docs/claude-code/ide-integrations#jetbrains-plugin-settings).
+For additional JetBrains configuration tips, see our [IDE integration guide](/en/ide-integrations#jetbrains-plugin-settings).
 
 ### Reporting Windows IDE integration issues (both native and WSL)
 
@@ -302,7 +302,7 @@ function example() {
 
 1. **Ask Claude to add language tags**: Simply request "Please add appropriate language tags to all code blocks in this markdown file."
 
-2. **Use post-processing hooks**: Set up automatic formatting hooks to detect and add missing language tags. See the [markdown formatting hook example](/en/docs/claude-code/hooks-guide#markdown-formatting-hook) for implementation details.
+2. **Use post-processing hooks**: Set up automatic formatting hooks to detect and add missing language tags. See the [markdown formatting hook example](/en/hooks-guide#markdown-formatting-hook) for implementation details.
 
 3. **Manual verification**: After generating markdown files, review them for proper code block formatting and request corrections if needed.
 
@@ -316,14 +316,14 @@ If generated markdown has excessive blank lines or inconsistent spacing:
 
 2. **Use formatting tools**: Set up hooks to run markdown formatters like `prettier` or custom formatting scripts on generated markdown files.
 
-3. **Specify formatting preferences**: Include formatting requirements in your prompts or project [memory](/en/docs/claude-code/memory) files.
+3. **Specify formatting preferences**: Include formatting requirements in your prompts or project [memory](/en/memory) files.
 
 ### Best practices for markdown generation
 
 To minimize formatting issues:
 
 * **Be explicit in requests**: Ask for "properly formatted markdown with language-tagged code blocks"
-* **Use project conventions**: Document your preferred markdown style in [CLAUDE.md](/en/docs/claude-code/memory)
+* **Use project conventions**: Document your preferred markdown style in [CLAUDE.md](/en/memory)
 * **Set up validation hooks**: Use post-processing hooks to automatically verify and fix common formatting issues
 
 ## Getting more help

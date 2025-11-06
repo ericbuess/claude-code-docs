@@ -131,7 +131,7 @@ export CLOUD_ML_REGION=us-east5
 
 ### Model selection
 
-By default, the models will use those specified in [Model configuration](/en/docs/claude-code/bedrock-vertex-proxies#model-configuration).
+By default, the models will use those specified in [Model configuration](/en/bedrock-vertex-proxies#model-configuration).
 
 If you have configured custom model names in LiteLLM, set the aforementioned environment variables to those custom names.
 
@@ -140,6 +140,6 @@ For more detailed information, refer to the [LiteLLM documentation](https://docs
 ## Additional resources
 
 * [LiteLLM documentation](https://docs.litellm.ai/)
-* [Claude Code settings](/en/docs/claude-code/settings)
-* [Enterprise network configuration](/en/docs/claude-code/network-config)
-* [Third-party integrations overview](/en/docs/claude-code/third-party-integrations)
+* [Claude Code settings](/en/settings)
+* [Enterprise network configuration](/en/network-config)
+* [Third-party integrations overview](/en/third-party-integrations)

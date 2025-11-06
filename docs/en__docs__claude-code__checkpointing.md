@@ -60,6 +60,6 @@ Checkpoints are designed for quick, session-level recovery. For permanent versio
 
 ## See also
 
-* [Interactive mode](/en/docs/claude-code/interactive-mode) - Keyboard shortcuts and session controls
-* [Slash commands](/en/docs/claude-code/slash-commands) - Accessing checkpoints using `/rewind`
-* [CLI reference](/en/docs/claude-code/cli-reference) - Command-line options
+* [Interactive mode](/en/interactive-mode) - Keyboard shortcuts and session controls
+* [Slash commands](/en/slash-commands) - Accessing checkpoints using `/rewind`
+* [CLI reference](/en/cli-reference) - Command-line options

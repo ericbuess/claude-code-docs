@@ -214,7 +214,7 @@ Suppose you want to use specialized AI subagents to handle specific tasks more e
   * Create project-specific subagents in `.claude/agents/` for team sharing
   * Use descriptive `description` fields to enable automatic delegation
   * Limit tool access to what each subagent actually needs
-  * Check the [subagents documentation](/en/docs/claude-code/sub-agents) for detailed examples
+  * Check the [subagents documentation](/en/sub-agents) for detailed examples
 </Tip>
 
 ***
@@ -247,7 +247,7 @@ claude --permission-mode plan
 
 **Run "headless" queries in Plan Mode**
 
-You can also run a query in Plan Mode directly with `-p` (i.e., in ["headless mode"](/en/docs/claude-code/sdk/sdk-headless)):
+You can also run a query in Plan Mode directly with `-p` (i.e., in ["headless mode"](/en/sdk/sdk-headless)):
 
 ```bash  theme={null}
 claude --permission-mode plan -p "Analyze the authentication system and suggest improvements"
@@ -281,7 +281,7 @@ Claude will analyze the current implementation and create a comprehensive plan. 
 }
 ```
 
-See [settings documentation](/en/docs/claude-code/settings#available-settings) for more configuration options.
+See [settings documentation](/en/settings#available-settings) for more configuration options.
 
 ***
 
@@ -488,7 +488,7 @@ Use @ to quickly include files or directories without waiting for Claude to read
     > Show me the data from @github:repos/owner/repo/issues
     ```
 
-    This fetches data from connected MCP servers using the format @server:resource. See [MCP resources](/en/docs/claude-code/mcp#use-mcp-resources) for details.
+    This fetches data from connected MCP servers using the format @server:resource. See [MCP resources](/en/mcp#use-mcp-resources) for details.
   </Step>
 </Steps>
 
@@ -508,7 +508,7 @@ Use @ to quickly include files or directories without waiting for Claude to read
 Suppose you're working on complex architectural decisions, challenging bugs, or planning multi-step implementations that require deep reasoning.
 
 <Note>
-  [Extended thinking](/en/docs/build-with-claude/extended-thinking) is disabled by default in Claude Code. You can enable it on-demand by using `Tab` to toggle Thinking on, or by using prompts like "think" or "think hard". You can also enable it permanently by setting the [`MAX_THINKING_TOKENS` environment variable](/en/docs/claude-code/settings#environment-variables) in your settings.
+  [Extended thinking](/en/docs/build-with-claude/extended-thinking) is disabled by default in Claude Code. You can enable it on-demand by using `Tab` to toggle Thinking on, or by using prompts like "think" or "think hard". You can also enable it permanently by setting the [`MAX_THINKING_TOKENS` environment variable](/en/settings#environment-variables) in your settings.
 </Note>
 
 <Steps>
@@ -793,7 +793,7 @@ Suppose you need Claude's output in a specific format, especially when integrati
 
 Claude Code supports custom slash commands that you can create to quickly execute specific prompts or tasks.
 
-For more details, see the [Slash commands](/en/docs/claude-code/slash-commands) reference page.
+For more details, see the [Slash commands](/en/slash-commands) reference page.
 
 ### Create project-specific commands
 

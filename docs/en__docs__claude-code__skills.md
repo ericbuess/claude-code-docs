@@ -7,7 +7,7 @@ This guide shows you how to create, use, and manage Agent Skills in Claude Code.
 ## Prerequisites
 
 * Claude Code version 1.0 or later
-* Basic familiarity with [Claude Code](/en/docs/claude-code/quickstart)
+* Basic familiarity with [Claude Code](/en/quickstart)
 
 ## What are Agent Skills?
 
@@ -64,7 +64,7 @@ Project Skills are checked into git and automatically available to team members.
 
 ### Plugin Skills
 
-Skills can also come from [Claude Code plugins](/en/docs/claude-code/plugins). Plugins may bundle Skills that are automatically available when the plugin is installed. These Skills work the same way as personal and project Skills.
+Skills can also come from [Claude Code plugins](/en/plugins). Plugins may bundle Skills that are automatically available when the plugin is installed. These Skills work the same way as personal and project Skills.
 
 ## Write SKILL.md
 
@@ -261,7 +261,7 @@ claude --debug
 
 ## Share Skills with your team
 
-**Recommended approach**: Distribute Skills through [plugins](/en/docs/claude-code/plugins).
+**Recommended approach**: Distribute Skills through [plugins](/en/plugins).
 
 To share Skills via plugin:
 
@@ -269,7 +269,7 @@ To share Skills via plugin:
 2. Add the plugin to a marketplace
 3. Team members install the plugin
 
-For complete instructions, see [Add Skills to your plugin](/en/docs/claude-code/plugins#add-skills-to-your-plugin).
+For complete instructions, see [Add Skills to your plugin](/en/plugins#add-skills-to-your-plugin).
 
 You can also share Skills directly through project repositories:
 
