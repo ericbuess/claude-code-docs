@@ -21,7 +21,7 @@ if [[ -f "$TEMPLATE_PATH" ]]; then
     }
 else
     echo "❌ Error: Standard template not found at $TEMPLATE_PATH"
-    echo "   Please reinstall: curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash"
+    echo "   Please reinstall: curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash"
     exit 1
 fi
 
