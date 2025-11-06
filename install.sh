@@ -2,7 +2,12 @@
 set -euo pipefail
 
 # Claude Code Docs Installer v0.3.4 - Enhanced edition with extended documentation coverage
-# This script installs/migrates claude-code-docs to ~/.claude-code-docs
+# This script installs claude-code-docs to ~/.claude-code-docs
+# Installation Strategy: Always perform a fresh installation at the fixed location
+#   1. Remove any existing installation at ~/.claude-code-docs (with user confirmation)
+#   2. Clone fresh from GitHub
+#   3. Set up commands and hooks
+#   4. Clean up any old installations in other locations
 
 echo "Claude Code Docs Installer v0.3.4"
 echo "==============================="
@@ -36,6 +41,60 @@ for cmd in git jq curl; do
     fi
 done
 echo "✓ All dependencies satisfied"
+
+
+# Function to check and remove existing installation at ~/.claude-code-docs
+check_and_remove_existing_install() {
+    # Check if installation directory already exists
+    if [[ ! -d "$INSTALL_DIR" ]]; then
+        return 0  # Nothing to remove
+    fi
+
+    echo ""
+    echo "⚠️  Existing installation detected at: $INSTALL_DIR"
+    echo ""
+
+    # Check for uncommitted changes if it's a git repo
+    local has_uncommitted_changes=false
+    if [[ -d "$INSTALL_DIR/.git" ]]; then
+        local original_dir=$(pwd)
+        if cd "$INSTALL_DIR" 2>/dev/null; then
+            if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
+                has_uncommitted_changes=true
+            fi
+            cd "$original_dir" || exit 1
+        fi
+    fi
+
+    # Show what will be deleted
+    echo "This installation will be completely removed to ensure a clean installation."
+
+    if [[ "$has_uncommitted_changes" == "true" ]]; then
+        echo ""
+        echo "⚠️  WARNING: This directory has uncommitted changes!"
+        echo "   All local modifications will be lost."
+        echo ""
+        read -p "Continue and delete existing installation? [y/N]: " -n 1 -r
+    else
+        echo ""
+        read -p "Continue and delete existing installation? [y/N]: " -n 1 -r
+    fi
+
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo ""
+        echo "Installation cancelled."
+        echo "Your existing installation is preserved at: $INSTALL_DIR"
+        exit 0
+    fi
+
+    # Remove the directory
+    echo ""
+    echo "Removing existing installation..."
+    rm -rf "$INSTALL_DIR"
+    echo "✓ Existing installation removed"
+    echo ""
+}
 
 
 # Function to find existing installations from configs
@@ -114,188 +173,6 @@ find_existing_installations() {
     fi
 }
 
-# Function to migrate from old location
-migrate_installation() {
-    local old_dir="$1"
-    
-    echo "📦 Found existing installation at: $old_dir"
-    echo "   Migrating to: $INSTALL_DIR"
-    echo ""
-    
-    # Check if old dir has uncommitted changes
-    local should_preserve=false
-    if [[ -d "$old_dir/.git" ]]; then
-        cd "$old_dir"
-        if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
-            should_preserve=true
-            echo "⚠️  Uncommitted changes detected in old installation"
-        fi
-        cd - >/dev/null
-    fi
-    
-    # Fresh install at new location
-    echo "Installing fresh at ~/.claude-code-docs..."
-    git clone -b "$INSTALL_BRANCH" https://github.com/costiash/claude-code-docs.git "$INSTALL_DIR"
-    cd "$INSTALL_DIR"
-    
-    # Remove old directory if safe
-    if [[ "$should_preserve" == "false" ]]; then
-        echo "Removing old installation..."
-        rm -rf "$old_dir"
-        echo "✓ Old installation removed"
-    else
-        echo ""
-        echo "ℹ️  Old installation preserved at: $old_dir"
-        echo "   (has uncommitted changes)"
-    fi
-    
-    echo ""
-    echo "✅ Migration complete!"
-}
-
-# Function to safely update git repository
-safe_git_update() {
-    local repo_dir="$1"
-    cd "$repo_dir"
-    
-    # Get current branch
-    local current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
-    
-    # Determine which branch to use - always use installer's target branch
-    local target_branch="$INSTALL_BRANCH"
-    
-    # Note: Simplified branch switching - no longer need v0.3.1 upgrade detection
-    
-    # If we're on a different branch or have conflicts, we need to switch
-    if [[ "$current_branch" != "$target_branch" ]]; then
-        echo "  Switching from $current_branch to $target_branch branch..."
-    else
-        echo "  Updating $target_branch branch..."
-    fi
-    
-    # Set git config for pull strategy if not set
-    if ! git config pull.rebase >/dev/null 2>&1; then
-        git config pull.rebase false
-    fi
-    
-    echo "Updating to latest version..."
-    
-    # Note: Old v0.3.1 upgrade logic removed - new branch switching logic handles all cases
-    
-    # Try regular pull first (use target branch)
-    if git pull --quiet origin "$target_branch" 2>/dev/null; then
-        return 0
-    fi
-    
-    # If pull failed, try more aggressive approach
-    echo "  Standard update failed, trying harder..."
-    
-    # Fetch latest
-    if ! git fetch origin "$target_branch" 2>/dev/null; then
-        echo "  ⚠️  Could not fetch from GitHub (offline?)"
-        return 1
-    fi
-    
-    # If we're switching branches, skip the change detection - just force clean
-    if [[ "$current_branch" != "$target_branch" ]]; then
-        echo "  Branch switch detected, forcing clean state..."
-        local needs_user_confirmation=false
-    else
-        # Check what kind of changes we have (only when staying on same branch)
-        local has_conflicts=false
-        local has_local_changes=false
-        local has_untracked=false
-        local needs_user_confirmation=false
-        
-        # Check for merge conflicts (but ignore conflicts on docs_manifest.json - that's expected)
-        local non_manifest_conflicts=$(git status --porcelain | grep "^UU\|^AA\|^DD" | grep -v "docs/docs_manifest.json" 2>/dev/null)
-        if [[ -n "$non_manifest_conflicts" ]]; then
-            has_conflicts=true
-            needs_user_confirmation=true
-        fi
-        
-        # Check for uncommitted changes (but ignore docs_manifest.json - that's expected)
-        local non_manifest_changes=$(git status --porcelain | grep -v "docs/docs_manifest.json" 2>/dev/null)
-        if [[ -n "$non_manifest_changes" ]]; then
-            has_local_changes=true
-            needs_user_confirmation=true
-        fi
-        
-        # Check for untracked files (but ignore common temp files)
-        if git status --porcelain | grep "^??" | grep -v -E "\.(tmp|log|swp)$" | grep -q . 2>/dev/null; then
-            has_untracked=true
-            needs_user_confirmation=true
-        fi
-    fi
-    
-    # If we have significant changes, ask user for confirmation
-    if [[ "$needs_user_confirmation" == "true" ]]; then
-        echo ""
-        echo "⚠️  WARNING: Local changes detected in your installation:"
-        if [[ "$has_conflicts" == "true" ]]; then
-            echo "  • Merge conflicts need resolution"
-        fi
-        if [[ "$has_local_changes" == "true" ]]; then
-            echo "  • Modified files (other than docs_manifest.json)"
-        fi
-        if [[ "$has_untracked" == "true" ]]; then
-            echo "  • Untracked files"
-        fi
-        echo ""
-        echo "The installer will reset to a clean state, discarding these changes."
-        echo "Note: Changes to docs_manifest.json are handled automatically."
-        echo ""
-        read -p "Continue and discard local changes? [y/N]: " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            echo "Installation cancelled. Your local changes are preserved."
-            echo "To proceed later, either:"
-            echo "  1. Manually resolve the issues, or"
-            echo "  2. Run the installer again and choose 'y' to discard changes"
-            return 1
-        fi
-        echo "  Proceeding with clean installation..."
-    else
-        # If only manifest changes/conflicts (or no changes), proceed silently
-        local manifest_only_changes=$(git status --porcelain | grep "docs/docs_manifest.json" 2>/dev/null)
-        if [[ -n "$manifest_only_changes" ]]; then
-            local conflict_type=$(echo "$manifest_only_changes" | grep "^UU")
-            if [[ -n "$conflict_type" ]]; then
-                echo "  Resolving manifest file conflicts automatically..."
-            else
-                echo "  Handling manifest file updates automatically..."
-            fi
-        fi
-    fi
-    
-    # Force clean state - handle any conflicts, merges, or messy states
-    if [[ "$needs_user_confirmation" == "true" ]]; then
-        echo "  Forcing clean update (discarding local changes)..."
-    else
-        echo "  Updating to clean state..."
-    fi
-    
-    # Abort any in-progress merge/rebase
-    git merge --abort >/dev/null 2>&1 || true
-    git rebase --abort >/dev/null 2>&1 || true
-    
-    # Clear any stale index
-    git reset >/dev/null 2>&1 || true
-    
-    # Force checkout target branch (handles detached HEAD, wrong branch, etc.)
-    git checkout -B "$target_branch" "origin/$target_branch" >/dev/null 2>&1
-    
-    # Reset to clean state (discards all local changes - user confirmed if needed)
-    git reset --hard "origin/$target_branch" >/dev/null 2>&1
-    
-    # Clean any untracked files that might interfere
-    git clean -fd >/dev/null 2>&1 || true
-    
-    echo "  ✓ Updated successfully to clean state"
-    
-    return 0
-}
-
 # Function to check if enhanced features are available
 check_enhanced_features() {
     # Check Python version (need 3.12+)
@@ -347,14 +224,18 @@ cleanup_old_installations() {
         
         # Check if it has uncommitted changes
         if [[ -d "$old_dir/.git" ]]; then
-            cd "$old_dir"
-            if [[ -z "$(git status --porcelain 2>/dev/null)" ]]; then
-                cd - >/dev/null
-                rm -rf "$old_dir"
-                echo "    ✓ Removed (clean)"
+            local original_dir=$(pwd)
+            if cd "$old_dir" 2>/dev/null; then
+                if [[ -z "$(git status --porcelain 2>/dev/null)" ]]; then
+                    cd "$original_dir" || exit 1
+                    rm -rf "$old_dir"
+                    echo "    ✓ Removed (clean)"
+                else
+                    cd "$original_dir" || exit 1
+                    echo "    ⚠️  Preserved (has uncommitted changes)"
+                fi
             else
-                cd - >/dev/null
-                echo "    ⚠️  Preserved (has uncommitted changes)"
+                echo "    ⚠️  Could not access directory"
             fi
         else
             echo "    ⚠️  Preserved (not a git repo)"
@@ -365,8 +246,11 @@ cleanup_old_installations() {
 # Main installation logic
 echo ""
 
-# Always find old installations first (before any config changes)
-echo "Checking for existing installations..."
+# STAGE 1: Check and remove existing installation at fixed location
+check_and_remove_existing_install
+
+# STAGE 2: Find old installations from configs (for cleanup later)
+echo "Checking for existing installations in other locations..."
 existing_installs=()
 while IFS= read -r line; do
     [[ -n "$line" ]] && existing_installs+=("$line")
@@ -378,36 +262,62 @@ else
 fi
 
 if [[ ${#existing_installs[@]} -gt 0 ]]; then
-    echo "Found ${#existing_installs[@]} existing installation(s):"
+    echo "Found ${#existing_installs[@]} old installation(s) in other locations:"
     for install in "${existing_installs[@]}"; do
         echo "  - $install"
     done
     echo ""
-fi
-
-# Check if already installed at new location
-if [[ -d "$INSTALL_DIR" && -f "$INSTALL_DIR/docs/docs_manifest.json" ]]; then
-    echo "✓ Found installation at ~/.claude-code-docs"
-    echo "  Updating to latest version..."
-    
-    # Update it safely
-    safe_git_update "$INSTALL_DIR"
-    cd "$INSTALL_DIR"
+    echo "These will be cleaned up after installation."
 else
-    # Need to install at new location
-    if [[ ${#existing_installs[@]} -gt 0 ]]; then
-        # Migrate from old location
-        old_install="${existing_installs[0]}"
-        migrate_installation "$old_install"
-    else
-        # Fresh installation
-        echo "No existing installation found"
-        echo "Installing fresh to ~/.claude-code-docs..."
-
-        git clone -b "$INSTALL_BRANCH" https://github.com/costiash/claude-code-docs.git "$INSTALL_DIR"
-        cd "$INSTALL_DIR"
-    fi
+    echo "No installations found in other locations."
 fi
+
+# STAGE 3: Fresh installation at ~/.claude-code-docs (atomic)
+echo ""
+echo "Installing to ~/.claude-code-docs..."
+
+# Create a temporary directory for atomic installation
+TEMP_INSTALL_DIR=$(mktemp -d "${TMPDIR:-/tmp}/claude-code-docs.XXXXXXXXXX") || {
+    echo "❌ Error: Failed to create temporary directory"
+    echo "   Please check disk space and permissions"
+    exit 1
+}
+
+# Ensure temp directory is cleaned up on exit
+trap 'rm -rf "$TEMP_INSTALL_DIR"' EXIT
+
+# Clone to temporary directory
+echo "  Downloading from GitHub..."
+if ! git clone -b "$INSTALL_BRANCH" https://github.com/costiash/claude-code-docs.git "$TEMP_INSTALL_DIR" 2>&1; then
+    echo ""
+    echo "❌ Error: Failed to clone repository from GitHub"
+    echo "   Possible causes:"
+    echo "     • No internet connection"
+    echo "     • GitHub is down"
+    echo "     • git is not installed correctly"
+    echo ""
+    echo "   Please check your network connection and try again"
+    exit 1
+fi
+
+echo "  Download complete, installing..."
+
+# Move to final location (atomic operation)
+if ! mv "$TEMP_INSTALL_DIR" "$INSTALL_DIR" 2>/dev/null; then
+    echo ""
+    echo "❌ Error: Failed to move installation to $INSTALL_DIR"
+    echo "   Please check permissions and try again"
+    exit 1
+fi
+
+# Remove trap since we've successfully moved the directory
+trap - EXIT
+
+cd "$INSTALL_DIR" || {
+    echo "❌ Error: Failed to access installation directory"
+    exit 1
+}
+echo "✓ Repository cloned successfully"
 
 # Now we're in $INSTALL_DIR, set up the new script-based system
 echo ""
