@@ -296,13 +296,43 @@ safe_git_update() {
     return 0
 }
 
+# Function to check if enhanced features are available
+check_enhanced_features() {
+    # Check Python version (need 3.12+)
+    if ! command -v python3 &> /dev/null; then
+        return 1
+    fi
+
+    local python_version=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")' 2>/dev/null || echo "0.0")
+    local python_major=$(echo "$python_version" | cut -d. -f1)
+    local python_minor=$(echo "$python_version" | cut -d. -f2)
+
+    if [[ "$python_major" -lt 3 ]] || [[ "$python_major" -eq 3 && "$python_minor" -lt 12 ]]; then
+        return 1
+    fi
+
+    # Check if paths_manifest.json exists with 449 paths
+    if [[ ! -f "$INSTALL_DIR/paths_manifest.json" ]]; then
+        return 1
+    fi
+
+    local path_count=$(python3 -c "import json; data=json.load(open('$INSTALL_DIR/paths_manifest.json')); print(data['metadata'].get('total_paths', 0))" 2>/dev/null || echo "0")
+
+    # Enhanced manifest has 449+ paths
+    if [[ "$path_count" -ge 400 ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Function to cleanup old installations
 cleanup_old_installations() {
     # Use the global OLD_INSTALLATIONS array that was populated before config updates
     if [[ ${#OLD_INSTALLATIONS[@]} -eq 0 ]]; then
         return
     fi
-    
+
     echo ""
     echo "Cleaning up old installations..."
     echo "Found ${#OLD_INSTALLATIONS[@]} old installation(s) to remove:"
@@ -511,7 +541,42 @@ echo "  /docs what's new  # See recent documentation changes"
 echo ""
 echo "🔄 Auto-updates: Enabled - syncs automatically when GitHub has newer content"
 echo ""
-echo "Available topics:"
-ls "$INSTALL_DIR/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 60
+
+# Check if enhanced features are available and show appropriate message
+if check_enhanced_features; then
+    echo "✨ Enhanced Edition Features:"
+    echo ""
+
+    # Show category summary
+    python3 -c "
+import json
+data = json.load(open('$INSTALL_DIR/paths_manifest.json'))
+total = data['metadata']['total_paths']
+cats = data['categories']
+
+print(f'📚 Documentation Coverage: {total} paths across 7 categories')
+print('')
+print('Categories:')
+for i, (cat, paths) in enumerate(cats.items(), 1):
+    cat_name = cat.replace('_', ' ').title()
+    print(f'  {i}. {cat_name}: {len(paths)} paths')
+
+print('')
+print('Enhanced Commands:')
+print('  ~/.claude-code-docs/claude-docs-helper.sh --search \"keyword\"')
+print('  ~/.claude-code-docs/claude-docs-helper.sh --status')
+print('  ~/.claude-code-docs/claude-docs-helper.sh --help')
+" 2>/dev/null || {
+        # Fallback if Python fails
+        echo "📚 Enhanced features available (449 paths)"
+        echo "   Run: ~/.claude-code-docs/claude-docs-helper.sh --status"
+    }
+else
+    echo "Available topics (standard mode):"
+    ls "$INSTALL_DIR/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 60
+    echo ""
+    echo "💡 Tip: Install Python 3.12+ for enhanced features (449 paths, full-text search)"
+fi
+
 echo ""
 echo "⚠️  Note: Restart Claude Code for auto-updates to take effect"
