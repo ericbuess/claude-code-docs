@@ -136,7 +136,7 @@ export DISABLE_PROMPT_CACHING=1
 ```
 
 <Note>
-  [Prompt caching](/en/docs/build-with-claude/prompt-caching) may not be available in all regions
+  [Prompt caching](https://docs.claude.com/en/docs/build-with-claude/prompt-caching) may not be available in all regions
 </Note>
 
 ### 5. Output token configuration

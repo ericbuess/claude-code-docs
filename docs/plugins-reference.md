@@ -87,7 +87,7 @@ skills/
 For SKILL.md format and complete Skill authoring guidance, see:
 
 * [Use Skills in Claude Code](/en/skills)
-* [Agent Skills overview](/en/docs/agents-and-tools/agent-skills/overview#skill-structure)
+* [Agent Skills overview](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview#skill-structure)
 
 ### Hooks
 

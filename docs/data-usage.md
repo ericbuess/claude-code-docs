@@ -39,7 +39,7 @@ Anthropic retains Claude Code data based on your account type and preferences.
 
 * Users who allow data use for model improvement: 5-year retention period to support model development and safety improvements
 * Users who don't allow data use for model improvement: 30-day retention period
-* Privacy settings can be changed at any time at [claude.ai/settings/data-privacy-controls](claude.ai/settings/data-privacy-controls).
+* Privacy settings can be changed at any time at [claude.ai/settings/data-privacy-controls](https://claude.ai/settings/data-privacy-controls).
 
 **Commercial users (Team, Enterprise, and API)**:
 

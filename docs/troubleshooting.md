@@ -252,7 +252,7 @@ Then restart WSL with `wsl --shutdown` from PowerShell.
   These networking issues only affect WSL2. WSL1 uses the host's network directly and doesn't require these configurations.
 </Note>
 
-For additional JetBrains configuration tips, see our [IDE integration guide](/en/ide-integrations#jetbrains-plugin-settings).
+For additional JetBrains configuration tips, see our [IDE integration guide](/en/vs-code#jetbrains-plugin-settings).
 
 ### Reporting Windows IDE integration issues (both native and WSL)
 

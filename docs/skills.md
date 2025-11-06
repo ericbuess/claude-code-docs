@@ -22,7 +22,7 @@ Agent Skills package expertise into discoverable capabilities. Each Skill consis
 * Reduce repetitive prompting
 * Compose multiple Skills for complex tasks
 
-Learn more in the [Agent Skills overview](/en/docs/agents-and-tools/agent-skills/overview).
+Learn more in the [Agent Skills overview](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview).
 
 <Note>
   For a deep dive into the architecture and real-world applications of Agent Skills, read our engineering blog: [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills).
@@ -92,7 +92,7 @@ Show concrete examples of using this Skill.
 
 The `description` field is critical for Claude to discover when to use your Skill. It should include both what the Skill does and when Claude should use it.
 
-See the [best practices guide](/en/docs/agents-and-tools/agent-skills/best-practices) for complete authoring guidance including validation rules.
+See the [best practices guide](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices) for complete authoring guidance including validation rules.
 
 ## Add supporting files
 
@@ -589,19 +589,19 @@ Claude loads additional files only when needed.
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Authoring best practices" icon="lightbulb" href="/en/docs/agents-and-tools/agent-skills/best-practices">
+  <Card title="Authoring best practices" icon="lightbulb" href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices">
     Write Skills that Claude can use effectively
   </Card>
 
-  <Card title="Agent Skills overview" icon="book" href="/en/docs/agents-and-tools/agent-skills/overview">
+  <Card title="Agent Skills overview" icon="book" href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview">
     Learn how Skills work across Claude products
   </Card>
 
-  <Card title="Use Skills in the Agent SDK" icon="cube" href="https://docs.claude.com/en/api/agent-sdk/skills">
+  <Card title="Use Skills in the Agent SDK" icon="cube" href="https://docs.claude.com/enhttps://docs.claude.com/en/api/agent-sdk/skills">
     Use Skills programmatically with TypeScript and Python
   </Card>
 
-  <Card title="Get started with Agent Skills" icon="rocket" href="/en/docs/agents-and-tools/agent-skills/quickstart">
+  <Card title="Get started with Agent Skills" icon="rocket" href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/quickstart">
     Create your first Skill
   </Card>
 </CardGroup>

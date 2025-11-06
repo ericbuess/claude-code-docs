@@ -10,18 +10,18 @@
 
 ### General controls
 
-| Shortcut                                     | Description                                                              | Context                                                     |
-| :------------------------------------------- | :----------------------------------------------------------------------- | :---------------------------------------------------------- |
-| `Ctrl+C`                                     | Cancel current input or generation                                       | Standard interrupt                                          |
-| `Ctrl+D`                                     | Exit Claude Code session                                                 | EOF signal                                                  |
-| `Ctrl+L`                                     | Clear terminal screen                                                    | Keeps conversation history                                  |
-| `Ctrl+O`                                     | Toggle verbose output                                                    | Shows detailed tool usage and execution                     |
-| `Ctrl+R`                                     | Reverse search command history                                           | Search through previous commands interactively              |
-| `Ctrl+V` (macOS/Linux) or `Alt+V` (Windows)  | Paste image from clipboard                                               | Pastes an image or path to an image file                    |
-| `Up/Down arrows`                             | Navigate command history                                                 | Recall previous inputs                                      |
-| `Esc` + `Esc`                                | Rewind the code/conversation                                             | Restore the code and/or conversation to a previous point    |
-| `Tab`                                        | Toggle [extended thinking](/en/docs/build-with-claude/extended-thinking) | Switch between Thinking on and Thinking off                 |
-| `Shift+Tab` or `Alt+M` (some configurations) | Toggle permission modes                                                  | Switch between Auto-Accept Mode, Plan Mode, and normal mode |
+| Shortcut                                     | Description                                                                                     | Context                                                     |
+| :------------------------------------------- | :---------------------------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| `Ctrl+C`                                     | Cancel current input or generation                                                              | Standard interrupt                                          |
+| `Ctrl+D`                                     | Exit Claude Code session                                                                        | EOF signal                                                  |
+| `Ctrl+L`                                     | Clear terminal screen                                                                           | Keeps conversation history                                  |
+| `Ctrl+O`                                     | Toggle verbose output                                                                           | Shows detailed tool usage and execution                     |
+| `Ctrl+R`                                     | Reverse search command history                                                                  | Search through previous commands interactively              |
+| `Ctrl+V` (macOS/Linux) or `Alt+V` (Windows)  | Paste image from clipboard                                                                      | Pastes an image or path to an image file                    |
+| `Up/Down arrows`                             | Navigate command history                                                                        | Recall previous inputs                                      |
+| `Esc` + `Esc`                                | Rewind the code/conversation                                                                    | Restore the code and/or conversation to a previous point    |
+| `Tab`                                        | Toggle [extended thinking](https://docs.claude.com/en/docs/build-with-claude/extended-thinking) | Switch between Thinking on and Thinking off                 |
+| `Shift+Tab` or `Alt+M` (some configurations) | Toggle permission modes                                                                         | Switch between Auto-Accept Mode, Plan Mode, and normal mode |
 
 ### Multiline input
 

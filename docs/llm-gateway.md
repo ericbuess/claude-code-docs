@@ -131,7 +131,7 @@ export CLOUD_ML_REGION=us-east5
 
 ### Model selection
 
-By default, the models will use those specified in [Model configuration](/en/bedrock-vertex-proxies#model-configuration).
+By default, the models will use those specified in [Model configuration](/en/third-party-integrations#model-configuration).
 
 If you have configured custom model names in LiteLLM, set the aforementioned environment variables to those custom names.
 

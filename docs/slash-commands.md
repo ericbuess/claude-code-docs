@@ -187,7 +187,7 @@ Command files support frontmatter, useful for specifying metadata about the comm
 | `allowed-tools`            | List of tools the command can use                                                                                                                                                     | Inherits from the conversation      |
 | `argument-hint`            | The arguments expected for the slash command. Example: `argument-hint: add [tagId] \| remove [tagId] \| list`. This hint is shown to the user when auto-completing the slash command. | None                                |
 | `description`              | Brief description of the command                                                                                                                                                      | Uses the first line from the prompt |
-| `model`                    | Specific model string (see [Models overview](/en/docs/about-claude/models/overview))                                                                                                  | Inherits from the conversation      |
+| `model`                    | Specific model string (see [Models overview](https://docs.claude.com/en/docs/about-claude/models/overview))                                                                           | Inherits from the conversation      |
 | `disable-model-invocation` | Whether to prevent `SlashCommand` tool from calling this command                                                                                                                      | false                               |
 
 For example:
