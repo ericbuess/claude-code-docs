@@ -1071,6 +1071,33 @@ You can use this in Claude Desktop by adding this configuration to claude\_deskt
 }
 ```
 
+<Warning>
+  **Configuring the executable path**: The `command` field must reference the Claude Code executable. If the `claude` command is not in your system's PATH, you'll need to specify the full path to the executable.
+
+  To find the full path:
+
+  ```bash  theme={null}
+  which claude
+  ```
+
+  Then use the full path in your configuration:
+
+  ```json  theme={null}
+  {
+    "mcpServers": {
+      "claude-code": {
+        "type": "stdio",
+        "command": "/full/path/to/claude",
+        "args": ["mcp", "serve"],
+        "env": {}
+      }
+    }
+  }
+  ```
+
+  Without the correct executable path, you'll encounter errors like `spawn claude ENOENT`.
+</Warning>
+
 <Tip>
   Tips:
 
@@ -1265,5 +1292,5 @@ In addition to providing enterprise-managed servers, administrators can control 
 * **Denylist takes absolute precedence**: If a server appears in both lists, it will be blocked
 
 <Note>
-  **Enterprise configuration precedence**: The enterprise MCP configuration has the highest precedence and cannot be overridden by user, local, or project configurations when `useEnterpriseMcpConfigOnly` is enabled.
+  **Enterprise configuration precedence**: The enterprise MCP configuration has the highest precedence and cannot be overridden by user, local, or project configurations.
 </Note>

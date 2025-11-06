@@ -8,26 +8,35 @@
 | :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/add-dir`                | Add additional working directories                                                                                                           |
 | `/agents`                 | Manage custom AI subagents for specialized tasks                                                                                             |
+| `/bashes`                 | List and manage background tasks                                                                                                             |
 | `/bug`                    | Report bugs (sends conversation to Anthropic)                                                                                                |
 | `/clear`                  | Clear conversation history                                                                                                                   |
 | `/compact [instructions]` | Compact conversation with optional focus instructions                                                                                        |
 | `/config`                 | Open the Settings interface (Config tab)                                                                                                     |
+| `/context`                | Visualize current context usage as a colored grid                                                                                            |
 | `/cost`                   | Show token usage statistics (see [cost tracking guide](/en/docs/claude-code/costs#using-the-cost-command) for subscription-specific details) |
 | `/doctor`                 | Checks the health of your Claude Code installation                                                                                           |
+| `/exit`                   | Exit the REPL                                                                                                                                |
+| `/export [filename]`      | Export the current conversation to a file or clipboard                                                                                       |
 | `/help`                   | Get usage help                                                                                                                               |
+| `/hooks`                  | Manage hook configurations for tool events                                                                                                   |
 | `/init`                   | Initialize project with CLAUDE.md guide                                                                                                      |
 | `/login`                  | Switch Anthropic accounts                                                                                                                    |
 | `/logout`                 | Sign out from your Anthropic account                                                                                                         |
 | `/mcp`                    | Manage MCP server connections and OAuth authentication                                                                                       |
 | `/memory`                 | Edit CLAUDE.md memory files                                                                                                                  |
 | `/model`                  | Select or change the AI model                                                                                                                |
+| `/output-style [style]`   | Set the output style directly or from a selection menu                                                                                       |
 | `/permissions`            | View or update [permissions](/en/docs/claude-code/iam#configuring-permissions)                                                               |
 | `/pr_comments`            | View pull request comments                                                                                                                   |
+| `/privacy-settings`       | View and update your privacy settings                                                                                                        |
 | `/review`                 | Request code review                                                                                                                          |
 | `/sandbox`                | Enable sandboxed bash tool with filesystem and network isolation for safer, more autonomous execution                                        |
 | `/rewind`                 | Rewind the conversation and/or code                                                                                                          |
 | `/status`                 | Open the Settings interface (Status tab) showing version, model, account, and connectivity                                                   |
+| `/statusline`             | Set up Claude Code's status line UI                                                                                                          |
 | `/terminal-setup`         | Install Shift+Enter key binding for newlines (iTerm2 and VSCode only)                                                                        |
+| `/todos`                  | List current todo items                                                                                                                      |
 | `/usage`                  | Show plan usage limits and rate limit status (subscription plans only)                                                                       |
 | `/vim`                    | Enter vim mode for alternating insert and command modes                                                                                      |
 
