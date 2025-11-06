@@ -65,7 +65,7 @@ Claude Code is built on Anthropic's APIs. For details regarding our API's securi
   The above data flow diagram and description applies to Claude Code CLI running locally on your machine. For cloud-based sessions using Claude Code on the web, see the section below.
 </Note>
 
-When using [Claude Code on the web](/en/docs/claude-code/claude-code-on-the-web), sessions run in Anthropic-managed virtual machines instead of locally. In cloud environments:
+When using [Claude Code on the web](/en/claude-code-on-the-web), sessions run in Anthropic-managed virtual machines instead of locally. In cloud environments:
 
 * **Code storage**: Your repository is cloned to an isolated VM and automatically deleted after session completion
 * **Credentials**: GitHub authentication is handled through a secure proxy; your GitHub credentials never enter the sandbox
@@ -73,7 +73,7 @@ When using [Claude Code on the web](/en/docs/claude-code/claude-code-on-the-web)
 * **Data retention**: Code and session data are subject to the retention and usage policies for your account type
 * **Session data**: Prompts, code changes, and outputs follow the same data policies as local Claude Code usage
 
-For security details about cloud execution, see [Security](/en/docs/claude-code/security#cloud-execution-security).
+For security details about cloud execution, see [Security](/en/security#cloud-execution-security).
 
 ## Telemetry services
 
@@ -93,4 +93,4 @@ By default, we disable all non-essential traffic (including error reporting, tel
 | **Sentry (Errors)**             | Default on.<br />`DISABLE_ERROR_REPORTING=1` to disable. | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1. | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1. |
 | **Claude API (`/bug` reports)** | Default on.<br />`DISABLE_BUG_COMMAND=1` to disable.     | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1. | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1. |
 
-All environment variables can be checked into `settings.json` ([read more](/en/docs/claude-code/settings)).
+All environment variables can be checked into `settings.json` ([read more](/en/settings)).

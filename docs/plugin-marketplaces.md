@@ -237,7 +237,7 @@ For plugins in the same repository:
 
 #### Advanced plugin entries
 
-Plugin entries can override default component locations and provide additional metadata. Note that `${CLAUDE_PLUGIN_ROOT}` is an environment variable that resolves to the plugin's installation directory (for details see [Environment variables](/en/docs/claude-code/plugins-reference#environment-variables)):
+Plugin entries can override default component locations and provide additional metadata. Note that `${CLAUDE_PLUGIN_ROOT}` is an environment variable that resolves to the plugin's installation directory (for details see [Environment variables](/en/plugins-reference#environment-variables)):
 
 ```json  theme={null}
 {
@@ -400,7 +400,7 @@ claude plugin validate .
 /plugin install test-plugin@marketplace-name
 ```
 
-For complete plugin testing workflows, see [Test your plugins locally](/en/docs/claude-code/plugins#test-your-plugins-locally). For technical troubleshooting, see [Plugins reference](/en/docs/claude-code/plugins-reference).
+For complete plugin testing workflows, see [Test your plugins locally](/en/plugins#test-your-plugins-locally). For technical troubleshooting, see [Plugins reference](/en/plugins-reference).
 
 ***
 
@@ -427,7 +427,7 @@ For complete plugin testing workflows, see [Test your plugins locally](/en/docs/
 
 ## See also
 
-* [Plugins](/en/docs/claude-code/plugins) - Installing and using plugins
-* [Plugins reference](/en/docs/claude-code/plugins-reference) - Complete technical specifications and schemas
-* [Plugin development](/en/docs/claude-code/plugins#develop-more-complex-plugins) - Creating your own plugins
-* [Settings](/en/docs/claude-code/settings#plugin-configuration) - Plugin configuration options
+* [Plugins](/en/plugins) - Installing and using plugins
+* [Plugins reference](/en/plugins-reference) - Complete technical specifications and schemas
+* [Plugin development](/en/plugins#develop-more-complex-plugins) - Creating your own plugins
+* [Settings](/en/settings#plugin-configuration) - Plugin configuration options

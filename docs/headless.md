@@ -33,7 +33,7 @@ Headless mode leverages all the CLI options available in Claude Code. Here are t
 | `--mcp-config`             | Load MCP servers from a JSON file                                                                      | `claude --mcp-config servers.json`                                                                                        |
 | `--permission-prompt-tool` | MCP tool for handling permission prompts (only with `--print`)                                         | `claude --permission-prompt-tool mcp__auth__prompt`                                                                       |
 
-For a complete list of CLI options and features, see the [CLI reference](/en/docs/claude-code/cli-reference) documentation.
+For a complete list of CLI options and features, see the [CLI reference](/en/cli-reference) documentation.
 
 ## Multi-turn conversations
 
@@ -200,5 +200,5 @@ claude -p --resume "$session_id" "Generate executive summary of risks"
 
 ## Related Resources
 
-* [CLI usage and controls](/en/docs/claude-code/cli-reference) - Complete CLI documentation
-* [Common workflows](/en/docs/claude-code/common-workflows) - Step-by-step guides for common use cases
+* [CLI usage and controls](/en/cli-reference) - Complete CLI documentation
+* [Common workflows](/en/common-workflows) - Step-by-step guides for common use cases

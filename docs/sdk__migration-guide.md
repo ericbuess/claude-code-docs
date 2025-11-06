@@ -317,7 +317,7 @@ If you encounter any issues during migration:
 2. Verify your requirements.txt or pyproject.toml has the new package name
 3. Run `pip install claude-agent-sdk` to ensure the package is installed
 
-See the [Troubleshooting](/en/docs/claude-code/troubleshooting) guide for common issues.
+See the [Troubleshooting](/en/troubleshooting) guide for common issues.
 
 ## Next Steps
 

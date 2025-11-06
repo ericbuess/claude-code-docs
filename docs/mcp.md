@@ -729,7 +729,7 @@ claude mcp remove github
 
 ### Plugin-provided MCP servers
 
-[Plugins](/en/docs/claude-code/plugins) can bundle MCP servers, automatically providing tools and integrations when the plugin is enabled. Plugin MCP servers work identically to user-configured servers.
+[Plugins](/en/plugins) can bundle MCP servers, automatically providing tools and integrations when the plugin is enabled. Plugin MCP servers work identically to user-configured servers.
 
 **How plugin MCP servers work**:
 
@@ -790,7 +790,7 @@ Plugin servers appear in the list with indicators showing they come from plugins
 * **Automatic setup**: No manual MCP configuration needed
 * **Team consistency**: Everyone gets the same tools when plugin is installed
 
-See the [plugin components reference](/en/docs/claude-code/plugins-reference#mcp-servers) for details on bundling MCP servers with plugins.
+See the [plugin components reference](/en/plugins-reference#mcp-servers) for details on bundling MCP servers with plugins.
 
 ## MCP installation scopes
 

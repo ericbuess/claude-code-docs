@@ -84,7 +84,7 @@ When subagent names conflict, project-level subagents take precedence over user-
 
 ### Plugin agents
 
-[Plugins](/en/docs/claude-code/plugins) can provide custom subagents that integrate seamlessly with Claude Code. Plugin agents work identically to user-defined agents and appear in the `/agents` interface.
+[Plugins](/en/plugins) can provide custom subagents that integrate seamlessly with Claude Code. Plugin agents work identically to user-defined agents and appear in the `/agents` interface.
 
 **Plugin agent locations**: Plugins include agents in their `agents/` directory (or custom paths specified in the plugin manifest).
 
@@ -95,7 +95,7 @@ When subagent names conflict, project-level subagents take precedence over user-
 * Can be invoked automatically by Claude when appropriate
 * Can be managed (viewed, inspected) through `/agents` interface
 
-See the [plugin components reference](/en/docs/claude-code/plugins-reference#agents) for details on creating plugin agents.
+See the [plugin components reference](/en/plugins-reference#agents) for details on creating plugin agents.
 
 ### CLI-based configuration
 
@@ -121,7 +121,7 @@ claude --agents '{
 * Automation scripts that need custom subagents
 * Sharing subagent definitions in documentation or scripts
 
-For detailed information about the JSON format and all available options, see the [CLI reference documentation](/en/docs/claude-code/cli-reference#agents-flag-format).
+For detailed information about the JSON format and all available options, see the [CLI reference documentation](/en/cli-reference#agents-flag-format).
 
 ### File format
 
@@ -145,16 +145,16 @@ the subagent should follow.
 
 #### Configuration fields
 
-| Field         | Required | Description                                                                                                                                                                                                                      |
-| :------------ | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`        | Yes      | Unique identifier using lowercase letters and hyphens                                                                                                                                                                            |
-| `description` | Yes      | Natural language description of the subagent's purpose                                                                                                                                                                           |
-| `tools`       | No       | Comma-separated list of specific tools. If omitted, inherits all tools from the main thread                                                                                                                                      |
-| `model`       | No       | Model to use for this subagent. Can be a model alias (`sonnet`, `opus`, `haiku`) or `'inherit'` to use the main conversation's model. If omitted, defaults to the [configured subagent model](/en/docs/claude-code/model-config) |
+| Field         | Required | Description                                                                                                                                                                                                     |
+| :------------ | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`        | Yes      | Unique identifier using lowercase letters and hyphens                                                                                                                                                           |
+| `description` | Yes      | Natural language description of the subagent's purpose                                                                                                                                                          |
+| `tools`       | No       | Comma-separated list of specific tools. If omitted, inherits all tools from the main thread                                                                                                                     |
+| `model`       | No       | Model to use for this subagent. Can be a model alias (`sonnet`, `opus`, `haiku`) or `'inherit'` to use the main conversation's model. If omitted, defaults to the [configured subagent model](/en/model-config) |
 
 ### Model selection
 
-The `model` field allows you to control which [AI model](/en/docs/claude-code/model-config) the subagent uses:
+The `model` field allows you to control which [AI model](/en/model-config) the subagent uses:
 
 * **Model alias**: Use one of the available aliases: `sonnet`, `opus`, or `haiku`
 * **`'inherit'`**: Use the same model as the main conversation (useful for consistency)
@@ -166,7 +166,7 @@ The `model` field allows you to control which [AI model](/en/docs/claude-code/mo
 
 ### Available tools
 
-Subagents can be granted access to any of Claude Code's internal tools. See the [tools documentation](/en/docs/claude-code/settings#tools-available-to-claude) for a complete list of available tools.
+Subagents can be granted access to any of Claude Code's internal tools. See the [tools documentation](/en/settings#tools-available-to-claude) for a complete list of available tools.
 
 <Tip>
   **Recommended:** Use the `/agents` command to modify tool access - it provides an interactive interface that lists all available tools, including any connected MCP server tools, making it easier to select the ones you need.
@@ -473,7 +473,7 @@ If you're using the Agent SDK or interacting with the AgentTool directly, you ca
 
 ## Related documentation
 
-* [Plugins](/en/docs/claude-code/plugins) - Extend Claude Code with custom agents through plugins
-* [Slash commands](/en/docs/claude-code/slash-commands) - Learn about other built-in commands
-* [Settings](/en/docs/claude-code/settings) - Configure Claude Code behavior
-* [Hooks](/en/docs/claude-code/hooks) - Automate workflows with event handlers
+* [Plugins](/en/plugins) - Extend Claude Code with custom agents through plugins
+* [Slash commands](/en/slash-commands) - Learn about other built-in commands
+* [Settings](/en/settings) - Configure Claude Code behavior
+* [Hooks](/en/hooks) - Automate workflows with event handlers

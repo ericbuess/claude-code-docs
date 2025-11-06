@@ -65,15 +65,15 @@ The VS Code extension supports using Claude Code with third-party providers like
 
 For detailed setup instructions and additional configuration options, see:
 
-* [Claude Code on Amazon Bedrock](/en/docs/claude-code/amazon-bedrock)
-* [Claude Code on Google Vertex AI](/en/docs/claude-code/google-vertex-ai)
+* [Claude Code on Amazon Bedrock](/en/amazon-bedrock)
+* [Claude Code on Google Vertex AI](/en/google-vertex-ai)
 
 ### Not Yet Implemented
 
 The following features are not yet available in the VS Code extension:
 
-* **Full MCP server configuration**: You need to [configure MCP servers through the CLI](/en/docs/claude-code/mcp) first, then the extension will use them
-* **Subagents configuration**: Configure [subagents through the CLI](/en/docs/claude-code/sub-agents) to use them in VS Code
+* **Full MCP server configuration**: You need to [configure MCP servers through the CLI](/en/mcp) first, then the extension will use them
+* **Subagents configuration**: Configure [subagents through the CLI](/en/sub-agents) to use them in VS Code
 * **Checkpoints**: Save and restore conversation state at specific points
 * **Advanced shortcuts**:
   * `#` shortcut to add to memory
@@ -120,4 +120,4 @@ Both the extension and CLI integration work with Visual Studio Code, Cursor, Win
   1. Open command palette with `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux)
   2. Search for "Shell Command: Install 'code' command in PATH" (or equivalent for your IDE)
 
-For additional help, see our [troubleshooting guide](/en/docs/claude-code/troubleshooting).
+For additional help, see our [troubleshooting guide](/en/troubleshooting).

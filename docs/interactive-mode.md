@@ -42,7 +42,7 @@
 | Shortcut     | Description                        | Notes                                                         |
 | :----------- | :--------------------------------- | :------------------------------------------------------------ |
 | `#` at start | Memory shortcut - add to CLAUDE.md | Prompts for file selection                                    |
-| `/` at start | Slash command                      | See [slash commands](/en/docs/claude-code/slash-commands)     |
+| `/` at start | Slash command                      | See [slash commands](/en/slash-commands)                      |
 | `!` at start | Bash mode                          | Run commands directly and add execution output to the session |
 | `@`          | File path mention                  | Trigger file path autocomplete                                |
 
@@ -162,8 +162,8 @@ This is useful for quick shell operations while maintaining conversation context
 
 ## See also
 
-* [Slash commands](/en/docs/claude-code/slash-commands) - Interactive session commands
-* [Checkpointing](/en/docs/claude-code/checkpointing) - Rewind Claude's edits and restore previous states
-* [CLI reference](/en/docs/claude-code/cli-reference) - Command-line flags and options
-* [Settings](/en/docs/claude-code/settings) - Configuration options
-* [Memory management](/en/docs/claude-code/memory) - Managing CLAUDE.md files
+* [Slash commands](/en/slash-commands) - Interactive session commands
+* [Checkpointing](/en/checkpointing) - Rewind Claude's edits and restore previous states
+* [CLI reference](/en/cli-reference) - Command-line flags and options
+* [Settings](/en/settings) - Configuration options
+* [Memory management](/en/memory) - Managing CLAUDE.md files

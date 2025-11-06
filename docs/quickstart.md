@@ -20,25 +20,25 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **Homebrew (macOS, Linux):**
 
-    ```sh  theme={null}
+    ```sh theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
 
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
   </Tab>
@@ -46,7 +46,7 @@ To install Claude Code, use one of the following methods:
   <Tab title="NPM">
     If you have [Node.js 18 or newer installed](https://nodejs.org/en/download/):
 
-    ```sh  theme={null}
+    ```sh theme={null} theme={null} theme={null}
     npm install -g @anthropic-ai/claude-code
     ```
   </Tab>
@@ -93,7 +93,7 @@ claude
 You'll see the Claude Code welcome screen with your session information, recent conversations, and latest updates. Type `/help` for available commands or `/resume` to continue a previous conversation.
 
 <Tip>
-  After logging in (Step 2), your credentials are stored on your system. Learn more in [Credential Management](/en/docs/claude-code/iam#credential-management).
+  After logging in (Step 2), your credentials are stored on your system. Learn more in [Credential Management](/en/iam#credential-management).
 </Tip>
 
 ## Step 4: Ask your first question
@@ -252,7 +252,7 @@ Here are the most important commands for daily use:
 | `/help`             | Show available commands           | `> /help`                           |
 | `exit` or Ctrl+C    | Exit Claude Code                  | `> exit`                            |
 
-See the [CLI reference](/en/docs/claude-code/cli-reference) for a complete list of commands.
+See the [CLI reference](/en/cli-reference) for a complete list of commands.
 
 ## Pro tips for beginners
 

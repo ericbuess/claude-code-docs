@@ -3,12 +3,12 @@
 > This page provides reference documentation for implementing hooks in Claude Code.
 
 <Tip>
-  For a quickstart guide with examples, see [Get started with Claude Code hooks](/en/docs/claude-code/hooks-guide).
+  For a quickstart guide with examples, see [Get started with Claude Code hooks](/en/hooks-guide).
 </Tip>
 
 ## Configuration
 
-Claude Code hooks are configured in your [settings files](/en/docs/claude-code/settings):
+Claude Code hooks are configured in your [settings files](/en/settings):
 
 * `~/.claude/settings.json` - User settings
 * `.claude/settings.json` - Project settings
@@ -95,7 +95,7 @@ ensuring they work regardless of Claude's current directory:
 
 ### Plugin hooks
 
-[Plugins](/en/docs/claude-code/plugins) can provide hooks that integrate seamlessly with your user and project hooks. Plugin hooks are automatically merged with your configuration when plugins are enabled.
+[Plugins](/en/plugins) can provide hooks that integrate seamlessly with your user and project hooks. Plugin hooks are automatically merged with your configuration when plugins are enabled.
 
 **How plugin hooks work**:
 
@@ -140,7 +140,7 @@ ensuring they work regardless of Claude's current directory:
 * `${CLAUDE_PROJECT_DIR}`: Project root directory (same as for project hooks)
 * All standard environment variables are available
 
-See the [plugin components reference](/en/docs/claude-code/plugins-reference#hooks) for details on creating plugin hooks.
+See the [plugin components reference](/en/plugins-reference#hooks) for details on creating plugin hooks.
 
 ## Prompt-Based Hooks
 
@@ -270,7 +270,7 @@ Prompt-based hooks work with any hook event, but are most useful for:
 * **Set appropriate timeouts**: Default is 30 seconds, adjust if needed
 * **Use for complex decisions**: Bash hooks are better for simple, deterministic rules
 
-See the [plugin components reference](/en/docs/claude-code/plugins-reference#hooks) for details on creating plugin hooks.
+See the [plugin components reference](/en/plugins-reference#hooks) for details on creating plugin hooks.
 
 ## Hook Events
 
@@ -280,7 +280,7 @@ Runs after Claude creates tool parameters and before processing the tool call.
 
 **Common matchers:**
 
-* `Task` - Subagent tasks (see [subagents documentation](/en/docs/claude-code/sub-agents))
+* `Task` - Subagent tasks (see [subagents documentation](/en/sub-agents))
 * `Bash` - Shell commands
 * `Glob` - File pattern matching
 * `Grep` - Content search
@@ -871,7 +871,7 @@ sys.exit(0)
 ## Working with MCP Tools
 
 Claude Code hooks work seamlessly with
-[Model Context Protocol (MCP) tools](/en/docs/claude-code/mcp). When MCP servers
+[Model Context Protocol (MCP) tools](/en/mcp). When MCP servers
 provide tools, they appear with a special naming pattern that you can match in
 your hooks.
 
@@ -917,7 +917,7 @@ You can target specific MCP tools or entire MCP servers:
 ## Examples
 
 <Tip>
-  For practical examples including code formatting, notifications, and file protection, see [More Examples](/en/docs/claude-code/hooks-guide#more-examples) in the get started guide.
+  For practical examples including code formatting, notifications, and file protection, see [More Examples](/en/hooks-guide#more-examples) in the get started guide.
 </Tip>
 
 ## Security Considerations

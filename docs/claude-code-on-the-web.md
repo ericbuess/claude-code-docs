@@ -129,7 +129,7 @@ When you start a session in Claude Code on the web, here's what happens under th
 
 ### Dependency management
 
-Configure automatic dependency installation using [SessionStart hooks](/en/docs/claude-code/hooks#sessionstart). This can be configured in your repository's `.claude/settings.json` file:
+Configure automatic dependency installation using [SessionStart hooks](/en/hooks#sessionstart). This can be configured in your repository's `.claude/settings.json` file:
 
 ```json  theme={null}
 {
@@ -178,7 +178,7 @@ pip install -r requirements.txt
 
 #### Persisting environment variables
 
-SessionStart hooks can persist environment variables for subsequent bash commands by writing to the file specified in the `CLAUDE_ENV_FILE` environment variable. For details, see [SessionStart hooks](/en/docs/claude-code/hooks#sessionstart) in the hooks reference.
+SessionStart hooks can persist environment variables for subsequent bash commands by writing to the file specified in the `CLAUDE_ENV_FILE` environment variable. For details, see [SessionStart hooks](/en/hooks#sessionstart) in the hooks reference.
 
 ## Network access and security
 
@@ -464,12 +464,12 @@ Claude Code on the web shares rate limits with all other Claude and Claude Code 
 
 ## Best practices
 
-1. **Use Claude Code hooks**: Configure [sessionStart hooks](/en/docs/claude-code/hooks#sessionstart) to automate environment setup and dependency installation.
+1. **Use Claude Code hooks**: Configure [sessionStart hooks](/en/hooks#sessionstart) to automate environment setup and dependency installation.
 2. **Document requirements**: Clearly specify dependencies and commands in your `CLAUDE.md` file. If you have an `AGENTS.md` file, you can source it in your `CLAUDE.md` using `@AGENTS.md` to maintain a single source of truth.
 
 ## Related resources
 
-* [Hooks configuration](/en/docs/claude-code/hooks)
-* [Settings reference](/en/docs/claude-code/settings)
-* [Security](/en/docs/claude-code/security)
-* [Data usage](/en/docs/claude-code/data-usage)
+* [Hooks configuration](/en/hooks)
+* [Settings reference](/en/settings)
+* [Security](/en/security)
+* [Data usage](/en/data-usage)

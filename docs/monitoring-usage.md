@@ -45,7 +45,7 @@ For full configuration options, see the [OpenTelemetry specification](https://gi
 
 ## Administrator Configuration
 
-Administrators can configure OpenTelemetry settings for all users through the managed settings file. This allows for centralized control of telemetry settings across an organization. See the [settings precedence](/en/docs/claude-code/settings#settings-precedence) for more information about how settings are applied.
+Administrators can configure OpenTelemetry settings for all users through the managed settings file. This allows for centralized control of telemetry settings across an organization. See the [settings precedence](/en/settings#settings-precedence) for more information about how settings are applied.
 
 The managed settings file is located at:
 

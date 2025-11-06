@@ -104,7 +104,7 @@ The plugin must be installed on the remote host, not on your local client machin
 ### WSL Configuration
 
 <Warning>
-  WSL users may need additional configuration for IDE detection to work properly. See our [WSL troubleshooting guide](/en/docs/claude-code/troubleshooting#jetbrains-ide-not-detected-on-wsl2) for detailed setup instructions.
+  WSL users may need additional configuration for IDE detection to work properly. See our [WSL troubleshooting guide](/en/troubleshooting#jetbrains-ide-not-detected-on-wsl2) for detailed setup instructions.
 </Warning>
 
 WSL configuration may require:
@@ -127,7 +127,7 @@ WSL configuration may require:
 * Verify the plugin is installed and enabled
 * Restart the IDE completely
 * Check that you're running Claude Code from the integrated terminal
-* For WSL users, see the [WSL troubleshooting guide](/en/docs/claude-code/troubleshooting#jetbrains-ide-not-detected-on-wsl2)
+* For WSL users, see the [WSL troubleshooting guide](/en/troubleshooting#jetbrains-ide-not-detected-on-wsl2)
 
 ### Command Not Found
 
@@ -147,4 +147,4 @@ When running in JetBrains IDEs, consider:
 * Taking extra care to ensure Claude is only used with trusted prompts
 * Being aware of which files Claude Code has access to modify
 
-For additional help, see our [troubleshooting guide](/en/docs/claude-code/troubleshooting).
+For additional help, see our [troubleshooting guide](/en/troubleshooting).
