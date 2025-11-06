@@ -15,6 +15,7 @@ The VS Code extension provides:
 * **Native IDE experience**: Dedicated Claude Code sidebar panel accessed via the Spark icon
 * **Plan mode with editing**: Review and edit Claude's plans before accepting them
 * **Auto-accept edits mode**: Automatically apply Claude's changes as they're made
+* **Extended thinking**: Toggle extended thinking on/off using the Extended Thinking button in the bottom-right corner of the prompt input
 * **File management**: @-mention files or attach files and images using the system file picker
 * **MCP server usage**: Use Model Context Protocol servers configured through the CLI
 * **Conversation history**: Easy access to past conversations
@@ -72,13 +73,15 @@ For detailed setup instructions and additional configuration options, see:
 
 The following features are not yet available in the VS Code extension:
 
-* **Full MCP server configuration**: You need to [configure MCP servers through the CLI](/en/mcp) first, then the extension will use them
+* **MCP server and Plugin configuration UI**: Type `/mcp` to open the terminal-based MCP server configuration, or `/plugin` for Plugin configuration. Once configured, MCP servers and Plugins will work in the extension. You can also [configure MCP servers through the CLI](/en/mcp) first, then the extension will use them.
 * **Subagents configuration**: Configure [subagents through the CLI](/en/sub-agents) to use them in VS Code
 * **Checkpoints**: Save and restore conversation state at specific points
+* **Conversation rewinding**: The `/rewind` command is coming soon
 * **Advanced shortcuts**:
-  * `#` shortcut to add to memory
-  * `!` shortcut to run bash commands directly
+  * `#` shortcut to add to memory (not supported)
+  * `!` shortcut to run bash commands directly (not supported)
 * **Tab completion**: File path completion with tab key
+* **Model selection UI for older models**: To use older model versions like `claude-sonnet-4-20250514`, open VS Code settings for Claude Code (the `/General Config` command) and insert the model string directly into the 'Selected Model' field
 
 We are working on adding these features in future updates.
 
@@ -106,7 +109,16 @@ Both the extension and CLI integration work with Visual Studio Code, Cursor, Win
 
 * Ensure you have a compatible version of VS Code (1.85.0 or later)
 * Check that VS Code has permission to install extensions
-* Try installing directly from the marketplace website
+* Try installing directly from the Marketplace website
+
+### Claude Code Never Responds
+
+If Claude Code is not responding to your prompts:
+
+1. **Check your internet connection**: Ensure you have a stable internet connection
+2. **Start a new conversation**: Try starting a fresh conversation to see if the issue persists
+3. **Try the CLI**: Run `claude` from the terminal to see if you get more detailed error messages
+4. **File a bug report**: If the problem continues, [file an issue on GitHub](https://github.com/anthropics/claude-code/issues) with details about the error
 
 ### Legacy Integration Not Working
 
