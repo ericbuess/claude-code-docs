@@ -8,25 +8,6 @@
 
 # Changelog
 
-## 2.0.34
-
-- VSCode Extension: Added setting to configure the initial permission mode for new conversations
-- Improved file path suggestion performance with native Rust-based fuzzy finder
-- Fixed infinite token refresh loop that caused MCP servers with OAuth (e.g., Slack) to hang during connection
-- Fixed memory crash when reading or writing large files (especially base64-encoded images)
-
-## 2.0.33
-
-- Native binary installs now launch quicker.
-- Fixed `claude doctor` incorrectly detecting Homebrew vs npm-global installations by properly resolving symlinks
-- Fixed `claude mcp serve` exposing tools with incompatible outputSchemas
-
-## 2.0.32
-
-- Un-deprecate output styles based on community feedback
-- Added `companyAnnouncements` setting for displaying announcements on startup
-- Fixed hook progress messages not updating correctly during PostToolUse hook execution
-
 ## 2.0.31
 
 - Windows: native installation uses shift+tab as shortcut for mode switching, instead of alt+m

@@ -1,0 +1,48 @@
+name: Validate Documentation
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Daily at 6am UTC
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install requests>=2.32.0
+          pip install pytest pytest-asyncio pytest-mock pyyaml
+
+      - name: Validate all paths reachable
+        continue-on-error: true
+        run: python scripts/lookup_paths.py --validate-all
+
+      - name: Run validation tests
+        run: |
+          if [ -d "tests/validation" ] && [ "$(ls -A tests/validation)" ]; then
+            pytest tests/validation/ -v --tb=short
+          else
+            echo "Validation tests not yet implemented"
+          fi
+
+      - name: Generate validation report
+        run: |
+          mkdir -p reports
+          echo "# Validation Report - $(date +'%Y-%m-%d')" > reports/validation-$(date +'%Y%m%d').md
+          echo "" >> reports/validation-$(date +'%Y%m%d').md
+          echo "Validation completed at $(date)" >> reports/validation-$(date +'%Y%m%d').md
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: reports/validation-*.md

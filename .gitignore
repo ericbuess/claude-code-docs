@@ -1,27 +1,69 @@
-# Python
+# Python-generated files
 __pycache__/
+*.py[oc]
 *.py[cod]
 *$py.class
 *.so
+build/
+dist/
+wheels/
+*.egg-info
 .Python
+
+# Virtual environments
+.venv
 .venv/
 venv/
-ENV/
 env/
+ENV/
 
-# IDE
-.vscode/
-.idea/
+# Upstream reference repository (keep local, don't commit)
+upstream/
+
+# Temporary and development files
+temp.html
+*.tmp
+*.log
 *.swp
 *.swo
 *~
 
-# OS
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-*
+
+# OS files
 .DS_Store
 Thumbs.db
 
-# Project specific
+# Test coverage reports
+.coverage
+htmlcov/
+.pytest_cache/
+reports/coverage/
+
+# Reports directory (all generated)
+reports/
+
+# Temporary files directory
+temp/
+
+# Development artifacts
+extracted_paths.txt
+extracted_paths_clean.txt
+sample_paths.txt
+*.bak
+*.orig
+
+# Log files
 *.log
+
+# Backup files
+*.backup
+*.backup.*
+
+# Project specific (from upstream)
 .claude/settings.local.json
 .last_pull
 .last_check
@@ -31,4 +73,9 @@ claude-docs-helper.sh
 test_*.txt
 test_*.md
 *.test
-*.tmp
+
+# Keep important directories
+!docs/
+!scripts/
+!tests/
+!docs-dev/

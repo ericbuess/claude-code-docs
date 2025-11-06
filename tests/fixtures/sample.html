@@ -1,0 +1,47 @@
+<html>
+<head>
+    <title>Sample Claude Documentation Page</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <article>
+        <h1>Build with Claude: Prompt Engineering</h1>
+
+        <p>This guide covers best practices for prompt engineering with Claude.</p>
+
+        <h2>Key Principles</h2>
+        <ul>
+            <li>Be clear and direct</li>
+            <li>Use examples (multishot prompting)</li>
+            <li>Let Claude think (chain of thought)</li>
+            <li>Use XML tags for structure</li>
+        </ul>
+
+        <h2>Code Example</h2>
+        <pre><code class="language-python">
+import anthropic
+
+client = anthropic.Anthropic(api_key="your-api-key")
+
+message = client.messages.create(
+    model="claude-3-5-sonnet-20241022",
+    max_tokens=1024,
+    messages=[
+        {"role": "user", "content": "Explain quantum computing"}
+    ]
+)
+
+print(message.content)
+        </code></pre>
+
+        <h2>Best Practices</h2>
+        <ol>
+            <li>Assign Claude a role</li>
+            <li>Provide context and examples</li>
+            <li>Break complex tasks into steps</li>
+        </ol>
+
+        <p>For more information, see the <a href="/en/docs/build-with-claude">Build with Claude</a> overview.</p>
+    </article>
+</body>
+</html>
