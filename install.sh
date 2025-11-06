@@ -38,6 +38,69 @@ done
 echo "✓ All dependencies satisfied"
 
 
+# Ask user about enhanced edition
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Choose Your Edition"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "📚 Standard Edition (recommended for most users)"
+echo "   • 269 core documentation files"
+echo "   • Shell-only, no dependencies"
+echo "   • Fast and simple"
+echo "   • Repository: ericbuess/claude-code-docs"
+echo ""
+echo "✨ Enhanced Edition (for power users)"
+echo "   • 449 documentation paths (extended coverage)"
+echo "   • Full-text search capabilities"
+echo "   • Path validation tools"
+echo "   • Tracks rapidly evolving Claude features"
+echo "   • Requires: Python 3.12+"
+echo "   • Repository: costiash/claude-code-docs"
+echo ""
+read -p "Install Enhanced Edition? [y/N]: " -n 1 -r
+echo
+echo ""
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Check Python version
+    if ! command -v python3 &> /dev/null; then
+        echo "⚠️  Warning: Python 3 not found"
+        echo "   Enhanced edition requires Python 3.12+"
+        echo "   Falling back to Standard Edition"
+        echo ""
+        INSTALL_ENHANCED=false
+    else
+        python_version=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")' 2>/dev/null || echo "0.0")
+        python_major=$(echo "$python_version" | cut -d. -f1)
+        python_minor=$(echo "$python_version" | cut -d. -f2)
+
+        if [[ "$python_major" -lt 3 ]] || [[ "$python_major" -eq 3 && "$python_minor" -lt 12 ]]; then
+            echo "⚠️  Warning: Python $python_version detected"
+            echo "   Enhanced edition requires Python 3.12+"
+            echo "   Falling back to Standard Edition"
+            echo ""
+            INSTALL_ENHANCED=false
+        else
+            echo "✓ Python $python_version detected"
+            echo "Installing Enhanced Edition from costiash/claude-code-docs..."
+            echo ""
+            INSTALL_ENHANCED=true
+            INSTALL_REPO="https://github.com/costiash/claude-code-docs.git"
+        fi
+    fi
+else
+    echo "Installing Standard Edition from ericbuess/claude-code-docs..."
+    echo ""
+    INSTALL_ENHANCED=false
+fi
+
+# Set default repository for standard edition
+if [[ "${INSTALL_ENHANCED:-false}" != "true" ]]; then
+    INSTALL_REPO="https://github.com/ericbuess/claude-code-docs.git"
+fi
+
+
 # Function to find existing installations from configs
 find_existing_installations() {
     local paths=()
@@ -135,7 +198,7 @@ migrate_installation() {
     
     # Fresh install at new location
     echo "Installing fresh at ~/.claude-code-docs..."
-    git clone -b "$INSTALL_BRANCH" https://github.com/ericbuess/claude-code-docs.git "$INSTALL_DIR"
+    git clone -b "$INSTALL_BRANCH" "$INSTALL_REPO" "$INSTALL_DIR"
     cd "$INSTALL_DIR"
     
     # Remove old directory if safe
@@ -374,7 +437,7 @@ else
         echo "No existing installation found"
         echo "Installing fresh to ~/.claude-code-docs..."
         
-        git clone -b "$INSTALL_BRANCH" https://github.com/ericbuess/claude-code-docs.git "$INSTALL_DIR"
+        git clone -b "$INSTALL_BRANCH" "$INSTALL_REPO" "$INSTALL_DIR"
         cd "$INSTALL_DIR"
     fi
 fi
@@ -499,16 +562,35 @@ cleanup_old_installations
 
 # Success message
 echo ""
-echo "✅ Claude Code Docs v0.3.3 installed successfully!"
-echo ""
-echo "📚 Command: /docs (user)"
-echo "📂 Location: ~/.claude-code-docs"
-echo ""
-echo "Usage examples:"
-echo "  /docs hooks         # Read hooks documentation"
-echo "  /docs -t           # Check when docs were last updated"
-echo "  /docs what's new  # See recent documentation changes"
-echo ""
+if [[ "${INSTALL_ENHANCED:-false}" == "true" ]]; then
+    echo "✅ Claude Code Docs - Enhanced Edition installed successfully!"
+    echo ""
+    echo "📚 Command: /docs (user)"
+    echo "📂 Location: ~/.claude-code-docs"
+    echo "✨ Edition: Enhanced (449 paths, Python-powered)"
+    echo ""
+    echo "Usage examples:"
+    echo "  /docs hooks                    # Read hooks documentation"
+    echo "  /docs -t                       # Check when docs were last updated"
+    echo "  /docs what's new               # See recent documentation changes"
+    echo ""
+    echo "Enhanced features:"
+    echo "  ~/.claude-code-docs/claude-docs-helper.sh --search \"keyword\"  # Search 449 paths"
+    echo "  ~/.claude-code-docs/claude-docs-helper.sh --status             # Show installation status"
+    echo ""
+else
+    echo "✅ Claude Code Docs - Standard Edition installed successfully!"
+    echo ""
+    echo "📚 Command: /docs (user)"
+    echo "📂 Location: ~/.claude-code-docs"
+    echo "📖 Edition: Standard (269 files, shell-only)"
+    echo ""
+    echo "Usage examples:"
+    echo "  /docs hooks         # Read hooks documentation"
+    echo "  /docs -t           # Check when docs were last updated"
+    echo "  /docs what's new  # See recent documentation changes"
+    echo ""
+fi
 echo "🔄 Auto-updates: Enabled - syncs automatically when GitHub has newer content"
 echo ""
 echo "Available topics:"
