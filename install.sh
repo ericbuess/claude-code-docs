@@ -57,11 +57,13 @@ check_and_remove_existing_install() {
     # Check for uncommitted changes if it's a git repo
     local has_uncommitted_changes=false
     if [[ -d "$INSTALL_DIR/.git" ]]; then
-        cd "$INSTALL_DIR"
-        if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
-            has_uncommitted_changes=true
+        local original_dir=$(pwd)
+        if cd "$INSTALL_DIR" 2>/dev/null; then
+            if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
+                has_uncommitted_changes=true
+            fi
+            cd "$original_dir" || exit 1
         fi
-        cd - >/dev/null
     fi
 
     # Show what will be deleted
@@ -222,14 +224,18 @@ cleanup_old_installations() {
         
         # Check if it has uncommitted changes
         if [[ -d "$old_dir/.git" ]]; then
-            cd "$old_dir"
-            if [[ -z "$(git status --porcelain 2>/dev/null)" ]]; then
-                cd - >/dev/null
-                rm -rf "$old_dir"
-                echo "    ✓ Removed (clean)"
+            local original_dir=$(pwd)
+            if cd "$old_dir" 2>/dev/null; then
+                if [[ -z "$(git status --porcelain 2>/dev/null)" ]]; then
+                    cd "$original_dir" || exit 1
+                    rm -rf "$old_dir"
+                    echo "    ✓ Removed (clean)"
+                else
+                    cd "$original_dir" || exit 1
+                    echo "    ⚠️  Preserved (has uncommitted changes)"
+                fi
             else
-                cd - >/dev/null
-                echo "    ⚠️  Preserved (has uncommitted changes)"
+                echo "    ⚠️  Could not access directory"
             fi
         else
             echo "    ⚠️  Preserved (not a git repo)"
@@ -266,11 +272,51 @@ else
     echo "No installations found in other locations."
 fi
 
-# STAGE 3: Fresh installation at ~/.claude-code-docs
+# STAGE 3: Fresh installation at ~/.claude-code-docs (atomic)
 echo ""
 echo "Installing to ~/.claude-code-docs..."
-git clone -b "$INSTALL_BRANCH" https://github.com/costiash/claude-code-docs.git "$INSTALL_DIR"
-cd "$INSTALL_DIR"
+
+# Create a temporary directory for atomic installation
+TEMP_INSTALL_DIR=$(mktemp -d "${TMPDIR:-/tmp}/claude-code-docs.XXXXXXXXXX") || {
+    echo "❌ Error: Failed to create temporary directory"
+    echo "   Please check disk space and permissions"
+    exit 1
+}
+
+# Ensure temp directory is cleaned up on exit
+trap 'rm -rf "$TEMP_INSTALL_DIR"' EXIT
+
+# Clone to temporary directory
+echo "  Downloading from GitHub..."
+if ! git clone -b "$INSTALL_BRANCH" https://github.com/costiash/claude-code-docs.git "$TEMP_INSTALL_DIR" 2>&1; then
+    echo ""
+    echo "❌ Error: Failed to clone repository from GitHub"
+    echo "   Possible causes:"
+    echo "     • No internet connection"
+    echo "     • GitHub is down"
+    echo "     • git is not installed correctly"
+    echo ""
+    echo "   Please check your network connection and try again"
+    exit 1
+fi
+
+echo "  Download complete, installing..."
+
+# Move to final location (atomic operation)
+if ! mv "$TEMP_INSTALL_DIR" "$INSTALL_DIR" 2>/dev/null; then
+    echo ""
+    echo "❌ Error: Failed to move installation to $INSTALL_DIR"
+    echo "   Please check permissions and try again"
+    exit 1
+fi
+
+# Remove trap since we've successfully moved the directory
+trap - EXIT
+
+cd "$INSTALL_DIR" || {
+    echo "❌ Error: Failed to access installation directory"
+    exit 1
+}
 echo "✓ Repository cloned successfully"
 
 # Now we're in $INSTALL_DIR, set up the new script-based system
