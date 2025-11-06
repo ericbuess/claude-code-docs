@@ -92,7 +92,7 @@ You'll be prompted to log in on first use. That's it! [Continue with Quickstart 
 ## Additional resources
 
 <CardGroup>
-  <Card title="Build with the Agent SDK" icon="code-branch" href="/en/api/agent-sdk/overview">
+  <Card title="Build with the Agent SDK" icon="code-branch" href="https://docs.claude.com/en/api/agent-sdk/overview">
     Create custom AI agents with the Claude Agent SDK
   </Card>
 
