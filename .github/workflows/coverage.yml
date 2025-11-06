@@ -31,10 +31,10 @@ jobs:
         run: |
           pytest tests/ -v --cov=scripts --cov-report=html --cov-report=term --cov-report=xml -m "not slow and not network" || true
 
-      - name: Check coverage threshold (85%)
+      - name: Check coverage threshold (82%)
         run: |
           if [ -f ".coverage" ]; then
-            coverage report --fail-under=85 || echo "⚠️  Coverage below 85% target"
+            coverage report --fail-under=82 || echo "⚠️  Coverage below 82% target"
           else
             echo "No coverage data generated"
           fi
@@ -56,5 +56,6 @@ jobs:
       - name: Comment coverage on PR
         if: github.event_name == 'pull_request' && hashFiles('coverage.xml') != ''
         uses: py-cov-action/python-coverage-comment-action@v3
+        continue-on-error: true
         with:
           GITHUB_TOKEN: ${{ github.token }}

@@ -155,6 +155,6 @@ class TestSearchIndex:
 
         indexed_files = data.get('indexed_files', 0)
 
-        # Should match actual file count (270)
-        assert indexed_files == 270, \
-            f"Search index shows {indexed_files} files, expected 270"
+        # Should match actual file count (269)
+        assert indexed_files == 269, \
+            f"Search index shows {indexed_files} files, expected 269"

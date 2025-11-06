@@ -175,7 +175,7 @@ The installer handles fresh installations, migrations from previous versions, an
 **Solution:**
 1. Run `/docs -t` to check sync status and force an update
 2. Manually update: `cd ~/.claude-code-docs && git pull`
-3. Check if GitHub Actions are running: [View Actions](https://github.com/ericbuess/claude-code-docs/actions)
+3. Check if GitHub Actions are running: [View Actions](https://github.com/costiash/claude-code-docs/actions)
 4. Re-run the installer as a last resort
 
 ### Installation errors
@@ -233,9 +233,9 @@ See [UNINSTALL.md](UNINSTALL.md) for manual uninstall instructions.
 
 **Contributions are welcome!** This is a community project and we'd love your help:
 
-- 🪟 **Windows Support**: Want to help add Windows compatibility? [Fork the repository](https://github.com/ericbuess/claude-code-docs/fork) and submit a PR!
-- 🐛 **Bug Reports**: Found something not working? [Open an issue](https://github.com/ericbuess/claude-code-docs/issues)
-- 💡 **Feature Requests**: Have an idea? [Start a discussion](https://github.com/ericbuess/claude-code-docs/issues)
+- 🪟 **Windows Support**: Want to help add Windows compatibility? [Fork the repository](https://github.com/costiash/claude-code-docs/fork) and submit a PR!
+- 🐛 **Bug Reports**: Found something not working? [Open an issue](https://github.com/costiash/claude-code-docs/issues)
+- 💡 **Feature Requests**: Have an idea? [Start a discussion](https://github.com/costiash/claude-code-docs/issues)
 - 📝 **Documentation**: Help improve docs or add examples
 
 You can also use Claude Code itself to help build features - just fork the repo and let Claude assist you!
@@ -246,7 +246,7 @@ As this is an early beta, you might encounter some issues:
 - Auto-updates may occasionally fail on some network configurations
 - Some documentation links might not resolve correctly
 
-If you find any issues not listed here, please [report them](https://github.com/ericbuess/claude-code-docs/issues)!
+If you find any issues not listed here, please [report them](https://github.com/costiash/claude-code-docs/issues)!
 
 ## License
 

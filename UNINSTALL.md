@@ -78,5 +78,5 @@ After uninstalling, there should be no traces left except:
 
 To reinstall after uninstalling:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash
 ```

@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `enhancements/FEATURES.md` - Technical feature specifications
   - `enhancements/CAPABILITIES.md` - Detailed capability documentation
   - `enhancements/EXAMPLES.md` - Practical usage examples
-- **Test Suite**: 566 tests with 12.31% code coverage (target: 85%)
+- **Test Suite**: 566 tests with 81.55% code coverage (target: 82%)
 - **Performance Benchmarks**: Documented search, fetch, and validation performance characteristics
 
 ### Changed
@@ -62,7 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Feature | Standard Mode | Enhanced Mode |
 |---------|--------------|---------------|
-| Documentation Files | 269 | 270 |
+| Documentation Files | 269 | 269 |
 | Documentation Paths | 269 | 449 |
 | Basic Search | ✓ | ✓ |
 | Full-Text Search | ✗ | ✓ |

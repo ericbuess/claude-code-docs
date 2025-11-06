@@ -289,7 +289,7 @@ cd ~/.claude-code-docs && git pull
 - All new Python code must have unit tests
 - Integration tests for workflows
 - Validation tests for external APIs
-- **Target: 85%+ code coverage** (currently 24%)
+- **Target: 82%+ code coverage** (currently 81.55%)
 
 **Running tests:**
 ```bash
@@ -342,9 +342,9 @@ def test_search_paths_with_limit():
 ```
 
 **Current test status:**
-- Total: 214 tests
-- Passing: 212 tests (99.1% pass rate)
-- Coverage: 22% (target: 85%+)
+- Total: 566 tests
+- Passing: 561 tests (99.1% pass rate)
+- Coverage: 81.55% (target: 82%+)
 
 ## Pull Request Guidelines
 

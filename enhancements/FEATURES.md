@@ -4,9 +4,9 @@ This fork extends [ericbuess/claude-code-docs](https://github.com/ericbuess/clau
 
 ## What's Enhanced
 
-### 1. Extended Path Coverage (449 paths vs 270)
+### 1. Extended Path Coverage (449 paths vs 269)
 
-**Standard Edition**: 270 core documentation files
+**Standard Edition**: 269 core documentation files
 **Enhanced Edition**: 449 documentation paths covering:
 - Core Documentation (151 paths - 33.6%)
 - API Reference (91 paths - 19.8%)
@@ -63,7 +63,7 @@ Fuzzy search across all 449 paths with relevance ranking.
 **Coverage**:
 - 566 total tests (459 unit + 53 integration + 57 validation)
 - 561 passing (99.1% pass rate)
-- 12.31% code coverage (target: 85%)
+- 81.55% code coverage (target: 82%)
 - pytest + pytest-cov
 - 14 fixtures in conftest.py
 
@@ -137,7 +137,7 @@ curl -fsSL https://raw.githubusercontent.com/YOUR_FORK/claude-code-docs/main/ins
 ```
 
 **Features**:
-- 270 core documentation files
+- 269 core documentation files
 - Standard `/docs` command
 - Auto-updates via git pull
 - No Python required
