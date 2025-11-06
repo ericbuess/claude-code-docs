@@ -94,28 +94,32 @@ def save_manifest(docs_dir: Path, manifest: dict) -> None:
 
 
 def url_to_safe_filename(url_path: str) -> str:
-    """Convert a URL path to a safe filename that preserves hierarchy only when needed."""
-    # Remove any known prefix patterns
-    for prefix in ['/en/docs/claude-code/', '/docs/claude-code/', '/claude-code/']:
-        if prefix in url_path:
-            path = url_path.split(prefix)[-1]
-            break
-    else:
-        # If no known prefix, take everything after the last occurrence of 'claude-code/'
-        if 'claude-code/' in url_path:
-            path = url_path.split('claude-code/')[-1]
-        else:
-            path = url_path
-    
-    # If no subdirectories, just use the filename
-    if '/' not in path:
-        return path + '.md' if not path.endswith('.md') else path
-    
-    # For subdirectories, replace slashes with double underscores
-    # e.g., "advanced/setup" becomes "advanced__setup.md"
+    """
+    Convert a URL path to a safe filename using standardized en__ naming convention.
+
+    Preserves full URL path structure by converting slashes to double underscores.
+
+    Examples:
+        /en/docs/claude-code/hooks → en__docs__claude-code__hooks.md
+        /en/api/messages → en__api__messages.md
+        /en/docs/build-with-claude/prompt-engineering/overview → en__docs__build-with-claude__prompt-engineering__overview.md
+
+    Args:
+        url_path: URL path like '/en/docs/claude-code/hooks'
+
+    Returns:
+        Safe filename like 'en__docs__claude-code__hooks.md'
+    """
+    # Strip leading and trailing slashes
+    path = url_path.strip('/')
+
+    # Replace all slashes with double underscores
     safe_name = path.replace('/', '__')
+
+    # Add .md extension if not present
     if not safe_name.endswith('.md'):
         safe_name += '.md'
+
     return safe_name
 
 
