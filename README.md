@@ -59,7 +59,7 @@ curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/ins
 Run this single command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash
 ```
 
 This will:
