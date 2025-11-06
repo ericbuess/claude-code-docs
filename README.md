@@ -10,13 +10,16 @@ Local mirror of Claude Code documentation files from https://docs.anthropic.com/
 
 **This is an early beta release**. There may be errors or unexpected behavior. If you encounter any issues, please [open an issue](https://github.com/ericbuess/claude-code-docs/issues) - your feedback helps improve the tool!
 
-## 🆕 Version 0.3.3 - Changelog Integration
+## 🆕 Version 0.3.4 - Enhanced Edition
 
 **New in this version:**
-- 📋 **Claude Code Changelog**: Access the official Claude Code release notes with `/docs changelog`
-- 🍎 **Full macOS compatibility**: Fixed shell compatibility issues for Mac users
-- 🐧 **Linux support**: Tested on Ubuntu, Debian, and other distributions
-- 🔧 **Improved installer**: Better handling of updates and edge cases
+- 🚀 **Extended Coverage**: 449 documentation paths (vs 270 in standard edition)
+- 🔍 **Full-Text Search**: Search across all documentation content
+- ✅ **Validation Tools**: Verify documentation integrity and reachability
+- 📚 **Seven Categories**: Core docs, API reference, Claude Code, prompt library, resources, release notes, and more
+- 🎯 **Dual-Mode Support**: Choose between standard (shell-only) or enhanced (Python-powered) modes during installation
+
+See [enhancements/](enhancements/) for complete feature documentation, capabilities, and usage examples.
 
 To update:
 ```bash
@@ -26,6 +29,8 @@ curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/ins
 ## Why This Exists
 
 - **Faster access** - Reads from local files instead of fetching from web
+- **Extended coverage** - 449 paths across 7 documentation categories (enhanced mode)
+- **Full-text search** - Find content across all documentation instantly (enhanced mode)
 - **Automatic updates** - Attempts to stay current with the latest documentation
 - **Track changes** - See what changed in docs over time
 - **Claude Code changelog** - Quick access to official release notes and version history
@@ -39,11 +44,15 @@ curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/ins
 
 ### Prerequisites
 
-This tool requires the following to be installed:
+**Standard mode:**
 - **git** - For cloning and updating the repository (usually pre-installed)
 - **jq** - For JSON processing in the auto-update hook (pre-installed on macOS; Linux users may need `apt install jq` or `yum install jq`)
 - **curl** - For downloading the installation script (usually pre-installed)
 - **Claude Code** - Obviously :)
+
+**Enhanced mode** (optional, for advanced features):
+- **Python 3.12+** - For full-text search and validation tools
+- All standard mode prerequisites
 
 ## Installation
 

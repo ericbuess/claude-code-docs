@@ -4,9 +4,9 @@ This fork extends [ericbuess/claude-code-docs](https://github.com/ericbuess/clau
 
 ## What's Enhanced
 
-### 1. Extended Path Coverage (449 paths vs 47)
+### 1. Extended Path Coverage (449 paths vs 270)
 
-**Standard Edition**: 47 core Claude Code documentation files
+**Standard Edition**: 270 core documentation files
 **Enhanced Edition**: 449 documentation paths covering:
 - Core Documentation (151 paths - 33.6%)
 - API Reference (91 paths - 19.8%)
@@ -136,7 +136,7 @@ curl -fsSL https://raw.githubusercontent.com/YOUR_FORK/claude-code-docs/main/ins
 ```
 
 **Features**:
-- 47 core documentation files
+- 270 core documentation files
 - Standard `/docs` command
 - Auto-updates via git pull
 - No Python required
@@ -163,7 +163,7 @@ curl -fsSL https://raw.githubusercontent.com/YOUR_FORK/claude-code-docs/main/ins
 
 | Feature | Standard | Enhanced |
 |---------|----------|----------|
-| Documentation files | 47 | 449 |
+| Documentation files | 270 | 449 |
 | Search | Topic name only | Full-text + fuzzy |
 | Validation | None | HTTP reachability |
 | Updates | Git pull | Selective fetch (SHA256) |

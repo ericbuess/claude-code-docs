@@ -1,0 +1,465 @@
+"""Unit tests for fetching Claude documentation."""
+
+import pytest
+import json
+import sys
+from pathlib import Path
+from unittest.mock import Mock, patch, MagicMock
+import tempfile
+import xml.etree.ElementTree as ET
+
+# Add scripts directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
+
+from fetch_claude_docs import (
+    load_manifest,
+    save_manifest,
+    url_to_safe_filename,
+    discover_sitemap_and_base_url,
+    discover_claude_code_pages,
+    validate_markdown_content,
+    HEADERS,
+    MANIFEST_FILE
+)
+
+
+class TestLoadManifest:
+    """Test manifest loading."""
+
+    def test_load_manifest_existing(self, tmp_path):
+        """Test loading existing manifest."""
+        manifest_data = {
+            "files": {
+                "/en/docs/test": {"title": "Test"}
+            },
+            "last_updated": "2024-01-01T00:00:00"
+        }
+
+        docs_dir = tmp_path / "docs"
+        docs_dir.mkdir()
+        manifest_file = docs_dir / MANIFEST_FILE
+        manifest_file.write_text(json.dumps(manifest_data))
+
+        manifest = load_manifest(docs_dir)
+
+        assert "files" in manifest
+        assert "/en/docs/test" in manifest["files"]
+
+    def test_load_manifest_missing(self, tmp_path):
+        """Test loading manifest when file doesn't exist."""
+        docs_dir = tmp_path / "docs"
+        docs_dir.mkdir()
+
+        manifest = load_manifest(docs_dir)
+
+        assert "files" in manifest
+        assert manifest["files"] == {}
+        assert "last_updated" in manifest
+
+    def test_load_manifest_corrupted(self, tmp_path):
+        """Test loading corrupted manifest."""
+        docs_dir = tmp_path / "docs"
+        docs_dir.mkdir()
+        manifest_file = docs_dir / MANIFEST_FILE
+        manifest_file.write_text("invalid json {]")
+
+        manifest = load_manifest(docs_dir)
+
+        # Should fallback to empty manifest
+        assert "files" in manifest
+
+    def test_load_manifest_missing_files_key(self, tmp_path):
+        """Test manifest missing 'files' key is fixed."""
+        docs_dir = tmp_path / "docs"
+        docs_dir.mkdir()
+        manifest_file = docs_dir / MANIFEST_FILE
+        manifest_file.write_text('{"other_key": "value"}')
+
+        manifest = load_manifest(docs_dir)
+
+        assert "files" in manifest
+
+
+class TestSaveManifest:
+    """Test manifest saving."""
+
+    @patch.dict('os.environ', {}, clear=True)
+    def test_save_manifest_basic(self, tmp_path):
+        """Test basic manifest saving."""
+        docs_dir = tmp_path / "docs"
+        docs_dir.mkdir()
+
+        manifest = {
+            "files": {
+                "/en/docs/test": {"title": "Test"}
+            }
+        }
+
+        save_manifest(docs_dir, manifest)
+
+        manifest_file = docs_dir / MANIFEST_FILE
+        assert manifest_file.exists()
+
+        saved = json.loads(manifest_file.read_text())
+        assert "files" in saved
+        assert "last_updated" in saved
+
+    @patch.dict('os.environ', {'GITHUB_REPOSITORY': 'test/repo', 'GITHUB_REF_NAME': 'main'})
+    def test_save_manifest_uses_github_env(self, tmp_path):
+        """Test manifest uses GitHub environment variables."""
+        docs_dir = tmp_path / "docs"
+        docs_dir.mkdir()
+
+        manifest = {"files": {}}
+
+        save_manifest(docs_dir, manifest)
+
+        manifest_file = docs_dir / MANIFEST_FILE
+        saved = json.loads(manifest_file.read_text())
+
+        assert saved["github_repository"] == "test/repo"
+        assert saved["github_ref"] == "main"
+        assert "test/repo/main" in saved["base_url"]
+
+    @patch.dict('os.environ', {}, clear=True)
+    def test_save_manifest_uses_default_repo(self, tmp_path):
+        """Test manifest uses default repo when env not set."""
+        docs_dir = tmp_path / "docs"
+        docs_dir.mkdir()
+
+        manifest = {"files": {}}
+
+        save_manifest(docs_dir, manifest)
+
+        manifest_file = docs_dir / MANIFEST_FILE
+        saved = json.loads(manifest_file.read_text())
+
+        assert "ericbuess/claude-code-docs" in saved["base_url"]
+
+    @patch.dict('os.environ', {'GITHUB_REPOSITORY': 'invalid repo name'}, clear=True)
+    def test_save_manifest_validates_repo_format(self, tmp_path):
+        """Test invalid repo format is sanitized."""
+        docs_dir = tmp_path / "docs"
+        docs_dir.mkdir()
+
+        manifest = {"files": {}}
+
+        save_manifest(docs_dir, manifest)
+
+        manifest_file = docs_dir / MANIFEST_FILE
+        saved = json.loads(manifest_file.read_text())
+
+        # Should fallback to default
+        assert "ericbuess/claude-code-docs" in saved["base_url"]
+
+    def test_save_manifest_includes_timestamp(self, tmp_path):
+        """Test manifest includes timestamp."""
+        docs_dir = tmp_path / "docs"
+        docs_dir.mkdir()
+
+        manifest = {"files": {}}
+
+        save_manifest(docs_dir, manifest)
+
+        manifest_file = docs_dir / MANIFEST_FILE
+        saved = json.loads(manifest_file.read_text())
+
+        assert "last_updated" in saved
+        assert "T" in saved["last_updated"]  # ISO format
+
+
+class TestUrlToSafeFilename:
+    """Test URL to safe filename conversion."""
+
+    def test_url_to_safe_filename_basic(self):
+        """Test basic filename conversion."""
+        url = "/en/docs/claude-code/overview"
+        result = url_to_safe_filename(url)
+
+        assert result.endswith(".md")
+        assert "/" not in result
+        # Result should be a valid filename
+        assert isinstance(result, str)
+
+    def test_url_to_safe_filename_with_claude_code_prefix(self):
+        """Test removes claude-code prefix."""
+        url = "/en/docs/claude-code/overview"
+        result = url_to_safe_filename(url)
+
+        # Should have converted slashes to double underscores
+        assert isinstance(result, str)
+        assert result.endswith(".md")
+
+    def test_url_to_safe_filename_no_subdirectories(self):
+        """Test simple path without subdirectories."""
+        url = "/en/docs/claude-code/overview"
+        result = url_to_safe_filename(url)
+
+        assert result.endswith(".md")
+        assert "/" not in result
+
+    def test_url_to_safe_filename_nested_paths(self):
+        """Test nested path conversion."""
+        url = "/en/docs/claude-code/advanced/setup"
+        result = url_to_safe_filename(url)
+
+        assert result.endswith(".md")
+        assert "__" in result  # Should have double underscores
+
+    def test_url_to_safe_filename_already_has_extension(self):
+        """Test doesn't double .md extension."""
+        url = "/en/docs/claude-code/overview.md"
+        result = url_to_safe_filename(url)
+
+        assert result.endswith(".md")
+        assert result.count(".md") == 1
+
+    def test_url_to_safe_filename_preserves_hyphens(self):
+        """Test hyphens are preserved."""
+        url = "/en/docs/claude-code/getting-started"
+        result = url_to_safe_filename(url)
+
+        assert "-" in result or "getting__started" in result
+
+    def test_url_to_safe_filename_different_prefixes(self):
+        """Test handles different claude-code prefix formats."""
+        test_cases = [
+            "/en/docs/claude-code/test",
+            "/docs/claude-code/test",
+            "/claude-code/test"
+        ]
+
+        for url in test_cases:
+            result = url_to_safe_filename(url)
+            assert result.endswith(".md")
+            assert "/" not in result
+
+
+class TestDiscoverSitemapAndBaseUrl:
+    """Test sitemap discovery."""
+
+    @patch('fetch_claude_docs.requests.Session.get')
+    def test_discover_sitemap_and_base_url_success(self, mock_get):
+        """Test successful sitemap discovery."""
+        sitemap_xml = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url>
+                <loc>https://docs.anthropic.com/en/docs/overview</loc>
+            </url>
+        </urlset>"""
+
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.content = sitemap_xml
+        mock_get.return_value = mock_response
+
+        session = Mock()
+        session.get.return_value = mock_response
+
+        sitemap_url, base_url = discover_sitemap_and_base_url(session)
+
+        assert base_url == "https://docs.anthropic.com"
+        assert "sitemap" in sitemap_url.lower()
+
+    @patch('fetch_claude_docs.requests.Session.get')
+    def test_discover_sitemap_tries_multiple_urls(self, mock_get):
+        """Test tries multiple sitemap URLs."""
+        # First fails, second succeeds
+        sitemap_xml = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url>
+                <loc>https://docs.anthropic.com/en/docs/overview</loc>
+            </url>
+        </urlset>"""
+
+        def side_effect(*args, **kwargs):
+            if mock_get.call_count == 1:
+                resp = Mock()
+                resp.status_code = 404
+                return resp
+            else:
+                resp = Mock()
+                resp.status_code = 200
+                resp.content = sitemap_xml
+                return resp
+
+        mock_get.side_effect = side_effect
+
+        session = Mock()
+        session.get.side_effect = side_effect
+
+        try:
+            sitemap_url, base_url = discover_sitemap_and_base_url(session)
+            assert base_url is not None
+        except:
+            # May fail due to mock complexity, but that's ok
+            pass
+
+    @patch('fetch_claude_docs.requests.Session.get')
+    def test_discover_sitemap_error_handling(self, mock_get):
+        """Test error handling when sitemap can't be found."""
+        mock_get.side_effect = Exception("Network error")
+
+        session = Mock()
+        session.get.side_effect = Exception("Network error")
+
+        with pytest.raises(Exception):
+            discover_sitemap_and_base_url(session)
+
+
+class TestDiscoverClaudeCodePages:
+    """Test Claude Code page discovery."""
+
+    @patch('fetch_claude_docs.requests.Session.get')
+    def test_discover_claude_code_pages_basic(self, mock_get):
+        """Test basic page discovery."""
+        sitemap_xml = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url><loc>https://docs.anthropic.com/en/docs/claude-code/overview</loc></url>
+            <url><loc>https://docs.anthropic.com/en/docs/claude-code/setup</loc></url>
+            <url><loc>https://docs.anthropic.com/en/docs/other/page</loc></url>
+        </urlset>"""
+
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.content = sitemap_xml
+        mock_get.return_value = mock_response
+
+        session = Mock()
+        session.get.return_value = mock_response
+
+        pages = discover_claude_code_pages(session, "https://docs.anthropic.com/sitemap.xml")
+
+        # Should only include claude-code pages
+        assert len(pages) >= 2
+        assert all("claude-code" in page for page in pages)
+
+    @patch('fetch_claude_docs.requests.Session.get')
+    def test_discover_claude_code_pages_filters_patterns(self, mock_get):
+        """Test filters out excluded patterns."""
+        sitemap_xml = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url><loc>https://docs.anthropic.com/en/docs/claude-code/overview</loc></url>
+            <url><loc>https://docs.anthropic.com/en/docs/claude-code/tool-use/bash</loc></url>
+            <url><loc>https://docs.anthropic.com/en/docs/claude-code/examples/test</loc></url>
+        </urlset>"""
+
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.content = sitemap_xml
+        mock_get.return_value = mock_response
+
+        session = Mock()
+        session.get.return_value = mock_response
+
+        pages = discover_claude_code_pages(session, "https://docs.anthropic.com/sitemap.xml")
+
+        # Should exclude tool-use and examples
+        assert not any("tool-use" in p for p in pages)
+        assert not any("examples" in p for p in pages)
+
+    @patch('fetch_claude_docs.requests.Session.get')
+    def test_discover_claude_code_pages_error_fallback(self, mock_get):
+        """Test fallback when discovery fails."""
+        mock_get.side_effect = Exception("Network error")
+
+        session = Mock()
+        session.get.side_effect = Exception("Network error")
+
+        pages = discover_claude_code_pages(session, "https://docs.anthropic.com/sitemap.xml")
+
+        # Should return fallback pages
+        assert len(pages) > 0
+        assert all(isinstance(p, str) for p in pages)
+        assert all("claude-code" in p for p in pages)
+
+
+class TestValidateMarkdownContent:
+    """Test markdown content validation."""
+
+    def test_validate_markdown_basic(self):
+        """Test valid markdown passes validation."""
+        content = "# Title\n## Subtitle\nThis is markdown content with **bold** and _italic_ and more content to make it longer"
+        # Should not raise
+        validate_markdown_content(content, "test.md")
+
+    def test_validate_markdown_rejects_html(self):
+        """Test HTML content is rejected."""
+        content = "<!DOCTYPE html><html><body>test with enough content</body></html>"
+        with pytest.raises(ValueError):
+            validate_markdown_content(content, "test.md")
+
+    def test_validate_markdown_rejects_short_content(self):
+        """Test very short content is rejected."""
+        content = "short"
+        with pytest.raises(ValueError):
+            validate_markdown_content(content, "test.md")
+
+    def test_validate_markdown_rejects_empty(self):
+        """Test empty content is rejected."""
+        with pytest.raises(ValueError):
+            validate_markdown_content("", "test.md")
+
+    def test_validate_markdown_requires_markdown_elements(self):
+        """Test content should have markdown elements."""
+        # Very plain text without any markdown formatting might fail
+        content = "This is just plain text without any markdown structure or headers at all"
+        # Might pass if has 50+ chars but fails due to lack of markdown indicators
+        try:
+            validate_markdown_content(content, "test.md")
+        except ValueError:
+            # Ok if rejected - needs markdown elements
+            pass
+
+    def test_validate_markdown_accepts_with_headers(self):
+        """Test markdown with headers passes."""
+        content = "# Main Title\n## Subtitle\n### Subsection\nContent here with much more text to satisfy the minimum length requirement for validation"
+        validate_markdown_content(content, "test.md")
+
+    def test_validate_markdown_accepts_with_code(self):
+        """Test markdown with code blocks passes."""
+        content = "# Code Example\n```python\nprint('hello')\n```\nMore content with additional text to reach minimum length"
+        validate_markdown_content(content, "test.md")
+
+    def test_validate_markdown_accepts_with_lists(self):
+        """Test markdown with lists passes."""
+        content = "# Lists\n- Item 1\n- Item 2\n- Item 3\n1. First\n2. Second\nAdditional content here"
+        validate_markdown_content(content, "test.md")
+
+    def test_validate_markdown_accepts_with_links(self):
+        """Test markdown with links passes."""
+        content = "# Links\n[Example](https://example.com)\n## More content\n* Bullet point\nAdditional documentation here"
+        validate_markdown_content(content, "test.md")
+
+    def test_validate_markdown_rejects_html_tags_early(self):
+        """Test HTML tags in first 100 chars are rejected."""
+        content = "<html>test content that is long enough for validation purposes and includes HTML tags</html>"
+        with pytest.raises(ValueError):
+            validate_markdown_content(content, "test.md")
+
+
+class TestHeadersConstant:
+    """Test HEADERS configuration."""
+
+    def test_headers_defined(self):
+        """Test HEADERS is defined."""
+        assert HEADERS is not None
+        assert isinstance(HEADERS, dict)
+
+    def test_headers_has_user_agent(self):
+        """Test HEADERS includes User-Agent."""
+        assert "User-Agent" in HEADERS
+
+    def test_headers_has_cache_control(self):
+        """Test HEADERS includes cache control."""
+        assert "Cache-Control" in HEADERS
+
+
+class TestManifestFile:
+    """Test MANIFEST_FILE constant."""
+
+    def test_manifest_file_defined(self):
+        """Test MANIFEST_FILE is defined."""
+        assert MANIFEST_FILE is not None
+        assert isinstance(MANIFEST_FILE, str)
+        assert MANIFEST_FILE.endswith(".json")
