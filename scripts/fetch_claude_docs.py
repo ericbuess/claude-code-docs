@@ -27,7 +27,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Sitemap URLs to try (in order of preference)
+# Note: Claude Code docs moved to code.claude.com domain (Nov 2025)
 SITEMAP_URLS = [
+    "https://code.claude.com/docs/sitemap.xml",  # New Claude Code domain
     "https://docs.anthropic.com/sitemap.xml",
     "https://docs.anthropic.com/sitemap_index.xml",
     "https://anthropic.com/sitemap.xml"
@@ -211,10 +213,12 @@ def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> L
         
         # Filter for ENGLISH Claude Code documentation pages only
         claude_code_pages = []
-        
+
         # Only accept English documentation patterns
+        # Updated for new domain structure (code.claude.com)
         english_patterns = [
-            '/en/docs/claude-code/',
+            '/docs/en/',  # New: code.claude.com/docs/en/...
+            '/en/docs/claude-code/',  # Old: docs.claude.com/en/docs/claude-code/... (kept for backward compatibility)
         ]
         
         for url in urls:

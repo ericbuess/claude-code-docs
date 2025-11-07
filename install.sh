@@ -1,10 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-# Claude Code Docs Installer v0.3.3 - Changelog integration and compatibility improvements
-# This script installs/migrates claude-code-docs to ~/.claude-code-docs
+# Claude Code Docs Installer v0.3.4 - Enhanced Edition with dual-mode support
+# This script installs claude-code-docs with choice between Standard and Enhanced editions
 
-echo "Claude Code Docs Installer v0.3.3"
+echo "Claude Code Docs Installer v0.3.4"
 echo "==============================="
 
 # Fixed installation location
@@ -36,6 +36,69 @@ for cmd in git jq curl; do
     fi
 done
 echo "✓ All dependencies satisfied"
+
+
+# Ask user about enhanced edition
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Choose Your Edition"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "📚 Standard Edition (recommended for most users)"
+echo "   • 269 core documentation files"
+echo "   • Shell-only, no dependencies"
+echo "   • Fast and simple"
+echo "   • Repository: ericbuess/claude-code-docs"
+echo ""
+echo "✨ Enhanced Edition (for power users)"
+echo "   • 449 documentation paths (extended coverage)"
+echo "   • Full-text search capabilities"
+echo "   • Path validation tools"
+echo "   • Tracks rapidly evolving Claude features"
+echo "   • Requires: Python 3.12+"
+echo "   • Repository: costiash/claude-code-docs"
+echo ""
+read -p "Install Enhanced Edition? [y/N]: " -n 1 -r
+echo
+echo ""
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Check Python version
+    if ! command -v python3 &> /dev/null; then
+        echo "⚠️  Warning: Python 3 not found"
+        echo "   Enhanced edition requires Python 3.12+"
+        echo "   Falling back to Standard Edition"
+        echo ""
+        INSTALL_ENHANCED=false
+    else
+        python_version=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")' 2>/dev/null || echo "0.0")
+        python_major=$(echo "$python_version" | cut -d. -f1)
+        python_minor=$(echo "$python_version" | cut -d. -f2)
+
+        if [[ "$python_major" -lt 3 ]] || [[ "$python_major" -eq 3 && "$python_minor" -lt 12 ]]; then
+            echo "⚠️  Warning: Python $python_version detected"
+            echo "   Enhanced edition requires Python 3.12+"
+            echo "   Falling back to Standard Edition"
+            echo ""
+            INSTALL_ENHANCED=false
+        else
+            echo "✓ Python $python_version detected"
+            echo "Installing Enhanced Edition from costiash/claude-code-docs..."
+            echo ""
+            INSTALL_ENHANCED=true
+            INSTALL_REPO="https://github.com/costiash/claude-code-docs.git"
+        fi
+    fi
+else
+    echo "Installing Standard Edition from ericbuess/claude-code-docs..."
+    echo ""
+    INSTALL_ENHANCED=false
+fi
+
+# Set default repository for standard edition
+if [[ "${INSTALL_ENHANCED:-false}" != "true" ]]; then
+    INSTALL_REPO="https://github.com/ericbuess/claude-code-docs.git"
+fi
 
 
 # Function to find existing installations from configs
@@ -135,7 +198,7 @@ migrate_installation() {
     
     # Fresh install at new location
     echo "Installing fresh at ~/.claude-code-docs..."
-    git clone -b "$INSTALL_BRANCH" https://github.com/ericbuess/claude-code-docs.git "$INSTALL_DIR"
+    git clone -b "$INSTALL_BRANCH" "$INSTALL_REPO" "$INSTALL_DIR"
     cd "$INSTALL_DIR"
     
     # Remove old directory if safe
@@ -373,32 +436,53 @@ else
         # Fresh installation
         echo "No existing installation found"
         echo "Installing fresh to ~/.claude-code-docs..."
-        
-        git clone -b "$INSTALL_BRANCH" https://github.com/ericbuess/claude-code-docs.git "$INSTALL_DIR"
+
+        git clone -b "$INSTALL_BRANCH" "$INSTALL_REPO" "$INSTALL_DIR"
         cd "$INSTALL_DIR"
     fi
 fi
 
 # Now we're in $INSTALL_DIR, set up the new script-based system
 echo ""
-echo "Setting up Claude Code Docs v0.3.3..."
+echo "Setting up Claude Code Docs v0.3.4..."
 
-# Copy helper script from template
+# Copy helper script based on edition
 echo "Installing helper script..."
-if [[ -f "$INSTALL_DIR/scripts/claude-docs-helper.sh.template" ]]; then
-    cp "$INSTALL_DIR/scripts/claude-docs-helper.sh.template" "$INSTALL_DIR/claude-docs-helper.sh"
-    chmod +x "$INSTALL_DIR/claude-docs-helper.sh"
-    echo "✓ Helper script installed"
-else
-    echo "  ⚠️  Template file missing, attempting recovery..."
-    # Try to fetch just the template file
-    if curl -fsSL "https://raw.githubusercontent.com/ericbuess/claude-code-docs/$INSTALL_BRANCH/scripts/claude-docs-helper.sh.template" -o "$INSTALL_DIR/claude-docs-helper.sh" 2>/dev/null; then
+if [[ "${INSTALL_ENHANCED:-false}" == "true" ]]; then
+    # Enhanced Edition: Use the enhanced script with Python features
+    if [[ -f "$INSTALL_DIR/scripts/claude-docs-helper.sh" ]]; then
+        cp "$INSTALL_DIR/scripts/claude-docs-helper.sh" "$INSTALL_DIR/claude-docs-helper.sh"
         chmod +x "$INSTALL_DIR/claude-docs-helper.sh"
-        echo "  ✓ Helper script downloaded directly"
+        echo "✓ Enhanced helper script installed"
     else
-        echo "  ❌ Failed to install helper script"
-        echo "  Please check your installation and try again"
-        exit 1
+        echo "  ⚠️  Enhanced script missing, attempting recovery..."
+        # Try to fetch the enhanced script from costiash fork
+        if curl -fsSL "https://raw.githubusercontent.com/costiash/claude-code-docs/$INSTALL_BRANCH/scripts/claude-docs-helper.sh" -o "$INSTALL_DIR/claude-docs-helper.sh" 2>/dev/null; then
+            chmod +x "$INSTALL_DIR/claude-docs-helper.sh"
+            echo "  ✓ Enhanced helper script downloaded directly"
+        else
+            echo "  ❌ Failed to install enhanced helper script"
+            echo "  Please check your installation and try again"
+            exit 1
+        fi
+    fi
+else
+    # Standard Edition: Use the template script
+    if [[ -f "$INSTALL_DIR/scripts/claude-docs-helper.sh.template" ]]; then
+        cp "$INSTALL_DIR/scripts/claude-docs-helper.sh.template" "$INSTALL_DIR/claude-docs-helper.sh"
+        chmod +x "$INSTALL_DIR/claude-docs-helper.sh"
+        echo "✓ Helper script installed"
+    else
+        echo "  ⚠️  Template file missing, attempting recovery..."
+        # Try to fetch the template from upstream
+        if curl -fsSL "https://raw.githubusercontent.com/ericbuess/claude-code-docs/$INSTALL_BRANCH/scripts/claude-docs-helper.sh.template" -o "$INSTALL_DIR/claude-docs-helper.sh" 2>/dev/null; then
+            chmod +x "$INSTALL_DIR/claude-docs-helper.sh"
+            echo "  ✓ Helper script downloaded directly"
+        else
+            echo "  ❌ Failed to install helper script"
+            echo "  Please check your installation and try again"
+            exit 1
+        fi
     fi
 fi
 
@@ -499,7 +583,7 @@ cleanup_old_installations
 
 # Success message
 echo ""
-echo "✅ Claude Code Docs v0.3.3 installed successfully!"
+echo "✅ Claude Code Docs v0.3.4 installed successfully!"
 echo ""
 echo "📚 Command: /docs (user)"
 echo "📂 Location: ~/.claude-code-docs"
@@ -511,7 +595,20 @@ echo "  /docs what's new  # See recent documentation changes"
 echo ""
 echo "🔄 Auto-updates: Enabled - syncs automatically when GitHub has newer content"
 echo ""
-echo "Available topics:"
-ls "$INSTALL_DIR/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 60
+
+# Show edition-specific information
+if [[ "${INSTALL_ENHANCED:-false}" == "true" ]]; then
+    echo "✨ Enhanced Edition Features:"
+    echo "   • 449 documentation paths (vs 269 standard)"
+    echo "   • Full-text search: ~/.claude-code-docs/claude-docs-helper.sh --search \"keyword\""
+    echo "   • Path validation: ~/.claude-code-docs/claude-docs-helper.sh --validate"
+    echo "   • Enhanced status: ~/.claude-code-docs/claude-docs-helper.sh --status"
+    echo ""
+    echo "💡 Tip: Enhanced features auto-detect and activate when Python 3.12+ is available"
+else
+    echo "Available topics:"
+    ls "$INSTALL_DIR/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 60
+fi
+
 echo ""
 echo "⚠️  Note: Restart Claude Code for auto-updates to take effect"
