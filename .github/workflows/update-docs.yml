@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: write
-  issues: write
 
 jobs:
   update-docs:
@@ -51,48 +50,52 @@ jobs:
       run: |
         # Stage changes to see what will be committed
         git add -A docs/
-        
-        # Get list of changed files
-        CHANGED_FILES=$(git diff --name-status --cached | grep "^M" | cut -f2 | grep -E "\.md$" | sed 's/docs\///' | paste -sd ", " -)
-        ADDED_FILES=$(git diff --name-status --cached | grep "^A" | cut -f2 | grep -E "\.md$" | sed 's/docs\///' | paste -sd ", " -)
-        DELETED_FILES=$(git diff --name-status --cached | grep "^D" | cut -f2 | grep -E "\.md$" | sed 's/docs\///' | paste -sd ", " -)
-        
-        # Build commit message
-        COMMIT_MSG="Update Claude Code docs - $(date +'%Y-%m-%d')"
-        
-        if [ -n "$CHANGED_FILES" ]; then
-          COMMIT_MSG="$COMMIT_MSG | Updated: $CHANGED_FILES"
+
+        # Get list of changed files with proper quoting
+        # Using printf with %q for shell-safe quoting would be ideal, but not available in all shells
+        # Instead, we carefully construct the file list from git output (which is already sanitized)
+        CHANGED_FILES=$(git diff --name-status --cached | grep "^M" | cut -f2 | grep -E "\.md$" | sed 's|^docs/||' | paste -sd ", " -)
+        ADDED_FILES=$(git diff --name-status --cached | grep "^A" | cut -f2 | grep -E "\.md$" | sed 's|^docs/||' | paste -sd ", " -)
+        DELETED_FILES=$(git diff --name-status --cached | grep "^D" | cut -f2 | grep -E "\.md$" | sed 's|^docs/||' | paste -sd ", " -)
+
+        # Build commit message with safe date format
+        COMMIT_MSG="Update Claude Code docs - $(date -u +'%Y-%m-%d')"
+
+        # Append file lists with proper quoting
+        if [ -n "${CHANGED_FILES}" ]; then
+          COMMIT_MSG="${COMMIT_MSG} | Updated: ${CHANGED_FILES}"
         fi
-        
-        if [ -n "$ADDED_FILES" ]; then
-          COMMIT_MSG="$COMMIT_MSG | Added: $ADDED_FILES"
+
+        if [ -n "${ADDED_FILES}" ]; then
+          COMMIT_MSG="${COMMIT_MSG} | Added: ${ADDED_FILES}"
         fi
-        
-        if [ -n "$DELETED_FILES" ]; then
-          COMMIT_MSG="$COMMIT_MSG | Removed: $DELETED_FILES"
+
+        if [ -n "${DELETED_FILES}" ]; then
+          COMMIT_MSG="${COMMIT_MSG} | Removed: ${DELETED_FILES}"
         fi
-        
-        echo "message=$COMMIT_MSG" >> $GITHUB_OUTPUT
+
+        # Use GitHub Actions multiline output format for safe escaping
+        # This prevents any shell interpretation of the commit message
+        {
+          echo "message<<EOF"
+          echo "${COMMIT_MSG}"
+          echo "EOF"
+        } >> $GITHUB_OUTPUT
     
     - name: Commit and push if changed
       if: steps.verify-changed-files.outputs.changed == 'true'
+      env:
+        COMMIT_MESSAGE: ${{ steps.commit-msg.outputs.message }}
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         # Files already staged in previous step
-        git commit -m "${{ steps.commit-msg.outputs.message }}"
+        # Use environment variable to avoid shell interpretation
+        git commit -m "${COMMIT_MESSAGE}"
         git push
-    
-    - name: Create issue on failure
+
+    - name: Log failure if fetch failed
       if: steps.fetch-docs.outputs.fetch_failed == 'true'
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const date = new Date().toISOString().split('T')[0];
-          await github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: `Documentation update failed - ${date}`,
-            body: `The automated documentation update failed on ${date}.\n\nPlease check the [workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) for details.`,
-            labels: ['bug', 'automation']
-          })
+      run: |
+        echo "::warning::Documentation fetch failed. Please check the workflow run for details."
+        exit 1

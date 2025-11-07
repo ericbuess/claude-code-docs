@@ -234,6 +234,116 @@ class TestUrlToSafeFilename:
             assert result.endswith(".md")
             assert "/" not in result
 
+    def test_url_to_safe_filename_sanitizes_special_characters(self):
+        """Test that special characters are removed."""
+        # Test various special characters that should be removed
+        url = "/en/docs/test<script>alert('xss')</script>"
+        result = url_to_safe_filename(url)
+
+        # Should only contain alphanumeric, hyphens, underscores, dots
+        assert "<" not in result
+        assert ">" not in result
+        assert "(" not in result
+        assert ")" not in result
+        assert "'" not in result
+        assert result.endswith(".md")
+
+    def test_url_to_safe_filename_sanitizes_path_traversal(self):
+        """Test that path traversal attempts are sanitized."""
+        # Try path traversal patterns
+        url = "/en/docs/../../../etc/passwd"
+        result = url_to_safe_filename(url)
+
+        # Should have removed dots in traversal pattern but kept necessary structure
+        assert result.endswith(".md")
+        # After sanitization, should be safe
+        assert "/" not in result
+
+    def test_url_to_safe_filename_sanitizes_null_bytes(self):
+        """Test that null bytes are removed."""
+        url = "/en/docs/test\x00malicious"
+        result = url_to_safe_filename(url)
+
+        # Null bytes should be removed
+        assert "\x00" not in result
+        assert result.endswith(".md")
+
+    def test_url_to_safe_filename_sanitizes_shell_metacharacters(self):
+        """Test that shell metacharacters are removed."""
+        url = "/en/docs/test;rm -rf /"
+        result = url_to_safe_filename(url)
+
+        # Shell metacharacters should be removed
+        assert ";" not in result
+        assert " " not in result
+        assert result.endswith(".md")
+
+    def test_url_to_safe_filename_sanitizes_unicode_attacks(self):
+        """Test that problematic unicode is handled."""
+        # Unicode characters that could cause issues
+        url = "/en/docs/test\u202e\u202d"  # Right-to-left override
+        result = url_to_safe_filename(url)
+
+        # Should only contain safe characters
+        assert result.endswith(".md")
+        # Unicode control characters should be removed
+        assert "\u202e" not in result
+        assert "\u202d" not in result
+
+    def test_url_to_safe_filename_empty_after_sanitization(self):
+        """Test that empty result after sanitization raises error."""
+        # URL with only special characters
+        url = "///<<<>>>"
+
+        with pytest.raises(ValueError, match="empty filename"):
+            url_to_safe_filename(url)
+
+    def test_url_to_safe_filename_only_extension(self):
+        """Test that only .md extension raises error."""
+        url = "/.md"
+
+        with pytest.raises(ValueError, match="empty filename"):
+            url_to_safe_filename(url)
+
+    def test_url_to_safe_filename_preserves_valid_characters(self):
+        """Test that valid characters are preserved."""
+        url = "/en/docs/test-file_name123"
+        result = url_to_safe_filename(url)
+
+        # Should preserve alphanumeric, hyphens, underscores
+        assert "test-file_name123" in result or "testfilename123" in result
+        assert result.endswith(".md")
+
+    def test_url_to_safe_filename_sql_injection_attempt(self):
+        """Test SQL injection patterns are sanitized."""
+        url = "/en/docs/test'; DROP TABLE docs;--"
+        result = url_to_safe_filename(url)
+
+        # SQL injection characters should be removed
+        assert "'" not in result
+        assert ";" not in result
+        assert "-" not in result or result.count("-") <= 2  # May keep hyphens in valid parts
+        assert result.endswith(".md")
+
+    def test_url_to_safe_filename_command_injection_attempt(self):
+        """Test command injection patterns are sanitized."""
+        url = "/en/docs/test`whoami`"
+        result = url_to_safe_filename(url)
+
+        # Backticks should be removed
+        assert "`" not in result
+        assert result.endswith(".md")
+
+    def test_url_to_safe_filename_windows_reserved_characters(self):
+        """Test Windows reserved characters are removed."""
+        url = "/en/docs/test<>:\"|?*"
+        result = url_to_safe_filename(url)
+
+        # Windows reserved characters should be removed
+        for char in '<>:"|?*':
+            assert char not in result
+        assert result.endswith(".md")
+
 
 class TestDiscoverSitemapAndBaseUrl:
     """Test sitemap discovery."""

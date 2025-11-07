@@ -36,10 +36,18 @@ jobs:
 
       - name: Generate validation report
         run: |
+          set -euo pipefail
           mkdir -p reports
-          echo "# Validation Report - $(date +'%Y-%m-%d')" > reports/validation-$(date +'%Y%m%d').md
-          echo "" >> reports/validation-$(date +'%Y%m%d').md
-          echo "Validation completed at $(date)" >> reports/validation-$(date +'%Y%m%d').md
+          # Use UTC dates and safe filename format
+          REPORT_DATE=$(date -u +'%Y-%m-%d')
+          REPORT_FILE="reports/validation-$(date -u +'%Y%m%d').md"
+
+          # Use printf for safer output generation
+          {
+            printf "# Validation Report - %s\n" "${REPORT_DATE}"
+            printf "\n"
+            printf "Validation completed at %s\n" "$(date -u)"
+          } > "${REPORT_FILE}"
 
       - name: Upload report
         uses: actions/upload-artifact@v4

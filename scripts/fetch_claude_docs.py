@@ -100,6 +100,7 @@ def url_to_safe_filename(url_path: str) -> str:
     Convert a URL path to a safe filename using standardized en__ naming convention.
 
     Preserves full URL path structure by converting slashes to double underscores.
+    Sanitizes characters to whitelist: alphanumeric, hyphens, underscores, and dots.
 
     Examples:
         /en/docs/claude-code/hooks → en__docs__claude-code__hooks.md
@@ -111,6 +112,9 @@ def url_to_safe_filename(url_path: str) -> str:
 
     Returns:
         Safe filename like 'en__docs__claude-code__hooks.md'
+
+    Raises:
+        ValueError: If the resulting filename is empty or invalid
     """
     # Strip leading and trailing slashes
     path = url_path.strip('/')
@@ -118,11 +122,19 @@ def url_to_safe_filename(url_path: str) -> str:
     # Replace all slashes with double underscores
     safe_name = path.replace('/', '__')
 
-    # Add .md extension if not present
-    if not safe_name.endswith('.md'):
-        safe_name += '.md'
+    # Sanitize: only keep alphanumeric, hyphens, underscores, and dots
+    # This prevents path traversal and injection attacks
+    sanitized = ''.join(c for c in safe_name if c.isalnum() or c in '-_.')
 
-    return safe_name
+    # Validate the result is not empty
+    if not sanitized or sanitized == '.md':
+        raise ValueError(f"Invalid URL path produces empty filename: {url_path}")
+
+    # Add .md extension if not present
+    if not sanitized.endswith('.md'):
+        sanitized += '.md'
+
+    return sanitized
 
 
 def discover_sitemap_and_base_url(session: requests.Session) -> Tuple[str, str]:
@@ -174,6 +186,27 @@ def discover_sitemap_and_base_url(session: requests.Session) -> Tuple[str, str]:
             continue
     
     raise Exception("Could not find a valid sitemap")
+
+
+def normalize_url_to_legacy_format(path: str) -> str:
+    """
+    Normalize new code.claude.com URL format to legacy naming convention.
+
+    Examples:
+        /docs/en/hooks → /en/docs/claude-code/hooks
+        /en/docs/claude-code/hooks → /en/docs/claude-code/hooks (unchanged)
+
+    This ensures consistent file naming regardless of URL structure changes.
+    """
+    # New format: /docs/en/XXX → convert to /en/docs/claude-code/XXX
+    if path.startswith('/docs/en/'):
+        # Extract the page name after /docs/en/
+        page_name = path.replace('/docs/en/', '')
+        # Convert to legacy format
+        return f'/en/docs/claude-code/{page_name}'
+
+    # Already in legacy format or other format - return as-is
+    return path
 
 
 def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> List[str]:
@@ -245,8 +278,9 @@ def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> L
                     '/api/',       # API reference pages
                     '/reference/', # Reference pages that aren't core docs
                 ]
-                
+
                 if not any(skip in path for skip in skip_patterns):
+                    # Keep original path - normalization happens during fetch
                     claude_code_pages.append(path)
         
         # Remove duplicates and sort
@@ -333,10 +367,22 @@ def validate_markdown_content(content: str, filename: str) -> None:
 def fetch_markdown_content(path: str, session: requests.Session, base_url: str) -> Tuple[str, str]:
     """
     Fetch markdown content with better error handling and validation.
+
+    Args:
+        path: Original URL path (e.g., /docs/en/hooks or /en/docs/claude-code/hooks)
+        session: Requests session
+        base_url: Base URL for fetching
+
+    Returns:
+        Tuple of (filename, content) where filename uses legacy naming convention
     """
+    # Build fetch URL with original path
     markdown_url = f"{base_url}{path}.md"
-    filename = url_to_safe_filename(path)
-    
+
+    # Normalize path for consistent filename (legacy convention)
+    normalized_path = normalize_url_to_legacy_format(path)
+    filename = url_to_safe_filename(normalized_path)
+
     logger.info(f"Fetching: {markdown_url} -> {filename}")
     
     for attempt in range(MAX_RETRIES):
