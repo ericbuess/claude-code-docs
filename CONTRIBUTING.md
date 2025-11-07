@@ -71,6 +71,88 @@ When updating documentation:
 - **Be consistent**: Follow existing patterns in each document
 - **Ask if unsure**: Open a discussion if URL choice is ambiguous
 
+## Branch Strategy
+
+This fork uses a clear branching strategy to maintain independence while allowing clean contributions to upstream:
+
+### Main Branches
+
+- **`main`** - Fork's stable branch with all enhancements
+- **`development`** - Active development for fork-specific features
+- **`upstream-sync`** - Clean tracking of `upstream/main` for syncing and PRs
+
+### Feature Branches
+
+- **`pr/*`** - Branches for PRs to upstream (clean, upstream-compatible changes only)
+- **`feature/*`** - Fork-specific feature development
+
+### Workflow for Upstream PRs
+
+When contributing to upstream ([ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)):
+
+```bash
+# 1. Update upstream-sync branch
+git checkout upstream-sync
+git pull upstream main
+git push origin upstream-sync
+
+# 2. Create clean PR branch from upstream-sync
+git checkout -b pr/your-feature upstream-sync
+
+# 3. Make ONLY upstream-compatible changes
+# - No Python code (unless universally beneficial)
+# - No fork-specific features
+# - No test artifacts or development tools
+
+# 4. Verify cleanliness
+git diff upstream/main --stat
+# Should show minimal, focused changes
+
+# 5. Push and create PR
+git push origin pr/your-feature
+gh pr create --repo ericbuess/claude-code-docs \
+  --base main \
+  --head costiash:pr/your-feature \
+  --title "feat: Your feature"
+```
+
+### Workflow for Fork Features
+
+When developing fork-specific features:
+
+```bash
+# 1. Create feature branch from development
+git checkout development
+git pull origin development
+git checkout -b feature/your-feature
+
+# 2. Develop and test with comprehensive tests
+pytest tests/ -v
+
+# 3. Push and create PR to this fork
+git push origin feature/your-feature
+gh pr create --repo costiash/claude-code-docs \
+  --base main \
+  --title "[Enhanced] Your feature"
+```
+
+### Syncing with Upstream
+
+Regularly sync the fork with upstream changes:
+
+```bash
+# Update upstream-sync
+git checkout upstream-sync
+git pull upstream main
+git push origin upstream-sync
+
+# Merge upstream changes to fork
+git checkout main
+git merge upstream-sync
+# Resolve conflicts (expected in enhanced files)
+git push origin main
+```
+
 ## Getting Started
 
 ### Prerequisites
