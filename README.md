@@ -6,6 +6,14 @@
 [![Python](https://img.shields.io/badge/python-3.12+-blue)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey)](https://github.com/costiash/claude-code-docs)
 
+> **⭐ This is an enhanced fork of [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)**
+>
+> This project builds upon Eric Buess's excellent foundation, adding enhanced search capabilities, extended documentation coverage, and validation tools. All credit for the original concept and implementation goes to the upstream repository.
+>
+> **For the original, simpler implementation, see [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)**
+
+---
+
 **Comprehensive local documentation for Claude Code with instant search and validation.**
 
 Stop hunting through scattered docs. This tool provides fast, searchable access to all 449 Claude Code documentation paths - API references, guides, examples, and changelogs.
@@ -18,8 +26,6 @@ Stop hunting through scattered docs. This tool provides fast, searchable access 
 - 🎯 **Dual Mode** - Simple shell-only or Python-powered enhanced features
 - 🧪 **Well-Tested** - 566 tests, 81% coverage, reliable and stable
 - 🔄 **Auto-Updates** - Syncs with latest Claude Code documentation every 3 hours
-
-Built on the excellent foundation of [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)
 
 ## Installation
 
@@ -208,10 +214,20 @@ See [UNINSTALL.md](UNINSTALL.md) for manual uninstall instructions.
 
 **Contributions are welcome!** This is a community project and we'd love your help:
 
+### Contributing to This Fork (Enhanced Features)
+
 - 🪟 **Windows Support**: Want to help add Windows compatibility? [Fork the repository](https://github.com/costiash/claude-code-docs/fork) and submit a PR!
 - 🐛 **Bug Reports**: Found something not working? [Open an issue](https://github.com/costiash/claude-code-docs/issues)
 - 💡 **Feature Requests**: Have an idea? [Start a discussion](https://github.com/costiash/claude-code-docs/issues)
 - 📝 **Documentation**: Help improve docs or add examples
+
+### Contributing to Upstream
+
+If you want to contribute improvements that benefit the original project:
+
+- 🔄 **Upstream Contributions**: Check out [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs) for the original implementation
+- 💝 **Core Features**: Contributions to core functionality should ideally go to upstream first
+- 🤝 **Collaboration**: We aim to keep compatibility with upstream and contribute improvements back when possible
 
 You can also use Claude Code itself to help build features - just fork the repo and let Claude assist you!
 
@@ -222,6 +238,15 @@ Some edge cases to be aware of:
 - Some documentation links might not resolve correctly
 
 If you find any issues not listed here, please [report them](https://github.com/costiash/claude-code-docs/issues)!
+
+## Acknowledgments
+
+This enhanced edition is built upon the excellent work of:
+
+- **[Eric Buess](https://github.com/ericbuess)** - Creator of [claude-code-docs](https://github.com/ericbuess/claude-code-docs), the original implementation that made local Claude Code documentation access possible
+- **[Anthropic](https://www.anthropic.com/)** - For Claude Code and the comprehensive documentation
+
+The original [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs) provides a simpler, shell-only implementation that works great for basic documentation access. This fork extends that foundation with additional features for users who need advanced search and validation capabilities.
 
 ## License
 
