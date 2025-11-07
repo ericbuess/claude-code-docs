@@ -99,7 +99,11 @@ class TestDocsManifest:
             f.name for f in docs_dir.glob('*.md')
             if f.name != 'docs_manifest.json'
         )
-        manifest_files = set(docs_manifest.keys())
+        # Handle both dict and list manifest formats
+        if isinstance(docs_manifest, dict):
+            manifest_files = set(docs_manifest.keys())
+        else:
+            manifest_files = set(docs_manifest)
 
         # Files in manifest but not on disk
         missing = manifest_files - actual_files
@@ -130,6 +134,14 @@ class TestDocsManifest:
 
     def test_all_entries_have_required_fields(self, docs_manifest):
         """Ensure all manifest entries have required fields"""
+        # Handle list format (new) - just verify filenames are non-empty strings
+        if isinstance(docs_manifest, list):
+            for filename in docs_manifest:
+                assert filename, "Empty filename in manifest"
+                assert isinstance(filename, str), f"Non-string filename: {filename}"
+            return
+
+        # Handle dict format (old) - verify detailed structure
         # All entries should have these core fields
         core_fields = {'hash', 'last_updated'}
 
