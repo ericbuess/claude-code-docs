@@ -91,6 +91,12 @@ CACHING_*.md
 COVERAGE_*.md
 GIT_*_SUMMARY.md
 CLEANUP_*.md
+INSTALLATION_CHANGES*.md
+
+# Package manager lock files (project uses pip requirements.txt)
+uv.lock
+poetry.lock
+Pipfile.lock
 
 # Analysis and execution tracking
 analysis/execution/*.md

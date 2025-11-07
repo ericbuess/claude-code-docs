@@ -79,7 +79,6 @@ This fork uses a clear branching strategy to maintain independence while allowin
 
 - **`main`** - Fork's stable branch with all enhancements
 - **`development`** - Active development for fork-specific features
-- **`upstream-sync`** - Clean tracking of `upstream/main` for syncing and PRs
 
 ### Feature Branches
 
@@ -91,13 +90,11 @@ This fork uses a clear branching strategy to maintain independence while allowin
 When contributing to upstream ([ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)):
 
 ```bash
-# 1. Update upstream-sync branch
-git checkout upstream-sync
-git pull upstream main
-git push origin upstream-sync
+# 1. Fetch latest from upstream
+git fetch upstream
 
-# 2. Create clean PR branch from upstream-sync
-git checkout -b pr/your-feature upstream-sync
+# 2. Create clean PR branch from upstream/main
+git checkout -b pr/your-feature upstream/main
 
 # 3. Make ONLY upstream-compatible changes
 # - No Python code (unless universally beneficial)
@@ -141,14 +138,12 @@ gh pr create --repo costiash/claude-code-docs \
 Regularly sync the fork with upstream changes:
 
 ```bash
-# Update upstream-sync
-git checkout upstream-sync
-git pull upstream main
-git push origin upstream-sync
+# Fetch latest from upstream
+git fetch upstream
 
 # Merge upstream changes to fork
 git checkout main
-git merge upstream-sync
+git merge upstream/main
 # Resolve conflicts (expected in enhanced files)
 git push origin main
 ```
