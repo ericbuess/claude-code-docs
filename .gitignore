@@ -116,3 +116,8 @@ analysis/execution/*.py
 !scripts/
 !tests/
 !enhancements/
+
+# Guide files for personal reference (not part of main repo)
+LINKEDIN_POST.md
+NEXT_STEPS.md
+REPO_SETUP.md
