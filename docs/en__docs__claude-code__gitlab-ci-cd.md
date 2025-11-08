@@ -9,7 +9,7 @@
 </Info>
 
 <Note>
-  This integration is built on top of the [Claude Code CLI and SDK](https://docs.claude.com/en/api/agent-sdk), enabling programmatic use of Claude in your CI/CD jobs and custom automation workflows.
+  This integration is built on top of the [Claude Code CLI and SDK](https://docs.claude.com/en/docs/agent-sdk), enabling programmatic use of Claude in your CI/CD jobs and custom automation workflows.
 </Note>
 
 ## Why use Claude Code with GitLab?
