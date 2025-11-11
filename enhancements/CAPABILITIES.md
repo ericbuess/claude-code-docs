@@ -280,7 +280,7 @@ Enhanced features integrate seamlessly:
 | Update method | Git pull all | Selective by hash |
 | Category support | No | Yes (7 categories) |
 | Testing | None | 577 tests |
-| Python required | No | Yes (3.12+) |
+| Python required | No | Yes (3.9+) |
 
 ## Use Cases
 

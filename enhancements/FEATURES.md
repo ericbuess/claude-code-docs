@@ -170,7 +170,7 @@ curl -fsSL https://raw.githubusercontent.com/YOUR_FORK/claude-code-docs/main/ins
 | Validation | None | HTTP reachability |
 | Updates | Git pull | Selective fetch (SHA256) |
 | Testing | None | 577 tests |
-| Python required | No | Yes (3.12+) |
+| Python required | No | Yes (3.9+) |
 | Dependencies | git, jq, curl | + Python, requests |
 
 ## Contributing Enhancements Upstream

@@ -68,8 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | Full-Text Search | ✗ | ✓ |
 | Category Filtering | ✗ | ✓ |
 | Validation Tools | ✗ | ✓ |
-| Dependencies | Shell, git, jq | + Python 3.12+ |
-| Test Coverage | ✗ | 566 tests (81.41%) |
+| Dependencies | Shell, git, jq | + Python 3.9+ |
+| Test Coverage | ✗ | 577 tests (72%) |
 
 ---
 
