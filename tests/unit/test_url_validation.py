@@ -48,15 +48,15 @@ class TestValidatePath:
         with patch('requests.head') as mock_head:
             mock_response = Mock()
             mock_response.status_code = 200
-            mock_response.url = "https://docs.anthropic.com/en/docs/test.md"
+            mock_response.url = "https://code.claude.com/docs/en/docs/test"
             mock_response.raise_for_status = Mock()
             mock_head.return_value = mock_response
 
             validate_path("/en/docs/test")
 
-            # Verify correct URL was called
+            # Verify correct URL was called (new domain, no .md extension)
             call_args = mock_head.call_args
-            assert 'https://docs.anthropic.com/en/docs/test.md' in str(call_args)
+            assert 'https://code.claude.com/docs/en/docs/test' in str(call_args)
 
 
 class TestSearchPaths:
