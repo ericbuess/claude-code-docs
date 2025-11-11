@@ -25,7 +25,7 @@ else
     exit 1
 fi
 
-# Check if Python is available and version is 3.12+
+# Check if Python is available and version is 3.9+
 check_python() {
     if ! command -v python3 &> /dev/null; then
         return 1
@@ -35,7 +35,7 @@ check_python() {
     local python_major=$(echo "$python_version" | cut -d. -f1)
     local python_minor=$(echo "$python_version" | cut -d. -f2)
 
-    if [[ "$python_major" -ge 3 && "$python_minor" -ge 12 ]]; then
+    if [[ "$python_major" -ge 3 && "$python_minor" -ge 9 ]]; then
         return 0
     else
         return 1
@@ -73,7 +73,7 @@ check_enhanced_available() {
 enhanced_search() {
     if ! check_enhanced_available; then
         echo "❌ Enhanced search not available"
-        echo "   Requires: Python 3.12+, lookup_paths.py, enhanced manifest"
+        echo "   Requires: Python 3.9+, lookup_paths.py, enhanced manifest"
         echo "   Reinstall with enhanced features: curl -fsSL .../install.sh | bash"
         echo ""
         echo "Falling back to standard search..."
@@ -101,7 +101,7 @@ enhanced_search() {
 search_content() {
     if ! check_enhanced_available; then
         echo "❌ Content search not available"
-        echo "   Requires: Python 3.12+, search index, enhanced features"
+        echo "   Requires: Python 3.9+, search index, enhanced features"
         echo "   Install with: curl -fsSL .../install.sh | bash"
         echo ""
         return 1
@@ -124,7 +124,7 @@ search_content() {
 validate_paths() {
     if ! check_enhanced_available; then
         echo "❌ Path validation not available"
-        echo "   Requires: Python 3.12+, lookup_paths.py"
+        echo "   Requires: Python 3.9+, lookup_paths.py"
         echo ""
         return 1
     fi
@@ -146,7 +146,7 @@ validate_paths() {
 update_all_docs() {
     if ! check_enhanced_available; then
         echo "❌ Enhanced update not available"
-        echo "   Requires: Python 3.12+, main.py"
+        echo "   Requires: Python 3.9+, main.py"
         echo ""
         echo "Falling back to standard git pull..."
         cd "$DOCS_PATH" && git pull
@@ -178,7 +178,7 @@ show_enhanced_help() {
     run_template_command --help 2>/dev/null || run_template_command
     echo ""
     echo "─────────────────────────────────────────────────────────────────"
-    echo "Enhanced Edition Commands (requires Python 3.12+):"
+    echo "Enhanced Edition Commands (requires Python 3.9+):"
     echo "─────────────────────────────────────────────────────────────────"
     echo ""
     echo "Search & Discovery:"
@@ -199,7 +199,7 @@ show_enhanced_help() {
     else
         echo "❌ Enhanced features: NOT AVAILABLE"
         if ! check_python; then
-            echo "   Missing: Python 3.12+"
+            echo "   Missing: Python 3.9+"
         else
             echo "   Missing: Enhanced installation files"
         fi
@@ -273,7 +273,7 @@ show_status() {
         local python_version=$(python3 --version 2>&1 | cut -d' ' -f2)
         echo "  ✅ Python $python_version"
     else
-        echo "  ❌ Python 3.12+ (not available)"
+        echo "  ❌ Python 3.9+ (not available)"
     fi
 
     [[ -f "$SCRIPTS_PATH/lookup_paths.py" ]] && echo "  ✅ lookup_paths.py" || echo "  ❌ lookup_paths.py"
