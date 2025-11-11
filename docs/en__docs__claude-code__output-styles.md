@@ -27,33 +27,33 @@ codebase and how Claude operates:
 
 Output styles directly modify Claude Code's system prompt.
 
-* Non-default output styles exclude instructions specific to code generation and
-  efficient output normally built into Claude Code (such as responding concisely
-  and verifying code with tests).
-* Instead, these output styles have their own custom instructions added to the
+* All output styles exclude instructions for efficient output (such as
+  responding concisely).
+* Custom output styles exclude instructions for coding (such as verifying code
+  with tests), unless `keep-coding-instructions` is true.
+* All output styles have their own custom instructions added to the end of the
   system prompt.
+* All output styles trigger reminders for Claude to adhere to the output style
+  instructions during the conversation.
 
 ## Change your output style
 
 You can either:
 
-* Run `/output-style` to access the menu and select your output style (this can
+* Run `/output-style` to access a menu and select your output style (this can
   also be accessed from the `/config` menu)
 
 * Run `/output-style [style]`, such as `/output-style explanatory`, to directly
   switch to a style
 
-These changes apply to the [local project level](/en/settings)
-and are saved in `.claude/settings.local.json`.
+These changes apply to the [local project level](/en/settings) and are saved in
+`.claude/settings.local.json`. You can also directly edit the `outputStyle`
+field in a settings file at a different level.
 
 ## Create a custom output style
 
-To set up a new output style with Claude's help, run
-`/output-style:new I want an output style that ...`
-
-By default, output styles created through `/output-style:new` are saved as
-markdown files at the user level in `~/.claude/output-styles` and can be used
-across projects. They have the following structure:
+Custom output styles are Markdown files with frontmatter and the text that will
+be added to the system prompt:
 
 ```markdown  theme={null}
 ---
@@ -72,9 +72,19 @@ tasks. [Your custom instructions here...]
 [Define how the assistant should behave in this style...]
 ```
 
-You can also create your own output style Markdown files and save them either at
-the user level (`~/.claude/output-styles`) or the project level
-(`.claude/output-styles`).
+You can save these files at the user level (`~/.claude/output-styles`) or
+project level (`.claude/output-styles`).
+
+### Frontmatter
+
+Output style files support frontmatter, useful for specifying metadata about the
+command:
+
+| Frontmatter                | Purpose                                                                     | Default                 |
+| :------------------------- | :-------------------------------------------------------------------------- | :---------------------- |
+| `name`                     | Name of the output style, if not the file name                              | Inherits from file name |
+| `description`              | Description of the output style. Used only in the UI of `/output-style`     | None                    |
+| `keep-coding-instructions` | Whether to keep the parts of Claude Code's system prompt related to coding. | false                   |
 
 ## Comparisons to related features
 
