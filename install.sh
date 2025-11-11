@@ -221,15 +221,37 @@ cleanup_old_installations() {
         fi
         
         echo "  - $old_dir"
-        
-        # Check if it has uncommitted changes
+
+        # SAFETY CHECK 1: Never delete current working directory
+        if [[ "$(pwd 2>/dev/null)" == "$old_dir" ]]; then
+            echo "    ⚠️  Preserved (current working directory)"
+            continue
+        fi
+
+        # SAFETY CHECK 2: Never delete development repos (pattern: /home/*/claude-code-docs)
+        if [[ "$old_dir" =~ ^/home/[^/]+/claude-code-docs$ ]]; then
+            echo "    ⚠️  Preserved (likely development repository)"
+            continue
+        fi
+
+        # SAFETY CHECK 3: Check if it's a development repo with GitHub remote
         if [[ -d "$old_dir/.git" ]]; then
             local original_dir=$(pwd)
             if cd "$old_dir" 2>/dev/null; then
+                # Check for GitHub remote pointing to main repo
+                local has_github_remote=$(git remote -v 2>/dev/null | grep -c "github.com.*claude-code-docs" || echo "0")
+
+                if [[ "$has_github_remote" -gt 0 ]]; then
+                    cd "$original_dir" || exit 1
+                    echo "    ⚠️  Preserved (development repository with GitHub remote)"
+                    continue
+                fi
+
+                # Check if it has uncommitted changes
                 if [[ -z "$(git status --porcelain 2>/dev/null)" ]]; then
                     cd "$original_dir" || exit 1
                     rm -rf "$old_dir"
-                    echo "    ✓ Removed (clean)"
+                    echo "    ✓ Removed (clean installation copy)"
                 else
                     cd "$original_dir" || exit 1
                     echo "    ⚠️  Preserved (has uncommitted changes)"
