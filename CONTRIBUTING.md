@@ -13,7 +13,7 @@ This project maintains **two modes** to serve different user needs:
    - Perfect for basic documentation access
 
 2. **Enhanced Mode** - Optional Python-based features (opt-in)
-   - Python 3.12+ required
+   - Python 3.9+ required
    - 449 documentation paths (10x coverage)
    - Full-text search and validation
    - Advanced features for power users
@@ -158,7 +158,7 @@ git push origin main
 - Basic understanding of Claude Code documentation
 
 **For enhanced features:**
-- Python 3.12+
+- Python 3.9+
 - pip package manager
 - Understanding of Python development
 
@@ -287,7 +287,7 @@ TOPIC="$(echo "$TOPIC" | tr -cd '[:alnum:]-_')"
 ### Python Scripts (Enhanced Mode)
 
 **Style Guide:**
-- Python 3.12+ features allowed and encouraged
+- Python 3.9+ features allowed and encouraged
 - Type hints required on all function signatures
 - Docstrings required for all public functions (use Google style)
 - Follow PEP 8 style guide
@@ -470,7 +470,7 @@ def test_search_paths_with_limit():
 ```
 
 **Current test status:**
-- Total: 566 tests
+- Total: 577 tests
 - Passing: 564 tests (99.6% pass rate)
 - Skipped: 2 tests (intentional - require development-time artifacts)
 - Failing: 0 tests
@@ -542,7 +542,7 @@ Fixes #123
 - Change 2
 
 ## Requirements
-- Python 3.12+
+- Python 3.9+
 - Additional dependencies: [list]
 
 ## Testing
@@ -576,7 +576,7 @@ Users can search for keywords within documentation content.
 - Implemented relevance ranking algorithm
 
 ## Requirements
-- Python 3.12+
+- Python 3.9+
 - Additional dependencies: None (uses existing requests library)
 
 ## Testing

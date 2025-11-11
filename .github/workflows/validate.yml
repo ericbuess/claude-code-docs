@@ -15,15 +15,14 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: '3.9'
 
       - name: Install dependencies
         run: |
           pip install requests>=2.32.0
-          pip install pytest pytest-asyncio pytest-mock pyyaml
+          pip install pytest pytest-cov pytest-asyncio pytest-mock pyyaml
 
       - name: Validate all paths reachable
-        continue-on-error: true
         run: python scripts/lookup_paths.py --validate-all
 
       - name: Run validation tests

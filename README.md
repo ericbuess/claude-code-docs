@@ -1,9 +1,9 @@
 # Claude Code Documentation Tool
 
 [![Last Update](https://img.shields.io/github/last-commit/costiash/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/costiash/claude-code-docs/commits/main)
-[![Tests](https://img.shields.io/badge/tests-566%20passing-success)](https://github.com/costiash/claude-code-docs/actions)
-[![Coverage](https://img.shields.io/badge/coverage-81%25-green)](https://github.com/costiash/claude-code-docs)
-[![Python](https://img.shields.io/badge/python-3.12+-blue)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/tests-573%20passing-success)](https://github.com/costiash/claude-code-docs/actions)
+[![Coverage](https://img.shields.io/badge/coverage-72%25-green)](https://github.com/costiash/claude-code-docs)
+[![Python](https://img.shields.io/badge/python-3.9+-blue)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey)](https://github.com/costiash/claude-code-docs)
 
 > **⭐ This is an enhanced fork of [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)**
@@ -24,7 +24,7 @@ Stop hunting through scattered docs. This tool provides fast, searchable access 
 - 📚 **Comprehensive Coverage** - 449 paths across 7 categories (API, guides, prompts, resources)
 - ✅ **Automated Validation** - Keeps docs fresh, detects broken links automatically
 - 🎯 **Dual Mode** - Simple shell-only or Python-powered enhanced features
-- 🧪 **Well-Tested** - 566 tests, 81% coverage, reliable and stable
+- 🧪 **Well-Tested** - 577 tests (99.3% pass rate), 72% coverage, reliable and stable
 - 🔄 **Auto-Updates** - Syncs with latest Claude Code documentation every 3 hours
 
 ## Installation
@@ -37,14 +37,14 @@ curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/inst
 
 **The installer automatically detects your system:**
 - **Standard mode** - Always works, shell-only, 269 core files
-- **Enhanced mode** - Enables automatically if Python 3.12+ is available (449 paths, full-text search)
+- **Enhanced mode** - Enables automatically if Python 3.9+ is available (449 paths, full-text search)
 
 Installation succeeds regardless of Python availability. Enhanced features activate automatically when supported.
 
 **Requirements:**
 - macOS 12+ or Linux (Ubuntu, Debian, Fedora, etc.)
 - git, jq, curl (usually pre-installed)
-- Python 3.12+ (optional, enables enhanced features)
+- Python 3.9+ (optional, enables enhanced features)
 
 See [enhancements/](enhancements/) for complete feature documentation and examples.
 
@@ -182,7 +182,7 @@ Re-run the installer and choose your preferred mode:
 curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash
 ```
 
-Enhanced mode requires Python 3.12+ and provides additional features like full-text search.
+Enhanced mode requires Python 3.9+ and provides additional features like full-text search.
 
 ## Uninstalling
 
@@ -223,7 +223,7 @@ This project implements multiple security layers to protect against injection at
 
 ### Security Validation
 
-All security enhancements are verified through automated testing with 99.7% test pass rate and 81% code coverage. See [CONTRIBUTING.md](CONTRIBUTING.md) for details on our security testing approach.
+All security enhancements are verified through automated testing with 99.3% test pass rate (573/577 tests) and 72% code coverage. See [CONTRIBUTING.md](CONTRIBUTING.md) for details on our security testing approach.
 
 ## Contributing
 

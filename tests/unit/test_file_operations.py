@@ -86,7 +86,7 @@ More content here."""
 
         # Verify correct URL was called
         call_args = mock_session.get.call_args
-        assert 'https://docs.anthropic.com/en/docs/test.md' in str(call_args)
+        assert 'https://code.claude.com/docs/en/docs/test.md' in str(call_args)
 
 
 class TestSaveDocumentation:

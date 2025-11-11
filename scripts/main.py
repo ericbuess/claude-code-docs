@@ -31,7 +31,7 @@ from functools import lru_cache
 import requests
 
 # Configuration
-BASE_URL = "https://docs.anthropic.com"
+BASE_URL = "https://code.claude.com/docs"
 HEADERS = {
     'User-Agent': 'Claude-Code-Docs-Fetcher/1.0',
     'Cache-Control': 'no-cache, no-store, must-revalidate',

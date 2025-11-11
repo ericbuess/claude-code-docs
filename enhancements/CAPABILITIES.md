@@ -202,7 +202,7 @@ Advanced fetching with enterprise features:
 - `build_search_index.py` - Full-text search indexer
 
 **Dependencies**:
-- Python 3.12+
+- Python 3.9+
 - requests library
 - Standard library modules (json, pathlib, concurrent.futures)
 
@@ -245,7 +245,7 @@ Enhanced features integrate seamlessly:
 - **Detection**: Automatic feature detection at runtime
 - **Fallback**: Graceful degradation to standard mode
 - **Compatibility**: Works with existing upstream scripts
-- **Testing**: Comprehensive test suite (566 tests)
+- **Testing**: Comprehensive test suite (577 tests)
 
 ## Performance Characteristics
 
@@ -279,7 +279,7 @@ Enhanced features integrate seamlessly:
 | Validation | None | HTTP reachability |
 | Update method | Git pull all | Selective by hash |
 | Category support | No | Yes (7 categories) |
-| Testing | None | 566 tests |
+| Testing | None | 577 tests |
 | Python required | No | Yes (3.12+) |
 
 ## Use Cases
@@ -320,7 +320,7 @@ Potential enhancements being considered:
 
 Current limitations to be aware of:
 
-- Requires Python 3.12+ for enhanced features
+- Requires Python 3.9+ for enhanced features
 - Requires internet connection for validation
 - Rate limiting applies to batch operations
 - Search quality depends on indexed content
