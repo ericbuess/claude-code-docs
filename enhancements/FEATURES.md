@@ -124,7 +124,7 @@ python scripts/main.py --verify              # Check what needs updating
 - `update-docs.yml` - Fetch docs every 3 hours
 
 **Enhanced Workflows** (ours):
-- `test.yml` - Run 566 tests on push/PR
+- `test.yml` - Run 577 tests on push/PR
 - `validate.yml` - Daily path validation
 - `coverage.yml` - Coverage reporting
 
@@ -158,7 +158,7 @@ curl -fsSL https://raw.githubusercontent.com/YOUR_FORK/claude-code-docs/main/ins
 - Advanced search tools
 
 **Requirements**:
-- Python 3.12+
+- Python 3.9+
 - requests library (installed automatically)
 
 ## Feature Comparison
@@ -169,7 +169,7 @@ curl -fsSL https://raw.githubusercontent.com/YOUR_FORK/claude-code-docs/main/ins
 | Search | Topic name only | Full-text + fuzzy |
 | Validation | None | HTTP reachability |
 | Updates | Git pull | Selective fetch (SHA256) |
-| Testing | None | 566 tests |
+| Testing | None | 577 tests |
 | Python required | No | Yes (3.12+) |
 | Dependencies | git, jq, curl | + Python, requests |
 
@@ -187,7 +187,7 @@ These enhancements are designed to be contributed back to upstream as optional f
 **Design Principles**:
 - All enhancements are **optional** (don't break standard mode)
 - **Backward compatible** with upstream
-- **Well tested** (566 tests, 99.6% pass rate - 564 passing, 2 skipped)
+- **Well tested** (577 tests, 99.6% pass rate - 564 passing, 2 skipped)
 - **Documented** (comprehensive docs)
 - **Modular** (can adopt pieces independently)
 

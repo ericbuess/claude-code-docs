@@ -12,7 +12,7 @@ This script:
 import json
 import re
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Tuple
 from collections import Counter
 import time
 
@@ -73,7 +73,7 @@ def path_from_file(file_path: Path, docs_dir: Path) -> str:
     return path_str
 
 
-def index_file(file_path: Path, docs_dir: Path) -> tuple[str, Dict]:
+def index_file(file_path: Path, docs_dir: Path) -> Tuple[str, Dict]:
     """Index a single markdown file"""
     try:
         content = file_path.read_text(encoding='utf-8', errors='ignore')

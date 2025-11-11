@@ -6,7 +6,7 @@ Claude Code GitHub Actions brings AI-powered automation to your GitHub workflow.
 
 <Note>
   Claude Code GitHub Actions is built on top of the [Claude Code
-  SDK](https://docs.claude.com/en/api/agent-sdk), which enables programmatic integration of
+  SDK](https://docs.claude.com/en/docs/agent-sdk), which enables programmatic integration of
   Claude Code into your applications. You can use the SDK to build custom
   automation workflows beyond GitHub Actions.
 </Note>

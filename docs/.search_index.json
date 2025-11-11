@@ -1,14 +1,14 @@
 {
   "version": "1.0",
-  "generated_at": "2025-11-06T02:33:42Z",
+  "generated_at": "2025-11-11T01:05:17Z",
   "indexed_files": 269,
   "index": {
     "/changelog": {
       "title": "Claude Code Changelog",
       "content_preview": "# Claude Code Changelog  > **Source**: https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md >  > This is the official Claude Code release changelog, automatically fetched from the Claude C...",
       "keywords": [
-        "claude",
         "fixed",
+        "claude",
         "added",
         "mcp",
         "now",
@@ -16,19 +16,19 @@
         "tool",
         "mode",
         "commands",
-        "where",
         "code",
         "improved",
+        "where",
         "add",
+        "bash",
         "files",
         "fix",
-        "bash",
         "command",
+        "sdk",
         "bug",
-        "file",
-        "sdk"
+        "file"
       ],
-      "word_count": 5273,
+      "word_count": 5405,
       "file_path": "docs/changelog.md"
     },
     "/en/api/admin-api/apikeys/get-api-key": {
@@ -3450,28 +3450,28 @@
       "title": "Claude Code on Amazon Bedrock",
       "content_preview": "# Claude Code on Amazon Bedrock  > Learn about configuring Claude Code through Amazon Bedrock, including setup, IAM configuration, and troubleshooting.  ## Prerequisites  Before configuring Claude Cod...",
       "keywords": [
+        "code",
         "bedrock",
         "claude",
-        "code",
         "aws",
         "model",
         "credentials",
-        "configuration",
         "settings",
-        "iam",
+        "configuration",
         "environment",
+        "iam",
+        "variables",
+        "when",
         "note",
         "amazon",
         "access",
+        "see",
         "uses",
+        "using",
         "these",
-        "api",
-        "when",
-        "output",
-        "models",
-        "permissions"
+        "api"
       ],
-      "word_count": 989,
+      "word_count": 1037,
       "file_path": "docs/en__docs__claude-code__amazon-bedrock.md"
     },
     "/en/docs/claude-code/analytics": {
@@ -3649,15 +3649,14 @@
         "data",
         "claude",
         "code",
-        "anthropic",
-        "snf",
-        "oudpt",
+        "yhhhmtsxwr",
         "users",
         "api",
         "default",
         "max",
         "using",
         "flow",
+        "anthropic",
         "our",
         "session",
         "retention",
@@ -3665,7 +3664,8 @@
         "png",
         "model",
         "https",
-        "mintcdn"
+        "mintcdn",
+        "com"
       ],
       "word_count": 1152,
       "file_path": "docs/en__docs__claude-code__data-usage.md"
@@ -3840,7 +3840,7 @@
     },
     "/en/docs/claude-code/hooks": {
       "title": "Hooks reference",
-      "content_preview": "# Hooks reference  > This page provides reference documentation for implementing hooks in Claude Code.  <Tip>   For a quickstart guide with examples, see [Get started with Claude Code hooks](/en/docs/...",
+      "content_preview": "# Hooks reference  > This page provides reference documentation for implementing hooks in Claude Code.  <Tip>   For a quickstart guide with examples, see [Get started with Claude Code hooks](/en/hooks...",
       "keywords": [
         "hooks",
         "claude",
@@ -4029,9 +4029,9 @@
         "claudedesktop",
         "description",
         "http",
-        "type"
+        "code"
       ],
-      "word_count": 4892,
+      "word_count": 4973,
       "file_path": "docs/en__docs__claude-code__mcp.md"
     },
     "/en/docs/claude-code/memory": {
@@ -4064,7 +4064,7 @@
     },
     "/en/docs/claude-code/model-config": {
       "title": "Model configuration",
-      "content_preview": "# Model configuration  > Learn about the Claude Code model configuration, including model aliases like `opusplan`  ## Available models  For the `model` setting in Claude Code, you can either configure:  * A **model alias** * A full **[model name](/en/docs/about-claude/models/overview#model-names)**",
+      "content_preview": "# Model configuration  > Learn about the Claude Code model configuration, including model aliases like `opusplan`  ## Available models  For the `model` setting in Claude Code, you can either configure...",
       "keywords": [
         "model",
         "caching",
@@ -4184,11 +4184,10 @@
         "title",
         "icon",
         "href",
-        "docs",
         "tab",
-        "ide",
         "terminal",
         "issues",
+        "ide",
         "cardgroup",
         "common",
         "about",
@@ -4197,7 +4196,8 @@
         "build",
         "works",
         "fix",
-        "codebase"
+        "codebase",
+        "google"
       ],
       "word_count": 609,
       "file_path": "docs/en__docs__claude-code__overview.md"
@@ -4232,7 +4232,7 @@
     },
     "/en/docs/claude-code/plugins-reference": {
       "title": "Plugins reference",
-      "content_preview": "# Plugins reference  > Complete technical reference for Claude Code plugin system, including schemas, CLI commands, and component specifications.  <Tip>   For hands-on tutorials and practical usage, see [Plugins](/en/docs/claude-code/plugins). For plugin management across teams and communities, see",
+      "content_preview": "# Plugins reference  > Complete technical reference for Claude Code plugin system, including schemas, CLI commands, and component specifications.  <Tip>   For hands-on tutorials and practical usage, s...",
       "keywords": [
         "plugin",
         "claude",
@@ -4406,24 +4406,24 @@
         "settings",
         "code",
         "set",
+        "files",
         "see",
         "when",
         "configuration",
-        "files",
-        "mcp",
         "project",
         "commands",
+        "mcp",
         "custom",
         "using",
-        "enterprise",
         "model",
         "default",
+        "enterprise",
         "tool",
         "permission",
         "rules",
         "bash"
       ],
-      "word_count": 2977,
+      "word_count": 2946,
       "file_path": "docs/en__docs__claude-code__settings.md"
     },
     "/en/docs/claude-code/setup": {
@@ -4463,6 +4463,7 @@
         "agent",
         "skill",
         "card",
+        "docs",
         "when",
         "project",
         "create",
@@ -4476,8 +4477,7 @@
         "team",
         "note",
         "agents",
-        "title",
-        "icon"
+        "title"
       ],
       "word_count": 2082,
       "file_path": "docs/en__docs__claude-code__skills.md"
@@ -4494,20 +4494,20 @@
         "arguments",
         "mcp",
         "code",
-        "custom",
         "file",
+        "custom",
         "when",
         "specific",
         "project",
         "files",
         "example",
+        "context",
         "server",
         "prompts",
         "description",
-        "available",
-        "plugin"
+        "available"
       ],
-      "word_count": 2275,
+      "word_count": 2371,
       "file_path": "docs/en__docs__claude-code__slash-commands.md"
     },
     "/en/docs/claude-code/statusline": {
@@ -4652,30 +4652,30 @@
     },
     "/en/docs/claude-code/vs-code": {
       "title": "Visual Studio Code",
-      "content_preview": "# Visual Studio Code  > Use Claude Code with Visual Studio Code through our native extension or CLI integration  <img src=\"https://mintcdn.com/anthropic-claude-docs/Xfpgr-ckk38MZnw3/images/vs-code-ext...",
+      "content_preview": "# Visual Studio Code  > Use Claude Code with Visual Studio Code through our native extension or CLI integration  <img src=\"https://mintcdn.com/claude-code/-YhHHmtSxwr7W8gy/images/vs-code-extension-int...",
       "keywords": [
         "code",
         "claude",
         "extension",
-        "xfpgr",
-        "ckk",
-        "mznw",
+        "yhhhmtsxwr",
         "interface",
         "auto",
+        "command",
         "cli",
         "images",
         "ide",
-        "command",
+        "terminal",
         "integration",
         "jpg",
+        "file",
+        "model",
         "https",
         "mintcdn",
         "com",
-        "anthropic",
-        "docs",
-        "fit"
+        "fit",
+        "max"
       ],
-      "word_count": 1019,
+      "word_count": 1194,
       "file_path": "docs/en__docs__claude-code__vs-code.md"
     },
     "/en/docs/get-started": {

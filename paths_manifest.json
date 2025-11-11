@@ -1,9 +1,9 @@
 {
   "metadata": {
     "generated_at": "2025-11-03T17:09:47.026869+00:00",
-    "total_paths": 449,
-    "cleaned_at": "2025-11-03T20:37:20Z",
-    "removed_broken_paths": 10,
+    "total_paths": 448,
+    "cleaned_at": "2025-11-11T02:30:00Z",
+    "removed_broken_paths": 11,
     "original_total_paths": 459
   },
   "categories": {
@@ -161,7 +161,6 @@
       "/en/docs/welcome"
     ],
     "uncategorized": [
-      "/en/docs_site_map.md",
       "/en/home",
       "/en/prompt-library"
     ],

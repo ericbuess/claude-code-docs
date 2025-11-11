@@ -14,17 +14,17 @@ import json
 import requests
 import time
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
-BASE_URL = "https://docs.anthropic.com"
+BASE_URL = "https://code.claude.com/docs"
 TIMEOUT = 10
 MAX_WORKERS = 10
 RATE_LIMIT = 0.1  # seconds between requests
 
 
-def validate_path(path: str) -> tuple[str, bool, int]:
+def validate_path(path: str) -> Tuple[str, bool, int]:
     """
     Validate a single path.
 
@@ -44,7 +44,7 @@ def validate_path(path: str) -> tuple[str, bool, int]:
         return (path, False, 0)
 
 
-def validate_paths_parallel(paths: List[str]) -> tuple[Set[str], Dict[str, int]]:
+def validate_paths_parallel(paths: List[str]) -> Tuple[Set[str], Dict[str, int]]:
     """
     Validate paths in parallel.
 

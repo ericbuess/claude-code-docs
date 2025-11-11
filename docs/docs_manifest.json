@@ -27,8 +27,8 @@
     "en__docs__claude-code__cli-reference.md": {
       "original_url": "https://code.claude.com/docs/en/cli-reference",
       "original_md_url": "https://code.claude.com/docs/en/cli-reference.md",
-      "hash": "27aa4ae389803ffb616c1a81136b478986966d1e613a2a3ab5da1d8a09608deb",
-      "last_updated": "2025-11-07T23:25:50.223747"
+      "hash": "18fbb91b734b2d8b1e5f3593b4c73c01cd3a5efcd80adce84fd14b69be9b713e",
+      "last_updated": "2025-11-11T01:46:32.552502"
     },
     "en__docs__claude-code__common-workflows.md": {
       "original_url": "https://code.claude.com/docs/en/common-workflows",
@@ -57,14 +57,14 @@
     "en__docs__claude-code__github-actions.md": {
       "original_url": "https://code.claude.com/docs/en/github-actions",
       "original_md_url": "https://code.claude.com/docs/en/github-actions.md",
-      "hash": "965014abd6e995f710ed9dfdd6f065761b26b247ad18536da00824f1bdf6101b",
-      "last_updated": "2025-11-07T23:25:53.311236"
+      "hash": "5c822ced45ce2adaa8a0e48cdbccdfdfcfc9adae83527d105bd689d851a4fd82",
+      "last_updated": "2025-11-11T01:46:35.769952"
     },
     "en__docs__claude-code__gitlab-ci-cd.md": {
       "original_url": "https://code.claude.com/docs/en/gitlab-ci-cd",
       "original_md_url": "https://code.claude.com/docs/en/gitlab-ci-cd.md",
-      "hash": "17e4adb0a4b68690a3eebc0ceccccc14e8eacd0c107ddcf988c8107e9648a8e1",
-      "last_updated": "2025-11-07T23:25:53.912723"
+      "hash": "4b1a38e446c1e992d753737210b7cab0f81a0a405c69fd7ac323a4401ab7536c",
+      "last_updated": "2025-11-11T01:46:36.387571"
     },
     "en__docs__claude-code__google-vertex-ai.md": {
       "original_url": "https://code.claude.com/docs/en/google-vertex-ai",
@@ -159,8 +159,8 @@
     "en__docs__claude-code__overview.md": {
       "original_url": "https://code.claude.com/docs/en/overview",
       "original_md_url": "https://code.claude.com/docs/en/overview.md",
-      "hash": "d253f85b2939e19f736d9dcaf52e19540ef77c8d44c10630edc565b70514bcab",
-      "last_updated": "2025-11-07T23:26:03.862398"
+      "hash": "769658a0649fb7ae0c86efb7fb2544836783e2e8cbdef62e08cdffb3e84db531",
+      "last_updated": "2025-11-11T01:46:46.220876"
     },
     "en__docs__claude-code__plugin-marketplaces.md": {
       "original_url": "https://code.claude.com/docs/en/plugin-marketplaces",
@@ -195,8 +195,8 @@
     "en__docs__claude-code__sdk__migration-guide.md": {
       "original_url": "https://code.claude.com/docs/en/sdk/migration-guide",
       "original_md_url": "https://code.claude.com/docs/en/sdk/migration-guide.md",
-      "hash": "77e114fc8107cc335bb5297d81c20446e13c52b357cb03f2f3a1af13ca9f0a16",
-      "last_updated": "2025-11-07T23:26:07.571228"
+      "hash": "2682860c30e3511848231a54d1303ed1e7ddbede257418e34b9fd48f61112b6e",
+      "last_updated": "2025-11-11T01:46:50.035935"
     },
     "en__docs__claude-code__security.md": {
       "original_url": "https://code.claude.com/docs/en/security",
@@ -219,8 +219,8 @@
     "en__docs__claude-code__skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
       "original_md_url": "https://code.claude.com/docs/en/skills.md",
-      "hash": "b0d29288b97dc00e594eb6a79b4c87bb5ea5ee886006403cf91d570419fc1604",
-      "last_updated": "2025-11-07T23:26:10.087001"
+      "hash": "f66d85caa95fb7a1e70bede4e49e16650201d2366eaa9914a9a4497619d7047d",
+      "last_updated": "2025-11-11T01:46:52.493909"
     },
     "en__docs__claude-code__slash-commands.md": {
       "original_url": "https://code.claude.com/docs/en/slash-commands",
@@ -267,14 +267,14 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "1bfd24d59b0804221e760bb03af88166af6915e6677fb2212544b437c9dac6dc",
-      "last_updated": "2025-11-07T23:26:14.735364",
+      "hash": "4e3743d041d7c8341c49cb188c2870d04721c5a162ce0773a905a3af1bdc13ea",
+      "last_updated": "2025-11-11T01:46:57.221079",
       "source": "claude-code-repository"
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-07T23:26:51.017626",
-    "fetch_duration_seconds": 27.708668,
+    "last_fetch_completed": "2025-11-11T01:46:57.221099",
+    "fetch_duration_seconds": 28.71888,
     "total_pages_discovered": 44,
     "pages_fetched_successfully": 45,
     "pages_failed": 0,
@@ -284,7 +284,7 @@
     "total_files": 45,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-07T23:26:51.017645",
+  "last_updated": "2025-11-11T01:46:57.221115",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

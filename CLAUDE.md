@@ -18,7 +18,7 @@ This repository supports TWO modes:
    - Full-text search capabilities
    - Validation tools
    - Extended API reference and prompt library
-   - Requires Python 3.12+
+   - Requires Python 3.9+
 
 The installer prompts users to choose their mode during installation.
 
@@ -37,7 +37,7 @@ When responding to /docs commands:
 
 ## Enhanced Features (if Python available)
 
-When Python 3.12+ is installed, these additional capabilities are available:
+When Python 3.9+ is installed, these additional capabilities are available:
 
 - **Full-text search**: `--search "keyword"` searches across all documentation content
 - **Category filtering**: `--category api` lists paths in specific categories
@@ -71,7 +71,7 @@ See `enhancements/` directory for comprehensive feature documentation and exampl
 │   ├── FEATURES.md        # Technical specs
 │   ├── CAPABILITIES.md    # Detailed capabilities
 │   └── EXAMPLES.md        # Usage examples
-├── tests/                 # Test suite (566 tests)
+├── tests/                 # Test suite (577 tests)
 ├── install.sh            # Dual-mode installer
 └── CLAUDE.md             # This file
 

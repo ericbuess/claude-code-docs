@@ -209,6 +209,67 @@ def normalize_url_to_legacy_format(path: str) -> str:
     return path
 
 
+def load_paths_from_manifest() -> List[str]:
+    """
+    Load paths for files that already exist locally in ./docs/
+
+    This ensures auto-update only updates existing files, not all 448 paths.
+    The remaining paths are fetched on-demand when users request them.
+
+    Returns:
+        List of paths corresponding to existing local files (269 files)
+    """
+    try:
+        docs_dir = Path(__file__).parent.parent / 'docs'
+        manifest_path = Path(__file__).parent.parent / 'paths_manifest.json'
+
+        if not manifest_path.exists():
+            logger.warning(f"paths_manifest.json not found at {manifest_path}")
+            return []
+
+        # Get list of existing local files
+        local_files = set()
+        if docs_dir.exists():
+            for md_file in docs_dir.glob('*.md'):
+                if md_file.name == 'docs_manifest.json':
+                    continue
+                local_files.add(md_file.stem)  # filename without .md extension
+
+        if not local_files:
+            logger.warning("No local documentation files found")
+            return []
+
+        # Load manifest to get all paths
+        with open(manifest_path) as f:
+            data = json.load(f)
+
+        # Collect paths that have corresponding local files
+        paths_to_update = []
+        all_manifest_paths = []
+
+        for category, paths in data.get('categories', {}).items():
+            all_manifest_paths.extend(paths)
+
+        # Convert each path to expected filename and check if file exists locally
+        for path in all_manifest_paths:
+            expected_filename = url_to_safe_filename(path)
+            # Remove .md extension for comparison
+            if expected_filename.endswith('.md'):
+                expected_filename = expected_filename[:-3]
+
+            if expected_filename in local_files:
+                paths_to_update.append(path)
+
+        logger.info(f"Found {len(paths_to_update)} paths with existing local files (out of {len(all_manifest_paths)} total paths)")
+        logger.info(f"Remaining {len(all_manifest_paths) - len(paths_to_update)} paths are fetched on-demand")
+
+        return sorted(paths_to_update)
+
+    except Exception as e:
+        logger.error(f"Failed to load paths from manifest: {e}")
+        return []
+
+
 def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> List[str]:
     """
     Dynamically discover all Claude Code documentation pages from the sitemap.
@@ -521,7 +582,7 @@ def cleanup_old_files(docs_dir: Path, current_files: Set[str], manifest: dict) -
 def main():
     """Main function with improved robustness."""
     start_time = datetime.now()
-    logger.info("Starting Claude Code documentation fetch (improved version)")
+    logger.info("Starting documentation update (updating existing local files only)")
     
     # Log configuration
     github_repo = os.environ.get('GITHUB_REPOSITORY', 'ericbuess/claude-code-docs')
@@ -551,30 +612,26 @@ def main():
         except Exception as e:
             logger.error(f"Failed to discover sitemap: {e}")
             logger.info("Using fallback configuration...")
-            base_url = "https://docs.anthropic.com"
+            base_url = "https://code.claude.com/docs"
             sitemap_url = None
         
-        # Discover documentation pages dynamically
-        if sitemap_url:
+        # Load paths for existing local files only (not all 448 paths)
+        logger.info("Detecting existing local files to update...")
+        documentation_pages = load_paths_from_manifest()
+
+        # If manifest loading failed, try sitemap discovery as fallback
+        if not documentation_pages and sitemap_url:
+            logger.warning("Failed to detect local files, falling back to sitemap discovery...")
             documentation_pages = discover_claude_code_pages(session, sitemap_url)
-        else:
-            # Use fallback pages if sitemap discovery failed
+
+        # If both failed, use minimal fallback
+        if not documentation_pages:
+            logger.warning("All discovery methods failed, using minimal fallback...")
             documentation_pages = [
                 "/en/docs/claude-code/overview",
                 "/en/docs/claude-code/setup",
                 "/en/docs/claude-code/quickstart",
-                "/en/docs/claude-code/memory",
-                "/en/docs/claude-code/common-workflows",
-                "/en/docs/claude-code/ide-integrations",
-                "/en/docs/claude-code/mcp",
-                "/en/docs/claude-code/github-actions",
-                "/en/docs/claude-code/sdk",
-                "/en/docs/claude-code/troubleshooting",
-                "/en/docs/claude-code/security",
-                "/en/docs/claude-code/settings",
                 "/en/docs/claude-code/hooks",
-                "/en/docs/claude-code/costs",
-                "/en/docs/claude-code/monitoring-usage",
             ]
         
         if not documentation_pages:

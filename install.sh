@@ -175,7 +175,7 @@ find_existing_installations() {
 
 # Function to check if enhanced features are available
 check_enhanced_features() {
-    # Check Python version (need 3.12+)
+    # Check Python version (need 3.9+)
     if ! command -v python3 &> /dev/null; then
         return 1
     fi
@@ -184,7 +184,7 @@ check_enhanced_features() {
     local python_major=$(echo "$python_version" | cut -d. -f1)
     local python_minor=$(echo "$python_version" | cut -d. -f2)
 
-    if [[ "$python_major" -lt 3 ]] || [[ "$python_major" -eq 3 && "$python_minor" -lt 12 ]]; then
+    if [[ "$python_major" -lt 3 ]] || [[ "$python_major" -eq 3 && "$python_minor" -lt 9 ]]; then
         return 1
     fi
 
@@ -485,7 +485,7 @@ else
     echo "Available topics (standard mode):"
     ls "$INSTALL_DIR/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 60
     echo ""
-    echo "💡 Tip: Install Python 3.12+ for enhanced features (449 paths, full-text search)"
+    echo "💡 Tip: Install Python 3.9+ for enhanced features (449 paths, full-text search)"
 fi
 
 echo ""
