@@ -29,9 +29,9 @@ logger = logging.getLogger(__name__)
 # Sitemap URLs to try (in order of preference)
 # Note: Claude Code docs migrated to code.claude.com (Nov 2025)
 SITEMAP_URLS = [
-    "https://docs.claude.com/sitemap.xml",  # New primary domain
-    "https://docs.anthropic.com/sitemap.xml",  # Redirects to docs.claude.com
-    "https://anthropic.com/sitemap.xml"
+    "https://code.claude.com/docs/sitemap.xml",  # Claude Code specific sitemap
+    "https://docs.claude.com/sitemap.xml",  # General Claude docs
+    "https://docs.anthropic.com/sitemap.xml",  # Legacy fallback
 ]
 MANIFEST_FILE = "docs_manifest.json"
 
@@ -255,7 +255,7 @@ def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> L
         logger.error(f"Failed to discover pages from sitemap: {e}")
         logger.warning("Falling back to essential pages...")
         
-        # Fallback list using new URL structure (code.claude.com)
+        # Fallback list - these pages are essential Claude Code documentation
         return [
             "/docs/en/overview",
             "/docs/en/quickstart",
