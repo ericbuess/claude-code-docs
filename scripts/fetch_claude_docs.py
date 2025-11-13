@@ -27,9 +27,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Sitemap URLs to try (in order of preference)
+# Note: Claude Code docs migrated to code.claude.com (Nov 2025)
 SITEMAP_URLS = [
-    "https://docs.anthropic.com/sitemap.xml",
-    "https://docs.anthropic.com/sitemap_index.xml",
+    "https://docs.claude.com/sitemap.xml",  # New primary domain
+    "https://docs.anthropic.com/sitemap.xml",  # Redirects to docs.claude.com
     "https://anthropic.com/sitemap.xml"
 ]
 MANIFEST_FILE = "docs_manifest.json"
@@ -95,8 +96,8 @@ def save_manifest(docs_dir: Path, manifest: dict) -> None:
 
 def url_to_safe_filename(url_path: str) -> str:
     """Convert a URL path to a safe filename that preserves hierarchy only when needed."""
-    # Remove any known prefix patterns
-    for prefix in ['/en/docs/claude-code/', '/docs/claude-code/', '/claude-code/']:
+    # Remove any known prefix patterns (supporting both old and new URL structures)
+    for prefix in ['/en/docs/claude-code/', '/docs/claude-code/', '/claude-code/', '/docs/en/']:
         if prefix in url_path:
             path = url_path.split(prefix)[-1]
             break
@@ -213,8 +214,10 @@ def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> L
         claude_code_pages = []
         
         # Only accept English documentation patterns
+        # Supporting both old (/en/docs/claude-code/) and new (/docs/en/) URL structures
         english_patterns = [
-            '/en/docs/claude-code/',
+            '/en/docs/claude-code/',  # Old structure (docs.anthropic.com)
+            '/docs/en/',              # New structure (code.claude.com)
         ]
         
         for url in urls:
@@ -252,23 +255,17 @@ def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> L
         logger.error(f"Failed to discover pages from sitemap: {e}")
         logger.warning("Falling back to essential pages...")
         
-        # More comprehensive fallback list
+        # Fallback list using new URL structure (code.claude.com)
         return [
-            "/en/docs/claude-code/overview",
-            "/en/docs/claude-code/setup",
-            "/en/docs/claude-code/quickstart",
-            "/en/docs/claude-code/memory",
-            "/en/docs/claude-code/common-workflows",
-            "/en/docs/claude-code/ide-integrations",
-            "/en/docs/claude-code/mcp",
-            "/en/docs/claude-code/github-actions",
-            "/en/docs/claude-code/sdk",
-            "/en/docs/claude-code/troubleshooting",
-            "/en/docs/claude-code/security",
-            "/en/docs/claude-code/settings",
-            "/en/docs/claude-code/hooks",
-            "/en/docs/claude-code/costs",
-            "/en/docs/claude-code/monitoring-usage",
+            "/docs/en/overview",
+            "/docs/en/quickstart",
+            "/docs/en/common-workflows",
+            "/docs/en/memory",
+            "/docs/en/mcp",
+            "/docs/en/hooks",
+            "/docs/en/settings",
+            "/docs/en/troubleshooting",
+            "/docs/en/security",
         ]
 
 
