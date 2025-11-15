@@ -75,13 +75,13 @@ def save_manifest(docs_dir: Path, manifest: dict) -> None:
     manifest["last_updated"] = datetime.now().isoformat()
     
     # Get GitHub repository from environment or use default
-    github_repo = os.environ.get('GITHUB_REPOSITORY', 'ericbuess/claude-code-docs')
+    github_repo = os.environ.get('GITHUB_REPOSITORY', 'costiash/claude-code-docs')
     github_ref = os.environ.get('GITHUB_REF_NAME', 'main')
-    
+
     # Validate repository name format (owner/repo)
     if not re.match(r'^[\w.-]+/[\w.-]+$', github_repo):
         logger.warning(f"Invalid repository format: {github_repo}, using default")
-        github_repo = 'ericbuess/claude-code-docs'
+        github_repo = 'costiash/claude-code-docs'
     
     # Validate branch/ref name
     if not re.match(r'^[\w.-]+$', github_ref):
@@ -93,6 +93,55 @@ def save_manifest(docs_dir: Path, manifest: dict) -> None:
     manifest["github_ref"] = github_ref
     manifest["description"] = "Claude Code documentation manifest. Keys are filenames, append to base_url for full URL."
     manifest_path.write_text(json.dumps(manifest, indent=2))
+
+
+def validate_repository_config(manifest: dict) -> None:
+    """
+    Validate that manifest repository matches actual git repository.
+    Warns if there's a mismatch to catch configuration issues.
+    """
+    import subprocess
+
+    try:
+        # Get actual git repository from remote origin
+        result = subprocess.run(
+            ['git', 'remote', 'get-url', 'origin'],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+
+        if result.returncode == 0:
+            git_url = result.stdout.strip()
+
+            # Extract owner/repo from git URL
+            # Handles both HTTPS and SSH formats:
+            # - https://github.com/costiash/claude-code-docs.git
+            # - git@github.com:costiash/claude-code-docs.git
+            if 'github.com' in git_url:
+                # Extract the owner/repo part
+                if git_url.startswith('git@github.com:'):
+                    repo_part = git_url.replace('git@github.com:', '').replace('.git', '')
+                elif 'github.com/' in git_url:
+                    repo_part = git_url.split('github.com/')[-1].replace('.git', '')
+                else:
+                    return  # Can't parse, skip validation
+
+                # Compare with manifest
+                manifest_repo = manifest.get('github_repository', '')
+
+                if manifest_repo and repo_part != manifest_repo:
+                    logger.warning("=" * 70)
+                    logger.warning("⚠️  REPOSITORY MISMATCH DETECTED!")
+                    logger.warning(f"   Git repository: {repo_part}")
+                    logger.warning(f"   Manifest repository: {manifest_repo}")
+                    logger.warning("   This may cause documentation to be fetched from wrong source.")
+                    logger.warning("   Consider updating GITHUB_REPOSITORY environment variable or")
+                    logger.warning("   updating the default in this script.")
+                    logger.warning("=" * 70)
+    except Exception as e:
+        # Don't fail on validation errors - this is just a warning
+        logger.debug(f"Could not validate repository config: {e}")
 
 
 def url_to_safe_filename(url_path: str) -> str:
@@ -188,24 +237,58 @@ def discover_sitemap_and_base_url(session: requests.Session) -> Tuple[str, str]:
     raise Exception("Could not find a valid sitemap")
 
 
-def normalize_url_to_legacy_format(path: str) -> str:
+def convert_legacy_path_to_fetch_url(path: str) -> str:
     """
-    Normalize new code.claude.com URL format to legacy naming convention.
+    Convert legacy manifest paths to correct fetch URLs.
 
-    Examples:
-        /docs/en/hooks → /en/docs/claude-code/hooks
-        /en/docs/claude-code/hooks → /en/docs/claude-code/hooks (unchanged)
+    Documentation is now split across two domains:
+    1. code.claude.com - Claude Code docs with URL structure: /docs/en/{page}
+    2. docs.claude.com - Everything else with URL structure: /en/{category}/{page}
 
-    This ensures consistent file naming regardless of URL structure changes.
+    Mapping rules:
+        Claude Code (code.claude.com):
+            /en/docs/claude-code/hooks → /docs/en/hooks
+
+        Everything else (docs.claude.com):
+            /en/api/messages → /en/api/messages (no change)
+            /en/docs/about-claude/models → /en/docs/about-claude/models (no change)
+            /en/prompt-library/code-clarifier → /en/prompt-library/code-clarifier (no change)
+            /en/resources/glossary → /en/resources/glossary (no change)
+            /en/release-notes/api → /en/release-notes/api (no change)
+            /en/home → /en/home (no change)
+
+    Args:
+        path: Legacy path from paths_manifest.json (e.g., /en/docs/claude-code/hooks)
+
+    Returns:
+        Fetch URL path appropriate for the domain
     """
-    # New format: /docs/en/XXX → convert to /en/docs/claude-code/XXX
+    # If already in new format (/docs/en/...), return as-is
     if path.startswith('/docs/en/'):
-        # Extract the page name after /docs/en/
-        page_name = path.replace('/docs/en/', '')
-        # Convert to legacy format
-        return f'/en/docs/claude-code/{page_name}'
+        return path
 
-    # Already in legacy format or other format - return as-is
+    # Remove leading /en/ prefix check
+    if not path.startswith('/en/'):
+        # Path doesn't match expected format, return as-is
+        return path
+
+    # Strip /en/ prefix for analysis
+    without_en = path[4:]  # Remove '/en/'
+
+    # Handle special case: /en/docs/claude-code/* → /docs/en/*
+    # This is for Claude Code docs hosted on code.claude.com
+    if without_en.startswith('docs/claude-code/'):
+        page_name = without_en.replace('docs/claude-code/', '')
+        return f'/docs/en/{page_name}'
+
+    # All other paths stay in /en/* format for docs.claude.com
+    # This includes:
+    # - /en/api/* → /en/api/*
+    # - /en/docs/* (non-claude-code) → /en/docs/*
+    # - /en/prompt-library/* → /en/prompt-library/*
+    # - /en/resources/* → /en/resources/*
+    # - /en/release-notes/* → /en/release-notes/*
+    # - /en/home → /en/home
     return path
 
 
@@ -425,24 +508,53 @@ def validate_markdown_content(content: str, filename: str) -> None:
         logger.warning(f"Content for {filename} doesn't contain expected documentation patterns")
 
 
+def get_base_url_for_path(path: str) -> str:
+    """
+    Determine the correct base URL for a given documentation path.
+
+    Documentation is hosted on two different domains:
+    - code.claude.com: Claude Code specific docs (/en/docs/claude-code/*)
+    - docs.claude.com: All other docs (API, prompt library, resources, etc.)
+
+    Args:
+        path: Documentation path (e.g., /en/api/messages or /en/docs/claude-code/hooks)
+
+    Returns:
+        Base URL (either https://code.claude.com or https://docs.claude.com)
+    """
+    # Claude Code docs are on code.claude.com
+    if '/claude-code/' in path:
+        return 'https://code.claude.com'
+
+    # Everything else (API, prompt library, resources, etc.) is on docs.claude.com
+    return 'https://docs.claude.com'
+
+
 def fetch_markdown_content(path: str, session: requests.Session, base_url: str) -> Tuple[str, str]:
     """
     Fetch markdown content with better error handling and validation.
 
     Args:
-        path: Original URL path (e.g., /docs/en/hooks or /en/docs/claude-code/hooks)
+        path: URL path from manifest (may be legacy format like /en/docs/claude-code/hooks)
         session: Requests session
-        base_url: Base URL for fetching
+        base_url: Base URL for fetching (DEPRECATED - automatically determined from path)
 
     Returns:
         Tuple of (filename, content) where filename uses legacy naming convention
     """
-    # Build fetch URL with original path
-    markdown_url = f"{base_url}{path}.md"
+    # Determine the correct base URL based on the path
+    # This overrides the passed base_url parameter to handle the multi-domain setup
+    actual_base_url = get_base_url_for_path(path)
 
-    # Normalize path for consistent filename (legacy convention)
-    normalized_path = normalize_url_to_legacy_format(path)
-    filename = url_to_safe_filename(normalized_path)
+    # Convert legacy path to new fetch URL format
+    fetch_path = convert_legacy_path_to_fetch_url(path)
+
+    # Build full fetch URL using the correct domain
+    markdown_url = f"{actual_base_url}{fetch_path}.md"
+
+    # Keep original path for consistent filename (legacy convention)
+    # This ensures files keep their existing names even as URLs change
+    filename = url_to_safe_filename(path)
 
     logger.info(f"Fetching: {markdown_url} -> {filename}")
     
@@ -585,7 +697,7 @@ def main():
     logger.info("Starting documentation update (updating existing local files only)")
     
     # Log configuration
-    github_repo = os.environ.get('GITHUB_REPOSITORY', 'ericbuess/claude-code-docs')
+    github_repo = os.environ.get('GITHUB_REPOSITORY', 'costiash/claude-code-docs')
     logger.info(f"GitHub repository: {github_repo}")
     
     # Create docs directory at repository root
@@ -595,7 +707,10 @@ def main():
     
     # Load manifest
     manifest = load_manifest(docs_dir)
-    
+
+    # Validate repository configuration
+    validate_repository_config(manifest)
+
     # Statistics
     successful = 0
     failed = 0

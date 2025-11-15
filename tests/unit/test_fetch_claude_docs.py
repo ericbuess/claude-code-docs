@@ -18,6 +18,8 @@ from fetch_claude_docs import (
     discover_sitemap_and_base_url,
     discover_claude_code_pages,
     validate_markdown_content,
+    get_base_url_for_path,
+    convert_legacy_path_to_fetch_url,
     HEADERS,
     MANIFEST_FILE
 )
@@ -134,7 +136,7 @@ class TestSaveManifest:
         manifest_file = docs_dir / MANIFEST_FILE
         saved = json.loads(manifest_file.read_text())
 
-        assert "ericbuess/claude-code-docs" in saved["base_url"]
+        assert "costiash/claude-code-docs" in saved["base_url"]
 
     @patch.dict('os.environ', {'GITHUB_REPOSITORY': 'invalid repo name'}, clear=True)
     def test_save_manifest_validates_repo_format(self, tmp_path):
@@ -150,7 +152,7 @@ class TestSaveManifest:
         saved = json.loads(manifest_file.read_text())
 
         # Should fallback to default
-        assert "ericbuess/claude-code-docs" in saved["base_url"]
+        assert "costiash/claude-code-docs" in saved["base_url"]
 
     def test_save_manifest_includes_timestamp(self, tmp_path):
         """Test manifest includes timestamp."""
@@ -573,3 +575,96 @@ class TestManifestFile:
         assert MANIFEST_FILE is not None
         assert isinstance(MANIFEST_FILE, str)
         assert MANIFEST_FILE.endswith(".json")
+
+
+class TestGetBaseUrlForPath:
+    """Test base URL determination for different documentation paths."""
+
+    def test_claude_code_paths_use_code_domain(self):
+        """Test that Claude Code paths use code.claude.com."""
+        claude_code_paths = [
+            "/en/docs/claude-code/hooks",
+            "/en/docs/claude-code/setup",
+            "/en/docs/claude-code/mcp",
+            "/en/docs/claude-code/sdk/overview",
+        ]
+        for path in claude_code_paths:
+            assert get_base_url_for_path(path) == "https://code.claude.com"
+
+    def test_api_paths_use_docs_domain(self):
+        """Test that API paths use docs.claude.com."""
+        api_paths = [
+            "/en/api/messages",
+            "/en/api/admin-api/apikeys/get-api-key",
+            "/en/api/admin-api/users/list-users",
+        ]
+        for path in api_paths:
+            assert get_base_url_for_path(path) == "https://docs.claude.com"
+
+    def test_other_docs_use_docs_domain(self):
+        """Test that non-Claude-Code docs use docs.claude.com."""
+        other_paths = [
+            "/en/docs/about-claude/models",
+            "/en/docs/build-with-claude/prompt-engineering",
+            "/en/resources/glossary",
+            "/en/prompt-library/code-clarifier",
+            "/en/release-notes/api",
+            "/en/home",
+        ]
+        for path in other_paths:
+            assert get_base_url_for_path(path) == "https://docs.claude.com"
+
+
+class TestConvertLegacyPathToFetchUrl:
+    """Test legacy path conversion for multi-domain setup."""
+
+    def test_claude_code_paths_conversion(self):
+        """Test Claude Code paths are converted to /docs/en/ format."""
+        test_cases = [
+            ("/en/docs/claude-code/hooks", "/docs/en/hooks"),
+            ("/en/docs/claude-code/setup", "/docs/en/setup"),
+            ("/en/docs/claude-code/sdk/overview", "/docs/en/sdk/overview"),
+        ]
+        for input_path, expected_output in test_cases:
+            assert convert_legacy_path_to_fetch_url(input_path) == expected_output
+
+    def test_api_paths_unchanged(self):
+        """Test API paths remain unchanged for docs.claude.com."""
+        test_cases = [
+            "/en/api/messages",
+            "/en/api/admin-api/apikeys/get-api-key",
+            "/en/api/admin-api/users/list-users",
+        ]
+        for path in test_cases:
+            assert convert_legacy_path_to_fetch_url(path) == path
+
+    def test_other_docs_paths_unchanged(self):
+        """Test other documentation paths remain unchanged."""
+        test_cases = [
+            "/en/docs/about-claude/models",
+            "/en/resources/glossary",
+            "/en/release-notes/api",
+            "/en/home",
+        ]
+        for path in test_cases:
+            assert convert_legacy_path_to_fetch_url(path) == path
+
+    def test_already_converted_paths(self):
+        """Test paths already in /docs/en/ format are unchanged."""
+        already_converted = [
+            "/docs/en/hooks",
+            "/docs/en/setup",
+            "/docs/en/sdk/overview",
+        ]
+        for path in already_converted:
+            assert convert_legacy_path_to_fetch_url(path) == path
+
+    def test_invalid_paths_returned_unchanged(self):
+        """Test paths without /en/ prefix are returned as-is."""
+        invalid_paths = [
+            "/invalid/path",
+            "/docs/something",
+            "not-a-path",
+        ]
+        for path in invalid_paths:
+            assert convert_legacy_path_to_fetch_url(path) == path
