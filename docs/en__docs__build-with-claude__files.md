@@ -451,7 +451,7 @@ Download files that have been created by skills or the code execution tool:
 </CodeGroup>
 
 <Note>
-  You can only download files that were created by [skills](/en/api/skills-guide) or the [code execution tool](/en/docs/agents-and-tools/tool-use/code-execution-tool). Files that you uploaded cannot be downloaded.
+  You can only download files that were created by [skills](/en/docs/build-with-claude/skills-guide) or the [code execution tool](/en/docs/agents-and-tools/tool-use/code-execution-tool). Files that you uploaded cannot be downloaded.
 </Note>
 
 ***
@@ -504,7 +504,7 @@ File API operations are **free**:
 * Getting file metadata
 * Deleting files
 
-File content used in `Messages` requests are priced as input tokens. You can only download files created by [skills](/en/api/skills-guide) or the [code execution tool](/en/docs/agents-and-tools/tool-use/code-execution-tool).
+File content used in `Messages` requests are priced as input tokens. You can only download files created by [skills](/en/docs/build-with-claude/skills-guide) or the [code execution tool](/en/docs/agents-and-tools/tool-use/code-execution-tool).
 
 ### Rate limits
 

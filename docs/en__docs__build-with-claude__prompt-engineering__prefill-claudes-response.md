@@ -38,7 +38,8 @@ response = client.messages.create(
 
 #### Example 1: Controlling output formatting and skipping the preamble
 
-<Tip>**Power user tip**: Prefilling `{` forces Claude to skip the preamble and directly output the JSON object. This is cleaner, more concise, and easier for programs to parse without additional processing.</Tip>
+<Tip>**Power user tip**: Prefilling `{` forces Claude to skip the preamble and directly output the JSON object. This is cleaner, more concise, and easier for programs to parse without additional processing.
+For guaranteed JSON output that conforms to a specific schema, consider using [Structured Outputs](/en/docs/build-with-claude/structured-outputs) instead of prefilling. Structured outputs ensure Claude's response always matches your defined JSON schema, making it ideal for production applications that require strict format compliance.</Tip>
 
 <AccordionGroup>
   <Accordion title="Example: Structured data extraction without prefilling">

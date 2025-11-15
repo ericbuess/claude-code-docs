@@ -867,7 +867,7 @@ Here are some important considerations for interleaved thinking:
 * Interleaved thinking is only supported for [tools used via the Messages API](/en/docs/agents-and-tools/tool-use/overview).
 * Interleaved thinking is supported for Claude 4 models only, with the beta header `interleaved-thinking-2025-05-14`.
 * Direct calls to the Claude API allow you to pass `interleaved-thinking-2025-05-14` in requests to any model, with no effect.
-* On 3rd-party platforms (e.g., [Amazon Bedrock](/en/api/claude-on-amazon-bedrock) and [Vertex AI](/en/api/claude-on-vertex-ai)), if you pass `interleaved-thinking-2025-05-14` to any model aside from Claude Opus 4.1, Opus 4, or Sonnet 4, your request will fail.
+* On 3rd-party platforms (e.g., [Amazon Bedrock](/en/docs/build-with-claude/claude-on-amazon-bedrock) and [Vertex AI](/en/docs/build-with-claude/claude-on-vertex-ai)), if you pass `interleaved-thinking-2025-05-14` to any model aside from Claude Opus 4.1, Opus 4, or Sonnet 4, your request will fail.
 
 <AccordionGroup>
   <Accordion title="Tool use without interleaved thinking">
@@ -2451,7 +2451,7 @@ Here are some important considerations on thinking encryption:
 * When [streaming responses](#streaming-thinking), the signature is added via a `signature_delta` inside a `content_block_delta` event just before the `content_block_stop` event.
 * `signature` values are significantly longer in Claude 4 models than in previous models.
 * The `signature` field is an opaque field and should not be interpreted or parsed - it exists solely for verification purposes.
-* `signature` values are compatible across platforms (Claude APIs, [Amazon Bedrock](/en/api/claude-on-amazon-bedrock), and [Vertex AI](/en/api/claude-on-vertex-ai)). Values generated on one platform will be compatible with another.
+* `signature` values are compatible across platforms (Claude APIs, [Amazon Bedrock](/en/docs/build-with-claude/claude-on-amazon-bedrock), and [Vertex AI](/en/docs/build-with-claude/claude-on-vertex-ai)). Values generated on one platform will be compatible with another.
 
 ### Thinking redaction
 

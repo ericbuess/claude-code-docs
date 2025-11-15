@@ -517,7 +517,7 @@ Now that you've created your first document with Skills, try these variations:
 Now that you've used pre-built Agent Skills, you can:
 
 <CardGroup cols={2}>
-  <Card title="API Guide" icon="book" href="/en/api/skills-guide">
+  <Card title="API Guide" icon="book" href="/en/docs/build-with-claude/skills-guide">
     Use Skills with the Claude API
   </Card>
 
@@ -529,11 +529,11 @@ Now that you've used pre-built Agent Skills, you can:
     Learn best practices for writing effective Skills
   </Card>
 
-  <Card title="Use Skills in Claude Code" icon="terminal" href="/en/docs/claude-code/skills">
+  <Card title="Use Skills in Claude Code" icon="terminal" href="https://code.claude.com/docs/en/skills">
     Learn about Skills in Claude Code
   </Card>
 
-  <Card title="Use Skills in the Agent SDK" icon="cube" href="/en/api/agent-sdk/skills">
+  <Card title="Use Skills in the Agent SDK" icon="cube" href="/en/docs/agent-sdk/skills">
     Use Skills programmatically in TypeScript and Python
   </Card>
 

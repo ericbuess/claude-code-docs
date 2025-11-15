@@ -145,7 +145,7 @@ In addition to intent, ticket routing and prioritization may also be influenced 
 
 ### Establish success criteria
 
-Work with your support team to [define clear success criteria](/en/docs/build-with-claude/define-success) with measurable benchmarks, thresholds, and goals.
+Work with your support team to [define clear success criteria](/en/docs/test-and-evaluate/define-success) with measurable benchmarks, thresholds, and goals.
 
 Here are some standard criteria and benchmarks when using LLMs for support ticket routing:
 
@@ -310,7 +310,7 @@ The reason we want to have Claude split its response into various XML tag sectio
 
 ### Deploy your prompt
 
-It’s hard to know how well your prompt works without deploying it in a test production setting and [running evaluations](/en/docs/build-with-claude/develop-tests).
+It’s hard to know how well your prompt works without deploying it in a test production setting and [running evaluations](/en/docs/test-and-evaluate/develop-tests).
 
 Let’s build the deployment structure. Start by defining the method signature for wrapping our call to Claude. We'll take the method we’ve already begun to write, which has `ticket_contents` as input, and now return a tuple of `reasoning` and `intent` as output. If you have an existing automation using traditional ML, you'll want to follow that method signature instead.
 
@@ -368,7 +368,7 @@ Since we need to wait for the entire reasoning and intent text to be generated b
 
 Prompting often requires testing and optimization for it to be production ready. To determine the readiness of your solution, evaluate performance based on the success criteria and thresholds you established earlier.
 
-To run your evaluation, you will need test cases to run it on. The rest of this guide assumes you have already [developed your test cases](/en/docs/build-with-claude/develop-tests).
+To run your evaluation, you will need test cases to run it on. The rest of this guide assumes you have already [developed your test cases](/en/docs/test-and-evaluate/develop-tests).
 
 ### Build an evaluation function
 

@@ -71,7 +71,7 @@ paths:
 
 
                 Read more about versioning and our version history
-                [here](https://docs.claude.com/en/api/versioning).
+                [here](https://docs.claude.com/en/docs/build-with-claude/versioning).
         x-api-key:
           schema:
             - type: string
@@ -224,7 +224,8 @@ paths:
           Error response.
 
 
-          See our [errors documentation](https://docs.claude.com/en/api/errors)
+          See our [errors
+          documentation](https://docs.claude.com/en/docs/build-with-claude/errors)
           for more details.
   deprecated: false
   type: path

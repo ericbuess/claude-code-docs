@@ -1,98 +1,59 @@
-# Overview
+# Features overview
 
-## Accessing the API
+> Explore Claude's advanced features and capabilities.
 
-The API is made available via our web [Console](https://console.anthropic.com/). You can use the [Workbench](https://console.anthropic.com/workbench) to try out the API in the browser and then generate API keys in [Account Settings](https://console.anthropic.com/account/keys). Use [workspaces](https://console.anthropic.com/settings/workspaces) to segment your API keys and [control spend](/en/api/rate-limits) by use case.
+export const PlatformAvailability = ({claudeApi = false, claudeApiBeta = false, bedrock = false, bedrockBeta = false, vertexAi = false, vertexAiBeta = false}) => {
+  const platforms = [];
+  if (claudeApi || claudeApiBeta) {
+    platforms.push(claudeApiBeta ? 'Claude API (Beta)' : 'Claude API');
+  }
+  if (bedrock || bedrockBeta) {
+    platforms.push(bedrockBeta ? 'Amazon Bedrock (Beta)' : 'Amazon Bedrock');
+  }
+  if (vertexAi || vertexAiBeta) {
+    platforms.push(vertexAiBeta ? "Google Cloud's Vertex AI (Beta)" : "Google Cloud's Vertex AI");
+  }
+  return <>
+      {platforms.map((platform, index) => <span key={index}>
+          {platform}
+          {index < platforms.length - 1 && <><br /><br /></>}
+        </span>)}
+    </>;
+};
 
-## Authentication
+## Core capabilities
 
-All requests to the Claude API must include an `x-api-key` header with your API key. If you are using the Client SDKs, you will set the API when constructing a client, and then the SDK will send the header on your behalf with every request. If integrating directly with the API, you'll need to send this header yourself.
+These features enhance Claude's fundamental abilities for processing, analyzing, and generating content across various formats and use cases.
 
-## Content types
+| Feature                                                                                       | Description                                                                                                                                                                                                               | Availability                                                    |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| [1M token context window](/en/docs/build-with-claude/context-windows#1m-token-context-window) | An extended context window that allows you to process much larger documents, maintain longer conversations, and work with more extensive codebases.                                                                       | <PlatformAvailability claudeApiBeta bedrockBeta vertexAiBeta /> |
+| [Agent Skills](/en/docs/agents-and-tools/agent-skills/overview)                               | Extend Claude's capabilities with Skills. Use pre-built Skills (PowerPoint, Excel, Word, PDF) or create custom Skills with instructions and scripts. Skills use progressive disclosure to efficiently manage context.     | <PlatformAvailability claudeApiBeta />                          |
+| [Batch processing](/en/docs/build-with-claude/batch-processing)                               | Process large volumes of requests asynchronously for cost savings. Send batches with a large number of queries per batch. Batch API calls costs 50% less than standard API calls.                                         | <PlatformAvailability claudeApi bedrock vertexAi />             |
+| [Citations](/en/docs/build-with-claude/citations)                                             | Ground Claude's responses in source documents. With Citations, Claude can provide detailed references to the exact sentences and passages it uses to generate responses, leading to more verifiable, trustworthy outputs. | <PlatformAvailability claudeApi bedrock vertexAi />             |
+| [Context editing](/en/docs/build-with-claude/context-editing)                                 | Automatically manage conversation context with configurable strategies. Supports clearing tool results when approaching token limits and managing thinking blocks in extended thinking conversations.                     | <PlatformAvailability claudeApiBeta bedrockBeta vertexAiBeta /> |
+| [Extended thinking](/en/docs/build-with-claude/extended-thinking)                             | Enhanced reasoning capabilities for complex tasks, providing transparency into Claude's step-by-step thought process before delivering its final answer.                                                                  | <PlatformAvailability claudeApi bedrock vertexAi />             |
+| [Files API](/en/docs/build-with-claude/files)                                                 | Upload and manage files to use with Claude without re-uploading content with each request. Supports PDFs, images, and text files.                                                                                         | <PlatformAvailability claudeApiBeta />                          |
+| [PDF support](/en/docs/build-with-claude/pdf-support)                                         | Process and analyze text and visual content from PDF documents.                                                                                                                                                           | <PlatformAvailability claudeApi bedrock vertexAi />             |
+| [Prompt caching (5m)](/en/docs/build-with-claude/prompt-caching)                              | Provide Claude with more background knowledge and example outputs to reduce costs and latency.                                                                                                                            | <PlatformAvailability claudeApi bedrock vertexAi />             |
+| [Prompt caching (1hr)](/en/docs/build-with-claude/prompt-caching#1-hour-cache-duration)       | Extended 1-hour cache duration for less frequently accessed but important context, complementing the standard 5-minute cache.                                                                                             | <PlatformAvailability claudeApi vertexAi />                     |
+| [Search results](/en/docs/build-with-claude/search-results)                                   | Enable natural citations for RAG applications by providing search results with proper source attribution. Achieve web search-quality citations for custom knowledge bases and tools.                                      | <PlatformAvailability claudeApi vertexAi />                     |
+| [Structured outputs](/en/docs/build-with-claude/structured-outputs)                           | Guarantee schema conformance with two approaches: JSON outputs for structured data responses, and strict tool use for validated tool inputs. Available on Sonnet 4.5 and Opus 4.1.                                        | <PlatformAvailability claudeApiBeta />                          |
+| [Token counting](/en/api/messages-count-tokens)                                               | Token counting enables you to determine the number of tokens in a message before sending it to Claude, helping you make informed decisions about your prompts and usage.                                                  | <PlatformAvailability claudeApi bedrock vertexAi />             |
+| [Tool use](/en/docs/agents-and-tools/tool-use/overview)                                       | Enable Claude to interact with external tools and APIs to perform a wider variety of tasks. For a list of supported tools, see [the Tools table](#tools).                                                                 | <PlatformAvailability claudeApi bedrock vertexAi />             |
 
-The Claude API always accepts JSON in request bodies and returns JSON in response bodies. You will need to send the `content-type: application/json` header in requests. If you are using the Client SDKs, this will be taken care of automatically.
+## Tools
 
-## Request size limits
+These features enable Claude to interact with external systems, execute code, and perform automated tasks through various tool interfaces.
 
-The API has a maximum request size of 32 MB for standard endpoints, including the Messages API and Token Counting API. If you exceed this limit, you'll receive a 413 `request_too_large` error from Cloudflare. Specific endpoints have different limits:
-
-* **Standard endpoints** (Messages, Token Counting): 32 MB
-* **[Batch API](/en/docs/build-with-claude/batch-processing)**: 256 MB
-* **[Files API](/en/docs/build-with-claude/files)**: 500 MB
-
-## Response Headers
-
-The Claude API includes the following headers in every response:
-
-* `request-id`: A globally unique identifier for the request.
-
-* `anthropic-organization-id`: The organization ID associated with the API key used in the request.
-
-## Examples
-
-<Tabs>
-  <Tab title="curl">
-    ```bash Shell theme={null}
-    curl https://api.anthropic.com/v1/messages \
-         --header "x-api-key: $ANTHROPIC_API_KEY" \
-         --header "anthropic-version: 2023-06-01" \
-         --header "content-type: application/json" \
-         --data \
-    '{
-        "model": "claude-sonnet-4-5",
-        "max_tokens": 1024,
-        "messages": [
-            {"role": "user", "content": "Hello, world"}
-        ]
-    }'
-    ```
-  </Tab>
-
-  <Tab title="Python">
-    Install via PyPI:
-
-    ```bash  theme={null}
-    pip install anthropic
-    ```
-
-    ```Python Python theme={null}
-    import anthropic
-
-    client = anthropic.Anthropic(
-        # defaults to os.environ.get("ANTHROPIC_API_KEY")
-        api_key="my_api_key",
-    )
-    message = client.messages.create(
-        model="claude-sonnet-4-5",
-        max_tokens=1024,
-        messages=[
-            {"role": "user", "content": "Hello, Claude"}
-        ]
-    )
-    print(message.content)
-    ```
-  </Tab>
-
-  <Tab title="TypeScript">
-    Install via npm:
-
-    ```bash  theme={null}
-    npm install @anthropic-ai/sdk
-    ```
-
-    ```TypeScript TypeScript theme={null}
-    import Anthropic from '@anthropic-ai/sdk';
-
-    const anthropic = new Anthropic({
-      apiKey: 'my_api_key', // defaults to process.env["ANTHROPIC_API_KEY"]
-    });
-
-    const msg = await anthropic.messages.create({
-      model: "claude-sonnet-4-5",
-      max_tokens: 1024,
-      messages: [{ role: "user", content: "Hello, Claude" }],
-    });
-    console.log(msg);
-    ```
-  </Tab>
-</Tabs>
+| Feature                                                                                       | Description                                                                                                                                                        | Availability                                                    |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| [Bash](/en/docs/agents-and-tools/tool-use/bash-tool)                                          | Execute bash commands and scripts to interact with the system shell and perform command-line operations.                                                           | <PlatformAvailability claudeApi bedrock vertexAi />             |
+| [Code execution](/en/docs/agents-and-tools/tool-use/code-execution-tool)                      | Run Python code in a sandboxed environment for advanced data analysis.                                                                                             | <PlatformAvailability claudeApiBeta />                          |
+| [Computer use](/en/docs/agents-and-tools/tool-use/computer-use-tool)                          | Control computer interfaces by taking screenshots and issuing mouse and keyboard commands.                                                                         | <PlatformAvailability claudeApiBeta bedrockBeta vertexAiBeta /> |
+| [Fine-grained tool streaming](/en/docs/agents-and-tools/tool-use/fine-grained-tool-streaming) | Stream tool use parameters without buffering/JSON validation, reducing latency for receiving large parameters.                                                     | <PlatformAvailability claudeApi bedrock vertexAi />             |
+| [MCP connector](/en/docs/agents-and-tools/mcp-connector)                                      | Connect to remote [MCP](/en/docs/mcp) servers directly from the Messages API without a separate MCP client.                                                        | <PlatformAvailability claudeApiBeta />                          |
+| [Memory](/en/docs/agents-and-tools/tool-use/memory-tool)                                      | Enable Claude to store and retrieve information across conversations. Build knowledge bases over time, maintain project context, and learn from past interactions. | <PlatformAvailability claudeApiBeta bedrockBeta vertexAiBeta /> |
+| [Text editor](/en/docs/agents-and-tools/tool-use/text-editor-tool)                            | Create and edit text files with a built-in text editor interface for file manipulation tasks.                                                                      | <PlatformAvailability claudeApi bedrock vertexAi />             |
+| [Web fetch](/en/docs/agents-and-tools/tool-use/web-fetch-tool)                                | Retrieve full content from specified web pages and PDF documents for in-depth analysis.                                                                            | <PlatformAvailability claudeApiBeta />                          |
+| [Web search](/en/docs/agents-and-tools/tool-use/web-search-tool)                              | Augment Claude's comprehensive knowledge with current, real-world data from across the web.                                                                        | <PlatformAvailability claudeApi vertexAi />                     |

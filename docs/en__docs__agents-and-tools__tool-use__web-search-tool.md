@@ -148,6 +148,7 @@ When using domain filters:
 
 * Domains should not include the HTTP/HTTPS scheme (use `example.com` instead of `https://example.com`)
 * Subdomains are automatically included (`example.com` covers `docs.example.com`)
+* Specific subdomains restrict results to only that subdomain (`docs.example.com` returns only results from that subdomain, not from `example.com` or `api.example.com`)
 * Subpaths are supported (`example.com/blog`)
 * You can use either `allowed_domains` or `blocked_domains`, but not both in the same request.
 

@@ -13,7 +13,7 @@
   <Tab title="cURL">
     <Steps>
       <Step title="Set your API key">
-        Get your API key from the [Claude Console](https://console.anthropic.com/settings/keys) and set it as an environment variable:
+        Get your API key at the [Claude Console](https://console.anthropic.com/settings/keys) and set it as an environment variable:
 
         ```bash  theme={null}
         export ANTHROPIC_API_KEY='your-api-key-here'
@@ -309,7 +309,7 @@ Now that you have made your first Claude API request, it's time to explore what 
     Learn common patterns for the Messages API.
   </Card>
 
-  <Card title="Features Overview" icon="brain-circuit" href="/en/docs/build-with-claude/overview">
+  <Card title="Features Overview" icon="brain-circuit" href="/en/api/overview">
     Explore Claude's advanced features and capabilities.
   </Card>
 
