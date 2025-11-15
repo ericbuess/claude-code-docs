@@ -8,6 +8,10 @@
 
 # Changelog
 
+## 2.0.42
+
+- Added `agent_id` and `agent_transcript_path` fields to `SubagentStop` hooks.
+
 ## 2.0.41
 
 - Added `model` parameter to prompt-based stop hooks, allowing users to specify a custom model for hook evaluation
@@ -17,7 +21,6 @@
 - Fixed: Bedrock users no longer see duplicate Opus entries in the /model picker when using `--model haiku`
 - Fixed broken security documentation links in trust dialogs and onboarding
 - Fixed issue where pressing ESC to close the diff modal would also interrupt the model
-- Slash Commmands: Added CLAUDE_PROJECT_DIR and CLAUDE_PLUGIN_ROOT env vars to bash command processing
 - ctrl-r history search landing on a slash command no longer cancels the search
 - SDK: Support custom timeouts for hooks
 - Allow more safe git commands to run without approval
