@@ -409,7 +409,8 @@ paths:
           Error response.
 
 
-          See our [errors documentation](https://docs.claude.com/en/api/errors)
+          See our [errors
+          documentation](https://docs.claude.com/en/docs/build-with-claude/errors)
           for more details.
   deprecated: false
   type: path

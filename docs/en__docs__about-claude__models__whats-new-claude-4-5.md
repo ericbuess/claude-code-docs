@@ -337,8 +337,8 @@ Starting with Claude 4.5 models (Sonnet 4.5 and Haiku 4.5), AWS Bedrock and Goog
 
 For implementation details and migration guidance:
 
-* [AWS Bedrock global vs regional endpoints](/en/api/claude-on-amazon-bedrock#global-vs-regional-endpoints)
-* [Google Vertex AI global vs regional endpoints](/en/api/claude-on-vertex-ai#global-vs-regional-endpoints)
+* [AWS Bedrock global vs regional endpoints](/en/docs/build-with-claude/claude-on-amazon-bedrock#global-vs-regional-endpoints)
+* [Google Vertex AI global vs regional endpoints](/en/docs/build-with-claude/claude-on-vertex-ai#global-vs-regional-endpoints)
 
 ### Availability
 

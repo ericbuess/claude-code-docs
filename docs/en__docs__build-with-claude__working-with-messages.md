@@ -1,4 +1,4 @@
-# Working with the Messages API
+# Using the Messages API
 
 > Practical patterns and examples for using the Messages API effectively
 

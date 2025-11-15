@@ -121,3 +121,6 @@ analysis/execution/*.py
 LINKEDIN_POST.md
 NEXT_STEPS.md
 REPO_SETUP.md
+
+# GitHub communication files (not part of main repo)
+github_response.md

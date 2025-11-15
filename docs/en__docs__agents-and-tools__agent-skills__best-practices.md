@@ -1159,15 +1159,15 @@ Before sharing a Skill, verify:
     Create your first Skill
   </Card>
 
-  <Card title="Use Skills in Claude Code" icon="terminal" href="/en/docs/claude-code/skills">
+  <Card title="Use Skills in Claude Code" icon="terminal" href="https://code.claude.com/docs/en/skills">
     Create and manage Skills in Claude Code
   </Card>
 
-  <Card title="Use Skills in the Agent SDK" icon="cube" href="/en/api/agent-sdk/skills">
+  <Card title="Use Skills in the Agent SDK" icon="cube" href="/en/docs/agent-sdk/skills">
     Use Skills programmatically in TypeScript and Python
   </Card>
 
-  <Card title="Use Skills with the API" icon="code" href="/en/api/skills-guide">
+  <Card title="Use Skills with the API" icon="code" href="/en/docs/build-with-claude/skills-guide">
     Upload and use Skills programmatically
   </Card>
 </CardGroup>

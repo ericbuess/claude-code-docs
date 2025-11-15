@@ -51,7 +51,7 @@ class TestNoDuplicateContent:
         # Exclude docs_manifest.json
         md_files = [f for f in docs_files if f.name != 'docs_manifest.json']
 
-        # Expected: 269 files (after deduplication and cleanup)
+        # Expected: 269 files (includes all docs from docs.claude.com + Claude Code docs from code.claude.com)
         assert len(md_files) == 269, f"Expected 269 files, found {len(md_files)}"
 
 class TestNamingConvention:
@@ -146,14 +146,16 @@ class TestCriticalFiles:
     """Verify critical enhanced files exist"""
 
     @pytest.mark.parametrize("filename", [
+        # Claude Code docs (from code.claude.com)
         "en__docs__claude-code__cli-reference.md",
         "en__docs__claude-code__hooks.md",
         "en__docs__claude-code__output-styles.md",
         "en__docs__claude-code__settings.md",
         "en__docs__claude-code__sub-agents.md",
         "en__docs__claude-code__mcp.md",
-        "en__docs__mcp.md",
         "en__docs__claude-code__overview.md",
+        # General docs (from docs.claude.com)
+        "en__docs__mcp.md",
         "en__api__overview.md",
     ])
     def test_critical_file_exists(self, docs_dir, filename):

@@ -11,7 +11,7 @@
 </Note>
 
 <Tip>
-  For the best experience and access to Claude API full feature set ([PDF processing](/en/docs/build-with-claude/pdf-support), [citations](/en/docs/build-with-claude/citations), [extended thinking](/en/docs/build-with-claude/extended-thinking), and [prompt caching](/en/docs/build-with-claude/prompt-caching)), we recommend using the native [Claude API](/en/api/getting-started).
+  For the best experience and access to Claude API full feature set ([PDF processing](/en/docs/build-with-claude/pdf-support), [citations](/en/docs/build-with-claude/citations), [extended thinking](/en/docs/build-with-claude/extended-thinking), and [prompt caching](/en/docs/build-with-claude/prompt-caching)), we recommend using the native [Claude API](/en/api/overview).
 </Tip>
 
 ## Getting started with the OpenAI SDK

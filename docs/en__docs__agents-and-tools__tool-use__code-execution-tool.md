@@ -999,4 +999,4 @@ To upgrade, you need to make the following changes in your API requests:
 
 The code execution tool enables Claude to use [Agent Skills](/en/docs/agents-and-tools/agent-skills/overview). Skills are modular capabilities consisting of instructions, scripts, and resources that extend Claude's functionality.
 
-Learn more in the [Agent Skills documentation](/en/docs/agents-and-tools/agent-skills/overview) and [Agent Skills API guide](/en/docs/agents-and-tools/agent-skills/api).
+Learn more in the [Agent Skills documentation](/en/docs/agents-and-tools/agent-skills/overview) and [Agent Skills API guide](/en/docs/build-with-claude/skills-guide).

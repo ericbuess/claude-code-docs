@@ -91,7 +91,7 @@ Here are the key tasks associated with the example insurance interaction above:
 
 ### Establish success criteria
 
-Work with your support team to [define clear success criteria](/en/docs/build-with-claude/define-success) and write [detailed evaluations](/en/docs/build-with-claude/develop-tests) with measurable benchmarks and goals.
+Work with your support team to [define clear success criteria](/en/docs/test-and-evaluate/define-success) and write [detailed evaluations](/en/docs/test-and-evaluate/develop-tests) with measurable benchmarks and goals.
 
 Here are criteria and benchmarks that can be used to evaluate how successfully Claude performs the defined tasks:
 
@@ -369,7 +369,7 @@ def get_quote(make, model, year, mileage, driver_age):
 
 ### Deploy your prompts
 
-It's hard to know how well your prompt works without deploying it in a test production setting and [running evaluations](/en/docs/build-with-claude/develop-tests) so let's build a small application using our prompt, the Anthropic SDK, and streamlit for a user interface.
+It's hard to know how well your prompt works without deploying it in a test production setting and [running evaluations](/en/docs/test-and-evaluate/develop-tests) so let's build a small application using our prompt, the Anthropic SDK, and streamlit for a user interface.
 
 In a file called `chatbot.py`, start by setting up the ChatBot class, which will encapsulate the interactions with the Anthropic SDK.
 
@@ -516,7 +516,7 @@ streamlit run app.py
 
 ### Evaluate your prompts
 
-Prompting often requires testing and optimization for it to be production ready. To determine the readiness of your solution, evaluate the chatbot performance using a systematic process combining quantitative and qualitative methods. Creating a [strong empirical evaluation](/en/docs/build-with-claude/develop-tests#building-evals-and-test-cases) based on your defined success criteria will allow you to optimize your prompts.
+Prompting often requires testing and optimization for it to be production ready. To determine the readiness of your solution, evaluate the chatbot performance using a systematic process combining quantitative and qualitative methods. Creating a [strong empirical evaluation](/en/docs/test-and-evaluate/develop-tests#building-evals-and-test-cases) based on your defined success criteria will allow you to optimize your prompts.
 
 <Tip>The [Claude Console](https://console.anthropic.com/dashboard) now features an Evaluation tool that allows you to test your prompts under various scenarios.</Tip>
 

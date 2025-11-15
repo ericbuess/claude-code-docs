@@ -261,25 +261,30 @@ When a batch is first created, the response will have a processing status of `in
 
 ### Tracking your batch
 
-The Message Batch's `processing_status` field indicates the stage of processing the batch is in. It starts as `in_progress`, then updates to `ended` once all the requests in the batch have finished processing, and results are ready. You can monitor the state of your batch by visiting the [Console](https://console.anthropic.com/settings/workspaces/default/batches), or using the [retrieval endpoint](/en/api/retrieving-message-batches):
+The Message Batch's `processing_status` field indicates the stage of processing the batch is in. It starts as `in_progress`, then updates to `ended` once all the requests in the batch have finished processing, and results are ready. You can monitor the state of your batch by visiting the [Console](https://console.anthropic.com/settings/workspaces/default/batches), or using the [retrieval endpoint](/en/api/retrieving-message-batches).
+
+#### Polling for Message Batch completion
+
+To poll a Message Batch, you'll need its `id`, which is provided in the response when creating a batch or by listing batches. You can implement a polling loop that checks the batch status periodically until processing has ended:
 
 <CodeGroup>
-  ```bash Shell theme={null}
-  curl https://api.anthropic.com/v1/messages/batches/msgbatch_01HkcTjaV5uDC8jWR4ZsDV8d \
-   --header "x-api-key: $ANTHROPIC_API_KEY" \
-   --header "anthropic-version: 2023-06-01" \
-   | sed -E 's/.*"id":"([^"]+)".*"processing_status":"([^"]+)".*/Batch \1 processing status is \2/'
-  ```
-
   ```python Python theme={null}
   import anthropic
+  import time
 
   client = anthropic.Anthropic()
 
-  message_batch = client.messages.batches.retrieve(
-      "msgbatch_01HkcTjaV5uDC8jWR4ZsDV8d",
-  )
-  print(f"Batch {message_batch.id} processing status is {message_batch.processing_status}")
+  message_batch = None
+  while True:
+      message_batch = client.messages.batches.retrieve(
+          MESSAGE_BATCH_ID
+      )
+      if message_batch.processing_status == "ended":
+          break
+
+      print(f"Batch {MESSAGE_BATCH_ID} is still processing...")
+      time.sleep(60)
+  print(message_batch)
   ```
 
   ```TypeScript TypeScript theme={null}
@@ -287,10 +292,101 @@ The Message Batch's `processing_status` field indicates the stage of processing 
 
   const anthropic = new Anthropic();
 
-  const messageBatch = await anthropic.messages.batches.retrieve(
-    "msgbatch_01HkcTjaV5uDC8jWR4ZsDV8d",
-  );
-  console.log(`Batch ${messageBatch.id} processing status is ${messageBatch.processing_status}`);
+  let messageBatch;
+  while (true) {
+    messageBatch = await anthropic.messages.batches.retrieve(
+      MESSAGE_BATCH_ID
+    );
+    if (messageBatch.processing_status === 'ended') {
+      break;
+    }
+
+    console.log(`Batch ${messageBatch} is still processing... waiting`);
+    await new Promise(resolve => setTimeout(resolve, 60_000));
+  }
+  console.log(messageBatch);
+  ```
+
+  ```bash Shell theme={null}
+  #!/bin/sh
+
+  until [[ $(curl -s "https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID" \
+            --header "x-api-key: $ANTHROPIC_API_KEY" \
+            --header "anthropic-version: 2023-06-01" \
+            | grep -o '"processing_status":[[:space:]]*"[^"]*"' \
+            | cut -d'"' -f4) == "ended" ]]; do
+      echo "Batch $MESSAGE_BATCH_ID is still processing..."
+      sleep 60
+  done
+
+  echo "Batch $MESSAGE_BATCH_ID has finished processing"
+  ```
+</CodeGroup>
+
+### Listing all Message Batches
+
+You can list all Message Batches in your Workspace using the [list endpoint](/en/api/listing-message-batches). The API supports pagination, automatically fetching additional pages as needed:
+
+<CodeGroup>
+  ```python Python theme={null}
+  import anthropic
+
+  client = anthropic.Anthropic()
+
+  # Automatically fetches more pages as needed.
+  for message_batch in client.messages.batches.list(
+      limit=20
+  ):
+      print(message_batch)
+  ```
+
+  ```TypeScript TypeScript theme={null}
+  import Anthropic from '@anthropic-ai/sdk';
+
+  const anthropic = new Anthropic();
+
+  // Automatically fetches more pages as needed.
+  for await (const messageBatch of anthropic.messages.batches.list({
+    limit: 20
+  })) {
+    console.log(messageBatch);
+  }
+  ```
+
+  ```bash Shell theme={null}
+  #!/bin/sh
+
+  if ! command -v jq &> /dev/null; then
+      echo "Error: This script requires jq. Please install it first."
+      exit 1
+  fi
+
+  BASE_URL="https://api.anthropic.com/v1/messages/batches"
+
+  has_more=true
+  after_id=""
+
+  while [ "$has_more" = true ]; do
+      # Construct URL with after_id if it exists
+      if [ -n "$after_id" ]; then
+          url="${BASE_URL}?limit=20&after_id=${after_id}"
+      else
+          url="$BASE_URL?limit=20"
+      fi
+
+      response=$(curl -s "$url" \
+                --header "x-api-key: $ANTHROPIC_API_KEY" \
+                --header "anthropic-version: 2023-06-01")
+
+      # Extract values using jq
+      has_more=$(echo "$response" | jq -r '.has_more')
+      after_id=$(echo "$response" | jq -r '.last_id')
+
+      # Process and print each entry in the data array
+      echo "$response" | jq -c '.data[]' | while read -r entry; do
+          echo "$entry" | jq '.'
+      done
+  done
   ```
 
   ```java Java theme={null}
@@ -298,23 +394,22 @@ The Message Batch's `processing_status` field indicates the stage of processing 
   import com.anthropic.client.okhttp.AnthropicOkHttpClient;
   import com.anthropic.models.messages.batches.*;
 
-  public class BatchRetrieveExample {
+  public class BatchListExample {
       public static void main(String[] args) {
           AnthropicClient client = AnthropicOkHttpClient.fromEnv();
 
-          MessageBatch messageBatch = client.messages().batches().retrieve(
-                  BatchRetrieveParams.builder()
-                          .messageBatchId("msgbatch_01HkcTjaV5uDC8jWR4ZsDV8d")
+          // Automatically fetches more pages as needed
+          for (MessageBatch messageBatch : client.messages().batches().list(
+                  BatchListParams.builder()
+                          .limit(20)
                           .build()
-          );
-          System.out.printf("Batch %s processing status is %s%n",
-                  messageBatch.id(), messageBatch.processingStatus());
+          )) {
+              System.out.println(messageBatch);
+          }
       }
   }
   ```
 </CodeGroup>
-
-You can [poll](/en/api/messages-batch-examples#polling-for-message-batch-completion) this endpoint to know when processing has ended.
 
 ### Retrieving batch results
 
@@ -479,6 +574,82 @@ If your result has an error, its `result.error` will be set to our standard [err
 
   Batch results can be returned in any order, and may not match the ordering of requests when the batch was created. In the above example, the result for the second batch request is returned before the first. To correctly match results with their corresponding requests, always use the `custom_id` field.
 </Tip>
+
+### Canceling a Message Batch
+
+You can cancel a Message Batch that is currently processing using the [cancel endpoint](/en/api/canceling-message-batches). Immediately after cancellation, a batch's `processing_status` will be `canceling`. You can use the same polling technique described above to wait until cancellation is finalized. Canceled batches end up with a status of `ended` and may contain partial results for requests that were processed before cancellation.
+
+<CodeGroup>
+  ```python Python theme={null}
+  import anthropic
+
+  client = anthropic.Anthropic()
+
+  message_batch = client.messages.batches.cancel(
+      MESSAGE_BATCH_ID,
+  )
+  print(message_batch)
+  ```
+
+  ```TypeScript TypeScript theme={null}
+  import Anthropic from '@anthropic-ai/sdk';
+
+  const anthropic = new Anthropic();
+
+  const messageBatch = await anthropic.messages.batches.cancel(
+      MESSAGE_BATCH_ID
+  );
+  console.log(messageBatch);
+  ```
+
+  ```bash Shell theme={null}
+  #!/bin/sh
+  curl --request POST https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID/cancel \
+      --header "x-api-key: $ANTHROPIC_API_KEY" \
+      --header "anthropic-version: 2023-06-01"
+  ```
+
+  ```java Java theme={null}
+  import com.anthropic.client.AnthropicClient;
+  import com.anthropic.client.okhttp.AnthropicOkHttpClient;
+  import com.anthropic.models.messages.batches.*;
+
+  public class BatchCancelExample {
+      public static void main(String[] args) {
+          AnthropicClient client = AnthropicOkHttpClient.fromEnv();
+
+          MessageBatch messageBatch = client.messages().batches().cancel(
+                  BatchCancelParams.builder()
+                          .messageBatchId(MESSAGE_BATCH_ID)
+                          .build()
+          );
+          System.out.println(messageBatch);
+      }
+  }
+  ```
+</CodeGroup>
+
+The response will show the batch in a `canceling` state:
+
+```JSON JSON theme={null}
+{
+  "id": "msgbatch_013Zva2CMHLNnXjNJJKqJ2EF",
+  "type": "message_batch",
+  "processing_status": "canceling",
+  "request_counts": {
+    "processing": 2,
+    "succeeded": 0,
+    "errored": 0,
+    "canceled": 0,
+    "expired": 0
+  },
+  "ended_at": null,
+  "created_at": "2024-09-24T18:37:24.100435Z",
+  "expires_at": "2024-09-25T18:37:24.100435Z",
+  "cancel_initiated_at": "2024-09-24T18:39:03.114875Z",
+  "results_url": null
+}
+```
 
 ### Using prompt caching with Message Batches
 

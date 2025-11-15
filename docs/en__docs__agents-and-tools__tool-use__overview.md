@@ -8,6 +8,14 @@ Claude is capable of interacting with tools and functions, allowing you to exten
   [form](https://forms.gle/BFnYc6iCkWoRzFgk7).
 </Tip>
 
+<Tip>
+  **Guarantee schema conformance with strict tool use**
+
+  [Structured Outputs](/en/docs/build-with-claude/structured-outputs) provides guaranteed schema validation for tool inputs. Add `strict: true` to your tool definitions to ensure Claude's tool calls always match your schema exactly—no more type mismatches or missing fields.
+
+  Perfect for production agents where invalid tool parameters would cause failures. [Learn when to use strict tool use →](/en/docs/build-with-claude/structured-outputs#when-to-use-json-outputs-vs-strict-tool-use)
+</Tip>
+
 Here's an example of how to provide tools to Claude using the Messages API:
 
 <CodeGroup>
