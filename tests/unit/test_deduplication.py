@@ -51,14 +51,14 @@ class TestNoDuplicateContent:
         # Exclude docs_manifest.json
         md_files = [f for f in docs_files if f.name != 'docs_manifest.json']
 
-        # Expected: 269 files (includes all docs from docs.claude.com + Claude Code docs from code.claude.com)
-        assert len(md_files) == 269, f"Expected 269 files, found {len(md_files)}"
+        # Expected: 268 files (includes all docs from docs.claude.com + Claude Code docs from code.claude.com)
+        assert len(md_files) == 268, f"Expected 268 files, found {len(md_files)}"
 
 class TestNamingConvention:
     """Verify file naming standards"""
 
     def test_all_docs_use_en_prefix(self, docs_files):
-        """Ensure all documentation files follow en__ naming convention"""
+        """Ensure all documentation files follow en__ or docs__en__ naming convention"""
         non_standard = []
 
         # Allowed exceptions (project-specific files)
@@ -69,11 +69,13 @@ class TestNamingConvention:
         }
 
         for f in docs_files:
-            if f.name not in allowed_exceptions and not f.name.startswith('en__'):
-                non_standard.append(f.name)
+            if f.name not in allowed_exceptions:
+                # Accept both en__* (old format) and docs__en__* (new Claude Code format)
+                if not (f.name.startswith('en__') or f.name.startswith('docs__en__')):
+                    non_standard.append(f.name)
 
         assert len(non_standard) == 0, \
-            f"Files not following en__ convention: {non_standard}"
+            f"Files not following en__ or docs__en__ convention: {non_standard}"
 
     def test_no_legacy_duplicates(self, docs_dir):
         """Ensure legacy format files don't coexist with en__ versions"""
@@ -125,8 +127,8 @@ class TestNamespaceCollisions:
             "Legacy mcp.md should be removed"
 
         # Should exist (different topics):
-        assert (docs_dir / 'en__docs__claude-code__mcp.md').exists(), \
-            "Claude Code MCP guide should exist"
+        assert (docs_dir / 'docs__en__mcp.md').exists(), \
+            "Claude Code MCP guide should exist (NEW FORMAT: docs__en__)"
         assert (docs_dir / 'en__docs__mcp.md').exists(), \
             "General MCP overview should exist"
 
@@ -137,8 +139,8 @@ class TestNamespaceCollisions:
             "Legacy overview.md should be removed"
 
         # Should exist (different topics):
-        assert (docs_dir / 'en__docs__claude-code__overview.md').exists(), \
-            "Claude Code overview should exist"
+        assert (docs_dir / 'docs__en__overview.md').exists(), \
+            "Claude Code overview should exist (NEW FORMAT: docs__en__)"
         assert (docs_dir / 'en__api__overview.md').exists(), \
             "API overview should exist"
 
@@ -146,14 +148,14 @@ class TestCriticalFiles:
     """Verify critical enhanced files exist"""
 
     @pytest.mark.parametrize("filename", [
-        # Claude Code docs (from code.claude.com)
-        "en__docs__claude-code__cli-reference.md",
-        "en__docs__claude-code__hooks.md",
-        "en__docs__claude-code__output-styles.md",
-        "en__docs__claude-code__settings.md",
-        "en__docs__claude-code__sub-agents.md",
-        "en__docs__claude-code__mcp.md",
-        "en__docs__claude-code__overview.md",
+        # Claude Code docs (NEW FORMAT from code.claude.com: docs__en__)
+        "docs__en__cli-reference.md",
+        "docs__en__hooks.md",
+        "docs__en__output-styles.md",
+        "docs__en__settings.md",
+        "docs__en__sub-agents.md",
+        "docs__en__mcp.md",
+        "docs__en__overview.md",
         # General docs (from docs.claude.com)
         "en__docs__mcp.md",
         "en__api__overview.md",

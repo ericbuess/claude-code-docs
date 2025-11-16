@@ -3,7 +3,7 @@
 > Build custom AI agents with the Claude Agent SDK
 
 <Note>
-  The Claude Code SDK has been renamed to the **Claude Agent SDK**. If you're migrating from the old SDK, see the [Migration Guide](/en/docs/claude-code/sdk/migration-guide).
+  The Claude Code SDK has been renamed to the **Claude Agent SDK**. If you're migrating from the old SDK, see the [Migration Guide](https://code.claude.com/docs/en/sdk/migration-guide).
 </Note>
 
 ## Installation
@@ -22,9 +22,9 @@
 
 The Claude Agent SDK is available in multiple forms to suit different use cases:
 
-* **[TypeScript SDK](/en/api/agent-sdk/typescript)** - For Node.js and web applications
-* **[Python SDK](/en/api/agent-sdk/python)** - For Python applications and data science
-* **[Streaming vs Single Mode](/en/api/agent-sdk/streaming-vs-single-mode)** - Understanding input modes and best practices
+* **[TypeScript SDK](/en/docs/agent-sdk/typescript)** - For Node.js and web applications
+* **[Python SDK](/en/docs/agent-sdk/python)** - For Python applications and data science
+* **[Streaming vs Single Mode](/en/docs/agent-sdk/streaming-vs-single-mode)** - Understanding input modes and best practices
 
 ## Why use the Claude Agent SDK?
 
@@ -67,7 +67,7 @@ The SDK also supports authentication via third-party API providers:
 * **Amazon Bedrock**: Set `CLAUDE_CODE_USE_BEDROCK=1` environment variable and configure AWS credentials
 * **Google Vertex AI**: Set `CLAUDE_CODE_USE_VERTEX=1` environment variable and configure Google Cloud credentials
 
-For detailed configuration instructions for third-party providers, see the [Amazon Bedrock](/en/docs/claude-code/amazon-bedrock) and [Google Vertex AI](/en/docs/claude-code/google-vertex-ai) documentation.
+For detailed configuration instructions for third-party providers, see the [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock) and [Google Vertex AI](https://code.claude.com/docs/en/google-vertex-ai) documentation.
 
 <Note>
   Unless previously approved, we do not allow third party developers to apply Claude.ai rate limits for their products, including agents built on the Claude Agent SDK. Please use the API key authentication methods described in this document instead.
@@ -81,8 +81,8 @@ The SDK provides access to all the default features available in Claude Code, le
 * **Agent Skills**: Extend Claude with specialized capabilities stored as `SKILL.md` files in `./.claude/skills/`
 * **Hooks**: Execute custom commands configured in `./.claude/settings.json` that respond to tool events
 * **Slash Commands**: Use custom commands defined as Markdown files in `./.claude/commands/`
-* **Plugins**: Load custom plugins programmatically using the `plugins` option to extend Claude Code with custom commands, agents, skills, hooks, and MCP servers. See [Plugins](/en/api/agent-sdk/plugins) for details.
-* **Memory (CLAUDE.md)**: Maintain project context through `CLAUDE.md` or `.claude/CLAUDE.md` files in your project directory, or `~/.claude/CLAUDE.md` for user-level instructions. To load these files, you must explicitly set `settingSources: ['project']` (TypeScript) or `setting_sources=["project"]` (Python) in your options. See [Modifying system prompts](/en/api/agent-sdk/modifying-system-prompts#method-1-claudemd-files-project-level-instructions) for details.
+* **Plugins**: Load custom plugins programmatically using the `plugins` option to extend Claude Code with custom commands, agents, skills, hooks, and MCP servers. See [Plugins](/en/docs/agent-sdk/plugins) for details.
+* **Memory (CLAUDE.md)**: Maintain project context through `CLAUDE.md` or `.claude/CLAUDE.md` files in your project directory, or `~/.claude/CLAUDE.md` for user-level instructions. To load these files, you must explicitly set `settingSources: ['project']` (TypeScript) or `setting_sources=["project"]` (Python) in your options. See [Modifying system prompts](/en/docs/agent-sdk/modifying-system-prompts#method-1-claudemd-files-project-level-instructions) for details.
 
 These features work identically to their Claude Code counterparts by reading from the same file system locations.
 
@@ -118,7 +118,7 @@ When referencing Claude in your agent selector or product:
 
 * **Claude Agent** (preferred for dropdown menus)
 * **Claude** (when within a menu already labeled "Agents")
-* **{YourAgentName} Powered by Claude** (if you have an existing agent name)
+* **\{YourAgentName} Powered by Claude** (if you have an existing agent name)
 
 **Not permitted:**
 
@@ -145,8 +145,8 @@ View the full changelog for SDK updates, bug fixes, and new features:
 
 ## Related Resources
 
-* [CLI Reference](/en/docs/claude-code/cli-reference) - Complete CLI documentation
-* [GitHub Actions Integration](/en/docs/claude-code/github-actions) - Automate your GitHub workflow
-* [MCP Documentation](/en/docs/claude-code/mcp) - Extend Claude with custom tools
-* [Common Workflows](/en/docs/claude-code/common-workflows) - Step-by-step guides
-* [Troubleshooting](/en/docs/claude-code/troubleshooting) - Common issues and solutions
+* [CLI Reference](https://code.claude.com/docs/en/cli-reference) - Complete CLI documentation
+* [GitHub Actions Integration](https://code.claude.com/docs/en/github-actions) - Automate your GitHub workflow
+* [MCP Documentation](https://code.claude.com/docs/en/mcp) - Extend Claude with custom tools
+* [Common Workflows](https://code.claude.com/docs/en/common-workflows) - Step-by-step guides
+* [Troubleshooting](https://code.claude.com/docs/en/troubleshooting) - Common issues and solutions

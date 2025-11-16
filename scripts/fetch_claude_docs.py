@@ -26,13 +26,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Sitemap URLs to try (in order of preference)
-# Note: Claude Code docs moved to code.claude.com domain (Nov 2025)
+# Sitemap URLs to try - we'll discover from ALL of them and combine results
+# Note: Claude Code docs are now split across multiple domains
 SITEMAP_URLS = [
-    "https://code.claude.com/docs/sitemap.xml",  # New Claude Code domain
-    "https://docs.anthropic.com/sitemap.xml",
-    "https://docs.anthropic.com/sitemap_index.xml",
-    "https://anthropic.com/sitemap.xml"
+    "https://docs.claude.com/sitemap.xml",       # Agent SDK and main docs
+    "https://code.claude.com/docs/sitemap.xml",  # Claude Code specific docs
+    "https://docs.anthropic.com/sitemap.xml",    # Legacy/fallback
 ]
 MANIFEST_FILE = "docs_manifest.json"
 
@@ -186,10 +185,114 @@ def url_to_safe_filename(url_path: str) -> str:
     return sanitized
 
 
+def categorize_path(path: str) -> str:
+    """
+    Categorize documentation path based on URL structure.
+
+    Args:
+        path: Documentation path (e.g., /en/api/messages or /docs/en/hooks)
+
+    Returns:
+        Category name as string
+    """
+    if path.startswith('/en/api/') or path.startswith('/en/docs/agent-sdk/'):
+        return 'api_reference'
+
+    if path.startswith('/docs/en/'):
+        return 'claude_code'
+
+    if path.startswith('/en/prompt-library/') or path.startswith('/en/resources/prompt-library/'):
+        return 'prompt_library'
+
+    if path.startswith('/en/resources/'):
+        return 'resources'
+
+    if path.startswith('/en/release-notes/'):
+        return 'release_notes'
+
+    if path.startswith('/en/home') or path == '/en/prompt-library':
+        return 'uncategorized'
+
+    # Everything else (guides, about-claude, build-with-claude, etc.)
+    return 'core_documentation'
+
+
+def update_paths_manifest(paths: List[str], manifest_file: Path = None) -> None:
+    """
+    Update paths_manifest.json with newly discovered paths from sitemaps.
+
+    Args:
+        paths: List of documentation paths discovered from sitemaps
+        manifest_file: Optional path to manifest file (defaults to paths_manifest.json)
+    """
+    if manifest_file is None:
+        manifest_file = Path(__file__).parent.parent / 'paths_manifest.json'
+    elif isinstance(manifest_file, str):
+        manifest_file = Path(manifest_file)
+
+    # Categorize all paths
+    categorized = {}
+    for path in paths:
+        category = categorize_path(path)
+        if category not in categorized:
+            categorized[category] = []
+        categorized[category].append(path)
+
+    # Sort paths within each category
+    for category in categorized:
+        categorized[category] = sorted(categorized[category])
+
+    # Build manifest structure
+    manifest = {
+        "metadata": {
+            "generated_at": datetime.now().isoformat() + "Z",
+            "total_paths": len(paths),
+            "source": "sitemap_discovery",
+            "last_regenerated": datetime.now().isoformat() + "Z",
+        },
+        "categories": categorized
+    }
+
+    # Write to file
+    manifest_file.write_text(json.dumps(manifest, indent=2))
+    logger.info(f"Updated paths_manifest.json with {len(paths)} paths across {len(categorized)} categories")
+
+
+def discover_from_all_sitemaps(session: requests.Session) -> List[str]:
+    """
+    Discover documentation paths from ALL sitemaps and combine results.
+
+    Returns:
+        List of unique English documentation paths discovered from all sitemaps
+    """
+    all_paths = []
+    successful_sitemaps = 0
+
+    for sitemap_url in SITEMAP_URLS:
+        try:
+            logger.info(f"Discovering from sitemap: {sitemap_url}")
+            paths = discover_claude_code_pages(session, sitemap_url)
+            logger.info(f"  Found {len(paths)} paths from {sitemap_url}")
+            all_paths.extend(paths)
+            successful_sitemaps += 1
+        except Exception as e:
+            logger.warning(f"  Failed to discover from {sitemap_url}: {e}")
+            continue
+
+    if successful_sitemaps == 0:
+        raise Exception("Could not discover from any sitemap")
+
+    # Remove duplicates and sort
+    unique_paths = sorted(list(set(all_paths)))
+    logger.info(f"Total unique paths discovered from {successful_sitemaps} sitemaps: {len(unique_paths)}")
+
+    return unique_paths
+
+
 def discover_sitemap_and_base_url(session: requests.Session) -> Tuple[str, str]:
     """
     Discover the sitemap URL and extract the base URL from it.
-    
+
     Returns:
         Tuple of (sitemap_url, base_url)
     """
@@ -208,7 +311,7 @@ def discover_sitemap_and_base_url(session: requests.Session) -> Tuple[str, str]:
                     # Fallback for older Python versions
                     logger.warning("XMLParser security parameters not available, using default parser")
                     root = ET.fromstring(response.content)
-                
+
                 # Try with namespace first
                 namespace = {'ns': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
                 first_url = None
@@ -217,14 +320,14 @@ def discover_sitemap_and_base_url(session: requests.Session) -> Tuple[str, str]:
                     if loc_elem is not None and loc_elem.text:
                         first_url = loc_elem.text
                         break
-                
+
                 # If no URLs found, try without namespace
                 if not first_url:
                     for loc_elem in root.findall('.//loc'):
                         if loc_elem.text:
                             first_url = loc_elem.text
                             break
-                
+
                 if first_url:
                     parsed = urlparse(first_url)
                     base_url = f"{parsed.scheme}://{parsed.netloc}"
@@ -233,7 +336,7 @@ def discover_sitemap_and_base_url(session: requests.Session) -> Tuple[str, str]:
         except Exception as e:
             logger.warning(f"Failed to fetch {sitemap_url}: {e}")
             continue
-    
+
     raise Exception("Could not find a valid sitemap")
 
 
@@ -296,11 +399,11 @@ def load_paths_from_manifest() -> List[str]:
     """
     Load paths for files that already exist locally in ./docs/
 
-    This ensures auto-update only updates existing files, not all 448 paths.
-    The remaining paths are fetched on-demand when users request them.
+    This is a FALLBACK used only if sitemap discovery fails.
+    Normally, we discover ~270 active paths from sitemaps and fetch all of them.
 
     Returns:
-        List of paths corresponding to existing local files (269 files)
+        List of paths corresponding to existing local files (~269 files)
     """
     try:
         docs_dir = Path(__file__).parent.parent / 'docs'
@@ -344,7 +447,6 @@ def load_paths_from_manifest() -> List[str]:
                 paths_to_update.append(path)
 
         logger.info(f"Found {len(paths_to_update)} paths with existing local files (out of {len(all_manifest_paths)} total paths)")
-        logger.info(f"Remaining {len(all_manifest_paths) - len(paths_to_update)} paths are fetched on-demand")
 
         return sorted(paths_to_update)
 
@@ -392,35 +494,26 @@ def discover_claude_code_pages(session: requests.Session, sitemap_url: str) -> L
         
         logger.info(f"Found {len(urls)} total URLs in sitemap")
         
-        # Filter for ENGLISH Claude Code documentation pages only
+        # Filter for ENGLISH documentation pages only
         claude_code_pages = []
-        
-        # Only accept English documentation patterns
-        # Updated for new domain structure (code.claude.com)
-        english_patterns = [
-            '/docs/en/',  # New: code.claude.com/docs/en/...
-            '/en/docs/claude-code/',  # Old: docs.claude.com/en/docs/claude-code/... (kept for backward compatibility)
-        ]
-        
+
         for url in urls:
-            # Check if URL matches English pattern specifically
-            if any(pattern in url for pattern in english_patterns):
-                parsed = urlparse(url)
-                path = parsed.path
-                
-                # Remove any file extension
-                if path.endswith('.html'):
-                    path = path[:-5]
-                elif path.endswith('/'):
-                    path = path[:-1]
-                
+            parsed = urlparse(url)
+            path = parsed.path
+
+            # Remove any file extension
+            if path.endswith('.html'):
+                path = path[:-5]
+            elif path.endswith('/'):
+                path = path[:-1]
+
+            # ONLY accept paths that start with /en/ or /docs/en/
+            # This excludes /de/, /fr/, /ja/, etc. (other languages)
+            if path.startswith('/en/') or path.startswith('/docs/en/'):
                 # Skip certain types of pages
                 skip_patterns = [
-                    '/tool-use/',  # Tool-specific pages
                     '/examples/',  # Example pages
                     '/legacy/',    # Legacy documentation
-                    '/api/',       # API reference pages
-                    '/reference/', # Reference pages that aren't core docs
                 ]
 
                 if not any(skip in path for skip in skip_patterns):
@@ -513,20 +606,21 @@ def get_base_url_for_path(path: str) -> str:
     Determine the correct base URL for a given documentation path.
 
     Documentation is hosted on two different domains:
-    - code.claude.com: Claude Code specific docs (/en/docs/claude-code/*)
-    - docs.claude.com: All other docs (API, prompt library, resources, etc.)
+    - code.claude.com: Paths starting with /docs/en/ (Claude Code docs)
+    - docs.claude.com: Paths starting with /en/ (API, agent-sdk, prompt library, etc.)
 
     Args:
-        path: Documentation path (e.g., /en/api/messages or /en/docs/claude-code/hooks)
+        path: Documentation path (e.g., /en/api/messages or /docs/en/analytics)
 
     Returns:
         Base URL (either https://code.claude.com or https://docs.claude.com)
     """
-    # Claude Code docs are on code.claude.com
-    if '/claude-code/' in path:
+    # Claude Code docs on code.claude.com use /docs/en/ prefix
+    if path.startswith('/docs/en/'):
         return 'https://code.claude.com'
 
-    # Everything else (API, prompt library, resources, etc.) is on docs.claude.com
+    # Everything else (starting with /en/) is on docs.claude.com
+    # This includes: /en/api/, /en/docs/agent-sdk/, /en/docs/about-claude/, etc.
     return 'https://docs.claude.com'
 
 
@@ -730,14 +824,24 @@ def main():
             base_url = "https://code.claude.com/docs"
             sitemap_url = None
         
-        # Load paths for existing local files only (not all 448 paths)
-        logger.info("Detecting existing local files to update...")
-        documentation_pages = load_paths_from_manifest()
+        # Discover ALL documentation paths from sitemaps
+        logger.info("Discovering all /en/ documentation paths from sitemaps...")
+        try:
+            documentation_pages = discover_from_all_sitemaps(session)
 
-        # If manifest loading failed, try sitemap discovery as fallback
-        if not documentation_pages and sitemap_url:
-            logger.warning("Failed to detect local files, falling back to sitemap discovery...")
-            documentation_pages = discover_claude_code_pages(session, sitemap_url)
+            # Auto-regenerate paths_manifest.json with fresh discovered paths
+            try:
+                update_paths_manifest(documentation_pages)
+                logger.info("Successfully regenerated paths_manifest.json from sitemap discovery")
+            except Exception as e:
+                logger.warning(f"Failed to update paths_manifest.json: {e}")
+                # Non-fatal - continue with fetch
+
+        except Exception as e:
+            logger.error(f"Sitemap discovery failed: {e}")
+            logger.warning("Falling back to local file detection...")
+            # Fallback: load paths for existing local files
+            documentation_pages = load_paths_from_manifest()
 
         # If both failed, use minimal fallback
         if not documentation_pages:

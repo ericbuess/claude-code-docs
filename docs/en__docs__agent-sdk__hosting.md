@@ -128,7 +128,7 @@ An agent session will not timeout, but we recommend setting a 'maxTurns' propert
 
 ## Next Steps
 
-* [Sessions Guide](/en/api/agent-sdk/sessions) - Learn about session management
-* [Permissions](/en/api/agent-sdk/permissions) - Configure tool permissions
-* [Cost Tracking](/en/api/agent-sdk/cost-tracking) - Monitor API usage
-* [MCP Integration](/en/api/agent-sdk/mcp) - Extend with custom tools
+* [Sessions Guide](/en/docs/agent-sdk/sessions) - Learn about session management
+* [Permissions](/en/docs/agent-sdk/permissions) - Configure tool permissions
+* [Cost Tracking](/en/docs/agent-sdk/cost-tracking) - Monitor API usage
+* [MCP Integration](/en/docs/agent-sdk/mcp) - Extend with custom tools

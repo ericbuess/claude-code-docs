@@ -60,11 +60,14 @@ auto_update() {
         
         # Check if installer needs updating
         local INSTALLER_VERSION=$SCRIPT_VERSION
-        local VERSION_INT=$(echo "$INSTALLER_VERSION" | sed 's/^0\.//')
-        
-        if [[ $VERSION_INT -ge 3 ]]; then
+        local VERSION_MAJOR=$(echo "$INSTALLER_VERSION" | cut -d. -f2)
+
+        if [[ "$VERSION_MAJOR" -ge 3 ]]; then
             echo "🔧 Updating Claude Code Docs installer..." >&2
-            ./install.sh >/dev/null 2>&1
+            CLAUDE_DOCS_AUTO_INSTALL=yes ./install.sh >/dev/null 2>&1 || {
+                echo "⚠️  Auto-update failed. Please reinstall manually:" >&2
+                echo "    curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash" >&2
+            }
         fi
     fi
     
@@ -162,10 +165,13 @@ read_doc() {
             
             # Check if installer needs updating
             local INSTALLER_VERSION=$SCRIPT_VERSION
-            local VERSION_INT=$(echo "$INSTALLER_VERSION" | sed 's/^0\.//')
-            
-            if [[ $VERSION_INT -ge 3 ]]; then
-                ./install.sh >/dev/null 2>&1
+            local VERSION_MAJOR=$(echo "$INSTALLER_VERSION" | cut -d. -f2)
+
+            if [[ "$VERSION_MAJOR" -ge 3 ]]; then
+                CLAUDE_DOCS_AUTO_INSTALL=yes ./install.sh >/dev/null 2>&1 || {
+                    echo "⚠️  Auto-update failed. Please reinstall manually:" >&2
+                    echo "    curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash" >&2
+                }
             fi
             echo "✅ Updated to latest (v$VERSION, $BRANCH)"
         else

@@ -14,7 +14,7 @@ Plugins are packages of Claude Code extensions that can include:
 * **Hooks**: Event handlers that respond to tool use and other events
 * **MCP servers**: External tool integrations via Model Context Protocol
 
-For complete information on plugin structure and how to create plugins, see [Plugins](/en/docs/claude-code/plugins).
+For complete information on plugin structure and how to create plugins, see [Plugins](https://code.claude.com/docs/en/plugins).
 
 ## Loading plugins
 
@@ -268,8 +268,8 @@ my-plugin/
 
 For detailed information on creating plugins, see:
 
-* [Plugins](/en/docs/claude-code/plugins) - Complete plugin development guide
-* [Plugins reference](/en/docs/claude-code/plugins-reference) - Technical specifications and schemas
+* [Plugins](https://code.claude.com/docs/en/plugins) - Complete plugin development guide
+* [Plugins reference](https://code.claude.com/docs/en/plugins-reference) - Technical specifications and schemas
 
 ## Common use cases
 
@@ -332,8 +332,8 @@ If relative paths don't work:
 
 ## See also
 
-* [Plugins](/en/docs/claude-code/plugins) - Complete plugin development guide
-* [Plugins reference](/en/docs/claude-code/plugins-reference) - Technical specifications
-* [Slash Commands](/en/api/agent-sdk/slash-commands) - Using slash commands in the SDK
-* [Subagents](/en/api/agent-sdk/subagents) - Working with specialized agents
-* [Skills](/en/api/agent-sdk/skills) - Using Agent Skills
+* [Plugins](https://code.claude.com/docs/en/plugins) - Complete plugin development guide
+* [Plugins reference](https://code.claude.com/docs/en/plugins-reference) - Technical specifications
+* [Slash Commands](/en/docs/agent-sdk/slash-commands) - Using slash commands in the SDK
+* [Subagents](/en/docs/agent-sdk/subagents) - Working with specialized agents
+* [Skills](/en/docs/agent-sdk/skills) - Using Agent Skills

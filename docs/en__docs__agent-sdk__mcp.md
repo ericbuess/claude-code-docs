@@ -194,7 +194,7 @@ Remote servers with network communication:
 
 ### SDK MCP Servers
 
-In-process servers running within your application. For detailed information on creating custom tools, see the [Custom Tools guide](/en/api/agent-sdk/custom-tools):
+In-process servers running within your application. For detailed information on creating custom tools, see the [Custom Tools guide](/en/docs/agent-sdk/custom-tools):
 
 ## Resource Management
 
@@ -354,8 +354,8 @@ Handle MCP connection failures gracefully:
 
 ## Related Resources
 
-* [Custom Tools Guide](/en/api/agent-sdk/custom-tools) - Detailed guide on creating SDK MCP servers
-* [TypeScript SDK Reference](/en/api/agent-sdk/typescript)
-* [Python SDK Reference](/en/api/agent-sdk/python)
-* [SDK Permissions](/en/api/agent-sdk/sdk-permissions)
-* [Common Workflows](/en/docs/claude-code/common-workflows)
+* [Custom Tools Guide](/en/docs/agent-sdk/custom-tools) - Detailed guide on creating SDK MCP servers
+* [TypeScript SDK Reference](/en/docs/agent-sdk/typescript)
+* [Python SDK Reference](/en/docs/agent-sdk/python)
+* [SDK Permissions](/en/docs/agent-sdk/permissions)
+* [Common Workflows](https://code.claude.com/docs/en/common-workflows)

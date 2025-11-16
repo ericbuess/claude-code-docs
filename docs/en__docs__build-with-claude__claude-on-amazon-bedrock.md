@@ -243,7 +243,7 @@ Anthropic recommends that you log your activity on at least a 30-day rolling bas
 
 ## Feature support
 
-You can find all the features currently supported on Bedrock [here](/en/docs/build-with-claude/overview).
+You can find all the features currently supported on Bedrock [here](/en/api/overview).
 
 ### PDF Support on Bedrock
 

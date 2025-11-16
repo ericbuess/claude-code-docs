@@ -4,262 +4,150 @@ Thank you for contributing to the Enhanced Claude Code Documentation Mirror!
 
 ## Project Philosophy
 
-This project maintains **two modes** to serve different user needs:
+This project extends [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs) with optional Python features:
 
-1. **Standard Mode** - Fully compatible with upstream ([ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs))
-   - Shell-based (bash) implementation
-   - No Python dependencies required
-   - 269 core documentation files
-   - Perfect for basic documentation access
+**Core Principle: Graceful Degradation**
+- Single installation (always 268 files + Python scripts)
+- Python features activate only when Python 3.9+ is available
+- Everything works without Python (basic `/docs` command)
+- No separate "modes" - just feature detection at runtime
 
-2. **Enhanced Mode** - Optional Python-based features (opt-in)
-   - Python 3.9+ required
-   - 449 documentation paths (10x coverage)
-   - Full-text search and validation
-   - Advanced features for power users
-
-**All contributions must preserve both modes.** Standard mode must continue to work without Python.
+**Design Goals:**
+1. **Honesty**: Accurate claims about what we deliver (270 paths, not 449)
+2. **Simplicity**: One installation, automatic feature detection
+3. **Compatibility**: Works with upstream, same `/docs` interface
+4. **Testing**: High test coverage (78%), all changes tested
 
 ## Repository URL Strategy
 
-This project uses a clear strategy for repository URLs across documentation:
+This project uses clear URL conventions:
 
-### Functional URLs (Fork)
-
-URLs for **functional purposes** point to this fork (`costiash/claude-code-docs`):
-- **Installation scripts**: Users install from the fork
-- **Issue tracking**: Bug reports and feature requests go to the fork
-- **GitHub Actions**: CI/CD runs on the fork
-- **Pull requests**: Contributions are made to the fork
-- **Version badges**: Status indicators link to the fork
+### Functional URLs (This Fork)
+For **functional purposes**, use `costiash/claude-code-docs`:
+- Installation scripts
+- Issue tracking and bug reports
+- GitHub Actions / CI/CD
+- Pull requests
+- Status badges
 
 **Examples:**
 ```bash
+# Installation
 curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash
-# Issues: https://github.com/costiash/claude-code-docs/issues
-# Actions: https://github.com/costiash/claude-code-docs/actions
+
+# Issues
+https://github.com/costiash/claude-code-docs/issues
+
+# Actions
+https://github.com/costiash/claude-code-docs/actions
 ```
 
 ### Attribution URLs (Upstream)
-
-URLs for **attribution and credit** point to upstream (`ericbuess/claude-code-docs`):
-- **"Built on" acknowledgments**: Credit to original author
-- **"Forked from" references**: Clear lineage documentation
-- **Upstream compatibility notes**: Explain relationship to original
-- **Upstream contribution guidance**: Direct contributors to original project
+For **attribution and credit**, use `ericbuess/claude-code-docs`:
+- "Built on" acknowledgments
+- "Forked from" references
+- Upstream compatibility notes
+- Contribution guidance to original project
 
 **Examples:**
 ```markdown
-This is an enhanced fork of [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)
-Built on the excellent foundation of [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)
+Built on [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)
 For upstream contributions, see [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)
-```
-
-### Rationale
-
-This dual-URL strategy achieves:
-1. **Clear functionality**: Users interact with the fork for installation and support
-2. **Proper attribution**: Original author receives credit for foundational work
-3. **Upstream compatibility**: Clear path for contributing improvements back to original
-4. **Community clarity**: Contributors understand relationship between projects
-
-### When Making Changes
-
-When updating documentation:
-- **Use fork URLs** for anything users will click/execute (install, issues, actions)
-- **Use upstream URLs** for credit, attribution, and original project references
-- **Be consistent**: Follow existing patterns in each document
-- **Ask if unsure**: Open a discussion if URL choice is ambiguous
-
-## Branch Strategy
-
-This fork uses a clear branching strategy to maintain independence while allowing clean contributions to upstream:
-
-### Main Branches
-
-- **`main`** - Fork's stable branch with all enhancements
-- **`development`** - Active development for fork-specific features
-
-### Feature Branches
-
-- **`pr/*`** - Branches for PRs to upstream (clean, upstream-compatible changes only)
-- **`feature/*`** - Fork-specific feature development
-
-### Workflow for Upstream PRs
-
-When contributing to upstream ([ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs)):
-
-```bash
-# 1. Fetch latest from upstream
-git fetch upstream
-
-# 2. Create clean PR branch from upstream/main
-git checkout -b pr/your-feature upstream/main
-
-# 3. Make ONLY upstream-compatible changes
-# - No Python code (unless universally beneficial)
-# - No fork-specific features
-# - No test artifacts or development tools
-
-# 4. Verify cleanliness
-git diff upstream/main --stat
-# Should show minimal, focused changes
-
-# 5. Push and create PR
-git push origin pr/your-feature
-gh pr create --repo ericbuess/claude-code-docs \
-  --base main \
-  --head costiash:pr/your-feature \
-  --title "feat: Your feature"
-```
-
-### Workflow for Fork Features
-
-When developing fork-specific features:
-
-```bash
-# 1. Create feature branch from development
-git checkout development
-git pull origin development
-git checkout -b feature/your-feature
-
-# 2. Develop and test with comprehensive tests
-pytest tests/ -v
-
-# 3. Push and create PR to this fork
-git push origin feature/your-feature
-gh pr create --repo costiash/claude-code-docs \
-  --base main \
-  --title "[Enhanced] Your feature"
-```
-
-### Syncing with Upstream
-
-Regularly sync the fork with upstream changes:
-
-```bash
-# Fetch latest from upstream
-git fetch upstream
-
-# Merge upstream changes to fork
-git checkout main
-git merge upstream/main
-# Resolve conflicts (expected in enhanced files)
-git push origin main
 ```
 
 ## Getting Started
 
 ### Prerequisites
 
-**For all contributors:**
+**Required for all contributors:**
 - Git
 - Bash
-- Basic understanding of Claude Code documentation
+- Basic understanding of Claude Code
 
-**For enhanced features:**
+**For Python features:**
 - Python 3.9+
 - pip package manager
-- Understanding of Python development
 
 ### Fork and Clone
 
 ```bash
-# Fork the repository on GitHub, then:
+# Fork on GitHub, then:
 git clone https://github.com/YOUR_USERNAME/claude-code-docs.git
 cd claude-code-docs
 
-# Add upstream remote for syncing
+# Add upstream remote
 git remote add upstream https://github.com/costiash/claude-code-docs.git
 ```
 
 ## Development Workflows
 
-### For Standard Features (Shell/Git)
+### For Shell Scripts
 
-**Working on shell scripts, installation, or core functionality:**
+Working on installation, helper scripts, or core functionality:
 
 ```bash
 # No Python setup needed
 cd claude-code-docs
 
-# Test standard mode installation
+# Test installation
 ./install.sh
-# Answer 'N' to enhanced features
 
-# Verify standard commands work
+# Test basic commands
 ~/.claude-code-docs/claude-docs-helper.sh hooks
 ~/.claude-code-docs/claude-docs-helper.sh -t
 ~/.claude-code-docs/claude-docs-helper.sh what's new
 
-# Make changes to shell scripts or docs
-
-# Test your changes
-~/.claude-code-docs/claude-docs-helper.sh [your-test-command]
-
-# Submit PR (see PR Guidelines below)
+# Test uninstall
+./uninstall.sh
 ```
 
-**What to work on:**
-- Installation scripts (`install.sh`, `uninstall.sh`)
-- Helper scripts (`scripts/claude-docs-helper.sh.template`)
-- GitHub Actions workflows (`.github/workflows/`)
-- Core documentation files (`docs/`)
-- Shell-based functionality
+**Files to work on:**
+- `install.sh` - Installation script
+- `uninstall.sh` - Removal script
+- `scripts/claude-docs-helper.sh` - Main entry point
+- `.github/workflows/` - GitHub Actions
+- `docs/` - Documentation files
 
-### For Enhanced Features (Python)
+### For Python Features
 
-**Working on search, validation, or Python tools:**
+Working on search, validation, or Python tools:
 
 ```bash
-# Clone repository
-cd claude-code-docs
-
 # Setup Python virtual environment
 python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 
 # Install in development mode
 pip install -e ".[dev]"
 
-# Test enhanced mode installation
-./install.sh
-# Answer 'Y' to enhanced features
-
-# Verify enhanced commands work
+# Test Python commands
 ~/.claude-code-docs/claude-docs-helper.sh --search "mcp"
 ~/.claude-code-docs/claude-docs-helper.sh --validate
 
-# Make changes to Python scripts
+# Run tests (REQUIRED before submitting PR)
+pytest tests/ -v  # Should see: 598 passed, 2 skipped
+pytest --cov=scripts --cov-report=term  # Should see: ~78%
 
-# Run tests (IMPORTANT!)
-pytest tests/ -v
-pytest --cov=scripts --cov-report=term
-
-# Test your specific changes
+# Test specific changes
 python scripts/lookup_paths.py "your test query"
-python scripts/main.py --verify
-
-# Submit PR (see PR Guidelines below)
+python scripts/fetch_claude_docs.py --help
 ```
 
-**What to work on:**
-- Python scripts (`scripts/*.py`)
-- Search functionality (`scripts/lookup_paths.py`, `scripts/build_search_index.py`)
-- Documentation fetching (`scripts/main.py`)
-- Path validation and cleaning
-- Test suite (`tests/`)
+**Files to work on:**
+- `scripts/fetch_claude_docs.py` - Documentation fetcher with auto-regeneration
+- `scripts/lookup_paths.py` - Search & validation
+- `scripts/build_search_index.py` - Full-text search indexing
+- `tests/` - Test suite (600 tests)
 
 ## Code Standards
 
-### Shell Scripts (Standard Mode)
+### Shell Scripts
 
 **Style Guide:**
-- Follow upstream's style (see `scripts/claude-docs-helper.sh.template`)
-- Use `set -euo pipefail` at the top of all scripts
-- Sanitize user inputs to prevent injection
-- Comment complex logic clearly
-- Use descriptive variable names (UPPERCASE for environment variables)
+- Use `set -euo pipefail` at top
+- Sanitize ALL user inputs (alphanumeric + safe chars only)
+- Comment complex logic
+- UPPERCASE for environment variables
 - Test on both macOS and Linux
 
 **Example:**
@@ -267,32 +155,31 @@ python scripts/main.py --verify
 #!/bin/bash
 set -euo pipefail
 
-# Claude Code Docs Helper - Standard Mode
-# This script handles basic documentation lookups
+# Claude Code Docs Helper
+# Handles documentation lookups with feature detection
 
 DOCS_DIR="${HOME}/.claude-code-docs/docs"
 TOPIC="${1:-}"
+
+# Sanitize input to prevent injection
+TOPIC="$(echo "$TOPIC" | tr -cd '[:alnum:]-_')"
 
 if [[ -z "$TOPIC" ]]; then
     echo "Usage: $0 <topic>"
     exit 1
 fi
 
-# Sanitize input
-TOPIC="$(echo "$TOPIC" | tr -cd '[:alnum:]-_')"
-
-# Rest of implementation...
+# Implementation...
 ```
 
-### Python Scripts (Enhanced Mode)
+### Python Scripts
 
 **Style Guide:**
-- Python 3.9+ features allowed and encouraged
+- Python 3.9+ features encouraged
 - Type hints required on all function signatures
-- Docstrings required for all public functions (use Google style)
-- Follow PEP 8 style guide
-- Maximum line length: 100 characters
-- Use descriptive variable names (lowercase_with_underscores)
+- Docstrings required (Google style)
+- Follow PEP 8 (max line length: 100 chars)
+- Descriptive variable names (lowercase_with_underscores)
 - Format with `black` (optional but recommended)
 
 **Example:**
@@ -301,7 +188,7 @@ TOPIC="$(echo "$TOPIC" | tr -cd '[:alnum:]-_')"
 """
 Path search and validation tool.
 
-This module provides fuzzy search and HTTP validation for Claude documentation paths.
+Provides fuzzy search and HTTP validation for Claude documentation paths.
 """
 
 from typing import List, Optional
@@ -312,16 +199,15 @@ def search_paths(query: str, limit: int = 20, category: Optional[str] = None) ->
     """
     Search for documentation paths matching the query.
 
-    Uses fuzzy matching with Levenshtein distance to find relevant paths.
-    Results are ranked by relevance score.
+    Uses fuzzy matching with Levenshtein distance for relevance ranking.
 
     Args:
         query: Search term (supports partial matches)
-        limit: Maximum number of results to return (default: 20)
+        limit: Maximum results to return (default: 20)
         category: Optional category filter (e.g., "core_documentation")
 
     Returns:
-        List of matching paths, sorted by relevance score (highest first)
+        List of matching paths, sorted by relevance score
 
     Raises:
         ValueError: If query is empty or limit is negative
@@ -332,71 +218,50 @@ def search_paths(query: str, limit: int = 20, category: Optional[str] = None) ->
     """
     if not query:
         raise ValueError("Query cannot be empty")
-
     if limit < 0:
         raise ValueError("Limit must be non-negative")
 
     # Implementation...
-    results = []
-    return results
+    return []
 ```
 
 ## File Naming Standards
 
-All documentation files in this project follow a **consistent naming convention** for easy organization and URL mapping:
+All documentation files follow a consistent naming convention:
 
 ### Format
 
 ```
 en__section__subsection__page.md
+# OR (for Claude Code docs)
+docs__en__page.md
 ```
 
 ### Examples
 
-Documentation URLs map directly to filenames:
-
 | URL Path | Filename |
 |----------|----------|
 | `/en/docs/claude-code/hooks` | `en__docs__claude-code__hooks.md` |
+| `/docs/en/hooks` | `docs__en__hooks.md` |
 | `/en/api/overview` | `en__api__overview.md` |
-| `/en/docs/build-with-claude/prompt-engineering/overview` | `en__docs__build-with-claude__prompt-engineering__overview.md` |
-| `/en/docs/agents-and-tools/mcp` | `en__docs__agents-and-tools__mcp.md` |
-
-### Benefits
-
-- **Flat directory structure** - All files in single `docs/` directory
-- **Direct URL↔filename mapping** - Easy to locate files by URL
-- **Consistent naming** - No ambiguity in file organization
-- **Full-text search compatible** - Easy to search and index
-- **Deduplication-friendly** - Prevents accidental duplicate files
 
 ### Rules
 
-1. **Always use lowercase** - File names must be lowercase
-2. **Use double underscores** - Separate path segments with `__` (not single underscore)
-3. **No special characters** - Only alphanumeric, hyphens, and underscores
-4. **Keep file extension** - All files are `.md`
-5. **Place in docs/ directory** - All documentation files go in `/docs/` directory
-
-### Implementation Note
-
-During Phase 1 (Manifest Cleanup & Deduplication), all 269 documentation files were standardized to follow this naming convention. This ensures consistency across the repository and prevents duplicate content.
+1. **Lowercase only**
+2. **Double underscores** for path separators
+3. **No special characters** except alphanumeric, hyphens, underscores
+4. **Keep `.md` extension**
+5. **Place in `docs/` directory**
 
 ## Testing Requirements
 
-### Standard Mode Testing
+### Manual Testing (Shell Scripts)
 
-**Manual testing required:**
-- Test on macOS (12+) and Ubuntu (22.04+)
-- Verify installation works without Python
-- Test all shell script functionality
-- Ensure backward compatibility with upstream
-- Check that auto-update hooks work
+Test on both macOS and Linux:
 
-**Test checklist:**
 ```bash
 # Installation
-./install.sh  # Answer 'N' to enhanced
+./install.sh
 ~/.claude-code-docs/claude-docs-helper.sh --help
 
 # Core functionality
@@ -407,17 +272,13 @@ During Phase 1 (Manifest Cleanup & Deduplication), all 269 documentation files w
 # Updates
 cd ~/.claude-code-docs && git pull
 
-# Uninstallation
+# Uninstall
 ./uninstall.sh
 ```
 
-### Enhanced Mode Testing
+### Automated Testing (Python Features)
 
-**Automated testing required:**
-- All new Python code must have unit tests
-- Integration tests for workflows
-- Validation tests for external APIs
-- **Target: 82%+ code coverage** (currently 81.41%)
+**All new Python code must have unit tests.**
 
 **Running tests:**
 ```bash
@@ -429,14 +290,14 @@ pytest tests/unit/              # 82 unit tests
 pytest tests/integration/       # 36 integration tests
 pytest tests/validation/        # 56 validation tests
 
-# Check coverage
+# Check coverage (target: 78%+)
 pytest --cov=scripts --cov-report=html
 pytest --cov=scripts --cov-report=term
 
 # Run specific test file
 pytest tests/unit/test_lookup_paths.py -v
 
-# Run with verbose output
+# Verbose output
 pytest -v
 
 # Stop on first failure
@@ -470,23 +331,27 @@ def test_search_paths_with_limit():
 ```
 
 **Current test status:**
-- Total: 577 tests
-- Passing: 564 tests (99.6% pass rate)
-- Skipped: 2 tests (intentional - require development-time artifacts)
-- Failing: 0 tests
-- Coverage: 81.41% (target: 82%+)
-
-**Skipped tests:**
-- `tests/unit/test_manifest_validation.py:45` - Requires `broken_paths_categorized.json` (only created during manifest cleaning)
-- `tests/validation/test_link_integrity.py:37` - Requires internal links in sample markdown files
+- Total: 600 tests
+- Passing: 598 (99.7%)
+- Skipped: 2 (intentional)
+- Coverage: 78.32%
 
 ## Pull Request Guidelines
 
-### For Standard Features
+### PR Title Format
 
-**PR Title Format:** `[Standard] Brief description`
+```
+[scope] Brief description
 
-**PR Description Template:**
+Examples:
+[fix] Update outdated path counts in helper script
+[feat] Add full-text content search
+[docs] Clarify installation methods in README
+[test] Add tests for auto-regeneration feature
+```
+
+### PR Description Template
+
 ```markdown
 ## Summary
 [Brief description of changes]
@@ -494,175 +359,66 @@ def test_search_paths_with_limit():
 ## Changes Made
 - Change 1
 - Change 2
-
-## Testing
-- [ ] Tested on macOS [version]
-- [ ] Tested on Ubuntu [version]
-- [ ] Verified backward compatibility
-- [ ] Standard mode works without Python
-
-## Related Issues
-Fixes #123
-```
-
-**Example PR:**
-```markdown
-[Standard] Fix hook-check race condition
-
-## Summary
-Fixes race condition where hook-check could read stale documentation
-if git fetch completes after status check.
-
-## Changes Made
-- Add mutex to ensure git fetch completes before status check
-- Improve error handling in hook-check function
-- Add timeout to prevent hanging
-
-## Testing
-- [x] Tested on macOS 14.0
-- [x] Tested on Ubuntu 22.04
-- [x] Verified backward compatibility
-- [x] Standard mode works without Python
-
-## Related Issues
-Fixes #123
-```
-
-### For Enhanced Features
-
-**PR Title Format:** `[Enhanced] Brief description`
-
-**PR Description Template:**
-```markdown
-## Summary
-[Brief description of enhancement]
-
-## Changes Made
-- Change 1
-- Change 2
-
-## Requirements
-- Python 3.9+
-- Additional dependencies: [list]
+- Change 3
 
 ## Testing
 - [ ] All tests pass (pytest)
-- [ ] Coverage: [percentage]%
-- [ ] New tests added: [count] tests
-- [ ] Tested enhanced mode installation
-- [ ] Standard mode still works
+- [ ] Coverage maintained or improved
+- [ ] Manual testing completed
+- [ ] Works without Python (if touching shell scripts)
+- [ ] Works with Python 3.9+ (if touching Python code)
 
 ## Documentation
-- [ ] Updated ENHANCEMENTS.md
-- [ ] Updated relevant examples
-- [ ] Added docstrings
+- [ ] Updated relevant docs (README, CLAUDE.md, etc.)
+- [ ] Added docstrings to new functions
+- [ ] Updated examples if needed
 
 ## Related Issues
-Fixes #456
-```
-
-**Example PR:**
-```markdown
-[Enhanced] Add --search-content for full-text search
-
-## Summary
-Adds full-text content search across all documentation, not just path names.
-Users can search for keywords within documentation content.
-
-## Changes Made
-- Added `build_search_index.py` for indexing documentation content
-- Enhanced `lookup_paths.py` with `--search-content` flag
-- Added keyword extraction and stop word filtering
-- Implemented relevance ranking algorithm
-
-## Requirements
-- Python 3.9+
-- Additional dependencies: None (uses existing requests library)
-
-## Testing
-- [x] All tests pass (pytest)
-- [x] Coverage: 92%
-- [x] New tests added: 15 tests in tests/unit/test_search_content.py
-- [x] Tested enhanced mode installation
-- [x] Standard mode still works
-
-## Documentation
-- [x] Updated ENHANCEMENTS.md
-- [x] Updated EXAMPLES.md with search examples
-- [x] Added docstrings to all public functions
-
-## Performance
-- Index build time: ~2 seconds for 459 docs
-- Search time: < 100ms per query
-- Index size: ~45KB
-
-## Related Issues
-Fixes #456
+Fixes #123
 ```
 
 ### Review Process
 
 1. **Automated Checks**: CI/CD runs tests automatically
-2. **Code Review**: Maintainer reviews code quality and design
-3. **Testing**: Verify functionality on macOS and Linux
-4. **Documentation**: Ensure changes are documented
-5. **Merge**: Approved PRs are merged to `migration-to-upstream` branch
+2. **Code Review**: Maintainer reviews code quality
+3. **Testing**: Functionality verified on macOS and Linux
+4. **Documentation**: Changes must be documented
+5. **Merge**: Approved PRs merged to main branch
 
 ## Documentation Requirements
 
-**All features must be documented:**
-
 | Feature Type | Documentation Required |
 |-------------|----------------------|
-| Standard features | Update README.md |
-| Enhanced features | Update ENHANCEMENTS.md |
-| Usage examples | Add to EXAMPLES.md (if exists) |
-| API changes | Update DEVELOPMENT.md |
+| Shell scripts | Update README.md |
+| Python features | Update docstrings + README.md |
 | New commands | Update command documentation |
-
-**Documentation checklist:**
-- [ ] Feature described clearly
-- [ ] Usage examples provided
-- [ ] Prerequisites listed
-- [ ] Troubleshooting section added (if applicable)
-- [ ] Links to related documentation
+| Architecture changes | Update CLAUDE.md |
 
 ## Release Process
 
-### Standard Releases (Upstream Sync)
+### Standard Releases
 
 **When to release:**
-- After syncing with upstream
-- No breaking changes to standard mode
-- All standard features tested
+- Bug fixes merged
+- Documentation updates
+- No breaking changes
 
 **Process:**
 ```bash
-# Sync with upstream
-git fetch upstream
-git merge upstream/main
-
-# Test standard mode
-./install.sh  # Answer 'N'
-~/.claude-code-docs/claude-docs-helper.sh hooks
-
-# Verify all standard features work
-# ... test commands ...
+# Update version in install.sh
+# Update CHANGELOG.md
 
 # Tag release
-git tag v0.x.x-standard
-git push origin v0.x.x-standard
-
-# Update CHANGELOG.md
+git tag v0.x.x
+git push origin v0.x.x
 ```
 
-### Enhanced Releases
+### Feature Releases
 
 **When to release:**
-- New enhanced features complete
-- All tests passing (100%)
+- New Python features complete
+- All tests passing (600/600 or 598/600)
 - Documentation updated
-- Tested on macOS and Linux
 
 **Process:**
 ```bash
@@ -670,77 +426,62 @@ git push origin v0.x.x-standard
 pytest
 
 # Check coverage
-pytest --cov=scripts --cov-report=term
+pytest --cov=scripts --cov-report=term  # Should be ~78%
 
-# Update version
-# Edit install.sh: ENHANCED_VERSION="0.x.x"
+# Update versions
+# Edit install.sh, README.md
 
-# Update CHANGELOG.md
-# Add release notes
-
-# Test both modes
-./install.sh  # Test 'N' (standard)
-./install.sh  # Test 'Y' (enhanced)
-
-# Verify all features work
-# ... test commands ...
+# Test both basic and Python features
+./install.sh
+pytest tests/ -v
 
 # Tag release
-git tag v0.x.x-enhanced
-git push origin v0.x.x-enhanced
+git tag v0.x.x-feature
+git push origin v0.x.x-feature
 ```
 
 ## Getting Help
 
 **Questions:**
-- Open a [GitHub Discussion](https://github.com/costiash/claude-code-docs/discussions)
-- Ask in the discussion thread
+- [GitHub Discussions](https://github.com/costiash/claude-code-docs/discussions)
 
 **Bug Reports:**
-- Open a [GitHub Issue](https://github.com/costiash/claude-code-docs/issues)
-- Use the bug report template
-- Include: OS version, Python version (if enhanced), steps to reproduce
+- [GitHub Issues](https://github.com/costiash/claude-code-docs/issues)
+- Use bug report template
+- Include: OS, Python version, reproduction steps
 
 **Feature Requests:**
-- Open a [GitHub Issue](https://github.com/costiash/claude-code-docs/issues)
-- Use label: `[Feature Request]`
-- Explain: what feature, why it's useful, standard or enhanced mode
+- [GitHub Issues](https://github.com/costiash/claude-code-docs/issues)
+- Label: `[Feature Request]`
+- Explain: what, why, and which features (shell or Python)
 
 ## Code of Conduct
 
-We are committed to providing a welcoming and inclusive environment for all contributors.
-
 **Expected Behavior:**
 - Be respectful and inclusive
-- Welcome newcomers and help them get started
+- Welcome newcomers
 - Accept constructive criticism gracefully
-- Focus on what's best for the project and community
-- Show empathy towards others
+- Focus on what's best for the project
+- Show empathy
 
 **Unacceptable Behavior:**
-- Harassment, discrimination, or offensive comments
-- Trolling, insulting, or derogatory remarks
-- Personal or political attacks
+- Harassment or discrimination
+- Trolling or derogatory remarks
+- Personal attacks
 - Publishing others' private information
-- Any conduct that creates an intimidating environment
 
 **Reporting:**
-If you experience or witness unacceptable behavior, please report it to the maintainers.
+Report to maintainers via GitHub Issues or email.
 
 ## License
 
-By contributing, you agree to license your contributions under the same license as this project (MIT License). See [LICENSE](./LICENSE) for details.
+By contributing, you agree to license your contributions under the MIT License. See [LICENSE](./LICENSE) for details.
 
 ## Acknowledgments
 
-This project builds upon:
-- [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs) - Upstream implementation
+- [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs) - Original implementation
 - [Anthropic](https://www.anthropic.com/) - Claude Code and documentation
-
-Thank you for contributing to make Claude Code documentation more accessible!
 
 ---
 
-**Questions?** Open a Discussion on GitHub or check the [README.md](./README.md) for more information.
-
-**Ready to contribute?** Fork the repository and start coding!
+**Ready to contribute?** Fork the repository and start coding! We're excited to see your contributions.
