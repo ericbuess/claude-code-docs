@@ -1,14 +1,41 @@
 # LLM gateway configuration
 
-> Learn how to configure Claude Code with LLM gateway solutions, including LiteLLM setup, authentication methods, and enterprise features like usage tracking and budget management.
+> Learn how to configure Claude Code to work with LLM gateway solutions. Covers gateway requirements, authentication configuration, model selection, and provider-specific endpoint setup.
 
-LLM gateways provide a centralized proxy layer between Claude Code and model providers, offering:
+LLM gateways provide a centralized proxy layer between Claude Code and model providers, often providing:
 
 * **Centralized authentication** - Single point for API key management
 * **Usage tracking** - Monitor usage across teams and projects
 * **Cost controls** - Implement budgets and rate limits
 * **Audit logging** - Track all model interactions for compliance
 * **Model routing** - Switch between providers without code changes
+
+## Gateway requirements
+
+For an LLM gateway to work with Claude Code, it must meet the following requirements:
+
+**API format**
+
+The gateway must expose to clients at least one of the following API formats:
+
+1. **Anthropic Messages**: `/v1/messages`, `/v1/messages/count_tokens`
+   * Must forward request headers: `anthropic-beta`, `anthropic-version`
+
+2. **Bedrock InvokeModel**: `/invoke`, `/invoke-with-response-stream`
+   * Must preserve request body fields: `anthropic_beta`, `anthropic_version`
+
+3. **Vertex rawPredict**: `:rawPredict`, `:streamRawPredict`, `/count-tokens:rawPredict`
+   * Must forward request headers: `anthropic-beta`, `anthropic-version`
+
+Failure to forward headers or preserve body fields may result in reduced functionality or inability to use Claude Code features.
+
+## Configuration
+
+### Model selection
+
+By default, Claude Code will use standard model names for the selected API format.
+
+If you have configured custom model names in your gateway, use the environment variables documented in [Model configuration](/en/model-config) to match your custom names.
 
 ## LiteLLM configuration
 
@@ -128,12 +155,6 @@ export CLAUDE_CODE_SKIP_VERTEX_AUTH=1
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
 ```
-
-### Model selection
-
-By default, the models will use those specified in [Model configuration](/en/third-party-integrations#model-configuration).
-
-If you have configured custom model names in LiteLLM, set the aforementioned environment variables to those custom names.
 
 For more detailed information, refer to the [LiteLLM documentation](https://docs.litellm.ai/).
 

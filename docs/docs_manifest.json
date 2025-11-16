@@ -831,8 +831,8 @@
     "en__docs__claude-code__llm-gateway.md": {
       "original_url": "https://code.claude.com/en/docs/claude-code/llm-gateway",
       "original_md_url": "https://code.claude.com/en/docs/claude-code/llm-gateway.md",
-      "hash": "be6e41580136854f77333c4f1738e8f11eada6b837643055a6efa6b374043d05",
-      "last_updated": "2025-11-15T18:10:14.963073"
+      "hash": "0b2f2340f03d8f32ab6a35d2a7fa74ce97a7aab3882588b9758c9c5bd6ff3bae",
+      "last_updated": "2025-11-16T00:29:26.257958"
     },
     "en__docs__claude-code__mcp.md": {
       "original_url": "https://code.claude.com/en/docs/claude-code/mcp",
@@ -1467,8 +1467,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-15T21:09:05.447072",
-    "fetch_duration_seconds": 259.092507,
+    "last_fetch_completed": "2025-11-16T00:30:22.751409",
+    "fetch_duration_seconds": 249.555637,
     "total_pages_discovered": 268,
     "pages_fetched_successfully": 244,
     "pages_failed": 25,
@@ -1504,7 +1504,7 @@
     "total_files": 244,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-15T21:09:05.447099",
+  "last_updated": "2025-11-16T00:30:22.751433",
   "base_url": "https://raw.githubusercontent.com/costiash/claude-code-docs/main/docs/",
   "github_repository": "costiash/claude-code-docs",
   "github_ref": "main",
