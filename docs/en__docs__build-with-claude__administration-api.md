@@ -33,13 +33,13 @@ This is useful for:
 
 There are five organization-level roles. See more details [here](https://support.claude.com/en/articles/10186004-api-console-roles-and-permissions).
 
-| Role               | Permissions                                                        |
-| ------------------ | ------------------------------------------------------------------ |
-| user               | Can use Workbench                                                  |
-| claude\_code\_user | Can use Workbench and [Claude Code](/en/docs/claude-code/overview) |
-| developer          | Can use Workbench and manage API keys                              |
-| billing            | Can use Workbench and manage billing details                       |
-| admin              | Can do all of the above, plus manage users                         |
+| Role               | Permissions                                                                   |
+| ------------------ | ----------------------------------------------------------------------------- |
+| user               | Can use Workbench                                                             |
+| claude\_code\_user | Can use Workbench and [Claude Code](https://code.claude.com/docs/en/overview) |
+| developer          | Can use Workbench and manage API keys                                         |
+| billing            | Can use Workbench and manage billing details                                  |
+| admin              | Can do all of the above, plus manage users                                    |
 
 ## Key concepts
 
@@ -203,16 +203,16 @@ For complete parameter details and response schemas, see the [Organization Info 
 
 To access usage and cost reports for your organization, use the Usage and Cost API endpoints:
 
-* The [**Usage endpoint**](/en/api/usage-cost-api#usage-api) (`/v1/organizations/usage_report/messages`) provides detailed usage data, including token counts and request metrics, grouped by various dimensions such as workspace, user, and model.
-* The [**Cost endpoint**](/en/api/usage-cost-api#cost-api) (`/v1/organizations/cost_report`) provides cost data associated with your organization's usage, allowing you to track expenses and allocate costs by workspace or description.
+* The [**Usage endpoint**](/en/docs/build-with-claude/usage-cost-api#usage-api) (`/v1/organizations/usage_report/messages`) provides detailed usage data, including token counts and request metrics, grouped by various dimensions such as workspace, user, and model.
+* The [**Cost endpoint**](/en/docs/build-with-claude/usage-cost-api#cost-api) (`/v1/organizations/cost_report`) provides cost data associated with your organization's usage, allowing you to track expenses and allocate costs by workspace or description.
 
 These endpoints provide detailed insights into your organization's usage and associated costs.
 
 ## Accessing Claude Code analytics
 
-For organizations using Claude Code, the [**Claude Code Analytics API**](/en/api/claude-code-analytics-api) provides detailed productivity metrics and usage insights:
+For organizations using Claude Code, the [**Claude Code Analytics API**](/en/docs/build-with-claude/claude-code-analytics-api) provides detailed productivity metrics and usage insights:
 
-* The [**Claude Code Analytics endpoint**](/en/api/claude-code-analytics-api) (`/v1/organizations/usage_report/claude_code`) provides daily aggregated metrics for Claude Code usage, including sessions, lines of code, commits, pull requests, tool usage statistics, and cost data broken down by user and model.
+* The [**Claude Code Analytics endpoint**](/en/docs/build-with-claude/claude-code-analytics-api) (`/v1/organizations/usage_report/claude_code`) provides daily aggregated metrics for Claude Code usage, including sessions, lines of code, commits, pull requests, tool usage statistics, and cost data broken down by user and model.
 
 This API enables you to track developer productivity, analyze Claude Code adoption, and build custom dashboards for your organization.
 

@@ -65,9 +65,15 @@ sample_paths.txt
 
 # Project specific (from upstream)
 .claude/
+.claude/*
 .last_pull
 .last_check
 claude-docs-helper.sh
+
+# Analysis and working documents (temporary)
+ANALYSIS.md
+/tmp/
+*.pyc
 
 # Test files
 test_*.txt

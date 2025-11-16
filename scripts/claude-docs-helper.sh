@@ -61,7 +61,7 @@ check_enhanced_available() {
 
     local path_count=$(python3 -c "import json; data=json.load(open('$DOCS_PATH/paths_manifest.json')); print(data['metadata'].get('total_paths', 0))" 2>/dev/null || echo "0")
 
-    # Enhanced manifest has 449+ paths (standard has 47)
+    # Active manifest has ~270 paths (all available documentation)
     if [[ "$path_count" -ge 100 ]]; then
         return 0
     else
@@ -83,7 +83,7 @@ enhanced_search() {
     fi
 
     local query="$*"
-    echo "🔍 Searching 449 paths for: $query"
+    echo "🔍 Searching 270 active documentation paths for: $query"
     echo ""
 
     if python3 "$SCRIPTS_PATH/lookup_paths.py" "$query" 2>/dev/null; then
@@ -142,7 +142,7 @@ validate_paths() {
     fi
 }
 
-# Update all documentation (fetch all 449+ docs)
+# Update all documentation (fetch all 270 active docs)
 update_all_docs() {
     if ! check_enhanced_available; then
         echo "❌ Enhanced update not available"
@@ -153,8 +153,8 @@ update_all_docs() {
         return
     fi
 
-    echo "🔄 Updating all documentation (449+ paths)..."
-    echo "This may take 5-10 minutes..."
+    echo "🔄 Updating all documentation (270 active paths)..."
+    echo "This may take 2-3 minutes..."
     echo ""
 
     if python3 "$SCRIPTS_PATH/main.py" --update-all 2>/dev/null; then
@@ -182,12 +182,12 @@ show_enhanced_help() {
     echo "─────────────────────────────────────────────────────────────────"
     echo ""
     echo "Search & Discovery:"
-    echo "  --search <query>        Fuzzy search 449 paths"
-    echo "  --search-content <term> Full-text content search"
+    echo "  --search <query>        Fuzzy search across 270 active documentation paths"
+    echo "  --search-content <term> Full-text content search across all documentation"
     echo ""
     echo "Maintenance:"
     echo "  --validate              Validate all paths (check for 404s)"
-    echo "  --update-all            Fetch all 449 documentation pages"
+    echo "  --update-all            Fetch all 270 active documentation pages"
     echo ""
     echo "Status:"
     echo "  --version               Show version information"
@@ -238,7 +238,7 @@ show_version() {
         echo "  ✅ Path validation: Available"
     else
         echo "  ❌ Enhanced features: DISABLED"
-        echo "     (Standard 47 docs available)"
+        echo "     (268 documentation files available, Python features require Python 3.9+)"
     fi
     echo ""
 }

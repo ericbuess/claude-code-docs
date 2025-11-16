@@ -166,7 +166,7 @@ The SDK automatically creates todos for:
 
 ## Related Documentation
 
-* [TypeScript SDK Reference](/en/api/agent-sdk/typescript)
-* [Python SDK Reference](/en/api/agent-sdk/python)
-* [Streaming vs Single Mode](/en/api/agent-sdk/streaming-vs-single-mode)
-* [Custom Tools](/en/api/agent-sdk/custom-tools)
+* [TypeScript SDK Reference](/en/docs/agent-sdk/typescript)
+* [Python SDK Reference](/en/docs/agent-sdk/python)
+* [Streaming vs Single Mode](/en/docs/agent-sdk/streaming-vs-single-mode)
+* [Custom Tools](/en/docs/agent-sdk/custom-tools)

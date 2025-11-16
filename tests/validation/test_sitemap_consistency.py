@@ -176,15 +176,15 @@ class TestCategoryCounts:
         """Test category counts are within reasonable ranges."""
         categories = paths_manifest['categories']
 
-        # Based on Phase 2 statistics:
-        # core_documentation: ~156 (34%)
-        # api_reference: ~91 (19.8%)
-        # claude_code: ~68 (14.8%)
-        # prompt_library: ~64 (13.9%)
+        # Based on current active documentation (270 total paths):
+        # core_documentation: ~79 (29.3%)
+        # api_reference: ~78 (28.9%)
+        # claude_code: ~44 (16.3%)
+        # prompt_library: ~65 (24.1%)
 
-        # Allow some variance
+        # Allow reasonable variance for future updates
         expected_ranges = {
-            'core_documentation': (100, 250),
+            'core_documentation': (60, 150),
             'api_reference': (50, 150),
             'claude_code': (40, 120),
             'prompt_library': (40, 150)
@@ -244,8 +244,9 @@ class TestManifestFormat:
         """Test paths follow expected format."""
         for category_paths in paths_manifest['categories'].values():
             for path in category_paths:
-                # Should start with /en/
-                assert path.startswith('/en/'), f"Invalid path: {path}"
+                # Should start with /en/ OR /docs/en/ (NEW Claude Code format)
+                assert path.startswith('/en/') or path.startswith('/docs/en/'), \
+                    f"Invalid path (must start with /en/ or /docs/en/): {path}"
 
                 # Should not have trailing slash (except root)
                 if len(path) > 4:

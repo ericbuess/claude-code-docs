@@ -20,22 +20,19 @@ Use the `createSdkMcpServer` and `tool` helper functions to define type-safe cus
     tools: [
       tool(
         "get_weather",
-        "Get current weather for a location",
+        "Get current temperature for a location using coordinates",
         {
-          location: z.string().describe("City name or coordinates"),
-          units: z.enum(["celsius", "fahrenheit"]).default("celsius").describe("Temperature units")
+          latitude: z.number().describe("Latitude coordinate"),
+          longitude: z.number().describe("Longitude coordinate")
         },
         async (args) => {
-          // Call weather API
-          const response = await fetch(
-            `https://api.weather.com/v1/current?q=${args.location}&units=${args.units}`
-          );
+          const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${args.latitude}&longitude=${args.longitude}&current=temperature_2m&temperature_unit=fahrenheit`);
           const data = await response.json();
-          
+
           return {
             content: [{
               type: "text",
-              text: `Temperature: ${data.temp}°\nConditions: ${data.conditions}\nHumidity: ${data.humidity}%`
+              text: `Temperature: ${data.current.temperature_2m}°F`
             }]
           };
         }
@@ -50,20 +47,19 @@ Use the `createSdkMcpServer` and `tool` helper functions to define type-safe cus
   import aiohttp
 
   # Define a custom tool using the @tool decorator
-  @tool("get_weather", "Get current weather for a location", {"location": str, "units": str})
+  @tool("get_weather", "Get current temperature for a location using coordinates", {"latitude": float, "longitude": float})
   async def get_weather(args: dict[str, Any]) -> dict[str, Any]:
       # Call weather API
-      units = args.get('units', 'celsius')
       async with aiohttp.ClientSession() as session:
           async with session.get(
-              f"https://api.weather.com/v1/current?q={args['location']}&units={units}"
+              f"https://api.open-meteo.com/v1/forecast?latitude={args['latitude']}&longitude={args['longitude']}&current=temperature_2m&temperature_unit=fahrenheit"
           ) as response:
               data = await response.json()
 
       return {
           "content": [{
               "type": "text",
-              "text": f"Temperature: {data['temp']}°\nConditions: {data['conditions']}\nHumidity: {data['humidity']}%"
+              "text": f"Temperature: {data['current']['temperature_2m']}°F"
           }]
       }
 
@@ -97,7 +93,7 @@ You can control which tools Claude can use via the `allowedTools` option:
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
-  import { query } from "@anthropic-ai/claude-code";
+  import { query } from "@anthropic-ai/claude-agent-sdk";
 
   // Use the custom tools in your query with streaming input
   async function* generateMessages() {
@@ -734,7 +730,7 @@ Handle errors gracefully to provide meaningful feedback:
 
 ## Related Documentation
 
-* [TypeScript SDK Reference](/en/api/agent-sdk/typescript)
-* [Python SDK Reference](/en/api/agent-sdk/python)
+* [TypeScript SDK Reference](/en/docs/agent-sdk/typescript)
+* [Python SDK Reference](/en/docs/agent-sdk/python)
 * [MCP Documentation](https://modelcontextprotocol.io)
-* [SDK Overview](/en/api/agent-sdk/overview)
+* [SDK Overview](/en/docs/agent-sdk/overview)

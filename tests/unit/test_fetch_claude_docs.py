@@ -424,7 +424,7 @@ class TestDiscoverClaudeCodePages:
 
     @patch('fetch_claude_docs.requests.Session.get')
     def test_discover_claude_code_pages_basic(self, mock_get):
-        """Test basic page discovery."""
+        """Test basic page discovery - now returns ALL /en/ paths."""
         sitemap_xml = b"""<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
             <url><loc>https://docs.anthropic.com/en/docs/claude-code/overview</loc></url>
@@ -442,18 +442,21 @@ class TestDiscoverClaudeCodePages:
 
         pages = discover_claude_code_pages(session, "https://docs.anthropic.com/sitemap.xml")
 
-        # Should only include claude-code pages
-        assert len(pages) >= 2
-        assert all("claude-code" in page for page in pages)
+        # NEW BEHAVIOR: Returns ALL /en/ paths, not just claude-code
+        assert len(pages) == 3
+        assert "/en/docs/claude-code/overview" in pages
+        assert "/en/docs/claude-code/setup" in pages
+        assert "/en/docs/other/page" in pages
 
     @patch('fetch_claude_docs.requests.Session.get')
     def test_discover_claude_code_pages_filters_patterns(self, mock_get):
-        """Test filters out excluded patterns."""
+        """Test filters out only /examples/ and /legacy/ patterns."""
         sitemap_xml = b"""<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
             <url><loc>https://docs.anthropic.com/en/docs/claude-code/overview</loc></url>
             <url><loc>https://docs.anthropic.com/en/docs/claude-code/tool-use/bash</loc></url>
-            <url><loc>https://docs.anthropic.com/en/docs/claude-code/examples/test</loc></url>
+            <url><loc>https://docs.anthropic.com/en/examples/test</loc></url>
+            <url><loc>https://docs.anthropic.com/en/legacy/old-page</loc></url>
         </urlset>"""
 
         mock_response = Mock()
@@ -466,9 +469,11 @@ class TestDiscoverClaudeCodePages:
 
         pages = discover_claude_code_pages(session, "https://docs.anthropic.com/sitemap.xml")
 
-        # Should exclude tool-use and examples
-        assert not any("tool-use" in p for p in pages)
-        assert not any("examples" in p for p in pages)
+        # NEW BEHAVIOR: Only excludes /examples/ and /legacy/
+        # tool-use is INCLUDED (we need agent SDK tool docs)
+        assert any("tool-use" in p for p in pages)  # tool-use is INCLUDED
+        assert not any("examples" in p for p in pages)  # examples excluded
+        assert not any("legacy" in p for p in pages)  # legacy excluded
 
     @patch('fetch_claude_docs.requests.Session.get')
     def test_discover_claude_code_pages_error_fallback(self, mock_get):
@@ -581,15 +586,24 @@ class TestGetBaseUrlForPath:
     """Test base URL determination for different documentation paths."""
 
     def test_claude_code_paths_use_code_domain(self):
-        """Test that Claude Code paths use code.claude.com."""
-        claude_code_paths = [
+        """Test that /docs/en/ paths use code.claude.com (NEW domain structure)."""
+        # NEW BEHAVIOR: /docs/en/* routes to code.claude.com
+        code_claude_paths = [
+            "/docs/en/hooks",
+            "/docs/en/setup",
+            "/docs/en/mcp",
+            "/docs/en/sdk/overview",
+        ]
+        for path in code_claude_paths:
+            assert get_base_url_for_path(path) == "https://code.claude.com"
+
+        # OLD /en/docs/claude-code/* paths now route to docs.claude.com (they redirect)
+        old_paths = [
             "/en/docs/claude-code/hooks",
             "/en/docs/claude-code/setup",
-            "/en/docs/claude-code/mcp",
-            "/en/docs/claude-code/sdk/overview",
         ]
-        for path in claude_code_paths:
-            assert get_base_url_for_path(path) == "https://code.claude.com"
+        for path in old_paths:
+            assert get_base_url_for_path(path) == "https://docs.claude.com"
 
     def test_api_paths_use_docs_domain(self):
         """Test that API paths use docs.claude.com."""

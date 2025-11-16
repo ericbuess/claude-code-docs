@@ -19,7 +19,7 @@ This API enables you to better monitor, analyze, and optimize your Claude implem
 <Check>
   **Admin API key required**
 
-  This API is part of the [Admin API](/en/api/administration-api). These endpoints require an Admin API key (starting with `sk-ant-admin...`) that differs from standard API keys. Only organization members with the admin role can provision Admin API keys through the [Claude Console](https://console.anthropic.com/settings/admin-keys).
+  This API is part of the [Admin API](/en/docs/build-with-claude/administration-api). These endpoints require an Admin API key (starting with `sk-ant-admin...`) that differs from standard API keys. Only organization members with the admin role can provision Admin API keys through the [Claude Console](https://console.anthropic.com/settings/admin-keys).
 </Check>
 
 ## Partner solutions
@@ -229,13 +229,13 @@ Usage and costs attributed to the default workspace have a `null` value for `wor
 
 ### How do I get per-user cost breakdowns for Claude Code?
 
-Use the [Claude Code Analytics API](/en/api/claude-code-analytics-api), which provides per-user estimated costs and productivity metrics without the performance limitations of breaking down costs by many API keys. For general API usage with many keys, use the [Usage API](#usage-api) to track token consumption as a cost proxy.
+Use the [Claude Code Analytics API](/en/docs/build-with-claude/claude-code-analytics-api), which provides per-user estimated costs and productivity metrics without the performance limitations of breaking down costs by many API keys. For general API usage with many keys, use the [Usage API](#usage-api) to track token consumption as a cost proxy.
 
 ## See also
 
 The Usage and Cost APIs can be used to help you deliver a better experience for your users, help you manage costs, and preserve your rate limit. Learn more about some of these other features:
 
-* [Admin API overview](/en/api/administration-api)
+* [Admin API overview](/en/docs/build-with-claude/administration-api)
 * [Admin API reference](/en/api/admin-api)
 * [Pricing](/en/docs/about-claude/pricing)
 * [Prompt caching](/en/docs/build-with-claude/prompt-caching) - Optimize costs with caching

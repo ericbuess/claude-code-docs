@@ -110,7 +110,7 @@ Configuration object for the `query()` function.
 | `pathToClaudeCodeExecutable` | `string`                                                                                          | Auto-detected              | Path to Claude Code executable                                                                                                                                                                                                                            |
 | `permissionMode`             | [`PermissionMode`](#permissionmode)                                                               | `'default'`                | Permission mode for the session                                                                                                                                                                                                                           |
 | `permissionPromptToolName`   | `string`                                                                                          | `undefined`                | MCP tool name for permission prompts                                                                                                                                                                                                                      |
-| `plugins`                    | [`SdkPluginConfig`](#sdkpluginconfig)`[]`                                                         | `[]`                       | Load custom plugins from local paths. See [Plugins](/en/api/agent-sdk/plugins) for details                                                                                                                                                                |
+| `plugins`                    | [`SdkPluginConfig`](#sdkpluginconfig)`[]`                                                         | `[]`                       | Load custom plugins from local paths. See [Plugins](/en/docs/agent-sdk/plugins) for details                                                                                                                                                               |
 | `resume`                     | `string`                                                                                          | `undefined`                | Session ID to resume                                                                                                                                                                                                                                      |
 | `settingSources`             | [`SettingSource`](#settingsource)`[]`                                                             | `[]` (no settings)         | Control which filesystem settings to load. When omitted, no settings are loaded. **Note:** Must include `'project'` to load CLAUDE.md files                                                                                                               |
 | `stderr`                     | `(data: string) => void`                                                                          | `undefined`                | Callback for stderr output                                                                                                                                                                                                                                |
@@ -376,7 +376,7 @@ plugins: [
 ]
 ```
 
-For complete information on creating and using plugins, see [Plugins](/en/api/agent-sdk/plugins).
+For complete information on creating and using plugins, see [Plugins](/en/docs/agent-sdk/plugins).
 
 ## Message Types
 
@@ -1791,7 +1791,7 @@ class AbortError extends Error {}
 
 ## See also
 
-* [SDK overview](/en/api/agent-sdk/overview) - General SDK concepts
-* [Python SDK reference](/en/api/agent-sdk/python) - Python SDK documentation
-* [CLI reference](/en/docs/claude-code/cli-reference) - Command-line interface
-* [Common workflows](/en/docs/claude-code/common-workflows) - Step-by-step guides
+* [SDK overview](/en/docs/agent-sdk/overview) - General SDK concepts
+* [Python SDK reference](/en/docs/agent-sdk/python) - Python SDK documentation
+* [CLI reference](https://code.claude.com/docs/en/cli-reference) - Command-line interface
+* [Common workflows](https://code.claude.com/docs/en/common-workflows) - Step-by-step guides

@@ -506,7 +506,7 @@ class ClaudeAgentOptions:
 | `include_partial_messages`    | `bool`                                       | `False`              | Include partial message streaming events                                                                                                                                                |
 | `fork_session`                | `bool`                                       | `False`              | When resuming with `resume`, fork to a new session ID instead of continuing the original session                                                                                        |
 | `agents`                      | `dict[str, AgentDefinition] \| None`         | `None`               | Programmatically defined subagents                                                                                                                                                      |
-| `plugins`                     | `list[SdkPluginConfig]`                      | `[]`                 | Load custom plugins from local paths. See [Plugins](/en/api/agent-sdk/plugins) for details                                                                                              |
+| `plugins`                     | `list[SdkPluginConfig]`                      | `[]`                 | Load custom plugins from local paths. See [Plugins](/en/docs/agent-sdk/plugins) for details                                                                                             |
 | `setting_sources`             | `list[SettingSource] \| None`                | `None` (no settings) | Control which filesystem settings to load. When omitted, no settings are loaded. **Note:** Must include `"project"` to load CLAUDE.md files                                             |
 
 ### `SystemPromptPreset`
@@ -737,7 +737,7 @@ plugins=[
 ]
 ```
 
-For complete information on creating and using plugins, see [Plugins](/en/api/agent-sdk/plugins).
+For complete information on creating and using plugins, see [Plugins](/en/docs/agent-sdk/plugins).
 
 ## Message Types
 
@@ -945,7 +945,7 @@ HookCallback = Callable[
 
 Parameters:
 
-* `input_data`: Hook-specific input data (see [hook documentation](https://docs.claude.com/en/docs/claude-code/hooks#hook-input))
+* `input_data`: Hook-specific input data (see [hook documentation](https://docs.claude.comhttps://code.claude.com/docs/en/hooks#hook-input))
 * `tool_use_id`: Optional tool use identifier (for tool-related hooks)
 * `context`: Hook context with additional information
 
@@ -1840,8 +1840,8 @@ asyncio.run(main())
 
 ## See also
 
-* [Python SDK guide](/en/api/agent-sdk/python) - Tutorial and examples
-* [SDK overview](/en/api/agent-sdk/overview) - General SDK concepts
-* [TypeScript SDK reference](/en/docs/claude-code/typescript-sdk-reference) - TypeScript SDK documentation
-* [CLI reference](/en/docs/claude-code/cli-reference) - Command-line interface
-* [Common workflows](/en/docs/claude-code/common-workflows) - Step-by-step guides
+* [Python SDK guide](/en/docs/agent-sdk/python) - Tutorial and examples
+* [SDK overview](/en/docs/agent-sdk/overview) - General SDK concepts
+* [TypeScript SDK reference](/en/docs/agent-sdk/typescript) - TypeScript SDK documentation
+* [CLI reference](https://code.claude.com/docs/en/cli-reference) - Command-line interface
+* [Common workflows](https://code.claude.com/docs/en/common-workflows) - Step-by-step guides

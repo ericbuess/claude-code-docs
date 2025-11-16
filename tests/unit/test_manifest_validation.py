@@ -118,19 +118,19 @@ class TestDocsManifest:
         # We don't enforce that all disk files must be in manifest
 
     def test_expected_file_count(self, docs_manifest, project_root):
-        """Verify manifest has reasonable number of files and disk has 269 total"""
+        """Verify manifest has reasonable number of files and disk has 268 total"""
         file_count = len(docs_manifest)
 
         # Manifest should have at least the Claude Code docs (44+)
         assert file_count >= 44, \
             f"Expected at least 44 files in manifest (Claude Code docs), found {file_count}"
 
-        # Check total files on disk
+        # Check total files on disk (268 after one deprecated file removed)
         docs_dir = project_root / 'docs'
         actual_file_count = len([f for f in docs_dir.glob('*.md') if f.name != 'docs_manifest.json'])
 
-        assert actual_file_count == 269, \
-            f"Expected 269 total files on disk, found {actual_file_count}"
+        assert actual_file_count == 268, \
+            f"Expected 268 total files on disk, found {actual_file_count}"
 
     def test_all_entries_have_required_fields(self, docs_manifest):
         """Ensure all manifest entries have required fields"""

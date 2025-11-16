@@ -90,26 +90,26 @@ def categorize_path(path: str) -> str:
     """
     Assign category based on path prefix.
 
+    UPDATED: Now matches fetch_claude_docs.py categorization for consistency.
+
     Args:
         path: Documentation path
 
     Returns:
         Category name (core_documentation, api_reference, etc.)
     """
-    # Must check claude-code BEFORE general docs (more specific first)
-    if path.startswith('/en/docs/claude-code/'):
-        return 'claude_code'
-
-    # Core documentation (but not claude-code)
-    if path.startswith('/en/docs/'):
-        return 'core_documentation'
-
-    # API reference
-    if path.startswith('/en/api/'):
+    # API reference (/en/api/* and /en/docs/agent-sdk/*)
+    if path.startswith('/en/api/') or path.startswith('/en/docs/agent-sdk/'):
         return 'api_reference'
 
+    # Claude Code docs (BOTH old and new formats for backwards compatibility)
+    # NEW: /docs/en/* (current on code.claude.com)
+    # OLD: /en/docs/claude-code/* (historical, now redirects)
+    if path.startswith('/docs/en/') or path.startswith('/en/docs/claude-code/'):
+        return 'claude_code'
+
     # Prompt library
-    if path.startswith('/en/prompt-library/'):
+    if path.startswith('/en/prompt-library/') or path.startswith('/en/resources/prompt-library/'):
         return 'prompt_library'
 
     # Resources
@@ -120,7 +120,12 @@ def categorize_path(path: str) -> str:
     if path.startswith('/en/release-notes/'):
         return 'release_notes'
 
-    # Uncategorized (should be rare)
+    # Core documentation (guides, about-claude, build-with-claude, etc.)
+    if path.startswith('/en/docs/'):
+        return 'core_documentation'
+
+    # Uncategorized fallback (home page, unknown paths, etc.)
+    # NOTE: This is the OLD behavior kept for backwards compatibility
     return 'uncategorized'
 
 

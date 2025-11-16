@@ -50,10 +50,6 @@ check_and_remove_existing_install() {
         return 0  # Nothing to remove
     fi
 
-    echo ""
-    echo "⚠️  Existing installation detected at: $INSTALL_DIR"
-    echo ""
-
     # Check for uncommitted changes if it's a git repo
     local has_uncommitted_changes=false
     if [[ -d "$INSTALL_DIR/.git" ]]; then
@@ -66,30 +62,48 @@ check_and_remove_existing_install() {
         fi
     fi
 
-    # Show what will be deleted
-    echo "This installation will be completely removed to ensure a clean installation."
-
-    if [[ "$has_uncommitted_changes" == "true" ]]; then
+    # Auto-proceed if no uncommitted changes OR auto-install mode enabled
+    if [[ "$has_uncommitted_changes" == "false" ]] || [[ "${CLAUDE_DOCS_AUTO_INSTALL:-}" == "yes" ]]; then
+        if [[ "${CLAUDE_DOCS_AUTO_INSTALL:-}" == "yes" ]]; then
+            echo "🔄 Auto-install mode: Removing existing installation..."
+        else
+            echo "🔄 Existing installation detected - updating to latest version..."
+        fi
+        rm -rf "$INSTALL_DIR"
+        echo "✓ Ready for fresh installation"
         echo ""
-        echo "⚠️  WARNING: This directory has uncommitted changes!"
-        echo "   All local modifications will be lost."
-        echo ""
-        read -p "Continue and delete existing installation? [y/N]: " -n 1 -r
-    else
-        echo ""
-        read -p "Continue and delete existing installation? [y/N]: " -n 1 -r
+        return 0
     fi
 
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    # Only prompt if there are uncommitted changes
+    echo ""
+    echo "⚠️  WARNING: Existing installation has uncommitted changes!"
+    echo "   Location: $INSTALL_DIR"
+    echo "   All local modifications will be lost."
+    echo ""
+
+    # Try to get user confirmation
+    if [[ -t 0 ]]; then
+        # Interactive terminal
+        read -p "Continue and delete existing installation? [y/N]: " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Installation cancelled. Your changes are preserved."
+            exit 0
+        fi
+    else
+        # Non-interactive (piped input, CI/CD)
+        echo "❌ Cannot proceed: Non-interactive mode with uncommitted changes"
         echo ""
-        echo "Installation cancelled."
-        echo "Your existing installation is preserved at: $INSTALL_DIR"
-        exit 0
+        echo "Options:"
+        echo "  • Commit your changes: cd $INSTALL_DIR && git add . && git commit"
+        echo "  • Force auto-install: CLAUDE_DOCS_AUTO_INSTALL=yes curl ... | bash"
+        echo "  • Download and run interactively: curl ... -o install.sh && bash install.sh"
+        echo ""
+        exit 1
     fi
 
     # Remove the directory
-    echo ""
     echo "Removing existing installation..."
     rm -rf "$INSTALL_DIR"
     echo "✓ Existing installation removed"
@@ -173,9 +187,9 @@ find_existing_installations() {
     fi
 }
 
-# Function to check if enhanced features are available
-check_enhanced_features() {
-    # Check Python version (need 3.9+)
+# Function to check if Python features are available
+check_python_features() {
+    # Check Python version (need 3.9+ for enhanced search/validation features)
     if ! command -v python3 &> /dev/null; then
         return 1
     fi
@@ -188,19 +202,13 @@ check_enhanced_features() {
         return 1
     fi
 
-    # Check if paths_manifest.json exists with 449 paths
+    # Check if paths_manifest.json exists
     if [[ ! -f "$INSTALL_DIR/paths_manifest.json" ]]; then
         return 1
     fi
 
-    local path_count=$(python3 -c "import json; data=json.load(open('$INSTALL_DIR/paths_manifest.json')); print(data['metadata'].get('total_paths', 0))" 2>/dev/null || echo "0")
-
-    # Enhanced manifest has 449+ paths
-    if [[ "$path_count" -ge 400 ]]; then
-        return 0
-    else
-        return 1
-    fi
+    # Python features available if we have Python 3.9+ and the manifest
+    return 0
 }
 
 # Function to cleanup old installations
@@ -373,42 +381,187 @@ if [[ -f ~/.claude/commands/docs.md ]]; then
     echo "  Updating existing command..."
 fi
 
-# Create simplified docs command
+# Create AI-powered docs command
 cat > ~/.claude/commands/docs.md << 'EOF'
-Execute the Claude Code Docs helper script at ~/.claude-code-docs/claude-docs-helper.sh
+# Claude Code Documentation Assistant - AI-Powered Semantic Search
 
-Usage:
-- /docs - List all available documentation topics
-- /docs <topic> - Read specific documentation with link to official docs
-- /docs -t - Check sync status without reading a doc
-- /docs -t <topic> - Check freshness then read documentation
-- /docs whats new - Show recent documentation changes (or "what's new")
+You are a documentation assistant for Claude Code. Use your semantic understanding to analyze user requests and route to appropriate helper functions.
 
-Examples of expected output:
+## Available Helper Functions
 
-When reading a doc:
+The helper script at `~/.claude-code-docs/claude-docs-helper.sh` provides:
+
+1. **Direct Documentation Lookup**: `<topic>` - Read a specific documentation file
+2. **Content Search**: `--search-content "<query>"` - Full-text search across all documentation (requires Python 3.9+)
+3. **Path Search**: `--search "<query>"` - Fuzzy search across 270 documentation paths (requires Python 3.9+)
+4. **Freshness Check**: `-t` - Check if local docs are synced with GitHub
+5. **What's New**: `"what's new"` - Show recent documentation changes with diffs
+6. **Help**: `--help` - Show all available commands
+
+## Request Analysis - Use Your Semantic Understanding
+
+Analyze the user's request (`$ARGUMENTS`) semantically and classify intent:
+
+### 1. Direct Documentation Lookup
+**User wants a specific documentation page by name**
+
+Examples:
+- `/docs hooks` → wants hooks documentation
+- `/docs mcp` → wants MCP documentation
+- `/docs settings` → wants settings documentation
+- `/docs memory` → wants memory features documentation
+
+**Action**: Execute direct lookup
+```bash
+~/.claude-code-docs/claude-docs-helper.sh <topic>
+```
+
+### 2. Information Search / Questions
+**User asks a question or searches for information semantically**
+
+Examples:
+- `/docs what are the best practices for Claude Code SDK in Python?`
+- `/docs how do I customize Claude Code's behavior?`
+- `/docs explain the differences between hooks and MCP`
+- `/docs find all mentions of authentication`
+- `/docs show me everything about memory features`
+
+**Action**: Extract key concepts and use content search (if Python available)
+```bash
+~/.claude-code-docs/claude-docs-helper.sh --search-content "<extracted keywords>"
+```
+
+If content search is not available (no Python), explain to user:
+"Content search requires Python 3.9+. You can:"
+1. List available topics with: `~/.claude-code-docs/claude-docs-helper.sh`
+2. Read specific docs like: `/docs hooks`, `/docs mcp`, etc.
+
+### 3. Path Discovery
+**User wants to discover available documentation paths**
+
+Examples:
+- `/docs show me all API documentation`
+- `/docs list everything about agent SDK`
+- `/docs what documentation is available for MCP?`
+
+**Action**: Use path search (if Python available)
+```bash
+~/.claude-code-docs/claude-docs-helper.sh --search "<keywords>"
+```
+
+### 4. Freshness Check
+**User wants to know if documentation is up to date**
+
+Examples:
+- `/docs -t`
+- `/docs check for updates`
+- `/docs are the docs current?`
+
+**Action**: Execute freshness check
+```bash
+~/.claude-code-docs/claude-docs-helper.sh -t
+```
+
+You can also combine with topic: `/docs -t hooks` checks freshness then reads hooks doc
+
+### 5. Recent Changes
+**User wants to see what's new in documentation**
+
+Examples:
+- `/docs what's new`
+- `/docs recent changes`
+- `/docs show latest updates`
+
+**Action**: Execute what's new command
+```bash
+~/.claude-code-docs/claude-docs-helper.sh "what's new"
+```
+
+### 6. Help / List Topics
+**User wants to see available commands or topics**
+
+Examples:
+- `/docs` (no arguments)
+- `/docs help`
+- `/docs list all topics`
+
+**Action**: Show help or list topics
+```bash
+~/.claude-code-docs/claude-docs-helper.sh --help
+```
+
+## Intelligent Routing Examples
+
+**Example 1: Direct Lookup**
+```
+User: /docs hooks
+Your Analysis: User wants hooks documentation (specific topic)
+Execute: ~/.claude-code-docs/claude-docs-helper.sh hooks
+```
+
+**Example 2: Semantic Question**
+```
+User: /docs what are the best practices and recommended workflows using Claude Agent SDK in Python according to the official documentation?
+Your Analysis: User wants information about best practices, workflows, Agent SDK, and Python
+Extract Keywords: "best practices workflows Agent SDK Python"
+Execute: ~/.claude-code-docs/claude-docs-helper.sh --search-content "best practices workflows Agent SDK Python"
+Present Results: Naturally summarize the search results with context and provide relevant doc links
+```
+
+**Example 3: Discovery Query**
+```
+User: /docs show me all documentation about authentication
+Your Analysis: User wants to discover authentication-related docs
+Execute: ~/.claude-code-docs/claude-docs-helper.sh --search "authentication"
+Present Results: List the matching paths found
+```
+
+**Example 4: Combined Workflow**
+```
+User: /docs what's new with extended thinking and how does it work?
+Your Analysis: User wants both recent changes AND information about extended thinking
+Step 1: Execute: ~/.claude-code-docs/claude-docs-helper.sh --search-content "extended thinking"
+Step 2: Read the found documentation
+Step 3: Check what's new: ~/.claude-code-docs/claude-docs-helper.sh "what's new"
+Present Results: Combine information naturally - explain how extended thinking works based on docs, then mention any recent updates
+```
+
+## Response Guidelines
+
+1. **Natural Presentation**: Don't just dump raw tool output - present information naturally with context
+2. **Always Provide Links**: Include official documentation URLs when showing results
+3. **Graceful Degradation**: If Python features aren't available, explain alternatives gracefully
+4. **Auto-Update Check**: For major information requests, the helper automatically checks for updates (takes ~0.4s)
+5. **Combine Sources**: When helpful, combine multiple searches or docs to give complete answers
+6. **Show Confidence**: If you're unsure about routing, explain your reasoning and ask for clarification
+
+## Expected Output Format
+
+When reading documentation, you'll see:
+```
 📚 COMMUNITY MIRROR: https://github.com/costiash/claude-code-docs
 📖 OFFICIAL DOCS: https://docs.anthropic.com/en/docs/claude-code
 
-[Doc content here...]
+[Documentation content here...]
 
 📖 Official page: https://docs.anthropic.com/en/docs/claude-code/hooks
+```
 
 When showing what's new:
+```
 📚 Recent documentation updates:
 
 • 5 hours ago:
-  📎 https://github.com/costiash/claude-code-docs/commit/eacd8e1
-  📄 data-usage: https://docs.anthropic.com/en/docs/claude-code/data-usage
-     ➕ Added: Privacy safeguards
-  📄 security: https://docs.anthropic.com/en/docs/claude-code/security
-     ✨ Data flow and dependencies section moved here
+  📎 https://github.com/costiash/claude-code-docs/commit/abc123
+  📄 hooks: https://docs.anthropic.com/en/docs/claude-code/hooks
+     ✨ Added: New examples for pre-commit hooks
+```
 
-📎 Full changelog: https://github.com/costiash/claude-code-docs/commits/main/docs
-📚 COMMUNITY MIRROR - NOT AFFILIATED WITH ANTHROPIC
+## User's Request
 
-Every request checks for the latest documentation from GitHub (takes ~0.4s).
-The helper script handles all functionality including auto-updates.
+The user requested: "$ARGUMENTS"
+
+**Your Task**: Analyze this semantically, route to the appropriate helper function(s), and present the information naturally.
 
 Execute: ~/.claude-code-docs/claude-docs-helper.sh "$ARGUMENTS"
 EOF
@@ -474,9 +627,16 @@ echo ""
 echo "🔄 Auto-updates: Enabled - syncs automatically when GitHub has newer content"
 echo ""
 
-# Check if enhanced features are available and show appropriate message
-if check_enhanced_features; then
-    echo "✨ Enhanced Edition Features:"
+# Show what's installed (always the same: 268 files + Python scripts)
+echo "📦 Installed Components:"
+echo "  • 268 documentation files"
+echo "  • 270 active documentation paths tracked"
+echo "  • AI-powered /docs command"
+echo ""
+
+# Check if Python features are available and show appropriate message
+if check_python_features; then
+    echo "✨ Python Features: AVAILABLE (Python 3.9+ detected)"
     echo ""
 
     # Show category summary
@@ -494,20 +654,31 @@ for i, (cat, paths) in enumerate(cats.items(), 1):
     print(f'  {i}. {cat_name}: {len(paths)} paths')
 
 print('')
-print('Enhanced Commands:')
+print('Python-Enhanced Commands:')
 print('  ~/.claude-code-docs/claude-docs-helper.sh --search \"keyword\"')
+print('  ~/.claude-code-docs/claude-docs-helper.sh --search-content \"term\"')
+print('  ~/.claude-code-docs/claude-docs-helper.sh --validate')
 print('  ~/.claude-code-docs/claude-docs-helper.sh --status')
-print('  ~/.claude-code-docs/claude-docs-helper.sh --help')
 " 2>/dev/null || {
         # Fallback if Python fails
-        echo "📚 Enhanced features available (449 paths)"
+        echo "📚 Python features available"
         echo "   Run: ~/.claude-code-docs/claude-docs-helper.sh --status"
     }
 else
-    echo "Available topics (standard mode):"
-    ls "$INSTALL_DIR/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 60
+    echo "ℹ️  Python Features: NOT AVAILABLE"
     echo ""
-    echo "💡 Tip: Install Python 3.9+ for enhanced features (449 paths, full-text search)"
+    echo "Basic documentation reading works perfectly!"
+    echo "Install Python 3.9+ to enable:"
+    echo "  • Full-text content search (--search-content)"
+    echo "  • Fuzzy path search (--search)"
+    echo "  • Path validation (--validate)"
+    echo "  • Enhanced AI routing capabilities"
+    echo ""
+    echo "Without Python, you can:"
+    echo "  • Read all 268 documentation files via /docs command"
+    echo "  • Use AI-powered semantic queries"
+    echo "  • Check documentation freshness"
+    echo "  • View recent changes"
 fi
 
 echo ""
