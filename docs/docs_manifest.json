@@ -192,12 +192,6 @@
       "hash": "c4d43447300ffa4823f8fd84ca3cef4c63c4273e57992d57463c1c4102b20241",
       "last_updated": "2025-11-16T17:38:33.803687"
     },
-    "docs__en__sdk__migration-guide.md": {
-      "original_url": "https://docs.claude.com/docs/en/sdk/migration-guide",
-      "original_md_url": "https://docs.claude.com/docs/en/sdk/migration-guide.md",
-      "hash": "2682860c30e3511848231a54d1303ed1e7ddbede257418e34b9fd48f61112b6e",
-      "last_updated": "2025-11-16T17:38:34.426649"
-    },
     "docs__en__security.md": {
       "original_url": "https://docs.claude.com/docs/en/security",
       "original_md_url": "https://docs.claude.com/docs/en/security.md",
@@ -213,8 +207,8 @@
     "docs__en__setup.md": {
       "original_url": "https://docs.claude.com/docs/en/setup",
       "original_md_url": "https://docs.claude.com/docs/en/setup.md",
-      "hash": "68551853fb299f0d8277a3f92a4ee30cefd6760c4c54e81e6cfc158971a10245",
-      "last_updated": "2025-11-16T17:38:36.394045"
+      "hash": "47bf5c97d23fc33bca53e95837c45444906b306bccede8a39bd7a4c11a5aa60b",
+      "last_updated": "2025-11-17T00:25:36.543459"
     },
     "docs__en__skills.md": {
       "original_url": "https://docs.claude.com/docs/en/skills",
@@ -1611,22 +1605,23 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-16T21:07:40.365607",
-    "fetch_duration_seconds": 155.842261,
+    "last_fetch_completed": "2025-11-17T00:27:40.527959",
+    "fetch_duration_seconds": 151.389757,
     "total_pages_discovered": 270,
-    "pages_fetched_successfully": 268,
-    "pages_failed": 3,
+    "pages_fetched_successfully": 267,
+    "pages_failed": 4,
     "failed_pages": [
+      "/docs/en/sdk/migration-guide",
       "/en/docs/about-claude/use-case-guides/overview",
       "/en/home",
       "/en/resources/overview"
     ],
     "sitemap_url": "https://docs.claude.com/sitemap.xml",
     "base_url": "https://docs.claude.com",
-    "total_files": 268,
+    "total_files": 267,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-16T21:07:40.365633",
+  "last_updated": "2025-11-17T00:27:40.527982",
   "base_url": "https://raw.githubusercontent.com/costiash/claude-code-docs/main/docs/",
   "github_repository": "costiash/claude-code-docs",
   "github_ref": "main",
