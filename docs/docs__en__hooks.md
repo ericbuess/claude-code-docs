@@ -587,7 +587,7 @@ For `manual`, `custom_instructions` comes from what the user passes into
 
 ## Hook Output
 
-There are two ways for hooks to return output back to Claude Code. The output
+There are two mutually-exclusive ways for hooks to return output back to Claude Code. The output
 communicates whether to block and any feedback that should be shown to Claude
 and the user.
 
@@ -595,13 +595,16 @@ and the user.
 
 Hooks communicate status through exit codes, stdout, and stderr:
 
-* **Exit code 0**: Success. `stdout` is shown to the user in transcript mode
-  (CTRL-R), except for `UserPromptSubmit` and `SessionStart`, where stdout is
-  added to the context.
-* **Exit code 2**: Blocking error. `stderr` is fed back to Claude to process
-  automatically. See per-hook-event behavior below.
-* **Other exit codes**: Non-blocking error. `stderr` is shown to the user and
-  execution continues.
+* **Exit code 0**: Success. `stdout` is shown to the user in verbose mode
+  (ctrl+o), except for `UserPromptSubmit` and `SessionStart`, where stdout is
+  added to the context. JSON output in `stdout` is parsed for structured control
+  (see [Advanced: JSON Output](#advanced-json-output)).
+* **Exit code 2**: Blocking error. Only `stderr` is used as the error message
+  and fed back to Claude. The format is `[command]: {stderr}`. JSON in `stdout`
+  is **not** processed for exit code 2. See per-hook-event behavior below.
+* **Other exit codes**: Non-blocking error. `stderr` is shown to the user in verbose mode (ctrl+o) with
+  format `Failed with non-blocking status code: {stderr}`. If `stderr` is empty,
+  it shows `No stderr output`. Execution continues.
 
 <Warning>
   Reminder: Claude Code does not see stdout if the exit code is 0, except for
@@ -624,7 +627,13 @@ Hooks communicate status through exit codes, stdout, and stderr:
 
 ### Advanced: JSON Output
 
-Hooks can return structured JSON in `stdout` for more sophisticated control:
+Hooks can return structured JSON in `stdout` for more sophisticated control.
+
+<Warning>
+  JSON output is only processed when the hook exits with code 0. If your hook
+  exits with code 2 (blocking error), `stderr` text is used directly—any JSON in `stdout`
+  is ignored. For other non-zero exit codes, only `stderr` is shown to the user in verbose mode (ctrl+o).
+</Warning>
 
 #### Common JSON Fields
 
@@ -733,13 +742,26 @@ Additionally, hooks can modify tool inputs before execution using `updatedInput`
 
 #### `UserPromptSubmit` Decision Control
 
-`UserPromptSubmit` hooks can control whether a user prompt is processed.
+`UserPromptSubmit` hooks can control whether a user prompt is processed and add context.
 
-* `"block"` prevents the prompt from being processed. The submitted prompt is
-  erased from context. `"reason"` is shown to the user but not added to context.
-* `undefined` allows the prompt to proceed normally. `"reason"` is ignored.
-* `"hookSpecificOutput.additionalContext"` adds the string to the context if not
-  blocked.
+**Adding context (exit code 0):**
+There are two ways to add context to the conversation:
+
+1. **Plain text stdout** (simpler): Any non-JSON text written to stdout is added
+   as context. This is the easiest way to inject information.
+
+2. **JSON with `additionalContext`** (structured): Use the JSON format below for
+   more control. The `additionalContext` field is added as context.
+
+Both methods work with exit code 0. Plain stdout is shown as hook output in
+the transcript; `additionalContext` is added more discretely.
+
+**Blocking prompts:**
+
+* `"decision": "block"` prevents the prompt from being processed. The submitted
+  prompt is erased from context. `"reason"` is shown to the user but not added
+  to context.
+* `"decision": undefined` (or omitted) allows the prompt to proceed normally.
 
 ```json  theme={null}
 {
@@ -751,6 +773,12 @@ Additionally, hooks can modify tool inputs before execution using `updatedInput`
   }
 }
 ```
+
+<Note>
+  The JSON format is not required for simple use cases. To add context, you can
+  just print plain text to stdout with exit code 0. Use JSON when you need to
+  block prompts or want more structured control.
+</Note>
 
 #### `Stop`/`SubagentStop` Decision Control
 
@@ -845,8 +873,12 @@ if issues:
 <Note>
   For `UserPromptSubmit` hooks, you can inject context using either method:
 
-  * Exit code 0 with stdout: Claude sees the context (special case for `UserPromptSubmit`)
-  * JSON output: Provides more control over the behavior
+  * **Plain text stdout** with exit code 0: Simplest approach—just print text
+  * **JSON output** with exit code 0: Use `"decision": "block"` to reject prompts,
+    or `additionalContext` for structured context injection
+
+  Remember: Exit code 2 only uses `stderr` for the error message. To block using
+  JSON (with a custom reason), use `"decision": "block"` with exit code 0.
 </Note>
 
 ```python  theme={null}
@@ -923,7 +955,7 @@ if tool_name == "Read":
         output = {
             "decision": "approve",
             "reason": "Documentation file auto-approved",
-            "suppressOutput": True  # Don't show in transcript mode
+            "suppressOutput": True  # Don't show in verbose mode
         }
         print(json.dumps(output))
         sys.exit(0)
@@ -1036,7 +1068,7 @@ This prevents malicious hook modifications from affecting your current session.
   * The `CLAUDE_CODE_REMOTE` environment variable indicates whether the hook is running in a remote (web) environment (`"true"`) or local CLI environment (not set or empty). Use this to run different logic based on execution context.
 * **Input**: JSON via stdin
 * **Output**:
-  * PreToolUse/PostToolUse/Stop/SubagentStop: Progress shown in transcript (Ctrl-R)
+  * PreToolUse/PostToolUse/Stop/SubagentStop: Progress shown in verbose mode (ctrl+o)
   * Notification/SessionEnd: Logged to debug only (`--debug`)
   * UserPromptSubmit/SessionStart: stdout added as context for Claude
 
@@ -1085,7 +1117,7 @@ Use `claude --debug` to see hook execution details:
 [DEBUG] Hook command completed with status 0: <Your stdout>
 ```
 
-Progress messages appear in transcript mode (Ctrl-R) showing:
+Progress messages appear in verbose mode (ctrl+o) showing:
 
 * Which hook is running
 * Command being executed
