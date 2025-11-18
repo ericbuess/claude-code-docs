@@ -4,11 +4,14 @@
 
 ## Available models
 
-For the `model` setting in Claude Code, you can either configure:
+For the `model` setting in Claude Code, you can configure either:
 
 * A **model alias**
-* A full **[model name](https://docs.claude.com/en/docs/about-claude/models/overview#model-names)**
-* For Bedrock, an ARN
+* A **model name**
+  * Anthropic API: A full **[model name](https://docs.claude.com/en/docs/about-claude/models/overview#model-names)**
+  * Bedrock: an inference profile ARN
+  * Foundry: a deployment name
+  * Vertex: a version name
 
 ### Model aliases
 
@@ -100,7 +103,7 @@ You can see which model you're currently using in several ways:
 ## Environment variables
 
 You can use the following environment variables, which must be full **model
-names**, to control the model names that the aliases map to.
+names** (or equivalent for your API provider), to control the model names that the aliases map to.
 
 | Env var                          | Description                                                                                   |
 | -------------------------------- | --------------------------------------------------------------------------------------------- |

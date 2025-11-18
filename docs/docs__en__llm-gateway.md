@@ -29,6 +29,10 @@ The gateway must expose to clients at least one of the following API formats:
 
 Failure to forward headers or preserve body fields may result in reduced functionality or inability to use Claude Code features.
 
+<Note>
+  Claude Code determines which features to enable based on the API format. When using the Anthropic Messages format with Bedrock or Vertex, you may need to set environment variable `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`.
+</Note>
+
 ## Configuration
 
 ### Model selection

@@ -12,6 +12,7 @@ This page provides an overview of available deployment options and helps you cho
       <th>Feature</th>
       <th>Anthropic</th>
       <th>Amazon Bedrock</th>
+      <th>Azure AI Foundry</th>
       <th>Google Vertex AI</th>
     </tr>
   </thead>
@@ -21,6 +22,7 @@ This page provides an overview of available deployment options and helps you cho
       <td>Regions</td>
       <td>Supported [countries](https://www.anthropic.com/supported-countries)</td>
       <td>Multiple AWS [regions](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)</td>
+      <td>Multiple Azure [regions](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/)</td>
       <td>Multiple GCP [regions](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations)</td>
     </tr>
 
@@ -29,19 +31,22 @@ This page provides an overview of available deployment options and helps you cho
       <td>Enabled by default</td>
       <td>Enabled by default</td>
       <td>Enabled by default</td>
+      <td>Enabled by default</td>
     </tr>
 
     <tr>
       <td>Authentication</td>
       <td>API key</td>
-      <td>AWS credentials (IAM)</td>
-      <td>GCP credentials (OAuth/Service Account)</td>
+      <td>API key or AWS credentials</td>
+      <td>API key or Microsoft Entra ID</td>
+      <td>GCP credentials</td>
     </tr>
 
     <tr>
       <td>Cost tracking</td>
       <td>Dashboard</td>
       <td>AWS Cost Explorer</td>
+      <td>Azure Cost Management</td>
       <td>GCP Billing</td>
     </tr>
 
@@ -49,6 +54,7 @@ This page provides an overview of available deployment options and helps you cho
       <td>Enterprise features</td>
       <td>Teams, usage monitoring</td>
       <td>IAM policies, CloudTrail</td>
+      <td>RBAC policies, Azure Monitor</td>
       <td>IAM roles, Cloud Audit Logs</td>
     </tr>
   </tbody>
@@ -56,9 +62,13 @@ This page provides an overview of available deployment options and helps you cho
 
 ## Cloud providers
 
-<CardGroup cols={2}>
+<CardGroup cols={3}>
   <Card title="Amazon Bedrock" icon="aws" href="/en/amazon-bedrock">
-    Use Claude models through AWS infrastructure with IAM-based authentication and AWS-native monitoring
+    Use Claude models through AWS infrastructure with API key or IAM-based authentication and AWS-native monitoring
+  </Card>
+
+  <Card title="Azure AI Foundry" icon="microsoft" href="/en/azure-ai-foundry">
+    Access Claude through Azure with API key or Microsoft Entra ID authentication and Azure billing
   </Card>
 
   <Card title="Google Vertex AI" icon="google" href="/en/google-vertex-ai">
@@ -115,6 +125,33 @@ export CLAUDE_CODE_USE_BEDROCK=1
 # Configure LLM gateway
 export ANTHROPIC_BEDROCK_BASE_URL='https://your-llm-gateway.com/bedrock'
 export CLAUDE_CODE_SKIP_BEDROCK_AUTH=1  # If gateway handles AWS auth
+```
+
+### Using Azure AI Foundry with corporate proxy
+
+Route Azure traffic through a corporate HTTP/HTTPS proxy:
+
+```bash  theme={null}
+# Enable Azure AI Foundry
+export CLAUDE_CODE_USE_FOUNDRY=1
+export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
+export ANTHROPIC_FOUNDRY_API_KEY=your-api-key  # Or omit for Entra ID auth
+
+# Configure corporate proxy
+export HTTPS_PROXY='https://proxy.example.com:8080'
+```
+
+### Using Azure AI Foundry with LLM Gateway
+
+Use a gateway service that provides Azure-compatible endpoints:
+
+```bash  theme={null}
+# Enable Azure AI Foundry
+export CLAUDE_CODE_USE_FOUNDRY=1
+
+# Configure LLM gateway
+export ANTHROPIC_FOUNDRY_BASE_URL='https://your-llm-gateway.com'
+export CLAUDE_CODE_SKIP_FOUNDRY_AUTH=1  # If gateway handles Azure auth
 ```
 
 ### Using Vertex AI with corporate proxy
@@ -216,6 +253,7 @@ At Anthropic, we trust Claude Code to power development across every Anthropic c
 ## Next steps
 
 * [Set up Amazon Bedrock](/en/amazon-bedrock) for AWS-native deployment
+* [Set up Azure AI Foundry](/en/azure-ai-foundry) for Azure deployment
 * [Configure Google Vertex AI](/en/google-vertex-ai) for GCP deployment
 * [Configure Enterprise Network](/en/network-config) for network requirements
 * [Deploy LLM Gateway](/en/llm-gateway) for enterprise management

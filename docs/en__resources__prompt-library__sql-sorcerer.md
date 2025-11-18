@@ -206,4 +206,5 @@ GROUP BY c.customer_id, c.first_name, c.last_name;
 </Tabs>
 
 ```
+ 
 ```

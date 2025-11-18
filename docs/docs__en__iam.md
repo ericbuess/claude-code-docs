@@ -4,10 +4,11 @@
 
 ## Authentication methods
 
-Setting up Claude Code requires access to Anthropic models. For teams, you can set up Claude Code access in one of three ways:
+Setting up Claude Code requires access to Anthropic models. For teams, you can set up Claude Code access in one of four ways:
 
 * Claude API via the Claude Console
 * Amazon Bedrock
+* Azure AI Foundry
 * Google Vertex AI
 
 ### Claude API authentication
@@ -29,9 +30,9 @@ Setting up Claude Code requires access to Anthropic models. For teams, you can s
 
 ### Cloud provider authentication
 
-**To set up Claude Code access for your team via Bedrock or Vertex:**
+**To set up Claude Code access for your team via Bedrock, Vertex, or Azure:**
 
-1. Follow the [Bedrock docs](/en/amazon-bedrock) or [Vertex docs](/en/google-vertex-ai)
+1. Follow the [Bedrock docs](/en/amazon-bedrock), [Vertex docs](/en/google-vertex-ai), or [Azure AI Foundry docs](/en/azure-ai-foundry)
 2. Distribute the environment variables and instructions for generating cloud credentials to your users. Read more about how to [manage configuration here](/en/settings).
 3. Users can [install Claude Code](/en/setup#installation)
 
@@ -195,6 +196,6 @@ This hierarchy ensures that organizational policies are always enforced while st
 Claude Code securely manages your authentication credentials:
 
 * **Storage location**: On macOS, API keys, OAuth tokens, and other credentials are stored in the encrypted macOS Keychain.
-* **Supported authentication types**: Claude.ai credentials, Claude API credentials, Bedrock Auth, and Vertex Auth.
+* **Supported authentication types**: Claude.ai credentials, Claude API credentials, Azure Auth, Bedrock Auth, and Vertex Auth.
 * **Custom credential scripts**: The [`apiKeyHelper`](/en/settings#available-settings) setting can be configured to run a shell script that returns an API key.
 * **Refresh intervals**: By default, `apiKeyHelper` is called after 5 minutes or on HTTP 401 response. Set `CLAUDE_CODE_API_KEY_HELPER_TTL_MS` environment variable for custom refresh intervals.

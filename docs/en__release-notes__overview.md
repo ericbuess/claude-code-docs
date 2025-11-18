@@ -8,6 +8,10 @@
   For updates to Claude Code, see the [complete CHANGELOG.md](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) in the `claude-code` repository.
 </Tip>
 
+### November 18, 2025
+
+* We've launched **Claude in Microsoft Foundry**, bringing Claude models to Azure customers with Azure billing and OAuth authentication. Access the full Messages API including extended thinking, prompt caching (5-minute and 1-hour), PDF support, Files API, Agent Skills, and tool use. Learn more in our [Microsoft Foundry documentation](/en/docs/build-with-claude/claude-in-microsoft-foundry).
+
 ### November 14, 2025
 
 * We've launched [structured outputs](/en/docs/build-with-claude/structured-outputs) in public beta, providing guaranteed schema conformance for Claude's responses. Use JSON outputs for structured data responses or strict tool use for validated tool inputs. Available for Claude Sonnet 4.5 and Claude Opus 4.1. To enable, use the beta header `structured-outputs-2025-11-13`.

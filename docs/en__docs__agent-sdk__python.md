@@ -462,6 +462,7 @@ class ClaudeAgentOptions:
     max_turns: int | None = None
     disallowed_tools: list[str] = field(default_factory=list)
     model: str | None = None
+    output_format: OutputFormat | None = None
     permission_prompt_tool_name: str | None = None
     cwd: str | Path | None = None
     settings: str | None = None
@@ -491,6 +492,7 @@ class ClaudeAgentOptions:
 | `max_turns`                   | `int \| None`                                | `None`               | Maximum conversation turns                                                                                                                                                              |
 | `disallowed_tools`            | `list[str]`                                  | `[]`                 | List of disallowed tool names                                                                                                                                                           |
 | `model`                       | `str \| None`                                | `None`               | Claude model to use                                                                                                                                                                     |
+| `output_format`               | [`OutputFormat`](#outputformat) ` \| None`   | `None`               | Define output format for agent results. See [Structured outputs](/en/docs/agent-sdk/structured-outputs) for details                                                                     |
 | `permission_prompt_tool_name` | `str \| None`                                | `None`               | MCP tool name for permission prompts                                                                                                                                                    |
 | `cwd`                         | `str \| Path \| None`                        | `None`               | Current working directory                                                                                                                                                               |
 | `settings`                    | `str \| None`                                | `None`               | Path to settings file                                                                                                                                                                   |
@@ -508,6 +510,21 @@ class ClaudeAgentOptions:
 | `agents`                      | `dict[str, AgentDefinition] \| None`         | `None`               | Programmatically defined subagents                                                                                                                                                      |
 | `plugins`                     | `list[SdkPluginConfig]`                      | `[]`                 | Load custom plugins from local paths. See [Plugins](/en/docs/agent-sdk/plugins) for details                                                                                             |
 | `setting_sources`             | `list[SettingSource] \| None`                | `None` (no settings) | Control which filesystem settings to load. When omitted, no settings are loaded. **Note:** Must include `"project"` to load CLAUDE.md files                                             |
+
+### `OutputFormat`
+
+Configuration for structured output validation.
+
+```python  theme={null}
+class OutputFormat(TypedDict):
+    type: Literal["json_schema"]
+    schema: dict[str, Any]
+```
+
+| Field    | Required | Description                                        |
+| :------- | :------- | :------------------------------------------------- |
+| `type`   | Yes      | Must be `"json_schema"` for JSON Schema validation |
+| `schema` | Yes      | JSON Schema definition for output validation       |
 
 ### `SystemPromptPreset`
 

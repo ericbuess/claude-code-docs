@@ -41,9 +41,9 @@ Once installed, you can start using Claude Code through the VS Code interface:
 4. Review and accept edits directly in the interface
    * **Tip**: Drag the sidebar wider to see inline diffs, then click on them to expand for full details
 
-### Using Third-Party Providers (Vertex and Bedrock)
+### Using Third-Party Providers
 
-The VS Code extension supports using Claude Code with third-party providers like Amazon Bedrock and Google Vertex AI. When configured with these providers, the extension will not prompt for login. To use third-party providers, configure environment variables in the VS Code extension settings:
+The VS Code extension supports using Claude Code with third-party providers like Amazon Bedrock, Azure AI Foundry, and Google Vertex AI. When configured with these providers, the extension will not prompt for login. To use third-party providers, configure environment variables in the VS Code extension settings:
 
 1. Open VS Code settings
 2. Search for "Claude Code: Environment Variables"
@@ -51,22 +51,25 @@ The VS Code extension supports using Claude Code with third-party providers like
 
 #### Environment Variables
 
-| Variable                      | Description                            | Required               | Example                                          |
-| :---------------------------- | :------------------------------------- | :--------------------- | :----------------------------------------------- |
-| `CLAUDE_CODE_USE_BEDROCK`     | Enable Amazon Bedrock integration      | Required for Bedrock   | `"1"` or `"true"`                                |
-| `CLAUDE_CODE_USE_VERTEX`      | Enable Google Vertex AI integration    | Required for Vertex AI | `"1"` or `"true"`                                |
-| `ANTHROPIC_API_KEY`           | API key for third-party access         | Required               | `"your-api-key"`                                 |
-| `AWS_REGION`                  | AWS region for Bedrock                 |                        | `"us-east-2"`                                    |
-| `AWS_PROFILE`                 | AWS profile for Bedrock authentication |                        | `"your-profile"`                                 |
-| `CLOUD_ML_REGION`             | Region for Vertex AI                   |                        | `"global"` or `"us-east5"`                       |
-| `ANTHROPIC_VERTEX_PROJECT_ID` | GCP project ID for Vertex AI           |                        | `"your-project-id"`                              |
-| `ANTHROPIC_MODEL`             | Override primary model                 | Override model ID      | `"us.anthropic.claude-sonnet-4-5-20250929-v1:0"` |
-| `ANTHROPIC_SMALL_FAST_MODEL`  | Override small/fast model              | Optional               | `"us.anthropic.claude-3-5-haiku-20241022-v1:0"`  |
-| `CLAUDE_CODE_SKIP_AUTH_LOGIN` | Disable all prompts to login           | Optional               | `"1"` or `"true"`                                |
+| Variable                      | Description                            | Required                | Example                                          |
+| :---------------------------- | :------------------------------------- | :---------------------- | :----------------------------------------------- |
+| `CLAUDE_CODE_USE_BEDROCK`     | Enable Amazon Bedrock integration      | Required for Bedrock    | `"1"` or `"true"`                                |
+| `CLAUDE_CODE_USE_FOUNDRY`     | Enable Azure AI Foundry integration    | Required for Foundry    | `"1"` or `"true"`                                |
+| `CLAUDE_CODE_USE_VERTEX`      | Enable Google Vertex AI integration    | Required for Vertex AI  | `"1"` or `"true"`                                |
+| `AWS_REGION`                  | AWS region for Bedrock                 |                         | `"us-east-2"`                                    |
+| `AWS_PROFILE`                 | AWS profile for Bedrock authentication |                         | `"your-profile"`                                 |
+| `CLOUD_ML_REGION`             | Region for Vertex AI                   |                         | `"global"` or `"us-east5"`                       |
+| `ANTHROPIC_VERTEX_PROJECT_ID` | GCP project ID for Vertex AI           |                         | `"your-project-id"`                              |
+| `ANTHROPIC_FOUNDRY_RESOURCE`  | Azure resource name for Foundry        | Required for AI Foundry | `"your-resource"`                                |
+| `ANTHROPIC_FOUNDRY_API_KEY`   | API key for Azure AI Foundry           | Optional for AI Foundry | `"your-api-key"`                                 |
+| `ANTHROPIC_MODEL`             | Override primary model                 | Override model ID       | `"us.anthropic.claude-sonnet-4-5-20250929-v1:0"` |
+| `ANTHROPIC_SMALL_FAST_MODEL`  | Override small/fast model              | Optional                | `"us.anthropic.claude-3-5-haiku-20241022-v1:0"`  |
+| `CLAUDE_CODE_SKIP_AUTH_LOGIN` | Disable all prompts to login           | Optional                | `"1"` or `"true"`                                |
 
 For detailed setup instructions and additional configuration options, see:
 
 * [Claude Code on Amazon Bedrock](/en/amazon-bedrock)
+* [Claude Code on Azure AI Foundry](/en/azure-ai-foundry)
 * [Claude Code on Google Vertex AI](/en/google-vertex-ai)
 
 ### Not Yet Implemented

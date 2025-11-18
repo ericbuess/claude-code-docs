@@ -1,5 +1,7 @@
 # Structured outputs
 
+> Get validated JSON results from agent workflows
+
 Structured outputs constrain Claude's responses to follow a specific schema, ensuring valid, parseable output for downstream processing. Use **JSON outputs** (`output_format`) for structured data responses, or **strict tool use** (`strict: true`) for guaranteed schema validation on tool names and inputs.
 
 <Note>
