@@ -6,10 +6,6 @@ Claude Code supports OpenTelemetry (OTel) metrics and events for monitoring and 
 
 All metrics are time series data exported via OpenTelemetry's standard metrics protocol, and events are exported via OpenTelemetry's logs/events protocol. It is the user's responsibility to ensure their metrics and logs backends are properly configured and that the aggregation granularity meets their monitoring requirements.
 
-<Note>
-  OpenTelemetry support is currently in beta and details are subject to change.
-</Note>
-
 ## Quick Start
 
 Configure OpenTelemetry using environment variables:
