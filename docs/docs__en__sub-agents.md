@@ -133,6 +133,8 @@ name: your-sub-agent-name
 description: Description of when this subagent should be invoked
 tools: tool1, tool2, tool3  # Optional - inherits all tools if omitted
 model: sonnet  # Optional - specify model alias or 'inherit'
+permissionMode: default  # Optional - permission mode for the subagent
+skills: skill1, skill2  # Optional - skills to auto-load
 ---
 
 Your subagent's system prompt goes here. This can be multiple paragraphs
@@ -145,12 +147,14 @@ the subagent should follow.
 
 #### Configuration fields
 
-| Field         | Required | Description                                                                                                                                                                                                     |
-| :------------ | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`        | Yes      | Unique identifier using lowercase letters and hyphens                                                                                                                                                           |
-| `description` | Yes      | Natural language description of the subagent's purpose                                                                                                                                                          |
-| `tools`       | No       | Comma-separated list of specific tools. If omitted, inherits all tools from the main thread                                                                                                                     |
-| `model`       | No       | Model to use for this subagent. Can be a model alias (`sonnet`, `opus`, `haiku`) or `'inherit'` to use the main conversation's model. If omitted, defaults to the [configured subagent model](/en/model-config) |
+| Field            | Required | Description                                                                                                                                                                                                     |
+| :--------------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`           | Yes      | Unique identifier using lowercase letters and hyphens                                                                                                                                                           |
+| `description`    | Yes      | Natural language description of the subagent's purpose                                                                                                                                                          |
+| `tools`          | No       | Comma-separated list of specific tools. If omitted, inherits all tools from the main thread                                                                                                                     |
+| `model`          | No       | Model to use for this subagent. Can be a model alias (`sonnet`, `opus`, `haiku`) or `'inherit'` to use the main conversation's model. If omitted, defaults to the [configured subagent model](/en/model-config) |
+| `permissionMode` | No       | Permission mode for the subagent. Valid values: `default`, `acceptEdits`, `bypassPermissions`, `plan`, `ignore`. Controls how the subagent handles permission requests                                          |
+| `skills`         | No       | Comma-separated list of skill names to auto-load when the subagent starts. Skills are loaded into the subagent's context automatically                                                                          |
 
 ### Model selection
 

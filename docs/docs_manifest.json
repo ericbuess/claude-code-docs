@@ -81,8 +81,8 @@
     "docs__en__hooks.md": {
       "original_url": "https://docs.claude.com/docs/en/hooks",
       "original_md_url": "https://docs.claude.com/docs/en/hooks.md",
-      "hash": "8774132201b317e72874b96bbcdf1e444555e19872ba40f04d95dbfce6898821",
-      "last_updated": "2025-11-17T03:28:39.144765"
+      "hash": "3cb05512039e4e2f3bc4e5329ec54ba9dd99c6d71f0fcb3db1cc1b95be0c4081",
+      "last_updated": "2025-11-18T03:25:44.844571"
     },
     "docs__en__hooks-guide.md": {
       "original_url": "https://docs.claude.com/docs/en/hooks-guide",
@@ -231,8 +231,8 @@
     "docs__en__sub-agents.md": {
       "original_url": "https://docs.claude.com/docs/en/sub-agents",
       "original_md_url": "https://docs.claude.com/docs/en/sub-agents.md",
-      "hash": "d93bdfeaa72122dcc29667a99919d5afe563dac1d8b2569eda66abbdc37ea292",
-      "last_updated": "2025-11-16T17:38:38.936113"
+      "hash": "b6880df8c7d7343019ea3b37e9bf0d25079c9fe41cee3ff1d1bbc90edfe43fd3",
+      "last_updated": "2025-11-18T03:26:04.436910"
     },
     "docs__en__terminal-config.md": {
       "original_url": "https://docs.claude.com/docs/en/terminal-config",
@@ -1605,8 +1605,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-18T00:26:38.679066",
-    "fetch_duration_seconds": 152.721565,
+    "last_fetch_completed": "2025-11-18T03:28:03.307426",
+    "fetch_duration_seconds": 148.181987,
     "total_pages_discovered": 270,
     "pages_fetched_successfully": 267,
     "pages_failed": 4,
@@ -1621,7 +1621,7 @@
     "total_files": 267,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-18T00:26:38.679086",
+  "last_updated": "2025-11-18T03:28:03.307452",
   "base_url": "https://raw.githubusercontent.com/costiash/claude-code-docs/main/docs/",
   "github_repository": "costiash/claude-code-docs",
   "github_ref": "main",

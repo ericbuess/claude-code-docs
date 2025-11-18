@@ -474,7 +474,8 @@ The exact schema for `tool_input` depends on the tool.
   "tool_input": {
     "file_path": "/path/to/file.txt",
     "content": "file content"
-  }
+  },
+  "tool_use_id": "toolu_01ABC123..."
 }
 ```
 
@@ -497,7 +498,8 @@ The exact schema for `tool_input` and `tool_response` depends on the tool.
   "tool_response": {
     "filePath": "/path/to/file.txt",
     "success": true
-  }
+  },
+  "tool_use_id": "toolu_01ABC123..."
 }
 ```
 
