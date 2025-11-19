@@ -531,8 +531,8 @@
     "en__api__overview.md": {
       "original_url": "https://docs.claude.com/en/api/overview",
       "original_md_url": "https://docs.claude.com/en/api/overview.md",
-      "hash": "3428b498fae45d0b9d6a02c2727621274aefc279a2bc1cdfae421c7d696220cd",
-      "last_updated": "2025-11-18T18:09:43.867063"
+      "hash": "9880d61e5a252c95bda53e6c364ab02bb17bbc587fe3438a20feef3fa54e003b",
+      "last_updated": "2025-11-19T00:26:08.672448"
     },
     "en__api__prompt-tools-generate.md": {
       "original_url": "https://docs.claude.com/en/api/prompt-tools-generate",
@@ -987,8 +987,8 @@
     "en__docs__build-with-claude__overview.md": {
       "original_url": "https://docs.claude.com/en/docs/build-with-claude/overview",
       "original_md_url": "https://docs.claude.com/en/docs/build-with-claude/overview.md",
-      "hash": "3428b498fae45d0b9d6a02c2727621274aefc279a2bc1cdfae421c7d696220cd",
-      "last_updated": "2025-11-18T18:11:31.018173"
+      "hash": "9880d61e5a252c95bda53e6c364ab02bb17bbc587fe3438a20feef3fa54e003b",
+      "last_updated": "2025-11-19T00:26:49.299549"
     },
     "en__docs__build-with-claude__pdf-support.md": {
       "original_url": "https://docs.claude.com/en/docs/build-with-claude/pdf-support",
@@ -1623,8 +1623,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-18T18:14:17.495816",
-    "fetch_duration_seconds": 340.22717,
+    "last_fetch_completed": "2025-11-19T00:27:45.177231",
+    "fetch_duration_seconds": 170.254067,
     "total_pages_discovered": 273,
     "pages_fetched_successfully": 270,
     "pages_failed": 4,
@@ -1639,7 +1639,7 @@
     "total_files": 270,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-18T18:14:17.495837",
+  "last_updated": "2025-11-19T00:27:45.177259",
   "base_url": "https://raw.githubusercontent.com/costiash/claude-code-docs/main/docs/",
   "github_repository": "costiash/claude-code-docs",
   "github_ref": "main",
