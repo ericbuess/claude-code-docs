@@ -1,39 +1,41 @@
 # Streaming Messages
 
-When creating a Message, you can set `"stream": true` to incrementally stream the response using [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent%5Fevents/Using%5Fserver-sent%5Fevents) (SSE).
+---
+
+When creating a Message, you can set `"stream": true` to incrementally stream the response using [server-sent events](https://developer.mozilla.org/en-US/Web/API/Server-sent%5Fevents/Using%5Fserver-sent%5Fevents) (SSE).
 
 ## Streaming with SDKs
 
 Our [Python](https://github.com/anthropics/anthropic-sdk-python) and [TypeScript](https://github.com/anthropics/anthropic-sdk-typescript) SDKs offer multiple ways of streaming. The Python SDK allows both sync and async streams. See the documentation in each SDK for details.
 
 <CodeGroup>
-  ```Python Python theme={null}
-  import anthropic
+    ```python Python
+    import anthropic
 
-  client = anthropic.Anthropic()
+    client = anthropic.Anthropic()
 
-  with client.messages.stream(
-      max_tokens=1024,
-      messages=[{"role": "user", "content": "Hello"}],
-      model="claude-sonnet-4-5",
-  ) as stream:
-    for text in stream.text_stream:
-        print(text, end="", flush=True)
-  ```
+    with client.messages.stream(
+        max_tokens=1024,
+        messages=[{"role": "user", "content": "Hello"}],
+        model="claude-sonnet-4-5",
+    ) as stream:
+      for text in stream.text_stream:
+          print(text, end="", flush=True)
+    ```
 
-  ```TypeScript TypeScript theme={null}
-  import Anthropic from '@anthropic-ai/sdk';
+    ```typescript TypeScript
+    import Anthropic from '@anthropic-ai/sdk';
 
-  const client = new Anthropic();
+    const client = new Anthropic();
 
-  await client.messages.stream({
-      messages: [{role: 'user', content: "Hello"}],
-      model: 'claude-sonnet-4-5',
-      max_tokens: 1024,
-  }).on('text', (text) => {
-      console.log(text);
-  });
-  ```
+    await client.messages.stream({
+        messages: [{role: 'user', content: "Hello"}],
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1024,
+    }).on('text', (text) => {
+        console.log(text);
+    });
+    ```
 </CodeGroup>
 
 ## Event types
@@ -47,9 +49,9 @@ Each stream uses the following event flow:
 3. One or more `message_delta` events, indicating top-level changes to the final `Message` object.
 4. A final `message_stop` event.
 
-<Warning>
+  <Warning>
   The token counts shown in the `usage` field of the `message_delta` event are *cumulative*.
-</Warning>
+  </Warning>
 
 ### Ping events
 
@@ -57,16 +59,16 @@ Event streams may also include any number of `ping` events.
 
 ### Error events
 
-We may occasionally send [errors](/en/api/errors) in the event stream. For example, during periods of high usage, you may receive an `overloaded_error`, which would normally correspond to an HTTP 529 in a non-streaming context:
+We may occasionally send [errors](/docs/en/api/errors) in the event stream. For example, during periods of high usage, you may receive an `overloaded_error`, which would normally correspond to an HTTP 529 in a non-streaming context:
 
-```json Example error theme={null}
+```json Example error
 event: error
 data: {"type": "error", "error": {"type": "overloaded_error", "message": "Overloaded"}}
 ```
 
 ### Other events
 
-In accordance with our [versioning policy](/en/api/versioning), we may add new event types, and your code should handle unknown event types gracefully.
+In accordance with our [versioning policy](/docs/en/api/versioning), we may add new event types, and your code should handle unknown event types gracefully.
 
 ## Content block delta types
 
@@ -75,58 +77,52 @@ Each `content_block_delta` event contains a `delta` of a type that updates the `
 ### Text delta
 
 A `text` content block delta looks like:
-
-```JSON Text delta theme={null}
+```json Text delta
 event: content_block_delta
 data: {"type": "content_block_delta","index": 0,"delta": {"type": "text_delta", "text": "ello frien"}}
 ```
 
 ### Input JSON delta
 
-The deltas for `tool_use` content blocks correspond to updates for the `input` field of the block. To support maximum granularity, the deltas are *partial JSON strings*, whereas the final `tool_use.input` is always an *object*.
+The deltas for `tool_use` content blocks correspond to updates for the `input` field of the block. To support maximum granularity, the deltas are _partial JSON strings_, whereas the final `tool_use.input` is always an _object_.
 
-You can accumulate the string deltas and parse the JSON once you receive a `content_block_stop` event, by using a library like [Pydantic](https://docs.pydantic.dev/latest/concepts/json/#partial-json-parsing) to do partial JSON parsing, or by using our [SDKs](/en/api/client-sdks), which provide helpers to access parsed incremental values.
+You can accumulate the string deltas and parse the JSON once you receive a `content_block_stop` event, by using a library like [Pydantic](https://docs.pydantic.dev/latest/concepts/json/#partial-json-parsing) to do partial JSON parsing, or by using our [SDKs](/docs/en/api/client-sdks), which provide helpers to access parsed incremental values.
 
 A `tool_use` content block delta looks like:
-
-```JSON Input JSON delta theme={null}
+```json Input JSON delta
 event: content_block_delta
 data: {"type": "content_block_delta","index": 1,"delta": {"type": "input_json_delta","partial_json": "{\"location\": \"San Fra"}}}
 ```
-
 Note: Our current models only support emitting one complete key and value property from `input` at a time. As such, when using tools, there may be delays between streaming events while the model is working. Once an `input` key and value are accumulated, we emit them as multiple `content_block_delta` events with chunked partial json so that the format can automatically support finer granularity in future models.
 
 ### Thinking delta
 
-When using [extended thinking](/en/docs/build-with-claude/extended-thinking#streaming-thinking) with streaming enabled, you'll receive thinking content via `thinking_delta` events. These deltas correspond to the `thinking` field of the `thinking` content blocks.
+When using [extended thinking](/docs/en/build-with-claude/extended-thinking#streaming-thinking) with streaming enabled, you'll receive thinking content via `thinking_delta` events. These deltas correspond to the `thinking` field of the `thinking` content blocks.
 
 For thinking content, a special `signature_delta` event is sent just before the `content_block_stop` event. This signature is used to verify the integrity of the thinking block.
 
 A typical thinking delta looks like:
-
-```JSON Thinking delta theme={null}
+```json Thinking delta
 event: content_block_delta
 data: {"type": "content_block_delta", "index": 0, "delta": {"type": "thinking_delta", "thinking": "Let me solve this step by step:\n\n1. First break down 27 * 453"}}
 ```
 
 The signature delta looks like:
-
-```JSON Signature delta theme={null}
+```json Signature delta
 event: content_block_delta
 data: {"type": "content_block_delta", "index": 0, "delta": {"type": "signature_delta", "signature": "EqQBCgIYAhIM1gbcDa9GJwZA2b3hGgxBdjrkzLoky3dl1pkiMOYds..."}}
 ```
 
 ## Full HTTP Stream response
 
-We strongly recommend that you use our [client SDKs](/en/api/client-sdks) when using streaming mode. However, if you are building a direct API integration, you will need to handle these events yourself.
+We strongly recommend that you use our [client SDKs](/docs/en/api/client-sdks) when using streaming mode. However, if you are building a direct API integration, you will need to handle these events yourself.
 
 A stream response is comprised of:
-
 1. A `message_start` event
 2. Potentially multiple content blocks, each of which contains:
-   * A `content_block_start` event
-   * Potentially multiple `content_block_delta` events
-   * A `content_block_stop` event
+    - A `content_block_start` event
+    - Potentially multiple `content_block_delta` events
+    - A `content_block_stop` event
 3. A `message_delta` event
 4. A `message_stop` event
 
@@ -135,36 +131,36 @@ There may be `ping` events dispersed throughout the response as well. See [Event
 ### Basic streaming request
 
 <CodeGroup>
-  ```bash Shell theme={null}
-  curl https://api.anthropic.com/v1/messages \
-       --header "anthropic-version: 2023-06-01" \
-       --header "content-type: application/json" \
-       --header "x-api-key: $ANTHROPIC_API_KEY" \
-       --data \
-  '{
-    "model": "claude-sonnet-4-5",
-    "messages": [{"role": "user", "content": "Hello"}],
-    "max_tokens": 256,
-    "stream": true
-  }'
-  ```
+```bash Shell
+curl https://api.anthropic.com/v1/messages \
+     --header "anthropic-version: 2023-06-01" \
+     --header "content-type: application/json" \
+     --header "x-api-key: $ANTHROPIC_API_KEY" \
+     --data \
+'{
+  "model": "claude-sonnet-4-5",
+  "messages": [{"role": "user", "content": "Hello"}],
+  "max_tokens": 256,
+  "stream": true
+}'
+```
 
-  ```python Python theme={null}
-  import anthropic
+```python Python
+import anthropic
 
-  client = anthropic.Anthropic()
+client = anthropic.Anthropic()
 
-  with client.messages.stream(
-      model="claude-sonnet-4-5",
-      messages=[{"role": "user", "content": "Hello"}],
-      max_tokens=256,
-  ) as stream:
-      for text in stream.text_stream:
-          print(text, end="", flush=True)
-  ```
+with client.messages.stream(
+    model="claude-sonnet-4-5",
+    messages=[{"role": "user", "content": "Hello"}],
+    max_tokens=256,
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+```
 </CodeGroup>
 
-```json Response theme={null}
+```json Response
 event: message_start
 data: {"type": "message_start", "message": {"id": "msg_1nZdL29xx5MUA1yADyHTEsnR8uuvGzszyY", "type": "message", "role": "assistant", "content": [], "model": "claude-sonnet-4-5-20250929", "stop_reason": null, "stop_sequence": null, "usage": {"input_tokens": 25, "output_tokens": 1}}}
 
@@ -194,87 +190,87 @@ data: {"type": "message_stop"}
 ### Streaming request with tool use
 
 <Tip>
-  Tool use now supports fine-grained streaming for parameter values as a beta feature. For more details, see [Fine-grained tool streaming](/en/docs/agents-and-tools/tool-use/fine-grained-tool-streaming).
+Tool use now supports fine-grained streaming for parameter values as a beta feature. For more details, see [Fine-grained tool streaming](/docs/en/agents-and-tools/tool-use/fine-grained-tool-streaming).
 </Tip>
 
 In this request, we ask Claude to use a tool to tell us the weather.
 
 <CodeGroup>
-  ```bash Shell theme={null}
-    curl https://api.anthropic.com/v1/messages \
-      -H "content-type: application/json" \
-      -H "x-api-key: $ANTHROPIC_API_KEY" \
-      -H "anthropic-version: 2023-06-01" \
-      -d '{
-        "model": "claude-sonnet-4-5",
-        "max_tokens": 1024,
-        "tools": [
-          {
-            "name": "get_weather",
-            "description": "Get the current weather in a given location",
-            "input_schema": {
-              "type": "object",
-              "properties": {
-                "location": {
-                  "type": "string",
-                  "description": "The city and state, e.g. San Francisco, CA"
-                }
-              },
-              "required": ["location"]
-            }
-          }
-        ],
-        "tool_choice": {"type": "any"},
-        "messages": [
-          {
-            "role": "user",
-            "content": "What is the weather like in San Francisco?"
-          }
-        ],
-        "stream": true
-      }'
-  ```
-
-  ```python Python theme={null}
-  import anthropic
-
-  client = anthropic.Anthropic()
-
-  tools = [
-      {
+```bash Shell
+  curl https://api.anthropic.com/v1/messages \
+    -H "content-type: application/json" \
+    -H "x-api-key: $ANTHROPIC_API_KEY" \
+    -H "anthropic-version: 2023-06-01" \
+    -d '{
+      "model": "claude-sonnet-4-5",
+      "max_tokens": 1024,
+      "tools": [
+        {
           "name": "get_weather",
           "description": "Get the current weather in a given location",
           "input_schema": {
-              "type": "object",
-              "properties": {
-                  "location": {
-                      "type": "string",
-                      "description": "The city and state, e.g. San Francisco, CA"
-                  }
-              },
-              "required": ["location"]
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string",
+                "description": "The city and state, e.g. San Francisco, CA"
+              }
+            },
+            "required": ["location"]
           }
-      }
-  ]
-
-  with client.messages.stream(
-      model="claude-sonnet-4-5",
-      max_tokens=1024,
-      tools=tools,
-      tool_choice={"type": "any"},
-      messages=[
-          {
-              "role": "user",
-              "content": "What is the weather like in San Francisco?"
-          }
+        }
       ],
-  ) as stream:
-      for text in stream.text_stream:
-          print(text, end="", flush=True)
-  ```
+      "tool_choice": {"type": "any"},
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is the weather like in San Francisco?"
+        }
+      ],
+      "stream": true
+    }'
+```
+
+```python Python
+import anthropic
+
+client = anthropic.Anthropic()
+
+tools = [
+    {
+        "name": "get_weather",
+        "description": "Get the current weather in a given location",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "The city and state, e.g. San Francisco, CA"
+                }
+            },
+            "required": ["location"]
+        }
+    }
+]
+
+with client.messages.stream(
+    model="claude-sonnet-4-5",
+    max_tokens=1024,
+    tools=tools,
+    tool_choice={"type": "any"},
+    messages=[
+        {
+            "role": "user",
+            "content": "What is the weather like in San Francisco?"
+        }
+    ],
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+```
 </CodeGroup>
 
-```json Response theme={null}
+```json Response
 event: message_start
 data: {"type":"message_start","message":{"id":"msg_014p7gG3wDgGV9EUtLvnow3U","type":"message","role":"assistant","model":"claude-sonnet-4-5-20250929","stop_sequence":null,"usage":{"input_tokens":472,"output_tokens":2},"content":[],"stop_reason":null}}
 
@@ -371,58 +367,58 @@ data: {"type":"message_stop"}
 In this request, we enable extended thinking with streaming to see Claude's step-by-step reasoning.
 
 <CodeGroup>
-  ```bash Shell theme={null}
-  curl https://api.anthropic.com/v1/messages \
-       --header "x-api-key: $ANTHROPIC_API_KEY" \
-       --header "anthropic-version: 2023-06-01" \
-       --header "content-type: application/json" \
-       --data \
-  '{
-      "model": "claude-sonnet-4-5",
-      "max_tokens": 20000,
-      "stream": true,
-      "thinking": {
-          "type": "enabled",
-          "budget_tokens": 16000
-      },
-      "messages": [
-          {
-              "role": "user",
-              "content": "What is 27 * 453?"
-          }
-      ]
-  }'
-  ```
+```bash Shell
+curl https://api.anthropic.com/v1/messages \
+     --header "x-api-key: $ANTHROPIC_API_KEY" \
+     --header "anthropic-version: 2023-06-01" \
+     --header "content-type: application/json" \
+     --data \
+'{
+    "model": "claude-sonnet-4-5",
+    "max_tokens": 20000,
+    "stream": true,
+    "thinking": {
+        "type": "enabled",
+        "budget_tokens": 16000
+    },
+    "messages": [
+        {
+            "role": "user",
+            "content": "What is 27 * 453?"
+        }
+    ]
+}'
+```
 
-  ```python Python theme={null}
-  import anthropic
+```python Python
+import anthropic
 
-  client = anthropic.Anthropic()
+client = anthropic.Anthropic()
 
-  with client.messages.stream(
-      model="claude-sonnet-4-5",
-      max_tokens=20000,
-      thinking={
-          "type": "enabled",
-          "budget_tokens": 16000
-      },
-      messages=[
-          {
-              "role": "user",
-              "content": "What is 27 * 453?"
-          }
-      ],
-  ) as stream:
-      for event in stream:
-          if event.type == "content_block_delta":
-              if event.delta.type == "thinking_delta":
-                  print(event.delta.thinking, end="", flush=True)
-              elif event.delta.type == "text_delta":
-                  print(event.delta.text, end="", flush=True)
-  ```
+with client.messages.stream(
+    model="claude-sonnet-4-5",
+    max_tokens=20000,
+    thinking={
+        "type": "enabled",
+        "budget_tokens": 16000
+    },
+    messages=[
+        {
+            "role": "user",
+            "content": "What is 27 * 453?"
+        }
+    ],
+) as stream:
+    for event in stream:
+        if event.type == "content_block_delta":
+            if event.delta.type == "thinking_delta":
+                print(event.delta.thinking, end="", flush=True)
+            elif event.delta.type == "text_delta":
+                print(event.delta.text, end="", flush=True)
+```
 </CodeGroup>
 
-```json Response theme={null}
+```json Response
 event: message_start
 data: {"type": "message_start", "message": {"id": "msg_01...", "type": "message", "role": "assistant", "content": [], "model": "claude-sonnet-4-5-20250929", "stop_reason": null, "stop_sequence": null}}
 
@@ -474,60 +470,60 @@ data: {"type": "message_stop"}
 In this request, we ask Claude to search the web for current weather information.
 
 <CodeGroup>
-  ```bash Shell theme={null}
-  curl https://api.anthropic.com/v1/messages \
-       --header "x-api-key: $ANTHROPIC_API_KEY" \
-       --header "anthropic-version: 2023-06-01" \
-       --header "content-type: application/json" \
-       --data \
-  '{
-      "model": "claude-sonnet-4-5",
-      "max_tokens": 1024,
-      "stream": true,
-      "tools": [
-          {
-              "type": "web_search_20250305",
-              "name": "web_search",
-              "max_uses": 5
-          }
-      ],
-      "messages": [
-          {
-              "role": "user",
-              "content": "What is the weather like in New York City today?"
-          }
-      ]
-  }'
-  ```
+```bash Shell
+curl https://api.anthropic.com/v1/messages \
+     --header "x-api-key: $ANTHROPIC_API_KEY" \
+     --header "anthropic-version: 2023-06-01" \
+     --header "content-type: application/json" \
+     --data \
+'{
+    "model": "claude-sonnet-4-5",
+    "max_tokens": 1024,
+    "stream": true,
+    "tools": [
+        {
+            "type": "web_search_20250305",
+            "name": "web_search",
+            "max_uses": 5
+        }
+    ],
+    "messages": [
+        {
+            "role": "user",
+            "content": "What is the weather like in New York City today?"
+        }
+    ]
+}'
+```
 
-  ```python Python theme={null}
-  import anthropic
+```python Python
+import anthropic
 
-  client = anthropic.Anthropic()
+client = anthropic.Anthropic()
 
-  with client.messages.stream(
-      model="claude-sonnet-4-5",
-      max_tokens=1024,
-      tools=[
-          {
-              "type": "web_search_20250305",
-              "name": "web_search",
-              "max_uses": 5
-          }
-      ],
-      messages=[
-          {
-              "role": "user",
-              "content": "What is the weather like in New York City today?"
-          }
-      ],
-  ) as stream:
-      for text in stream.text_stream:
-          print(text, end="", flush=True)
-  ```
+with client.messages.stream(
+    model="claude-sonnet-4-5",
+    max_tokens=1024,
+    tools=[
+        {
+            "type": "web_search_20250305",
+            "name": "web_search",
+            "max_uses": 5
+        }
+    ],
+    messages=[
+        {
+            "role": "user",
+            "content": "What is the weather like in New York City today?"
+        }
+    ],
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+```
 </CodeGroup>
 
-```json Response theme={null}
+```json Response
 event: message_start
 data: {"type":"message_start","message":{"id":"msg_01G...","type":"message","role":"assistant","model":"claude-sonnet-4-5-20250929","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":2679,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":3}}}
 

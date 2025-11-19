@@ -1,25 +1,26 @@
 # Fine-grained tool streaming
 
-Tool use now supports fine-grained [streaming](/en/docs/build-with-claude/streaming) for parameter values. This allows developers to stream tool use parameters without buffering / JSON validation, reducing the latency to begin receiving large parameters.
+---
+
+Tool use now supports fine-grained [streaming](/docs/en/build-with-claude/streaming) for parameter values. This allows developers to stream tool use parameters without buffering / JSON validation, reducing the latency to begin receiving large parameters.
 
 <Note>
-  Fine-grained tool streaming is a beta feature. Please make sure to evaluate your responses before using it in production.
+Fine-grained tool streaming is a beta feature. Please make sure to evaluate your responses before using it in production. 
 
-  Please use [this form](https://forms.gle/D4Fjr7GvQRzfTZT96) to provide feedback on the quality of the model responses, the API itself, or the quality of the documentation—we cannot wait to hear from you!
+Please use [this form](https://forms.gle/D4Fjr7GvQRzfTZT96) to provide feedback on the quality of the model responses, the API itself, or the quality of the documentation—we cannot wait to hear from you!
 </Note>
 
 <Warning>
-  When using fine-grained tool streaming, you may potentially receive invalid or partial JSON inputs. Please make sure to account for these edge cases in your code.
+When using fine-grained tool streaming, you may potentially receive invalid or partial JSON inputs. Please make sure to account for these edge cases in your code.
 </Warning>
-
 ## How to use fine-grained tool streaming
-
 To use this beta feature, simply add the beta header `fine-grained-tool-streaming-2025-05-14` to a tool use request and turn on streaming.
 
 Here's an example of how to use fine-grained tool streaming with the API:
 
 <CodeGroup>
-  ```bash Shell theme={null}
+
+  ```bash Shell
   curl https://api.anthropic.com/v1/messages \
     -H "content-type: application/json" \
     -H "x-api-key: $ANTHROPIC_API_KEY" \
@@ -58,7 +59,7 @@ Here's an example of how to use fine-grained tool streaming with the API:
     }' | jq '.usage'
   ```
 
-  ```Python Python theme={null}
+  ```python Python
   import anthropic
 
   client = anthropic.Anthropic()
@@ -94,7 +95,7 @@ Here's an example of how to use fine-grained tool streaming with the API:
   print(response.usage)
   ```
 
-  ```TypeScript TypeScript theme={null}
+  ```typescript TypeScript
   import Anthropic from '@anthropic-ai/sdk';
 
   const anthropic = new Anthropic();
@@ -134,42 +135,40 @@ Here's an example of how to use fine-grained tool streaming with the API:
 In this example, fine-grained tool streaming enables Claude to stream the lines of a long poem into the tool call `make_file` without buffering to validate if the `lines_of_text` parameter is valid JSON. This means you can see the parameter stream as it arrives, without having to wait for the entire parameter to buffer and validate.
 
 <Note>
-  With fine-grained tool streaming, tool use chunks start streaming faster, and are often longer and contain fewer word breaks. This is due to differences in chunking behavior.
+With fine-grained tool streaming, tool use chunks start streaming faster, and are often longer and contain fewer word breaks. This is due to differences in chunking behavior.
 
-  Example:
+Example: 
 
-  Without fine-grained streaming (15s delay):
+Without fine-grained streaming (15s delay):
+```
+Chunk 1: '{"'
+Chunk 2: 'query": "Ty'
+Chunk 3: 'peScri'
+Chunk 4: 'pt 5.0 5.1 '
+Chunk 5: '5.2 5'
+Chunk 6: '.3'
+Chunk 8: ' new f'
+Chunk 9: 'eatur'
+...
+```
 
-  ```
-  Chunk 1: '{"'
-  Chunk 2: 'query": "Ty'
-  Chunk 3: 'peScri'
-  Chunk 4: 'pt 5.0 5.1 '
-  Chunk 5: '5.2 5'
-  Chunk 6: '.3'
-  Chunk 8: ' new f'
-  Chunk 9: 'eatur'
-  ...
-  ```
-
-  With fine-grained streaming (3s delay):
-
-  ```
-  Chunk 1: '{"query": "TypeScript 5.0 5.1 5.2 5.3'
-  Chunk 2: ' new features comparison'
-  ```
+With fine-grained streaming (3s delay):
+```
+Chunk 1: '{"query": "TypeScript 5.0 5.1 5.2 5.3'
+Chunk 2: ' new features comparison'
+```
 </Note>
 
 <Warning>
-  Because fine-grained streaming sends parameters without buffering or JSON validation, there is no guarantee that the resulting stream will complete in a valid JSON string.
-  Particularly, if the [stop reason](/en/docs/build-with-claude/handling-stop-reasons) `max_tokens` is reached, the stream may end midway through a parameter and may be incomplete. You will generally have to write specific support to handle when `max_tokens` is reached.
+Because fine-grained streaming sends parameters without buffering or JSON validation, there is no guarantee that the resulting stream will complete in a valid JSON string.
+Particularly, if the [stop reason](/docs/en/build-with-claude/handling-stop-reasons) `max_tokens` is reached, the stream may end midway through a parameter and may be incomplete. You will generally have to write specific support to handle when `max_tokens` is reached.
 </Warning>
 
 ## Handling invalid JSON in tool responses
 
 When using fine-grained tool streaming, you may receive invalid or incomplete JSON from the model. If you need to pass this invalid JSON back to the model in an error response block, you may wrap it in a JSON object to ensure proper handling (with a reasonable key). For example:
 
-```json  theme={null}
+```json
 {
   "INVALID_JSON": "<your invalid json string>"
 }
@@ -178,5 +177,5 @@ When using fine-grained tool streaming, you may receive invalid or incomplete JS
 This approach helps the model understand that the content is invalid JSON while preserving the original malformed data for debugging purposes.
 
 <Note>
-  When wrapping invalid JSON, make sure to properly escape any quotes or special characters in the invalid JSON string to maintain valid JSON structure in the wrapper object.
+When wrapping invalid JSON, make sure to properly escape any quotes or special characters in the invalid JSON string to maintain valid JSON structure in the wrapper object.
 </Note>

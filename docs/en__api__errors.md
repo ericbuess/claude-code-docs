@@ -1,5 +1,7 @@
 # Errors
 
+---
+
 ## HTTP errors
 
 Our API follows a predictable HTTP error code format:
@@ -14,23 +16,23 @@ Our API follows a predictable HTTP error code format:
 * 529 - `overloaded_error`: The API is temporarily overloaded.
 
   <Warning>
-    529 errors can occur when APIs experience high traffic across all users.
-
-    In rare cases, if your organization has a sharp increase in usage, you might see 429 errors due to acceleration limits on the API. To avoid hitting acceleration limits, ramp up your traffic gradually and maintain consistent usage patterns.
+  529 errors can occur when APIs experience high traffic across all users.  
+  
+  In rare cases, if your organization has a sharp increase in usage, you might see 429 errors due to acceleration limits on the API. To avoid hitting acceleration limits, ramp up your traffic gradually and maintain consistent usage patterns.
   </Warning>
 
-When receiving a [streaming](/en/docs/build-with-claude/streaming) response via SSE, it's possible that an error can occur after returning a 200 response, in which case error handling wouldn't follow these standard mechanisms.
+When receiving a [streaming](/docs/en/build-with-claude/streaming) response via SSE, it's possible that an error can occur after returning a 200 response, in which case error handling wouldn't follow these standard mechanisms.
 
 ## Request size limits
 
 The API enforces request size limits to ensure optimal performance:
 
-| Endpoint Type                                            | Maximum Request Size |
-| :------------------------------------------------------- | :------------------- |
-| Messages API                                             | 32 MB                |
-| Token Counting API                                       | 32 MB                |
-| [Batch API](/en/docs/build-with-claude/batch-processing) | 256 MB               |
-| [Files API](/en/docs/build-with-claude/files)            | 500 MB               |
+| Endpoint Type | Maximum Request Size |
+|:---|:---|
+| Messages API | 32 MB |
+| Token Counting API | 32 MB |
+| [Batch API](/docs/en/build-with-claude/batch-processing) | 256 MB |
+| [Files API](/docs/en/build-with-claude/files) | 500 MB |
 
 If you exceed these limits, you'll receive a 413 `request_too_large` error. The error is returned from Cloudflare before the request reaches our API servers.
 
@@ -38,7 +40,7 @@ If you exceed these limits, you'll receive a 413 `request_too_large` error. The 
 
 Errors are always returned as JSON, with a top-level `error` object that always includes a `type` and `message` value. The response also includes a `request_id` field for easier tracking and debugging. For example:
 
-```JSON JSON theme={null}
+```json JSON
 {
   "type": "error",
   "error": {
@@ -49,7 +51,7 @@ Errors are always returned as JSON, with a top-level `error` object that always 
 }
 ```
 
-In accordance with our [versioning](/en/api/versioning) policy, we may expand the values within these objects, and it is possible that the `type` values will grow over time.
+In accordance with our [versioning](/docs/en/api/versioning) policy, we may expand the values within these objects, and it is possible that the `type` values will grow over time.
 
 ## Request id
 
@@ -58,7 +60,7 @@ Every API response includes a unique `request-id` header. This header contains a
 Our official SDKs provide this value as a property on top-level response objects, containing the value of the `request-id` header:
 
 <CodeGroup>
-  ```Python Python theme={null}
+  ```python Python
   import anthropic
 
   client = anthropic.Anthropic()
@@ -73,7 +75,7 @@ Our official SDKs provide this value as a property on top-level response objects
   print(f"Request ID: {message._request_id}")
   ```
 
-  ```TypeScript TypeScript theme={null}
+  ```typescript TypeScript
   import Anthropic from '@anthropic-ai/sdk';
 
   const client = new Anthropic();
@@ -92,18 +94,18 @@ Our official SDKs provide this value as a property on top-level response objects
 ## Long requests
 
 <Warning>
-  We highly encourage using the [streaming Messages API](/en/docs/build-with-claude/streaming) or [Message Batches API](/en/api/creating-message-batches) for long running requests, especially those over 10 minutes.
+ We highly encourage using the [streaming Messages API](/docs/en/build-with-claude/streaming) or [Message Batches API](/docs/en/api/creating-message-batches) for long running requests, especially those over 10 minutes.
 </Warning>
 
-We do not recommend setting a large `max_tokens` values without using our [streaming Messages API](/en/docs/build-with-claude/streaming)
-or [Message Batches API](/en/api/creating-message-batches):
+We do not recommend setting a large `max_tokens` values without using our [streaming Messages API](/docs/en/build-with-claude/streaming)
+or [Message Batches API](/docs/en/api/creating-message-batches):
 
-* Some networks may drop idle connections after a variable period of time, which
-  can cause the request to fail or timeout without receiving a response from Anthropic.
-* Networks differ in reliability; our [Message Batches API](/en/api/creating-message-batches) can help you
-  manage the risk of network issues by allowing you to poll for results rather than requiring an uninterrupted network connection.
+- Some networks may drop idle connections after a variable period of time, which
+can cause the request to fail or timeout without receiving a response from Anthropic.
+- Networks differ in reliability; our [Message Batches API](/docs/en/api/creating-message-batches) can help you
+manage the risk of network issues by allowing you to poll for results rather than requiring an uninterrupted network connection.
 
 If you are building a direct API integration, you should be aware that setting a [TCP socket keep-alive](https://tldp.org/HOWTO/TCP-Keepalive-HOWTO/programming.html) can reduce the impact of idle connection timeouts on some networks.
 
-Our [SDKs](/en/api/client-sdks) will validate that your non-streaming Messages API requests are not expected to exceed a 10 minute timeout and
+Our [SDKs](/docs/en/api/client-sdks) will validate that your non-streaming Messages API requests are not expected to exceed a 10 minute timeout and
 also will set a socket option for TCP keep-alive.

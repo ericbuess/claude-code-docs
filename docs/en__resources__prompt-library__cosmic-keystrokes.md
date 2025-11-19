@@ -1,16 +1,18 @@
 # Cosmic Keystrokes
 
-> Generate an interactive speed typing game in a single HTML file, featuring side-scrolling gameplay and Tailwind CSS styling.
+Generate an interactive speed typing game in a single HTML file, featuring side-scrolling gameplay and Tailwind CSS styling.
+
+---
 
 > Copy this prompt into our developer [Console](https://console.anthropic.com/dashboard) to try it for yourself!
 
-|      | Content                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| User | Write me a fully complete web app as a single HTML file. The app should contain a simple side-scrolling game where I use WASD to move around. When moving around the world, occasionally the character/sprite will encounter words. When a word is encountered, the player must correctly type the word as fast as possible.The faster the word is successfully typed, the more point the player gets. We should have a counter in the top-right to keep track of points. Words should be random and highly variable to keep the game interesting.<br /><br />You should make the website very aesthetic and use Tailwind. |
+|        | Content                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| User | Write me a fully complete web app as a single HTML file. The app should contain a simple side-scrolling game where I use WASD to move around. When moving around the world, occasionally the character/sprite will encounter words. When a word is encountered, the player must correctly type the word as fast as possible.The faster the word is successfully typed, the more point the player gets. We should have a counter in the top-right to keep track of points. Words should be random and highly variable to keep the game interesting.<br/><br/>You should make the website very aesthetic and use Tailwind. |
 
 ## Example Output
 
-```html  theme={null}
+```html
 <!DOCTYPE html>
 <html>
   <head>
@@ -278,107 +280,109 @@
 ## API Request
 
 <CodeGroup>
-  ```python Python theme={null}
-  import anthropic
 
-  client = anthropic.Anthropic(
-      # defaults to os.environ.get("ANTHROPIC_API_KEY")
-      api_key="my_api_key",
-  )
-  message = client.messages.create(
-      model="claude-sonnet-4-5",
-      max_tokens=2000,
-      temperature=0,
-      messages=[
-          {
-              "role": "user",
-              "content": [
-                  {
-                      "type": "text",
-                      "text": "Write me a fully complete web app as a single HTML file. The app should contain a simple side-scrolling game where I use WASD to move around.  When moving around the world, occasionally the character/sprite will encounter words. When a word is encountered, the player must correctly type the word as fast as possible.The faster the word is successfully typed, the more point the player gets. We should have a counter in the top-right to keep track of points. Words should be random and highly variable to keep the game interesting.  \n  \nYou should make the website very aesthetic and use Tailwind."
-                  }
-              ]
-          }
-      ]
-  )
-  print(message.content)
-  ```
+```python Python
+import anthropic
 
-  ```typescript TypeScript theme={null}
-  import Anthropic from '@anthropic-ai/sdk';
+client = anthropic.Anthropic(
+    # defaults to os.environ.get("ANTHROPIC_API_KEY")
+    api_key="my_api_key",
+)
+message = client.messages.create(
+    model="claude-sonnet-4-5",
+    max_tokens=2000,
+    temperature=0,
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Write me a fully complete web app as a single HTML file. The app should contain a simple side-scrolling game where I use WASD to move around.  When moving around the world, occasionally the character/sprite will encounter words. When a word is encountered, the player must correctly type the word as fast as possible.The faster the word is successfully typed, the more point the player gets. We should have a counter in the top-right to keep track of points. Words should be random and highly variable to keep the game interesting.  \n  \nYou should make the website very aesthetic and use Tailwind."
+                }
+            ]
+        }
+    ]
+)
+print(message.content)
+```
 
-  const anthropic = new Anthropic({
-    apiKey: 'my_api_key', // defaults to process.env["ANTHROPIC_API_KEY"]
-  });
+```typescript TypeScript
+import Anthropic from '@anthropic-ai/sdk';
 
-  const msg = await anthropic.messages.create({
-    model: 'claude-sonnet-4-5',
-    max_tokens: 2000,
-    temperature: 0,
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'text',
-            text: 'Write me a fully complete web app as a single HTML file. The app should contain a simple side-scrolling game where I use WASD to move around.  When moving around the world, occasionally the character/sprite will encounter words. When a word is encountered, the player must correctly type the word as fast as possible.The faster the word is successfully typed, the more point the player gets. We should have a counter in the top-right to keep track of points. Words should be random and highly variable to keep the game interesting.  \n  \nYou should make the website very aesthetic and use Tailwind.',
-          },
-        ],
-      },
-    ],
-  });
-  console.log(msg);
-  ```
+const anthropic = new Anthropic({
+  apiKey: 'my_api_key', // defaults to process.env["ANTHROPIC_API_KEY"]
+});
 
-  ```python AWS Bedrock Python theme={null}
-  from anthropic import AnthropicBedrock
+const msg = await anthropic.messages.create({
+  model: 'claude-sonnet-4-5',
+  max_tokens: 2000,
+  temperature: 0,
+  messages: [
+    {
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: 'Write me a fully complete web app as a single HTML file. The app should contain a simple side-scrolling game where I use WASD to move around.  When moving around the world, occasionally the character/sprite will encounter words. When a word is encountered, the player must correctly type the word as fast as possible.The faster the word is successfully typed, the more point the player gets. We should have a counter in the top-right to keep track of points. Words should be random and highly variable to keep the game interesting.  \n  \nYou should make the website very aesthetic and use Tailwind.',
+        },
+      ],
+    },
+  ],
+});
+console.log(msg);
+```
 
-  # See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
-  # for authentication options
-  client = AnthropicBedrock()
+```python AWS Bedrock Python
+from anthropic import AnthropicBedrock
 
-  message = client.messages.create(
-      model="anthropic.claude-sonnet-4-5-20250929-v1:0",
-      max_tokens=2000,
-      temperature=0,
-      messages=[
-          {
-              "role": "user",
-              "content": [
-                  {
-                      "type": "text",
-                      "text": "Write me a fully complete web app as a single HTML file. The app should contain a simple side-scrolling game where I use WASD to move around.  When moving around the world, occasionally the character/sprite will encounter words. When a word is encountered, the player must correctly type the word as fast as possible.The faster the word is successfully typed, the more point the player gets. We should have a counter in the top-right to keep track of points. Words should be random and highly variable to keep the game interesting.  \n  \nYou should make the website very aesthetic and use Tailwind."
-                  }
-              ]
-          }
-      ]
-  )
-  print(message.content)
-  ```
+# See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
+# for authentication options
+client = AnthropicBedrock()
 
-  ```typescript AWS Bedrock TypeScript theme={null}
-  import AnthropicBedrock from '@anthropic-ai/bedrock-sdk';
+message = client.messages.create(
+    model="anthropic.claude-sonnet-4-5-20250929-v1:0",
+    max_tokens=2000,
+    temperature=0,
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Write me a fully complete web app as a single HTML file. The app should contain a simple side-scrolling game where I use WASD to move around.  When moving around the world, occasionally the character/sprite will encounter words. When a word is encountered, the player must correctly type the word as fast as possible.The faster the word is successfully typed, the more point the player gets. We should have a counter in the top-right to keep track of points. Words should be random and highly variable to keep the game interesting.  \n  \nYou should make the website very aesthetic and use Tailwind."
+                }
+            ]
+        }
+    ]
+)
+print(message.content)
+```
 
-  // See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
-  // for authentication options
-  const client = new AnthropicBedrock();
+```typescript AWS Bedrock TypeScript
+import AnthropicBedrock from '@anthropic-ai/bedrock-sdk';
 
-  const msg = await client.messages.create({
-    model: 'anthropic.claude-sonnet-4-5-20250929-v1:0',
-    max_tokens: 2000,
-    temperature: 0,
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'text',
-            text: 'Write me a fully complete web app as a single HTML file. The app should contain a simple side-scrolling game where I use WASD to move around.  When moving around the world, occasionally the character/sprite will encounter words. When a word is encountered, the player must correctly type the word as fast as possible.The faster the word is successfully typed, the more point the player gets. We should have a counter in the top-right to keep track of points. Words should be random and highly variable to keep the game interesting.  \n  \nYou should make the website very aesthetic and use Tailwind.',
-          },
-        ],
-      },
-    ],
-  });
-  console.log(msg);
-  ```
+// See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
+// for authentication options
+const client = new AnthropicBedrock();
+
+const msg = await client.messages.create({
+  model: 'anthropic.claude-sonnet-4-5-20250929-v1:0',
+  max_tokens: 2000,
+  temperature: 0,
+  messages: [
+    {
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: 'Write me a fully complete web app as a single HTML file. The app should contain a simple side-scrolling game where I use WASD to move around.  When moving around the world, occasionally the character/sprite will encounter words. When a word is encountered, the player must correctly type the word as fast as possible.The faster the word is successfully typed, the more point the player gets. We should have a counter in the top-right to keep track of points. Words should be random and highly variable to keep the game interesting.  \n  \nYou should make the website very aesthetic and use Tailwind.',
+        },
+      ],
+    },
+  ],
+});
+console.log(msg);
+```
+
 </CodeGroup>

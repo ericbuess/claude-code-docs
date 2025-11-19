@@ -1,141 +1,433 @@
-# Migrating from Text Completions
+# Using the Messages API
 
-> Migrating from Text Completions to Messages
+Practical patterns and examples for using the Messages API effectively
 
-<Note>
-  The Text Completions API has been deprecated in favor of the Messages API.
-</Note>
+---
 
-When migrating from Text Completions to [Messages](/en/api/messages), consider the following changes.
+This guide covers common patterns for working with the Messages API, including basic requests, multi-turn conversations, prefill techniques, and vision capabilities. For complete API specifications, see the [Messages API reference](/docs/en/api/messages).
 
-### Inputs and outputs
-
-The largest change between Text Completions and the Messages is the way in which you specify model inputs and receive outputs from the model.
-
-With Text Completions, inputs are raw strings:
-
-```Python Python theme={null}
-prompt = "\n\nHuman: Hello there\n\nAssistant: Hi, I'm Claude. How can I help?\n\nHuman: Can you explain Glycolysis to me?\n\nAssistant:"
-```
-
-With Messages, you specify a list of input messages instead of a raw prompt:
+## Basic request and response
 
 <CodeGroup>
-  ```json Shorthand theme={null}
-  messages = [
-    {"role": "user", "content": "Hello there."},
-    {"role": "assistant", "content": "Hi, I'm Claude. How can I help?"},
-    {"role": "user", "content": "Can you explain Glycolysis to me?"},
-  ]
+  ```bash Shell
+  #!/bin/sh
+  curl https://api.anthropic.com/v1/messages \
+       --header "x-api-key: $ANTHROPIC_API_KEY" \
+       --header "anthropic-version: 2023-06-01" \
+       --header "content-type: application/json" \
+       --data \
+  '{
+      "model": "claude-sonnet-4-5",
+      "max_tokens": 1024,
+      "messages": [
+          {"role": "user", "content": "Hello, Claude"}
+      ]
+  }'
   ```
 
-  ```json Expanded theme={null}
-  messages = [
-    {"role": "user", "content": [{"type": "text", "text": "Hello there."}]},
-    {"role": "assistant", "content": [{"type": "text", "text": "Hi, I'm Claude. How can I help?"}]},
-    {"role": "user", "content":[{"type": "text", "text": "Can you explain Glycolysis to me?"}]},
-  ]
+  ```python Python
+  import anthropic
+
+  message = anthropic.Anthropic().messages.create(
+      model="claude-sonnet-4-5",
+      max_tokens=1024,
+      messages=[
+          {"role": "user", "content": "Hello, Claude"}
+      ]
+  )
+  print(message)
+  ```
+
+  ```typescript TypeScript
+  import Anthropic from '@anthropic-ai/sdk';
+
+  const anthropic = new Anthropic();
+
+  const message = await anthropic.messages.create({
+    model: 'claude-sonnet-4-5',
+    max_tokens: 1024,
+    messages: [
+      {"role": "user", "content": "Hello, Claude"}
+    ]
+  });
+  console.log(message);
   ```
 </CodeGroup>
 
-Each input message has a `role` and `content`.
-
-<Tip>
-  **Role names**
-
-  The Text Completions API expects alternating `\n\nHuman:` and `\n\nAssistant:` turns, but the Messages API expects `user` and `assistant` roles. You may see documentation referring to either "human" or "user" turns. These refer to the same role, and will be "user" going forward.
-</Tip>
-
-With Text Completions, the model's generated text is returned in the `completion` values of the response:
-
-```Python Python theme={null}
->>> response = anthropic.completions.create(...)
->>> response.completion
-" Hi, I'm Claude"
-```
-
-With Messages, the response is the `content` value, which is a list of content blocks:
-
-```Python Python theme={null}
->>> response = anthropic.messages.create(...)
->>> response.content
-[{"type": "text", "text": "Hi, I'm Claude"}]
-```
-
-### Putting words in Claude's mouth
-
-With Text Completions, you can pre-fill part of Claude's response:
-
-```Python Python theme={null}
-prompt = "\n\nHuman: Hello\n\nAssistant: Hello, my name is"
-```
-
-With Messages, you can achieve the same result by making the last input message have the `assistant` role:
-
-```Python Python theme={null}
-messages = [
-  {"role": "human", "content": "Hello"},
-  {"role": "assistant", "content": "Hello, my name is"},
-]
-```
-
-When doing so, response `content` will continue from the last input message `content`:
-
-```JSON JSON theme={null}
+```json JSON
 {
+  "id": "msg_01XFDUDYJgAACzvnptvVoYEL",
+  "type": "message",
   "role": "assistant",
-  "content": [{"type": "text", "text": " Claude. How can I assist you today?" }],
-  ...
+  "content": [
+    {
+      "type": "text",
+      "text": "Hello!"
+    }
+  ],
+  "model": "claude-sonnet-4-5",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 6
+  }
 }
 ```
 
-### System prompt
+## Multiple conversational turns
 
-With Text Completions, the [system prompt](/en/docs/build-with-claude/prompt-engineering/system-prompts) is specified by adding text before the first `\n\nHuman:` turn:
+The Messages API is stateless, which means that you always send the full conversational history to the API. You can use this pattern to build up a conversation over time. Earlier conversational turns don't necessarily need to actually originate from Claude — you can use synthetic `assistant` messages.
 
-```Python Python theme={null}
-prompt = "Today is January 1, 2024.\n\nHuman: Hello, Claude\n\nAssistant:"
+<CodeGroup>
+```bash Shell
+#!/bin/sh
+curl https://api.anthropic.com/v1/messages \
+     --header "x-api-key: $ANTHROPIC_API_KEY" \
+     --header "anthropic-version: 2023-06-01" \
+     --header "content-type: application/json" \
+     --data \
+'{
+    "model": "claude-sonnet-4-5",
+    "max_tokens": 1024,
+    "messages": [
+        {"role": "user", "content": "Hello, Claude"},
+        {"role": "assistant", "content": "Hello!"},
+        {"role": "user", "content": "Can you describe LLMs to me?"}
+
+    ]
+}'
 ```
 
-With Messages, you specify the system prompt with the `system` parameter:
+```python Python
+import anthropic
 
-```Python Python theme={null}
-anthropic.Anthropic().messages.create(
+message = anthropic.Anthropic().messages.create(
     model="claude-sonnet-4-5",
     max_tokens=1024,
-    system="Today is January 1, 2024.", # <-- system prompt
     messages=[
-        {"role": "user", "content": "Hello, Claude"}
-    ]
+        {"role": "user", "content": "Hello, Claude"},
+        {"role": "assistant", "content": "Hello!"},
+        {"role": "user", "content": "Can you describe LLMs to me?"}
+    ],
 )
+print(message)
+
 ```
 
-### Model names
+```typescript TypeScript
+import Anthropic from '@anthropic-ai/sdk';
 
-The Messages API requires that you specify the full model version (e.g. `claude-sonnet-4-5-20250929`).
+const anthropic = new Anthropic();
 
-We previously supported specifying only the major version number (e.g. `claude-2`), which resulted in automatic upgrades to minor versions. However, we no longer recommend this integration pattern, and Messages do not support it.
+await anthropic.messages.create({
+  model: 'claude-sonnet-4-5',
+  max_tokens: 1024,
+  messages: [
+    {"role": "user", "content": "Hello, Claude"},
+    {"role": "assistant", "content": "Hello!"},
+    {"role": "user", "content": "Can you describe LLMs to me?"}
+  ]
+});
+```
+</CodeGroup>
 
-### Stop reason
+```json JSON
+{
+    "id": "msg_018gCsTGsXkYJVqYPxTgDHBU",
+    "type": "message",
+    "role": "assistant",
+    "content": [
+        {
+            "type": "text",
+            "text": "Sure, I'd be happy to provide..."
+        }
+    ],
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 30,
+      "output_tokens": 309
+    }
+}
+```
 
-Text Completions always have a `stop_reason` of either:
+## Putting words in Claude's mouth
 
-* `"stop_sequence"`: The model either ended its turn naturally, or one of your custom stop sequences was generated.
-* `"max_tokens"`: Either the model generated your specified `max_tokens` of content, or it reached its [absolute maximum](/en/docs/about-claude/models/overview#model-comparison-table).
+You can pre-fill part of Claude's response in the last position of the input messages list. This can be used to shape Claude's response. The example below uses `"max_tokens": 1` to get a single multiple choice answer from Claude.
 
-Messages have a `stop_reason` of one of the following values:
+<CodeGroup>
+  ```bash Shell
+  #!/bin/sh
+  curl https://api.anthropic.com/v1/messages \
+       --header "x-api-key: $ANTHROPIC_API_KEY" \
+       --header "anthropic-version: 2023-06-01" \
+       --header "content-type: application/json" \
+       --data \
+  '{
+      "model": "claude-sonnet-4-5",
+      "max_tokens": 1,
+      "messages": [
+          {"role": "user", "content": "What is latin for Ant? (A) Apoidea, (B) Rhopalocera, (C) Formicidae"},
+          {"role": "assistant", "content": "The answer is ("}
+      ]
+  }'
+  ```
 
-* `"end_turn"`: The conversational turn ended naturally.
-* `"stop_sequence"`: One of your specified custom stop sequences was generated.
-* `"max_tokens"`: (unchanged)
+  ```python Python
+  import anthropic
 
-### Specifying max tokens
+  message = anthropic.Anthropic().messages.create(
+      model="claude-sonnet-4-5",
+      max_tokens=1,
+      messages=[
+          {"role": "user", "content": "What is latin for Ant? (A) Apoidea, (B) Rhopalocera, (C) Formicidae"},
+          {"role": "assistant", "content": "The answer is ("}
+      ]
+  )
+  print(message)
+  ```
 
-* Text Completions: `max_tokens_to_sample` parameter. No validation, but capped values per-model.
-* Messages: `max_tokens` parameter. If passing a value higher than the model supports, returns a validation error.
+  ```typescript TypeScript
+  import Anthropic from '@anthropic-ai/sdk';
 
-### Streaming format
+  const anthropic = new Anthropic();
 
-When using `"stream": true` in with Text Completions, the response included any of `completion`, `ping`, and `error` server-sent-events.
+  const message = await anthropic.messages.create({
+    model: 'claude-sonnet-4-5',
+    max_tokens: 1,
+    messages: [
+      {"role": "user", "content": "What is latin for Ant? (A) Apoidea, (B) Rhopalocera, (C) Formicidae"},
+      {"role": "assistant", "content": "The answer is ("}
+    ]
+  });
+  console.log(message);
+  ```
+</CodeGroup>
 
-Messages can contain multiple content blocks of varying types, and so its streaming format is somewhat more complex. See [Messages streaming](/en/docs/build-with-claude/streaming) for details.
+```json JSON
+{
+  "id": "msg_01Q8Faay6S7QPTvEUUQARt7h",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "C"
+    }
+  ],
+  "model": "claude-sonnet-4-5",
+  "stop_reason": "max_tokens",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 42,
+    "output_tokens": 1
+  }
+}
+```
+
+For more information on prefill techniques, see our [prefill guide](/docs/en/build-with-claude/prompt-engineering/prefill-claudes-response).
+
+## Vision
+
+Claude can read both text and images in requests. We support both `base64` and `url` source types for images, and the `image/jpeg`, `image/png`, `image/gif`, and `image/webp` media types. See our [vision guide](/docs/en/build-with-claude/vision) for more details.
+
+<CodeGroup>
+  ```bash Shell
+  #!/bin/sh
+
+  # Option 1: Base64-encoded image
+  IMAGE_URL="https://upload.wikimedia.org/wikipedia/commons/a/a7/Camponotus_flavomarginatus_ant.jpg"
+  IMAGE_MEDIA_TYPE="image/jpeg"
+  IMAGE_BASE64=$(curl "$IMAGE_URL" | base64)
+
+  curl https://api.anthropic.com/v1/messages \
+       --header "x-api-key: $ANTHROPIC_API_KEY" \
+       --header "anthropic-version: 2023-06-01" \
+       --header "content-type: application/json" \
+       --data \
+  '{
+      "model": "claude-sonnet-4-5",
+      "max_tokens": 1024,
+      "messages": [
+          {"role": "user", "content": [
+              {"type": "image", "source": {
+                  "type": "base64",
+                  "media_type": "'$IMAGE_MEDIA_TYPE'",
+                  "data": "'$IMAGE_BASE64'"
+              }},
+              {"type": "text", "text": "What is in the above image?"}
+          ]}
+      ]
+  }'
+
+  # Option 2: URL-referenced image
+  curl https://api.anthropic.com/v1/messages \
+       --header "x-api-key: $ANTHROPIC_API_KEY" \
+       --header "anthropic-version: 2023-06-01" \
+       --header "content-type: application/json" \
+       --data \
+  '{
+      "model": "claude-sonnet-4-5",
+      "max_tokens": 1024,
+      "messages": [
+          {"role": "user", "content": [
+              {"type": "image", "source": {
+                  "type": "url",
+                  "url": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Camponotus_flavomarginatus_ant.jpg"
+              }},
+              {"type": "text", "text": "What is in the above image?"}
+          ]}
+      ]
+  }'
+  ```
+
+  ```python Python
+  import anthropic
+  import base64
+  import httpx
+
+  # Option 1: Base64-encoded image
+  image_url = "https://upload.wikimedia.org/wikipedia/commons/a/a7/Camponotus_flavomarginatus_ant.jpg"
+  image_media_type = "image/jpeg"
+  image_data = base64.standard_b64encode(httpx.get(image_url).content).decode("utf-8")
+
+  message = anthropic.Anthropic().messages.create(
+      model="claude-sonnet-4-5",
+      max_tokens=1024,
+      messages=[
+          {
+              "role": "user",
+              "content": [
+                  {
+                      "type": "image",
+                      "source": {
+                          "type": "base64",
+                          "media_type": image_media_type,
+                          "data": image_data,
+                      },
+                  },
+                  {
+                      "type": "text",
+                      "text": "What is in the above image?"
+                  }
+              ],
+          }
+      ],
+  )
+  print(message)
+
+  # Option 2: URL-referenced image
+  message_from_url = anthropic.Anthropic().messages.create(
+      model="claude-sonnet-4-5",
+      max_tokens=1024,
+      messages=[
+          {
+              "role": "user",
+              "content": [
+                  {
+                      "type": "image",
+                      "source": {
+                          "type": "url",
+                          "url": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Camponotus_flavomarginatus_ant.jpg",
+                      },
+                  },
+                  {
+                      "type": "text",
+                      "text": "What is in the above image?"
+                  }
+              ],
+          }
+      ],
+  )
+  print(message_from_url)
+  ```
+
+  ```typescript TypeScript
+  import Anthropic from '@anthropic-ai/sdk';
+
+  const anthropic = new Anthropic();
+
+  // Option 1: Base64-encoded image
+  const image_url = "https://upload.wikimedia.org/wikipedia/commons/a/a7/Camponotus_flavomarginatus_ant.jpg"
+  const image_media_type = "image/jpeg"
+  const image_array_buffer = await ((await fetch(image_url)).arrayBuffer());
+  const image_data = Buffer.from(image_array_buffer).toString('base64');
+
+  const message = await anthropic.messages.create({
+    model: 'claude-sonnet-4-5',
+    max_tokens: 1024,
+    messages: [
+          {
+              "role": "user",
+              "content": [
+                  {
+                      "type": "image",
+                      "source": {
+                          "type": "base64",
+                          "media_type": image_media_type,
+                          "data": image_data,
+                      },
+                  },
+                  {
+                      "type": "text",
+                      "text": "What is in the above image?"
+                  }
+              ],
+          }
+        ]
+  });
+  console.log(message);
+
+  // Option 2: URL-referenced image
+  const messageFromUrl = await anthropic.messages.create({
+    model: 'claude-sonnet-4-5',
+    max_tokens: 1024,
+    messages: [
+          {
+              "role": "user",
+              "content": [
+                  {
+                      "type": "image",
+                      "source": {
+                          "type": "url",
+                          "url": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Camponotus_flavomarginatus_ant.jpg",
+                      },
+                  },
+                  {
+                      "type": "text",
+                      "text": "What is in the above image?"
+                  }
+              ],
+          }
+        ]
+  });
+  console.log(messageFromUrl);
+  ```
+</CodeGroup>
+
+```json JSON
+{
+  "id": "msg_01EcyWo6m4hyW8KHs2y2pei5",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "This image shows an ant, specifically a close-up view of an ant. The ant is shown in detail, with its distinct head, antennae, and legs clearly visible. The image is focused on capturing the intricate details and features of the ant, likely taken with a macro lens to get an extreme close-up perspective."
+    }
+  ],
+  "model": "claude-sonnet-4-5",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 1551,
+    "output_tokens": 71
+  }
+}
+```
+
+## Tool use, JSON mode, and computer use
+
+See our [guide](/docs/en/agents-and-tools/tool-use/overview) for examples for how to use tools with the Messages API.
+See our [computer use guide](/docs/en/agents-and-tools/tool-use/computer-use-tool) for examples of how to control desktop computer environments with the Messages API.

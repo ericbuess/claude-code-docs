@@ -1,6 +1,8 @@
 # Neologism creator
 
-> Invent new words and provide their definitions based on user-provided concepts or ideas.
+Invent new words and provide their definitions based on user-provided concepts or ideas.
+
+---
 
 > Copy this prompt into our developer [Console](https://console.anthropic.com/dashboard) to try it for yourself!
 
@@ -12,185 +14,192 @@
 
 How about the neologism "fauxprehension" to describe this concept?
 
-Fauxprehension (fəʊprɪˈhɛnʃ(ə)n) - noun\
-Definition: The act of feigning understanding or comprehension of a topic, concept, or situation in order to avoid appearing ignorant, uninformed, or out of the loop. It is the pretense of knowledge or grasp of a subject matter, often employed in social or professional settings to maintain one's image or status.
+Fauxprehension (fəʊprɪˈhɛnʃ(ə)n) - noun  
+ Definition: The act of feigning understanding or comprehension of a topic, concept, or situation in order to avoid appearing ignorant, uninformed, or out of the loop. It is the pretense of knowledge or grasp of a subject matter, often employed in social or professional settings to maintain one's image or status.
 
 Etymology: The word "fauxprehension" is a blend of "faux," which comes from the French word meaning false or fake, and "comprehension," which means the action or capability of understanding something.
 
-***
+---
 
 ## API request
 
 <Tabs>
-  <Tab title="Python">
-    ```Python  theme={null}
-    import anthropic
+<Tab title="Python">
 
-    client = anthropic.Anthropic(
-      # defaults to os.environ.get("ANTHROPIC_API_KEY")
-      api_key="my_api_key",
-    )
-    message = client.messages.create(
-      model="claude-sonnet-4-5",
-      max_tokens=1000,
-      temperature=1,
-      messages=[
+```python
+import anthropic
+
+client = anthropic.Anthropic(
+  # defaults to os.environ.get("ANTHROPIC_API_KEY")
+  api_key="my_api_key",
+)
+message = client.messages.create(
+  model="claude-sonnet-4-5",
+  max_tokens=1000,
+  temperature=1,
+  messages=[
+    {
+      "role": "user",
+      "content": [
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "Can you help me create a new word for the act of pretending to understand something in order to avoid looking ignorant or uninformed?"
-            }
-          ]
+          "type": "text",
+          "text": "Can you help me create a new word for the act of pretending to understand something in order to avoid looking ignorant or uninformed?"
         }
       ]
-    )
-    print(message.content)
+    }
+  ]
+)
+print(message.content)
 
-    ```
-  </Tab>
+```
 
-  <Tab title="TypeScript">
-    ```TypeScript  theme={null}
-    import Anthropic from "@anthropic-ai/sdk";
+</Tab>
+<Tab title="TypeScript">
 
-    const anthropic = new Anthropic({
-      apiKey: "my_api_key", // defaults to process.env["ANTHROPIC_API_KEY"]
-    });
+```typescript
+import Anthropic from "@anthropic-ai/sdk";
 
-    const msg = await anthropic.messages.create({
-      model: "claude-sonnet-4-5",
-      max_tokens: 1000,
-      temperature: 1,
-      messages: [
+const anthropic = new Anthropic({
+  apiKey: "my_api_key", // defaults to process.env["ANTHROPIC_API_KEY"]
+});
+
+const msg = await anthropic.messages.create({
+  model: "claude-sonnet-4-5",
+  max_tokens: 1000,
+  temperature: 1,
+  messages: [
+    {
+      "role": "user",
+      "content": [
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "Can you help me create a new word for the act of pretending to understand something in order to avoid looking ignorant or uninformed?"
-            }
-          ]
+          "type": "text",
+          "text": "Can you help me create a new word for the act of pretending to understand something in order to avoid looking ignorant or uninformed?"
         }
       ]
-    });
-    console.log(msg);
+    }
+  ]
+});
+console.log(msg);
 
-    ```
-  </Tab>
+````
 
-  <Tab title="AWS Bedrock Python">
-    ```Python  theme={null}
-    from anthropic import AnthropicBedrock
+</Tab>
+<Tab title="AWS Bedrock Python">
 
-    # See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
-    # for authentication options
-    client = AnthropicBedrock()
+```python
+from anthropic import AnthropicBedrock
 
-    message = client.messages.create(
-        model="anthropic.claude-sonnet-4-5-20250929-v1:0",
-        max_tokens=1000,
-        temperature=1,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "Can you help me create a new word for the act of pretending to understand something in order to avoid looking ignorant or uninformed?"
-                    }
-                ]
-            }
-        ]
-    )
-    print(message.content)
+# See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
+# for authentication options
+client = AnthropicBedrock()
 
-    ```
-  </Tab>
-
-  <Tab title="AWS Bedrock TypeScript">
-    ```TypeScript  theme={null}
-    import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
-
-    // See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
-    // for authentication options
-    const client = new AnthropicBedrock();
-
-    const msg = await client.messages.create({
-      model: "anthropic.claude-sonnet-4-5-20250929-v1:0",
-      max_tokens: 1000,
-      temperature: 1,
-      messages: [
+message = client.messages.create(
+    model="anthropic.claude-sonnet-4-5-20250929-v1:0",
+    max_tokens=1000,
+    temperature=1,
+    messages=[
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "Can you help me create a new word for the act of pretending to understand something in order to avoid looking ignorant or uninformed?"
-            }
-          ]
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Can you help me create a new word for the act of pretending to understand something in order to avoid looking ignorant or uninformed?"
+                }
+            ]
+        }
+    ]
+)
+print(message.content)
+
+```
+
+</Tab>
+<Tab title="AWS Bedrock TypeScript">
+
+```typescript
+import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
+
+// See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
+// for authentication options
+const client = new AnthropicBedrock();
+
+const msg = await client.messages.create({
+  model: "anthropic.claude-sonnet-4-5-20250929-v1:0",
+  max_tokens: 1000,
+  temperature: 1,
+  messages: [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Can you help me create a new word for the act of pretending to understand something in order to avoid looking ignorant or uninformed?"
         }
       ]
-    });
-    console.log(msg);
+    }
+  ]
+});
+console.log(msg);
 
-    ```
-  </Tab>
+```
 
-  <Tab title="Vertex AI Python">
-    ```Python  theme={null}
-    from anthropic import AnthropicVertex
+</Tab>
+<Tab title="Vertex AI Python">
 
-    client = AnthropicVertex()
+```python
+from anthropic import AnthropicVertex
 
-    message = client.messages.create(
-        model="claude-sonnet-4@20250514",
-        max_tokens=1000,
-        temperature=1,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "Can you help me create a new word for the act of pretending to understand something in order to avoid looking ignorant or uninformed?"
-                    }
-                ]
-            }
-        ]
-    )
-    print(message.content)
+client = AnthropicVertex()
 
-    ```
-  </Tab>
-
-  <Tab title="Vertex AI TypeScript">
-    ```TypeScript  theme={null}
-    import { AnthropicVertex } from '@anthropic-ai/vertex-sdk';
-
-    // Reads from the `CLOUD_ML_REGION` & `ANTHROPIC_VERTEX_PROJECT_ID` environment variables.
-    // Additionally goes through the standard `google-auth-library` flow.
-    const client = new AnthropicVertex();
-
-    const msg = await client.messages.create({
-      model: "claude-sonnet-4@20250514",
-      max_tokens: 1000,
-      temperature: 1,
-      messages: [
+message = client.messages.create(
+    model="claude-sonnet-4@20250514",
+    max_tokens=1000,
+    temperature=1,
+    messages=[
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "Can you help me create a new word for the act of pretending to understand something in order to avoid looking ignorant or uninformed?"
-            }
-          ]
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Can you help me create a new word for the act of pretending to understand something in order to avoid looking ignorant or uninformed?"
+                }
+            ]
+        }
+    ]
+)
+print(message.content)
+
+```
+
+</Tab>
+<Tab title="Vertex AI TypeScript">
+
+```typescript
+import { AnthropicVertex } from '@anthropic-ai/vertex-sdk';
+
+// Reads from the `CLOUD_ML_REGION` & `ANTHROPIC_VERTEX_PROJECT_ID` environment variables.
+// Additionally goes through the standard `google-auth-library` flow.
+const client = new AnthropicVertex();
+
+const msg = await client.messages.create({
+  model: "claude-sonnet-4@20250514",
+  max_tokens: 1000,
+  temperature: 1,
+  messages: [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Can you help me create a new word for the act of pretending to understand something in order to avoid looking ignorant or uninformed?"
         }
       ]
-    });
-    console.log(msg);
+    }
+  ]
+});
+console.log(msg);
 
-    ```
-  </Tab>
+```
+
+</Tab>
 </Tabs>

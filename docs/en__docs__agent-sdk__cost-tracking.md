@@ -1,12 +1,14 @@
 # Tracking Costs and Usage
 
-> Understand and track token usage for billing in the Claude Agent SDK
+Understand and track token usage for billing in the Claude Agent SDK
+
+---
 
 # SDK Cost Tracking
 
 The Claude Agent SDK provides detailed token usage information for each interaction with Claude. This guide explains how to properly track costs and understand usage reporting, especially when dealing with parallel tool uses and multi-step conversations.
 
-For complete API documentation, see the [TypeScript SDK reference](/en/docs/agent-sdk/typescript).
+For complete API documentation, see the [TypeScript SDK reference](/docs/en/agent-sdk/typescript).
 
 ## Understanding Token Usage
 
@@ -25,39 +27,41 @@ When Claude processes requests, it reports token usage at the message level. Thi
 When Claude executes tools, the usage reporting differs based on whether tools are executed sequentially or in parallel:
 
 <CodeGroup>
-  ```typescript TypeScript theme={null}
-  import { query } from "@anthropic-ai/claude-agent-sdk";
 
-  // Example: Tracking usage in a conversation
-  const result = await query({
-    prompt: "Analyze this codebase and run tests",
-    options: {
-      onMessage: (message) => {
-        if (message.type === 'assistant' && message.usage) {
-          console.log(`Message ID: ${message.id}`);
-          console.log(`Usage:`, message.usage);
-        }
+```typescript TypeScript
+import { query } from "@anthropic-ai/claude-agent-sdk";
+
+// Example: Tracking usage in a conversation
+const result = await query({
+  prompt: "Analyze this codebase and run tests",
+  options: {
+    onMessage: (message) => {
+      if (message.type === 'assistant' && message.usage) {
+        console.log(`Message ID: ${message.id}`);
+        console.log(`Usage:`, message.usage);
       }
     }
-  });
-  ```
+  }
+});
+```
 
-  ```python Python theme={null}
-  from claude_agent_sdk import query, ClaudeAgentOptions, AssistantMessage
-  import asyncio
+```python Python
+from claude_agent_sdk import query, ClaudeAgentOptions, AssistantMessage
+import asyncio
 
-  # Example: Tracking usage in a conversation
-  async def track_usage():
-      # Process messages as they arrive
-      async for message in query(
-          prompt="Analyze this codebase and run tests"
-      ):
-          if isinstance(message, AssistantMessage) and hasattr(message, 'usage'):
-              print(f"Message ID: {message.id}")
-              print(f"Usage: {message.usage}")
+# Example: Tracking usage in a conversation
+async def track_usage():
+    # Process messages as they arrive
+    async for message in query(
+        prompt="Analyze this codebase and run tests"
+    ):
+        if isinstance(message, AssistantMessage) and hasattr(message, 'usage'):
+            print(f"Message ID: {message.id}")
+            print(f"Usage: {message.usage}")
 
-  asyncio.run(track_usage())
-  ```
+asyncio.run(track_usage())
+```
+
 </CodeGroup>
 
 ### Message Flow Example
@@ -84,7 +88,7 @@ assistant (text)      { id: "msg_2", usage: { output_tokens: 98, ... } }
 
 **All messages with the same `id` field report identical usage**. When Claude sends multiple messages in the same turn (e.g., text + tool uses), they share the same message ID and usage data.
 
-```typescript  theme={null}
+```typescript
 // All these messages have the same ID and usage
 const messages = [
   { type: 'assistant', id: 'msg_123', usage: { output_tokens: 100 } },
@@ -104,7 +108,7 @@ const uniqueUsage = messages[0].usage; // Same for all messages with this ID
 
 The final `result` message contains the total cumulative usage from all steps in the conversation:
 
-```typescript  theme={null}
+```typescript
 // Final result includes total usage
 const result = await query({
   prompt: "Multi-step task",
@@ -120,136 +124,138 @@ console.log("Total cost:", result.usage.total_cost_usd);
 Here's a complete example of implementing a cost tracking system:
 
 <CodeGroup>
-  ```typescript TypeScript theme={null}
-  import { query } from "@anthropic-ai/claude-agent-sdk";
 
-  class CostTracker {
-    private processedMessageIds = new Set<string>();
-    private stepUsages: Array<any> = [];
-    
-    async trackConversation(prompt: string) {
-      const result = await query({
-        prompt,
-        options: {
-          onMessage: (message) => {
-            this.processMessage(message);
-          }
+```typescript TypeScript
+import { query } from "@anthropic-ai/claude-agent-sdk";
+
+class CostTracker {
+  private processedMessageIds = new Set<string>();
+  private stepUsages: Array<any> = [];
+  
+  async trackConversation(prompt: string) {
+    const result = await query({
+      prompt,
+      options: {
+        onMessage: (message) => {
+          this.processMessage(message);
         }
-      });
-      
-      return {
-        result,
-        stepUsages: this.stepUsages,
-        totalCost: result.usage?.total_cost_usd || 0
-      };
-    }
-    
-    private processMessage(message: any) {
-      // Only process assistant messages with usage
-      if (message.type !== 'assistant' || !message.usage) {
-        return;
       }
-      
-      // Skip if we've already processed this message ID
-      if (this.processedMessageIds.has(message.id)) {
-        return;
-      }
-      
-      // Mark as processed and record usage
-      this.processedMessageIds.add(message.id);
-      this.stepUsages.push({
-        messageId: message.id,
-        timestamp: new Date().toISOString(),
-        usage: message.usage,
-        costUSD: this.calculateCost(message.usage)
-      });
-    }
+    });
     
-    private calculateCost(usage: any): number {
-      // Implement your pricing calculation here
-      // This is a simplified example
-      const inputCost = usage.input_tokens * 0.00003;
-      const outputCost = usage.output_tokens * 0.00015;
-      const cacheReadCost = (usage.cache_read_input_tokens || 0) * 0.0000075;
-      
-      return inputCost + outputCost + cacheReadCost;
-    }
+    return {
+      result,
+      stepUsages: this.stepUsages,
+      totalCost: result.usage?.total_cost_usd || 0
+    };
   }
+  
+  private processMessage(message: any) {
+    // Only process assistant messages with usage
+    if (message.type !== 'assistant' || !message.usage) {
+      return;
+    }
+    
+    // Skip if we've already processed this message ID
+    if (this.processedMessageIds.has(message.id)) {
+      return;
+    }
+    
+    // Mark as processed and record usage
+    this.processedMessageIds.add(message.id);
+    this.stepUsages.push({
+      messageId: message.id,
+      timestamp: new Date().toISOString(),
+      usage: message.usage,
+      costUSD: this.calculateCost(message.usage)
+    });
+  }
+  
+  private calculateCost(usage: any): number {
+    // Implement your pricing calculation here
+    // This is a simplified example
+    const inputCost = usage.input_tokens * 0.00003;
+    const outputCost = usage.output_tokens * 0.00015;
+    const cacheReadCost = (usage.cache_read_input_tokens || 0) * 0.0000075;
+    
+    return inputCost + outputCost + cacheReadCost;
+  }
+}
 
-  // Usage
-  const tracker = new CostTracker();
-  const { result, stepUsages, totalCost } = await tracker.trackConversation(
-    "Analyze and refactor this code"
-  );
+// Usage
+const tracker = new CostTracker();
+const { result, stepUsages, totalCost } = await tracker.trackConversation(
+  "Analyze and refactor this code"
+);
 
-  console.log(`Steps processed: ${stepUsages.length}`);
-  console.log(`Total cost: $${totalCost.toFixed(4)}`);
-  ```
+console.log(`Steps processed: ${stepUsages.length}`);
+console.log(`Total cost: $${totalCost.toFixed(4)}`);
+```
 
-  ```python Python theme={null}
-  from claude_agent_sdk import query, AssistantMessage, ResultMessage
-  from datetime import datetime
-  import asyncio
+```python Python
+from claude_agent_sdk import query, AssistantMessage, ResultMessage
+from datetime import datetime
+import asyncio
 
-  class CostTracker:
-      def __init__(self):
-          self.processed_message_ids = set()
-          self.step_usages = []
+class CostTracker:
+    def __init__(self):
+        self.processed_message_ids = set()
+        self.step_usages = []
 
-      async def track_conversation(self, prompt):
-          result = None
+    async def track_conversation(self, prompt):
+        result = None
 
-          # Process messages as they arrive
-          async for message in query(prompt=prompt):
-              self.process_message(message)
+        # Process messages as they arrive
+        async for message in query(prompt=prompt):
+            self.process_message(message)
 
-              # Capture the final result message
-              if isinstance(message, ResultMessage):
-                  result = message
+            # Capture the final result message
+            if isinstance(message, ResultMessage):
+                result = message
 
-          return {
-              "result": result,
-              "step_usages": self.step_usages,
-              "total_cost": result.total_cost_usd if result else 0
-          }
+        return {
+            "result": result,
+            "step_usages": self.step_usages,
+            "total_cost": result.total_cost_usd if result else 0
+        }
 
-      def process_message(self, message):
-          # Only process assistant messages with usage
-          if not isinstance(message, AssistantMessage) or not hasattr(message, 'usage'):
-              return
+    def process_message(self, message):
+        # Only process assistant messages with usage
+        if not isinstance(message, AssistantMessage) or not hasattr(message, 'usage'):
+            return
 
-          # Skip if already processed this message ID
-          message_id = getattr(message, 'id', None)
-          if not message_id or message_id in self.processed_message_ids:
-              return
+        # Skip if already processed this message ID
+        message_id = getattr(message, 'id', None)
+        if not message_id or message_id in self.processed_message_ids:
+            return
 
-          # Mark as processed and record usage
-          self.processed_message_ids.add(message_id)
-          self.step_usages.append({
-              "message_id": message_id,
-              "timestamp": datetime.now().isoformat(),
-              "usage": message.usage,
-              "cost_usd": self.calculate_cost(message.usage)
-          })
+        # Mark as processed and record usage
+        self.processed_message_ids.add(message_id)
+        self.step_usages.append({
+            "message_id": message_id,
+            "timestamp": datetime.now().isoformat(),
+            "usage": message.usage,
+            "cost_usd": self.calculate_cost(message.usage)
+        })
 
-      def calculate_cost(self, usage):
-          # Implement your pricing calculation
-          input_cost = usage.get("input_tokens", 0) * 0.00003
-          output_cost = usage.get("output_tokens", 0) * 0.00015
-          cache_read_cost = usage.get("cache_read_input_tokens", 0) * 0.0000075
+    def calculate_cost(self, usage):
+        # Implement your pricing calculation
+        input_cost = usage.get("input_tokens", 0) * 0.00003
+        output_cost = usage.get("output_tokens", 0) * 0.00015
+        cache_read_cost = usage.get("cache_read_input_tokens", 0) * 0.0000075
 
-          return input_cost + output_cost + cache_read_cost
+        return input_cost + output_cost + cache_read_cost
 
-  # Usage
-  async def main():
-      tracker = CostTracker()
-      result = await tracker.track_conversation("Analyze and refactor this code")
+# Usage
+async def main():
+    tracker = CostTracker()
+    result = await tracker.track_conversation("Analyze and refactor this code")
 
-      print(f"Steps processed: {len(result['step_usages'])}")
-      print(f"Total cost: ${result['total_cost']:.4f}")
+    print(f"Steps processed: {len(result['step_usages'])}")
+    print(f"Total cost: ${result['total_cost']:.4f}")
 
-  asyncio.run(main())
-  ```
+asyncio.run(main())
+```
+
 </CodeGroup>
 
 ## Handling Edge Cases
@@ -266,7 +272,7 @@ In rare cases, you might observe different `output_tokens` values for messages w
 
 When using prompt caching, track these token types separately:
 
-```typescript  theme={null}
+```typescript
 interface CacheUsage {
   cache_creation_input_tokens: number;
   cache_read_input_tokens: number;
@@ -289,18 +295,18 @@ interface CacheUsage {
 
 Each usage object contains:
 
-* `input_tokens`: Base input tokens processed
-* `output_tokens`: Tokens generated in the response
-* `cache_creation_input_tokens`: Tokens used to create cache entries
-* `cache_read_input_tokens`: Tokens read from cache
-* `service_tier`: The service tier used (e.g., "standard")
-* `total_cost_usd`: Total cost in USD (only in result message)
+- `input_tokens`: Base input tokens processed
+- `output_tokens`: Tokens generated in the response
+- `cache_creation_input_tokens`: Tokens used to create cache entries
+- `cache_read_input_tokens`: Tokens read from cache
+- `service_tier`: The service tier used (e.g., "standard")
+- `total_cost_usd`: Total cost in USD (only in result message)
 
 ## Example: Building a Billing Dashboard
 
 Here's how to aggregate usage data for a billing dashboard:
 
-```typescript  theme={null}
+```typescript
 class BillingAggregator {
   private userUsage = new Map<string, {
     totalTokens: number;
@@ -344,6 +350,6 @@ class BillingAggregator {
 
 ## Related Documentation
 
-* [TypeScript SDK Reference](/en/docs/agent-sdk/typescript) - Complete API documentation
-* [SDK Overview](/en/docs/agent-sdk/overview) - Getting started with the SDK
-* [SDK Permissions](/en/docs/agent-sdk/permissions) - Managing tool permissions
+- [TypeScript SDK Reference](/docs/en/agent-sdk/typescript) - Complete API documentation
+- [SDK Overview](/docs/en/agent-sdk/overview) - Getting started with the SDK
+- [SDK Permissions](/docs/en/agent-sdk/permissions) - Managing tool permissions

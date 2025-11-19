@@ -1,36 +1,37 @@
 # Web fetch tool
 
+---
+
 The web fetch tool allows Claude to retrieve full content from specified web pages and PDF documents.
 
 <Note>
-  The web fetch tool is currently in beta. To enable it, use the beta header `web-fetch-2025-09-10` in your API requests.
+The web fetch tool is currently in beta. To enable it, use the beta header `web-fetch-2025-09-10` in your API requests.
 
-  Please use [this form](https://forms.gle/NhWcgmkcvPCMmPE86) to provide feedback on the quality of the model responses, the API itself, or the quality of the documentation.
+Please use [this form](https://forms.gle/NhWcgmkcvPCMmPE86) to provide feedback on the quality of the model responses, the API itself, or the quality of the documentation.
 </Note>
 
 <Warning>
-  Enabling the web fetch tool in environments where Claude processes untrusted input alongside sensitive data poses data exfiltration risks. We recommend only using this tool in trusted environments or when handling non-sensitive data.
+Enabling the web fetch tool in environments where Claude processes untrusted input alongside sensitive data poses data exfiltration risks. We recommend only using this tool in trusted environments or when handling non-sensitive data. 
 
-  To minimize exfiltration risks, Claude is not allowed to dynamically construct URLs. Claude can only fetch URLs that have been explicitly provided by the user or that come from previous web search or web fetch results. However, there is still residual risk that should be carefully considered when using this tool.
+To minimize exfiltration risks, Claude is not allowed to dynamically construct URLs. Claude can only fetch URLs that have been explicitly provided by the user or that come from previous web search or web fetch results. However, there is still residual risk that should be carefully considered when using this tool.
 
-  If data exfiltration is a concern, consider:
-
-  * Disabling the web fetch tool entirely
-  * Using the `max_uses` parameter to limit the number of requests
-  * Using the `allowed_domains` parameter to restrict to known safe domains
+If data exfiltration is a concern, consider:
+- Disabling the web fetch tool entirely
+- Using the `max_uses` parameter to limit the number of requests
+- Using the `allowed_domains` parameter to restrict to known safe domains
 </Warning>
 
 ## Supported models
 
 Web fetch is available on:
 
-* Claude Sonnet 4.5 (`claude-sonnet-4-5-20250929`)
-* Claude Sonnet 4 (`claude-sonnet-4-20250514`)
-* Claude Sonnet 3.7 ([deprecated](/en/docs/about-claude/model-deprecations)) (`claude-3-7-sonnet-20250219`)
-* Claude Haiku 4.5 (`claude-haiku-4-5-20251001`)
-* Claude Haiku 3.5 (`claude-3-5-haiku-latest`)
-* Claude Opus 4.1 (`claude-opus-4-1-20250805`)
-* Claude Opus 4 (`claude-opus-4-20250514`)
+- Claude Sonnet 4.5 (`claude-sonnet-4-5-20250929`)
+- Claude Sonnet 4 (`claude-sonnet-4-20250514`)
+- Claude Sonnet 3.7 ([deprecated](/docs/en/about-claude/model-deprecations)) (`claude-3-7-sonnet-20250219`)
+- Claude Haiku 4.5 (`claude-haiku-4-5-20251001`)
+- Claude Haiku 3.5 (`claude-3-5-haiku-latest`)
+- Claude Opus 4.1 (`claude-opus-4-1-20250805`)
+- Claude Opus 4 (`claude-opus-4-20250514`)
 
 ## How web fetch works
 
@@ -42,7 +43,7 @@ When you add the web fetch tool to your API request:
 4. Claude analyzes the fetched content and provides a response with optional citations.
 
 <Note>
-  The web fetch tool currently does not support web sites dynamically rendered via Javascript.
+The web fetch tool currently does not support web sites dynamically rendered via Javascript.
 </Note>
 
 ## How to use web fetch
@@ -50,92 +51,92 @@ When you add the web fetch tool to your API request:
 Provide the web fetch tool in your API request:
 
 <CodeGroup>
-  ```bash Shell theme={null}
-  curl https://api.anthropic.com/v1/messages \
-      --header "x-api-key: $ANTHROPIC_API_KEY" \
-      --header "anthropic-version: 2023-06-01" \
-      --header "anthropic-beta: web-fetch-2025-09-10" \
-      --header "content-type: application/json" \
-      --data '{
-          "model": "claude-sonnet-4-5",
-          "max_tokens": 1024,
-          "messages": [
-              {
-                  "role": "user",
-                  "content": "Please analyze the content at https://example.com/article"
-              }
-          ],
-          "tools": [{
-              "type": "web_fetch_20250910",
-              "name": "web_fetch",
-              "max_uses": 5
-          }]
-      }'
-  ```
+```bash Shell
+curl https://api.anthropic.com/v1/messages \
+    --header "x-api-key: $ANTHROPIC_API_KEY" \
+    --header "anthropic-version: 2023-06-01" \
+    --header "anthropic-beta: web-fetch-2025-09-10" \
+    --header "content-type: application/json" \
+    --data '{
+        "model": "claude-sonnet-4-5",
+        "max_tokens": 1024,
+        "messages": [
+            {
+                "role": "user",
+                "content": "Please analyze the content at https://example.com/article"
+            }
+        ],
+        "tools": [{
+            "type": "web_fetch_20250910",
+            "name": "web_fetch",
+            "max_uses": 5
+        }]
+    }'
+```
 
-  ```python Python theme={null}
-  import anthropic
+```python Python
+import anthropic
 
-  client = anthropic.Anthropic()
+client = anthropic.Anthropic()
 
-  response = client.messages.create(
-      model="claude-sonnet-4-5",
-      max_tokens=1024,
-      messages=[
-          {
-              "role": "user",
-              "content": "Please analyze the content at https://example.com/article"
-          }
-      ],
-      tools=[{
-          "type": "web_fetch_20250910",
-          "name": "web_fetch",
-          "max_uses": 5
-      }],
-      extra_headers={
-          "anthropic-beta": "web-fetch-2025-09-10"
-      }
-  )
-  print(response)
-  ```
-
-  ```typescript TypeScript theme={null}
-  import { Anthropic } from '@anthropic-ai/sdk';
-
-  const anthropic = new Anthropic();
-
-  async function main() {
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5",
-      max_tokens: 1024,
-      messages: [
+response = client.messages.create(
+    model="claude-sonnet-4-5",
+    max_tokens=1024,
+    messages=[
         {
-          role: "user",
-          content: "Please analyze the content at https://example.com/article"
+            "role": "user",
+            "content": "Please analyze the content at https://example.com/article"
         }
-      ],
-      tools: [{
-        type: "web_fetch_20250910",
-        name: "web_fetch",
-        max_uses: 5
-      }],
-      headers: {
+    ],
+    tools=[{
+        "type": "web_fetch_20250910",
+        "name": "web_fetch",
+        "max_uses": 5
+    }],
+    extra_headers={
         "anthropic-beta": "web-fetch-2025-09-10"
+    }
+)
+print(response)
+```
+
+```typescript TypeScript
+import { Anthropic } from '@anthropic-ai/sdk';
+
+const anthropic = new Anthropic();
+
+async function main() {
+  const response = await anthropic.messages.create({
+    model: "claude-sonnet-4-5",
+    max_tokens: 1024,
+    messages: [
+      {
+        role: "user",
+        content: "Please analyze the content at https://example.com/article"
       }
-    });
+    ],
+    tools: [{
+      type: "web_fetch_20250910",
+      name: "web_fetch",
+      max_uses: 5
+    }],
+    headers: {
+      "anthropic-beta": "web-fetch-2025-09-10"
+    }
+  });
 
-    console.log(response);
-  }
+  console.log(response);
+}
 
-  main().catch(console.error);
-  ```
+main().catch(console.error);
+```
 </CodeGroup>
 
 ### Tool definition
 
 The web fetch tool supports the following parameters:
 
-```json JSON theme={null}
+```json JSON
 {
   "type": "web_fetch_20250910",
   "name": "web_fetch",
@@ -167,20 +168,19 @@ The `max_uses` parameter limits the number of web fetches performed. If Claude a
 
 When using domain filters:
 
-* Domains should not include the HTTP/HTTPS scheme (use `example.com` instead of `https://example.com`)
-* Subdomains are automatically included (`example.com` covers `docs.example.com`)
-* Subpaths are supported (`example.com/blog`)
-* You can use either `allowed_domains` or `blocked_domains`, but not both in the same request.
+- Domains should not include the HTTP/HTTPS scheme (use `example.com` instead of `https://example.com`)
+- Subdomains are automatically included (`example.com` covers `docs.example.com`)
+- Subpaths are supported (`example.com/blog`)
+- You can use either `allowed_domains` or `blocked_domains`, but not both in the same request.
 
 <Warning>
-  Be aware that Unicode characters in domain names can create security vulnerabilities through homograph attacks, where visually similar characters from different scripts can bypass domain filters. For example, `аmazon.com` (using Cyrillic 'а') may appear identical to `amazon.com` but represents a different domain.
+Be aware that Unicode characters in domain names can create security vulnerabilities through homograph attacks, where visually similar characters from different scripts can bypass domain filters. For example, `аmazon.com` (using Cyrillic 'а') may appear identical to `amazon.com` but represents a different domain. 
 
-  When configuring domain allow/block lists:
-
-  * Use ASCII-only domain names when possible
-  * Consider that URL parsers may handle Unicode normalization differently
-  * Test your domain filters with potential homograph variations
-  * Regularly audit your domain configurations for suspicious Unicode characters
+When configuring domain allow/block lists:
+- Use ASCII-only domain names when possible
+- Consider that URL parsers may handle Unicode normalization differently
+- Test your domain filters with potential homograph variations
+- Regularly audit your domain configurations for suspicious Unicode characters
 </Warning>
 
 #### Content limits
@@ -188,7 +188,7 @@ When using domain filters:
 The `max_content_tokens` parameter limits the amount of content that will be included in the context. If the fetched content exceeds this limit, it will be truncated. This helps control token usage when fetching large documents.
 
 <Note>
-  The `max_content_tokens` parameter limit is approximate. The actual number of input tokens used can vary by a small amount.
+The `max_content_tokens` parameter limit is approximate. The actual number of input tokens used can vary by a small amount.
 </Note>
 
 #### Citations
@@ -196,14 +196,14 @@ The `max_content_tokens` parameter limits the amount of content that will be inc
 Unlike web search where citations are always enabled, citations are optional for web fetch. Set `"citations": {"enabled": true}` to enable Claude to cite specific passages from fetched documents.
 
 <Note>
-  When displaying API outputs directly to end users, citations must be included to the original source. If you are making modifications to API outputs, including by reprocessing and/or combining them with your own material before displaying them to end users, display citations as appropriate based on consultation with your legal team.
+When displaying API outputs directly to end users, citations must be included to the original source. If you are making modifications to API outputs, including by reprocessing and/or combining them with your own material before displaying them to end users, display citations as appropriate based on consultation with your legal team.
 </Note>
 
 ### Response
 
 Here's an example response structure:
 
-```json  theme={null}
+```json
 {
   "role": "assistant",
   "content": [
@@ -277,17 +277,17 @@ Here's an example response structure:
 
 Fetch results include:
 
-* `url`: The URL that was fetched
-* `content`: A document block containing the fetched content
-* `retrieved_at`: Timestamp when the content was retrieved
+- `url`: The URL that was fetched
+- `content`: A document block containing the fetched content
+- `retrieved_at`: Timestamp when the content was retrieved
 
 <Note>
-  The web fetch tool caches results to improve performance and reduce redundant requests. This means the content returned may not always be the latest version available at the URL. The cache behavior is managed automatically and may change over time to optimize for different content types and usage patterns.
+The web fetch tool caches results to improve performance and reduce redundant requests. This means the content returned may not always be the latest version available at the URL. The cache behavior is managed automatically and may change over time to optimize for different content types and usage patterns.
 </Note>
 
 For PDF documents, the content will be returned as base64-encoded data:
 
-```json  theme={null}
+```json
 {
   "type": "web_fetch_tool_result",
   "tool_use_id": "srvtoolu_02",
@@ -312,7 +312,7 @@ For PDF documents, the content will be returned as base64-encoded data:
 
 When the web fetch tool encounters an error, the Claude API returns a 200 (success) response with the error represented in the response body:
 
-```json  theme={null}
+```json
 {
   "type": "web_fetch_tool_result",
   "tool_use_id": "srvtoolu_a93jad",
@@ -325,22 +325,22 @@ When the web fetch tool encounters an error, the Claude API returns a 200 (succe
 
 These are the possible error codes:
 
-* `invalid_input`: Invalid URL format
-* `url_too_long`: URL exceeds maximum length (250 characters)
-* `url_not_allowed`: URL blocked by domain filtering rules and model restrictions
-* `url_not_accessible`: Failed to fetch content (HTTP error)
-* `too_many_requests`: Rate limit exceeded
-* `unsupported_content_type`: Content type not supported (only text and PDF)
-* `max_uses_exceeded`: Maximum web fetch tool uses exceeded
-* `unavailable`: An internal error occurred
+- `invalid_input`: Invalid URL format
+- `url_too_long`: URL exceeds maximum length (250 characters)
+- `url_not_allowed`: URL blocked by domain filtering rules and model restrictions
+- `url_not_accessible`: Failed to fetch content (HTTP error)
+- `too_many_requests`: Rate limit exceeded
+- `unsupported_content_type`: Content type not supported (only text and PDF)
+- `max_uses_exceeded`: Maximum web fetch tool uses exceeded
+- `unavailable`: An internal error occurred
 
 ## URL validation
 
 For security reasons, the web fetch tool can only fetch URLs that have previously appeared in the conversation context. This includes:
 
-* URLs in user messages
-* URLs in client-side tool results
-* URLs from previous web search or web fetch results
+- URLs in user messages
+- URLs in client-side tool results
+- URLs from previous web search or web fetch results
 
 The tool cannot fetch arbitrary URLs that Claude generates or URLs from container-based server tools (Code Execution, Bash, etc.).
 
@@ -348,7 +348,7 @@ The tool cannot fetch arbitrary URLs that Claude generates or URLs from containe
 
 Web fetch works seamlessly with web search for comprehensive information gathering:
 
-```python  theme={null}
+```python
 import anthropic
 
 client = anthropic.Anthropic()
@@ -382,7 +382,6 @@ response = client.messages.create(
 ```
 
 In this workflow, Claude will:
-
 1. Use web search to find relevant articles
 2. Select the most promising results
 3. Use web fetch to retrieve full content
@@ -390,9 +389,9 @@ In this workflow, Claude will:
 
 ## Prompt caching
 
-Web fetch works with [prompt caching](/en/docs/build-with-claude/prompt-caching). To enable prompt caching, add `cache_control` breakpoints in your request. Cached fetch results can be reused across conversation turns.
+Web fetch works with [prompt caching](/docs/en/build-with-claude/prompt-caching). To enable prompt caching, add `cache_control` breakpoints in your request. Cached fetch results can be reused across conversation turns.
 
-```python  theme={null}
+```python
 import anthropic
 
 client = anthropic.Anthropic()
@@ -452,7 +451,7 @@ print(f"Cache read tokens: {response2.usage.get('cache_read_input_tokens', 0)}")
 
 With streaming enabled, fetch events are part of the stream with a pause during content retrieval:
 
-```javascript  theme={null}
+```javascript
 event: message_start
 data: {"type": "message_start", "message": {"id": "msg_abc123", "type": "message"}}
 
@@ -479,13 +478,13 @@ data: {"type": "content_block_start", "index": 2, "content_block": {"type": "web
 
 ## Batch requests
 
-You can include the web fetch tool in the [Messages Batches API](/en/docs/build-with-claude/batch-processing). Web fetch tool calls through the Messages Batches API are priced the same as those in regular Messages API requests.
+You can include the web fetch tool in the [Messages Batches API](/docs/en/build-with-claude/batch-processing). Web fetch tool calls through the Messages Batches API are priced the same as those in regular Messages API requests.
 
 ## Usage and pricing
 
 Web fetch usage has **no additional charges** beyond standard token costs:
 
-```json  theme={null}
+```json
 "usage": {
   "input_tokens": 25039,
   "output_tokens": 931,
@@ -502,7 +501,6 @@ The web fetch tool is available on the Claude API at **no additional cost**. You
 To protect against inadvertently fetching large content that would consume excessive tokens, use the `max_content_tokens` parameter to set appropriate limits based on your use case and budget considerations.
 
 Example token usage for typical content:
-
-* Average web page (10KB): \~2,500 tokens
-* Large documentation page (100KB): \~25,000 tokens
-* Research paper PDF (500KB): \~125,000 tokens
+- Average web page (10KB): ~2,500 tokens
+- Large documentation page (100KB): ~25,000 tokens  
+- Research paper PDF (500KB): ~125,000 tokens

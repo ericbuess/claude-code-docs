@@ -1,6 +1,8 @@
 # Supported regions
 
-> Here are the countries, regions, and territories we can currently support access from:
+Here are the countries, regions, and territories we can currently support access from:
+
+---
 
 * Albania
 * Algeria

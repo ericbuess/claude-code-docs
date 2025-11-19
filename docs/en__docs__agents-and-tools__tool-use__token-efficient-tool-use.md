@@ -1,21 +1,24 @@
 # Token-efficient tool use
 
+---
+
 Starting with Claude Sonnet 3.7, Claude is capable of calling tools in a token-efficient manner. Requests save an average of 14% in output tokens, up to 70%, which also reduces latency. Exact token reduction and latency improvements depend on the overall response shape and size.
 
 <Info>
-  Token-efficient tool use is a beta feature that **only works with Claude 3.7 Sonnet**. To use this beta feature, add the beta header `token-efficient-tools-2025-02-19` to a tool use request. This header has no effect on other Claude models.
+Token-efficient tool use is a beta feature that **only works with Claude 3.7 Sonnet**. To use this beta feature, add the beta header `token-efficient-tools-2025-02-19` to a tool use request. This header has no effect on other Claude models.
 
-  All [Claude 4 models](/en/docs/about-claude/models/overview) support token-efficient tool use by default. No beta header is needed.
+All [Claude 4 models](/docs/en/about-claude/models/overview) support token-efficient tool use by default. No beta header is needed.
 </Info>
 
 <Warning>
-  Token-efficient tool use does not currently work with [`disable_parallel_tool_use`](/en/docs/agents-and-tools/tool-use/implement-tool-use).
+Token-efficient tool use does not currently work with [`disable_parallel_tool_use`](/docs/en/agents-and-tools/tool-use/implement-tool-use).
 </Warning>
 
 Here's an example of how to use token-efficient tools with the API in Claude Sonnet 3.7:
 
 <CodeGroup>
-  ```bash Shell theme={null}
+
+  ```bash Shell
   curl https://api.anthropic.com/v1/messages \
     -H "content-type: application/json" \
     -H "x-api-key: $ANTHROPIC_API_KEY" \
@@ -51,7 +54,7 @@ Here's an example of how to use token-efficient tools with the API in Claude Son
     }' | jq '.usage'
   ```
 
-  ```Python Python theme={null}
+  ```python Python
   import anthropic
 
   client = anthropic.Anthropic()
@@ -85,7 +88,7 @@ Here's an example of how to use token-efficient tools with the API in Claude Son
   print(response.usage)
   ```
 
-  ```TypeScript TypeScript theme={null}
+  ```typescript TypeScript
   import Anthropic from '@anthropic-ai/sdk';
 
   const anthropic = new Anthropic();
@@ -117,7 +120,7 @@ Here's an example of how to use token-efficient tools with the API in Claude Son
   console.log(message.usage);
   ```
 
-  ```Java Java theme={null}
+  ```java Java
   import java.util.List;
   import java.util.Map;
 
@@ -168,5 +171,5 @@ Here's an example of how to use token-efficient tools with the API in Claude Son
 The above request should, on average, use fewer input and output tokens than a normal request. To confirm this, try making the same request but remove `token-efficient-tools-2025-02-19` from the beta headers list.
 
 <Tip>
-  To keep the benefits of prompt caching, use the beta header consistently for requests you'd like to cache. If you selectively use it, prompt caching will fail.
+To keep the benefits of prompt caching, use the beta header consistently for requests you'd like to cache. If you selectively use it, prompt caching will fail. 
 </Tip>

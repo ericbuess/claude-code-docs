@@ -1,11 +1,13 @@
 # Get started with Claude
 
-> Make your first API call to Claude and build a simple web search assistant
+Make your first API call to Claude and build a simple web search assistant
+
+---
 
 ## Prerequisites
 
-* An Anthropic [Console account](https://console.anthropic.com/)
-* An [API key](https://console.anthropic.com/settings/keys)
+- An Anthropic [Console account](https://console.anthropic.com/)
+- An [API key](https://console.anthropic.com/settings/keys)
 
 ## Call the API
 
@@ -15,7 +17,7 @@
       <Step title="Set your API key">
         Get your API key at the [Claude Console](https://console.anthropic.com/settings/keys) and set it as an environment variable:
 
-        ```bash  theme={null}
+        ```bash
         export ANTHROPIC_API_KEY='your-api-key-here'
         ```
       </Step>
@@ -23,7 +25,7 @@
       <Step title="Make your first API call">
         Run this command to create a simple web search assistant:
 
-        ```bash  theme={null}
+        ```bash
         curl https://api.anthropic.com/v1/messages \
           -H "Content-Type: application/json" \
           -H "x-api-key: $ANTHROPIC_API_KEY" \
@@ -41,8 +43,7 @@
         ```
 
         **Example output:**
-
-        ```json  theme={null}
+        ```json
         {
           "id": "msg_01HCDu5LRGeP2o7s2xGmxyx8",
           "type": "message", 
@@ -70,7 +71,7 @@
       <Step title="Set your API key">
         Get your API key from the [Claude Console](https://console.anthropic.com/settings/keys) and set it as an environment variable:
 
-        ```bash  theme={null}
+        ```bash
         export ANTHROPIC_API_KEY='your-api-key-here'
         ```
       </Step>
@@ -78,7 +79,7 @@
       <Step title="Install the SDK">
         Install the Anthropic Python SDK:
 
-        ```bash  theme={null}
+        ```bash
         pip install anthropic
         ```
       </Step>
@@ -86,7 +87,7 @@
       <Step title="Create your code">
         Save this as `quickstart.py`:
 
-        ```python  theme={null}
+        ```python
         import anthropic
 
         client = anthropic.Anthropic()
@@ -106,13 +107,12 @@
       </Step>
 
       <Step title="Run your code">
-        ```bash  theme={null}
+        ```bash
         python quickstart.py
         ```
 
         **Example output:**
-
-        ```python  theme={null}
+        ```python
         [TextBlock(text='Here are some effective search strategies for finding the latest renewable energy developments:\n\n**Search Terms to Use:**\n- "renewable energy news 2024"\n- "clean energy breakthroughs"\n- "solar/wind/battery technology advances"\n- "energy storage innovations"\n- "green hydrogen developments"\n- "renewable energy policy updates"\n\n**Reliable Sources to Check:**\n- **News & Analysis:** Reuters Energy, Bloomberg New Energy Finance, Greentech Media, Energy Storage News\n- **Industry Publications:** Renewable Energy World, PV Magazine, Wind Power Engineering\n- **Research Organizations:** International Energy Agency (IEA), National Renewable Energy Laboratory (NREL)\n- **Government Sources:** Department of Energy websites, EPA clean energy updates\n\n**Specific Topics to Explore:**\n- Perovskite and next-gen solar cells\n- Offshore wind expansion\n- Grid-scale battery storage\n- Green hydrogen production\n- Carbon capture technologies\n- Smart grid innovations\n- Energy policy changes and incentives...', type='text')]
         ```
       </Step>
@@ -124,7 +124,7 @@
       <Step title="Set your API key">
         Get your API key from the [Claude Console](https://console.anthropic.com/settings/keys) and set it as an environment variable:
 
-        ```bash  theme={null}
+        ```bash
         export ANTHROPIC_API_KEY='your-api-key-here'
         ```
       </Step>
@@ -132,7 +132,7 @@
       <Step title="Install the SDK">
         Install the Anthropic TypeScript SDK:
 
-        ```bash  theme={null}
+        ```bash
         npm install @anthropic-ai/sdk
         ```
       </Step>
@@ -140,7 +140,7 @@
       <Step title="Create your code">
         Save this as `quickstart.ts`:
 
-        ```typescript  theme={null}
+        ```typescript
         import Anthropic from "@anthropic-ai/sdk";
 
         async function main() {
@@ -164,13 +164,12 @@
       </Step>
 
       <Step title="Run your code">
-        ```bash  theme={null}
+        ```bash
         npx tsx quickstart.ts
         ```
 
         **Example output:**
-
-        ```javascript  theme={null}
+        ```javascript
         {
           id: 'msg_01ThFHzad6Bh4TpQ6cHux9t8',
           type: 'message',
@@ -213,7 +212,7 @@
       <Step title="Set your API key">
         Get your API key from the [Claude Console](https://console.anthropic.com/settings/keys) and set it as an environment variable:
 
-        ```bash  theme={null}
+        ```bash
         export ANTHROPIC_API_KEY='your-api-key-here'
         ```
       </Step>
@@ -222,14 +221,12 @@
         Add the Anthropic Java SDK to your project. First find the current version on [Maven Central](https://central.sonatype.com/artifact/com.anthropic/anthropic-java).
 
         **Gradle:**
-
-        ```gradle  theme={null}
+        ```groovy
         implementation("com.anthropic:anthropic-java:1.0.0")
         ```
 
         **Maven:**
-
-        ```xml  theme={null}
+        ```xml
         <dependency>
           <groupId>com.anthropic</groupId>
           <artifactId>anthropic-java</artifactId>
@@ -241,7 +238,7 @@
       <Step title="Create your code">
         Save this as `QuickStart.java`:
 
-        ```java  theme={null}
+        ```java
         import com.anthropic.client.AnthropicClient;
         import com.anthropic.client.okhttp.AnthropicOkHttpClient;
         import com.anthropic.models.messages.Message;
@@ -265,14 +262,13 @@
       </Step>
 
       <Step title="Run your code">
-        ```bash  theme={null}
+        ```bash
         javac QuickStart.java
         java QuickStart
         ```
 
         **Example output:**
-
-        ```java  theme={null}
+        ```java
         [ContentBlock{text=TextBlock{text=Here are some effective search strategies to find the latest renewable energy developments:
 
         ## Search Terms to Use:
@@ -305,19 +301,16 @@
 Now that you have made your first Claude API request, it's time to explore what else is possible:
 
 <CardGroup cols={3}>
-  <Card title="Working with Messages" icon="messages" href="/en/docs/build-with-claude/working-with-messages">
+  <Card title="Working with Messages" icon="messages" href="/docs/en/build-with-claude/working-with-messages">
     Learn common patterns for the Messages API.
   </Card>
-
-  <Card title="Features Overview" icon="brain-circuit" href="/en/api/overview">
+  <Card title="Features Overview" icon="brain" href="/docs/en/api/overview">
     Explore Claude's advanced features and capabilities.
   </Card>
-
-  <Card title="Client SDKs" icon="code-simple" href="/en/api/client-sdks">
+  <Card title="Client SDKs" icon="code-brackets" href="/docs/en/api/client-sdks">
     Discover Anthropic client libraries.
   </Card>
-
-  <Card title="Claude Cookbook" icon="hat-chef" href="https://github.com/anthropics/anthropic-cookbook">
+  <Card title="Claude Cookbook" icon="chef-hat" href="https://github.com/anthropics/anthropic-cookbook">
     Learn with interactive Jupyter notebooks.
   </Card>
 </CardGroup>

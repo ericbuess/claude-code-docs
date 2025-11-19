@@ -1,6 +1,8 @@
 # Function fabricator
 
-> Create Python functions based on detailed specifications.
+Create Python functions based on detailed specifications.
+
+---
 
 > Copy this prompt into our developer [Console](https://console.anthropic.com/dashboard) to try it for yourself!
 
@@ -11,7 +13,7 @@
 
 ## Example Output
 
-```python Python theme={null}
+```python Python
 def solve_sudoku(grid):
    def is_valid(row, col, num):
        # Check if the number is valid in the current row and column
@@ -64,188 +66,189 @@ def solve_sudoku(grid):
 
 ```
 
-***
+---
 
 ## API Request
 
 <Tabs>
-  <Tab title="Python">
-    ```Python  theme={null}
-    import anthropic
+<Tab title="Python">
+```python
+import anthropic
 
-    client = anthropic.Anthropic(  # defaults to os.environ.get("ANTHROPIC_API_KEY")
-        api_key="my_api_key",
-    )
-    message = client.messages.create(
-        model="claude-sonnet-4-5",
-        max_tokens=1000,
-        temperature=0,
-        system="Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming. Please include appropriate comments in the code to explain the logic and assist other developers in understanding the implementation.",
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "I want a function that can solve a Sudoku puzzle. The function should take a 9x9 Sudoku grid as input, where empty cells are represented by the value 0. The function should solve the puzzle using a backtracking algorithm and return the solved grid. If the puzzle is unsolvable, it should return None. The function should also validate the input grid to ensure it is a valid Sudoku puzzle.",
-                    }
-                ],
-            }
-        ],
-    )
-    print(message.content)
-
-
-    ```
-  </Tab>
-
-  <Tab title="TypeScript">
-    ```TypeScript  theme={null}
-    import Anthropic from "@anthropic-ai/sdk";
-
-    const anthropic = new Anthropic({
-      apiKey: "my_api_key", // defaults to process.env["ANTHROPIC_API_KEY"]
-    });
-
-    const msg = await anthropic.messages.create({
-      model: "claude-sonnet-4-5",
-      max_tokens: 1000,
-      temperature: 0,
-      system: "Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming. Please include appropriate comments in the code to explain the logic and assist other developers in understanding the implementation.",
-      messages: [
-        {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "I want a function that can solve a Sudoku puzzle. The function should take a 9x9 Sudoku grid as input, where empty cells are represented by the value 0. The function should solve the puzzle using a backtracking algorithm and return the solved grid. If the puzzle is unsolvable, it should return None. The function should also validate the input grid to ensure it is a valid Sudoku puzzle."
-            }
-          ]
-        }
-      ]
-    });
-    console.log(msg);
-
-    ```
-  </Tab>
-
-  <Tab title="AWS Bedrock Python">
-    ```Python  theme={null}
-    from anthropic import AnthropicBedrock
-
-    # See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
-
-    # for authentication options
-
-    client = AnthropicBedrock()
-
-    message = client.messages.create(
-    model="anthropic.claude-sonnet-4-5-20250929-v1:0",
+client = anthropic.Anthropic(  # defaults to os.environ.get("ANTHROPIC_API_KEY")
+    api_key="my_api_key",
+)
+message = client.messages.create(
+    model="claude-sonnet-4-5",
     max_tokens=1000,
     temperature=0,
     system="Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming. Please include appropriate comments in the code to explain the logic and assist other developers in understanding the implementation.",
     messages=[
-    {
-    "role": "user",
-    "content": [
-    {
-    "type": "text",
-    "text": "I want a function that can solve a Sudoku puzzle. The function should take a 9x9 Sudoku grid as input, where empty cells are represented by the value 0. The function should solve the puzzle using a backtracking algorithm and return the solved grid. If the puzzle is unsolvable, it should return None. The function should also validate the input grid to ensure it is a valid Sudoku puzzle."
-    }
-    ]
-    }
-    ]
-    )
-    print(message.content)
-
-    ```
-  </Tab>
-
-  <Tab title="AWS Bedrock TypeScript">
-    ```TypeScript  theme={null}
-    import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
-
-    // See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
-    // for authentication options
-    const client = new AnthropicBedrock();
-
-    const msg = await client.messages.create({
-      model: "anthropic.claude-sonnet-4-5-20250929-v1:0",
-      max_tokens: 1000,
-      temperature: 0,
-      system: "Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming. Please include appropriate comments in the code to explain the logic and assist other developers in understanding the implementation.",
-      messages: [
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "I want a function that can solve a Sudoku puzzle. The function should take a 9x9 Sudoku grid as input, where empty cells are represented by the value 0. The function should solve the puzzle using a backtracking algorithm and return the solved grid. If the puzzle is unsolvable, it should return None. The function should also validate the input grid to ensure it is a valid Sudoku puzzle."
-            }
-          ]
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "I want a function that can solve a Sudoku puzzle. The function should take a 9x9 Sudoku grid as input, where empty cells are represented by the value 0. The function should solve the puzzle using a backtracking algorithm and return the solved grid. If the puzzle is unsolvable, it should return None. The function should also validate the input grid to ensure it is a valid Sudoku puzzle.",
+                }
+            ],
+        }
+    ],
+)
+print(message.content)
+
+
+```
+</Tab>
+<Tab title="TypeScript">
+
+```typescript
+import Anthropic from "@anthropic-ai/sdk";
+
+const anthropic = new Anthropic({
+  apiKey: "my_api_key", // defaults to process.env["ANTHROPIC_API_KEY"]
+});
+
+const msg = await anthropic.messages.create({
+  model: "claude-sonnet-4-5",
+  max_tokens: 1000,
+  temperature: 0,
+  system: "Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming. Please include appropriate comments in the code to explain the logic and assist other developers in understanding the implementation.",
+  messages: [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "I want a function that can solve a Sudoku puzzle. The function should take a 9x9 Sudoku grid as input, where empty cells are represented by the value 0. The function should solve the puzzle using a backtracking algorithm and return the solved grid. If the puzzle is unsolvable, it should return None. The function should also validate the input grid to ensure it is a valid Sudoku puzzle."
         }
       ]
-    });
-    console.log(msg);
-
-    ```
-  </Tab>
-
-  <Tab title="Vertex AI Python">
-    ```Python  theme={null}
-    from anthropic import AnthropicVertex
-
-    client = AnthropicVertex()
-
-    message = client.messages.create(
-    model="claude-sonnet-4@20250514",
-    max_tokens=1000,
-    temperature=0,
-    system="Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming. Please include appropriate comments in the code to explain the logic and assist other developers in understanding the implementation.",
-    messages=[
-    {
-    "role": "user",
-    "content": [
-    {
-    "type": "text",
-    "text": "I want a function that can solve a Sudoku puzzle. The function should take a 9x9 Sudoku grid as input, where empty cells are represented by the value 0. The function should solve the puzzle using a backtracking algorithm and return the solved grid. If the puzzle is unsolvable, it should return None. The function should also validate the input grid to ensure it is a valid Sudoku puzzle."
     }
-    ]
-    }
-    ]
-    )
-    print(message.content)
+  ]
+});
+console.log(msg);
 
-    ```
-  </Tab>
+````
 
-  <Tab title="Vertex AI TypeScript">
-    ```TypeScript  theme={null}
-    import { AnthropicVertex } from '@anthropic-ai/vertex-sdk';
+</Tab>
+<Tab title="AWS Bedrock Python">
+```python
+from anthropic import AnthropicBedrock
 
-    // Reads from the `CLOUD_ML_REGION` & `ANTHROPIC_VERTEX_PROJECT_ID` environment variables.
-    // Additionally goes through the standard `google-auth-library` flow.
-    const client = new AnthropicVertex();
+# See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
 
-    const msg = await client.messages.create({
-      model: "claude-sonnet-4@20250514",
-      max_tokens: 1000,
-      temperature: 0,
-      system: "Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming. Please include appropriate comments in the code to explain the logic and assist other developers in understanding the implementation.",
-      messages: [
+# for authentication options
+
+client = AnthropicBedrock()
+
+message = client.messages.create(
+model="anthropic.claude-sonnet-4-5-20250929-v1:0",
+max_tokens=1000,
+temperature=0,
+system="Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming. Please include appropriate comments in the code to explain the logic and assist other developers in understanding the implementation.",
+messages=[
+{
+"role": "user",
+"content": [
+{
+"type": "text",
+"text": "I want a function that can solve a Sudoku puzzle. The function should take a 9x9 Sudoku grid as input, where empty cells are represented by the value 0. The function should solve the puzzle using a backtracking algorithm and return the solved grid. If the puzzle is unsolvable, it should return None. The function should also validate the input grid to ensure it is a valid Sudoku puzzle."
+}
+]
+}
+]
+)
+print(message.content)
+
+````
+</Tab>
+<Tab title="AWS Bedrock TypeScript">
+
+```typescript
+import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
+
+// See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
+// for authentication options
+const client = new AnthropicBedrock();
+
+const msg = await client.messages.create({
+  model: "anthropic.claude-sonnet-4-5-20250929-v1:0",
+  max_tokens: 1000,
+  temperature: 0,
+  system: "Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming. Please include appropriate comments in the code to explain the logic and assist other developers in understanding the implementation.",
+  messages: [
+    {
+      "role": "user",
+      "content": [
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "I want a function that can solve a Sudoku puzzle. The function should take a 9x9 Sudoku grid as input, where empty cells are represented by the value 0. The function should solve the puzzle using a backtracking algorithm and return the solved grid. If the puzzle is unsolvable, it should return None. The function should also validate the input grid to ensure it is a valid Sudoku puzzle."
-            }
-          ]
+          "type": "text",
+          "text": "I want a function that can solve a Sudoku puzzle. The function should take a 9x9 Sudoku grid as input, where empty cells are represented by the value 0. The function should solve the puzzle using a backtracking algorithm and return the solved grid. If the puzzle is unsolvable, it should return None. The function should also validate the input grid to ensure it is a valid Sudoku puzzle."
         }
       ]
-    });
-    console.log(msg);
+    }
+  ]
+});
+console.log(msg);
 
-    ```
-  </Tab>
+````
+
+</Tab>
+<Tab title="Vertex AI Python">
+```python
+from anthropic import AnthropicVertex
+
+client = AnthropicVertex()
+
+message = client.messages.create(
+model="claude-sonnet-4@20250514",
+max_tokens=1000,
+temperature=0,
+system="Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming. Please include appropriate comments in the code to explain the logic and assist other developers in understanding the implementation.",
+messages=[
+{
+"role": "user",
+"content": [
+{
+"type": "text",
+"text": "I want a function that can solve a Sudoku puzzle. The function should take a 9x9 Sudoku grid as input, where empty cells are represented by the value 0. The function should solve the puzzle using a backtracking algorithm and return the solved grid. If the puzzle is unsolvable, it should return None. The function should also validate the input grid to ensure it is a valid Sudoku puzzle."
+}
+]
+}
+]
+)
+print(message.content)
+
+````
+</Tab>
+<Tab title="Vertex AI TypeScript">
+
+```typescript
+import { AnthropicVertex } from '@anthropic-ai/vertex-sdk';
+
+// Reads from the `CLOUD_ML_REGION` & `ANTHROPIC_VERTEX_PROJECT_ID` environment variables.
+// Additionally goes through the standard `google-auth-library` flow.
+const client = new AnthropicVertex();
+
+const msg = await client.messages.create({
+  model: "claude-sonnet-4@20250514",
+  max_tokens: 1000,
+  temperature: 0,
+  system: "Your task is to create Python functions based on the provided natural language requests. The requests will describe the desired functionality of the function, including the input parameters and expected return value. Implement the functions according to the given specifications, ensuring that they handle edge cases, perform necessary validations, and follow best practices for Python programming. Please include appropriate comments in the code to explain the logic and assist other developers in understanding the implementation.",
+  messages: [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "I want a function that can solve a Sudoku puzzle. The function should take a 9x9 Sudoku grid as input, where empty cells are represented by the value 0. The function should solve the puzzle using a backtracking algorithm and return the solved grid. If the puzzle is unsolvable, it should return None. The function should also validate the input grid to ensure it is a valid Sudoku puzzle."
+        }
+      ]
+    }
+  ]
+});
+console.log(msg);
+
+````
+
+</Tab>
 </Tabs>

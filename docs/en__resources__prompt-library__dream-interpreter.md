@@ -1,6 +1,8 @@
 # Dream interpreter
 
-> Offer interpretations and insights into the symbolism of the user's dreams.
+Offer interpretations and insights into the symbolism of the user's dreams.
+
+---
 
 > Copy this prompt into our developer [Console](https://console.anthropic.com/dashboard) to try it for yourself!
 
@@ -25,186 +27,196 @@ However, it's essential to remember that dream interpretation is highly personal
 
 Do you feel that this interpretation resonates with you? Are there any other aspects of the dream or your waking life that you think might be relevant to the dream's meaning?
 
-***
+---
 
 ## API Request
 
 <Tabs>
-  <Tab title="Python">
-    ```Python  theme={null}
-    import anthropic
+<Tab title="Python">
+```python
+import anthropic
 
-    client = anthropic.Anthropic(  # defaults to os.environ.get("ANTHROPIC_API_KEY")
-        api_key="my_api_key",
-    )
-    message = client.messages.create(
-        model="claude-sonnet-4-5",
-        max_tokens=2000,
-        temperature=1,
-        system="You are an AI assistant with a deep understanding of dream interpretation and symbolism. Your task is to provide users with insightful and meaningful analyses of the symbols, emotions, and narratives present in their dreams. Offer potential interpretations while encouraging the user to reflect on their own experiences and emotions.",
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "I had a dream last night that I was walking through a dense forest. The trees were tall and dark, and I could hear strange whispers coming from the shadows. Suddenly, I stumbled upon a clearing where I found a majestic white stag standing in the center. As I approached the stag, it transformed into a wise old man who handed me a golden key. Then I woke up. What could this dream mean?",
-                    }
-                ],
-            }
-        ],
-    )
-    print(message.content)
-
-
-    ```
-  </Tab>
-
-  <Tab title="TypeScript">
-    ```TypeScript  theme={null}
-    import Anthropic from "@anthropic-ai/sdk";
-
-    const anthropic = new Anthropic({
-      apiKey: "my_api_key", // defaults to process.env["ANTHROPIC_API_KEY"]
-    });
-
-    const msg = await anthropic.messages.create({
-      model: "claude-sonnet-4-5",
-      max_tokens: 2000,
-      temperature: 1,
-      system: "You are an AI assistant with a deep understanding of dream interpretation and symbolism. Your task is to provide users with insightful and meaningful analyses of the symbols, emotions, and narratives present in their dreams. Offer potential interpretations while encouraging the user to reflect on their own experiences and emotions.",
-      messages: [
+client = anthropic.Anthropic(  # defaults to os.environ.get("ANTHROPIC_API_KEY")
+    api_key="my_api_key",
+)
+message = client.messages.create(
+    model="claude-sonnet-4-5",
+    max_tokens=2000,
+    temperature=1,
+    system="You are an AI assistant with a deep understanding of dream interpretation and symbolism. Your task is to provide users with insightful and meaningful analyses of the symbols, emotions, and narratives present in their dreams. Offer potential interpretations while encouraging the user to reflect on their own experiences and emotions.",
+    messages=[
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "I had a dream last night that I was walking through a dense forest. The trees were tall and dark, and I could hear strange whispers coming from the shadows. Suddenly, I stumbled upon a clearing where I found a majestic white stag standing in the center. As I approached the stag, it transformed into a wise old man who handed me a golden key. Then I woke up. What could this dream mean?"
-            }
-          ]
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "I had a dream last night that I was walking through a dense forest. The trees were tall and dark, and I could hear strange whispers coming from the shadows. Suddenly, I stumbled upon a clearing where I found a majestic white stag standing in the center. As I approached the stag, it transformed into a wise old man who handed me a golden key. Then I woke up. What could this dream mean?",
+                }
+            ],
+        }
+    ],
+)
+print(message.content)
+
+
+````
+</Tab>
+
+<Tab title="TypeScript">
+
+```typescript
+import Anthropic from "@anthropic-ai/sdk";
+
+const anthropic = new Anthropic({
+  apiKey: "my_api_key", // defaults to process.env["ANTHROPIC_API_KEY"]
+});
+
+const msg = await anthropic.messages.create({
+  model: "claude-sonnet-4-5",
+  max_tokens: 2000,
+  temperature: 1,
+  system: "You are an AI assistant with a deep understanding of dream interpretation and symbolism. Your task is to provide users with insightful and meaningful analyses of the symbols, emotions, and narratives present in their dreams. Offer potential interpretations while encouraging the user to reflect on their own experiences and emotions.",
+  messages: [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "I had a dream last night that I was walking through a dense forest. The trees were tall and dark, and I could hear strange whispers coming from the shadows. Suddenly, I stumbled upon a clearing where I found a majestic white stag standing in the center. As I approached the stag, it transformed into a wise old man who handed me a golden key. Then I woke up. What could this dream mean?"
         }
       ]
-    });
-    console.log(msg);
+    }
+  ]
+});
+console.log(msg);
 
-    ```
-  </Tab>
+````
 
-  <Tab title="AWS Bedrock Python">
-    ```Python  theme={null}
-    from anthropic import AnthropicBedrock
+</Tab>
 
-    # See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
-    # for authentication options
-    client = AnthropicBedrock()
+<Tab title="AWS Bedrock Python">
 
-    message = client.messages.create(
-        model="anthropic.claude-sonnet-4-5-20250929-v1:0",
-        max_tokens=2000,
-        temperature=1,
-        system="You are an AI assistant with a deep understanding of dream interpretation and symbolism. Your task is to provide users with insightful and meaningful analyses of the symbols, emotions, and narratives present in their dreams. Offer potential interpretations while encouraging the user to reflect on their own experiences and emotions.",
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "I had a dream last night that I was walking through a dense forest. The trees were tall and dark, and I could hear strange whispers coming from the shadows. Suddenly, I stumbled upon a clearing where I found a majestic white stag standing in the center. As I approached the stag, it transformed into a wise old man who handed me a golden key. Then I woke up. What could this dream mean?"
-                    }
-                ]
-            }
-        ]
-    )
-    print(message.content)
+```python
+from anthropic import AnthropicBedrock
 
-    ```
-  </Tab>
+# See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
+# for authentication options
+client = AnthropicBedrock()
 
-  <Tab title="AWS Bedrock TypeScript">
-    ```TypeScript  theme={null}
-    import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
-
-    // See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
-    // for authentication options
-    const client = new AnthropicBedrock();
-
-    const msg = await client.messages.create({
-      model: "anthropic.claude-sonnet-4-5-20250929-v1:0",
-      max_tokens: 2000,
-      temperature: 1,
-      system: "You are an AI assistant with a deep understanding of dream interpretation and symbolism. Your task is to provide users with insightful and meaningful analyses of the symbols, emotions, and narratives present in their dreams. Offer potential interpretations while encouraging the user to reflect on their own experiences and emotions.",
-      messages: [
+message = client.messages.create(
+    model="anthropic.claude-sonnet-4-5-20250929-v1:0",
+    max_tokens=2000,
+    temperature=1,
+    system="You are an AI assistant with a deep understanding of dream interpretation and symbolism. Your task is to provide users with insightful and meaningful analyses of the symbols, emotions, and narratives present in their dreams. Offer potential interpretations while encouraging the user to reflect on their own experiences and emotions.",
+    messages=[
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "I had a dream last night that I was walking through a dense forest. The trees were tall and dark, and I could hear strange whispers coming from the shadows. Suddenly, I stumbled upon a clearing where I found a majestic white stag standing in the center. As I approached the stag, it transformed into a wise old man who handed me a golden key. Then I woke up. What could this dream mean?"
-            }
-          ]
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "I had a dream last night that I was walking through a dense forest. The trees were tall and dark, and I could hear strange whispers coming from the shadows. Suddenly, I stumbled upon a clearing where I found a majestic white stag standing in the center. As I approached the stag, it transformed into a wise old man who handed me a golden key. Then I woke up. What could this dream mean?"
+                }
+            ]
+        }
+    ]
+)
+print(message.content)
+
+```
+
+</Tab>
+
+<Tab title="AWS Bedrock TypeScript">
+
+```typescript
+import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
+
+// See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
+// for authentication options
+const client = new AnthropicBedrock();
+
+const msg = await client.messages.create({
+  model: "anthropic.claude-sonnet-4-5-20250929-v1:0",
+  max_tokens: 2000,
+  temperature: 1,
+  system: "You are an AI assistant with a deep understanding of dream interpretation and symbolism. Your task is to provide users with insightful and meaningful analyses of the symbols, emotions, and narratives present in their dreams. Offer potential interpretations while encouraging the user to reflect on their own experiences and emotions.",
+  messages: [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "I had a dream last night that I was walking through a dense forest. The trees were tall and dark, and I could hear strange whispers coming from the shadows. Suddenly, I stumbled upon a clearing where I found a majestic white stag standing in the center. As I approached the stag, it transformed into a wise old man who handed me a golden key. Then I woke up. What could this dream mean?"
         }
       ]
-    });
-    console.log(msg);
+    }
+  ]
+});
+console.log(msg);
 
-    ```
-  </Tab>
+```
 
-  <Tab title="Vertex AI Python">
-    ```Python  theme={null}
-    from anthropic import AnthropicVertex
+</Tab>
 
-    client = AnthropicVertex()
+<Tab title="Vertex AI Python">
 
-    message = client.messages.create(
-        model="claude-sonnet-4@20250514",
-        max_tokens=2000,
-        temperature=1,
-        system="You are an AI assistant with a deep understanding of dream interpretation and symbolism. Your task is to provide users with insightful and meaningful analyses of the symbols, emotions, and narratives present in their dreams. Offer potential interpretations while encouraging the user to reflect on their own experiences and emotions.",
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "I had a dream last night that I was walking through a dense forest. The trees were tall and dark, and I could hear strange whispers coming from the shadows. Suddenly, I stumbled upon a clearing where I found a majestic white stag standing in the center. As I approached the stag, it transformed into a wise old man who handed me a golden key. Then I woke up. What could this dream mean?"
-                    }
-                ]
-            }
-        ]
-    )
-    print(message.content)
+```python
+from anthropic import AnthropicVertex
 
-    ```
-  </Tab>
+client = AnthropicVertex()
 
-  <Tab title="Vertex AI TypeScript">
-    ```TypeScript  theme={null}
-    import { AnthropicVertex } from '@anthropic-ai/vertex-sdk';
-
-    // Reads from the `CLOUD_ML_REGION` & `ANTHROPIC_VERTEX_PROJECT_ID` environment variables.
-    // Additionally goes through the standard `google-auth-library` flow.
-    const client = new AnthropicVertex();
-
-    const msg = await client.messages.create({
-      model: "claude-sonnet-4@20250514",
-      max_tokens: 2000,
-      temperature: 1,
-      system: "You are an AI assistant with a deep understanding of dream interpretation and symbolism. Your task is to provide users with insightful and meaningful analyses of the symbols, emotions, and narratives present in their dreams. Offer potential interpretations while encouraging the user to reflect on their own experiences and emotions.",
-      messages: [
+message = client.messages.create(
+    model="claude-sonnet-4@20250514",
+    max_tokens=2000,
+    temperature=1,
+    system="You are an AI assistant with a deep understanding of dream interpretation and symbolism. Your task is to provide users with insightful and meaningful analyses of the symbols, emotions, and narratives present in their dreams. Offer potential interpretations while encouraging the user to reflect on their own experiences and emotions.",
+    messages=[
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "I had a dream last night that I was walking through a dense forest. The trees were tall and dark, and I could hear strange whispers coming from the shadows. Suddenly, I stumbled upon a clearing where I found a majestic white stag standing in the center. As I approached the stag, it transformed into a wise old man who handed me a golden key. Then I woke up. What could this dream mean?"
-            }
-          ]
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "I had a dream last night that I was walking through a dense forest. The trees were tall and dark, and I could hear strange whispers coming from the shadows. Suddenly, I stumbled upon a clearing where I found a majestic white stag standing in the center. As I approached the stag, it transformed into a wise old man who handed me a golden key. Then I woke up. What could this dream mean?"
+                }
+            ]
+        }
+    ]
+)
+print(message.content)
+
+```
+
+</Tab>
+
+<Tab title="Vertex AI TypeScript">
+
+```typescript
+import { AnthropicVertex } from '@anthropic-ai/vertex-sdk';
+
+// Reads from the `CLOUD_ML_REGION` & `ANTHROPIC_VERTEX_PROJECT_ID` environment variables.
+// Additionally goes through the standard `google-auth-library` flow.
+const client = new AnthropicVertex();
+
+const msg = await client.messages.create({
+  model: "claude-sonnet-4@20250514",
+  max_tokens: 2000,
+  temperature: 1,
+  system: "You are an AI assistant with a deep understanding of dream interpretation and symbolism. Your task is to provide users with insightful and meaningful analyses of the symbols, emotions, and narratives present in their dreams. Offer potential interpretations while encouraging the user to reflect on their own experiences and emotions.",
+  messages: [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "I had a dream last night that I was walking through a dense forest. The trees were tall and dark, and I could hear strange whispers coming from the shadows. Suddenly, I stumbled upon a clearing where I found a majestic white stag standing in the center. As I approached the stag, it transformed into a wise old man who handed me a golden key. Then I woke up. What could this dream mean?"
         }
       ]
-    });
-    console.log(msg);
+    }
+  ]
+});
+console.log(msg);
 
-    ```
-  </Tab>
+```
+
+</Tab>
 </Tabs>

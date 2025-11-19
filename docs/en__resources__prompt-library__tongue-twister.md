@@ -1,6 +1,8 @@
 # Tongue twister
 
-> Create challenging tongue twisters.
+Create challenging tongue twisters.
+
+---
 
 > Copy this prompt into our developer [Console](https://console.anthropic.com/dashboard) to try it for yourself!
 
@@ -10,192 +12,199 @@
 
 ## Example Output
 
-Tongue Twister 1:\
-The shrewd shrew chewed through the shiny, shimmering shoe.
+Tongue Twister 1:  
+ The shrewd shrew chewed through the shiny, shimmering shoe.
 
-Tongue Twister 2:\
-Brisk breezes blew by the blue-blooded, blabbering, babbling baboon.
+Tongue Twister 2:  
+ Brisk breezes blew by the blue-blooded, blabbering, babbling baboon.
 
-Tongue Twister 3:\
-The perplexed piper picked a peck of pickled peppers while practicing his piping.
+Tongue Twister 3:  
+ The perplexed piper picked a peck of pickled peppers while practicing his piping.
 
-Tongue Twister 4:\
-Six sleek, slick, slender sleds slid swiftly down the steep, snowy slope.
+Tongue Twister 4:  
+ Six sleek, slick, slender sleds slid swiftly down the steep, snowy slope.
 
-***
+---
 
 ## API Request
 
 <Tabs>
-  <Tab title="Python">
-    ```Python  theme={null}
-    import anthropic
+<Tab title="Python">
 
-    client = anthropic.Anthropic(
-      # defaults to os.environ.get("ANTHROPIC_API_KEY")
-      api_key="my_api_key",
-    )
-    message = client.messages.create(
-      model="claude-sonnet-4-5",
-      max_tokens=1000,
-      temperature=1,
-      messages=[
+```python
+import anthropic
+
+client = anthropic.Anthropic(
+  # defaults to os.environ.get("ANTHROPIC_API_KEY")
+  api_key="my_api_key",
+)
+message = client.messages.create(
+  model="claude-sonnet-4-5",
+  max_tokens=1000,
+  temperature=1,
+  messages=[
+    {
+      "role": "user",
+      "content": [
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "Generate complex and creative tongue twisters. Aim to create tongue twisters that are not only challenging to say but also engaging, entertaining, and potentially humorous. Consider incorporating wordplay, rhyme, and alliteration to enhance the difficulty and enjoyment of the tongue twisters."
-            }
-          ]
+          "type": "text",
+          "text": "Generate complex and creative tongue twisters. Aim to create tongue twisters that are not only challenging to say but also engaging, entertaining, and potentially humorous. Consider incorporating wordplay, rhyme, and alliteration to enhance the difficulty and enjoyment of the tongue twisters."
         }
       ]
-    )
-    print(message.content)
+    }
+  ]
+)
+print(message.content)
 
-    ```
-  </Tab>
+```
 
-  <Tab title="TypeScript">
-    ```TypeScript  theme={null}
-    import Anthropic from "@anthropic-ai/sdk";
+</Tab>
+<Tab title="TypeScript">
 
-    const anthropic = new Anthropic({
-      apiKey: "my_api_key", // defaults to process.env["ANTHROPIC_API_KEY"]
-    });
+```typescript
+import Anthropic from "@anthropic-ai/sdk";
 
-    const msg = await anthropic.messages.create({
-      model: "claude-sonnet-4-5",
-      max_tokens: 1000,
-      temperature: 1,
-      messages: [
+const anthropic = new Anthropic({
+  apiKey: "my_api_key", // defaults to process.env["ANTHROPIC_API_KEY"]
+});
+
+const msg = await anthropic.messages.create({
+  model: "claude-sonnet-4-5",
+  max_tokens: 1000,
+  temperature: 1,
+  messages: [
+    {
+      "role": "user",
+      "content": [
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "Generate complex and creative tongue twisters. Aim to create tongue twisters that are not only challenging to say but also engaging, entertaining, and potentially humorous. Consider incorporating wordplay, rhyme, and alliteration to enhance the difficulty and enjoyment of the tongue twisters."
-            }
-          ]
+          "type": "text",
+          "text": "Generate complex and creative tongue twisters. Aim to create tongue twisters that are not only challenging to say but also engaging, entertaining, and potentially humorous. Consider incorporating wordplay, rhyme, and alliteration to enhance the difficulty and enjoyment of the tongue twisters."
         }
       ]
-    });
-    console.log(msg);
+    }
+  ]
+});
+console.log(msg);
 
-    ```
-  </Tab>
+````
 
-  <Tab title="AWS Bedrock Python">
-    ```Python  theme={null}
-    from anthropic import AnthropicBedrock
+</Tab>
+<Tab title="AWS Bedrock Python">
 
-    # See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
-    # for authentication options
-    client = AnthropicBedrock()
+```python
+from anthropic import AnthropicBedrock
 
-    message = client.messages.create(
-        model="anthropic.claude-sonnet-4-5-20250929-v1:0",
-        max_tokens=1000,
-        temperature=1,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "Generate complex and creative tongue twisters. Aim to create tongue twisters that are not only challenging to say but also engaging, entertaining, and potentially humorous. Consider incorporating wordplay, rhyme, and alliteration to enhance the difficulty and enjoyment of the tongue twisters."
-                    }
-                ]
-            }
-        ]
-    )
-    print(message.content)
+# See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
+# for authentication options
+client = AnthropicBedrock()
 
-    ```
-  </Tab>
-
-  <Tab title="AWS Bedrock TypeScript">
-    ```TypeScript  theme={null}
-    import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
-
-    // See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
-    // for authentication options
-    const client = new AnthropicBedrock();
-
-    const msg = await client.messages.create({
-      model: "anthropic.claude-sonnet-4-5-20250929-v1:0",
-      max_tokens: 1000,
-      temperature: 1,
-      messages: [
+message = client.messages.create(
+    model="anthropic.claude-sonnet-4-5-20250929-v1:0",
+    max_tokens=1000,
+    temperature=1,
+    messages=[
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "Generate complex and creative tongue twisters. Aim to create tongue twisters that are not only challenging to say but also engaging, entertaining, and potentially humorous. Consider incorporating wordplay, rhyme, and alliteration to enhance the difficulty and enjoyment of the tongue twisters."
-            }
-          ]
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Generate complex and creative tongue twisters. Aim to create tongue twisters that are not only challenging to say but also engaging, entertaining, and potentially humorous. Consider incorporating wordplay, rhyme, and alliteration to enhance the difficulty and enjoyment of the tongue twisters."
+                }
+            ]
+        }
+    ]
+)
+print(message.content)
+
+```
+
+</Tab>
+<Tab title="AWS Bedrock TypeScript">
+
+```typescript
+import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
+
+// See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
+// for authentication options
+const client = new AnthropicBedrock();
+
+const msg = await client.messages.create({
+  model: "anthropic.claude-sonnet-4-5-20250929-v1:0",
+  max_tokens: 1000,
+  temperature: 1,
+  messages: [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Generate complex and creative tongue twisters. Aim to create tongue twisters that are not only challenging to say but also engaging, entertaining, and potentially humorous. Consider incorporating wordplay, rhyme, and alliteration to enhance the difficulty and enjoyment of the tongue twisters."
         }
       ]
-    });
-    console.log(msg);
+    }
+  ]
+});
+console.log(msg);
 
-    ```
-  </Tab>
+```
 
-  <Tab title="Vertex AI Python">
-    ```Python  theme={null}
-    from anthropic import AnthropicVertex
+</Tab>
+<Tab title="Vertex AI Python">
 
-    client = AnthropicVertex()
+```python
+from anthropic import AnthropicVertex
 
-    message = client.messages.create(
-        model="claude-sonnet-4@20250514",
-        max_tokens=1000,
-        temperature=1,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "Generate complex and creative tongue twisters. Aim to create tongue twisters that are not only challenging to say but also engaging, entertaining, and potentially humorous. Consider incorporating wordplay, rhyme, and alliteration to enhance the difficulty and enjoyment of the tongue twisters."
-                    }
-                ]
-            }
-        ]
-    )
-    print(message.content)
+client = AnthropicVertex()
 
-    ```
-  </Tab>
-
-  <Tab title="Vertex AI TypeScript">
-    ```TypeScript  theme={null}
-    import { AnthropicVertex } from '@anthropic-ai/vertex-sdk';
-
-    // Reads from the `CLOUD_ML_REGION` & `ANTHROPIC_VERTEX_PROJECT_ID` environment variables.
-    // Additionally goes through the standard `google-auth-library` flow.
-    const client = new AnthropicVertex();
-
-    const msg = await client.messages.create({
-      model: "claude-sonnet-4@20250514",
-      max_tokens: 1000,
-      temperature: 1,
-      messages: [
+message = client.messages.create(
+    model="claude-sonnet-4@20250514",
+    max_tokens=1000,
+    temperature=1,
+    messages=[
         {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "Generate complex and creative tongue twisters. Aim to create tongue twisters that are not only challenging to say but also engaging, entertaining, and potentially humorous. Consider incorporating wordplay, rhyme, and alliteration to enhance the difficulty and enjoyment of the tongue twisters."
-            }
-          ]
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Generate complex and creative tongue twisters. Aim to create tongue twisters that are not only challenging to say but also engaging, entertaining, and potentially humorous. Consider incorporating wordplay, rhyme, and alliteration to enhance the difficulty and enjoyment of the tongue twisters."
+                }
+            ]
+        }
+    ]
+)
+print(message.content)
+
+```
+
+</Tab>
+<Tab title="Vertex AI TypeScript">
+
+```typescript
+import { AnthropicVertex } from '@anthropic-ai/vertex-sdk';
+
+// Reads from the `CLOUD_ML_REGION` & `ANTHROPIC_VERTEX_PROJECT_ID` environment variables.
+// Additionally goes through the standard `google-auth-library` flow.
+const client = new AnthropicVertex();
+
+const msg = await client.messages.create({
+  model: "claude-sonnet-4@20250514",
+  max_tokens: 1000,
+  temperature: 1,
+  messages: [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Generate complex and creative tongue twisters. Aim to create tongue twisters that are not only challenging to say but also engaging, entertaining, and potentially humorous. Consider incorporating wordplay, rhyme, and alliteration to enhance the difficulty and enjoyment of the tongue twisters."
         }
       ]
-    });
-    console.log(msg);
+    }
+  ]
+});
+console.log(msg);
 
-    ```
-  </Tab>
+```
+
+</Tab>
 </Tabs>

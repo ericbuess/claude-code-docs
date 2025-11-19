@@ -1,6 +1,8 @@
 # Futuristic fashion advisor
 
-> Suggest avant-garde fashion trends and styles for the user's specific preferences.
+Suggest avant-garde fashion trends and styles for the user's specific preferences.
+
+---
 
 > Copy this prompt into our developer [Console](https://console.anthropic.com/dashboard) to try it for yourself!
 
@@ -24,178 +26,183 @@
 >
 > Tips for styling and mixing textures:
 >
-> * Experiment with layering different materials, such as leather, denim, cotton, and silk, to create visual interest and depth in your outfits.
-> * Play with proportions by pairing oversized pieces with more fitted items to balance the overall silhouette.
-> * Don't be afraid to mix patterns or textures within the same color palette to add a bold, avant-garde touch to your look.
-> * Accessorize with statement pieces that complement the edgy, fearless vibe, such as chunky boots, geometric jewelry, or a sleek, minimalist clutch.
+> - Experiment with layering different materials, such as leather, denim, cotton, and silk, to create visual interest and depth in your outfits.
+> - Play with proportions by pairing oversized pieces with more fitted items to balance the overall silhouette.
+> - Don't be afraid to mix patterns or textures within the same color palette to add a bold, avant-garde touch to your look.
+> - Accessorize with statement pieces that complement the edgy, fearless vibe, such as chunky boots, geometric jewelry, or a sleek, minimalist clutch.
 >   Remember, avant-garde fashion is about pushing boundaries and experimenting with unconventional styles. Embrace your unique taste and have fun creating striking, memorable looks that showcase your personal style.
 
 ### API Request
 
 <CodeGroup>
-  ```python Python theme={null}
-  import anthropic
-
-  client = anthropic.Anthropic(
-      # defaults to os.environ.get("ANTHROPIC_API_KEY")
-      api_key="my_api_key",
-  )
-  message = client.messages.create(
-      model="claude-sonnet-4-5",
-      max_tokens=1000,
-      temperature=1,
-      system="Your task is to suggest avant-garde fashion trends and styles tailored to the user's preferences. If the user doesn't provide this information, ask the user about their personal style, favorite colors, preferred materials, body type, and any specific fashion goals or occasions they have in mind. Use this information to generate creative, bold, and unconventional fashion suggestions that push the boundaries of traditional style while still considering the user's individual taste and needs. For each suggestion, provide a detailed description of the outfit or style, including key pieces, color combinations, materials, and accessories. Explain how the suggested avant-garde fashion choices can be incorporated into the user's wardrobe and offer tips on styling, layering, and mixing patterns or textures to create unique, eye-catching looks.",
-      messages=[
-          {
-              "role": "user",
-              "content": [
-                  {
-                      "type": "text",
-                      "text": "Personal style: Edgy, minimal, with a touch of androgyny  \nFavorite colors: Black, white, and deep red  \nPreferred materials: Leather, denim, and high-quality cotton  \nBody type: Tall and lean  \nFashion goals: To create a striking, fearless look for an art gallery opening"
-                  }
-              ]
-          }
-      ]
-  )
-  print(message.content)
-
-  ```
-
-  ```typescript TypeScript theme={null}
-  import Anthropic from "@anthropic-ai/sdk";
-
-  const anthropic = new Anthropic({
-    apiKey: "my_api_key", // defaults to process.env["ANTHROPIC_API_KEY"]
-  });
-
-  const msg = await anthropic.messages.create({
-    model: "claude-sonnet-4-5",
-    max_tokens: 1000,
-    temperature: 1,
-    system: "Your task is to suggest avant-garde fashion trends and styles tailored to the user's preferences. If the user doesn't provide this information, ask the user about their personal style, favorite colors, preferred materials, body type, and any specific fashion goals or occasions they have in mind. Use this information to generate creative, bold, and unconventional fashion suggestions that push the boundaries of traditional style while still considering the user's individual taste and needs. For each suggestion, provide a detailed description of the outfit or style, including key pieces, color combinations, materials, and accessories. Explain how the suggested avant-garde fashion choices can be incorporated into the user's wardrobe and offer tips on styling, layering, and mixing patterns or textures to create unique, eye-catching looks.",
-    messages: [
-      {
-        "role": "user",
-        "content": [
-          {
-            "type": "text",
-            "text": "Personal style: Edgy, minimal, with a touch of androgyny  \nFavorite colors: Black, white, and deep red  \nPreferred materials: Leather, denim, and high-quality cotton  \nBody type: Tall and lean  \nFashion goals: To create a striking, fearless look for an art gallery opening"
-          }
+    ```python Python
+    import anthropic
+    
+    client = anthropic.Anthropic(
+        # defaults to os.environ.get("ANTHROPIC_API_KEY")
+        api_key="my_api_key",
+    )
+    message = client.messages.create(
+        model="claude-sonnet-4-5",
+        max_tokens=1000,
+        temperature=1,
+        system="Your task is to suggest avant-garde fashion trends and styles tailored to the user's preferences. If the user doesn't provide this information, ask the user about their personal style, favorite colors, preferred materials, body type, and any specific fashion goals or occasions they have in mind. Use this information to generate creative, bold, and unconventional fashion suggestions that push the boundaries of traditional style while still considering the user's individual taste and needs. For each suggestion, provide a detailed description of the outfit or style, including key pieces, color combinations, materials, and accessories. Explain how the suggested avant-garde fashion choices can be incorporated into the user's wardrobe and offer tips on styling, layering, and mixing patterns or textures to create unique, eye-catching looks.",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Personal style: Edgy, minimal, with a touch of androgyny  \nFavorite colors: Black, white, and deep red  \nPreferred materials: Leather, denim, and high-quality cotton  \nBody type: Tall and lean  \nFashion goals: To create a striking, fearless look for an art gallery opening"
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  });
-  console.log(msg);
-
-  ```
-
-  ```python AWS Bedrock Python theme={null}
-  from anthropic import AnthropicBedrock
-
-  # See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
-  # for authentication options
-  client = AnthropicBedrock()
-
-  message = client.messages.create(
-      model="anthropic.claude-sonnet-4-5-20250929-v1:0",
-      max_tokens=1000,
-      temperature=1,
-      system="Your task is to suggest avant-garde fashion trends and styles tailored to the user's preferences. If the user doesn't provide this information, ask the user about their personal style, favorite colors, preferred materials, body type, and any specific fashion goals or occasions they have in mind. Use this information to generate creative, bold, and unconventional fashion suggestions that push the boundaries of traditional style while still considering the user's individual taste and needs. For each suggestion, provide a detailed description of the outfit or style, including key pieces, color combinations, materials, and accessories. Explain how the suggested avant-garde fashion choices can be incorporated into the user's wardrobe and offer tips on styling, layering, and mixing patterns or textures to create unique, eye-catching looks.",
-      messages=[
-          {
-              "role": "user",
-              "content": [
-                  {
-                      "type": "text",
-                      "text": "Personal style: Edgy, minimal, with a touch of androgyny  \nFavorite colors: Black, white, and deep red  \nPreferred materials: Leather, denim, and high-quality cotton  \nBody type: Tall and lean  \nFashion goals: To create a striking, fearless look for an art gallery opening"
-                  }
-              ]
-          }
+    )
+    print(message.content)
+    
+    ```
+    
+    
+    ```typescript TypeScript
+    import Anthropic from "@anthropic-ai/sdk";
+    
+    const anthropic = new Anthropic({
+      apiKey: "my_api_key", // defaults to process.env["ANTHROPIC_API_KEY"]
+    });
+    
+    const msg = await anthropic.messages.create({
+      model: "claude-sonnet-4-5",
+      max_tokens: 1000,
+      temperature: 1,
+      system: "Your task is to suggest avant-garde fashion trends and styles tailored to the user's preferences. If the user doesn't provide this information, ask the user about their personal style, favorite colors, preferred materials, body type, and any specific fashion goals or occasions they have in mind. Use this information to generate creative, bold, and unconventional fashion suggestions that push the boundaries of traditional style while still considering the user's individual taste and needs. For each suggestion, provide a detailed description of the outfit or style, including key pieces, color combinations, materials, and accessories. Explain how the suggested avant-garde fashion choices can be incorporated into the user's wardrobe and offer tips on styling, layering, and mixing patterns or textures to create unique, eye-catching looks.",
+      messages: [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Personal style: Edgy, minimal, with a touch of androgyny  \nFavorite colors: Black, white, and deep red  \nPreferred materials: Leather, denim, and high-quality cotton  \nBody type: Tall and lean  \nFashion goals: To create a striking, fearless look for an art gallery opening"
+            }
+          ]
+        }
       ]
-  )
-  print(message.content)
-
-  ```
-
-  ```typescript AWS Bedrock TypeScript theme={null}
-  import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
-
-  // See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
-  // for authentication options
-  const client = new AnthropicBedrock();
-
-  const msg = await client.messages.create({
-    model: "anthropic.claude-sonnet-4-5-20250929-v1:0",
-    max_tokens: 1000,
-    temperature: 1,
-    system: "Your task is to suggest avant-garde fashion trends and styles tailored to the user's preferences. If the user doesn't provide this information, ask the user about their personal style, favorite colors, preferred materials, body type, and any specific fashion goals or occasions they have in mind. Use this information to generate creative, bold, and unconventional fashion suggestions that push the boundaries of traditional style while still considering the user's individual taste and needs. For each suggestion, provide a detailed description of the outfit or style, including key pieces, color combinations, materials, and accessories. Explain how the suggested avant-garde fashion choices can be incorporated into the user's wardrobe and offer tips on styling, layering, and mixing patterns or textures to create unique, eye-catching looks.",
-    messages: [
-      {
-        "role": "user",
-        "content": [
-          {
-            "type": "text",
-            "text": "Personal style: Edgy, minimal, with a touch of androgyny  \nFavorite colors: Black, white, and deep red  \nPreferred materials: Leather, denim, and high-quality cotton  \nBody type: Tall and lean  \nFashion goals: To create a striking, fearless look for an art gallery opening"
-          }
+    });
+    console.log(msg);
+    
+    ```
+    
+    
+    ```python AWS Bedrock Python
+    from anthropic import AnthropicBedrock
+    
+    # See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
+    # for authentication options
+    client = AnthropicBedrock()
+    
+    message = client.messages.create(
+        model="anthropic.claude-sonnet-4-5-20250929-v1:0",
+        max_tokens=1000,
+        temperature=1,
+        system="Your task is to suggest avant-garde fashion trends and styles tailored to the user's preferences. If the user doesn't provide this information, ask the user about their personal style, favorite colors, preferred materials, body type, and any specific fashion goals or occasions they have in mind. Use this information to generate creative, bold, and unconventional fashion suggestions that push the boundaries of traditional style while still considering the user's individual taste and needs. For each suggestion, provide a detailed description of the outfit or style, including key pieces, color combinations, materials, and accessories. Explain how the suggested avant-garde fashion choices can be incorporated into the user's wardrobe and offer tips on styling, layering, and mixing patterns or textures to create unique, eye-catching looks.",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Personal style: Edgy, minimal, with a touch of androgyny  \nFavorite colors: Black, white, and deep red  \nPreferred materials: Leather, denim, and high-quality cotton  \nBody type: Tall and lean  \nFashion goals: To create a striking, fearless look for an art gallery opening"
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  });
-  console.log(msg);
-
-  ```
-
-  ```python Vertex AI Python theme={null}
-  from anthropic import AnthropicVertex
-
-  client = AnthropicVertex()
-
-  message = client.messages.create(
-      model="claude-sonnet-4@20250514",
-      max_tokens=1000,
-      temperature=1,
-      system="Your task is to suggest avant-garde fashion trends and styles tailored to the user's preferences. If the user doesn't provide this information, ask the user about their personal style, favorite colors, preferred materials, body type, and any specific fashion goals or occasions they have in mind. Use this information to generate creative, bold, and unconventional fashion suggestions that push the boundaries of traditional style while still considering the user's individual taste and needs. For each suggestion, provide a detailed description of the outfit or style, including key pieces, color combinations, materials, and accessories. Explain how the suggested avant-garde fashion choices can be incorporated into the user's wardrobe and offer tips on styling, layering, and mixing patterns or textures to create unique, eye-catching looks.",
-      messages=[
-          {
-              "role": "user",
-              "content": [
-                  {
-                      "type": "text",
-                      "text": "Personal style: Edgy, minimal, with a touch of androgyny  \nFavorite colors: Black, white, and deep red  \nPreferred materials: Leather, denim, and high-quality cotton  \nBody type: Tall and lean  \nFashion goals: To create a striking, fearless look for an art gallery opening"
-                  }
-              ]
-          }
+    )
+    print(message.content)
+    
+    ```
+    
+    
+    ```typescript AWS Bedrock TypeScript
+    import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
+    
+    // See https://docs.claude.com/claude/reference/claude-on-amazon-bedrock
+    // for authentication options
+    const client = new AnthropicBedrock();
+    
+    const msg = await client.messages.create({
+      model: "anthropic.claude-sonnet-4-5-20250929-v1:0",
+      max_tokens: 1000,
+      temperature: 1,
+      system: "Your task is to suggest avant-garde fashion trends and styles tailored to the user's preferences. If the user doesn't provide this information, ask the user about their personal style, favorite colors, preferred materials, body type, and any specific fashion goals or occasions they have in mind. Use this information to generate creative, bold, and unconventional fashion suggestions that push the boundaries of traditional style while still considering the user's individual taste and needs. For each suggestion, provide a detailed description of the outfit or style, including key pieces, color combinations, materials, and accessories. Explain how the suggested avant-garde fashion choices can be incorporated into the user's wardrobe and offer tips on styling, layering, and mixing patterns or textures to create unique, eye-catching looks.",
+      messages: [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Personal style: Edgy, minimal, with a touch of androgyny  \nFavorite colors: Black, white, and deep red  \nPreferred materials: Leather, denim, and high-quality cotton  \nBody type: Tall and lean  \nFashion goals: To create a striking, fearless look for an art gallery opening"
+            }
+          ]
+        }
       ]
-  )
-  print(message.content)
-
-  ```
-
-  ```typescript Vertex AI TypeScript theme={null}
-  import { AnthropicVertex } from '@anthropic-ai/vertex-sdk';
-
-  // Reads from the `CLOUD_ML_REGION` & `ANTHROPIC_VERTEX_PROJECT_ID` environment variables.
-  // Additionally goes through the standard `google-auth-library` flow.
-  const client = new AnthropicVertex();
-
-  const msg = await client.messages.create({
-    model: "claude-sonnet-4@20250514",
-    max_tokens: 1000,
-    temperature: 1,
-    system: "Your task is to suggest avant-garde fashion trends and styles tailored to the user's preferences. If the user doesn't provide this information, ask the user about their personal style, favorite colors, preferred materials, body type, and any specific fashion goals or occasions they have in mind. Use this information to generate creative, bold, and unconventional fashion suggestions that push the boundaries of traditional style while still considering the user's individual taste and needs. For each suggestion, provide a detailed description of the outfit or style, including key pieces, color combinations, materials, and accessories. Explain how the suggested avant-garde fashion choices can be incorporated into the user's wardrobe and offer tips on styling, layering, and mixing patterns or textures to create unique, eye-catching looks.",
-    messages: [
-      {
-        "role": "user",
-        "content": [
-          {
-            "type": "text",
-            "text": "Personal style: Edgy, minimal, with a touch of androgyny  \nFavorite colors: Black, white, and deep red  \nPreferred materials: Leather, denim, and high-quality cotton  \nBody type: Tall and lean  \nFashion goals: To create a striking, fearless look for an art gallery opening"
-          }
+    });
+    console.log(msg);
+    
+    ```
+    
+    
+    ```python Vertex AI Python
+    from anthropic import AnthropicVertex
+    
+    client = AnthropicVertex()
+    
+    message = client.messages.create(
+        model="claude-sonnet-4@20250514",
+        max_tokens=1000,
+        temperature=1,
+        system="Your task is to suggest avant-garde fashion trends and styles tailored to the user's preferences. If the user doesn't provide this information, ask the user about their personal style, favorite colors, preferred materials, body type, and any specific fashion goals or occasions they have in mind. Use this information to generate creative, bold, and unconventional fashion suggestions that push the boundaries of traditional style while still considering the user's individual taste and needs. For each suggestion, provide a detailed description of the outfit or style, including key pieces, color combinations, materials, and accessories. Explain how the suggested avant-garde fashion choices can be incorporated into the user's wardrobe and offer tips on styling, layering, and mixing patterns or textures to create unique, eye-catching looks.",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Personal style: Edgy, minimal, with a touch of androgyny  \nFavorite colors: Black, white, and deep red  \nPreferred materials: Leather, denim, and high-quality cotton  \nBody type: Tall and lean  \nFashion goals: To create a striking, fearless look for an art gallery opening"
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  });
-  console.log(msg);
-
-  ```
+    )
+    print(message.content)
+    
+    ```
+    
+    
+    ```typescript Vertex AI TypeScript
+    import { AnthropicVertex } from '@anthropic-ai/vertex-sdk';
+    
+    // Reads from the `CLOUD_ML_REGION` & `ANTHROPIC_VERTEX_PROJECT_ID` environment variables.
+    // Additionally goes through the standard `google-auth-library` flow.
+    const client = new AnthropicVertex();
+    
+    const msg = await client.messages.create({
+      model: "claude-sonnet-4@20250514",
+      max_tokens: 1000,
+      temperature: 1,
+      system: "Your task is to suggest avant-garde fashion trends and styles tailored to the user's preferences. If the user doesn't provide this information, ask the user about their personal style, favorite colors, preferred materials, body type, and any specific fashion goals or occasions they have in mind. Use this information to generate creative, bold, and unconventional fashion suggestions that push the boundaries of traditional style while still considering the user's individual taste and needs. For each suggestion, provide a detailed description of the outfit or style, including key pieces, color combinations, materials, and accessories. Explain how the suggested avant-garde fashion choices can be incorporated into the user's wardrobe and offer tips on styling, layering, and mixing patterns or textures to create unique, eye-catching looks.",
+      messages: [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Personal style: Edgy, minimal, with a touch of androgyny  \nFavorite colors: Black, white, and deep red  \nPreferred materials: Leather, denim, and high-quality cotton  \nBody type: Tall and lean  \nFashion goals: To create a striking, fearless look for an art gallery opening"
+            }
+          ]
+        }
+      ]
+    });
+    console.log(msg);
+    
+    ```
 </CodeGroup>

@@ -1,21 +1,23 @@
 # Memory tool
 
+---
+
 The memory tool enables Claude to store and retrieve information across conversations through a memory file directory. Claude can create, read, update, and delete files that persist between sessions, allowing it to build knowledge over time without keeping everything in the context window.
 
 The memory tool operates client-side—you control where and how the data is stored through your own infrastructure.
 
 <Note>
-  The memory tool is currently in beta. To enable it, use the beta header `context-management-2025-06-27` in your API requests.
+The memory tool is currently in beta. To enable it, use the beta header `context-management-2025-06-27` in your API requests.
 
-  Please reach out through our [feedback form](https://forms.gle/YXC2EKGMhjN1c4L88) to share your feedback on this feature.
+Please reach out through our [feedback form](https://forms.gle/YXC2EKGMhjN1c4L88) to share your feedback on this feature.
 </Note>
 
 ## Use cases
 
-* Maintain project context across multiple agent executions
-* Learn from past interactions, decisions, and feedback
-* Build knowledge bases over time
-* Enable cross-conversation learning where Claude improves at recurring workflows
+- Maintain project context across multiple agent executions
+- Learn from past interactions, decisions, and feedback
+- Build knowledge bases over time
+- Enable cross-conversation learning where Claude improves at recurring workflows
 
 ## How it works
 
@@ -28,20 +30,17 @@ Since this is a client-side tool, Claude makes tool calls to perform memory oper
 When you ask Claude to help with a task, Claude automatically checks its memory directory first. Here's what a typical interaction looks like:
 
 **1. User request:**
-
 ```
 "Help me respond to this customer service ticket."
 ```
 
 **2. Claude checks the memory directory:**
-
 ```
 "I'll help you respond to the customer service ticket. Let me check my memory for any previous context."
 ```
 
 Claude calls the memory tool:
-
-```json  theme={null}
+```json
 {
   "type": "tool_use",
   "id": "toolu_01C4D5E6F7G8H9I0J1K2L3M4",
@@ -54,8 +53,7 @@ Claude calls the memory tool:
 ```
 
 **3. Your application returns the directory contents:**
-
-```json  theme={null}
+```json
 {
   "type": "tool_result",
   "tool_use_id": "toolu_01C4D5E6F7G8H9I0J1K2L3M4",
@@ -64,8 +62,7 @@ Claude calls the memory tool:
 ```
 
 **4. Claude reads relevant files:**
-
-```json  theme={null}
+```json
 {
   "type": "tool_use",
   "id": "toolu_01D5E6F7G8H9I0J1K2L3M4N5",
@@ -78,8 +75,7 @@ Claude calls the memory tool:
 ```
 
 **5. Your application returns the file contents:**
-
-```json  theme={null}
+```json
 {
   "type": "tool_result",
   "tool_use_id": "toolu_01D5E6F7G8H9I0J1K2L3M4N5",
@@ -88,7 +84,6 @@ Claude calls the memory tool:
 ```
 
 **6. Claude uses the memory to help:**
-
 ```
 "Based on your customer service guidelines, I can help you craft a response. Please share the ticket details..."
 ```
@@ -97,11 +92,11 @@ Claude calls the memory tool:
 
 The memory tool is available on:
 
-* Claude Sonnet 4.5 (`claude-sonnet-4-5-20250929`)
-* Claude Sonnet 4 (`claude-sonnet-4-20250514`)
-* Claude Haiku 4.5 (`claude-haiku-4-5-20251001`)
-* Claude Opus 4.1 (`claude-opus-4-1-20250805`)
-* Claude Opus 4 (`claude-opus-4-20250514`)
+- Claude Sonnet 4.5 (`claude-sonnet-4-5-20250929`)
+- Claude Sonnet 4 (`claude-sonnet-4-20250514`)
+- Claude Haiku 4.5 (`claude-haiku-4-5-20251001`)
+- Claude Opus 4.1 (`claude-opus-4-1-20250805`)
+- Claude Opus 4 (`claude-opus-4-20250514`)
 
 ## Getting started
 
@@ -112,84 +107,85 @@ To use the memory tool:
 3. Implement client-side handlers for memory operations
 
 <Note>
-  To handle memory tool operations in your application, you need to implement handlers for each memory command. Our SDKs provide memory tool helpers that handle the tool interface—you can subclass `BetaAbstractMemoryTool` (Python) or use `betaMemoryTool` (TypeScript) to implement your own memory backend (file-based, database, cloud storage, encrypted files, etc.).
+To handle memory tool operations in your application, you need to implement handlers for each memory command. Our SDKs provide memory tool helpers that handle the tool interface—you can subclass `BetaAbstractMemoryTool` (Python) or use `betaMemoryTool` (TypeScript) to implement your own memory backend (file-based, database, cloud storage, encrypted files, etc.).
 
-  For working examples, see:
-
-  * Python: [examples/memory/basic.py](https://github.com/anthropics/anthropic-sdk-python/blob/main/examples/memory/basic.py)
-  * TypeScript: [examples/tools-helpers-memory.ts](https://github.com/anthropics/anthropic-sdk-typescript/blob/main/examples/tools-helpers-memory.ts)
+For working examples, see:
+- Python: [examples/memory/basic.py](https://github.com/anthropics/anthropic-sdk-python/blob/main/examples/memory/basic.py)
+- TypeScript: [examples/tools-helpers-memory.ts](https://github.com/anthropics/anthropic-sdk-typescript/blob/main/examples/tools-helpers-memory.ts)
 </Note>
 
 ## Basic usage
 
 <CodeGroup>
-  ````bash cURL theme={null}
-  curl https://api.anthropic.com/v1/messages \
-      --header "x-api-key: $ANTHROPIC_API_KEY" \
-      --header "anthropic-version: 2023-06-01" \
-      --header "content-type: application/json" \
-      --header "anthropic-beta: context-management-2025-06-27" \
-      --data '{
-          "model": "claude-sonnet-4-5",
-          "max_tokens": 2048,
-          "messages": [
-              {
-                  "role": "user",
-                  "content": "I'\''m working on a Python web scraper that keeps crashing with a timeout error. Here'\''s the problematic function:\n\n```python\ndef fetch_page(url, retries=3):\n    for i in range(retries):\n        try:\n            response = requests.get(url, timeout=5)\n            return response.text\n        except requests.exceptions.Timeout:\n            if i == retries - 1:\n                raise\n            time.sleep(1)\n```\n\nPlease help me debug this."
-              }
-          ],
-          "tools": [{
-              "type": "memory_20250818",
-              "name": "memory"
-          }]
-      }'
-  ````
 
-  ````python Python theme={null}
-  import anthropic
+```bash cURL
+curl https://api.anthropic.com/v1/messages \
+    --header "x-api-key: $ANTHROPIC_API_KEY" \
+    --header "anthropic-version: 2023-06-01" \
+    --header "content-type: application/json" \
+    --header "anthropic-beta: context-management-2025-06-27" \
+    --data '{
+        "model": "claude-sonnet-4-5",
+        "max_tokens": 2048,
+        "messages": [
+            {
+                "role": "user",
+                "content": "I'\''m working on a Python web scraper that keeps crashing with a timeout error. Here'\''s the problematic function:\n\n```python\ndef fetch_page(url, retries=3):\n    for i in range(retries):\n        try:\n            response = requests.get(url, timeout=5)\n            return response.text\n        except requests.exceptions.Timeout:\n            if i == retries - 1:\n                raise\n            time.sleep(1)\n```\n\nPlease help me debug this."
+            }
+        ],
+        "tools": [{
+            "type": "memory_20250818",
+            "name": "memory"
+        }]
+    }'
+```
 
-  client = anthropic.Anthropic()
+```python Python
+import anthropic
 
-  message = client.beta.messages.create(
-      model="claude-sonnet-4-5",
-      max_tokens=2048,
-      messages=[
-          {
-              "role": "user",
-              "content": "I'm working on a Python web scraper that keeps crashing with a timeout error. Here's the problematic function:\n\n```python\ndef fetch_page(url, retries=3):\n    for i in range(retries):\n        try:\n            response = requests.get(url, timeout=5)\n            return response.text\n        except requests.exceptions.Timeout:\n            if i == retries - 1:\n                raise\n            time.sleep(1)\n```\n\nPlease help me debug this."
-          }
-      ],
-      tools=[{
-          "type": "memory_20250818",
-          "name": "memory"
-      }],
-      betas=["context-management-2025-06-27"]
-  )
-  ````
+client = anthropic.Anthropic()
 
-  ````typescript TypeScript theme={null}
-  import Anthropic from '@anthropic-ai/sdk';
-
-  const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
-  });
-
-  const message = await anthropic.beta.messages.create({
-    model: "claude-sonnet-4-5",
-    max_tokens: 2048,
-    messages: [
-      {
-        role: "user",
-        content: "I'm working on a Python web scraper that keeps crashing with a timeout error. Here's the problematic function:\n\n```python\ndef fetch_page(url, retries=3):\n    for i in range(retries):\n        try:\n            response = requests.get(url, timeout=5)\n            return response.text\n        except requests.exceptions.Timeout:\n            if i == retries - 1:\n                raise\n            time.sleep(1)\n```\n\nPlease help me debug this."
-      }
+message = client.beta.messages.create(
+    model="claude-sonnet-4-5",
+    max_tokens=2048,
+    messages=[
+        {
+            "role": "user",
+            "content": "I'm working on a Python web scraper that keeps crashing with a timeout error. Here's the problematic function:\n\n```python\ndef fetch_page(url, retries=3):\n    for i in range(retries):\n        try:\n            response = requests.get(url, timeout=5)\n            return response.text\n        except requests.exceptions.Timeout:\n            if i == retries - 1:\n                raise\n            time.sleep(1)\n```\n\nPlease help me debug this."
+        }
     ],
-    tools: [{
-      type: "memory_20250818",
-      name: "memory"
+    tools=[{
+        "type": "memory_20250818",
+        "name": "memory"
     }],
-    betas: ["context-management-2025-06-27"]
-  });
-  ````
+    betas=["context-management-2025-06-27"]
+)
+```
+
+```typescript TypeScript
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+});
+
+const message = await anthropic.beta.messages.create({
+  model: "claude-sonnet-4-5",
+  max_tokens: 2048,
+  messages: [
+    {
+      role: "user",
+      content: "I'm working on a Python web scraper that keeps crashing with a timeout error. Here's the problematic function:\n\n```python\ndef fetch_page(url, retries=3):\n    for i in range(retries):\n        try:\n            response = requests.get(url, timeout=5)\n            return response.text\n        except requests.exceptions.Timeout:\n            if i == retries - 1:\n                raise\n            time.sleep(1)\n```\n\nPlease help me debug this."
+    }
+  ],
+  tools: [{
+    type: "memory_20250818",
+    name: "memory"
+  }],
+  betas: ["context-management-2025-06-27"]
+});
+```
+
 </CodeGroup>
 
 ## Tool commands
@@ -197,10 +193,9 @@ To use the memory tool:
 Your client-side implementation needs to handle these memory tool commands:
 
 ### view
-
 Shows directory contents or file contents with optional line ranges:
 
-```json  theme={null}
+```json
 {
   "command": "view",
   "path": "/memories",
@@ -209,10 +204,9 @@ Shows directory contents or file contents with optional line ranges:
 ```
 
 ### create
-
 Create or overwrite a file:
 
-```json  theme={null}
+```json
 {
   "command": "create",
   "path": "/memories/notes.txt",
@@ -220,11 +214,10 @@ Create or overwrite a file:
 }
 ```
 
-### str\_replace
-
+### str_replace
 Replace text in a file:
 
-```json  theme={null}
+```json
 {
   "command": "str_replace",
   "path": "/memories/preferences.txt",
@@ -234,10 +227,9 @@ Replace text in a file:
 ```
 
 ### insert
-
 Insert text at a specific line:
 
-```json  theme={null}
+```json
 {
   "command": "insert",
   "path": "/memories/todo.txt",
@@ -247,10 +239,9 @@ Insert text at a specific line:
 ```
 
 ### delete
-
 Delete a file or directory:
 
-```json  theme={null}
+```json
 {
   "command": "delete",
   "path": "/memories/old_file.txt"
@@ -258,10 +249,9 @@ Delete a file or directory:
 ```
 
 ### rename
-
 Rename or move a file/directory:
 
-```json  theme={null}
+```json
 {
   "command": "rename",
   "old_path": "/memories/draft.txt",
@@ -286,45 +276,42 @@ If you observe Claude creating cluttered memory files, you can include this inst
 
 > Note: when editing your memory folder, always try to keep its content up-to-date, coherent and organized. You can rename or delete files that are no longer relevant. Do not create new files unless necessary.
 
-You can also guide what Claude writes to memory, e.g., "Only write down information relevant to \<topic> in your memory system."
+You can also guide what Claude writes to memory, e.g., "Only write down information relevant to \<topic\> in your memory system."
 
 ## Security considerations
 
 Here are important security concerns when implementing your memory store:
 
 ### Sensitive information
-
 Claude will usually refuse to write down sensitive information in memory files. However, you may want to implement stricter validation that strips out potentially sensitive information.
 
 ### File storage size
-
 Consider tracking memory file sizes and preventing files from growing too large. Consider adding a maximum number of characters the memory read command can return, and let Claude paginate through contents.
 
 ### Memory expiration
-
 Consider clearing out memory files periodically that haven't been accessed in an extended time.
 
 ### Path traversal protection
 
 <Warning>
-  Malicious path inputs could attempt to access files outside the `/memories` directory. Your implementation **MUST** validate all paths to prevent directory traversal attacks.
+Malicious path inputs could attempt to access files outside the `/memories` directory. Your implementation **MUST** validate all paths to prevent directory traversal attacks.
 </Warning>
 
 Consider these safeguards:
 
-* Validate that all paths start with `/memories`
-* Resolve paths to their canonical form and verify they remain within the memory directory
-* Reject paths containing sequences like `../`, `..\\`, or other traversal patterns
-* Watch for URL-encoded traversal sequences (`%2e%2e%2f`)
-* Use your language's built-in path security utilities (e.g., Python's `pathlib.Path.resolve()` and `relative_to()`)
+- Validate that all paths start with `/memories`
+- Resolve paths to their canonical form and verify they remain within the memory directory
+- Reject paths containing sequences like `../`, `..\\`, or other traversal patterns
+- Watch for URL-encoded traversal sequences (`%2e%2e%2f`)
+- Use your language's built-in path security utilities (e.g., Python's `pathlib.Path.resolve()` and `relative_to()`)
 
 ## Error handling
 
-The memory tool uses the same error handling patterns as the [text editor tool](/en/docs/agents-and-tools/tool-use/text-editor-tool#handle-errors). Common errors include file not found, permission errors, and invalid paths.
+The memory tool uses the same error handling patterns as the [text editor tool](/docs/en/agents-and-tools/tool-use/text-editor-tool#handle-errors). Common errors include file not found, permission errors, and invalid paths.
 
 ## Using with Context Editing
 
-The memory tool can be combined with [context editing](/en/docs/build-with-claude/context-editing), which automatically clears old tool results when conversation context grows beyond a configured threshold. This combination enables long-running agentic workflows that would otherwise exceed context limits.
+The memory tool can be combined with [context editing](/docs/en/build-with-claude/context-editing), which automatically clears old tool results when conversation context grows beyond a configured threshold. This combination enables long-running agentic workflows that would otherwise exceed context limits.
 
 ### How they work together
 
@@ -332,10 +319,10 @@ When context editing is enabled and your conversation approaches the clearing th
 
 After tool results are cleared, Claude can retrieve the stored information from memory files whenever needed, effectively treating memory as an extension of its working context. This allows Claude to:
 
-* Continue complex, multi-step workflows without losing critical information
-* Reference past work and decisions even after tool results are removed
-* Maintain coherent context across conversations that would exceed typical context limits
-* Build up a knowledge base over time while keeping the active context window manageable
+- Continue complex, multi-step workflows without losing critical information
+- Reference past work and decisions even after tool results are removed
+- Maintain coherent context across conversations that would exceed typical context limits
+- Build up a knowledge base over time while keeping the active context window manageable
 
 ### Example workflow
 
@@ -353,97 +340,101 @@ Consider a code refactoring project with many file operations:
 To use both features together:
 
 <CodeGroup>
-  ```python Python theme={null}
-  response = client.beta.messages.create(
-      model="claude-sonnet-4-5",
-      max_tokens=4096,
-      messages=[...],
-      tools=[
-          {
-              "type": "memory_20250818",
-              "name": "memory"
-          },
-          # Your other tools
-      ],
-      betas=["context-management-2025-06-27"],
-      context_management={
-          "edits": [
-              {
-                  "type": "clear_tool_uses_20250919",
-                  "trigger": {
-                      "type": "input_tokens",
-                      "value": 100000
-                  },
-                  "keep": {
-                      "type": "tool_uses",
-                      "value": 3
-                  }
-              }
-          ]
-      }
-  )
-  ```
 
-  ```typescript TypeScript theme={null}
-  import Anthropic from '@anthropic-ai/sdk';
-
-  const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
-  });
-
-  const response = await anthropic.beta.messages.create({
-    model: "claude-sonnet-4-5",
-    max_tokens: 4096,
-    messages: [...],
-    tools: [
-      {
-        type: "memory_20250818",
-        name: "memory"
-      },
-      // Your other tools
-    ],
-    betas: ["context-management-2025-06-27"],
-    context_management: {
-      edits: [
+```python Python
+response = client.beta.messages.create(
+    model="claude-sonnet-4-5",
+    max_tokens=4096,
+    messages=[...],
+    tools=[
         {
-          type: "clear_tool_uses_20250919",
-          trigger: {
-            type: "input_tokens",
-            value: 100000
-          },
-          keep: {
-            type: "tool_uses",
-            value: 3
-          }
-        }
-      ]
+            "type": "memory_20250818",
+            "name": "memory"
+        },
+        # Your other tools
+    ],
+    betas=["context-management-2025-06-27"],
+    context_management={
+        "edits": [
+            {
+                "type": "clear_tool_uses_20250919",
+                "trigger": {
+                    "type": "input_tokens",
+                    "value": 100000
+                },
+                "keep": {
+                    "type": "tool_uses",
+                    "value": 3
+                }
+            }
+        ]
     }
-  });
-  ```
+)
+```
+
+```typescript TypeScript
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+});
+
+const response = await anthropic.beta.messages.create({
+  model: "claude-sonnet-4-5",
+  max_tokens: 4096,
+  messages: [...],
+  tools: [
+    {
+      type: "memory_20250818",
+      name: "memory"
+    },
+    // Your other tools
+  ],
+  betas: ["context-management-2025-06-27"],
+  context_management: {
+    edits: [
+      {
+        type: "clear_tool_uses_20250919",
+        trigger: {
+          type: "input_tokens",
+          value: 100000
+        },
+        keep: {
+          type: "tool_uses",
+          value: 3
+        }
+      }
+    ]
+  }
+});
+```
+
 </CodeGroup>
 
 You can also exclude memory tool calls from being cleared to ensure Claude always has access to recent memory operations:
 
 <CodeGroup>
-  ```python Python theme={null}
-  context_management={
-      "edits": [
-          {
-              "type": "clear_tool_uses_20250919",
-              "exclude_tools": ["memory"]
-          }
-      ]
-  }
-  ```
 
-  ```typescript TypeScript theme={null}
-  context_management: {
-    edits: [
-      {
-        type: "clear_tool_uses_20250919",
-        exclude_tools: ["memory"]
-      }
+```python Python
+context_management={
+    "edits": [
+        {
+            "type": "clear_tool_uses_20250919",
+            "exclude_tools": ["memory"]
+        }
     ]
-  }
-  ```
+}
+```
+
+```typescript TypeScript
+context_management: {
+  edits: [
+    {
+      type: "clear_tool_uses_20250919",
+      exclude_tools: ["memory"]
+    }
+  ]
+}
+```
+
 </CodeGroup>
