@@ -33,8 +33,8 @@
     "docs__en__cli-reference.md": {
       "original_url": "https://docs.claude.com/docs/en/cli-reference",
       "original_md_url": "https://docs.claude.com/docs/en/cli-reference.md",
-      "hash": "18fbb91b734b2d8b1e5f3593b4c73c01cd3a5efcd80adce84fd14b69be9b713e",
-      "last_updated": "2025-11-16T17:38:16.597272"
+      "hash": "dc1aaa8c702736b9f2ac1da68217fc0b7a8fea0049a6dd7371ebccb153e500e0",
+      "last_updated": "2025-11-19T03:25:31.662418"
     },
     "docs__en__common-workflows.md": {
       "original_url": "https://docs.claude.com/docs/en/common-workflows",
@@ -933,8 +933,8 @@
     "en__docs__build-with-claude__claude-in-microsoft-foundry.md": {
       "original_url": "https://docs.claude.com/en/docs/build-with-claude/claude-in-microsoft-foundry",
       "original_md_url": "https://docs.claude.com/en/docs/build-with-claude/claude-in-microsoft-foundry.md",
-      "hash": "8b38e7387726b7f83a7066b826a0ac691e0ac08233457c0599363901de129a1f",
-      "last_updated": "2025-11-18T18:11:16.687721"
+      "hash": "5b2b1a0878b4fceb6c6b5738235dd50bca0c1d7014823cca45712f9345fa80a1",
+      "last_updated": "2025-11-19T03:27:02.230725"
     },
     "en__docs__build-with-claude__claude-on-amazon-bedrock.md": {
       "original_url": "https://docs.claude.com/en/docs/build-with-claude/claude-on-amazon-bedrock",
@@ -1623,8 +1623,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-19T00:27:45.177231",
-    "fetch_duration_seconds": 170.254067,
+    "last_fetch_completed": "2025-11-19T03:28:02.347650",
+    "fetch_duration_seconds": 158.239099,
     "total_pages_discovered": 273,
     "pages_fetched_successfully": 270,
     "pages_failed": 4,
@@ -1639,7 +1639,7 @@
     "total_files": 270,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-19T00:27:45.177259",
+  "last_updated": "2025-11-19T03:28:02.347676",
   "base_url": "https://raw.githubusercontent.com/costiash/claude-code-docs/main/docs/",
   "github_repository": "costiash/claude-code-docs",
   "github_ref": "main",

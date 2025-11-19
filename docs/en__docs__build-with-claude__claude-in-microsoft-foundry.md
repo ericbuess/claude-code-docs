@@ -74,9 +74,17 @@ After provisioning your Foundry Claude resource, you can obtain an API key from 
 1. Navigate to your resource in the Foundry portal
 2. Go to **Keys and Endpoint** section
 3. Copy one of the provided API keys
-4. Use either the `api-key` or `x-api-key` header in your requests
+4. Use either the `api-key` or `x-api-key` header in your requests, or provide it to the SDK
 
-The Python and TypeScript SDKs require an API key and resource name. The SDK's will automatically read these from the `ANTHROPIC_FOUNDRY_API_KEY` and `ANTHROPIC_FOUNDRY_RESOURCE` environment variables if they are defined.
+The Python and TypeScript SDKs require an API key and either a resource name or base URL. The SDKs will automatically read these from the following environment variables if they are defined:
+
+* `ANTHROPIC_FOUNDRY_API_KEY` - Your API key
+* `ANTHROPIC_FOUNDRY_RESOURCE` - Your resource name (e.g., `example-resource`)
+* `ANTHROPIC_FOUNDRY_BASE_URL` - Alternative to resource name; the full base URL (e.g., `https://example-resource.services.ai.azure.com/anthropic/`)
+
+<Note>
+  The `resource` and `base_url` parameters are mutually exclusive. Provide either the resource name (which the SDK uses to construct the URL as `https://{resource}.services.ai.azure.com/anthropic/`) or the full base URL directly.
+</Note>
 
 **Example using API key:**
 
@@ -87,7 +95,7 @@ The Python and TypeScript SDKs require an API key and resource name. The SDK's w
 
   client = AnthropicFoundry(
       api_key=os.environ.get("ANTHROPIC_FOUNDRY_API_KEY"),
-      resource_name="{resource}",
+      resource='example-resource', # your resource name
   )
 
   message = client.messages.create(
@@ -103,7 +111,7 @@ The Python and TypeScript SDKs require an API key and resource name. The SDK's w
 
   const client = new AnthropicFoundry({
     apiKey: process.env.ANTHROPIC_FOUNDRY_API_KEY,
-    resourceName: "{resource}",
+    resource: 'example-resource', // your resource name
   });
 
   const message = await client.messages.create({
@@ -157,7 +165,7 @@ For enhanced security and centralized access management, you can use Entra ID (f
 
   # Create client with Entra ID authentication
   client = AnthropicFoundry(
-      resource_name="{resource}",  # Your Azure resource name
+      resource='example-resource', # your resource name
       azure_ad_token_provider=token_provider  # Use token provider for Entra ID auth
   )
 
@@ -186,7 +194,7 @@ For enhanced security and centralized access management, you can use Entra ID (f
 
   // Create client with Entra ID authentication
   const client = new AnthropicFoundry({
-    resourceName: "{resource}", // Your Azure resource name
+    resource: 'example-resource', // your resource name
     azureADTokenProvider: tokenProvider, // Use token provider for Entra ID auth
   });
 
@@ -203,7 +211,7 @@ For enhanced security and centralized access management, you can use Entra ID (f
   # Get Azure Entra ID token
   ACCESS_TOKEN=$(az account get-access-token --resource https://cognitiveservices.azure.com --query accessToken -o tsv)
 
-  # Make request with token
+  # Make request with token. Replace {resource} with your resource name
   curl https://{resource}.services.ai.azure.com/anthropic/v1/messages \
     -H "content-type: application/json" \
     -H "Authorization: Bearer $ACCESS_TOKEN" \
@@ -220,41 +228,6 @@ For enhanced security and centralized access management, you can use Entra ID (f
 
 <Note>
   Azure Entra ID authentication allows you to manage access using Azure RBAC, integrate with your organization's identity management, and avoid managing API keys manually.
-</Note>
-
-<Note>
-  Replace `{resource}` with your actual Azure resource name. You can use either the `api-key` header (shown above) or the `x-api-key` header - both are supported.
-</Note>
-
-## Install an SDK
-
-Anthropic's [client SDKs](/en/api/client-sdks) support Foundry through platform-specific packages.
-
-```bash  theme={null}
-# Python
-pip install -U "anthropic"
-
-# Typescript
-npm install @anthropic-ai/foundry-sdk
-```
-
-### Model parameter and deployments
-
-The model parameter in your API requests accepts deployment names. The default name suggested for deployments is the model ID (e.g., claude-sonnet-4-5), but you can customize deployment names in the Foundry portal (at deployment creation time only).
-
-**Example with custom deployment:**
-
-```python  theme={null}
-# If you've created a custom deployment named "my-claude-deployment"
-message = client.messages.create(
-    model="my-claude-deployment",  # Your custom deployment name
-    max_tokens=1024,
-    messages=[{"role": "user", "content": "Hello!"}]
-)
-```
-
-<Note>
-  Deployments allow you to manage different model configurations, versions, or rate limits through Azure without changing your application code. See our [client SDKs](/en/api/client-sdks) for more details, and the official Foundry docs [here](https://ai.azure.com/catalog/publishers/anthropic).
 </Note>
 
 ## Correlation request IDs
