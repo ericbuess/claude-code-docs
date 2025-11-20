@@ -38,7 +38,7 @@ Hooks are organized by matchers, where each matcher can have multiple hooks:
 ```
 
 * **matcher**: Pattern to match tool names, case-sensitive (only applicable for
-  `PreToolUse` and `PostToolUse`)
+  `PreToolUse`, `PermissionRequest`, and `PostToolUse`)
   * Simple strings match exactly: `Write` matches only the Write tool
   * Supports regex: `Edit|Write` or `Notebook.*`
   * Use `*` to match all tools. You can also use empty string (`""`) or leave
@@ -211,6 +211,7 @@ Prompt-based hooks work with any hook event, but are most useful for:
 * **SubagentStop**: Evaluate if a subagent has completed its task
 * **UserPromptSubmit**: Validate user prompts with LLM assistance
 * **PreToolUse**: Make context-aware permission decisions
+* **PermissionRequest**: Intelligently allow or deny permission dialogs
 
 ### Example: Intelligent Stop hook
 
@@ -615,17 +616,18 @@ Hooks communicate status through exit codes, stdout, and stderr:
 
 #### Exit Code 2 Behavior
 
-| Hook Event         | Behavior                                                           |
-| ------------------ | ------------------------------------------------------------------ |
-| `PreToolUse`       | Blocks the tool call, shows stderr to Claude                       |
-| `PostToolUse`      | Shows stderr to Claude (tool already ran)                          |
-| `Notification`     | N/A, shows stderr to user only                                     |
-| `UserPromptSubmit` | Blocks prompt processing, erases prompt, shows stderr to user only |
-| `Stop`             | Blocks stoppage, shows stderr to Claude                            |
-| `SubagentStop`     | Blocks stoppage, shows stderr to Claude subagent                   |
-| `PreCompact`       | N/A, shows stderr to user only                                     |
-| `SessionStart`     | N/A, shows stderr to user only                                     |
-| `SessionEnd`       | N/A, shows stderr to user only                                     |
+| Hook Event          | Behavior                                                           |
+| ------------------- | ------------------------------------------------------------------ |
+| `PreToolUse`        | Blocks the tool call, shows stderr to Claude                       |
+| `PermissionRequest` | Denies the permission, shows stderr to Claude                      |
+| `PostToolUse`       | Shows stderr to Claude (tool already ran)                          |
+| `Notification`      | N/A, shows stderr to user only                                     |
+| `UserPromptSubmit`  | Blocks prompt processing, erases prompt, shows stderr to user only |
+| `Stop`              | Blocks stoppage, shows stderr to Claude                            |
+| `SubagentStop`      | Blocks stoppage, shows stderr to Claude subagent                   |
+| `PreCompact`        | N/A, shows stderr to user only                                     |
+| `SessionStart`      | N/A, shows stderr to user only                                     |
+| `SessionEnd`        | N/A, shows stderr to user only                                     |
 
 ### Advanced: JSON Output
 
@@ -1070,7 +1072,7 @@ This prevents malicious hook modifications from affecting your current session.
   * The `CLAUDE_CODE_REMOTE` environment variable indicates whether the hook is running in a remote (web) environment (`"true"`) or local CLI environment (not set or empty). Use this to run different logic based on execution context.
 * **Input**: JSON via stdin
 * **Output**:
-  * PreToolUse/PostToolUse/Stop/SubagentStop: Progress shown in verbose mode (ctrl+o)
+  * PreToolUse/PermissionRequest/PostToolUse/Stop/SubagentStop: Progress shown in verbose mode (ctrl+o)
   * Notification/SessionEnd: Logged to debug only (`--debug`)
   * UserPromptSubmit/SessionStart: stdout added as context for Claude
 

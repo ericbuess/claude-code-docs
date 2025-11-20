@@ -120,6 +120,7 @@ Plugins can provide event handlers that respond to Claude Code events automatica
 **Available events**:
 
 * `PreToolUse`: Before Claude uses any tool
+* `PermissionRequest`: When a permission dialog is shown
 * `PostToolUse`: After Claude uses any tool
 * `UserPromptSubmit`: When user submits a prompt
 * `Notification`: When Claude Code sends notifications

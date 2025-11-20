@@ -40,6 +40,7 @@ Claude Code provides several hook events that run at different points in the
 workflow:
 
 * **PreToolUse**: Runs before tool calls (can block them)
+* **PermissionRequest**: Runs when a permission dialog is shown (can allow or deny)
 * **PostToolUse**: Runs after tool calls complete
 * **UserPromptSubmit**: Runs when the user submits a prompt, before Claude processes it
 * **Notification**: Runs when Claude Code sends notifications

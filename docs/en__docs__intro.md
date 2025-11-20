@@ -71,7 +71,7 @@ Claude can assist with many tasks that involve text, code, and images.
     Find answers to frequently asked account and billing questions.
   </Card>
 
-  <Card title="Service Status" icon="chart" href="https://www.claude.com/status">
+  <Card title="Service Status" icon="chart" href="https://status.claude.com">
     Check the status of Anthropic services.
   </Card>
 </CardGroup>

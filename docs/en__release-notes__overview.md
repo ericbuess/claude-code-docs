@@ -10,6 +10,9 @@ For release notes on Claude Apps, see the [Release notes for Claude Apps in the 
 For updates to Claude Code, see the [complete CHANGELOG.md](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) in the `claude-code` repository.
 </Tip>
 
+### November 19, 2025
+- We've launched a **new documentation platform** at [platform.claude.com/docs](https://platform.claude.com/docs). Our documentation now lives side by side with the Claude Console, providing a unified developer experience. The previous docs site at docs.claude.com will redirect to the new location.
+
 ### November 18, 2025
 - We've launched **Claude in Microsoft Foundry**, bringing Claude models to Azure customers with Azure billing and OAuth authentication. Access the full Messages API including extended thinking, prompt caching (5-minute and 1-hour), PDF support, Files API, Agent Skills, and tool use. Learn more in our [Microsoft Foundry documentation](/docs/en/build-with-claude/claude-in-microsoft-foundry).
 
