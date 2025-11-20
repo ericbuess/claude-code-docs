@@ -12,12 +12,6 @@
       "hash": "3c259cd0f4bc719f33864decb4179bec753a4aea3bd143ae16078890d1f3c150",
       "last_updated": "2025-11-16T17:38:14.666550"
     },
-    "docs__en__azure-ai-foundry.md": {
-      "original_url": "https://docs.claude.com/docs/en/azure-ai-foundry",
-      "original_md_url": "https://docs.claude.com/docs/en/azure-ai-foundry.md",
-      "hash": "10013e9291249255c4c13103c3f923966895fd45e57c14730d1eb2db7cf4ad6c",
-      "last_updated": "2025-11-18T18:08:41.037246"
-    },
     "docs__en__checkpointing.md": {
       "original_url": "https://docs.claude.com/docs/en/checkpointing",
       "original_md_url": "https://docs.claude.com/docs/en/checkpointing.md",
@@ -99,8 +93,8 @@
     "docs__en__iam.md": {
       "original_url": "https://docs.claude.com/docs/en/iam",
       "original_md_url": "https://docs.claude.com/docs/en/iam.md",
-      "hash": "4eb53cc1b8ce5908d15514417ffcde57378a260837acb402049c71b0fddcd086",
-      "last_updated": "2025-11-18T18:08:50.662054"
+      "hash": "c1ab109a1e30775c7705bdfb454b44a201363b13a63567bdf5293c83f656ecf7",
+      "last_updated": "2025-11-20T06:08:56.268746"
     },
     "docs__en__interactive-mode.md": {
       "original_url": "https://docs.claude.com/docs/en/interactive-mode",
@@ -137,6 +131,12 @@
       "original_md_url": "https://docs.claude.com/docs/en/memory.md",
       "hash": "314250cccf38fdb518122df8df9fc8dda5176f1bdef5839813744a62ba1f076f",
       "last_updated": "2025-11-16T17:38:27.486653"
+    },
+    "docs__en__microsoft-foundry.md": {
+      "original_url": "https://docs.claude.com/docs/en/microsoft-foundry",
+      "original_md_url": "https://docs.claude.com/docs/en/microsoft-foundry.md",
+      "hash": "001ea72a5ac444cf032970c16f0a65f50bfe35cd84d7aad6bd70dcd6a4a85f10",
+      "last_updated": "2025-11-20T06:09:00.218709"
     },
     "docs__en__model-config.md": {
       "original_url": "https://docs.claude.com/docs/en/model-config",
@@ -207,14 +207,14 @@
     "docs__en__settings.md": {
       "original_url": "https://docs.claude.com/docs/en/settings",
       "original_md_url": "https://docs.claude.com/docs/en/settings.md",
-      "hash": "f23a4a727afb019d53fe0a91972c76344e2838a8ea341cc2862534778e59f689",
-      "last_updated": "2025-11-18T18:09:13.389546"
+      "hash": "e5a216c1a4f91c71fe7b93734603a5ba863256bb351b63e111ff9dfecc20dc70",
+      "last_updated": "2025-11-20T06:09:07.688952"
     },
     "docs__en__setup.md": {
       "original_url": "https://docs.claude.com/docs/en/setup",
       "original_md_url": "https://docs.claude.com/docs/en/setup.md",
-      "hash": "ff94158f802a5635fdeef672f5702282fed3151c0359b4b5beb2ef07e058bac6",
-      "last_updated": "2025-11-18T18:09:14.072634"
+      "hash": "4067e6169c1dbd0a871347aaa3f67855d79e329904016ba45b43193c42b145c3",
+      "last_updated": "2025-11-20T06:09:08.246045"
     },
     "docs__en__skills.md": {
       "original_url": "https://docs.claude.com/docs/en/skills",
@@ -249,8 +249,8 @@
     "docs__en__third-party-integrations.md": {
       "original_url": "https://docs.claude.com/docs/en/third-party-integrations",
       "original_md_url": "https://docs.claude.com/docs/en/third-party-integrations.md",
-      "hash": "c70d013a20e278e9c4e0cf0af3ba19fc3f7df567efa259e0d5c828780dc3f037",
-      "last_updated": "2025-11-18T18:09:18.105701"
+      "hash": "a908197faa8cd18efa11da2d9c14e436c6d4a9757858e0b8296b7e6c82e4b1e1",
+      "last_updated": "2025-11-20T06:09:11.692085"
     },
     "docs__en__troubleshooting.md": {
       "original_url": "https://docs.claude.com/docs/en/troubleshooting",
@@ -261,8 +261,8 @@
     "docs__en__vs-code.md": {
       "original_url": "https://docs.claude.com/docs/en/vs-code",
       "original_md_url": "https://docs.claude.com/docs/en/vs-code.md",
-      "hash": "e6dc5799d8aff38e11d4018f385446e41884ed73ffe538673676ff2db2722011",
-      "last_updated": "2025-11-18T18:09:19.599069"
+      "hash": "db2d3c2c7ac36666b72589338300d44f7924b6a76d1c14435383a96e38dfa98b",
+      "last_updated": "2025-11-20T06:09:12.893315"
     },
     "en__api__beta-headers.md": {
       "original_url": "https://docs.claude.com/en/api/beta-headers",
@@ -1305,8 +1305,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-20T03:27:53.841826",
-    "fetch_duration_seconds": 193.895774,
+    "last_fetch_completed": "2025-11-20T06:11:33.236190",
+    "fetch_duration_seconds": 167.540155,
     "total_pages_discovered": 273,
     "pages_fetched_successfully": 217,
     "pages_failed": 57,
@@ -1374,7 +1374,7 @@
     "total_files": 217,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-20T03:27:53.841854",
+  "last_updated": "2025-11-20T06:11:33.236212",
   "base_url": "https://raw.githubusercontent.com/costiash/claude-code-docs/main/docs/",
   "github_repository": "costiash/claude-code-docs",
   "github_ref": "main",

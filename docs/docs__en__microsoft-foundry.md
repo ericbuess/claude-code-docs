@@ -1,22 +1,22 @@
-# Claude Code on Azure AI Foundry
+# Claude Code on Microsoft Foundry
 
-> Learn about configuring Claude Code through Azure AI Foundry, including setup, configuration, and troubleshooting.
+> Learn about configuring Claude Code through Microsoft Foundry, including setup, configuration, and troubleshooting.
 
 ## Prerequisites
 
-Before configuring Claude Code with Azure AI Foundry, ensure you have:
+Before configuring Claude Code with Microsoft Foundry, ensure you have:
 
-* An Azure subscription with access to Azure AI Foundry
-* RBAC permissions to create Azure AI Foundry resources and deployments
-* Azure CLI installed and configured (optional - only needed if you don’t have another mechanism for getting credentials)
+* An Azure subscription with access to Microsoft Foundry
+* RBAC permissions to create Microsoft Foundry resources and deployments
+* Azure CLI installed and configured (optional - only needed if you don't have another mechanism for getting credentials)
 
 ## Setup
 
-### 1. Provision Azure AI Foundry resource
+### 1. Provision Microsoft Foundry resource
 
 First, create a Claude resource in Azure:
 
-1. Navigate to the [Azure AI Foundry portal](https://ai.azure.com/)
+1. Navigate to the [Microsoft Foundry portal](https://ai.azure.com/)
 2. Create a new resource, noting your resource name
 3. Create deployments for the Claude models:
    * Claude Opus
@@ -25,11 +25,11 @@ First, create a Claude resource in Azure:
 
 ### 2. Configure Azure credentials
 
-Claude Code supports two authentication methods for Azure AI Foundry. Choose the method that best fits your security requirements.
+Claude Code supports two authentication methods for Microsoft Foundry. Choose the method that best fits your security requirements.
 
 **Option A: API key authentication**
 
-1. Navigate to your resource in the Azure AI Foundry portal
+1. Navigate to your resource in the Microsoft Foundry portal
 2. Go to the **Endpoints and keys** section
 3. Copy **API Key**
 4. Set the environment variable:
@@ -50,15 +50,15 @@ az login
 ```
 
 <Note>
-  When using AI Foundry, the `/login` and `/logout` commands are disabled since authentication is handled through Azure credentials.
+  When using Microsoft Foundry, the `/login` and `/logout` commands are disabled since authentication is handled through Azure credentials.
 </Note>
 
 ### 3. Configure Claude Code
 
-Set the following environment variables to enable Azure AI Foundry. Note that your deployments' names are set as the model identifiers in Claude Code (may be optional if using suggested deployment names).
+Set the following environment variables to enable Microsoft Foundry. Note that your deployments' names are set as the model identifiers in Claude Code (may be optional if using suggested deployment names).
 
 ```bash  theme={null}
-# Enable Azure AI Foundry integration
+# Enable Microsoft Foundry integration
 export CLAUDE_CODE_USE_FOUNDRY=1
 
 # Azure resource name (replace {resource} with your resource name)
@@ -92,7 +92,7 @@ For more restrictive permissions, create a custom role with the following:
 }
 ```
 
-For details, see [Azure AI Foundry RBAC documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/rbac-azure-ai-foundry).
+For details, see [Microsoft Foundry RBAC documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/rbac-azure-ai-foundry).
 
 ## Troubleshooting
 
@@ -102,6 +102,6 @@ If you receive an error "Failed to get token from azureADTokenProvider: ChainedT
 
 ## Additional resources
 
-* [AI Foundry documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-azure-ai-foundry)
-* [AI Foundry models](https://ai.azure.com/explore/models)
-* [AI Foundry pricing](https://azure.microsoft.com/en-us/pricing/details/ai-foundry/)
+* [Microsoft Foundry documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-azure-ai-foundry)
+* [Microsoft Foundry models](https://ai.azure.com/explore/models)
+* [Microsoft Foundry pricing](https://azure.microsoft.com/en-us/pricing/details/ai-foundry/)

@@ -8,7 +8,7 @@ Setting up Claude Code requires access to Anthropic models. For teams, you can s
 
 * Claude API via the Claude Console
 * Amazon Bedrock
-* Azure AI Foundry
+* Microsoft Foundry
 * Google Vertex AI
 
 ### Claude API authentication
@@ -32,7 +32,7 @@ Setting up Claude Code requires access to Anthropic models. For teams, you can s
 
 **To set up Claude Code access for your team via Bedrock, Vertex, or Azure:**
 
-1. Follow the [Bedrock docs](/en/amazon-bedrock), [Vertex docs](/en/google-vertex-ai), or [Azure AI Foundry docs](/en/azure-ai-foundry)
+1. Follow the [Bedrock docs](/en/amazon-bedrock), [Vertex docs](/en/google-vertex-ai), or [Microsoft Foundry docs](/en/microsoft-foundry)
 2. Distribute the environment variables and instructions for generating cloud credentials to your users. Read more about how to [manage configuration here](/en/settings).
 3. Users can [install Claude Code](/en/setup#installation)
 
