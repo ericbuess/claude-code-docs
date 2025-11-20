@@ -123,8 +123,8 @@
     "docs__en__mcp.md": {
       "original_url": "https://docs.claude.com/docs/en/mcp",
       "original_md_url": "https://docs.claude.com/docs/en/mcp.md",
-      "hash": "9e017c0ae4d5a4dbd8b77a7b72f881d0a42f69019580783653b565b6c9d5d7a7",
-      "last_updated": "2025-11-16T17:38:26.862279"
+      "hash": "b0181e4e093783e16323fb349e68e307cef40750175ebc8ddb512fa006a3902b",
+      "last_updated": "2025-11-20T18:08:41.429552"
     },
     "docs__en__memory.md": {
       "original_url": "https://docs.claude.com/docs/en/memory",
@@ -1305,8 +1305,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-20T15:09:39.140719",
-    "fetch_duration_seconds": 185.565015,
+    "last_fetch_completed": "2025-11-20T18:11:39.526430",
+    "fetch_duration_seconds": 191.844436,
     "total_pages_discovered": 273,
     "pages_fetched_successfully": 217,
     "pages_failed": 57,
@@ -1374,7 +1374,7 @@
     "total_files": 217,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-11-20T15:09:39.140757",
+  "last_updated": "2025-11-20T18:11:39.526458",
   "base_url": "https://raw.githubusercontent.com/costiash/claude-code-docs/main/docs/",
   "github_repository": "costiash/claude-code-docs",
   "github_ref": "main",
