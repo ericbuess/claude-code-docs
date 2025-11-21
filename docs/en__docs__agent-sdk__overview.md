@@ -5,7 +5,7 @@ Build custom AI agents with the Claude Agent SDK
 ---
 
 <Note>
-The Claude Code SDK has been renamed to the **Claude Agent SDK**. If you're migrating from the old SDK, see the [Migration Guide](https://code.claude.com/docs/en/sdk/migration-guide).
+The Claude Code SDK has been renamed to the **Claude Agent SDK**. If you're migrating from the old SDK, see the [Migration Guide](/docs/en/agent-sdk/migration-guide).
 </Note>
 
 ## Installation
