@@ -37,9 +37,9 @@ This is especially useful for bulk operations that don't require immediate resul
 - A Message Batch is limited to either 100,000 Message requests or 256 MB in size, whichever is reached first.
 - We process each batch as fast as possible, with most batches completing within 1 hour. You will be able to access batch results when all messages have completed or after 24 hours, whichever comes first. Batches will expire if processing does not complete within 24 hours.
 - Batch results are available for 29 days after creation. After that, you may still view the Batch, but its results will no longer be available for download.
-- Batches are scoped to a [Workspace](https://console.anthropic.com/settings/workspaces). You may view all batches—and their results—that were created within the Workspace that your API key belongs to.
+- Batches are scoped to a [Workspace](/settings/workspaces). You may view all batches—and their results—that were created within the Workspace that your API key belongs to.
 - Rate limits apply to both Batches API HTTP requests and the number of requests within a batch waiting to be processed. See [Message Batches API rate limits](/docs/en/api/rate-limits#message-batches-api). Additionally, we may slow down processing based on current demand and your request volume. In that case, you may see more requests expiring after 24 hours.
-- Due to high throughput and concurrent processing, batches may go slightly over your Workspace's configured [spend limit](https://console.anthropic.com/settings/limits).
+- Due to high throughput and concurrent processing, batches may go slightly over your Workspace's configured [spend limit](/settings/limits).
 
 ### Supported models
 
@@ -259,7 +259,7 @@ When a batch is first created, the response will have a processing status of `in
 
 ### Tracking your batch
 
-The Message Batch's `processing_status` field indicates the stage of processing the batch is in. It starts as `in_progress`, then updates to `ended` once all the requests in the batch have finished processing, and results are ready. You can monitor the state of your batch by visiting the [Console](https://console.anthropic.com/settings/workspaces/default/batches), or using the [retrieval endpoint](/docs/en/api/retrieving-message-batches).
+The Message Batch's `processing_status` field indicates the stage of processing the batch is in. It starts as `in_progress`, then updates to `ended` once all the requests in the batch have finished processing, and results are ready. You can monitor the state of your batch by visiting the [Console](/settings/workspaces/default/batches), or using the [retrieval endpoint](/docs/en/api/retrieving-message-batches).
 
 #### Polling for Message Batch completion
 

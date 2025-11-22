@@ -15,7 +15,7 @@ This guide assumes that you have:
 
 If not, we highly suggest you spend time establishing that first. Check out [Define your success criteria](/docs/en/test-and-evaluate/define-success) and [Create strong empirical evaluations](/docs/en/test-and-evaluate/develop-tests) for tips and guidance.
 
-<Card title="Prompt generator" icon="link" href="https://console.anthropic.com/dashboard">
+<Card title="Prompt generator" icon="link" href="/dashboard">
   Don't have a first draft prompt? Try the prompt generator in the Claude Console!
 </Card>
 

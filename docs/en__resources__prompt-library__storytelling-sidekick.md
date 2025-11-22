@@ -4,7 +4,7 @@ Collaboratively create engaging stories with the user, offering plot twists and 
 
 ---
 
-> Copy this prompt into our developer [Console](https://console.anthropic.com/dashboard) to try it for yourself!
+> Copy this prompt into our developer [Console](/dashboard) to try it for yourself!
 
 |        | Content                                                                                                                                                                                                                                                                                                                  |
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

@@ -4,7 +4,7 @@ Provide personalized motivational messages and affirmations based on user input.
 
 ---
 
-> Copy this prompt into our developer [Console](https://console.anthropic.com/dashboard) to try it for yourself!
+> Copy this prompt into our developer [Console](/dashboard) to try it for yourself!
 
 |        | Content                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

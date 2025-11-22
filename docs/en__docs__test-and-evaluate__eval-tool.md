@@ -1,6 +1,6 @@
 # Using the Evaluation Tool
 
-The [Claude Console](https://console.anthropic.com/dashboard) features an **Evaluation tool** that allows you to test your prompts under various scenarios.
+The [Claude Console](/dashboard) features an **Evaluation tool** that allows you to test your prompts under various scenarios.
 
 ---
 

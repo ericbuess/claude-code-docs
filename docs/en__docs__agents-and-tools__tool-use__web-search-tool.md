@@ -31,7 +31,7 @@ When you add the web search tool to your API request:
 ## How to use web search
 
 <Note>
-Your organization's administrator must enable web search in [Console](https://console.anthropic.com/settings/privacy).
+Your organization's administrator must enable web search in [Console](/settings/privacy).
 </Note>
 
 Provide the web search tool in your API request:

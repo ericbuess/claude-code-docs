@@ -4,7 +4,7 @@ Create compelling product announcement tweets in the world's 10 most spoken lang
 
 ---
 
-> Copy this prompt into our developer [Console](https://console.anthropic.com/dashboard) to try it for yourself!
+> Copy this prompt into our developer [Console](/dashboard) to try it for yourself!
 
 |      | Content                                                                                                                                                                                                                                                                                                      |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

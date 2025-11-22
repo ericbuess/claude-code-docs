@@ -23,7 +23,7 @@ To use the OpenAI SDK compatibility feature, you'll need to:
 1. Use an official OpenAI SDK  
 2. Change the following  
    * Update your base URL to point to the Claude API  
-   * Replace your API key with an [Claude API key](https://console.anthropic.com/settings/keys)  
+   * Replace your API key with an [Claude API key](/settings/keys)  
    * Update your model name to use a [Claude model](/docs/en/about-claude/models/overview)  
 3. Review the documentation below for what features are supported
 
@@ -83,7 +83,7 @@ Most unsupported fields are silently ignored rather than producing errors. These
 
 #### Output quality considerations
 
-If you’ve done lots of tweaking to your prompt, it’s likely to be well-tuned to OpenAI specifically. Consider using our [prompt improver in the Claude Console](https://console.anthropic.com/dashboard) as a good starting point.
+If you’ve done lots of tweaking to your prompt, it’s likely to be well-tuned to OpenAI specifically. Consider using our [prompt improver in the Claude Console](/dashboard) as a good starting point.
 
 #### System / Developer message hoisting
 

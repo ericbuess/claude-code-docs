@@ -533,7 +533,7 @@ streamlit run app.py
 
 Prompting often requires testing and optimization for it to be production ready. To determine the readiness of your solution, evaluate the chatbot performance using a systematic process combining quantitative and qualitative methods. Creating a [strong empirical evaluation](/docs/en/test-and-evaluate/develop-tests#building-evals-and-test-cases) based on your defined success criteria will allow you to optimize your prompts. 
 
-<Tip>The [Claude Console](https://console.anthropic.com/dashboard) now features an Evaluation tool that allows you to test your prompts under various scenarios.</Tip>
+<Tip>The [Claude Console](/dashboard) now features an Evaluation tool that allows you to test your prompts under various scenarios.</Tip>
 
 ### Improve performance
 

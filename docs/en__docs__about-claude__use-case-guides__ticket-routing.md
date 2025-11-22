@@ -267,7 +267,7 @@ Ticket routing is a type of classification task. Claude analyzes the content of 
 Let’s write a ticket classification prompt. Our initial prompt should contain the contents of the user request and return both the reasoning and the intent.
 
 <Tip>
-Try the [prompt generator](/docs/en/prompt-generator) on the [Claude Console](https://console.anthropic.com/login) to have Claude write a first draft for you.
+Try the [prompt generator](/docs/en/prompt-generator) on the [Claude Console](/login) to have Claude write a first draft for you.
 </Tip>
 
 Here's an example ticket routing classification prompt:
@@ -532,7 +532,7 @@ For either of these approaches, you will need to wrap your script in a service. 
     <Card title="Classification cookbook" icon="link" href="https://github.com/anthropics/anthropic-cookbook/tree/main/capabilities/classification">
         Visit our classification cookbook for more example code and detailed eval guidance.
     </Card>
-    <Card title="Claude Console" icon="link" href="https://console.anthropic.com/dashboard">
+    <Card title="Claude Console" icon="link" href="/dashboard">
         Begin building and evaluating your workflow on the Claude Console.
     </Card>
 </CardGroup>

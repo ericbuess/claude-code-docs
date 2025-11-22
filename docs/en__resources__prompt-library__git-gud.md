@@ -4,7 +4,7 @@ Generate appropriate Git commands based on user-described version control action
 
 ---
 
-> Copy this prompt into our developer [Console](https://console.anthropic.com/dashboard) to try it for yourself!
+> Copy this prompt into our developer [Console](/dashboard) to try it for yourself!
 
 | Role | Content                                                                                                                       |
 | ---- | ----------------------------------------------------------------------------------------------------------------------------- |

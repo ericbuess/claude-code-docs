@@ -4,7 +4,7 @@ Generate trivia questions on a wide range of topics and provide hints when neede
 
 ---
 
-> Copy this prompt into our developer [Console](https://console.anthropic.com/dashboard) to try it for yourself!
+> Copy this prompt into our developer [Console](/dashboard) to try it for yourself!
 
 | Role | Content                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

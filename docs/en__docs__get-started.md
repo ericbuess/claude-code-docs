@@ -6,8 +6,8 @@ Make your first API call to Claude and build a simple web search assistant
 
 ## Prerequisites
 
-- An Anthropic [Console account](https://console.anthropic.com/)
-- An [API key](https://console.anthropic.com/settings/keys)
+- An Anthropic [Console account](/)
+- An [API key](/settings/keys)
 
 ## Call the API
 
@@ -15,7 +15,7 @@ Make your first API call to Claude and build a simple web search assistant
   <Tab title="cURL">
     <Steps>
       <Step title="Set your API key">
-        Get your API key at the [Claude Console](https://console.anthropic.com/settings/keys) and set it as an environment variable:
+        Get your API key at the [Claude Console](/settings/keys) and set it as an environment variable:
 
         ```bash
         export ANTHROPIC_API_KEY='your-api-key-here'
@@ -69,7 +69,7 @@ Make your first API call to Claude and build a simple web search assistant
   <Tab title="Python">
     <Steps>
       <Step title="Set your API key">
-        Get your API key from the [Claude Console](https://console.anthropic.com/settings/keys) and set it as an environment variable:
+        Get your API key from the [Claude Console](/settings/keys) and set it as an environment variable:
 
         ```bash
         export ANTHROPIC_API_KEY='your-api-key-here'
@@ -122,7 +122,7 @@ Make your first API call to Claude and build a simple web search assistant
   <Tab title="TypeScript">
     <Steps>
       <Step title="Set your API key">
-        Get your API key from the [Claude Console](https://console.anthropic.com/settings/keys) and set it as an environment variable:
+        Get your API key from the [Claude Console](/settings/keys) and set it as an environment variable:
 
         ```bash
         export ANTHROPIC_API_KEY='your-api-key-here'
@@ -210,7 +210,7 @@ Make your first API call to Claude and build a simple web search assistant
   <Tab title="Java">
     <Steps>
       <Step title="Set your API key">
-        Get your API key from the [Claude Console](https://console.anthropic.com/settings/keys) and set it as an environment variable:
+        Get your API key from the [Claude Console](/settings/keys) and set it as an environment variable:
 
         ```bash
         export ANTHROPIC_API_KEY='your-api-key-here'

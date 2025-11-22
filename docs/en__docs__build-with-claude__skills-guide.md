@@ -59,7 +59,7 @@ Both skill sources are returned by the [List Skills endpoint](/docs/en/api/skill
 
 To use Skills, you need:
 
-1. **Anthropic API key** from the [Console](https://console.anthropic.com/settings/keys)
+1. **Anthropic API key** from the [Console](/settings/keys)
 2. **Beta headers**:
    - `code-execution-2025-08-25` - Enables code execution (required for Skills)
    - `skills-2025-10-02` - Enables Skills API

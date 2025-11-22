@@ -4,7 +4,7 @@ Invent new words and provide their definitions based on user-provided concepts o
 
 ---
 
-> Copy this prompt into our developer [Console](https://console.anthropic.com/dashboard) to try it for yourself!
+> Copy this prompt into our developer [Console](/dashboard) to try it for yourself!
 
 |      | Content                                                                                                                               |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------- |

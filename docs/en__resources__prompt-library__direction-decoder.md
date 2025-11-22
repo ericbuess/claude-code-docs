@@ -4,7 +4,7 @@ Transform natural language into step-by-step directions.
 
 ---
 
-> Copy this prompt into our developer [Console](https://console.anthropic.com/login?selectAccount=true&returnTo=%2Fdashboard%3F) to try it for yourself!
+> Copy this prompt into our developer [Console](/login?selectAccount=true&returnTo=%2Fdashboard%3F) to try it for yourself!
 
 |        | Content                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -8,7 +8,7 @@ This tutorial shows you how to use Agent Skills to create a PowerPoint presentat
 
 ## Prerequisites
 
-- [Anthropic API key](https://console.anthropic.com/settings/keys)
+- [Anthropic API key](/settings/keys)
 - Python 3.7+ or curl installed
 - Basic familiarity with making API requests
 

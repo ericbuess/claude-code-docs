@@ -6,7 +6,7 @@
 **The Admin API is unavailable for individual accounts.** To collaborate with teammates and add members, set up your organization in **Console → Settings → Organization**.
 </Tip>
 
-The [Admin API](/docs/en/api/admin) allows you to programmatically manage your organization's resources, including organization members, workspaces, and API keys. This provides programmatic control over administrative tasks that would otherwise require manual configuration in the [Claude Console](https://console.anthropic.com).
+The [Admin API](/docs/en/api/admin) allows you to programmatically manage your organization's resources, including organization members, workspaces, and API keys. This provides programmatic control over administrative tasks that would otherwise require manual configuration in the [Claude Console](/).
 
 <Check>
   **The Admin API requires special access**
@@ -100,7 +100,7 @@ curl --request DELETE "https://api.anthropic.com/v1/organizations/invites/{invit
 
 ### Workspaces
 
-Create and manage [workspaces](/docs/en/api/admin-api/workspaces/get-workspace) ([console](https://console.anthropic.com/settings/workspaces)) to organize your resources:
+Create and manage [workspaces](/docs/en/api/admin-api/workspaces/get-workspace) ([console](/settings/workspaces)) to organize your resources:
 
 <CodeGroup>
 

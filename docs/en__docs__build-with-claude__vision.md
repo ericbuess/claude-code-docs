@@ -13,7 +13,7 @@ This guide describes how to work with images in Claude, including best practices
 Use Claude’s vision capabilities via:
 
 - [claude.ai](https://claude.ai/). Upload an image like you would a file, or drag and drop an image directly into the chat window.
-- The [Console Workbench](https://console.anthropic.com/workbench/). If you select a model that accepts images (Claude 3 and 4 models only), a button to add images appears at the top right of every User message block.
+- The [Console Workbench](/workbench/). If you select a model that accepts images (Claude 3 and 4 models only), a button to add images appears at the top right of every User message block.
 - **API request**. See the examples in this guide.
 
 ---

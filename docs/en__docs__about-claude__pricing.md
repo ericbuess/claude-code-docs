@@ -337,14 +337,14 @@ For enterprise customers with specific needs:
 - Dedicated support
 - Custom terms
 
-Contact our sales team at [sales@anthropic.com](mailto:sales@anthropic.com) or through the [Claude Console](https://console.anthropic.com/settings/limits) to discuss enterprise pricing options.
+Contact our sales team at [sales@anthropic.com](mailto:sales@anthropic.com) or through the [Claude Console](/settings/limits) to discuss enterprise pricing options.
 
 ## Billing and payment
 
 - Billing is calculated monthly based on actual usage
 - Payments are processed in USD
 - Credit card and invoicing options available
-- Usage tracking available in the [Claude Console](https://console.anthropic.com)
+- Usage tracking available in the [Claude Console](/)
 
 ## Frequently asked questions
 

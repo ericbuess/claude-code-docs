@@ -743,7 +743,7 @@ public class CountTokensPdfExample {
 
 ## Pricing and rate limits
 
-Token counting is **free to use** but subject to requests per minute rate limits based on your [usage tier](/docs/en/api/rate-limits#rate-limits). If you need higher limits, contact sales through the [Claude Console](https://console.anthropic.com/settings/limits).
+Token counting is **free to use** but subject to requests per minute rate limits based on your [usage tier](/docs/en/api/rate-limits#rate-limits). If you need higher limits, contact sales through the [Claude Console](/settings/limits).
 
 | Usage tier | Requests per minute (RPM) |
 |------------|---------------------------|

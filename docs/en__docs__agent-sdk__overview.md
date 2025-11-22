@@ -61,7 +61,7 @@ Here are some example agent types you can create:
 
 ### Authentication
 
-For basic authentication, retrieve an Claude API key from the [Claude Console](https://console.anthropic.com/) and set the `ANTHROPIC_API_KEY` environment variable.
+For basic authentication, retrieve an Claude API key from the [Claude Console](/) and set the `ANTHROPIC_API_KEY` environment variable.
 
 The SDK also supports authentication via third-party API providers:
 

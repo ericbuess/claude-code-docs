@@ -98,7 +98,7 @@ If you're ready to start exploring what Claude can do for you, let's dive in! Wh
   <Card title="Quickstart" icon="lightning" href="/docs/en/get-started">
     Learn how to make your first API call in minutes.
   </Card>
-  <Card title="Claude Console" icon="code" href="https://console.anthropic.com">
+  <Card title="Claude Console" icon="code" href="/">
     Craft and test powerful prompts directly in your browser.
   </Card>
 </CardGroup>

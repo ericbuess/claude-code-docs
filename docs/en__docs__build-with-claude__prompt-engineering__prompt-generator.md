@@ -10,11 +10,11 @@ Sometimes, the hardest part of using an AI model is figuring out how to prompt i
 
 The prompt generator is particularly useful as a tool for solving the "blank page problem" to give you a jumping-off point for further testing and iteration.
 
-<Tip>Try the prompt generator now directly on the [Console](https://console.anthropic.com/dashboard).</Tip>
+<Tip>Try the prompt generator now directly on the [Console](/dashboard).</Tip>
 
 If you're interested in analyzing the underlying prompt and architecture, check out our [prompt generator Google Colab notebook](https://anthropic.com/metaprompt-notebook/). There, you can easily run the code to have Claude construct prompts on your behalf.
 
-<Note>Note that to run the Colab notebook, you will need an [API key](https://console.anthropic.com/settings/keys).</Note>
+<Note>Note that to run the Colab notebook, you will need an [API key](/settings/keys).</Note>
 
 ***
 

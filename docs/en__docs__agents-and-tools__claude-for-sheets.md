@@ -20,7 +20,7 @@ Easily enable Claude for Sheets using the following steps:
 
 <Steps>
   <Step title="Get your Claude API key">
-    If you don't yet have an API key, you can make API keys in the [Claude Console](https://console.anthropic.com/settings/keys).
+    If you don't yet have an API key, you can make API keys in the [Claude Console](/settings/keys).
   </Step>
   <Step title="Install the Claude for Sheets extension">
     Find the [Claude for Sheets extension](https://workspace.google.com/marketplace/app/claude%5Ffor%5Fsheets/909417792257) in the add-on marketplace, then click the blue `Install` btton and accept the permissions.

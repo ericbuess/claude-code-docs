@@ -34,7 +34,7 @@ Anthropic notifies customers with active deployments for models with upcoming re
 
 To help identify usage of deprecated models, customers can access an audit of their API usage. Follow these steps:
 
-1. Go to https://console.anthropic.com/settings/usage
+1. Go to the [Usage](/settings/usage) page in Console
 2. Click the "Export" button
 3. Review the downloaded CSV to see usage broken down by API key and model
 

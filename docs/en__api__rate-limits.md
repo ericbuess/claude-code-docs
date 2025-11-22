@@ -18,9 +18,9 @@ These limits apply to both Standard and Priority Tier usage. For more informatio
 * Limits are designed to prevent API abuse, while minimizing impact on common customer usage patterns.
 * Limits are defined by **usage tier**, where each tier is associated with a different set of spend and rate limits.
 * Your organization will increase tiers automatically as you reach certain thresholds while using the API.
-  Limits are set at the organization level. You can see your organization's limits in the [Limits page](https://console.anthropic.com/settings/limits) in the [Claude Console](https://console.anthropic.com/).
+  Limits are set at the organization level. You can see your organization's limits in the [Limits page](/settings/limits) in the [Claude Console](/).
 * You may hit rate limits over shorter time intervals. For instance, a rate of 60 requests per minute (RPM) may be enforced as 1 request per second. Short bursts of requests at a high volume can surpass the rate limit and result in rate limit errors.
-* The limits outlined below are our standard tier limits. If you're seeking higher, custom limits or Priority Tier for enhanced service levels, contact sales through the [Claude Console](https://console.anthropic.com/settings/limits).
+* The limits outlined below are our standard tier limits. If you're seeking higher, custom limits or Priority Tier for enhanced service levels, contact sales through the [Claude Console](/settings/limits).
 * We use the [token bucket algorithm](https://en.wikipedia.org/wiki/Token_bucket) to do rate limiting. This means that your capacity is continuously replenished up to your maximum limit, rather than being reset at fixed intervals.
 * All limits described here represent maximum allowed usage, not guaranteed minimums. These limits are intended to reduce unintentional overspend and ensure fair distribution of resources among users.
 
@@ -123,14 +123,14 @@ To get the most out of your rate limits, use [prompt caching](/docs/en/build-wit
 - Tool definitions
 - Conversation history
 
-With effective caching, you can dramatically increase your actual throughput without increasing your rate limits. Monitor your cache hit rate on the [Usage page](https://console.anthropic.com/settings/usage) to optimize your caching strategy.
+With effective caching, you can dramatically increase your actual throughput without increasing your rate limits. Monitor your cache hit rate on the [Usage page](/settings/usage) to optimize your caching strategy.
 </Tip>
 
 OTPM rate limits are estimated based on `max_tokens` at the beginning of each request, and the estimate is adjusted at the end of the request to reflect the actual number of output tokens used.
 If you're hitting OTPM limits earlier than expected, try reducing `max_tokens` to better approximate the size of your completions.
 
 Rate limits are applied separately for each model; therefore you can use different models up to their respective limits simultaneously.
-You can check your current rate limits and behavior in the [Claude Console](https://console.anthropic.com/settings/limits).
+You can check your current rate limits and behavior in the [Claude Console](/settings/limits).
 
 <Note>
 For long context requests (>200K tokens) when using the `context-1m-2025-08-07` beta header with Claude Sonnet 4.x, separate rate limits apply. See [Long context rate limits](#long-context-rate-limits) below.
@@ -186,7 +186,7 @@ For long context requests (>200K tokens) when using the `context-1m-2025-08-07` 
 
 </Tab>
 <Tab title="Custom">
-If you're seeking higher limits for an Enterprise use case, contact sales through the [Claude Console](https://console.anthropic.com/settings/limits).
+If you're seeking higher limits for an Enterprise use case, contact sales through the [Claude Console](/settings/limits).
 </Tab>
 </Tabs>
 
@@ -222,7 +222,7 @@ The Message Batches API has its own set of rate limits which are shared across a
 | 4,000                             | 500,000                                    | 100,000                          |
 </Tab>
 <Tab title="Custom">
-If you're seeking higher limits for an Enterprise use case, contact sales through the [Claude Console](https://console.anthropic.com/settings/limits).
+If you're seeking higher limits for an Enterprise use case, contact sales through the [Claude Console](/settings/limits).
 </Tab>
 </Tabs>
 
@@ -241,7 +241,7 @@ The 1M token context window is currently in beta for organizations in usage tier
 | 1,000,000                              | 200,000                                 |
 </Tab>
 <Tab title="Custom">
-For custom long context rate limits for enterprise use cases, contact sales through the [Claude Console](https://console.anthropic.com/settings/limits).
+For custom long context rate limits for enterprise use cases, contact sales through the [Claude Console](/settings/limits).
 </Tab>
 </Tabs>
 
@@ -251,7 +251,7 @@ To get the most out of the 1M token context window with rate limits, use [prompt
 
 ### Monitoring your rate limits in the Console
 
-You can monitor your rate limit usage on the [Usage](https://console.anthropic.com/settings/usage) page of the [Claude Console](https://console.anthropic.com/). 
+You can monitor your rate limit usage on the [Usage](/settings/usage) page of the [Claude Console](/). 
 
 In addition to providing token and request charts, the Usage page provides two separate rate limit charts. Use these charts to see what headroom you have to grow, when you may be hitting peak use, better undersand what rate limits to request, or how you can improve your caching rates. The charts visualize a number of metrics for a given rate limit (e.g. per model):
 
