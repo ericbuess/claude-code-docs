@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "generated_at": "2025-11-16T17:38:13.915991Z",
-    "total_paths": 270,
+    "generated_at": "2025-11-24T16:45:20.050263Z",
+    "total_paths": 273,
     "source": "sitemap_discovery",
-    "last_regenerated": "2025-11-16T17:38:13.915999Z"
+    "last_regenerated": "2025-11-24T16:45:20.050267Z"
   },
   "categories": {
     "claude_code": [
@@ -29,6 +29,7 @@
       "/docs/en/llm-gateway",
       "/docs/en/mcp",
       "/docs/en/memory",
+      "/docs/en/microsoft-foundry",
       "/docs/en/model-config",
       "/docs/en/monitoring-usage",
       "/docs/en/network-config",
@@ -128,6 +129,7 @@
       "/en/docs/agent-sdk/skills",
       "/en/docs/agent-sdk/slash-commands",
       "/en/docs/agent-sdk/streaming-vs-single-mode",
+      "/en/docs/agent-sdk/structured-outputs",
       "/en/docs/agent-sdk/subagents",
       "/en/docs/agent-sdk/todo-tracking",
       "/en/docs/agent-sdk/typescript"
@@ -166,6 +168,7 @@
       "/en/docs/build-with-claude/batch-processing",
       "/en/docs/build-with-claude/citations",
       "/en/docs/build-with-claude/claude-code-analytics-api",
+      "/en/docs/build-with-claude/claude-in-microsoft-foundry",
       "/en/docs/build-with-claude/claude-on-amazon-bedrock",
       "/en/docs/build-with-claude/claude-on-vertex-ai",
       "/en/docs/build-with-claude/context-editing",

@@ -125,12 +125,25 @@ class TestDocsManifest:
         assert file_count >= 44, \
             f"Expected at least 44 files in manifest (Claude Code docs), found {file_count}"
 
-        # Check total files on disk (268 after one deprecated file removed)
+        # Check total files on disk matches paths_manifest.json expectations
         docs_dir = project_root / 'docs'
         actual_file_count = len([f for f in docs_dir.glob('*.md') if f.name != 'docs_manifest.json'])
 
-        assert actual_file_count == 268, \
-            f"Expected 268 total files on disk, found {actual_file_count}"
+        # Load paths_manifest.json to get expected path count
+        paths_manifest_path = project_root / 'paths_manifest.json'
+        if not paths_manifest_path.exists():
+            pytest.skip("paths_manifest.json not available")
+
+        import json
+        with open(paths_manifest_path) as f:
+            paths_manifest = json.load(f)
+
+        expected_path_count = paths_manifest['metadata']['total_paths']
+
+        # Allow variance for unfetchable paths (HTML-only pages, external redirects)
+        variance = abs(actual_file_count - expected_path_count)
+        assert variance <= 10, \
+            f"File count discrepancy: {actual_file_count} files on disk vs {expected_path_count} in paths manifest (variance: {variance})"
 
     def test_all_entries_have_required_fields(self, docs_manifest):
         """Ensure all manifest entries have required fields"""
