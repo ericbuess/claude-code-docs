@@ -9,9 +9,9 @@ The docs are periodically updated via GitHub Actions.
 This repository uses a **graceful degradation** approach:
 
 **Installation** (always the same):
-- 268 documentation files (.md format)
+- 273 documentation paths tracked in manifest
+- ~266-270 files downloaded (varies based on fetch success)
 - Python scripts for enhanced features
-- 270 active documentation paths tracked in manifest
 - Full test suite and GitHub workflows
 
 **Runtime Features** (Python-dependent):
@@ -383,11 +383,11 @@ When Python 3.9+ is installed, these additional capabilities are available:
 - **Full-text search**: `--search "keyword"` searches across all documentation content
 - **Category filtering**: `--category api` lists paths in specific categories
 - **Path validation**: `--validate` checks documentation integrity
-- **Active documentation**: Access to 270 active paths across 7 categories:
-  - Core Documentation (79 paths, 29.3%)
-  - API Reference (78 paths, 28.9%)
-  - Prompt Library (65 paths, 24.1%)
-  - Claude Code (44 paths, 16.3%)
+- **Active documentation**: Access to 273 active paths across 7 categories:
+  - Core Documentation (80 paths, 29.3%)
+  - API Reference (79 paths, 28.9%)
+  - Prompt Library (65 paths, 23.8%)
+  - Claude Code (45 paths, 16.5%)
   - Release Notes (2 paths)
   - Resources (1 path)
   - Uncategorized (1 path)
@@ -398,21 +398,21 @@ See `enhancements/` directory for comprehensive feature documentation and exampl
 
 ```
 /
-├── docs/                   # 268 documentation files (.md format)
-│   ├── docs_manifest.json  # File tracking manifest (268 files)
+├── docs/                   # ~266-270 documentation files (.md format)
+│   ├── docs_manifest.json  # File tracking manifest
 │   └── .search_index.json  # Full-text search index (Python-generated)
 ├── scripts/
 │   ├── claude-docs-helper.sh       # Main helper (feature detection)
 │   ├── fetch_claude_docs.py        # Documentation fetcher with auto-regeneration
 │   ├── lookup_paths.py             # Search & validation (Python)
 │   └── build_search_index.py       # Index builder (Python)
-├── paths_manifest.json     # Active paths manifest (270 paths)
+├── paths_manifest.json     # Active paths manifest (273 paths tracked)
 ├── enhancements/          # Feature documentation
 │   ├── README.md          # Overview
 │   ├── FEATURES.md        # Technical specs
 │   ├── CAPABILITIES.md    # Detailed capabilities
 │   └── EXAMPLES.md        # Usage examples
-├── tests/                 # Test suite (600 tests, 598 passing)
+├── tests/                 # Test suite (620 tests, 618 passing)
 ├── install.sh            # Installation script
 └── CLAUDE.md             # This file (AI context)
 
@@ -433,8 +433,8 @@ When working on this repository:
 @scripts/fetch_claude_docs.py - Documentation fetcher with auto-regeneration
 @scripts/lookup_paths.py - Search & validation
 @scripts/build_search_index.py - Full-text search indexing
-@paths_manifest.json - Active paths manifest (270 paths)
-@tests/ - Test suite (600 tests)
+@paths_manifest.json - Active paths manifest (273 paths tracked)
+@tests/ - Test suite (620 tests)
 
 ### Automation
 @.github/workflows/ - Auto-update workflows (runs every 3 hours)

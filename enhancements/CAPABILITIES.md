@@ -8,22 +8,22 @@ This document describes the actual capabilities of the enhanced edition of claud
 
 The enhanced edition provides comprehensive coverage of Anthropic's documentation:
 
-- **Total Paths**: 449 documentation paths
-- **Upstream Coverage**: 269 documentation files (vs upstream's standard coverage)
-- **Coverage Increase**: ~1.7x more paths than standard edition
+- **Total Paths Tracked**: 273 documentation paths (in `paths_manifest.json`)
+- **Files Downloaded**: ~266-270 actual .md files (varies based on fetch success)
+- **Auto-Discovery**: Paths discovered from official sitemaps, regenerated automatically
 
 ### Category Breakdown
 
 Documentation is organized into 7 primary categories:
 
-1. **Core Documentation** (151 paths - 33.6%)
+1. **Core Documentation** (80 paths - 29.3%)
    - About Claude (models, pricing, security, compliance)
    - Build with Claude (prompt engineering, text generation, streaming)
    - Test and Evaluate (guardrails, success metrics, testing)
    - Use case guides and examples
    - Getting started and quickstart guides
 
-2. **API Reference** (91 paths - 20.3%)
+2. **API Reference** (79 paths - 28.9%)
    - Administration API (users, workspaces, API keys, invites)
    - Agent SDK (Python, TypeScript, MCP, custom tools)
    - Messages API and streaming
@@ -31,7 +31,14 @@ Documentation is organized into 7 primary categories:
    - Batch processing APIs
    - Skills API
 
-3. **Claude Code Documentation** (68 paths - 15.1%)
+3. **Prompt Library** (65 paths - 23.8%)
+   - Coding assistants (code consultant, bug buster, function fabricator)
+   - Data processing (CSV converter, data organizer, spreadsheet sorcerer)
+   - Writing tools (grammar genie, prose polisher, memo maestro)
+   - Creative prompts (storytelling sidekick, pun-dit, cosmic keystrokes)
+   - Professional tools (meeting scribe, career coach, interview crafter)
+
+4. **Claude Code Documentation** (45 paths - 16.5%)
    - Getting started and quickstart
    - IDE integrations (VS Code, JetBrains)
    - CI/CD integrations (GitHub Actions, GitLab CI/CD)
@@ -40,29 +47,15 @@ Documentation is organized into 7 primary categories:
    - Advanced features (MCP, hooks, plugins, skills)
    - Configuration and troubleshooting
 
-4. **Resources** (68 paths - 15.1%)
-   - Prompt library (64 unique prompts)
-   - API features overview
-   - Glossary
-   - Resource overview
-
-5. **Prompt Library** (64 paths - 14.3%)
-   - Coding assistants (code consultant, bug buster, function fabricator)
-   - Data processing (CSV converter, data organizer, spreadsheet sorcerer)
-   - Writing tools (grammar genie, prose polisher, memo maestro)
-   - Creative prompts (storytelling sidekick, pun-dit, cosmic keystrokes)
-   - Professional tools (meeting scribe, career coach, interview crafter)
-
-6. **Release Notes** (4 paths - 0.9%)
+5. **Release Notes** (2 paths)
    - API release notes
-   - Claude apps release notes
    - System prompts updates
-   - Overview of changes
 
-7. **Uncategorized** (3 paths - 0.7%)
-   - Site map
+6. **Resources** (1 path)
+   - Resources overview
+
+7. **Uncategorized** (1 path)
    - Home page
-   - Prompt library index
 
 ## Search Capabilities
 
@@ -70,7 +63,7 @@ Documentation is organized into 7 primary categories:
 
 **Command**: `--search <query>`
 
-Fuzzy search across all 449 documentation paths with intelligent matching:
+Fuzzy search across all 273 documentation paths with intelligent matching:
 
 - **Pattern matching**: Finds paths containing search terms
 - **Fuzzy matching**: Suggests similar paths when exact match not found
@@ -270,17 +263,17 @@ Enhanced features integrate seamlessly:
 - **Success rate**: >99%
 - **Resource usage**: Low CPU, minimal memory
 
-## Comparison with Standard Edition
+## Feature Availability
 
-| Capability | Standard | Enhanced |
-|-----------|----------|----------|
-| Documentation paths | 269 files | 449 paths |
-| Search method | File name only | Path + content search |
+| Capability | Without Python | With Python 3.9+ |
+|-----------|----------------|------------------|
+| Documentation paths tracked | 273 | 273 |
+| Files downloaded | ~266-270 | ~266-270 |
+| Search method | Topic name via AI | Path + content + AI |
 | Validation | None | HTTP reachability |
-| Update method | Git pull all | Selective by hash |
-| Category support | No | Yes (7 categories) |
-| Testing | None | 577 tests |
-| Python required | No | Yes (3.9+) |
+| Update method | Git pull | Auto-fetch + validation |
+| Category support | Yes (7 categories) | Yes (7 categories) |
+| Testing | N/A | 620 tests |
 
 ## Use Cases
 

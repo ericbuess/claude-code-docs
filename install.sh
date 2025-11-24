@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Claude Code Docs Installer v0.3.4 - Enhanced edition with extended documentation coverage
+# Claude Code Docs Installer v0.4.1 - Enhanced edition with accurate path tracking
 # This script installs claude-code-docs to ~/.claude-code-docs
 # Installation Strategy: Always perform a fresh installation at the fixed location
 #   1. Remove any existing installation at ~/.claude-code-docs (with user confirmation)
@@ -9,7 +9,7 @@ set -euo pipefail
 #   3. Set up commands and hooks
 #   4. Clean up any old installations in other locations
 
-echo "Claude Code Docs Installer v0.3.4"
+echo "Claude Code Docs Installer v0.4.1"
 echo "==============================="
 
 # Fixed installation location
@@ -351,7 +351,7 @@ echo "✓ Repository cloned successfully"
 
 # Now we're in $INSTALL_DIR, set up the new script-based system
 echo ""
-echo "Setting up Claude Code Docs v0.3.4..."
+echo "Setting up Claude Code Docs v0.4.1..."
 
 # Copy enhanced helper script (not the template!)
 echo "Installing helper script..."
@@ -570,7 +570,7 @@ cleanup_old_installations
 
 # Success message
 echo ""
-echo "✅ Claude Code Docs v0.3.4 installed successfully!"
+echo "✅ Claude Code Docs v0.4.1 installed successfully!"
 echo ""
 echo "📚 Command: /docs (user)"
 echo "📂 Location: ~/.claude-code-docs"
@@ -583,11 +583,11 @@ echo ""
 echo "🔄 Auto-updates: Enabled - syncs automatically when GitHub has newer content"
 echo ""
 
-# Show what's installed (always the same: 268 files + Python scripts)
+# Show what's installed (273 paths tracked in manifest)
 echo "📦 Installed Components:"
-echo "  • 268 documentation files"
-echo "  • 270 active documentation paths tracked"
+echo "  • 273 documentation paths tracked"
 echo "  • AI-powered /docs command"
+echo "  • Auto-update system"
 echo ""
 
 # Check if Python features are available and show appropriate message
@@ -631,7 +631,7 @@ else
     echo "  • Enhanced AI routing capabilities"
     echo ""
     echo "Without Python, you can:"
-    echo "  • Read all 268 documentation files via /docs command"
+    echo "  • Read all 273 documentation paths via /docs command"
     echo "  • Use AI-powered semantic queries"
     echo "  • Check documentation freshness"
     echo "  • View recent changes"

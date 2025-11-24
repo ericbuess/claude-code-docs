@@ -400,10 +400,10 @@ def load_paths_from_manifest() -> List[str]:
     Load paths for files that already exist locally in ./docs/
 
     This is a FALLBACK used only if sitemap discovery fails.
-    Normally, we discover ~270 active paths from sitemaps and fetch all of them.
+    Normally, we discover ~273 active paths from sitemaps and fetch all of them.
 
     Returns:
-        List of paths corresponding to existing local files (~269 files)
+        List of paths corresponding to existing local files (~266-270 files)
     """
     try:
         docs_dir = Path(__file__).parent.parent / 'docs'

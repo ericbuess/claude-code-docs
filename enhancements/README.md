@@ -11,11 +11,11 @@ The enhanced edition extends [ericbuess/claude-code-docs](https://github.com/eri
 ### Core Documentation
 
 - **[FEATURES.md](FEATURES.md)** - Complete feature list and technical details
-  - Extended path coverage (449 vs 269 paths)
+  - Documentation coverage (273 active paths tracked)
   - Full-text search capabilities
   - Path validation tools
   - Advanced search and filtering
-  - Comprehensive testing (577 tests)
+  - Comprehensive testing (620 tests)
   - Performance benchmarks
 
 - **[CAPABILITIES.md](CAPABILITIES.md)** - Detailed capability documentation
@@ -57,21 +57,20 @@ If you're working on the codebase:
 
 ## Architecture
 
-### Dual-Mode Design
+### Single Installation with Graceful Degradation
 
-The enhanced edition supports two installation modes:
+The enhanced edition uses a single installation approach:
 
-**Standard Mode** (upstream-compatible):
-- 269 documentation files
-- Shell scripts only
-- No Python dependencies
-- Works exactly like upstream
+**Always Installed**:
+- 273 documentation paths tracked in manifest
+- ~266-270 files downloaded (varies based on fetch success)
+- Python scripts for enhanced features
 
-**Enhanced Mode** (opt-in):
-- 449 documentation paths
-- Python 3.9+ with advanced features
-- Full-text search, validation, fuzzy matching
-- Graceful degradation if Python unavailable
+**Runtime Behavior** (automatic feature detection):
+- **Without Python 3.9+**: Basic documentation reading via `/docs` command
+- **With Python 3.9+**: Full-text search, validation, fuzzy matching, auto-regeneration
+
+No separate "modes" - features activate automatically based on Python availability.
 
 ### Key Components
 

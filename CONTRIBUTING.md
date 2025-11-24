@@ -7,13 +7,13 @@ Thank you for contributing to the Enhanced Claude Code Documentation Mirror!
 This project extends [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs) with optional Python features:
 
 **Core Principle: Graceful Degradation**
-- Single installation (always 268 files + Python scripts)
+- Single installation (273 paths tracked + Python scripts)
 - Python features activate only when Python 3.9+ is available
 - Everything works without Python (basic `/docs` command)
 - No separate "modes" - just feature detection at runtime
 
 **Design Goals:**
-1. **Honesty**: Accurate claims about what we deliver (270 paths, not 449)
+1. **Honesty**: Accurate claims about what we deliver (273 paths tracked, ~266-270 files downloaded)
 2. **Simplicity**: One installation, automatic feature detection
 3. **Compatibility**: Works with upstream, same `/docs` interface
 4. **Testing**: High test coverage (78%), all changes tested

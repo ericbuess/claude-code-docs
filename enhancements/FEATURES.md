@@ -4,17 +4,18 @@ This fork extends [ericbuess/claude-code-docs](https://github.com/ericbuess/clau
 
 ## What's Enhanced
 
-### 1. Extended Path Coverage (449 paths vs 269)
+### 1. Active Documentation Path Tracking
 
-**Standard Edition**: 269 core documentation files
-**Enhanced Edition**: 449 documentation paths covering:
-- Core Documentation (151 paths - 33.6%)
-- API Reference (91 paths - 19.8%)
-- Claude Code Documentation (68 paths - 14.8%)
-- Prompt Library (64 paths - 13.9%)
-- Resources (68 paths - 15.1%)
-- Release Notes (4 paths - 0.9%)
-- Uncategorized (3 paths - 0.7%)
+**Enhanced Edition**: 273 documentation paths tracked in manifest covering:
+- Core Documentation (80 paths - 29.3%)
+- API Reference (79 paths - 28.9%)
+- Prompt Library (65 paths - 23.8%)
+- Claude Code Documentation (45 paths - 16.5%)
+- Release Notes (2 paths)
+- Resources (1 path)
+- Uncategorized (1 path)
+
+**Files Downloaded**: ~266-270 actual .md files (varies based on fetch success)
 
 See `paths_manifest.json` for full list.
 
@@ -128,50 +129,36 @@ python scripts/main.py --verify              # Check what needs updating
 - `validate.yml` - Daily path validation
 - `coverage.yml` - Coverage reporting
 
-## Installation Modes
+## Installation
 
-### Standard Mode (Upstream Compatible)
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/YOUR_FORK/claude-code-docs/main/install.sh | bash
-# Answer 'N' to enhanced features
-```
-
-**Features**:
-- 269 core documentation files
-- Standard `/docs` command
-- Auto-updates via git pull
-- No Python required
-
-### Enhanced Mode
+### Single Installation with Graceful Degradation
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/YOUR_FORK/claude-code-docs/main/install.sh | bash
-# Answer 'Y' to enhanced features
+curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash
 ```
 
-**Features**:
-- All standard features
-- 449 documentation paths
-- Full-text search
-- Path validation
-- Advanced search tools
+**Always Installed**:
+- 273 documentation paths tracked in manifest
+- ~266-270 files downloaded (varies based on fetch success)
+- AI-powered `/docs` command
+- Auto-update system
+- Python enhancement scripts
 
-**Requirements**:
-- Python 3.9+
-- requests library (installed automatically)
+**Runtime Features** (automatic detection):
+- **Without Python 3.9+**: Basic documentation reading via `/docs`
+- **With Python 3.9+**: Full-text search, validation, fuzzy matching, auto-regeneration
 
-## Feature Comparison
+## Feature Availability
 
-| Feature | Standard | Enhanced |
-|---------|----------|----------|
-| Documentation files | 269 | 449 |
-| Search | Topic name only | Full-text + fuzzy |
+| Feature | Without Python | With Python 3.9+ |
+|---------|----------------|------------------|
+| Documentation paths | 273 tracked | 273 tracked |
+| Files downloaded | ~266-270 | ~266-270 |
+| Search | Topic name via AI | Full-text + fuzzy + AI |
 | Validation | None | HTTP reachability |
-| Updates | Git pull | Selective fetch (SHA256) |
-| Testing | None | 577 tests |
-| Python required | No | Yes (3.9+) |
-| Dependencies | git, jq, curl | + Python, requests |
+| Updates | Git pull | Auto-fetch + validation |
+| Testing | N/A | 620 tests |
+| Dependencies | git, jq, curl | + Python 3.9+, requests |
 
 ## Contributing Enhancements Upstream
 

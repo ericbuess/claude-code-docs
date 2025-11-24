@@ -5,6 +5,30 @@ All notable changes to the enhanced edition of claude-code-docs will be document
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2025-11-24
+
+### Fixed
+- **Version Alignment**: Updated all version strings from v0.3.4 to v0.4.1 to match git tag
+- **Path Count Accuracy**: Corrected all documentation from outdated 268/270 to accurate 273 paths tracked
+- **File Count Clarity**: Clarified distinction between paths tracked (273) vs files downloaded (~266-270)
+- **Category Breakdown**: Updated all category counts to match current manifest:
+  - Core Documentation: 80 paths (29.3%)
+  - API Reference: 79 paths (28.9%)
+  - Prompt Library: 65 paths (23.8%)
+  - Claude Code: 45 paths (16.5%)
+  - Release Notes: 2 paths
+  - Resources: 1 path
+  - Uncategorized: 1 path
+
+### Changed
+- **Architecture Documentation**: Replaced outdated "Dual-Mode" concept with accurate "Single Installation with Graceful Degradation"
+- **Enhancement Documentation**: Updated all enhancement docs (FEATURES.md, CAPABILITIES.md, README.md) with accurate numbers
+- **Install Messages**: Updated installer output to show accurate, consistent information
+
+## [0.4.0] - 2025-11-24
+
+**Note**: This tag was created but version strings in code were not updated (still showed v0.3.4). Fixed in v0.4.1.
+
 ## [0.3.4] - 2025-11-06
 
 ### Added

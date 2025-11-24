@@ -17,12 +17,12 @@
 
 **Fast, searchable access to Claude Code documentation - locally, always up-to-date.**
 
-Stop hunting through scattered docs. This tool provides instant access to **270 actively maintained** Claude documentation paths covering API references, guides, examples, and changelogs.
+Stop hunting through scattered docs. This tool provides instant access to **273 actively maintained** Claude documentation paths covering API references, guides, examples, and changelogs.
 
 ## Key Features
 
 - 🤖 **AI-Powered Search** - Ask questions naturally, Claude understands intent and routes intelligently
-- 📚 **Complete Coverage** - 270 active documentation paths, 266 files (~98.5% coverage)
+- 📚 **Complete Coverage** - 273 active documentation paths, ~266-270 files downloaded (~97% coverage)
 - 🔍 **Semantic Understanding** - No primitive keyword matching, leverages Claude's language understanding
 - ✅ **Auto-Validated** - Continuous validation detects broken links automatically
 - 🔄 **Always Fresh** - Auto-updates every 3 hours from official sources
@@ -31,14 +31,16 @@ Stop hunting through scattered docs. This tool provides instant access to **270 
 
 ## What's Included
 
-**Documentation Files** (266 total):
-- Core Documentation (79 paths, 29%) - Guides, tutorials, best practices
-- API Reference (78 paths, 29%) - Complete API docs, Admin API, Agent SDK
+**Documentation Paths** (273 tracked in manifest):
+- Core Documentation (80 paths, 29%) - Guides, tutorials, best practices
+- API Reference (79 paths, 29%) - Complete API docs, Admin API, Agent SDK
 - Prompt Library (65 paths, 24%) - Ready-to-use prompt templates
-- Claude Code (44 paths, 16%) - CLI-specific docs, hooks, skills, MCP
+- Claude Code (45 paths, 16%) - CLI-specific docs, hooks, skills, MCP
 - Release Notes (2 paths) - Version history
 - Resources (1 path) - Additional resources
 - Uncategorized (1 path) - Home page
+
+**Files Downloaded** (~266-270 actual .md files, varies based on fetch success)
 
 **Python Features** (optional, requires Python 3.9+):
 - Full-text search across all content
@@ -172,7 +174,7 @@ Works on: All interactive shells
 For power users who want direct access to helper functions:
 
 ```bash
-# Fuzzy search across 270 paths (requires Python 3.9+)
+# Fuzzy search across 273 paths (requires Python 3.9+)
 ~/.claude-code-docs/claude-docs-helper.sh --search "keyword"
 
 # Full-text content search (requires Python 3.9+)
@@ -193,9 +195,9 @@ For power users who want direct access to helper functions:
 ## Architecture
 
 **Single Installation** - Always installs complete repository:
-- 266 documentation files (.md format)
+- 273 documentation paths tracked in manifest
+- ~266-270 files downloaded (varies based on fetch success)
 - 7 Python scripts for enhanced features
-- 270 active paths tracked in manifest
 - Full test suite (620 tests)
 
 **Graceful Degradation** - Features adapt to environment:
