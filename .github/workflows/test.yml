@@ -67,7 +67,7 @@ jobs:
         run: |
           if [ -f "coverage.xml" ]; then
             pip install coverage
-            coverage report --fail-under=20 || echo "Coverage below target - current: 22%, target: 85%"
+            coverage report --fail-under=75 || echo "Coverage below 75% threshold - current: 78.7%"
           else
             echo "Skipping coverage check - no coverage data"
           fi

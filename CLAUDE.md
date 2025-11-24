@@ -74,6 +74,308 @@ Your Actions:
 Result: User gets semantic answer with documentation context, not raw file paths
 ```
 
+## Intent-Driven Documentation Search - ENHANCED APPROACH
+
+**Philosophy**: Hide complexity from users. Synthesize aggressively. Minimize interaction.
+
+### Core Principles
+
+1. **Intent-driven, not path-driven** - Understand WHAT the user wants, not WHERE it might be located
+2. **Content search over path matching** - Find relevant information even without exact path matches
+3. **Synthesize by default** - Read multiple docs silently, present one unified answer
+4. **Only ask when contexts are incompatible** - Different products with fundamentally different workflows
+
+### Category Labels (User-Facing)
+
+When presenting options to users, always use these user-friendly labels:
+
+| Internal Category | User-Facing Label |
+|-------------------|-------------------|
+| `claude_code` | Claude Code CLI |
+| `api_reference` | Claude API |
+| `core_documentation` | Claude Documentation |
+| Agent SDK paths (`/en/docs/agent-sdk/*`) | Claude Agent SDK |
+| `prompt_library` | Prompt Library |
+| `release_notes` | Release Notes |
+| `resources` | Resources |
+
+**Why this matters**: Users think in product names ("I'm using Claude Agent SDK"), not internal category identifiers.
+
+### Ambiguity Resolution Strategy
+
+#### SYNTHESIZE (default behavior):
+
+**When**: Multiple documents in the same product context
+
+**Action**:
+- Read ALL matching documents silently (no asking user which to read)
+- Extract relevant sections related to query intent
+- Synthesize one unified, coherent answer
+- Cite all sources at the end
+
+**Example**:
+```
+User: /docs hooks in agent sdk
+
+Search finds:
+- /en/docs/agent-sdk/python.md (15 mentions of "hooks")
+- /en/docs/agent-sdk/overview.md (3 mentions of "hooks")
+- /en/docs/agent-sdk/plugins.md (8 mentions of "hooks")
+
+Decision: All in same context (Agent SDK) → SYNTHESIZE
+
+Action:
+1. Read all three documents silently
+2. Extract all hook-related content
+3. Synthesize unified explanation
+
+Present:
+"In the Claude Agent SDK, hooks provide intercept points in the agent lifecycle...
+
+[Unified explanation combining insights from all three sources]
+
+You can configure hooks in Python like this:
+[Code example from python.md]
+
+Common use cases for hooks include:
+[Use cases from overview.md]
+
+When integrating with plugins:
+[Integration details from plugins.md]
+
+Sources:
+• Agent SDK Python Guide: https://docs.claude.com/en/docs/agent-sdk/python
+• Agent SDK Overview: https://docs.claude.com/en/docs/agent-sdk/overview
+• Plugins Integration: https://docs.claude.com/en/docs/agent-sdk/plugins"
+```
+
+**Never show**: "Found 3 documents about hooks, which do you want to read?" ❌
+
+#### ASK (minimal - only for cross-context ambiguity):
+
+**When**: Matches span fundamentally different product contexts with incompatible workflows
+
+**Action**:
+- Use AskUserQuestion tool
+- Present options with user-friendly product labels
+- Explain WHY contexts are different
+- After selection → synthesize within chosen context
+
+**Example**:
+```
+User: /docs skills
+
+Search finds matches in 3 different products:
+- Claude Agent SDK (5 docs) - Building custom agent capabilities
+- Claude Code CLI (2 docs) - Installing/running pre-built skills locally
+- Claude API (7 docs) - Programmatic skill management endpoints
+
+Decision: Different products, incompatible workflows → ASK
+
+Present:
+"Skills exist in different Claude products with different purposes:
+
+○ 1. Claude Agent SDK
+     Build custom agent capabilities in Python/TypeScript
+     (For developers creating new agent skills)
+
+○ 2. Claude Code CLI
+     Install and run pre-built skills locally
+     (For using existing skills in command-line interface)
+
+○ 3. Claude API
+     Programmatic skill management endpoints
+     (For API integration and automation)
+
+Which are you working with?"
+
+After user selects option 1 (Agent SDK):
+→ Read all 5 Agent SDK docs about skills
+→ Synthesize unified answer within that context
+→ Present with sources
+```
+
+### Content Search Strategies
+
+**Priority order for finding relevant information**:
+
+1. **Explicit context in query** → Filter to that product first
+   - "hooks in agent sdk" → Search only agent-sdk category
+   - "cli memory features" → Search only claude_code category
+   - "api authentication" → Search only api_reference category
+
+2. **Keyword extraction** → Full-text content search across all docs
+   - "best practices for extended thinking"
+   - Extract: ["best practices", "extended thinking"]
+   - Search document content, not just paths
+
+3. **No exact path match** → Search document content anyway
+   - Query: "how do I use memory in agent sdk?"
+   - No `/agent-sdk/memory.md` path exists
+   - But `/agent-sdk/python.md` contains extensive memory documentation
+   - Find it via content search, read it, extract relevant sections
+
+### Decision Logic (Pseudo-code)
+
+```python
+def handle_docs_query(user_query):
+    # Step 1: Extract intent and context from query
+    intent = extract_intent(user_query)  # what they want to know
+    context = extract_context(user_query)  # which product (if specified)
+    keywords = extract_keywords(user_query)
+
+    # Step 2: Search with context filter if available
+    if context:  # e.g., "in agent sdk", "cli hooks"
+        matches = search_content(keywords, category_filter=context)
+    else:
+        matches = search_content(keywords)  # search everywhere
+
+    # Step 3: Analyze results
+    if len(matches) == 0:
+        return suggest_alternatives()
+
+    categories = get_product_contexts(matches)
+
+    # Step 4: Decide action based on context analysis
+    if len(categories) == 1:
+        # ✅ Same product context → SYNTHESIZE
+        docs = read_all_matching_docs(matches)
+        answer = synthesize_unified_answer(docs, intent)
+        return present_with_sources(answer, matches)
+
+    else:
+        # ❓ Different product contexts → ASK
+        options = format_product_options(categories)
+        selected_category = ask_user_question(options)
+
+        # Then synthesize within selected context
+        filtered_matches = filter_by_category(matches, selected_category)
+        docs = read_all_matching_docs(filtered_matches)
+        answer = synthesize_unified_answer(docs, intent)
+        return present_with_sources(answer, filtered_matches)
+```
+
+### Example Workflows
+
+#### Example 1: Clear context, multiple docs (synthesize)
+```
+User: /docs how do I use memory in the agent sdk?
+
+Analysis:
+- Intent: how-to question about memory
+- Context: agent sdk (explicitly stated)
+- Type: implementation guidance
+
+Search: Content search in agent_sdk category for "memory"
+Found:
+- /en/docs/agent-sdk/python.md (12 mentions)
+- /en/docs/agent-sdk/overview.md (5 mentions)
+- /en/docs/agent-sdk/sessions.md (8 mentions)
+
+Decision: All same context (Agent SDK) → SYNTHESIZE
+
+Action:
+1. Read all three docs silently
+2. Extract memory-related sections
+3. Combine into unified explanation
+
+Output:
+"In the Claude Agent SDK, memory allows agents to maintain state across interactions...
+
+[Unified explanation from all three docs]
+[Code examples from python.md]
+[Architecture details from overview.md]
+[Session persistence from sessions.md]
+
+Sources:
+• Agent SDK Python Guide: https://docs.claude.com/en/docs/agent-sdk/python
+• Agent SDK Overview: https://docs.claude.com/en/docs/agent-sdk/overview
+• Sessions: https://docs.claude.com/en/docs/agent-sdk/sessions"
+```
+
+#### Example 2: Ambiguous context (ask, then synthesize)
+```
+User: /docs memory
+
+Analysis:
+- Intent: general query about memory
+- Context: UNCLEAR (not specified)
+- Type: general information
+
+Search: Content search across all categories for "memory"
+Found in multiple product contexts:
+- claude_code (2 docs) - CLI memory management features
+- api_reference (3 docs) - Memory API endpoints
+- core_documentation (4 docs) - Memory tool for agents
+
+Decision: Different products, different use cases → ASK
+
+Ask:
+"Memory features exist in different Claude products:
+
+○ 1. Claude Code CLI
+     Local memory management for command-line interface
+
+○ 2. Claude API
+     Memory API endpoints for programmatic access
+
+○ 3. Claude Documentation
+     Memory tool for building agents
+
+Which are you interested in?"
+
+User selects: 1 (Claude Code CLI)
+
+Then:
+→ Filter to claude_code category only
+→ Read both CLI memory docs
+→ Synthesize unified CLI memory answer
+→ Present with sources
+```
+
+#### Example 3: Complex integration question (synthesize)
+```
+User: /docs how do agent sdk skills interact with mcp servers?
+
+Analysis:
+- Intent: integration/how-to
+- Context: agent sdk (explicit)
+- Keywords: ["skills", "mcp", "integration"]
+
+Search: Content search in agent_sdk for "skills" AND "mcp"
+Found:
+- /en/docs/agent-sdk/skills.md
+- /en/docs/agent-sdk/mcp.md
+- /en/docs/agent-sdk/plugins.md
+
+Decision: All same context (Agent SDK) → SYNTHESIZE
+
+Action:
+1. Read all three docs
+2. Find sections about skills+MCP integration
+3. Synthesize unified integration guide
+
+Output:
+"Agent SDK skills can interact with MCP servers in several ways:
+
+[Unified explanation showing integration patterns]
+[Skill configuration examples from skills.md]
+[MCP server setup from mcp.md]
+[Plugin considerations from plugins.md]
+
+Sources: ..."
+```
+
+### Implementation Checklist
+
+- [ ] Content search is the default (not just path matching)
+- [ ] Read multiple docs silently without asking user
+- [ ] Synthesize aggressively within same product context
+- [ ] Only ask when crossing product boundaries
+- [ ] Extract context hints from query ("in agent sdk", "cli hooks")
+- [ ] Cite all sources at the end
+- [ ] Graceful degradation if Python unavailable (basic path matching + suggestions)
+
 ## Python-Enhanced Features
 
 When Python 3.9+ is installed, these additional capabilities are available:

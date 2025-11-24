@@ -1,8 +1,8 @@
 # Claude Code Documentation Tool
 
 [![Last Update](https://img.shields.io/github/last-commit/costiash/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/costiash/claude-code-docs/commits/main)
-[![Tests](https://img.shields.io/badge/tests-598%20passing-success)](https://github.com/costiash/claude-code-docs/actions)
-[![Coverage](https://img.shields.io/badge/coverage-78%25-green)](https://github.com/costiash/claude-code-docs)
+[![Tests](https://img.shields.io/badge/tests-618%20passing-success)](https://github.com/costiash/claude-code-docs/actions)
+[![Coverage](https://img.shields.io/badge/coverage-78.7%25-green)](https://github.com/costiash/claude-code-docs)
 [![Python](https://img.shields.io/badge/python-3.9+-blue)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey)](https://github.com/costiash/claude-code-docs)
 [![Mentioned in Awesome Claude Code](https://awesome.re/mentioned-badge.svg)](https://github.com/hesreallyhim/awesome-claude-code)
@@ -22,16 +22,16 @@ Stop hunting through scattered docs. This tool provides instant access to **270 
 ## Key Features
 
 - 🤖 **AI-Powered Search** - Ask questions naturally, Claude understands intent and routes intelligently
-- 📚 **Complete Coverage** - 270 active documentation paths, 268 files (~99% coverage)
+- 📚 **Complete Coverage** - 270 active documentation paths, 266 files (~98.5% coverage)
 - 🔍 **Semantic Understanding** - No primitive keyword matching, leverages Claude's language understanding
 - ✅ **Auto-Validated** - Continuous validation detects broken links automatically
 - 🔄 **Always Fresh** - Auto-updates every 3 hours from official sources
 - 🎯 **Graceful Degradation** - Works with or without Python
-- 🧪 **Well-Tested** - 600 tests (99.7% pass rate), 78% coverage
+- 🧪 **Well-Tested** - 620 tests (618 passing, 2 skipped), 78.7% coverage
 
 ## What's Included
 
-**Documentation Files** (268 total):
+**Documentation Files** (266 total):
 - Core Documentation (79 paths, 29%) - Guides, tutorials, best practices
 - API Reference (78 paths, 29%) - Complete API docs, Admin API, Agent SDK
 - Prompt Library (65 paths, 24%) - Ready-to-use prompt templates
@@ -57,7 +57,7 @@ curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/inst
 
 **What it does:**
 1. Clones repository to `~/.claude-code-docs`
-2. Installs 268 documentation files
+2. Installs 266 documentation files
 3. Sets up `/docs` command in Claude Code
 4. Enables auto-updates
 
@@ -193,10 +193,10 @@ For power users who want direct access to helper functions:
 ## Architecture
 
 **Single Installation** - Always installs complete repository:
-- 268 documentation files (.md format)
+- 266 documentation files (.md format)
 - 7 Python scripts for enhanced features
 - 270 active paths tracked in manifest
-- Full test suite (600 tests)
+- Full test suite (620 tests)
 
 **Graceful Degradation** - Features adapt to environment:
 - **Without Python**: Basic documentation reading via `/docs` command
@@ -311,8 +311,8 @@ See [UNINSTALL.md](UNINSTALL.md) for manual removal instructions.
 - You can fork and install from your own repository
 
 **Validation:**
-- 598/600 tests passing (99.7% pass rate)
-- 78% code coverage
+- 618/620 tests passing (99.7% pass rate, 2 skipped)
+- 78.7% code coverage
 - Automated security testing in CI/CD
 
 ## Contributing
@@ -336,10 +336,10 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 
 # Run tests
-pytest tests/ -v  # Should see: 598 passed, 2 skipped
+pytest tests/ -v  # Should see: 618 passed, 2 skipped
 
 # Test coverage
-pytest --cov=scripts --cov-report=term  # Should see: ~78%
+pytest --cov=scripts --cov-report=term  # Should see: ~78.7%
 ```
 
 ## Acknowledgments
