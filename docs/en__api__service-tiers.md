@@ -110,6 +110,7 @@ The ratio of input to output tokens you purchase matters. Sizing your Priority T
 
 Priority Tier is supported by:
 
+- Claude Opus 4.5
 - Claude Opus 4.1
 - Claude Opus 4
 - Claude Sonnet 4

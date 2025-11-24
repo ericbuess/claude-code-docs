@@ -6,7 +6,7 @@ Streams the results of a Message Batch as a `.jsonl` file.
 
 Each line in the file is a JSON object containing the result of a single request in the Message Batch. Results are not guaranteed to be in the same order as requests. Use the `custom_id` field to match results to requests.
 
-Learn more about the Message Batches API in our [user guide](/en/docs/build-with-claude/batch-processing)
+Learn more about the Message Batches API in our [user guide](https://docs.claude.com/en/docs/build-with-claude/batch-processing)
 
 ### Path Parameters
 
@@ -263,11 +263,19 @@ Learn more about the Message Batches API in our [user guide](/en/docs/build-with
 
           See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-          - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+          - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
             The model that will complete your prompt.
 
             See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+            - `"claude-opus-4-5-20251101"`
+
+              Premium model combining maximum intelligence with practical performance
+
+            - `"claude-opus-4-5"`
+
+              Premium model combining maximum intelligence with practical performance
 
             - `"claude-3-7-sonnet-latest"`
 

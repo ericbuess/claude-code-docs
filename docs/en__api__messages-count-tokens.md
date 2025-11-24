@@ -6,7 +6,7 @@ Count the number of tokens in a Message.
 
 The Token Count API can be used to count the number of tokens in a Message, including tools, images, and documents, without creating it.
 
-Learn more about token counting in our [user guide](/en/docs/build-with-claude/token-counting)
+Learn more about token counting in our [user guide](https://docs.claude.com/en/docs/build-with-claude/token-counting)
 
 ### Body Parameters
 
@@ -1419,11 +1419,19 @@ Learn more about token counting in our [user guide](/en/docs/build-with-claude/t
 
   See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-  - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+  - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
     The model that will complete your prompt.
 
     See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+    - `"claude-opus-4-5-20251101"`
+
+      Premium model combining maximum intelligence with practical performance
+
+    - `"claude-opus-4-5"`
+
+      Premium model combining maximum intelligence with practical performance
 
     - `"claude-3-7-sonnet-latest"`
 
@@ -2071,6 +2079,6 @@ curl https://api.anthropic.com/v1/messages/count_tokens \
               "role": "user"
             }
           ],
-          "model": "claude-3-7-sonnet-latest"
+          "model": "claude-opus-4-5-20251101"
         }'
 ```

@@ -40,6 +40,7 @@ Note that Anthropic model availability varies by region. Search for "Claude" in 
 | Claude Sonnet 4.5              | claude-sonnet-4-5@20250929 |
 | Claude Sonnet 4                | claude-sonnet-4@20250514 |
 | Claude Sonnet 3.7 <Tooltip tooltipContent="Deprecated as of October 28, 2025.">⚠️</Tooltip> | claude-3-7-sonnet@20250219 |
+| Claude Opus 4.5                | claude-opus-4-5@20251101 |
 | Claude Opus 4.1                | claude-opus-4-1@20250805 |
 | Claude Opus 4                  | claude-opus-4@20250514   |
 | Claude Opus 3 <Tooltip tooltipContent="Deprecated as of June 30, 2025.">⚠️</Tooltip> | claude-3-opus@20240229   |

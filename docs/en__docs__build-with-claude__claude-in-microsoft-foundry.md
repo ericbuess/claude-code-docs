@@ -256,11 +256,12 @@ For details on response headers specific to Foundry, see the [correlation reques
 
 The following Claude models are available through Foundry. The latest generation models (Sonnet 4.5, Opus 4.1, and Haiku 4.5) offer the most advanced capabilities:
 
-| Model             | Default Deployment Name |
-| :---------------- | :---------------------- |
-| Claude Sonnet 4.5 | `claude-sonnet-4-5`     |
-| Claude Opus 4.1   | `claude-opus-4-1`       |
-| Claude Haiku 4.5  | `claude-haiku-4-5`      |
+| Model             | Default Deployment Name     |
+| :---------------- | :-------------------------- |
+| Claude Opus 4.5   | `claude-opus-4-5`  |
+| Claude Sonnet 4.5 | `claude-sonnet-4-5`         |
+| Claude Opus 4.1   | `claude-opus-4-1`           |
+| Claude Haiku 4.5  | `claude-haiku-4-5`          |
 
 By default, deployment names match the model IDs shown above. However, you can create custom deployments with different names in the Foundry portal to manage different configurations, versions, or rate limits. Use the deployment name (not necessarily the model ID) in your API requests.
 

@@ -22,7 +22,7 @@ remembering exact version numbers:
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`default`**    | Recommended model setting, depending on your account type                                                                                                               |
 | **`sonnet`**     | Uses the latest Sonnet model (currently Sonnet 4.5) for daily coding tasks                                                                                              |
-| **`opus`**       | Uses Opus model (currently Opus 4.1) for specialized complex reasoning tasks                                                                                            |
+| **`opus`**       | Uses Opus model (currently Opus 4.5) for specialized complex reasoning tasks                                                                                            |
 | **`haiku`**      | Uses the fast and efficient Haiku model for simple tasks                                                                                                                |
 | **`sonnet[1m]`** | Uses Sonnet with a [1 million token context window](https://docs.claude.com/en/docs/build-with-claude/context-windows#1m-token-context-window) window for long sessions |
 | **`opusplan`**   | Special mode that uses `opus` during plan mode, then switches to `sonnet` for execution                                                                                 |

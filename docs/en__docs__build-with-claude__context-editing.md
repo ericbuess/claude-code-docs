@@ -4,22 +4,22 @@ Automatically manage conversation context as it grows with context editing.
 
 ---
 
+## Overview
+
+Context editing allows you to automatically manage conversation context as it grows, helping you optimize costs and stay within context window limits. You can use server-side API strategies, client-side SDK features, or both together.
+
+| Approach | Where it runs | Strategies | How it works |
+|----------|---------------|------------|--------------|
+| **Server-side** | API | Tool result clearing (`clear_tool_uses_20250919`)<br/>Thinking block clearing (`clear_thinking_20251015`) | Applied before the prompt reaches Claude. Clears specific content from conversation history. Each strategy can be configured independently. |
+| **Client-side** | SDK | Compaction | Available in [Python and TypeScript SDKs](/docs/en/api/client-sdks) when using [`tool_runner`](/docs/en/agents-and-tools/tool-use/implement-tool-use#tool-runner-beta). Generates a summary and replaces full conversation history. See [Compaction](#client-side-compaction-sdk) below. |
+
+## Server-side strategies
+
 <Note>
 Context editing is currently in beta with support for tool result clearing and thinking block clearing. To enable it, use the beta header `context-management-2025-06-27` in your API requests.
 
 Please reach out through our [feedback form](https://forms.gle/YXC2EKGMhjN1c4L88) to share your feedback on this feature.
 </Note>
-
-## Overview
-
-Context editing allows you to automatically manage conversation context as it grows, helping you optimize costs and stay within context window limits. The API provides different strategies for managing context:
-
-- **Tool result clearing** (`clear_tool_uses_20250919`): Automatically clears tool use/result pairs when conversation context exceeds your configured threshold
-- **Thinking block clearing** (`clear_thinking_20251015`): Manages [thinking blocks](/docs/en/build-with-claude/extended-thinking) by clearing older thinking blocks from previous turns
-
-Each strategy can be configured independently and applied together to optimize your specific use case.
-
-## Context editing strategies
 
 ### Tool result clearing
 
@@ -59,6 +59,7 @@ Context editing's interaction with [prompt caching](/docs/en/build-with-claude/p
 
 Context editing is available on:
 
+- Claude Opus 4.5 (`claude-opus-4-5-20251101`)
 - Claude Opus 4.1 (`claude-opus-4-1-20250805`)
 - Claude Opus 4 (`claude-opus-4-20250514`)
 - Claude Sonnet 4.5 (`claude-sonnet-4-5-20250929`)
@@ -769,3 +770,340 @@ const response = await anthropic.beta.messages.create({
 ```
 
 </CodeGroup>
+
+## Client-side compaction (SDK)
+
+<Note>
+Compaction is available in the [Python and TypeScript SDKs](/docs/en/api/client-sdks) when using the [`tool_runner` method](/docs/en/agents-and-tools/tool-use/implement-tool-use#tool-runner-beta).
+</Note>
+
+Compaction is an SDK feature that automatically manages conversation context by generating summaries when token usage grows too large. Unlike server-side context editing strategies that clear content, compaction instructs Claude to summarize the conversation history, then replaces the full history with that summary. This allows Claude to continue working on long-running tasks that would otherwise exceed the [context window](/docs/en/build-with-claude/context-windows).
+
+### How compaction works
+
+When compaction is enabled, the SDK monitors token usage after each model response:
+
+1. **Threshold check**: The SDK calculates total tokens as `input_tokens + cache_creation_input_tokens + cache_read_input_tokens + output_tokens`
+2. **Summary generation**: When the threshold is exceeded, a summary prompt is injected as a user turn, and Claude generates a structured summary wrapped in `<summary></summary>` tags
+3. **Context replacement**: The SDK extracts the summary and replaces the entire message history with it
+4. **Continuation**: The conversation resumes from the summary, with Claude picking up where it left off
+
+### Using compaction
+
+Add `compaction_control` to your `tool_runner` call:
+
+<CodeGroup>
+
+```python Python
+import anthropic
+
+client = anthropic.Anthropic()
+
+runner = client.beta.messages.tool_runner(
+    model="claude-sonnet-4-5",
+    max_tokens=4096,
+    tools=[...],
+    messages=[
+        {
+            "role": "user",
+            "content": "Analyze all the files in this directory and write a summary report."
+        }
+    ],
+    compaction_control={
+        "enabled": True,
+        "context_token_threshold": 100000
+    }
+)
+
+for message in runner:
+    print(f"Tokens used: {message.usage.input_tokens}")
+
+final = runner.until_done()
+```
+
+```typescript TypeScript
+import Anthropic from '@anthropic-ai/sdk';
+
+const client = new Anthropic();
+
+const runner = client.beta.messages.toolRunner({
+    model: 'claude-sonnet-4-5',
+    max_tokens: 4096,
+    tools: [...],
+    messages: [
+        {
+            role: 'user',
+            content: 'Analyze all the files in this directory and write a summary report.'
+        }
+    ],
+    compactionControl: {
+        enabled: true,
+        contextTokenThreshold: 100000
+    }
+});
+
+for await (const message of runner) {
+    console.log('Tokens used:', message.usage.input_tokens);
+}
+
+const finalMessage = await runner.runUntilDone();
+```
+
+</CodeGroup>
+
+#### What happens during compaction
+
+As the conversation grows, the message history accumulates:
+
+**Before compaction (approaching 100k tokens):**
+```json
+[
+  { "role": "user", "content": "Analyze all files and write a report..." },
+  { "role": "assistant", "content": "I'll help. Let me start by reading..." },
+  { "role": "user", "content": [{ "type": "tool_result", "tool_use_id": "...", "content": "..." }] },
+  { "role": "assistant", "content": "Based on file1.txt, I see..." },
+  { "role": "user", "content": [{ "type": "tool_result", "tool_use_id": "...", "content": "..." }] },
+  { "role": "assistant", "content": "After analyzing file2.txt..." },
+  // ... 50 more exchanges like this ...
+]
+```
+
+When tokens exceed the threshold, the SDK injects a summary request and Claude generates a summary. The entire history is then replaced:
+
+**After compaction (back to ~2-3k tokens):**
+```json
+[
+  {
+    "role": "assistant",
+    "content": "# Task Overview\nThe user requested analysis of directory files to produce a summary report...\n\n# Current State\nAnalyzed 52 files across 3 subdirectories. Key findings documented in report.md...\n\n# Important Discoveries\n- Configuration files use YAML format\n- Found 3 deprecated dependencies\n- Test coverage at 67%\n\n# Next Steps\n1. Analyze remaining files in /src/legacy\n2. Complete final report sections...\n\n# Context to Preserve\nUser prefers markdown format with executive summary first..."
+  }
+]
+```
+
+Claude continues working from this summary as if it were the original conversation history.
+
+### Configuration options
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `enabled` | boolean | Yes | - | Whether to enable automatic compaction |
+| `context_token_threshold` | number | No | 100,000 | Token count at which compaction triggers |
+| `model` | string | No | Same as main model | Model to use for generating summaries |
+| `summary_prompt` | string | No | See below | Custom prompt for summary generation |
+
+#### Choosing a token threshold
+
+The threshold determines when compaction occurs. A lower threshold means more frequent compactions with smaller context windows. A higher threshold allows more context but risks hitting limits.
+
+<CodeGroup>
+
+```python Python
+# More frequent compaction for memory-constrained scenarios
+compaction_control={
+    "enabled": True,
+    "context_token_threshold": 50000
+}
+
+# Less frequent compaction when you need more context
+compaction_control={
+    "enabled": True,
+    "context_token_threshold": 150000
+}
+```
+
+```typescript TypeScript
+// More frequent compaction for memory-constrained scenarios
+compactionControl: {
+    enabled: true,
+    contextTokenThreshold: 50000
+}
+
+// Less frequent compaction when you need more context
+compactionControl: {
+    enabled: true,
+    contextTokenThreshold: 150000
+}
+```
+
+</CodeGroup>
+
+#### Using a different model for summaries
+
+You can use a faster or cheaper model for generating summaries:
+
+<CodeGroup>
+
+```python Python
+compaction_control={
+    "enabled": True,
+    "context_token_threshold": 100000,
+    "model": "claude-haiku-4-5"
+}
+```
+
+```typescript TypeScript
+compactionControl: {
+    enabled: true,
+    contextTokenThreshold: 100000,
+    model: 'claude-haiku-4-5'
+}
+```
+
+</CodeGroup>
+
+#### Custom summary prompts
+
+You can provide a custom prompt for domain-specific needs. Your prompt should instruct Claude to wrap its summary in `<summary></summary>` tags.
+
+<CodeGroup>
+
+```python Python
+compaction_control={
+    "enabled": True,
+    "context_token_threshold": 100000,
+    "summary_prompt": """Summarize the research conducted so far, including:
+- Sources consulted and key findings
+- Questions answered and remaining unknowns
+- Recommended next steps
+
+Wrap your summary in <summary></summary> tags."""
+}
+```
+
+```typescript TypeScript
+compactionControl: {
+    enabled: true,
+    contextTokenThreshold: 100000,
+    summaryPrompt: `Summarize the research conducted so far, including:
+- Sources consulted and key findings
+- Questions answered and remaining unknowns
+- Recommended next steps
+
+Wrap your summary in <summary></summary> tags.`
+}
+```
+
+</CodeGroup>
+
+### Default summary prompt
+
+The built-in summary prompt instructs Claude to create a structured continuation summary including:
+
+1. **Task Overview**: The user's core request, success criteria, and constraints
+2. **Current State**: What has been completed, files modified, and artifacts produced
+3. **Important Discoveries**: Technical constraints, decisions made, errors resolved, and failed approaches
+4. **Next Steps**: Specific actions needed, blockers, and priority order
+5. **Context to Preserve**: User preferences, domain-specific details, and commitments made
+
+This structure enables Claude to resume work efficiently without losing important context or repeating mistakes.
+
+<section title="View full default prompt">
+
+```
+You have been working on the task described above but have not yet completed it. Write a continuation summary that will allow you (or another instance of yourself) to resume work efficiently in a future context window where the conversation history will be replaced with this summary. Your summary should be structured, concise, and actionable. Include:
+
+1. Task Overview
+The user's core request and success criteria
+Any clarifications or constraints they specified
+
+2. Current State
+What has been completed so far
+Files created, modified, or analyzed (with paths if relevant)
+Key outputs or artifacts produced
+
+3. Important Discoveries
+Technical constraints or requirements uncovered
+Decisions made and their rationale
+Errors encountered and how they were resolved
+What approaches were tried that didn't work (and why)
+
+4. Next Steps
+Specific actions needed to complete the task
+Any blockers or open questions to resolve
+Priority order if multiple steps remain
+
+5. Context to Preserve
+User preferences or style requirements
+Domain-specific details that aren't obvious
+Any promises made to the user
+
+Be concise but complete—err on the side of including information that would prevent duplicate work or repeated mistakes. Write in a way that enables immediate resumption of the task.
+
+Wrap your summary in <summary></summary> tags.
+```
+
+</section>
+
+### Limitations
+
+#### Server-side tools
+
+<Warning>
+Compaction requires special consideration when using server-side tools such as [web search](/docs/en/agents-and-tools/tool-use/web-search-tool) or [web fetch](/docs/en/agents-and-tools/tool-use/web-fetch-tool).
+</Warning>
+
+When using server-side tools, the SDK may incorrectly calculate token usage, causing compaction to trigger at the wrong time.
+
+For example, after a web search operation, the API response might show:
+
+```json
+{
+  "usage": {
+    "input_tokens": 63000,
+    "cache_read_input_tokens": 270000,
+    "output_tokens": 1400
+  }
+}
+```
+
+The SDK calculates total usage as 63,000 + 270,000 = 333,000 tokens. However, the `cache_read_input_tokens` value includes accumulated reads from multiple internal API calls made by the server-side tool, not your actual conversation context. Your real context length might only be the 63,000 `input_tokens`, but the SDK sees 333k and triggers compaction prematurely.
+
+**Workarounds:**
+
+- Use the [token counting](/docs/en/build-with-claude/token-counting) endpoint to get accurate context length
+- Avoid compaction when using server-side tools extensively
+
+#### Tool use edge cases
+
+When compaction is triggered while a tool use response is pending, the SDK removes the tool use block from the message history before generating the summary. Claude will re-issue the tool call after resuming from the summary if still needed.
+
+### Monitoring compaction
+
+Enable logging to track when compaction occurs:
+
+<CodeGroup>
+
+```python Python
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logging.getLogger("anthropic.lib.tools").setLevel(logging.INFO)
+
+# Logs will show:
+# INFO: Token usage 105000 has exceeded the threshold of 100000. Performing compaction.
+# INFO: Compaction complete. New token usage: 2500
+```
+
+```typescript TypeScript
+// The SDK logs compaction events to the console
+// You'll see messages like:
+// Token usage 105000 has exceeded the threshold of 100000. Performing compaction.
+// Compaction complete. New token usage: 2500
+```
+
+</CodeGroup>
+
+### When to use compaction
+
+**Good use cases:**
+
+- Long-running agent tasks that process many files or data sources
+- Research workflows that accumulate large amounts of information
+- Multi-step tasks with clear, measurable progress
+- Tasks that produce artifacts (files, reports) that persist outside the conversation
+
+**Less ideal use cases:**
+
+- Tasks requiring precise recall of early conversation details
+- Workflows using server-side tools extensively
+- Tasks that need to maintain exact state across many variables

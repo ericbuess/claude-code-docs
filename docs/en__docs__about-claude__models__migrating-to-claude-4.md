@@ -351,6 +351,32 @@ model="claude-sonnet-4-5-20250929"
 
 Claude Sonnet 4.5 is our most intelligent model with best-in-class reasoning, coding, and long-running agent capabilities. It offers superior performance compared to Opus 4.1 for most use cases.
 
+### Migrating from Claude Opus 4.1 → Opus 4.5
+
+**No breaking changes.** All API calls will work without modification.
+
+Simply update your model ID:
+
+```python
+# Before (Claude Opus 4.1)
+model="claude-opus-4-1-20250805"
+
+# After (Claude Opus 4.5)
+model="claude-opus-4-5-20251101"
+```
+
+Claude Opus 4.5 is our most intelligent model, combining maximum capability with practical performance. It features step-change improvements in vision, coding, and computer use at a more accessible price point than Opus 4.1. Ideal for complex specialized tasks and professional software engineering.
+
+<Note>
+For codebases with many model references, a [Claude Code plugin](https://github.com/anthropics/claude-code/tree/main/plugins/claude-opus-4-5-migration) is available to automate migration to Opus 4.5.
+</Note>
+
+### Migrating between Claude 4.5 models
+
+**No breaking changes.** All API calls will work without modification.
+
+Simply update your model ID.
+
 ## Need help?
 
 - Check our [API documentation](/docs/en/api/overview) for detailed specifications

@@ -6,6 +6,7 @@ Claude can interact with computer environments through the computer use tool, wh
 
 <Note>
 Computer use is currently in beta and requires a [beta header](/docs/en/api/beta-headers):
+- `"computer-use-2025-11-24"` (Claude Opus 4.5)
 - `"computer-use-2025-01-24"` (Claude 4 models and Claude Sonnet 3.7 ([deprecated](/docs/en/about-claude/model-deprecations)))
 </Note>
 
@@ -26,11 +27,12 @@ Computer use is available for the following Claude models:
 
 | Model | Tool Version | Beta Flag |
 |-------|--------------|-----------|
+| Claude Opus 4.5 | `computer_20251124` | `computer-use-2025-11-24` |
 | Claude 4 models | `computer_20250124` | `computer-use-2025-01-24` |
 | Claude Sonnet 3.7 ([deprecated](/docs/en/about-claude/model-deprecations)) | `computer_20250124`| `computer-use-2025-01-24` |
 
 <Note>
-Claude 4 models use updated tool versions optimized for the new architecture. Claude Sonnet 3.7 ([deprecated](/docs/en/about-claude/model-deprecations)) introduces additional capabilities including the thinking feature for more insight into the model's reasoning process.
+Claude Opus 4.5 introduces the `computer_20251124` tool version with new capabilities including the zoom action for detailed screen region inspection. Claude 4 models use updated tool versions optimized for the new architecture. Claude Sonnet 3.7 ([deprecated](/docs/en/about-claude/model-deprecations)) introduces additional capabilities including the thinking feature for more insight into the model's reasoning process.
 </Note>
 
 <Warning>
@@ -97,8 +99,8 @@ response = client.beta.messages.create(
           "display_number": 1,
         },
         {
-          "type": "text_editor_20250124",
-          "name": "str_replace_editor"
+          "type": "text_editor_20250728",
+          "name": "str_replace_based_edit_tool"
         },
         {
           "type": "bash_20250124",
@@ -129,8 +131,8 @@ curl https://api.anthropic.com/v1/messages \
         "display_number": 1
       },
       {
-        "type": "text_editor_20250124",
-        "name": "str_replace_editor"
+        "type": "text_editor_20250728",
+        "name": "str_replace_based_edit_tool"
       },
       {
         "type": "bash_20250124",
@@ -312,9 +314,17 @@ The loop continues until either Claude responds without requesting any tools (ta
 <Warning>
   When using the computer use tool, you must include the appropriate beta flag for your model version:
   
+    <section title="Claude Opus 4.5">
+
+      When using `computer_20251124`, include this beta flag:
+      ```
+      "betas": ["computer-use-2025-11-24"]
+      ```
+    
+</section>
     <section title="Claude 4 models">
 
-      When using `computer_20250124`, include this beta flag: 
+      When using `computer_20250124`, include this beta flag:
       ```
       "betas": ["computer-use-2025-01-24"]
       ```
@@ -322,7 +332,7 @@ The loop continues until either Claude responds without requesting any tools (ta
 </section>
     <section title="Claude Sonnet 3.7">
 
-      When using `computer_20250124`, include this beta flag: 
+      When using `computer_20250124`, include this beta flag:
       ```
       "betas": ["computer-use-2025-01-24"]
       ```
@@ -378,6 +388,11 @@ Available in Claude 4 models and Claude Sonnet 3.7:
 - **hold_key** - Hold a key while performing other actions
 - **wait** - Pause between actions
 
+**Enhanced actions (`computer_20251124`)**
+Available in Claude Opus 4.5:
+- All actions from `computer_20250124`
+- **zoom** - View a specific region of the screen at full resolution. Requires `enable_zoom: true` in tool definition. Takes a `region` parameter with coordinates `[x1, y1, x2, y2]` defining top-left and bottom-right corners of the area to inspect.
+
 <section title="Example actions">
 
 ```json
@@ -405,6 +420,12 @@ Available in Claude 4 models and Claude Sonnet 3.7:
   "scroll_direction": "down",
   "scroll_amount": 3
 }
+
+// Zoom to view region in detail (Opus 4.5)
+{
+  "action": "zoom",
+  "region": [100, 200, 400, 350]
+}
 ```
 
 </section>
@@ -413,11 +434,12 @@ Available in Claude 4 models and Claude Sonnet 3.7:
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
-| `type` | Yes | Tool version (`computer_20250124` or `computer_20241022`) |
+| `type` | Yes | Tool version (`computer_20251124`, `computer_20250124`, or `computer_20241022`) |
 | `name` | Yes | Must be "computer" |
 | `display_width_px` | Yes | Display width in pixels |
 | `display_height_px` | Yes | Display height in pixels |
 | `display_number` | No | Display number for X11 environments |
+| `enable_zoom` | No | Enable zoom action (`computer_20251124` only). Set to `true` to allow Claude to zoom into specific screen regions. Default: `false` |
 
 <Warning>
 Keep display resolution at or below 1280x800 (WXGA) for best performance. Higher resolutions may cause accuracy issues due to [image resizing](/docs/en/build-with-claude/vision#evaluate-image-size).
@@ -488,8 +510,8 @@ The computer use tool can be combined with other tools to create more powerful a
           "display_number": 1
         },
         {
-          "type": "text_editor_20250124",
-          "name": "str_replace_editor"
+          "type": "text_editor_20250728",
+          "name": "str_replace_based_edit_tool"
         },
         {
           "type": "bash_20250124",
@@ -545,8 +567,8 @@ response = client.beta.messages.create(
           "display_number": 1,
         },
         {
-          "type": "text_editor_20250124",
-          "name": "str_replace_editor"
+          "type": "text_editor_20250728",
+          "name": "str_replace_based_edit_tool"
         },
         {
           "type": "bash_20250124",
@@ -596,8 +618,8 @@ const message = await anthropic.beta.messages.create({
         display_number: 1,
       },
       {
-        type: "text_editor_20250124",
-        name: "str_replace_editor"
+        type: "text_editor_20250728",
+        name: "str_replace_based_edit_tool"
       },
       {
         type: "bash_20250124",

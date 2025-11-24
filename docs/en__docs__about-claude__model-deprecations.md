@@ -71,6 +71,7 @@ All publicly released models are listed below with their status:
 | `claude-opus-4-1-20250805`  | Active              | N/A               | Not sooner than August 5, 2026 |
 | `claude-sonnet-4-5-20250929`| Active              | N/A               | Not sooner than September 29, 2026 |
 | `claude-haiku-4-5-20251001` | Active              | N/A               | Not sooner than October 15, 2026 |
+| `claude-opus-4-5-20251101`  | Active              | N/A               | Not sooner than November 24, 2026 |
 
 ## Deprecation history
 

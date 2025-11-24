@@ -5,13 +5,17 @@
 Claude's Model Context Protocol (MCP) connector feature enables you to connect to remote MCP servers directly from the Messages API without a separate MCP client.
 
 <Note>
-  This feature requires the beta header: `"anthropic-beta": "mcp-client-2025-04-04"`
+  **Current version**: This feature requires the beta header: `"anthropic-beta": "mcp-client-2025-11-20"`
+
+  The previous version (`mcp-client-2025-04-04`) is deprecated. See the [deprecated version documentation](#deprecated-version-mcp-client-2025-04-04) below.
 </Note>
 
 ## Key features
 
 - **Direct API integration**: Connect to MCP servers without implementing an MCP client
 - **Tool calling support**: Access MCP tools through the Messages API
+- **Flexible tool configuration**: Enable all tools, allowlist specific tools, or denylist unwanted tools
+- **Per-tool configuration**: Configure individual tools with custom settings
 - **OAuth authentication**: Support for OAuth Bearer tokens for authenticated servers
 - **Multiple servers**: Connect to multiple MCP servers in a single request
 
@@ -23,16 +27,22 @@ Claude's Model Context Protocol (MCP) connector feature enables you to connect t
 
 ## Using the MCP connector in the Messages API
 
-To connect to a remote MCP server, include the `mcp_servers` parameter in your Messages API request:
+The MCP connector uses two components:
+
+1. **MCP Server Definition** (`mcp_servers` array): Defines server connection details (URL, authentication)
+2. **MCP Toolset** (`tools` array): Configures which tools to enable and how to configure them
+
+### Basic example
+
+This example enables all tools from an MCP server with default configuration:
 
 <CodeGroup>
-
-```bash cURL
+```bash Shell
 curl https://api.anthropic.com/v1/messages \
   -H "Content-Type: application/json" \
   -H "X-API-Key: $ANTHROPIC_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
-  -H "anthropic-beta: mcp-client-2025-04-04" \
+  -H "anthropic-beta: mcp-client-2025-11-20" \
   -d '{
     "model": "claude-sonnet-4-5",
     "max_tokens": 1000,
@@ -43,6 +53,12 @@ curl https://api.anthropic.com/v1/messages \
         "url": "https://example-server.modelcontextprotocol.io/sse",
         "name": "example-mcp",
         "authorization_token": "YOUR_TOKEN"
+      }
+    ],
+    "tools": [
+      {
+        "type": "mcp_toolset",
+        "mcp_server_name": "example-mcp"
       }
     ]
   }'
@@ -70,7 +86,13 @@ const response = await anthropic.beta.messages.create({
       authorization_token: "YOUR_TOKEN",
     },
   ],
-  betas: ["mcp-client-2025-04-04"],
+  tools: [
+    {
+      type: "mcp_toolset",
+      mcp_server_name: "example-mcp",
+    },
+  ],
+  betas: ["mcp-client-2025-11-20"],
 });
 ```
 
@@ -92,25 +114,24 @@ response = client.beta.messages.create(
         "name": "example-mcp",
         "authorization_token": "YOUR_TOKEN"
     }],
-    betas=["mcp-client-2025-04-04"]
+    tools=[{
+        "type": "mcp_toolset",
+        "mcp_server_name": "example-mcp"
+    }],
+    betas=["mcp-client-2025-11-20"]
 )
 ```
-
 </CodeGroup>
 
 ## MCP server configuration
 
-Each MCP server in the `mcp_servers` array supports the following configuration:
+Each MCP server in the `mcp_servers` array defines the connection details:
 
 ```json
 {
   "type": "url",
   "url": "https://example-server.modelcontextprotocol.io/sse",
   "name": "example-mcp",
-  "tool_configuration": {
-    "enabled": true,
-    "allowed_tools": ["example_tool_1", "example_tool_2"]
-  },
   "authorization_token": "YOUR_TOKEN"
 }
 ```
@@ -121,11 +142,171 @@ Each MCP server in the `mcp_servers` array supports the following configuration:
 |----------|------|----------|-------------|
 | `type` | string | Yes | Currently only "url" is supported |
 | `url` | string | Yes | The URL of the MCP server. Must start with https:// |
-| `name` | string | Yes | A unique identifier for this MCP server. It will be used in `mcp_tool_call` blocks to identify the server and to disambiguate tools to the model. |
-| `tool_configuration` | object | No | Configure tool usage |
-| `tool_configuration.enabled` | boolean | No | Whether to enable tools from this server (default: true) |
-| `tool_configuration.allowed_tools` | array | No | List to restrict the tools to allow (by default, all tools are allowed) |
+| `name` | string | Yes | A unique identifier for this MCP server. Must be referenced by exactly one MCPToolset in the `tools` array. |
 | `authorization_token` | string | No | OAuth authorization token if required by the MCP server. See [MCP specification](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization). |
+
+## MCP toolset configuration
+
+The MCPToolset lives in the `tools` array and configures which tools from the MCP server are enabled and how they should be configured.
+
+### Basic structure
+
+```json
+{
+  "type": "mcp_toolset",
+  "mcp_server_name": "example-mcp",
+  "default_config": {
+    "enabled": true,
+    "defer_loading": false
+  },
+  "configs": {
+    "specific_tool_name": {
+      "enabled": true,
+      "defer_loading": true
+    }
+  }
+}
+```
+
+### Field descriptions
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `type` | string | Yes | Must be "mcp_toolset" |
+| `mcp_server_name` | string | Yes | Must match a server name defined in the `mcp_servers` array |
+| `default_config` | object | No | Default configuration applied to all tools in this set. Individual tool configs in `configs` will override these defaults. |
+| `configs` | object | No | Per-tool configuration overrides. Keys are tool names, values are configuration objects. |
+| `cache_control` | object | No | Cache breakpoint configuration for this toolset |
+
+### Tool configuration options
+
+Each tool (whether configured in `default_config` or in `configs`) supports the following fields:
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `enabled` | boolean | `true` | Whether this tool is enabled |
+| `defer_loading` | boolean | `false` | If true, tool description is not sent to the model initially. Used with [Tool Search Tool](/agents-and-tools/tool-search-tool). |
+
+### Configuration merging
+
+Configuration values merge with this precedence (highest to lowest):
+
+1. Tool-specific settings in `configs`
+2. Set-level `default_config`
+3. System defaults
+
+Example:
+
+```json
+{
+  "type": "mcp_toolset",
+  "mcp_server_name": "google-calendar-mcp",
+  "default_config": {
+    "defer_loading": true
+  },
+  "configs": {
+    "search_events": {
+      "enabled": false
+    }
+  }
+}
+```
+
+Results in:
+- `search_events`: `enabled: false` (from configs), `defer_loading: true` (from default_config)
+- All other tools: `enabled: true` (system default), `defer_loading: true` (from default_config)
+
+## Common configuration patterns
+
+### Enable all tools with default configuration
+
+The simplest pattern - enable all tools from a server:
+
+```json
+{
+  "type": "mcp_toolset",
+  "mcp_server_name": "google-calendar-mcp",
+}
+```
+
+### Allowlist - Enable only specific tools
+
+Set `enabled: false` as the default, then explicitly enable specific tools:
+
+```json
+{
+  "type": "mcp_toolset",
+  "mcp_server_name": "google-calendar-mcp",
+  "default_config": {
+    "enabled": false
+  },
+  "configs": {
+    "search_events": {
+      "enabled": true
+    },
+    "create_event": {
+      "enabled": true
+    }
+  }
+}
+```
+
+### Denylist - Disable specific tools
+
+Enable all tools by default, then explicitly disable unwanted tools:
+
+```json
+{
+  "type": "mcp_toolset",
+  "mcp_server_name": "google-calendar-mcp",
+  "configs": {
+    "delete_all_events": {
+      "enabled": false
+    },
+    "share_calendar_publicly": {
+      "enabled": false
+    }
+  }
+}
+```
+
+### Mixed - Allowlist with per-tool configuration
+
+Combine allowlisting with custom configuration for each tool:
+
+```json
+{
+  "type": "mcp_toolset",
+  "mcp_server_name": "google-calendar-mcp",
+  "default_config": {
+    "enabled": false,
+    "defer_loading": true
+  },
+  "configs": {
+    "search_events": {
+      "enabled": true,
+      "defer_loading": false
+    },
+    "list_events": {
+      "enabled": true
+    }
+  }
+}
+```
+
+In this example:
+- `search_events` is enabled with `defer_loading: false`
+- `list_events` is enabled with `defer_loading: true` (inherited from default_config)
+- All other tools are disabled
+
+## Validation rules
+
+The API enforces these validation rules:
+
+- **Server must exist**: The `mcp_server_name` in an MCPToolset must match a server defined in the `mcp_servers` array
+- **Server must be used**: Every MCP server defined in `mcp_servers` must be referenced by exactly one MCPToolset
+- **Unique toolset per server**: Each MCP server can only be referenced by one MCPToolset
+- **Unknown tool names**: If a tool name in `configs` doesn't exist on the MCP server, a backend warning is logged but no error is returned (MCP servers may have dynamic tool availability)
 
 ## Response content types
 
@@ -161,7 +342,7 @@ When Claude uses MCP tools, the response will include two new content block type
 
 ## Multiple MCP servers
 
-You can connect to multiple MCP servers by including multiple objects in the `mcp_servers` array:
+You can connect to multiple MCP servers by including multiple server definitions in `mcp_servers` and a corresponding MCPToolset for each in the `tools` array:
 
 ```json
 {
@@ -185,6 +366,19 @@ You can connect to multiple MCP servers by including multiple objects in the `mc
       "url": "https://mcp.example2.com/sse",
       "name": "mcp-server-2",
       "authorization_token": "TOKEN2"
+    }
+  ],
+  "tools": [
+    {
+      "type": "mcp_toolset",
+      "mcp_server_name": "mcp-server-1"
+    },
+    {
+      "type": "mcp_toolset",
+      "mcp_server_name": "mcp-server-2",
+      "default_config": {
+        "defer_loading": true
+      }
     }
   ]
 }
@@ -231,3 +425,113 @@ Once you've obtained an access token using either OAuth flow above, you can use 
 ```
 
 For detailed explanations of the OAuth flow, refer to the [Authorization section](https://modelcontextprotocol.io/docs/concepts/authentication) in the MCP specification.
+
+## Migration guide
+
+If you're using the deprecated `mcp-client-2025-04-04` beta header, follow this guide to migrate to the new version.
+
+### Key changes
+
+1. **New beta header**: Change from `mcp-client-2025-04-04` to `mcp-client-2025-11-20`
+2. **Tool configuration moved**: Tool configuration now lives in the `tools` array as MCPToolset objects, not in the MCP server definition
+3. **More flexible configuration**: New pattern supports allowlisting, denylisting, and per-tool configuration
+
+### Migration steps
+
+**Before (deprecated):**
+
+```json
+{
+  "model": "claude-sonnet-4-5",
+  "max_tokens": 1000,
+  "messages": [...],
+  "mcp_servers": [
+    {
+      "type": "url",
+      "url": "https://mcp.example.com/sse",
+      "name": "example-mcp",
+      "authorization_token": "YOUR_TOKEN",
+      "tool_configuration": {
+        "enabled": true,
+        "allowed_tools": ["tool1", "tool2"]
+      }
+    }
+  ]
+}
+```
+
+**After (current):**
+
+```json
+{
+  "model": "claude-sonnet-4-5",
+  "max_tokens": 1000,
+  "messages": [...],
+  "mcp_servers": [
+    {
+      "type": "url",
+      "url": "https://mcp.example.com/sse",
+      "name": "example-mcp",
+      "authorization_token": "YOUR_TOKEN"
+    }
+  ],
+  "tools": [
+    {
+      "type": "mcp_toolset",
+      "mcp_server_name": "example-mcp",
+      "default_config": {
+        "enabled": false
+      },
+      "configs": {
+        "tool1": {
+          "enabled": true
+        },
+        "tool2": {
+          "enabled": true
+        }
+      }
+    }
+  ]
+}
+```
+
+### Common migration patterns
+
+| Old pattern | New pattern |
+|-------------|-------------|
+| No `tool_configuration` (all tools enabled) | MCPToolset with no `default_config` or `configs` |
+| `tool_configuration.enabled: false` | MCPToolset with `default_config.enabled: false` |
+| `tool_configuration.allowed_tools: [...]` | MCPToolset with `default_config.enabled: false` and specific tools enabled in `configs` |
+
+## Deprecated version: mcp-client-2025-04-04
+
+<Note type="warning">
+  This version is deprecated. Please migrate to `mcp-client-2025-11-20` using the [migration guide](#migration-guide) above.
+</Note>
+
+The previous version of the MCP connector included tool configuration directly in the MCP server definition:
+
+```json
+{
+  "mcp_servers": [
+    {
+      "type": "url",
+      "url": "https://example-server.modelcontextprotocol.io/sse",
+      "name": "example-mcp",
+      "authorization_token": "YOUR_TOKEN",
+      "tool_configuration": {
+        "enabled": true,
+        "allowed_tools": ["example_tool_1", "example_tool_2"]
+      }
+    }
+  ]
+}
+```
+
+### Deprecated field descriptions
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `tool_configuration` | object | **Deprecated**: Use MCPToolset in the `tools` array instead |
+| `tool_configuration.enabled` | boolean | **Deprecated**: Use `default_config.enabled` in MCPToolset |
+| `tool_configuration.allowed_tools` | array | **Deprecated**: Use allowlist pattern with `configs` in MCPToolset |

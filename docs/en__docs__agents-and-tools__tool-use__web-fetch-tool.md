@@ -30,6 +30,7 @@ Web fetch is available on:
 - Claude Sonnet 3.7 ([deprecated](/docs/en/about-claude/model-deprecations)) (`claude-3-7-sonnet-20250219`)
 - Claude Haiku 4.5 (`claude-haiku-4-5-20251001`)
 - Claude Haiku 3.5 (`claude-3-5-haiku-latest`)
+- Claude Opus 4.5 (`claude-opus-4-5-20251101`)
 - Claude Opus 4.1 (`claude-opus-4-1-20250805`)
 - Claude Opus 4 (`claude-opus-4-20250514`)
 

@@ -166,7 +166,7 @@ Here are criteria and benchmarks that can be used to evaluate the business impac
 
 The choice of model depends on the trade-offs between cost, accuracy, and response time.
 
-For customer support chat, `claude-opus-4-1-20250805` is well suited to balance intelligence, latency, and cost. However, for instances where you have conversation flow with multiple prompts including RAG, tool use, and/or long-context prompts, `claude-3-haiku-20240307` may be more suitable to optimize for latency.
+For customer support chat, Claude Sonnet 4.5 is well suited to balance intelligence, latency, and cost. However, for instances where you have conversation flow with multiple prompts including RAG, tool use, and/or long-context prompts, Claude Haiku 4.5 may be more suitable to optimize for latency.
 
 ### Build a strong prompt
 

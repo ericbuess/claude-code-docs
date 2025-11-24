@@ -67,6 +67,7 @@ The Batches API offers significant cost savings. All usage is charged at 50% of 
 
 | Model             | Batch input      | Batch output    |
 |-------------------|------------------|-----------------|
+| Claude Opus 4.5     | $2.50 / MTok     | $12.50 / MTok   |
 | Claude Opus 4.1     | $7.50 / MTok     | $37.50 / MTok   |
 | Claude Opus 4     | $7.50 / MTok     | $37.50 / MTok   |
 | Claude Sonnet 4.5   | $1.50 / MTok     | $7.50 / MTok    |

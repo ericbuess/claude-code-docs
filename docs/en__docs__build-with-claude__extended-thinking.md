@@ -11,7 +11,8 @@ Extended thinking is supported in the following models:
 - Claude Sonnet 4.5 (`claude-sonnet-4-5-20250929`)
 - Claude Sonnet 4 (`claude-sonnet-4-20250514`)
 - Claude Sonnet 3.7 (`claude-3-7-sonnet-20250219`) ([deprecated](/docs/en/about-claude/model-deprecations))
-- Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) 
+- Claude Haiku 4.5 (`claude-haiku-4-5-20251001`)
+- Claude Opus 4.5 (`claude-opus-4-5-20251101`)
 - Claude Opus 4.1 (`claude-opus-4-1-20250805`)
 - Claude Opus 4 (`claude-opus-4-20250514`)
 
@@ -832,7 +833,7 @@ Here are some important considerations for interleaved thinking:
 - Interleaved thinking is only supported for [tools used via the Messages API](/docs/en/agents-and-tools/tool-use/overview).
 - Interleaved thinking is supported for Claude 4 models only, with the beta header `interleaved-thinking-2025-05-14`.
 - Direct calls to the Claude API allow you to pass `interleaved-thinking-2025-05-14` in requests to any model, with no effect.
-- On 3rd-party platforms (e.g., [Amazon Bedrock](/docs/en/build-with-claude/claude-on-amazon-bedrock) and [Vertex AI](/docs/en/build-with-claude/claude-on-vertex-ai)), if you pass `interleaved-thinking-2025-05-14` to any model aside from Claude Opus 4.1, Opus 4, or Sonnet 4, your request will fail.
+- On 3rd-party platforms (e.g., [Amazon Bedrock](/docs/en/build-with-claude/claude-on-amazon-bedrock) and [Vertex AI](/docs/en/build-with-claude/claude-on-vertex-ai)), if you pass `interleaved-thinking-2025-05-14` to any model aside from Claude Opus 4.5, Claude Opus 4.1, Opus 4, or Sonnet 4, your request will fail.
 
 <section title="Tool use without interleaved thinking">
 
@@ -1659,18 +1660,18 @@ Request 2 writes a cache of the request content (not the response). The cache in
 
 **Request 3:**
 ```
-User: ["What's the weather in Paris?"], 
-Assistant: [thinking_block_1] + [tool_use block 1], 
-User: [tool_result_1, cache=True], 
-Assistant: [thinking_block_2] + [text block 2], 
+User: ["What's the weather in Paris?"],
+Assistant: [thinking_block_1] + [tool_use block 1],
+User: [tool_result_1, cache=True],
+Assistant: [thinking_block_2] + [text block 2],
 User: [Text response, cache=True]
 ```
-Because a non-tool-result user block was included, all previous thinking blocks are ignored. This request will be processed the same as:
+For Claude Opus 4.5 and later, all previous thinking blocks are kept by default. For older models, because a non-tool-result user block was included, all previous thinking blocks are ignored. This request will be processed the same as:
 ```
-User: ["What's the weather in Paris?"], 
-Assistant: [tool_use block 1], 
-User: [tool_result_1, cache=True], 
-Assistant: [text block 2], 
+User: ["What's the weather in Paris?"],
+Assistant: [tool_use block 1],
+User: [tool_result_1, cache=True],
+Assistant: [text block 2],
 User: [Text response, cache=True]
 ```
 
@@ -2600,22 +2601,34 @@ The Messages API handles thinking differently across Claude Sonnet 3.7 and Claud
 
 See the table below for a condensed comparison:
 
-| Feature | Claude Sonnet 3.7 | Claude 4 Models |
-|---------|------------------|----------------|
-| **Thinking Output** | Returns full thinking output | Returns summarized thinking |
-| **Interleaved Thinking** | Not supported | Supported with `interleaved-thinking-2025-05-14` beta header |
+| Feature | Claude Sonnet 3.7 | Claude 4 Models (pre-Opus 4.5) | Claude Opus 4.5 and later |
+|---------|------------------|-------------------------------|--------------------------|
+| **Thinking Output** | Returns full thinking output | Returns summarized thinking | Returns summarized thinking |
+| **Interleaved Thinking** | Not supported | Supported with `interleaved-thinking-2025-05-14` beta header | Supported with `interleaved-thinking-2025-05-14` beta header |
+| **Thinking Block Preservation** | Not preserved across turns | Not preserved across turns | **Preserved by default** (enables cache optimization, token savings) |
+
+### Thinking block preservation in Claude Opus 4.5
+
+Claude Opus 4.5 introduces a new default behavior: **thinking blocks from previous assistant turns are preserved in model context by default**. This differs from earlier models, which remove thinking blocks from prior turns.
+
+**Benefits of thinking block preservation:**
+
+- **Cache optimization**: When using tool use, preserved thinking blocks enable cache hits as they are passed back with tool results and cached incrementally across the assistant turn, resulting in token savings in multi-step workflows
+- **No intelligence impact**: Preserving thinking blocks has no negative effect on model performance
+
+**Important considerations:**
+
+- **Context usage**: Long conversations will consume more context space since thinking blocks are retained in context
+- **Automatic behavior**: This is the default behavior for Claude Opus 4.5—no code changes or beta headers required
+- **Backward compatibility**: To leverage this feature, continue passing complete, unmodified thinking blocks back to the API as you would for tool use
+
+<Note>
+For earlier models (Claude Sonnet 4.5, Opus 4.1, etc.), thinking blocks from previous turns continue to be removed from context. The existing behavior described in the [Extended thinking with prompt caching](#extended-thinking-with-prompt-caching) section applies to those models.
+</Note>
 
 ## Pricing
 
-Extended thinking uses the standard token pricing scheme:
-
-| Model             | Base Input Tokens | Cache Writes  | Cache Hits    | Output Tokens |
-|-------------------|-------------------|---------------|---------------|---------------|
-| Claude Opus 4.1     | $15 / MTok        | $18.75 / MTok | $1.50 / MTok  | $75 / MTok    |
-| Claude Opus 4     | $15 / MTok        | $18.75 / MTok | $1.50 / MTok  | $75 / MTok    |
-| Claude Sonnet 4.5   | $3 / MTok         | $3.75 / MTok  | $0.30 / MTok  | $15 / MTok    |
-| Claude Sonnet 4   | $3 / MTok         | $3.75 / MTok  | $0.30 / MTok  | $15 / MTok    |
-| Claude Sonnet 3.7 | $3 / MTok         | $3.75 / MTok  | $0.30 / MTok  | $15 / MTok    |
+For complete pricing information including base rates, cache writes, cache hits, and output tokens, see the [pricing page](/docs/en/about-claude/pricing).
 
 The thinking process incurs charges for:
 - Tokens used during thinking (output tokens)

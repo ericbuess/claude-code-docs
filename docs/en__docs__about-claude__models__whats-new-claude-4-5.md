@@ -2,10 +2,44 @@
 
 ---
 
-Claude 4.5 introduces two models designed for different use cases:
+Claude 4.5 introduces three models designed for different use cases:
 
+- **Claude Opus 4.5**: Our most intelligent model combining maximum capability with practical performance. Ideal for complex specialized tasks, professional software engineering, and advanced agents. Features a more accessible price point than previous Opus models
 - **Claude Sonnet 4.5**: Our best model for complex agents and coding, with the highest intelligence across most tasks
 - **Claude Haiku 4.5**: Our fastest and most intelligent Haiku model with near-frontier performance. The first Haiku model with extended thinking
+
+## Key improvements in Opus 4.5 over Opus 4.1
+
+### Maximum intelligence
+
+Claude Opus 4.5 represents our most intelligent model, combining maximum capability with practical performance. It delivers step-change improvements across reasoning, coding, and complex problem-solving tasks while maintaining the high-quality outputs expected from the Opus family.
+
+### Effort parameter
+
+Claude Opus 4.5 is the only model that supports the [effort parameter](/docs/en/build-with-claude/effort), allowing you to control how many tokens Claude uses when responding. This gives you the ability to trade off between response thoroughness and token efficiency with a single model.
+
+The effort parameter affects all tokens in the response, including text responses, tool calls, and extended thinking. You can choose between:
+- **High effort**: Maximum thoroughness for complex analysis and detailed explanations
+- **Medium effort**: Balanced approach for most production use cases
+- **Low effort**: Most token-efficient responses for high-volume automation
+
+### Computer use excellence
+
+Claude Opus 4.5 introduces [enhanced computer use capabilities](/docs/en/agents-and-tools/tool-use/computer-use-tool) with a new zoom action that enables detailed inspection of specific screen regions at full resolution. This allows Claude to examine fine-grained UI elements, small text, and detailed visual information that might be unclear in standard screenshots.
+
+The zoom capability is particularly valuable for:
+- Inspecting small UI elements and controls
+- Reading fine print or detailed text
+- Analyzing complex interfaces with dense information
+- Verifying precise visual details before taking actions
+
+### Practical performance
+
+Claude Opus 4.5 delivers flagship intelligence at a [more accessible price point](/docs/en/about-claude/pricing) than previous Opus models, making advanced AI capabilities available for a broader range of applications and use cases.
+
+### Thinking block preservation
+
+Claude Opus 4.5 [automatically preserves all previous thinking blocks](/docs/en/build-with-claude/extended-thinking#thinking-block-preservation-in-claude-opus-4-5) throughout conversations, maintaining reasoning continuity across extended multi-turn interactions and tool use sessions. This ensures Claude can effectively leverage its full reasoning history when working on complex, long-running tasks.
 
 ## Key improvements in Sonnet 4.5 over Sonnet 4
 
@@ -31,7 +65,7 @@ Claude Sonnet 4.5 introduces major advances in agent capabilities:
 - **Enhanced tool usage**: The model more effectively uses parallel tool calls, firing off multiple speculative searches simultaneously during research and reading several files at once to build context faster. Improved coordination across multiple tools and information sources enables the model to effectively leverage a wide range of capabilities in agentic search and coding workflows.
 - **Advanced context management**: Sonnet 4.5 maintains exceptional state tracking in external files, preserving goal-orientation across sessions. Combined with more effective context window usage and our new context management API features, the model optimally handles information across extended sessions to maintain coherence over time.
 
-<Note>Context awareness is available in Claude Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4, and Opus 4.1.</Note>
+<Note>Context awareness is available in Claude Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4, Opus 4.1, and Opus 4.5.</Note>
 
 ### Communication and interaction style
 
@@ -43,7 +77,7 @@ For detailed guidance on working with this communication style, see [Claude 4 be
 
 Claude Sonnet 4.5 excels at creative content tasks:
 
-- **Presentations and animations**: Matches or exceeds Claude Opus 4.1 for creating slides and visual content
+- **Presentations and animations**: Matches or exceeds Claude Opus 4.1 and Opus 4.5 for creating slides and visual content
 - **Creative flair**: Produces polished, professional output with strong instruction following
 - **First-try quality**: Generates usable, well-designed content in initial attempts
 
@@ -74,7 +108,7 @@ Extended thinking must be enabled explicitly by adding a `thinking` parameter to
 Claude Haiku 4.5 performs significantly better on coding and reasoning tasks when [extended thinking](/docs/en/build-with-claude/extended-thinking) is enabled. Extended thinking is disabled by default, but we recommend enabling it for complex problem-solving, coding work, and multi-step reasoning. Be aware that extended thinking impacts [prompt caching efficiency](/docs/en/build-with-claude/prompt-caching#caching-with-thinking-blocks). See the [migration guide](/docs/en/about-claude/models/migrating-to-claude-4#extended-thinking-recommendations) for configuration details.
 </Note>
 
-<Note>Available in Claude Sonnet 3.7, Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4, and Opus 4.1.</Note>
+<Note>Available in Claude Sonnet 3.7, Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4, Opus 4.1, and Opus 4.5.</Note>
 
 ### Context awareness
 
@@ -86,7 +120,7 @@ Claude Haiku 4.5 features **context awareness**, enabling the model to track its
 
 This is the first Haiku model with native context awareness capabilities. For prompting guidance, see [Claude 4 best practices](/docs/en/build-with-claude/prompt-engineering/claude-4-best-practices#context-awareness-and-multi-window-workflows).
 
-<Note>Available in Claude Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4, and Opus 4.1.</Note>
+<Note>Available in Claude Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4, Opus 4.1, and Opus 4.5.</Note>
 
 ### Strong coding and tool use
 
@@ -107,6 +141,112 @@ Haiku 4.5 is designed for use cases that demand both intelligence and efficiency
 
 ## New API features
 
+### Programmatic tool calling (Beta)
+
+[Programmatic tool calling](/docs/en/agents-and-tools/tool-use/programmatic-tool-calling) allows Claude to write code that calls your tools programmatically within a code execution container, rather than requiring round trips through the model for each tool invocation. This significantly reduces latency for multi-tool workflows and decreases token consumption by allowing Claude to filter or process data before it reaches the model's context window.
+
+```python
+tools=[
+    {
+        "type": "code_execution_20250825",
+        "name": "code_execution"
+    },
+    {
+        "name": "query_database",
+        "description": "Execute a SQL query against the sales database. Returns a list of rows as JSON objects.",
+        "input_schema": {...},
+        "allowed_callers": ["code_execution_20250825"]  # Enable programmatic calling
+    }
+]
+```
+
+Key benefits:
+- **Reduced latency**: Eliminate model round-trips between tool calls
+- **Token efficiency**: Process and filter tool results programmatically before returning to Claude
+- **Complex workflows**: Support loops, conditional logic, and batch processing
+
+<Note>Available in Claude Opus 4.5 and Claude Sonnet 4.5. Requires [beta header](/docs/en/api/beta-headers): `advanced-tool-use-2025-11-20`</Note>
+
+### Tool search tool (Beta)
+
+The [tool search tool](/docs/en/agents-and-tools/tool-use/tool-search-tool) enables Claude to work with hundreds or thousands of tools by dynamically discovering and loading them on-demand. Instead of loading all tool definitions into the context window upfront, Claude searches your tool catalog and loads only the tools it needs.
+
+Two search variants are available:
+- **Regex** (`tool_search_tool_regex_20251119`): Claude constructs regex patterns to search tool names, descriptions, and arguments
+- **BM25** (`tool_search_tool_bm25_20251119`): Claude uses natural language queries to search for tools
+
+```python
+tools=[
+    {
+        "type": "tool_search_tool_regex_20251119",
+        "name": "tool_search_tool_regex"
+    },
+    {
+        "name": "get_weather",
+        "description": "Get the weather at a specific location",
+        "input_schema": {...},
+        "defer_loading": True  # Load on-demand via search
+    }
+]
+```
+
+This approach solves two critical challenges:
+- **Context efficiency**: Save 10-20K tokens by not loading all tool definitions upfront
+- **Tool selection accuracy**: Maintain high accuracy even with 100+ available tools
+
+<Note>Available in Claude Opus 4.5 and Claude Sonnet 4.5. Requires [beta header](/docs/en/api/beta-headers): `advanced-tool-use-2025-11-20`</Note>
+
+### Effort parameter (Beta)
+
+The [effort parameter](/docs/en/build-with-claude/effort) allows you to control how many tokens Claude uses when responding, trading off between response thoroughness and token efficiency:
+
+```python
+response = client.beta.messages.create(
+    model="claude-opus-4-5-20251101",
+    betas=["effort-2025-11-24"],
+    max_tokens=4096,
+    messages=[{"role": "user", "content": "..."}],
+    output_config={
+        "effort": "medium"  # "low", "medium", or "high"
+    }
+)
+```
+
+The effort parameter affects all tokens in the response, including text responses, tool calls, and extended thinking. Lower effort levels produce more concise responses with minimal explanations, while higher effort provides detailed reasoning and comprehensive answers.
+
+<Note>Available exclusively in Claude Opus 4.5. Requires [beta header](/docs/en/api/beta-headers): `effort-2025-11-24`</Note>
+
+### Tool use examples (Beta)
+
+[Tool use examples](/docs/en/agents-and-tools/tool-use/implement-tool-use#providing-tool-use-examples) allow you to provide concrete examples of valid tool inputs to help Claude understand how to use your tools more effectively. This is particularly useful for complex tools with nested objects, optional parameters, or format-sensitive inputs.
+
+```python
+tools=[
+    {
+        "name": "get_weather",
+        "description": "Get the current weather in a given location",
+        "input_schema": {...},
+        "input_examples": [
+            {
+                "location": "San Francisco, CA",
+                "unit": "fahrenheit"
+            },
+            {
+                "location": "Tokyo, Japan",
+                "unit": "celsius"
+            },
+            {
+                "location": "New York, NY"  # Demonstrates optional 'unit' parameter
+            }
+        ]
+    }
+]
+```
+
+Examples are included in the prompt alongside your tool schema, showing Claude concrete patterns for well-formed tool calls. Each example must be valid according to the tool's `input_schema`.
+
+<Note>Available in Claude Sonnet 4.5, Haiku 4.5, Opus 4.5, Opus 4.1, and Opus 4. Requires [beta header](/docs/en/api/beta-headers): `advanced-tool-use-2025-11-20`.</Note>
+
 ### Memory tool (Beta)
 
 The new [memory tool](/docs/en/agents-and-tools/tool-use/memory-tool) enables Claude to store and retrieve information outside the context window:
@@ -125,7 +265,7 @@ This allows for:
 - Maintaining project state across sessions
 - Preserving effectively unlimited context through file-based storage
 
-<Note>Available in Claude Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4, and Opus 4.1. Requires [beta header](/docs/en/api/beta-headers): `context-management-2025-06-27`</Note>
+<Note>Available in Claude Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4, Opus 4.1, and Opus 4.5. Requires [beta header](/docs/en/api/beta-headers): `context-management-2025-06-27`</Note>
 
 ### Context editing
 
@@ -153,7 +293,7 @@ response = client.beta.messages.create(
 
 This feature automatically removes older tool calls and results when approaching token limits, helping manage context in long-running agent sessions.
 
-<Note>Available in Claude Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4, and Opus 4.1. Requires [beta header](/docs/en/api/beta-headers): `context-management-2025-06-27`</Note>
+<Note>Available in Claude Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4, Opus 4.1, and Opus 4.5. Requires [beta header](/docs/en/api/beta-headers): `context-management-2025-06-27`</Note>
 
 ### Enhanced stop reasons
 
@@ -216,14 +356,20 @@ The following features were introduced in Claude 4 and are available across Clau
 Claude 4 models introduce a new `refusal` stop reason for content that the model declines to generate for safety reasons:
 
 ```json
-{"id":"msg_014XEDjypDjFzgKVWdFUXxZP",
-"type":"message",
-"role":"assistant",
-"model":"claude-sonnet-4-5",
-"content":[{"type":"text","text":"I would be happy to assist you. You can "}],
-"stop_reason":"refusal",
-"stop_sequence":null,
-"usage":{"input_tokens":564,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":22}
+{
+  "id": "msg_014XEDjypDjFzgKVWdFUXxZP",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-sonnet-4-5",
+  "content": [{"type": "text", "text": "I would be happy to assist you. You can "}],
+  "stop_reason": "refusal",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 564,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 22
+  }
 }
 ```
 
@@ -320,6 +466,7 @@ Claude 4.5 models maintain competitive pricing:
 
 | Model | Input | Output |
 |-------|-------|--------|
+| Claude Opus 4.5 | $5 per million tokens | $25 per million tokens |
 | Claude Sonnet 4.5 | $3 per million tokens | $15 per million tokens |
 | Claude Haiku 4.5 | $1 per million tokens | $5 per million tokens |
 
@@ -327,12 +474,12 @@ For more details, see the [pricing documentation](/docs/en/about-claude/pricing)
 
 ### Third-party platform pricing
 
-Starting with Claude 4.5 models (Sonnet 4.5 and Haiku 4.5), AWS Bedrock and Google Vertex AI offer two endpoint types:
+Starting with Claude 4.5 models (Opus 4.5, Sonnet 4.5, and Haiku 4.5), AWS Bedrock and Google Vertex AI offer two endpoint types:
 
 - **Global endpoints**: Dynamic routing for maximum availability
 - **Regional endpoints**: Guaranteed data routing through specific geographic regions with a **10% pricing premium**
 
-**This regional pricing applies to both Claude Sonnet 4.5 and Claude Haiku 4.5.**
+**This regional pricing applies to all Claude 4.5 models: Opus 4.5, Sonnet 4.5, and Haiku 4.5.**
 
 **The Claude API (1P) is global by default and unaffected by this change.** The Claude API is global-only (equivalent to the global endpoint offering and pricing from other providers).
 
@@ -346,6 +493,7 @@ Claude 4.5 models are available on:
 
 | Model | Claude API | Amazon Bedrock | Google Cloud Vertex AI |
 |-------|-----------|----------------|------------------------|
+| Claude Opus 4.5 | `claude-opus-4-5-20251101` | `anthropic.claude-opus-4-5-20251101-v1:0` | `claude-opus-4-5@20251101` |
 | Claude Sonnet 4.5 | `claude-sonnet-4-5-20250929` | `anthropic.claude-sonnet-4-5-20250929-v1:0` | `claude-sonnet-4-5@20250929` |
 | Claude Haiku 4.5 | `claude-haiku-4-5-20251001` | `anthropic.claude-haiku-4-5-20251001-v1:0` | `claude-haiku-4-5@20251001` |
 
@@ -360,6 +508,8 @@ The migration guide covers the following scenarios:
 - **Claude Haiku 3.5 → Haiku 4.5**: Complete migration path with breaking changes
 - **Claude Sonnet 4 → Sonnet 4.5**: Quick upgrade with minimal changes
 - **Claude Opus 4.1 → Sonnet 4.5**: Seamless upgrade with no breaking changes
+- **Claude Opus 4.1 → Opus 4.5**: Seamless upgrade with no breaking changes
+- **Claude Opus 4.5 → Sonnet 4.5**: Seamless downgrade with no breaking changes
 
 ## Next steps
 

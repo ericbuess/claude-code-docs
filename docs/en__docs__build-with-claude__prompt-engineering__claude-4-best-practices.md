@@ -190,6 +190,10 @@ Do not jump into implementatation or changes files unless clearly instructed to 
 </do_not_act_before_instructions>
 ```
 
+### Tool usage and triggering
+
+Claude Opus 4.5 is more responsive to the system prompt than previous models. If your prompts were designed to reduce undertriggering on tools or skills, Claude Opus 4.5 may now overtrigger. The fix is to dial back any aggressive language. Where you might have said "CRITICAL: You MUST use this tool when...", you can use more normal prompting like "Use this tool when...".
+
 ### Control the format of responses
 
 There are a few ways that we have found to be particularly effective in steering output formatting in Claude 4.x models:
@@ -267,6 +271,10 @@ For LLM-powered apps that need to specify model strings:
 When an LLM is needed, please default to Claude Sonnet 4.5 unless the user requests otherwise. The exact model string for Claude Sonnet 4.5 is claude-sonnet-4-5-20250929.
 ```
 
+### Thinking sensitivity
+
+When extended thinking is disabled, Claude Opus 4.5 is particularly sensitive to the word "think" and its variants. We recommend replacing "think" with alternative words that convey similar meaning, such as "consider," "believe," and "evaluate."
+
 ### Leverage thinking & interleaved thinking capabilities
 
 Claude 4.x models offer thinking capabilities that can be especially helpful for tasks involving reflection after tool use or complex multi-step reasoning. You can guide its initial or interleaved thinking for better results.
@@ -288,6 +296,12 @@ For best results with document creation:
 ```text Sample prompt
 Create a professional presentation on [topic]. Include thoughtful design elements, visual hierarchy, and engaging animations where appropriate.
 ```
+
+### Improved vision capabilities
+
+Claude Opus 4.5 has improved vision capabilities compared to previous Claude models. It performs better on image processing and data extraction tasks, particularly when there are multiple images present in context. These improvements carry over to computer use, where the model can more reliably interpret screenshots and UI elements. You can also use Claude Opus 4.5 to analyze videos by breaking them up into frames.
+
+One technique we've found effective to further boost performance is to give Claude Opus 4.5 a crop tool or [skill](/docs/en/agents-and-tools/agent-skills/overview). We've seen consistent uplift on image evaluations when Claude is able to "zoom" in on relevant regions of an image. We've put together a cookbook for the crop tool [here](https://github.com/anthropics/claude-cookbooks/blob/main/multimodal/crop_tool.ipynb).
 
 ### Optimize parallel tool calling
 
@@ -319,33 +333,53 @@ If you'd prefer to minimize net new file creation, you can instruct Claude to cl
 If you create any temporary new files, scripts, or helper files for iteration, clean up these files by removing them at the end of the task.
 ```
 
-### Enhance visual and frontend code generation
+### Overeagerness and file creation
 
-Claude 4.x models can generate high-quality, visually distinctive, functional user interfaces. However, without guidance, frontend code can default to generic patterns that lack visual interest. To elicit exceptional UI results:
+Claude Opus 4.5 has a tendency to overengineer by creating extra files, adding unnecessary abstractions, or building in flexibility that wasn't requested. If you're seeing this undesired behavior, add explicit prompting to keep solutions minimal.
 
-1. **Provide explicit encouragement for creativity:**
+For example:
 
-```text Sample prompt
-Don't hold back. Give it your all. Create an impressive demonstration showcasing web development capabilities.
+```text Sample prompt to minimize overengineering
+Avoid over-engineering. Only make changes that are directly requested or clearly necessary. Keep solutions simple and focused.
+
+Don't add features, refactor code, or make "improvements" beyond what was asked. A bug fix doesn't need surrounding code cleaned up. A simple feature doesn't need extra configurability.
+
+Don't add error handling, fallbacks, or validation for scenarios that can't happen. Trust internal code and framework guarantees. Only validate at system boundaries (user input, external APIs). Don't use backwards-compatibility shims when you can just change the code.
+
+Don't create helpers, utilities, or abstractions for one-time operations. Don't design for hypothetical future requirements. The right amount of complexity is the minimum needed for the current task. Reuse existing abstractions where possible and follow the DRY principle.
 ```
 
-2. **Specify aesthetic direction and design constraints:**
+### Frontend design
 
-```text Sample prompt
-Create a professional dashboard using a dark blue and cyan color palette, modern sans-serif typography (e.g., Inter for headings, system fonts for body), and card-based layouts with subtle shadows. Include thoughtful details like hover states, transitions, and micro-interactions. Apply design principles: hierarchy, contrast, balance, and movement.
+Claude 4.x models, particularly Opus 4.5, excel at building complex, real-world web applications with strong frontend design. However, without guidance, models can default to generic patterns that create what users call the "AI slop" aesthetic. To create distinctive, creative frontends that surprise and delight:
+
+<Tip>
+For a detailed guide on improving frontend design, see our blog post on [improving frontend design through skills](https://www.claude.com/blog/improving-frontend-design-through-skills).
+</Tip>
+
+Here's a system prompt snippet you can use to encourage better frontend design:
+
+```text Sample prompt for frontend aesthetics
+<frontend_aesthetics>
+You tend to converge toward generic, "on distribution" outputs. In frontend design, this creates what users call the "AI slop" aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight.
+
+Focus on:
+- Typography: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the frontend's aesthetics.
+- Color & Theme: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes. Draw from IDE themes and cultural aesthetics for inspiration.
+- Motion: Use animations for effects and micro-interactions. Prioritize CSS-only solutions for HTML. Use Motion library for React when available. Focus on high-impact moments: one well-orchestrated page load with staggered reveals (animation-delay) creates more delight than scattered micro-interactions.
+- Backgrounds: Create atmosphere and depth rather than defaulting to solid colors. Layer CSS gradients, use geometric patterns, or add contextual effects that match the overall aesthetic.
+
+Avoid generic AI-generated aesthetics:
+- Overused font families (Inter, Roboto, Arial, system fonts)
+- Clichéd color schemes (particularly purple gradients on white backgrounds)
+- Predictable layouts and component patterns
+- Cookie-cutter design that lacks context-specific character
+
+Interpret creatively and make unexpected choices that feel genuinely designed for the context. Vary between light and dark themes, different fonts, different aesthetics. You still tend to converge on common choices (Space Grotesk, for example) across generations. Avoid this: it is critical that you think outside the box!
+</frontend_aesthetics>
 ```
 
-3. **Encourage design diversity and fusion aesthetics:**
-
-```text Sample prompt
-Provide multiple design options. Create fusion aesthetics by combining elements from different sources—one color scheme, different typography, another layout principle. Avoid generic centered layouts, simplistic gradients, and uniform styling.
-```
-
-4. **Request specific features explicitly:**
-
-- "Include as many relevant features and interactions as possible"
-- "Add animations and interactive elements"
-- "Create a fully-featured implementation beyond the basics"
+You can also refer to the full skill [here](https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md).
 
 ### Avoid focusing on passing tests and hard-coding
 
@@ -357,6 +391,16 @@ Please write a high-quality, general-purpose solution using the standard tools a
 Focus on understanding the problem requirements and implementing the correct algorithm. Tests are there to verify correctness, not to define the solution. Provide a principled implementation that follows best practices and software design principles.
 
 If the task is unreasonable or infeasible, or if any of the tests are incorrect, please inform me rather than working around them. The solution should be robust, maintainable, and extendable.
+```
+
+### Encouraging code exploration
+
+Claude Opus 4.5 is highly capable but can be overly conservative when exploring code. If you notice the model proposing solutions without looking at the code or making assumptions about code it hasn't read, the best solution is to add explicit instructions to the prompt. Claude Opus 4.5 is our most steerable model to date and responds reliably to direct guidance.
+
+For example:
+
+```text Sample prompt for code exploration
+ALWAYS read and understand relevant files before proposing code edits. Do not speculate about code you have not inspected. If the user references a specific file/path, you MUST open and inspect it before explaining or proposing fixes. Be rigorous and persistent in searching code for key facts. Thoroughly review the style, conventions, and abstractions of the codebase before implementing new features or abstractions.
 ```
 
 ### Minimizing hallucinations in agentic coding

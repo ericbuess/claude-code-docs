@@ -21,6 +21,7 @@ Client tools (both Anthropic-defined and user-defined) are specified in the `too
 | `name`         | The name of the tool. Must match the regex `^[a-zA-Z0-9_-]{1,64}$`.                                 |
 | `description`  | A detailed plaintext description of what the tool does, when it should be used, and how it behaves. |
 | `input_schema` | A [JSON Schema](https://json-schema.org/) object defining the expected parameters for the tool.     |
+| `input_examples` | (Optional, beta) An array of example input objects to help Claude understand how to use the tool. See [Providing tool use examples](#providing-tool-use-examples). |
 
 <section title="Example simple tool definition">
 
@@ -73,7 +74,7 @@ To get the best performance out of Claude when using tools, follow these guideli
   - When it should be used (and when it shouldn't)
   - What each parameter means and how it affects the tool's behavior
   - Any important caveats or limitations, such as what information the tool does not return if the tool name is unclear. The more context you can give Claude about your tools, the better it will be at deciding when and how to use them. Aim for at least 3-4 sentences per tool description, more if the tool is complex.
-- **Prioritize descriptions over examples.** While you can include examples of how to use a tool in its description or in the accompanying prompt, this is less important than having a clear and comprehensive explanation of the tool's purpose and parameters. Only add examples after you've fully fleshed out the description.
+- **Prioritize descriptions, but consider using `input_examples` for complex tools.** Clear descriptions are most important, but for tools with complex inputs, nested objects, or format-sensitive parameters, you can use the `input_examples` field (beta) to provide schema-validated examples. See [Providing tool use examples](#providing-tool-use-examples) for details.
 
 <section title="Example of a good tool description">
 
@@ -118,6 +119,125 @@ To get the best performance out of Claude when using tools, follow these guideli
 
 The good description clearly explains what the tool does, when to use it, what data it returns, and what the `ticker` parameter means. The poor description is too brief and leaves Claude with many open questions about the tool's behavior and usage.
 
+## Providing tool use examples
+
+You can provide concrete examples of valid tool inputs to help Claude understand how to use your tools more effectively. This is particularly useful for complex tools with nested objects, optional parameters, or format-sensitive inputs.
+
+<Info>
+Tool use examples is a beta feature. To use this feature, include the `advanced-tool-use-2025-11-20` header in your request. On Google Cloud's Vertex AI and Amazon Bedrock, only Claude Opus 4.5 supports tool use examples.
+</Info>
+
+### Basic usage
+
+Add an optional `input_examples` field to your tool definition with an array of example input objects. Each example must be valid according to the tool's `input_schema`:
+
+<CodeGroup>
+```python Python
+import anthropic
+
+client = anthropic.Anthropic()
+
+response = client.messages.create(
+    model="claude-sonnet-4-5-20250929",
+    max_tokens=1024,
+    betas=["advanced-tool-use-2025-11-20"],
+    tools=[
+        {
+            "name": "get_weather",
+            "description": "Get the current weather in a given location",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "The city and state, e.g. San Francisco, CA"
+                    },
+                    "unit": {
+                        "type": "string",
+                        "enum": ["celsius", "fahrenheit"],
+                        "description": "The unit of temperature"
+                    }
+                },
+                "required": ["location"]
+            },
+            "input_examples": [
+                {
+                    "location": "San Francisco, CA",
+                    "unit": "fahrenheit"
+                },
+                {
+                    "location": "Tokyo, Japan",
+                    "unit": "celsius"
+                },
+                {
+                    "location": "New York, NY"  # 'unit' is optional
+                }
+            ]
+        }
+    ],
+    messages=[
+        {"role": "user", "content": "What's the weather like in San Francisco?"}
+    ]
+)
+```
+
+```typescript TypeScript
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic();
+
+const response = await client.messages.create({
+  model: "claude-sonnet-4-5-20250929",
+  max_tokens: 1024,
+  betas: ["advanced-tool-use-2025-11-20"],
+  tools: [
+    {
+      name: "get_weather",
+      description: "Get the current weather in a given location",
+      input_schema: {
+        type: "object",
+        properties: {
+          location: {
+            type: "string",
+            description: "The city and state, e.g. San Francisco, CA",
+          },
+          unit: {
+            type: "string",
+            enum: ["celsius", "fahrenheit"],
+            description: "The unit of temperature",
+          },
+        },
+        required: ["location"],
+      },
+      input_examples: [
+        {
+          location: "San Francisco, CA",
+          unit: "fahrenheit",
+        },
+        {
+          location: "Tokyo, Japan",
+          unit: "celsius",
+        },
+        {
+          location: "New York, NY",
+          // Demonstrates that 'unit' is optional
+        },
+      ],
+    },
+  ],
+  messages: [{ role: "user", content: "What's the weather like in San Francisco?" }],
+});
+```
+</CodeGroup>
+
+Examples are included in the prompt alongside your tool schema, showing Claude concrete patterns for well-formed tool calls. This helps Claude understand when to include optional parameters, what formats to use, and how to structure complex inputs.
+
+### Requirements and limitations
+
+- **Schema validation** - Each example must be valid according to the tool's `input_schema`. Invalid examples return a 400 error
+- **Not supported for server-side tools** - Only user-defined tools can have input examples
+- **Token cost** - Examples add to prompt tokens: ~20-50 tokens for simple examples, ~100-200 tokens for complex nested objects
+
 ## Tool runner (beta)
 
 The tool runner provides an out-of-the-box solution for executing tools with Claude. Instead of manually handling tool calls, tool results, and conversation management, the tool runner automatically:
@@ -132,6 +252,12 @@ We recommend that you use the tool runner for most tool use implementations.
 <Note>
 The tool runner is currently in beta and only available in the [Python](https://github.com/anthropics/anthropic-sdk-python/blob/main/tools.md) and [TypeScript](https://github.com/anthropics/anthropic-sdk-typescript/blob/main/helpers.md#tool-helpers) SDKs.
 </Note>
+
+<Tip>
+**Automatic context management with compaction**
+
+The tool runner supports automatic [compaction](/docs/en/build-with-claude/context-editing#client-side-compaction-sdk), which generates summaries when token usage exceeds a threshold. This allows long-running agentic tasks to continue beyond context window limits.
+</Tip>
 
 <Tabs>
 <Tab title="Python">
@@ -1126,7 +1252,7 @@ While Claude 4 models have excellent parallel tool use capabilities by default, 
 
 <section title="System prompts for parallel tool use">
 
-For Claude 4 models (Opus 4.1, Opus 4, and Sonnet 4), add this to your system prompt:
+For Claude 4 models (Opus 4, and Sonnet 4), add this to your system prompt:
 ```text
 For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
 ```
@@ -1622,7 +1748,7 @@ print(f"Average tools per message: {avg_tools_per_message}")
 
 **4. Model-specific behavior**
 
-- Claude Opus 4.1, Opus 4, and Sonnet 4: Excel at parallel tool use with minimal prompting
+- Claude Opus 4.5, Opus 4.1, and Sonnet 4: Excel at parallel tool use with minimal prompting
 - Claude Sonnet 3.7: May need stronger prompting or [token-efficient tool use](/docs/en/agents-and-tools/tool-use/token-efficient-tool-use)
 - Claude Haiku: Less likely to use parallel tools without explicit prompting
 

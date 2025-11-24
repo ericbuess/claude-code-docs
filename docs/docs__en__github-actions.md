@@ -11,6 +11,10 @@ Claude Code GitHub Actions brings AI-powered automation to your GitHub workflow.
   automation workflows beyond GitHub Actions.
 </Note>
 
+<Info>
+  **Claude Opus 4.5 is now available.** Claude Code GitHub Actions default to Sonnet. To use Opus 4.5, configure the [model parameter](#breaking-changes-reference) to use `claude-opus-4-5-20251101`.
+</Info>
+
 ## Why use Claude Code GitHub Actions?
 
 * **Instant PR creation**: Describe what you need, and Claude creates a complete PR with all necessary changes
@@ -186,7 +190,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: "Generate a summary of yesterday's commits and open issues"
-          claude_args: "--model claude-opus-4-1-20250805"
+          claude_args: "--model claude-opus-4-5-20251101"
 ```
 
 ### Common use cases

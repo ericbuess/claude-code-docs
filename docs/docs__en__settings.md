@@ -376,21 +376,25 @@ Claude Code supports the following environment variables to control its behavior
 
 Claude Code has access to a set of powerful tools that help it understand and modify your codebase:
 
-| Tool             | Description                                                         | Permission Required |
-| :--------------- | :------------------------------------------------------------------ | :------------------ |
-| **Bash**         | Executes shell commands in your environment                         | Yes                 |
-| **Edit**         | Makes targeted edits to specific files                              | Yes                 |
-| **Glob**         | Finds files based on pattern matching                               | No                  |
-| **Grep**         | Searches for patterns in file contents                              | No                  |
-| **NotebookEdit** | Modifies Jupyter notebook cells                                     | Yes                 |
-| **NotebookRead** | Reads and displays Jupyter notebook contents                        | No                  |
-| **Read**         | Reads the contents of files                                         | No                  |
-| **SlashCommand** | Runs a [custom slash command](/en/slash-commands#slashcommand-tool) | Yes                 |
-| **Task**         | Runs a sub-agent to handle complex, multi-step tasks                | No                  |
-| **TodoWrite**    | Creates and manages structured task lists                           | No                  |
-| **WebFetch**     | Fetches content from a specified URL                                | Yes                 |
-| **WebSearch**    | Performs web searches with domain filtering                         | Yes                 |
-| **Write**        | Creates or overwrites files                                         | Yes                 |
+| Tool                | Description                                                                        | Permission Required |
+| :------------------ | :--------------------------------------------------------------------------------- | :------------------ |
+| **AskUserQuestion** | Asks the user multiple choice questions to gather information or clarify ambiguity | No                  |
+| **Bash**            | Executes shell commands in your environment                                        | Yes                 |
+| **BashOutput**      | Retrieves output from a background bash shell                                      | No                  |
+| **Edit**            | Makes targeted edits to specific files                                             | Yes                 |
+| **ExitPlanMode**    | Prompts the user to exit plan mode and start coding                                | Yes                 |
+| **Glob**            | Finds files based on pattern matching                                              | No                  |
+| **Grep**            | Searches for patterns in file contents                                             | No                  |
+| **KillShell**       | Kills a running background bash shell by its ID                                    | No                  |
+| **NotebookEdit**    | Modifies Jupyter notebook cells                                                    | Yes                 |
+| **Read**            | Reads the contents of files                                                        | No                  |
+| **Skill**           | Executes a skill within the main conversation                                      | Yes                 |
+| **SlashCommand**    | Runs a [custom slash command](/en/slash-commands#slashcommand-tool)                | Yes                 |
+| **Task**            | Runs a sub-agent to handle complex, multi-step tasks                               | No                  |
+| **TodoWrite**       | Creates and manages structured task lists                                          | No                  |
+| **WebFetch**        | Fetches content from a specified URL                                               | Yes                 |
+| **WebSearch**       | Performs web searches with domain filtering                                        | Yes                 |
+| **Write**           | Creates or overwrites files                                                        | Yes                 |
 
 Permission rules can be configured using `/allowed-tools` or in [permission settings](/en/settings#available-settings). Also see [Tool-specific permission rules](/en/iam#tool-specific-permission-rules).
 

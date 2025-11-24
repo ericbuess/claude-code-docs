@@ -10,6 +10,13 @@ For release notes on Claude Apps, see the [Release notes for Claude Apps in the 
 For updates to Claude Code, see the [complete CHANGELOG.md](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) in the `claude-code` repository.
 </Tip>
 
+### November 24, 2025
+- We've launched [Claude Opus 4.5](https://www.anthropic.com/news/claude-opus-4-5), our most intelligent model combining maximum capability with practical performance. Ideal for complex specialized tasks, professional software engineering, and advanced agents. Features step-change improvements in vision, coding, and computer use at a more accessible price point than previous Opus models. Learn more in our [Models & Pricing documentation](/docs/en/about-claude/models).
+- We've launched [programmatic tool calling](/docs/en/agents-and-tools/tool-use/programmatic-tool-calling) in public beta, allowing Claude to call tools from within code execution to reduce latency and token usage in multi-tool workflows.
+- We've launched the [tool search tool](/docs/en/agents-and-tools/tool-use/tool-search-tool) in public beta, enabling Claude to dynamically discover and load tools on-demand from large tool catalogs.
+- We've launched the [effort parameter](/docs/en/build-with-claude/effort) in public beta for Claude Opus 4.5, allowing you to control token usage by trading off between response thoroughness and efficiency.
+- We've added [client-side compaction](/docs/en/build-with-claude/context-editing#client-side-compaction-sdk) to our Python and TypeScript SDKs, automatically managing conversation context through summarization when using `tool_runner`.
+
 ### November 19, 2025
 - We've launched a **new documentation platform** at [platform.claude.com/docs](https://platform.claude.com/docs). Our documentation now lives side by side with the Claude Console, providing a unified developer experience. The previous docs site at docs.claude.com will redirect to the new location.
 

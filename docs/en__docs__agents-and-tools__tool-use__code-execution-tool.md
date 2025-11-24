@@ -18,6 +18,7 @@ The code execution tool is available on the following models:
 
 | Model | Tool Version |
 |-------|--------------|
+| Claude Opus 4.5 (`claude-opus-4-5-20251101`) | `code_execution_20250825` |
 | Claude Opus 4.1 (`claude-opus-4-1-20250805`) | `code_execution_20250825` |
 | Claude Opus 4 (`claude-opus-4-20250514`) | `code_execution_20250825` |
 | Claude Sonnet 4.5 (`claude-sonnet-4-5-20250929`) | `code_execution_20250825` |
@@ -984,6 +985,39 @@ To upgrade, you need to make the following changes in your API requests:
 3. **Review response handling** (if parsing responses programmatically):
    - The previous blocks for Python execution responses will no longer be sent
    - Instead, new response types for Bash and file operations will be sent (see Response Format section)
+
+## Programmatic tool calling
+
+The code execution tool powers [programmatic tool calling](/docs/en/agents-and-tools/tool-use/programmatic-tool-calling), which allows Claude to write code that calls your custom tools programmatically within the execution container. This enables efficient multi-tool workflows, data filtering before reaching Claude's context, and complex conditional logic.
+
+<CodeGroup>
+```python Python
+# Enable programmatic calling for your tools
+response = client.beta.messages.create(
+    model="claude-sonnet-4-5",
+    betas=["advanced-tool-use-2025-11-20"],
+    max_tokens=4096,
+    messages=[{
+        "role": "user",
+        "content": "Get weather for 5 cities and find the warmest"
+    }],
+    tools=[
+        {
+            "type": "code_execution_20250825",
+            "name": "code_execution"
+        },
+        {
+            "name": "get_weather",
+            "description": "Get weather for a city",
+            "input_schema": {...},
+            "allowed_callers": ["code_execution_20250825"]  # Enable programmatic calling
+        }
+    ]
+)
+```
+</CodeGroup>
+
+Learn more in the [Programmatic tool calling documentation](/docs/en/agents-and-tools/tool-use/programmatic-tool-calling).
 
 ## Using code execution with Agent Skills
 

@@ -6,7 +6,7 @@ Send a batch of Message creation requests.
 
 The Message Batches API can be used to process multiple Messages API requests at once. Once a Message Batch is created, it begins processing immediately. Batches can take up to 24 hours to complete.
 
-Learn more about the Message Batches API in our [user guide](/en/docs/build-with-claude/batch-processing)
+Learn more about the Message Batches API in our [user guide](https://docs.claude.com/en/docs/build-with-claude/batch-processing)
 
 ### Body Parameters
 
@@ -24,7 +24,7 @@ Learn more about the Message Batches API in our [user guide](/en/docs/build-with
 
     Messages API creation parameters for the individual request.
 
-    See the [Messages API reference](/docs/en/api/messages) for full documentation on available parameters.
+    See the [Messages API reference](https://docs.claude.com/en/api/messages) for full documentation on available parameters.
 
     - `max_tokens: number`
 
@@ -1443,11 +1443,19 @@ Learn more about the Message Batches API in our [user guide](/en/docs/build-with
 
       See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-      - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+      - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
         The model that will complete your prompt.
 
         See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+        - `"claude-opus-4-5-20251101"`
+
+          Premium model combining maximum intelligence with practical performance
+
+        - `"claude-opus-4-5"`
+
+          Premium model combining maximum intelligence with practical performance
 
         - `"claude-3-7-sonnet-latest"`
 

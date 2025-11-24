@@ -8,7 +8,7 @@ Send a structured list of input messages with text and/or image content, and the
 
 The Messages API can be used for either single queries or stateless multi-turn conversations.
 
-Learn more about the Messages API in our [user guide](/en/docs/initial-setup)
+Learn more about the Messages API in our [user guide](https://docs.claude.com/en/docs/initial-setup)
 
 ### Body Parameters
 
@@ -1429,11 +1429,19 @@ Learn more about the Messages API in our [user guide](/en/docs/initial-setup)
 
   See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-  - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+  - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
     The model that will complete your prompt.
 
     See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+    - `"claude-opus-4-5-20251101"`
+
+      Premium model combining maximum intelligence with practical performance
+
+    - `"claude-opus-4-5"`
+
+      Premium model combining maximum intelligence with practical performance
 
     - `"claude-3-7-sonnet-latest"`
 
@@ -2349,11 +2357,19 @@ Learn more about the Messages API in our [user guide](/en/docs/initial-setup)
 
     See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-    - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+    - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
       The model that will complete your prompt.
 
       See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+      - `"claude-opus-4-5-20251101"`
+
+        Premium model combining maximum intelligence with practical performance
+
+      - `"claude-opus-4-5"`
+
+        Premium model combining maximum intelligence with practical performance
 
       - `"claude-3-7-sonnet-latest"`
 
@@ -2562,7 +2578,7 @@ Count the number of tokens in a Message.
 
 The Token Count API can be used to count the number of tokens in a Message, including tools, images, and documents, without creating it.
 
-Learn more about token counting in our [user guide](/en/docs/build-with-claude/token-counting)
+Learn more about token counting in our [user guide](https://docs.claude.com/en/docs/build-with-claude/token-counting)
 
 ### Body Parameters
 
@@ -3975,11 +3991,19 @@ Learn more about token counting in our [user guide](/en/docs/build-with-claude/t
 
   See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-  - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+  - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
     The model that will complete your prompt.
 
     See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+    - `"claude-opus-4-5-20251101"`
+
+      Premium model combining maximum intelligence with practical performance
+
+    - `"claude-opus-4-5"`
+
+      Premium model combining maximum intelligence with practical performance
 
     - `"claude-3-7-sonnet-latest"`
 
@@ -4627,7 +4651,7 @@ curl https://api.anthropic.com/v1/messages/count_tokens \
               "role": "user"
             }
           ],
-          "model": "claude-3-7-sonnet-latest"
+          "model": "claude-opus-4-5-20251101"
         }'
 ```
 
@@ -7439,11 +7463,19 @@ curl https://api.anthropic.com/v1/messages/count_tokens \
 
     See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-    - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+    - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
       The model that will complete your prompt.
 
       See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+      - `"claude-opus-4-5-20251101"`
+
+        Premium model combining maximum intelligence with practical performance
+
+      - `"claude-opus-4-5"`
+
+        Premium model combining maximum intelligence with practical performance
 
       - `"claude-3-7-sonnet-latest"`
 
@@ -9314,17 +9346,25 @@ curl https://api.anthropic.com/v1/messages/count_tokens \
 
 ### Model
 
-- `Model = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more or string`
+- `Model = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more or string`
 
   The model that will complete your prompt.
 
   See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-  - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+  - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
     The model that will complete your prompt.
 
     See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+    - `"claude-opus-4-5-20251101"`
+
+      Premium model combining maximum intelligence with practical performance
+
+    - `"claude-opus-4-5"`
+
+      Premium model combining maximum intelligence with practical performance
 
     - `"claude-3-7-sonnet-latest"`
 
@@ -10185,11 +10225,19 @@ curl https://api.anthropic.com/v1/messages/count_tokens \
 
       See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-      - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+      - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
         The model that will complete your prompt.
 
         See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+        - `"claude-opus-4-5-20251101"`
+
+          Premium model combining maximum intelligence with practical performance
+
+        - `"claude-opus-4-5"`
+
+          Premium model combining maximum intelligence with practical performance
 
         - `"claude-3-7-sonnet-latest"`
 
@@ -10619,11 +10667,19 @@ curl https://api.anthropic.com/v1/messages/count_tokens \
 
         See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-        - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+        - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
           The model that will complete your prompt.
 
           See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+          - `"claude-opus-4-5-20251101"`
+
+            Premium model combining maximum intelligence with practical performance
+
+          - `"claude-opus-4-5"`
+
+            Premium model combining maximum intelligence with practical performance
 
           - `"claude-3-7-sonnet-latest"`
 
@@ -13664,7 +13720,7 @@ Send a batch of Message creation requests.
 
 The Message Batches API can be used to process multiple Messages API requests at once. Once a Message Batch is created, it begins processing immediately. Batches can take up to 24 hours to complete.
 
-Learn more about the Message Batches API in our [user guide](/en/docs/build-with-claude/batch-processing)
+Learn more about the Message Batches API in our [user guide](https://docs.claude.com/en/docs/build-with-claude/batch-processing)
 
 ### Body Parameters
 
@@ -13682,7 +13738,7 @@ Learn more about the Message Batches API in our [user guide](/en/docs/build-with
 
     Messages API creation parameters for the individual request.
 
-    See the [Messages API reference](/docs/en/api/messages) for full documentation on available parameters.
+    See the [Messages API reference](https://docs.claude.com/en/api/messages) for full documentation on available parameters.
 
     - `max_tokens: number`
 
@@ -15101,11 +15157,19 @@ Learn more about the Message Batches API in our [user guide](/en/docs/build-with
 
       See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-      - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+      - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
         The model that will complete your prompt.
 
         See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+        - `"claude-opus-4-5-20251101"`
+
+          Premium model combining maximum intelligence with practical performance
+
+        - `"claude-opus-4-5"`
+
+          Premium model combining maximum intelligence with practical performance
 
         - `"claude-3-7-sonnet-latest"`
 
@@ -15911,7 +15975,7 @@ curl https://api.anthropic.com/v1/messages/batches \
 
 This endpoint is idempotent and can be used to poll for Message Batch completion. To access the results of a Message Batch, make a request to the `results_url` field in the response.
 
-Learn more about the Message Batches API in our [user guide](/en/docs/build-with-claude/batch-processing)
+Learn more about the Message Batches API in our [user guide](https://docs.claude.com/en/docs/build-with-claude/batch-processing)
 
 ### Path Parameters
 
@@ -16022,7 +16086,7 @@ curl https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID \
 
 List all Message Batches within a Workspace. Most recently created batches are returned first.
 
-Learn more about the Message Batches API in our [user guide](/en/docs/build-with-claude/batch-processing)
+Learn more about the Message Batches API in our [user guide](https://docs.claude.com/en/docs/build-with-claude/batch-processing)
 
 ### Query Parameters
 
@@ -16157,7 +16221,7 @@ Batches may be canceled any time before processing ends. Once cancellation is in
 
 The number of canceled requests is specified in `request_counts`. To determine which requests were canceled, check the individual results within the batch. Note that cancellation may not result in any canceled requests if they were non-interruptible.
 
-Learn more about the Message Batches API in our [user guide](/en/docs/build-with-claude/batch-processing)
+Learn more about the Message Batches API in our [user guide](https://docs.claude.com/en/docs/build-with-claude/batch-processing)
 
 ### Path Parameters
 
@@ -16271,7 +16335,7 @@ Delete a Message Batch.
 
 Message Batches can only be deleted once they've finished processing. If you'd like to delete an in-progress batch, you must first cancel it.
 
-Learn more about the Message Batches API in our [user guide](/en/docs/build-with-claude/batch-processing)
+Learn more about the Message Batches API in our [user guide](https://docs.claude.com/en/docs/build-with-claude/batch-processing)
 
 ### Path Parameters
 
@@ -16311,7 +16375,7 @@ Streams the results of a Message Batch as a `.jsonl` file.
 
 Each line in the file is a JSON object containing the result of a single request in the Message Batch. Results are not guaranteed to be in the same order as requests. Use the `custom_id` field to match results to requests.
 
-Learn more about the Message Batches API in our [user guide](/en/docs/build-with-claude/batch-processing)
+Learn more about the Message Batches API in our [user guide](https://docs.claude.com/en/docs/build-with-claude/batch-processing)
 
 ### Path Parameters
 
@@ -16568,11 +16632,19 @@ Learn more about the Message Batches API in our [user guide](/en/docs/build-with
 
           See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-          - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+          - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
             The model that will complete your prompt.
 
             See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+            - `"claude-opus-4-5-20251101"`
+
+              Premium model combining maximum intelligence with practical performance
+
+            - `"claude-opus-4-5"`
+
+              Premium model combining maximum intelligence with practical performance
 
             - `"claude-3-7-sonnet-latest"`
 
@@ -17329,11 +17401,19 @@ curl https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID/results \
 
           See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-          - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+          - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
             The model that will complete your prompt.
 
             See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+            - `"claude-opus-4-5-20251101"`
+
+              Premium model combining maximum intelligence with practical performance
+
+            - `"claude-opus-4-5"`
+
+              Premium model combining maximum intelligence with practical performance
 
             - `"claude-3-7-sonnet-latest"`
 
@@ -17891,11 +17971,19 @@ curl https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID/results \
 
         See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-        - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+        - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
           The model that will complete your prompt.
 
           See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+          - `"claude-opus-4-5-20251101"`
+
+            Premium model combining maximum intelligence with practical performance
+
+          - `"claude-opus-4-5"`
+
+            Premium model combining maximum intelligence with practical performance
 
           - `"claude-3-7-sonnet-latest"`
 
@@ -18415,11 +18503,19 @@ curl https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID/results \
 
       See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
 
-      - `UnionMember0 = "claude-3-7-sonnet-latest" or "claude-3-7-sonnet-20250219" or "claude-3-5-haiku-latest" or 15 more`
+      - `UnionMember0 = "claude-opus-4-5-20251101" or "claude-opus-4-5" or "claude-3-7-sonnet-latest" or 17 more`
 
         The model that will complete your prompt.
 
         See [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options.
+
+        - `"claude-opus-4-5-20251101"`
+
+          Premium model combining maximum intelligence with practical performance
+
+        - `"claude-opus-4-5"`
+
+          Premium model combining maximum intelligence with practical performance
 
         - `"claude-3-7-sonnet-latest"`
 

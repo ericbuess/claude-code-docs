@@ -1279,6 +1279,7 @@ When you use `tools`, we also automatically include a special system prompt for 
 
 | Model                    | Tool choice                                          | Tool use system prompt token count          |
 |--------------------------|------------------------------------------------------|---------------------------------------------|
+| Claude Opus 4.5            | `auto`, `none`<hr />`any`, `tool`   | 346 tokens<hr />313 tokens |
 | Claude Opus 4.1            | `auto`, `none`<hr />`any`, `tool`   | 346 tokens<hr />313 tokens |
 | Claude Opus 4            | `auto`, `none`<hr />`any`, `tool`   | 346 tokens<hr />313 tokens |
 | Claude Sonnet 4.5          | `auto`, `none`<hr />`any`, `tool`   | 346 tokens<hr />313 tokens |

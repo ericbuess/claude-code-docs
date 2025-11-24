@@ -14,21 +14,21 @@ Once you've picked a model, [learn how to make your first API call](/docs/en/get
 
 ### Latest models comparison
 
-| Feature | Claude Sonnet 4.5 | Claude Haiku 4.5 | Claude Opus 4.1 |
-|:--------|:------------------|:-----------------|:----------------|
-| **Description** | Our smartest model for complex agents and coding | Our fastest model with near-frontier intelligence | Exceptional model for specialized reasoning tasks |
-| **Claude API ID** | claude-sonnet-4-5-20250929 | claude-haiku-4-5-20251001 | claude-opus-4-1-20250805 |
-| **Claude API alias**<sup>1</sup> | claude-sonnet-4-5 | claude-haiku-4-5 | claude-opus-4-1 |
-| **AWS Bedrock ID** | anthropic.claude-sonnet-4-5-20250929-v1:0 | anthropic.claude-haiku-4-5-20251001-v1:0 | anthropic.claude-opus-4-1-20250805-v1:0 |
-| **GCP Vertex AI ID** | claude-sonnet-4-5@20250929 | claude-haiku-4-5@20251001 | claude-opus-4-1@20250805 |
-| **Pricing**<sup>2</sup> | \$3 / input MTok<br/>\$15 / output MTok | \$1 / input MTok<br/>\$5 / output MTok | \$15 / input MTok<br/>\$75 / output MTok |
-| **[Extended thinking](/docs/en/build-with-claude/extended-thinking)** | Yes | Yes | Yes |
-| **[Priority Tier](/docs/en/api/service-tiers)** | Yes | Yes | Yes |
-| **Comparative latency** | Fast | Fastest | Moderate |
-| **Context window** | <Tooltip tooltipContent="~150K words \ ~680K unicode characters">200K tokens</Tooltip> / <br/> <Tooltip tooltipContent="~750K words \ ~3.4M unicode characters">1M tokens</Tooltip> (beta)<sup>3</sup> | <Tooltip tooltipContent="~150K words \ ~680K unicode characters">200K tokens</Tooltip> | <Tooltip tooltipContent="~150K words \ ~680K unicode characters">200K tokens</Tooltip> |
-| **Max output** | 64K tokens | 64K tokens | 32K tokens |
-| **Reliable knowledge cutoff** | Jan 2025<sup>4</sup> | Feb 2025 | Jan 2025<sup>4</sup> |
-| **Training data cutoff** | Jul 2025 | Jul 2025 | Mar 2025 |
+| Feature | Claude Sonnet 4.5 | Claude Haiku 4.5 | Claude Opus 4.5 | Claude Opus 4.1 |
+|:--------|:------------------|:-----------------|:----------------|:----------------|
+| **Description** | Our smartest model for complex agents and coding | Our fastest model with near-frontier intelligence | Premium model combining maximum intelligence with practical performance | Exceptional model for specialized reasoning tasks |
+| **Claude API ID** | claude-sonnet-4-5-20250929 | claude-haiku-4-5-20251001 | claude-opus-4-5-20251101 | claude-opus-4-1-20250805 |
+| **Claude API alias**<sup>1</sup> | claude-sonnet-4-5 | claude-haiku-4-5 | claude-opus-4-5 | claude-opus-4-1 |
+| **AWS Bedrock ID** | anthropic.claude-sonnet-4-5-20250929-v1:0 | anthropic.claude-haiku-4-5-20251001-v1:0 | anthropic.claude-opus-4-5-20251101-v1:0 | anthropic.claude-opus-4-1-20250805-v1:0 |
+| **GCP Vertex AI ID** | claude-sonnet-4-5@20250929 | claude-haiku-4-5@20251001 | claude-opus-4-5@20251101 | claude-opus-4-1@20250805 |
+| **Pricing**<sup>2</sup> | \$3 / input MTok<br/>\$15 / output MTok | \$1 / input MTok<br/>\$5 / output MTok | \$5 / input MTok<br/>\$25 / output MTok | \$15 / input MTok<br/>\$75 / output MTok |
+| **[Extended thinking](/docs/en/build-with-claude/extended-thinking)** | Yes | Yes | Yes | Yes |
+| **[Priority Tier](/docs/en/api/service-tiers)** | Yes | Yes | Yes | Yes |
+| **Comparative latency** | Fast | Fastest | Moderate | Moderate |
+| **Context window** | <Tooltip tooltipContent="~150K words \ ~680K unicode characters">200K tokens</Tooltip> / <br/> <Tooltip tooltipContent="~750K words \ ~3.4M unicode characters">1M tokens</Tooltip> (beta)<sup>3</sup> | <Tooltip tooltipContent="~150K words \ ~680K unicode characters">200K tokens</Tooltip> | <Tooltip tooltipContent="~150K words \ ~680K unicode characters">200K tokens</Tooltip> | <Tooltip tooltipContent="~150K words \ ~680K unicode characters">200K tokens</Tooltip> |
+| **Max output** | 64K tokens | 64K tokens | 64K tokens | 32K tokens |
+| **Reliable knowledge cutoff** | Jan 2025<sup>4</sup> | Feb 2025 | Mar 2025<sup>4</sup> | Jan 2025<sup>4</sup> |
+| **Training data cutoff** | Jul 2025 | Jul 2025 | Aug 2025 | Mar 2025 |
 
 _<sup>1 - Aliases automatically point to the most recent model snapshot. When we release new model snapshots, we migrate aliases to point to the newest version of a model, typically within a week of the new release. While aliases are useful for experimentation, we recommend using specific model versions (e.g., `claude-sonnet-4-5-20250929`) in production applications to ensure consistent behavior.</sup>_
 
