@@ -6,7 +6,7 @@ set -euo pipefail
 # Installation path: ~/.claude-code-docs/scripts/claude-docs-helper.sh
 
 # Script version
-ENHANCED_VERSION="0.4.1"
+ENHANCED_VERSION="0.4.2"
 
 # Fixed installation path
 DOCS_PATH="$HOME/.claude-code-docs"
@@ -14,15 +14,70 @@ SCRIPTS_PATH="$DOCS_PATH/scripts"
 
 # Source the standard template for base functionality
 TEMPLATE_PATH="$SCRIPTS_PATH/claude-docs-helper.sh.template"
+TEMPLATE_AVAILABLE=true
 if [[ -f "$TEMPLATE_PATH" ]]; then
     # Define a function to run template commands
     run_template_command() {
         bash "$TEMPLATE_PATH" "$@"
     }
 else
-    echo "❌ Error: Standard template not found at $TEMPLATE_PATH"
-    echo "   Please reinstall: curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash"
-    exit 1
+    TEMPLATE_AVAILABLE=false
+    # Provide minimal fallback when template is missing
+    run_template_command() {
+        echo "📚 COMMUNITY MIRROR: https://github.com/costiash/claude-code-docs"
+        echo "📖 OFFICIAL DOCS: https://docs.anthropic.com/en/docs/claude-code"
+        echo ""
+        echo "⚠️  Template script missing - running in fallback mode"
+        echo ""
+
+        local topic="${1:-}"
+
+        # Handle special commands
+        case "$topic" in
+            -t|--check|--help|-h|--version|--status)
+                echo "This command requires the template script."
+                echo "Please reinstall: curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash"
+                return 1
+                ;;
+        esac
+
+        # Try to read documentation directly
+        if [[ -n "$topic" && -d "$DOCS_PATH/docs" ]]; then
+            # Try common filename patterns
+            local doc_file=""
+            for pattern in "${topic}.md" "docs__en__${topic}.md" "en__docs__claude-code__${topic}.md"; do
+                if [[ -f "$DOCS_PATH/docs/$pattern" ]]; then
+                    doc_file="$DOCS_PATH/docs/$pattern"
+                    break
+                fi
+            done
+
+            if [[ -n "$doc_file" ]]; then
+                echo "📄 Reading: $topic"
+                echo ""
+                cat "$doc_file"
+                return 0
+            else
+                echo "Could not find documentation for: $topic"
+                echo ""
+            fi
+        fi
+
+        # List available documentation
+        if [[ -d "$DOCS_PATH/docs" ]]; then
+            echo "Available documentation files:"
+            ls "$DOCS_PATH/docs" 2>/dev/null | grep '\.md$' | sed 's/\.md$//' | sort | head -20
+            echo ""
+            echo "(Showing first 20 files. Template needed for full functionality.)"
+        else
+            echo "Documentation directory not found."
+        fi
+
+        echo ""
+        echo "To restore full functionality, reinstall:"
+        echo "  curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash"
+        return 1
+    }
 fi
 
 # Check if Python is available and version is 3.9+

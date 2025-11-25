@@ -76,8 +76,8 @@ No separate "modes" - features activate automatically based on Python availabili
 
 **Documentation Coverage**:
 - 7 categories of documentation
-- 449 total paths
-- ~1.7x coverage vs standard
+- 273 total paths
+- All available English documentation
 
 **Search System**:
 - Path-based search (fuzzy matching)
@@ -99,28 +99,28 @@ No separate "modes" - features activate automatically based on Python availabili
 
 ## Category Breakdown
 
-The 449 documentation paths are organized into:
+The 273 documentation paths are organized into:
 
-1. **Core Documentation** (151 paths - 33.6%)
+1. **Core Documentation** (80 paths - 29.3%)
    - About Claude, Build with Claude, Test and Evaluate
 
-2. **API Reference** (91 paths - 20.3%)
+2. **API Reference** (79 paths - 28.9%)
    - Administration API, Agent SDK, Messages API, Skills API
 
-3. **Claude Code** (68 paths - 15.1%)
+3. **Prompt Library** (65 paths - 23.8%)
+   - 65 unique prompt templates
+
+4. **Claude Code** (45 paths - 16.5%)
    - Getting started, IDE integrations, SDK, advanced features
 
-4. **Resources** (68 paths - 15.1%)
-   - Prompt library, API features, glossary
+5. **Release Notes** (2 paths)
+   - Overview and system prompts updates
 
-5. **Prompt Library** (64 paths - 14.3%)
-   - 64 unique prompt templates
+6. **Resources** (1 path)
+   - Resources overview
 
-6. **Release Notes** (4 paths - 0.9%)
-   - API, Claude apps, system prompts updates
-
-7. **Uncategorized** (3 paths - 0.7%)
-   - Site map, home, library index
+7. **Uncategorized** (1 path)
+   - Home page
 
 ## Performance
 
@@ -128,7 +128,7 @@ Key performance metrics:
 
 - **Search**: <100ms per query
 - **Fetch**: ~32s per 100 paths
-- **Validation**: ~30s for all 449 paths
+- **Validation**: ~30s for all 273 paths
 - **Memory**: ~35 MB typical usage
 - **Index size**: ~45KB
 
@@ -212,7 +212,7 @@ These enhancements are designed for potential contribution back to upstream:
 
 **Proposed PRs**:
 1. Optional enhanced mode installation
-2. Extended path coverage (449 paths)
+2. Extended path coverage (273 paths)
 3. Full-text search capability
 4. Testing framework
 5. Enhanced documentation

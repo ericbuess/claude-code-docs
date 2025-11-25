@@ -1,12 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
-# Claude Code Documentation Helper Script v0.4.1
+# Claude Code Documentation Helper Script v0.4.2
 # This script handles all /docs command functionality
 # Installation path: ~/.claude-code-docs/claude-docs-helper.sh
 
 # Script version
-SCRIPT_VERSION="0.4.1"
+SCRIPT_VERSION="0.4.2"
 
 # Fixed installation path (no need for placeholder replacement)
 DOCS_PATH="$HOME/.claude-code-docs"
@@ -58,17 +58,12 @@ auto_update() {
         echo "🔄 Updating documentation..." >&2
         git pull --quiet origin "$BRANCH" 2>&1 | grep -v "Merge made by" || true
         
-        # Check if installer needs updating
-        local INSTALLER_VERSION=$SCRIPT_VERSION
-        local VERSION_MAJOR=$(echo "$INSTALLER_VERSION" | cut -d. -f2)
-
-        if [[ "$VERSION_MAJOR" -ge 3 ]]; then
-            echo "🔧 Updating Claude Code Docs installer..." >&2
-            CLAUDE_DOCS_AUTO_INSTALL=yes ./install.sh >/dev/null 2>&1 || {
-                echo "⚠️  Auto-update failed. Please reinstall manually:" >&2
-                echo "    curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash" >&2
-            }
+        # Sync helper script to root (lightweight update, no full reinstall needed)
+        if [[ -f "$DOCS_PATH/scripts/claude-docs-helper.sh" ]]; then
+            cp "$DOCS_PATH/scripts/claude-docs-helper.sh" "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
+            chmod +x "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
         fi
+        echo "✅ Documentation updated" >&2
     fi
     
     return 0  # Success (either updated or already up-to-date)
@@ -163,15 +158,10 @@ read_doc() {
             echo "🔄 Updating to latest documentation..."
             git pull --quiet origin "$COMPARE_BRANCH" 2>&1 | grep -v "Merge made by" || true
             
-            # Check if installer needs updating
-            local INSTALLER_VERSION=$SCRIPT_VERSION
-            local VERSION_MAJOR=$(echo "$INSTALLER_VERSION" | cut -d. -f2)
-
-            if [[ "$VERSION_MAJOR" -ge 3 ]]; then
-                CLAUDE_DOCS_AUTO_INSTALL=yes ./install.sh >/dev/null 2>&1 || {
-                    echo "⚠️  Auto-update failed. Please reinstall manually:" >&2
-                    echo "    curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash" >&2
-                }
+            # Sync helper script to root (lightweight update, no full reinstall needed)
+            if [[ -f "$DOCS_PATH/scripts/claude-docs-helper.sh" ]]; then
+                cp "$DOCS_PATH/scripts/claude-docs-helper.sh" "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
+                chmod +x "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
             fi
             echo "✅ Updated to latest (v$VERSION, $BRANCH)"
         else
@@ -235,14 +225,6 @@ list_docs() {
     ls "$DOCS_PATH/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 80
     echo ""
     echo "Usage: /docs <topic> or /docs -t to check freshness"
-}
-
-# Function for hook check (auto-update)
-hook_check() {
-    # This is now just a passthrough since auto_update handles everything
-    # Note: We could potentially start a background fetch here for parallelization,
-    # but since git fetch only takes ~0.37s, the complexity isn't worth it
-    exit 0
 }
 
 # Function to show what's new (simplified version)
@@ -309,7 +291,7 @@ uninstall() {
     
     echo "This will remove:"
     echo "  • The /docs command from ~/.claude/commands/docs.md"
-    echo "  • The auto-update hook from ~/.claude/settings.json"
+    echo "  • Any legacy hooks from ~/.claude/settings.json (if present)"
     echo "  • The installation directory ~/.claude-code-docs"
     echo ""
     
@@ -364,9 +346,6 @@ case "${1:-}" in
             echo ""
             read_doc "$(sanitize_input "$remaining_args")"
         fi
-        ;;
-    hook-check)
-        hook_check
         ;;
     uninstall)
         uninstall

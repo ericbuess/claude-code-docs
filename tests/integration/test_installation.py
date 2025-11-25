@@ -168,7 +168,7 @@ print("Enhanced mode: {script_name}")
         manifest_data = {
             "metadata": {
                 "generated_at": "2025-11-03T00:00:00",
-                "total_paths": 449,
+                "total_paths": 273,
                 "source": "sitemap"
             },
             "categories": {

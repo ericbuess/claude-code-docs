@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Claude Code Docs Installer v0.4.1 - Enhanced edition with accurate path tracking
+# Claude Code Docs Installer v0.4.2 - Enhanced edition with accurate path tracking
 # This script installs claude-code-docs to ~/.claude-code-docs
 # Installation Strategy: Always perform a fresh installation at the fixed location
 #   1. Remove any existing installation at ~/.claude-code-docs (with user confirmation)
@@ -9,7 +9,7 @@ set -euo pipefail
 #   3. Set up commands and hooks
 #   4. Clean up any old installations in other locations
 
-echo "Claude Code Docs Installer v0.4.1"
+echo "Claude Code Docs Installer v0.4.2"
 echo "==============================="
 
 # Fixed installation location
@@ -351,7 +351,7 @@ echo "✓ Repository cloned successfully"
 
 # Now we're in $INSTALL_DIR, set up the new script-based system
 echo ""
-echo "Setting up Claude Code Docs v0.4.1..."
+echo "Setting up Claude Code Docs v0.4.2..."
 
 # Copy enhanced helper script (not the template!)
 echo "Installing helper script..."
@@ -524,43 +524,17 @@ EOF
 
 echo "✓ Created /docs command"
 
-# Always update hook (remove old ones pointing to wrong location)
-echo "Setting up automatic updates..."
-
-# Simple hook that just calls the helper script
-HOOK_COMMAND="~/.claude-code-docs/claude-docs-helper.sh hook-check"
-
+# Clean up any old hooks from previous installations
 if [ -f ~/.claude/settings.json ]; then
-    # Update existing settings.json
-    echo "  Updating Claude settings..."
-    
-    # First remove ALL hooks that contain "claude-code-docs" anywhere in the command
+    echo "Cleaning up old hooks..."
+    # Remove ALL hooks that contain "claude-code-docs" anywhere in the command
     # This catches old installations at any path
     jq '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[] | select(.hooks[0].command | contains("claude-code-docs") | not)]' ~/.claude/settings.json > ~/.claude/settings.json.tmp
-    
-    # Then add our new hook
-    jq --arg cmd "$HOOK_COMMAND" '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[]] + [{"matcher": "Read", "hooks": [{"type": "command", "command": $cmd}]}]' ~/.claude/settings.json.tmp > ~/.claude/settings.json
+
+    # Clean up empty structures
+    jq 'if .hooks.PreToolUse == [] then .hooks |= del(.PreToolUse) else . end | if .hooks == {} then del(.hooks) else . end' ~/.claude/settings.json.tmp > ~/.claude/settings.json
     rm -f ~/.claude/settings.json.tmp
-    echo "✓ Updated Claude settings"
-else
-    # Create new settings.json
-    echo "  Creating Claude settings..."
-    jq -n --arg cmd "$HOOK_COMMAND" '{
-        "hooks": {
-            "PreToolUse": [
-                {
-                    "matcher": "Read",
-                    "hooks": [
-                        {
-                            "type": "command",
-                            "command": $cmd
-                        }
-                    ]
-                }
-            ]
-        }
-    }' > ~/.claude/settings.json
-    echo "✓ Created Claude settings"
+    echo "✓ Cleaned up old hooks"
 fi
 
 # Note: Do NOT modify docs_manifest.json - it's tracked by git and would break updates
@@ -568,9 +542,64 @@ fi
 # Clean up old installations now that v0.3 is set up
 cleanup_old_installations
 
+# Verify installation
+echo ""
+echo "Verifying installation..."
+VERIFY_FAILED=false
+
+# Check critical files exist
+if [[ ! -f "$INSTALL_DIR/claude-docs-helper.sh" ]]; then
+    echo "  ❌ Helper script missing"
+    VERIFY_FAILED=true
+else
+    echo "  ✓ Helper script installed"
+fi
+
+if [[ ! -f "$INSTALL_DIR/scripts/claude-docs-helper.sh.template" ]]; then
+    echo "  ❌ Template script missing"
+    VERIFY_FAILED=true
+else
+    echo "  ✓ Template script installed"
+fi
+
+if [[ ! -d "$INSTALL_DIR/docs" ]]; then
+    echo "  ❌ Documentation directory missing"
+    VERIFY_FAILED=true
+else
+    DOC_COUNT=$(find "$INSTALL_DIR/docs" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
+    if [[ "$DOC_COUNT" -lt 100 ]]; then
+        echo "  ⚠️  Only $DOC_COUNT documentation files found (expected ~267)"
+    else
+        echo "  ✓ Documentation files installed ($DOC_COUNT files)"
+    fi
+fi
+
+if [[ ! -f ~/.claude/commands/docs.md ]]; then
+    echo "  ❌ /docs command not created"
+    VERIFY_FAILED=true
+else
+    echo "  ✓ /docs command created"
+fi
+
+# Test that helper script executes
+if ! "$INSTALL_DIR/claude-docs-helper.sh" --help >/dev/null 2>&1; then
+    echo "  ❌ Helper script fails to execute"
+    VERIFY_FAILED=true
+else
+    echo "  ✓ Helper script executes correctly"
+fi
+
+if [[ "$VERIFY_FAILED" == "true" ]]; then
+    echo ""
+    echo "⚠️  Installation completed with warnings. Some components may not work correctly."
+    echo "    Try reinstalling or check the issues above."
+else
+    echo "  ✓ All verification checks passed"
+fi
+
 # Success message
 echo ""
-echo "✅ Claude Code Docs v0.4.1 installed successfully!"
+echo "✅ Claude Code Docs v0.4.2 installed successfully!"
 echo ""
 echo "📚 Command: /docs (user)"
 echo "📂 Location: ~/.claude-code-docs"
@@ -580,14 +609,13 @@ echo "  /docs hooks         # Read hooks documentation"
 echo "  /docs -t           # Check when docs were last updated"
 echo "  /docs what's new  # See recent documentation changes"
 echo ""
-echo "🔄 Auto-updates: Enabled - syncs automatically when GitHub has newer content"
+echo "🔄 Updates: Run '/docs -t' to check for and pull latest documentation"
 echo ""
 
 # Show what's installed (273 paths tracked in manifest)
 echo "📦 Installed Components:"
 echo "  • 273 documentation paths tracked"
 echo "  • AI-powered /docs command"
-echo "  • Auto-update system"
 echo ""
 
 # Check if Python features are available and show appropriate message
@@ -638,4 +666,4 @@ else
 fi
 
 echo ""
-echo "⚠️  Note: Restart Claude Code for auto-updates to take effect"
+echo "💡 Tip: Run '/docs -t' periodically to get latest documentation updates"

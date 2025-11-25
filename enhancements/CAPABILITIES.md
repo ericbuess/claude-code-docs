@@ -91,7 +91,7 @@ Searches within documentation content (not just path names):
 **Implementation**:
 - Pre-built search index: `docs/.search_index.json`
 - Index builder: `scripts/build_search_index.py`
-- Index size: ~45KB for 449 documents
+- Index size: ~45KB for 273 documents
 - Search speed: <100ms per query
 
 ## Validation Features
@@ -109,7 +109,7 @@ Validates HTTP reachability of all documentation paths:
 - **Broken link detection**: Identifies and reports unreachable paths
 
 **Validation metrics**:
-- Average validation time: ~30 seconds for 449 paths
+- Average validation time: ~30 seconds for 273 paths
 - Concurrent requests: Configurable (default: 10)
 - Request timeout: 10 seconds per path
 - Error handling: Retries with exponential backoff
@@ -149,7 +149,7 @@ Efficiently updates only changed documentation:
 
 Advanced fetching with enterprise features:
 
-- **Batch fetching**: Update all 449 paths efficiently
+- **Batch fetching**: Update all 273 paths efficiently
 - **Category updates**: Update specific categories only
 - **Rate limiting**: 0.5s delay between requests
 - **Retry logic**: Exponential backoff on failures
@@ -206,7 +206,7 @@ Advanced fetching with enterprise features:
 {
   "metadata": {
     "generated_at": "timestamp",
-    "total_paths": 449,
+    "total_paths": 273,
     "cleaned_at": "timestamp",
     "removed_broken_paths": 10,
     "original_total_paths": 459
@@ -246,7 +246,7 @@ Enhanced features integrate seamlessly:
 
 - **Path search**: ~90ms average
 - **Content search**: <100ms per query
-- **Index build**: ~2 seconds for 449 documents
+- **Index build**: ~2 seconds for 273 documents
 - **Index size**: ~45KB (minimal disk usage)
 
 ### Fetch Performance
@@ -258,7 +258,7 @@ Enhanced features integrate seamlessly:
 
 ### Validation Performance
 
-- **Full validation**: ~30 seconds for 449 paths
+- **Full validation**: ~30 seconds for 273 paths
 - **Parallel requests**: 10 concurrent by default
 - **Success rate**: >99%
 - **Resource usage**: Low CPU, minimal memory

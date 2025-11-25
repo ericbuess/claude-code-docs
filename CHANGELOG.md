@@ -5,6 +5,29 @@ All notable changes to the enhanced edition of claude-code-docs will be document
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] - 2025-11-25
+
+### Fixed
+- **Critical Auto-Update Bug**: Fixed issue where `/docs -t` would destroy the installation directory
+  - Root cause: Running `install.sh` from within `~/.claude-code-docs` caused the script to delete its own working directory
+  - Solution: Replaced full reinstall with lightweight script sync after `git pull`
+- **Template Fallback**: Enhanced helper now gracefully degrades if template is missing instead of failing completely
+
+### Removed
+- **Useless Hook**: Removed the PreToolUse hook that did nothing (just `exit 0`)
+  - The hook fired on every Read tool use but provided no functionality
+  - Updates now happen on-demand via `/docs -t` command
+
+### Added
+- **Post-Installation Verification**: Installer now validates all critical components after installation
+  - Checks helper script, template, docs directory, and command file
+  - Reports issues instead of silently failing
+
+### Changed
+- **Documentation Accuracy**: Updated README and installer messages to clarify update behavior
+  - Removed misleading "Auto-updates: Enabled" claims
+  - Clarified that updates are on-demand via `/docs -t`
+
 ## [0.4.1] - 2025-11-24
 
 ### Fixed
@@ -76,9 +99,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Full macOS compatibility
 - Linux support (Ubuntu, Debian, Fedora)
 - Improved installer
-- Automatic documentation updates via GitHub Actions
+- Documentation updates via GitHub Actions (repository-side)
 - `/docs` slash command integration
-- PreToolUse Read hook for automatic updates
 
 ---
 
