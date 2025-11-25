@@ -67,9 +67,14 @@ Claude Code on desktop includes a bundled, stable version of Claude Code to ensu
   The bundled Claude Code version in Desktop may differ from the latest CLI version. Desktop prioritizes stability while the CLI may have newer features.
 </Note>
 
+### Enterprise configuration
+
+Organizations can disable local Claude Code use in the desktop application with the `isClaudeCodeForDesktopEnabled` [enterprise policy option](https://support.claude.com/en/articles/12622667-enterprise-configuration#h_003283c7cb). Additionally, Claude Code on the web can be disabled in your [admin settings](https://claude.ai/admin-settings/claude-code).
+
 ## Related resources
 
 * [Claude Code on the web](/en/claude-code-on-the-web)
 * [Claude Desktop support articles](https://support.claude.com/en/collections/16163169-claude-desktop)
+* [Enterprise Configuration](https://support.claude.com/en/articles/12622667-enterprise-configuration)
 * [Common workflows](/en/common-workflows)
 * [Settings reference](/en/settings)
