@@ -70,7 +70,7 @@ fi
 
 echo "This will remove:"
 echo "  • The /docs command from ~/.claude/commands/docs.md"
-echo "  • All claude-code-docs hooks from ~/.claude/settings.json"
+echo "  • Any legacy hooks from ~/.claude/settings.json (if present)"
 if [[ ${#installations[@]} -gt 0 ]]; then
     echo "  • Installation directories (if safe to remove)"
 fi
@@ -101,7 +101,7 @@ if [[ -f ~/.claude/settings.json ]]; then
     
     mv ~/.claude/settings.json.tmp2 ~/.claude/settings.json
     rm -f ~/.claude/settings.json.tmp
-    echo "✓ Removed hooks (backup: ~/.claude/settings.json.backup)"
+    echo "✓ Cleaned up legacy hooks (backup: ~/.claude/settings.json.backup)"
 fi
 
 # Remove directories

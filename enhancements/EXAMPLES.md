@@ -230,11 +230,11 @@ The system suggests:
 /docs --validate
 ```
 
-Validates that all 449 documentation paths are reachable on docs.anthropic.com.
+Validates that all 273 documentation paths are reachable on docs.anthropic.com.
 
 **Output includes**:
-- Total paths checked: 449
-- Successful: 449
+- Total paths checked: 273
+- Successful: 273
 - Failed: 0
 - Validation time: ~30s
 

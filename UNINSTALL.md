@@ -26,7 +26,7 @@ Navigate to your installation directory and run:
 The uninstaller will remove:
 
 1. **The /docs command** from `~/.claude/commands/docs.md`
-2. **The auto-update hook** from `~/.claude/settings.json`
+2. **Any legacy hooks** from `~/.claude/settings.json` (if present from older versions)
 3. **The installation directory**:
    - v0.3+: `~/.claude-code-docs`
    - v0.2 or older: wherever you installed it
@@ -40,8 +40,8 @@ If you prefer to uninstall manually:
 rm -f ~/.claude/commands/docs.md
 ```
 
-### 2. Remove the hook from Claude settings:
-Use /hooks in Claude Code CLI or Edit `~/.claude/settings.json` direction to remove the PreToolUse hook that references claude-code-docs.
+### 2. Remove any legacy hooks from Claude settings (if present):
+If you installed an older version (v0.4.1 or earlier), check `~/.claude/settings.json` and remove any PreToolUse hooks that reference claude-code-docs. Current versions (v0.4.2+) do not install hooks.
 
 ### 3. Remove the installation directory:
 

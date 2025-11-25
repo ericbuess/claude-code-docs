@@ -35,7 +35,7 @@ Searches across all documentation content, not just path names.
 
 **Command**: `/docs --validate`
 
-Validates all 449 paths are reachable on docs.anthropic.com.
+Validates all 273 paths are reachable on docs.anthropic.com.
 
 **Features**:
 - HTTP reachability testing
@@ -49,7 +49,7 @@ Validates all 449 paths are reachable on docs.anthropic.com.
 
 **Command**: `/docs --search 'query'`
 
-Fuzzy search across all 449 paths with relevance ranking.
+Fuzzy search across all 273 paths with relevance ranking.
 
 **Features**:
 - Levenshtein distance matching
@@ -76,7 +76,7 @@ Fuzzy search across all 449 paths with relevance ranking.
 **Script**: `scripts/main.py` (662 lines)
 
 **Features**:
-- Batch fetching of 449 paths
+- Batch fetching of 273 paths
 - SHA256-based change detection (only fetch what changed)
 - Retry logic with exponential backoff
 - Rate limiting (0.5s between requests)
@@ -85,7 +85,7 @@ Fuzzy search across all 449 paths with relevance ranking.
 
 **Usage**:
 ```bash
-python scripts/main.py --update-all           # Fetch all 449 docs
+python scripts/main.py --update-all           # Fetch all 273 docs
 python scripts/main.py --update-category core # Update specific category
 python scripts/main.py --verify              # Check what needs updating
 ```
@@ -166,7 +166,7 @@ These enhancements are designed to be contributed back to upstream as optional f
 
 **Proposed PRs**:
 1. **Optional Enhanced Mode** - Install script with Python features
-2. **Extended Path Coverage** - 449 paths manifest (opt-in)
+2. **Extended Path Coverage** - 273 paths manifest
 3. **Full-Text Search** - Search capability (opt-in)
 4. **Testing Framework** - Test suite for validation
 5. **Developer Documentation** - Enhanced docs
@@ -189,11 +189,11 @@ These enhancements are designed to be contributed back to upstream as optional f
 **Search Performance**:
 - Path search: ~90ms average
 - Content search: < 100ms per query
-- Index build time: ~2 seconds for 449 docs
+- Index build time: ~2 seconds for 273 docs
 - Index size: ~45KB
 
 **Validation Performance**:
-- Full validation: ~30 seconds for 449 paths (parallel)
+- Full validation: ~30 seconds for 273 paths (parallel)
 - Configurable concurrency
 
 ## License

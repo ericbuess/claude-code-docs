@@ -125,8 +125,8 @@ pip install -e ".[dev]"
 ~/.claude-code-docs/claude-docs-helper.sh --validate
 
 # Run tests (REQUIRED before submitting PR)
-pytest tests/ -v  # Should see: 598 passed, 2 skipped
-pytest --cov=scripts --cov-report=term  # Should see: ~78%
+pytest tests/ -v  # Should see: 627 passed, 2 skipped
+pytest --cov=scripts --cov-report=term  # Should see: ~78.7%
 
 # Test specific changes
 python scripts/lookup_paths.py "your test query"
@@ -137,7 +137,7 @@ python scripts/fetch_claude_docs.py --help
 - `scripts/fetch_claude_docs.py` - Documentation fetcher with auto-regeneration
 - `scripts/lookup_paths.py` - Search & validation
 - `scripts/build_search_index.py` - Full-text search indexing
-- `tests/` - Test suite (600 tests)
+- `tests/` - Test suite (629 tests)
 
 ## Code Standards
 
@@ -331,10 +331,10 @@ def test_search_paths_with_limit():
 ```
 
 **Current test status:**
-- Total: 600 tests
-- Passing: 598 (99.7%)
+- Total: 629 tests
+- Passing: 627 (99.7%)
 - Skipped: 2 (intentional)
-- Coverage: 78.32%
+- Coverage: 78.70%
 
 ## Pull Request Guidelines
 
@@ -417,7 +417,7 @@ git push origin v0.x.x
 
 **When to release:**
 - New Python features complete
-- All tests passing (600/600 or 598/600)
+- All tests passing (629/629 or 627/629)
 - Documentation updated
 
 **Process:**
@@ -426,7 +426,7 @@ git push origin v0.x.x
 pytest
 
 # Check coverage
-pytest --cov=scripts --cov-report=term  # Should be ~78%
+pytest --cov=scripts --cov-report=term  # Should be ~78.7%
 
 # Update versions
 # Edit install.sh, README.md

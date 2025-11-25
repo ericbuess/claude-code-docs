@@ -1,7 +1,7 @@
 # Claude Code Documentation Tool
 
 [![Last Update](https://img.shields.io/github/last-commit/costiash/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/costiash/claude-code-docs/commits/main)
-[![Tests](https://img.shields.io/badge/tests-618%20passing-success)](https://github.com/costiash/claude-code-docs/actions)
+[![Tests](https://img.shields.io/badge/tests-627%20passing-success)](https://github.com/costiash/claude-code-docs/actions)
 [![Coverage](https://img.shields.io/badge/coverage-78.7%25-green)](https://github.com/costiash/claude-code-docs)
 [![Python](https://img.shields.io/badge/python-3.9+-blue)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey)](https://github.com/costiash/claude-code-docs)
@@ -25,9 +25,20 @@ Stop hunting through scattered docs. This tool provides instant access to **273 
 - 📚 **Complete Coverage** - 273 active documentation paths, ~266-270 files downloaded (~97% coverage)
 - 🔍 **Semantic Understanding** - No primitive keyword matching, leverages Claude's language understanding
 - ✅ **Auto-Validated** - Continuous validation detects broken links automatically
-- 🔄 **Always Fresh** - Auto-updates every 3 hours from official sources
+- 🔄 **Always Fresh** - Repository updated every 3 hours; run `/docs -t` to pull latest
 - 🎯 **Graceful Degradation** - Works with or without Python
-- 🧪 **Well-Tested** - 620 tests (618 passing, 2 skipped), 78.7% coverage
+- 🧪 **Well-Tested** - 629 tests (627 passing, 2 skipped), 78.7% coverage
+
+## How It Works
+
+This tool takes a different approach to documentation access:
+
+1. **Local Mirror** - Instead of fetching docs from the web each time, we keep a local copy that's always ready
+2. **AI as the Interface** - You ask questions in plain English, Claude figures out which docs to read
+3. **Smart Routing** - The `/docs` command understands context ("hooks in agent sdk" vs "cli hooks")
+4. **Works Offline** - Once installed, docs are available even without internet
+
+The magic is in combining a simple local file system with Claude's language understanding. No complex search engines or databases - just markdown files and AI smarts.
 
 ## What's Included
 
@@ -61,7 +72,7 @@ curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/inst
 1. Clones repository to `~/.claude-code-docs`
 2. Installs 266 documentation files
 3. Sets up `/docs` command in Claude Code
-4. Enables auto-updates
+4. Verifies installation integrity
 
 **Python features activate automatically if Python 3.9+ is installed.**
 
@@ -198,7 +209,7 @@ For power users who want direct access to helper functions:
 - 273 documentation paths tracked in manifest
 - ~266-270 files downloaded (varies based on fetch success)
 - 7 Python scripts for enhanced features
-- Full test suite (620 tests)
+- Full test suite (629 tests)
 
 **Graceful Degradation** - Features adapt to environment:
 - **Without Python**: Basic documentation reading via `/docs` command
@@ -210,8 +221,8 @@ For power users who want direct access to helper functions:
 
 Documentation stays current through:
 
-1. **Automated Updates** - GitHub Actions fetches new docs every 3 hours
-2. **Pre-Command Check** - `/docs` checks for GitHub updates automatically
+1. **Repository Updates** - GitHub Actions fetches new docs every 3 hours
+2. **On-Demand Sync** - Run `/docs -t` to check for and pull updates
 3. **Auto-Regeneration** - Manifests regenerate from sitemaps on each fetch
 4. **Visual Feedback** - See "🔄 Updating documentation..." when updates occur
 
@@ -313,7 +324,7 @@ See [UNINSTALL.md](UNINSTALL.md) for manual removal instructions.
 - You can fork and install from your own repository
 
 **Validation:**
-- 618/620 tests passing (99.7% pass rate, 2 skipped)
+- 627/629 tests passing (99.7% pass rate, 2 skipped)
 - 78.7% code coverage
 - Automated security testing in CI/CD
 
@@ -338,7 +349,7 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 
 # Run tests
-pytest tests/ -v  # Should see: 618 passed, 2 skipped
+pytest tests/ -v  # Should see: 627 passed, 2 skipped
 
 # Test coverage
 pytest --cov=scripts --cov-report=term  # Should see: ~78.7%

@@ -1,12 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
-# Claude Code Documentation Helper Script v0.4.1
+# Claude Code Documentation Helper Script v0.4.2
 # This script handles all /docs command functionality
 # Installation path: ~/.claude-code-docs/claude-docs-helper.sh
 
 # Script version
-SCRIPT_VERSION="0.4.1"
+SCRIPT_VERSION="0.4.2"
 
 # Fixed installation path (no need for placeholder replacement)
 DOCS_PATH="$HOME/.claude-code-docs"
@@ -28,11 +28,74 @@ print_doc_header() {
     echo ""
 }
 
+# Function to sync helper script to root (atomic copy to avoid race conditions)
+sync_helper_script() {
+    if [[ -f "$DOCS_PATH/scripts/claude-docs-helper.sh" ]]; then
+        # Use atomic copy: write to temp file, then move
+        local temp_file="$DOCS_PATH/.claude-docs-helper.sh.tmp"
+        if cp "$DOCS_PATH/scripts/claude-docs-helper.sh" "$temp_file" 2>/dev/null; then
+            if mv "$temp_file" "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null; then
+                chmod +x "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
+            else
+                # Log failure for debugging (to stderr to not pollute output)
+                echo "⚠️  Warning: Could not sync helper script (mv failed)" >&2
+                rm -f "$temp_file" 2>/dev/null || true
+            fi
+        else
+            # Log failure for debugging
+            echo "⚠️  Warning: Could not sync helper script (cp failed)" >&2
+        fi
+    fi
+}
+
+# Lock file for preventing concurrent updates
+LOCK_FILE="$DOCS_PATH/.update.lock"
+
+# Function to acquire lock (returns 0 if acquired, 1 if already locked)
+acquire_lock() {
+    local lock_file="$1"
+    local timeout="${2:-5}"  # Default 5 second timeout
+
+    # Check if lock exists and is stale (older than 60 seconds)
+    if [[ -f "$lock_file" ]]; then
+        local lock_age=$(($(date +%s) - $(stat -c %Y "$lock_file" 2>/dev/null || stat -f %m "$lock_file" 2>/dev/null || echo 0)))
+        if [[ $lock_age -gt 60 ]]; then
+            # Stale lock, remove it
+            rm -f "$lock_file" 2>/dev/null || true
+        else
+            # Lock is held by another process
+            return 1
+        fi
+    fi
+
+    # Try to create lock file atomically using mkdir (atomic on POSIX)
+    if mkdir "$lock_file.d" 2>/dev/null; then
+        echo $$ > "$lock_file" 2>/dev/null || true
+        rmdir "$lock_file.d" 2>/dev/null || true
+        return 0
+    fi
+    return 1
+}
+
+# Function to release lock
+release_lock() {
+    local lock_file="$1"
+    rm -f "$lock_file" 2>/dev/null || true
+}
 
 # Function to auto-update docs if needed
 auto_update() {
     cd "$DOCS_PATH" 2>/dev/null || return 1
-    
+
+    # Try to acquire lock to prevent concurrent updates
+    if ! acquire_lock "$LOCK_FILE"; then
+        # Another update is in progress, skip this one
+        return 0
+    fi
+
+    # Ensure lock is released on exit (trap for this function scope)
+    trap 'release_lock "$LOCK_FILE"' RETURN
+
     # Get current branch
     local BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
     
@@ -56,21 +119,14 @@ auto_update() {
     if [[ "$LOCAL" != "$REMOTE" ]] && [[ "$BEHIND" -gt 0 ]]; then
         # We're behind - safe to pull
         echo "🔄 Updating documentation..." >&2
-        git pull --quiet origin "$BRANCH" 2>&1 | grep -v "Merge made by" || true
-        
-        # Check if installer needs updating
-        local INSTALLER_VERSION=$SCRIPT_VERSION
-        local VERSION_MAJOR=$(echo "$INSTALLER_VERSION" | cut -d. -f2)
-
-        if [[ "$VERSION_MAJOR" -ge 3 ]]; then
-            echo "🔧 Updating Claude Code Docs installer..." >&2
-            CLAUDE_DOCS_AUTO_INSTALL=yes ./install.sh >/dev/null 2>&1 || {
-                echo "⚠️  Auto-update failed. Please reinstall manually:" >&2
-                echo "    curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash" >&2
-            }
+        if git pull --quiet origin "$BRANCH" 2>&1 | grep -v "Merge made by"; then
+            sync_helper_script
+            echo "✅ Documentation updated" >&2
+        else
+            echo "⚠️  Update failed - using cached docs" >&2
         fi
     fi
-    
+
     return 0  # Success (either updated or already up-to-date)
 }
 
@@ -161,19 +217,12 @@ read_doc() {
         if [[ "$LOCAL" != "$REMOTE" ]] && [[ "$BEHIND" -gt 0 ]]; then
             # We're behind - safe to update
             echo "🔄 Updating to latest documentation..."
-            git pull --quiet origin "$COMPARE_BRANCH" 2>&1 | grep -v "Merge made by" || true
-            
-            # Check if installer needs updating
-            local INSTALLER_VERSION=$SCRIPT_VERSION
-            local VERSION_MAJOR=$(echo "$INSTALLER_VERSION" | cut -d. -f2)
-
-            if [[ "$VERSION_MAJOR" -ge 3 ]]; then
-                CLAUDE_DOCS_AUTO_INSTALL=yes ./install.sh >/dev/null 2>&1 || {
-                    echo "⚠️  Auto-update failed. Please reinstall manually:" >&2
-                    echo "    curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash" >&2
-                }
+            if git pull --quiet origin "$COMPARE_BRANCH" 2>&1 | grep -v "Merge made by"; then
+                sync_helper_script
+                echo "✅ Updated to latest (v$VERSION, $BRANCH)"
+            else
+                echo "⚠️  Update failed - using cached docs (v$VERSION, $BRANCH)"
             fi
-            echo "✅ Updated to latest (v$VERSION, $BRANCH)"
         else
             local AHEAD=$(git rev-list origin/"$COMPARE_BRANCH"..HEAD --count 2>/dev/null || echo "0")
             if [[ "$AHEAD" -gt 0 ]]; then
@@ -235,14 +284,6 @@ list_docs() {
     ls "$DOCS_PATH/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 80
     echo ""
     echo "Usage: /docs <topic> or /docs -t to check freshness"
-}
-
-# Function for hook check (auto-update)
-hook_check() {
-    # This is now just a passthrough since auto_update handles everything
-    # Note: We could potentially start a background fetch here for parallelization,
-    # but since git fetch only takes ~0.37s, the complexity isn't worth it
-    exit 0
 }
 
 # Function to show what's new (simplified version)
@@ -309,7 +350,7 @@ uninstall() {
     
     echo "This will remove:"
     echo "  • The /docs command from ~/.claude/commands/docs.md"
-    echo "  • The auto-update hook from ~/.claude/settings.json"
+    echo "  • Any legacy hooks from ~/.claude/settings.json (if present)"
     echo "  • The installation directory ~/.claude-code-docs"
     echo ""
     
@@ -364,9 +405,6 @@ case "${1:-}" in
             echo ""
             read_doc "$(sanitize_input "$remaining_args")"
         fi
-        ;;
-    hook-check)
-        hook_check
         ;;
     uninstall)
         uninstall
