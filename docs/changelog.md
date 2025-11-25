@@ -8,6 +8,13 @@
 
 # Changelog
 
+## 2.0.52
+
+- Fixed duplicate message display when starting Claude with a command line argument
+- Fixed `/usage` command progress bars to fill up as usage increases (instead of showing remaining percentage)
+- Fixed image pasting not working on Linux systems running Wayland (now falls back to wl-paste when xclip is unavailable)
+- Permit some uses of `$!` in bash commands
+
 ## 2.0.51
 
 - Added Opus 4.5! https://www.anthropic.com/news/claude-opus-4-5
