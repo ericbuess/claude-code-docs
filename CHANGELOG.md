@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Root cause: Running `install.sh` from within `~/.claude-code-docs` caused the script to delete its own working directory
   - Solution: Replaced full reinstall with lightweight script sync after `git pull`
 - **Template Fallback**: Enhanced helper now gracefully degrades if template is missing instead of failing completely
+- **Security: Path Traversal Protection**: Added realpath validation in fallback mode to ensure files stay within docs directory
+  - Input sanitization removes special characters (already existed)
+  - New: Resolved path validation ensures no escape from docs directory
+- **Silent Failure Logging**: sync_helper_script() now logs failures to stderr for debugging
+  - Previously errors were silently suppressed with `|| true`
+  - Now provides feedback when copy or move operations fail
 
 ### Removed
 - **Useless Hook**: Removed the PreToolUse hook that did nothing (just `exit 0`)
@@ -22,11 +28,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Post-Installation Verification**: Installer now validates all critical components after installation
   - Checks helper script, template, docs directory, and command file
   - Reports issues instead of silently failing
+- **Lock File Mechanism**: Added lock file to prevent concurrent update operations
+  - Prevents race conditions when multiple `/docs` commands run simultaneously
+  - Automatically cleans up stale locks (older than 60 seconds)
+- **Integration Tests**: Added 9 new tests for critical bug fix scenarios (627 tests total)
+  - Tests for sync_helper_script() atomic copy behavior
+  - Tests verifying update doesn't delete working directory
+  - Tests for template fallback functionality
+  - Tests for lock file mechanism
+  - Tests for path traversal protection
 
 ### Changed
 - **Documentation Accuracy**: Updated README and installer messages to clarify update behavior
   - Removed misleading "Auto-updates: Enabled" claims
   - Clarified that updates are on-demand via `/docs -t`
+- **Test Suite**: Updated from 618 to 627 passing tests (78.7% coverage maintained)
 
 ## [0.4.1] - 2025-11-24
 

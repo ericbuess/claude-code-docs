@@ -34,16 +34,68 @@ sync_helper_script() {
         # Use atomic copy: write to temp file, then move
         local temp_file="$DOCS_PATH/.claude-docs-helper.sh.tmp"
         if cp "$DOCS_PATH/scripts/claude-docs-helper.sh" "$temp_file" 2>/dev/null; then
-            mv "$temp_file" "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
-            chmod +x "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
+            if mv "$temp_file" "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null; then
+                chmod +x "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
+            else
+                # Log failure for debugging (to stderr to not pollute output)
+                echo "⚠️  Warning: Could not sync helper script (mv failed)" >&2
+                rm -f "$temp_file" 2>/dev/null || true
+            fi
+        else
+            # Log failure for debugging
+            echo "⚠️  Warning: Could not sync helper script (cp failed)" >&2
         fi
     fi
+}
+
+# Lock file for preventing concurrent updates
+LOCK_FILE="$DOCS_PATH/.update.lock"
+
+# Function to acquire lock (returns 0 if acquired, 1 if already locked)
+acquire_lock() {
+    local lock_file="$1"
+    local timeout="${2:-5}"  # Default 5 second timeout
+
+    # Check if lock exists and is stale (older than 60 seconds)
+    if [[ -f "$lock_file" ]]; then
+        local lock_age=$(($(date +%s) - $(stat -c %Y "$lock_file" 2>/dev/null || stat -f %m "$lock_file" 2>/dev/null || echo 0)))
+        if [[ $lock_age -gt 60 ]]; then
+            # Stale lock, remove it
+            rm -f "$lock_file" 2>/dev/null || true
+        else
+            # Lock is held by another process
+            return 1
+        fi
+    fi
+
+    # Try to create lock file atomically using mkdir (atomic on POSIX)
+    if mkdir "$lock_file.d" 2>/dev/null; then
+        echo $$ > "$lock_file" 2>/dev/null || true
+        rmdir "$lock_file.d" 2>/dev/null || true
+        return 0
+    fi
+    return 1
+}
+
+# Function to release lock
+release_lock() {
+    local lock_file="$1"
+    rm -f "$lock_file" 2>/dev/null || true
 }
 
 # Function to auto-update docs if needed
 auto_update() {
     cd "$DOCS_PATH" 2>/dev/null || return 1
-    
+
+    # Try to acquire lock to prevent concurrent updates
+    if ! acquire_lock "$LOCK_FILE"; then
+        # Another update is in progress, skip this one
+        return 0
+    fi
+
+    # Ensure lock is released on exit (trap for this function scope)
+    trap 'release_lock "$LOCK_FILE"' RETURN
+
     # Get current branch
     local BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
     

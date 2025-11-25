@@ -52,10 +52,17 @@ else
 
             # Try common filename patterns
             local doc_file=""
+            local docs_dir="$DOCS_PATH/docs"
             for pattern in "${safe_topic}.md" "docs__en__${safe_topic}.md" "en__docs__claude-code__${safe_topic}.md"; do
-                if [[ -f "$DOCS_PATH/docs/$pattern" ]]; then
-                    doc_file="$DOCS_PATH/docs/$pattern"
-                    break
+                local candidate="$docs_dir/$pattern"
+                if [[ -f "$candidate" ]]; then
+                    # Security: Validate resolved path stays within docs directory
+                    local resolved_path=$(cd "$(dirname "$candidate")" 2>/dev/null && pwd -P)/$(basename "$candidate")
+                    local resolved_docs=$(cd "$docs_dir" 2>/dev/null && pwd -P)
+                    if [[ "$resolved_path" == "$resolved_docs/"* ]]; then
+                        doc_file="$candidate"
+                        break
+                    fi
                 fi
             done
 
