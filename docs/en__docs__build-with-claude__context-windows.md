@@ -143,7 +143,7 @@ curl https://api.anthropic.com/v1/messages \
 **Important considerations:**
 - **Beta status**: This is a beta feature subject to change. Features and pricing may be modified or removed in future releases.
 - **Usage tier requirement**: The 1M token context window is available to organizations in [usage tier](/docs/en/api/rate-limits) 4 and organizations with custom rate limits. Lower tier organizations must advance to usage tier 4 to access this feature.
-- **Availability**: The 1M token context window is currently available on the Claude API, [Amazon Bedrock](/docs/en/build-with-claude/claude-on-amazon-bedrock), and [Google Cloud's Vertex AI](/docs/en/build-with-claude/claude-on-vertex-ai). 
+- **Availability**: The 1M token context window is currently available on the Claude API, [Microsoft Foundry](/docs/en/build-with-claude/claude-in-microsoft-foundry), [Amazon Bedrock](/docs/en/build-with-claude/claude-on-amazon-bedrock), and [Google Cloud's Vertex AI](/docs/en/build-with-claude/claude-on-vertex-ai). 
 - **Pricing**: Requests exceeding 200K tokens are automatically charged at premium rates (2x input, 1.5x output pricing). See the [pricing documentation](/docs/en/about-claude/pricing#long-context-pricing) for details.
 - **Rate limits**: Long context requests have dedicated rate limits. See the [rate limits documentation](/docs/en/api/rate-limits#long-context-rate-limits) for details.
 - **Multimodal considerations**: When processing large numbers of images or pdfs, be aware that the files can vary in token usage. When pairing a large prompt with a large number of images, you may hit [request size limits](/docs/en/api/overview#request-size-limits).

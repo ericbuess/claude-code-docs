@@ -110,7 +110,7 @@ Configuration object for the `query()` function.
 | `mcpServers` | `Record<string, [`McpServerConfig`](#mcpserverconfig)>` | `{}` | MCP server configurations |
 | `model` | `string` | Default from CLI | Claude model to use |
 | `outputFormat` | `{ type: 'json_schema', schema: JSONSchema }` | `undefined` | Define output format for agent results. See [Structured outputs](/docs/en/agent-sdk/structured-outputs) for details |
-| `pathToClaudeCodeExecutable` | `string` | Auto-detected | Path to Claude Code executable |
+| `pathToClaudeCodeExecutable` | `string` | Uses built-in executable | Path to Claude Code executable |
 | `permissionMode` | [`PermissionMode`](#permissionmode) | `'default'` | Permission mode for the session |
 | `permissionPromptToolName` | `string` | `undefined` | MCP tool name for permission prompts |
 | `plugins` | [`SdkPluginConfig`](#sdkpluginconfig)`[]` | `[]` | Load custom plugins from local paths. See [Plugins](/docs/en/agent-sdk/plugins) for details |

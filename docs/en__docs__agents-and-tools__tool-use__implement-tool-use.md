@@ -124,7 +124,12 @@ The good description clearly explains what the tool does, when to use it, what d
 You can provide concrete examples of valid tool inputs to help Claude understand how to use your tools more effectively. This is particularly useful for complex tools with nested objects, optional parameters, or format-sensitive inputs.
 
 <Info>
-Tool use examples is a beta feature. To use this feature, include the `advanced-tool-use-2025-11-20` header in your request. On Google Cloud's Vertex AI and Amazon Bedrock, only Claude Opus 4.5 supports tool use examples.
+Tool use examples is a beta feature. Include the appropriate [beta header](/docs/en/api/beta-headers) for your provider:
+
+| Provider | Beta header | Supported models |
+|----------|-------------|------------------|
+| Claude API,<br/>Microsoft Foundry | `advanced-tool-use-2025-11-20` | All models |
+| Vertex AI,<br/>Amazon Bedrock | `tool-examples-2025-10-29` | Claude Opus 4.5 only |
 </Info>
 
 ### Basic usage
