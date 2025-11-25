@@ -535,7 +535,11 @@ The user requested: "$ARGUMENTS"
 3. **Analyze search results** (if using --search-content):
    - Check which product contexts the results span
    - **Same context**: Read ALL matching docs using exact filenames, synthesize unified answer
-   - **Different contexts**: Use AskUserQuestion to clarify which product, then synthesize within chosen context
+   - **Different contexts**: Use AskUserQuestion with **ANTHROPIC PRODUCT NAMES** users know:
+     - "Claude Code" (NOT "CLI" or "claude_code")
+     - "Claude API" (NOT "api_reference")
+     - "Agent SDK" (NOT "agent-sdk paths")
+     - "Prompt Library", etc.
 
 4. **Always present naturally** - don't dump raw output, add context and links
 EOF
