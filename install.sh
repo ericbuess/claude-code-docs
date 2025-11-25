@@ -519,7 +519,25 @@ The user requested: "$ARGUMENTS"
 
 **Your task**: Follow the workflow above. Reference CLAUDE.md for detailed guidance on ambiguity resolution and synthesis strategies.
 
-Execute: ~/.claude-code-docs/claude-docs-helper.sh "$ARGUMENTS"
+## Execution Steps
+
+1. **Analyze the user's request** to determine routing:
+   - **Simple keyword** (e.g., "hooks", "mcp", "memory"): Route to content search
+   - **Question** (e.g., "how do I...", "what are..."): Route to content search
+   - **Exact filename** (e.g., "docs__en__hooks"): Route to direct lookup
+   - **Special flags** (e.g., "-t", "what's new"): Pass through directly
+
+2. **Execute appropriate command:**
+   - **For keywords/questions**: `~/.claude-code-docs/claude-docs-helper.sh --search-content "$ARGUMENTS"`
+   - **For exact filenames**: `~/.claude-code-docs/claude-docs-helper.sh "$ARGUMENTS"`
+   - **For special flags**: `~/.claude-code-docs/claude-docs-helper.sh "$ARGUMENTS"`
+
+3. **Analyze search results** (if using --search-content):
+   - Check which product contexts the results span
+   - **Same context**: Read ALL matching docs using exact filenames, synthesize unified answer
+   - **Different contexts**: Use AskUserQuestion to clarify which product, then synthesize within chosen context
+
+4. **Always present naturally** - don't dump raw output, add context and links
 EOF
 
 echo "✓ Created /docs command"

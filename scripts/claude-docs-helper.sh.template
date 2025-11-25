@@ -180,12 +180,12 @@ show_freshness() {
 # Function to read documentation
 read_doc() {
     local topic=$(sanitize_input "$1")
-    
+
     # Strip .md extension if user included it (they're being helpful!)
     topic="${topic%.md}"
-    
+
     local doc_path="$DOCS_PATH/docs/${topic}.md"
-    
+
     if [[ -f "$doc_path" ]]; then
         print_doc_header
         
@@ -241,34 +241,14 @@ read_doc() {
             echo "📖 Official page: https://docs.anthropic.com/en/docs/claude-code/$topic"
         fi
     else
-        # Always show search interface - never error messages
+        # File not found - list available files, let Claude figure out the correct name
         print_doc_header
-        echo "🔍 Searching for: $topic"
+        echo "📄 Topic not found: $topic"
         echo ""
-        
-        # Try to extract keywords from the topic
-        local keywords=$(echo "$topic" | grep -o '[a-zA-Z0-9_-]\+' | grep -v -E '^(tell|me|about|explain|what|is|are|how|do|to|show|find|search|the|for|in)$' | tr '\n' ' ')
-        
-        if [[ -n "$keywords" ]]; then
-            # Search for matching topics - escape the pattern
-            local escaped_keywords=$(echo "$keywords" | sed 's/[[\.*^$()+?{|]/\\&/g')
-            local matches=$(ls "$DOCS_PATH/docs" | grep '\.md$' | sed 's/\.md$//' | grep -i -E "$(echo "$escaped_keywords" | tr ' ' '|')" | sort)
-            
-            if [[ -n "$matches" ]]; then
-                echo "Found these related topics:"
-                echo "$matches" | sed 's/^/  • /' 
-                echo ""
-                echo "Try: /docs <topic> to read a specific document"
-            else
-                echo "No exact matches found. Here are all available topics:"
-                ls "$DOCS_PATH/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 80
-            fi
-        else
-            echo "Available topics:"
-            ls "$DOCS_PATH/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 80
-        fi
+        echo "Available documentation files:"
+        ls "$DOCS_PATH/docs" | grep '\.md$' | sed 's/\.md$//' | sort
         echo ""
-        echo "💡 Tip: Use grep to search across all docs: cd ~/.claude-code-docs && grep -r 'search term' docs/"
+        echo "💡 Use exact filename without .md extension"
     fi
 }
 
@@ -408,6 +388,29 @@ case "${1:-}" in
         ;;
     uninstall)
         uninstall
+        ;;
+    --help|-h)
+        print_doc_header
+        echo "Usage: /docs [OPTIONS] [TOPIC]"
+        echo ""
+        echo "Options:"
+        echo "  -t, --check     Check if documentation is up-to-date and sync if needed"
+        echo "  --help, -h      Show this help message"
+        echo "  uninstall       Show uninstall instructions"
+        echo ""
+        echo "Special Commands:"
+        echo "  what's new      Show recent documentation changes"
+        echo "  changelog       Show Claude Code release notes"
+        echo ""
+        echo "Examples:"
+        echo "  /docs hooks         Read hooks documentation"
+        echo "  /docs -t            Check freshness and sync"
+        echo "  /docs -t mcp        Check freshness, then read mcp docs"
+        echo "  /docs what's new    Show recent changes"
+        echo ""
+        echo "Available topics:"
+        ls "$DOCS_PATH/docs" 2>/dev/null | grep '\.md$' | sed 's/\.md$//' | sort | head -20
+        echo "  ... (use '/docs' with no args to see all)"
         ;;
     whats-new|whats|what)
         # Handle various forms of "what's new"
