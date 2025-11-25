@@ -28,6 +28,17 @@ print_doc_header() {
     echo ""
 }
 
+# Function to sync helper script to root (atomic copy to avoid race conditions)
+sync_helper_script() {
+    if [[ -f "$DOCS_PATH/scripts/claude-docs-helper.sh" ]]; then
+        # Use atomic copy: write to temp file, then move
+        local temp_file="$DOCS_PATH/.claude-docs-helper.sh.tmp"
+        if cp "$DOCS_PATH/scripts/claude-docs-helper.sh" "$temp_file" 2>/dev/null; then
+            mv "$temp_file" "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
+            chmod +x "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
+        fi
+    fi
+}
 
 # Function to auto-update docs if needed
 auto_update() {
@@ -56,16 +67,14 @@ auto_update() {
     if [[ "$LOCAL" != "$REMOTE" ]] && [[ "$BEHIND" -gt 0 ]]; then
         # We're behind - safe to pull
         echo "🔄 Updating documentation..." >&2
-        git pull --quiet origin "$BRANCH" 2>&1 | grep -v "Merge made by" || true
-        
-        # Sync helper script to root (lightweight update, no full reinstall needed)
-        if [[ -f "$DOCS_PATH/scripts/claude-docs-helper.sh" ]]; then
-            cp "$DOCS_PATH/scripts/claude-docs-helper.sh" "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
-            chmod +x "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
+        if git pull --quiet origin "$BRANCH" 2>&1 | grep -v "Merge made by"; then
+            sync_helper_script
+            echo "✅ Documentation updated" >&2
+        else
+            echo "⚠️  Update failed - using cached docs" >&2
         fi
-        echo "✅ Documentation updated" >&2
     fi
-    
+
     return 0  # Success (either updated or already up-to-date)
 }
 
@@ -156,14 +165,12 @@ read_doc() {
         if [[ "$LOCAL" != "$REMOTE" ]] && [[ "$BEHIND" -gt 0 ]]; then
             # We're behind - safe to update
             echo "🔄 Updating to latest documentation..."
-            git pull --quiet origin "$COMPARE_BRANCH" 2>&1 | grep -v "Merge made by" || true
-            
-            # Sync helper script to root (lightweight update, no full reinstall needed)
-            if [[ -f "$DOCS_PATH/scripts/claude-docs-helper.sh" ]]; then
-                cp "$DOCS_PATH/scripts/claude-docs-helper.sh" "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
-                chmod +x "$DOCS_PATH/claude-docs-helper.sh" 2>/dev/null || true
+            if git pull --quiet origin "$COMPARE_BRANCH" 2>&1 | grep -v "Merge made by"; then
+                sync_helper_script
+                echo "✅ Updated to latest (v$VERSION, $BRANCH)"
+            else
+                echo "⚠️  Update failed - using cached docs (v$VERSION, $BRANCH)"
             fi
-            echo "✅ Updated to latest (v$VERSION, $BRANCH)"
         else
             local AHEAD=$(git rev-list origin/"$COMPARE_BRANCH"..HEAD --count 2>/dev/null || echo "0")
             if [[ "$AHEAD" -gt 0 ]]; then

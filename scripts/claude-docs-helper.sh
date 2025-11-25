@@ -43,9 +43,16 @@ else
 
         # Try to read documentation directly
         if [[ -n "$topic" && -d "$DOCS_PATH/docs" ]]; then
+            # Sanitize topic to prevent path traversal attacks
+            local safe_topic=$(echo "$topic" | sed 's/[^a-zA-Z0-9_-]//g')
+            if [[ -z "$safe_topic" ]]; then
+                echo "Invalid topic name: $topic"
+                return 1
+            fi
+
             # Try common filename patterns
             local doc_file=""
-            for pattern in "${topic}.md" "docs__en__${topic}.md" "en__docs__claude-code__${topic}.md"; do
+            for pattern in "${safe_topic}.md" "docs__en__${safe_topic}.md" "en__docs__claude-code__${safe_topic}.md"; do
                 if [[ -f "$DOCS_PATH/docs/$pattern" ]]; then
                     doc_file="$DOCS_PATH/docs/$pattern"
                     break
@@ -53,12 +60,12 @@ else
             done
 
             if [[ -n "$doc_file" ]]; then
-                echo "📄 Reading: $topic"
+                echo "📄 Reading: $safe_topic"
                 echo ""
                 cat "$doc_file"
                 return 0
             else
-                echo "Could not find documentation for: $topic"
+                echo "Could not find documentation for: $safe_topic"
                 echo ""
             fi
         fi
