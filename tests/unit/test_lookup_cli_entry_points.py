@@ -46,7 +46,7 @@ class TestLookupCLIEntryPoint:
         manifest_file.write_text(json.dumps(manifest_data))
 
         with patch('sys.argv', ['lookup_paths.py', 'hooks', '--manifest', str(manifest_file)]):
-            with patch('lookup_paths.print_search_results') as mock_print:
+            with patch('lookup.cli.print_search_results') as mock_print:
                 result = main()
 
                 assert result == 0
@@ -62,7 +62,7 @@ class TestLookupCLIEntryPoint:
             '--check', '/en/docs/test',
             '--manifest', str(manifest_file)
         ]):
-            with patch('lookup_paths.validate_path') as mock_validate:
+            with patch('lookup.cli.validate_path') as mock_validate:
                 mock_validate.return_value = {
                     'path': '/en/docs/test',
                     'url': 'https://docs.anthropic.com/en/docs/test.md',
@@ -86,7 +86,7 @@ class TestLookupCLIEntryPoint:
             '--check', '/en/docs/missing',
             '--manifest', str(manifest_file)
         ]):
-            with patch('lookup_paths.validate_path') as mock_validate:
+            with patch('lookup.cli.validate_path') as mock_validate:
                 mock_validate.return_value = {
                     'path': '/en/docs/missing',
                     'url': 'https://docs.anthropic.com/en/docs/missing.md',
@@ -117,12 +117,12 @@ class TestLookupCLIEntryPoint:
             '--validate-all',
             '--manifest', str(manifest_file)
         ]):
-            with patch('lookup_paths.batch_validate') as mock_batch:
+            with patch('lookup.cli.batch_validate') as mock_batch:
                 mock_stats = ValidationStats()
                 mock_stats.reachable = 2
                 mock_batch.return_value = mock_stats
 
-                with patch('lookup_paths.print_validation_report'):
+                with patch('lookup.cli.print_validation_report'):
                     result = main()
 
                 assert result == 0
@@ -142,12 +142,12 @@ class TestLookupCLIEntryPoint:
             '--batch-validate', str(batch_file),
             '--manifest', str(manifest_file)
         ]):
-            with patch('lookup_paths.batch_validate') as mock_batch:
+            with patch('lookup.cli.batch_validate') as mock_batch:
                 mock_stats = ValidationStats()
                 mock_stats.reachable = 2
                 mock_batch.return_value = mock_stats
 
-                with patch('lookup_paths.print_validation_report'):
+                with patch('lookup.cli.print_validation_report'):
                     result = main()
 
                 assert result == 0
@@ -187,7 +187,7 @@ class TestLookupCLIEntryPoint:
         }
 
         with patch('sys.argv', ['lookup_paths.py', '--search-content', 'test']):
-            with patch('lookup_paths.load_search_index', return_value=index_data):
+            with patch('lookup.cli.load_search_index', return_value=index_data):
                 result = main()
 
                 # Will succeed if index loads
@@ -196,7 +196,7 @@ class TestLookupCLIEntryPoint:
     def test_main_search_content_no_index(self):
         """Test main() with --search-content but no index."""
         with patch('sys.argv', ['lookup_paths.py', '--search-content', 'test']):
-            with patch('lookup_paths.load_search_index', return_value=None):
+            with patch('lookup.cli.load_search_index', return_value=None):
                 result = main()
 
                 assert result == 1
@@ -219,10 +219,10 @@ class TestLookupCLIEntryPoint:
             '--max-results', '5',
             '--manifest', str(manifest_file)
         ]):
-            with patch('lookup_paths.search_paths') as mock_search:
+            with patch('lookup.cli.search_paths') as mock_search:
                 mock_search.return_value = []
 
-                with patch('lookup_paths.print_search_results'):
+                with patch('lookup.cli.print_search_results'):
                     result = main()
 
                 # Check max_results was passed (as third positional arg)
@@ -269,7 +269,7 @@ class TestLookupCLIEntryPoint:
             'test',
             '--manifest', str(manifest_file)
         ]):
-            with patch('lookup_paths.search_paths', side_effect=KeyboardInterrupt()):
+            with patch('lookup.cli.search_paths', side_effect=KeyboardInterrupt()):
                 result = main()
 
                 assert result == 130
@@ -284,7 +284,7 @@ class TestLookupCLIEntryPoint:
             'test',
             '--manifest', str(manifest_file)
         ]):
-            with patch('lookup_paths.search_paths', side_effect=RuntimeError("Unexpected")):
+            with patch('lookup.cli.search_paths', side_effect=RuntimeError("Unexpected")):
                 result = main()
 
                 assert result == 1
@@ -384,17 +384,17 @@ class TestBatchValidate:
         """Test batch validation with all reachable paths."""
         paths = ["/en/docs/test1", "/en/docs/test2", "/en/docs/test3"]
 
-        def mock_validate(path, base_url):
+        def mock_validate(path, base_url=None, timeout=None):
             return {
                 'path': path,
-                'url': f'{base_url}{path}.md',
+                'url': f'https://platform.claude.com{path}',
                 'status_code': 200,
                 'reachable': True,
                 'redirect': None,
                 'error': None
             }
 
-        with patch('lookup_paths.validate_path', side_effect=mock_validate):
+        with patch('lookup.validation.validate_path', side_effect=mock_validate):
             stats = batch_validate(paths)
 
         summary = stats.get_summary()
@@ -405,11 +405,11 @@ class TestBatchValidate:
         """Test batch validation with mixed results."""
         paths = ["/en/docs/ok", "/en/docs/missing", "/en/docs/timeout"]
 
-        def mock_validate(path, base_url):
+        def mock_validate(path, base_url=None, timeout=None):
             if "missing" in path:
                 return {
                     'path': path,
-                    'url': f'{base_url}{path}.md',
+                    'url': f'https://platform.claude.com{path}',
                     'status_code': 404,
                     'reachable': False,
                     'redirect': None,
@@ -418,7 +418,7 @@ class TestBatchValidate:
             elif "timeout" in path:
                 return {
                     'path': path,
-                    'url': f'{base_url}{path}.md',
+                    'url': f'https://platform.claude.com{path}',
                     'status_code': None,
                     'reachable': False,
                     'redirect': None,
@@ -427,14 +427,14 @@ class TestBatchValidate:
             else:
                 return {
                     'path': path,
-                    'url': f'{base_url}{path}.md',
+                    'url': f'https://platform.claude.com{path}',
                     'status_code': 200,
                     'reachable': True,
                     'redirect': None,
                     'error': None
                 }
 
-        with patch('lookup_paths.validate_path', side_effect=mock_validate):
+        with patch('lookup.validation.validate_path', side_effect=mock_validate):
             stats = batch_validate(paths)
 
         summary = stats.get_summary()
@@ -446,7 +446,7 @@ class TestBatchValidate:
         """Test batch validation with custom worker count."""
         paths = [f"/en/docs/test{i}" for i in range(10)]
 
-        with patch('lookup_paths.validate_path') as mock_validate:
+        with patch('lookup.validation.validate_path') as mock_validate:
             mock_validate.return_value = {
                 'path': '/test',
                 'url': 'http://example.com',
@@ -465,19 +465,19 @@ class TestBatchValidate:
         """Test batch validation handles exceptions."""
         paths = ["/en/docs/test1", "/en/docs/error"]
 
-        def mock_validate(path, base_url):
+        def mock_validate(path, base_url=None, timeout=None):
             if "error" in path:
                 raise Exception("Validation error")
             return {
                 'path': path,
-                'url': f'{base_url}{path}.md',
+                'url': f'https://platform.claude.com{path}',
                 'status_code': 200,
                 'reachable': True,
                 'redirect': None,
                 'error': None
             }
 
-        with patch('lookup_paths.validate_path', side_effect=mock_validate):
+        with patch('lookup.validation.validate_path', side_effect=mock_validate):
             stats = batch_validate(paths)
 
         # Should handle exception gracefully

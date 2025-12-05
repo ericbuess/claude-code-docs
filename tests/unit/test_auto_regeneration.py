@@ -163,46 +163,45 @@ class TestUpdatePathsManifest:
 class TestDiscoverFromAllSitemaps:
     """Test discover_from_all_sitemaps() function."""
 
-    @patch('fetch_claude_docs.discover_claude_code_pages')
+    @patch('fetcher.sitemap.discover_claude_code_pages')
     def test_discover_from_all_sitemaps_combines_results(self, mock_discover):
         """Test that it combines results from all sitemaps."""
         # Mock different results from different sitemaps
+        # NOTE: As of Dec 2025, we only have 2 sitemaps (platform.claude.com and code.claude.com)
         mock_discover.side_effect = [
-            ["/en/api/messages", "/en/docs/about-claude/models"],  # First sitemap
-            ["/docs/en/hooks", "/docs/en/setup"],  # Second sitemap
-            ["/en/api/messages", "/en/resources/glossary"],  # Third sitemap (has duplicate)
+            ["/en/api/messages", "/en/docs/about-claude/models"],  # platform.claude.com
+            ["/docs/en/hooks", "/docs/en/setup"],  # code.claude.com
         ]
 
         session = Mock()
 
         result = discover_from_all_sitemaps(session)
 
-        # Should combine and deduplicate
-        assert len(result) == 5  # 6 total - 1 duplicate
+        # Should combine results from both sitemaps
+        assert len(result) == 4  # 4 unique paths from 2 sitemaps
         assert "/en/api/messages" in result
         assert "/docs/en/hooks" in result
-        assert "/en/resources/glossary" in result
+        assert "/en/docs/about-claude/models" in result
 
-    @patch('fetch_claude_docs.discover_claude_code_pages')
+    @patch('fetcher.sitemap.discover_claude_code_pages')
     def test_discover_from_all_sitemaps_handles_failures(self, mock_discover):
         """Test that it continues even if some sitemaps fail."""
-        # First sitemap works, second fails, third works
+        # First sitemap works, second fails
+        # NOTE: We only have 2 sitemaps now
         mock_discover.side_effect = [
             ["/en/api/messages"],
             Exception("Sitemap unavailable"),
-            ["/docs/en/hooks"],
         ]
 
         session = Mock()
 
         result = discover_from_all_sitemaps(session)
 
-        # Should succeed with partial results
-        assert len(result) == 2
+        # Should succeed with partial results from one sitemap
+        assert len(result) == 1
         assert "/en/api/messages" in result
-        assert "/docs/en/hooks" in result
 
-    @patch('fetch_claude_docs.discover_claude_code_pages')
+    @patch('fetcher.sitemap.discover_claude_code_pages')
     def test_discover_from_all_sitemaps_fails_if_all_fail(self, mock_discover):
         """Test that it raises exception if ALL sitemaps fail."""
         mock_discover.side_effect = Exception("All sitemaps unavailable")

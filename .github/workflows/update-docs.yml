@@ -29,7 +29,17 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r scripts/requirements.txt
-    
+
+    # =================================================================
+    # SAFEGUARD: Count files BEFORE fetch to detect mass deletions
+    # =================================================================
+    - name: Count files before fetch
+      id: count-before
+      run: |
+        BEFORE=$(find docs/ -name "*.md" 2>/dev/null | wc -l)
+        echo "count=$BEFORE" >> $GITHUB_OUTPUT
+        echo "📊 Files before fetch: $BEFORE"
+
     - name: Fetch latest documentation
       id: fetch-docs
       env:
@@ -38,7 +48,51 @@ jobs:
       run: |
         python scripts/fetch_claude_docs.py || echo "fetch_failed=true" >> $GITHUB_OUTPUT
       continue-on-error: true
-    
+
+    # =================================================================
+    # SAFEGUARD: Validate file count AFTER fetch (FAIL + REVERT on trigger)
+    # =================================================================
+    - name: Validate after fetch (safeguard)
+      id: validate-safeguard
+      run: |
+        AFTER=$(find docs/ -name "*.md" 2>/dev/null | wc -l)
+        BEFORE=${{ steps.count-before.outputs.count }}
+
+        echo "📊 Files after fetch: $AFTER (was: $BEFORE)"
+
+        # SAFEGUARD 1: Check deletion percentage
+        if [ "$BEFORE" -gt 0 ]; then
+          DELETED=$((BEFORE - AFTER))
+          if [ "$DELETED" -lt 0 ]; then
+            DELETED=0
+          fi
+          PERCENT=$((DELETED * 100 / BEFORE))
+
+          if [ "$PERCENT" -gt 10 ]; then
+            echo "::error::🚨 SAFEGUARD TRIGGERED: $PERCENT% of files would be deleted!"
+            echo "::error::   Before: $BEFORE files, After: $AFTER files, Would delete: $DELETED"
+            echo "::error::   This indicates sitemap discovery failure."
+            echo ""
+            echo "Reverting docs/ to previous state..."
+            git checkout -- docs/
+            echo "safeguard_triggered=true" >> $GITHUB_OUTPUT
+            echo "::error::Workflow failed. Manual investigation required."
+            exit 1
+          fi
+        fi
+
+        # SAFEGUARD 2: Check minimum file count
+        if [ "$AFTER" -lt 250 ]; then
+          echo "::error::🚨 SAFEGUARD TRIGGERED: Only $AFTER files remain (expected 250+)!"
+          echo "Reverting docs/ to previous state..."
+          git checkout -- docs/
+          echo "safeguard_triggered=true" >> $GITHUB_OUTPUT
+          echo "::error::Workflow failed. Manual investigation required."
+          exit 1
+        fi
+
+        echo "✅ Safeguard validation passed: $AFTER files present"
+
     - name: Check for changes
       id: verify-changed-files
       run: |

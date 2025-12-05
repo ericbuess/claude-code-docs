@@ -350,42 +350,43 @@ class TestUrlToSafeFilename:
 class TestDiscoverSitemapAndBaseUrl:
     """Test sitemap discovery."""
 
-    @patch('fetch_claude_docs.requests.Session.get')
-    def test_discover_sitemap_and_base_url_success(self, mock_get):
+    def test_discover_sitemap_and_base_url_success(self):
         """Test successful sitemap discovery."""
         sitemap_xml = b"""<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
             <url>
-                <loc>https://docs.anthropic.com/en/docs/overview</loc>
+                <loc>https://platform.claude.com/en/docs/overview</loc>
             </url>
         </urlset>"""
 
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.content = sitemap_xml
-        mock_get.return_value = mock_response
 
         session = Mock()
         session.get.return_value = mock_response
 
         sitemap_url, base_url = discover_sitemap_and_base_url(session)
 
-        assert base_url == "https://docs.anthropic.com"
+        assert base_url == "https://platform.claude.com"
         assert "sitemap" in sitemap_url.lower()
 
-    @patch('fetch_claude_docs.requests.Session.get')
-    def test_discover_sitemap_tries_multiple_urls(self, mock_get):
+    def test_discover_sitemap_tries_multiple_urls(self):
         """Test tries multiple sitemap URLs."""
         # First fails, second succeeds
         sitemap_xml = b"""<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
             <url>
-                <loc>https://docs.anthropic.com/en/docs/overview</loc>
+                <loc>https://code.claude.com/docs/en/overview</loc>
             </url>
         </urlset>"""
 
+        call_count = 0
+
         def side_effect(*args, **kwargs):
-            if mock_get.call_count == 1:
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
                 resp = Mock()
                 resp.status_code = 404
                 return resp
@@ -394,8 +395,6 @@ class TestDiscoverSitemapAndBaseUrl:
                 resp.status_code = 200
                 resp.content = sitemap_xml
                 return resp
-
-        mock_get.side_effect = side_effect
 
         session = Mock()
         session.get.side_effect = side_effect
@@ -407,11 +406,8 @@ class TestDiscoverSitemapAndBaseUrl:
             # May fail due to mock complexity, but that's ok
             pass
 
-    @patch('fetch_claude_docs.requests.Session.get')
-    def test_discover_sitemap_error_handling(self, mock_get):
+    def test_discover_sitemap_error_handling(self):
         """Test error handling when sitemap can't be found."""
-        mock_get.side_effect = Exception("Network error")
-
         session = Mock()
         session.get.side_effect = Exception("Network error")
 
@@ -422,25 +418,23 @@ class TestDiscoverSitemapAndBaseUrl:
 class TestDiscoverClaudeCodePages:
     """Test Claude Code page discovery."""
 
-    @patch('fetch_claude_docs.requests.Session.get')
-    def test_discover_claude_code_pages_basic(self, mock_get):
+    def test_discover_claude_code_pages_basic(self):
         """Test basic page discovery - now returns ALL /en/ paths."""
         sitemap_xml = b"""<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-            <url><loc>https://docs.anthropic.com/en/docs/claude-code/overview</loc></url>
-            <url><loc>https://docs.anthropic.com/en/docs/claude-code/setup</loc></url>
-            <url><loc>https://docs.anthropic.com/en/docs/other/page</loc></url>
+            <url><loc>https://platform.claude.com/en/docs/claude-code/overview</loc></url>
+            <url><loc>https://platform.claude.com/en/docs/claude-code/setup</loc></url>
+            <url><loc>https://platform.claude.com/en/docs/other/page</loc></url>
         </urlset>"""
 
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.content = sitemap_xml
-        mock_get.return_value = mock_response
 
         session = Mock()
         session.get.return_value = mock_response
 
-        pages = discover_claude_code_pages(session, "https://docs.anthropic.com/sitemap.xml")
+        pages = discover_claude_code_pages(session, "https://platform.claude.com/sitemap.xml")
 
         # NEW BEHAVIOR: Returns ALL /en/ paths, not just claude-code
         assert len(pages) == 3
@@ -448,26 +442,24 @@ class TestDiscoverClaudeCodePages:
         assert "/en/docs/claude-code/setup" in pages
         assert "/en/docs/other/page" in pages
 
-    @patch('fetch_claude_docs.requests.Session.get')
-    def test_discover_claude_code_pages_filters_patterns(self, mock_get):
+    def test_discover_claude_code_pages_filters_patterns(self):
         """Test filters out only /examples/ and /legacy/ patterns."""
         sitemap_xml = b"""<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-            <url><loc>https://docs.anthropic.com/en/docs/claude-code/overview</loc></url>
-            <url><loc>https://docs.anthropic.com/en/docs/claude-code/tool-use/bash</loc></url>
-            <url><loc>https://docs.anthropic.com/en/examples/test</loc></url>
-            <url><loc>https://docs.anthropic.com/en/legacy/old-page</loc></url>
+            <url><loc>https://platform.claude.com/en/docs/claude-code/overview</loc></url>
+            <url><loc>https://platform.claude.com/en/docs/claude-code/tool-use/bash</loc></url>
+            <url><loc>https://platform.claude.com/en/examples/test</loc></url>
+            <url><loc>https://platform.claude.com/en/legacy/old-page</loc></url>
         </urlset>"""
 
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.content = sitemap_xml
-        mock_get.return_value = mock_response
 
         session = Mock()
         session.get.return_value = mock_response
 
-        pages = discover_claude_code_pages(session, "https://docs.anthropic.com/sitemap.xml")
+        pages = discover_claude_code_pages(session, "https://platform.claude.com/sitemap.xml")
 
         # NEW BEHAVIOR: Only excludes /examples/ and /legacy/
         # tool-use is INCLUDED (we need agent SDK tool docs)
@@ -475,15 +467,12 @@ class TestDiscoverClaudeCodePages:
         assert not any("examples" in p for p in pages)  # examples excluded
         assert not any("legacy" in p for p in pages)  # legacy excluded
 
-    @patch('fetch_claude_docs.requests.Session.get')
-    def test_discover_claude_code_pages_error_fallback(self, mock_get):
+    def test_discover_claude_code_pages_error_fallback(self):
         """Test fallback when discovery fails."""
-        mock_get.side_effect = Exception("Network error")
-
         session = Mock()
         session.get.side_effect = Exception("Network error")
 
-        pages = discover_claude_code_pages(session, "https://docs.anthropic.com/sitemap.xml")
+        pages = discover_claude_code_pages(session, "https://platform.claude.com/sitemap.xml")
 
         # Should return fallback pages
         assert len(pages) > 0
@@ -597,26 +586,27 @@ class TestGetBaseUrlForPath:
         for path in code_claude_paths:
             assert get_base_url_for_path(path) == "https://code.claude.com"
 
-        # OLD /en/docs/claude-code/* paths now route to docs.claude.com (they redirect)
+        # OLD /en/docs/claude-code/* paths now route to platform.claude.com (they redirect)
+        # NOTE: As of Dec 2025, docs.claude.com is BROKEN - use platform.claude.com
         old_paths = [
             "/en/docs/claude-code/hooks",
             "/en/docs/claude-code/setup",
         ]
         for path in old_paths:
-            assert get_base_url_for_path(path) == "https://docs.claude.com"
+            assert get_base_url_for_path(path) == "https://platform.claude.com"
 
-    def test_api_paths_use_docs_domain(self):
-        """Test that API paths use docs.claude.com."""
+    def test_api_paths_use_platform_domain(self):
+        """Test that API paths use platform.claude.com (NOT docs.claude.com which is broken)."""
         api_paths = [
             "/en/api/messages",
             "/en/api/admin-api/apikeys/get-api-key",
             "/en/api/admin-api/users/list-users",
         ]
         for path in api_paths:
-            assert get_base_url_for_path(path) == "https://docs.claude.com"
+            assert get_base_url_for_path(path) == "https://platform.claude.com"
 
-    def test_other_docs_use_docs_domain(self):
-        """Test that non-Claude-Code docs use docs.claude.com."""
+    def test_other_docs_use_platform_domain(self):
+        """Test that non-Claude-Code docs use platform.claude.com."""
         other_paths = [
             "/en/docs/about-claude/models",
             "/en/docs/build-with-claude/prompt-engineering",
@@ -626,7 +616,7 @@ class TestGetBaseUrlForPath:
             "/en/home",
         ]
         for path in other_paths:
-            assert get_base_url_for_path(path) == "https://docs.claude.com"
+            assert get_base_url_for_path(path) == "https://platform.claude.com"
 
 
 class TestConvertLegacyPathToFetchUrl:
