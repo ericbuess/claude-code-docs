@@ -575,13 +575,14 @@ class TestGetBaseUrlForPath:
     """Test base URL determination for different documentation paths."""
 
     def test_claude_code_paths_use_code_domain(self):
-        """Test that /docs/en/ paths use code.claude.com (NEW domain structure)."""
-        # NEW BEHAVIOR: /docs/en/* routes to code.claude.com
+        """Test that Claude Code CLI paths use code.claude.com (NEW domain structure)."""
+        # Claude Code CLI pages are identified by their specific page names
+        # These ~46 pages are hosted on code.claude.com with /docs/en/ prefix
         code_claude_paths = [
             "/docs/en/hooks",
             "/docs/en/setup",
             "/docs/en/mcp",
-            "/docs/en/sdk/overview",
+            "/docs/en/sdk/migration-guide",  # Only sdk/migration-guide is a CLI page, not sdk/overview
         ]
         for path in code_claude_paths:
             assert get_base_url_for_path(path) == "https://code.claude.com"

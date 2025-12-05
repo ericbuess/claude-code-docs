@@ -1,12 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
-# Claude Code Documentation Helper Script v0.4.2
+# Claude Code Documentation Helper Script v0.5.0
 # This script handles all /docs command functionality
 # Installation path: ~/.claude-code-docs/claude-docs-helper.sh
 
 # Script version
-SCRIPT_VERSION="0.4.2"
+SCRIPT_VERSION="0.5.0"
 
 # Fixed installation path (no need for placeholder replacement)
 DOCS_PATH="$HOME/.claude-code-docs"

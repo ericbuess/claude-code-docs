@@ -6,7 +6,7 @@ set -euo pipefail
 # Installation path: ~/.claude-code-docs/scripts/claude-docs-helper.sh
 
 # Script version
-ENHANCED_VERSION="0.4.2"
+ENHANCED_VERSION="0.5.0"
 
 # Fixed installation path
 DOCS_PATH="$HOME/.claude-code-docs"

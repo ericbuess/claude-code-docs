@@ -102,6 +102,41 @@ Works on: All interactive shells
 - **Required**: git, jq, curl (usually pre-installed)
 - **Optional**: Python 3.9+ (enables search/validation features)
 
+## Upgrading
+
+### From v0.4.x to v0.5.0
+
+Version 0.5.0 includes significant improvements requiring a fresh installation:
+
+```bash
+# Re-run the installer - it handles everything automatically
+curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/install.sh | bash
+```
+
+The installer will:
+1. Detect your existing v0.4.x installation
+2. Show you what's changing (version, doc count, new features)
+3. Perform an atomic upgrade
+4. Verify the new installation
+
+**What You Get:**
+
+| Metric | v0.4.x | v0.5.0 |
+|--------|--------|--------|
+| Documentation Files | ~270 | 571 |
+| Tracked Paths | 273 | 573 |
+| Python Modules | Monolithic | Modular (15 modules) |
+| Safety Thresholds | None | 3 safeguards |
+
+**What Changes:**
+- Filename convention: `docs__en__hooks.md` → `claude-code__hooks.md`
+- Script structure: Flat files → Organized packages (`fetcher/`, `lookup/`)
+
+**What Stays the Same:**
+- `/docs` command interface
+- All user configs in `~/.claude/`
+- Python feature detection (3.9+ optional)
+
 ## Usage
 
 ### Basic Commands

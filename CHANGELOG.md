@@ -5,6 +5,50 @@ All notable changes to the enhanced edition of claude-code-docs will be document
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2025-12-06
+
+### Breaking Changes
+- **Filename Convention Changed**: All Claude Code CLI docs renamed to use domain-based prefix
+  - Old: `docs__en__<topic>.md` (e.g., `docs__en__hooks.md`)
+  - New: `claude-code__<topic>.md` (e.g., `claude-code__hooks.md`)
+  - Platform docs use: `docs__en__<path>.md`
+- **Scripts Restructured**: Monolithic scripts replaced with modular packages
+  - Added: `scripts/fetcher/` (8 modules for documentation fetching)
+  - Added: `scripts/lookup/` (7 modules for search and validation)
+  - Removed: `main.py`, `update_sitemap.py`, `extract_paths.py`, `clean_manifest.py`
+
+### Added
+- **2x Documentation Coverage**: 571 files (up from ~270)
+- **573 Tracked Paths**: Comprehensive coverage across 6 categories
+  - API Reference: 377 paths (65.8%)
+  - Core Documentation: 82 paths (14.3%)
+  - Prompt Library: 65 paths (11.3%)
+  - Claude Code: 46 paths (8.0%)
+  - Release Notes: 2 paths
+  - Resources: 1 path
+- **Safety Thresholds**: Prevent catastrophic deletion during automated sync
+  - `MIN_DISCOVERY_THRESHOLD`: 200 paths minimum from sitemaps
+  - `MAX_DELETION_PERCENT`: 10% maximum deletion per sync
+  - `MIN_EXPECTED_FILES`: 250 minimum files required
+- **Modular Architecture**: Better code organization and testability
+  - `fetcher/` package: config, manifest, paths, sitemap, content, safeguards, cli
+  - `lookup/` package: config, manifest, search, validation, formatting, cli
+- **Domain-Based Naming**: Clear source identification in filenames
+  - `claude-code__*.md` from code.claude.com
+  - `docs__en__*.md` from platform.claude.com
+- **Version-Aware Upgrades**: Installer detects existing version and shows upgrade info
+
+### Changed
+- **Manifest Structure**: `paths_manifest.json` now tracks 573 paths in 6 categories
+- **Search Index**: Updated to cover all 571 documentation files
+- **Python Packages**: Thin wrappers (`fetch_claude_docs.py`, `lookup_paths.py`) for backward compatibility
+
+### Upgrade Notes
+- **Seamless Upgrade**: Run `install.sh` again to upgrade from any v0.4.x version
+- **No Data Loss**: All user configs remain in `~/.claude/`
+- **Atomic Operation**: Installation uses temp directory, moves atomically
+- The installer will show before/after comparison during upgrade
+
 ## [0.4.2] - 2025-11-25
 
 ### Fixed
