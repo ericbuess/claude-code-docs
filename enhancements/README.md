@@ -11,7 +11,7 @@ The enhanced edition extends [ericbuess/claude-code-docs](https://github.com/eri
 ### Core Documentation
 
 - **[FEATURES.md](FEATURES.md)** - Complete feature list and technical details
-  - Documentation coverage (273 active paths tracked)
+  - Documentation coverage (573 active paths tracked)
   - Full-text search capabilities
   - Path validation tools
   - Advanced search and filtering
@@ -19,7 +19,7 @@ The enhanced edition extends [ericbuess/claude-code-docs](https://github.com/eri
   - Performance benchmarks
 
 - **[CAPABILITIES.md](CAPABILITIES.md)** - Detailed capability documentation
-  - Documentation coverage breakdown (7 categories)
+  - Documentation coverage breakdown (6 categories)
   - Search capabilities (path + content search)
   - Validation features (HTTP reachability testing)
   - Advanced features (change detection, batch operations)
@@ -62,8 +62,8 @@ If you're working on the codebase:
 The enhanced edition uses a single installation approach:
 
 **Always Installed**:
-- 273 documentation paths tracked in manifest
-- ~266-270 files downloaded (varies based on fetch success)
+- 573 documentation paths tracked in manifest
+- 571 files downloaded
 - Python scripts for enhanced features
 
 **Runtime Behavior** (automatic feature detection):
@@ -75,8 +75,8 @@ No separate "modes" - features activate automatically based on Python availabili
 ### Key Components
 
 **Documentation Coverage**:
-- 7 categories of documentation
-- 273 total paths
+- 6 categories of documentation
+- 573 total paths
 - All available English documentation
 
 **Search System**:
@@ -99,28 +99,25 @@ No separate "modes" - features activate automatically based on Python availabili
 
 ## Category Breakdown
 
-The 273 documentation paths are organized into:
+The 573 documentation paths are organized into:
 
-1. **Core Documentation** (80 paths - 29.3%)
-   - About Claude, Build with Claude, Test and Evaluate
+1. **API Reference** (377 paths - 65.8%)
+   - Complete API docs, Admin API, Agent SDK, multi-language SDK docs (Python, TypeScript, Go, Java, Kotlin, Ruby)
 
-2. **API Reference** (79 paths - 28.9%)
-   - Administration API, Agent SDK, Messages API, Skills API
+2. **Core Documentation** (82 paths - 14.3%)
+   - About Claude, Build with Claude, Test and Evaluate, Guides
 
-3. **Prompt Library** (65 paths - 23.8%)
+3. **Prompt Library** (65 paths - 11.3%)
    - 65 unique prompt templates
 
-4. **Claude Code** (45 paths - 16.5%)
-   - Getting started, IDE integrations, SDK, advanced features
+4. **Claude Code** (46 paths - 8.0%)
+   - CLI-specific docs, hooks, skills, MCP, IDE integrations
 
-5. **Release Notes** (2 paths)
+5. **Release Notes** (2 paths - 0.3%)
    - Overview and system prompts updates
 
-6. **Resources** (1 path)
+6. **Resources** (1 path - 0.2%)
    - Resources overview
-
-7. **Uncategorized** (1 path)
-   - Home page
 
 ## Performance
 
@@ -128,7 +125,7 @@ Key performance metrics:
 
 - **Search**: <100ms per query
 - **Fetch**: ~32s per 100 paths
-- **Validation**: ~30s for all 273 paths
+- **Validation**: ~60s for all 573 paths
 - **Memory**: ~35 MB typical usage
 - **Index size**: ~45KB
 
@@ -154,7 +151,7 @@ enhancements/
 ### For Developers
 
 - **docs-dev/** - Developer documentation (if exists)
-- **tests/** - Test suite (577 tests)
+- **tests/** - Test suite (294 tests)
 - **scripts/** - Python implementation scripts
 
 ## Use Cases
@@ -202,7 +199,7 @@ All enhancements are designed to be:
 
 - **Optional**: Standard mode works without Python
 - **Backward compatible**: Doesn't break upstream functionality
-- **Well tested**: 577 tests with 99.6% pass rate (564 passing, 2 skipped, 81.41% coverage, target: 82%)
+- **Well tested**: 294 tests with 99.3% pass rate (294 passing, 2 skipped)
 - **Documented**: Comprehensive documentation
 - **Modular**: Can adopt features independently
 
@@ -212,7 +209,7 @@ These enhancements are designed for potential contribution back to upstream:
 
 **Proposed PRs**:
 1. Optional enhanced mode installation
-2. Extended path coverage (273 paths)
+2. Extended path coverage (573 paths)
 3. Full-text search capability
 4. Testing framework
 5. Enhanced documentation

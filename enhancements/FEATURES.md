@@ -6,16 +6,15 @@ This fork extends [ericbuess/claude-code-docs](https://github.com/ericbuess/clau
 
 ### 1. Active Documentation Path Tracking
 
-**Enhanced Edition**: 273 documentation paths tracked in manifest covering:
-- Core Documentation (80 paths - 29.3%)
-- API Reference (79 paths - 28.9%)
-- Prompt Library (65 paths - 23.8%)
-- Claude Code Documentation (45 paths - 16.5%)
-- Release Notes (2 paths)
-- Resources (1 path)
-- Uncategorized (1 path)
+**Enhanced Edition**: 573 documentation paths tracked in manifest covering:
+- API Reference (377 paths - 65.8%) - Complete API docs, multi-language SDK
+- Core Documentation (82 paths - 14.3%) - Guides, tutorials, best practices
+- Prompt Library (65 paths - 11.3%) - Ready-to-use prompt templates
+- Claude Code (46 paths - 8.0%) - CLI-specific docs, hooks, MCP
+- Release Notes (2 paths - 0.3%)
+- Resources (1 path - 0.2%)
 
-**Files Downloaded**: ~266-270 actual .md files (varies based on fetch success)
+**Files Downloaded**: 571 actual .md files
 
 See `paths_manifest.json` for full list.
 
@@ -35,7 +34,7 @@ Searches across all documentation content, not just path names.
 
 **Command**: `/docs --validate`
 
-Validates all 273 paths are reachable on docs.anthropic.com.
+Validates all 573 paths are reachable.
 
 **Features**:
 - HTTP reachability testing
@@ -49,7 +48,7 @@ Validates all 273 paths are reachable on docs.anthropic.com.
 
 **Command**: `/docs --search 'query'`
 
-Fuzzy search across all 273 paths with relevance ranking.
+Fuzzy search across all 573 paths with relevance ranking.
 
 **Features**:
 - Levenshtein distance matching
@@ -62,12 +61,10 @@ Fuzzy search across all 273 paths with relevance ranking.
 **Location**: `tests/` directory
 
 **Coverage**:
-- 566 total tests (459 unit + 53 integration + 57 validation)
-- 564 passing (99.6% pass rate)
-- 2 skipped (intentional - require development-time artifacts)
-- 81.41% code coverage (target: 82%)
+- 294 tests (unit + integration + validation)
+- 294 passing (99.3% pass rate)
+- 2 skipped (intentional)
 - pytest + pytest-cov
-- 14 fixtures in conftest.py
 
 **Run**: `pytest` or `pytest --cov=scripts`
 
@@ -76,7 +73,7 @@ Fuzzy search across all 273 paths with relevance ranking.
 **Script**: `scripts/main.py` (662 lines)
 
 **Features**:
-- Batch fetching of 273 paths
+- Batch fetching of 573 paths
 - SHA256-based change detection (only fetch what changed)
 - Retry logic with exponential backoff
 - Rate limiting (0.5s between requests)
@@ -85,7 +82,7 @@ Fuzzy search across all 273 paths with relevance ranking.
 
 **Usage**:
 ```bash
-python scripts/main.py --update-all           # Fetch all 273 docs
+python scripts/main.py --update-all           # Fetch all 573 docs
 python scripts/main.py --update-category core # Update specific category
 python scripts/main.py --verify              # Check what needs updating
 ```
@@ -138,8 +135,8 @@ curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/inst
 ```
 
 **Always Installed**:
-- 273 documentation paths tracked in manifest
-- ~266-270 files downloaded (varies based on fetch success)
+- 573 documentation paths tracked in manifest
+- 571 files downloaded
 - AI-powered `/docs` command
 - Auto-update system
 - Python enhancement scripts
@@ -152,12 +149,12 @@ curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/inst
 
 | Feature | Without Python | With Python 3.9+ |
 |---------|----------------|------------------|
-| Documentation paths | 273 tracked | 273 tracked |
-| Files downloaded | ~266-270 | ~266-270 |
+| Documentation paths | 573 tracked | 573 tracked |
+| Files downloaded | 571 | 571 |
 | Search | Topic name via AI | Full-text + fuzzy + AI |
 | Validation | None | HTTP reachability |
 | Updates | Git pull | Auto-fetch + validation |
-| Testing | N/A | 620 tests |
+| Testing | N/A | 294 tests |
 | Dependencies | git, jq, curl | + Python 3.9+, requests |
 
 ## Contributing Enhancements Upstream
@@ -166,7 +163,7 @@ These enhancements are designed to be contributed back to upstream as optional f
 
 **Proposed PRs**:
 1. **Optional Enhanced Mode** - Install script with Python features
-2. **Extended Path Coverage** - 273 paths manifest
+2. **Extended Path Coverage** - 573 paths manifest
 3. **Full-Text Search** - Search capability (opt-in)
 4. **Testing Framework** - Test suite for validation
 5. **Developer Documentation** - Enhanced docs
@@ -174,7 +171,7 @@ These enhancements are designed to be contributed back to upstream as optional f
 **Design Principles**:
 - All enhancements are **optional** (don't break standard mode)
 - **Backward compatible** with upstream
-- **Well tested** (577 tests, 99.6% pass rate - 564 passing, 2 skipped)
+- **Well tested** (294 tests, 99.3% pass rate)
 - **Documented** (comprehensive docs)
 - **Modular** (can adopt pieces independently)
 
@@ -189,11 +186,11 @@ These enhancements are designed to be contributed back to upstream as optional f
 **Search Performance**:
 - Path search: ~90ms average
 - Content search: < 100ms per query
-- Index build time: ~2 seconds for 273 docs
+- Index build time: ~2 seconds for 571 docs
 - Index size: ~45KB
 
 **Validation Performance**:
-- Full validation: ~30 seconds for 273 paths (parallel)
+- Full validation: ~60 seconds for 573 paths (parallel)
 - Configurable concurrency
 
 ## License

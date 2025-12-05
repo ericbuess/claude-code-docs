@@ -28,6 +28,7 @@ from .manifest import (
 
 from .paths import (
     url_to_safe_filename,
+    is_claude_code_cli_page,
     categorize_path,
     convert_legacy_path_to_fetch_url,
     get_base_url_for_path,
@@ -74,6 +75,7 @@ __all__ = [
     'validate_repository_config',
     # Paths
     'url_to_safe_filename',
+    'is_claude_code_cli_page',
     'categorize_path',
     'convert_legacy_path_to_fetch_url',
     'get_base_url_for_path',

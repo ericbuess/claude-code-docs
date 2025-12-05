@@ -22,7 +22,7 @@ This repository uses a **graceful degradation** approach:
 
 **Installation** (always the same):
 - 573 documentation paths tracked in manifest (6 categories)
-- ~267 files downloaded
+- 571 files downloaded
 - Python scripts for enhanced features
 - Full test suite (294 tests) and GitHub workflows
 
@@ -409,7 +409,7 @@ See `enhancements/` directory for comprehensive feature documentation and exampl
 
 ```
 /
-├── docs/                   # ~267 documentation files (.md format)
+├── docs/                   # 571 documentation files (.md format)
 │   ├── docs_manifest.json  # File tracking manifest
 │   └── .search_index.json  # Full-text search index (Python-generated)
 ├── scripts/

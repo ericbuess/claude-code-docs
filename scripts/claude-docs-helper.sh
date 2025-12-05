@@ -307,7 +307,7 @@ show_version() {
         echo "  ✅ Path validation: Available"
     else
         echo "  ❌ Enhanced features: DISABLED"
-        echo "     (268 documentation files available, Python features require Python 3.9+)"
+        echo "     (571 documentation files available, Python features require Python 3.9+)"
     fi
     echo ""
 }

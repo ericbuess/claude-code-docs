@@ -590,7 +590,7 @@ if [[ ! -d "$INSTALL_DIR/docs" ]]; then
 else
     DOC_COUNT=$(find "$INSTALL_DIR/docs" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
     if [[ "$DOC_COUNT" -lt 100 ]]; then
-        echo "  ⚠️  Only $DOC_COUNT documentation files found (expected ~267)"
+        echo "  ⚠️  Only $DOC_COUNT documentation files found (expected ~571)"
     else
         echo "  ✓ Documentation files installed ($DOC_COUNT files)"
     fi

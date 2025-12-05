@@ -94,13 +94,18 @@ def main():
             try:
                 filename, content = fetch_markdown_content(page_path, session, base_url)
 
-                # Check if content has changed
+                # Check if content has changed OR file doesn't exist on disk
                 old_hash = manifest.get("files", {}).get(filename, {}).get("hash", "")
                 old_entry = manifest.get("files", {}).get(filename, {})
+                file_path = docs_dir / filename
+                file_exists = file_path.exists()
 
-                if content_has_changed(content, old_hash):
+                if content_has_changed(content, old_hash) or not file_exists:
                     content_hash = save_markdown_file(docs_dir, filename, content)
-                    logger.info(f"Updated: {filename}")
+                    if not file_exists:
+                        logger.info(f"Created: {filename}")
+                    else:
+                        logger.info(f"Updated: {filename}")
                     # Only update timestamp when content actually changes
                     last_updated = datetime.now().isoformat()
                 else:

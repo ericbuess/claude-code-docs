@@ -22,7 +22,7 @@ Stop hunting through scattered docs. This tool provides instant access to **573 
 ## Key Features
 
 - 🤖 **AI-Powered Search** - Ask questions naturally, Claude understands intent and routes intelligently
-- 📚 **Complete Coverage** - 573 documentation paths tracked, ~267 files downloaded
+- 📚 **Complete Coverage** - 573 documentation paths tracked, 571 files downloaded
 - 🔍 **Semantic Understanding** - No primitive keyword matching, leverages Claude's language understanding
 - ✅ **Auto-Validated** - Continuous validation detects broken links automatically
 - 🔄 **Always Fresh** - Repository updated every 3 hours; run `/docs -t` to pull latest
@@ -50,7 +50,7 @@ The magic is in combining a simple local file system with Claude's language unde
 - Release Notes (2 paths) - Version history
 - Resources (1 path) - Additional resources
 
-**Files Downloaded** (~267 actual .md files)
+**Files Downloaded** (571 actual .md files)
 
 **Python Features** (optional, requires Python 3.9+):
 - Full-text search across all content
@@ -69,7 +69,7 @@ curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/inst
 
 **What it does:**
 1. Clones repository to `~/.claude-code-docs`
-2. Installs ~267 documentation files
+2. Installs 571 documentation files
 3. Sets up `/docs` command in Claude Code
 4. Verifies installation integrity
 
@@ -206,7 +206,7 @@ For power users who want direct access to helper functions:
 
 **Single Installation** - Always installs complete repository:
 - 573 documentation paths tracked in manifest (6 categories)
-- ~267 files downloaded
+- 571 files downloaded
 - Modular Python packages for enhanced features
 - Full test suite (294 tests)
 

@@ -8,54 +8,49 @@ This document describes the actual capabilities of the enhanced edition of claud
 
 The enhanced edition provides comprehensive coverage of Anthropic's documentation:
 
-- **Total Paths Tracked**: 273 documentation paths (in `paths_manifest.json`)
-- **Files Downloaded**: ~266-270 actual .md files (varies based on fetch success)
+- **Total Paths Tracked**: 573 documentation paths (in `paths_manifest.json`)
+- **Files Downloaded**: 571 actual .md files
 - **Auto-Discovery**: Paths discovered from official sitemaps, regenerated automatically
 
 ### Category Breakdown
 
-Documentation is organized into 7 primary categories:
+Documentation is organized into 6 primary categories:
 
-1. **Core Documentation** (80 paths - 29.3%)
+1. **API Reference** (377 paths - 65.8%)
+   - Complete API documentation
+   - Administration API (users, workspaces, API keys, invites)
+   - Agent SDK documentation
+   - Multi-language SDK docs (Python, TypeScript, Go, Java, Kotlin, Ruby)
+   - Messages API, Files API, Batch processing APIs, Skills API
+
+2. **Core Documentation** (82 paths - 14.3%)
    - About Claude (models, pricing, security, compliance)
    - Build with Claude (prompt engineering, text generation, streaming)
    - Test and Evaluate (guardrails, success metrics, testing)
    - Use case guides and examples
    - Getting started and quickstart guides
 
-2. **API Reference** (79 paths - 28.9%)
-   - Administration API (users, workspaces, API keys, invites)
-   - Agent SDK (Python, TypeScript, MCP, custom tools)
-   - Messages API and streaming
-   - Files API (create, list, delete, content)
-   - Batch processing APIs
-   - Skills API
-
-3. **Prompt Library** (65 paths - 23.8%)
+3. **Prompt Library** (65 paths - 11.3%)
    - Coding assistants (code consultant, bug buster, function fabricator)
    - Data processing (CSV converter, data organizer, spreadsheet sorcerer)
    - Writing tools (grammar genie, prose polisher, memo maestro)
    - Creative prompts (storytelling sidekick, pun-dit, cosmic keystrokes)
    - Professional tools (meeting scribe, career coach, interview crafter)
 
-4. **Claude Code Documentation** (45 paths - 16.5%)
-   - Getting started and quickstart
+4. **Claude Code** (46 paths - 8.0%)
+   - CLI-specific documentation
    - IDE integrations (VS Code, JetBrains)
    - CI/CD integrations (GitHub Actions, GitLab CI/CD)
    - Cloud platforms (Amazon Bedrock, Google Vertex AI)
-   - SDK (Python, TypeScript)
    - Advanced features (MCP, hooks, plugins, skills)
    - Configuration and troubleshooting
 
-5. **Release Notes** (2 paths)
+5. **Release Notes** (2 paths - 0.3%)
    - API release notes
    - System prompts updates
 
-6. **Resources** (1 path)
+6. **Resources** (1 path - 0.2%)
    - Resources overview
-
-7. **Uncategorized** (1 path)
-   - Home page
 
 ## Search Capabilities
 
@@ -63,7 +58,7 @@ Documentation is organized into 7 primary categories:
 
 **Command**: `--search <query>`
 
-Fuzzy search across all 273 documentation paths with intelligent matching:
+Fuzzy search across all 573 documentation paths with intelligent matching:
 
 - **Pattern matching**: Finds paths containing search terms
 - **Fuzzy matching**: Suggests similar paths when exact match not found
@@ -91,7 +86,7 @@ Searches within documentation content (not just path names):
 **Implementation**:
 - Pre-built search index: `docs/.search_index.json`
 - Index builder: `scripts/build_search_index.py`
-- Index size: ~45KB for 273 documents
+- Index size: ~45KB for 571 documents
 - Search speed: <100ms per query
 
 ## Validation Features
@@ -109,7 +104,7 @@ Validates HTTP reachability of all documentation paths:
 - **Broken link detection**: Identifies and reports unreachable paths
 
 **Validation metrics**:
-- Average validation time: ~30 seconds for 273 paths
+- Average validation time: ~60 seconds for 573 paths
 - Concurrent requests: Configurable (default: 10)
 - Request timeout: 10 seconds per path
 - Error handling: Retries with exponential backoff
@@ -149,7 +144,7 @@ Efficiently updates only changed documentation:
 
 Advanced fetching with enterprise features:
 
-- **Batch fetching**: Update all 273 paths efficiently
+- **Batch fetching**: Update all 573 paths efficiently
 - **Category updates**: Update specific categories only
 - **Rate limiting**: 0.5s delay between requests
 - **Retry logic**: Exponential backoff on failures
@@ -206,14 +201,15 @@ Advanced fetching with enterprise features:
 {
   "metadata": {
     "generated_at": "timestamp",
-    "total_paths": 273,
-    "cleaned_at": "timestamp",
-    "removed_broken_paths": 10,
-    "original_total_paths": 459
+    "total_paths": 573,
+    "source": "sitemap_discovery",
+    "last_regenerated": "timestamp"
   },
   "categories": {
-    "core_documentation": [...],
     "api_reference": [...],
+    "core_documentation": [...],
+    "prompt_library": [...],
+    "claude_code": [...],
     ...
   }
 }
@@ -246,7 +242,7 @@ Enhanced features integrate seamlessly:
 
 - **Path search**: ~90ms average
 - **Content search**: <100ms per query
-- **Index build**: ~2 seconds for 273 documents
+- **Index build**: ~2 seconds for 571 documents
 - **Index size**: ~45KB (minimal disk usage)
 
 ### Fetch Performance
@@ -258,7 +254,7 @@ Enhanced features integrate seamlessly:
 
 ### Validation Performance
 
-- **Full validation**: ~30 seconds for 273 paths
+- **Full validation**: ~60 seconds for 573 paths
 - **Parallel requests**: 10 concurrent by default
 - **Success rate**: >99%
 - **Resource usage**: Low CPU, minimal memory
@@ -267,13 +263,13 @@ Enhanced features integrate seamlessly:
 
 | Capability | Without Python | With Python 3.9+ |
 |-----------|----------------|------------------|
-| Documentation paths tracked | 273 | 273 |
-| Files downloaded | ~266-270 | ~266-270 |
+| Documentation paths tracked | 573 | 573 |
+| Files downloaded | 571 | 571 |
 | Search method | Topic name via AI | Path + content + AI |
 | Validation | None | HTTP reachability |
 | Update method | Git pull | Auto-fetch + validation |
-| Category support | Yes (7 categories) | Yes (7 categories) |
-| Testing | N/A | 620 tests |
+| Category support | Yes (6 categories) | Yes (6 categories) |
+| Testing | N/A | 294 tests |
 
 ## Use Cases
 

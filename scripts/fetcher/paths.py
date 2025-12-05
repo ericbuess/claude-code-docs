@@ -16,23 +16,28 @@ from typing import List
 from .config import logger
 
 
-def url_to_safe_filename(url_path: str) -> str:
+def url_to_safe_filename(url_path: str, source_domain: str = None) -> str:
     """
-    Convert a URL path to a safe filename using standardized en__ naming convention.
+    Convert a URL path to a safe filename with domain-based naming convention.
 
-    Preserves full URL path structure by converting slashes to double underscores.
-    Sanitizes characters to whitelist: alphanumeric, hyphens, underscores, and dots.
+    Domain distinction strategy (to avoid naming conflicts):
+    - Files from code.claude.com → claude-code__<page>.md (e.g., claude-code__hooks.md)
+    - Files from platform.claude.com → docs__en__<path>.md (existing convention)
+
+    This is necessary because BOTH domains use /docs/en/ URL prefix.
 
     Examples:
-        /en/docs/claude-code/hooks → en__docs__claude-code__hooks.md
-        /en/api/messages → en__api__messages.md
-        /en/docs/build-with-claude/prompt-engineering/overview → en__docs__build-with-claude__prompt-engineering__overview.md
+        /docs/en/hooks (code.claude.com) → claude-code__hooks.md
+        /docs/en/api/messages (platform.claude.com) → docs__en__api__messages.md
+        /docs/en/about-claude/pricing (platform.claude.com) → docs__en__about-claude__pricing.md
 
     Args:
-        url_path: URL path like '/en/docs/claude-code/hooks'
+        url_path: URL path like '/docs/en/hooks'
+        source_domain: Source domain ('code.claude.com' or 'platform.claude.com')
+                       If None, determines from path using is_claude_code_cli_page()
 
     Returns:
-        Safe filename like 'en__docs__claude-code__hooks.md'
+        Safe filename with appropriate prefix
 
     Raises:
         ValueError: If the resulting filename is empty or invalid
@@ -40,8 +45,25 @@ def url_to_safe_filename(url_path: str) -> str:
     # Strip leading and trailing slashes
     path = url_path.strip('/')
 
-    # Replace all slashes with double underscores
-    safe_name = path.replace('/', '__')
+    # Determine if this is a Claude Code CLI page
+    is_cli_page = False
+    if source_domain == 'code.claude.com':
+        is_cli_page = True
+    elif source_domain is None:
+        # Auto-detect using the known list of CLI pages
+        is_cli_page = is_claude_code_cli_page(url_path)
+
+    if is_cli_page:
+        # Claude Code CLI docs: /docs/en/hooks -> claude-code__hooks.md
+        # Extract just the page name (last segment)
+        page_name = path.rstrip('/').split('/')[-1]
+        # Handle nested paths like sdk/migration-guide
+        if path.startswith('docs/en/sdk/'):
+            page_name = 'sdk__' + page_name
+        safe_name = f"claude-code__{page_name}"
+    else:
+        # Platform docs: /docs/en/api/messages -> docs__en__api__messages.md
+        safe_name = path.replace('/', '__')
 
     # Sanitize: only keep alphanumeric, hyphens, underscores, and dots
     # This prevents path traversal and injection attacks
@@ -56,6 +78,48 @@ def url_to_safe_filename(url_path: str) -> str:
         sanitized += '.md'
 
     return sanitized
+
+
+def is_claude_code_cli_page(path: str) -> bool:
+    """
+    Check if a path is a Claude Code CLI page (hosted on code.claude.com).
+
+    These are the ~46 pages from code.claude.com/docs/sitemap.xml that need
+    the claude-code__ filename prefix to avoid conflicts with platform.claude.com.
+
+    Args:
+        path: Documentation path (e.g., /docs/en/hooks)
+
+    Returns:
+        True if this is a Claude Code CLI page
+    """
+    # Claude Code CLI pages - these specific page names are hosted on code.claude.com
+    CLAUDE_CODE_CLI_PAGES = {
+        'amazon-bedrock', 'analytics', 'checkpointing', 'claude-code-on-the-web',
+        'cli-reference', 'common-workflows', 'costs', 'data-usage', 'desktop',
+        'devcontainer', 'github-actions', 'gitlab-ci-cd', 'google-vertex-ai',
+        'headless', 'hooks', 'hooks-guide', 'iam', 'interactive-mode', 'jetbrains',
+        'legal-and-compliance', 'llm-gateway', 'mcp', 'memory', 'microsoft-foundry',
+        'model-config', 'monitoring-usage', 'network-config', 'output-styles',
+        'overview', 'plugin-marketplaces', 'plugins', 'plugins-reference',
+        'quickstart', 'sandboxing', 'security', 'settings', 'setup', 'skills',
+        'slash-commands', 'statusline', 'sub-agents', 'terminal-config',
+        'third-party-integrations', 'troubleshooting', 'vs-code',
+    }
+
+    # Also check for SDK migration guide which is a nested path
+    CLAUDE_CODE_CLI_NESTED = {
+        'sdk/migration-guide',
+    }
+
+    # Extract page name from path
+    # Path format: /docs/en/page-name or /docs/en/subdir/page-name
+    if path.startswith('/docs/en/'):
+        page_part = path[9:]  # len('/docs/en/') = 9
+        if page_part in CLAUDE_CODE_CLI_PAGES or page_part in CLAUDE_CODE_CLI_NESTED:
+            return True
+
+    return False
 
 
 def categorize_path(path: str) -> str:
@@ -180,23 +244,25 @@ def get_base_url_for_path(path: str) -> str:
     Determine the correct base URL for a given documentation path.
 
     Documentation is hosted on two different domains (as of Dec 2025):
-    - code.claude.com: Paths starting with /docs/en/ (Claude Code CLI docs)
-    - platform.claude.com: Paths starting with /en/ (API, Agent SDK, Prompt Library, etc.)
+    - code.claude.com: Claude Code CLI-specific documentation (~46 pages)
+    - platform.claude.com: Everything else (API, Agent SDK, Prompt Library, Core docs, etc.)
+
+    NOTE: Both domains now use /docs/en/ prefix, so we identify Claude Code CLI pages
+    by their specific page names (a known, fixed set).
 
     NOTE: docs.claude.com and docs.anthropic.com are BROKEN and should not be used!
 
     Args:
-        path: Documentation path (e.g., /en/api/messages or /docs/en/analytics)
+        path: Documentation path (e.g., /docs/en/api/messages or /docs/en/hooks)
 
     Returns:
         Base URL (https://code.claude.com or https://platform.claude.com)
     """
-    # Claude Code CLI docs on code.claude.com use /docs/en/ prefix
-    if path.startswith('/docs/en/'):
+    if is_claude_code_cli_page(path):
         return 'https://code.claude.com'
 
-    # Everything else (starting with /en/) is on platform.claude.com
-    # This includes: /en/api/, /en/docs/agent-sdk/, /en/docs/about-claude/, etc.
+    # Everything else (including platform's /docs/en/ paths) is on platform.claude.com
+    # This includes: /docs/en/api/, /docs/en/agent-sdk/, /docs/en/about-claude/, etc.
     return 'https://platform.claude.com'
 
 

@@ -13,7 +13,7 @@ This project extends [ericbuess/claude-code-docs](https://github.com/ericbuess/c
 - No separate "modes" - just feature detection at runtime
 
 **Design Goals:**
-1. **Honesty**: Accurate claims about what we deliver (573 paths tracked, ~267 files downloaded)
+1. **Honesty**: Accurate claims about what we deliver (573 paths tracked, 571 files downloaded)
 2. **Simplicity**: One installation, automatic feature detection
 3. **Compatibility**: Works with upstream, same `/docs` interface
 4. **Testing**: All changes tested (294 tests)
