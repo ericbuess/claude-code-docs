@@ -7,16 +7,16 @@ Thank you for contributing to the Enhanced Claude Code Documentation Mirror!
 This project extends [ericbuess/claude-code-docs](https://github.com/ericbuess/claude-code-docs) with optional Python features:
 
 **Core Principle: Graceful Degradation**
-- Single installation (273 paths tracked + Python scripts)
+- Single installation (573 paths tracked across 6 categories + Python scripts)
 - Python features activate only when Python 3.9+ is available
 - Everything works without Python (basic `/docs` command)
 - No separate "modes" - just feature detection at runtime
 
 **Design Goals:**
-1. **Honesty**: Accurate claims about what we deliver (273 paths tracked, ~266-270 files downloaded)
+1. **Honesty**: Accurate claims about what we deliver (573 paths tracked, ~267 files downloaded)
 2. **Simplicity**: One installation, automatic feature detection
 3. **Compatibility**: Works with upstream, same `/docs` interface
-4. **Testing**: High test coverage (78%), all changes tested
+4. **Testing**: All changes tested (294 tests)
 
 ## Repository URL Strategy
 
@@ -125,8 +125,7 @@ pip install -e ".[dev]"
 ~/.claude-code-docs/claude-docs-helper.sh --validate
 
 # Run tests (REQUIRED before submitting PR)
-pytest tests/ -v  # Should see: 627 passed, 2 skipped
-pytest --cov=scripts --cov-report=term  # Should see: ~78.7%
+pytest tests/ -v  # Should see: 294 passed, 2 skipped
 
 # Test specific changes
 python scripts/lookup_paths.py "your test query"
@@ -331,10 +330,9 @@ def test_search_paths_with_limit():
 ```
 
 **Current test status:**
-- Total: 629 tests
-- Passing: 627 (99.7%)
+- Total: 296 tests
+- Passing: 294 (99.3%)
 - Skipped: 2 (intentional)
-- Coverage: 78.70%
 
 ## Pull Request Guidelines
 
@@ -417,16 +415,13 @@ git push origin v0.x.x
 
 **When to release:**
 - New Python features complete
-- All tests passing (629/629 or 627/629)
+- All tests passing (294/296 or 296/296)
 - Documentation updated
 
 **Process:**
 ```bash
 # Ensure tests pass
 pytest
-
-# Check coverage
-pytest --cov=scripts --cov-report=term  # Should be ~78.7%
 
 # Update versions
 # Edit install.sh, README.md

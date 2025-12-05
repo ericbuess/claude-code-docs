@@ -140,21 +140,21 @@ class TestCategoryCounts:
     """Test category counts match expectations."""
 
     @pytest.mark.integration
-    def test_core_docs_largest_category(self, paths_manifest):
-        """Test core documentation is the largest category."""
+    def test_api_reference_largest_category(self, paths_manifest):
+        """Test api_reference is the largest category (due to multi-language SDK docs)."""
         categories = paths_manifest['categories']
 
         if not categories:
             pytest.skip("No categories in manifest")
 
-        core_count = len(categories.get('core_documentation', []))
+        api_count = len(categories.get('api_reference', []))
         total_count = sum(len(paths) for paths in categories.values())
 
-        # Core docs should be significant portion
+        # API reference should be significant portion (includes multi-language SDK docs)
         if total_count > 0:
-            core_percentage = core_count / total_count
-            # Should be at least 25% (adjust based on actual data)
-            assert core_percentage >= 0.20
+            api_percentage = api_count / total_count
+            # Should be at least 50% (due to Python, TypeScript, Go, Java, Kotlin, Ruby SDK docs)
+            assert api_percentage >= 0.50, f"api_reference is {api_percentage:.1%} of total"
 
     @pytest.mark.integration
     def test_all_categories_nonempty(self, paths_manifest):
@@ -176,17 +176,19 @@ class TestCategoryCounts:
         """Test category counts are within reasonable ranges."""
         categories = paths_manifest['categories']
 
-        # Based on current active documentation (270 total paths):
-        # core_documentation: ~79 (29.3%)
-        # api_reference: ~78 (28.9%)
-        # claude_code: ~44 (16.3%)
-        # prompt_library: ~65 (24.1%)
+        # Based on current active documentation (573 total paths):
+        # api_reference: ~377 (65.8%) - includes multi-language SDK docs
+        # core_documentation: ~82 (14.3%)
+        # prompt_library: ~65 (11.3%)
+        # claude_code: ~46 (8%)
+        # release_notes: ~2
+        # resources: ~1
 
         # Allow reasonable variance for future updates
         expected_ranges = {
-            'core_documentation': (60, 150),
-            'api_reference': (50, 150),
-            'claude_code': (40, 120),
+            'core_documentation': (60, 200),
+            'api_reference': (200, 600),  # Large due to multi-language SDK docs
+            'claude_code': (30, 100),
             'prompt_library': (40, 150)
         }
 

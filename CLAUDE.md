@@ -1,18 +1,30 @@
 # Claude Code Documentation Mirror - Enhanced Edition
 
-This repository contains local copies of Claude Code documentation from https://docs.anthropic.com/en/docs/claude-code/
+> **⛔ CRITICAL: UPSTREAM ISOLATION ⛔**
+>
+> **This repository is COMPLETELY INDEPENDENT. Do NOT:**
+> - Push to, pull from, or sync with the upstream repo (ericbuess/claude-code-docs)
+> - Create PRs to the upstream repo
+> - Add upstream as a remote
+> - Reference upstream in any git operations
+>
+> **All git operations must target `origin` (costiash/claude-code-docs) ONLY.**
 
-The docs are periodically updated via GitHub Actions.
+This repository contains local copies of Claude documentation from multiple Anthropic sources:
+- **Platform docs**: https://platform.claude.com (API, guides, Agent SDK, etc.)
+- **Claude Code docs**: https://code.claude.com/docs (CLI-specific documentation)
+
+The docs are periodically updated via GitHub Actions with safeguards to prevent mass deletion.
 
 ## Architecture: Single Installation with Optional Python Features
 
 This repository uses a **graceful degradation** approach:
 
 **Installation** (always the same):
-- 273 documentation paths tracked in manifest
-- ~266-270 files downloaded (varies based on fetch success)
+- 573 documentation paths tracked in manifest (6 categories)
+- ~267 files downloaded
 - Python scripts for enhanced features
-- Full test suite and GitHub workflows
+- Full test suite (294 tests) and GitHub workflows
 
 **Runtime Features** (Python-dependent):
 - **Without Python 3.9+**: Basic documentation reading via shell scripts
@@ -383,14 +395,13 @@ When Python 3.9+ is installed, these additional capabilities are available:
 - **Full-text search**: `--search "keyword"` searches across all documentation content
 - **Category filtering**: `--category api` lists paths in specific categories
 - **Path validation**: `--validate` checks documentation integrity
-- **Active documentation**: Access to 273 active paths across 7 categories:
-  - Core Documentation (80 paths, 29.3%)
-  - API Reference (79 paths, 28.9%)
-  - Prompt Library (65 paths, 23.8%)
-  - Claude Code (45 paths, 16.5%)
+- **Active documentation**: Access to 573 paths across 6 categories:
+  - API Reference (377 paths, 65.8%) - Includes multi-language SDK docs (Python, TypeScript, Go, Java, Kotlin, Ruby)
+  - Core Documentation (82 paths, 14.3%)
+  - Prompt Library (65 paths, 11.3%)
+  - Claude Code (46 paths, 8.0%)
   - Release Notes (2 paths)
   - Resources (1 path)
-  - Uncategorized (1 path)
 
 See `enhancements/` directory for comprehensive feature documentation and examples.
 
@@ -398,21 +409,39 @@ See `enhancements/` directory for comprehensive feature documentation and exampl
 
 ```
 /
-├── docs/                   # ~266-270 documentation files (.md format)
+├── docs/                   # ~267 documentation files (.md format)
 │   ├── docs_manifest.json  # File tracking manifest
 │   └── .search_index.json  # Full-text search index (Python-generated)
 ├── scripts/
 │   ├── claude-docs-helper.sh       # Main helper (feature detection)
-│   ├── fetch_claude_docs.py        # Documentation fetcher with auto-regeneration
-│   ├── lookup_paths.py             # Search & validation (Python)
-│   └── build_search_index.py       # Index builder (Python)
-├── paths_manifest.json     # Active paths manifest (273 paths tracked)
+│   ├── fetch_claude_docs.py        # Thin wrapper for fetcher package
+│   ├── lookup_paths.py             # Thin wrapper for lookup package
+│   ├── build_search_index.py       # Index builder (Python)
+│   ├── fetcher/                    # Documentation fetching package
+│   │   ├── __init__.py             # Package exports
+│   │   ├── config.py               # Constants and safety thresholds
+│   │   ├── manifest.py             # Manifest file operations
+│   │   ├── paths.py                # Path conversion and categorization
+│   │   ├── sitemap.py              # Sitemap discovery and parsing
+│   │   ├── content.py              # Content fetching and validation
+│   │   ├── safeguards.py           # Safety checks (deletion prevention)
+│   │   └── cli.py                  # Main entry point
+│   └── lookup/                     # Search and validation package
+│       ├── __init__.py             # Package exports
+│       ├── config.py               # Configuration constants
+│       ├── manifest.py             # Manifest loading utilities
+│       ├── search.py               # Search functionality
+│       ├── validation.py           # Path validation
+│       ├── formatting.py           # Output formatting
+│       └── cli.py                  # Main entry point
+├── paths_manifest.json     # Active paths manifest (573 paths, 6 categories)
+├── archive/               # Archived/deprecated scripts (git-ignored)
 ├── enhancements/          # Feature documentation
 │   ├── README.md          # Overview
 │   ├── FEATURES.md        # Technical specs
 │   ├── CAPABILITIES.md    # Detailed capabilities
 │   └── EXAMPLES.md        # Usage examples
-├── tests/                 # Test suite (620 tests, 618 passing)
+├── tests/                 # Test suite (294 tests, 294 passing)
 ├── install.sh            # Installation script
 └── CLAUDE.md             # This file (AI context)
 
@@ -430,14 +459,47 @@ When working on this repository:
 @uninstall.sh - Clean removal
 
 ### Python Features
-@scripts/fetch_claude_docs.py - Documentation fetcher with auto-regeneration
-@scripts/lookup_paths.py - Search & validation
+@scripts/fetch_claude_docs.py - Thin wrapper for fetcher package (backwards compatible)
+@scripts/lookup_paths.py - Thin wrapper for lookup package (backwards compatible)
+@scripts/fetcher/ - Documentation fetching package (8 modules)
+@scripts/lookup/ - Search & validation package (7 modules)
 @scripts/build_search_index.py - Full-text search indexing
-@paths_manifest.json - Active paths manifest (273 paths tracked)
-@tests/ - Test suite (620 tests)
+@paths_manifest.json - Active paths manifest (573 paths, 6 categories)
+@tests/ - Test suite (294 tests)
 
 ### Automation
 @.github/workflows/ - Auto-update workflows (runs every 3 hours)
+
+## Documentation Deletion Safeguards
+
+The automated sync system includes multiple safeguards to prevent catastrophic documentation loss. These were implemented after a critical bug where 80%+ of documentation was deleted due to broken sitemap URLs.
+
+### Safety Thresholds (in `scripts/fetcher/config.py`)
+
+| Constant | Value | Purpose |
+|----------|-------|---------|
+| `MIN_DISCOVERY_THRESHOLD` | 200 | Minimum paths that must be discovered from sitemaps |
+| `MAX_DELETION_PERCENT` | 10 | Maximum percentage of files that can be deleted in one sync |
+| `MIN_EXPECTED_FILES` | 250 | Minimum files that must remain after sync |
+
+### How Safeguards Work
+
+1. **Discovery Validation**: Before fetching, validates that sitemap discovery found enough paths
+2. **Deletion Limiting**: `cleanup_old_files()` refuses to delete more than 10% of existing files
+3. **File Count Validation**: Refuses to proceed if result would have fewer than 250 files
+4. **Workflow Validation**: GitHub Actions validates sync success before committing
+
+### Sitemap Sources
+
+Documentation is discovered from two sitemaps:
+- `https://platform.claude.com/sitemap.xml` - Platform documentation (API, guides, etc.)
+- `https://code.claude.com/docs/sitemap.xml` - Claude Code CLI documentation
+
+### Filename Conventions
+
+Files are named based on their source:
+- Platform docs: `en__docs__section__page.md` (double underscore for path separators)
+- Claude Code docs: `docs__en__page.md` (prefixed with `docs__`)
 
 ## Working on This Repository
 
@@ -463,7 +525,7 @@ python3 scripts/lookup_paths.py --search "mcp"
 pytest tests/ -v
 
 # Run full test suite
-pytest tests/ -q  # Should see: 598 passed, 2 skipped
+pytest tests/ -q  # Should see: 294 passed, 2 skipped
 ```
 
 ## Upstream Compatibility

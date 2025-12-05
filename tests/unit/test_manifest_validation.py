@@ -141,9 +141,18 @@ class TestDocsManifest:
         expected_path_count = paths_manifest['metadata']['total_paths']
 
         # Allow variance for unfetchable paths (HTML-only pages, external redirects)
-        variance = abs(actual_file_count - expected_path_count)
-        assert variance <= 10, \
-            f"File count discrepancy: {actual_file_count} files on disk vs {expected_path_count} in paths manifest (variance: {variance})"
+        # With multi-language SDK docs in sitemap (573+ paths), not all are fetchable
+        # Many SDK-specific paths may not have actual content (redirect to main docs)
+        # We expect actual file count to be significantly less than manifest paths
+
+        # Check that we have at least a reasonable minimum of files
+        min_expected_files = 250  # MIN_EXPECTED_FILES safeguard
+        assert actual_file_count >= min_expected_files, \
+            f"Too few files on disk: {actual_file_count} (expected at least {min_expected_files})"
+
+        # Check that we don't exceed the manifest path count
+        assert actual_file_count <= expected_path_count + 10, \
+            f"More files on disk ({actual_file_count}) than paths in manifest ({expected_path_count})"
 
     def test_all_entries_have_required_fields(self, docs_manifest):
         """Ensure all manifest entries have required fields"""

@@ -1,8 +1,8 @@
 # Claude Code Documentation Tool
 
 [![Last Update](https://img.shields.io/github/last-commit/costiash/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/costiash/claude-code-docs/commits/main)
-[![Tests](https://img.shields.io/badge/tests-627%20passing-success)](https://github.com/costiash/claude-code-docs/actions)
-[![Coverage](https://img.shields.io/badge/coverage-78.7%25-green)](https://github.com/costiash/claude-code-docs)
+[![Tests](https://img.shields.io/badge/tests-294%20passing-success)](https://github.com/costiash/claude-code-docs/actions)
+[![Coverage](https://img.shields.io/badge/coverage-17.6%25-yellow)](https://github.com/costiash/claude-code-docs)
 [![Python](https://img.shields.io/badge/python-3.9+-blue)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey)](https://github.com/costiash/claude-code-docs)
 [![Mentioned in Awesome Claude Code](https://awesome.re/mentioned-badge.svg)](https://github.com/hesreallyhim/awesome-claude-code)
@@ -17,17 +17,17 @@
 
 **Fast, searchable access to Claude Code documentation - locally, always up-to-date.**
 
-Stop hunting through scattered docs. This tool provides instant access to **273 actively maintained** Claude documentation paths covering API references, guides, examples, and changelogs.
+Stop hunting through scattered docs. This tool provides instant access to **573 actively maintained** Claude documentation paths covering API references, guides, examples, and changelogs.
 
 ## Key Features
 
 - 🤖 **AI-Powered Search** - Ask questions naturally, Claude understands intent and routes intelligently
-- 📚 **Complete Coverage** - 273 active documentation paths, ~266-270 files downloaded (~97% coverage)
+- 📚 **Complete Coverage** - 573 documentation paths tracked, ~267 files downloaded
 - 🔍 **Semantic Understanding** - No primitive keyword matching, leverages Claude's language understanding
 - ✅ **Auto-Validated** - Continuous validation detects broken links automatically
 - 🔄 **Always Fresh** - Repository updated every 3 hours; run `/docs -t` to pull latest
 - 🎯 **Graceful Degradation** - Works with or without Python
-- 🧪 **Well-Tested** - 629 tests (627 passing, 2 skipped), 78.7% coverage
+- 🧪 **Well-Tested** - 296 tests (294 passing, 2 skipped)
 
 ## How It Works
 
@@ -42,16 +42,15 @@ The magic is in combining a simple local file system with Claude's language unde
 
 ## What's Included
 
-**Documentation Paths** (273 tracked in manifest):
-- Core Documentation (80 paths, 29%) - Guides, tutorials, best practices
-- API Reference (79 paths, 29%) - Complete API docs, Admin API, Agent SDK
-- Prompt Library (65 paths, 24%) - Ready-to-use prompt templates
-- Claude Code (45 paths, 16%) - CLI-specific docs, hooks, skills, MCP
+**Documentation Paths** (573 tracked in manifest across 6 categories):
+- API Reference (377 paths, 65.8%) - Complete API docs, Admin API, Agent SDK, multi-language SDK docs
+- Core Documentation (82 paths, 14.3%) - Guides, tutorials, best practices
+- Prompt Library (65 paths, 11.3%) - Ready-to-use prompt templates
+- Claude Code (46 paths, 8.0%) - CLI-specific docs, hooks, skills, MCP
 - Release Notes (2 paths) - Version history
 - Resources (1 path) - Additional resources
-- Uncategorized (1 path) - Home page
 
-**Files Downloaded** (~266-270 actual .md files, varies based on fetch success)
+**Files Downloaded** (~267 actual .md files)
 
 **Python Features** (optional, requires Python 3.9+):
 - Full-text search across all content
@@ -70,7 +69,7 @@ curl -fsSL https://raw.githubusercontent.com/costiash/claude-code-docs/main/inst
 
 **What it does:**
 1. Clones repository to `~/.claude-code-docs`
-2. Installs 266 documentation files
+2. Installs ~267 documentation files
 3. Sets up `/docs` command in Claude Code
 4. Verifies installation integrity
 
@@ -185,7 +184,7 @@ Works on: All interactive shells
 For power users who want direct access to helper functions:
 
 ```bash
-# Fuzzy search across 273 paths (requires Python 3.9+)
+# Fuzzy search across 573 paths (requires Python 3.9+)
 ~/.claude-code-docs/claude-docs-helper.sh --search "keyword"
 
 # Full-text content search (requires Python 3.9+)
@@ -206,10 +205,32 @@ For power users who want direct access to helper functions:
 ## Architecture
 
 **Single Installation** - Always installs complete repository:
-- 273 documentation paths tracked in manifest
-- ~266-270 files downloaded (varies based on fetch success)
-- 7 Python scripts for enhanced features
-- Full test suite (629 tests)
+- 573 documentation paths tracked in manifest (6 categories)
+- ~267 files downloaded
+- Modular Python packages for enhanced features
+- Full test suite (294 tests)
+
+**Modular Code Structure** - Python code organized into focused packages:
+```
+scripts/
+├── fetcher/           # Documentation fetching (8 modules)
+│   ├── config.py      # Constants and safety thresholds
+│   ├── manifest.py    # Manifest file operations
+│   ├── paths.py       # Path conversion and categorization
+│   ├── sitemap.py     # Sitemap discovery and parsing
+│   ├── content.py     # Content fetching and validation
+│   ├── safeguards.py  # Safety checks (deletion prevention)
+│   └── cli.py         # Main entry point
+├── lookup/            # Search and validation (7 modules)
+│   ├── config.py      # Configuration constants
+│   ├── manifest.py    # Manifest loading utilities
+│   ├── search.py      # Search functionality
+│   ├── validation.py  # Path validation
+│   ├── formatting.py  # Output formatting
+│   └── cli.py         # Main entry point
+├── fetch_claude_docs.py  # Thin wrapper (backwards compatible)
+└── lookup_paths.py       # Thin wrapper (backwards compatible)
+```
 
 **Graceful Degradation** - Features adapt to environment:
 - **Without Python**: Basic documentation reading via `/docs` command
@@ -225,6 +246,11 @@ Documentation stays current through:
 2. **On-Demand Sync** - Run `/docs -t` to check for and pull updates
 3. **Auto-Regeneration** - Manifests regenerate from sitemaps on each fetch
 4. **Visual Feedback** - See "🔄 Updating documentation..." when updates occur
+5. **Safety Validation** - Each sync validates against safeguard thresholds before committing
+
+**Sitemap Sources:**
+- `https://platform.claude.com/sitemap.xml` - Platform documentation
+- `https://code.claude.com/docs/sitemap.xml` - Claude Code documentation
 
 **Manual update:**
 ```bash
@@ -317,6 +343,23 @@ See [UNINSTALL.md](UNINSTALL.md) for manual removal instructions.
 - Shell injection prevention (heredocs, env vars)
 - Comprehensive security testing (13 test cases)
 
+**Documentation Deletion Safeguards:**
+
+The automated sync system includes multiple safeguards to prevent catastrophic documentation loss:
+
+| Safeguard | Threshold | Purpose |
+|-----------|-----------|---------|
+| `MIN_DISCOVERY_THRESHOLD` | 200 paths | Refuses to proceed if sitemap discovery finds too few paths |
+| `MAX_DELETION_PERCENT` | 10% | Never deletes more than 10% of existing files in one sync |
+| `MIN_EXPECTED_FILES` | 250 files | Refuses if file count would drop below minimum |
+| Workflow validation | Auto-revert | GitHub Actions automatically reverts on sync failure |
+
+These safeguards protect against:
+- Sitemap URLs returning errors (500, 401, etc.)
+- Network failures during discovery
+- Upstream documentation restructuring
+- Accidental mass deletion bugs
+
 **Operational Security:**
 - All operations limited to documentation directory
 - No external data transmission
@@ -324,8 +367,7 @@ See [UNINSTALL.md](UNINSTALL.md) for manual removal instructions.
 - You can fork and install from your own repository
 
 **Validation:**
-- 627/629 tests passing (99.7% pass rate, 2 skipped)
-- 78.7% code coverage
+- 294/296 tests passing (99.3% pass rate, 2 skipped)
 - Automated security testing in CI/CD
 
 ## Contributing
@@ -349,10 +391,7 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 
 # Run tests
-pytest tests/ -v  # Should see: 627 passed, 2 skipped
-
-# Test coverage
-pytest --cov=scripts --cov-report=term  # Should see: ~78.7%
+pytest tests/ -v  # Should see: 294 passed, 2 skipped
 ```
 
 ## Acknowledgments

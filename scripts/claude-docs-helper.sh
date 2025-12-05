@@ -152,7 +152,7 @@ enhanced_search() {
     fi
 
     local query="$*"
-    echo "🔍 Searching 270 active documentation paths for: $query"
+    echo "🔍 Searching 573 documentation paths for: $query"
     echo ""
 
     if python3 "$SCRIPTS_PATH/lookup_paths.py" "$query" 2>/dev/null; then
@@ -211,7 +211,7 @@ validate_paths() {
     fi
 }
 
-# Update all documentation (fetch all 270 active docs)
+# Update all documentation (fetch all 573 paths)
 update_all_docs() {
     if ! check_enhanced_available; then
         echo "❌ Enhanced update not available"
@@ -222,7 +222,7 @@ update_all_docs() {
         return
     fi
 
-    echo "🔄 Updating all documentation (270 active paths)..."
+    echo "🔄 Updating all documentation (573 paths)..."
     echo "This may take 2-3 minutes..."
     echo ""
 
@@ -251,12 +251,12 @@ show_enhanced_help() {
     echo "─────────────────────────────────────────────────────────────────"
     echo ""
     echo "Search & Discovery:"
-    echo "  --search <query>        Fuzzy search across 270 active documentation paths"
+    echo "  --search <query>        Fuzzy search across 573 documentation paths"
     echo "  --search-content <term> Full-text content search across all documentation"
     echo ""
     echo "Maintenance:"
     echo "  --validate              Validate all paths (check for 404s)"
-    echo "  --update-all            Fetch all 270 active documentation pages"
+    echo "  --update-all            Fetch all 573 documentation pages"
     echo ""
     echo "Status:"
     echo "  --version               Show version information"

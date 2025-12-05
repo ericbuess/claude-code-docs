@@ -30,48 +30,56 @@ class TestCategorizePath:
 
     def test_categorize_api_reference(self):
         """Test API reference categorization."""
+        # Both old format (/en/...) and new format (/docs/en/...) should work
         paths = [
+            "/docs/en/api/messages",
+            "/docs/en/api/admin/users/list",
+            "/docs/en/agent-sdk/overview",
+            "/docs/en/agent-sdk/python",
+            # Old format also works
             "/en/api/messages",
-            "/en/api/admin-api/users/list",
-            "/en/docs/agent-sdk/overview",
-            "/en/docs/agent-sdk/python",
+            "/en/agent-sdk/overview",
         ]
 
         # Import here to avoid circular import
         from fetch_claude_docs import categorize_path
 
         for path in paths:
-            assert categorize_path(path) == "api_reference"
+            assert categorize_path(path) == "api_reference", f"Failed for path: {path}"
 
     def test_categorize_claude_code(self):
         """Test Claude Code docs categorization."""
         paths = [
             "/docs/en/hooks",
             "/docs/en/setup",
-            "/docs/en/mcp",
-            "/docs/en/sdk/overview",
+            "/docs/en/quickstart",
+            "/docs/en/analytics",
+            "/docs/en/memory",
         ]
 
         from fetch_claude_docs import categorize_path
 
         for path in paths:
-            assert categorize_path(path) == "claude_code"
+            assert categorize_path(path) == "claude_code", f"Failed for path: {path}"
 
     def test_categorize_prompt_library(self):
         """Test prompt library categorization."""
         paths = [
-            "/en/prompt-library/code-clarifier",
-            "/en/resources/prompt-library/grammar-genie",
+            "/docs/en/resources/prompt-library/code-clarifier",
+            "/docs/en/resources/prompt-library/grammar-genie",
+            # Old format also works
+            "/en/resources/prompt-library/code-clarifier",
         ]
 
         from fetch_claude_docs import categorize_path
 
         for path in paths:
-            assert categorize_path(path) == "prompt_library"
+            assert categorize_path(path) == "prompt_library", f"Failed for path: {path}"
 
     def test_categorize_resources(self):
         """Test resources categorization."""
         paths = [
+            "/docs/en/resources/overview",
             "/en/resources/glossary",
             "/en/resources/faq",
         ]
@@ -79,32 +87,37 @@ class TestCategorizePath:
         from fetch_claude_docs import categorize_path
 
         for path in paths:
-            assert categorize_path(path) == "resources"
+            assert categorize_path(path) == "resources", f"Failed for path: {path}"
 
     def test_categorize_release_notes(self):
         """Test release notes categorization."""
         paths = [
+            "/docs/en/release-notes/overview",
+            "/docs/en/release-notes/system-prompts",
             "/en/release-notes/api",
-            "/en/release-notes/2024-01",
         ]
 
         from fetch_claude_docs import categorize_path
 
         for path in paths:
-            assert categorize_path(path) == "release_notes"
+            assert categorize_path(path) == "release_notes", f"Failed for path: {path}"
 
     def test_categorize_core_documentation(self):
         """Test core documentation categorization (fallback)."""
         paths = [
-            "/en/docs/about-claude/models",
-            "/en/docs/build-with-claude/prompt-engineering",
-            "/en/docs/test-and-evaluate/define-success",
+            "/docs/en/about-claude/models/overview",
+            "/docs/en/build-with-claude/prompt-engineering/overview",
+            "/docs/en/test-and-evaluate/define-success",
+            "/docs/en/agents-and-tools/tool-use/overview",
+            # Old format also works
+            "/en/about-claude/models",
+            "/en/build-with-claude/prompt-engineering",
         ]
 
         from fetch_claude_docs import categorize_path
 
         for path in paths:
-            assert categorize_path(path) == "core_documentation"
+            assert categorize_path(path) == "core_documentation", f"Failed for path: {path}"
 
 
 class TestUpdatePathsManifest:
@@ -114,12 +127,13 @@ class TestUpdatePathsManifest:
         """Test that update_paths_manifest() creates properly categorized manifest."""
         from fetch_claude_docs import update_paths_manifest
 
+        # Use new /docs/en/... format (from code.claude.com sitemap)
         paths = [
-            "/en/api/messages",
+            "/docs/en/api/messages",
             "/docs/en/hooks",
-            "/en/prompt-library/code-clarifier",
-            "/en/resources/glossary",
-            "/en/docs/about-claude/models",
+            "/docs/en/resources/prompt-library/code-clarifier",
+            "/docs/en/resources/overview",
+            "/docs/en/about-claude/models/overview",
         ]
 
         manifest_file = tmp_path / "paths_manifest.json"
@@ -135,11 +149,11 @@ class TestUpdatePathsManifest:
         assert "categories" in manifest
 
         # Check categorization
-        assert "/en/api/messages" in manifest["categories"]["api_reference"]
+        assert "/docs/en/api/messages" in manifest["categories"]["api_reference"]
         assert "/docs/en/hooks" in manifest["categories"]["claude_code"]
-        assert "/en/prompt-library/code-clarifier" in manifest["categories"]["prompt_library"]
-        assert "/en/resources/glossary" in manifest["categories"]["resources"]
-        assert "/en/docs/about-claude/models" in manifest["categories"]["core_documentation"]
+        assert "/docs/en/resources/prompt-library/code-clarifier" in manifest["categories"]["prompt_library"]
+        assert "/docs/en/resources/overview" in manifest["categories"]["resources"]
+        assert "/docs/en/about-claude/models/overview" in manifest["categories"]["core_documentation"]
 
     def test_update_paths_manifest_includes_metadata(self, tmp_path):
         """Test that metadata is properly included."""
@@ -246,10 +260,11 @@ class TestEdgeCases:
         from fetch_claude_docs import categorize_path
 
         # Should handle these without crashing
+        # Use new /docs/en/... format
         test_cases = [
-            ("/en/api/messages-v2", "api_reference"),
-            ("/docs/en/mcp/sub-topic", "claude_code"),  # NEW path format
-            ("/en/prompt-library/code-consultant-v2", "prompt_library"),
+            ("/docs/en/api/messages-v2", "api_reference"),
+            ("/docs/en/mcp", "claude_code"),
+            ("/docs/en/resources/prompt-library/code-consultant-v2", "prompt_library"),
         ]
 
         for path, expected_category in test_cases:
@@ -272,13 +287,14 @@ class TestEdgeCases:
         assert manifest["categories"] == {}
 
     def test_update_paths_manifest_many_paths(self, tmp_path):
-        """Test with realistic number of paths (~270)."""
+        """Test with realistic number of paths (~502)."""
         from fetch_claude_docs import update_paths_manifest
 
-        # Generate 270 realistic paths
-        paths = [f"/en/api/endpoint-{i}" for i in range(100)]
-        paths += [f"/docs/en/page-{i}" for i in range(70)]
-        paths += [f"/en/prompt-library/prompt-{i}" for i in range(100)]
+        # Generate realistic paths using new /docs/en/... format
+        paths = [f"/docs/en/api/endpoint-{i}" for i in range(300)]  # -> api_reference
+        paths += ["/docs/en/hooks", "/docs/en/quickstart"]  # -> claude_code (2 paths)
+        paths += [f"/docs/en/resources/prompt-library/prompt-{i}" for i in range(100)]  # -> prompt_library
+        paths += [f"/docs/en/about-claude/topic-{i}" for i in range(100)]  # -> core_documentation
 
         manifest_file = tmp_path / "paths_manifest.json"
 
@@ -287,7 +303,9 @@ class TestEdgeCases:
         with open(manifest_file) as f:
             manifest = json.load(f)
 
-        assert manifest["metadata"]["total_paths"] == 270
-        assert len(manifest["categories"]["api_reference"]) == 100
-        assert len(manifest["categories"]["claude_code"]) == 70
+        # Total = 300 + 2 + 100 + 100 = 502
+        assert manifest["metadata"]["total_paths"] == 502
+        assert len(manifest["categories"]["api_reference"]) == 300
+        assert len(manifest["categories"]["claude_code"]) == 2
         assert len(manifest["categories"]["prompt_library"]) == 100
+        assert len(manifest["categories"]["core_documentation"]) == 100

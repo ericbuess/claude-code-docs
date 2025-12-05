@@ -62,31 +62,72 @@ def categorize_path(path: str) -> str:
     """
     Categorize documentation path based on URL structure.
 
+    Handles both old format (/en/...) and new format (/docs/en/...).
+
     Args:
         path: Documentation path (e.g., /en/api/messages or /docs/en/hooks)
 
     Returns:
         Category name as string
     """
-    if path.startswith('/en/api/') or path.startswith('/en/docs/agent-sdk/'):
+    # Normalize path - handle both /docs/en/... and /en/... formats
+    # The /docs/en/... format comes from code.claude.com sitemap
+    normalized = path
+    if path.startswith('/docs/en/'):
+        # Remove /docs prefix to normalize: /docs/en/api/... -> /en/api/...
+        normalized = path[5:]  # '/docs/en/...' -> '/en/...'
+
+    # API Reference: /en/api/* or /en/docs/agent-sdk/*
+    if normalized.startswith('/en/api/') or normalized.startswith('/en/agent-sdk/'):
         return 'api_reference'
 
-    if path.startswith('/docs/en/'):
+    # Claude Code CLI docs: specific CLI-related pages
+    # These are the actual Claude Code CLI documentation pages
+    claude_code_pages = [
+        '/en/amazon-bedrock', '/en/analytics', '/en/checkpointing',
+        '/en/claude-code-on-the-web', '/en/cli-reference', '/en/common-workflows',
+        '/en/costs', '/en/data-usage', '/en/devcontainer', '/en/github-actions',
+        '/en/gitlab-ci-cd', '/en/google-vertex-ai', '/en/headless', '/en/hooks',
+        '/en/hooks-guide', '/en/iam', '/en/interactive-mode', '/en/jetbrains',
+        '/en/legal-and-compliance', '/en/llm-gateway', '/en/mcp', '/en/memory',
+        '/en/microsoft-foundry', '/en/model-config', '/en/monitoring-usage',
+        '/en/network-config', '/en/output-styles', '/en/overview',
+        '/en/plugin-marketplaces', '/en/plugins', '/en/plugins-reference',
+        '/en/quickstart', '/en/sandboxing', '/en/security', '/en/settings',
+        '/en/setup', '/en/skills', '/en/slash-commands', '/en/statusline',
+        '/en/sub-agents', '/en/terminal-config', '/en/third-party-integrations',
+        '/en/troubleshooting', '/en/vs-code', '/en/desktop',
+        '/en/sdk/migration-guide',
+    ]
+    if normalized in claude_code_pages or any(normalized.startswith(p + '/') for p in claude_code_pages):
         return 'claude_code'
 
-    if path.startswith('/en/prompt-library/') or path.startswith('/en/resources/prompt-library/'):
+    # Prompt Library
+    if normalized.startswith('/en/resources/prompt-library/'):
         return 'prompt_library'
 
-    if path.startswith('/en/resources/'):
+    # Resources (but not prompt-library)
+    if normalized.startswith('/en/resources/'):
         return 'resources'
 
-    if path.startswith('/en/release-notes/'):
+    # Release Notes
+    if normalized.startswith('/en/release-notes/'):
         return 'release_notes'
 
-    if path.startswith('/en/home') or path == '/en/prompt-library':
+    # Uncategorized
+    if normalized in ['/en/home', '/en/prompt-library']:
         return 'uncategorized'
 
-    # Everything else (guides, about-claude, build-with-claude, etc.)
+    # Core Documentation: about-claude, build-with-claude, agents-and-tools, test-and-evaluate, etc.
+    core_prefixes = [
+        '/en/about-claude/', '/en/build-with-claude/', '/en/agents-and-tools/',
+        '/en/test-and-evaluate/', '/en/get-started', '/en/intro', '/en/mcp',
+    ]
+    if any(normalized.startswith(prefix) or normalized == prefix.rstrip('/') for prefix in core_prefixes):
+        return 'core_documentation'
+
+    # Default: if it doesn't match anything specific, categorize as core_documentation
+    # This catches paths like /en/docs/... that aren't Agent SDK
     return 'core_documentation'
 
 
@@ -164,10 +205,10 @@ def load_paths_from_manifest() -> List[str]:
     Load paths for files that already exist locally in ./docs/
 
     This is a FALLBACK used only if sitemap discovery fails.
-    Normally, we discover ~273 active paths from sitemaps and fetch all of them.
+    Normally, we discover ~573 paths from sitemaps and fetch all of them.
 
     Returns:
-        List of paths corresponding to existing local files (~266-270 files)
+        List of paths corresponding to existing local files (~267 files)
     """
     try:
         docs_dir = Path(__file__).parent.parent.parent / 'docs'

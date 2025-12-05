@@ -634,9 +634,9 @@ echo ""
 echo "🔄 Updates: Run '/docs -t' to check for and pull latest documentation"
 echo ""
 
-# Show what's installed (273 paths tracked in manifest)
+# Show what's installed (573 paths tracked in manifest across 6 categories)
 echo "📦 Installed Components:"
-echo "  • 273 documentation paths tracked"
+echo "  • 573 documentation paths tracked (6 categories)"
 echo "  • AI-powered /docs command"
 echo ""
 
@@ -652,7 +652,7 @@ data = json.load(open('$INSTALL_DIR/paths_manifest.json'))
 total = data['metadata']['total_paths']
 cats = data['categories']
 
-print(f'📚 Documentation Coverage: {total} paths across 7 categories')
+print(f'📚 Documentation Coverage: {total} paths across {len(cats)} categories')
 print('')
 print('Categories:')
 for i, (cat, paths) in enumerate(cats.items(), 1):
@@ -681,7 +681,7 @@ else
     echo "  • Enhanced AI routing capabilities"
     echo ""
     echo "Without Python, you can:"
-    echo "  • Read all 273 documentation paths via /docs command"
+    echo "  • Read all 573 documentation paths via /docs command"
     echo "  • Use AI-powered semantic queries"
     echo "  • Check documentation freshness"
     echo "  • View recent changes"

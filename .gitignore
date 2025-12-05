@@ -90,6 +90,9 @@ claude-docs-helper.sh
 # Upstream reference repository (local development only)
 upstream/
 
+# Archive folder (legacy/orphaned scripts)
+archive/
+
 # ============================================================================
 # Documentation & Tracking Files (DO NOT COMMIT)
 # ============================================================================
