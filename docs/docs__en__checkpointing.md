@@ -63,3 +63,8 @@ Checkpoints are designed for quick, session-level recovery. For permanent versio
 * [Interactive mode](/en/interactive-mode) - Keyboard shortcuts and session controls
 * [Slash commands](/en/slash-commands) - Accessing checkpoints using `/rewind`
 * [CLI reference](/en/cli-reference) - Command-line options
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

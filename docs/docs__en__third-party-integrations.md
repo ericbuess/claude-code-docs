@@ -258,3 +258,8 @@ At Anthropic, we trust Claude Code to power development across every Anthropic c
 * [Configure Enterprise Network](/en/network-config) for network requirements
 * [Deploy LLM Gateway](/en/llm-gateway) for enterprise management
 * [Settings](/en/settings) for configuration options and environment variables
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

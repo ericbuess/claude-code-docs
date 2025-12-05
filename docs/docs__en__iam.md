@@ -171,11 +171,7 @@ Read & Edit rules both follow the [gitignore](https://git-scm.com/docs/gitignore
 
 For enterprise deployments of Claude Code, we support enterprise managed policy settings that take precedence over user and project settings. This allows system administrators to enforce security policies that users cannot override.
 
-System administrators can deploy policies to:
-
-* macOS: `/Library/Application Support/ClaudeCode/managed-settings.json`
-* Linux and WSL: `/etc/claude-code/managed-settings.json`
-* Windows: `C:\ProgramData\ClaudeCode\managed-settings.json`
+System administrators can deploy policies to the [managed settings file locations](/en/settings#settings-files).
 
 These policy files follow the same format as regular [settings files](/en/settings#settings-files) but cannot be overridden by user or project settings. This ensures consistent security policies across your organization.
 
@@ -199,3 +195,8 @@ Claude Code securely manages your authentication credentials:
 * **Supported authentication types**: Claude.ai credentials, Claude API credentials, Azure Auth, Bedrock Auth, and Vertex Auth.
 * **Custom credential scripts**: The [`apiKeyHelper`](/en/settings#available-settings) setting can be configured to run a shell script that returns an API key.
 * **Refresh intervals**: By default, `apiKeyHelper` is called after 5 minutes or on HTTP 401 response. Set `CLAUDE_CODE_API_KEY_HELPER_TTL_MS` environment variable for custom refresh intervals.
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

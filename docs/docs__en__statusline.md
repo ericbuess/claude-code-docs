@@ -200,3 +200,8 @@ echo "[$MODEL] 📁 ${DIR##*/}"
 
 * If your status line doesn't appear, check that your script is executable (`chmod +x`)
 * Ensure your script outputs to stdout (not stderr)
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

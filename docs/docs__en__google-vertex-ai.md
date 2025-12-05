@@ -157,3 +157,8 @@ If you encounter 429 errors:
 * [Vertex AI documentation](https://cloud.google.com/vertex-ai/docs)
 * [Vertex AI pricing](https://cloud.google.com/vertex-ai/pricing)
 * [Vertex AI quotas and limits](https://cloud.google.com/vertex-ai/docs/quotas)
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

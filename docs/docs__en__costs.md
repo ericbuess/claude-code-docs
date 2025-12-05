@@ -129,3 +129,8 @@ If you notice changes in how costs are displayed (such as the `/cost` command sh
   For team deployments, we recommend starting with a small pilot group to
   establish usage patterns before wider rollout.
 </Note>
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

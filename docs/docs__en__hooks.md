@@ -1127,3 +1127,8 @@ Progress messages appear in verbose mode (ctrl+o) showing:
 * Command being executed
 * Success/failure status
 * Output or error messages
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

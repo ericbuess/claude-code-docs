@@ -107,3 +107,8 @@ about when to use the agent.
 
 You can think of output styles as "stored system prompts" and custom slash
 commands as "stored prompts".
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

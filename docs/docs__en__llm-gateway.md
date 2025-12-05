@@ -168,3 +168,8 @@ For more detailed information, refer to the [LiteLLM documentation](https://docs
 * [Claude Code settings](/en/settings)
 * [Enterprise network configuration](/en/network-config)
 * [Third-party integrations overview](/en/third-party-integrations)
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

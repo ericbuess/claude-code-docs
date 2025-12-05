@@ -203,3 +203,8 @@ For implementation details and source code, visit the [GitHub repository](https:
 * [IAM](/en/iam) - Permission configuration and access control
 * [Settings](/en/settings) - Complete configuration reference
 * [CLI reference](/en/cli-reference) - Command-line options including `-sb`
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

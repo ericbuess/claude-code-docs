@@ -8,14 +8,18 @@ Claude Code can remember your preferences across sessions, like style guidelines
 
 Claude Code offers four memory locations in a hierarchical structure, each serving a different purpose:
 
-| Memory Type                | Location                                                                                                                                                | Purpose                                             | Use Case Examples                                                    | Shared With                     |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------- |
-| **Enterprise policy**      | macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`<br />Linux: `/etc/claude-code/CLAUDE.md`<br />Windows: `C:\ProgramData\ClaudeCode\CLAUDE.md` | Organization-wide instructions managed by IT/DevOps | Company coding standards, security policies, compliance requirements | All users in organization       |
-| **Project memory**         | `./CLAUDE.md` or `./.claude/CLAUDE.md`                                                                                                                  | Team-shared instructions for the project            | Project architecture, coding standards, common workflows             | Team members via source control |
-| **User memory**            | `~/.claude/CLAUDE.md`                                                                                                                                   | Personal preferences for all projects               | Code styling preferences, personal tooling shortcuts                 | Just you (all projects)         |
-| **Project memory (local)** | `./CLAUDE.local.md`                                                                                                                                     | Personal project-specific preferences               | *(Deprecated, see below)* Your sandbox URLs, preferred test data     | Just you (current project)      |
+| Memory Type                | Location                                                                                                                                                        | Purpose                                             | Use Case Examples                                                    | Shared With                     |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------- |
+| **Enterprise policy**      | • macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`<br />• Linux: `/etc/claude-code/CLAUDE.md`<br />• Windows: `C:\Program Files\ClaudeCode\CLAUDE.md` | Organization-wide instructions managed by IT/DevOps | Company coding standards, security policies, compliance requirements | All users in organization       |
+| **Project memory**         | `./CLAUDE.md` or `./.claude/CLAUDE.md`                                                                                                                          | Team-shared instructions for the project            | Project architecture, coding standards, common workflows             | Team members via source control |
+| **User memory**            | `~/.claude/CLAUDE.md`                                                                                                                                           | Personal preferences for all projects               | Code styling preferences, personal tooling shortcuts                 | Just you (all projects)         |
+| **Project memory (local)** | `./CLAUDE.local.md`                                                                                                                                             | Personal project-specific preferences               | Your sandbox URLs, preferred test data                               | Just you (current project)      |
 
 All memory files are automatically loaded into Claude Code's context when launched. Files higher in the hierarchy take precedence and are loaded first, providing a foundation that more specific memories build upon.
+
+<Note>
+  CLAUDE.local.md files are automatically added to .gitignore, making them ideal for private project-specific preferences that shouldn't be checked into version control.
+</Note>
 
 ## CLAUDE.md imports
 
@@ -28,7 +32,7 @@ See @README for project overview and @package.json for available npm commands fo
 - git workflow @docs/git-instructions.md
 ```
 
-Both relative and absolute paths are allowed. In particular, importing files in user's home dir is a convenient way for your team members to provide individual instructions that are not checked into the repository. Previously CLAUDE.local.md served a similar purpose, but is now deprecated in favor of imports since they work better across multiple git worktrees.
+Both relative and absolute paths are allowed. In particular, importing files in user's home dir is a convenient way for your team members to provide individual instructions that are not checked into the repository. Imports are an alternative to CLAUDE.local.md that work better across multiple git worktrees.
 
 ```
 # Individual Preferences
@@ -88,11 +92,7 @@ Enterprise organizations can deploy centrally managed CLAUDE.md files that apply
 
 To set up organization-level memory management:
 
-1. Create the enterprise memory file in the appropriate location for your operating system:
-
-* macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`
-* Linux/WSL: `/etc/claude-code/CLAUDE.md`
-* Windows: `C:\ProgramData\ClaudeCode\CLAUDE.md`
+1. Create the enterprise memory file at the **Enterprise policy** location shown in the [memory types table above](#determine-memory-type).
 
 2. Deploy via your configuration management system (MDM, Group Policy, Ansible, etc.) to ensure consistent distribution across all developer machines.
 
@@ -101,3 +101,8 @@ To set up organization-level memory management:
 * **Be specific**: "Use 2-space indentation" is better than "Format code properly".
 * **Use structure to organize**: Format each individual memory as a bullet point and group related memories under descriptive markdown headings.
 * **Review periodically**: Update memories as your project evolves to ensure Claude is always using the most up to date information and context.
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

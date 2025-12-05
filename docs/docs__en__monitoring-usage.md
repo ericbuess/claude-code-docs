@@ -41,13 +41,7 @@ For full configuration options, see the [OpenTelemetry specification](https://gi
 
 ## Administrator Configuration
 
-Administrators can configure OpenTelemetry settings for all users through the managed settings file. This allows for centralized control of telemetry settings across an organization. See the [settings precedence](/en/settings#settings-precedence) for more information about how settings are applied.
-
-The managed settings file is located at:
-
-* macOS: `/Library/Application Support/ClaudeCode/managed-settings.json`
-* Linux and WSL: `/etc/claude-code/managed-settings.json`
-* Windows: `C:\ProgramData\ClaudeCode\managed-settings.json`
+Administrators can configure OpenTelemetry settings for all users through the [managed settings file](/en/settings#settings-files). This allows for centralized control of telemetry settings across an organization. See the [settings precedence](/en/settings#settings-precedence) for more information about how settings are applied.
 
 Example managed settings configuration:
 
@@ -501,3 +495,8 @@ For a comprehensive guide on measuring return on investment for Claude Code, inc
 ## Monitoring Claude Code on Amazon Bedrock
 
 For detailed Claude Code usage monitoring guidance for Amazon Bedrock, see [Claude Code Monitoring Implementation (Bedrock)](https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock/blob/main/assets/docs/MONITORING.md).
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

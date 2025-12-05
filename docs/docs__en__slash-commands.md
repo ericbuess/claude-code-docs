@@ -503,3 +503,8 @@ Learn more about [Agent Skills](/en/skills).
 * [CLI reference](/en/cli-reference) - Command-line flags and options
 * [Settings](/en/settings) - Configuration options
 * [Memory management](/en/memory) - Managing Claude's memory across sessions
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

@@ -482,3 +482,8 @@ Claude Code on the web shares rate limits with all other Claude and Claude Code 
 * [Settings reference](/en/settings)
 * [Security](/en/security)
 * [Data usage](/en/data-usage)
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

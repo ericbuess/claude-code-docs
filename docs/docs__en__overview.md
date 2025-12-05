@@ -120,3 +120,8 @@ You'll be prompted to log in on first use. That's it! [Continue with Quickstart 
     Understand how Claude Code handles your data
   </Card>
 </CardGroup>
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

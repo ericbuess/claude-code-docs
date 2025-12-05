@@ -202,3 +202,8 @@ claude -p --resume "$session_id" "Generate executive summary of risks"
 
 * [CLI usage and controls](/en/cli-reference) - Complete CLI documentation
 * [Common workflows](/en/common-workflows) - Step-by-step guides for common use cases
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

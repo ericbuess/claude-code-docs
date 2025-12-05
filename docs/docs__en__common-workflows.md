@@ -947,3 +947,8 @@ Claude has built-in access to its documentation and can answer questions about i
 <Card title="Claude Code reference implementation" icon="code" href="https://github.com/anthropics/claude-code/tree/main/.devcontainer">
   Clone our development container reference implementation.
 </Card>
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt
