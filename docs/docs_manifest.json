@@ -225,14 +225,20 @@
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
       "original_md_url": "https://code.claude.com/docs/en/setup.md",
-      "hash": "a55d0376bc7e828fff396b663ca782bb6c2fca193c271bababdb148f6d38446e",
-      "last_updated": "2025-12-08T06:02:35.037159"
+      "hash": "322d138e5e559243bb1a546dfc7a2e5fcad4000c43746bb06bbf2d155296c05d",
+      "last_updated": "2025-12-08T21:01:44.388022"
     },
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
       "original_md_url": "https://code.claude.com/docs/en/skills.md",
       "hash": "67d1a207d9b79d690cddd87ddfd9086b26dc2186f8f26a3da21eed041b1db62d",
       "last_updated": "2025-12-08T00:05:17.872573"
+    },
+    "slack.md": {
+      "original_url": "https://code.claude.com/docs/en/slack",
+      "original_md_url": "https://code.claude.com/docs/en/slack.md",
+      "hash": "5ee26ba61c0f38fd4fc0753163927d5952862e915790d053aa35b75b1ba656cd",
+      "last_updated": "2025-12-08T21:01:45.667944"
     },
     "slash-commands.md": {
       "original_url": "https://code.claude.com/docs/en/slash-commands",
@@ -285,18 +291,18 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-12-08T18:02:03.495317",
-    "fetch_duration_seconds": 28.28449,
-    "total_pages_discovered": 46,
-    "pages_fetched_successfully": 47,
+    "last_fetch_completed": "2025-12-08T21:01:50.141175",
+    "fetch_duration_seconds": 29.354751,
+    "total_pages_discovered": 47,
+    "pages_fetched_successfully": 48,
     "pages_failed": 0,
     "failed_pages": [],
     "sitemap_url": "https://code.claude.com/docs/sitemap.xml",
     "base_url": "https://code.claude.com",
-    "total_files": 47,
+    "total_files": 48,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-12-08T18:02:03.495346",
+  "last_updated": "2025-12-08T21:01:50.141206",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
