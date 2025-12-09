@@ -171,8 +171,8 @@
     "overview.md": {
       "original_url": "https://code.claude.com/docs/en/overview",
       "original_md_url": "https://code.claude.com/docs/en/overview.md",
-      "hash": "228640f1a0eb82e35e8b5f560146158b6f1dfb9c215114dbc97ff48a7428b1d2",
-      "last_updated": "2025-12-08T06:02:29.706104"
+      "hash": "1bfaa9213cf3ca5674bc5179cd33df9e0fc847e02a8127a3277d7631f91dcd7d",
+      "last_updated": "2025-12-09T03:25:23.334895"
     },
     "plugin-marketplaces.md": {
       "original_url": "https://code.claude.com/docs/en/plugin-marketplaces",
@@ -225,8 +225,8 @@
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
       "original_md_url": "https://code.claude.com/docs/en/setup.md",
-      "hash": "322d138e5e559243bb1a546dfc7a2e5fcad4000c43746bb06bbf2d155296c05d",
-      "last_updated": "2025-12-08T21:01:44.388022"
+      "hash": "683b0cf69987aa8f1bfc5338564d601a350ccec61f1a374d05d1e561a60d5ccb",
+      "last_updated": "2025-12-09T03:25:28.691837"
     },
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
@@ -285,14 +285,14 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "25d96b65ba8269503563f9fbd15d90f740a59b9e31ab18ff938d6a6aedaaa9c8",
-      "last_updated": "2025-12-07T12:02:33.995055",
+      "hash": "a3de63ee0175eaab67c9bfd210118675b38c23395036081ec1c8ffe8c29c45f9",
+      "last_updated": "2025-12-09T03:25:34.014349",
       "source": "claude-code-repository"
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-12-09T00:04:42.849552",
-    "fetch_duration_seconds": 27.627996,
+    "last_fetch_completed": "2025-12-09T03:25:34.014377",
+    "fetch_duration_seconds": 27.342208,
     "total_pages_discovered": 47,
     "pages_fetched_successfully": 48,
     "pages_failed": 0,
@@ -302,7 +302,7 @@
     "total_files": 48,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-12-09T00:04:42.849578",
+  "last_updated": "2025-12-09T03:25:34.014398",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

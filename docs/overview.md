@@ -48,12 +48,8 @@ claude
 You'll be prompted to log in on first use. That's it! [Continue with Quickstart (5 minutes) →](/en/quickstart)
 
 <Tip>
-  See [advanced setup](/en/setup) for installation options or [troubleshooting](/en/troubleshooting) if you hit issues.
+  Claude Code automatically keeps itself up to date. See [advanced setup](/en/setup) for installation options, manual updates, or uninstallation instructions. Visit [troubleshooting](/en/troubleshooting) if you hit issues.
 </Tip>
-
-<Note>
-  **New VS Code Extension (Beta)**: Prefer a graphical interface? Our new [VS Code extension](/en/vs-code) provides an easy-to-use native IDE experience without requiring terminal familiarity. Simply install from the marketplace and start coding with Claude directly in your sidebar.
-</Note>
 
 ## What Claude Code does for you
 
