@@ -66,7 +66,21 @@ You can enable sandboxing by running the `/sandbox` slash command:
 > /sandbox
 ```
 
-This activates the sandboxed bash tool with default settings, allowing access to your current working directory while blocking access to sensitive system locations.
+This opens a menu where you can choose between sandbox modes.
+
+### Sandbox modes
+
+Claude Code offers two sandbox modes:
+
+**Auto-allow mode**: Bash commands will attempt to run inside the sandbox and are automatically allowed without requiring permission. Commands that cannot be sandboxed (such as those needing network access to non-allowed hosts) fall back to the regular permission flow. Explicit ask/deny rules you've configured are always respected.
+
+**Regular permissions mode**: All bash commands go through the standard permission flow, even when sandboxed. This provides more control but requires more approvals.
+
+In both modes, the sandbox enforces the same filesystem and network restrictions. The difference is only in whether sandboxed commands are auto-approved or require explicit permission.
+
+<Info>
+  Auto-allow mode works independently of your permission mode setting. Even if you're not in "accept edits" mode, sandboxed bash commands will run automatically when auto-allow is enabled. This means bash commands that modify files within the sandbox boundaries will execute without prompting, even when file edit tools would normally require approval.
+</Info>
 
 ### Configure sandboxing
 

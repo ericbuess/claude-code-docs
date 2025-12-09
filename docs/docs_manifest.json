@@ -201,8 +201,8 @@
     "sandboxing.md": {
       "original_url": "https://code.claude.com/docs/en/sandboxing",
       "original_md_url": "https://code.claude.com/docs/en/sandboxing.md",
-      "hash": "d6a79ac25885826ad31c15d9a0f25bdf9f95104327f88f5c8b347c2546ee3129",
-      "last_updated": "2025-12-08T06:02:32.621492"
+      "hash": "bcdc06de16c420371e610419230b3f8a6039df5f60b54b8a31a7f5c0a9dbdbec",
+      "last_updated": "2025-12-09T06:02:39.199650"
     },
     "sdk__migration-guide.md": {
       "original_url": "https://code.claude.com/docs/en/sdk/migration-guide",
@@ -291,8 +291,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-12-09T03:25:34.014377",
-    "fetch_duration_seconds": 27.342208,
+    "last_fetch_completed": "2025-12-09T06:02:47.147274",
+    "fetch_duration_seconds": 28.689736,
     "total_pages_discovered": 47,
     "pages_fetched_successfully": 48,
     "pages_failed": 0,
@@ -302,7 +302,7 @@
     "total_files": 48,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-12-09T03:25:34.014398",
+  "last_updated": "2025-12-09T06:02:47.147300",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
