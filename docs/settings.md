@@ -66,7 +66,8 @@ Code through hierarchical settings:
 | `cleanupPeriodDays`          | Sessions inactive for longer than this period are deleted at startup. Setting to `0` immediately deletes all sessions. (default: 30 days)                                                                                                                        | `20`                                                                    |
 | `companyAnnouncements`       | Announcement to display to users at startup. If multiple announcements are provided, they will be cycled through at random.                                                                                                                                      | `["Welcome to Acme Corp! Review our code guidelines at docs.acme.com"]` |
 | `env`                        | Environment variables that will be applied to every session                                                                                                                                                                                                      | `{"FOO": "bar"}`                                                        |
-| `includeCoAuthoredBy`        | Whether to include the `co-authored-by Claude` byline in git commits and pull requests (default: `true`)                                                                                                                                                         | `false`                                                                 |
+| `attribution`                | Customize attribution for git commits and pull requests. See [Attribution settings](#attribution-settings)                                                                                                                                                       | `{"commit": "🤖 Generated with Claude Code", "pr": ""}`                 |
+| `includeCoAuthoredBy`        | **Deprecated**: Use `attribution` instead. Whether to include the `co-authored-by Claude` byline in git commits and pull requests (default: `true`)                                                                                                              | `false`                                                                 |
 | `permissions`                | See table below for structure of permissions.                                                                                                                                                                                                                    |                                                                         |
 | `hooks`                      | Configure custom commands to run before or after tool executions. See [hooks documentation](/en/hooks)                                                                                                                                                           | `{"PreToolUse": {"Bash": "echo 'Running command...'"}}`                 |
 | `disableAllHooks`            | Disable all [hooks](/en/hooks)                                                                                                                                                                                                                                   | `true`                                                                  |
@@ -142,6 +143,47 @@ Configure advanced sandboxing behavior. Sandboxing isolates bash commands from y
 * Use `Edit` allow rules to let Claude write to directories beyond the current working directory
 * Use `Edit` deny rules to block writes to specific paths
 * Use `WebFetch` allow/deny rules to control which network domains Claude can access
+
+### Attribution settings
+
+Claude Code adds attribution to git commits and pull requests. These are configured separately:
+
+* Commits use [git trailers](https://git-scm.com/docs/git-interpret-trailers) (like `Co-Authored-By`) by default,  which can be customized or disabled
+* Pull request descriptions are plain text
+
+| Keys     | Description                                                                                |
+| :------- | :----------------------------------------------------------------------------------------- |
+| `commit` | Attribution for git commits, including any trailers. Empty string hides commit attribution |
+| `pr`     | Attribution for pull request descriptions. Empty string hides pull request attribution     |
+
+**Default commit attribution:**
+
+```
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+   Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
+
+**Default pull request attribution:**
+
+```
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+```
+
+**Example:**
+
+```json  theme={null}
+{
+  "attribution": {
+    "commit": "Generated with AI\n\nCo-Authored-By: AI <ai@example.com>",
+    "pr": ""
+  }
+}
+```
+
+<Note>
+  The `attribution` setting takes precedence over the deprecated `includeCoAuthoredBy` setting. To hide all attribution, set `commit` and `pr` to empty strings.
+</Note>
 
 ### Settings precedence
 

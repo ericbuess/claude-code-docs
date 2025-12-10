@@ -39,6 +39,7 @@
 | `/rewind`                 | Rewind the conversation and/or code                                                                                         |
 | `/sandbox`                | Enable sandboxed bash tool with filesystem and network isolation for safer, more autonomous execution                       |
 | `/security-review`        | Complete a security review of pending changes on the current branch                                                         |
+| `/stats`                  | Visualize daily usage, session history, streaks, and model preferences                                                      |
 | `/status`                 | Open the Settings interface (Status tab) showing version, model, account, and connectivity                                  |
 | `/statusline`             | Set up Claude Code's status line UI                                                                                         |
 | `/terminal-setup`         | Install Shift+Enter key binding for newlines (iTerm2 and VSCode only)                                                       |
