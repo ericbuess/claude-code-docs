@@ -8,6 +8,15 @@
 
 # Changelog
 
+## 2.0.65
+
+- Added ability to switch models while writing a prompt using alt+p (linux, windows), option+p (macos).
+- Added context window information to status line input
+- Added `fileSuggestion` setting for custom `@` file search commands
+- Added `CLAUDE_CODE_SHELL` environment variable to override automatic shell detection (useful when login shell differs from actual working shell)
+- Fixed prompt not being saved to history when aborting a query with Escape
+- Fixed Read tool image handling to identify format from bytes instead of file extension
+
 ## 2.0.64
 
 - Made auto-compacting instant
