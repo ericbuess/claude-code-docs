@@ -31,6 +31,7 @@
 - VSCode: Added copy-to-clipboard button on code blocks and bash tool inputs
 - VSCode: Fixed extension not working on Windows ARM64 by falling back to x64 binary via emulation
 - Bedrock: Improve efficiency of token counting
+- Bedrock: Add support for `aws login` AWS Management Console credentials
 - Unshipped AgentOutputTool and BashOutputTool, in favor of a new unified TaskOutputTool
 
 ## 2.0.62
