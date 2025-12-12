@@ -3,8 +3,8 @@
     "amazon-bedrock.md": {
       "original_url": "https://code.claude.com/docs/en/amazon-bedrock",
       "original_md_url": "https://code.claude.com/docs/en/amazon-bedrock.md",
-      "hash": "9296b17c147185aecc9ab962677437ec6a171a8789105fb84814bfa03f65fa32",
-      "last_updated": "2025-12-08T06:02:13.313738"
+      "hash": "a7bf981296d86a140210aa4cf10b983521b6b61b504bf7cb97f693c2d2bdad3d",
+      "last_updated": "2025-12-12T00:04:32.308991"
     },
     "analytics.md": {
       "original_url": "https://code.claude.com/docs/en/analytics",
@@ -291,8 +291,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-12-11T21:02:02.989369",
-    "fetch_duration_seconds": 28.33882,
+    "last_fetch_completed": "2025-12-12T00:05:05.188766",
+    "fetch_duration_seconds": 33.905643,
     "total_pages_discovered": 47,
     "pages_fetched_successfully": 48,
     "pages_failed": 0,
@@ -302,7 +302,7 @@
     "total_files": 48,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-12-11T21:02:02.989391",
+  "last_updated": "2025-12-12T00:05:05.188791",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

@@ -48,7 +48,15 @@ aws sso login --profile=<your-profile-name>
 export AWS_PROFILE=your-profile-name
 ```
 
-**Option D: Bedrock API keys**
+**Option D: AWS Management Console credentials**
+
+```bash  theme={null}
+aws login
+```
+
+[Learn more](https://docs.aws.amazon.com/signin/latest/userguide/command-line-sign-in.html) about `aws login`.
+
+**Option E: Bedrock API keys**
 
 ```bash  theme={null}
 export AWS_BEARER_TOKEN_BEDROCK=your-bedrock-api-key
