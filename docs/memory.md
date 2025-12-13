@@ -54,16 +54,6 @@ Claude Code reads memories recursively: starting in the cwd, Claude Code recurse
 
 Claude will also discover CLAUDE.md nested in subtrees under your current working directory. Instead of loading them at launch, they are only included when Claude reads files in those subtrees.
 
-## Quickly add memories with the `#` shortcut
-
-The fastest way to add a memory is to start your input with the `#` character:
-
-```
-# Always use descriptive variable names
-```
-
-You'll be prompted to select which memory file to store this in.
-
 ## Directly edit memories with `/memory`
 
 Use the `/memory` slash command during a session to open any memory file in your system editor for more extensive additions or organization.

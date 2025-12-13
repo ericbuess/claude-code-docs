@@ -135,8 +135,8 @@
     "memory.md": {
       "original_url": "https://code.claude.com/docs/en/memory",
       "original_md_url": "https://code.claude.com/docs/en/memory.md",
-      "hash": "7824df90065bd8ec0ee17b916232eefa3849d9be383beaa3aa3cf00c0cf5bd6d",
-      "last_updated": "2025-12-09T18:01:41.608829"
+      "hash": "bfb0737ddfd8af370ca9574d85d10c84cf4091092b343af03cc3e218d09baa22",
+      "last_updated": "2025-12-13T06:02:17.699996"
     },
     "microsoft-foundry.md": {
       "original_url": "https://code.claude.com/docs/en/microsoft-foundry",
@@ -291,8 +291,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-12-13T03:24:03.458548",
-    "fetch_duration_seconds": 27.390935,
+    "last_fetch_completed": "2025-12-13T06:02:32.172671",
+    "fetch_duration_seconds": 27.516833,
     "total_pages_discovered": 47,
     "pages_fetched_successfully": 48,
     "pages_failed": 0,
@@ -302,7 +302,7 @@
     "total_files": 48,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-12-13T03:24:03.458569",
+  "last_updated": "2025-12-13T06:02:32.172702",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
