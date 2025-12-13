@@ -8,9 +8,17 @@
 
 # Changelog
 
+## 2.0.68
+
+- Fixed IME (Input Method Editor) support for languages like Chinese, Japanese, and Korean by correctly positioning the composition window at the cursor
+- Fixed a bug where disallowed MCP tools were visible to the model
+- Fixed an issue where steering messages could be lost while a subagent is working
+- Fixed Option+Arrow word navigation treating entire CJK (Chinese, Japanese, Korean) text sequences as a single word instead of navigating by word boundaries
+- Improved plan mode exit UX: show simplified yes/no dialog when exiting with empty or missing plan instead of throwing an error
+- Add support for enterprise managed settings. Contact your Anthropic account team to enable this feature.
+
 ## 2.0.67
 
-- Claude now suggests prompts to speed up your workflow: press Tab to accept or Enter to submit
 - Thinking mode is now enabled by default for Opus 4.5
 - Thinking mode configuration has moved to /config
 - Added search functionality to `/permissions` command with `/` keyboard shortcut for filtering rules by tool name
