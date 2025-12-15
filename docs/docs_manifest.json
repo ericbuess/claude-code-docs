@@ -27,8 +27,8 @@
     "cli-reference.md": {
       "original_url": "https://code.claude.com/docs/en/cli-reference",
       "original_md_url": "https://code.claude.com/docs/en/cli-reference.md",
-      "hash": "0008d7582dd382b277eccd67ec9ae51744d9d47942ef6ae5513dbfac9e8bc43c",
-      "last_updated": "2025-12-08T00:04:57.895107"
+      "hash": "1f74e23fa86b4371fc33681751e303252a7b222d2da28beaf28c3e09b5bee882",
+      "last_updated": "2025-12-15T18:01:38.511141"
     },
     "common-workflows.md": {
       "original_url": "https://code.claude.com/docs/en/common-workflows",
@@ -81,8 +81,8 @@
     "headless.md": {
       "original_url": "https://code.claude.com/docs/en/headless",
       "original_md_url": "https://code.claude.com/docs/en/headless.md",
-      "hash": "7e52e398c60c0ca0fa4c5b39c28bba4d80ba78907d0039e03075fb9243e3a7cf",
-      "last_updated": "2025-12-08T06:02:20.941253"
+      "hash": "a9ccdc4e232e12284c55680ba2cb91ce03576b93a4828cecbbefcceab8ed087a",
+      "last_updated": "2025-12-15T18:01:44.027578"
     },
     "hooks.md": {
       "original_url": "https://code.claude.com/docs/en/hooks",
@@ -291,8 +291,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-12-15T15:03:38.657679",
-    "fetch_duration_seconds": 29.058164,
+    "last_fetch_completed": "2025-12-15T18:02:04.335746",
+    "fetch_duration_seconds": 28.638849,
     "total_pages_discovered": 47,
     "pages_fetched_successfully": 48,
     "pages_failed": 0,
@@ -302,7 +302,7 @@
     "total_files": 48,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-12-15T15:03:38.657705",
+  "last_updated": "2025-12-15T18:02:04.335772",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
