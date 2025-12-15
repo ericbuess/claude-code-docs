@@ -177,20 +177,20 @@
     "plugin-marketplaces.md": {
       "original_url": "https://code.claude.com/docs/en/plugin-marketplaces",
       "original_md_url": "https://code.claude.com/docs/en/plugin-marketplaces.md",
-      "hash": "f9d70aff1d2cbf04fa77c06b6118f6afa10ab1562ae06c6a52e12e41d426b933",
-      "last_updated": "2025-12-08T00:05:12.515662"
+      "hash": "1b2daac5086b55d1ffc6ab98d80519abc29211019863d57717d9b037eadb9efd",
+      "last_updated": "2025-12-15T21:01:40.490065"
     },
     "plugins.md": {
       "original_url": "https://code.claude.com/docs/en/plugins",
       "original_md_url": "https://code.claude.com/docs/en/plugins.md",
-      "hash": "1709e7105b34ecc569ca20d5348b918da78c731ab24cd1943401bb7ae72f0b61",
-      "last_updated": "2025-12-08T06:02:30.879689"
+      "hash": "6b67f5a49fc07fa63a20d7b67d5c13354a36e5ffcd4624546ba0c113402c9f7a",
+      "last_updated": "2025-12-15T21:01:41.139475"
     },
     "plugins-reference.md": {
       "original_url": "https://code.claude.com/docs/en/plugins-reference",
       "original_md_url": "https://code.claude.com/docs/en/plugins-reference.md",
-      "hash": "564f1fd7b7d2daaf94a5023d996f1d5e8ba49de97b2411a20a69e4502ac9178b",
-      "last_updated": "2025-12-05T12:02:34.938384"
+      "hash": "5df4ab29b0d042c590cd2950bd2eadba980f27b41fb360f756522f0772fd9781",
+      "last_updated": "2025-12-15T21:01:41.724070"
     },
     "quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/quickstart",
@@ -291,8 +291,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-12-15T18:02:04.335746",
-    "fetch_duration_seconds": 28.638849,
+    "last_fetch_completed": "2025-12-15T21:01:50.949927",
+    "fetch_duration_seconds": 29.785715,
     "total_pages_discovered": 47,
     "pages_fetched_successfully": 48,
     "pages_failed": 0,
@@ -302,7 +302,7 @@
     "total_files": 48,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-12-15T18:02:04.335772",
+  "last_updated": "2025-12-15T21:01:50.949953",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

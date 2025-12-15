@@ -10,6 +10,7 @@ A marketplace is a JSON file that lists available plugins and describes where to
 
 * **Centralized discovery**: Browse plugins from multiple sources in one place
 * **Version management**: Track and update plugin versions automatically
+* **Automatic updates**: Keep plugins current with [per-marketplace auto-update settings](#auto-update-settings)
 * **Team distribution**: Share required plugins across your organization
 * **Flexible sources**: Support for git repositories, GitHub repos, local paths, and package managers
 
@@ -373,6 +374,51 @@ Removes the marketplace from your configuration.
 <Warning>
   Removing a marketplace will uninstall any plugins you installed from it.
 </Warning>
+
+***
+
+## Auto-update settings
+
+Claude Code can automatically update marketplaces and their installed plugins at startup. This keeps your plugins current without manual intervention.
+
+### How auto-update works
+
+When auto-update is enabled for a marketplace:
+
+1. **Marketplace refresh**: Claude Code pulls the latest marketplace data (git pull or re-download)
+2. **Plugin updates**: Installed plugins from that marketplace are updated to their latest versions
+3. **Notification**: If any plugins were updated, you'll see a notification suggesting a restart
+
+### Configure auto-update per marketplace
+
+Toggle auto-update for individual marketplaces through the UI:
+
+1. Run `/plugin` to open the plugin manager
+2. Select **Marketplaces**
+3. Choose a marketplace from the list
+4. Select **Enable auto-update** or **Disable auto-update**
+
+<Note>
+  Official Anthropic marketplaces have auto-update enabled by default. You can disable this if you prefer manual updates.
+</Note>
+
+### Auto-update behavior
+
+| Marketplace type                | Default behavior     |
+| :------------------------------ | :------------------- |
+| Official Anthropic marketplaces | Auto-update enabled  |
+| Third-party marketplaces        | Auto-update disabled |
+| Local development marketplaces  | Auto-update disabled |
+
+### Disable auto-update globally
+
+To disable all automatic updates (both Claude Code and plugins), set the `DISABLE_AUTOUPDATER` environment variable. See [Auto updates](/en/setup#auto-updates) for details.
+
+When auto-updates are disabled globally:
+
+* No marketplaces or plugins will auto-update
+* The auto-update toggle is hidden in the UI
+* You can still manually update using `/plugin marketplace update`
 
 ***
 

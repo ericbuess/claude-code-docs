@@ -201,6 +201,44 @@ Select "Browse Plugins" to see available options with descriptions, features, an
 /plugin uninstall plugin-name@marketplace-name
 ```
 
+### Installation scopes
+
+Plugins can be installed at different scopes to control their availability and sharing:
+
+| Scope     | Location                      | Behavior                                |
+| :-------- | :---------------------------- | :-------------------------------------- |
+| `user`    | `~/.claude/settings.json`     | Available across all projects (default) |
+| `project` | `.claude/settings.json`       | Shared with team via version control    |
+| `local`   | `.claude/settings.local.json` | Project-specific, gitignored            |
+
+**When to use each scope:**
+
+* **User scope** (default): For plugins you want available in all your projects
+* **Project scope**: For plugins your team should share (committed to git)
+* **Local scope**: For personal plugins in a specific project (not shared)
+
+```shell Install to user scope (default) theme={null}
+claude plugin install formatter@your-org
+```
+
+```shell Install to project scope (shared with team) theme={null}
+claude plugin install formatter@your-org --scope project
+```
+
+```shell Install to local scope (gitignored) theme={null}
+claude plugin install formatter@your-org --scope local
+```
+
+The `--scope` option also works with `uninstall`, `enable`, and `disable` commands:
+
+```shell Uninstall from project scope theme={null}
+claude plugin uninstall formatter@your-org --scope project
+```
+
+<Note>
+  When using `/plugin install` interactively, you'll be prompted to select the installation scope.
+</Note>
+
 ### Verify installation
 
 After installing a plugin:
