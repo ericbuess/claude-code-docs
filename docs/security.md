@@ -113,7 +113,7 @@ For more details on cloud execution, see [Claude Code on the web](/en/claude-cod
 
 ### Team security
 
-* Use [enterprise managed policies](/en/iam#enterprise-managed-policy-settings) to enforce organizational standards
+* Use [enterprise managed settings](/en/iam#enterprise-managed-settings) to enforce organizational standards
 * Share approved permission configurations through version control
 * Train team members on security best practices
 * Monitor Claude Code usage through [OpenTelemetry metrics](/en/monitoring-usage)

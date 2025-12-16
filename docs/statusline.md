@@ -62,7 +62,13 @@ Your status line command receives structured data via stdin in JSON format:
   "context_window": {
     "total_input_tokens": 15234,
     "total_output_tokens": 4521,
-    "context_window_size": 200000
+    "context_window_size": 200000,
+    "current_usage": {
+      "input_tokens": 8500,
+      "output_tokens": 1200,
+      "cache_creation_input_tokens": 5000,
+      "cache_read_input_tokens": 2000
+    }
   }
 }
 ```
@@ -198,21 +204,33 @@ echo "[$MODEL] 📁 ${DIR##*/}"
 
 ### Context Window Usage
 
-Display the percentage of context window consumed:
+Display the percentage of context window consumed. The `context_window` object contains:
+
+* `total_input_tokens` / `total_output_tokens`: Cumulative totals across the entire session
+* `current_usage`: Current context window usage from the last API call (may be `null` if no messages yet)
+  * `input_tokens`: Input tokens in current context
+  * `output_tokens`: Output tokens generated
+  * `cache_creation_input_tokens`: Tokens written to cache
+  * `cache_read_input_tokens`: Tokens read from cache
+
+For accurate context percentage, use `current_usage` which reflects the actual context window state:
 
 ```bash  theme={null}
 #!/bin/bash
 input=$(cat)
 
-INPUT_TOKENS=$(echo "$input" | jq -r '.context_window.total_input_tokens')
-OUTPUT_TOKENS=$(echo "$input" | jq -r '.context_window.total_output_tokens')
-CONTEXT_SIZE=$(echo "$input" | jq -r '.context_window.context_window_size')
 MODEL=$(echo "$input" | jq -r '.model.display_name')
+CONTEXT_SIZE=$(echo "$input" | jq -r '.context_window.context_window_size')
+USAGE=$(echo "$input" | jq '.context_window.current_usage')
 
-TOTAL_TOKENS=$((INPUT_TOKENS + OUTPUT_TOKENS))
-PERCENT_USED=$((TOTAL_TOKENS * 100 / CONTEXT_SIZE))
-
-echo "[$MODEL] Context: ${PERCENT_USED}%"
+if [ "$USAGE" != "null" ]; then
+    # Calculate current context from current_usage fields
+    CURRENT_TOKENS=$(echo "$USAGE" | jq '.input_tokens + .cache_creation_input_tokens + .cache_read_input_tokens')
+    PERCENT_USED=$((CURRENT_TOKENS * 100 / CONTEXT_SIZE))
+    echo "[$MODEL] Context: ${PERCENT_USED}%"
+else
+    echo "[$MODEL] Context: 0%"
+fi
 ```
 
 ## Tips

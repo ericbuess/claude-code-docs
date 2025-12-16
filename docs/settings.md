@@ -14,19 +14,16 @@ Code through hierarchical settings:
 * **Project settings** are saved in your project directory:
   * `.claude/settings.json` for settings that are checked into source control and shared with your team
   * `.claude/settings.local.json` for settings that are not checked in, useful for personal preferences and experimentation. Claude Code will configure git to ignore `.claude/settings.local.json` when it is created.
-* For enterprise deployments of Claude Code, we also support **enterprise
-  managed policy settings**. These take precedence over user and project
-  settings. System administrators can deploy policies to:
-  * macOS: `/Library/Application Support/ClaudeCode/managed-settings.json`
-  * Linux and WSL: `/etc/claude-code/managed-settings.json`
-  * Windows: `C:\Program Files\ClaudeCode\managed-settings.json`
-    * `C:\ProgramData\ClaudeCode\managed-settings.json` will be deprecated in a future version.
-* Enterprise deployments can also configure **managed MCP servers** that override
-  user-configured servers. See [Enterprise MCP configuration](/en/mcp#enterprise-mcp-configuration):
-  * macOS: `/Library/Application Support/ClaudeCode/managed-mcp.json`
-  * Linux and WSL: `/etc/claude-code/managed-mcp.json`
-  * Windows: `C:\Program Files\ClaudeCode\managed-mcp.json`
-    * `C:\ProgramData\ClaudeCode\managed-mcp.json` will be deprecated in a future version.
+* **Managed settings** (Enterprise): Enterprise administrators can configure and distribute Claude Code settings to their organization through the [Claude.ai admin console](https://claude.ai/admin-settings/claude-code). These settings are fetched automatically when users authenticate, take precedence over user and project settings, and cannot be overridden locally. This feature is available to Claude for Enterprise customers. If you don't see this option in your admin console, contact your Anthropic account team to have the feature enabled.
+
+For organizations that prefer file-based policy distribution, Claude Code also supports `managed-settings.json` and `managed-mcp.json` files that can be deployed to system directories:
+
+* macOS: `/Library/Application Support/ClaudeCode/`
+* Linux and WSL: `/etc/claude-code/`
+* Windows: `C:\Program Files\ClaudeCode\`
+
+See [Enterprise managed settings](/en/iam#enterprise-managed-settings) and [Enterprise MCP configuration](/en/mcp#enterprise-mcp-configuration) for details.
+
 * **Other configuration** is stored in `~/.claude.json`. This file contains your preferences (theme, notification settings, editor mode), OAuth session, [MCP server](/en/mcp) configurations for user and local scopes, per-project state (allowed tools, trust settings), and various caches. Project-scoped MCP servers are stored separately in `.mcp.json`.
 
 ```JSON Example settings.json theme={null}
@@ -94,7 +91,7 @@ Code through hierarchical settings:
 | `deny`                         | Array of [permission rules](/en/iam#configuring-permissions) to deny tool use. Use this to also exclude sensitive files from Claude Code access. **Note:** Bash patterns are prefix matches and can be bypassed (see [Bash permission limitations](/en/iam#tool-specific-permission-rules)) | `[ "WebFetch", "Bash(curl:*)", "Read(./.env)", "Read(./secrets/**)" ]` |
 | `additionalDirectories`        | Additional [working directories](/en/iam#working-directories) that Claude has access to                                                                                                                                                                                                     | `[ "../docs/" ]`                                                       |
 | `defaultMode`                  | Default [permission mode](/en/iam#permission-modes) when opening Claude Code                                                                                                                                                                                                                | `"acceptEdits"`                                                        |
-| `disableBypassPermissionsMode` | Set to `"disable"` to prevent `bypassPermissions` mode from being activated. This disables the `--dangerously-skip-permissions` command-line flag. See [managed policy settings](/en/iam#enterprise-managed-policy-settings)                                                                | `"disable"`                                                            |
+| `disableBypassPermissionsMode` | Set to `"disable"` to prevent `bypassPermissions` mode from being activated. This disables the `--dangerously-skip-permissions` command-line flag. See [managed settings](/en/iam#enterprise-managed-settings)                                                                              | `"disable"`                                                            |
 
 ### Sandbox settings
 
@@ -190,20 +187,26 @@ Claude Code adds attribution to git commits and pull requests. These are configu
 
 Settings apply in order of precedence. From highest to lowest:
 
-1. **Enterprise managed policies** (`managed-settings.json`)
-   * Deployed by IT/DevOps
-   * Can't be overridden
+1. **Managed settings** (Enterprise)
+   * Remote settings configured via the [Claude.ai admin console](https://claude.ai/admin-settings/claude-code)
+   * Fetched automatically when users authenticate
+   * Cannot be overridden
 
-2. **Command line arguments**
+2. **File-based managed settings** (`managed-settings.json`)
+   * Policies deployed by IT/DevOps to system directories
+   * Cannot be overridden by user or project settings
+   * Ignored when remote managed settings are configured
+
+3. **Command line arguments**
    * Temporary overrides for a specific session
 
-3. **Local project settings** (`.claude/settings.local.json`)
+4. **Local project settings** (`.claude/settings.local.json`)
    * Personal project-specific settings
 
-4. **Shared project settings** (`.claude/settings.json`)
+5. **Shared project settings** (`.claude/settings.json`)
    * Team-shared project settings in source control
 
-5. **User settings** (`~/.claude/settings.json`)
+6. **User settings** (`~/.claude/settings.json`)
    * Personal global settings
 
 This hierarchy ensures that enterprise security policies are always enforced while still allowing teams and individuals to customize their experience.
@@ -516,7 +519,7 @@ files by blocking Write operations to certain paths.
 ## See also
 
 * [Identity and Access Management](/en/iam#configuring-permissions) - Learn about Claude Code's permission system
-* [IAM and access control](/en/iam#enterprise-managed-policy-settings) - Enterprise policy management
+* [IAM and access control](/en/iam#enterprise-managed-settings) - Enterprise policy management
 * [Troubleshooting](/en/troubleshooting#auto-updater-issues) - Solutions for common configuration issues
 
 
