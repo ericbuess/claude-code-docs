@@ -62,10 +62,6 @@ You may also encounter permission errors if your npm global prefix is not user w
 
 Claude Code has a native installation that doesn't depend on npm or Node.js.
 
-<Note>
-  The native Claude Code installer is currently in beta.
-</Note>
-
 Use the following command to run the native installer.
 
 **macOS, Linux, WSL:**

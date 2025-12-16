@@ -21,12 +21,6 @@ To install Claude Code, use one of the following methods:
 
 <Tabs>
   <Tab title="Native Install (Recommended)">
-    **Homebrew (macOS, Linux):**
-
-    ```sh  theme={null}
-    brew install --cask claude-code
-    ```
-
     **macOS, Linux, WSL:**
 
     ```bash  theme={null}
@@ -43,6 +37,12 @@ To install Claude Code, use one of the following methods:
 
     ```batch  theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+    ```
+  </Tab>
+
+  <Tab title="Homebrew">
+    ```sh  theme={null}
+    brew install --cask claude-code
     ```
   </Tab>
 
@@ -127,10 +127,6 @@ curl -fsSL https://claude.ai/install.sh | bash -s 1.0.58
 
 <Note>
   **Alpine Linux and other musl/uClibc-based distributions**: The native build requires `libgcc`, `libstdc++`, and `ripgrep`. For Alpine: `apk add libgcc libstdc++ ripgrep`. Set `USE_BUILTIN_RIPGREP=0`.
-</Note>
-
-<Note>
-  Claude Code installed via Homebrew will auto-update outside of the brew directory unless explicitly disabled with the `DISABLE_AUTOUPDATER` environment variable (see [Auto updates](#auto-updates) section).
 </Note>
 
 **Windows PowerShell:**

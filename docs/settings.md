@@ -16,14 +16,18 @@ Code through hierarchical settings:
   * `.claude/settings.local.json` for settings that are not checked in, useful for personal preferences and experimentation. Claude Code will configure git to ignore `.claude/settings.local.json` when it is created.
 * **Managed settings** (Enterprise): Enterprise administrators can configure and distribute Claude Code settings to their organization through the [Claude.ai admin console](https://claude.ai/admin-settings/claude-code). These settings are fetched automatically when users authenticate, take precedence over user and project settings, and cannot be overridden locally. This feature is available to Claude for Enterprise customers. If you don't see this option in your admin console, contact your Anthropic account team to have the feature enabled.
 
-For organizations that prefer file-based policy distribution, Claude Code also supports `managed-settings.json` and `managed-mcp.json` files that can be deployed to system directories:
+  For organizations that prefer file-based policy distribution, Claude Code also supports `managed-settings.json` and `managed-mcp.json` files that can be deployed to system directories:
 
-* macOS: `/Library/Application Support/ClaudeCode/`
-* Linux and WSL: `/etc/claude-code/`
-* Windows: `C:\Program Files\ClaudeCode\`
+  * macOS: `/Library/Application Support/ClaudeCode/`
+  * Linux and WSL: `/etc/claude-code/`
+  * Windows: `C:\Program Files\ClaudeCode\`
 
-See [Enterprise managed settings](/en/iam#enterprise-managed-settings) and [Enterprise MCP configuration](/en/mcp#enterprise-mcp-configuration) for details.
+  See [Enterprise managed settings](/en/iam#enterprise-managed-settings) and [Enterprise MCP configuration](/en/mcp#enterprise-mcp-configuration) for details.
 
+  <Note>
+    Enterprise deployments can also restrict **plugin marketplace additions** using
+    `strictKnownMarketplaces`. For more information, see [Enterprise marketplace restrictions](/en/plugin-marketplaces#enterprise-marketplace-restrictions).
+  </Note>
 * **Other configuration** is stored in `~/.claude.json`. This file contains your preferences (theme, notification settings, editor mode), OAuth session, [MCP server](/en/mcp) configurations for user and local scopes, per-project state (allowed tools, trust settings), and various caches. Project-scoped MCP servers are stored separately in `.mcp.json`.
 
 ```JSON Example settings.json theme={null}
@@ -57,30 +61,31 @@ See [Enterprise managed settings](/en/iam#enterprise-managed-settings) and [Ente
 
 `settings.json` supports a number of options:
 
-| Key                          | Description                                                                                                                                                                                                                                                      | Example                                                                 |
-| :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `apiKeyHelper`               | Custom script, to be executed in `/bin/sh`, to generate an auth value. This value will be sent as `X-Api-Key` and `Authorization: Bearer` headers for model requests                                                                                             | `/bin/generate_temp_api_key.sh`                                         |
-| `cleanupPeriodDays`          | Sessions inactive for longer than this period are deleted at startup. Setting to `0` immediately deletes all sessions. (default: 30 days)                                                                                                                        | `20`                                                                    |
-| `companyAnnouncements`       | Announcement to display to users at startup. If multiple announcements are provided, they will be cycled through at random.                                                                                                                                      | `["Welcome to Acme Corp! Review our code guidelines at docs.acme.com"]` |
-| `env`                        | Environment variables that will be applied to every session                                                                                                                                                                                                      | `{"FOO": "bar"}`                                                        |
-| `attribution`                | Customize attribution for git commits and pull requests. See [Attribution settings](#attribution-settings)                                                                                                                                                       | `{"commit": "🤖 Generated with Claude Code", "pr": ""}`                 |
-| `includeCoAuthoredBy`        | **Deprecated**: Use `attribution` instead. Whether to include the `co-authored-by Claude` byline in git commits and pull requests (default: `true`)                                                                                                              | `false`                                                                 |
-| `permissions`                | See table below for structure of permissions.                                                                                                                                                                                                                    |                                                                         |
-| `hooks`                      | Configure custom commands to run before or after tool executions. See [hooks documentation](/en/hooks)                                                                                                                                                           | `{"PreToolUse": {"Bash": "echo 'Running command...'"}}`                 |
-| `disableAllHooks`            | Disable all [hooks](/en/hooks)                                                                                                                                                                                                                                   | `true`                                                                  |
-| `model`                      | Override the default model to use for Claude Code                                                                                                                                                                                                                | `"claude-sonnet-4-5-20250929"`                                          |
-| `statusLine`                 | Configure a custom status line to display context. See [`statusLine` documentation](/en/statusline)                                                                                                                                                              | `{"type": "command", "command": "~/.claude/statusline.sh"}`             |
-| `outputStyle`                | Configure an output style to adjust the system prompt. See [output styles documentation](/en/output-styles)                                                                                                                                                      | `"Explanatory"`                                                         |
-| `forceLoginMethod`           | Use `claudeai` to restrict login to Claude.ai accounts, `console` to restrict login to Claude Console (API usage billing) accounts                                                                                                                               | `claudeai`                                                              |
-| `forceLoginOrgUUID`          | Specify the UUID of an organization to automatically select it during login, bypassing the organization selection step. Requires `forceLoginMethod` to be set                                                                                                    | `"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"`                                |
-| `enableAllProjectMcpServers` | Automatically approve all MCP servers defined in project `.mcp.json` files                                                                                                                                                                                       | `true`                                                                  |
-| `enabledMcpjsonServers`      | List of specific MCP servers from `.mcp.json` files to approve                                                                                                                                                                                                   | `["memory", "github"]`                                                  |
-| `disabledMcpjsonServers`     | List of specific MCP servers from `.mcp.json` files to reject                                                                                                                                                                                                    | `["filesystem"]`                                                        |
-| `allowedMcpServers`          | When set in managed-settings.json, allowlist of MCP servers users can configure. Undefined = no restrictions, empty array = lockdown. Applies to all scopes. Denylist takes precedence. See [Enterprise MCP configuration](/en/mcp#enterprise-mcp-configuration) | `[{ "serverName": "github" }]`                                          |
-| `deniedMcpServers`           | When set in managed-settings.json, denylist of MCP servers that are explicitly blocked. Applies to all scopes including enterprise servers. Denylist takes precedence over allowlist. See [Enterprise MCP configuration](/en/mcp#enterprise-mcp-configuration)   | `[{ "serverName": "filesystem" }]`                                      |
-| `awsAuthRefresh`             | Custom script that modifies the `.aws` directory (see [advanced credential configuration](/en/amazon-bedrock#advanced-credential-configuration))                                                                                                                 | `aws sso login --profile myprofile`                                     |
-| `awsCredentialExport`        | Custom script that outputs JSON with AWS credentials (see [advanced credential configuration](/en/amazon-bedrock#advanced-credential-configuration))                                                                                                             | `/bin/generate_aws_grant.sh`                                            |
-| `alwaysThinkingEnabled`      | Enable [extended thinking](/en/common-workflows#use-extended-thinking) by default for all sessions. Typically configured via the `/config` command rather than editing directly                                                                                  | `true`                                                                  |
+| Key                          | Description                                                                                                                                                                                                                                                                           | Example                                                                 |
+| :--------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------- |
+| `apiKeyHelper`               | Custom script, to be executed in `/bin/sh`, to generate an auth value. This value will be sent as `X-Api-Key` and `Authorization: Bearer` headers for model requests                                                                                                                  | `/bin/generate_temp_api_key.sh`                                         |
+| `cleanupPeriodDays`          | Sessions inactive for longer than this period are deleted at startup. Setting to `0` immediately deletes all sessions. (default: 30 days)                                                                                                                                             | `20`                                                                    |
+| `companyAnnouncements`       | Announcement to display to users at startup. If multiple announcements are provided, they will be cycled through at random.                                                                                                                                                           | `["Welcome to Acme Corp! Review our code guidelines at docs.acme.com"]` |
+| `env`                        | Environment variables that will be applied to every session                                                                                                                                                                                                                           | `{"FOO": "bar"}`                                                        |
+| `attribution`                | Customize attribution for git commits and pull requests. See [Attribution settings](#attribution-settings)                                                                                                                                                                            | `{"commit": "🤖 Generated with Claude Code", "pr": ""}`                 |
+| `includeCoAuthoredBy`        | **Deprecated**: Use `attribution` instead. Whether to include the `co-authored-by Claude` byline in git commits and pull requests (default: `true`)                                                                                                                                   | `false`                                                                 |
+| `permissions`                | See table below for structure of permissions.                                                                                                                                                                                                                                         |                                                                         |
+| `hooks`                      | Configure custom commands to run before or after tool executions. See [hooks documentation](/en/hooks)                                                                                                                                                                                | `{"PreToolUse": {"Bash": "echo 'Running command...'"}}`                 |
+| `disableAllHooks`            | Disable all [hooks](/en/hooks)                                                                                                                                                                                                                                                        | `true`                                                                  |
+| `model`                      | Override the default model to use for Claude Code                                                                                                                                                                                                                                     | `"claude-sonnet-4-5-20250929"`                                          |
+| `statusLine`                 | Configure a custom status line to display context. See [`statusLine` documentation](/en/statusline)                                                                                                                                                                                   | `{"type": "command", "command": "~/.claude/statusline.sh"}`             |
+| `outputStyle`                | Configure an output style to adjust the system prompt. See [output styles documentation](/en/output-styles)                                                                                                                                                                           | `"Explanatory"`                                                         |
+| `forceLoginMethod`           | Use `claudeai` to restrict login to Claude.ai accounts, `console` to restrict login to Claude Console (API usage billing) accounts                                                                                                                                                    | `claudeai`                                                              |
+| `forceLoginOrgUUID`          | Specify the UUID of an organization to automatically select it during login, bypassing the organization selection step. Requires `forceLoginMethod` to be set                                                                                                                         | `"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"`                                |
+| `enableAllProjectMcpServers` | Automatically approve all MCP servers defined in project `.mcp.json` files                                                                                                                                                                                                            | `true`                                                                  |
+| `enabledMcpjsonServers`      | List of specific MCP servers from `.mcp.json` files to approve                                                                                                                                                                                                                        | `["memory", "github"]`                                                  |
+| `disabledMcpjsonServers`     | List of specific MCP servers from `.mcp.json` files to reject                                                                                                                                                                                                                         | `["filesystem"]`                                                        |
+| `allowedMcpServers`          | When set in managed-settings.json, allowlist of MCP servers users can configure. Undefined = no restrictions, empty array = lockdown. Applies to all scopes. Denylist takes precedence. See [Enterprise MCP configuration](/en/mcp#enterprise-mcp-configuration)                      | `[{ "serverName": "github" }]`                                          |
+| `deniedMcpServers`           | When set in managed-settings.json, denylist of MCP servers that are explicitly blocked. Applies to all scopes including enterprise servers. Denylist takes precedence over allowlist. See [Enterprise MCP configuration](/en/mcp#enterprise-mcp-configuration)                        | `[{ "serverName": "filesystem" }]`                                      |
+| `strictKnownMarketplaces`    | When set in managed-settings.json, allowlist of plugin marketplaces users can add. Undefined = no restrictions, empty array = lockdown. Applies to marketplace additions only. See [Enterprise marketplace restrictions](/en/plugin-marketplaces#enterprise-marketplace-restrictions) | `[{ "source": "github", "repo": "company/plugins" }]`                   |
+| `awsAuthRefresh`             | Custom script that modifies the `.aws` directory (see [advanced credential configuration](/en/amazon-bedrock#advanced-credential-configuration))                                                                                                                                      | `aws sso login --profile myprofile`                                     |
+| `awsCredentialExport`        | Custom script that outputs JSON with AWS credentials (see [advanced credential configuration](/en/amazon-bedrock#advanced-credential-configuration))                                                                                                                                  | `/bin/generate_aws_grant.sh`                                            |
+| `alwaysThinkingEnabled`      | Enable [extended thinking](/en/common-workflows#use-extended-thinking) by default for all sessions. Typically configured via the `/config` command rather than editing directly                                                                                                       | `true`                                                                  |
 
 ### Permission settings
 
@@ -338,6 +343,190 @@ Defines additional marketplaces that should be made available for the repository
 * `github`: GitHub repository (uses `repo`)
 * `git`: Any git URL (uses `url`)
 * `directory`: Local filesystem path (uses `path`, for development only)
+
+#### `strictKnownMarketplaces`
+
+**Enterprise-only setting**: Controls which plugin marketplaces users are allowed to add. This setting can only be configured in `managed-settings.json` and provides enterprise administrators with strict control over marketplace sources.
+
+**Managed settings file locations**:
+
+* **macOS**: `/Library/Application Support/ClaudeCode/managed-settings.json`
+* **Linux and WSL**: `/etc/claude-code/managed-settings.json`
+* **Windows**: `C:\ProgramData\ClaudeCode\managed-settings.json`
+
+**Key characteristics**:
+
+* Only available in enterprise managed settings (`managed-settings.json`)
+* Cannot be overridden by user or project settings (highest precedence)
+* Enforced BEFORE network/filesystem operations (blocked sources never execute)
+* Uses exact matching for source specifications (including `ref`, `path` for git sources)
+
+**Allowlist behavior**:
+
+* `undefined` (default): No restrictions - users can add any marketplace
+* Empty array `[]`: Complete lockdown - users cannot add any new marketplaces
+* List of sources: Users can only add marketplaces that match exactly
+
+**All supported source types**:
+
+The allowlist supports six marketplace source types. Each source must match exactly for a user's marketplace addition to be allowed.
+
+1. **GitHub repositories**:
+
+```json  theme={null}
+{ "source": "github", "repo": "company/approved-plugins" }
+{ "source": "github", "repo": "company/security-tools", "ref": "v2.0" }
+{ "source": "github", "repo": "team/plugins", "ref": "main", "path": "marketplace" }
+```
+
+Fields: `repo` (required), `ref` (optional: branch/tag/SHA), `path` (optional: subdirectory)
+
+2. **Git repositories**:
+
+```json  theme={null}
+{ "source": "git", "url": "https://gitlab.company.com/tools/plugins.git" }
+{ "source": "git", "url": "https://bitbucket.org/company/plugins.git", "ref": "production" }
+{ "source": "git", "url": "ssh://git@internal.company.com/plugins.git", "ref": "v3.1", "path": "approved" }
+```
+
+Fields: `url` (required), `ref` (optional: branch/tag/SHA), `path` (optional: subdirectory)
+
+3. **URL-based marketplaces**:
+
+```json  theme={null}
+{ "source": "url", "url": "https://internal.company.com/plugins/marketplace.json" }
+{ "source": "url", "url": "https://cdn.company.com/marketplace.json", "headers": { "Authorization": "Bearer ${TOKEN}" } }
+```
+
+Fields: `url` (required), `headers` (optional: HTTP headers for authenticated access)
+
+4. **NPM packages**:
+
+```json  theme={null}
+{ "source": "npm", "package": "@company/claude-plugins" }
+{ "source": "npm", "package": "@company-internal/approved-marketplace" }
+```
+
+Fields: `package` (required, supports scoped packages)
+
+5. **File paths**:
+
+```json  theme={null}
+{ "source": "file", "path": "/usr/local/share/claude/company-marketplace.json" }
+{ "source": "file", "path": "/opt/company/plugins/marketplace.json" }
+```
+
+Fields: `path` (required: absolute path to marketplace.json file)
+
+6. **Directory paths**:
+
+```json  theme={null}
+{ "source": "directory", "path": "/usr/local/share/claude/company-plugins" }
+{ "source": "directory", "path": "/opt/company/approved-marketplaces" }
+```
+
+Fields: `path` (required: absolute path to directory containing `.claude-plugin/marketplace.json`)
+
+**Configuration examples**:
+
+Example - Allow specific marketplaces only:
+
+```json  theme={null}
+{
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "company/approved-plugins"
+    },
+    {
+      "source": "github",
+      "repo": "company/security-tools",
+      "ref": "v2.0"
+    },
+    {
+      "source": "url",
+      "url": "https://internal.company.com/plugins/marketplace.json"
+    },
+    {
+      "source": "npm",
+      "package": "@company/compliance-plugins"
+    }
+  ]
+}
+```
+
+Example - Disable all marketplace additions:
+
+```json  theme={null}
+{
+  "strictKnownMarketplaces": []
+}
+```
+
+**Exact matching requirements**:
+
+Marketplace sources must match **exactly** for a user's addition to be allowed. For git-based sources (`github` and `git`), this includes all optional fields:
+
+* The `repo` or `url` must match exactly
+* The `ref` field must match exactly (or both be undefined)
+* The `path` field must match exactly (or both be undefined)
+
+Examples of sources that **do NOT match**:
+
+```json  theme={null}
+// These are DIFFERENT sources:
+{ "source": "github", "repo": "company/plugins" }
+{ "source": "github", "repo": "company/plugins", "ref": "main" }
+
+// These are also DIFFERENT:
+{ "source": "github", "repo": "company/plugins", "path": "marketplace" }
+{ "source": "github", "repo": "company/plugins" }
+```
+
+**Comparison with `extraKnownMarketplaces`**:
+
+| Aspect                | `strictKnownMarketplaces`            | `extraKnownMarketplaces`             |
+| --------------------- | ------------------------------------ | ------------------------------------ |
+| **Purpose**           | Enterprise policy enforcement        | Team convenience                     |
+| **Settings file**     | `managed-settings.json` only         | Any settings file                    |
+| **Behavior**          | Blocks non-allowlisted additions     | Auto-installs missing marketplaces   |
+| **When enforced**     | Before network/filesystem operations | After user trust prompt              |
+| **Can be overridden** | No (highest precedence)              | Yes (by higher precedence settings)  |
+| **Source format**     | Direct source object                 | Named marketplace with nested source |
+| **Use case**          | Compliance, security restrictions    | Onboarding, standardization          |
+
+**Format difference**:
+
+`strictKnownMarketplaces` uses direct source objects:
+
+```json  theme={null}
+{
+  "strictKnownMarketplaces": [
+    { "source": "github", "repo": "company/plugins" }
+  ]
+}
+```
+
+`extraKnownMarketplaces` requires named marketplaces:
+
+```json  theme={null}
+{
+  "extraKnownMarketplaces": {
+    "company-tools": {
+      "source": { "source": "github", "repo": "company/plugins" }
+    }
+  }
+}
+```
+
+**Important notes**:
+
+* Restrictions are checked BEFORE any network requests or filesystem operations
+* When blocked, users see clear error messages indicating the source is blocked by enterprise policy
+* The restriction applies only to adding NEW marketplaces; previously installed marketplaces remain accessible
+* Enterprise managed settings have the highest precedence and cannot be overridden
+
+See [Enterprise marketplace restrictions](/en/plugin-marketplaces#enterprise-marketplace-restrictions) for user-facing documentation.
 
 ### Managing plugins
 

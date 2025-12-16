@@ -10,31 +10,41 @@ Prerequisites:
 
 **Install Claude Code:**
 
+To install Claude Code, use one of the following methods:
+
 <Tabs>
-  <Tab title="macOS/Linux">
+  <Tab title="Native Install (Recommended)">
+    **macOS, Linux, WSL:**
+
     ```bash  theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
+    ```
+
+    **Windows PowerShell:**
+
+    ```powershell  theme={null}
+    irm https://claude.ai/install.ps1 | iex
+    ```
+
+    **Windows CMD:**
+
+    ```batch  theme={null}
+    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash  theme={null}
+    ```sh  theme={null}
     brew install --cask claude-code
     ```
   </Tab>
 
-  <Tab title="Windows">
-    ```powershell  theme={null}
-    irm https://claude.ai/install.ps1 | iex
-    ```
-  </Tab>
-
   <Tab title="NPM">
-    ```bash  theme={null}
+    If you have [Node.js 18 or newer installed](https://nodejs.org/en/download/):
+
+    ```sh  theme={null}
     npm install -g @anthropic-ai/claude-code
     ```
-
-    Requires [Node.js 18+](https://nodejs.org/en/download/)
   </Tab>
 </Tabs>
 

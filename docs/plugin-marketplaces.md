@@ -103,6 +103,65 @@ Set up automatic marketplace installation for team projects by specifying requir
 
 When team members trust the repository folder, Claude Code automatically installs these marketplaces and any plugins specified in the `enabledPlugins` field.
 
+## Enterprise marketplace restrictions
+
+For organizations requiring strict control over plugin sources, enterprise administrators can restrict which plugin marketplaces users are allowed to add using the `strictKnownMarketplaces` setting in managed settings.
+
+**Managed settings file locations**:
+
+* **macOS**: `/Library/Application Support/ClaudeCode/managed-settings.json`
+* **Linux and WSL**: `/etc/claude-code/managed-settings.json`
+* **Windows**: `C:\ProgramData\ClaudeCode\managed-settings.json`
+
+**Restriction behavior**:
+
+When `strictKnownMarketplaces` is configured in managed settings:
+
+* **Undefined** (default): No restrictions - users can add any marketplace
+* **Empty array `[]`**: Complete lockdown - users cannot add any new marketplaces
+* **List of sources**: Users can only add marketplaces that match the allowlist exactly
+
+**Basic examples**:
+
+Disable all marketplace additions:
+
+```json  theme={null}
+{
+  "strictKnownMarketplaces": []
+}
+```
+
+Allow specific marketplaces only:
+
+```json  theme={null}
+{
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "company/approved-plugins"
+    },
+    {
+      "source": "github",
+      "repo": "company/security-tools",
+      "ref": "v2.0"
+    },
+    {
+      "source": "url",
+      "url": "https://internal.company.com/plugins/marketplace.json"
+    }
+  ]
+}
+```
+
+**Key characteristics**:
+
+* Enforced BEFORE network/filesystem operations
+* Uses exact matching (including optional `ref` and `path` fields for git sources)
+* Cannot be overridden by user or project settings
+* Only affects adding NEW marketplaces (previously installed marketplaces still work)
+
+See [strictKnownMarketplaces reference](/en/settings#strictknownmarketplaces) for complete configuration details, including all six supported source types, exact matching rules, and comparison with `extraKnownMarketplaces`.
+
 ***
 
 ## Create your own marketplace
@@ -495,6 +554,7 @@ For complete plugin testing workflows, see [Test your plugins locally](/en/plugi
 * [Plugins reference](/en/plugins-reference) - Complete technical specifications and schemas
 * [Plugin development](/en/plugins#develop-more-complex-plugins) - Creating your own plugins
 * [Settings](/en/settings#plugin-configuration) - Plugin configuration options
+* [strictKnownMarketplaces reference](/en/settings#strictknownmarketplaces) - Complete configuration reference for enterprise marketplace restrictions
 
 
 ---
