@@ -3,8 +3,8 @@
     "amazon-bedrock.md": {
       "original_url": "https://code.claude.com/docs/en/amazon-bedrock",
       "original_md_url": "https://code.claude.com/docs/en/amazon-bedrock.md",
-      "hash": "a7bf981296d86a140210aa4cf10b983521b6b61b504bf7cb97f693c2d2bdad3d",
-      "last_updated": "2025-12-12T00:04:32.308991"
+      "hash": "b57f9a2687ef34c9156a873bda76416093af0a9faa70a44a0c862a50d6dadce1",
+      "last_updated": "2025-12-16T21:01:20.846254"
     },
     "analytics.md": {
       "original_url": "https://code.claude.com/docs/en/analytics",
@@ -279,8 +279,8 @@
     "vs-code.md": {
       "original_url": "https://code.claude.com/docs/en/vs-code",
       "original_md_url": "https://code.claude.com/docs/en/vs-code.md",
-      "hash": "fd1087d0ade6491cdd1f872181257c8bbb9d2ab3e924fd3fc22941b9eeff3166",
-      "last_updated": "2025-12-08T06:02:39.927009"
+      "hash": "33be62ea974331d47956e67dea3234a965f01e62c15f2f5bf30ea81428870931",
+      "last_updated": "2025-12-16T21:01:48.003059"
     },
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
@@ -291,8 +291,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-12-16T18:02:48.184933",
-    "fetch_duration_seconds": 27.040082,
+    "last_fetch_completed": "2025-12-16T21:01:48.144794",
+    "fetch_duration_seconds": 27.715803,
     "total_pages_discovered": 47,
     "pages_fetched_successfully": 48,
     "pages_failed": 0,
@@ -302,7 +302,7 @@
     "total_files": 48,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-12-16T18:02:48.184956",
+  "last_updated": "2025-12-16T21:01:48.144824",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
