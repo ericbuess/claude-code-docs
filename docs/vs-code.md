@@ -150,14 +150,13 @@ By default, Claude Code connects directly to Anthropic's API. If your organizati
 
 The extension doesn't yet have full feature parity with the CLI. If you need CLI-only features, you can run `claude` directly in VS Code's integrated terminal.
 
-| Feature             | CLI                            | VS Code Extension                        |
-| ------------------- | ------------------------------ | ---------------------------------------- |
-| Slash commands      | [Full set](/en/slash-commands) | Subset (type `/` to see available)       |
-| MCP server config   | Yes                            | No (configure via CLI, use in extension) |
-| Checkpoints         | Yes                            | Coming soon                              |
-| `#` memory shortcut | Yes                            | No                                       |
-| `!` bash shortcut   | Yes                            | No                                       |
-| Tab completion      | Yes                            | No                                       |
+| Feature           | CLI                            | VS Code Extension                        |
+| ----------------- | ------------------------------ | ---------------------------------------- |
+| Slash commands    | [Full set](/en/slash-commands) | Subset (type `/` to see available)       |
+| MCP server config | Yes                            | No (configure via CLI, use in extension) |
+| Checkpoints       | Yes                            | Coming soon                              |
+| `!` bash shortcut | Yes                            | No                                       |
+| Tab completion    | Yes                            | No                                       |
 
 ### Run CLI in VS Code
 

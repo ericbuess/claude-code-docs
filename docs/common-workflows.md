@@ -563,51 +563,83 @@ Token budgets for thinking mode:
 
 ## Resume previous conversations
 
-Suppose you've been working on a task with Claude Code and need to continue where you left off in a later session.
+When starting Claude Code, you can resume a previous session:
 
-Claude Code provides two options for resuming previous conversations:
+* `claude --continue` continues the most recent conversation in the current directory
+* `claude --resume` opens a conversation picker or resumes by name
 
-* `--continue` to automatically continue the most recent conversation
-* `--resume` to display a conversation picker
+From inside an active session, use `/resume` to switch to a different conversation.
+
+Sessions are stored per project directory. The `/resume` picker shows sessions from the same git repository, including worktrees.
+
+### Name your sessions
+
+Give sessions descriptive names to find them later. This is a best practice when working on multiple tasks or features.
 
 <Steps>
-  <Step title="Continue the most recent conversation">
-    ```bash  theme={null}
-    claude --continue
+  <Step title="Name the current session">
+    Use `/rename` during a session to give it a memorable name:
+
+    ```
+    > /rename auth-refactor
     ```
 
-    This immediately resumes your most recent conversation without any prompts.
+    You can also rename any session from the picker: run `/resume`, navigate to a session, and press `R`.
   </Step>
 
-  <Step title="Continue in non-interactive mode">
+  <Step title="Resume by name later">
+    From the command line:
+
     ```bash  theme={null}
-    claude --continue --print "Continue with my task"
+    claude --resume auth-refactor
     ```
 
-    Use `--print` with `--continue` to resume the most recent conversation in non-interactive mode, perfect for scripts or automation.
-  </Step>
+    Or from inside an active session:
 
-  <Step title="Show conversation picker">
-    ```bash  theme={null}
-    claude --resume
     ```
-
-    This displays an interactive conversation selector with a clean list view showing:
-
-    * Session summary (or initial prompt)
-    * Metadata: time elapsed, message count, and git branch
-
-    Use arrow keys to navigate and press Enter to select a conversation. Press Esc to exit.
+    > /resume auth-refactor
+    ```
   </Step>
 </Steps>
+
+### Use the session picker
+
+The `/resume` command (or `claude --resume` without arguments) opens an interactive session picker with these features:
+
+**Keyboard shortcuts in the picker:**
+
+| Shortcut  | Action                                            |
+| :-------- | :------------------------------------------------ |
+| `↑` / `↓` | Navigate between sessions                         |
+| `→` / `←` | Expand or collapse grouped sessions               |
+| `Enter`   | Select and resume the highlighted session         |
+| `P`       | Preview the session content                       |
+| `R`       | Rename the highlighted session                    |
+| `/`       | Search to filter sessions                         |
+| `A`       | Toggle between current directory and all projects |
+| `B`       | Filter to sessions from your current git branch   |
+| `Esc`     | Exit the picker or search mode                    |
+
+**Session organization:**
+
+The picker displays sessions with helpful metadata:
+
+* Session name or initial prompt
+* Time elapsed since last activity
+* Message count
+* Git branch (if applicable)
+
+Forked sessions (created with `/rewind` or `--fork-session`) are grouped together under their root session, making it easier to find related conversations.
 
 <Tip>
   Tips:
 
-  * Conversation history is stored locally on your machine
+  * **Name sessions early**: Use `/rename` when starting work on a distinct task—it's much easier to find "payment-integration" than "explain this function" later
   * Use `--continue` for quick access to your most recent conversation
-  * Use `--resume` when you need to select a specific past conversation
-  * When resuming, you'll see the entire conversation history before continuing
+  * Use `--resume session-name` when you know which session you need
+  * Use `--resume` (without a name) when you need to browse and select
+  * For scripts, use `claude --continue --print "prompt"` to resume in non-interactive mode
+  * Press `P` in the picker to preview a session before resuming it
   * The resumed conversation starts with the same model and configuration as the original
 
   How it works:
@@ -616,22 +648,6 @@ Claude Code provides two options for resuming previous conversations:
   2. **Message Deserialization**: When resuming, the entire message history is restored to maintain context
   3. **Tool State**: Tool usage and results from the previous conversation are preserved
   4. **Context Restoration**: The conversation resumes with all previous context intact
-
-  Examples:
-
-  ```bash  theme={null}
-  # Continue most recent conversation
-  claude --continue
-
-  # Continue most recent conversation with a specific prompt
-  claude --continue --print "Show me our progress"
-
-  # Show conversation picker
-  claude --resume
-
-  # Continue most recent conversation in non-interactive mode
-  claude --continue --print "Run the tests again"
-  ```
 </Tip>
 
 ***

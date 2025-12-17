@@ -34,7 +34,8 @@
 | `/pr-comments`            | View pull request comments                                                                                                  |
 | `/privacy-settings`       | View and update your privacy settings                                                                                       |
 | `/release-notes`          | View release notes                                                                                                          |
-| `/resume`                 | Resume a conversation                                                                                                       |
+| `/rename <name>`          | Rename the current session for easier identification                                                                        |
+| `/resume [session]`       | Resume a conversation by ID or name, or open the session picker                                                             |
 | `/review`                 | Request code review                                                                                                         |
 | `/rewind`                 | Rewind the conversation and/or code                                                                                         |
 | `/sandbox`                | Enable sandboxed bash tool with filesystem and network isolation for safer, more autonomous execution                       |

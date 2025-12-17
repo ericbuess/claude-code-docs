@@ -4,17 +4,17 @@
 
 ## CLI commands
 
-| Command                            | Description                                    | Example                                           |
-| :--------------------------------- | :--------------------------------------------- | :------------------------------------------------ |
-| `claude`                           | Start interactive REPL                         | `claude`                                          |
-| `claude "query"`                   | Start REPL with initial prompt                 | `claude "explain this project"`                   |
-| `claude -p "query"`                | Query via SDK, then exit                       | `claude -p "explain this function"`               |
-| `cat file \| claude -p "query"`    | Process piped content                          | `cat logs.txt \| claude -p "explain"`             |
-| `claude -c`                        | Continue most recent conversation              | `claude -c`                                       |
-| `claude -c -p "query"`             | Continue via SDK                               | `claude -c -p "Check for type errors"`            |
-| `claude -r "<session-id>" "query"` | Resume session by ID                           | `claude -r "abc123" "Finish this PR"`             |
-| `claude update`                    | Update to latest version                       | `claude update`                                   |
-| `claude mcp`                       | Configure Model Context Protocol (MCP) servers | See the [Claude Code MCP documentation](/en/mcp). |
+| Command                         | Description                                    | Example                                           |
+| :------------------------------ | :--------------------------------------------- | :------------------------------------------------ |
+| `claude`                        | Start interactive REPL                         | `claude`                                          |
+| `claude "query"`                | Start REPL with initial prompt                 | `claude "explain this project"`                   |
+| `claude -p "query"`             | Query via SDK, then exit                       | `claude -p "explain this function"`               |
+| `cat file \| claude -p "query"` | Process piped content                          | `cat logs.txt \| claude -p "explain"`             |
+| `claude -c`                     | Continue most recent conversation              | `claude -c`                                       |
+| `claude -c -p "query"`          | Continue via SDK                               | `claude -c -p "Check for type errors"`            |
+| `claude -r "<session>" "query"` | Resume session by ID or name                   | `claude -r "auth-refactor" "Finish this PR"`      |
+| `claude update`                 | Update to latest version                       | `claude update`                                   |
+| `claude mcp`                    | Configure Model Context Protocol (MCP) servers | See the [Claude Code MCP documentation](/en/mcp). |
 
 ## CLI flags
 
@@ -46,7 +46,7 @@ Customize Claude Code's behavior with these command-line flags:
 | `--permission-prompt-tool`       | Specify an MCP tool to handle permission prompts in non-interactive mode                                                                                                                                | `claude -p --permission-prompt-tool mcp_auth_tool "query"`                                         |
 | `--plugin-dir`                   | Load plugins from directories for this session only (repeatable)                                                                                                                                        | `claude --plugin-dir ./my-plugins`                                                                 |
 | `--print`, `-p`                  | Print response without interactive mode (see [SDK documentation](https://docs.claude.com/en/docs/agent-sdk) for programmatic usage details)                                                             | `claude -p "query"`                                                                                |
-| `--resume`, `-r`                 | Resume a specific session by ID, or by choosing in interactive mode                                                                                                                                     | `claude --resume abc123 "query"`                                                                   |
+| `--resume`, `-r`                 | Resume a specific session by ID or name, or show an interactive picker to choose a session                                                                                                              | `claude --resume auth-refactor`                                                                    |
 | `--session-id`                   | Use a specific session ID for the conversation (must be a valid UUID)                                                                                                                                   | `claude --session-id "550e8400-e29b-41d4-a716-446655440000"`                                       |
 | `--setting-sources`              | Comma-separated list of setting sources to load (`user`, `project`, `local`)                                                                                                                            | `claude --setting-sources user,project`                                                            |
 | `--settings`                     | Path to a settings JSON file or a JSON string to load additional settings from                                                                                                                          | `claude --settings ./settings.json`                                                                |
