@@ -74,6 +74,7 @@ Code through hierarchical settings:
 | `disableAllHooks`            | Disable all [hooks](/en/hooks)                                                                                                                                                                                                                                                        | `true`                                                                  |
 | `model`                      | Override the default model to use for Claude Code                                                                                                                                                                                                                                     | `"claude-sonnet-4-5-20250929"`                                          |
 | `statusLine`                 | Configure a custom status line to display context. See [`statusLine` documentation](/en/statusline)                                                                                                                                                                                   | `{"type": "command", "command": "~/.claude/statusline.sh"}`             |
+| `fileSuggestion`             | Configure a custom script for `@` file autocomplete. See [File suggestion settings](#file-suggestion-settings)                                                                                                                                                                        | `{"type": "command", "command": "~/.claude/file-suggestion.sh"}`        |
 | `outputStyle`                | Configure an output style to adjust the system prompt. See [output styles documentation](/en/output-styles)                                                                                                                                                                           | `"Explanatory"`                                                         |
 | `forceLoginMethod`           | Use `claudeai` to restrict login to Claude.ai accounts, `console` to restrict login to Claude Console (API usage billing) accounts                                                                                                                                                    | `claudeai`                                                              |
 | `forceLoginOrgUUID`          | Specify the UUID of an organization to automatically select it during login, bypassing the organization selection step. Requires `forceLoginMethod` to be set                                                                                                                         | `"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"`                                |
@@ -187,6 +188,41 @@ Claude Code adds attribution to git commits and pull requests. These are configu
 <Note>
   The `attribution` setting takes precedence over the deprecated `includeCoAuthoredBy` setting. To hide all attribution, set `commit` and `pr` to empty strings.
 </Note>
+
+### File suggestion settings
+
+Configure a custom command for `@` file path autocomplete. The built-in file suggestion uses fast filesystem traversal, but large monorepos may benefit from project-specific indexing such as a pre-built file index or custom tooling.
+
+```json  theme={null}
+{
+  "fileSuggestion": {
+    "type": "command",
+    "command": "~/.claude/file-suggestion.sh"
+  }
+}
+```
+
+The command runs with the same environment variables as [hooks](/en/hooks), including `CLAUDE_PROJECT_DIR`. It receives JSON via stdin with a `query` field:
+
+```json  theme={null}
+{"query": "src/comp"}
+```
+
+Output newline-separated file paths to stdout (currently limited to 15):
+
+```
+src/components/Button.tsx
+src/components/Modal.tsx
+src/components/Form.tsx
+```
+
+**Example:**
+
+```bash  theme={null}
+#!/bin/bash
+query=$(cat | jq -r '.query')
+your-repo-file-index --query "$query" | head -20
+```
 
 ### Settings precedence
 
