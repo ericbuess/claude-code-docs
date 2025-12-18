@@ -18,6 +18,12 @@
       "hash": "3412893eca2d799ac0f53886b7672e996a9e86126d353bfdbbc9240e639c957b",
       "last_updated": "2025-12-05T12:02:17.612141"
     },
+    "chrome.md": {
+      "original_url": "https://code.claude.com/docs/en/chrome",
+      "original_md_url": "https://code.claude.com/docs/en/chrome.md",
+      "hash": "b6457507dd4a3dba76692b5eca45624a496781def22762a6a0422305320972ed",
+      "last_updated": "2025-12-18T18:01:43.909488"
+    },
     "claude-code-on-the-web.md": {
       "original_url": "https://code.claude.com/docs/en/claude-code-on-the-web",
       "original_md_url": "https://code.claude.com/docs/en/claude-code-on-the-web.md",
@@ -279,8 +285,8 @@
     "vs-code.md": {
       "original_url": "https://code.claude.com/docs/en/vs-code",
       "original_md_url": "https://code.claude.com/docs/en/vs-code.md",
-      "hash": "f1b9d660d74940cfb80830e6a176d0b6dc52c6b6b042c1815ba527e913e3486d",
-      "last_updated": "2025-12-17T15:02:30.875403"
+      "hash": "d936c92de540dc33ce188f78e75d4221908aa95af83d71d64bffe292d2225e4e",
+      "last_updated": "2025-12-18T18:02:17.051737"
     },
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
@@ -291,18 +297,18 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-12-18T15:02:06.045873",
-    "fetch_duration_seconds": 28.288975,
-    "total_pages_discovered": 47,
-    "pages_fetched_successfully": 48,
+    "last_fetch_completed": "2025-12-18T18:02:17.140866",
+    "fetch_duration_seconds": 35.633233,
+    "total_pages_discovered": 48,
+    "pages_fetched_successfully": 49,
     "pages_failed": 0,
     "failed_pages": [],
     "sitemap_url": "https://code.claude.com/docs/sitemap.xml",
     "base_url": "https://code.claude.com",
-    "total_files": 48,
+    "total_files": 49,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-12-18T15:02:06.045903",
+  "last_updated": "2025-12-18T18:02:17.140897",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

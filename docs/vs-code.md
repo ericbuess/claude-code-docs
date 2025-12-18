@@ -76,7 +76,7 @@ By default, the extension opens a graphical chat panel. If you prefer the CLI-st
 You can also open VS Code settings (`Cmd+,` on Mac or `Ctrl+,` on Windows/Linux), go to Extensions → Claude Code, and check **Use Terminal**.
 
 <Note>
-  In terminal mode, the Activity Bar icon (left vertical menu) still opens the graphical panel, while the Editor Toolbar icon (top-right of editor) opens terminal mode. You can use both entry points to switch between interfaces without changing settings.
+  In terminal mode, the Activity Bar icon (left vertical menu) won't persist between sessions. If you want the Spark icon to always appear in the Activity Bar, keep this setting disabled and use the Editor Toolbar icon (top-right of editor) to access terminal mode instead.
 </Note>
 
 ## VS Code commands and shortcuts
@@ -202,6 +202,10 @@ If you don't see the icon:
 5. **Disable conflicting extensions**: Temporarily disable other AI extensions (Cline, Continue, etc.)
 6. **Check workspace trust**: The extension doesn't work in Restricted Mode
 7. **Use the Command Palette**: Open with `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux), then type "Claude Code: Open in Side Bar"
+
+### Spark icon doesn't stay in the Activity Bar
+
+If the Spark icon appears in the Activity Bar when you open the sidebar but doesn't persist after you close VS Code, check that the [Use Terminal setting](vscode://settings/claudeCode.useTerminal) is disabled. When terminal mode is enabled, the Activity Bar icon won't persist between sessions.
 
 ### Claude Code never responds
 
