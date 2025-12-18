@@ -22,6 +22,10 @@ Code through hierarchical settings:
   * Linux and WSL: `/etc/claude-code/`
   * Windows: `C:\Program Files\ClaudeCode\`
 
+  <Note>
+    These are system-wide paths (not user home directories like `~/Library/...`) that require administrator privileges. They are designed to be deployed by IT administrators.
+  </Note>
+
   See [Enterprise managed settings](/en/iam#enterprise-managed-settings) and [Enterprise MCP configuration](/en/mcp#enterprise-mcp-configuration) for details.
 
   <Note>
