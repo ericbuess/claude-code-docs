@@ -147,21 +147,8 @@ Read & Edit rules both follow the [gitignore](https://git-scm.com/docs/gitignore
 **MCP**
 
 * `mcp__puppeteer` Matches any tool provided by the `puppeteer` server (name configured in Claude Code)
+* `mcp__puppeteer__*` Wildcard syntax that also matches all tools from the `puppeteer` server
 * `mcp__puppeteer__puppeteer_navigate` Matches the `puppeteer_navigate` tool provided by the `puppeteer` server
-
-<Warning>
-  Unlike other permission types, MCP permissions do NOT support wildcards (`*`).
-
-  To approve all tools from an MCP server:
-
-  * ✅ Use: `mcp__github` (approves ALL GitHub tools)
-  * ❌ Don't use: `mcp__github__*` (wildcards are not supported)
-
-  To approve specific tools only, list each one:
-
-  * ✅ Use: `mcp__github__get_issue`
-  * ✅ Use: `mcp__github__list_issues`
-</Warning>
 
 ### Additional permission control with hooks
 

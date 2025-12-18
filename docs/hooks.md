@@ -15,6 +15,10 @@ Claude Code hooks are configured in your [settings files](/en/settings):
 * `.claude/settings.local.json` - Local project settings (not committed)
 * Enterprise managed policy settings
 
+<Note>
+  Enterprise administrators can use `allowManagedHooksOnly` to block user, project, and plugin hooks. See [Hook configuration](/en/settings#hook-configuration).
+</Note>
+
 ### Structure
 
 Hooks are organized by matchers, where each matcher can have multiple hooks:

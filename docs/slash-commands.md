@@ -333,16 +333,17 @@ Use the `/mcp` command to:
 
 ### MCP permissions and wildcards
 
-Wildcards aren't supported in [permissions for MCP tools](/en/iam#tool-specific-permission-rules).
-
-To approve all tools from an MCP server, use the server name alone, without wildcards:
+To approve all tools from an MCP server, use either the server name alone or wildcard syntax:
 
 * `mcp__github` (approves all GitHub tools)
+* `mcp__github__*` (wildcard syntax, also approves all GitHub tools)
 
 To approve specific tools, list each one explicitly:
 
 * `mcp__github__get_issue`
 * `mcp__github__list_issues`
+
+See [MCP permission rules](/en/iam#tool-specific-permission-rules) for more details.
 
 ## `SlashCommand` tool
 
