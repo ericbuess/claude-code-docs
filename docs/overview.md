@@ -98,6 +98,10 @@ You'll be prompted to log in on first use. That's it! [Continue with Quickstart 
 ## Additional resources
 
 <CardGroup>
+  <Card title="About Claude Code" icon="sparkles" href="https://claude.com/product/claude-code">
+    Learn more about Claude Code on claude.com
+  </Card>
+
   <Card title="Build with the Agent SDK" icon="code-branch" href="https://docs.claude.com/en/docs/agent-sdk/overview">
     Create custom AI agents with the Claude Agent SDK
   </Card>

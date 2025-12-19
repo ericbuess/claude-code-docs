@@ -319,6 +319,10 @@ Now that you've learned the basics, explore more advanced features:
   <Card title="Claude Code on the web" icon="cloud" href="/en/claude-code-on-the-web">
     Run tasks asynchronously in the cloud
   </Card>
+
+  <Card title="About Claude Code" icon="sparkles" href="https://claude.com/product/claude-code">
+    Learn more on claude.com
+  </Card>
 </CardGroup>
 
 ## Getting help

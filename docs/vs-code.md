@@ -34,26 +34,36 @@ Once installed, you can start using Claude Code through the VS Code interface:
   <Step title="Open the Claude Code panel">
     Throughout VS Code, the Spark icon indicates Claude Code: <img src="https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-spark-icon.svg?fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=a734d84e785140016672f08e0abb236c" alt="Spark icon" style={{display: "inline", height: "0.85em", verticalAlign: "middle"}} data-og-width="16" width="16" data-og-height="16" height="16" data-path="images/vs-code-spark-icon.svg" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-spark-icon.svg?w=280&fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=9a45aad9a84b9fa1701ac99a1f9aa4e9 280w, https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-spark-icon.svg?w=560&fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=3f4cb9254c4d4e93989c4b6bf9292f4b 560w, https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-spark-icon.svg?w=840&fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=e75ccc9faa3e572db8f291ceb65bb264 840w, https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-spark-icon.svg?w=1100&fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=f147bd81a381a62539a4ce361fac41c7 1100w, https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-spark-icon.svg?w=1650&fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=78fe68efaee5d6e844bbacab1b442ed5 1650w, https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-spark-icon.svg?w=2500&fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=efb8dbe1dfa722d094edc6ad2ad4bedb 2500w" />
 
-    The quickest way to open Claude is to click this icon in the **Editor Toolbar** (top-right corner of the editor). Note: This icon only appears when you have a file open—opening just a folder isn't enough.
+    The quickest way to open Claude is to click the Spark icon in the **Editor Toolbar** (top-right corner of the editor). The icon only appears when you have a file open.
 
         <img src="https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-editor-icon.png?fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=eb4540325d94664c51776dbbfec4cf02" alt="VS Code editor showing the Spark icon in the Editor Toolbar" data-og-width="2796" width="2796" data-og-height="734" height="734" data-path="images/vs-code-editor-icon.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-editor-icon.png?w=280&fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=56f218d5464359d6480cfe23f70a923e 280w, https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-editor-icon.png?w=560&fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=344a8db024b196c795a80dc85cacb8d1 560w, https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-editor-icon.png?w=840&fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=f30bf834ee0625b2a4a635d552d87163 840w, https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-editor-icon.png?w=1100&fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=81fdf984840e43a9f08ae42729d1484d 1100w, https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-editor-icon.png?w=1650&fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=8b60fb32de54717093d512afaa99785c 1650w, https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-editor-icon.png?w=2500&fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=893e6bda8f2e9d42c8a294d394f0b736 2500w" />
 
     Other ways to open Claude Code:
 
     * **Command Palette**: `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux), type "Claude Code", and select an option like "Open in New Tab"
-    * **Activity Bar**: Run "Claude Code: Open in Side Bar" from the Command Palette once, and a Spark icon will appear in the left sidebar. This is useful if you want quick access without having a file open.
+    * **Status Bar**: Click **✱ Claude Code** in the bottom-right corner of the window. This works even when no file is open.
 
-    You can drag the Claude panel to reposition it anywhere in VS Code, including to the Activity Bar if the Spark icon isn't showing there. See [Customize your workflow](#customize-your-workflow) for details.
+    You can drag the Claude panel to reposition it anywhere in VS Code. See [Customize your workflow](#customize-your-workflow) for details.
   </Step>
 
   <Step title="Send a prompt">
-    Prompt Claude Code in the same way you would in the terminal.
+    Ask Claude to help with your code or files, whether that's explaining how something works, debugging an issue, or making changes.
+
+    <Tip>Select text in the editor and press `Alt+K` to insert an @-mention with the file path and line numbers directly into your prompt.</Tip>
+
+    Here's an example of asking about a particular line in a file:
+
+        <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-send-prompt.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=ede3ed8d8d5f940e01c5de636d009cfd" alt="VS Code editor with lines 2-3 selected in a Python file, and the Claude Code panel showing a question about those lines with an @-mention reference" data-og-width="3288" width="3288" data-og-height="1876" height="1876" data-path="images/vs-code-send-prompt.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-send-prompt.png?w=280&fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=f40bde7b2c245fe8f0f5b784e8106492 280w, https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-send-prompt.png?w=560&fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=fad66a27a9a6faa23b05370aa4f398b2 560w, https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-send-prompt.png?w=840&fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=4539c8a3823ca80a5c8771f6c088ce9e 840w, https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-send-prompt.png?w=1100&fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=fae8ebf300c7853409a562ffa46d9c71 1100w, https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-send-prompt.png?w=1650&fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=22e4462bb8cf0c0ca20f8102bc4c971a 1650w, https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-send-prompt.png?w=2500&fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=739bfd045f70fe7be1a109a53494590e 2500w" />
   </Step>
 
   <Step title="Review changes">
-    Watch as Claude analyzes your code and suggests changes. Review and accept edits directly in the interface.
+    When Claude wants to edit a file, it shows you a diff and asks for permission. You can accept, reject, or tell Claude what to do instead.
+
+        <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=e005f9b41c541c5c7c59c082f7c4841c" alt="VS Code showing a diff of Claude's proposed changes with a permission prompt asking whether to make the edit" data-og-width="3292" width="3292" data-og-height="1876" height="1876" data-path="images/vs-code-edits.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?w=280&fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=cb5d41b81087f79b842a56b5a3304660 280w, https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?w=560&fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=90bb691960decdc06393c3c21cd62c75 560w, https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?w=840&fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=9a11bf878ba619e850380904ff4f38e8 840w, https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?w=1100&fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=6dddbf596b4f69ec6245bdc5eb6dd487 1100w, https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?w=1650&fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=ef2713b8cbfd2cee97af817d813d64c7 1650w, https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?w=2500&fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=1f7e1c52919cdfddf295f32a2ec7ae59 2500w" />
   </Step>
 </Steps>
+
+For more ideas on what you can do with Claude Code, see [Common workflows](/en/common-workflows).
 
 ## Customize your workflow
 
@@ -63,21 +73,19 @@ Once you're up and running, you can reposition the Claude panel or switch to ter
 
 You can drag the Claude panel to reposition it anywhere in VS Code. Grab the panel's tab or title bar and drag it to:
 
-* **Activity Bar**: The left sidebar with icons for Explorer, Search, etc.
-* **Secondary sidebar**: The right side of the window
+* **Secondary sidebar** (default): The right side of the window
+* **Primary sidebar**: The left sidebar with icons for Explorer, Search, etc.
 * **Editor area**: Opens Claude as a tab alongside your files
 
-This lets you position Claude wherever works best for your workflow.
+<Note>
+  The Spark icon only appears in the Activity Bar (left sidebar icons) when the Claude panel is docked to the left. Since Claude defaults to the right side, use the Editor Toolbar icon to open Claude.
+</Note>
 
 ### Switch to terminal mode
 
 By default, the extension opens a graphical chat panel. If you prefer the CLI-style interface, open the [Use Terminal setting](vscode://settings/claudeCode.useTerminal) and check the box.
 
 You can also open VS Code settings (`Cmd+,` on Mac or `Ctrl+,` on Windows/Linux), go to Extensions → Claude Code, and check **Use Terminal**.
-
-<Note>
-  In terminal mode, the Activity Bar icon (left vertical menu) won't persist between sessions. If you want the Spark icon to always appear in the Activity Bar, keep this setting disabled and use the Editor Toolbar icon (top-right of editor) to access terminal mode instead.
-</Note>
 
 ## VS Code commands and shortcuts
 
@@ -188,24 +196,15 @@ To reduce risk when working with untrusted code:
 
 ### Spark icon not visible
 
-There are two places the Spark icon can appear:
+The Spark icon appears in the **Editor Toolbar** (top-right of editor) when you have a file open. If you don't see it:
 
-* **Editor Toolbar** (top-right of editor): Only visible when a file is open
-* **Activity Bar** (left sidebar): Only visible after running "Claude Code: Open in Side Bar" from the Command Palette
+1. **Open a file**: The icon requires a file to be open—having just a folder open isn't enough
+2. **Check VS Code version**: Requires 1.98.0 or higher (Help → About)
+3. **Restart VS Code**: Run "Developer: Reload Window" from the Command Palette
+4. **Disable conflicting extensions**: Temporarily disable other AI extensions (Cline, Continue, etc.)
+5. **Check workspace trust**: The extension doesn't work in Restricted Mode
 
-If you don't see the icon:
-
-1. **Open a file**: The Editor Toolbar icon requires a file to be open—having just a folder open isn't enough
-2. **Enable the Activity Bar icon**: Run "Claude Code: Open in Side Bar" from the Command Palette once, and the icon will appear in the Activity Bar permanently
-3. **Check VS Code version**: Requires 1.98.0 or higher (Help → About)
-4. **Restart VS Code**: Run "Developer: Reload Window" from the command palette
-5. **Disable conflicting extensions**: Temporarily disable other AI extensions (Cline, Continue, etc.)
-6. **Check workspace trust**: The extension doesn't work in Restricted Mode
-7. **Use the Command Palette**: Open with `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux), then type "Claude Code: Open in Side Bar"
-
-### Spark icon doesn't stay in the Activity Bar
-
-If the Spark icon appears in the Activity Bar when you open the sidebar but doesn't persist after you close VS Code, check that the [Use Terminal setting](vscode://settings/claudeCode.useTerminal) is disabled. When terminal mode is enabled, the Activity Bar icon won't persist between sessions.
+Alternatively, click "✱ Claude Code" in the **Status Bar** (bottom-right corner)—this works even without a file open. You can also use the **Command Palette** (`Cmd+Shift+P` / `Ctrl+Shift+P`) and type "Claude Code".
 
 ### Claude Code never responds
 
