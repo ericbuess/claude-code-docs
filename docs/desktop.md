@@ -67,7 +67,29 @@ Claude Code on desktop includes a bundled, stable version of Claude Code to ensu
   The bundled Claude Code version in Desktop may differ from the latest CLI version. Desktop prioritizes stability while the CLI may have newer features.
 </Note>
 
-### Enterprise configuration
+## Environment configuration
+
+For local environments, Claude Code on desktop automatically extracts your `$PATH` environment variable from your shell configuration. This allows local sessions to access development tools like `yarn`, `npm`, `node`, and other commands available in your terminal without additional setup.
+
+### Custom environment variables
+
+Select "Local" environment, then to the right, select the settings button. This will open a dialog where you can update local environment variables. This is useful for setting project-specific variables or API keys that your development workflows require. Environment variable values are masked in the UI for security reasons.
+
+<Note>
+  Environment variables must be specified as key-value pairs, in [`.env` format](https://www.dotenv.org/). For example:
+
+  ```
+  API_KEY=your_api_key
+  DEBUG=true
+
+  # Multiline values - wrap in quotes
+  CERT="-----BEGIN CERT-----
+  MIIE...
+  -----END CERT-----"
+  ```
+</Note>
+
+## Enterprise configuration
 
 Organizations can disable local Claude Code use in the desktop application with the `isClaudeCodeForDesktopEnabled` [enterprise policy option](https://support.claude.com/en/articles/12622667-enterprise-configuration#h_003283c7cb). Additionally, Claude Code on the web can be disabled in your [admin settings](https://claude.ai/admin-settings/claude-code).
 
