@@ -3,7 +3,7 @@
 > Connect Claude Code to your browser to test web apps, debug with console logs, and automate browser tasks.
 
 <Note>
-  Chrome integration is in beta and currently works with Google Chrome only. Arc and Dia browsers are not yet supported. WSL (Windows Subsystem for Linux) is also not supported.
+  Chrome integration is in beta and currently works with Google Chrome only. It is not yet supported on Brave, Arc, or other Chromium-based browsers. WSL (Windows Subsystem for Linux) is also not supported.
 </Note>
 
 Claude Code integrates with the Claude in Chrome browser extension to give you browser automation capabilities directly from your terminal. Build in your terminal, then test and debug in your browser without switching contexts.
@@ -27,8 +27,8 @@ Key capabilities include:
 Before using Claude Code with Chrome, you need:
 
 * [Google Chrome](https://www.google.com/chrome/) browser
-* [Claude in Chrome extension](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) installed
-* [Claude Code CLI](/en/quickstart#step-1:-install-claude-code) installed
+* [Claude in Chrome extension](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) version 1.0.36 or higher
+* [Claude Code CLI](/en/quickstart#step-1:-install-claude-code) version 2.0.73 or higher
 * A paid Claude plan (Pro, Team, or Enterprise)
 
 ## How the integration works
@@ -180,9 +180,11 @@ When using browser automation, keep these guidelines in mind:
 
 If Claude Code shows "Chrome extension not detected":
 
-1. Verify the extension is installed in Chrome
-2. Check that Chrome is running
-3. Run `/chrome` and select "Reconnect extension" to re-establish the connection
+1. Verify the Chrome extension (version 1.0.36 or higher) is installed
+2. Verify Claude Code is version 2.0.73 or higher by running `claude --version`
+3. Check that Chrome is running
+4. Run `/chrome` and select "Reconnect extension" to re-establish the connection
+5. If the issue persists, restart both Claude Code and Chrome
 
 ### Browser not responding
 

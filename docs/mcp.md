@@ -833,15 +833,22 @@ MCP servers can expose prompts that become available as slash commands in Claude
 
 ## Enterprise MCP configuration
 
-For organizations that need centralized control over MCP servers, Claude Code supports enterprise-managed MCP configurations. This allows IT administrators to:
+For organizations that need centralized control over MCP servers, Claude Code supports two enterprise configuration options:
+
+1. **Exclusive control with `managed-mcp.json`**: Deploy a fixed set of MCP servers that users cannot modify or extend
+2. **Policy-based control with allowlists/denylists**: Allow users to add their own servers, but restrict which ones are permitted
+
+These options allow IT administrators to:
 
 * **Control which MCP servers employees can access**: Deploy a standardized set of approved MCP servers across the organization
-* **Prevent unauthorized MCP servers**: Optionally restrict users from adding their own MCP servers
+* **Prevent unauthorized MCP servers**: Restrict users from adding unapproved MCP servers
 * **Disable MCP entirely**: Remove MCP functionality completely if needed
 
-### Setting up enterprise MCP configuration
+### Option 1: Exclusive control with managed-mcp.json
 
-System administrators deploy an enterprise MCP configuration file to a system-wide directory:
+When you deploy a `managed-mcp.json` file, it takes **exclusive control** over all MCP servers. Users cannot add, modify, or use any MCP servers other than those defined in this file. This is the simplest approach for organizations that want complete control.
+
+System administrators deploy the configuration file to a system-wide directory:
 
 * macOS: `/Library/Application Support/ClaudeCode/managed-mcp.json`
 * Linux and WSL: `/etc/claude-code/managed-mcp.json`
@@ -876,18 +883,23 @@ The `managed-mcp.json` file uses the same format as a standard `.mcp.json` file:
 }
 ```
 
-### Restricting MCP servers with allowlists and denylists
+### Option 2: Policy-based control with allowlists and denylists
 
-In addition to providing enterprise-managed servers, administrators can control which MCP servers users are allowed to configure using `allowedMcpServers` and `deniedMcpServers` in the [managed settings file](/en/settings#settings-files):
+Instead of taking exclusive control, administrators can allow users to configure their own MCP servers while enforcing restrictions on which servers are permitted. This approach uses `allowedMcpServers` and `deniedMcpServers` in the [managed settings file](/en/settings#settings-files).
+
+<Note>
+  **Choosing between options**: Use Option 1 (`managed-mcp.json`) when you want to deploy a fixed set of servers with no user customization. Use Option 2 (allowlists/denylists) when you want to allow users to add their own servers within policy constraints.
+</Note>
 
 #### Restriction options
 
-Each entry in the allowlist or denylist can restrict servers in two ways:
+Each entry in the allowlist or denylist can restrict servers in three ways:
 
 1. **By server name** (`serverName`): Matches the configured name of the server
 2. **By command** (`serverCommand`): Matches the exact command and arguments used to start stdio servers
+3. **By URL pattern** (`serverUrl`): Matches remote server URLs with wildcard support
 
-**Important**: Each entry must have **either** `serverName` **or** `serverCommand`, not both.
+**Important**: Each entry must have exactly one of `serverName`, `serverCommand`, or `serverUrl`.
 
 #### Example configuration
 
@@ -900,14 +912,21 @@ Each entry in the allowlist or denylist can restrict servers in two ways:
 
     // Allow by exact command (for stdio servers)
     { "serverCommand": ["npx", "-y", "@modelcontextprotocol/server-filesystem"] },
-    { "serverCommand": ["python", "/usr/local/bin/approved-server.py"] }
+    { "serverCommand": ["python", "/usr/local/bin/approved-server.py"] },
+
+    // Allow by URL pattern (for remote servers)
+    { "serverUrl": "https://mcp.company.com/*" },
+    { "serverUrl": "https://*.internal.corp/*" }
   ],
   "deniedMcpServers": [
     // Block by server name
     { "serverName": "dangerous-server" },
 
     // Block by exact command (for stdio servers)
-    { "serverCommand": ["npx", "-y", "unapproved-package"] }
+    { "serverCommand": ["npx", "-y", "unapproved-package"] },
+
+    // Block by URL pattern (for remote servers)
+    { "serverUrl": "https://*.untrusted.com/*" }
   ]
 }
 ```
@@ -927,8 +946,43 @@ Each entry in the allowlist or denylist can restrict servers in two ways:
 
 **Non-stdio server behavior**:
 
-* Remote servers (HTTP, SSE, WebSocket) always match by name only
+* Remote servers (HTTP, SSE, WebSocket) use URL-based matching when `serverUrl` entries exist in the allowlist
+* If no URL entries exist, remote servers fall back to name-based matching
 * Command restrictions do not apply to remote servers
+
+#### How URL-based restrictions work
+
+URL patterns support wildcards using `*` to match any sequence of characters. This is useful for allowing entire domains or subdomains.
+
+**Wildcard examples**:
+
+* `https://mcp.company.com/*` - Allow all paths on a specific domain
+* `https://*.example.com/*` - Allow any subdomain of example.com
+* `http://localhost:*/*` - Allow any port on localhost
+
+**Remote server behavior**:
+
+* When the allowlist contains **any** `serverUrl` entries, remote servers **must** match one of those URL patterns
+* Remote servers cannot pass by name alone when URL restrictions are present
+* This ensures administrators can enforce which remote endpoints are allowed
+
+<Accordion title="Example: URL-only allowlist">
+  ```json  theme={null}
+  {
+    "allowedMcpServers": [
+      { "serverUrl": "https://mcp.company.com/*" },
+      { "serverUrl": "https://*.internal.corp/*" }
+    ]
+  }
+  ```
+
+  **Result**:
+
+  * HTTP server at `https://mcp.company.com/api`: ✅ Allowed (matches URL pattern)
+  * HTTP server at `https://api.internal.corp/mcp`: ✅ Allowed (matches wildcard subdomain)
+  * HTTP server at `https://external.com/mcp`: ❌ Blocked (doesn't match any URL pattern)
+  * Stdio server with any command: ❌ Blocked (no name or command entries to match)
+</Accordion>
 
 <Accordion title="Example: Command-only allowlist">
   ```json  theme={null}
@@ -987,7 +1041,7 @@ Each entry in the allowlist or denylist can restrict servers in two ways:
 
 * `undefined` (default): No restrictions - users can configure any MCP server
 * Empty array `[]`: Complete lockdown - users cannot configure any MCP servers
-* List of entries: Users can only configure servers that match by name or command
+* List of entries: Users can only configure servers that match by name, command, or URL pattern
 
 #### Denylist behavior (`deniedMcpServers`)
 
@@ -997,12 +1051,12 @@ Each entry in the allowlist or denylist can restrict servers in two ways:
 
 #### Important notes
 
-* These restrictions apply to all scopes: user, project, local, and even enterprise servers from `managed-mcp.json`
-* **Denylist takes absolute precedence**: If a server matches a denylist entry (by name or command), it will be blocked even if it's on the allowlist
-* Name-based and command-based restrictions work together: a server passes if it matches **either** a name entry **or** a command entry (unless blocked by denylist)
+* **Option 1 and Option 2 can be combined**: If `managed-mcp.json` exists, it has exclusive control and users cannot add servers. Allowlists/denylists still apply to the enterprise servers themselves.
+* **Denylist takes absolute precedence**: If a server matches a denylist entry (by name, command, or URL), it will be blocked even if it's on the allowlist
+* Name-based, command-based, and URL-based restrictions work together: a server passes if it matches **either** a name entry, a command entry, or a URL pattern (unless blocked by denylist)
 
 <Note>
-  **Enterprise configuration precedence**: The enterprise MCP configuration has the highest precedence and cannot be overridden by user, local, or project configurations.
+  **When using `managed-mcp.json`**: Users cannot add MCP servers through `claude mcp add` or configuration files. The `allowedMcpServers` and `deniedMcpServers` settings still apply to filter which enterprise servers are actually loaded.
 </Note>
 
 
