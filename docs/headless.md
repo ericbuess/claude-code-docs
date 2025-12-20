@@ -55,13 +55,18 @@ claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
 ```
 
-### Run slash commands
+### Create a commit
 
-Run [slash commands](/en/slash-commands) non-interactively. This example generates a commit for staged changes using the `/commit` slash command:
+This example reviews staged changes and creates a commit with an appropriate message:
 
 ```bash  theme={null}
-claude -p "/commit"
+claude -p "Look at my staged changes and create an appropriate commit" \
+  --allowedTools "Bash(git diff:*),Bash(git log:*),Bash(git status:*),Bash(git commit:*)"
 ```
+
+<Note>
+  [Slash commands](/en/slash-commands) like `/commit` are only available in interactive mode. In `-p` mode, describe the task you want to accomplish instead.
+</Note>
 
 ### Customize the system prompt
 

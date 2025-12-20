@@ -4,6 +4,71 @@
 
 Claude Code offers a variety of settings to configure its behavior to meet your needs. You can configure Claude Code by running the `/config` command when using the interactive REPL, which opens a tabbed Settings interface where you can view status information and modify configuration options.
 
+## Configuration scopes
+
+Claude Code uses a **scope system** to determine where configurations apply and who they're shared with. Understanding scopes helps you decide how to configure Claude Code for personal use, team collaboration, or enterprise deployment.
+
+### Available scopes
+
+| Scope          | Location                             | Who it affects                       | Shared with team?      |
+| :------------- | :----------------------------------- | :----------------------------------- | :--------------------- |
+| **Enterprise** | System-level `managed-settings.json` | All users on the machine             | Yes (deployed by IT)   |
+| **User**       | `~/.claude/` directory               | You, across all projects             | No                     |
+| **Project**    | `.claude/` in repository             | All collaborators on this repository | Yes (committed to git) |
+| **Local**      | `.claude/*.local.*` files            | You, in this repository only         | No (gitignored)        |
+
+### When to use each scope
+
+**Enterprise scope** is for:
+
+* Security policies that must be enforced organization-wide
+* Compliance requirements that can't be overridden
+* Standardized configurations deployed by IT/DevOps
+
+**User scope** is best for:
+
+* Personal preferences you want everywhere (themes, editor settings)
+* Tools and plugins you use across all projects
+* API keys and authentication (stored securely)
+
+**Project scope** is best for:
+
+* Team-shared settings (permissions, hooks, MCP servers)
+* Plugins the whole team should have
+* Standardizing tooling across collaborators
+
+**Local scope** is best for:
+
+* Personal overrides for a specific project
+* Testing configurations before sharing with the team
+* Machine-specific settings that won't work for others
+
+### How scopes interact
+
+When the same setting is configured in multiple scopes, more specific scopes take precedence:
+
+1. **Enterprise** (highest) - can't be overridden by anything
+2. **Command line arguments** - temporary session overrides
+3. **Local** - overrides project and user settings
+4. **Project** - overrides user settings
+5. **User** (lowest) - applies when nothing else specifies the setting
+
+For example, if a permission is allowed in user settings but denied in project settings, the project setting takes precedence and the permission is blocked.
+
+### What uses scopes
+
+Scopes apply to many Claude Code features:
+
+| Feature         | User location             | Project location                   | Local location                 |
+| :-------------- | :------------------------ | :--------------------------------- | :----------------------------- |
+| **Settings**    | `~/.claude/settings.json` | `.claude/settings.json`            | `.claude/settings.local.json`  |
+| **Subagents**   | `~/.claude/agents/`       | `.claude/agents/`                  | —                              |
+| **MCP servers** | `~/.claude.json`          | `.mcp.json`                        | `~/.claude.json` (per-project) |
+| **Plugins**     | `~/.claude/settings.json` | `.claude/settings.json`            | `.claude/settings.local.json`  |
+| **CLAUDE.md**   | `~/.claude/CLAUDE.md`     | `CLAUDE.md` or `.claude/CLAUDE.md` | `CLAUDE.local.md`              |
+
+***
+
 ## Settings files
 
 The `settings.json` file is our official mechanism for configuring Claude
@@ -89,7 +154,7 @@ Code through hierarchical settings:
 | `disabledMcpjsonServers`     | List of specific MCP servers from `.mcp.json` files to reject                                                                                                                                                                                                                         | `["filesystem"]`                                                        |
 | `allowedMcpServers`          | When set in managed-settings.json, allowlist of MCP servers users can configure. Undefined = no restrictions, empty array = lockdown. Applies to all scopes. Denylist takes precedence. See [Enterprise MCP configuration](/en/mcp#enterprise-mcp-configuration)                      | `[{ "serverName": "github" }]`                                          |
 | `deniedMcpServers`           | When set in managed-settings.json, denylist of MCP servers that are explicitly blocked. Applies to all scopes including enterprise servers. Denylist takes precedence over allowlist. See [Enterprise MCP configuration](/en/mcp#enterprise-mcp-configuration)                        | `[{ "serverName": "filesystem" }]`                                      |
-| `strictKnownMarketplaces`    | When set in managed-settings.json, allowlist of plugin marketplaces users can add. Undefined = no restrictions, empty array = lockdown. Applies to marketplace additions only. See [Enterprise marketplace restrictions](/en/plugin-marketplaces#enterprise-marketplace-restrictions) | `[{ "source": "github", "repo": "company/plugins" }]`                   |
+| `strictKnownMarketplaces`    | When set in managed-settings.json, allowlist of plugin marketplaces users can add. Undefined = no restrictions, empty array = lockdown. Applies to marketplace additions only. See [Enterprise marketplace restrictions](/en/plugin-marketplaces#enterprise-marketplace-restrictions) | `[{ "source": "github", "repo": "acme-corp/plugins" }]`                 |
 | `awsAuthRefresh`             | Custom script that modifies the `.aws` directory (see [advanced credential configuration](/en/amazon-bedrock#advanced-credential-configuration))                                                                                                                                      | `aws sso login --profile myprofile`                                     |
 | `awsCredentialExport`        | Custom script that outputs JSON with AWS credentials (see [advanced credential configuration](/en/amazon-bedrock#advanced-credential-configuration))                                                                                                                                  | `/bin/generate_aws_grant.sh`                                            |
 | `alwaysThinkingEnabled`      | Enable [extended thinking](/en/common-workflows#use-extended-thinking) by default for all sessions. Typically configured via the `/config` command rather than editing directly                                                                                                       | `true`                                                                  |
@@ -330,14 +395,14 @@ Plugin-related settings in `settings.json`:
 ```json  theme={null}
 {
   "enabledPlugins": {
-    "formatter@company-tools": true,
-    "deployer@company-tools": true,
+    "formatter@acme-tools": true,
+    "deployer@acme-tools": true,
     "analyzer@security-plugins": false
   },
   "extraKnownMarketplaces": {
-    "company-tools": {
+    "acme-tools": {
       "source": "github",
-      "repo": "company/claude-plugins"
+      "repo": "acme-corp/claude-plugins"
     }
   }
 }
@@ -381,16 +446,16 @@ Defines additional marketplaces that should be made available for the repository
 ```json  theme={null}
 {
   "extraKnownMarketplaces": {
-    "company-tools": {
+    "acme-tools": {
       "source": {
         "source": "github",
-        "repo": "company-org/claude-plugins"
+        "repo": "acme-corp/claude-plugins"
       }
     },
     "security-plugins": {
       "source": {
         "source": "git",
-        "url": "https://git.company.com/security/plugins.git"
+        "url": "https://git.example.com/security/plugins.git"
       }
     }
   }
@@ -405,7 +470,7 @@ Defines additional marketplaces that should be made available for the repository
 
 #### `strictKnownMarketplaces`
 
-**Enterprise-only setting**: Controls which plugin marketplaces users are allowed to add. This setting can only be configured in `managed-settings.json` and provides enterprise administrators with strict control over marketplace sources.
+**Enterprise-only setting**: Controls which plugin marketplaces users are allowed to add. This setting can only be configured in [`managed-settings.json`](/en/iam#enterprise-managed-settings) and provides enterprise administrators with strict control over marketplace sources.
 
 **Managed settings file locations**:
 
@@ -433,9 +498,9 @@ The allowlist supports six marketplace source types. Each source must match exac
 1. **GitHub repositories**:
 
 ```json  theme={null}
-{ "source": "github", "repo": "company/approved-plugins" }
-{ "source": "github", "repo": "company/security-tools", "ref": "v2.0" }
-{ "source": "github", "repo": "team/plugins", "ref": "main", "path": "marketplace" }
+{ "source": "github", "repo": "acme-corp/approved-plugins" }
+{ "source": "github", "repo": "acme-corp/security-tools", "ref": "v2.0" }
+{ "source": "github", "repo": "acme-corp/plugins", "ref": "main", "path": "marketplace" }
 ```
 
 Fields: `repo` (required), `ref` (optional: branch/tag/SHA), `path` (optional: subdirectory)
@@ -443,9 +508,9 @@ Fields: `repo` (required), `ref` (optional: branch/tag/SHA), `path` (optional: s
 2. **Git repositories**:
 
 ```json  theme={null}
-{ "source": "git", "url": "https://gitlab.company.com/tools/plugins.git" }
-{ "source": "git", "url": "https://bitbucket.org/company/plugins.git", "ref": "production" }
-{ "source": "git", "url": "ssh://git@internal.company.com/plugins.git", "ref": "v3.1", "path": "approved" }
+{ "source": "git", "url": "https://gitlab.example.com/tools/plugins.git" }
+{ "source": "git", "url": "https://bitbucket.org/acme-corp/plugins.git", "ref": "production" }
+{ "source": "git", "url": "ssh://git@git.example.com/plugins.git", "ref": "v3.1", "path": "approved" }
 ```
 
 Fields: `url` (required), `ref` (optional: branch/tag/SHA), `path` (optional: subdirectory)
@@ -453,8 +518,8 @@ Fields: `url` (required), `ref` (optional: branch/tag/SHA), `path` (optional: su
 3. **URL-based marketplaces**:
 
 ```json  theme={null}
-{ "source": "url", "url": "https://internal.company.com/plugins/marketplace.json" }
-{ "source": "url", "url": "https://cdn.company.com/marketplace.json", "headers": { "Authorization": "Bearer ${TOKEN}" } }
+{ "source": "url", "url": "https://plugins.example.com/marketplace.json" }
+{ "source": "url", "url": "https://cdn.example.com/marketplace.json", "headers": { "Authorization": "Bearer ${TOKEN}" } }
 ```
 
 Fields: `url` (required), `headers` (optional: HTTP headers for authenticated access)
@@ -462,8 +527,8 @@ Fields: `url` (required), `headers` (optional: HTTP headers for authenticated ac
 4. **NPM packages**:
 
 ```json  theme={null}
-{ "source": "npm", "package": "@company/claude-plugins" }
-{ "source": "npm", "package": "@company-internal/approved-marketplace" }
+{ "source": "npm", "package": "@acme-corp/claude-plugins" }
+{ "source": "npm", "package": "@acme-corp/approved-marketplace" }
 ```
 
 Fields: `package` (required, supports scoped packages)
@@ -471,8 +536,8 @@ Fields: `package` (required, supports scoped packages)
 5. **File paths**:
 
 ```json  theme={null}
-{ "source": "file", "path": "/usr/local/share/claude/company-marketplace.json" }
-{ "source": "file", "path": "/opt/company/plugins/marketplace.json" }
+{ "source": "file", "path": "/usr/local/share/claude/acme-marketplace.json" }
+{ "source": "file", "path": "/opt/acme-corp/plugins/marketplace.json" }
 ```
 
 Fields: `path` (required: absolute path to marketplace.json file)
@@ -480,8 +545,8 @@ Fields: `path` (required: absolute path to marketplace.json file)
 6. **Directory paths**:
 
 ```json  theme={null}
-{ "source": "directory", "path": "/usr/local/share/claude/company-plugins" }
-{ "source": "directory", "path": "/opt/company/approved-marketplaces" }
+{ "source": "directory", "path": "/usr/local/share/claude/acme-plugins" }
+{ "source": "directory", "path": "/opt/acme-corp/approved-marketplaces" }
 ```
 
 Fields: `path` (required: absolute path to directory containing `.claude-plugin/marketplace.json`)
@@ -495,20 +560,20 @@ Example - Allow specific marketplaces only:
   "strictKnownMarketplaces": [
     {
       "source": "github",
-      "repo": "company/approved-plugins"
+      "repo": "acme-corp/approved-plugins"
     },
     {
       "source": "github",
-      "repo": "company/security-tools",
+      "repo": "acme-corp/security-tools",
       "ref": "v2.0"
     },
     {
       "source": "url",
-      "url": "https://internal.company.com/plugins/marketplace.json"
+      "url": "https://plugins.example.com/marketplace.json"
     },
     {
       "source": "npm",
-      "package": "@company/compliance-plugins"
+      "package": "@acme-corp/compliance-plugins"
     }
   ]
 }
@@ -534,12 +599,12 @@ Examples of sources that **do NOT match**:
 
 ```json  theme={null}
 // These are DIFFERENT sources:
-{ "source": "github", "repo": "company/plugins" }
-{ "source": "github", "repo": "company/plugins", "ref": "main" }
+{ "source": "github", "repo": "acme-corp/plugins" }
+{ "source": "github", "repo": "acme-corp/plugins", "ref": "main" }
 
 // These are also DIFFERENT:
-{ "source": "github", "repo": "company/plugins", "path": "marketplace" }
-{ "source": "github", "repo": "company/plugins" }
+{ "source": "github", "repo": "acme-corp/plugins", "path": "marketplace" }
+{ "source": "github", "repo": "acme-corp/plugins" }
 ```
 
 **Comparison with `extraKnownMarketplaces`**:
@@ -561,7 +626,7 @@ Examples of sources that **do NOT match**:
 ```json  theme={null}
 {
   "strictKnownMarketplaces": [
-    { "source": "github", "repo": "company/plugins" }
+    { "source": "github", "repo": "acme-corp/plugins" }
   ]
 }
 ```
@@ -571,8 +636,8 @@ Examples of sources that **do NOT match**:
 ```json  theme={null}
 {
   "extraKnownMarketplaces": {
-    "company-tools": {
-      "source": { "source": "github", "repo": "company/plugins" }
+    "acme-tools": {
+      "source": { "source": "github", "repo": "acme-corp/plugins" }
     }
   }
 }

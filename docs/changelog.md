@@ -8,6 +8,22 @@
 
 # Changelog
 
+## 2.0.74
+
+- Added LSP (Language Server Protocol) tool for code intelligence features like go-to-definition, find references, and hover documentation
+- Added `/terminal-setup` support for Kitty, Alacritty, Zed, and Warp terminals
+- Added ctrl+t shortcut in `/theme` to toggle syntax highlighting on/off
+- Added syntax highlighting info to theme picker
+- Added guidance for macOS users when Alt shortcuts fail due to terminal configuration
+- Fixed skill `allowed-tools` not being applied to tools invoked by the skill
+- Fixed Opus 4.5 tip incorrectly showing when user was already using Opus
+- Fixed a potential crash when syntax highlighting isn't initialized correctly
+- Fixed visual bug in `/plugins discover` where list selection indicator showed while search box was focused
+- Fixed macOS keyboard shortcuts to display 'opt' instead of 'alt'
+- Improved `/context` command visualization with grouped skills and agents by source, slash commands, and sorted token count
+- [Windows] Fixed issue with improper rendering
+- [VSCode] Added gift tag pictogram for year-end promotion message
+
 ## 2.0.73
 
 - Added clickable `[Image #N]` links that open attached images in the default viewer
