@@ -24,7 +24,7 @@ Think of it like adding an app store: adding the store gives you access to brows
 
 ## Official Anthropic marketplace
 
-The official Anthropic marketplace (`claude-plugins-official`) is automatically installed when you start Claude Code. You can browse its plugins immediately by running `/plugin` and going to the **Discover** tab.
+The official Anthropic marketplace (`claude-plugins-official`) is automatically available when you start Claude Code. Run `/plugin` and go to the **Discover** tab to browse what's available.
 
 To install a plugin from the official marketplace:
 
@@ -32,9 +32,63 @@ To install a plugin from the official marketplace:
 /plugin install plugin-name@claude-plugins-official
 ```
 
+The official marketplace includes several categories of plugins:
+
+### Code intelligence
+
+Code intelligence plugins help Claude understand your codebase more deeply. With these plugins installed, Claude can jump to definitions, find references, and see type errors immediately after edits. These plugins use the [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) (LSP), the same technology that powers VS Code's code intelligence.
+
+These plugins require the language server binary to be installed on your system. If you already have a language server installed, Claude may prompt you to install the corresponding plugin when you open a project.
+
+| Language   | Plugin              | Binary required              |
+| :--------- | :------------------ | :--------------------------- |
+| C/C++      | `clangd-lsp`        | `clangd`                     |
+| C#         | `csharp-lsp`        | `csharp-ls`                  |
+| Go         | `gopls-lsp`         | `gopls`                      |
+| Java       | `jdtls-lsp`         | `jdtls`                      |
+| Lua        | `lua-lsp`           | `lua-language-server`        |
+| PHP        | `php-lsp`           | `intelephense`               |
+| Python     | `pyright-lsp`       | `pyright-langserver`         |
+| Rust       | `rust-analyzer-lsp` | `rust-analyzer`              |
+| Swift      | `swift-lsp`         | `sourcekit-lsp`              |
+| TypeScript | `typescript-lsp`    | `typescript-language-server` |
+
+You can also [create your own LSP plugin](/en/plugins-reference#lsp-servers) for other languages.
+
+<Note>
+  If you see `Executable not found in $PATH` in the `/plugin` Errors tab after installing a plugin, install the required binary from the table above.
+</Note>
+
+### External integrations
+
+These plugins bundle pre-configured [MCP servers](/en/mcp) so you can connect Claude to external services without manual setup:
+
+* **Source control**: `github`, `gitlab`
+* **Project management**: `atlassian` (Jira/Confluence), `asana`, `linear`, `notion`
+* **Design**: `figma`
+* **Infrastructure**: `vercel`, `firebase`, `supabase`
+* **Communication**: `slack`
+* **Monitoring**: `sentry`
+
+### Development workflows
+
+Plugins that add commands and agents for common development tasks:
+
+* **commit-commands**: Git commit workflows including commit, push, and PR creation
+* **pr-review-toolkit**: Specialized agents for reviewing pull requests
+* **agent-sdk-dev**: Tools for building with the Claude Agent SDK
+* **plugin-dev**: Toolkit for creating your own plugins
+
+### Output styles
+
+Customize how Claude responds:
+
+* **explanatory-output-style**: Educational insights about implementation choices
+* **learning-output-style**: Interactive learning mode for skill building
+
 ## Try it: add the demo marketplace
 
-Anthropic also maintains a [demo plugins marketplace](https://github.com/anthropics/claude-code/tree/main/plugins) with example plugins that show what's possible with the plugin system. Unlike the official marketplace, you need to add this one manually.
+Anthropic also maintains a [demo plugins marketplace](https://github.com/anthropics/claude-code/tree/main/plugins) (`claude-code-plugins`) with example plugins that show what's possible with the plugin system. Unlike the official marketplace, you need to add this one manually.
 
 <Steps>
   <Step title="Add the marketplace">

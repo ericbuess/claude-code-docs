@@ -69,8 +69,8 @@
     "discover-plugins.md": {
       "original_url": "https://code.claude.com/docs/en/discover-plugins",
       "original_md_url": "https://code.claude.com/docs/en/discover-plugins.md",
-      "hash": "d8bde424db343fab1cf90039151ab920dd9c0b282359bd0b0bd7dd7bdc79f8fc",
-      "last_updated": "2025-12-20T00:04:25.280755"
+      "hash": "4ae1fc65e869e46c2dc5e25184925d499ef9179af912e8d4f60a19521039a0f0",
+      "last_updated": "2025-12-23T18:02:20.335653"
     },
     "github-actions.md": {
       "original_url": "https://code.claude.com/docs/en/github-actions",
@@ -297,8 +297,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-12-23T15:02:08.606989",
-    "fetch_duration_seconds": 29.436029,
+    "last_fetch_completed": "2025-12-23T18:02:40.856954",
+    "fetch_duration_seconds": 27.056938,
     "total_pages_discovered": 48,
     "pages_fetched_successfully": 49,
     "pages_failed": 0,
@@ -308,7 +308,7 @@
     "total_files": 49,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-12-23T15:02:08.607029",
+  "last_updated": "2025-12-23T18:02:40.856980",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
