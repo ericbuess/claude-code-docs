@@ -32,6 +32,10 @@ To install a plugin from the official marketplace:
 /plugin install plugin-name@claude-plugins-official
 ```
 
+<Note>
+  The official marketplace is maintained by Anthropic. To distribute your own plugins, [create your own marketplace](/en/plugin-marketplaces) and share it with users.
+</Note>
+
 The official marketplace includes several categories of plugins:
 
 ### Code intelligence
@@ -343,6 +347,7 @@ If you see "unknown command" or the `/plugin` command doesn't appear:
 * **Marketplace not loading**: Verify the URL is accessible and that `.claude-plugin/marketplace.json` exists at the path
 * **Plugin installation failures**: Check that plugin source URLs are accessible and repositories are public (or you have access)
 * **Files not found after installation**: Plugins are copied to a cache, so paths referencing files outside the plugin directory won't work
+* **Plugin Skills not appearing**: Clear the cache with `rm -rf ~/.claude/plugins/cache`, restart Claude Code, and reinstall the plugin. See [Plugin Skills not appearing](/en/skills#plugin-skills-not-appearing-after-installation) for details.
 
 For detailed troubleshooting with solutions, see [Troubleshooting](/en/plugin-marketplaces#troubleshooting) in the marketplace guide. For debugging tools, see [Debugging and development tools](/en/plugins-reference#debugging-and-development-tools).
 
