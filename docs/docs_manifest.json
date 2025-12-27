@@ -93,8 +93,8 @@
     "headless.md": {
       "original_url": "https://code.claude.com/docs/en/headless",
       "original_md_url": "https://code.claude.com/docs/en/headless.md",
-      "hash": "f9918de16d7c121ca2ca37341742dddc69915d07fb75833168dee2db407efa74",
-      "last_updated": "2025-12-20T00:04:27.721532"
+      "hash": "3b3fd5b137d4bb74e004c205b98d0720fccf0e8269bc6ce8621fee6da3c85be1",
+      "last_updated": "2025-12-27T06:02:12.099901"
     },
     "hooks.md": {
       "original_url": "https://code.claude.com/docs/en/hooks",
@@ -297,8 +297,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-12-27T03:28:37.554964",
-    "fetch_duration_seconds": 29.157704,
+    "last_fetch_completed": "2025-12-27T06:02:30.728341",
+    "fetch_duration_seconds": 28.011735,
     "total_pages_discovered": 48,
     "pages_fetched_successfully": 49,
     "pages_failed": 0,
@@ -308,7 +308,7 @@
     "total_files": 49,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2025-12-27T03:28:37.554992",
+  "last_updated": "2025-12-27T06:02:30.728368",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

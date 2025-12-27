@@ -42,9 +42,36 @@ Use `--output-format` to control how responses are returned:
 * `json`: structured JSON with result, session ID, and metadata
 * `stream-json`: newline-delimited JSON for real-time streaming
 
+This example returns a project summary as JSON with session metadata, with the text result in the `result` field:
+
 ```bash  theme={null}
 claude -p "Summarize this project" --output-format json
 ```
+
+To get output conforming to a specific schema, use `--output-format json` with `--json-schema` and a [JSON Schema](https://json-schema.org/) definition. The response includes metadata about the request (session ID, usage, etc.) with the structured output in the `structured_output` field.
+
+This example extracts function names and returns them as an array of strings:
+
+```bash  theme={null}
+claude -p "Extract the main function names from auth.py" \
+  --output-format json \
+  --json-schema '{"type":"object","properties":{"functions":{"type":"array","items":{"type":"string"}}},"required":["functions"]}'
+```
+
+<Tip>
+  Use a tool like [jq](https://jqlang.github.io/jq/) to parse the response and extract specific fields:
+
+  ```bash  theme={null}
+  # Extract the text result
+  claude -p "Summarize this project" --output-format json | jq -r '.result'
+
+  # Extract structured output
+  claude -p "Extract function names from auth.py" \
+    --output-format json \
+    --json-schema '{"type":"object","properties":{"functions":{"type":"array","items":{"type":"string"}}},"required":["functions"]}' \
+    | jq '.structured_output'
+  ```
+</Tip>
 
 ### Auto-approve tools
 
