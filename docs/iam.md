@@ -68,12 +68,13 @@ A rule that is just the tool name matches any use of that tool. For example, add
 
 Claude Code supports several permission modes that can be set as the `defaultMode` in [settings files](/en/settings#settings-files):
 
-| Mode                | Description                                                                  |
-| :------------------ | :--------------------------------------------------------------------------- |
-| `default`           | Standard behavior - prompts for permission on first use of each tool         |
-| `acceptEdits`       | Automatically accepts file edit permissions for the session                  |
-| `plan`              | Plan Mode - Claude can analyze but not modify files or execute commands      |
-| `bypassPermissions` | Skips all permission prompts (requires safe environment - see warning below) |
+| Mode                | Description                                                                                                               |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------ |
+| `default`           | Standard behavior - prompts for permission on first use of each tool                                                      |
+| `acceptEdits`       | Automatically accepts file edit permissions for the session                                                               |
+| `plan`              | Plan Mode - Claude can analyze but not modify files or execute commands                                                   |
+| `dontAsk`           | Auto-denies tools unless pre-approved via `/permissions` or [`permissions.allow`](/en/settings#permission-settings) rules |
+| `bypassPermissions` | Skips all permission prompts (requires safe environment - see warning below)                                              |
 
 #### Working directories
 

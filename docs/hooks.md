@@ -456,7 +456,7 @@ event-specific data:
   session_id: string
   transcript_path: string  // Path to conversation JSON
   cwd: string              // The current working directory when the hook is invoked
-  permission_mode: string  // Current permission mode: "default", "plan", "acceptEdits", or "bypassPermissions"
+  permission_mode: string  // Current permission mode: "default", "plan", "acceptEdits", "dontAsk", or "bypassPermissions"
 
   // Event-specific fields
   hook_event_name: string
