@@ -23,25 +23,25 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
   </Tab>
 
   <Tab title="Homebrew">
-    ```sh  theme={null}
+    ```sh theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
   </Tab>
@@ -49,7 +49,7 @@ To install Claude Code, use one of the following methods:
   <Tab title="NPM">
     If you have [Node.js 18 or newer installed](https://nodejs.org/en/download/):
 
-    ```sh  theme={null}
+    ```sh theme={null} theme={null} theme={null}
     npm install -g @anthropic-ai/claude-code
     ```
   </Tab>
@@ -216,27 +216,27 @@ If you need to uninstall Claude Code, follow the instructions for your installat
 
 ### Native installation
 
-Remove the Claude Code binary and symlink:
+Remove the Claude Code binary and version files:
 
 **macOS, Linux, WSL:**
 
 ```bash  theme={null}
 rm -f ~/.local/bin/claude
-rm -rf ~/.claude-code
+rm -rf ~/.local/share/claude
 ```
 
 **Windows PowerShell:**
 
 ```powershell  theme={null}
-Remove-Item -Path "$env:LOCALAPPDATA\Programs\claude-code" -Recurse -Force
-Remove-Item -Path "$env:LOCALAPPDATA\Microsoft\WindowsApps\claude.exe" -Force
+Remove-Item -Path "$env:USERPROFILE\.local\bin\claude.exe" -Force
+Remove-Item -Path "$env:USERPROFILE\.local\share\claude" -Recurse -Force
 ```
 
 **Windows CMD:**
 
 ```batch  theme={null}
-rmdir /s /q "%LOCALAPPDATA%\Programs\claude-code"
-del "%LOCALAPPDATA%\Microsoft\WindowsApps\claude.exe"
+del "%USERPROFILE%\.local\bin\claude.exe"
+rmdir /s /q "%USERPROFILE%\.local\share\claude"
 ```
 
 ### Homebrew installation

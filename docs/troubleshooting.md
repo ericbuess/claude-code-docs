@@ -91,11 +91,46 @@ irm https://claude.ai/install.ps1 | iex
 
 ```
 
-This command installs the appropriate build of Claude Code for your operating system and architecture and adds a symlink to the installation at `~/.local/bin/claude`.
+This command installs the appropriate build of Claude Code for your operating system and architecture and adds a symlink to the installation at `~/.local/bin/claude` (or `%USERPROFILE%\.local\bin\claude.exe` on Windows).
 
 <Tip>
   Make sure that you have the installation directory in your system PATH.
 </Tip>
+
+### Windows: "Claude Code on Windows requires git-bash"
+
+Claude Code on native Windows requires [Git for Windows](https://git-scm.com/downloads/win) which includes Git Bash. If Git is installed but not detected:
+
+1. Set the path explicitly in PowerShell before running Claude:
+   ```powershell  theme={null}
+   $env:CLAUDE_CODE_GIT_BASH_PATH="C:\Program Files\Git\bin\bash.exe"
+   ```
+
+2. Or add it to your system environment variables permanently through System Properties → Environment Variables.
+
+If Git is installed in a non-standard location, adjust the path accordingly.
+
+### Windows: "installMethod is native, but claude command not found"
+
+If you see this error after installation, the `claude` command isn't in your PATH. Add it manually:
+
+<Steps>
+  <Step title="Open Environment Variables">
+    Press `Win + R`, type `sysdm.cpl`, and press Enter. Click **Advanced** → **Environment Variables**.
+  </Step>
+
+  <Step title="Edit User PATH">
+    Under "User variables", select **Path** and click **Edit**. Click **New** and add:
+
+    ```
+    %USERPROFILE%\.local\bin
+    ```
+  </Step>
+
+  <Step title="Restart your terminal">
+    Close and reopen PowerShell or CMD for changes to take effect.
+  </Step>
+</Steps>
 
 Verify installation:
 
