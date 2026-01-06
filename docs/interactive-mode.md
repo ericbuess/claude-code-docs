@@ -39,12 +39,11 @@
 
 ### Quick commands
 
-| Shortcut     | Description                        | Notes                                                         |
-| :----------- | :--------------------------------- | :------------------------------------------------------------ |
-| `#` at start | Memory shortcut - add to CLAUDE.md | Prompts for file selection                                    |
-| `/` at start | Slash command                      | See [slash commands](/en/slash-commands)                      |
-| `!` at start | Bash mode                          | Run commands directly and add execution output to the session |
-| `@`          | File path mention                  | Trigger file path autocomplete                                |
+| Shortcut     | Description       | Notes                                                         |
+| :----------- | :---------------- | :------------------------------------------------------------ |
+| `/` at start | Slash command     | See [slash commands](/en/slash-commands)                      |
+| `!` at start | Bash mode         | Run commands directly and add execution output to the session |
+| `@`          | File path mention | Trigger file path autocomplete                                |
 
 ## Vim editor mode
 
