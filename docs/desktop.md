@@ -53,7 +53,7 @@ The file uses `.gitignore`-style patterns. When a worktree is created, files mat
 
 ### Launch Claude Code on the web
 
-From the desktop app, you can kick off Claude Code sessions that run on Anthropic's secure cloud infrastructure. This is useful for:
+From the desktop app, you can kick off Claude Code sessions that run on Anthropic's secure cloud infrastructure.
 
 To start a web session from desktop, select a remote environment when creating a new session.
 
