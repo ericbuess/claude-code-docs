@@ -100,14 +100,14 @@ When you send a request, Claude follows these steps to find and use relevant Ski
 
 Where you store a Skill determines who can use it:
 
-| Location   | Path                                                        | Applies to                        |
-| :--------- | :---------------------------------------------------------- | :-------------------------------- |
-| Enterprise | See [managed settings](/en/iam#enterprise-managed-settings) | All users in your organization    |
-| Personal   | `~/.claude/skills/`                                         | You, across all projects          |
-| Project    | `.claude/skills/`                                           | Anyone working in this repository |
-| Plugin     | Bundled with [plugins](/en/plugins)                         | Anyone with the plugin installed  |
+| Location   | Path                                             | Applies to                        |
+| :--------- | :----------------------------------------------- | :-------------------------------- |
+| Enterprise | See [managed settings](/en/iam#managed-settings) | All users in your organization    |
+| Personal   | `~/.claude/skills/`                              | You, across all projects          |
+| Project    | `.claude/skills/`                                | Anyone working in this repository |
+| Plugin     | Bundled with [plugins](/en/plugins)              | Anyone with the plugin installed  |
 
-If two Skills have the same name, the higher row wins: enterprise overrides personal, personal overrides project, and project overrides plugin.
+If two Skills have the same name, the higher row wins: managed overrides personal, personal overrides project, and project overrides plugin.
 
 ### When to use Skills versus other options
 
@@ -286,7 +286,7 @@ You can share Skills in several ways:
 
 * **Project Skills**: Commit `.claude/skills/` to version control. Anyone who clones the repository gets the Skills.
 * **Plugins**: To share Skills across multiple repositories, create a `skills/` directory in your [plugin](/en/plugins) with Skill folders containing `SKILL.md` files. Distribute through a [plugin marketplace](/en/plugin-marketplaces).
-* **Enterprise**: Administrators can deploy Skills organization-wide through [managed settings](/en/iam#enterprise-managed-settings). See [Where Skills live](#where-skills-live) for enterprise Skill paths.
+* **Managed**: Administrators can deploy Skills organization-wide through [managed settings](/en/iam#managed-settings). See [Where Skills live](#where-skills-live) for managed Skill paths.
 
 ## Examples
 

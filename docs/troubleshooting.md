@@ -166,19 +166,19 @@ This removes your stored authentication information and forces a clean login.
 
 Claude Code stores configuration in several locations:
 
-| File                          | Purpose                                                                |
-| :---------------------------- | :--------------------------------------------------------------------- |
-| `~/.claude/settings.json`     | User settings (permissions, hooks, model overrides)                    |
-| `.claude/settings.json`       | Project settings (checked into source control)                         |
-| `.claude/settings.local.json` | Local project settings (not committed)                                 |
-| `~/.claude.json`              | Global state (theme, OAuth, MCP servers, allowed tools)                |
-| `.mcp.json`                   | Project MCP servers (checked into source control)                      |
-| `managed-settings.json`       | [Enterprise managed settings](/en/settings#settings-files)             |
-| `managed-mcp.json`            | [Enterprise managed MCP servers](/en/mcp#enterprise-mcp-configuration) |
+| File                          | Purpose                                                  |
+| :---------------------------- | :------------------------------------------------------- |
+| `~/.claude/settings.json`     | User settings (permissions, hooks, model overrides)      |
+| `.claude/settings.json`       | Project settings (checked into source control)           |
+| `.claude/settings.local.json` | Local project settings (not committed)                   |
+| `~/.claude.json`              | Global state (theme, OAuth, MCP servers, allowed tools)  |
+| `.mcp.json`                   | Project MCP servers (checked into source control)        |
+| `managed-settings.json`       | [Managed settings](/en/settings#settings-files)          |
+| `managed-mcp.json`            | [Managed MCP servers](/en/mcp#managed-mcp-configuration) |
 
 On Windows, `~` refers to your user home directory, such as `C:\Users\YourName`.
 
-**Enterprise managed file locations:**
+**Managed file locations:**
 
 * macOS: `/Library/Application Support/ClaudeCode/`
 * Linux/WSL: `/etc/claude-code/`

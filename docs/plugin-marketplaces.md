@@ -359,9 +359,9 @@ You can also specify which plugins should be enabled by default:
 
 For full configuration options, see [Plugin settings](/en/settings#plugin-settings).
 
-### Enterprise marketplace restrictions
+### Managed marketplace restrictions
 
-For organizations requiring strict control over plugin sources, enterprise administrators can restrict which plugin marketplaces users are allowed to add using the [`strictKnownMarketplaces`](/en/settings#strictknownmarketplaces) setting in managed settings.
+For organizations requiring strict control over plugin sources, administrators can restrict which plugin marketplaces users are allowed to add using the [`strictKnownMarketplaces`](/en/settings#strictknownmarketplaces) setting in managed settings.
 
 When `strictKnownMarketplaces` is configured in managed settings, the restriction behavior depends on the value:
 
@@ -503,7 +503,7 @@ For additional debugging tools and common issues, see [Debugging and development
 * [Plugins](/en/plugins) - Creating your own plugins
 * [Plugins reference](/en/plugins-reference) - Complete technical specifications and schemas
 * [Plugin settings](/en/settings#plugin-settings) - Plugin configuration options
-* [strictKnownMarketplaces reference](/en/settings#strictknownmarketplaces) - Enterprise marketplace restrictions
+* [strictKnownMarketplaces reference](/en/settings#strictknownmarketplaces) - Managed marketplace restrictions
 
 
 ---

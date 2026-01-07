@@ -155,22 +155,19 @@ Read & Edit rules both follow the [gitignore](https://git-scm.com/docs/gitignore
 
 [Claude Code hooks](/en/hooks-guide) provide a way to register custom shell commands to perform permission evaluation at runtime. When Claude Code makes a tool call, PreToolUse hooks run before the permission system runs, and the hook output can determine whether to approve or deny the tool call in place of the permission system.
 
-### Enterprise managed settings
+### Managed settings
 
-For enterprise deployments of Claude Code, administrators can configure and distribute settings to their organization through the [Claude.ai admin console](https://claude.ai/admin-settings/claude-code). These settings are fetched automatically when users authenticate and cannot be overridden locally. This feature is available to Claude for Enterprise customers. If you don't see this option in your admin console, contact your Anthropic account team to have the feature enabled.
-
-For organizations that prefer file-based policy distribution, Claude Code also supports `managed-settings.json` files that can be deployed to [system directories](/en/settings#settings-files). These policy files follow the same format as regular settings files and cannot be overridden by user or project settings.
+For organizations that need centralized control over Claude Code configuration, administrators can deploy `managed-settings.json` files to [system directories](/en/settings#settings-files). These policy files follow the same format as regular settings files and cannot be overridden by user or project settings.
 
 ### Settings precedence
 
 When multiple settings sources exist, they are applied in the following order (highest to lowest precedence):
 
-1. Managed settings (via Claude.ai admin console)
-2. File-based managed settings (`managed-settings.json`)
-3. Command line arguments
-4. Local project settings (`.claude/settings.local.json`)
-5. Shared project settings (`.claude/settings.json`)
-6. User settings (`~/.claude/settings.json`)
+1. Managed settings (`managed-settings.json`)
+2. Command line arguments
+3. Local project settings (`.claude/settings.local.json`)
+4. Shared project settings (`.claude/settings.json`)
+5. User settings (`~/.claude/settings.json`)
 
 This hierarchy ensures that organizational policies are always enforced while still allowing flexibility at the project and user levels where appropriate.
 

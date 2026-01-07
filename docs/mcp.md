@@ -467,7 +467,7 @@ Select your scope based on:
 
   * **User and local scope**: `~/.claude.json` (in the `mcpServers` field or under project paths)
   * **Project scope**: `.mcp.json` in your project root (checked into source control)
-  * **Enterprise managed**: `managed-mcp.json` in system directories (see [Enterprise MCP configuration](#enterprise-mcp-configuration))
+  * **Managed**: `managed-mcp.json` in system directories (see [Managed MCP configuration](#managed-mcp-configuration))
 </Note>
 
 ### Scope hierarchy and precedence
@@ -832,9 +832,9 @@ MCP servers can expose prompts that become available as slash commands in Claude
   * Server and prompt names are normalized (spaces become underscores)
 </Tip>
 
-## Enterprise MCP configuration
+## Managed MCP configuration
 
-For organizations that need centralized control over MCP servers, Claude Code supports two enterprise configuration options:
+For organizations that need centralized control over MCP servers, Claude Code supports two configuration options:
 
 1. **Exclusive control with `managed-mcp.json`**: Deploy a fixed set of MCP servers that users cannot modify or extend
 2. **Policy-based control with allowlists/denylists**: Allow users to add their own servers, but restrict which ones are permitted
@@ -1052,12 +1052,12 @@ URL patterns support wildcards using `*` to match any sequence of characters. Th
 
 #### Important notes
 
-* **Option 1 and Option 2 can be combined**: If `managed-mcp.json` exists, it has exclusive control and users cannot add servers. Allowlists/denylists still apply to the enterprise servers themselves.
+* **Option 1 and Option 2 can be combined**: If `managed-mcp.json` exists, it has exclusive control and users cannot add servers. Allowlists/denylists still apply to the managed servers themselves.
 * **Denylist takes absolute precedence**: If a server matches a denylist entry (by name, command, or URL), it will be blocked even if it's on the allowlist
 * Name-based, command-based, and URL-based restrictions work together: a server passes if it matches **either** a name entry, a command entry, or a URL pattern (unless blocked by denylist)
 
 <Note>
-  **When using `managed-mcp.json`**: Users cannot add MCP servers through `claude mcp add` or configuration files. The `allowedMcpServers` and `deniedMcpServers` settings still apply to filter which enterprise servers are actually loaded.
+  **When using `managed-mcp.json`**: Users cannot add MCP servers through `claude mcp add` or configuration files. The `allowedMcpServers` and `deniedMcpServers` settings still apply to filter which managed servers are actually loaded.
 </Note>
 
 

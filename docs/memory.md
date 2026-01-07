@@ -198,11 +198,11 @@ User-level rules are loaded before project rules, giving project rules higher pr
 
 ## Organization-level memory management
 
-Enterprise organizations can deploy centrally managed CLAUDE.md files that apply to all users.
+Organizations can deploy centrally managed CLAUDE.md files that apply to all users.
 
 To set up organization-level memory management:
 
-1. Create the enterprise memory file at the **Enterprise policy** location shown in the [memory types table above](#determine-memory-type).
+1. Create the managed memory file at the **Managed policy** location shown in the [memory types table above](#determine-memory-type).
 
 2. Deploy via your configuration management system (MDM, Group Policy, Ansible, etc.) to ensure consistent distribution across all developer machines.
 

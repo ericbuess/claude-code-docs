@@ -230,7 +230,7 @@ To choose a different [installation scope](/en/settings#configuration-scopes), u
 * **Project scope**: install for all collaborators on this repository (adds to `.claude/settings.json`)
 * **Local scope**: install for yourself in this repository only (not shared with collaborators)
 
-You may also see plugins with **managed** scope—these are installed by enterprise administrators via [managed settings](/en/settings#enterprise-managed-policy-settings) and cannot be modified.
+You may also see plugins with **managed** scope—these are installed by administrators via [managed settings](/en/settings#settings-files) and cannot be modified.
 
 Run `/plugin` and go to the **Installed** tab to see your plugins grouped by scope.
 

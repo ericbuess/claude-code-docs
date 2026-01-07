@@ -8,6 +8,14 @@
 
 # Changelog
 
+## 2.0.76
+
+- Fixed issue with macOS code-sign warning when using Claude in Chrome integration
+
+## 2.0.75
+
+- Minor bugfixes
+
 ## 2.0.74
 
 - Added LSP (Language Server Protocol) tool for code intelligence features like go-to-definition, find references, and hover documentation
