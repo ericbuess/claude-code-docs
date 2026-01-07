@@ -277,21 +277,22 @@ Stdio servers run as local processes on your machine. They're ideal for tools th
 
 ```bash  theme={null}
 # Basic syntax
-claude mcp add --transport stdio <name> <command> [args...]
+claude mcp add [options] <name> -- <command> [args...]
 
 # Real example: Add Airtable server
-claude mcp add --transport stdio airtable --env AIRTABLE_API_KEY=YOUR_KEY \
+claude mcp add --transport stdio --env AIRTABLE_API_KEY=YOUR_KEY airtable \
   -- npx -y airtable-mcp-server
 ```
 
 <Note>
-  **Understanding the "--" parameter:**
-  The `--` (double dash) separates Claude's own CLI flags from the command and arguments that get passed to the MCP server. Everything before `--` are options for Claude (like `--env`, `--scope`), and everything after `--` is the actual command to run the MCP server.
+  **Important: Option ordering**
+
+  All options (`--transport`, `--env`, `--scope`, `--header`) must come **before** the server name. The `--` (double dash) then separates the server name from the command and arguments that get passed to the MCP server.
 
   For example:
 
   * `claude mcp add --transport stdio myserver -- npx server` → runs `npx server`
-  * `claude mcp add --transport stdio myserver --env KEY=value -- python server.py --port 8080` → runs `python server.py --port 8080` with `KEY=value` in environment
+  * `claude mcp add --transport stdio --env KEY=value myserver -- python server.py --port 8080` → runs `python server.py --port 8080` with `KEY=value` in environment
 
   This prevents conflicts between Claude's flags and the server's flags.
 </Note>

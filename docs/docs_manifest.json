@@ -141,8 +141,8 @@
     "mcp.md": {
       "original_url": "https://code.claude.com/docs/en/mcp",
       "original_md_url": "https://code.claude.com/docs/en/mcp.md",
-      "hash": "96d84afcc804eef1143aa098db83e2345f968c783b4f810a4c457a503c4a3b59",
-      "last_updated": "2025-12-19T18:02:22.137218"
+      "hash": "51bf8a72439b69e35c47aef9805537cc80c815abb58ef15ce016608d8b567eb8",
+      "last_updated": "2026-01-07T00:04:39.019519"
     },
     "memory.md": {
       "original_url": "https://code.claude.com/docs/en/memory",
@@ -225,8 +225,8 @@
     "settings.md": {
       "original_url": "https://code.claude.com/docs/en/settings",
       "original_md_url": "https://code.claude.com/docs/en/settings.md",
-      "hash": "a53ec5648f0dddd0c10ea99b1027b0bc752b24d7fddf4253215c29501eefb58e",
-      "last_updated": "2025-12-20T00:04:41.236102"
+      "hash": "204475489075f908a3fb88bd8f458fa788532897a955457973bf8ab2a5ad50f2",
+      "last_updated": "2026-01-07T00:04:47.111016"
     },
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
@@ -279,8 +279,8 @@
     "troubleshooting.md": {
       "original_url": "https://code.claude.com/docs/en/troubleshooting",
       "original_md_url": "https://code.claude.com/docs/en/troubleshooting.md",
-      "hash": "46549e4ceca1fc625679f4b10444d2772482cac1987fa19279e52c98686c452b",
-      "last_updated": "2026-01-06T03:29:44.205481"
+      "hash": "80f7d381a7060a6ab711fece3369d4e3c2c704cc4910f608169cc05a4db8d82c",
+      "last_updated": "2026-01-07T00:04:52.281313"
     },
     "vs-code.md": {
       "original_url": "https://code.claude.com/docs/en/vs-code",
@@ -297,8 +297,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-01-06T21:01:52.691529",
-    "fetch_duration_seconds": 27.684546,
+    "last_fetch_completed": "2026-01-07T00:04:52.969401",
+    "fetch_duration_seconds": 27.671327,
     "total_pages_discovered": 48,
     "pages_fetched_successfully": 49,
     "pages_failed": 0,
@@ -308,7 +308,7 @@
     "total_files": 49,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-01-06T21:01:52.691557",
+  "last_updated": "2026-01-07T00:04:52.969431",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
