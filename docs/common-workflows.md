@@ -635,7 +635,7 @@ Forked sessions (created with `/rewind` or `--fork-session`) are grouped togethe
   Tips:
 
   * **Name sessions early**: Use `/rename` when starting work on a distinct task—it's much easier to find "payment-integration" than "explain this function" later
-  * Use `--continue` for quick access to your most recent conversation
+  * Use `--continue` for quick access to your most recent conversation in the current directory
   * Use `--resume session-name` when you know which session you need
   * Use `--resume` (without a name) when you need to browse and select
   * For scripts, use `claude --continue --print "prompt"` to resume in non-interactive mode

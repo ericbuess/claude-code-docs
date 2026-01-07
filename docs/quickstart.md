@@ -20,25 +20,25 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
   </Tab>
 
   <Tab title="Homebrew">
-    ```sh  theme={null}
+    ```sh theme={null} theme={null}
     brew install --cask claude-code
     ```
   </Tab>
@@ -46,7 +46,7 @@ To install Claude Code, use one of the following methods:
   <Tab title="NPM">
     If you have [Node.js 18 or newer installed](https://nodejs.org/en/download/):
 
-    ```sh  theme={null}
+    ```sh theme={null} theme={null}
     npm install -g @anthropic-ai/claude-code
     ```
   </Tab>
@@ -240,17 +240,17 @@ There are a number of ways to work with Claude:
 
 Here are the most important commands for daily use:
 
-| Command             | What it does                      | Example                             |
-| ------------------- | --------------------------------- | ----------------------------------- |
-| `claude`            | Start interactive mode            | `claude`                            |
-| `claude "task"`     | Run a one-time task               | `claude "fix the build error"`      |
-| `claude -p "query"` | Run one-off query, then exit      | `claude -p "explain this function"` |
-| `claude -c`         | Continue most recent conversation | `claude -c`                         |
-| `claude -r`         | Resume a previous conversation    | `claude -r`                         |
-| `claude commit`     | Create a Git commit               | `claude commit`                     |
-| `/clear`            | Clear conversation history        | `> /clear`                          |
-| `/help`             | Show available commands           | `> /help`                           |
-| `exit` or Ctrl+C    | Exit Claude Code                  | `> exit`                            |
+| Command             | What it does                                           | Example                             |
+| ------------------- | ------------------------------------------------------ | ----------------------------------- |
+| `claude`            | Start interactive mode                                 | `claude`                            |
+| `claude "task"`     | Run a one-time task                                    | `claude "fix the build error"`      |
+| `claude -p "query"` | Run one-off query, then exit                           | `claude -p "explain this function"` |
+| `claude -c`         | Continue most recent conversation in current directory | `claude -c`                         |
+| `claude -r`         | Resume a previous conversation                         | `claude -r`                         |
+| `claude commit`     | Create a Git commit                                    | `claude commit`                     |
+| `/clear`            | Clear conversation history                             | `> /clear`                          |
+| `/help`             | Show available commands                                | `> /help`                           |
+| `exit` or Ctrl+C    | Exit Claude Code                                       | `> exit`                            |
 
 See the [CLI reference](/en/cli-reference) for a complete list of commands.
 
