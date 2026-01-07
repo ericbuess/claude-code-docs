@@ -51,8 +51,8 @@
     "data-usage.md": {
       "original_url": "https://code.claude.com/docs/en/data-usage",
       "original_md_url": "https://code.claude.com/docs/en/data-usage.md",
-      "hash": "8a6ccd1a1bf61f53783bd41f55829f8c9769bdd83fd2d51ede4ae70b358ef1a5",
-      "last_updated": "2026-01-06T21:01:30.045425"
+      "hash": "11b7a032425fea5b4cc12a3da655908137337976c53ca45614aa46719adb1fb0",
+      "last_updated": "2026-01-07T03:29:37.218749"
     },
     "desktop.md": {
       "original_url": "https://code.claude.com/docs/en/desktop",
@@ -297,8 +297,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-01-07T00:04:52.969401",
-    "fetch_duration_seconds": 27.671327,
+    "last_fetch_completed": "2026-01-07T03:30:01.439155",
+    "fetch_duration_seconds": 29.637709,
     "total_pages_discovered": 48,
     "pages_fetched_successfully": 49,
     "pages_failed": 0,
@@ -308,7 +308,7 @@
     "total_files": 49,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-01-07T00:04:52.969431",
+  "last_updated": "2026-01-07T03:30:01.439182",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

@@ -7,15 +7,7 @@
 ### Data training policy
 
 **Consumer users (Free, Pro, and Max plans)**:
-Starting August 28, 2025, we're giving you the choice to allow your data to be used to improve future Claude models.
-
-We will train new models using data from Free, Pro, and Max accounts when this setting is on (including when you use Claude Code from these accounts).
-
-* If you're a current user, you can select your preference now and your selection will immediately go into effect.
-  This setting will only apply to new or resumed chats and coding sessions on Claude. Previous chats with no additional activity will not be used for model training.
-* You have until October 8, 2025 to make your selection.
-  If you're a new user, you can pick your setting for model training during the signup process.
-  You can change your selection at any time in your Privacy Settings.
+We give you the choice to allow your data to be used to improve future Claude models. We will train new models using data from Free, Pro, and Max accounts when this setting is on (including when you use Claude Code from these accounts).
 
 **Commercial users**: (Team and Enterprise plans, API, 3rd-party platforms, and Claude Gov) maintain existing policies: Anthropic does not train generative models using code or prompts sent to Claude Code under commercial terms, unless the customer has chosen to provide their data to us for model improvement (for example, the [Developer Partner Program](https://support.claude.com/en/articles/11174108-about-the-development-partner-program)).
 
@@ -51,7 +43,11 @@ Learn more about data retention practices in our [Privacy Center](https://privac
 
 For full details, please review our [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) (for Team, Enterprise, and API users) or [Consumer Terms](https://www.anthropic.com/legal/consumer-terms) (for Free, Pro, and Max users) and [Privacy Policy](https://www.anthropic.com/legal/privacy).
 
-## Data flow and dependencies
+## Data access
+
+For all first party users, you can learn more about what data is logged for [local Claude Code](#local-claude-code-data-flow-and-dependencies) and [remote Claude Code](#cloud-execution-data-flow-and-dependencies). Note for remote Claude Code, Claude accesses the repository where you initiate your Claude Code session. Claude does not access repositories that you have connected but have not started a session in.
+
+## Local Claude Code: Data flow and dependencies
 
 The diagram below shows how Claude Code connects to external services during installation and normal operation. Solid lines indicate required connections, while dashed lines represent optional or user-initiated data flows.
 
@@ -61,19 +57,14 @@ Claude Code is installed from [NPM](https://www.npmjs.com/package/@anthropic-ai/
 
 Claude Code is built on Anthropic's APIs. For details regarding our API's security controls, including our API logging procedures, please refer to compliance artifacts offered in the [Anthropic Trust Center](https://trust.anthropic.com).
 
-### Cloud execution
-
-<Note>
-  The above data flow diagram and description applies to Claude Code CLI running locally on your machine. For cloud-based sessions using Claude Code on the web, see the section below.
-</Note>
+### Cloud execution: Data flow and dependencies
 
 When using [Claude Code on the web](/en/claude-code-on-the-web), sessions run in Anthropic-managed virtual machines instead of locally. In cloud environments:
 
-* **Code storage**: Your repository is cloned to an isolated VM and automatically deleted after session completion
-* **Credentials**: GitHub authentication is handled through a secure proxy; your GitHub credentials never enter the sandbox
-* **Network traffic**: All outbound traffic goes through a security proxy for audit logging and abuse prevention
-* **Data retention**: Code and session data are subject to the retention and usage policies for your account type
-* **Session data**: Prompts, code changes, and outputs follow the same data policies as local Claude Code usage
+* **Code and data storage:** Your repository is cloned to an isolated VM. Code and session data are subject to the retention and usage policies for your account type (see Data retention section above)
+* **Credentials:** GitHub authentication is handled through a secure proxy; your GitHub credentials never enter the sandbox
+* **Network traffic:** All outbound traffic goes through a security proxy for audit logging and abuse prevention
+* **Session data:** Prompts, code changes, and outputs follow the same data policies as local Claude Code usage
 
 For security details about cloud execution, see [Security](/en/security#cloud-execution-security).
 
