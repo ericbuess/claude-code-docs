@@ -166,7 +166,7 @@ You can use the following fields in the YAML frontmatter:
 | `context`        | No       | Set to `fork` to run the Skill in a forked sub-agent context with its own conversation history.                                                                                                                                                                                                   |
 | `agent`          | No       | Specify which [agent type](/en/sub-agents#built-in-subagents) to use when `context: fork` is set (e.g., `Explore`, `Plan`, `general-purpose`, or a custom agent name from `.claude/agents/`). Defaults to `general-purpose` if not specified. Only applicable when combined with `context: fork`. |
 | `hooks`          | No       | Define hooks scoped to this Skill's lifecycle. Supports `PreToolUse`, `PostToolUse`, and `Stop` events.                                                                                                                                                                                           |
-| `user-invocable` | No       | Set to `false` to hide the Skill from the slash command menu. Skills are visible in the menu by default.                                                                                                                                                                                          |
+| `user-invocable` | No       | Controls whether the Skill appears in the slash command menu. Does not affect the [`Skill` tool](/en/slash-commands#skill-tool) or automatic discovery. Defaults to `true`. See [Control Skill visibility](#control-skill-visibility).                                                            |
 
 See the [best practices guide](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices) for complete authoring guidance including validation rules.
 
@@ -295,11 +295,49 @@ hooks:
       hooks:
         - type: command
           command: "./scripts/security-check.sh $TOOL_INPUT"
-          once: true  # Optional: only run once per session
+          once: true
 ---
 ```
 
-See [Hooks](/en/hooks) for the complete hook configuration format, including the `once` option for one-time execution.
+The `once: true` option runs the hook only once per session. After the first successful execution, the hook is removed.
+
+Hooks defined in a Skill are scoped to that Skill's execution and are automatically cleaned up when the Skill finishes.
+
+See [Hooks](/en/hooks) for the complete hook configuration format.
+
+### Control Skill visibility
+
+Skills can be invoked in three ways:
+
+1. **Manual invocation**: You type `/skill-name` in the prompt
+2. **Programmatic invocation**: Claude calls it via the [`Skill` tool](/en/slash-commands#skill-tool)
+3. **Automatic discovery**: Claude reads the Skill's description and loads it when relevant to the conversation
+
+The `user-invocable` field controls only manual invocation. When set to `false`, the Skill is hidden from the slash command menu but Claude can still invoke it programmatically or discover it automatically.
+
+To block programmatic invocation via the `Skill` tool, use `disable-model-invocation: true` instead.
+
+#### When to use each setting
+
+| Setting                          | Slash menu | `Skill` tool | Auto-discovery | Use case                                                        |
+| :------------------------------- | :--------- | :----------- | :------------- | :-------------------------------------------------------------- |
+| `user-invocable: true` (default) | Visible    | Allowed      | Yes            | Skills you want users to invoke directly                        |
+| `user-invocable: false`          | Hidden     | Allowed      | Yes            | Skills that Claude can use but users shouldn't invoke manually  |
+| `disable-model-invocation: true` | Visible    | Blocked      | Yes            | Skills you want users to invoke but not Claude programmatically |
+
+#### Example: model-only Skill
+
+Set `user-invocable: false` to hide a Skill from the slash menu while still allowing Claude to invoke it programmatically:
+
+```yaml  theme={null}
+---
+name: internal-review-standards
+description: Apply internal code review standards when reviewing pull requests
+user-invocable: false
+---
+```
+
+With this setting, users won't see the Skill in the `/` menu, but Claude can still invoke it via the `Skill` tool or discover it automatically based on context.
 
 ### Skills and subagents
 

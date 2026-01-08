@@ -155,6 +155,7 @@ the subagent should follow.
 | `model`          | No       | Model to use for this subagent. Can be a model alias (`sonnet`, `opus`, `haiku`) or `'inherit'` to use the main conversation's model. If omitted, defaults to the [configured subagent model](/en/model-config) |
 | `permissionMode` | No       | Permission mode for the subagent. Valid values: `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, `plan`, `ignore`. Controls how the subagent handles permission requests                               |
 | `skills`         | No       | Comma-separated list of skill names to auto-load when the subagent starts. Subagents do not inherit Skills from the parent conversation. If omitted, no Skills are preloaded.                                   |
+| `hooks`          | No       | Define hooks scoped to this subagent's lifecycle. Supports `PreToolUse`, `PostToolUse`, and `Stop` events. See [Define hooks for subagents](#define-hooks-for-subagents).                                       |
 
 ### Model selection
 
@@ -182,6 +183,27 @@ You have two options for configuring tools:
 * **Specify individual tools** as a comma-separated list for more granular control (can be edited manually or via `/agents`)
 
 **MCP Tools**: Subagents can access MCP tools from configured MCP servers. When the `tools` field is omitted, subagents inherit all MCP tools available to the main thread.
+
+### Define hooks for subagents
+
+Subagents can define hooks that run during the subagent's lifecycle. Use the `hooks` field to specify `PreToolUse`, `PostToolUse`, or `Stop` handlers:
+
+```yaml  theme={null}
+---
+name: code-reviewer
+description: Review code changes with automatic linting
+hooks:
+  PostToolUse:
+    - matcher: "Edit|Write"
+      hooks:
+        - type: command
+          command: "./scripts/run-linter.sh"
+---
+```
+
+Hooks defined in a subagent are scoped to that subagent's execution and are automatically cleaned up when the subagent finishes.
+
+See [Hooks](/en/hooks) for the complete hook configuration format.
 
 ## Managing subagents
 
