@@ -30,11 +30,13 @@
 | `/model`                  | Select or change the AI model                                                                                               |
 | `/output-style [style]`   | Set the output style directly or from a selection menu                                                                      |
 | `/permissions`            | View or update [permissions](/en/iam#configuring-permissions)                                                               |
+| `/plan`                   | Enter plan mode directly from the prompt                                                                                    |
 | `/plugin`                 | Manage Claude Code plugins                                                                                                  |
 | `/pr-comments`            | View pull request comments                                                                                                  |
 | `/privacy-settings`       | View and update your privacy settings                                                                                       |
 | `/release-notes`          | View release notes                                                                                                          |
 | `/rename <name>`          | Rename the current session for easier identification                                                                        |
+| `/remote-env`             | Configure remote session environment (claude.ai subscribers)                                                                |
 | `/resume [session]`       | Resume a conversation by ID or name, or open the session picker                                                             |
 | `/review`                 | Request code review                                                                                                         |
 | `/rewind`                 | Rewind the conversation and/or code                                                                                         |
@@ -43,7 +45,9 @@
 | `/stats`                  | Visualize daily usage, session history, streaks, and model preferences                                                      |
 | `/status`                 | Open the Settings interface (Status tab) showing version, model, account, and connectivity                                  |
 | `/statusline`             | Set up Claude Code's status line UI                                                                                         |
-| `/terminal-setup`         | Install Shift+Enter key binding for newlines (iTerm2 and VSCode only)                                                       |
+| `/teleport`               | Resume a remote session from claude.ai by session ID, or open a picker (claude.ai subscribers)                              |
+| `/terminal-setup`         | Install Shift+Enter key binding for newlines (VS Code, Alacritty, Zed, Warp)                                                |
+| `/theme`                  | Change the color theme                                                                                                      |
 | `/todos`                  | List current TODO items                                                                                                     |
 | `/usage`                  | For subscription plans only: show plan usage limits and rate limit status                                                   |
 | `/vim`                    | Enter vim mode for alternating insert and command modes                                                                     |
@@ -51,6 +55,10 @@
 ## Custom slash commands
 
 Custom slash commands allow you to define frequently used prompts as Markdown files that Claude Code can execute. Commands are organized by scope (project-specific or personal) and support namespacing through directory structures.
+
+<Tip>
+  Slash command autocomplete works anywhere in your input, not just at the beginning. Type `/` at any position to see available commands.
+</Tip>
 
 ### Syntax
 

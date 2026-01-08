@@ -13,13 +13,18 @@ For additional customization of the Claude Code interface itself, you can config
 You have several options for entering line breaks into Claude Code:
 
 * **Quick escape**: Type `\` followed by Enter to create a newline
-* **Keyboard shortcut**: Set up a keybinding to insert a newline
+* **Shift+Enter**: Works out of the box in iTerm2, WezTerm, Ghostty, and Kitty
+* **Keyboard shortcut**: Set up a keybinding to insert a newline in other terminals
 
-#### Set up Shift+Enter (VS Code or iTerm2):
+**Set up Shift+Enter for other terminals**
 
-Run `/terminal-setup` within Claude Code to automatically configure Shift+Enter.
+Run `/terminal-setup` within Claude Code to automatically configure Shift+Enter for VS Code, Alacritty, Zed, and Warp.
 
-#### Set up Option+Enter (VS Code, iTerm2 or macOS Terminal.app):
+<Note>
+  The `/terminal-setup` command is only visible in terminals that require manual configuration. If you're using iTerm2, WezTerm, Ghostty, or Kitty, you won't see this command because Shift+Enter already works natively.
+</Note>
+
+**Set up Option+Enter (VS Code, iTerm2 or macOS Terminal.app)**
 
 **For Mac Terminal.app:**
 
@@ -65,8 +70,14 @@ Claude Code supports a subset of Vim keybindings that can be enabled with `/vim`
 The supported subset includes:
 
 * Mode switching: `Esc` (to NORMAL), `i`/`I`, `a`/`A`, `o`/`O` (to INSERT)
-* Navigation: `h`/`j`/`k`/`l`, `w`/`e`/`b`, `0`/`$`/`^`, `gg`/`G`
+* Navigation: `h`/`j`/`k`/`l`, `w`/`e`/`b`, `0`/`$`/`^`, `gg`/`G`, `f`/`F`/`t`/`T` with `;`/`,` repeat
 * Editing: `x`, `dw`/`de`/`db`/`dd`/`D`, `cw`/`ce`/`cb`/`cc`/`C`, `.` (repeat)
+* Yank/paste: `yy`/`Y`, `yw`/`ye`/`yb`, `p`/`P`
+* Text objects: `iw`/`aw`, `iW`/`aW`, `i"`/`a"`, `i'`/`a'`, `i(`/`a(`, `i[`/`a[`, `i{`/`a{`
+* Indentation: `>>`/`<<`
+* Line operations: `J` (join lines)
+
+See [Interactive mode](/en/interactive-mode#vim-editor-mode) for the complete reference.
 
 
 ---

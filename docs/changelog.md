@@ -16,7 +16,7 @@
 - Added `language` setting to configure Claude's response language (e.g., language: "japanese")
 - Changed Shift+Enter to work out of the box in iTerm2, WezTerm, Ghostty, and Kitty without modifying terminal configs
 - Added `respectGitignore` support in `settings.json` for per-project control over @-mention file picker behavior
-- Added `CLAUDE_CODE_HIDE_ACCOUNT_INFO` environment variable to hide email and organization from the UI, useful for streaming or recording sessions
+- Added `IS_DEMO` environment variable to hide email and organization from the UI, useful for streaming or recording sessions
 - Fixed security issue where sensitive data (OAuth tokens, API keys, passwords) could be exposed in debug logs
 - Fixed files and skills not being properly discovered when resuming sessions with `-c` or `--resume`
 - Fixed pasted content being lost when replaying prompts from history using up arrow or Ctrl+R search

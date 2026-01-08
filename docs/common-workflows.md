@@ -454,6 +454,7 @@ Suppose you need to work with images in your codebase, and you want Claude's hel
   * Include screenshots of errors, UI designs, or diagrams for better context
   * You can work with multiple images in a conversation
   * Image analysis works with diagrams, screenshots, mockups, and more
+  * When Claude references images (for example, `[Image #1]`), `Cmd+Click` (Mac) or `Ctrl+Click` (Windows/Linux) the link to open the image in your default viewer
 </Tip>
 
 ***
@@ -509,10 +510,11 @@ Extended thinking is particularly valuable for complex architectural decisions, 
   Sonnet 4.5 and Opus 4.5 have thinking enabled by default. All other models have thinking disabled by default. Use `/model` to view or switch your current model.
 </Note>
 
-You can configure thinking mode for Claude Code in two ways:
+You can configure thinking mode for Claude Code in several ways:
 
 | Scope                             | How to enable                                                                        | Details                                                                                                                                          |
 | --------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Toggle shortcut**               | Press `Option+T` (macOS) or `Alt+T` (Windows/Linux)                                  | Toggle thinking on/off. May require [terminal configuration](/en/terminal-config) to enable Option key shortcuts                                 |
 | **Global default**                | Use `/config` to toggle thinking mode on                                             | Sets your default across all projects.<br />Saved as `alwaysThinkingEnabled` in `~/.claude/settings.json`                                        |
 | **Environment variable override** | Set [`MAX_THINKING_TOKENS`](/en/settings#environment-variables) environment variable | When set, applies a custom token budget to all requests, overriding your thinking mode configuration. Example: `export MAX_THINKING_TOKENS=1024` |
 
