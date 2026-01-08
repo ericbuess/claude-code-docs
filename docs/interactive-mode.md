@@ -5,36 +5,68 @@
 ## Keyboard shortcuts
 
 <Note>
-  Keyboard shortcuts may vary by platform and terminal. Press `?` to see available shortcuts for your environment. For example, Option key combinations on macOS may require configuring your terminal to use Option as a meta/escape key.
+  Keyboard shortcuts may vary by platform and terminal. Press `?` to see available shortcuts for your environment.
+
+  **macOS users**: Option/Alt key shortcuts (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`) require configuring Option as Meta in your terminal:
+
+  * **iTerm2**: Settings → Profiles → Keys → Set Left/Right Option key to "Esc+"
+  * **Terminal.app**: Settings → Profiles → Keyboard → Check "Use Option as Meta Key"
+  * **VS Code**: Settings → Profiles → Keys → Set Left/Right Option key to "Esc+"
+
+  See [Terminal configuration](/en/terminal-config) for details.
 </Note>
 
 ### General controls
 
-| Shortcut                                      | Description                        | Context                                                     |
-| :-------------------------------------------- | :--------------------------------- | :---------------------------------------------------------- |
-| `Ctrl+C`                                      | Cancel current input or generation | Standard interrupt                                          |
-| `Ctrl+D`                                      | Exit Claude Code session           | EOF signal                                                  |
-| `Ctrl+L`                                      | Clear terminal screen              | Keeps conversation history                                  |
-| `Ctrl+O`                                      | Toggle verbose output              | Shows detailed tool usage and execution                     |
-| `Ctrl+R`                                      | Reverse search command history     | Search through previous commands interactively              |
-| `Ctrl+V` (macOS/Linux) or `Alt+V` (Windows)   | Paste image from clipboard         | Pastes an image or path to an image file                    |
-| `Up/Down arrows`                              | Navigate command history           | Recall previous inputs                                      |
-| `Esc` + `Esc`                                 | Rewind the code/conversation       | Restore the code and/or conversation to a previous point    |
-| `Shift+Tab` or `Alt+M` (some configurations)  | Toggle permission modes            | Switch between Auto-Accept Mode, Plan Mode, and normal mode |
-| `Option+P` (macOS) or `Alt+P` (Windows/Linux) | Switch model                       | Switch models without clearing your prompt                  |
+| Shortcut                                          | Description                        | Context                                                                                       |
+| :------------------------------------------------ | :--------------------------------- | :-------------------------------------------------------------------------------------------- |
+| `Ctrl+C`                                          | Cancel current input or generation | Standard interrupt                                                                            |
+| `Ctrl+D`                                          | Exit Claude Code session           | EOF signal                                                                                    |
+| `Ctrl+L`                                          | Clear terminal screen              | Keeps conversation history                                                                    |
+| `Ctrl+O`                                          | Toggle verbose output              | Shows detailed tool usage and execution                                                       |
+| `Ctrl+R`                                          | Reverse search command history     | Search through previous commands interactively                                                |
+| `Ctrl+V` or `Cmd+V` (iTerm2) or `Alt+V` (Windows) | Paste image from clipboard         | Pastes an image or path to an image file                                                      |
+| `Ctrl+B`                                          | Background running tasks           | Backgrounds bash commands and agents. Tmux users press twice                                  |
+| `Left/Right arrows`                               | Cycle through dialog tabs          | Navigate between tabs in permission dialogs and menus                                         |
+| `Up/Down arrows`                                  | Navigate command history           | Recall previous inputs                                                                        |
+| `Esc` + `Esc`                                     | Rewind the code/conversation       | Restore the code and/or conversation to a previous point                                      |
+| `Shift+Tab` or `Alt+M` (some configurations)      | Toggle permission modes            | Switch between Auto-Accept Mode, Plan Mode, and normal mode                                   |
+| `Option+P` (macOS) or `Alt+P` (Windows/Linux)     | Switch model                       | Switch models without clearing your prompt                                                    |
+| `Option+T` (macOS) or `Alt+T` (Windows/Linux)     | Toggle extended thinking           | Enable or disable extended thinking mode. Run `/terminal-setup` first to enable this shortcut |
+
+### Text editing
+
+| Shortcut                 | Description                  | Context                                                                                                       |
+| :----------------------- | :--------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| `Ctrl+K`                 | Delete to end of line        | Stores deleted text for pasting                                                                               |
+| `Ctrl+U`                 | Delete entire line           | Stores deleted text for pasting                                                                               |
+| `Ctrl+Y`                 | Paste deleted text           | Paste text deleted with `Ctrl+K` or `Ctrl+U`                                                                  |
+| `Alt+Y` (after `Ctrl+Y`) | Cycle paste history          | After pasting, cycle through previously deleted text. Requires [Option as Meta](#keyboard-shortcuts) on macOS |
+| `Alt+B`                  | Move cursor back one word    | Word navigation. Requires [Option as Meta](#keyboard-shortcuts) on macOS                                      |
+| `Alt+F`                  | Move cursor forward one word | Word navigation. Requires [Option as Meta](#keyboard-shortcuts) on macOS                                      |
+
+### Theme and display
+
+| Shortcut | Description                                | Context                                                                                                      |
+| :------- | :----------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+| `Ctrl+T` | Toggle syntax highlighting for code blocks | Only works inside the `/theme` picker menu. Controls whether code in Claude's responses uses syntax coloring |
+
+<Note>
+  Syntax highlighting is only available in the native build of Claude Code.
+</Note>
 
 ### Multiline input
 
-| Method           | Shortcut       | Context                           |
-| :--------------- | :------------- | :-------------------------------- |
-| Quick escape     | `\` + `Enter`  | Works in all terminals            |
-| macOS default    | `Option+Enter` | Default on macOS                  |
-| Terminal setup   | `Shift+Enter`  | After `/terminal-setup`           |
-| Control sequence | `Ctrl+J`       | Line feed character for multiline |
-| Paste mode       | Paste directly | For code blocks, logs             |
+| Method           | Shortcut       | Context                                                 |
+| :--------------- | :------------- | :------------------------------------------------------ |
+| Quick escape     | `\` + `Enter`  | Works in all terminals                                  |
+| macOS default    | `Option+Enter` | Default on macOS                                        |
+| Shift+Enter      | `Shift+Enter`  | Works out of the box in iTerm2, WezTerm, Ghostty, Kitty |
+| Control sequence | `Ctrl+J`       | Line feed character for multiline                       |
+| Paste mode       | Paste directly | For code blocks, logs                                   |
 
 <Tip>
-  Configure your preferred line break behavior in terminal settings. Run `/terminal-setup` to install Shift+Enter binding for iTerm2 and VS Code terminals.
+  Shift+Enter works without configuration in iTerm2, WezTerm, Ghostty, and Kitty. For other terminals (VS Code, Alacritty, Zed, Warp), run `/terminal-setup` to install the binding.
 </Tip>
 
 ### Quick commands
@@ -63,17 +95,23 @@ Enable vim-style editing with `/vim` command or configure permanently via `/conf
 
 ### Navigation (NORMAL mode)
 
-| Command         | Action                    |
-| :-------------- | :------------------------ |
-| `h`/`j`/`k`/`l` | Move left/down/up/right   |
-| `w`             | Next word                 |
-| `e`             | End of word               |
-| `b`             | Previous word             |
-| `0`             | Beginning of line         |
-| `$`             | End of line               |
-| `^`             | First non-blank character |
-| `gg`            | Beginning of input        |
-| `G`             | End of input              |
+| Command         | Action                                              |
+| :-------------- | :-------------------------------------------------- |
+| `h`/`j`/`k`/`l` | Move left/down/up/right                             |
+| `w`             | Next word                                           |
+| `e`             | End of word                                         |
+| `b`             | Previous word                                       |
+| `0`             | Beginning of line                                   |
+| `$`             | End of line                                         |
+| `^`             | First non-blank character                           |
+| `gg`            | Beginning of input                                  |
+| `G`             | End of input                                        |
+| `f{char}`       | Jump to next occurrence of character                |
+| `F{char}`       | Jump to previous occurrence of character            |
+| `t{char}`       | Jump to just before next occurrence of character    |
+| `T{char}`       | Jump to just after previous occurrence of character |
+| `;`             | Repeat last f/F/t/T motion                          |
+| `,`             | Repeat last f/F/t/T motion in reverse               |
 
 ### Editing (NORMAL mode)
 
@@ -86,7 +124,28 @@ Enable vim-style editing with `/vim` command or configure permanently via `/conf
 | `cc`           | Change line             |
 | `C`            | Change to end of line   |
 | `cw`/`ce`/`cb` | Change word/to end/back |
+| `yy`/`Y`       | Yank (copy) line        |
+| `yw`/`ye`/`yb` | Yank word/to end/back   |
+| `p`            | Paste after cursor      |
+| `P`            | Paste before cursor     |
+| `>>`           | Indent line             |
+| `<<`           | Dedent line             |
+| `J`            | Join lines              |
 | `.`            | Repeat last change      |
+
+### Text objects (NORMAL mode)
+
+Text objects work with operators like `d`, `c`, and `y`:
+
+| Command   | Action                                   |
+| :-------- | :--------------------------------------- |
+| `iw`/`aw` | Inner/around word                        |
+| `iW`/`aW` | Inner/around WORD (whitespace-delimited) |
+| `i"`/`a"` | Inner/around double quotes               |
+| `i'`/`a'` | Inner/around single quotes               |
+| `i(`/`a(` | Inner/around parentheses                 |
+| `i[`/`a[` | Inner/around brackets                    |
+| `i{`/`a{` | Inner/around braces                      |
 
 ## Command history
 

@@ -315,6 +315,10 @@ claude mcp remove github
 /mcp
 ```
 
+### Dynamic tool updates
+
+Claude Code supports MCP `list_changed` notifications, allowing MCP servers to dynamically update their available tools, prompts, and resources without requiring you to disconnect and reconnect. When an MCP server sends a `list_changed` notification, Claude Code automatically refreshes the available capabilities from that server.
+
 <Tip>
   Tips:
 

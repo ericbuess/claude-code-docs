@@ -225,6 +225,30 @@ mkdir -p ~/.claude/agents
   Subagents created by manually adding files will be loaded the next time you start a Claude Code session. To create and use a subagent immediately without restarting, use the `/agents` command instead.
 </Note>
 
+### Disabling specific subagents
+
+You can disable specific built-in or custom subagents using the `Task(AgentName)` permission rule syntax. Add these rules to the `deny` array in your [settings](/en/settings#permission-settings) or use the `--disallowedTools` CLI flag.
+
+**Example settings.json configuration:**
+
+```json  theme={null}
+{
+  "permissions": {
+    "deny": ["Task(Explore)", "Task(Plan)"]
+  }
+}
+```
+
+**Example CLI usage:**
+
+```bash  theme={null}
+claude --disallowedTools "Task(Explore)"
+```
+
+This is useful when you want to prevent Claude from delegating tasks to specific subagents, either for security reasons or to enforce a particular workflow.
+
+See [IAM documentation](/en/iam#tool-specific-permission-rules) for more details on permission rules.
+
 ## Using subagents effectively
 
 ### Automatic delegation
