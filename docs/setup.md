@@ -23,25 +23,25 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
   </Tab>
 
   <Tab title="Homebrew">
-    ```sh  theme={null}
+    ```sh theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
   </Tab>
@@ -49,7 +49,7 @@ To install Claude Code, use one of the following methods:
   <Tab title="NPM">
     If you have [Node.js 18 or newer installed](https://nodejs.org/en/download/):
 
-    ```sh  theme={null}
+    ```sh theme={null} theme={null} theme={null}
     npm install -g @anthropic-ai/claude-code
     ```
   </Tab>
@@ -65,16 +65,6 @@ After the installation process completes, navigate to your project and start Cla
 cd your-awesome-project
 claude
 ```
-
-Claude Code offers the following authentication options:
-
-1. **Claude Console**: The default option. Connect through the Claude Console and complete the OAuth process. Requires active billing in the [Anthropic console](https://console.anthropic.com). A "Claude Code" workspace is automatically created for usage tracking and cost management. You can't create API keys for the Claude Code workspace; it's dedicated exclusively for Claude Code usage.
-2. **Claude App (with Pro or Max plan)**: Subscribe to Claude's [Pro or Max plan](https://claude.com/pricing) for a unified subscription that includes both Claude Code and the web interface. Get more value at the same price point while managing your account in one place. Log in with your Claude.ai account. During launch, choose the option that matches your subscription type.
-3. **Enterprise platforms**: Configure Claude Code to use [Amazon Bedrock, Google Vertex AI, or Microsoft Foundry](/en/third-party-integrations) for enterprise deployments with your existing cloud infrastructure.
-
-<Note>
-  Claude Code securely stores your credentials. See [Credential Management](/en/iam#credential-management) for details.
-</Note>
 
 ## Windows setup
 
@@ -178,6 +168,23 @@ npm install -g @anthropic-ai/claude-code
   Do NOT use `sudo npm install -g` as this can lead to permission issues and security risks.
   If you encounter permission errors, see [configure Claude Code](/en/troubleshooting#linux-permission-issues) for recommended solutions.
 </Warning>
+
+## Authentication options
+
+### For individuals
+
+1. **Claude Pro or Max plan** (recommended): Subscribe to Claude's [Pro or Max plan](https://claude.ai/pricing) for a unified subscription that includes both Claude Code and Claude on the web. Manage your account in one place and log in with your Claude.ai account.
+2. **Claude Console**: Connect through the [Claude Console](https://console.anthropic.com) and complete the OAuth process. Requires active billing in the Anthropic Console. A "Claude Code" workspace is automatically created for usage tracking and cost management. You can't create API keys for the Claude Code workspace; it's dedicated exclusively for Claude Code usage.
+
+### For teams and organizations
+
+1. **Claude for Teams or Enterprise** (recommended): Subscribe to [Claude for Teams](https://claude.com/pricing#team-&-enterprise) or [Claude for Enterprise](https://anthropic.com/contact-sales) for centralized billing, team management, and access to both Claude Code and Claude on the web. Team members log in with their Claude.ai accounts.
+2. **Claude Console with team billing**: Set up a shared [Claude Console](https://console.anthropic.com) organization with team billing. Invite team members and assign roles for usage tracking.
+3. **Cloud providers**: Configure Claude Code to use [Amazon Bedrock, Google Vertex AI, or Microsoft Foundry](/en/third-party-integrations) for deployments with your existing cloud infrastructure.
+
+<Note>
+  Claude Code securely stores your credentials. See [Credential Management](/en/iam#credential-management) for details.
+</Note>
 
 ## Running on AWS or GCP
 

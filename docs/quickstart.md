@@ -10,7 +10,7 @@ Make sure you have:
 
 * A terminal or command prompt open
 * A code project to work with
-* A [Claude.ai](https://claude.ai) (recommended) or [Claude Console](https://console.anthropic.com/) account
+* A [Claude subscription](https://claude.com/pricing) (Pro, Max, Teams, or Enterprise) or [Claude Console](https://console.anthropic.com/) account
 
 ## Step 1: Install Claude Code
 
@@ -20,25 +20,25 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
   </Tab>
 
   <Tab title="Homebrew">
-    ```sh  theme={null}
+    ```sh theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
   </Tab>
@@ -46,7 +46,7 @@ To install Claude Code, use one of the following methods:
   <Tab title="NPM">
     If you have [Node.js 18 or newer installed](https://nodejs.org/en/download/):
 
-    ```sh  theme={null}
+    ```sh theme={null} theme={null} theme={null}
     npm install -g @anthropic-ai/claude-code
     ```
   </Tab>
@@ -66,9 +66,9 @@ claude
 # Follow the prompts to log in with your account
 ```
 
-You can log in using either account type:
+You can log in using any of these account types:
 
-* [Claude.ai](https://claude.ai) (subscription plans - recommended)
+* [Claude Pro, Max, Teams, or Enterprise](https://claude.com/pricing) (recommended)
 * [Claude Console](https://console.anthropic.com/) (API access with pre-paid credits)
 
 Once logged in, your credentials are stored and you won't need to log in again.

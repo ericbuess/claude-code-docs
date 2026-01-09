@@ -4,21 +4,37 @@
 
 ## Authentication methods
 
-Setting up Claude Code requires access to Anthropic models. For teams, you can set up Claude Code access in one of four ways:
+Setting up Claude Code requires access to Anthropic models. For teams, you can set up Claude Code access in one of these ways:
 
-* Claude API via the Claude Console
-* Amazon Bedrock
-* Microsoft Foundry
-* Google Vertex AI
+* [Claude for Teams or Enterprise](/en/setup#for-teams-and-organizations) (recommended)
+* [Claude Console with team billing](/en/setup#for-teams-and-organizations)
+* [Amazon Bedrock](/en/amazon-bedrock)
+* [Google Vertex AI](/en/google-vertex-ai)
+* [Microsoft Foundry](/en/microsoft-foundry)
 
-### Claude API authentication
+### Claude for Teams or Enterprise (recommended)
 
-**To set up Claude Code access for your team via Claude API:**
+[Claude for Teams](https://claude.com/pricing#team-&-enterprise) and [Claude for Enterprise](https://anthropic.com/contact-sales) provide the best experience for organizations using Claude Code. Team members get access to both Claude Code and Claude on the web with centralized billing and team management.
+
+* **Claude for Teams**: Self-service plan with collaboration features, admin tools, and billing management. Best for smaller teams.
+* **Claude for Enterprise**: Adds SSO, domain capture, role-based permissions, compliance API, and managed policy settings for organization-wide Claude Code configurations. Best for larger organizations with security and compliance requirements.
+
+**To set up Claude Code access:**
+
+1. Subscribe to [Claude for Teams](https://claude.com/pricing#team-&-enterprise) or contact sales for [Claude for Enterprise](https://anthropic.com/contact-sales)
+2. Invite team members from the admin dashboard
+3. Team members install Claude Code and log in with their Claude.ai accounts
+
+### Claude Console authentication
+
+For organizations that prefer API-based billing, you can set up access through the Claude Console.
+
+**To set up Claude Code access for your team via Claude Console:**
 
 1. Use your existing Claude Console account or create a new Claude Console account
 2. You can add users through either method below:
    * Bulk invite users from within the Console (Console -> Settings -> Members -> Invite)
-   * [Set up SSO](https://support.claude.com/en/articles/10280258-setting-up-single-sign-on-on-the-api-console)
+   * [Set up SSO](https://support.claude.com/en/articles/13132885-setting-up-single-sign-on-sso)
 3. When inviting users, they need one of the following roles:
    * "Claude Code" role means users can only create Claude Code API keys
    * "Developer" role means users can create any kind of API key
