@@ -21,6 +21,7 @@ If your organization has specific infrastructure requirements, compare the optio
     <tr>
       <th>Feature</th>
       <th>Claude for Teams/Enterprise</th>
+      <th>Anthropic Console</th>
       <th>Amazon Bedrock</th>
       <th>Google Vertex AI</th>
       <th>Microsoft Foundry</th>
@@ -31,13 +32,24 @@ If your organization has specific infrastructure requirements, compare the optio
     <tr>
       <td>Best for</td>
       <td>Most organizations (recommended)</td>
+      <td>Individual developers</td>
       <td>AWS-native deployments</td>
       <td>GCP-native deployments</td>
       <td>Azure-native deployments</td>
     </tr>
 
     <tr>
+      <td>Billing</td>
+      <td><strong>Teams:</strong> \$150/seat (Premium) with PAYG available<br /><strong>Enterprise:</strong> <a href="https://claude.com/contact-sales">Contact Sales</a></td>
+      <td>PAYG</td>
+      <td>PAYG through AWS</td>
+      <td>PAYG through GCP</td>
+      <td>PAYG through Azure</td>
+    </tr>
+
+    <tr>
       <td>Regions</td>
+      <td>Supported [countries](https://www.anthropic.com/supported-countries)</td>
       <td>Supported [countries](https://www.anthropic.com/supported-countries)</td>
       <td>Multiple AWS [regions](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)</td>
       <td>Multiple GCP [regions](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations)</td>
@@ -50,11 +62,13 @@ If your organization has specific infrastructure requirements, compare the optio
       <td>Enabled by default</td>
       <td>Enabled by default</td>
       <td>Enabled by default</td>
+      <td>Enabled by default</td>
     </tr>
 
     <tr>
       <td>Authentication</td>
       <td>Claude.ai SSO or email</td>
+      <td>API key</td>
       <td>API key or AWS credentials</td>
       <td>GCP credentials</td>
       <td>API key or Microsoft Entra ID</td>
@@ -62,6 +76,7 @@ If your organization has specific infrastructure requirements, compare the optio
 
     <tr>
       <td>Cost tracking</td>
+      <td>Usage dashboard</td>
       <td>Usage dashboard</td>
       <td>AWS Cost Explorer</td>
       <td>GCP Billing</td>
@@ -74,11 +89,13 @@ If your organization has specific infrastructure requirements, compare the optio
       <td>No</td>
       <td>No</td>
       <td>No</td>
+      <td>No</td>
     </tr>
 
     <tr>
       <td>Enterprise features</td>
       <td>Team management, SSO, usage monitoring</td>
+      <td>None</td>
       <td>IAM policies, CloudTrail</td>
       <td>IAM roles, Cloud Audit Logs</td>
       <td>RBAC policies, Azure Monitor</td>
@@ -88,23 +105,11 @@ If your organization has specific infrastructure requirements, compare the optio
 
 Select a deployment option to view setup instructions:
 
-<CardGroup cols={2}>
-  <Card title="Claude for Teams or Enterprise" icon="users" href="/en/iam#claude-for-teams-or-enterprise-recommended">
-    Set up centralized billing and team management
-  </Card>
-
-  <Card title="Amazon Bedrock" icon="aws" href="/en/amazon-bedrock">
-    Deploy through AWS with IAM-based authentication and AWS-native monitoring
-  </Card>
-
-  <Card title="Google Vertex AI" icon="google" href="/en/google-vertex-ai">
-    Deploy through GCP with enterprise-grade security and compliance
-  </Card>
-
-  <Card title="Microsoft Foundry" icon="microsoft" href="/en/microsoft-foundry">
-    Deploy through Azure with Entra ID authentication and Azure billing
-  </Card>
-</CardGroup>
+* [Claude for Teams or Enterprise](/en/iam#claude-for-teams-or-enterprise-recommended)
+* [Anthropic Console](/en/iam#claude-console-authentication)
+* [Amazon Bedrock](/en/amazon-bedrock)
+* [Google Vertex AI](/en/google-vertex-ai)
+* [Microsoft Foundry](/en/microsoft-foundry)
 
 ## Configure proxies and gateways
 
