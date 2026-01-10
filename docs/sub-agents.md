@@ -52,6 +52,16 @@ Claude Code includes built-in subagents that Claude automatically uses when appr
 
     Claude delegates to general-purpose when the task requires both exploration and modification, complex reasoning to interpret results, or multiple dependent steps.
   </Tab>
+
+  <Tab title="Other">
+    Claude Code includes additional helper agents for specific tasks. These are typically invoked automatically, so you don't need to use them directly.
+
+    | Agent             | Model    | When Claude uses it                                      |
+    | :---------------- | :------- | :------------------------------------------------------- |
+    | Bash              | Inherits | Running terminal commands in a separate context          |
+    | statusline-setup  | Sonnet   | When you run `/statusline` to configure your status line |
+    | Claude Code Guide | Haiku    | When you ask questions about Claude Code features        |
+  </Tab>
 </Tabs>
 
 Beyond these built-in subagents, you can create your own with custom prompts, tool restrictions, permission modes, hooks, and skills. The following sections show how to get started and customize subagents.
