@@ -233,21 +233,15 @@ The LLM must respond with JSON containing:
 
 ```json  theme={null}
 {
-  "decision": "approve" | "block",
-  "reason": "Explanation for the decision",
-  "continue": false,  // Optional: stops Claude entirely
-  "stopReason": "Message shown to user",  // Optional: custom stop message
-  "systemMessage": "Warning or context"  // Optional: shown to user
+  "ok": true | false,
+  "reason": "Explanation for the decision"
 }
 ```
 
 **Response fields:**
 
-* `decision`: `"approve"` allows the action, `"block"` prevents it
-* `reason`: Explanation shown to Claude when decision is `"block"`
-* `continue`: (Optional) If `false`, stops Claude's execution entirely
-* `stopReason`: (Optional) Message shown when `continue` is false
-* `systemMessage`: (Optional) Additional message shown to the user
+* `ok`: `true` allows the action, `false` prevents it
+* `reason`: Required when `ok` is `false`. Explanation shown to Claude
 
 ### Supported hook events
 
@@ -269,7 +263,7 @@ Prompt-based hooks work with any hook event, but are most useful for:
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "You are evaluating whether Claude should stop working. Context: $ARGUMENTS\n\nAnalyze the conversation and determine if:\n1. All user-requested tasks are complete\n2. Any errors need to be addressed\n3. Follow-up work is needed\n\nRespond with JSON: {\"decision\": \"approve\" or \"block\", \"reason\": \"your explanation\"}",
+            "prompt": "You are evaluating whether Claude should stop working. Context: $ARGUMENTS\n\nAnalyze the conversation and determine if:\n1. All user-requested tasks are complete\n2. Any errors need to be addressed\n3. Follow-up work is needed\n\nRespond with JSON: {\"ok\": true} to allow stopping, or {\"ok\": false, \"reason\": \"your explanation\"} to continue working.",
             "timeout": 30
           }
         ]
@@ -289,7 +283,7 @@ Prompt-based hooks work with any hook event, but are most useful for:
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Evaluate if this subagent should stop. Input: $ARGUMENTS\n\nCheck if:\n- The subagent completed its assigned task\n- Any errors occurred that need fixing\n- Additional context gathering is needed\n\nReturn: {\"decision\": \"approve\" or \"block\", \"reason\": \"explanation\"}"
+            "prompt": "Evaluate if this subagent should stop. Input: $ARGUMENTS\n\nCheck if:\n- The subagent completed its assigned task\n- Any errors occurred that need fixing\n- Additional context gathering is needed\n\nReturn: {\"ok\": true} to allow stopping, or {\"ok\": false, \"reason\": \"explanation\"} to continue."
           }
         ]
       }
