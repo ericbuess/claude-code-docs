@@ -237,8 +237,8 @@
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
       "original_md_url": "https://code.claude.com/docs/en/skills.md",
-      "hash": "40a8d9731adfd53b173acf78dd6cfaee24cdc3a0c4b41b97cbf91e495481f798",
-      "last_updated": "2026-01-08T21:01:56.868545"
+      "hash": "5ea9beecc22af4cd3138510398cb4c0923933da9eb7697654126be623539b42c",
+      "last_updated": "2026-01-10T00:04:50.701392"
     },
     "slack.md": {
       "original_url": "https://code.claude.com/docs/en/slack",
@@ -261,8 +261,8 @@
     "sub-agents.md": {
       "original_url": "https://code.claude.com/docs/en/sub-agents",
       "original_md_url": "https://code.claude.com/docs/en/sub-agents.md",
-      "hash": "772fa3ce5227039c7c042d0fe2aa862d789fc469f120400527be4dd249826f18",
-      "last_updated": "2026-01-08T21:01:59.333116"
+      "hash": "4c68f14d3c2e7c7725d7f48b74ff4c0a8d764ec1bdec65ab1c54cc1208a7a563",
+      "last_updated": "2026-01-10T00:04:52.985834"
     },
     "terminal-config.md": {
       "original_url": "https://code.claude.com/docs/en/terminal-config",
@@ -291,14 +291,14 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "092c12fb73946f993c097c04ba112c2d7d78b12358081922a07cdbbdd2fd9518",
-      "last_updated": "2026-01-09T00:04:54.927953",
+      "hash": "18610fc8e69d2af77086432544bfd20febe4f8163bfae33c910660893e0bbc79",
+      "last_updated": "2026-01-10T00:04:55.414119",
       "source": "claude-code-repository"
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-01-09T21:01:43.497340",
-    "fetch_duration_seconds": 29.364723,
+    "last_fetch_completed": "2026-01-10T00:04:55.414145",
+    "fetch_duration_seconds": 27.530205,
     "total_pages_discovered": 48,
     "pages_fetched_successfully": 49,
     "pages_failed": 0,
@@ -308,7 +308,7 @@
     "total_files": 49,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-01-09T21:01:43.497366",
+  "last_updated": "2026-01-10T00:04:55.414166",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
