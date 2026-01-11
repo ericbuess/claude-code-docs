@@ -8,6 +8,26 @@
 
 The Claude desktop app provides a native interface for running multiple Claude Code sessions on your local machine and seamless integration with Claude Code on the web.
 
+## Installation
+
+Download the Claude desktop app for your platform:
+
+<CardGroup cols={2}>
+  <Card title="macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    Universal build for Intel and Apple Silicon
+  </Card>
+
+  <Card title="Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    For x64 processors
+  </Card>
+</CardGroup>
+
+For Windows ARM64, [download here](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs).
+
+<Note>
+  Local sessions are not available on Windows ARM64.
+</Note>
+
 ## Features
 
 Claude Code on desktop provides:
@@ -15,14 +35,6 @@ Claude Code on desktop provides:
 * **Parallel local sessions with `git` worktrees**: Run multiple Claude Code sessions simultaneously in the same repository, each with its own isolated `git` worktree
 * **Include files listed in your `.gitignore` in your worktrees**: Automatically copy files in your `.gitignore`, like `.env`, to new worktrees using `.worktreeinclude`
 * **Launch Claude Code on the web**: Kick off secure cloud sessions directly from the desktop app
-
-## Installation
-
-Download and install the Claude Desktop app from [claude.ai/download](https://claude.ai/download)
-
-<Note>
-  Local sessions are not available on Windows arm64 architectures.
-</Note>
 
 ## Using Git worktrees
 
