@@ -502,7 +502,37 @@ event-specific data:
 
 ### PreToolUse Input
 
-The exact schema for `tool_input` depends on the tool.
+The exact schema for `tool_input` depends on the tool. Here are examples for commonly hooked tools.
+
+#### Bash tool
+
+The Bash tool is the most commonly hooked tool for command validation:
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Bash",
+  "tool_input": {
+    "command": "psql -c 'SELECT * FROM users'",
+    "description": "Query the users table",
+    "timeout": 120000
+  },
+  "tool_use_id": "toolu_01ABC123..."
+}
+```
+
+| Field               | Type    | Description                                   |
+| :------------------ | :------ | :-------------------------------------------- |
+| `command`           | string  | The shell command to execute                  |
+| `description`       | string  | Optional description of what the command does |
+| `timeout`           | number  | Optional timeout in milliseconds              |
+| `run_in_background` | boolean | Whether to run the command in background      |
+
+#### Write tool
 
 ```json  theme={null}
 {
@@ -519,6 +549,60 @@ The exact schema for `tool_input` depends on the tool.
   "tool_use_id": "toolu_01ABC123..."
 }
 ```
+
+| Field       | Type   | Description                        |
+| :---------- | :----- | :--------------------------------- |
+| `file_path` | string | Absolute path to the file to write |
+| `content`   | string | Content to write to the file       |
+
+#### Edit tool
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "/path/to/file.txt",
+    "old_string": "original text",
+    "new_string": "replacement text"
+  },
+  "tool_use_id": "toolu_01ABC123..."
+}
+```
+
+| Field         | Type    | Description                                         |
+| :------------ | :------ | :-------------------------------------------------- |
+| `file_path`   | string  | Absolute path to the file to edit                   |
+| `old_string`  | string  | Text to find and replace                            |
+| `new_string`  | string  | Replacement text                                    |
+| `replace_all` | boolean | Whether to replace all occurrences (default: false) |
+
+#### Read tool
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Read",
+  "tool_input": {
+    "file_path": "/path/to/file.txt"
+  },
+  "tool_use_id": "toolu_01ABC123..."
+}
+```
+
+| Field       | Type   | Description                                |
+| :---------- | :----- | :----------------------------------------- |
+| `file_path` | string | Absolute path to the file to read          |
+| `offset`    | number | Optional line number to start reading from |
+| `limit`     | number | Optional number of lines to read           |
 
 ### PostToolUse Input
 

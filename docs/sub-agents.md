@@ -256,7 +256,7 @@ If the parent uses `bypassPermissions`, this takes precedence and cannot be over
 
 For more dynamic control over tool usage, use `PreToolUse` hooks to validate operations before they execute. This is useful when you need to allow some operations of a tool while blocking others.
 
-This example creates a subagent that only allows read-only database queries by validating commands before execution:
+This example creates a subagent that only allows read-only database queries. The `PreToolUse` hook runs the script specified in `command` before each Bash command executes:
 
 ```yaml  theme={null}
 ---
@@ -272,7 +272,25 @@ hooks:
 ---
 ```
 
-The validation script inspects `$TOOL_INPUT` and exits with a non-zero code to block write operations. See [Define hooks for subagents](#define-hooks-for-subagents) for more hook configuration options.
+Claude Code [passes hook input as JSON](/en/hooks#pretooluse-input) via stdin to hook commands. The validation script reads this JSON, extracts the Bash command, and [exits with code 2](/en/hooks#exit-code-2-behavior) to block write operations:
+
+```bash  theme={null}
+#!/bin/bash
+# ./scripts/validate-readonly-query.sh
+
+INPUT=$(cat)
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+
+# Block SQL write operations (case-insensitive)
+if echo "$COMMAND" | grep -iE '\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE)\b' > /dev/null; then
+  echo "Blocked: Only SELECT queries are allowed" >&2
+  exit 2
+fi
+
+exit 0
+```
+
+See [Hook input](/en/hooks#pretooluse-input) for the complete input schema and [exit codes](/en/hooks#exit-codes) for how exit codes affect behavior.
 
 #### Disable specific subagents
 
@@ -619,6 +637,68 @@ For each analysis:
 
 Always ensure queries are efficient and cost-effective.
 ```
+
+### Database query validator
+
+A subagent that allows Bash access but validates commands to permit only read-only SQL queries. This example shows how to use `PreToolUse` hooks for conditional validation when you need finer control than the `tools` field provides.
+
+```markdown  theme={null}
+---
+name: db-reader
+description: Execute read-only database queries. Use when analyzing data or generating reports.
+tools: Bash
+hooks:
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "./scripts/validate-readonly-query.sh"
+---
+
+You are a database analyst with read-only access. Execute SELECT queries to answer questions about the data.
+
+When asked to analyze data:
+1. Identify which tables contain the relevant data
+2. Write efficient SELECT queries with appropriate filters
+3. Present results clearly with context
+
+You cannot modify data. If asked to INSERT, UPDATE, DELETE, or modify schema, explain that you only have read access.
+```
+
+Claude Code [passes hook input as JSON](/en/hooks#pretooluse-input) via stdin to hook commands. The validation script reads this JSON, extracts the command being executed, and checks it against a list of SQL write operations. If a write operation is detected, the script [exits with code 2](/en/hooks#exit-code-2-behavior) to block execution and returns an error message to Claude via stderr.
+
+Create the validation script anywhere in your project. The path must match the `command` field in your hook configuration:
+
+```bash  theme={null}
+#!/bin/bash
+# Blocks SQL write operations, allows SELECT queries
+
+# Read JSON input from stdin
+INPUT=$(cat)
+
+# Extract the command field from tool_input using jq
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+
+if [ -z "$COMMAND" ]; then
+  exit 0
+fi
+
+# Block write operations (case-insensitive)
+if echo "$COMMAND" | grep -iE '\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|REPLACE|MERGE)\b' > /dev/null; then
+  echo "Blocked: Write operations not allowed. Use SELECT queries only." >&2
+  exit 2
+fi
+
+exit 0
+```
+
+Make the script executable:
+
+```bash  theme={null}
+chmod +x ./scripts/validate-readonly-query.sh
+```
+
+The hook receives JSON via stdin with the Bash command in `tool_input.command`. Exit code 2 blocks the operation and feeds the error message back to Claude. See [Hooks](/en/hooks#exit-codes) for details on exit codes and [Hook input](/en/hooks#pretooluse-input) for the complete input schema.
 
 ## Next steps
 

@@ -99,8 +99,8 @@
     "hooks.md": {
       "original_url": "https://code.claude.com/docs/en/hooks",
       "original_md_url": "https://code.claude.com/docs/en/hooks.md",
-      "hash": "c9feea9bbc5a83f628ce46ef8b3c67f72836e3ca0eccb54393ae0139e78aa4eb",
-      "last_updated": "2026-01-10T03:28:49.875225"
+      "hash": "b5cab260614f400bb37ee06d9a61c74df41ab9855e764d297fb536bf8d069088",
+      "last_updated": "2026-01-11T00:05:45.944028"
     },
     "hooks-guide.md": {
       "original_url": "https://code.claude.com/docs/en/hooks-guide",
@@ -261,8 +261,8 @@
     "sub-agents.md": {
       "original_url": "https://code.claude.com/docs/en/sub-agents",
       "original_md_url": "https://code.claude.com/docs/en/sub-agents.md",
-      "hash": "ecbe6950c05b8dcf6910e41ced7c5c0c340d385eb187e00bf7bdf002937b2ceb",
-      "last_updated": "2026-01-10T21:01:43.738250"
+      "hash": "ccea2e1d625181cd2d36b004fd504cc78a39b70ae26584159aaf9fd65d64c01c",
+      "last_updated": "2026-01-11T00:06:02.031941"
     },
     "terminal-config.md": {
       "original_url": "https://code.claude.com/docs/en/terminal-config",
@@ -297,8 +297,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-01-10T21:01:46.142132",
-    "fetch_duration_seconds": 28.657678,
+    "last_fetch_completed": "2026-01-11T00:06:04.540506",
+    "fetch_duration_seconds": 28.510289,
     "total_pages_discovered": 48,
     "pages_fetched_successfully": 49,
     "pages_failed": 0,
@@ -308,7 +308,7 @@
     "total_files": 49,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-01-10T21:01:46.142156",
+  "last_updated": "2026-01-11T00:06:04.540533",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
