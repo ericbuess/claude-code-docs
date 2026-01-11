@@ -217,6 +217,10 @@ For plugins in the same repository:
 }
 ```
 
+<Note>
+  Relative paths only work when users add your marketplace via Git (GitHub, GitLab, or git URL). If users add your marketplace via a direct URL to the `marketplace.json` file, relative paths will not resolve correctly. For URL-based distribution, use GitHub, npm, or git URL sources instead. See [Troubleshooting](#plugins-with-relative-paths-fail-in-url-based-marketplaces) for details.
+</Note>
+
 ### GitHub repositories
 
 ```json  theme={null}
@@ -486,6 +490,20 @@ Run `claude plugin validate .` or `/plugin validate .` from your marketplace dir
 * Check that plugin directories contain required files
 * For GitHub sources, ensure repositories are public or you have access
 * Test plugin sources manually by cloning/downloading
+
+### Plugins with relative paths fail in URL-based marketplaces
+
+**Symptoms**: Added a marketplace via URL (such as `https://example.com/marketplace.json`), but plugins with relative path sources like `"./plugins/my-plugin"` fail to install with "path not found" errors.
+
+**Cause**: URL-based marketplaces only download the `marketplace.json` file itself. They do not download plugin files from the server. Relative paths in the marketplace entry reference files on the remote server that were not downloaded.
+
+**Solutions**:
+
+* **Use external sources**: Change plugin entries to use GitHub, npm, or git URL sources instead of relative paths:
+  ```json  theme={null}
+  { "name": "my-plugin", "source": { "source": "github", "repo": "owner/repo" } }
+  ```
+* **Use a Git-based marketplace**: Host your marketplace in a Git repository and add it with the git URL. Git-based marketplaces clone the entire repository, making relative paths work correctly.
 
 ### Files not found after installation
 

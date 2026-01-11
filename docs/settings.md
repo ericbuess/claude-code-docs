@@ -518,6 +518,10 @@ Fields: `url` (required), `ref` (optional: branch/tag/SHA), `path` (optional: su
 
 Fields: `url` (required), `headers` (optional: HTTP headers for authenticated access)
 
+<Note>
+  URL-based marketplaces only download the `marketplace.json` file. They do not download plugin files from the server. Plugins in URL-based marketplaces must use external sources (GitHub, npm, or git URLs) rather than relative paths. For plugins with relative paths, use a Git-based marketplace instead. See [Troubleshooting](/en/plugin-marketplaces#plugins-with-relative-paths-fail-in-url-based-marketplaces) for details.
+</Note>
+
 4. **NPM packages**:
 
 ```json  theme={null}

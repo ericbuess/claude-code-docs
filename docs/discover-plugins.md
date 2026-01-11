@@ -210,11 +210,17 @@ You can also add a direct path to a `marketplace.json` file:
 /plugin marketplace add ./path/to/marketplace.json
 ```
 
-Or add a remote `marketplace.json` file via URL:
+### Add from remote URLs
+
+Add a remote `marketplace.json` file via URL:
 
 ```shell  theme={null}
 /plugin marketplace add https://example.com/marketplace.json
 ```
+
+<Note>
+  URL-based marketplaces have some limitations compared to Git-based marketplaces. If you encounter "path not found" errors when installing plugins, see [Troubleshooting](/en/plugin-marketplaces#plugins-with-relative-paths-fail-in-url-based-marketplaces).
+</Note>
 
 ## Install plugins
 

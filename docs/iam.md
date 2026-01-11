@@ -60,11 +60,11 @@ We support fine-grained permissions so that you're able to specify exactly what 
 
 Claude Code uses a tiered permission system to balance power and safety:
 
-| Tool Type         | Example              | Approval Required | "Yes, don't ask again" Behavior               |
-| :---------------- | :------------------- | :---------------- | :-------------------------------------------- |
-| Read-only         | File reads, LS, Grep | No                | N/A                                           |
-| Bash Commands     | Shell execution      | Yes               | Permanently per project directory and command |
-| File Modification | Edit/write files     | Yes               | Until session end                             |
+| Tool Type         | Example          | Approval Required | "Yes, don't ask again" Behavior               |
+| :---------------- | :--------------- | :---------------- | :-------------------------------------------- |
+| Read-only         | File reads, Grep | No                | N/A                                           |
+| Bash Commands     | Shell execution  | Yes               | Permanently per project directory and command |
+| File Modification | Edit/write files | Yes               | Until session end                             |
 
 ### Configuring permissions
 
@@ -141,7 +141,7 @@ Bash permission rules support both prefix matching with `:*` and wildcard matchi
 
 **Read & Edit**
 
-`Edit` rules apply to all built-in tools that edit files. Claude will make a best-effort attempt to apply `Read` rules to all built-in tools that read files like Grep, Glob, and LS.
+`Edit` rules apply to all built-in tools that edit files. Claude will make a best-effort attempt to apply `Read` rules to all built-in tools that read files like Grep and Glob.
 
 Read & Edit rules both follow the [gitignore](https://git-scm.com/docs/gitignore) specification with four distinct pattern types:
 
