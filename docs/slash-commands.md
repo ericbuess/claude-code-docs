@@ -206,6 +206,8 @@ Command files support frontmatter, useful for specifying metadata about the comm
 | :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------- |
 | `allowed-tools`            | List of tools the command can use                                                                                                                                                     | Inherits from the conversation      |
 | `argument-hint`            | The arguments expected for the slash command. Example: `argument-hint: add [tagId] \| remove [tagId] \| list`. This hint is shown to the user when auto-completing the slash command. | None                                |
+| `context`                  | Set to `fork` to run the command in a forked sub-agent context with its own conversation history.                                                                                     | Inline (no fork)                    |
+| `agent`                    | Specify which [agent type](/en/sub-agents#built-in-subagents) to use when `context: fork` is set. Only applicable when combined with `context: fork`.                                 | `general-purpose`                   |
 | `description`              | Brief description of the command                                                                                                                                                      | Uses the first line from the prompt |
 | `model`                    | Specific model string (see [Models overview](https://docs.claude.com/en/docs/about-claude/models/overview))                                                                           | Inherits from the conversation      |
 | `disable-model-invocation` | Whether to prevent the `Skill` tool from calling this command                                                                                                                         | false                               |
@@ -382,7 +384,7 @@ See [MCP permission rules](/en/iam#tool-specific-permission-rules) for more deta
 ## `Skill` tool
 
 <Note>
-  In earlier versions of Claude Code, slash command invocation was provided by a separate `SlashCommand` tool. This has been merged into the `Skill` tool. If you have existing permission rules using `SlashCommand`, update them to use `Skill`.
+  In earlier versions of Claude Code, slash command invocation was provided by a separate `SlashCommand` tool. This has been merged into the `Skill` tool.
 </Note>
 
 The `Skill` tool allows Claude to programmatically invoke both [custom slash commands](/en/slash-commands#custom-slash-commands) and [Agent Skills](/en/skills) during a conversation. This gives Claude the ability to use these capabilities on your behalf when appropriate.
@@ -433,8 +435,8 @@ To prevent a specific command or Skill from being invoked programmatically via t
 
 The permission rules support:
 
-* **Exact match**: `Skill(/commit)` (allows only `/commit` with no arguments)
-* **Prefix match**: `Skill(/review-pr:*)` (allows `/review-pr` with any arguments)
+* **Exact match**: `Skill(commit)` (allows only `commit` with no arguments)
+* **Prefix match**: `Skill(review-pr:*)` (allows `review-pr` with any arguments)
 
 ### Character budget limit
 

@@ -191,6 +191,8 @@ To run commands in the background, you can either:
 * Background tasks have unique IDs for tracking and output retrieval
 * Background tasks are automatically cleaned up when Claude Code exits
 
+To disable all background task functionality, set the `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` environment variable to `1`. See [Environment variables](/en/settings#environment-variables) for details.
+
 **Common backgrounded commands:**
 
 * Build tools (webpack, vite, make)

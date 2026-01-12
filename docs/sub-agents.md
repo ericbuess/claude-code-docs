@@ -414,6 +414,8 @@ Claude decides whether to run subagents in the foreground or background based on
 * Ask Claude to "run this in the background"
 * Press **Ctrl+B** to background a running task
 
+To disable all background task functionality, set the `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` environment variable to `1`. See [Environment variables](/en/settings#environment-variables).
+
 ### Common patterns
 
 #### Isolate high-volume operations
