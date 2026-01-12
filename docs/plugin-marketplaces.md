@@ -322,6 +322,28 @@ Any git hosting service works, such as GitLab, Bitbucket, and self-hosted server
 /plugin marketplace add https://gitlab.com/company/plugins.git
 ```
 
+### Private repositories
+
+Claude Code supports installing plugins from private repositories. Set the appropriate authentication token in your environment, and Claude Code will use it when authentication is required.
+
+| Provider  | Environment variables        | Notes                                     |
+| :-------- | :--------------------------- | :---------------------------------------- |
+| GitHub    | `GITHUB_TOKEN` or `GH_TOKEN` | Personal access token or GitHub App token |
+| GitLab    | `GITLAB_TOKEN` or `GL_TOKEN` | Personal access token or project token    |
+| Bitbucket | `BITBUCKET_TOKEN`            | App password or repository access token   |
+
+Set the token in your shell configuration (for example, `.bashrc`, `.zshrc`) or pass it when running Claude Code:
+
+```bash  theme={null}
+export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
+```
+
+Authentication tokens are only used when a repository requires authentication. Public repositories work without any tokens configured, even if tokens are present in your environment.
+
+<Note>
+  For CI/CD environments, configure the token as a secret environment variable. GitHub Actions automatically provides `GITHUB_TOKEN` for repositories in the same organization.
+</Note>
+
 ### Test locally before distribution
 
 Test your marketplace locally before sharing:
@@ -490,6 +512,19 @@ Run `claude plugin validate .` or `/plugin validate .` from your marketplace dir
 * Check that plugin directories contain required files
 * For GitHub sources, ensure repositories are public or you have access
 * Test plugin sources manually by cloning/downloading
+
+### Private repository authentication fails
+
+**Symptoms**: Authentication errors when installing plugins from private repositories, even with tokens configured
+
+**Solutions**:
+
+* Verify your token is set in the current shell session: `echo $GITHUB_TOKEN`
+* Check that the token has the required permissions (read access to the repository)
+* For GitHub, ensure the token has the `repo` scope for private repositories
+* For GitLab, ensure the token has at least `read_repository` scope
+* Verify the token hasn't expired
+* If using multiple git providers, ensure you've set the token for the correct provider
 
 ### Plugins with relative paths fail in URL-based marketplaces
 
