@@ -6,16 +6,16 @@
 
 * **Operating Systems**: macOS 10.15+, Ubuntu 20.04+/Debian 10+, or Windows 10+ (with WSL 1, WSL 2, or Git for Windows)
 * **Hardware**: 4 GB+ RAM
-* **Software**: [Node.js 18+](https://nodejs.org/en/download) (only required for npm installation)
-* **Network**: Internet connection required for authentication and AI processing
-* **Shell**: Works best in Bash, Zsh or Fish
+* **Network**: Internet connection required (see [network configuration](/en/network-config#network-access-requirements))
+* **Shell**: Works best in Bash or Zsh
 * **Location**: [Anthropic supported countries](https://www.anthropic.com/supported-countries)
 
 ### Additional dependencies
 
 * **ripgrep**: Usually included with Claude Code. If search fails, see [search troubleshooting](/en/troubleshooting#search-and-discovery-issues).
+* **[Node.js 18+](https://nodejs.org/en/download)**: Only required for [deprecated npm installation](#npm-installation-deprecated)
 
-## Standard installation
+## Installation
 
 To install Claude Code, use one of the following methods:
 
@@ -46,18 +46,12 @@ To install Claude Code, use one of the following methods:
     ```
   </Tab>
 
-  <Tab title="NPM">
-    If you have [Node.js 18 or newer installed](https://nodejs.org/en/download/):
-
-    ```sh  theme={null}
-    npm install -g @anthropic-ai/claude-code
+  <Tab title="WinGet">
+    ```powershell  theme={null}
+    winget install Anthropic.ClaudeCode
     ```
   </Tab>
 </Tabs>
-
-<Note>
-  Some users may be automatically migrated to an improved installation method.
-</Note>
 
 After the installation process completes, navigate to your project and start Claude Code:
 
@@ -66,41 +60,32 @@ cd your-awesome-project
 claude
 ```
 
-## Windows setup
-
-**Option 1: Claude Code within WSL**
-
-* Both WSL 1 and WSL 2 are supported
-
-**Option 2: Claude Code on native Windows with Git Bash**
-
-* Requires [Git for Windows](https://git-scm.com/downloads/win)
-* For portable Git installations, specify the path to your `bash.exe`:
-  ```powershell  theme={null}
-  $env:CLAUDE_CODE_GIT_BASH_PATH="C:\Program Files\Git\bin\bash.exe"
-  ```
-
-## Alternative installation methods
-
-Claude Code offers multiple installation methods to suit different environments.
-
-If you encounter any issues during installation, consult the [troubleshooting guide](/en/troubleshooting#linux-permission-issues).
+If you encounter any issues during installation, consult the [troubleshooting guide](/en/troubleshooting).
 
 <Tip>
   Run `claude doctor` after installation to check your installation type and version.
 </Tip>
 
-### Native installation options
+<Note>
+  **Alpine Linux and other musl/uClibc-based distributions**: The native installer requires `libgcc`, `libstdc++`, and `ripgrep`. For Alpine: `apk add libgcc libstdc++ ripgrep`. Set `USE_BUILTIN_RIPGREP=0`.
+</Note>
 
-The native installation is the recommended method and offers several benefits:
+### Authentication
 
-* One self-contained executable
-* No Node.js dependency
-* Improved auto-updater stability
+#### For individuals
 
-If you have an existing installation of Claude Code, use `claude install` to migrate to the native binary installation.
+1. **Claude Pro or Max plan** (recommended): Subscribe to Claude's [Pro or Max plan](https://claude.ai/pricing) for a unified subscription that includes both Claude Code and Claude on the web. Manage your account in one place and log in with your Claude.ai account.
+2. **Claude Console**: Connect through the [Claude Console](https://console.anthropic.com) and complete the OAuth process. Requires active billing in the Anthropic Console. A "Claude Code" workspace is automatically created for usage tracking and cost management. You can't create API keys for the Claude Code workspace; it's dedicated exclusively for Claude Code usage.
 
-For advanced installation options with the native installer:
+#### For teams and organizations
+
+1. **Claude for Teams or Enterprise** (recommended): Subscribe to [Claude for Teams](https://claude.com/pricing#team-&-enterprise) or [Claude for Enterprise](https://anthropic.com/contact-sales) for centralized billing, team management, and access to both Claude Code and Claude on the web. Team members log in with their Claude.ai accounts.
+2. **Claude Console with team billing**: Set up a shared [Claude Console](https://console.anthropic.com) organization with team billing. Invite team members and assign roles for usage tracking.
+3. **Cloud providers**: Configure Claude Code to use [Amazon Bedrock, Google Vertex AI, or Microsoft Foundry](/en/third-party-integrations) for deployments with your existing cloud infrastructure.
+
+### Install a specific version
+
+To install a specific version of Claude Code with the native installer:
 
 **macOS, Linux, WSL:**
 
@@ -114,10 +99,6 @@ curl -fsSL https://claude.ai/install.sh | bash -s latest
 # Install specific version number
 curl -fsSL https://claude.ai/install.sh | bash -s 1.0.58
 ```
-
-<Note>
-  **Alpine Linux and other musl/uClibc-based distributions**: The native build requires `libgcc`, `libstdc++`, and `ripgrep`. For Alpine: `apk add libgcc libstdc++ ripgrep`. Set `USE_BUILTIN_RIPGREP=0`.
-</Note>
 
 **Windows PowerShell:**
 
@@ -145,20 +126,18 @@ REM Install specific version number
 curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 1.0.58 && del install.cmd
 ```
 
-<Tip>
-  Make sure that you remove any outdated aliases or symlinks before installing.
-</Tip>
-
-**Binary integrity and code signing**
+### Binary integrity and code signing
 
 * SHA256 checksums for all platforms are published in the release manifests, currently located at `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json` (example: replace `{VERSION}` with `2.0.30`)
 * Signed binaries are distributed for the following platforms:
   * macOS: Signed by "Anthropic PBC" and notarized by Apple
   * Windows: Signed by "Anthropic, PBC"
 
-### NPM installation
+## NPM installation (deprecated)
 
-For environments where NPM is preferred or required:
+NPM installation is deprecated. Use the [native installation](#installation) method when possible. To migrate an existing npm installation to native, run `claude install`.
+
+**Global npm installation**
 
 ```sh  theme={null}
 npm install -g @anthropic-ai/claude-code
@@ -169,28 +148,19 @@ npm install -g @anthropic-ai/claude-code
   If you encounter permission errors, see [configure Claude Code](/en/troubleshooting#linux-permission-issues) for recommended solutions.
 </Warning>
 
-## Authentication options
+## Windows setup
 
-### For individuals
+**Option 1: Claude Code within WSL**
 
-1. **Claude Pro or Max plan** (recommended): Subscribe to Claude's [Pro or Max plan](https://claude.ai/pricing) for a unified subscription that includes both Claude Code and Claude on the web. Manage your account in one place and log in with your Claude.ai account.
-2. **Claude Console**: Connect through the [Claude Console](https://console.anthropic.com) and complete the OAuth process. Requires active billing in the Anthropic Console. A "Claude Code" workspace is automatically created for usage tracking and cost management. You can't create API keys for the Claude Code workspace; it's dedicated exclusively for Claude Code usage.
+* Both WSL 1 and WSL 2 are supported
 
-### For teams and organizations
+**Option 2: Claude Code on native Windows with Git Bash**
 
-1. **Claude for Teams or Enterprise** (recommended): Subscribe to [Claude for Teams](https://claude.com/pricing#team-&-enterprise) or [Claude for Enterprise](https://anthropic.com/contact-sales) for centralized billing, team management, and access to both Claude Code and Claude on the web. Team members log in with their Claude.ai accounts.
-2. **Claude Console with team billing**: Set up a shared [Claude Console](https://console.anthropic.com) organization with team billing. Invite team members and assign roles for usage tracking.
-3. **Cloud providers**: Configure Claude Code to use [Amazon Bedrock, Google Vertex AI, or Microsoft Foundry](/en/third-party-integrations) for deployments with your existing cloud infrastructure.
-
-<Note>
-  Claude Code securely stores your credentials. See [Credential Management](/en/iam#credential-management) for details.
-</Note>
-
-## Running on AWS or GCP
-
-By default, Claude Code uses the Claude API.
-
-For details on running Claude Code on AWS or GCP, see [third-party integrations](/en/third-party-integrations).
+* Requires [Git for Windows](https://git-scm.com/downloads/win)
+* For portable Git installations, specify the path to your `bash.exe`:
+  ```powershell  theme={null}
+  $env:CLAUDE_CODE_GIT_BASH_PATH="C:\Program Files\Git\bin\bash.exe"
+  ```
 
 ## Update Claude Code
 
@@ -202,6 +172,12 @@ Claude Code automatically keeps itself up to date to ensure you have the latest 
 * **Update process**: Downloads and installs automatically in the background
 * **Notifications**: You'll see a notification when updates are installed
 * **Applying updates**: Updates take effect the next time you start Claude Code
+
+<Note>
+  Homebrew and WinGet installations do not auto-update. Use `brew upgrade claude-code` or `winget upgrade Anthropic.ClaudeCode` to update manually.
+
+  **Known issue:** Claude Code may notify you of updates before the new version is available in these package managers. If an upgrade fails, wait and try again later.
+</Note>
 
 **Disable auto-updates:**
 
@@ -250,6 +226,12 @@ rmdir /s /q "%USERPROFILE%\.local\share\claude"
 
 ```bash  theme={null}
 brew uninstall --cask claude-code
+```
+
+### WinGet installation
+
+```powershell  theme={null}
+winget uninstall Anthropic.ClaudeCode
 ```
 
 ### NPM installation

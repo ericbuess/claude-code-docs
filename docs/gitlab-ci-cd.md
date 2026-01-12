@@ -77,7 +77,7 @@ claude:
   before_script:
     - apk update
     - apk add --no-cache git curl bash
-    - npm install -g @anthropic-ai/claude-code
+    - curl -fsSL https://claude.ai/install.sh | bash
   script:
     # Optional: start a GitLab MCP server if your setup provides one
     - /bin/gitlab-mcp-server || true
@@ -255,7 +255,7 @@ claude:
   before_script:
     - apk update
     - apk add --no-cache git curl bash
-    - npm install -g @anthropic-ai/claude-code
+    - curl -fsSL https://claude.ai/install.sh | bash
   script:
     - /bin/gitlab-mcp-server || true
     - >
@@ -289,7 +289,7 @@ claude-bedrock:
   before_script:
     - apk add --no-cache bash curl jq git python3 py3-pip
     - pip install --no-cache-dir awscli
-    - npm install -g @anthropic-ai/claude-code
+    - curl -fsSL https://claude.ai/install.sh | bash
     # Exchange GitLab OIDC token for AWS credentials
     - export AWS_WEB_IDENTITY_TOKEN_FILE="${CI_JOB_JWT_FILE:-/tmp/oidc_token}"
     - if [ -n "${CI_JOB_JWT_V2}" ]; then printf "%s" "$CI_JOB_JWT_V2" > "$AWS_WEB_IDENTITY_TOKEN_FILE"; fi
@@ -339,8 +339,8 @@ claude-vertex:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "web"'
   before_script:
-    - apt-get update && apt-get install -y git nodejs npm && apt-get clean
-    - npm install -g @anthropic-ai/claude-code
+    - apt-get update && apt-get install -y git && apt-get clean
+    - curl -fsSL https://claude.ai/install.sh | bash
     # Authenticate to Google Cloud via WIF (no downloaded keys)
     - >
       gcloud auth login --cred-file=<(cat <<EOF

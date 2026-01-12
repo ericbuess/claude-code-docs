@@ -81,8 +81,8 @@
     "gitlab-ci-cd.md": {
       "original_url": "https://code.claude.com/docs/en/gitlab-ci-cd",
       "original_md_url": "https://code.claude.com/docs/en/gitlab-ci-cd.md",
-      "hash": "f96ee45c9fecb2886d4cc36e399993c2f1697a0e44fca7cf4b2c6f1f7ef2c5e7",
-      "last_updated": "2025-12-08T00:05:02.077631"
+      "hash": "ced93c6b11589b1537f66690e9955d80717d2de642800b76d904c8fe7a697b4f",
+      "last_updated": "2026-01-12T18:02:22.872800"
     },
     "google-vertex-ai.md": {
       "original_url": "https://code.claude.com/docs/en/google-vertex-ai",
@@ -183,8 +183,8 @@
     "overview.md": {
       "original_url": "https://code.claude.com/docs/en/overview",
       "original_md_url": "https://code.claude.com/docs/en/overview.md",
-      "hash": "c46ebde76575e15ca2a9e6f8e6de902aa5caaa956069e2439de0eaa8cbb8fe0c",
-      "last_updated": "2026-01-10T21:01:36.016658"
+      "hash": "14e9d2c59beb8c3065d200bdba78b2c668b1acf20be1f0205d25298c0f58b945",
+      "last_updated": "2026-01-12T18:02:33.251839"
     },
     "plugin-marketplaces.md": {
       "original_url": "https://code.claude.com/docs/en/plugin-marketplaces",
@@ -207,8 +207,8 @@
     "quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/quickstart",
       "original_md_url": "https://code.claude.com/docs/en/quickstart.md",
-      "hash": "5d651c459f6e548ebc17d839ccf765959025b439145b2e2b085ec12443306591",
-      "last_updated": "2026-01-10T21:01:38.351596"
+      "hash": "f9ac73f2396c90ffab40b44b3712376c1ead266fb0939a744907327e1a212e56",
+      "last_updated": "2026-01-12T18:02:35.731174"
     },
     "sandboxing.md": {
       "original_url": "https://code.claude.com/docs/en/sandboxing",
@@ -231,8 +231,8 @@
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
       "original_md_url": "https://code.claude.com/docs/en/setup.md",
-      "hash": "95d469c644fe251b16292c7c19a8042171ed89b509db02802d8110a03f3214a0",
-      "last_updated": "2026-01-10T21:01:40.698384"
+      "hash": "528525ae902a267566156c43802f434dc9a434864f13091c975578a8f33be97e",
+      "last_updated": "2026-01-12T18:02:38.166357"
     },
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
@@ -297,8 +297,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-01-12T15:03:56.487332",
-    "fetch_duration_seconds": 29.405133,
+    "last_fetch_completed": "2026-01-12T18:02:43.780375",
+    "fetch_duration_seconds": 29.255026,
     "total_pages_discovered": 48,
     "pages_fetched_successfully": 49,
     "pages_failed": 0,
@@ -308,7 +308,7 @@
     "total_files": 49,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-01-12T15:03:56.487362",
+  "last_updated": "2026-01-12T18:02:43.780404",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

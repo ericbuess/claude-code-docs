@@ -43,11 +43,9 @@ To install Claude Code, use one of the following methods:
     ```
   </Tab>
 
-  <Tab title="NPM">
-    If you have [Node.js 18 or newer installed](https://nodejs.org/en/download/):
-
-    ```sh  theme={null}
-    npm install -g @anthropic-ai/claude-code
+  <Tab title="WinGet">
+    ```powershell  theme={null}
+    winget install Anthropic.ClaudeCode
     ```
   </Tab>
 </Tabs>
