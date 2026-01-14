@@ -221,7 +221,7 @@ Suppose you want to use specialized AI subagents to handle specific tasks more e
 
 ## Use Plan Mode for safe code analysis
 
-Plan Mode instructs Claude to create a plan by analyzing the codebase with read-only operations, perfect for exploring codebases, planning complex changes, or reviewing code safely.
+Plan Mode instructs Claude to create a plan by analyzing the codebase with read-only operations, perfect for exploring codebases, planning complex changes, or reviewing code safely. In Plan Mode, Claude uses [`AskUserQuestion`](/en/settings#tools-available-to-claude) to gather requirements and clarify your goals before proposing a plan.
 
 ### When to use Plan Mode
 
@@ -282,6 +282,34 @@ Claude analyzes the current implementation and create a comprehensive plan. Refi
 ```
 
 See [settings documentation](/en/settings#available-settings) for more configuration options.
+
+## Let Claude interview you
+
+For large features, start with a minimal spec and let Claude interview you to fill in the details:
+
+```
+> Interview me about this feature before you start: user notification system
+```
+
+```
+> Help me think through the requirements for authentication by asking questions
+```
+
+```
+> Ask me clarifying questions to build out this spec: payment processing
+```
+
+Claude uses the [`AskUserQuestion`](/en/settings#tools-available-to-claude) tool to ask you multiple-choice questions for gathering requirements, clarifying ambiguity, and understanding your preferences before writing any code. This collaborative approach produces better specs than trying to anticipate every requirement upfront.
+
+This behavior is most active in Plan Mode. To encourage it in other modes, add guidance to your `CLAUDE.md` file:
+
+```markdown  theme={null}
+Always ask clarifying questions when there are multiple valid approaches to a task.
+```
+
+<Note>
+  If you're building applications with the Agent SDK and want to surface clarifying questions to your users programmatically, see [Handle approvals and user input](https://platform.claude.com/docs/en/agent-sdk/user-input#handle-clarifying-questions).
+</Note>
 
 ***
 

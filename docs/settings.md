@@ -742,7 +742,7 @@ Claude Code has access to a set of powerful tools that help it understand and mo
 
 | Tool                | Description                                                                                       | Permission Required |
 | :------------------ | :------------------------------------------------------------------------------------------------ | :------------------ |
-| **AskUserQuestion** | Asks the user multiple choice questions to gather information or clarify ambiguity                | No                  |
+| **AskUserQuestion** | Asks multiple-choice questions to gather requirements or clarify ambiguity                        | No                  |
 | **Bash**            | Executes shell commands in your environment (see [Bash tool behavior](#bash-tool-behavior) below) | Yes                 |
 | **BashOutput**      | Retrieves output from a background bash shell                                                     | No                  |
 | **Edit**            | Makes targeted edits to specific files                                                            | Yes                 |
