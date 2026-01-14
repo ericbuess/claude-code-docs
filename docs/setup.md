@@ -23,31 +23,31 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
   </Tab>
 
   <Tab title="Homebrew">
-    ```sh  theme={null}
+    ```sh theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null}
     winget install Anthropic.ClaudeCode
     ```
   </Tab>
@@ -85,46 +85,73 @@ If you encounter any issues during installation, consult the [troubleshooting gu
 
 ### Install a specific version
 
-To install a specific version of Claude Code with the native installer:
+The native installer accepts either a specific version number or a release channel (`latest` or `stable`). The channel you choose at install time becomes your default for auto-updates. See [Configure release channel](#configure-release-channel) for more information.
 
-**macOS, Linux, WSL:**
+To install the latest version (default):
 
-```bash  theme={null}
-# Install stable version (default)
-curl -fsSL https://claude.ai/install.sh | bash
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash  theme={null}
+    curl -fsSL https://claude.ai/install.sh | bash
+    ```
+  </Tab>
 
-# Install latest version
-curl -fsSL https://claude.ai/install.sh | bash -s latest
+  <Tab title="Windows PowerShell">
+    ```powershell  theme={null}
+    irm https://claude.ai/install.ps1 | iex
+    ```
+  </Tab>
 
-# Install specific version number
-curl -fsSL https://claude.ai/install.sh | bash -s 1.0.58
-```
+  <Tab title="Windows CMD">
+    ```batch  theme={null}
+    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+    ```
+  </Tab>
+</Tabs>
 
-**Windows PowerShell:**
+To install the stable version:
 
-```powershell  theme={null}
-# Install stable version (default)
-irm https://claude.ai/install.ps1 | iex
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash  theme={null}
+    curl -fsSL https://claude.ai/install.sh | bash -s stable
+    ```
+  </Tab>
 
-# Install latest version
-& ([scriptblock]::Create((irm https://claude.ai/install.ps1))) latest
+  <Tab title="Windows PowerShell">
+    ```powershell  theme={null}
+    & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) stable
+    ```
+  </Tab>
 
-# Install specific version number
-& ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 1.0.58
-```
+  <Tab title="Windows CMD">
+    ```batch  theme={null}
+    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd stable && del install.cmd
+    ```
+  </Tab>
+</Tabs>
 
-**Windows CMD:**
+To install a specific version number:
 
-```batch  theme={null}
-REM Install stable version (default)
-curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash  theme={null}
+    curl -fsSL https://claude.ai/install.sh | bash -s 1.0.58
+    ```
+  </Tab>
 
-REM Install latest version
-curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd latest && del install.cmd
+  <Tab title="Windows PowerShell">
+    ```powershell  theme={null}
+    & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 1.0.58
+    ```
+  </Tab>
 
-REM Install specific version number
-curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 1.0.58 && del install.cmd
-```
+  <Tab title="Windows CMD">
+    ```batch  theme={null}
+    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 1.0.58 && del install.cmd
+    ```
+  </Tab>
+</Tabs>
 
 ### Binary integrity and code signing
 
@@ -179,7 +206,24 @@ Claude Code automatically keeps itself up to date to ensure you have the latest 
   **Known issue:** Claude Code may notify you of updates before the new version is available in these package managers. If an upgrade fails, wait and try again later.
 </Note>
 
-**Disable auto-updates:**
+### Configure release channel
+
+Configure which release channel Claude Code follows for both auto-updates and `claude update` with the `autoUpdatesChannel` setting:
+
+* `"latest"` (default): Receive new features as soon as they're released
+* `"stable"`: Use a version that is typically about one week old, skipping releases with major regressions
+
+Configure this via `/config` → **Auto-update channel**, or add it to your [settings.json file](/en/settings):
+
+```json  theme={null}
+{
+  "autoUpdatesChannel": "stable"
+}
+```
+
+For enterprise deployments, you can enforce a consistent release channel across your organization using [managed settings](/en/iam#managed-settings).
+
+### Disable auto-updates
 
 Set the `DISABLE_AUTOUPDATER` environment variable in your shell or [settings.json file](/en/settings):
 
