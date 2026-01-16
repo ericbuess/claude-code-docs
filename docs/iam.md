@@ -134,9 +134,11 @@ Bash permission rules support both prefix matching with `:*` and wildcard matchi
 
   For more reliable URL filtering, consider:
 
-  * Using the WebFetch tool with `WebFetch(domain:github.com)` permission
+  * **Restrict Bash network tools**: Use deny rules to block `curl`, `wget`, and similar commands, then use the WebFetch tool with `WebFetch(domain:github.com)` permission for allowed domains
+  * **Use PreToolUse hooks**: Implement a hook that validates URLs in Bash commands and blocks disallowed domains
   * Instructing Claude Code about your allowed curl patterns via CLAUDE.md
-  * Using hooks for custom permission validation
+
+  Note that using WebFetch alone does not prevent network access. If Bash is allowed, Claude can still use `curl`, `wget`, or other tools to reach any URL.
 </Warning>
 
 **Read & Edit**
