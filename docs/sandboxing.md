@@ -216,7 +216,7 @@ For implementation details and source code, visit the [GitHub repository](https:
 * [Security](/en/security) - Comprehensive security features and best practices
 * [IAM](/en/iam) - Permission configuration and access control
 * [Settings](/en/settings) - Complete configuration reference
-* [CLI reference](/en/cli-reference) - Command-line options including `-sb`
+* [CLI reference](/en/cli-reference) - Command-line options
 
 
 ---

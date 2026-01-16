@@ -63,6 +63,8 @@ Your status line command receives structured data via stdin in JSON format:
     "total_input_tokens": 15234,
     "total_output_tokens": 4521,
     "context_window_size": 200000,
+    "used_percentage": 42.5,
+    "remaining_percentage": 57.5,
     "current_usage": {
       "input_tokens": 8500,
       "output_tokens": 1200,
@@ -207,13 +209,29 @@ echo "[$MODEL] 📁 ${DIR##*/}"
 Display the percentage of context window consumed. The `context_window` object contains:
 
 * `total_input_tokens` / `total_output_tokens`: Cumulative totals across the entire session
+* `used_percentage`: Pre-calculated percentage of context window used (0-100)
+* `remaining_percentage`: Pre-calculated percentage of context window remaining (0-100)
 * `current_usage`: Current context window usage from the last API call (may be `null` if no messages yet)
   * `input_tokens`: Input tokens in current context
   * `output_tokens`: Output tokens generated
   * `cache_creation_input_tokens`: Tokens written to cache
   * `cache_read_input_tokens`: Tokens read from cache
 
-For accurate context percentage, use `current_usage` which reflects the actual context window state:
+You can use the pre-calculated `used_percentage` and `remaining_percentage` fields directly, or calculate from `current_usage` for more control.
+
+**Simple approach using pre-calculated percentages:**
+
+```bash  theme={null}
+#!/bin/bash
+input=$(cat)
+
+MODEL=$(echo "$input" | jq -r '.model.display_name')
+PERCENT_USED=$(echo "$input" | jq -r '.context_window.used_percentage // 0')
+
+echo "[$MODEL] Context: ${PERCENT_USED}%"
+```
+
+**Advanced approach with manual calculation:**
 
 ```bash  theme={null}
 #!/bin/bash

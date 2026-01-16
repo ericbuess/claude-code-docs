@@ -809,6 +809,10 @@ Additionally, hooks can modify tool inputs before execution using `updatedInput`
 * Combine with `"permissionDecision": "allow"` to modify the input and auto-approve the tool call
 * Combine with `"permissionDecision": "ask"` to modify the input and show it to the user for confirmation
 
+Hooks can also provide context to Claude using `additionalContext`:
+
+* `"hookSpecificOutput.additionalContext"` adds a string to Claude's context before the tool executes.
+
 ```json  theme={null}
 {
   "hookSpecificOutput": {
@@ -817,7 +821,8 @@ Additionally, hooks can modify tool inputs before execution using `updatedInput`
     "permissionDecisionReason": "My reason here",
     "updatedInput": {
       "field_to_modify": "new value"
-    }
+    },
+    "additionalContext": "Current environment: production. Proceed with caution."
   }
 }
 ```

@@ -530,39 +530,25 @@ Use @ to quickly include files or directories without waiting for Claude to read
 
 ## Use extended thinking (thinking mode)
 
-[Extended thinking](https://docs.claude.com/en/docs/build-with-claude/extended-thinking) reserves a portion of the total output token budget for Claude to reason through complex problems step-by-step. This reasoning is visible in verbose mode, which you can toggle on with `Ctrl+O`.
+[Extended thinking](https://docs.claude.com/en/docs/build-with-claude/extended-thinking) is enabled by default, reserving a portion of the output token budget (up to 31,999 tokens) for Claude to reason through complex problems step-by-step. This reasoning is visible in verbose mode, which you can toggle on with `Ctrl+O`.
 
 Extended thinking is particularly valuable for complex architectural decisions, challenging bugs, multi-step implementation planning, and evaluating tradeoffs between different approaches. It provides more space for exploring multiple solutions, analyzing edge cases, and self-correcting mistakes.
 
 <Note>
-  Sonnet 4.5 and Opus 4.5 have thinking enabled by default. All other models have thinking disabled by default. Use `/model` to view or switch your current model.
+  Phrases like "think", "think hard", "ultrathink", and "think more" are interpreted as regular prompt instructions and don't allocate thinking tokens.
 </Note>
 
-You can configure thinking mode for Claude Code in several ways:
+### Configure thinking mode
 
-| Scope                             | How to enable                                                                        | Details                                                                                                                                          |
-| --------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Toggle shortcut**               | Press `Option+T` (macOS) or `Alt+T` (Windows/Linux)                                  | Toggle thinking on/off. May require [terminal configuration](/en/terminal-config) to enable Option key shortcuts                                 |
-| **Global default**                | Use `/config` to toggle thinking mode on                                             | Sets your default across all projects.<br />Saved as `alwaysThinkingEnabled` in `~/.claude/settings.json`                                        |
-| **Environment variable override** | Set [`MAX_THINKING_TOKENS`](/en/settings#environment-variables) environment variable | When set, applies a custom token budget to all requests, overriding your thinking mode configuration. Example: `export MAX_THINKING_TOKENS=1024` |
+Thinking is enabled by default, but you can adjust or disable it.
 
-### Per-request thinking with `ultrathink`
-
-You can include `ultrathink` as a keyword in your message to enable thinking for a single request:
-
-```
-> ultrathink: design a caching layer for our API
-```
-
-Note that `ultrathink` both allocates the thinking budget AND semantically signals to Claude to reason more thoroughly, which may result in deeper thinking than necessary for your task.
-
-The `ultrathink` keyword only works when `MAX_THINKING_TOKENS` is not set. When `MAX_THINKING_TOKENS` is configured, it takes priority and controls the thinking budget for all requests.
-
-Other phrases like "think", "think hard", and "think more" are interpreted as regular prompt instructions and don't allocate thinking tokens.
+| Scope                  | How to configure                                                                     | Details                                                                                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Toggle shortcut**    | Press `Option+T` (macOS) or `Alt+T` (Windows/Linux)                                  | Toggle thinking on/off for the current session. May require [terminal configuration](/en/terminal-config) to enable Option key shortcuts |
+| **Global default**     | Use `/config` to toggle thinking mode                                                | Sets your default across all projects.<br />Saved as `alwaysThinkingEnabled` in `~/.claude/settings.json`                                |
+| **Limit token budget** | Set [`MAX_THINKING_TOKENS`](/en/settings#environment-variables) environment variable | Limit the thinking budget to a specific number of tokens. Example: `export MAX_THINKING_TOKENS=10000`                                    |
 
 To view Claude's thinking process, press `Ctrl+O` to toggle verbose mode and see the internal reasoning displayed as gray italic text.
-
-See the [token budget section below](#how-extended-thinking-token-budgets-work) for detailed budget information and cost implications.
 
 ### How extended thinking token budgets work
 
@@ -576,13 +562,13 @@ A larger thinking token budget provides:
 
 Token budgets for thinking mode:
 
-* When thinking is **enabled** (via `/config` or `ultrathink`), Claude can use up to **31,999 tokens** from your output budget for internal reasoning
-* When thinking is **disabled**, Claude uses **0 tokens** for thinking
+* When thinking is **enabled**, Claude can use up to **31,999 tokens** from your output budget for internal reasoning
+* When thinking is **disabled** (via toggle or `/config`), Claude uses **0 tokens** for thinking
 
-**Custom token budgets:**
+**Limit the thinking budget:**
 
-* You can set a custom thinking token budget using the [`MAX_THINKING_TOKENS` environment variable](/en/settings#environment-variables)
-* This takes highest priority and overrides the default 31,999 token budget
+* Use the [`MAX_THINKING_TOKENS` environment variable](/en/settings#environment-variables) to cap the thinking budget
+* When set, this value limits the maximum tokens Claude can use for thinking
 * See the [extended thinking documentation](https://docs.claude.com/en/docs/build-with-claude/extended-thinking) for valid token ranges
 
 <Warning>
