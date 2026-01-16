@@ -499,7 +499,7 @@ Subagent transcripts persist independently of the main conversation:
 
 #### Auto-compaction
 
-Subagents support automatic compaction using the same logic as the main conversation. When a subagent's context approaches its limit, Claude Code summarizes older messages to free up space while preserving important context.
+Subagents support automatic compaction using the same logic as the main conversation. By default, auto-compaction triggers at approximately 95% capacity. To trigger compaction earlier, set `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` to a lower percentage (for example, `50`). See [environment variables](/en/settings#environment-variables) for details.
 
 Compaction events are logged in subagent transcript files:
 

@@ -62,7 +62,7 @@ The TPM per user decreases as team size grows because we expect fewer users to u
 
 * **Compact conversations:**
 
-  * Claude uses auto-compact by default when context exceeds 95% capacity
+  * Claude uses auto-compact by default when context reaches approximately 95% capacity. To trigger compaction earlier, set [`CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`](/en/settings#environment-variables) to a lower percentage (for example, `50`)
   * Toggle auto-compact: Run `/config` and navigate to "Auto-compact enabled"
   * Use `/compact` manually when context gets large
   * Add custom instructions: `/compact Focus on code samples and API usage`
