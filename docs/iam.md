@@ -70,15 +70,22 @@ Claude Code uses a tiered permission system to balance power and safety:
 
 You can view & manage Claude Code's tool permissions with `/permissions`. This UI lists all permission rules and the settings.json file they are sourced from.
 
-* **Allow** rules will allow Claude Code to use the specified tool without further manual approval.
-* **Ask** rules will ask the user for confirmation whenever Claude Code tries to use the specified tool. Ask rules take precedence over allow rules.
-* **Deny** rules will prevent Claude Code from using the specified tool. Deny rules take precedence over allow and ask rules.
+* **Allow** rules let Claude Code use the specified tool without manual approval.
+* **Ask** rules prompt for confirmation whenever Claude Code tries to use the specified tool.
+* **Deny** rules prevent Claude Code from using the specified tool.
+
+Rules are evaluated in order: **deny → ask → allow**. The first matching rule wins, so deny rules always take precedence.
+
 * **Additional directories** extend Claude's file access to directories beyond the initial working directory.
 * **Default mode** controls Claude's permission behavior when encountering new requests.
 
 Permission rules use the format: `Tool` or `Tool(optional-specifier)`
 
-A rule that is just the tool name matches any use of that tool. For example, adding `Bash` to the list of allow rules would allow Claude Code to use the Bash tool without requiring user approval.
+A rule that is just the tool name matches any use of that tool. For example, adding `Bash` to the allow list allows Claude Code to use the Bash tool without requiring user approval. Note that `Bash(*)` does **not** match all Bash commands. Use `Bash` without parentheses to match all uses.
+
+<Note>
+  For a quick reference on permission rule syntax including wildcards, see [Permission rule syntax](/en/settings#permission-rule-syntax) in the settings documentation.
+</Note>
 
 #### Permission modes
 
