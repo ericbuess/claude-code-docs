@@ -301,6 +301,10 @@ For large features, start with a minimal spec and let Claude interview you to fi
 
 Claude uses the [`AskUserQuestion`](/en/settings#tools-available-to-claude) tool to ask you multiple-choice questions for gathering requirements, clarifying ambiguity, and understanding your preferences before writing any code. This collaborative approach produces better specs than trying to anticipate every requirement upfront.
 
+<Tip>
+  When you select "Type something" to provide a custom answer, press **Ctrl+G** to open your default text editor for longer responses.
+</Tip>
+
 This behavior is most active in Plan Mode. To encourage it in other modes, add guidance to your `CLAUDE.md` file:
 
 ```markdown  theme={null}

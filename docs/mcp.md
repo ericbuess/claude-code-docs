@@ -37,8 +37,12 @@ export const MCPServersTable = ({platform = "all"}) => {
             mcpConnector: worksWith.includes('claude-api'),
             claudeDesktop: worksWith.includes('claude-desktop')
           };
-          const remoteUrl = server.remotes?.[0]?.url || meta.url;
-          const remoteType = server.remotes?.[0]?.type;
+          const remotes = server.remotes || [];
+          const httpRemote = remotes.find(r => r.type === 'streamable-http');
+          const sseRemote = remotes.find(r => r.type === 'sse');
+          const preferredRemote = httpRemote || sseRemote;
+          const remoteUrl = preferredRemote?.url || meta.url;
+          const remoteType = preferredRemote?.type;
           const isTemplatedUrl = remoteUrl?.includes('{');
           let setupUrl;
           if (isTemplatedUrl && meta.requiredFields) {
