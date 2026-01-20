@@ -10,17 +10,35 @@ This reference provides complete technical specifications for the Claude Code pl
 
 ## Plugin components reference
 
-This section documents the five types of components that plugins can provide.
+This section documents the types of components that plugins can provide.
 
-### Commands
+### Skills
 
-Plugins add custom slash commands that integrate seamlessly with Claude Code's command system.
+Plugins add skills to Claude Code, creating `/name` shortcuts that you or Claude can invoke.
 
-**Location**: `commands/` directory in plugin root
+**Location**: `skills/` or `commands/` directory in plugin root
 
-**File format**: Markdown files with frontmatter
+**File format**: Skills are directories with `SKILL.md`; commands are simple markdown files
 
-For complete details on plugin command structure, invocation patterns, and features, see [Plugin commands](/en/slash-commands#plugin-commands).
+**Skill structure**:
+
+```
+skills/
+├── pdf-processor/
+│   ├── SKILL.md
+│   ├── reference.md (optional)
+│   └── scripts/ (optional)
+└── code-reviewer/
+    └── SKILL.md
+```
+
+**Integration behavior**:
+
+* Skills and commands are automatically discovered when the plugin is installed
+* Claude can invoke them automatically based on task context
+* Skills can include supporting files alongside SKILL.md
+
+For complete details, see [Skills](/en/skills).
 
 ### Agents
 
@@ -57,37 +75,6 @@ Provide examples of when this agent should be used and what kinds of problems it
 * Claude can invoke agents automatically based on task context
 * Agents can be invoked manually by users
 * Plugin agents work alongside built-in Claude agents
-
-### Skills
-
-Plugins can provide Agent Skills that extend Claude's capabilities. Skills are model-invoked—Claude autonomously decides when to use them based on the task context.
-
-**Location**: `skills/` directory in plugin root
-
-**File format**: Directories containing `SKILL.md` files with frontmatter
-
-**Skill structure**:
-
-```
-skills/
-├── pdf-processor/
-│   ├── SKILL.md
-│   ├── reference.md (optional)
-│   └── scripts/ (optional)
-└── code-reviewer/
-    └── SKILL.md
-```
-
-**Integration behavior**:
-
-* Plugin Skills are automatically discovered when the plugin is installed
-* Claude autonomously invokes Skills based on matching task context
-* Skills can include supporting files alongside SKILL.md
-
-For SKILL.md format and complete Skill authoring guidance, see:
-
-* [Use Skills in Claude Code](/en/skills)
-* [Agent Skills overview](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview#skill-structure)
 
 ### Hooks
 
@@ -478,15 +465,15 @@ enterprise-plugin/
 
 ### File locations reference
 
-| Component       | Default Location             | Purpose                          |
-| :-------------- | :--------------------------- | :------------------------------- |
-| **Manifest**    | `.claude-plugin/plugin.json` | Required metadata file           |
-| **Commands**    | `commands/`                  | Slash command Markdown files     |
-| **Agents**      | `agents/`                    | Subagent Markdown files          |
-| **Skills**      | `skills/`                    | Agent Skills with SKILL.md files |
-| **Hooks**       | `hooks/hooks.json`           | Hook configuration               |
-| **MCP servers** | `.mcp.json`                  | MCP server definitions           |
-| **LSP servers** | `.lsp.json`                  | Language server configurations   |
+| Component       | Default Location             | Purpose                                                     |
+| :-------------- | :--------------------------- | :---------------------------------------------------------- |
+| **Manifest**    | `.claude-plugin/plugin.json` | Required metadata file                                      |
+| **Commands**    | `commands/`                  | Skill Markdown files (legacy; use `skills/` for new skills) |
+| **Agents**      | `agents/`                    | Subagent Markdown files                                     |
+| **Skills**      | `skills/`                    | Skills with `<name>/SKILL.md` structure                     |
+| **Hooks**       | `hooks/hooks.json`           | Hook configuration                                          |
+| **MCP servers** | `.mcp.json`                  | MCP server definitions                                      |
+| **LSP servers** | `.lsp.json`                  | Language server configurations                              |
 
 ***
 
@@ -735,9 +722,8 @@ Follow semantic versioning for plugin releases:
 
 * [Plugins](/en/plugins) - Tutorials and practical usage
 * [Plugin marketplaces](/en/plugin-marketplaces) - Creating and managing marketplaces
-* [Slash commands](/en/slash-commands) - Command development details
+* [Skills](/en/skills) - Skill development details
 * [Subagents](/en/sub-agents) - Agent configuration and capabilities
-* [Agent Skills](/en/skills) - Extend Claude's capabilities
 * [Hooks](/en/hooks) - Event handling and automation
 * [MCP](/en/mcp) - External tool integration
 * [Settings](/en/settings) - Configuration options for plugins

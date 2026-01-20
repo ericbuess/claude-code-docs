@@ -142,7 +142,6 @@ For most use cases, `--append-system-prompt` or `--append-system-prompt-file` is
 
 * [Chrome extension](/en/chrome) - Browser automation and web testing
 * [Interactive mode](/en/interactive-mode) - Shortcuts, input modes, and interactive features
-* [Slash commands](/en/slash-commands) - Interactive session commands
 * [Quickstart guide](/en/quickstart) - Getting started with Claude Code
 * [Common workflows](/en/common-workflows) - Advanced workflows and patterns
 * [Settings](/en/settings) - Configuration options

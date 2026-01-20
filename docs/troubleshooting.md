@@ -223,7 +223,7 @@ If Claude Code seems unresponsive:
 
 ### Search and discovery issues
 
-If Search tool, `@file` mentions, custom agents, and custom slash commands aren't working, install system `ripgrep`:
+If Search tool, `@file` mentions, custom agents, and custom skills aren't working, install system `ripgrep`:
 
 ```bash  theme={null}
 # macOS (Homebrew)  

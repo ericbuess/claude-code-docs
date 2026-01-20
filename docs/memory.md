@@ -56,7 +56,7 @@ Claude will also discover CLAUDE.md nested in subtrees under your current workin
 
 ## Directly edit memories with `/memory`
 
-Use the `/memory` slash command during a session to open any memory file in your system editor for more extensive additions or organization.
+Use the `/memory` command during a session to open any memory file in your system editor for more extensive additions or organization.
 
 ## Set up project memory
 

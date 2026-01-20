@@ -156,7 +156,7 @@ jobs:
           # Responds to @claude mentions in comments
 ```
 
-### Using slash commands
+### Using skills
 
 ```yaml  theme={null}
 name: Code Review
@@ -266,7 +266,7 @@ The Claude Code Action v1 simplifies configuration with unified parameters:
 Key features:
 
 * **Unified prompt interface** - Use `prompt` for all instructions
-* **Slash commands** - Pre-built prompts like `/review` or `/fix`
+* **Commands** - Prebuilt prompts like `/review` or `/fix`
 * **CLI passthrough** - Any Claude Code CLI argument via `claude_args`
 * **Flexible triggers** - Works with any GitHub event
 
@@ -623,15 +623,15 @@ Confirm API key is valid and has sufficient permissions. For Bedrock/Vertex, che
 
 The Claude Code Action v1 uses a simplified configuration:
 
-| Parameter           | Description                                     | Required |
-| ------------------- | ----------------------------------------------- | -------- |
-| `prompt`            | Instructions for Claude (text or slash command) | No\*     |
-| `claude_args`       | CLI arguments passed to Claude Code             | No       |
-| `anthropic_api_key` | Claude API key                                  | Yes\*\*  |
-| `github_token`      | GitHub token for API access                     | No       |
-| `trigger_phrase`    | Custom trigger phrase (default: "@claude")      | No       |
-| `use_bedrock`       | Use AWS Bedrock instead of Claude API           | No       |
-| `use_vertex`        | Use Google Vertex AI instead of Claude API      | No       |
+| Parameter           | Description                                            | Required |
+| ------------------- | ------------------------------------------------------ | -------- |
+| `prompt`            | Instructions for Claude (text or skill like `/review`) | No\*     |
+| `claude_args`       | CLI arguments passed to Claude Code                    | No       |
+| `anthropic_api_key` | Claude API key                                         | Yes\*\*  |
+| `github_token`      | GitHub token for API access                            | No       |
+| `trigger_phrase`    | Custom trigger phrase (default: "@claude")             | No       |
+| `use_bedrock`       | Use AWS Bedrock instead of Claude API                  | No       |
+| `use_vertex`        | Use Google Vertex AI instead of Claude API             | No       |
 
 \*Prompt is optional - when omitted for issue/PR comments, Claude responds to trigger phrase\
 \*\*Required for direct Claude API, not for Bedrock/Vertex

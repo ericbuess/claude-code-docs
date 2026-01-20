@@ -146,9 +146,9 @@ ensuring they work regardless of Claude's current directory:
 
 See the [plugin components reference](/en/plugins-reference#hooks) for details on creating plugin hooks.
 
-### Hooks in Skills, Agents, and Slash Commands
+### Hooks in skills and agents
 
-In addition to settings files and plugins, hooks can be defined directly in [Skills](/en/skills), [subagents](/en/sub-agents), and [slash commands](/en/slash-commands) using frontmatter. These hooks are scoped to the component's lifecycle and only run when that component is active.
+In addition to settings files and plugins, hooks can be defined directly in [skills](/en/skills) and [subagents](/en/sub-agents) using frontmatter. These hooks are scoped to the component's lifecycle and only run when that component is active.
 
 **Supported events**: `PreToolUse`, `PostToolUse`, and `Stop`
 
@@ -184,9 +184,9 @@ hooks:
 
 Component-scoped hooks follow the same configuration format as settings-based hooks but are automatically cleaned up when the component finishes executing.
 
-**Additional option for skills and slash commands:**
+**Additional option for skills:**
 
-* `once`: Set to `true` to run the hook only once per session. After the first successful execution, the hook is removed. Note: This option is currently only supported for skills and slash commands, not for agents.
+* `once`: Set to `true` to run the hook only once per session. After the first successful execution, the hook is removed. Note: This option is currently only supported for skills, not for agents.
 
 ## Prompt-Based Hooks
 

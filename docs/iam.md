@@ -104,7 +104,7 @@ Claude Code supports several permission modes that can be set as the `defaultMod
 By default, Claude has access to files in the directory where it was launched. You can extend this access:
 
 * **During startup**: Use `--add-dir <path>` CLI argument
-* **During session**: Use `/add-dir` slash command
+* **During session**: Use `/add-dir` command
 * **Persistent configuration**: Add to `additionalDirectories` in [settings files](/en/settings#settings-files)
 
 Files in additional directories follow the same permission rules as the original working directory - they become readable without prompts, and file editing permissions follow the current permission mode.

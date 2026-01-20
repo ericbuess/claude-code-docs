@@ -136,7 +136,7 @@ Open the Command Palette (`Cmd+Shift+P` on Mac or `Ctrl+Shift+P` on Windows/Linu
 Some shortcuts depend on which panel is "focused" (receiving keyboard input). When your cursor is in a code file, the editor is focused. When your cursor is in Claude's prompt box, Claude is focused. Use `Cmd+Esc` / `Ctrl+Esc` to toggle between them.
 
 <Note>
-  These are VS Code commands for controlling the extension. For Claude Code built-in commands (like `/help` or `/compact`), some CLI commands are only available in the terminal. See [VS Code extension vs. Claude Code CLI](#vs-code-extension-vs-claude-code-cli) for details.
+  These are VS Code commands for controlling the extension. Not all built-in Claude Code commands are available in the extension. See [VS Code extension vs. Claude Code CLI](#vs-code-extension-vs-claude-code-cli) for details.
 </Note>
 
 | Command                    | Shortcut                                                 | Description                                                                          |
@@ -180,13 +180,13 @@ The extension has two types of settings:
 
 Claude Code is available as both a VS Code extension (graphical panel) and a CLI (command-line interface in the terminal). Some features are only available in the CLI. If you need a CLI-only feature, run `claude` in VS Code's integrated terminal.
 
-| Feature           | CLI                            | VS Code Extension                        |
-| ----------------- | ------------------------------ | ---------------------------------------- |
-| Built-in commands | [Full set](/en/slash-commands) | Subset (type `/` to see available)       |
-| MCP server config | Yes                            | No (configure via CLI, use in extension) |
-| Checkpoints       | Yes                            | Coming soon                              |
-| `!` bash shortcut | Yes                            | No                                       |
-| Tab completion    | Yes                            | No                                       |
+| Feature             | CLI                                           | VS Code Extension                        |
+| ------------------- | --------------------------------------------- | ---------------------------------------- |
+| Commands and skills | [All](/en/interactive-mode#built-in-commands) | Subset (type `/` to see available)       |
+| MCP server config   | Yes                                           | No (configure via CLI, use in extension) |
+| Checkpoints         | Yes                                           | Coming soon                              |
+| `!` bash shortcut   | Yes                                           | No                                       |
+| Tab completion      | Yes                                           | No                                       |
 
 ### Run CLI in VS Code
 

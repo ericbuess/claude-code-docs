@@ -68,7 +68,7 @@ Beyond these built-in subagents, you can create your own with custom prompts, to
 
 ## Quickstart: create your first subagent
 
-Subagents are defined in Markdown files with YAML frontmatter. You can [create them manually](#write-subagent-files) or use the `/agents` slash command.
+Subagents are defined in Markdown files with YAML frontmatter. You can [create them manually](#write-subagent-files) or use the `/agents` command.
 
 This walkthrough guides you through creating a user-level subagent with the `/agent` command. The subagent reviews code and suggests improvements for the codebase.
 
@@ -251,6 +251,28 @@ The `permissionMode` field controls how the subagent handles permission prompts.
 </Warning>
 
 If the parent uses `bypassPermissions`, this takes precedence and cannot be overridden.
+
+#### Preload skills into subagents
+
+Use the `skills` field to inject skill content into a subagent's context at startup. This gives the subagent domain knowledge without requiring it to discover and load skills during execution.
+
+```yaml  theme={null}
+---
+name: api-developer
+description: Implement API endpoints following team conventions
+skills:
+  - api-conventions
+  - error-handling-patterns
+---
+
+Implement API endpoints. Follow the conventions and patterns from the preloaded skills.
+```
+
+The full content of each skill is injected into the subagent's context, not just made available for invocation. Subagents don't inherit skills from the parent conversation; you must list them explicitly.
+
+<Note>
+  This is the inverse of [running a skill in a subagent](/en/skills#run-skills-in-a-subagent). With `skills` in a subagent, the subagent controls the system prompt and loads skill content. With `context: fork` in a skill, the skill content is injected into the agent you specify. Both use the same underlying system.
+</Note>
 
 #### Conditional rules with hooks
 

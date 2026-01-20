@@ -19,21 +19,26 @@ Once your marketplace is live, you can update it by pushing changes to your repo
 
 ## Walkthrough: create a local marketplace
 
-This example creates a marketplace with one plugin: a `/review` command for code reviews. You'll create the directory structure, add a slash command, create the plugin manifest and marketplace catalog, then install and test it.
+This example creates a marketplace with one plugin: a `/review` skill for code reviews. You'll create the directory structure, add a skill, create the plugin manifest and marketplace catalog, then install and test it.
 
 <Steps>
   <Step title="Create the directory structure">
     ```bash  theme={null}
     mkdir -p my-marketplace/.claude-plugin
     mkdir -p my-marketplace/plugins/review-plugin/.claude-plugin
-    mkdir -p my-marketplace/plugins/review-plugin/commands
+    mkdir -p my-marketplace/plugins/review-plugin/skills/review
     ```
   </Step>
 
-  <Step title="Create the plugin command">
-    Create a Markdown file that defines what the `/review` command does.
+  <Step title="Create the skill">
+    Create a `SKILL.md` file that defines what the `/review` skill does.
 
-    ```markdown my-marketplace/plugins/review-plugin/commands/review.md theme={null}
+    ```markdown my-marketplace/plugins/review-plugin/skills/review/SKILL.md theme={null}
+    ---
+    description: Review code for bugs, security, and performance
+    disable-model-invocation: true
+    ---
+
     Review the code I've selected or the recent changes for:
     - Potential bugs or edge cases
     - Security concerns
@@ -50,7 +55,7 @@ This example creates a marketplace with one plugin: a `/review` command for code
     ```json my-marketplace/plugins/review-plugin/.claude-plugin/plugin.json theme={null}
     {
       "name": "review-plugin",
-      "description": "Adds a /review command for quick code reviews",
+      "description": "Adds a /review skill for quick code reviews",
       "version": "1.0.0"
     }
     ```
@@ -69,7 +74,7 @@ This example creates a marketplace with one plugin: a `/review` command for code
         {
           "name": "review-plugin",
           "source": "./plugins/review-plugin",
-          "description": "Adds a /review command for quick code reviews"
+          "description": "Adds a /review skill for quick code reviews"
         }
       ]
     }

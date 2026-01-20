@@ -60,7 +60,7 @@ These OS-level restrictions ensure that all child processes spawned by Claude Co
 
 ### Enable sandboxing
 
-You can enable sandboxing by running the `/sandbox` slash command:
+You can enable sandboxing by running the `/sandbox` command:
 
 ```
 > /sandbox

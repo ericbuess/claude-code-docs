@@ -1,46 +1,40 @@
-# Agent Skills
+# Extend Claude with skills
 
-> Create, manage, and share Skills to extend Claude's capabilities in Claude Code.
+> Create, manage, and share skills to extend Claude's capabilities in Claude Code. Includes custom slash commands.
 
-A Skill is a markdown file that teaches Claude how to do something specific, such as reviewing PRs using your team's standards or generating commit messages in your preferred format. When you ask Claude something that matches a Skill's purpose, Claude automatically applies it.
+Skills extend what Claude can do. Create a `SKILL.md` file with instructions, and Claude adds it to its toolkit. Claude uses skills when relevant, or you can invoke one directly with `/skill-name`.
 
-Skills can also bundle scripts in any language. This means Claude can run Python, Node.js, Bash, or any other scripts you include, giving it capabilities far beyond what's possible in a single prompt. For example, generate interactive visualizations, query databases, process files, call APIs, or produce reports in any format. See [Generate visual output](#generate-visual-output) for an example Skill that uses a Python script to create an interactive codebase visualization.
+<Note>
+  For built-in commands like `/help` and `/compact`, see [interactive mode](/en/interactive-mode#built-in-commands).
 
-This guide covers creating Skills, configuring them with metadata and scripts, and sharing them with your team or organization.
+  **Custom slash commands have been merged into skills.** A file at `.claude/commands/review.md` and a skill at `.claude/skills/review/SKILL.md` both create `/review` and work the same way. Your existing `.claude/commands/` files keep working. Skills add optional features: a directory for supporting files, frontmatter to [control whether you or Claude invokes them](#control-who-invokes-a-skill), and the ability for Claude to load them automatically when relevant.
+</Note>
 
-## Create your first Skill
+Claude Code skills follow the [Agent Skills](https://agentskills.io) open standard, which works across multiple AI tools. Claude Code extends the standard with additional features like [invocation control](#control-who-invokes-a-skill), [subagent execution](#run-skills-in-a-subagent), and [dynamic context injection](#inject-dynamic-context).
 
-This example creates a personal Skill that teaches Claude to explain code using visual diagrams and analogies. Unlike Claude's default explanations, this Skill ensures every explanation includes an ASCII diagram and a real-world analogy.
+## Getting started
+
+### Create your first skill
+
+This example creates a skill that teaches Claude to explain code using visual diagrams and analogies. Since it uses default frontmatter, Claude can load it automatically when you ask how something works, or you can invoke it directly with `/explain-code`.
 
 <Steps>
-  <Step title="Check available Skills">
-    Before creating a Skill, see what Skills Claude already has access to:
-
-    ```
-    What Skills are available?
-    ```
-
-    Claude will list any Skills currently loaded. You may see none, or you may see Skills from plugins or your organization.
-  </Step>
-
-  <Step title="Create the Skill directory">
-    Create a directory for the Skill in your personal Skills folder. Personal Skills are available across all your projects. (You can also create [project Skills](#where-skills-live) in `.claude/skills/` to share with your team.)
+  <Step title="Create the skill directory">
+    Create a directory for the skill in your personal skills folder. Personal skills are available across all your projects.
 
     ```bash  theme={null}
-    mkdir -p ~/.claude/skills/explaining-code
+    mkdir -p ~/.claude/skills/explain-code
     ```
   </Step>
 
   <Step title="Write SKILL.md">
-    Every Skill needs a `SKILL.md` file. The file starts with YAML metadata between `---` markers and must include a `name` and `description`, followed by Markdown instructions that Claude follows when the Skill is active.
+    Every skill needs a `SKILL.md` file with two parts: YAML frontmatter (between `---` markers) that tells Claude when to use the skill, and markdown content with instructions Claude follows when the skill is invoked. The `name` field becomes the `/slash-command`, and the `description` helps Claude decide when to load it automatically.
 
-    The `description` is especially important, because Claude uses it to decide when to apply the Skill.
-
-    Create `~/.claude/skills/explaining-code/SKILL.md`:
+    Create `~/.claude/skills/explain-code/SKILL.md`:
 
     ```yaml  theme={null}
     ---
-    name: explaining-code
+    name: explain-code
     description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
     ---
 
@@ -55,133 +49,138 @@ This example creates a personal Skill that teaches Claude to explain code using 
     ```
   </Step>
 
-  <Step title="Load and verify the Skill">
-    Skills are automatically loaded when created or modified. Verify the Skill appears in the list:
+  <Step title="Test the skill">
+    You can test it two ways:
 
-    ```
-    What Skills are available?
-    ```
-
-    You should see `explaining-code` in the list with its description.
-  </Step>
-
-  <Step title="Test the Skill">
-    Open any file in your project and ask Claude a question that matches the Skill's description:
+    **Let Claude invoke it automatically** by asking something that matches the description:
 
     ```
     How does this code work?
     ```
 
-    Claude should ask to use the `explaining-code` Skill, then include an analogy and ASCII diagram in its explanation. If the Skill doesn't trigger, try rephrasing to include more keywords from the description, like "explain how this works."
+    **Or invoke it directly** with the skill name:
+
+    ```
+    /explain-code src/auth/login.ts
+    ```
+
+    Either way, Claude should include an analogy and ASCII diagram in its explanation.
   </Step>
 </Steps>
 
-The rest of this guide covers how Skills work, configuration options, and troubleshooting.
+### Where skills live
 
-## How Skills work
+Where you store a skill determines who can use it:
 
-Skills are **model-invoked**: Claude decides which Skills to use based on your request. You don't need to explicitly call a Skill. Claude automatically applies relevant Skills when your request matches their description.
+| Location   | Path                                             | Applies to                     |
+| :--------- | :----------------------------------------------- | :----------------------------- |
+| Enterprise | See [managed settings](/en/iam#managed-settings) | All users in your organization |
+| Personal   | `~/.claude/skills/<skill-name>/SKILL.md`         | All your projects              |
+| Project    | `.claude/skills/<skill-name>/SKILL.md`           | This project only              |
+| Plugin     | `<plugin>/skills/<skill-name>/SKILL.md`          | Where plugin is enabled        |
 
-When you send a request, Claude follows these steps to find and use relevant Skills:
-
-<Steps>
-  <Step title="Discovery">
-    At startup, Claude loads only the name and description of each available Skill. This keeps startup fast while giving Claude enough context to know when each Skill might be relevant.
-  </Step>
-
-  <Step title="Activation">
-    When your request matches a Skill's description, Claude asks to use the Skill. You'll see a confirmation prompt before the full `SKILL.md` is loaded into context. Since Claude reads these descriptions to find relevant Skills, [write descriptions](#skill-not-triggering) that include keywords users would naturally say.
-  </Step>
-
-  <Step title="Execution">
-    Claude follows the Skill's instructions, loading referenced files or running bundled scripts as needed.
-  </Step>
-</Steps>
-
-### Where Skills live
-
-Where you store a Skill determines who can use it:
-
-| Location   | Path                                             | Applies to                        |
-| :--------- | :----------------------------------------------- | :-------------------------------- |
-| Enterprise | See [managed settings](/en/iam#managed-settings) | All users in your organization    |
-| Personal   | `~/.claude/skills/`                              | You, across all projects          |
-| Project    | `.claude/skills/`                                | Anyone working in this repository |
-| Plugin     | Bundled with [plugins](/en/plugins)              | Anyone with the plugin installed  |
-
-If two Skills have the same name, the higher row wins: managed overrides personal, personal overrides project, and project overrides plugin.
+Project skills override personal skills with the same name. If you have files in `.claude/commands/`, those work the same way but a skill takes precedence over a command with the same name.
 
 #### Automatic discovery from nested directories
 
-When you work with files in subdirectories, Claude Code automatically discovers Skills from nested `.claude/skills/` directories. For example, if you're editing a file in `packages/frontend/`, Claude Code also looks for Skills in `packages/frontend/.claude/skills/`. This supports monorepo setups where packages have their own Skills.
+When you work with files in subdirectories, Claude Code automatically discovers skills from nested `.claude/skills/` directories. For example, if you're editing a file in `packages/frontend/`, Claude Code also looks for skills in `packages/frontend/.claude/skills/`. This supports monorepo setups where packages have their own skills.
 
-### When to use Skills versus other options
+Each skill is a directory with `SKILL.md` as the entrypoint:
 
-Claude Code offers several ways to customize behavior. The key difference: **Skills are triggered automatically by Claude** based on your request, while slash commands require you to type `/command` explicitly.
+```
+my-skill/
+├── SKILL.md           # Main instructions (required)
+├── template.md        # Template for Claude to fill in
+├── examples/
+│   └── sample.md      # Example output showing expected format
+└── scripts/
+    └── validate.sh    # Script Claude can execute
+```
 
-| Use this                                 | When you want to...                                                        | When it runs                               |
-| :--------------------------------------- | :------------------------------------------------------------------------- | :----------------------------------------- |
-| **Skills**                               | Give Claude specialized knowledge (e.g., "review PRs using our standards") | Claude chooses when relevant               |
-| **[Slash commands](/en/slash-commands)** | Create reusable prompts (e.g., `/deploy staging`)                          | You type `/command` to run it              |
-| **[CLAUDE.md](/en/memory)**              | Set project-wide instructions (e.g., "use TypeScript strict mode")         | Loaded into every conversation             |
-| **[Subagents](/en/sub-agents)**          | Delegate tasks to a separate context with its own tools                    | Claude delegates, or you invoke explicitly |
-| **[Hooks](/en/hooks)**                   | Run scripts on events (e.g., lint on file save)                            | Fires on specific tool events              |
-| **[MCP servers](/en/mcp)**               | Connect Claude to external tools and data sources                          | Claude calls MCP tools as needed           |
-
-**Skills vs. subagents**: Skills add knowledge to the current conversation. Subagents run in a separate context with their own tools. Use Skills for guidance and standards; use subagents when you need isolation or different tool access.
-
-**Skills vs. MCP**: Skills tell Claude *how* to use tools; MCP *provides* the tools. For example, an MCP server connects Claude to your database, while a Skill teaches Claude your data model and query patterns.
+The `SKILL.md` contains the main instructions and is required. Other files are optional and let you build more powerful skills: templates for Claude to fill in, example outputs showing the expected format, scripts Claude can execute, or detailed reference documentation. Reference these files from your `SKILL.md` so Claude knows what they contain and when to load them. See [Add supporting files](#add-supporting-files) for more details.
 
 <Note>
-  For a deep dive into the architecture and real-world applications of Agent Skills, read [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills).
+  Files in `.claude/commands/` still work and support the same [frontmatter](#frontmatter-reference). Skills are recommended since they support additional features like supporting files.
 </Note>
 
-## Configure Skills
+## Configure skills
 
-This section covers Skill file structure, supporting files, tool restrictions, and distribution options.
+Skills are configured through YAML frontmatter at the top of `SKILL.md` and the markdown content that follows.
 
-### Write SKILL.md
+### Types of skill content
 
-The `SKILL.md` file is the only required file in a Skill. It has two parts: YAML metadata (the section between `---` markers) at the top, and Markdown instructions that tell Claude how to use the Skill:
+Skill files can contain any instructions, but thinking about how you want to invoke them helps guide what to include:
+
+**Reference content** adds knowledge Claude applies to your current work. Conventions, patterns, style guides, domain knowledge. This content runs inline so Claude can use it alongside your conversation context.
 
 ```yaml  theme={null}
 ---
-name: your-skill-name
-description: Brief description of what this Skill does and when to use it
+name: api-conventions
+description: API design patterns for this codebase
 ---
 
-# Your Skill Name
-
-## Instructions
-Provide clear, step-by-step guidance for Claude.
-
-## Examples
-Show concrete examples of using this Skill.
+When writing API endpoints:
+- Use RESTful naming conventions
+- Return consistent error formats
+- Include request validation
 ```
 
-#### Available metadata fields
+**Task content** gives Claude step-by-step instructions for a specific action, like deployments, commits, or code generation. These are often actions you want to invoke directly with `/skill-name` rather than letting Claude decide when to run them. Add `disable-model-invocation: true` to prevent Claude from triggering it automatically.
 
-You can use the following fields in the YAML frontmatter:
+```yaml  theme={null}
+---
+name: deploy
+description: Deploy the application to production
+context: fork
+disable-model-invocation: true
+---
 
-| Field            | Required | Description                                                                                                                                                                                                                                                                                       |
-| :--------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `name`           | Yes      | Skill name. Must use lowercase letters, numbers, and hyphens only (max 64 characters). Should match the directory name.                                                                                                                                                                           |
-| `description`    | Yes      | What the Skill does and when to use it (max 1024 characters). Claude uses this to decide when to apply the Skill.                                                                                                                                                                                 |
-| `allowed-tools`  | No       | Tools Claude can use without asking permission when this Skill is active. Supports comma-separated values or YAML-style lists. See [Restrict tool access](#restrict-tool-access-with-allowed-tools).                                                                                              |
-| `model`          | No       | [Model](https://docs.claude.com/en/docs/about-claude/models/overview) to use when this Skill is active (e.g., `claude-sonnet-4-20250514`). Defaults to the conversation's model.                                                                                                                  |
-| `context`        | No       | Set to `fork` to run the Skill in a forked sub-agent context with its own conversation history.                                                                                                                                                                                                   |
-| `agent`          | No       | Specify which [agent type](/en/sub-agents#built-in-subagents) to use when `context: fork` is set (e.g., `Explore`, `Plan`, `general-purpose`, or a custom agent name from `.claude/agents/`). Defaults to `general-purpose` if not specified. Only applicable when combined with `context: fork`. |
-| `hooks`          | No       | Define hooks scoped to this Skill's lifecycle. Supports `PreToolUse`, `PostToolUse`, and `Stop` events.                                                                                                                                                                                           |
-| `user-invocable` | No       | Controls whether the Skill appears in the slash command menu. Does not affect the [`Skill` tool](/en/slash-commands#skill-tool) or automatic discovery. Defaults to `true`. See [Control Skill visibility](#control-skill-visibility).                                                            |
+Deploy the application:
+1. Run the test suite
+2. Build the application
+3. Push to the deployment target
+```
+
+Your `SKILL.md` can contain anything, but thinking through how you want the skill invoked (by you, by Claude, or both) and where you want it to run (inline or in a subagent) helps guide what to include. For complex skills, you can also [add supporting files](#add-supporting-files) to keep the main skill focused.
+
+### Frontmatter reference
+
+Beyond the markdown content, you can configure skill behavior using YAML frontmatter fields between `---` markers at the top of your `SKILL.md` file:
+
+```yaml  theme={null}
+---
+name: my-skill
+description: What this skill does
+disable-model-invocation: true
+allowed-tools: Read, Grep
+---
+
+Your skill instructions here...
+```
+
+All fields are optional. Only `description` is recommended so Claude knows when to use the skill.
+
+| Field                      | Required    | Description                                                                                                                                           |
+| :------------------------- | :---------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | No          | Display name for the skill. If omitted, uses the directory name. Lowercase letters, numbers, and hyphens only (max 64 characters).                    |
+| `description`              | Recommended | What the skill does and when to use it. Claude uses this to decide when to apply the skill. If omitted, uses the first paragraph of markdown content. |
+| `argument-hint`            | No          | Hint shown during autocomplete to indicate expected arguments. Example: `[issue-number]` or `[filename] [format]`.                                    |
+| `disable-model-invocation` | No          | Set to `true` to prevent Claude from automatically loading this skill. Use for workflows you want to trigger manually with `/name`. Default: `false`. |
+| `user-invocable`           | No          | Set to `false` to hide from the `/` menu. Use for background knowledge users shouldn't invoke directly. Default: `true`.                              |
+| `allowed-tools`            | No          | Tools Claude can use without asking permission when this skill is active.                                                                             |
+| `model`                    | No          | Model to use when this skill is active.                                                                                                               |
+| `context`                  | No          | Set to `fork` to run in a forked subagent context.                                                                                                    |
+| `agent`                    | No          | Which subagent type to use when `context: fork` is set.                                                                                               |
+| `hooks`                    | No          | Hooks scoped to this skill's lifecycle. See [Hooks](/en/hooks) for configuration format.                                                              |
 
 #### Available string substitutions
 
-Skills support string substitution for dynamic values in the Skill content:
+Skills support string substitution for dynamic values in the skill content:
 
 | Variable               | Description                                                                                                                                  |
 | :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
-| `$ARGUMENTS`           | All arguments passed when invoking the Skill. If `$ARGUMENTS` is not present in the content, arguments are appended as `ARGUMENTS: <value>`. |
-| `${CLAUDE_SESSION_ID}` | The current session ID. Useful for logging, creating session-specific files, or correlating Skill output with sessions.                      |
+| `$ARGUMENTS`           | All arguments passed when invoking the skill. If `$ARGUMENTS` is not present in the content, arguments are appended as `ARGUMENTS: <value>`. |
+| `${CLAUDE_SESSION_ID}` | The current session ID. Useful for logging, creating session-specific files, or correlating skill output with sessions.                      |
 
 **Example using substitutions:**
 
@@ -196,23 +195,9 @@ Log the following to logs/${CLAUDE_SESSION_ID}.log:
 $ARGUMENTS
 ```
 
-See the [best practices guide](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices) for complete authoring guidance including validation rules.
+### Add supporting files
 
-### Update or delete a Skill
-
-To update a Skill, edit its `SKILL.md` file directly. To remove a Skill, delete its directory. Changes take effect immediately.
-
-### Add supporting files with progressive disclosure
-
-Skills share Claude's context window with conversation history, other Skills, and your request. To keep context focused, use **progressive disclosure**: put essential information in `SKILL.md` and detailed reference material in separate files that Claude reads only when needed.
-
-This approach lets you bundle comprehensive documentation, examples, and scripts without consuming context upfront. Claude loads additional files only when the task requires them.
-
-<Tip>Keep `SKILL.md` under 500 lines for optimal performance. If your content exceeds this, split detailed reference material into separate files.</Tip>
-
-#### Example: multi-file Skill structure
-
-Claude discovers supporting files through links in your `SKILL.md`. The following example shows a Skill with detailed documentation in separate files and utility scripts that Claude can execute without reading:
+Skills can include multiple files in their directory. This keeps `SKILL.md` focused on the essentials while letting Claude access detailed reference material only when needed. Large reference docs, API specifications, or example collections don't need to load into context every time the skill runs.
 
 ```
 my-skill/
@@ -223,268 +208,214 @@ my-skill/
     └── helper.py (utility script - executed, not loaded)
 ```
 
-The `SKILL.md` file references these supporting files so Claude knows they exist:
+Reference supporting files from `SKILL.md` so Claude knows what each file contains and when to load it:
 
-````markdown  theme={null}
-## Overview
-
-[Essential instructions here]
-
+```markdown  theme={null}
 ## Additional resources
 
 - For complete API details, see [reference.md](reference.md)
 - For usage examples, see [examples.md](examples.md)
-
-## Utility scripts
-
-To validate input files, run the helper script. It checks for required fields and returns any validation errors:
-```bash
-python scripts/helper.py input.txt
-```
-````
-
-<Tip>Keep references one level deep. Link directly from `SKILL.md` to reference files. Deeply nested references (file A links to file B which links to file C) may result in Claude partially reading files.</Tip>
-
-**Bundle utility scripts for zero-context execution.** Scripts in your Skill directory can be executed without loading their contents into context. Claude runs the script and only the output consumes tokens. This is useful for:
-
-* Complex validation logic that would be verbose to describe in prose
-* Data processing that's more reliable as tested code than generated code
-* Operations that benefit from consistency across uses
-
-In `SKILL.md`, tell Claude to run the script rather than read it:
-
-```markdown  theme={null}
-Run the validation script to check the form:
-python scripts/validate_form.py input.pdf
 ```
 
-For complete guidance on structuring Skills, see the [best practices guide](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices#progressive-disclosure-patterns).
+<Tip>Keep `SKILL.md` under 500 lines. Move detailed reference material to separate files.</Tip>
 
-### Restrict tool access with allowed-tools
+### Control who invokes a skill
 
-Use the `allowed-tools` frontmatter field to limit which tools Claude can use when a Skill is active. You can specify tools as a comma-separated string or a YAML list:
+By default, both you and Claude can invoke any skill. You can type `/skill-name` to invoke it directly, and Claude can load it automatically when relevant to your conversation. Two frontmatter fields let you restrict this:
+
+* **`disable-model-invocation: true`**: Only you can invoke the skill. Use this for workflows with side effects or that you want to control timing, like `/commit`, `/deploy`, or `/send-slack-message`. You don't want Claude deciding to deploy because your code looks ready.
+
+* **`user-invocable: false`**: Only Claude can invoke the skill. Use this for background knowledge that isn't actionable as a command. A `legacy-system-context` skill explains how an old system works. Claude should know this when relevant, but `/legacy-system-context` isn't a meaningful action for users to take.
+
+This example creates a deploy skill that only you can trigger. The `disable-model-invocation: true` field prevents Claude from running it automatically:
 
 ```yaml  theme={null}
 ---
-name: reading-files-safely
-description: Read files without making changes. Use when you need read-only file access.
+name: deploy
+description: Deploy the application to production
+disable-model-invocation: true
+---
+
+Deploy $ARGUMENTS to production:
+
+1. Run the test suite
+2. Build the application
+3. Push to the deployment target
+4. Verify the deployment succeeded
+```
+
+Here's how the two fields affect invocation and context loading:
+
+| Frontmatter                      | You can invoke | Claude can invoke | When loaded into context                                     |
+| :------------------------------- | :------------- | :---------------- | :----------------------------------------------------------- |
+| (default)                        | Yes            | Yes               | Description always in context, full skill loads when invoked |
+| `disable-model-invocation: true` | Yes            | No                | Description not in context, full skill loads when you invoke |
+| `user-invocable: false`          | No             | Yes               | Description always in context, full skill loads when invoked |
+
+<Note>
+  In a regular session, skill descriptions are loaded into context so Claude knows what's available, but full skill content only loads when invoked. [Subagents with preloaded skills](/en/sub-agents#preload-skills-into-subagents) work differently: the full skill content is injected at startup.
+</Note>
+
+### Restrict tool access
+
+Use the `allowed-tools` field to limit which tools Claude can use when a skill is active. This skill creates a read-only mode where Claude can explore files but not modify them:
+
+```yaml  theme={null}
+---
+name: safe-reader
+description: Read files without making changes
 allowed-tools: Read, Grep, Glob
 ---
 ```
 
-Or use YAML-style lists for better readability:
+### Pass arguments to skills
+
+Both you and Claude can pass arguments when invoking a skill. Arguments are available via the `$ARGUMENTS` placeholder.
+
+This skill fixes a GitHub issue by number. The `$ARGUMENTS` placeholder gets replaced with whatever follows the skill name:
 
 ```yaml  theme={null}
 ---
-name: reading-files-safely
-description: Read files without making changes. Use when you need read-only file access.
-allowed-tools:
-  - Read
-  - Grep
-  - Glob
+name: fix-issue
+description: Fix a GitHub issue
+disable-model-invocation: true
 ---
+
+Fix GitHub issue $ARGUMENTS following our coding standards.
+
+1. Read the issue description
+2. Understand the requirements
+3. Implement the fix
+4. Write tests
+5. Create a commit
 ```
 
-When this Skill is active, Claude can only use the specified tools (Read, Grep, Glob) without needing to ask for permission. This is useful for:
+When you run `/fix-issue 123`, Claude receives "Fix GitHub issue 123 following our coding standards..."
 
-* Read-only Skills that shouldn't modify files
-* Skills with limited scope: for example, only data analysis, no file writing
-* Security-sensitive workflows where you want to restrict capabilities
+If you invoke a skill with arguments but the skill doesn't include `$ARGUMENTS`, Claude Code appends `ARGUMENTS: <your input>` to the end of the skill content so Claude still sees what you typed.
 
-If `allowed-tools` is omitted, the Skill doesn't restrict tools. Claude uses its standard permission model and may ask you to approve tool usage.
+## Advanced patterns
 
-<Note>
-  `allowed-tools` is only supported for Skills in Claude Code.
-</Note>
+### Inject dynamic context
 
-### Run Skills in a forked context
+The `!`command\`\` syntax runs shell commands before the skill content is sent to Claude. The command output replaces the placeholder, so Claude receives actual data, not the command itself.
 
-Use `context: fork` to run a Skill in an isolated sub-agent context with its own conversation history. This is useful for Skills that perform complex multi-step operations without cluttering the main conversation:
+This skill summarizes a pull request by fetching live PR data with the GitHub CLI. The `!`gh pr diff\`\` and other commands run first, and their output gets inserted into the prompt:
 
 ```yaml  theme={null}
 ---
-name: code-analysis
-description: Analyze code quality and generate detailed reports
+name: pr-summary
+description: Summarize changes in a pull request
 context: fork
+agent: Explore
+allowed-tools: Bash(gh:*)
 ---
+
+## Pull request context
+- PR diff: !`gh pr diff`
+- PR comments: !`gh pr view --comments`
+- Changed files: !`gh pr diff --name-only`
+
+## Your task
+Summarize this pull request...
 ```
 
-### Define hooks for Skills
+When this skill runs:
 
-Skills can define hooks that run during the Skill's lifecycle. Use the `hooks` field to specify `PreToolUse`, `PostToolUse`, or `Stop` handlers:
+1. Each `!`command\`\` executes immediately (before Claude sees anything)
+2. The output replaces the placeholder in the skill content
+3. Claude receives the fully-rendered prompt with actual PR data
+
+This is preprocessing, not something Claude executes. Claude only sees the final result.
+
+<Tip>
+  To enable [extended thinking](/en/common-workflows#use-extended-thinking) in a skill, include the word "ultrathink" anywhere in your skill content.
+</Tip>
+
+### Run skills in a subagent
+
+Add `context: fork` to your frontmatter when you want a skill to run in isolation. The skill content becomes the prompt that drives the subagent. It won't have access to your conversation history.
+
+<Warning>
+  `context: fork` only makes sense for skills with explicit instructions. If your skill contains guidelines like "use these API conventions" without a task, the subagent receives the guidelines but no actionable prompt, and returns without meaningful output.
+</Warning>
+
+Skills and [subagents](/en/sub-agents) work together in two directions:
+
+| Approach                     | System prompt                             | Task                        | Also loads                   |
+| :--------------------------- | :---------------------------------------- | :-------------------------- | :--------------------------- |
+| Skill with `context: fork`   | From agent type (`Explore`, `Plan`, etc.) | SKILL.md content            | CLAUDE.md                    |
+| Subagent with `skills` field | Subagent's markdown body                  | Claude's delegation message | Preloaded skills + CLAUDE.md |
+
+With `context: fork`, you write the task in your skill and pick an agent type to execute it. For the inverse (defining a custom subagent that uses skills as reference material), see [Subagents](/en/sub-agents#preload-skills-into-subagents).
+
+#### Example: Research skill using Explore agent
+
+This skill runs research in a forked Explore agent. The skill content becomes the task, and the agent provides read-only tools optimized for codebase exploration:
 
 ```yaml  theme={null}
 ---
-name: secure-operations
-description: Perform operations with additional security checks
-hooks:
-  PreToolUse:
-    - matcher: "Bash"
-      hooks:
-        - type: command
-          command: "./scripts/security-check.sh $TOOL_INPUT"
-          once: true
+name: deep-research
+description: Research a topic thoroughly
+context: fork
+agent: Explore
 ---
+
+Research $ARGUMENTS thoroughly:
+
+1. Find relevant files using Glob and Grep
+2. Read and analyze the code
+3. Summarize findings with specific file references
 ```
 
-The `once: true` option runs the hook only once per session. After the first successful execution, the hook is removed.
+When this skill runs:
 
-Hooks defined in a Skill are scoped to that Skill's execution and are automatically cleaned up when the Skill finishes.
+1. A new isolated context is created
+2. The subagent receives the skill content as its prompt ("Research \$ARGUMENTS thoroughly...")
+3. The `agent` field determines the execution environment (model, tools, and permissions)
+4. Results are summarized and returned to your main conversation
 
-See [Hooks](/en/hooks) for the complete hook configuration format.
+The `agent` field specifies which subagent configuration to use. Options include built-in agents (`Explore`, `Plan`, `general-purpose`) or any custom subagent from `.claude/agents/`. If omitted, uses `general-purpose`.
 
-### Control Skill visibility
+### Restrict Claude's skill access
 
-Skills can be invoked in three ways:
+By default, Claude can invoke any skill that doesn't have `disable-model-invocation: true` set. Built-in commands like `/compact` and `/init` are not available through the Skill tool.
 
-1. **Manual invocation**: You type `/skill-name` in the prompt
-2. **Programmatic invocation**: Claude calls it via the [`Skill` tool](/en/slash-commands#skill-tool)
-3. **Automatic discovery**: Claude reads the Skill's description and loads it when relevant to the conversation
+Three ways to control which skills Claude can invoke:
 
-The `user-invocable` field controls only manual invocation. When set to `false`, the Skill is hidden from the slash command menu but Claude can still invoke it programmatically or discover it automatically.
+**Disable all skills** by denying the Skill tool in `/permissions`:
 
-To block programmatic invocation via the `Skill` tool, use `disable-model-invocation: true` instead.
-
-#### When to use each setting
-
-| Setting                          | Slash menu | `Skill` tool | Auto-discovery | Use case                                                        |
-| :------------------------------- | :--------- | :----------- | :------------- | :-------------------------------------------------------------- |
-| `user-invocable: true` (default) | Visible    | Allowed      | Yes            | Skills you want users to invoke directly                        |
-| `user-invocable: false`          | Hidden     | Allowed      | Yes            | Skills that Claude can use but users shouldn't invoke manually  |
-| `disable-model-invocation: true` | Visible    | Blocked      | Yes            | Skills you want users to invoke but not Claude programmatically |
-
-#### Example: model-only Skill
-
-Set `user-invocable: false` to hide a Skill from the slash menu while still allowing Claude to invoke it programmatically:
-
-```yaml  theme={null}
----
-name: internal-review-standards
-description: Apply internal code review standards when reviewing pull requests
-user-invocable: false
----
+```
+# Add to deny rules:
+Skill
 ```
 
-With this setting, users won't see the Skill in the `/` menu, but Claude can still invoke it via the `Skill` tool or discover it automatically based on context.
+**Allow or deny specific skills** using [permission rules](/en/permissions):
 
-### Skills and subagents
+```
+# Allow only specific skills
+Skill(commit)
+Skill(review-pr:*)
 
-There are two ways Skills and subagents can work together:
-
-#### Give a subagent access to Skills
-
-[Subagents](/en/sub-agents) do not automatically inherit Skills from the main conversation. To give a custom subagent access to specific Skills, list them in the subagent's `skills` field:
-
-```yaml  theme={null}
-# .claude/agents/code-reviewer.md
----
-name: code-reviewer
-description: Review code for quality and best practices
-skills: pr-review, security-check
----
+# Deny specific skills
+Skill(deploy:*)
 ```
 
-The full content of each listed Skill is injected into the subagent's context at startup, not just made available for invocation. If the `skills` field is omitted, no Skills are loaded for that subagent.
+Permission syntax: `Skill(name)` for exact match, `Skill(name:*)` for prefix match with any arguments.
+
+**Hide individual skills** by adding `disable-model-invocation: true` to their frontmatter. This removes the skill from Claude's context entirely.
 
 <Note>
-  Built-in agents (Explore, Plan, general-purpose) do not have access to your Skills. Only custom subagents you define in `.claude/agents/` with an explicit `skills` field can use Skills.
+  The `user-invocable` field only controls menu visibility, not Skill tool access. Use `disable-model-invocation: true` to block programmatic invocation.
 </Note>
 
-#### Run a Skill in a subagent context
+## Share skills
 
-Use `context: fork` and `agent` to run a Skill in a forked subagent with its own separate context. See [Run Skills in a forked context](#run-skills-in-a-forked-context) for details.
+Skills can be distributed at different scopes depending on your audience:
 
-### Distribute Skills
-
-You can share Skills in several ways:
-
-* **Project Skills**: Commit `.claude/skills/` to version control. Anyone who clones the repository gets the Skills.
-* **Plugins**: To share Skills across multiple repositories, create a `skills/` directory in your [plugin](/en/plugins) with Skill folders containing `SKILL.md` files. Distribute through a [plugin marketplace](/en/plugin-marketplaces).
-* **Managed**: Administrators can deploy Skills organization-wide through [managed settings](/en/iam#managed-settings). See [Where Skills live](#where-skills-live) for managed Skill paths.
-
-## Examples
-
-These examples show common Skill patterns, from minimal single-file Skills to multi-file Skills with supporting documentation and scripts.
-
-### Simple Skill (single file)
-
-A minimal Skill needs only a `SKILL.md` file with frontmatter and instructions. This example helps Claude generate commit messages by examining staged changes:
-
-```
-commit-helper/
-└── SKILL.md
-```
-
-```yaml  theme={null}
----
-name: generating-commit-messages
-description: Generates clear commit messages from git diffs. Use when writing commit messages or reviewing staged changes.
----
-
-# Generating Commit Messages
-
-## Instructions
-
-1. Run `git diff --staged` to see changes
-2. I'll suggest a commit message with:
-   - Summary under 50 characters
-   - Detailed description
-   - Affected components
-
-## Best practices
-
-- Use present tense
-- Explain what and why, not how
-```
-
-### Use multiple files
-
-For complex Skills, use progressive disclosure to keep the main `SKILL.md` focused while providing detailed documentation in supporting files. This PDF processing Skill includes reference docs, utility scripts, and uses `allowed-tools` to restrict Claude to specific tools:
-
-```
-pdf-processing/
-├── SKILL.md              # Overview and quick start
-├── FORMS.md              # Form field mappings and filling instructions
-├── REFERENCE.md          # API details for pypdf and pdfplumber
-└── scripts/
-    ├── fill_form.py      # Utility to populate form fields
-    └── validate.py       # Checks PDFs for required fields
-```
-
-**`SKILL.md`**:
-
-````yaml  theme={null}
----
-name: pdf-processing
-description: Extract text, fill forms, merge PDFs. Use when working with PDF files, forms, or document extraction. Requires pypdf and pdfplumber packages.
-allowed-tools: Read, Bash(python:*)
----
-
-# PDF Processing
-
-## Quick start
-
-Extract text:
-```python
-import pdfplumber
-with pdfplumber.open("doc.pdf") as pdf:
-    text = pdf.pages[0].extract_text()
-```
-
-For form filling, see [FORMS.md](FORMS.md).
-For detailed API reference, see [REFERENCE.md](REFERENCE.md).
-
-## Requirements
-
-Packages must be installed in your environment:
-```bash
-pip install pypdf pdfplumber
-```
-````
-
-<Note>
-  If your Skill requires external packages, list them in the description. Packages must be installed in your environment before Claude can use them.
-</Note>
+* **Project skills**: Commit `.claude/skills/` to version control
+* **Plugins**: Create a `skills/` directory in your [plugin](/en/plugins)
+* **Managed**: Deploy organization-wide through [managed settings](/en/iam#managed-settings)
 
 ### Generate visual output
 
@@ -677,104 +608,36 @@ This pattern works for any visual output: dependency graphs, test coverage repor
 
 ## Troubleshooting
 
-### View and test Skills
-
-To see which Skills Claude has access to, ask Claude a question like "What Skills are available?" Claude loads all available Skill names and descriptions into the context window when a conversation starts, so it can list the Skills it currently has access to.
-
-To test a specific Skill, ask Claude to do a task that matches the Skill's description. For example, if your Skill has the description "Reviews pull requests for code quality", ask Claude to "Review the changes in my current branch." Claude automatically uses the Skill when the request matches its description.
-
 ### Skill not triggering
 
-The description field is how Claude decides whether to use your Skill. Vague descriptions like "Helps with documents" don't give Claude enough information to match your Skill to relevant requests.
+If Claude doesn't use your skill when expected:
 
-A good description answers two questions:
+1. Check the description includes keywords users would naturally say
+2. Verify the skill appears in `What skills are available?`
+3. Try rephrasing your request to match the description more closely
+4. Invoke it directly with `/skill-name` if the skill is user-invocable
 
-1. **What does this Skill do?** List the specific capabilities.
-2. **When should Claude use it?** Include trigger terms users would mention.
+### Skill triggers too often
 
-```yaml  theme={null}
-description: Extract text and tables from PDF files, fill forms, merge documents. Use when working with PDF files or when the user mentions PDFs, forms, or document extraction.
-```
+If Claude uses your skill when you don't want it:
 
-This description works because it names specific actions (extract, fill, merge) and includes keywords users would say (PDF, forms, document extraction).
+1. Make the description more specific
+2. Add `disable-model-invocation: true` if you only want manual invocation
 
-### Skill doesn't load
+### Claude doesn't see all my skills
 
-**Check the file path.** Skills must be in the correct directory with the exact filename `SKILL.md` (case-sensitive):
+Skill descriptions are loaded into context so Claude knows what's available. If you have many skills, they may exceed the character budget (default 15,000 characters). Run `/context` to check for a warning about excluded skills.
 
-| Type       | Path                                                                    |
-| :--------- | :---------------------------------------------------------------------- |
-| Personal   | `~/.claude/skills/my-skill/SKILL.md`                                    |
-| Project    | `.claude/skills/my-skill/SKILL.md`                                      |
-| Enterprise | See [Where Skills live](#where-skills-live) for platform-specific paths |
-| Plugin     | `skills/my-skill/SKILL.md` inside the plugin directory                  |
+To increase the limit, set the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable.
 
-**Check the YAML syntax.** Invalid YAML in the frontmatter prevents the Skill from loading. The frontmatter must start with `---` on line 1 (no blank lines before it), end with `---` before the Markdown content, and use spaces for indentation (not tabs).
+## Related resources
 
-**Run debug mode.** Use `claude --debug` to see Skill loading errors.
-
-### Skill has errors
-
-**Check dependencies are installed.** If your Skill uses external packages, they must be installed in your environment before Claude can use them.
-
-**Check script permissions.** Scripts need execute permissions: `chmod +x scripts/*.py`
-
-**Check file paths.** Use forward slashes (Unix style) in all paths. Use `scripts/helper.py`, not `scripts\helper.py`.
-
-### Multiple Skills conflict
-
-If Claude uses the wrong Skill or seems confused between similar Skills, the descriptions are probably too similar. Make each description distinct by using specific trigger terms.
-
-For example, instead of two Skills with "data analysis" in both descriptions, differentiate them: one for "sales data in Excel files and CRM exports" and another for "log files and system metrics". The more specific your trigger terms, the easier it is for Claude to match the right Skill to your request.
-
-### Plugin Skills not appearing
-
-**Symptom**: You installed a plugin from a marketplace, but its Skills don't appear when you ask Claude "What Skills are available?"
-
-**Solution**: Clear the plugin cache and reinstall:
-
-```bash  theme={null}
-rm -rf ~/.claude/plugins/cache
-```
-
-Then restart Claude Code and reinstall the plugin:
-
-```shell  theme={null}
-/plugin install plugin-name@marketplace-name
-```
-
-This forces Claude Code to re-download and re-register the plugin's Skills.
-
-**If Skills still don't appear**, verify the plugin's directory structure is correct. Skills must be in a `skills/` directory at the plugin root:
-
-```
-my-plugin/
-├── .claude-plugin/
-│   └── plugin.json
-└── skills/
-    └── my-skill/
-        └── SKILL.md
-```
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="Authoring best practices" icon="lightbulb" href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices">
-    Write Skills that Claude can use effectively
-  </Card>
-
-  <Card title="Agent Skills overview" icon="book" href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview">
-    Learn how Skills work across Claude products
-  </Card>
-
-  <Card title="Use Skills in the Agent SDK" icon="cube" href="https://docs.claude.com/en/docs/agent-sdk/skills">
-    Use Skills programmatically with TypeScript and Python
-  </Card>
-
-  <Card title="Get started with Agent Skills" icon="rocket" href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/quickstart">
-    Create your first Skill
-  </Card>
-</CardGroup>
+* **[Subagents](/en/sub-agents)**: delegate tasks to specialized agents
+* **[Plugins](/en/plugins)**: package and distribute skills with other extensions
+* **[Hooks](/en/hooks)**: automate workflows around tool events
+* **[Memory](/en/memory)**: manage CLAUDE.md files for persistent context
+* **[Interactive mode](/en/interactive-mode#built-in-commands)**: built-in commands and shortcuts
+* **[Permissions](/en/permissions)**: control tool and skill access
 
 
 ---

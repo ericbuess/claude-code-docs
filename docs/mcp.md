@@ -857,9 +857,9 @@ You can also disable the MCPSearch tool specifically using the `disallowedTools`
 }
 ```
 
-## Use MCP prompts as slash commands
+## Use MCP prompts as commands
 
-MCP servers can expose prompts that become available as slash commands in Claude Code.
+MCP servers can expose prompts that become available as commands in Claude Code.
 
 ### Execute MCP prompts
 

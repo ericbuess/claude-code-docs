@@ -64,7 +64,7 @@ Install `jq` for JSON processing in the command line.
 
 ### Step 1: Open hooks configuration
 
-Run the `/hooks` [slash command](/en/slash-commands) and select
+Run the `/hooks` command and select
 the `PreToolUse` hook event.
 
 `PreToolUse` hooks run before tool calls and can block them while providing

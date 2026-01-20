@@ -67,7 +67,7 @@ Claude opens new tabs for browser tasks rather than taking over existing ones. H
   </Step>
 </Steps>
 
-You can also enable Chrome integration from within an existing session using the `/chrome` slash command.
+You can also enable Chrome integration from within an existing session using the `/chrome` command.
 
 ## Try it out
 
