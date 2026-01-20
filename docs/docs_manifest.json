@@ -237,8 +237,8 @@
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
       "original_md_url": "https://code.claude.com/docs/en/skills.md",
-      "hash": "f1b7577f6fc33b5e6c2fc853dce36c784dde2c6ff0a5044212b6842d11ca3ab8",
-      "last_updated": "2026-01-16T15:02:53.313377"
+      "hash": "b26fc5d49d96086556f1924c9e0fb16e7e87b4d5961d521abcc78d626bae7bc8",
+      "last_updated": "2026-01-20T03:30:35.452475"
     },
     "slack.md": {
       "original_url": "https://code.claude.com/docs/en/slack",
@@ -297,8 +297,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-01-20T00:04:57.456673",
-    "fetch_duration_seconds": 27.85194,
+    "last_fetch_completed": "2026-01-20T03:30:40.188200",
+    "fetch_duration_seconds": 28.081081,
     "total_pages_discovered": 48,
     "pages_fetched_successfully": 49,
     "pages_failed": 0,
@@ -308,7 +308,7 @@
     "total_files": 49,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-01-20T00:04:57.456698",
+  "last_updated": "2026-01-20T03:30:40.188226",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
