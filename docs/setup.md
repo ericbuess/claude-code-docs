@@ -184,7 +184,7 @@ npm install -g @anthropic-ai/claude-code
 
 <Warning>
   Do NOT use `sudo npm install -g` as this can lead to permission issues and security risks.
-  If you encounter permission errors, see [configure Claude Code](/en/troubleshooting#linux-permission-issues) for recommended solutions.
+  If you encounter permission errors, see [troubleshooting permission errors](/en/troubleshooting#command-not-found-claude-or-permission-errors) for recommended solutions.
 </Warning>
 
 ## Windows setup

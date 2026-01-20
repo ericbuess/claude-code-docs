@@ -443,7 +443,7 @@ The allowlist uses exact matching. For a marketplace to be allowed, all specifie
 * For GitHub sources: `repo` is required, and `ref` or `path` must also match if specified in the allowlist
 * For URL sources: the full URL must match exactly
 
-Because `strictKnownMarketplaces` is set in [managed settings](/en/settings#settings-file-locations), individual users and project configurations cannot override these restrictions.
+Because `strictKnownMarketplaces` is set in [managed settings](/en/settings#settings-files), individual users and project configurations cannot override these restrictions.
 
 For complete configuration details including all supported source types and comparison with `extraKnownMarketplaces`, see the [strictKnownMarketplaces reference](/en/settings#strictknownmarketplaces).
 

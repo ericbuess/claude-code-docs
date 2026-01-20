@@ -312,7 +312,7 @@ fi
 exit 0
 ```
 
-See [Hook input](/en/hooks#pretooluse-input) for the complete input schema and [exit codes](/en/hooks#exit-codes) for how exit codes affect behavior.
+See [Hook input](/en/hooks#pretooluse-input) for the complete input schema and [exit codes](/en/hooks#simple-exit-code) for how exit codes affect behavior.
 
 #### Disable specific subagents
 
@@ -510,8 +510,6 @@ Continue that code review and now analyze the authorization logic
 ```
 
 You can also ask Claude for the agent ID if you want to reference it explicitly, or find IDs in the transcript files at `~/.claude/projects/{project}/{sessionId}/subagents/`. Each transcript is stored as `agent-{agentId}.jsonl`.
-
-For programmatic usage, see [Subagents in the Agent SDK](/en/agent-sdk/subagents).
 
 Subagent transcripts persist independently of the main conversation:
 
@@ -722,7 +720,7 @@ Make the script executable:
 chmod +x ./scripts/validate-readonly-query.sh
 ```
 
-The hook receives JSON via stdin with the Bash command in `tool_input.command`. Exit code 2 blocks the operation and feeds the error message back to Claude. See [Hooks](/en/hooks#exit-codes) for details on exit codes and [Hook input](/en/hooks#pretooluse-input) for the complete input schema.
+The hook receives JSON via stdin with the Bash command in `tool_input.command`. Exit code 2 blocks the operation and feeds the error message back to Claude. See [Hooks](/en/hooks#simple-exit-code) for details on exit codes and [Hook input](/en/hooks#pretooluse-input) for the complete input schema.
 
 ## Next steps
 
