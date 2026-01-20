@@ -123,6 +123,8 @@ Bash permission rules support both prefix matching with `:*` and wildcard matchi
 * `Bash(* install)` Matches any command ending with ` install` (e.g., `npm install`, `yarn install`)
 * `Bash(git * main)` Matches commands like `git checkout main`, `git merge main`
 
+The key difference between `:*` and `*`: the `:*` suffix enforces a word boundary, requiring the prefix to be followed by a space or end-of-string. For example, `Bash(ls:*)` matches `ls -la` but not `lsof`. In contrast, `Bash(ls*)` with a bare `*` matches both `ls -la` and `lsof` because `*` has no word boundary constraint.
+
 <Tip>
   Claude Code is aware of shell operators (like `&&`) so a prefix match rule like `Bash(safe-cmd:*)` won't give it permission to run the command `safe-cmd && other-cmd`
 </Tip>

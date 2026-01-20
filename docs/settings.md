@@ -217,10 +217,10 @@ Add a specifier in parentheses to match specific tool uses:
 
 Two wildcard syntaxes are available for Bash rules:
 
-| Wildcard | Position            | Behavior                                                                | Example                                                   |
-| :------- | :------------------ | :---------------------------------------------------------------------- | :-------------------------------------------------------- |
-| `:*`     | End of pattern only | **Prefix matching** - matches commands starting with the prefix         | `Bash(npm run:*)` matches `npm run test`, `npm run build` |
-| `*`      | Anywhere in pattern | **Glob matching** - matches any sequence of characters at that position | `Bash(* install)` matches `npm install`, `yarn install`   |
+| Wildcard | Position            | Behavior                                                                                         | Example                                      |
+| :------- | :------------------ | :----------------------------------------------------------------------------------------------- | :------------------------------------------- |
+| `:*`     | End of pattern only | **Prefix matching** with word boundary. The prefix must be followed by a space or end-of-string. | `Bash(ls:*)` matches `ls -la` but not `lsof` |
+| `*`      | Anywhere in pattern | **Glob matching** with no word boundary. Matches any sequence of characters at that position.    | `Bash(ls*)` matches both `ls -la` and `lsof` |
 
 **Prefix matching with `:*`**
 
@@ -258,7 +258,7 @@ The `*` wildcard can appear at the beginning, middle, or end of a pattern. The f
 ```
 
 <Warning>
-  Bash permission rules use pattern matching and can be bypassed using shell features like command flags, variables, or redirects. For example, `Bash(curl:*)` can be bypassed with `curl -X GET` reordered to `curl http://example.com -X GET`. Do not rely on Bash deny rules as a security boundary.
+  Bash permission patterns that try to constrain command arguments are fragile. For example, `Bash(curl http://github.com/:*)` intends to restrict curl to GitHub URLs, but won't match `curl -X GET http://github.com/...` (flags before URL), `curl https://github.com/...` (different protocol), or commands using shell variables. Do not rely on argument-constraining patterns as a security boundary. See [Bash permission limitations](/en/iam#tool-specific-permission-rules) for alternatives.
 </Warning>
 
 For detailed information about tool-specific permission patterns—including Read, Edit, WebFetch, MCP, Task rules, and Bash permission limitations—see [Tool-specific permission rules](/en/iam#tool-specific-permission-rules).
