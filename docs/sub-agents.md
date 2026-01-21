@@ -202,7 +202,7 @@ The following fields can be used in the YAML frontmatter. Only `name` and `descr
 | `description`     | Yes      | When Claude should delegate to this subagent                                                                                                                                                                 |
 | `tools`           | No       | [Tools](#available-tools) the subagent can use. Inherits all tools if omitted                                                                                                                                |
 | `disallowedTools` | No       | Tools to deny, removed from inherited or specified list                                                                                                                                                      |
-| `model`           | No       | [Model](#choose-a-model) to use: `sonnet`, `opus`, `haiku`, or `inherit`. Defaults to `sonnet`                                                                                                               |
+| `model`           | No       | [Model](#choose-a-model) to use: `sonnet`, `opus`, `haiku`, or `inherit`. Defaults to `inherit`                                                                                                              |
 | `permissionMode`  | No       | [Permission mode](#permission-modes): `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, or `plan`                                                                                                    |
 | `skills`          | No       | [Skills](/en/skills) to load into the subagent's context at startup. The full skill content is injected, not just made available for invocation. Subagents don't inherit skills from the parent conversation |
 | `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) scoped to this subagent                                                                                                                                       |
@@ -212,8 +212,8 @@ The following fields can be used in the YAML frontmatter. Only `name` and `descr
 The `model` field controls which [AI model](/en/model-config) the subagent uses:
 
 * **Model alias**: Use one of the available aliases: `sonnet`, `opus`, or `haiku`
-* **inherit**: Use the same model as the main conversation (useful for consistency)
-* **Omitted**: If not specified, uses the default model configured for subagents (`sonnet`)
+* **inherit**: Use the same model as the main conversation
+* **Omitted**: If not specified, defaults to `inherit` (uses the same model as the main conversation)
 
 ### Control subagent capabilities
 
