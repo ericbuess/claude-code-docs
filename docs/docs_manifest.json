@@ -39,14 +39,14 @@
     "common-workflows.md": {
       "original_url": "https://code.claude.com/docs/en/common-workflows",
       "original_md_url": "https://code.claude.com/docs/en/common-workflows.md",
-      "hash": "29c3d6b8d725d1b201199edb2142ee77182ba16546d64cbb22cb18023a7d87e7",
-      "last_updated": "2026-01-20T18:02:41.646998"
+      "hash": "446b4f3e9c595756853be3fa979bb02b55bdc52095f134bd00f001a864877cca",
+      "last_updated": "2026-01-21T21:05:19.276190"
     },
     "costs.md": {
       "original_url": "https://code.claude.com/docs/en/costs",
       "original_md_url": "https://code.claude.com/docs/en/costs.md",
-      "hash": "4ab6c0584a533b7d748f4d5fac426cbecff92b821b3a4412de604f8b17ae91f8",
-      "last_updated": "2026-01-20T21:03:14.279763"
+      "hash": "c7f0b537687d53d11896e408f64b2c7923429c47aa8c0e5eb881af9b53a9baf6",
+      "last_updated": "2026-01-21T21:05:19.846255"
     },
     "data-usage.md": {
       "original_url": "https://code.claude.com/docs/en/data-usage",
@@ -71,6 +71,12 @@
       "original_md_url": "https://code.claude.com/docs/en/discover-plugins.md",
       "hash": "4b1e890d66804b241224bfaa9866b9b909423894e4821db026e085163394f00c",
       "last_updated": "2026-01-20T18:02:44.914878"
+    },
+    "features-overview.md": {
+      "original_url": "https://code.claude.com/docs/en/features-overview",
+      "original_md_url": "https://code.claude.com/docs/en/features-overview.md",
+      "hash": "a7c8234e8c2674c8150dd220d0359005a6801db825ce9c637bcfc1f44aab22bd",
+      "last_updated": "2026-01-21T21:05:22.750817"
     },
     "github-actions.md": {
       "original_url": "https://code.claude.com/docs/en/github-actions",
@@ -107,6 +113,12 @@
       "original_md_url": "https://code.claude.com/docs/en/hooks-guide.md",
       "hash": "7af12ae0aaa82b7a1834e314664348c2aa6c64281b5336a935d110fd7c98dff8",
       "last_updated": "2026-01-21T00:04:55.578679"
+    },
+    "how-claude-code-works.md": {
+      "original_url": "https://code.claude.com/docs/en/how-claude-code-works",
+      "original_md_url": "https://code.claude.com/docs/en/how-claude-code-works.md",
+      "hash": "b2a5c5838bcff80207bca176f3f990e49a467eb93d12e25cfaf015886c2500a7",
+      "last_updated": "2026-01-21T21:05:26.727534"
     },
     "iam.md": {
       "original_url": "https://code.claude.com/docs/en/iam",
@@ -147,8 +159,8 @@
     "memory.md": {
       "original_url": "https://code.claude.com/docs/en/memory",
       "original_md_url": "https://code.claude.com/docs/en/memory.md",
-      "hash": "b83194cef72334c8261a24388cf7666913dc68eedad93fc9886509e811ffb66d",
-      "last_updated": "2026-01-20T18:02:52.666872"
+      "hash": "579bf4c6609db387f6644a1c4b7a9fb579f798d50f439970d1d256b4dca4a582",
+      "last_updated": "2026-01-21T21:05:30.746605"
     },
     "microsoft-foundry.md": {
       "original_url": "https://code.claude.com/docs/en/microsoft-foundry",
@@ -291,18 +303,18 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-01-21T18:11:01.894920",
-    "fetch_duration_seconds": 28.792953,
-    "total_pages_discovered": 47,
-    "pages_fetched_successfully": 48,
+    "last_fetch_completed": "2026-01-21T21:05:43.393438",
+    "fetch_duration_seconds": 27.891525,
+    "total_pages_discovered": 49,
+    "pages_fetched_successfully": 50,
     "pages_failed": 0,
     "failed_pages": [],
     "sitemap_url": "https://code.claude.com/docs/sitemap.xml",
     "base_url": "https://code.claude.com",
-    "total_files": 48,
+    "total_files": 50,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-01-21T18:11:01.894951",
+  "last_updated": "2026-01-21T21:05:43.393465",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
