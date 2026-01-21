@@ -47,6 +47,7 @@ workflow:
 * **Stop**: Runs when Claude Code finishes responding
 * **SubagentStop**: Runs when subagent tasks complete
 * **PreCompact**: Runs before Claude Code is about to run a compact operation
+* **Setup**: Runs when Claude Code is invoked with `--init`, `--init-only`, or `--maintenance` flags
 * **SessionStart**: Runs when Claude Code starts a new session or resumes an existing session
 * **SessionEnd**: Runs when Claude Code session ends
 

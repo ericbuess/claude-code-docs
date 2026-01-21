@@ -53,7 +53,7 @@ Hooks are organized by matchers, where each matcher can have multiple hooks:
   * `prompt`: (For `type: "prompt"`) The prompt to send to the LLM for evaluation
   * `timeout`: (Optional) How long a hook should run, in seconds, before canceling that specific hook
 
-For events like `UserPromptSubmit`, `Stop`, and `SubagentStop`
+For events like `UserPromptSubmit`, `Stop`, `SubagentStop`, and `Setup`
 that don't use matchers, you can omit the matcher field:
 
 ```json  theme={null}
@@ -411,11 +411,29 @@ Runs before Claude Code is about to run a compact operation.
 * `manual` - Invoked from `/compact`
 * `auto` - Invoked from auto-compact (due to full context window)
 
+### Setup
+
+Runs when Claude Code is invoked with repository setup and maintenance flags (`--init`, `--init-only`, or `--maintenance`). Use this hook for operations you don't want on every session—such as installing dependencies, running migrations, or periodic maintenance tasks.
+
+<Note>
+  Use **Setup** hooks for one-time or occasional operations (dependency installation, migrations, cleanup). Use **SessionStart** hooks for things you want on every session (loading context, setting environment variables). Setup hooks require explicit flags because running them automatically would slow down every session start.
+</Note>
+
+**Matchers:**
+
+* `init` - Invoked from `--init` or `--init-only` flags
+* `maintenance` - Invoked from `--maintenance` flag
+
+Setup hooks have access to the `CLAUDE_ENV_FILE` environment variable for persisting environment variables, similar to SessionStart hooks.
+
 ### SessionStart
 
 Runs when Claude Code starts a new session or resumes an existing session (which
-currently does start a new session under the hood). Useful for loading in
-development context like existing issues or recent changes to your codebase, installing dependencies, or setting up environment variables.
+currently does start a new session under the hood). Useful for loading development context like existing issues or recent changes to your codebase, or setting up environment variables.
+
+<Note>
+  For one-time operations like installing dependencies or running migrations, use [Setup hooks](#setup) instead. SessionStart runs on every session, so keep these hooks fast.
+</Note>
 
 **Matchers:**
 
@@ -687,6 +705,21 @@ For `manual`, `custom_instructions` comes from what the user passes into
 }
 ```
 
+### Setup Input
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "~/.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "Setup",
+  "trigger": "init"
+}
+```
+
+The `trigger` field will be either `"init"` (from `--init` or `--init-only`) or `"maintenance"` (from `--maintenance`).
+
 ### SessionStart Input
 
 ```json  theme={null}
@@ -750,6 +783,7 @@ Hooks communicate status through exit codes, stdout, and stderr:
 | `Stop`              | Blocks stoppage, shows stderr to Claude                            |
 | `SubagentStop`      | Blocks stoppage, shows stderr to Claude subagent                   |
 | `PreCompact`        | N/A, shows stderr to user only                                     |
+| `Setup`             | N/A, shows stderr to user only                                     |
 | `SessionStart`      | N/A, shows stderr to user only                                     |
 | `SessionEnd`        | N/A, shows stderr to user only                                     |
 
@@ -925,6 +959,23 @@ the transcript; `additionalContext` is added more discretely.
 {
   "decision": "block" | undefined,
   "reason": "Must be provided when Claude is blocked from stopping"
+}
+```
+
+#### `Setup` Decision Control
+
+`Setup` hooks allow you to load context and configure the environment during repository initialization or maintenance.
+
+* `"hookSpecificOutput.additionalContext"` adds the string to the context.
+* Multiple hooks' `additionalContext` values are concatenated.
+* Setup hooks have access to `CLAUDE_ENV_FILE` for persisting environment variables.
+
+```json  theme={null}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "Setup",
+    "additionalContext": "Repository initialized with custom configuration"
+  }
 }
 ```
 
@@ -1203,7 +1254,7 @@ This prevents malicious hook modifications from affecting your current session.
 * **Output**:
   * PreToolUse/PermissionRequest/PostToolUse/Stop/SubagentStop: Progress shown in verbose mode (ctrl+o)
   * Notification/SessionEnd: Logged to debug only (`--debug`)
-  * UserPromptSubmit/SessionStart: stdout added as context for Claude
+  * UserPromptSubmit/SessionStart/Setup: stdout added as context for Claude
 
 ## Debugging
 
