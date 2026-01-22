@@ -79,7 +79,7 @@ Where you store a skill determines who can use it:
 | Project    | `.claude/skills/<skill-name>/SKILL.md`           | This project only              |
 | Plugin     | `<plugin>/skills/<skill-name>/SKILL.md`          | Where plugin is enabled        |
 
-Project skills override personal skills with the same name. If you have files in `.claude/commands/`, those work the same way but a skill takes precedence over a command with the same name.
+When skills share the same name across levels, higher-priority locations win: enterprise > personal > project. Plugin skills use a `plugin-name:skill-name` namespace, so they cannot conflict with other levels. If you have files in `.claude/commands/`, those work the same way, but if a skill and a command share the same name, the skill takes precedence.
 
 #### Automatic discovery from nested directories
 
