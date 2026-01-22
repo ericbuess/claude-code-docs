@@ -257,6 +257,7 @@ Bash mode:
 * Shows real-time progress and output
 * Supports the same `Ctrl+B` backgrounding for long-running commands
 * Does not require Claude to interpret or approve the command
+* Supports history-based autocomplete: type a partial command and press **Tab** to complete from previous `!` commands in the current project
 
 This is useful for quick shell operations while maintaining conversation context.
 

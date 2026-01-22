@@ -1,0 +1,613 @@
+# Best Practices for Claude Code
+
+> Tips and patterns for getting the most out of Claude Code, from configuring your environment to scaling across parallel sessions.
+
+Claude Code is an agentic coding environment. Unlike a chatbot that answers questions and waits, Claude Code can read your files, run commands, make changes, and autonomously work through problems while you watch, redirect, or step away entirely.
+
+This changes how you work. Instead of writing code yourself and asking Claude to review it, you describe what you want and Claude figures out how to build it. Claude explores, plans, and implements.
+
+But this autonomy still comes with a learning curve. Claude works within certain constraints you need to understand.
+
+This guide covers patterns that have proven effective across Anthropic's internal teams and for engineers using Claude Code across various codebases, languages, and environments.
+
+***
+
+Most best practices are based on one constraint: Claude's context window fills up fast, and performance degrades as it fills.
+
+Claude's context window holds your entire conversation, including every message, every file Claude reads, and every command output. However, this can fill up fast. A single debugging session or codebase exploration might generate and consume tens of thousands of tokens.
+
+This matters since LLM performance degrades as context fills. When the context window is getting full, Claude may start "forgetting" earlier instructions or making more mistakes. The context window is the most important resource to manage.
+
+***
+
+## Give Claude a way to verify its work
+
+<Tip>
+  **Include tests, screenshots, or expected outputs so Claude can check itself. This is the single highest-leverage thing you can do.**
+</Tip>
+
+Claude performs dramatically better when it can verify its own work, like run tests, compare screenshots, and validate outputs.
+
+Without clear success criteria, it might produce something that looks right but actually doesn't work. You become the only feedback loop, and every mistake requires your attention.
+
+| Strategy                              | Before                                                  | After                                                                                                                                                                                                   |
+| ------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Provide verification criteria**     | *"implement a function that validates email addresses"* | *"write a validateEmail function. example test cases: [user@example.com](mailto:user@example.com) is true, invalid is false, [user@.com](mailto:user@.com) is false. run the tests after implementing"* |
+| **Verify UI changes visually**        | *"make the dashboard look better"*                      | *"\[paste screenshot] implement this design. take a screenshot of the result and compare it to the original. list differences and fix them"*                                                            |
+| **Address root causes, not symptoms** | *"the build is failing"*                                | *"the build fails with this error: \[paste error]. fix it and verify the build succeeds. address the root cause, don't suppress the error"*                                                             |
+
+UI changes can be verified using the [Claude in Chrome extension](/en/chrome). It opens a browser, tests the UI, and iterates until the code works.
+
+Your verification can also be a test suite, a linter, or a Bash command that checks output. Invest in making your verification rock-solid.
+
+***
+
+## Explore first, then plan, then code
+
+<Tip>
+  **Separate research and planning from implementation to avoid solving the wrong problem.**
+</Tip>
+
+Letting Claude jump straight to coding can produce code that solves the wrong problem. Use [Plan Mode](/en/common-workflows#use-plan-mode-for-safe-code-analysis) to separate exploration from execution.
+
+The recommended workflow has four phases:
+
+<Steps>
+  <Step title="Explore">
+    Enter Plan Mode. Claude reads files and answers questions without making changes.
+
+    ```txt claude (Plan Mode) theme={null}
+    read /src/auth and understand how we handle sessions and login.
+    also look at how we manage environment variables for secrets.
+    ```
+  </Step>
+
+  <Step title="Plan">
+    Ask Claude to create a detailed implementation plan.
+
+    ```txt claude (Plan Mode) theme={null}
+    I want to add Google OAuth. What files need to change?
+    What's the session flow? Create a plan.
+    ```
+  </Step>
+
+  <Step title="Implement">
+    Switch back to Normal Mode and let Claude code, verifying against its plan.
+
+    ```txt claude (Normal Mode) theme={null}
+    implement the OAuth flow from your plan. write tests for the
+    callback handler, run the test suite and fix any failures.
+    ```
+  </Step>
+
+  <Step title="Commit">
+    Ask Claude to commit with a descriptive message and create a PR.
+
+    ```txt claude (Normal Mode) theme={null}
+    commit with a descriptive message and open a PR
+    ```
+  </Step>
+</Steps>
+
+<Callout>
+  Plan Mode is useful, but also adds overhead.
+
+  For tasks where the scope is clear and the fix is small (like fixing a typo, adding a log line, or renaming a variable) ask Claude to do it directly.
+
+  Planning is most useful when you're uncertain about the approach, when the change modifies multiple files, or when you're unfamiliar with the code being modified. If you could describe the diff in one sentence, skip the plan.
+</Callout>
+
+***
+
+## Provide specific context in your prompts
+
+<Tip>
+  **The more precise your instructions, the fewer corrections you'll need.**
+</Tip>
+
+Claude can infer intent, but it can't read your mind. Reference specific files, mention constraints, and point to example patterns.
+
+| Strategy                                                                                         | Before                                               | After                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Scope the task.** Specify which file, what scenario, and testing preferences.                  | *"add tests for foo.py"*                             | *"write a test for foo.py covering the edge case where the user is logged out. avoid mocks."*                                                                                                                                                                                                                                                                    |
+| **Point to sources.** Direct Claude to the source that can answer a question.                    | *"why does ExecutionFactory have such a weird api?"* | *"look through ExecutionFactory's git history and summarize how its api came to be"*                                                                                                                                                                                                                                                                             |
+| **Reference existing patterns.** Point Claude to patterns in your codebase.                      | *"add a calendar widget"*                            | *"look at how existing widgets are implemented on the home page to understand the patterns. HotDogWidget.php is a good example. follow the pattern to implement a new calendar widget that lets the user select a month and paginate forwards/backwards to pick a year. build from scratch without libraries other than the ones already used in the codebase."* |
+| **Describe the symptom.** Provide the symptom, the likely location, and what "fixed" looks like. | *"fix the login bug"*                                | *"users report that login fails after session timeout. check the auth flow in src/auth/, especially token refresh. write a failing test that reproduces the issue, then fix it"*                                                                                                                                                                                 |
+
+Vague prompts can be useful when you're exploring and can afford to course-correct. A prompt like `"what would you improve in this file?"` can surface things you wouldn't have thought to ask about.
+
+### Provide rich content
+
+<Tip>
+  **Use `@` to reference files, paste screenshots/images, or pipe data directly.**
+</Tip>
+
+You can provide rich data to Claude in several ways:
+
+* **Reference files with `@`** instead of describing where code lives. Claude reads the file before responding.
+* **Paste images directly**. Copy/paste or drag and drop images into the prompt.
+* **Give URLs** for documentation and API references. Use `/permissions` to allowlist frequently-used domains.
+* **Pipe in data** by running `cat error.log | claude` to send file contents directly.
+* **Let Claude fetch what it needs**. Tell Claude to pull context itself using Bash commands, MCP tools, or by reading files.
+
+***
+
+## Configure your environment
+
+A few setup steps make Claude Code significantly more effective across all your sessions.
+
+### Write an effective CLAUDE.md
+
+<Tip>
+  **Run `/init` to generate a starter CLAUDE.md file based on your current project structure, then refine over time.**
+</Tip>
+
+CLAUDE.md is a special file that Claude reads at the start of every conversation. Include Bash commands, code style, and workflow rules. This gives Claude persistent context **it can't infer from code alone**.
+
+The `/init` slash command analyzes your codebase to detect build systems, test frameworks, and code patterns, giving you a solid foundation to refine.
+
+There's no required format for CLAUDE.md files, but keep it short and human-readable. For example:
+
+```markdown CLAUDE.md theme={null}
+# Code style
+- Use ES modules (import/export) syntax, not CommonJS (require)
+- Destructure imports when possible (eg. import { foo } from 'bar')
+
+# Workflow
+- Be sure to typecheck when you're done making a series of code changes
+- Prefer running single tests, and not the whole test suite, for performance
+```
+
+While it's tempting to dump everything in this file, keep it concise. For each line, ask: *"Would removing this cause Claude to make mistakes?"* If not, cut it. Bloated CLAUDE.md files cause Claude to ignore your actual instructions!
+
+| ✅ Include                                            | ❌ Exclude                                          |
+| ---------------------------------------------------- | -------------------------------------------------- |
+| Bash commands Claude can't guess                     | Anything Claude can figure out by reading code     |
+| Code style rules that differ from defaults           | Standard language conventions Claude already knows |
+| Testing instructions and preferred test runners      | Detailed API documentation (link to docs instead)  |
+| Repository etiquette (branch naming, PR conventions) | Information that changes frequently                |
+| Architectural decisions specific to your project     | Long explanations or tutorials                     |
+| Developer environment quirks (required env vars)     | File-by-file descriptions of the codebase          |
+| Common gotchas or non-obvious behaviors              | Self-evident practices like "write clean code"     |
+
+If Claude keeps doing something you don't want despite having a rule against it, the file is probably too long and the rule is getting lost. If Claude asks you questions that are answered in CLAUDE.md, the phrasing might be ambiguous. Treat CLAUDE.md like code: review it when things go wrong, prune it regularly, and test changes by observing whether Claude's behavior actually shifts.
+
+You can tune instructions by adding emphasis (e.g., "IMPORTANT" or "YOU MUST") to improve adherence. Check CLAUDE.md into git so your team can contribute. The file compounds in value over time.
+
+CLAUDE.md files can import additional files using `@path/to/import` syntax:
+
+```markdown CLAUDE.md theme={null}
+See @README.md for project overview and @package.json for available npm commands.
+
+# Additional Instructions
+- Git workflow: @docs/git-instructions.md
+- Personal overrides: @~/.claude/my-project-instructions.md
+```
+
+You can place CLAUDE.md files in several locations:
+
+* **Home folder (`~/.claude/CLAUDE.md`)**: Applies to all Claude sessions
+* **Project root (`./CLAUDE.md`)**: Check into git to share with your team, or name it `CLAUDE.local.md` and `.gitignore` it
+* **Parent directories**: Useful for monorepos where both `root/CLAUDE.md` and `root/foo/CLAUDE.md` are pulled in automatically
+* **Child directories**: Claude pulls in child CLAUDE.md files on demand when working with files in those directories
+
+### Configure permissions
+
+<Tip>
+  **Use `/permissions` to allowlist safe commands or `/sandbox` for OS-level isolation. This reduces interruptions while keeping you in control.**
+</Tip>
+
+By default, Claude Code requests permission for actions that might modify your system: file writes, Bash commands, MCP tools, etc. This is safe but tedious. After the tenth approval you're not really reviewing anymore, you're just clicking through. There are two ways to reduce these interruptions:
+
+* **Permission allowlists**: Permit specific tools you know are safe (like `npm run lint` or `git commit`)
+* **Sandboxing**: Enable OS-level isolation that restricts filesystem and network access, allowing Claude to work more freely within defined boundaries
+
+Alternatively, use `--dangerously-skip-permissions` to bypass all permission checks for contained workflows like fixing lint errors or generating boilerplate.
+
+<Warning>
+  Letting Claude run arbitrary commands can result in data loss, system corruption, or data exfiltration via prompt injection. Only use `--dangerously-skip-permissions` in a sandbox without internet access.
+</Warning>
+
+Read more about [configuring permissions](/en/settings) and [enabling sandboxing](/en/sandboxing#sandboxing).
+
+### Use CLI tools
+
+<Tip>
+  **Tell Claude Code to use CLI tools like `gh`, `aws`, `gcloud`, and `sentry-cli` when interacting with external services.**
+</Tip>
+
+CLI tools are the most context-efficient way to interact with external services. If you use GitHub, install the `gh` CLI. Claude knows how to use it for creating issues, opening pull requests, and reading comments. Without `gh`, Claude can still use the GitHub API, but unauthenticated requests often hit rate limits.
+
+Claude is also effective at learning CLI tools it doesn't already know. Try prompts like `Use 'foo-cli-tool --help' to learn about foo tool, then use it to solve A, B, C.`
+
+### Connect MCP servers
+
+<Tip>
+  **Run `claude mcp add` to connect external tools like Notion, Figma, or your database.**
+</Tip>
+
+With [MCP servers](/en/mcp), you can ask Claude to implement features from issue trackers, query databases, analyze monitoring data, integrate designs from Figma, and automate workflows.
+
+### Create custom slash commands
+
+<Tip>
+  **Save repeated workflows as markdown files in `.claude/commands/` for project-level commands or `~/.claude/commands/` for global commands available in all sessions.**
+</Tip>
+
+Custom slash commands can include the special keyword `$ARGUMENTS` to pass parameters from command invocation, or `$1`, `$2`, etc. for positional arguments.
+
+```markdown .claude/commands/fix-github-issue.md theme={null}
+---
+description: Fix a GitHub issue
+---
+Please analyze and fix the GitHub issue: $ARGUMENTS.
+
+Follow these steps:
+1. Use `gh issue view` to get the issue details
+2. Understand the problem described in the issue
+3. Search the codebase for relevant files
+4. Implement the necessary changes to fix the issue
+5. Write and run tests to verify the fix
+6. Ensure code passes linting and type checking
+7. Create a descriptive commit message
+8. Push and create a PR
+```
+
+Now you can run `/fix-github-issue 1234`. Read more in the [custom slash commands documentation](/en/slash-commands#custom-slash-commands).
+
+### Install plugins
+
+<Tip>
+  **Run `/plugin` to browse the marketplace. Plugins add commands, tools, and integrations without configuration.**
+</Tip>
+
+Plugins extend Claude Code with pre-built capabilities from the community and Anthropic. Instead of configuring everything yourself, install a plugin and it works immediately.
+
+A plugin can add:
+
+* **Custom commands**: New slash commands for specific workflows (e.g., `/deploy`, `/review`, `/migrate`)
+* **MCP servers**: Pre-configured connections to external tools (databases, APIs, SaaS products)
+* **Subagents**: Specialized assistants for tasks like security review, documentation, or testing
+* **Skills**: Domain knowledge that Claude applies automatically when relevant
+
+Read more in the [plugins documentation](/en/plugins).
+
+### Set up hooks
+
+<Tip>
+  **Use `/hooks` to provide deterministic control over Claude Code's behavior. Instead of hoping Claude remembers to perform an action, hooks guarantee it happens every time.**
+</Tip>
+
+Hooks run scripts automatically at specific points in Claude's workflow:
+
+* **Auto-formatting**: Run prettier on `.ts` files, gofmt on `.go` files after every edit
+* **Linting**: Automatically lint changed files and surface errors
+* **Guardrails**: Block modifications to `.env`, `secrets/`, or production configs
+* **Logging**: Track all executed commands for compliance or debugging
+* **Notifications**: Get alerted when Claude is waiting for input
+
+Claude can write hooks for you. Try prompts like *"Write a hook that runs eslint after every file edit"* or *"Write a hook that blocks writes to the migrations folder."* Run `/hooks` for interactive configuration, or edit `.claude/settings.json` directly.
+
+If something *must* happen every time with zero exceptions (formatting, linting, blocking writes to sensitive files), use a hook. If it's guidance where judgment is needed (code style preferences, architectural patterns), use CLAUDE.md. Hooks are deterministic; CLAUDE.md is advisory.
+
+Read more in the [hooks documentation](/en/hooks-guide).
+
+### Create custom subagents
+
+<Tip>
+  **Define specialized assistants in `.claude/agents/` that Claude can delegate to. Each subagent has its own context window, tools, and instructions.**
+</Tip>
+
+Unlike slash commands (which are prompt templates you invoke explicitly), subagents run in their own context with their own set of allowed tools. They're delegated assistants rather than scripted workflows.
+
+```markdown .claude/agents/security-reviewer.md theme={null}
+---
+name: security-reviewer
+description: Reviews code for security vulnerabilities
+tools: Read, Grep, Glob, Bash
+model: opus
+---
+You are a senior security engineer. Review code for:
+- Injection vulnerabilities (SQL, XSS, command injection)
+- Authentication and authorization flaws
+- Secrets or credentials in code
+- Insecure data handling
+
+Provide specific line references and suggested fixes.
+```
+
+Subagents are useful for:
+
+* **Code review**: A reviewer subagent checks work without biasing the main conversation
+* **Investigation**: Explore unfamiliar code without consuming your main context
+* **Specialized tasks**: Security review, documentation generation, test writing
+* **Verification**: Have a subagent check that the main agent's work is correct
+
+Tell Claude to use subagents explicitly: *"Use a subagent to review this code for security issues."* Read more in the [subagents documentation](/en/sub-agents).
+
+### Add agent skills
+
+<Tip>
+  **Create markdown files in `.claude/skills/` to give Claude domain knowledge it applies automatically. Unlike slash commands, skills are triggered by context, not explicit invocation.**
+</Tip>
+
+Skills extend Claude's knowledge with information specific to your project, team, or domain. Claude reads skills and autonomously decides when to apply them based on the task at hand.
+
+Create a skill by adding a markdown file to `.claude/skills/`
+
+```yaml .claude/skills/api-conventions.md theme={null}
+---
+name: api-conventions
+description: REST API design conventions for our services
+---
+# API Conventions
+- Use kebab-case for URL paths
+- Use camelCase for JSON properties
+- Always include pagination for list endpoints
+- Version APIs in the URL path (/v1/, /v2/)
+```
+
+Skills vs. other customization:
+
+| Feature        | Triggered by        | Best for               |
+| -------------- | ------------------- | ---------------------- |
+| CLAUDE.md      | Always loaded       | Global project context |
+| Slash commands | Explicit `/command` | Repeatable workflows   |
+| Skills         | Context (automatic) | Domain knowledge       |
+| Subagents      | Delegation          | Isolated tasks         |
+
+Read more in the [skills documentation](/en/skills).
+
+***
+
+## Communicate effectively
+
+The way you communicate with Claude Code significantly impacts the quality of results.
+
+### Ask codebase questions
+
+<Tip>
+  **Ask Claude questions you'd ask a senior engineer.**
+</Tip>
+
+When onboarding to a new codebase, use Claude Code for learning and exploration. You can ask Claude the same sorts of questions you would ask another engineer:
+
+* How does logging work?
+* How do I make a new API endpoint?
+* What does `async move { ... }` do on line 134 of `foo.rs`?
+* What edge cases does `CustomerOnboardingFlowImpl` handle?
+* Why does this code call `foo()` instead of `bar()` on line 333?
+
+Using Claude Code this way is an effective onboarding workflow, improving ramp-up time and reducing load on other engineers. No special prompting required: ask questions directly.
+
+### Let Claude interview you
+
+<Tip>
+  **For larger features, have Claude interview you first. Start with a minimal prompt and ask Claude to interview you using the `AskUserQuestion` tool.**
+</Tip>
+
+Claude asks about things you might not have considered yet, including technical implementation, UI/UX, edge cases, and tradeoffs.
+
+```
+I want to build [brief description]. Interview me in detail using the AskUserQuestion tool.
+
+Ask about technical implementation, UI/UX, edge cases, concerns, and tradeoffs. Don't ask obvious questions, dig into the hard parts I might not have considered.
+
+Keep interviewing until we've covered everything, then write a complete spec to SPEC.md.
+```
+
+Once the spec is complete, start a fresh session to execute it. The new session has clean context focused entirely on implementation, and you have a written spec to reference.
+
+***
+
+## Manage your session
+
+Conversations are persistent and reversible. Use this to your advantage!
+
+### Course-correct early and often
+
+<Tip>
+  **Correct Claude as soon as you notice it going off track.**
+</Tip>
+
+The best results come from tight feedback loops. Though Claude occasionally solves problems perfectly on the first attempt, correcting it quickly generally produces better solutions faster.
+
+* **`Esc`**: Stop Claude mid-action with the `Esc` key. Context is preserved, so you can redirect.
+* **`Esc + Esc` or `/rewind`**: Press `Esc` twice or run `/rewind` to open the rewind menu and restore previous conversation and code state.
+* **`"Undo that"`**: Have Claude revert its changes.
+* **`/clear`**: Reset context between unrelated tasks. Long sessions with irrelevant context can reduce performance.
+
+If you've corrected Claude more than twice on the same issue in one session, the context is cluttered with failed approaches. Run `/clear` and start fresh with a more specific prompt that incorporates what you learned. A clean session with a better prompt almost always outperforms a long session with accumulated corrections.
+
+### Manage context aggressively
+
+<Tip>
+  **Run `/clear` between unrelated tasks to reset context.**
+</Tip>
+
+Claude Code automatically compacts conversation history when you approach context limits, which preserves important code and decisions while freeing space.
+
+During long sessions, Claude's context window can fill with irrelevant conversation, file contents, and commands. This can reduce performance and sometimes distract Claude.
+
+* Use `/clear` frequently between tasks to reset the context window entirely
+* When auto compaction triggers, Claude summarizes what matters most, including code patterns, file states, and key decisions
+* For more control, run `/compact <instructions>`, like `/compact Focus on the API changes`
+
+### Use subagents for investigation
+
+<Tip>
+  **Delegate research with `"use subagents to investigate X"`. They explore in a separate context, keeping your main conversation clean for implementation.**
+</Tip>
+
+Since context is your fundamental constraint, subagents are one of the most powerful tools available. When Claude researches a codebase it reads lots of files, all of which consume your context. Subagents run in separate context windows and report back summaries:
+
+```
+Use subagents to investigate how our authentication system handles token
+refresh, and whether we have any existing OAuth utilities I should reuse.
+```
+
+The subagent explores the codebase, reads relevant files, and reports back with findings, all without cluttering your main conversation.
+
+You can also use subagents for verification after Claude implements something:
+
+```
+use a subagent to review this code for edge cases
+```
+
+### Rewind with checkpoints
+
+<Tip>
+  **Every action Claude makes creates a checkpoint. You can restore conversation, code, or both to any previous checkpoint.**
+</Tip>
+
+Claude automatically checkpoints before changes. Double-tap `Escape` or run `/rewind` to open the checkpoint menu. You can restore conversation only (keep code changes), restore code only (keep conversation), or restore both.
+
+Instead of carefully planning every move, you can tell Claude to try something risky. If it doesn't work, rewind and try a different approach. Checkpoints persist across sessions, so you can close your terminal and still rewind later.
+
+<Warning>
+  Checkpoints only track changes made *by Claude*, not external processes. This isn't a replacement for git.
+</Warning>
+
+### Resume conversations
+
+<Tip>
+  **Run `claude --continue` to pick up where you left off, or `--resume` to choose from recent sessions.**
+</Tip>
+
+Claude Code saves conversations locally. When a task spans multiple sessions (you start a feature, get interrupted, come back the next day) you don't have to re-explain the context:
+
+```bash  theme={null}
+claude --continue    # Resume the most recent conversation
+claude --resume      # Select from recent conversations
+```
+
+Use `/rename` to give sessions descriptive names (`"oauth-migration"`, `"debugging-memory-leak"`) so you can find them later. Treat sessions like branches. Different workstreams can have separate, persistent contexts.
+
+***
+
+## Automate and scale
+
+Once you're effective with one Claude, multiply your output with parallel sessions, headless mode, and fan-out patterns.
+
+Everything so far assumes one human, one Claude, and one conversation. But Claude Code scales horizontally. The techniques in this section show how you can get more done.
+
+### Run headless mode
+
+<Tip>
+  **Use `claude -p "prompt"` in CI, pre-commit hooks, or scripts. Add `--output-format stream-json` for streaming JSON output.**
+</Tip>
+
+With `claude -p "your prompt"`, you can run Claude headlessly, without an interactive session. Headless mode is how you integrate Claude into CI pipelines, pre-commit hooks, or any automated workflow. The output formats (plain text, JSON, streaming JSON) let you parse results programmatically.
+
+```bash  theme={null}
+# One-off queries
+claude -p "Explain what this project does"
+
+# Structured output for scripts
+claude -p "List all API endpoints" --output-format json
+
+# Streaming for real-time processing
+claude -p "Analyze this log file" --output-format stream-json
+```
+
+### Run multiple Claude sessions
+
+<Tip>
+  **Run multiple Claude sessions in parallel to speed up development, run isolated experiments, or start complex workflows.**
+</Tip>
+
+There are two main ways to run parallel sessions:
+
+* [Claude Desktop](/en/desktop): Manage multiple local sessions visually. Each session gets its own isolated worktree.
+* [Claude Code on the web](/en/claude-code-on-the-web): Run on Anthropic's secure cloud infrastructure in isolated VMs.
+
+Beyond parallelizing work, multiple sessions enable quality-focused workflows. A fresh context improves code review since Claude won't be biased toward code it just wrote.
+
+For example, use a Writer/Reviewer pattern:
+
+| Session A (Writer)                                                      | Session B (Reviewer)                                                                                                                                                     |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Implement a rate limiter for our API endpoints`                        |                                                                                                                                                                          |
+|                                                                         | `Review the rate limiter implementation in @src/middleware/rateLimiter.ts. Look for edge cases, race conditions, and consistency with our existing middleware patterns.` |
+| `Here's the review feedback: [Session B output]. Address these issues.` |                                                                                                                                                                          |
+
+You can do something similar with tests: have one Claude write tests, then another write code to pass them.
+
+### Fan out across files
+
+<Tip>
+  **Loop through tasks calling `claude -p` for each. Use `--allowedTools` to scope permissions for batch operations.**
+</Tip>
+
+For large migrations or analyses, you can distribute work across many parallel Claude invocations:
+
+<Steps>
+  <Step title="Generate a task list">
+    Have Claude list all files that need migrating (e.g., `list all 2,000 Python files that need migrating`)
+  </Step>
+
+  <Step title="Write a script to loop through the list">
+    ```bash  theme={null}
+    for file in $(cat files.txt); do
+      claude -p "Migrate $file from React to Vue. Return OK or FAIL." \
+        --allowedTools "Edit,Bash(git commit:*)"
+    done
+    ```
+  </Step>
+
+  <Step title="Test on a few files, then run at scale">
+    Refine your prompt based on what goes wrong with the first 2-3 files, then run on the full set. The `--allowedTools` flag restricts what Claude can do, which matters when you're running unattended.
+  </Step>
+</Steps>
+
+You can also integrate Claude into existing data/processing pipelines:
+
+```bash  theme={null}
+claude -p "<your prompt>" --output-format json | your_command
+```
+
+Use `--verbose` for debugging during development, and turn it off in production.
+
+### Safe Autonomous Mode
+
+Use `claude --dangerously-skip-permissions` to bypass all permission checks and let Claude work uninterrupted. This works well for workflows like fixing lint errors or generating boilerplate code.
+
+<Warning>
+  Letting Claude run arbitrary commands is risky and can result in data loss, system corruption, or data exfiltration (e.g., via prompt injection attacks). To minimize these risks, use `--dangerously-skip-permissions` in a container without internet access.
+
+  With sandboxing enabled (`/sandbox`), you get similar autonomy with better security. Sandbox defines upfront boundaries rather than bypassing all checks.
+</Warning>
+
+***
+
+## Avoid common failure patterns
+
+These are common mistakes. Recognizing them early saves time:
+
+* **The kitchen sink session.** You start with one task, then ask Claude something unrelated, then go back to the first task. Context is full of irrelevant information.
+  > **Fix**: `/clear` between unrelated tasks.
+* **Correcting over and over.** Claude does something wrong, you correct it, it's still wrong, you correct again. Context is polluted with failed approaches.
+  > **Fix**: After two failed corrections, `/clear` and write a better initial prompt incorporating what you learned.
+* **The over-specified CLAUDE.md.** If your CLAUDE.md is too long, Claude ignores half of it because important rules get lost in the noise.
+  > **Fix**: Ruthlessly prune. If Claude already does something correctly without the instruction, delete it or convert it to a hook.
+* **The trust-then-verify gap.** Claude produces a plausible-looking implementation that doesn't handle edge cases.
+  > **Fix**: Always provide verification (tests, scripts, screenshots). If you can't verify it, don't ship it.
+* **The infinite exploration.** You ask Claude to "investigate" something without scoping it. Claude reads hundreds of files, filling the context.
+  > **Fix**: Scope investigations narrowly or use subagents so the exploration doesn't consume your main context.
+
+***
+
+## Develop your intuition
+
+The patterns in this guide aren't set in stone. They're starting points that work well in general, but might not be optimal for every situation.
+
+Sometimes you *should* let context accumulate because you're deep in one complex problem and the history is valuable. Sometimes you should skip planning and let Claude figure it out because the task is exploratory. Sometimes a vague prompt is exactly right because you want to see how Claude interprets the problem before constraining it.
+
+Pay attention to what works. When Claude produces great output, notice what you did: the prompt structure, the context you provided, the mode you were in. When Claude struggles, ask why. Was the context too noisy? The prompt too vague? The task too big for one pass?
+
+Over time, you'll develop intuition that no guide can capture. You'll know when to be specific and when to be open-ended, when to plan and when to explore, when to clear context and when to let it accumulate.
+
+
+---
+
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

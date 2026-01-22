@@ -238,6 +238,26 @@ For plugins in the same repository:
 }
 ```
 
+You can pin to a specific branch, tag, or commit:
+
+```json  theme={null}
+{
+  "name": "github-plugin",
+  "source": {
+    "source": "github",
+    "repo": "owner/plugin-repo",
+    "ref": "v2.0.0",
+    "sha": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0"
+  }
+}
+```
+
+| Field  | Type   | Description                                                           |
+| :----- | :----- | :-------------------------------------------------------------------- |
+| `repo` | string | Required. GitHub repository in `owner/repo` format                    |
+| `ref`  | string | Optional. Git branch or tag (defaults to repository default branch)   |
+| `sha`  | string | Optional. Full 40-character git commit SHA to pin to an exact version |
+
 ### Git repositories
 
 ```json  theme={null}
@@ -249,6 +269,26 @@ For plugins in the same repository:
   }
 }
 ```
+
+You can pin to a specific branch, tag, or commit:
+
+```json  theme={null}
+{
+  "name": "git-plugin",
+  "source": {
+    "source": "url",
+    "url": "https://gitlab.com/team/plugin.git",
+    "ref": "main",
+    "sha": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0"
+  }
+}
+```
+
+| Field | Type   | Description                                                           |
+| :---- | :----- | :-------------------------------------------------------------------- |
+| `url` | string | Required. Full git repository URL (must end with `.git`)              |
+| `ref` | string | Optional. Git branch or tag (defaults to repository default branch)   |
+| `sha` | string | Optional. Full 40-character git commit SHA to pin to an exact version |
 
 ### Advanced plugin entries
 
