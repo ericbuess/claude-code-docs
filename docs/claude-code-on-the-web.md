@@ -36,7 +36,7 @@ Claude Code on the web is available in research preview to:
 3. Install the Claude GitHub app in your repositories
 4. Select your default environment
 5. Submit your coding task
-6. Review changes and create a pull request in GitHub
+6. Review changes in diff view, iterate with comments, then create a pull request
 
 ## How it works
 
@@ -48,6 +48,20 @@ When you start a task on Claude Code on the web:
 4. **Task execution**: Claude analyzes code, makes changes, runs tests, and checks its work
 5. **Completion**: You're notified when finished and can create a PR with the changes
 6. **Results**: Changes are pushed to a branch, ready for pull request creation
+
+## Review changes with diff view
+
+Diff view lets you see exactly what Claude changed before creating a pull request. Instead of clicking "Create PR" to review changes in GitHub, view the diff directly in the app and iterate with Claude until the changes are ready.
+
+When Claude makes changes to files, a diff stats indicator appears showing the number of lines added and removed (for example, `+12 -1`). Select this indicator to open the diff viewer, which displays a file list on the left and the changes for each file on the right.
+
+From the diff view, you can:
+
+* Review changes file by file
+* Comment on specific changes to request modifications
+* Continue iterating with Claude based on what you see
+
+This lets you refine changes through multiple rounds of feedback without creating draft PRs or switching to GitHub.
 
 ## Moving tasks between web and terminal
 
