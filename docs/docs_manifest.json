@@ -15,8 +15,8 @@
     "best-practices.md": {
       "original_url": "https://code.claude.com/docs/en/best-practices",
       "original_md_url": "https://code.claude.com/docs/en/best-practices.md",
-      "hash": "d38163c3adf6eb8e2afc2e5e8e84897224d584e99c6d2fea2b1f830a7d0d26ff",
-      "last_updated": "2026-01-22T00:05:10.327292"
+      "hash": "df84a6ff76092f119f638e19a9545eea9b355d4a1df674ee9ffaf6b3dee3d928",
+      "last_updated": "2026-01-22T15:05:07.496585"
     },
     "checkpointing.md": {
       "original_url": "https://code.claude.com/docs/en/checkpointing",
@@ -45,8 +45,8 @@
     "common-workflows.md": {
       "original_url": "https://code.claude.com/docs/en/common-workflows",
       "original_md_url": "https://code.claude.com/docs/en/common-workflows.md",
-      "hash": "446b4f3e9c595756853be3fa979bb02b55bdc52095f134bd00f001a864877cca",
-      "last_updated": "2026-01-21T21:05:19.276190"
+      "hash": "c4e3580f9e40783eaf89ffef6bd645987a8235c655b89e631a160d178f9cbc18",
+      "last_updated": "2026-01-22T15:05:10.875777"
     },
     "costs.md": {
       "original_url": "https://code.claude.com/docs/en/costs",
@@ -309,8 +309,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-01-22T12:02:58.352430",
-    "fetch_duration_seconds": 28.87379,
+    "last_fetch_completed": "2026-01-22T15:05:42.931927",
+    "fetch_duration_seconds": 37.171678,
     "total_pages_discovered": 50,
     "pages_fetched_successfully": 51,
     "pages_failed": 0,
@@ -320,7 +320,7 @@
     "total_files": 51,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-01-22T12:02:58.352459",
+  "last_updated": "2026-01-22T15:05:42.931955",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

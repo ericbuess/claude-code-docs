@@ -2,7 +2,7 @@
 
 > Step-by-step guides for exploring codebases, fixing bugs, refactoring, testing, and other everyday tasks with Claude Code.
 
-This page covers practical workflows for everyday development: exploring unfamiliar code, debugging, refactoring, writing tests, creating PRs, and managing sessions. Each section includes example prompts you can adapt to your own projects.
+This page covers practical workflows for everyday development: exploring unfamiliar code, debugging, refactoring, writing tests, creating PRs, and managing sessions. Each section includes example prompts you can adapt to your own projects. For higher-level patterns and tips, see [Best practices](/en/best-practices).
 
 ## Understand new codebases
 
@@ -219,76 +219,6 @@ Suppose you want to use specialized AI subagents to handle specific tasks more e
 
 ***
 
-## Create custom skills and commands
-
-Skills extend Claude's capabilities with reusable prompts and workflows. Create a skill once, then invoke it with `/skill-name` or let Claude use it automatically when relevant.
-
-For the full reference, see the [Skills documentation](/en/skills).
-
-### Create a skill Claude can use automatically
-
-This skill teaches Claude how to analyze code performance. Because it has a description and no restrictions, Claude can load it automatically when you ask about optimization.
-
-<Steps>
-  <Step title="Create a skills directory in your project">
-    ```bash  theme={null}
-    mkdir -p .claude/skills/optimize
-    ```
-  </Step>
-
-  <Step title="Create a SKILL.md file with frontmatter and instructions">
-    Create `.claude/skills/optimize/SKILL.md` with the following content:
-
-    ```markdown .claude/skills/optimize/SKILL.md theme={null}
-    ---
-    name: optimize
-    description: Analyze code performance and suggest optimizations
-    ---
-
-    Analyze the performance of this code and suggest three specific optimizations.
-    ```
-  </Step>
-
-  <Step title="Use your custom skill">
-    Claude uses it automatically when relevant, or you can invoke it directly:
-
-    ```
-    /optimize src/utils/parser.js
-    ```
-  </Step>
-</Steps>
-
-### Create a skill for manual invocation
-
-This skill runs tests and shows coverage. The `disable-model-invocation: true` field means Claude can't invoke it automatically—only you can trigger it with `/test-coverage`.
-
-<Steps>
-  <Step title="Create a skill file">
-    Create `.claude/commands/test-coverage.md` with the following content:
-
-    ```markdown .claude/commands/test-coverage.md theme={null}
-    ---
-    description: Run tests with coverage report
-    disable-model-invocation: true
-    ---
-
-    Run the test suite with coverage enabled and summarize the results.
-    ```
-  </Step>
-
-  <Step title="Use your skill">
-    ```
-    /test-coverage
-    ```
-  </Step>
-</Steps>
-
-<Tip>
-  Skills can be scoped to a project, personal directory, or organization. They can also accept arguments with `$ARGUMENTS`. See the [Skills documentation](/en/skills) for details.
-</Tip>
-
-***
-
 ## Use Plan Mode for safe code analysis
 
 Plan Mode instructs Claude to create a plan by analyzing the codebase with read-only operations, perfect for exploring codebases, planning complex changes, or reviewing code safely. In Plan Mode, Claude uses [`AskUserQuestion`](/en/settings#tools-available-to-claude) to gather requirements and clarify your goals before proposing a plan.
@@ -352,38 +282,6 @@ Claude analyzes the current implementation and create a comprehensive plan. Refi
 ```
 
 See [settings documentation](/en/settings#available-settings) for more configuration options.
-
-## Let Claude interview you
-
-For large features, start with a minimal spec and let Claude interview you to fill in the details:
-
-```
-> Interview me about this feature before you start: user notification system
-```
-
-```
-> Help me think through the requirements for authentication by asking questions
-```
-
-```
-> Ask me clarifying questions to build out this spec: payment processing
-```
-
-Claude uses the [`AskUserQuestion`](/en/settings#tools-available-to-claude) tool to ask you multiple-choice questions for gathering requirements, clarifying ambiguity, and understanding your preferences before writing any code. This collaborative approach produces better specs than trying to anticipate every requirement upfront.
-
-<Tip>
-  When you select "Type something" to provide a custom answer, press **Ctrl+G** to open your default text editor for longer responses.
-</Tip>
-
-This behavior is most active in Plan Mode. To encourage it in other modes, add guidance to your `CLAUDE.md` file:
-
-```markdown  theme={null}
-Always ask clarifying questions when there are multiple valid approaches to a task.
-```
-
-<Note>
-  If you're building applications with the Agent SDK and want to surface clarifying questions to your users programmatically, see [Handle approvals and user input](https://platform.claude.com/docs/en/agent-sdk/user-input#handle-clarifying-questions).
-</Note>
 
 ***
 
@@ -942,9 +840,23 @@ Claude has built-in access to its documentation and can answer questions about i
 
 ## Next steps
 
-<Card title="Claude Code reference implementation" icon="code" href="https://github.com/anthropics/claude-code/tree/main/.devcontainer">
-  Clone our development container reference implementation.
-</Card>
+<CardGroup cols={2}>
+  <Card title="Best practices" icon="lightbulb" href="/en/best-practices">
+    Patterns for getting the most out of Claude Code
+  </Card>
+
+  <Card title="How Claude Code works" icon="gear" href="/en/how-claude-code-works">
+    Understand the agentic loop and context management
+  </Card>
+
+  <Card title="Extend Claude Code" icon="puzzle-piece" href="/en/features-overview">
+    Add skills, hooks, MCP, subagents, and plugins
+  </Card>
+
+  <Card title="Reference implementation" icon="code" href="https://github.com/anthropics/claude-code/tree/main/.devcontainer">
+    Clone our development container reference implementation
+  </Card>
+</CardGroup>
 
 
 ---
