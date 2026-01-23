@@ -81,6 +81,7 @@ Suppose you need to locate code related to a specific feature or functionality.
 
   * Be specific about what you're looking for
   * Use domain language from the project
+  * Install a [code intelligence plugin](/en/discover-plugins#code-intelligence) for your language to give Claude precise "go to definition" and "find references" navigation
 </Tip>
 
 ***

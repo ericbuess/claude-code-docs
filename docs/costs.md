@@ -89,6 +89,10 @@ Each MCP server adds tool definitions to your context, even when idle. Run `/con
 * **Disable unused servers**: Run `/mcp` to see configured servers and disable any you're not actively using.
 * **Tool search is automatic**: When MCP tool descriptions exceed 10% of your context window, Claude Code automatically defers them and loads tools on-demand via [tool search](/en/mcp#scale-with-mcp-tool-search). Since deferred tools only enter context when actually used, a lower threshold means fewer idle tool definitions consuming space. Set a lower threshold with `ENABLE_TOOL_SEARCH=auto:<N>` (for example, `auto:5` triggers when tools exceed 5% of your context window).
 
+### Install code intelligence plugins for typed languages
+
+[Code intelligence plugins](/en/discover-plugins#code-intelligence) give Claude precise symbol navigation instead of text-based search, reducing unnecessary file reads when exploring unfamiliar code. A single "go to definition" call replaces what might otherwise be a grep followed by reading multiple candidate files. Installed language servers also report type errors automatically after edits, so Claude catches mistakes without running a compiler.
+
 ### Offload processing to hooks and skills
 
 Custom [hooks](/en/hooks) can preprocess data before Claude sees it. Instead of Claude reading a 10,000-line log file to find errors, a hook can grep for `ERROR` and return only matching lines, reducing context from tens of thousands of tokens to hundreds.

@@ -40,7 +40,7 @@ The official marketplace includes several categories of plugins:
 
 ### Code intelligence
 
-Code intelligence plugins help Claude understand your codebase more deeply. With these plugins installed, Claude can jump to definitions, find references, and see type errors immediately after edits. These plugins use the [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) (LSP), the same technology that powers VS Code's code intelligence.
+Code intelligence plugins enable Claude Code's built-in LSP tool, giving Claude the ability to jump to definitions, find references, and see type errors immediately after edits. These plugins configure [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) connections, the same technology that powers VS Code's code intelligence.
 
 These plugins require the language server binary to be installed on your system. If you already have a language server installed, Claude may prompt you to install the corresponding plugin when you open a project.
 
@@ -50,6 +50,7 @@ These plugins require the language server binary to be installed on your system.
 | C#         | `csharp-lsp`        | `csharp-ls`                  |
 | Go         | `gopls-lsp`         | `gopls`                      |
 | Java       | `jdtls-lsp`         | `jdtls`                      |
+| Kotlin     | `kotlin-lsp`        | `kotlin-language-server`     |
 | Lua        | `lua-lsp`           | `lua-language-server`        |
 | PHP        | `php-lsp`           | `intelephense`               |
 | Python     | `pyright-lsp`       | `pyright-langserver`         |
@@ -62,6 +63,15 @@ You can also [create your own LSP plugin](/en/plugins-reference#lsp-servers) for
 <Note>
   If you see `Executable not found in $PATH` in the `/plugin` Errors tab after installing a plugin, install the required binary from the table above.
 </Note>
+
+#### What Claude gains from code intelligence plugins
+
+Once a code intelligence plugin is installed and its language server binary is available, Claude gains two capabilities:
+
+* **Automatic diagnostics**: after every file edit Claude makes, the language server analyzes the changes and reports errors and warnings back automatically. Claude sees type errors, missing imports, and syntax issues without needing to run a compiler or linter. If Claude introduces an error, it notices and fixes the issue in the same turn. This requires no configuration beyond installing the plugin. You can see diagnostics inline by pressing **Ctrl+O** when the "diagnostics found" indicator appears.
+* **Code navigation**: Claude can use the language server to jump to definitions, find references, get type info on hover, list symbols, find implementations, and trace call hierarchies. These operations give Claude more precise navigation than grep-based search, though availability may vary by language and environment.
+
+If you run into issues, see [Code intelligence troubleshooting](#code-intelligence-issues).
 
 ### External integrations
 
@@ -365,6 +375,12 @@ If you see "unknown command" or the `/plugin` command doesn't appear:
 * **Plugin skills not appearing**: Clear the cache with `rm -rf ~/.claude/plugins/cache`, restart Claude Code, and reinstall the plugin.
 
 For detailed troubleshooting with solutions, see [Troubleshooting](/en/plugin-marketplaces#troubleshooting) in the marketplace guide. For debugging tools, see [Debugging and development tools](/en/plugins-reference#debugging-and-development-tools).
+
+### Code intelligence issues
+
+* **Language server not starting**: verify the binary is installed and available in your `$PATH`. Check the `/plugin` Errors tab for details.
+* **High memory usage**: language servers like `rust-analyzer` and `pyright` can consume significant memory on large projects. If you experience memory issues, disable the plugin with `/plugin disable <plugin-name>` and rely on Claude's built-in search tools instead.
+* **False positive diagnostics in monorepos**: language servers may report unresolved import errors for internal packages if the workspace isn't configured correctly. These don't affect Claude's ability to edit code.
 
 ## Next steps
 
