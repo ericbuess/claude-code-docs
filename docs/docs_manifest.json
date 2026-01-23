@@ -87,8 +87,8 @@
     "github-actions.md": {
       "original_url": "https://code.claude.com/docs/en/github-actions",
       "original_md_url": "https://code.claude.com/docs/en/github-actions.md",
-      "hash": "b64e23368162a9ff1624def8f0740ffe4d9ef3fd3e67254668c2370183bdeb81",
-      "last_updated": "2026-01-20T18:02:45.503093"
+      "hash": "9eaf0d38776aade7e31230926acd54839299eb67617d5de5d19d7fac5affad27",
+      "last_updated": "2026-01-23T21:01:33.963380"
     },
     "gitlab-ci-cd.md": {
       "original_url": "https://code.claude.com/docs/en/gitlab-ci-cd",
@@ -171,8 +171,8 @@
     "microsoft-foundry.md": {
       "original_url": "https://code.claude.com/docs/en/microsoft-foundry",
       "original_md_url": "https://code.claude.com/docs/en/microsoft-foundry.md",
-      "hash": "e0567f4c00c37f0b8393864cefe3796fca8d6396f749e5a5e1977cd14d179616",
-      "last_updated": "2025-12-05T12:02:30.222482"
+      "hash": "b0f9ad2a233f53b795f9c5428ebe950d48f77a710972067909b21fa8ebe7fe3b",
+      "last_updated": "2026-01-23T21:01:42.437697"
     },
     "model-config.md": {
       "original_url": "https://code.claude.com/docs/en/model-config",
@@ -243,8 +243,8 @@
     "settings.md": {
       "original_url": "https://code.claude.com/docs/en/settings",
       "original_md_url": "https://code.claude.com/docs/en/settings.md",
-      "hash": "0718a62c9be63cf2a8b9ce31cd482aee93dbf4e4e6939ce0a04f5f69e9594186",
-      "last_updated": "2026-01-23T18:02:14.629709"
+      "hash": "2a25232582a5e4654cac1ad34ef314daf86f05097e8b9fe2cef3d5e1ada1a200",
+      "last_updated": "2026-01-23T21:01:49.940011"
     },
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
@@ -309,8 +309,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-01-23T18:02:20.052178",
-    "fetch_duration_seconds": 29.874674,
+    "last_fetch_completed": "2026-01-23T21:01:55.478854",
+    "fetch_duration_seconds": 30.545531,
     "total_pages_discovered": 50,
     "pages_fetched_successfully": 51,
     "pages_failed": 0,
@@ -320,7 +320,7 @@
     "total_files": 51,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-01-23T18:02:20.052196",
+  "last_updated": "2026-01-23T21:01:55.478881",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
