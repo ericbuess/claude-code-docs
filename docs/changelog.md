@@ -8,6 +8,10 @@
 
 # Changelog
 
+## 2.1.17
+
+- Fixed crashes on processors without AVX instruction support
+
 ## 2.1.16
 
 - Added new task management system, including new capabilities like dependency tracking

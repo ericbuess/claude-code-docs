@@ -193,7 +193,7 @@ Claude Code stores configuration in several locations:
 | `~/.claude/settings.json`     | User settings (permissions, hooks, model overrides)      |
 | `.claude/settings.json`       | Project settings (checked into source control)           |
 | `.claude/settings.local.json` | Local project settings (not committed)                   |
-| `~/.claude.json`              | Global state (theme, OAuth, MCP servers, allowed tools)  |
+| `~/.claude.json`              | Global state (theme, OAuth, MCP servers)                 |
 | `.mcp.json`                   | Project MCP servers (checked into source control)        |
 | `managed-settings.json`       | [Managed settings](/en/settings#settings-files)          |
 | `managed-mcp.json`            | [Managed MCP servers](/en/mcp#managed-mcp-configuration) |
@@ -223,7 +223,7 @@ rm .mcp.json
 ```
 
 <Warning>
-  This will remove all your settings, allowed tools, MCP server configurations, and session history.
+  This will remove all your settings, MCP server configurations, and session history.
 </Warning>
 
 ## Performance and stability

@@ -101,6 +101,28 @@ You can also hold `Shift` while dragging files into the prompt box to add them a
 
 Click the dropdown at the top of the Claude Code panel to access your conversation history. You can search by keyword or browse by time (Today, Yesterday, Last 7 days, etc.). Click any conversation to resume it with the full message history. For more on resuming sessions, see [Common workflows](/en/common-workflows#resume-previous-conversations).
 
+### Resume remote sessions from Claude.ai
+
+If you use [Claude Code on the web](/en/claude-code-on-the-web), you can resume those remote sessions directly in VS Code. This requires signing in with **Claude.ai Subscription**, not Anthropic Console.
+
+<Steps>
+  <Step title="Open Past Conversations">
+    Click the **Past Conversations** dropdown at the top of the Claude Code panel.
+  </Step>
+
+  <Step title="Select the Remote tab">
+    The dialog shows two tabs: Local and Remote. Click **Remote** to see sessions from claude.ai.
+  </Step>
+
+  <Step title="Select a session to resume">
+    Browse or search your remote sessions. Click any session to download it and continue the conversation locally.
+  </Step>
+</Steps>
+
+<Note>
+  Only web sessions started with a GitHub repository appear in the Remote tab. Resuming loads the conversation history locally; changes are not synced back to claude.ai.
+</Note>
+
 ## Customize your workflow
 
 Once you're up and running, you can reposition the Claude panel, run multiple sessions, or switch to terminal mode.
@@ -128,6 +150,43 @@ When using tabs, a small colored dot on the spark icon indicates status: blue me
 By default, the extension opens a graphical chat panel. If you prefer the CLI-style interface, open the [Use Terminal setting](vscode://settings/claudeCode.useTerminal) and check the box.
 
 You can also open VS Code settings (`Cmd+,` on Mac or `Ctrl+,` on Windows/Linux), go to Extensions → Claude Code, and check **Use Terminal**.
+
+## Manage plugins
+
+The VS Code extension includes a graphical interface for installing and managing [plugins](/en/plugins). Type `/plugins` in the prompt box to open the **Manage plugins** interface.
+
+### Install plugins
+
+The plugin dialog shows two tabs: **Plugins** and **Marketplaces**.
+
+In the Plugins tab:
+
+* **Installed plugins** appear at the top with toggle switches to enable or disable them
+* **Available plugins** from your configured marketplaces appear below
+* Search to filter plugins by name or description
+* Click **Install** on any available plugin
+
+When you install a plugin, choose the installation scope:
+
+* **Install for you**: Available in all your projects (user scope)
+* **Install for this project**: Shared with project collaborators (project scope)
+* **Install locally**: Only for you, only in this repository (local scope)
+
+### Manage marketplaces
+
+Switch to the **Marketplaces** tab to add or remove plugin sources:
+
+* Enter a GitHub repo, URL, or local path to add a new marketplace
+* Click the refresh icon to update a marketplace's plugin list
+* Click the trash icon to remove a marketplace
+
+After making changes, a banner prompts you to restart Claude Code to apply the updates.
+
+<Note>
+  Plugin management in VS Code uses the same CLI commands under the hood. Plugins and marketplaces you configure in the extension are also available in the CLI, and vice versa.
+</Note>
+
+For more about the plugin system, see [Plugins](/en/plugins) and [Plugin marketplaces](/en/plugin-marketplaces).
 
 ## VS Code commands and shortcuts
 
