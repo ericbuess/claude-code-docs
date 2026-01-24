@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Hooks reference
 
 > This page provides reference documentation for implementing hooks in Claude Code.
@@ -1370,8 +1374,3 @@ Progress messages appear in verbose mode (ctrl+o) showing:
 * Command being executed
 * Success/failure status
 * Output or error messages
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

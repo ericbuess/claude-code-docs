@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Set up Claude Code
 
 > Install, authenticate, and start using Claude Code on your development machine.
@@ -340,8 +344,3 @@ REM Remove project-specific settings (run from your project directory)
 rmdir /s /q ".claude"
 del ".mcp.json"
 ```
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

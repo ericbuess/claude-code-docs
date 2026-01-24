@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Use Claude Code with Chrome (beta)
 
 > Connect Claude Code to your browser to test web apps, debug with console logs, and automate browser tasks.
@@ -213,8 +217,3 @@ Site-level permissions are inherited from the Chrome extension. Manage permissio
 * [CLI reference](/en/cli-reference) - Command-line flags including `--chrome`
 * [Common workflows](/en/common-workflows) - More ways to use Claude Code
 * [Getting started with Claude for Chrome](https://support.anthropic.com/en/articles/12012173-getting-started-with-claude-for-chrome) - Full documentation for the Chrome extension, including shortcuts, scheduling, and permissions
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

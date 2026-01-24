@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Claude Code settings
 
 > Configure Claude Code with global and project-level settings, and environment variables.
@@ -947,8 +951,3 @@ files by blocking Write operations to certain paths.
 * [Tool-specific permission rules](/en/iam#tool-specific-permission-rules) - Detailed patterns for Bash, Read, Edit, WebFetch, MCP, and Task tools, including security limitations
 * [Managed settings](/en/iam#managed-settings) - Managed policy configuration for organizations
 * [Troubleshooting](/en/troubleshooting) - Solutions for common configuration issues
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

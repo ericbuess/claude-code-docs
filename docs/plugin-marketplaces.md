@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Create and distribute a plugin marketplace
 
 > Build and host plugin marketplaces to distribute Claude Code extensions across teams and communities.
@@ -602,8 +606,3 @@ For additional debugging tools and common issues, see [Debugging and development
 * [Plugins reference](/en/plugins-reference) - Complete technical specifications and schemas
 * [Plugin settings](/en/settings#plugin-settings) - Plugin configuration options
 * [strictKnownMarketplaces reference](/en/settings#strictknownmarketplaces) - Managed marketplace restrictions
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

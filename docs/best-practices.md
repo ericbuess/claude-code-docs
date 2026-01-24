@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Best Practices for Claude Code
 
 > Tips and patterns for getting the most out of Claude Code, from configuring your environment to scaling across parallel sessions.
@@ -589,8 +593,3 @@ Over time, you'll develop intuition that no guide can capture. You'll know when 
     Store project conventions and persistent context
   </Card>
 </CardGroup>
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

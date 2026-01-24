@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # How Claude Code works
 
 > Understand the agentic loop, built-in tools, and how Claude Code interacts with your project.
@@ -233,8 +237,3 @@ You don't need to specify which files to read or what commands to run. Claude fi
     Step-by-step guides for typical tasks
   </Card>
 </CardGroup>
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

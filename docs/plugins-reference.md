@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Plugins reference
 
 > Complete technical reference for Claude Code plugin system, including schemas, CLI commands, and component specifications.
@@ -728,8 +732,3 @@ Follow semantic versioning for plugin releases:
 * [Hooks](/en/hooks) - Event handling and automation
 * [MCP](/en/mcp) - External tool integration
 * [Settings](/en/settings) - Configuration options for plugins
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

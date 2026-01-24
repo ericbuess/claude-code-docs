@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Run Claude Code programmatically
 
 > Use the Agent SDK to run Claude Code programmatically from the CLI, Python, or TypeScript.
@@ -148,8 +152,3 @@ claude -p "Continue that review" --resume "$session_id"
     Use the Agent SDK in GitLab pipelines
   </Card>
 </CardGroup>
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

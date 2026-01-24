@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # JetBrains IDEs
 
 > Use Claude Code with JetBrains IDEs including IntelliJ, PyCharm, WebStorm, and more
@@ -146,8 +150,3 @@ When running in JetBrains IDEs, consider:
 * Being aware of which files Claude Code has access to modify
 
 For additional help, see our [troubleshooting guide](/en/troubleshooting).
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

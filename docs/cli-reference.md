@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # CLI reference
 
 > Complete reference for Claude Code command-line interface, including commands and flags.
@@ -149,8 +153,3 @@ For most use cases, `--append-system-prompt` or `--append-system-prompt-file` is
 * [Common workflows](/en/common-workflows) - Advanced workflows and patterns
 * [Settings](/en/settings) - Configuration options
 * [SDK documentation](https://docs.claude.com/en/docs/agent-sdk) - Programmatic usage and integrations
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

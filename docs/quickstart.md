@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Quickstart
 
 > Welcome to Claude Code!
@@ -340,8 +344,3 @@ Now that you've learned the basics, explore more advanced features:
 * **In Claude Code**: Type `/help` or ask "how do I..."
 * **Documentation**: You're here! Browse other guides
 * **Community**: Join our [Discord](https://www.anthropic.com/discord) for tips and support
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

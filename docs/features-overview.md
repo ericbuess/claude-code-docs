@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Extend Claude Code
 
 > Understand when to use CLAUDE.md, Skills, subagents, hooks, MCP, and plugins.
@@ -241,8 +245,3 @@ Each feature has its own guide with setup instructions, examples, and configurat
     Host and distribute plugin collections
   </Card>
 </CardGroup>
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

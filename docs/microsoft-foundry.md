@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Claude Code on Microsoft Foundry
 
 > Learn about configuring Claude Code through Microsoft Foundry, including setup, configuration, and troubleshooting.
@@ -105,8 +109,3 @@ If you receive an error "Failed to get token from azureADTokenProvider: ChainedT
 * [Microsoft Foundry documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-azure-ai-foundry)
 * [Microsoft Foundry models](https://ai.azure.com/explore/models)
 * [Microsoft Foundry pricing](https://azure.microsoft.com/en-us/pricing/details/ai-foundry/)
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

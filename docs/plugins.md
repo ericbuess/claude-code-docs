@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Create plugins
 
 > Create custom plugins to extend Claude Code with skills, agents, hooks, and MCP servers.
@@ -404,8 +408,3 @@ Now that you understand Claude Code's plugin system, here are suggested paths fo
   * [Subagents](/en/sub-agents): agent configuration and capabilities
   * [Hooks](/en/hooks): event handling and automation
   * [MCP](/en/mcp): external tool integration
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

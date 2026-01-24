@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Security
 
 > Learn about Claude Code's security safeguards and best practices for safe usage.
@@ -134,8 +138,3 @@ If you discover a security vulnerability in Claude Code:
 * [Monitoring usage](/en/monitoring-usage) - Track and audit Claude Code activity
 * [Development containers](/en/devcontainer) - Secure, isolated environments
 * [Anthropic Trust Center](https://trust.anthropic.com) - Security certifications and compliance
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt

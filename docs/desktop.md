@@ -1,3 +1,7 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
 # Claude Code on desktop
 
 > Run Claude Code tasks locally or on secure cloud infrastructure with the Claude desktop app
@@ -123,8 +127,3 @@ Organizations can disable local Claude Code use in the desktop application with 
 * [Enterprise Configuration](https://support.claude.com/en/articles/12622667-enterprise-configuration)
 * [Common workflows](/en/common-workflows)
 * [Settings reference](/en/settings)
-
-
----
-
-> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt
