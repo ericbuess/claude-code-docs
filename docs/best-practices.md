@@ -73,6 +73,8 @@ The recommended workflow has four phases:
     I want to add Google OAuth. What files need to change?
     What's the session flow? Create a plan.
     ```
+
+    Press `Ctrl+G` to open the plan in your text editor for direct editing before Claude proceeds.
   </Step>
 
   <Step title="Implement">

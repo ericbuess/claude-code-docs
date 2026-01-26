@@ -275,6 +275,8 @@ Claude analyzes the current implementation and create a comprehensive plan. Refi
 > How should we handle database migration?
 ```
 
+<Tip>Press `Ctrl+G` to open the plan in your default text editor, where you can edit it directly before Claude proceeds.</Tip>
+
 ### Configure Plan Mode as default
 
 ```json  theme={null}

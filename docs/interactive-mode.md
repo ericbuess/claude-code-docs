@@ -273,6 +273,7 @@ When working on complex, multi-step work, Claude creates a task list to track pr
 * To see all tasks or clear them, ask Claude directly: "show me all tasks" or "clear all tasks"
 * Tasks persist across context compactions, helping Claude stay organized on larger projects
 * To share a task list across sessions, set `CLAUDE_CODE_TASK_LIST_ID` to use a named directory in `~/.claude/tasks/`: `CLAUDE_CODE_TASK_LIST_ID=my-project claude`
+* To revert to the previous TODO list, set `CLAUDE_CODE_ENABLE_TASKS=false`.
 
 ## See also
 

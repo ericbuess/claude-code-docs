@@ -247,9 +247,19 @@ Claude Code is available as both a VS Code extension (graphical panel) and a CLI
 | ------------------- | --------------------------------------------- | ---------------------------------------- |
 | Commands and skills | [All](/en/interactive-mode#built-in-commands) | Subset (type `/` to see available)       |
 | MCP server config   | Yes                                           | No (configure via CLI, use in extension) |
-| Checkpoints         | Yes                                           | Coming soon                              |
+| Checkpoints         | Yes                                           | Yes                                      |
 | `!` bash shortcut   | Yes                                           | No                                       |
 | Tab completion      | Yes                                           | No                                       |
+
+### Rewind with checkpoints
+
+The VS Code extension supports checkpoints, which track Claude's file edits and let you rewind to a previous state. Hover over any message to reveal the rewind button, then choose from three options:
+
+* **Fork conversation from here**: start a new conversation branch from this message while keeping all code changes intact
+* **Rewind code to here**: revert file changes back to this point in the conversation while keeping the full conversation history
+* **Fork conversation and rewind code**: start a new conversation branch and revert file changes to this point
+
+For full details on how checkpoints work and their limitations, see [Checkpointing](/en/checkpointing).
 
 ### Run CLI in VS Code
 

@@ -20,19 +20,19 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
@@ -42,7 +42,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```sh  theme={null}
+    ```sh theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
 
@@ -52,7 +52,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -89,6 +89,20 @@ You'll be prompted to log in on first use. That's it! [Continue with Quickstart 
 * **Unix philosophy**: Claude Code is composable and scriptable. `tail -f app.log | claude -p "Slack me if you see any anomalies appear in this log stream"` *works*. Your CI can run `claude -p "If there are new text strings, translate them into French and raise a PR for @lang-fr-team to review"`.
 * **Enterprise-ready**: Use the Claude API, or host on AWS or GCP. Enterprise-grade [security](/en/security), [privacy](/en/data-usage), and [compliance](https://trust.anthropic.com/) is built-in.
 
+## Use Claude Code everywhere
+
+Claude Code works across your development environment: in your terminal, in your IDE, in the cloud, and in Slack.
+
+* **[Terminal (CLI)](/en/quickstart)**: the core Claude Code experience. Run `claude` in any terminal to start coding.
+* **[Claude Code on the web](/en/claude-code-on-the-web)**: use Claude Code from your browser at [claude.ai/code](https://claude.ai/code) or the Claude iOS app, with no local setup required. Run tasks in parallel, work on repos you don't have locally, and review changes in a built-in diff view.
+* **[Desktop app](/en/desktop)**: a standalone application with diff review, parallel sessions via git worktrees, and the ability to launch cloud sessions.
+* **[VS Code](/en/vs-code)**: a native extension with inline diffs, @-mentions, and plan review.
+* **[JetBrains IDEs](/en/jetbrains)**: a plugin for IntelliJ IDEA, PyCharm, WebStorm, and other JetBrains IDEs with IDE diff viewing and context sharing.
+* **[GitHub Actions](/en/github-actions)**: automate code review, issue triage, and other workflows in CI/CD with `@claude` mentions.
+* **[GitLab CI/CD](/en/gitlab-ci-cd)**: event-driven automation for GitLab merge requests and issues.
+* **[Slack](/en/slack)**: mention Claude in Slack to route coding tasks to Claude Code on the web and get PRs back.
+* **[Chrome](/en/chrome)**: connect Claude Code to your browser for live debugging, design verification, and web app testing.
+
 ## Next steps
 
 <CardGroup>
@@ -104,8 +118,8 @@ You'll be prompted to log in on first use. That's it! [Continue with Quickstart 
     Solutions for common issues with Claude Code
   </Card>
 
-  <Card title="IDE setup" icon="laptop" href="/en/vs-code">
-    Add Claude Code to your IDE
+  <Card title="Desktop app" icon="laptop" href="/en/desktop">
+    Run Claude Code as a standalone application
   </Card>
 </CardGroup>
 
