@@ -338,7 +338,7 @@ name: pr-summary
 description: Summarize changes in a pull request
 context: fork
 agent: Explore
-allowed-tools: Bash(gh:*)
+allowed-tools: Bash(gh *)
 ---
 
 ## Pull request context
@@ -425,13 +425,13 @@ Skill
 ```
 # Allow only specific skills
 Skill(commit)
-Skill(review-pr:*)
+Skill(review-pr *)
 
 # Deny specific skills
-Skill(deploy:*)
+Skill(deploy *)
 ```
 
-Permission syntax: `Skill(name)` for exact match, `Skill(name:*)` for prefix match with any arguments.
+Permission syntax: `Skill(name)` for exact match, `Skill(name *)` for prefix match with any arguments.
 
 **Hide individual skills** by adding `disable-model-invocation: true` to their frontmatter. This removes the skill from Claude's context entirely.
 
@@ -465,7 +465,7 @@ Create `~/.claude/skills/codebase-visualizer/SKILL.md`. The description tells Cl
 ---
 name: codebase-visualizer
 description: Generate an interactive collapsible tree visualization of your codebase. Use when exploring a new repo, understanding project structure, or identifying large files.
-allowed-tools: Bash(python:*)
+allowed-tools: Bash(python *)
 ---
 
 # Codebase Visualizer

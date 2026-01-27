@@ -106,11 +106,11 @@ Code through hierarchical settings:
   "permissions": {
     "allow": [
       "Bash(npm run lint)",
-      "Bash(npm run test:*)",
+      "Bash(npm run test *)",
       "Read(~/.zshrc)"
     ],
     "deny": [
-      "Bash(curl:*)",
+      "Bash(curl *)",
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(./secrets/**)"
@@ -172,9 +172,9 @@ Code through hierarchical settings:
 
 | Keys                           | Description                                                                                                                                                                                                                              | Example                                                                |
 | :----------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------- |
-| `allow`                        | Array of permission rules to allow tool use. See [Permission rule syntax](#permission-rule-syntax) below for pattern matching details                                                                                                    | `[ "Bash(git diff:*)" ]`                                               |
-| `ask`                          | Array of permission rules to ask for confirmation upon tool use. See [Permission rule syntax](#permission-rule-syntax) below                                                                                                             | `[ "Bash(git push:*)" ]`                                               |
-| `deny`                         | Array of permission rules to deny tool use. Use this to exclude sensitive files from Claude Code access. See [Permission rule syntax](#permission-rule-syntax) and [Bash permission limitations](/en/iam#tool-specific-permission-rules) | `[ "WebFetch", "Bash(curl:*)", "Read(./.env)", "Read(./secrets/**)" ]` |
+| `allow`                        | Array of permission rules to allow tool use. See [Permission rule syntax](#permission-rule-syntax) below for pattern matching details                                                                                                    | `[ "Bash(git diff *)" ]`                                               |
+| `ask`                          | Array of permission rules to ask for confirmation upon tool use. See [Permission rule syntax](#permission-rule-syntax) below                                                                                                             | `[ "Bash(git push *)" ]`                                               |
+| `deny`                         | Array of permission rules to deny tool use. Use this to exclude sensitive files from Claude Code access. See [Permission rule syntax](#permission-rule-syntax) and [Bash permission limitations](/en/iam#tool-specific-permission-rules) | `[ "WebFetch", "Bash(curl *)", "Read(./.env)", "Read(./secrets/**)" ]` |
 | `additionalDirectories`        | Additional [working directories](/en/iam#working-directories) that Claude has access to                                                                                                                                                  | `[ "../docs/" ]`                                                       |
 | `defaultMode`                  | Default [permission mode](/en/iam#permission-modes) when opening Claude Code                                                                                                                                                             | `"acceptEdits"`                                                        |
 | `disableBypassPermissionsMode` | Set to `"disable"` to prevent `bypassPermissions` mode from being activated. This disables the `--dangerously-skip-permissions` command-line flag. See [managed settings](/en/iam#managed-settings)                                      | `"disable"`                                                            |
@@ -217,50 +217,29 @@ Add a specifier in parentheses to match specific tool uses:
 
 #### Wildcard patterns
 
-Two wildcard syntaxes are available for Bash rules:
-
-| Wildcard | Position            | Behavior                                                                                         | Example                                      |
-| :------- | :------------------ | :----------------------------------------------------------------------------------------------- | :------------------------------------------- |
-| `:*`     | End of pattern only | **Prefix matching** with word boundary. The prefix must be followed by a space or end-of-string. | `Bash(ls:*)` matches `ls -la` but not `lsof` |
-| `*`      | Anywhere in pattern | **Glob matching** with no word boundary. Matches any sequence of characters at that position.    | `Bash(ls*)` matches both `ls -la` and `lsof` |
-
-**Prefix matching with `:*`**
-
-The `:*` suffix matches any command that starts with the specified prefix. This works with multi-word commands. The following configuration allows npm and git commit commands while blocking git push and rm -rf:
+Bash rules support glob patterns with `*`. Wildcards can appear at any position in the command, including at the beginning, middle, or end. The following configuration allows npm and git commit commands while blocking git push:
 
 ```json  theme={null}
 {
   "permissions": {
     "allow": [
-      "Bash(npm run:*)",
-      "Bash(git commit:*)",
-      "Bash(docker compose:*)"
+      "Bash(npm run *)",
+      "Bash(git commit *)",
+      "Bash(git * main)",
+      "Bash(* --version)",
+      "Bash(* --help *)"
     ],
     "deny": [
-      "Bash(git push:*)",
-      "Bash(rm -rf:*)"
+      "Bash(git push *)"
     ]
   }
 }
 ```
 
-**Glob matching with `*`**
-
-The `*` wildcard can appear at the beginning, middle, or end of a pattern. The following configuration allows any git command targeting main (like `git checkout main`, `git merge main`) and any version check command (like `node --version`, `npm --version`):
-
-```json  theme={null}
-{
-  "permissions": {
-    "allow": [
-      "Bash(git * main)",
-      "Bash(* --version)"
-    ]
-  }
-}
-```
+The space before `*` matters: `Bash(ls *)` matches `ls -la` but not `lsof`, while `Bash(ls*)` matches both. The legacy `:*` suffix syntax (e.g., `Bash(npm run:*)`) is equivalent to ` *` but is deprecated.
 
 <Warning>
-  Bash permission patterns that try to constrain command arguments are fragile. For example, `Bash(curl http://github.com/:*)` intends to restrict curl to GitHub URLs, but won't match `curl -X GET http://github.com/...` (flags before URL), `curl https://github.com/...` (different protocol), or commands using shell variables. Do not rely on argument-constraining patterns as a security boundary. See [Bash permission limitations](/en/iam#tool-specific-permission-rules) for alternatives.
+  Bash permission patterns that try to constrain command arguments are fragile. For example, `Bash(curl http://github.com/ *)` intends to restrict curl to GitHub URLs, but won't match `curl -X GET http://github.com/...` (flags before URL), `curl https://github.com/...` (different protocol), or commands using shell variables. Do not rely on argument-constraining patterns as a security boundary. See [Bash permission limitations](/en/iam#tool-specific-permission-rules) for alternatives.
 </Warning>
 
 For detailed information about tool-specific permission patterns—including Read, Edit, WebFetch, MCP, Task rules, and Bash permission limitations—see [Tool-specific permission rules](/en/iam#tool-specific-permission-rules).
@@ -429,7 +408,7 @@ Settings apply in order of precedence. From highest to lowest:
 
 This hierarchy ensures that organizational policies are always enforced while still allowing teams and individuals to customize their experience.
 
-For example, if your user settings allow `Bash(npm run:*)` but a project's shared settings deny it, the project setting takes precedence and the command is blocked.
+For example, if your user settings allow `Bash(npm run *)` but a project's shared settings deny it, the project setting takes precedence and the command is blocked.
 
 ### Key points about the configuration system
 
