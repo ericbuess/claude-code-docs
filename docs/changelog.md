@@ -32,7 +32,6 @@
 - Improved task list to dynamically adjust visible items based on terminal height
 - Improved fork conversation hint to show how to resume the original session
 - Changed collapsed read/search groups to show present tense ("Reading", "Searching for") while in progress, and past tense ("Read", "Searched for") when complete
-- Changed teammate messages to render with rich Markdown formatting (bold, code blocks, lists, etc.) instead of plain text
 - Changed `ToolSearch` results to appear as a brief notification instead of inline in the conversation
 - Changed the `/commit-push-pr` skill to automatically post PR URLs to Slack channels when configured via MCP tools
 - Changed the `/copy` command to be available to all users

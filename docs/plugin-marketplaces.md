@@ -373,7 +373,9 @@ Any git hosting service works, such as GitLab, Bitbucket, and self-hosted server
 
 ### Private repositories
 
-Claude Code supports installing plugins from private repositories. Set the appropriate authentication token in your environment, and Claude Code will use it when authentication is required.
+Claude Code supports installing plugins from private repositories. For manual installation and updates, Claude Code uses your existing git credential helpers. If `git clone` works for a private repository in your terminal, it works in Claude Code too. Common credential helpers include `gh auth login` for GitHub, macOS Keychain, and `git-credential-store`.
+
+Background auto-updates run at startup without credential helpers, since interactive prompts would block Claude Code from starting. To enable auto-updates for private marketplaces, set the appropriate authentication token in your environment:
 
 | Provider  | Environment variables        | Notes                                     |
 | :-------- | :--------------------------- | :---------------------------------------- |
@@ -386,8 +388,6 @@ Set the token in your shell configuration (for example, `.bashrc`, `.zshrc`) or 
 ```bash  theme={null}
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 ```
-
-Authentication tokens are only used when a repository requires authentication. Public repositories work without any tokens configured, even if tokens are present in your environment.
 
 <Note>
   For CI/CD environments, configure the token as a secret environment variable. GitHub Actions automatically provides `GITHUB_TOKEN` for repositories in the same organization.
@@ -478,14 +478,28 @@ Allow specific marketplaces only:
 }
 ```
 
+Allow all marketplaces from an internal git server using regex pattern matching:
+
+```json  theme={null}
+{
+  "strictKnownMarketplaces": [
+    {
+      "source": "hostPattern",
+      "hostPattern": "^github\\.example\\.com$"
+    }
+  ]
+}
+```
+
 #### How restrictions work
 
 Restrictions are validated early in the plugin installation process, before any network requests or filesystem operations occur. This prevents unauthorized marketplace access attempts.
 
-The allowlist uses exact matching. For a marketplace to be allowed, all specified fields must match exactly:
+The allowlist uses exact matching for most source types. For a marketplace to be allowed, all specified fields must match exactly:
 
 * For GitHub sources: `repo` is required, and `ref` or `path` must also match if specified in the allowlist
 * For URL sources: the full URL must match exactly
+* For `hostPattern` sources: the marketplace host is matched against the regex pattern
 
 Because `strictKnownMarketplaces` is set in [managed settings](/en/settings#settings-files), individual users and project configurations cannot override these restrictions.
 
@@ -564,16 +578,23 @@ Run `claude plugin validate .` or `/plugin validate .` from your marketplace dir
 
 ### Private repository authentication fails
 
-**Symptoms**: Authentication errors when installing plugins from private repositories, even with tokens configured
+**Symptoms**: Authentication errors when installing plugins from private repositories
 
 **Solutions**:
 
-* Verify your token is set in the current shell session: `echo $GITHUB_TOKEN`
+For manual installation and updates:
+
+* Verify you're authenticated with your git provider (for example, run `gh auth status` for GitHub)
+* Check that your credential helper is configured correctly: `git config --global credential.helper`
+* Try cloning the repository manually to verify your credentials work
+
+For background auto-updates:
+
+* Set the appropriate token in your environment: `echo $GITHUB_TOKEN`
 * Check that the token has the required permissions (read access to the repository)
 * For GitHub, ensure the token has the `repo` scope for private repositories
 * For GitLab, ensure the token has at least `read_repository` scope
 * Verify the token hasn't expired
-* If using multiple git providers, ensure you've set the token for the correct provider
 
 ### Plugins with relative paths fail in URL-based marketplaces
 

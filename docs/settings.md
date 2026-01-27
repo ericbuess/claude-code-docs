@@ -556,6 +556,7 @@ Defines additional marketplaces that should be made available for the repository
 * `github`: GitHub repository (uses `repo`)
 * `git`: Any git URL (uses `url`)
 * `directory`: Local filesystem path (uses `path`, for development only)
+* `hostPattern`: regex pattern to match marketplace hosts (uses `hostPattern`)
 
 #### `strictKnownMarketplaces`
 
@@ -572,7 +573,7 @@ Defines additional marketplaces that should be made available for the repository
 * Only available in managed settings (`managed-settings.json`)
 * Cannot be overridden by user or project settings (highest precedence)
 * Enforced BEFORE network/filesystem operations (blocked sources never execute)
-* Uses exact matching for source specifications (including `ref`, `path` for git sources)
+* Uses exact matching for source specifications (including `ref`, `path` for git sources), except `hostPattern`, which uses regex matching
 
 **Allowlist behavior**:
 
@@ -582,7 +583,7 @@ Defines additional marketplaces that should be made available for the repository
 
 **All supported source types**:
 
-The allowlist supports six marketplace source types. Each source must match exactly for a user's marketplace addition to be allowed.
+The allowlist supports seven marketplace source types. Most sources use exact matching, while `hostPattern` uses regex matching against the marketplace host.
 
 1. **GitHub repositories**:
 
@@ -644,9 +645,27 @@ Fields: `path` (required: absolute path to marketplace.json file)
 
 Fields: `path` (required: absolute path to directory containing `.claude-plugin/marketplace.json`)
 
+7. **Host pattern matching**:
+
+```json  theme={null}
+{ "source": "hostPattern", "hostPattern": "^github\\.example\\.com$" }
+{ "source": "hostPattern", "hostPattern": "^gitlab\\.internal\\.example\\.com$" }
+```
+
+Fields: `hostPattern` (required: regex pattern to match against the marketplace host)
+
+Use host pattern matching when you want to allow all marketplaces from a specific host without enumerating each repository individually. This is useful for organizations with internal GitHub Enterprise or GitLab servers where developers create their own marketplaces.
+
+Host extraction by source type:
+
+* `github`: always matches against `github.com`
+* `git`: extracts hostname from the URL (supports both HTTPS and SSH formats)
+* `url`: extracts hostname from the URL
+* `npm`, `file`, `directory`: not supported for host pattern matching
+
 **Configuration examples**:
 
-Example - Allow specific marketplaces only:
+Example: allow specific marketplaces only:
 
 ```json  theme={null}
 {
@@ -677,6 +696,19 @@ Example - Disable all marketplace additions:
 ```json  theme={null}
 {
   "strictKnownMarketplaces": []
+}
+```
+
+Example: allow all marketplaces from an internal git server:
+
+```json  theme={null}
+{
+  "strictKnownMarketplaces": [
+    {
+      "source": "hostPattern",
+      "hostPattern": "^github\\.example\\.com$"
+    }
+  ]
 }
 ```
 
