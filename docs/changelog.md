@@ -8,6 +8,10 @@
 
 # Changelog
 
+## 2.1.22
+
+- Fixed structured outputs for non-interactive (-p) mode
+
 ## 2.1.21
 
 - Added support for full-width (zenkaku) number input from Japanese IME in option selection prompts
