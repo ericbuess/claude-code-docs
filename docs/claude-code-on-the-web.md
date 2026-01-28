@@ -437,6 +437,9 @@ When using "Limited" network access, the following domains are allowed by defaul
 * gradle.org
 * [www.gradle.org](http://www.gradle.org)
 * services.gradle.org
+* plugins.gradle.org
+* kotlin.org
+* [www.kotlin.org](http://www.kotlin.org)
 * spring.io
 * repo.spring.io
 
