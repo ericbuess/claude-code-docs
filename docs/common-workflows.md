@@ -330,40 +330,38 @@ For comprehensive coverage, ask Claude to identify edge cases you might have mis
 
 ## Create pull requests
 
-Suppose you need to create a well-documented pull request for your changes.
+You can create pull requests by asking Claude directly ("create a pr for my changes") or by using the `/commit-push-pr` skill, which commits, pushes, and opens a PR in one step.
+
+```
+> /commit-push-pr
+```
+
+If you have a Slack MCP server configured and specify channels in your CLAUDE.md (for example, "post PR URLs to #team-prs"), the skill automatically posts the PR URL to those channels.
+
+For more control over the process, guide Claude through it step-by-step or [create your own skill](/en/skills):
 
 <Steps>
   <Step title="Summarize your changes">
     ```
-    > summarize the changes I've made to the authentication module 
+    > summarize the changes I've made to the authentication module
     ```
   </Step>
 
-  <Step title="Generate a pull request with Claude">
+  <Step title="Generate a pull request">
     ```
-    > create a pr 
+    > create a pr
     ```
   </Step>
 
   <Step title="Review and refine">
     ```
-    > enhance the PR description with more context about the security improvements 
-    ```
-  </Step>
-
-  <Step title="Add testing details">
-    ```
-    > add information about how these changes were tested 
+    > enhance the PR description with more context about the security improvements
     ```
   </Step>
 </Steps>
 
 <Tip>
-  Tips:
-
-  * Ask Claude directly to make a PR for you
-  * Review Claude's generated PR before submitting
-  * Ask Claude to highlight potential risks or considerations
+  Review Claude's generated PR before submitting and ask Claude to highlight potential risks or considerations.
 </Tip>
 
 ## Handle documentation

@@ -58,6 +58,16 @@ Claude Code reads memories recursively: starting in the cwd, Claude Code recurse
 
 Claude will also discover CLAUDE.md nested in subtrees under your current working directory. Instead of loading them at launch, they are only included when Claude reads files in those subtrees.
 
+### Load memory from additional directories
+
+The `--add-dir` flag gives Claude access to additional directories outside your main working directory. By default, CLAUDE.md files from these directories are not loaded.
+
+To also load memory files (CLAUDE.md, .claude/CLAUDE.md, and .claude/rules/\*.md) from additional directories, set the `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` environment variable:
+
+```bash  theme={null}
+CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
+```
+
 ## Directly edit memories with `/memory`
 
 Use the `/memory` command during a session to open any memory file in your system editor for more extensive additions or organization.
