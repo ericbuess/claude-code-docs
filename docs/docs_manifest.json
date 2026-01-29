@@ -9,8 +9,8 @@
     "analytics.md": {
       "original_url": "https://code.claude.com/docs/en/analytics",
       "original_md_url": "https://code.claude.com/docs/en/analytics.md",
-      "hash": "1798fbaad53714049f4f18c8874454557d2cbbbbfc6df8ac4b30d372a910cada",
-      "last_updated": "2026-01-24T03:28:58.039296"
+      "hash": "d6581929bf896c11e6c41e5154366efd5e0fe5abfbb4462c4dfc2644faaa8fd7",
+      "last_updated": "2026-01-29T21:03:07.527915"
     },
     "best-practices.md": {
       "original_url": "https://code.claude.com/docs/en/best-practices",
@@ -315,8 +315,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-01-29T18:07:56.716367",
-    "fetch_duration_seconds": 29.382662,
+    "last_fetch_completed": "2026-01-29T21:03:37.406685",
+    "fetch_duration_seconds": 30.816367,
     "total_pages_discovered": 51,
     "pages_fetched_successfully": 52,
     "pages_failed": 0,
@@ -326,7 +326,7 @@
     "total_files": 52,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-01-29T18:07:56.716395",
+  "last_updated": "2026-01-29T21:03:37.406715",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
