@@ -27,7 +27,7 @@ The Teams and Enterprise dashboard includes:
 ### Enable contribution metrics
 
 <Note>
-  Contribution metrics are in public beta and available on Claude for Teams and Claude for Enterprise plans.
+  Contribution metrics are in public beta and available on Claude for Teams and Claude for Enterprise plans. These metrics only cover users within your claude.ai organization. Usage through the Claude Console API or third-party integrations is not included.
 </Note>
 
 Usage and adoption data is available for all Claude for Teams and Claude for Enterprise accounts. Contribution metrics require additional setup to connect your GitHub organization.
@@ -60,6 +60,10 @@ Data typically appears within 24 hours after enabling, with daily updates. If no
 Contribution metrics support GitHub Cloud and GitHub Enterprise Server.
 
 ### Review summary metrics
+
+<Note>
+  These metrics are deliberately conservative and represent an underestimate of Claude Code's actual impact. Only lines and PRs where there is high confidence in Claude Code's involvement are counted.
+</Note>
 
 The dashboard displays these summary metrics at the top:
 
