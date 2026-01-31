@@ -202,7 +202,7 @@ Each feature loads at different points in your session. The tabs below explain w
   </Tab>
 
   <Tab title="Hooks">
-    **When:** On trigger. Hooks can run before or after tool executions, at session start, before compaction, and at other lifecycle events. See [Hooks](/en/hooks) for the full list.
+    **When:** On trigger. Hooks fire at specific lifecycle events like tool execution, session boundaries, prompt submission, permission requests, and compaction. See [Hooks](/en/hooks) for the full list.
 
     **What loads:** Nothing by default. Hooks run as external scripts.
 
@@ -233,8 +233,8 @@ Each feature has its own guide with setup instructions, examples, and configurat
     Connect Claude to external services
   </Card>
 
-  <Card title="Hooks" icon="bolt" href="/en/hooks">
-    Run scripts on Claude Code events
+  <Card title="Hooks" icon="bolt" href="/en/hooks-guide">
+    Automate workflows with hooks
   </Card>
 
   <Card title="Plugins" icon="puzzle-piece" href="/en/plugins">

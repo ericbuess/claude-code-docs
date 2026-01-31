@@ -175,7 +175,7 @@ All fields are optional. Only `description` is recommended so Claude knows when 
 | `model`                    | No          | Model to use when this skill is active.                                                                                                               |
 | `context`                  | No          | Set to `fork` to run in a forked subagent context.                                                                                                    |
 | `agent`                    | No          | Which subagent type to use when `context: fork` is set.                                                                                               |
-| `hooks`                    | No          | Hooks scoped to this skill's lifecycle. See [Hooks](/en/hooks) for configuration format.                                                              |
+| `hooks`                    | No          | Hooks scoped to this skill's lifecycle. See [Hooks in skills and agents](/en/hooks#hooks-in-skills-and-agents) for configuration format.              |
 
 #### Available string substitutions
 

@@ -298,7 +298,7 @@ hooks:
 ---
 ```
 
-Claude Code [passes hook input as JSON](/en/hooks#pretooluse-input) via stdin to hook commands. The validation script reads this JSON, extracts the Bash command, and [exits with code 2](/en/hooks#exit-code-2-behavior) to block write operations:
+Claude Code [passes hook input as JSON](/en/hooks#pretooluse-input) via stdin to hook commands. The validation script reads this JSON, extracts the Bash command, and [exits with code 2](/en/hooks#exit-code-2-behavior-per-event) to block write operations:
 
 ```bash  theme={null}
 #!/bin/bash
@@ -316,7 +316,7 @@ fi
 exit 0
 ```
 
-See [Hook input](/en/hooks#pretooluse-input) for the complete input schema and [exit codes](/en/hooks#simple-exit-code) for how exit codes affect behavior.
+See [Hook input](/en/hooks#pretooluse-input) for the complete input schema and [exit codes](/en/hooks#exit-code-output) for how exit codes affect behavior.
 
 #### Disable specific subagents
 
@@ -349,11 +349,13 @@ Subagents can define [hooks](/en/hooks) that run during the subagent's lifecycle
 
 Define hooks directly in the subagent's markdown file. These hooks only run while that specific subagent is active and are cleaned up when it finishes.
 
-| Event         | Matcher input | When it fires                   |
-| :------------ | :------------ | :------------------------------ |
-| `PreToolUse`  | Tool name     | Before the subagent uses a tool |
-| `PostToolUse` | Tool name     | After the subagent uses a tool  |
-| `Stop`        | (none)        | When the subagent finishes      |
+All [hook events](/en/hooks#hook-events) are supported. The most common events for subagents are:
+
+| Event         | Matcher input | When it fires                                                       |
+| :------------ | :------------ | :------------------------------------------------------------------ |
+| `PreToolUse`  | Tool name     | Before the subagent uses a tool                                     |
+| `PostToolUse` | Tool name     | After the subagent uses a tool                                      |
+| `Stop`        | (none)        | When the subagent finishes (converted to `SubagentStop` at runtime) |
 
 This example validates Bash commands with the `PreToolUse` hook and runs a linter after file edits with `PostToolUse`:
 
@@ -379,14 +381,14 @@ hooks:
 
 #### Project-level hooks for subagent events
 
-Configure hooks in `settings.json` that respond to subagent lifecycle events in the main session. Use the `matcher` field to target specific agent types by name.
+Configure hooks in `settings.json` that respond to subagent lifecycle events in the main session.
 
 | Event           | Matcher input   | When it fires                    |
 | :-------------- | :-------------- | :------------------------------- |
 | `SubagentStart` | Agent type name | When a subagent begins execution |
-| `SubagentStop`  | Agent type name | When a subagent completes        |
+| `SubagentStop`  | (none)          | When any subagent completes      |
 
-This example runs setup and cleanup scripts only when the `db-agent` subagent starts and stops:
+`SubagentStart` supports matchers to target specific agent types by name. `SubagentStop` fires for all subagent completions regardless of matcher values. This example runs a setup script only when the `db-agent` subagent starts, and a cleanup script when any subagent stops:
 
 ```json  theme={null}
 {
@@ -401,7 +403,6 @@ This example runs setup and cleanup scripts only when the `db-agent` subagent st
     ],
     "SubagentStop": [
       {
-        "matcher": "db-agent",
         "hooks": [
           { "type": "command", "command": "./scripts/cleanup-db-connection.sh" }
         ]
@@ -691,7 +692,7 @@ When asked to analyze data:
 You cannot modify data. If asked to INSERT, UPDATE, DELETE, or modify schema, explain that you only have read access.
 ```
 
-Claude Code [passes hook input as JSON](/en/hooks#pretooluse-input) via stdin to hook commands. The validation script reads this JSON, extracts the command being executed, and checks it against a list of SQL write operations. If a write operation is detected, the script [exits with code 2](/en/hooks#exit-code-2-behavior) to block execution and returns an error message to Claude via stderr.
+Claude Code [passes hook input as JSON](/en/hooks#pretooluse-input) via stdin to hook commands. The validation script reads this JSON, extracts the command being executed, and checks it against a list of SQL write operations. If a write operation is detected, the script [exits with code 2](/en/hooks#exit-code-2-behavior-per-event) to block execution and returns an error message to Claude via stderr.
 
 Create the validation script anywhere in your project. The path must match the `command` field in your hook configuration:
 
@@ -724,7 +725,7 @@ Make the script executable:
 chmod +x ./scripts/validate-readonly-query.sh
 ```
 
-The hook receives JSON via stdin with the Bash command in `tool_input.command`. Exit code 2 blocks the operation and feeds the error message back to Claude. See [Hooks](/en/hooks#simple-exit-code) for details on exit codes and [Hook input](/en/hooks#pretooluse-input) for the complete input schema.
+The hook receives JSON via stdin with the Bash command in `tool_input.command`. Exit code 2 blocks the operation and feeds the error message back to Claude. See [Hooks](/en/hooks#exit-code-output) for details on exit codes and [Hook input](/en/hooks#pretooluse-input) for the complete input schema.
 
 ## Next steps
 

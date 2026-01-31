@@ -360,6 +360,8 @@ For more control over the process, guide Claude through it step-by-step or [crea
   </Step>
 </Steps>
 
+When you create a PR using `gh pr create`, the session is automatically linked to that PR. You can resume it later with `claude --from-pr <number>`.
+
 <Tip>
   Review Claude's generated PR before submitting and ask Claude to highlight potential risks or considerations.
 </Tip>
@@ -560,6 +562,7 @@ When starting Claude Code, you can resume a previous session:
 
 * `claude --continue` continues the most recent conversation in the current directory
 * `claude --resume` opens a conversation picker or resumes by name
+* `claude --from-pr 123` resumes sessions linked to a specific pull request
 
 From inside an active session, use `/resume` to switch to a different conversation.
 

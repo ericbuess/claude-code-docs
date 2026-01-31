@@ -119,7 +119,6 @@ Plugins can provide event handlers that respond to Claude Code events automatica
 * `Stop`: When Claude attempts to stop
 * `SubagentStart`: When a subagent is started
 * `SubagentStop`: When a subagent attempts to stop
-* `Setup`: When `--init`, `--init-only`, or `--maintenance` flags are used
 * `SessionStart`: At the beginning of sessions
 * `SessionEnd`: At the end of sessions
 * `PreCompact`: Before conversation history is compacted

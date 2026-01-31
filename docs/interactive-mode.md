@@ -288,6 +288,7 @@ When working on a branch with an open pull request, Claude Code displays a click
 * Yellow: pending review
 * Red: changes requested
 * Gray: draft
+* Purple: merged
 
 `Cmd+click` (Mac) or `Ctrl+click` (Windows/Linux) the link to open the pull request in your browser. The status updates automatically every 60 seconds.
 

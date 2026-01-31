@@ -383,7 +383,7 @@ function example() {
 
 1. **Ask Claude to add language tags**: Request "Add appropriate language tags to all code blocks in this markdown file."
 
-2. **Use post-processing hooks**: Set up automatic formatting hooks to detect and add missing language tags. See the [markdown formatting hook example](/en/hooks-guide#markdown-formatting-hook) for implementation details.
+2. **Use post-processing hooks**: Set up automatic formatting hooks to detect and add missing language tags. See [Auto-format code after edits](/en/hooks-guide#auto-format-code-after-edits) for an example of a PostToolUse formatting hook.
 
 3. **Manual verification**: After generating markdown files, review them for proper code block formatting and request corrections if needed.
 
