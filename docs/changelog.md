@@ -8,6 +8,10 @@
 
 # Changelog
 
+## 2.1.29
+
+- Fixed startup performance issues when resuming sessions that have `saved_hook_context`
+
 ## 2.1.27
 
 - Added tool call failures and denials to debug logs
