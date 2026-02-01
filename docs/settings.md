@@ -107,6 +107,7 @@ Code through hierarchical settings:
 
 ```JSON Example settings.json theme={null}
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Bash(npm run lint)",
@@ -131,6 +132,8 @@ Code through hierarchical settings:
   ]
 }
 ```
+
+The `$schema` line in the example above points to the [official JSON schema](https://json.schemastore.org/claude-code-settings.json) for Claude Code settings. Adding it to your `settings.json` enables autocomplete and inline validation in VS Code, Cursor, and any other editor that supports JSON schema validation.
 
 ### Available settings
 
