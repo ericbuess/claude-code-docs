@@ -70,24 +70,25 @@ Example managed settings configuration:
 
 ### Common configuration variables
 
-| Environment Variable                            | Description                                                               | Example Values                       |
-| ----------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------ |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                  | Enables telemetry collection (required)                                   | `1`                                  |
-| `OTEL_METRICS_EXPORTER`                         | Metrics exporter type(s) (comma-separated)                                | `console`, `otlp`, `prometheus`      |
-| `OTEL_LOGS_EXPORTER`                            | Logs/events exporter type(s) (comma-separated)                            | `console`, `otlp`                    |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                   | Protocol for OTLP exporter (all signals)                                  | `grpc`, `http/json`, `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                   | OTLP collector endpoint (all signals)                                     | `http://localhost:4317`              |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`           | Protocol for metrics (overrides general)                                  | `grpc`, `http/json`, `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`           | OTLP metrics endpoint (overrides general)                                 | `http://localhost:4318/v1/metrics`   |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`              | Protocol for logs (overrides general)                                     | `grpc`, `http/json`, `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`              | OTLP logs endpoint (overrides general)                                    | `http://localhost:4318/v1/logs`      |
-| `OTEL_EXPORTER_OTLP_HEADERS`                    | Authentication headers for OTLP                                           | `Authorization=Bearer token`         |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`         | Client key for mTLS authentication                                        | Path to client key file              |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE` | Client certificate for mTLS authentication                                | Path to client cert file             |
-| `OTEL_METRIC_EXPORT_INTERVAL`                   | Export interval in milliseconds (default: 60000)                          | `5000`, `60000`                      |
-| `OTEL_LOGS_EXPORT_INTERVAL`                     | Logs export interval in milliseconds (default: 5000)                      | `1000`, `10000`                      |
-| `OTEL_LOG_USER_PROMPTS`                         | Enable logging of user prompt content (default: disabled)                 | `1` to enable                        |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`   | Interval for refreshing dynamic headers (default: 1740000ms / 29 minutes) | `900000`                             |
+| Environment Variable                            | Description                                                                                | Example Values                       |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------ |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                  | Enables telemetry collection (required)                                                    | `1`                                  |
+| `OTEL_METRICS_EXPORTER`                         | Metrics exporter type(s) (comma-separated)                                                 | `console`, `otlp`, `prometheus`      |
+| `OTEL_LOGS_EXPORTER`                            | Logs/events exporter type(s) (comma-separated)                                             | `console`, `otlp`                    |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                   | Protocol for OTLP exporter (all signals)                                                   | `grpc`, `http/json`, `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                   | OTLP collector endpoint (all signals)                                                      | `http://localhost:4317`              |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`           | Protocol for metrics (overrides general)                                                   | `grpc`, `http/json`, `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`           | OTLP metrics endpoint (overrides general)                                                  | `http://localhost:4318/v1/metrics`   |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`              | Protocol for logs (overrides general)                                                      | `grpc`, `http/json`, `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`              | OTLP logs endpoint (overrides general)                                                     | `http://localhost:4318/v1/logs`      |
+| `OTEL_EXPORTER_OTLP_HEADERS`                    | Authentication headers for OTLP                                                            | `Authorization=Bearer token`         |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`         | Client key for mTLS authentication                                                         | Path to client key file              |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE` | Client certificate for mTLS authentication                                                 | Path to client cert file             |
+| `OTEL_METRIC_EXPORT_INTERVAL`                   | Export interval in milliseconds (default: 60000)                                           | `5000`, `60000`                      |
+| `OTEL_LOGS_EXPORT_INTERVAL`                     | Logs export interval in milliseconds (default: 5000)                                       | `1000`, `10000`                      |
+| `OTEL_LOG_USER_PROMPTS`                         | Enable logging of user prompt content (default: disabled)                                  | `1` to enable                        |
+| `OTEL_LOG_TOOL_DETAILS`                         | Enable logging of MCP server/tool names and skill names in tool events (default: disabled) | `1` to enable                        |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`   | Interval for refreshing dynamic headers (default: 1740000ms / 29 minutes)                  | `900000`                             |
 
 ### Metrics cardinality control
 
@@ -334,6 +335,7 @@ Logged when a user submits a prompt.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"user_prompt"`
 * `event.timestamp`: ISO 8601 timestamp
+* `event.sequence`: monotonically increasing counter for ordering events within a session
 * `prompt_length`: Length of the prompt
 * `prompt`: Prompt content (redacted by default, enable with `OTEL_LOG_USER_PROMPTS=1`)
 
@@ -348,6 +350,7 @@ Logged when a tool completes execution.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"tool_result"`
 * `event.timestamp`: ISO 8601 timestamp
+* `event.sequence`: monotonically increasing counter for ordering events within a session
 * `tool_name`: Name of the tool
 * `success`: `"true"` or `"false"`
 * `duration_ms`: Execution time in milliseconds
@@ -356,6 +359,8 @@ Logged when a tool completes execution.
 * `source`: Decision source - `"config"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, or `"user_reject"`
 * `tool_parameters`: JSON string containing tool-specific parameters (when available)
   * For Bash tool: includes `bash_command`, `full_command`, `timeout`, `description`, `sandbox`
+  * For MCP tools (when `OTEL_LOG_TOOL_DETAILS=1`): includes `mcp_server_name`, `mcp_tool_name`
+  * For Skill tool (when `OTEL_LOG_TOOL_DETAILS=1`): includes `skill_name`
 
 #### API request event
 
@@ -368,6 +373,7 @@ Logged for each API request to Claude.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"api_request"`
 * `event.timestamp`: ISO 8601 timestamp
+* `event.sequence`: monotonically increasing counter for ordering events within a session
 * `model`: Model used (for example, "claude-sonnet-4-5-20250929")
 * `cost_usd`: Estimated cost in USD
 * `duration_ms`: Request duration in milliseconds
@@ -387,6 +393,7 @@ Logged when an API request to Claude fails.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"api_error"`
 * `event.timestamp`: ISO 8601 timestamp
+* `event.sequence`: monotonically increasing counter for ordering events within a session
 * `model`: Model used (for example, "claude-sonnet-4-5-20250929")
 * `error`: Error message
 * `status_code`: HTTP status code (if applicable)
@@ -404,6 +411,7 @@ Logged when a tool permission decision is made (accept/reject).
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"tool_decision"`
 * `event.timestamp`: ISO 8601 timestamp
+* `event.sequence`: monotonically increasing counter for ordering events within a session
 * `tool_name`: Name of the tool (for example, "Read", "Edit", "Write", "NotebookEdit")
 * `decision`: Either `"accept"` or `"reject"`
 * `source`: Decision source - `"config"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, or `"user_reject"`
@@ -493,7 +501,8 @@ For a comprehensive guide on measuring return on investment for Claude Code, inc
 
 * Telemetry is opt-in and requires explicit configuration
 * Sensitive information like API keys or file contents are never included in metrics or events
-* User prompt content is redacted by default - only prompt length is recorded. To enable user prompt logging, set `OTEL_LOG_USER_PROMPTS=1`
+* User prompt content is redacted by default, only prompt length is recorded. To enable user prompt logging, set `OTEL_LOG_USER_PROMPTS=1`
+* MCP server/tool names and skill names are not logged by default because they can reveal user-specific configurations. To enable, set `OTEL_LOG_TOOL_DETAILS=1`
 
 ## Monitoring Claude Code on Amazon Bedrock
 
