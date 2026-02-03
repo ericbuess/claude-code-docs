@@ -139,6 +139,35 @@ Teleport checks these requirements before resuming a session. If any requirement
 | Branch available   | The branch from the web session must have been pushed to the remote. Teleport automatically fetches and checks it out. |
 | Same account       | You must be authenticated to the same Claude.ai account used in the web session.                                       |
 
+### Sharing sessions
+
+To share a session, toggle its visibility according to the account
+types below. After that, share the session link as-is. Recipients who open your
+shared session will see the latest state of the session upon load, but the
+recipient's page will not update in real time.
+
+#### Sharing from an Enterprise or Teams account
+
+For Enterprise and Teams accounts, the two visibility options are **Private**
+and **Team**. Team visibility makes the session visible to other members of your
+Claude.ai organization. Repository access verification is enabled by default,
+based on the GitHub account connected to the recipient's account. Your account's
+display name is visible to all recipients with access. [Claude in Slack](/en/slack)
+sessions are automatically shared with Team visibility.
+
+#### Sharing from a Max or Pro account
+
+For Max and Pro accounts, the two visibility options are **Private**
+and **Public**. Public visibility makes the session visible to any user logged
+into claude.ai.
+
+Check your session for sensitive content before sharing. Sessions may contain
+code and credentials from private GitHub repositories. Repository access
+verification is not enabled by default.
+
+Enable repository access verification and/or withhold your name from your shared
+sessions by going to Settings > Claude Code > Sharing settings.
+
 ## Cloud environment
 
 ### Default image

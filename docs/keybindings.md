@@ -24,7 +24,7 @@ This example binds `Ctrl+E` to open an external editor in the chat context, and 
 
 ```json  theme={null}
 {
-  "$schema": "https://platform.claude.com/docs/schemas/claude-code/keybindings.json",
+  "$schema": "https://www.schemastore.org/claude-code-keybindings.json",
   "$docs": "https://code.claude.com/docs/en/keybindings",
   "bindings": [
     {

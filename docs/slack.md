@@ -137,6 +137,10 @@ Slack workspace administrators control whether the Claude app can be installed i
 
 **On the web**: The complete Claude Code session with full conversation history, all code changes, file operations, and the ability to continue the session or create pull requests.
 
+For Enterprise and Teams accounts, sessions created from Claude in Slack are
+automatically visible to the organization. See [Claude Code on the Web sharing](/en/claude-code-on-the-web#sharing-sessions)
+for more details.
+
 ## Best practices
 
 ### Writing effective requests
