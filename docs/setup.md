@@ -8,7 +8,12 @@
 
 ## System requirements
 
-* **Operating Systems**: macOS 13.0+, Ubuntu 20.04+/Debian 10+, or Windows 10 1809+ / Windows Server 2019+ (with WSL 1, WSL 2, or Git for Windows)
+* **Operating System**:
+  * macOS 13.0+
+  * Windows 10 1809+ or Windows Server 2019+ ([see setup notes](#platform-specific-setup))
+  * Ubuntu 20.04+
+  * Debian 10+
+  * Alpine Linux 3.19+ ([additional dependencies required](#platform-specific-setup))
 * **Hardware**: 4 GB+ RAM
 * **Network**: Internet connection required (see [network configuration](/en/network-config#network-access-requirements))
 * **Shell**: Works best in Bash or Zsh
@@ -27,19 +32,19 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null} theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null} theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
@@ -49,7 +54,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```sh  theme={null}
+    ```sh theme={null} theme={null} theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
 
@@ -59,7 +64,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -82,9 +87,19 @@ If you encounter any issues during installation, consult the [troubleshooting gu
   Run `claude doctor` after installation to check your installation type and version.
 </Tip>
 
-<Note>
-  **Alpine Linux and other musl/uClibc-based distributions**: The native installer requires `libgcc`, `libstdc++`, and `ripgrep`. For Alpine: `apk add libgcc libstdc++ ripgrep`. Set `USE_BUILTIN_RIPGREP=0`.
-</Note>
+### Platform-specific setup
+
+**Windows**: Run Claude Code natively (requires [Git Bash](https://git-scm.com/downloads/win)) or inside WSL. Both WSL 1 and WSL 2 are supported, but WSL 1 has limited support and does not support features like Bash tool sandboxing.
+
+**Alpine Linux and other musl/uClibc-based distributions**:
+
+The native installer on Alpine and other musl/uClibc-based distributions requires `libgcc`, `libstdc++`, and `ripgrep`. Install these using your distribution's package manager, then set `USE_BUILTIN_RIPGREP=0`.
+
+On Alpine:
+
+```bash  theme={null}
+apk add libgcc libstdc++ ripgrep
+```
 
 ### Authentication
 
