@@ -137,7 +137,7 @@ Even if an attacker successfully manipulates Claude Code's behavior through prom
 
 * Cannot modify critical config files such as `~/.bashrc`
 * Cannot modify system-level files in `/bin/`
-* Cannot read files that are denied in your [Claude permission settings](/en/iam#configuring-permissions)
+* Cannot read files that are denied in your [Claude permission settings](/en/permissions#manage-permissions)
 
 **Network protection:**
 
@@ -184,6 +184,21 @@ When Claude Code attempts to access network resources outside the sandbox:
 * Filesystem Permission Escalation: Overly broad filesystem write permissions can enable privilege escalation attacks. Allowing writes to directories containing executables in `$PATH`, system configuration directories, or user shell configuration files (`.bashrc`, `.zshrc`) can lead to code execution in different security contexts when other users or system processes access these files.
 * Linux Sandbox Strength: The Linux implementation provides strong filesystem and network isolation but includes an `enableWeakerNestedSandbox` mode that enables it to work inside of Docker environments without privileged namespaces. This option considerably weakens security and should only be used in cases where additional isolation is otherwise enforced.
 
+## How sandboxing relates to permissions
+
+Sandboxing and [permissions](/en/permissions) are complementary security layers that work together:
+
+* **Permissions** control which tools Claude Code can use and are evaluated before any tool runs. They apply to all tools: Bash, Read, Edit, WebFetch, MCP, and others.
+* **Sandboxing** provides OS-level enforcement that restricts what Bash commands can access at the filesystem and network level. It applies only to Bash commands and their child processes.
+
+Filesystem and network restrictions are configured through permission rules, not sandbox settings:
+
+* Use `Read` and `Edit` deny rules to block access to specific files or directories
+* Use `WebFetch` allow/deny rules to control domain access
+* Use sandbox `allowedDomains` to control which domains Bash commands can reach
+
+This [repository](https://github.com/anthropics/claude-code/tree/main/examples/settings) includes starter settings configurations for common deployment scenarios, including sandbox-specific examples. Use these as starting points and adjust them to fit your needs.
+
 ## Advanced usage
 
 ### Custom proxy configuration
@@ -210,7 +225,7 @@ For organizations requiring advanced network security, you can implement a custo
 
 The sandboxed bash tool works alongside:
 
-* **IAM policies**: Combine with [permission settings](/en/iam) for defense-in-depth
+* **Permission rules**: Combine with [permission settings](/en/permissions) for defense-in-depth
 * **Development containers**: Use with [devcontainers](/en/devcontainer) for additional isolation
 * **Enterprise policies**: Enforce sandbox configurations through [managed settings](/en/settings#settings-precedence)
 
@@ -241,6 +256,6 @@ For implementation details and source code, visit the [GitHub repository](https:
 ## See also
 
 * [Security](/en/security) - Comprehensive security features and best practices
-* [IAM](/en/iam) - Permission configuration and access control
+* [Permissions](/en/permissions) - Permission configuration and access control
 * [Settings](/en/settings) - Complete configuration reference
 * [CLI reference](/en/cli-reference) - Command-line options

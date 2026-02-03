@@ -116,7 +116,7 @@ Control how Claude works using the mode selector next to the send button:
 
 To stop Claude mid-task, click the stop button.
 
-Remote sessions only support **Code** and **Plan** modes because they continue running in the background without requiring your active participation. See [permission modes](/en/iam#permission-modes) for details on how these work internally.
+Remote sessions only support **Code** and **Plan** modes because they continue running in the background without requiring your active participation. See [permission modes](/en/permissions#permission-modes) for details on how these work internally.
 
 ### Work in parallel with sessions
 

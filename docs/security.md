@@ -18,7 +18,7 @@ Claude Code uses strict read-only permissions by default. When additional action
 
 We designed Claude Code to be transparent and secure. For example, we require approval for bash commands before executing them, giving you direct control. This approach enables users and organizations to configure permissions directly.
 
-For detailed permission configuration, see [Identity and Access Management](/en/iam).
+For detailed permission configuration, see [Permissions](/en/permissions).
 
 ### Built-in protections
 
@@ -42,7 +42,7 @@ Prompt injection is a technique where an attacker attempts to override or manipu
 * **Permission system**: Sensitive operations require explicit approval
 * **Context-aware analysis**: Detects potentially harmful instructions by analyzing the full request
 * **Input sanitization**: Prevents command injection by processing user inputs
-* **Command blocklist**: Blocks risky commands that fetch arbitrary content from the web like `curl` and `wget` by default. When explicitly allowed, be aware of [permission pattern limitations](/en/iam#tool-specific-permission-rules)
+* **Command blocklist**: Blocks risky commands that fetch arbitrary content from the web like `curl` and `wget` by default. When explicitly allowed, be aware of [permission pattern limitations](/en/permissions#tool-specific-permission-rules)
 
 ### Privacy safeguards
 
@@ -63,7 +63,7 @@ For full details, please review our [Commercial Terms of Service](https://www.an
 * **Command injection detection**: Suspicious bash commands require manual approval even if previously allowlisted
 * **Fail-closed matching**: Unmatched commands default to requiring manual approval
 * **Natural language descriptions**: Complex bash commands include explanations for user understanding
-* **Secure credential storage**: API keys and tokens are encrypted. See [Credential Management](/en/iam#credential-management)
+* **Secure credential storage**: API keys and tokens are encrypted. See [Credential Management](/en/authentication#credential-management)
 
 <Warning>
   **Windows WebDAV security risk**: When running Claude Code on Windows, we recommend against enabling WebDAV or allowing Claude Code to access paths such as `\\*` that may contain WebDAV subdirectories. [WebDAV has been deprecated by Microsoft](https://learn.microsoft.com/en-us/windows/whats-new/deprecated-features#:~:text=The%20Webclient%20\(WebDAV\)%20service%20is%20deprecated) due to security risks. Enabling WebDAV may allow Claude Code to trigger network requests to remote hosts, bypassing the permission system.
@@ -117,7 +117,7 @@ For more details on cloud execution, see [Claude Code on the web](/en/claude-cod
 
 ### Team security
 
-* Use [managed settings](/en/iam#managed-settings) to enforce organizational standards
+* Use [managed settings](/en/permissions#managed-settings) to enforce organizational standards
 * Share approved permission configurations through version control
 * Train team members on security best practices
 * Monitor Claude Code usage through [OpenTelemetry metrics](/en/monitoring-usage)
@@ -134,7 +134,7 @@ If you discover a security vulnerability in Claude Code:
 ## Related resources
 
 * [Sandboxing](/en/sandboxing) - Filesystem and network isolation for bash commands
-* [Identity and Access Management](/en/iam) - Configure permissions and access controls
+* [Permissions](/en/permissions) - Configure permissions and access controls
 * [Monitoring usage](/en/monitoring-usage) - Track and audit Claude Code activity
 * [Development containers](/en/devcontainer) - Secure, isolated environments
 * [Anthropic Trust Center](https://trust.anthropic.com) - Security certifications and compliance
