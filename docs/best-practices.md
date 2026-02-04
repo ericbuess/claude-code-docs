@@ -40,7 +40,7 @@ Without clear success criteria, it might produce something that looks right but 
 | **Verify UI changes visually**        | *"make the dashboard look better"*                      | *"\[paste screenshot] implement this design. take a screenshot of the result and compare it to the original. list differences and fix them"*                                                            |
 | **Address root causes, not symptoms** | *"the build is failing"*                                | *"the build fails with this error: \[paste error]. fix it and verify the build succeeds. address the root cause, don't suppress the error"*                                                             |
 
-UI changes can be verified using the [Claude in Chrome extension](/en/chrome). It opens a browser, tests the UI, and iterates until the code works.
+UI changes can be verified using the [Claude in Chrome extension](/en/chrome). It opens new tabs in your browser, tests the UI, and iterates until the code works.
 
 Your verification can also be a test suite, a linter, or a Bash command that checks output. Invest in making your verification rock-solid.
 

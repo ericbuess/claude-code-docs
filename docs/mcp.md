@@ -20,6 +20,7 @@ export const MCPServersTable = ({platform = "all"}) => {
         do {
           const url = new URL('https://api.anthropic.com/mcp-registry/v0/servers');
           url.searchParams.set('version', 'latest');
+          url.searchParams.set('visibility', 'commercial');
           url.searchParams.set('limit', '100');
           if (cursor) {
             url.searchParams.set('cursor', cursor);

@@ -193,6 +193,22 @@ After making changes, a banner prompts you to restart Claude Code to apply the u
 
 For more about the plugin system, see [Plugins](/en/plugins) and [Plugin marketplaces](/en/plugin-marketplaces).
 
+## Automate browser tasks with Chrome
+
+Connect Claude to your Chrome browser to test web apps, debug with console logs, and automate browser workflows without leaving VS Code. This requires the [Claude in Chrome extension](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) version 1.0.36 or higher.
+
+Type `@browser` in the prompt box followed by what you want Claude to do:
+
+```text  theme={null}
+@browser go to localhost:3000 and check the console for errors
+```
+
+You can also open the attachment menu to select specific browser tools like opening a new tab or reading page content.
+
+Claude opens new tabs for browser tasks and shares your browser's login state, so it can access any site you're already signed into.
+
+For setup instructions, the full list of capabilities, and troubleshooting, see [Use Claude Code with Chrome](/en/chrome).
+
 ## VS Code commands and shortcuts
 
 Open the Command Palette (`Cmd+Shift+P` on Mac or `Ctrl+Shift+P` on Windows/Linux) and type "Claude Code" to see all available VS Code commands for the Claude Code extension.
