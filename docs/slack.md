@@ -64,6 +64,10 @@ Before using Claude Code in Slack, ensure you have the following:
       In Code + Chat mode, if Claude routes a message to Chat but you wanted a coding session, you can click "Retry as Code" to create a Claude Code session instead. Similarly, if it's routed to Code but you wanted a Chat session, you can choose that option in that thread.
     </Note>
   </Step>
+
+  <Step title="Add Claude to channels">
+    Claude is not automatically added to any channels after installation. To use Claude in a channel, invite it by typing `/invite @Claude` in that channel. Claude can only respond to @mentions in channels where it has been added.
+  </Step>
 </Steps>
 
 ## How it works
@@ -127,9 +131,26 @@ Claude automatically selects a repository based on context from your Slack conve
 | Repository Access    | Users can only access repositories they've personally connected |
 | Session History      | Sessions appear in your Claude Code history on claude.ai/code   |
 
-### Workspace admin permissions
+### Workspace-level access
 
-Slack workspace administrators control whether the Claude app can be installed in the workspace. Individual users then authenticate with their own Claude accounts to use the integration.
+Slack workspace administrators control whether the Claude app is available in their workspace:
+
+| Control                      | Description                                                                                                       |
+| :--------------------------- | :---------------------------------------------------------------------------------------------------------------- |
+| App installation             | Workspace admins decide whether to install the Claude app from the Slack App Marketplace                          |
+| Enterprise Grid distribution | For Enterprise Grid organizations, organization admins can control which workspaces have access to the Claude app |
+| App removal                  | Removing the app from a workspace immediately revokes access for all users in that workspace                      |
+
+### Channel-based access control
+
+Claude is not automatically added to any channels after installation. Users must explicitly invite Claude to channels where they want to use it:
+
+* **Invite required**: Type `/invite @Claude` in any channel to add Claude to that channel
+* **Channel membership controls access**: Claude can only respond to @mentions in channels where it has been added
+* **Access gating through channels**: Admins can control who uses Claude Code by managing which channels Claude is invited to and who has access to those channels
+* **Private channel support**: Claude works in both public and private channels, giving teams flexibility in controlling visibility
+
+This channel-based model allows teams to restrict Claude Code usage to specific channels, providing an additional layer of access control beyond workspace-level permissions.
 
 ## What's accessible where
 
