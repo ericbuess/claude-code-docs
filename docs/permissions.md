@@ -173,7 +173,7 @@ Use `Task(AgentName)` rules to control which [subagents](/en/sub-agents) Claude 
 
 * `Task(Explore)` matches the Explore subagent
 * `Task(Plan)` matches the Plan subagent
-* `Task(Verify)` matches the Verify subagent
+* `Task(my-custom-agent)` matches a custom subagent named `my-custom-agent`
 
 Add these rules to the `deny` array in your settings or use the `--disallowedTools` CLI flag to disable specific agents. To disable the Explore agent:
 

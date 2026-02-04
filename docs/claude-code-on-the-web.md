@@ -330,7 +330,7 @@ When using "Limited" network access, the following domains are allowed by defaul
 
 * api.anthropic.com
 * statsig.anthropic.com
-* docs.claude.com
+* platform.claude.com
 * code.claude.com
 * claude.ai
 

@@ -86,7 +86,7 @@ export VERTEX_REGION_CLAUDE_4_1_OPUS=europe-west1
 ```
 
 <Note>
-  [Prompt caching](https://docs.claude.com/en/docs/build-with-claude/prompt-caching) is automatically supported when you specify the `cache_control` ephemeral flag. To disable it, set `DISABLE_PROMPT_CACHING=1`. For heightened rate limits, contact Google Cloud support.
+  [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) is automatically supported when you specify the `cache_control` ephemeral flag. To disable it, set `DISABLE_PROMPT_CACHING=1`. For heightened rate limits, contact Google Cloud support.
 </Note>
 
 <Note>
@@ -131,7 +131,7 @@ For details, see [Vertex IAM documentation](https://cloud.google.com/vertex-ai/d
 
 ## 1M token context window
 
-Claude Sonnet 4 and Sonnet 4.5 support the [1M token context window](https://docs.claude.com/en/docs/build-with-claude/context-windows#1m-token-context-window) on Vertex AI.
+Claude Sonnet 4 and Sonnet 4.5 support the [1M token context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) on Vertex AI.
 
 <Note>
   The 1M token context window is currently in beta. To use the extended context window, include the `context-1m-2025-08-07` beta header in your Vertex AI requests.
