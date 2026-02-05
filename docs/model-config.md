@@ -92,12 +92,12 @@ and Sonnet's efficiency for execution.
 
 [Effort levels](https://platform.claude.com/docs/en/build-with-claude/effort) control Opus 4.6's adaptive reasoning, which dynamically allocates thinking based on task complexity. Lower effort is faster and cheaper for straightforward tasks, while higher effort provides deeper reasoning for complex problems.
 
-Four levels are available: **low**, **medium**, **high** (default), and **max**.
+Three levels are available: **low**, **medium**, and **high** (default).
 
 **Setting effort:**
 
 * **In `/model`**: use left/right arrow keys to adjust the effort slider when selecting a model
-* **Environment variable**: set `CLAUDE_CODE_EFFORT_LEVEL=low|medium|high|max`
+* **Environment variable**: set `CLAUDE_CODE_EFFORT_LEVEL=low|medium|high`
 * **Settings**: set `effortLevel` in your settings file
 
 Effort is currently supported on Opus 4.6. The effort slider appears in `/model` when a supported model is selected.
