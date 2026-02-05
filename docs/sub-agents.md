@@ -8,6 +8,10 @@
 
 Subagents are specialized AI assistants that handle specific types of tasks. Each subagent runs in its own context window with a custom system prompt, specific tool access, and independent permissions. When Claude encounters a task that matches a subagent's description, it delegates to that subagent, which works independently and returns results.
 
+<Note>
+  If you need multiple agents working in parallel and communicating with each other, see [agent teams](/en/agent-teams) instead. Subagents work within a single session; agent teams coordinate across separate sessions.
+</Note>
+
 Subagents help you:
 
 * **Preserve context** by keeping exploration and implementation out of your main conversation
@@ -510,6 +514,8 @@ Each subagent explores its area independently, then Claude synthesizes the findi
 <Warning>
   When subagents complete, their results return to your main conversation. Running many subagents that each return detailed results can consume significant context.
 </Warning>
+
+For tasks that need sustained parallelism or exceed your context window, [agent teams](/en/agent-teams) give each worker its own independent context.
 
 #### Chain subagents
 

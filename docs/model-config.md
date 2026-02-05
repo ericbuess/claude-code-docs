@@ -12,7 +12,7 @@ For the `model` setting in Claude Code, you can configure either:
 
 * A **model alias**
 * A **model name**
-  * Anthropic API: A full **[model name](https://docs.claude.com/en/docs/about-claude/models/overview#model-names)**
+  * Anthropic API: A full **[model name](https://platform.claude.com/docs/en/about-claude/models/overview)**
   * Bedrock: an inference profile ARN
   * Foundry: a deployment name
   * Vertex: a version name
@@ -22,14 +22,16 @@ For the `model` setting in Claude Code, you can configure either:
 Model aliases provide a convenient way to select model settings without
 remembering exact version numbers:
 
-| Model alias      | Behavior                                                                                                                                                                |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`default`**    | Recommended model setting, depending on your account type                                                                                                               |
-| **`sonnet`**     | Uses the latest Sonnet model (currently Sonnet 4.5) for daily coding tasks                                                                                              |
-| **`opus`**       | Uses Opus model (currently Opus 4.5) for specialized complex reasoning tasks                                                                                            |
-| **`haiku`**      | Uses the fast and efficient Haiku model for simple tasks                                                                                                                |
-| **`sonnet[1m]`** | Uses Sonnet with a [1 million token context window](https://docs.claude.com/en/docs/build-with-claude/context-windows#1m-token-context-window) window for long sessions |
-| **`opusplan`**   | Special mode that uses `opus` during plan mode, then switches to `sonnet` for execution                                                                                 |
+| Model alias      | Behavior                                                                                                                                                             |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`default`**    | Recommended model setting, depending on your account type                                                                                                            |
+| **`sonnet`**     | Uses the latest Sonnet model (currently Sonnet 4.5) for daily coding tasks                                                                                           |
+| **`opus`**       | Uses the latest Opus model (currently Opus 4.6) for complex reasoning tasks                                                                                          |
+| **`haiku`**      | Uses the fast and efficient Haiku model for simple tasks                                                                                                             |
+| **`sonnet[1m]`** | Uses Sonnet with a [1 million token context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) for long sessions |
+| **`opusplan`**   | Special mode that uses `opus` during plan mode, then switches to `sonnet` for execution                                                                              |
+
+Aliases always point to the latest version. To pin to a specific version, use the full model name (for example, `claude-opus-4-5-20251101`) or set the corresponding environment variable like `ANTHROPIC_DEFAULT_OPUS_MODEL`.
 
 ### Setting your model
 
@@ -66,10 +68,13 @@ Example settings file:
 
 ### `default` model setting
 
-The behavior of `default` depends on your account type.
+The behavior of `default` depends on your account type:
 
-For certain Max users, Claude Code will automatically fall back to Sonnet if you
-hit a usage threshold with Opus.
+* **Max and Teams**: defaults to Opus 4.6
+* **Pro**: defaults to Opus 4.6 in Claude Code
+* **Enterprise**: Opus 4.6 is available but not the default
+
+Claude Code may automatically fall back to Sonnet if you hit a usage threshold with Opus.
 
 ### `opusplan` model setting
 
@@ -83,19 +88,40 @@ The `opusplan` model alias provides an automated hybrid approach:
 This gives you the best of both worlds: Opus's superior reasoning for planning,
 and Sonnet's efficiency for execution.
 
+### Adjust effort level
+
+[Effort levels](https://platform.claude.com/docs/en/build-with-claude/effort) control Opus 4.6's adaptive reasoning, which dynamically allocates thinking based on task complexity. Lower effort is faster and cheaper for straightforward tasks, while higher effort provides deeper reasoning for complex problems.
+
+Four levels are available: **low**, **medium**, **high** (default), and **max**.
+
+**Setting effort:**
+
+* **In `/model`**: use left/right arrow keys to adjust the effort slider when selecting a model
+* **Environment variable**: set `CLAUDE_CODE_EFFORT_LEVEL=low|medium|high|max`
+* **Settings**: set `effortLevel` in your settings file
+
+Effort is currently supported on Opus 4.6. The effort slider appears in `/model` when a supported model is selected.
+
 ### Extended context with \[1m]
 
-For Console/API users, the `[1m]` suffix can be added to full model names to
-enable a
-[1 million token context window](https://docs.claude.com/en/docs/build-with-claude/context-windows#1m-token-context-window).
+The `[1m]` suffix enables a [1 million token context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) for long sessions.
+
+<Note>
+  For Opus 4.6, the 1M context window is available for API and Claude Code pay-as-you-go users. Pro, Max, Teams, and Enterprise subscription users do not have access to Opus 4.6 1M context at launch.
+</Note>
+
+You can use the `[1m]` suffix with model aliases or full model names:
 
 ```bash  theme={null}
-# Example of using a full model name with the [1m] suffix
-/model anthropic.claude-sonnet-4-5-20250929-v1:0[1m]
+# Use the sonnet[1m] alias
+/model sonnet[1m]
+
+# Or append [1m] to a full model name
+/model claude-sonnet-4-5-20250929[1m]
 ```
 
 Note: Extended context models have
-[different pricing](https://docs.claude.com/en/docs/about-claude/pricing#long-context-pricing).
+[different pricing](https://platform.claude.com/docs/en/about-claude/pricing#long-context-pricing).
 
 ## Checking your current model
 
@@ -121,7 +147,7 @@ Note: `ANTHROPIC_SMALL_FAST_MODEL` is deprecated in favor of
 
 ### Prompt caching configuration
 
-Claude Code automatically uses [prompt caching](https://docs.claude.com/en/docs/build-with-claude/prompt-caching) to optimize performance and reduce costs. You can disable prompt caching globally or for specific model tiers:
+Claude Code automatically uses [prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) to optimize performance and reduce costs. You can disable prompt caching globally or for specific model tiers:
 
 | Environment variable            | Description                                                                                    |
 | ------------------------------- | ---------------------------------------------------------------------------------------------- |

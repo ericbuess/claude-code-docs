@@ -22,6 +22,7 @@ Extensions plug into different parts of the agentic loop:
 * **[Skills](/en/skills)** add reusable knowledge and invocable workflows
 * **[MCP](/en/mcp)** connects Claude to external services and tools
 * **[Subagents](/en/sub-agents)** run their own loops in isolated context, returning summaries
+* **[Agent teams](/en/agent-teams)** coordinate multiple independent sessions with shared tasks and peer-to-peer messaging
 * **[Hooks](/en/hooks)** run outside the loop entirely as deterministic scripts
 * **[Plugins](/en/plugins)** and **[marketplaces](/en/plugin-marketplaces)** package and distribute these features
 
@@ -31,13 +32,14 @@ Extensions plug into different parts of the agentic loop:
 
 Features range from always-on context that Claude sees every session, to on-demand capabilities you or Claude can invoke, to background automation that runs on specific events. The table below shows what's available and when each one makes sense.
 
-| Feature       | What it does                                               | When to use it                                         | Example                                                                          |
-| ------------- | ---------------------------------------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| **CLAUDE.md** | Persistent context loaded every conversation               | Project conventions, "always do X" rules               | "Use pnpm, not npm. Run tests before committing."                                |
-| **Skill**     | Instructions, knowledge, and workflows Claude can use      | Reusable content, reference docs, repeatable tasks     | `/review` runs your code review checklist; API docs skill with endpoint patterns |
-| **Subagent**  | Isolated execution context that returns summarized results | Context isolation, parallel tasks, specialized workers | Research task that reads many files but returns only key findings                |
-| **MCP**       | Connect to external services                               | External data or actions                               | Query your database, post to Slack, control a browser                            |
-| **Hook**      | Deterministic script that runs on events                   | Predictable automation, no LLM involved                | Run ESLint after every file edit                                                 |
+| Feature                            | What it does                                               | When to use it                                                                  | Example                                                                          |
+| ---------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| **CLAUDE.md**                      | Persistent context loaded every conversation               | Project conventions, "always do X" rules                                        | "Use pnpm, not npm. Run tests before committing."                                |
+| **Skill**                          | Instructions, knowledge, and workflows Claude can use      | Reusable content, reference docs, repeatable tasks                              | `/review` runs your code review checklist; API docs skill with endpoint patterns |
+| **Subagent**                       | Isolated execution context that returns summarized results | Context isolation, parallel tasks, specialized workers                          | Research task that reads many files but returns only key findings                |
+| **[Agent teams](/en/agent-teams)** | Coordinate multiple independent Claude Code sessions       | Parallel research, new feature development, debugging with competing hypotheses | Spawn reviewers to check security, performance, and tests simultaneously         |
+| **MCP**                            | Connect to external services                               | External data or actions                                                        | Query your database, post to Slack, control a browser                            |
+| **Hook**                           | Deterministic script that runs on events                   | Predictable automation, no LLM involved                                         | Run ESLint after every file edit                                                 |
 
 **[Plugins](/en/plugins)** are the packaging layer. A plugin bundles skills, hooks, subagents, and MCP servers into a single installable unit. Plugin skills are namespaced (like `/my-plugin:review`) so multiple plugins can coexist. Use plugins when you want to reuse the same setup across multiple repositories or distribute to others via a **[marketplace](/en/plugin-marketplaces)**.
 
@@ -80,6 +82,31 @@ Some features can seem similar. Here's how to tell them apart.
     **Put it in a skill** if it's reference material Claude needs sometimes (API docs, style guides) or a workflow you trigger with `/<name>` (deploy, review, release).
 
     **Rule of thumb:** Keep CLAUDE.md under \~500 lines. If it's growing, move reference content to skills.
+  </Tab>
+
+  <Tab title="Subagent vs Agent team">
+    Both parallelize work, but they're architecturally different:
+
+    * **Subagents** run inside your session and report results back to your main context
+    * **Agent teams** are independent Claude Code sessions that communicate with each other
+
+    | Aspect            | Subagent                                         | Agent team                                          |
+    | ----------------- | ------------------------------------------------ | --------------------------------------------------- |
+    | **Context**       | Own context window; results return to the caller | Own context window; fully independent               |
+    | **Communication** | Reports results back to the main agent only      | Teammates message each other directly               |
+    | **Coordination**  | Main agent manages all work                      | Shared task list with self-coordination             |
+    | **Best for**      | Focused tasks where only the result matters      | Complex work requiring discussion and collaboration |
+    | **Token cost**    | Lower: results summarized back to main context   | Higher: each teammate is a separate Claude instance |
+
+    **Use a subagent** when you need a quick, focused worker: research a question, verify a claim, review a file. The subagent does the work and returns a summary. Your main conversation stays clean.
+
+    **Use an agent team** when teammates need to share findings, challenge each other, and coordinate independently. Agent teams are best for research with competing hypotheses, parallel code review, and new feature development where each teammate owns a separate piece.
+
+    **Transition point:** If you're running parallel subagents but hitting context limits, or if your subagents need to communicate with each other, agent teams are the natural next step.
+
+    <Note>
+      Agent teams are experimental and disabled by default. See [agent teams](/en/agent-teams) for setup and current limitations.
+    </Note>
   </Tab>
 
   <Tab title="MCP vs Skill">
@@ -227,6 +254,10 @@ Each feature has its own guide with setup instructions, examples, and configurat
 
   <Card title="Subagents" icon="users" href="/en/sub-agents">
     Offload work to isolated context
+  </Card>
+
+  <Card title="Agent teams" icon="network" href="/en/agent-teams">
+    Coordinate multiple sessions working in parallel
   </Card>
 
   <Card title="MCP" icon="plug" href="/en/mcp">
