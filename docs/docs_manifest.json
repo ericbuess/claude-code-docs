@@ -207,8 +207,8 @@
     "overview.md": {
       "original_url": "https://code.claude.com/docs/en/overview",
       "original_md_url": "https://code.claude.com/docs/en/overview.md",
-      "hash": "082b20ca53c8dae28429500600d93316ff53f2ecb6591d106d9d99220d392ac4",
-      "last_updated": "2026-02-04T21:06:56.473208"
+      "hash": "2ed0f02a89fe38f001ea1fdddc0e99acd8ffa3aae0c86094ed650678f83b541e",
+      "last_updated": "2026-02-05T00:07:43.212216"
     },
     "permissions.md": {
       "original_url": "https://code.claude.com/docs/en/permissions",
@@ -321,8 +321,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-02-04T21:07:06.694672",
-    "fetch_duration_seconds": 31.409245,
+    "last_fetch_completed": "2026-02-05T00:07:53.675651",
+    "fetch_duration_seconds": 32.286812,
     "total_pages_discovered": 52,
     "pages_fetched_successfully": 53,
     "pages_failed": 0,
@@ -332,7 +332,7 @@
     "total_files": 53,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-02-04T21:07:06.694697",
+  "last_updated": "2026-02-05T00:07:53.675681",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
