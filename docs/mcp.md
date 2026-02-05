@@ -618,6 +618,67 @@ Many cloud-based MCP servers require authentication. Claude Code supports OAuth 
   * OAuth authentication works with HTTP servers
 </Tip>
 
+### Use pre-configured OAuth credentials
+
+Some MCP servers don't support automatic OAuth setup. If you see an error like "Incompatible auth server: does not support dynamic client registration," the server requires pre-configured credentials. Register an OAuth app through the server's developer portal first, then provide the credentials when adding the server.
+
+<Steps>
+  <Step title="Register an OAuth app with the server">
+    Create an app through the server's developer portal and note your client ID and client secret.
+
+    Many servers also require a redirect URI. If so, choose a port and register a redirect URI in the format `http://localhost:PORT/callback`. Use that same port with `--callback-port` in the next step.
+  </Step>
+
+  <Step title="Add the server with your credentials">
+    Choose one of the following methods. The port used for `--callback-port` can be any available port. It just needs to match the redirect URI you registered in the previous step.
+
+    <Tabs>
+      <Tab title="claude mcp add">
+        Use `--client-id` to pass your app's client ID. The `--client-secret` flag prompts for the secret with masked input:
+
+        ```bash  theme={null}
+        claude mcp add --transport http \
+          --client-id your-client-id --client-secret --callback-port 8080 \
+          my-server https://mcp.example.com/mcp
+        ```
+      </Tab>
+
+      <Tab title="claude mcp add-json">
+        Include the `oauth` object in the JSON config and pass `--client-secret` as a separate flag:
+
+        ```bash  theme={null}
+        claude mcp add-json my-server \
+          '{"type":"http","url":"https://mcp.example.com/mcp","oauth":{"clientId":"your-client-id","callbackPort":8080}}' \
+          --client-secret
+        ```
+      </Tab>
+
+      <Tab title="CI / env var">
+        Set the secret via environment variable to skip the interactive prompt:
+
+        ```bash  theme={null}
+        MCP_CLIENT_SECRET=your-secret claude mcp add --transport http \
+          --client-id your-client-id --client-secret --callback-port 8080 \
+          my-server https://mcp.example.com/mcp
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Authenticate in Claude Code">
+    Run `/mcp` in Claude Code and follow the browser login flow.
+  </Step>
+</Steps>
+
+<Tip>
+  Tips:
+
+  * The client secret is stored securely in your system keychain (macOS) or a credentials file, not in your config
+  * If the server uses a public OAuth client with no secret, use only `--client-id` without `--client-secret`
+  * These flags only apply to HTTP and SSE transports. They have no effect on stdio servers
+  * Use `claude mcp get <name>` to verify that OAuth credentials are configured for a server
+</Tip>
+
 ## Add MCP servers from JSON configuration
 
 If you have a JSON configuration for an MCP server, you can add it directly:
@@ -633,6 +694,9 @@ If you have a JSON configuration for an MCP server, you can add it directly:
 
     # Example: Adding a stdio server with JSON configuration
     claude mcp add-json local-weather '{"type":"stdio","command":"/path/to/weather-cli","args":["--api-key","abc123"],"env":{"CACHE_DIR":"/tmp"}}'
+
+    # Example: Adding an HTTP server with pre-configured OAuth credentials
+    claude mcp add-json my-server '{"type":"http","url":"https://mcp.example.com/mcp","oauth":{"clientId":"your-client-id","callbackPort":8080}}' --client-secret
     ```
   </Step>
 

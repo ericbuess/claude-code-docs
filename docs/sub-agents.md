@@ -210,6 +210,7 @@ The following fields can be used in the YAML frontmatter. Only `name` and `descr
 | `permissionMode`  | No       | [Permission mode](#permission-modes): `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, or `plan`                                                                                                    |
 | `skills`          | No       | [Skills](/en/skills) to load into the subagent's context at startup. The full skill content is injected, not just made available for invocation. Subagents don't inherit skills from the parent conversation |
 | `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) scoped to this subagent                                                                                                                                       |
+| `memory`          | No       | [Persistent memory scope](#enable-persistent-memory): `user`, `project`, or `local`. Enables cross-session learning                                                                                          |
 
 ### Choose a model
 
@@ -277,6 +278,49 @@ The full content of each skill is injected into the subagent's context, not just
 <Note>
   This is the inverse of [running a skill in a subagent](/en/skills#run-skills-in-a-subagent). With `skills` in a subagent, the subagent controls the system prompt and loads skill content. With `context: fork` in a skill, the skill content is injected into the agent you specify. Both use the same underlying system.
 </Note>
+
+#### Enable persistent memory
+
+The `memory` field designates a persistent directory for the subagent to write to across conversations. The subagent uses this directory to build up knowledge over time: codebase patterns, debugging insights, architectural decisions, and other learnings.
+
+```yaml  theme={null}
+---
+name: code-reviewer
+description: Reviews code for quality and best practices
+memory: user
+---
+
+You are a code reviewer. As you review code, update your agent memory with
+patterns, conventions, and recurring issues you discover.
+```
+
+Choose a scope based on how broadly the memory should apply:
+
+| Scope     | Location                                      | Use when                                                                                    |
+| :-------- | :-------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| `user`    | `~/.claude/agent-memory/<name-of-agent>/`     | the subagent should remember learnings across all projects                                  |
+| `project` | `.claude/agent-memory/<name-of-agent>/`       | the subagent's knowledge is project-specific and shareable via version control              |
+| `local`   | `.claude/agent-memory-local/<name-of-agent>/` | the subagent's knowledge is project-specific but should not be checked into version control |
+
+When memory is enabled:
+
+* The subagent's system prompt includes instructions for reading and writing to the memory directory.
+* The subagent's system prompt also includes the first 200 lines of `MEMORY.md` in the memory directory, with instructions to curate `MEMORY.md` if it exceeds 200 lines.
+* Read, Write, and Edit tools are automatically enabled so the subagent can manage its memory files.
+
+##### Persistent memory tips
+
+* `user` is the recommended default scope. Use `project` or `local` when the subagent's knowledge is only relevant to a specific codebase.
+* Ask the subagent to consult its memory before starting work: "Review this PR, and check your memory for patterns you've seen before."
+* Ask the subagent to update its memory after completing a task: "Now that you're done, save what you learned to your memory." Over time, this builds a knowledge base that makes the subagent more effective.
+* Include memory instructions directly in the subagent's markdown file so it proactively maintains its own knowledge base:
+
+  ```
+  **Update your agent memory** as you discover codepaths, patterns, library
+  locations, and key architectural decisions. This builds up institutional
+  knowledge across conversations. Write concise notes about what you found
+  and where.
+  ```
 
 #### Conditional rules with hooks
 
