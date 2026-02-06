@@ -57,7 +57,7 @@ Each binding block specifies a **context** where the bindings apply:
 | `ThemePicker`     | Theme picker dialog                              |
 | `Attachments`     | Image/attachment bar navigation                  |
 | `Footer`          | Footer indicator navigation (tasks, teams, diff) |
-| `MessageSelector` | Rewind dialog message selection                  |
+| `MessageSelector` | Rewind and summarize dialog message selection    |
 | `DiffDialog`      | Diff viewer navigation                           |
 | `ModelPicker`     | Model picker effort level                        |
 | `Select`          | Generic select/list components                   |

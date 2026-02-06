@@ -9,8 +9,8 @@
     "amazon-bedrock.md": {
       "original_url": "https://code.claude.com/docs/en/amazon-bedrock",
       "original_md_url": "https://code.claude.com/docs/en/amazon-bedrock.md",
-      "hash": "d70c38254f7038316476a23a40a1943282e99b3b4597351da49dee95eeef5e96",
-      "last_updated": "2026-02-04T03:44:56.557651"
+      "hash": "176ac270e1303ed139d87c75caf122647c2c1f257f87208a807d1e08b8319484",
+      "last_updated": "2026-02-06T21:05:37.031820"
     },
     "analytics.md": {
       "original_url": "https://code.claude.com/docs/en/analytics",
@@ -27,14 +27,14 @@
     "best-practices.md": {
       "original_url": "https://code.claude.com/docs/en/best-practices",
       "original_md_url": "https://code.claude.com/docs/en/best-practices.md",
-      "hash": "8a408a364dd14139d4e1a100b571bea6ef785320cabad3e60974a87fb5993745",
-      "last_updated": "2026-02-06T00:04:58.046531"
+      "hash": "cdf845c6996d7e52b93c988da87b66165552f61a2f5d4a3b696f24476e947f50",
+      "last_updated": "2026-02-06T21:05:38.751681"
     },
     "checkpointing.md": {
       "original_url": "https://code.claude.com/docs/en/checkpointing",
       "original_md_url": "https://code.claude.com/docs/en/checkpointing.md",
-      "hash": "4cf5e22c4d83cc8ff0b697b2ed3f8ee2b71f1b962d460e6a9b09a9e1a0a80df3",
-      "last_updated": "2026-01-24T03:28:59.203622"
+      "hash": "b42b6ecb828bbc8247180d0655365e53879172da7d121233f66c3b2c20b045c9",
+      "last_updated": "2026-02-06T21:05:39.306976"
     },
     "chrome.md": {
       "original_url": "https://code.claude.com/docs/en/chrome",
@@ -141,8 +141,8 @@
     "interactive-mode.md": {
       "original_url": "https://code.claude.com/docs/en/interactive-mode",
       "original_md_url": "https://code.claude.com/docs/en/interactive-mode.md",
-      "hash": "9095cb78fac61512c449f8aea50d79e4f5b0ab0484a339bd6d1c86357523bad6",
-      "last_updated": "2026-02-05T18:13:00.389982"
+      "hash": "3ce4a47e4ccf9f70d50d324d8869d8fa977b373e439297b0120eea8464cb909f",
+      "last_updated": "2026-02-06T21:05:49.494359"
     },
     "jetbrains.md": {
       "original_url": "https://code.claude.com/docs/en/jetbrains",
@@ -153,8 +153,8 @@
     "keybindings.md": {
       "original_url": "https://code.claude.com/docs/en/keybindings",
       "original_md_url": "https://code.claude.com/docs/en/keybindings.md",
-      "hash": "6cae341c14c021c3bfaa95b124e774f71595849de7995e6fa8a2898d691eb08a",
-      "last_updated": "2026-02-03T18:13:51.325498"
+      "hash": "f431b89c2b90b1f18cf292f7f5255b868c7b42e27d0fa0c56d12e97b3bf33bb0",
+      "last_updated": "2026-02-06T21:05:50.623587"
     },
     "legal-and-compliance.md": {
       "original_url": "https://code.claude.com/docs/en/legal-and-compliance",
@@ -327,8 +327,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-02-06T18:10:53.974398",
-    "fetch_duration_seconds": 32.185252,
+    "last_fetch_completed": "2026-02-06T21:06:06.221538",
+    "fetch_duration_seconds": 30.074357,
     "total_pages_discovered": 53,
     "pages_fetched_successfully": 54,
     "pages_failed": 0,
@@ -338,7 +338,7 @@
     "total_files": 54,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-02-06T18:10:53.974428",
+  "last_updated": "2026-02-06T21:06:06.221561",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
