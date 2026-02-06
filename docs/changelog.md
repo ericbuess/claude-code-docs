@@ -8,6 +8,11 @@
 
 # Changelog
 
+## 2.1.34
+
+- Fixed a crash when agent teams setting changed between renders
+- Fixed a bug where commands excluded from sandboxing (via `sandbox.excludedCommands` or `dangerouslyDisableSandbox`) could bypass the Bash ask permission rule when `autoAllowBashIfSandboxed` was enabled
+
 ## 2.1.33
 
 - Fixed agent teammate sessions in tmux to send and receive messages
