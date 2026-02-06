@@ -285,7 +285,7 @@ The full content of each skill is injected into the subagent's context, not just
 
 #### Enable persistent memory
 
-The `memory` field designates a persistent directory for the subagent to write to across conversations. The subagent uses this directory to build up knowledge over time: codebase patterns, debugging insights, architectural decisions, and other learnings.
+The `memory` field gives the subagent a persistent directory that survives across conversations. The subagent uses this directory to build up knowledge over time, such as codebase patterns, debugging insights, and architectural decisions.
 
 ```yaml  theme={null}
 ---
@@ -319,8 +319,8 @@ When memory is enabled:
 * Ask the subagent to update its memory after completing a task: "Now that you're done, save what you learned to your memory." Over time, this builds a knowledge base that makes the subagent more effective.
 * Include memory instructions directly in the subagent's markdown file so it proactively maintains its own knowledge base:
 
-  ```
-  **Update your agent memory** as you discover codepaths, patterns, library
+  ```markdown  theme={null}
+  Update your agent memory as you discover codepaths, patterns, library
   locations, and key architectural decisions. This builds up institutional
   knowledge across conversations. Write concise notes about what you found
   and where.

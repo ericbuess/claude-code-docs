@@ -34,6 +34,10 @@ Usage and adoption data is available for all Claude for Teams and Claude for Ent
 
 You need the Owner role to configure analytics settings. A GitHub admin must install the GitHub app.
 
+<Warning>
+  Contribution metrics are not available for organizations with [Zero Data Retention](/en/data-usage#data-retention) enabled. The analytics dashboard will show usage metrics only.
+</Warning>
+
 <Steps>
   <Step title="Install the GitHub app">
     A GitHub admin installs the Claude GitHub app on your organization's GitHub account at [github.com/apps/claude](https://github.com/apps/claude).

@@ -180,15 +180,15 @@ You've created a plugin with a skill, but plugins can include much more: custom 
   **Common mistake**: Don't put `commands/`, `agents/`, `skills/`, or `hooks/` inside the `.claude-plugin/` directory. Only `plugin.json` goes inside `.claude-plugin/`. All other directories must be at the plugin root level.
 </Warning>
 
-| Directory         | Location    | Purpose                                         |
-| :---------------- | :---------- | :---------------------------------------------- |
-| `.claude-plugin/` | Plugin root | Contains only `plugin.json` manifest (required) |
-| `commands/`       | Plugin root | Skills as Markdown files                        |
-| `agents/`         | Plugin root | Custom agent definitions                        |
-| `skills/`         | Plugin root | Agent Skills with `SKILL.md` files              |
-| `hooks/`          | Plugin root | Event handlers in `hooks.json`                  |
-| `.mcp.json`       | Plugin root | MCP server configurations                       |
-| `.lsp.json`       | Plugin root | LSP server configurations for code intelligence |
+| Directory         | Location    | Purpose                                                                        |
+| :---------------- | :---------- | :----------------------------------------------------------------------------- |
+| `.claude-plugin/` | Plugin root | Contains `plugin.json` manifest (optional if components use default locations) |
+| `commands/`       | Plugin root | Skills as Markdown files                                                       |
+| `agents/`         | Plugin root | Custom agent definitions                                                       |
+| `skills/`         | Plugin root | Agent Skills with `SKILL.md` files                                             |
+| `hooks/`          | Plugin root | Event handlers in `hooks.json`                                                 |
+| `.mcp.json`       | Plugin root | MCP server configurations                                                      |
+| `.lsp.json`       | Plugin root | LSP server configurations for code intelligence                                |
 
 <Note>
   **Next steps**: Ready to add more features? Jump to [Develop more complex plugins](#develop-more-complex-plugins) to add agents, hooks, MCP servers, and LSP servers. For complete technical specifications of all plugin components, see [Plugins reference](/en/plugins-reference).
