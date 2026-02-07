@@ -90,6 +90,12 @@
       "hash": "8600a6390d7d69d154eda26468e41a835b54a55aa1b745bbbaa13a947336e43f",
       "last_updated": "2026-01-24T03:29:04.463139"
     },
+    "fast-mode.md": {
+      "original_url": "https://code.claude.com/docs/en/fast-mode",
+      "original_md_url": "https://code.claude.com/docs/en/fast-mode.md",
+      "hash": "94c66282fca39a3227180040305945e0218670622c1e280120dc261380dc6745",
+      "last_updated": "2026-02-07T18:02:56.410029"
+    },
     "features-overview.md": {
       "original_url": "https://code.claude.com/docs/en/features-overview",
       "original_md_url": "https://code.claude.com/docs/en/features-overview.md",
@@ -321,24 +327,24 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "2526e06a10a501aac0fd16d399a1d2812eb9e682c65c2ec89add7bbcab224964",
-      "last_updated": "2026-02-06T15:12:26.728756",
+      "hash": "1a535727519396734b81b040e26cee1ac96475a790a287999e24b3697dedca08",
+      "last_updated": "2026-02-07T18:03:21.111516",
       "source": "claude-code-repository"
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-02-07T15:04:12.591506",
-    "fetch_duration_seconds": 31.184192,
-    "total_pages_discovered": 53,
-    "pages_fetched_successfully": 54,
+    "last_fetch_completed": "2026-02-07T18:03:21.111540",
+    "fetch_duration_seconds": 34.941009,
+    "total_pages_discovered": 54,
+    "pages_fetched_successfully": 55,
     "pages_failed": 0,
     "failed_pages": [],
     "sitemap_url": "https://code.claude.com/docs/sitemap.xml",
     "base_url": "https://code.claude.com",
-    "total_files": 54,
+    "total_files": 55,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-02-07T15:04:12.591536",
+  "last_updated": "2026-02-07T18:03:21.111561",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
