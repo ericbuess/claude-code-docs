@@ -266,20 +266,22 @@ You can replace the `echo` with any command that produces dynamic output, like `
 
 Hook events fire at specific lifecycle points in Claude Code. When an event fires, all matching hooks run in parallel, and identical hook commands are automatically deduplicated. The table below shows each event and when it triggers:
 
-| Event                | When it fires                                        |
-| :------------------- | :--------------------------------------------------- |
-| `SessionStart`       | When a session begins or resumes                     |
-| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it |
-| `PreToolUse`         | Before a tool call executes. Can block it            |
-| `PermissionRequest`  | When a permission dialog appears                     |
-| `PostToolUse`        | After a tool call succeeds                           |
-| `PostToolUseFailure` | After a tool call fails                              |
-| `Notification`       | When Claude Code sends a notification                |
-| `SubagentStart`      | When a subagent is spawned                           |
-| `SubagentStop`       | When a subagent finishes                             |
-| `Stop`               | When Claude finishes responding                      |
-| `PreCompact`         | Before context compaction                            |
-| `SessionEnd`         | When a session terminates                            |
+| Event                | When it fires                                                      |
+| :------------------- | :----------------------------------------------------------------- |
+| `SessionStart`       | When a session begins or resumes                                   |
+| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it               |
+| `PreToolUse`         | Before a tool call executes. Can block it                          |
+| `PermissionRequest`  | When a permission dialog appears                                   |
+| `PostToolUse`        | After a tool call succeeds                                         |
+| `PostToolUseFailure` | After a tool call fails                                            |
+| `Notification`       | When Claude Code sends a notification                              |
+| `SubagentStart`      | When a subagent is spawned                                         |
+| `SubagentStop`       | When a subagent finishes                                           |
+| `Stop`               | When Claude finishes responding                                    |
+| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle |
+| `TaskCompleted`      | When a task is being marked as completed                           |
+| `PreCompact`         | Before context compaction                                          |
+| `SessionEnd`         | When a session terminates                                          |
 
 Each hook has a `type` that determines how it runs. Most hooks use `"type": "command"`, which runs a shell command. Two other options use a Claude model to make decisions: `"type": "prompt"` for single-turn evaluation and `"type": "agent"` for multi-turn verification with tool access. See [Prompt-based hooks](#prompt-based-hooks) and [Agent-based hooks](#agent-based-hooks) for details.
 
@@ -381,16 +383,16 @@ The `"Edit|Write"` matcher is a regex pattern that matches the tool name. The ho
 
 Each event type matches on a specific field. Matchers support exact strings and regex patterns:
 
-| Event                                                                  | What the matcher filters  | Example matcher values                                                   |
-| :--------------------------------------------------------------------- | :------------------------ | :----------------------------------------------------------------------- |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` | tool name                 | `Bash`, `Edit\|Write`, `mcp__.*`                                         |
-| `SessionStart`                                                         | how the session started   | `startup`, `resume`, `clear`, `compact`                                  |
-| `SessionEnd`                                                           | why the session ended     | `clear`, `logout`, `prompt_input_exit`, `other`                          |
-| `Notification`                                                         | notification type         | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog` |
-| `SubagentStart`                                                        | agent type                | `Bash`, `Explore`, `Plan`, or custom agent names                         |
-| `PreCompact`                                                           | what triggered compaction | `manual`, `auto`                                                         |
-| `UserPromptSubmit`, `Stop`                                             | no matcher support        | always fires on every occurrence                                         |
-| `SubagentStop`                                                         | agent type                | same values as `SubagentStart`                                           |
+| Event                                                                  | What the matcher filters  | Example matcher values                                                         |
+| :--------------------------------------------------------------------- | :------------------------ | :----------------------------------------------------------------------------- |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` | tool name                 | `Bash`, `Edit\|Write`, `mcp__.*`                                               |
+| `SessionStart`                                                         | how the session started   | `startup`, `resume`, `clear`, `compact`                                        |
+| `SessionEnd`                                                           | why the session ended     | `clear`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other` |
+| `Notification`                                                         | notification type         | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`       |
+| `SubagentStart`                                                        | agent type                | `Bash`, `Explore`, `Plan`, or custom agent names                               |
+| `PreCompact`                                                           | what triggered compaction | `manual`, `auto`                                                               |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`            | no matcher support        | always fires on every occurrence                                               |
+| `SubagentStop`                                                         | agent type                | same values as `SubagentStart`                                                 |
 
 A few more examples showing matchers on different event types:
 

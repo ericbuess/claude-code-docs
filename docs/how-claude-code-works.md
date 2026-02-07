@@ -77,7 +77,7 @@ Because Claude sees your whole project, it can work across it. When you ask Clau
 
 Claude Code saves your conversation locally as you work. Each message, tool use, and result is stored, which enables [rewinding](#undo-changes-with-checkpoints), [resuming, and forking](#resume-or-fork-sessions) sessions. Before Claude makes code changes, it also snapshots the affected files so you can revert if needed.
 
-**Sessions are ephemeral.** Unlike claude.ai, Claude Code has no persistent memory between sessions. Each new session starts fresh. Claude doesn't "learn" your preferences over time or remember what you worked on last week. If you want Claude to know something across sessions, put it in your [CLAUDE.md](/en/memory).
+**Sessions are independent.** Each new session starts with a fresh context window, without the conversation history from previous sessions. Claude can persist learnings across sessions using [auto memory](/en/memory#auto-memory), and you can add your own persistent instructions in [CLAUDE.md](/en/memory).
 
 ### Work across branches
 

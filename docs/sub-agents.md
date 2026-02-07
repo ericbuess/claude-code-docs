@@ -174,7 +174,7 @@ claude --agents '{
 }'
 ```
 
-The `--agents` flag accepts JSON with the same fields as [frontmatter](#supported-frontmatter-fields). Use `prompt` for the system prompt (equivalent to the markdown body in file-based subagents). See the [CLI reference](/en/cli-reference#agents-flag-format) for the full JSON format.
+The `--agents` flag accepts JSON with the same [frontmatter](#supported-frontmatter-fields) fields as file-based subagents: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, and `memory`. Use `prompt` for the system prompt, equivalent to the markdown body in file-based subagents. See the [CLI reference](/en/cli-reference#agents-flag-format) for the full JSON format.
 
 **Plugin subagents** come from [plugins](/en/plugins) you've installed. They appear in `/agents` alongside your custom subagents. See the [plugin components reference](/en/plugins-reference#agents) for details on creating plugin subagents.
 
@@ -204,17 +204,19 @@ The frontmatter defines the subagent's metadata and configuration. The body beco
 
 The following fields can be used in the YAML frontmatter. Only `name` and `description` are required.
 
-| Field             | Required | Description                                                                                                                                                                                                  |
-| :---------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`            | Yes      | Unique identifier using lowercase letters and hyphens                                                                                                                                                        |
-| `description`     | Yes      | When Claude should delegate to this subagent                                                                                                                                                                 |
-| `tools`           | No       | [Tools](#available-tools) the subagent can use. Inherits all tools if omitted                                                                                                                                |
-| `disallowedTools` | No       | Tools to deny, removed from inherited or specified list                                                                                                                                                      |
-| `model`           | No       | [Model](#choose-a-model) to use: `sonnet`, `opus`, `haiku`, or `inherit`. Defaults to `inherit`                                                                                                              |
-| `permissionMode`  | No       | [Permission mode](#permission-modes): `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, or `plan`                                                                                                    |
-| `skills`          | No       | [Skills](/en/skills) to load into the subagent's context at startup. The full skill content is injected, not just made available for invocation. Subagents don't inherit skills from the parent conversation |
-| `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) scoped to this subagent                                                                                                                                       |
-| `memory`          | No       | [Persistent memory scope](#enable-persistent-memory): `user`, `project`, or `local`. Enables cross-session learning                                                                                          |
+| Field             | Required | Description                                                                                                                                                                                                                                                                 |
+| :---------------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`            | Yes      | Unique identifier using lowercase letters and hyphens                                                                                                                                                                                                                       |
+| `description`     | Yes      | When Claude should delegate to this subagent                                                                                                                                                                                                                                |
+| `tools`           | No       | [Tools](#available-tools) the subagent can use. Inherits all tools if omitted                                                                                                                                                                                               |
+| `disallowedTools` | No       | Tools to deny, removed from inherited or specified list                                                                                                                                                                                                                     |
+| `model`           | No       | [Model](#choose-a-model) to use: `sonnet`, `opus`, `haiku`, or `inherit`. Defaults to `inherit`                                                                                                                                                                             |
+| `permissionMode`  | No       | [Permission mode](#permission-modes): `default`, `acceptEdits`, `delegate`, `dontAsk`, `bypassPermissions`, or `plan`                                                                                                                                                       |
+| `maxTurns`        | No       | Maximum number of agentic turns before the subagent stops                                                                                                                                                                                                                   |
+| `skills`          | No       | [Skills](/en/skills) to load into the subagent's context at startup. The full skill content is injected, not just made available for invocation. Subagents don't inherit skills from the parent conversation                                                                |
+| `mcpServers`      | No       | [MCP servers](/en/mcp) available to this subagent. Each entry is either a server name referencing an already-configured server (e.g., `"slack"`) or an inline definition with the server name as key and a full [MCP server config](/en/mcp#configure-mcp-servers) as value |
+| `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) scoped to this subagent                                                                                                                                                                                                      |
+| `memory`          | No       | [Persistent memory scope](#enable-persistent-memory): `user`, `project`, or `local`. Enables cross-session learning                                                                                                                                                         |
 
 ### Choose a model
 
@@ -243,17 +245,40 @@ disallowedTools: Write, Edit
 ---
 ```
 
+#### Restrict which subagents can be spawned
+
+When an agent runs as the main thread with `claude --agent`, it can spawn subagents using the Task tool. To restrict which subagent types it can spawn, use `Task(agent_type)` syntax in the `tools` field:
+
+```yaml  theme={null}
+---
+name: coordinator
+description: Coordinates work across specialized agents
+tools: Task(worker, researcher), Read, Bash
+---
+```
+
+This is an allowlist: only the `worker` and `researcher` subagents can be spawned. If the agent tries to spawn any other type, the request fails and the agent sees only the allowed types in its prompt. To block specific agents while allowing all others, use [`permissions.deny`](#disable-specific-subagents) instead.
+
+To allow spawning any subagent without restrictions, use `Task` without parentheses:
+
+```yaml  theme={null}
+tools: Task, Read, Bash
+```
+
+If `Task` is omitted from the `tools` list entirely, the agent cannot spawn any subagents. This restriction only applies to agents running as the main thread with `claude --agent`. Subagents cannot spawn other subagents, so `Task(agent_type)` has no effect in subagent definitions.
+
 #### Permission modes
 
 The `permissionMode` field controls how the subagent handles permission prompts. Subagents inherit the permission context from the main conversation but can override the mode.
 
-| Mode                | Behavior                                                           |
-| :------------------ | :----------------------------------------------------------------- |
-| `default`           | Standard permission checking with prompts                          |
-| `acceptEdits`       | Auto-accept file edits                                             |
-| `dontAsk`           | Auto-deny permission prompts (explicitly allowed tools still work) |
-| `bypassPermissions` | Skip all permission checks                                         |
-| `plan`              | Plan mode (read-only exploration)                                  |
+| Mode                | Behavior                                                                                                             |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------- |
+| `default`           | Standard permission checking with prompts                                                                            |
+| `acceptEdits`       | Auto-accept file edits                                                                                               |
+| `dontAsk`           | Auto-deny permission prompts (explicitly allowed tools still work)                                                   |
+| `delegate`          | Coordination-only mode for [agent team](/en/agent-teams#use-delegate-mode) leads. Restricts to team management tools |
+| `bypassPermissions` | Skip all permission checks                                                                                           |
+| `plan`              | Plan mode (read-only exploration)                                                                                    |
 
 <Warning>
   Use `bypassPermissions` with caution. It skips all permission checks, allowing the subagent to execute any operation without approval.
@@ -434,9 +459,9 @@ Configure hooks in `settings.json` that respond to subagent lifecycle events in 
 | Event           | Matcher input   | When it fires                    |
 | :-------------- | :-------------- | :------------------------------- |
 | `SubagentStart` | Agent type name | When a subagent begins execution |
-| `SubagentStop`  | (none)          | When any subagent completes      |
+| `SubagentStop`  | Agent type name | When a subagent completes        |
 
-`SubagentStart` supports matchers to target specific agent types by name. `SubagentStop` fires for all subagent completions regardless of matcher values. This example runs a setup script only when the `db-agent` subagent starts, and a cleanup script when any subagent stops:
+Both events support matchers to target specific agent types by name. This example runs a setup script only when the `db-agent` subagent starts, and a cleanup script when any subagent stops:
 
 ```json  theme={null}
 {

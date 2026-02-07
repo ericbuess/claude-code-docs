@@ -43,6 +43,10 @@ The three restore options revert state: they undo code changes, conversation his
 
 This is similar to `/compact`, but targeted: instead of summarizing the entire conversation, you keep early context in full detail and only compress the parts that are using up space. You can type optional instructions to guide what the summary focuses on.
 
+<Note>
+  Summarize keeps you in the same session and compresses context. If you want to branch off and try a different approach while preserving the original session intact, use [fork](/en/how-claude-code-works#resume-or-fork-sessions) instead (`claude --continue --fork-session`).
+</Note>
+
 ## Common use cases
 
 Checkpoints are particularly useful when:
