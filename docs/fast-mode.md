@@ -14,14 +14,14 @@ Fast mode delivers faster Opus 4.6 responses at a higher cost per token. Toggle 
 
 Fast mode is not a different model. It uses the same Opus 4.6 with a different API configuration that prioritizes speed over cost efficiency. You get identical quality and capabilities, just faster responses.
 
-This page covers how to [toggle fast mode](#toggle-fast-mode), its [cost tradeoff](#understand-the-cost-tradeoff), [when to use it](#decide-when-to-use-fast-mode), [requirements](#requirements), and [rate limit behavior](#handle-rate-limits).
-
 What to know:
 
 * Use `/fast` to toggle on fast mode in Claude Code CLI. Also available via `/fast` in Claude Code VS Code Extension.
 * Fast mode for Opus 4.6 pricing starts at \$30/150 MTok. Fast mode is available at a 50% discount for all plans until 11:59pm PT on February 16.
-* Available to all Claude Code users on subscription plans (Pro/Max/Team/Enterprise) and first-party Console.
+* Available to all Claude Code users on subscription plans (Pro/Max/Team/Enterprise) and Claude Console.
 * For Claude Code users on subscription plans (Pro/Max/Team/Enterprise), fast mode is available via extra usage only and not included in the subscription rate limits.
+
+This page covers how to [toggle fast mode](#toggle-fast-mode), its [cost tradeoff](#understand-the-cost-tradeoff), [when to use it](#decide-when-to-use-fast-mode), [requirements](#requirements), and [rate limit behavior](#handle-rate-limits).
 
 ## Toggle fast mode
 
