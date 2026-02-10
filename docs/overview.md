@@ -4,160 +4,212 @@
 
 # Claude Code overview
 
-> Learn about Claude Code, Anthropic's agentic coding tool that works in your terminal, IDE, desktop app, and browser to help you turn ideas into code faster than ever before.
+> Claude Code is an agentic coding tool that reads your codebase, edits files, runs commands, and integrates with your development tools. Available in your terminal, IDE, desktop app, and browser.
 
-## Get started in 30 seconds
+Claude Code is an agentic coding tool that reads your codebase, edits files, and runs commands. It works in your terminal, IDE, browser, and as a desktop app.
 
-Prerequisites:
+## Get started
 
-* Meet the [system requirements](/en/setup#system-requirements)
-* A [Claude subscription](https://claude.com/pricing) (Pro, Max, Teams, or Enterprise) or [Claude Console](https://console.anthropic.com/) account
-
-**Install Claude Code:**
-
-To install Claude Code, use one of the following methods:
+Choose your environment to get started. Most surfaces require a [Claude subscription](https://claude.com/pricing) or [Anthropic Console](https://console.anthropic.com/) account. The Terminal CLI and VS Code also support [third-party providers](/en/third-party-integrations).
 
 <Tabs>
-  <Tab title="Native Install (Recommended)">
-    **macOS, Linux, WSL:**
+  <Tab title="Terminal">
+    The full-featured CLI for working with Claude Code directly in your terminal. Edit files, run commands, and manage your entire project from the command line.
+
+    To install Claude Code, use one of the following methods:
+
+    <Tabs>
+      <Tab title="Native Install (Recommended)">
+        **macOS, Linux, WSL:**
+
+        ```bash  theme={null}
+        curl -fsSL https://claude.ai/install.sh | bash
+        ```
+
+        **Windows PowerShell:**
+
+        ```powershell  theme={null}
+        irm https://claude.ai/install.ps1 | iex
+        ```
+
+        **Windows CMD:**
+
+        ```batch  theme={null}
+        curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+        ```
+
+        <Info>
+          Native installations automatically update in the background to keep you on the latest version.
+        </Info>
+      </Tab>
+
+      <Tab title="Homebrew">
+        ```sh  theme={null}
+        brew install --cask claude-code
+        ```
+
+        <Info>
+          Homebrew installations do not auto-update. Run `brew upgrade claude-code` periodically to get the latest features and security fixes.
+        </Info>
+      </Tab>
+
+      <Tab title="WinGet">
+        ```powershell  theme={null}
+        winget install Anthropic.ClaudeCode
+        ```
+
+        <Info>
+          WinGet installations do not auto-update. Run `winget upgrade Anthropic.ClaudeCode` periodically to get the latest features and security fixes.
+        </Info>
+      </Tab>
+    </Tabs>
+
+    Then start Claude Code in any project:
 
     ```bash  theme={null}
-    curl -fsSL https://claude.ai/install.sh | bash
+    cd your-project
+    claude
     ```
 
-    **Windows PowerShell:**
+    You'll be prompted to log in on first use. That's it! [Continue with the Quickstart →](/en/quickstart)
 
-    ```powershell  theme={null}
-    irm https://claude.ai/install.ps1 | iex
-    ```
-
-    **Windows CMD:**
-
-    ```batch  theme={null}
-    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
-    ```
-
-    <Info>
-      Native installations automatically update in the background to keep you on the latest version.
-    </Info>
+    <Tip>
+      See [advanced setup](/en/setup) for installation options, manual updates, or uninstallation instructions. Visit [troubleshooting](/en/troubleshooting) if you hit issues.
+    </Tip>
   </Tab>
 
-  <Tab title="Homebrew">
-    ```sh  theme={null}
-    brew install --cask claude-code
-    ```
+  <Tab title="VS Code">
+    The VS Code extension provides inline diffs, @-mentions, plan review, and conversation history directly in your editor.
 
-    <Info>
-      Homebrew installations do not auto-update. Run `brew upgrade claude-code` periodically to get the latest features and security fixes.
-    </Info>
+    * [Install for VS Code](vscode:extension/anthropic.claude-code)
+    * [Install for Cursor](cursor:extension/anthropic.claude-code)
+
+    Or search for "Claude Code" in the Extensions view (`Cmd+Shift+X` on Mac, `Ctrl+Shift+X` on Windows/Linux). After installing, open the Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`), type "Claude Code", and select **Open in New Tab**.
+
+    [Get started with VS Code →](/en/vs-code#get-started)
   </Tab>
 
-  <Tab title="WinGet">
-    ```powershell  theme={null}
-    winget install Anthropic.ClaudeCode
-    ```
+  <Tab title="Desktop app">
+    A standalone app for running Claude Code outside your IDE or terminal. Review diffs visually, run multiple sessions side by side, and kick off cloud sessions.
 
-    <Info>
-      WinGet installations do not auto-update. Run `winget upgrade Anthropic.ClaudeCode` periodically to get the latest features and security fixes.
-    </Info>
+    Download and install:
+
+    * [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) (Intel and Apple Silicon)
+    * [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) (x64)
+
+    After installing, launch Claude, sign in, and click the **Code** tab to start coding.
+
+    [Learn more about the desktop app →](/en/desktop#installation-and-setup)
+  </Tab>
+
+  <Tab title="Web">
+    Run Claude Code in your browser with no local setup. Kick off long-running tasks and check back when they're done, work on repos you don't have locally, or run multiple tasks in parallel. Available on desktop browsers and the Claude iOS app.
+
+    Start coding at [claude.ai/code](https://claude.ai/code).
+
+    [Get started on the web →](/en/claude-code-on-the-web#getting-started)
+  </Tab>
+
+  <Tab title="JetBrains">
+    A plugin for IntelliJ IDEA, PyCharm, WebStorm, and other JetBrains IDEs with interactive diff viewing and selection context sharing.
+
+    Install the [Claude Code plugin](https://plugins.jetbrains.com/plugin/27310-claude-code-beta-) from the JetBrains Marketplace and restart your IDE.
+
+    [Get started with JetBrains →](/en/jetbrains)
   </Tab>
 </Tabs>
 
-**Start using Claude Code:**
+## What you can do
 
-```bash  theme={null}
-cd your-project
-claude
-```
+Here are some of the ways you can use Claude Code:
 
-You'll be prompted to log in on first use. That's it! [Continue with Quickstart (5 minutes) →](/en/quickstart)
+<AccordionGroup>
+  <Accordion title="Automate the work you keep putting off" icon="wand-magic-sparkles">
+    Claude Code handles the tedious tasks that eat up your day: writing tests for untested code, fixing lint errors across a project, resolving merge conflicts, updating dependencies, and writing release notes.
 
-<Tip>
-  See [advanced setup](/en/setup) for installation options, manual updates, or uninstallation instructions. Visit [troubleshooting](/en/troubleshooting) if you hit issues.
-</Tip>
+    ```bash  theme={null}
+    claude "write tests for the auth module, run them, and fix any failures"
+    ```
+  </Accordion>
 
-Claude Code also runs in [VS Code](/en/vs-code), [JetBrains IDEs](/en/jetbrains), as a [desktop app](/en/desktop), [on the web](/en/claude-code-on-the-web), and in [Slack](/en/slack). See [all platforms](#use-claude-code-everywhere) below.
+  <Accordion title="Build features and fix bugs" icon="hammer">
+    Describe what you want in plain language. Claude Code plans the approach, writes the code across multiple files, and verifies it works.
 
-## What Claude Code does for you
+    For bugs, paste an error message or describe the symptom. Claude Code traces the issue through your codebase, identifies the root cause, and implements a fix. See [common workflows](/en/common-workflows) for more examples.
+  </Accordion>
 
-* **Build features from descriptions**: Tell Claude what you want to build in plain English. It will make a plan, write the code, and ensure it works.
-* **Debug and fix issues**: Describe a bug or paste an error message. Claude Code will analyze your codebase, identify the problem, and implement a fix.
-* **Navigate any codebase**: Ask anything about your team's codebase, and get a thoughtful answer back. Claude Code maintains awareness of your entire project structure, can find up-to-date information from the web, and with [MCP](/en/mcp) can pull from external data sources like Google Drive, Figma, and Slack.
-* **Automate tedious tasks**: Fix fiddly lint issues, resolve merge conflicts, and write release notes. Do all this in a single command from your developer machines, or automatically in CI.
+  <Accordion title="Create commits and pull requests" icon="code-branch">
+    Claude Code works directly with git. It stages changes, writes commit messages, creates branches, and opens pull requests.
 
-## Why developers love Claude Code
+    ```bash  theme={null}
+    claude "commit my changes with a descriptive message"
+    ```
 
-* **Meets you where you work**: Use Claude Code in your terminal, your IDE, or a standalone desktop app. It integrates with the tools you already use.
-* **Takes action**: Claude Code can directly edit files, run commands, and create commits. Need more? [MCP](/en/mcp) lets Claude read your design docs in Google Drive, update your tickets in Jira, or use *your* custom developer tooling.
-* **Unix philosophy**: Claude Code is composable and scriptable. `tail -f app.log | claude -p "Slack me if you see any anomalies appear in this log stream"` *works*. Your CI can run `claude -p "If there are new text strings, translate them into French and raise a PR for @lang-fr-team to review"`.
-* **Enterprise-ready**: Use the Claude API, or host on AWS or GCP. Enterprise-grade [security](/en/security), [privacy](/en/data-usage), and [compliance](https://trust.anthropic.com/) is built-in.
+    In CI, you can automate code review and issue triage with [GitHub Actions](/en/github-actions) or [GitLab CI/CD](/en/gitlab-ci-cd).
+  </Accordion>
+
+  <Accordion title="Connect your tools with MCP" icon="plug">
+    The [Model Context Protocol (MCP)](/en/mcp) is an open standard for connecting AI tools to external data sources. With MCP, Claude Code can read your design docs in Google Drive, update tickets in Jira, pull data from Slack, or use your own custom tooling.
+  </Accordion>
+
+  <Accordion title="Customize with instructions, skills, and hooks" icon="sliders">
+    [`CLAUDE.md`](/en/claude-md) is a markdown file you add to your project root that Claude Code reads at the start of every session. Use it to set coding standards, architecture decisions, preferred libraries, and review checklists.
+
+    Create [custom slash commands](/en/skills) to package repeatable workflows your team can share, like `/review-pr` or `/deploy-staging`.
+
+    [Hooks](/en/hooks) let you run shell commands before or after Claude Code actions, like auto-formatting after every file edit or running lint before a commit.
+  </Accordion>
+
+  <Accordion title="Run agent teams and build custom agents" icon="users">
+    Spawn [multiple Claude Code agents](/en/sub-agents) that work on different parts of a task simultaneously. A lead agent coordinates the work, assigns subtasks, and merges results.
+
+    For fully custom workflows, the [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) lets you build your own agents powered by Claude Code's tools and capabilities, with full control over orchestration, tool access, and permissions.
+  </Accordion>
+
+  <Accordion title="Pipe, script, and automate with the CLI" icon="terminal">
+    Claude Code is composable and follows the Unix philosophy. Pipe logs into it, run it in CI, or chain it with other tools:
+
+    ```bash  theme={null}
+    # Monitor logs and get alerted
+    tail -f app.log | claude -p "Slack me if you see any anomalies"
+
+    # Automate translations in CI
+    claude -p "translate new strings into French and raise a PR for review"
+
+    # Bulk operations across files
+    git diff main --name-only | claude -p "review these changed files for security issues"
+    ```
+
+    See the [CLI reference](/en/cli-reference) for the full set of commands and flags.
+  </Accordion>
+
+  <Accordion title="Work from anywhere" icon="globe">
+    Start a task on your laptop and pick it up on your phone. [Claude Code on the web](/en/claude-code-on-the-web) and the [Claude iOS app](https://apps.apple.com/app/claude-by-anthropic/id6473753684) run sessions on cloud infrastructure, so you can kick off work from anywhere without a local dev environment.
+
+    You can also route coding tasks straight from team chat: mention `@Claude` in [Slack](/en/slack) with a bug report or feature request, and get a pull request back.
+  </Accordion>
+</AccordionGroup>
 
 ## Use Claude Code everywhere
 
-Claude Code works across your development environment: in your terminal, in your IDE, in the cloud, and in Slack.
+Each surface connects to the same underlying Claude Code engine, so your CLAUDE.md files, settings, and MCP servers work across all of them.
 
-* **[Terminal (CLI)](/en/quickstart)**: the core Claude Code experience. Run `claude` in any terminal to start coding.
-* **[Claude Code on the web](/en/claude-code-on-the-web)**: use Claude Code from your browser at [claude.ai/code](https://claude.ai/code) or the Claude iOS app, with no local setup required. Run tasks in parallel, work on repos you don't have locally, and review changes in a built-in diff view.
-* **[Desktop app](/en/desktop)**: a standalone application with diff review, parallel sessions via git worktrees, and the ability to launch cloud sessions.
-* **[VS Code](/en/vs-code)**: a native extension with inline diffs, @-mentions, and plan review.
-* **[JetBrains IDEs](/en/jetbrains)**: a plugin for IntelliJ IDEA, PyCharm, WebStorm, and other JetBrains IDEs with IDE diff viewing and context sharing.
-* **[GitHub Actions](/en/github-actions)**: automate code review, issue triage, and other workflows in CI/CD with `@claude` mentions.
-* **[GitLab CI/CD](/en/gitlab-ci-cd)**: event-driven automation for GitLab merge requests and issues.
-* **[Slack](/en/slack)**: mention Claude in Slack to route coding tasks to Claude Code on the web and get PRs back.
-* **[Chrome](/en/chrome)**: connect Claude Code to your browser for live debugging, design verification, and web app testing.
+Beyond the [Terminal](/en/quickstart), [VS Code](/en/vs-code), [JetBrains](/en/jetbrains), [Desktop](/en/desktop), and [Web](/en/claude-code-on-the-web) environments above, Claude Code integrates with CI/CD, chat, and browser workflows:
+
+| I want to...                                  | Best option                                                                                                        |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Start a task locally, continue on mobile      | [Web](/en/claude-code-on-the-web) or [Claude iOS app](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
+| Automate PR reviews and issue triage          | [GitHub Actions](/en/github-actions) or [GitLab CI/CD](/en/gitlab-ci-cd)                                           |
+| Route bug reports from Slack to pull requests | [Slack](/en/slack)                                                                                                 |
+| Debug live web applications                   | [Chrome](/en/chrome)                                                                                               |
+| Build custom agents for your own workflows    | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                                |
 
 ## Next steps
 
-<CardGroup>
-  <Card title="Quickstart" icon="rocket" href="/en/quickstart">
-    See Claude Code in action with practical examples
-  </Card>
+Once you've installed Claude Code, these guides help you go deeper.
 
-  <Card title="Common workflows" icon="graduation-cap" href="/en/common-workflows">
-    Step-by-step guides for common workflows
-  </Card>
-
-  <Card title="Troubleshooting" icon="wrench" href="/en/troubleshooting">
-    Solutions for common issues with Claude Code
-  </Card>
-
-  <Card title="Desktop app" icon="laptop" href="/en/desktop">
-    Run Claude Code as a standalone application
-  </Card>
-</CardGroup>
-
-## Additional resources
-
-<CardGroup>
-  <Card title="About Claude Code" icon="sparkles" href="https://claude.com/product/claude-code">
-    Learn more about Claude Code on claude.com
-  </Card>
-
-  <Card title="Build with the Agent SDK" icon="code-branch" href="https://platform.claude.com/docs/en/agent-sdk/overview">
-    Create custom AI agents with the Claude Agent SDK
-  </Card>
-
-  <Card title="Host on AWS or GCP" icon="cloud" href="/en/third-party-integrations">
-    Configure Claude Code with Amazon Bedrock or Google Vertex AI
-  </Card>
-
-  <Card title="Settings" icon="gear" href="/en/settings">
-    Customize Claude Code for your workflow
-  </Card>
-
-  <Card title="Commands" icon="terminal" href="/en/cli-reference">
-    Learn about CLI commands and controls
-  </Card>
-
-  <Card title="Reference implementation" icon="code" href="https://github.com/anthropics/claude-code/tree/main/.devcontainer">
-    Clone our development container reference implementation
-  </Card>
-
-  <Card title="Security" icon="shield" href="/en/security">
-    Discover Claude Code's safeguards and best practices for safe usage
-  </Card>
-
-  <Card title="Privacy and data usage" icon="lock" href="/en/data-usage">
-    Understand how Claude Code handles your data
-  </Card>
-</CardGroup>
+* [Quickstart](/en/quickstart): walk through your first real task, from exploring a codebase to committing a fix
+* Level up with [best practices](/en/best-practices) and [common workflows](/en/common-workflows)
+* [Settings](/en/settings): customize Claude Code for your workflow
+* [Troubleshooting](/en/troubleshooting): solutions for common issues
+* [code.claude.com](https://code.claude.com/): demos, pricing, and product details

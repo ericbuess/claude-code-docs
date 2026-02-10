@@ -30,8 +30,8 @@ Claude Code on the web is available in research preview to:
 
 * **Pro users**
 * **Max users**
-* **Team premium seat users**
-* **Enterprise premium seat users**
+* **Team users**
+* **Enterprise users** with premium seats or Chat + Claude Code seats
 
 ## Getting started
 
