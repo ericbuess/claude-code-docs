@@ -93,8 +93,8 @@
     "fast-mode.md": {
       "original_url": "https://code.claude.com/docs/en/fast-mode",
       "original_md_url": "https://code.claude.com/docs/en/fast-mode.md",
-      "hash": "871ac1a0437826d93d3194a269eaf8c4a5b60c652f2e2a0ca43e45a4ba025678",
-      "last_updated": "2026-02-07T21:04:41.156546"
+      "hash": "7dc76bb70f0f0dcfac20f244d201dab9d3212b53675fbee5592abc8fb5495a6b",
+      "last_updated": "2026-02-10T21:12:58.683008"
     },
     "features-overview.md": {
       "original_url": "https://code.claude.com/docs/en/features-overview",
@@ -333,8 +333,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-02-10T18:18:12.713479",
-    "fetch_duration_seconds": 32.690975,
+    "last_fetch_completed": "2026-02-10T21:13:22.436505",
+    "fetch_duration_seconds": 33.72258,
     "total_pages_discovered": 54,
     "pages_fetched_successfully": 55,
     "pages_failed": 0,
@@ -344,7 +344,7 @@
     "total_files": 55,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-02-10T18:18:12.713504",
+  "last_updated": "2026-02-10T21:13:22.436533",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
