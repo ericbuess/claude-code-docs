@@ -113,6 +113,11 @@ Control how Claude works using the mode selector next to the send button:
 * **Ask** (recommended for new users): Claude asks for your approval before each file edit or command. You see a diff view and can accept or reject each change.
 * **Code**: Claude auto-accepts file edits but still asks before running terminal commands. Use this when you trust file changes and want faster iteration.
 * **Plan**: Claude creates a detailed plan for your approval before making any changes. Good for complex tasks where you want to review the approach first.
+* **Act**: Claude runs without permission checks, automatically executing file edits and terminal commands. Only use this mode in trusted environments.
+
+<Warning title="Act mode">
+  Act runs in `bypassPermissions` mode, which disables all permission checks and should only be used in isolated environments like containers or VMs where Claude Code cannot cause damage. This mode is disabled by default. For personal accounts, enable it in [Claude Code personal settings](https://claude.ai/settings/claude-code). For Team and Enterprise plans, admins must enable it in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code). Act mode does not persist across sessions.
+</Warning>
 
 To stop Claude mid-task, click the stop button.
 
