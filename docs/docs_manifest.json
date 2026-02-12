@@ -267,8 +267,8 @@
     "server-managed-settings.md": {
       "original_url": "https://code.claude.com/docs/en/server-managed-settings",
       "original_md_url": "https://code.claude.com/docs/en/server-managed-settings.md",
-      "hash": "f88f501469ee683dbd3afda68271807233d8ef45a59844ddd746196c87f973d8",
-      "last_updated": "2026-02-11T00:11:46.870281"
+      "hash": "ed1e4ea53eb3044345411a2256efc637a6e71d60a683e6c51cfcdd887f9fc06a",
+      "last_updated": "2026-02-12T00:06:53.180765"
     },
     "settings.md": {
       "original_url": "https://code.claude.com/docs/en/settings",
@@ -339,8 +339,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-02-11T21:10:22.181851",
-    "fetch_duration_seconds": 33.305109,
+    "last_fetch_completed": "2026-02-12T00:06:59.324548",
+    "fetch_duration_seconds": 33.437902,
     "total_pages_discovered": 55,
     "pages_fetched_successfully": 56,
     "pages_failed": 0,
@@ -350,7 +350,7 @@
     "total_files": 56,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-02-11T21:10:22.181878",
+  "last_updated": "2026-02-12T00:06:59.324575",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

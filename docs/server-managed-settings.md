@@ -19,7 +19,7 @@ This approach is designed for organizations that do not have device management i
 To use server-managed settings, you need:
 
 * Claude for Teams or Claude for Enterprise plan
-* Claude Code version 2.1.30 or later
+* Claude Code version 2.1.38 or later for Claude for Teams, or version 2.1.30 or later for Claude for Enterprise
 * Network access to `api.anthropic.com`
 
 ## Choose between server-managed and endpoint-managed settings
