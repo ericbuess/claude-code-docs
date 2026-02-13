@@ -80,10 +80,9 @@ export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 
 Claude Code requires access to the following URLs:
 
-* `api.anthropic.com` - Claude API endpoints
-* `claude.ai` - WebFetch safeguards
-* `statsig.anthropic.com` - Telemetry and metrics
-* `sentry.io` - Error reporting
+* `api.anthropic.com`: Claude API endpoints
+* `claude.ai`: authentication for claude.ai accounts
+* `platform.claude.com`: authentication for Anthropic Console accounts
 
 Ensure these URLs are allowlisted in your proxy configuration and firewall rules. This is especially important when using Claude Code in containerized or restricted network environments.
 
