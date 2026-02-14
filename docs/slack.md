@@ -23,7 +23,7 @@ Before using Claude Code in Slack, ensure you have the following:
 
 | Requirement            | Details                                                                        |
 | :--------------------- | :----------------------------------------------------------------------------- |
-| Claude Plan            | Pro, Max, Team, or Enterprise with Claude Code access (premium seats)          |
+| Claude Plan            | Pro, Max, Teams, or Enterprise with Claude Code access (premium seats)         |
 | Claude Code on the web | Access to [Claude Code on the web](/en/claude-code-on-the-web) must be enabled |
 | GitHub Account         | Connected to Claude Code on the web with at least one repository authenticated |
 | Slack Authentication   | Your Slack account linked to your Claude account via the Claude app            |
