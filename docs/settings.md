@@ -152,7 +152,7 @@ The `$schema` line in the example above points to the [official JSON schema](htt
 | `disableAllHooks`                 | Disable all [hooks](/en/hooks) and any custom [status line](/en/statusline)                                                                                                                                                                                                     | `true`                                                                  |
 | `allowManagedHooksOnly`           | (Managed settings only) Prevent loading of user, project, and plugin hooks. Only allows managed hooks and SDK hooks. See [Hook configuration](#hook-configuration)                                                                                                              | `true`                                                                  |
 | `allowManagedPermissionRulesOnly` | (Managed settings only) Prevent user and project settings from defining `allow`, `ask`, or `deny` permission rules. Only rules in managed settings apply. See [Managed-only settings](/en/permissions#managed-only-settings)                                                    | `true`                                                                  |
-| `model`                           | Override the default model to use for Claude Code                                                                                                                                                                                                                               | `"claude-sonnet-4-5-20250929"`                                          |
+| `model`                           | Override the default model to use for Claude Code                                                                                                                                                                                                                               | `"claude-sonnet-4-6"`                                                   |
 | `availableModels`                 | Restrict which models users can select via `/model`, `--model`, Config tool, or `ANTHROPIC_MODEL`. Does not affect the Default option. See [Restrict model selection](/en/model-config#restrict-model-selection)                                                                | `["sonnet", "haiku"]`                                                   |
 | `otelHeadersHelper`               | Script to generate dynamic OpenTelemetry headers. Runs at startup and periodically (see [Dynamic headers](/en/monitoring-usage#dynamic-headers))                                                                                                                                | `/bin/generate_otel_headers.sh`                                         |
 | `statusLine`                      | Configure a custom status line to display context. See [`statusLine` documentation](/en/statusline)                                                                                                                                                                             | `{"type": "command", "command": "~/.claude/statusline.sh"}`             |
@@ -275,7 +275,7 @@ Claude Code adds attribution to git commits and pull requests. These are configu
 ```
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-   Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+   Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 ```
 
 **Default pull request attribution:**

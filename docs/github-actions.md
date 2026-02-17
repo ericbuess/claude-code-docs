@@ -117,7 +117,7 @@ All beta users must make these changes to their workflow files in order to upgra
     anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
     custom_instructions: "Follow our coding standards"
     max_turns: "10"
-    model: "claude-sonnet-4-5-20250929"
+    model: "claude-sonnet-4-6"
 ```
 
 **GA version (v1.0):**
@@ -130,7 +130,7 @@ All beta users must make these changes to their workflow files in order to upgra
     claude_args: |
       --append-system-prompt "Follow our coding standards"
       --max-turns 10
-      --model claude-sonnet-4-5-20250929
+      --model claude-sonnet-4-6
 ```
 
 <Tip>
@@ -521,11 +521,11 @@ Before setting up Claude Code GitHub Actions with cloud providers, you need:
                 with:
                   github_token: ${{ steps.app-token.outputs.token }}
                   use_bedrock: "true"
-                  claude_args: '--model us.anthropic.claude-sonnet-4-5-20250929-v1:0 --max-turns 10'
+                  claude_args: '--model us.anthropic.claude-sonnet-4-6 --max-turns 10'
         ```
 
         <Tip>
-          The model ID format for Bedrock includes the region prefix (e.g., `us.anthropic.claude...`) and version suffix.
+          The model ID format for Bedrock includes a region prefix (for example, `us.anthropic.claude-sonnet-4-6`).
         </Tip>
       </Accordion>
 
@@ -645,13 +645,13 @@ The Claude Code Action v1 uses a simplified configuration:
 The `claude_args` parameter accepts any Claude Code CLI arguments:
 
 ```yaml  theme={null}
-claude_args: "--max-turns 5 --model claude-sonnet-4-5-20250929 --mcp-config /path/to/config.json"
+claude_args: "--max-turns 5 --model claude-sonnet-4-6 --mcp-config /path/to/config.json"
 ```
 
 Common arguments:
 
 * `--max-turns`: Maximum conversation turns (default: 10)
-* `--model`: Model to use (for example, `claude-sonnet-4-5-20250929`)
+* `--model`: Model to use (for example, `claude-sonnet-4-6`)
 * `--mcp-config`: Path to MCP configuration
 * `--allowed-tools`: Comma-separated list of allowed tools
 * `--debug`: Enable debug output

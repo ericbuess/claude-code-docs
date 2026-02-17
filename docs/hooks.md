@@ -579,7 +579,7 @@ In addition to the [common input fields](#common-input-fields), SessionStart hoo
   "permission_mode": "default",
   "hook_event_name": "SessionStart",
   "source": "startup",
-  "model": "claude-sonnet-4-5-20250929"
+  "model": "claude-sonnet-4-6"
 }
 ```
 

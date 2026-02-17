@@ -11,7 +11,7 @@
 Before configuring Claude Code with Bedrock, ensure you have:
 
 * An AWS account with Bedrock access enabled
-* Access to desired Claude models (for example, Claude Sonnet 4.5) in Bedrock
+* Access to desired Claude models (for example, Claude Sonnet 4.6) in Bedrock
 * AWS CLI installed and configured (optional - only needed if you don't have another mechanism for getting credentials)
 * Appropriate IAM permissions
 
@@ -124,10 +124,10 @@ When enabling Bedrock for Claude Code, keep the following in mind:
 
 Claude Code uses these default models for Bedrock:
 
-| Model type       | Default value                                      |
-| :--------------- | :------------------------------------------------- |
-| Primary model    | `global.anthropic.claude-sonnet-4-5-20250929-v1:0` |
-| Small/fast model | `us.anthropic.claude-haiku-4-5-20251001-v1:0`      |
+| Model type       | Default value                                 |
+| :--------------- | :-------------------------------------------- |
+| Primary model    | `global.anthropic.claude-sonnet-4-6`          |
+| Small/fast model | `us.anthropic.claude-haiku-4-5-20251001-v1:0` |
 
 <Note>
   For Bedrock users, Claude Code won't automatically upgrade from Haiku 3.5 to Haiku 4.5. To manually switch to a newer Haiku model, set the `ANTHROPIC_DEFAULT_HAIKU_MODEL` environment variable to the full model name (for example, `us.anthropic.claude-haiku-4-5-20251001-v1:0`).
@@ -137,7 +137,7 @@ To customize models, use one of these methods:
 
 ```bash  theme={null}
 # Using inference profile ID
-export ANTHROPIC_MODEL='global.anthropic.claude-sonnet-4-5-20250929-v1:0'
+export ANTHROPIC_MODEL='global.anthropic.claude-sonnet-4-6'
 export ANTHROPIC_SMALL_FAST_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
 
 # Using application inference profile ARN
