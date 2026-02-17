@@ -6,7 +6,7 @@
 
 > Build and host plugin marketplaces to distribute Claude Code extensions across teams and communities.
 
-A plugin marketplace is a catalog that lets you distribute plugins to others. Marketplaces provide centralized discovery, version tracking, automatic updates, and support for multiple source types (git repositories, local paths, and more). This guide shows you how to create your own marketplace to share plugins with your team or community.
+A **plugin marketplace** is a catalog that lets you distribute plugins to others. Marketplaces provide centralized discovery, version tracking, automatic updates, and support for multiple source types (git repositories, local paths, and more). This guide shows you how to create your own marketplace to share plugins with your team or community.
 
 Looking to install plugins from an existing marketplace? See [Discover and install prebuilt plugins](/en/discover-plugins).
 
@@ -108,7 +108,7 @@ To learn more about what plugins can do, including hooks, agents, MCP servers, a
 <Note>
   **How plugins are installed**: When users install a plugin, Claude Code copies the plugin directory to a cache location. This means plugins can't reference files outside their directory using paths like `../shared-utils`, because those files won't be copied.
 
-  If you need to share files across plugins, use symlinks (which are followed during copying) or restructure your marketplace so the shared directory is inside the plugin source path. See [Plugin caching and file resolution](/en/plugins-reference#plugin-caching-and-file-resolution) for details.
+  If you need to share files across plugins, use symlinks (which are followed during copying). See [Plugin caching and file resolution](/en/plugins-reference#plugin-caching-and-file-resolution) for details.
 </Note>
 
 ## Create the marketplace file
@@ -190,18 +190,18 @@ Each plugin entry in the `plugins` array describes a plugin and where to find it
 
 **Standard metadata fields:**
 
-| Field         | Type    | Description                                                                                                                                                                                |
-| :------------ | :------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `description` | string  | Brief plugin description                                                                                                                                                                   |
-| `version`     | string  | Plugin version                                                                                                                                                                             |
-| `author`      | object  | Plugin author information (`name` required, `email` optional)                                                                                                                              |
-| `homepage`    | string  | Plugin homepage or documentation URL                                                                                                                                                       |
-| `repository`  | string  | Source code repository URL                                                                                                                                                                 |
-| `license`     | string  | SPDX license identifier (for example, MIT, Apache-2.0)                                                                                                                                     |
-| `keywords`    | array   | Tags for plugin discovery and categorization                                                                                                                                               |
-| `category`    | string  | Plugin category for organization                                                                                                                                                           |
-| `tags`        | array   | Tags for searchability                                                                                                                                                                     |
-| `strict`      | boolean | When true (default), marketplace component fields merge with plugin.json. When false, the marketplace entry defines the plugin entirely, and plugin.json must not also declare components. |
+| Field         | Type    | Description                                                                                                                       |
+| :------------ | :------ | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `description` | string  | Brief plugin description                                                                                                          |
+| `version`     | string  | Plugin version                                                                                                                    |
+| `author`      | object  | Plugin author information (`name` required, `email` optional)                                                                     |
+| `homepage`    | string  | Plugin homepage or documentation URL                                                                                              |
+| `repository`  | string  | Source code repository URL                                                                                                        |
+| `license`     | string  | SPDX license identifier (for example, MIT, Apache-2.0)                                                                            |
+| `keywords`    | array   | Tags for plugin discovery and categorization                                                                                      |
+| `category`    | string  | Plugin category for organization                                                                                                  |
+| `tags`        | array   | Tags for searchability                                                                                                            |
+| `strict`      | boolean | Controls whether `plugin.json` is the authority for component definitions (default: true). See [Strict mode](#strict-mode) below. |
 
 **Component configuration fields:**
 
@@ -214,6 +214,27 @@ Each plugin entry in the `plugins` array describes a plugin and where to find it
 | `lspServers` | string\|object | LSP server configurations or path to LSP config  |
 
 ## Plugin sources
+
+Plugin sources tell Claude Code where to fetch each individual plugin listed in your marketplace. These are set in the `source` field of each plugin entry in `marketplace.json`.
+
+Once a plugin is cloned or copied into the local machine, it is copied into the local versioned plugin cache at `~/.claude/plugins/cache`.
+
+| Source        | Type                            | Fields                                | Notes                                                             |
+| ------------- | ------------------------------- | ------------------------------------- | ----------------------------------------------------------------- |
+| Relative path | `string` (e.g. `"./my-plugin"`) | —                                     | Local directory within the marketplace repo. Must start with `./` |
+| `github`      | object                          | `repo`, `ref?`, `sha?`                |                                                                   |
+| `url`         | object                          | `url` (must end .git), `ref?`, `sha?` | Git URL source                                                    |
+| `npm`         | object                          | `package`, `version?`, `registry?`    | Installed via `npm install`                                       |
+| `pip`         | object                          | `package`, `version?`, `registry?`    | Installed via pip                                                 |
+
+<Note>
+  **Marketplace sources vs plugin sources**: These are different concepts that control different things.
+
+  * **Marketplace source** — where to fetch the `marketplace.json` catalog itself. Set when users run `/plugin marketplace add` or in `extraKnownMarketplaces` settings. Supports `ref` (branch/tag) but not `sha`.
+  * **Plugin source** — where to fetch an individual plugin listed in the marketplace. Set in the `source` field of each plugin entry inside `marketplace.json`. Supports both `ref` (branch/tag) and `sha` (exact commit).
+
+  For example, a marketplace hosted at `acme-corp/plugin-catalog` (marketplace source) can list a plugin fetched from `acme-corp/code-formatter` (plugin source). The marketplace source and plugin source point to different repositories and are pinned independently.
+</Note>
 
 ### Relative paths
 
@@ -349,7 +370,21 @@ Key things to notice:
 
 * **`commands` and `agents`**: You can specify multiple directories or individual files. Paths are relative to the plugin root.
 * **`${CLAUDE_PLUGIN_ROOT}`**: Use this variable in hooks and MCP server configs to reference files within the plugin's installation directory. This is necessary because plugins are copied to a cache location when installed.
-* **`strict: false`**: Since this is set to false, the plugin doesn't need its own `plugin.json`. The marketplace entry defines everything.
+* **`strict: false`**: Since this is set to false, the plugin doesn't need its own `plugin.json`. The marketplace entry defines everything. See [Strict mode](#strict-mode) below.
+
+### Strict mode
+
+The `strict` field controls whether `plugin.json` is the authority for component definitions (commands, agents, hooks, skills, MCP servers, output styles).
+
+| Value            | Behavior                                                                                                                                                         |
+| :--------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `true` (default) | `plugin.json` is the authority. The marketplace entry can supplement it with additional components, and both sources are merged.                                 |
+| `false`          | The marketplace entry is the entire definition. If the plugin also has a `plugin.json` that declares components, that's a conflict and the plugin fails to load. |
+
+**When to use each mode:**
+
+* **`strict: true`**: the plugin has its own `plugin.json` and manages its own components. The marketplace entry can add extra commands or hooks on top. This is the default and works for most plugins.
+* **`strict: false`**: the marketplace operator wants full control. The plugin repo provides raw files, and the marketplace entry defines which of those files are exposed as commands, agents, hooks, etc. Useful when the marketplace restructures or curates a plugin's components differently than the plugin author intended.
 
 ## Host and distribute marketplaces
 
@@ -504,6 +539,88 @@ The allowlist uses exact matching for most source types. For a marketplace to be
 Because `strictKnownMarketplaces` is set in [managed settings](/en/settings#settings-files), individual users and project configurations cannot override these restrictions.
 
 For complete configuration details including all supported source types and comparison with `extraKnownMarketplaces`, see the [strictKnownMarketplaces reference](/en/settings#strictknownmarketplaces).
+
+### Version resolution and release channels
+
+Plugin versions determine cache paths and update detection. You can specify the version in the plugin manifest (`plugin.json`) or in the marketplace entry (`marketplace.json`).
+
+<Warning>
+  When possible, avoid setting the version in both places. The plugin manifest always wins silently, which can cause the marketplace version to be ignored. For relative-path plugins, set the version in the marketplace entry. For all other plugin sources, set it in the plugin manifest.
+</Warning>
+
+#### Set up release channels
+
+To support "stable" and "latest" release channels for your plugins, you can set up two marketplaces that point to different refs or SHAs of the same repo. You can then assign the two marketplaces to different user groups through [managed settings](/en/settings#settings-files).
+
+<Warning>
+  The plugin's `plugin.json` must declare a different `version` at each pinned ref or commit. If two refs or commits have the same manifest version, Claude Code treats them as identical and skips the update.
+</Warning>
+
+##### Example
+
+```json  theme={null}
+{
+  "name": "stable-tools",
+  "plugins": [
+    {
+      "name": "code-formatter",
+      "source": {
+        "source": "github",
+        "repo": "acme-corp/code-formatter",
+        "ref": "stable"
+      }
+    }
+  ]
+}
+```
+
+```json  theme={null}
+{
+  "name": "latest-tools",
+  "plugins": [
+    {
+      "name": "code-formatter",
+      "source": {
+        "source": "github",
+        "repo": "acme-corp/code-formatter",
+        "ref": "latest"
+      }
+    }
+  ]
+}
+```
+
+##### Assign channels to user groups
+
+Assign each marketplace to the appropriate user group through managed settings. For example, the stable group receives:
+
+```json  theme={null}
+{
+  "extraKnownMarketplaces": {
+    "stable-tools": {
+      "source": {
+        "source": "github",
+        "repo": "acme-corp/stable-tools"
+      }
+    }
+  }
+}
+```
+
+The early-access group receives `latest-tools` instead:
+
+```json  theme={null}
+{
+  "extraKnownMarketplaces": {
+    "latest-tools": {
+      "source": {
+        "source": "github",
+        "repo": "acme-corp/latest-tools"
+      }
+    }
+  }
+}
+```
 
 ## Validation and testing
 
