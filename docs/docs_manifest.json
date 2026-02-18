@@ -171,8 +171,8 @@
     "legal-and-compliance.md": {
       "original_url": "https://code.claude.com/docs/en/legal-and-compliance",
       "original_md_url": "https://code.claude.com/docs/en/legal-and-compliance.md",
-      "hash": "773c24daa75cf3853f754f36125add8df53b9d00cafd8f188ebaba6161878a7e",
-      "last_updated": "2026-01-24T03:29:12.099164"
+      "hash": "255e31b55475481c4969dadad71392b896bd82937879daa831f1d25a3ebdc655",
+      "last_updated": "2026-02-18T03:48:16.208459"
     },
     "llm-gateway.md": {
       "original_url": "https://code.claude.com/docs/en/llm-gateway",
@@ -345,8 +345,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-02-18T00:08:24.521870",
-    "fetch_duration_seconds": 34.342405,
+    "last_fetch_completed": "2026-02-18T03:48:32.103574",
+    "fetch_duration_seconds": 32.687917,
     "total_pages_discovered": 56,
     "pages_fetched_successfully": 57,
     "pages_failed": 0,
@@ -356,7 +356,7 @@
     "total_files": 57,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-02-18T00:08:24.521900",
+  "last_updated": "2026-02-18T03:48:32.103602",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
