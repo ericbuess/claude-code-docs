@@ -207,8 +207,8 @@
     "monitoring-usage.md": {
       "original_url": "https://code.claude.com/docs/en/monitoring-usage",
       "original_md_url": "https://code.claude.com/docs/en/monitoring-usage.md",
-      "hash": "2969a54408e6023f4527c19f0c6c51c0a71f5b04038c9c48c1676ab6c9c96464",
-      "last_updated": "2026-02-19T00:08:17.573533"
+      "hash": "b4168131af5f99a08e362c652a710c2cdf532188b22b4a15f96d6fb9dc3a4a13",
+      "last_updated": "2026-02-19T03:47:58.853956"
     },
     "network-config.md": {
       "original_url": "https://code.claude.com/docs/en/network-config",
@@ -345,8 +345,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-02-19T00:08:30.227930",
-    "fetch_duration_seconds": 33.372795,
+    "last_fetch_completed": "2026-02-19T03:48:10.838360",
+    "fetch_duration_seconds": 31.62221,
     "total_pages_discovered": 56,
     "pages_fetched_successfully": 57,
     "pages_failed": 0,
@@ -356,7 +356,7 @@
     "total_files": 57,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-02-19T00:08:30.227947",
+  "last_updated": "2026-02-19T03:48:10.838393",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

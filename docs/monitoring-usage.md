@@ -225,15 +225,15 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 
 All metrics and events share these standard attributes:
 
-| Attribute           | Description                                                       | Controlled By                                       |
-| ------------------- | ----------------------------------------------------------------- | --------------------------------------------------- |
-| `session.id`        | Unique session identifier                                         | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true)   |
-| `app.version`       | Current Claude Code version                                       | `OTEL_METRICS_INCLUDE_VERSION` (default: false)     |
-| `organization.id`   | Organization UUID (when authenticated)                            | Always included when available                      |
-| `user.account_uuid` | Account UUID (when authenticated)                                 | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
-| `user.id`           | Anonymous user identifier                                         | Always included                                     |
-| `user.email`        | User email address (when authenticated via OAuth)                 | Always included when available                      |
-| `terminal.type`     | Terminal type, such as `iTerm.app`, `vscode`, `cursor`, or `tmux` | Always included when detected                       |
+| Attribute           | Description                                                                      | Controlled By                                       |
+| ------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `session.id`        | Unique session identifier                                                        | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true)   |
+| `app.version`       | Current Claude Code version                                                      | `OTEL_METRICS_INCLUDE_VERSION` (default: false)     |
+| `organization.id`   | Organization UUID (when authenticated)                                           | Always included when available                      |
+| `user.account_uuid` | Account UUID (when authenticated)                                                | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
+| `user.id`           | Anonymous device/installation identifier, generated per Claude Code installation | Always included                                     |
+| `user.email`        | User email address (when authenticated via OAuth)                                | Always included when available                      |
+| `terminal.type`     | Terminal type, such as `iTerm.app`, `vscode`, `cursor`, or `tmux`                | Always included when detected                       |
 
 ### Metrics
 
