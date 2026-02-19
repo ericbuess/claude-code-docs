@@ -14,6 +14,10 @@ Before configuring Claude Code with Microsoft Foundry, ensure you have:
 * RBAC permissions to create Microsoft Foundry resources and deployments
 * Azure CLI installed and configured (optional - only needed if you don't have another mechanism for getting credentials)
 
+<Note>
+  If you are deploying Claude Code to multiple users, [pin your model versions](#4-pin-model-versions) to prevent breakage when Anthropic releases new models.
+</Note>
+
 ## Setup
 
 ### 1. Provision Microsoft Foundry resource
@@ -59,7 +63,7 @@ az login
 
 ### 3. Configure Claude Code
 
-Set the following environment variables to enable Microsoft Foundry. Note that your deployments' names are set as the model identifiers in Claude Code (may be optional if using suggested deployment names).
+Set the following environment variables to enable Microsoft Foundry:
 
 ```bash  theme={null}
 # Enable Microsoft Foundry integration
@@ -69,14 +73,23 @@ export CLAUDE_CODE_USE_FOUNDRY=1
 export ANTHROPIC_FOUNDRY_RESOURCE={resource}
 # Or provide the full base URL:
 # export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic
-
-# Set models to your resource's deployment names
-export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
-export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
-export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'
 ```
 
-For more details on model configuration options, see [Model configuration](/en/model-config).
+### 4. Pin model versions
+
+<Warning>
+  Pin specific model versions for every deployment. If you use model aliases (`sonnet`, `opus`, `haiku`) without pinning, Claude Code may attempt to use a newer model version that isn't available in your Foundry account, breaking existing users when Anthropic releases updates. When you create Azure deployments, select a specific model version rather than "auto-update to latest."
+</Warning>
+
+Set the model variables to match the deployment names you created in step 1:
+
+```bash  theme={null}
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'
+export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
+```
+
+For current and legacy model IDs, see [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview). See [Model configuration](/en/model-config#pin-models-for-third-party-deployments) for the full list of environment variables.
 
 ## Azure RBAC configuration
 
