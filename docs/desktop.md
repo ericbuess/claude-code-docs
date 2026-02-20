@@ -272,7 +272,7 @@ This table compares core capabilities between the CLI and Desktop. For a full li
 | [Plugins](/en/plugins)                                | `/plugin` command                                         | plugin manager UI                                            |
 | @mention files                                        | text-based                                                | with autocomplete                                            |
 | File attachments                                      | not available                                             | images, PDFs                                                 |
-| Session isolation                                     | manual via git worktrees                                  | automatic worktrees                                          |
+| Session isolation                                     | [`--worktree`](/en/cli-reference) flag                    | automatic worktrees                                          |
 | Multiple sessions                                     | separate terminals                                        | sidebar tabs                                                 |
 | Scripting and automation                              | [`--print`](/en/cli-reference), [Agent SDK](/en/headless) | not available                                                |
 

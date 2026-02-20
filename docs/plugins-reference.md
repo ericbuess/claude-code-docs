@@ -428,6 +428,7 @@ enterprise-plugin/
 ├── hooks/                    # Hook configurations
 │   ├── hooks.json           # Main hook config
 │   └── security-hooks.json  # Additional hooks
+├── settings.json            # Default settings for the plugin
 ├── .mcp.json                # MCP server definitions
 ├── .lsp.json                # LSP server configurations
 ├── scripts/                 # Hook and utility scripts
@@ -444,15 +445,16 @@ enterprise-plugin/
 
 ### File locations reference
 
-| Component       | Default Location             | Purpose                                                     |
-| :-------------- | :--------------------------- | :---------------------------------------------------------- |
-| **Manifest**    | `.claude-plugin/plugin.json` | Plugin metadata and configuration (optional)                |
-| **Commands**    | `commands/`                  | Skill Markdown files (legacy; use `skills/` for new skills) |
-| **Agents**      | `agents/`                    | Subagent Markdown files                                     |
-| **Skills**      | `skills/`                    | Skills with `<name>/SKILL.md` structure                     |
-| **Hooks**       | `hooks/hooks.json`           | Hook configuration                                          |
-| **MCP servers** | `.mcp.json`                  | MCP server definitions                                      |
-| **LSP servers** | `.lsp.json`                  | Language server configurations                              |
+| Component       | Default Location             | Purpose                                                                                                                   |
+| :-------------- | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| **Manifest**    | `.claude-plugin/plugin.json` | Plugin metadata and configuration (optional)                                                                              |
+| **Commands**    | `commands/`                  | Skill Markdown files (legacy; use `skills/` for new skills)                                                               |
+| **Agents**      | `agents/`                    | Subagent Markdown files                                                                                                   |
+| **Skills**      | `skills/`                    | Skills with `<name>/SKILL.md` structure                                                                                   |
+| **Hooks**       | `hooks/hooks.json`           | Hook configuration                                                                                                        |
+| **MCP servers** | `.mcp.json`                  | MCP server definitions                                                                                                    |
+| **LSP servers** | `.lsp.json`                  | Language server configurations                                                                                            |
+| **Settings**    | `settings.json`              | Default configuration applied when the plugin is enabled. Only [`agent`](/en/sub-agents) settings are currently supported |
 
 ***
 

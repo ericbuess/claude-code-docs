@@ -22,23 +22,24 @@
 
 ### General controls
 
-| Shortcut                                          | Description                        | Context                                                                                       |
-| :------------------------------------------------ | :--------------------------------- | :-------------------------------------------------------------------------------------------- |
-| `Ctrl+C`                                          | Cancel current input or generation | Standard interrupt                                                                            |
-| `Ctrl+D`                                          | Exit Claude Code session           | EOF signal                                                                                    |
-| `Ctrl+G`                                          | Open in default text editor        | Edit your prompt or custom response in your default text editor                               |
-| `Ctrl+L`                                          | Clear terminal screen              | Keeps conversation history                                                                    |
-| `Ctrl+O`                                          | Toggle verbose output              | Shows detailed tool usage and execution                                                       |
-| `Ctrl+R`                                          | Reverse search command history     | Search through previous commands interactively                                                |
-| `Ctrl+V` or `Cmd+V` (iTerm2) or `Alt+V` (Windows) | Paste image from clipboard         | Pastes an image or path to an image file                                                      |
-| `Ctrl+B`                                          | Background running tasks           | Backgrounds bash commands and agents. Tmux users press twice                                  |
-| `Ctrl+T`                                          | Toggle task list                   | Show or hide the [task list](#task-list) in the terminal status area                          |
-| `Left/Right arrows`                               | Cycle through dialog tabs          | Navigate between tabs in permission dialogs and menus                                         |
-| `Up/Down arrows`                                  | Navigate command history           | Recall previous inputs                                                                        |
-| `Esc` + `Esc`                                     | Rewind or summarize                | Restore code and/or conversation to a previous point, or summarize from a selected message    |
-| `Shift+Tab` or `Alt+M` (some configurations)      | Toggle permission modes            | Switch between Auto-Accept Mode, Plan Mode, and normal mode.                                  |
-| `Option+P` (macOS) or `Alt+P` (Windows/Linux)     | Switch model                       | Switch models without clearing your prompt                                                    |
-| `Option+T` (macOS) or `Alt+T` (Windows/Linux)     | Toggle extended thinking           | Enable or disable extended thinking mode. Run `/terminal-setup` first to enable this shortcut |
+| Shortcut                                          | Description                                                         | Context                                                                                       |
+| :------------------------------------------------ | :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------- |
+| `Ctrl+C`                                          | Cancel current input or generation                                  | Standard interrupt                                                                            |
+| `Ctrl+F`                                          | Kill all background agents. Press twice within 3 seconds to confirm | Background agent control                                                                      |
+| `Ctrl+D`                                          | Exit Claude Code session                                            | EOF signal                                                                                    |
+| `Ctrl+G`                                          | Open in default text editor                                         | Edit your prompt or custom response in your default text editor                               |
+| `Ctrl+L`                                          | Clear terminal screen                                               | Keeps conversation history                                                                    |
+| `Ctrl+O`                                          | Toggle verbose output                                               | Shows detailed tool usage and execution                                                       |
+| `Ctrl+R`                                          | Reverse search command history                                      | Search through previous commands interactively                                                |
+| `Ctrl+V` or `Cmd+V` (iTerm2) or `Alt+V` (Windows) | Paste image from clipboard                                          | Pastes an image or path to an image file                                                      |
+| `Ctrl+B`                                          | Background running tasks                                            | Backgrounds bash commands and agents. Tmux users press twice                                  |
+| `Ctrl+T`                                          | Toggle task list                                                    | Show or hide the [task list](#task-list) in the terminal status area                          |
+| `Left/Right arrows`                               | Cycle through dialog tabs                                           | Navigate between tabs in permission dialogs and menus                                         |
+| `Up/Down arrows`                                  | Navigate command history                                            | Recall previous inputs                                                                        |
+| `Esc` + `Esc`                                     | Rewind or summarize                                                 | Restore code and/or conversation to a previous point, or summarize from a selected message    |
+| `Shift+Tab` or `Alt+M` (some configurations)      | Toggle permission modes                                             | Switch between Auto-Accept Mode, Plan Mode, and normal mode.                                  |
+| `Option+P` (macOS) or `Alt+P` (Windows/Linux)     | Switch model                                                        | Switch models without clearing your prompt                                                    |
+| `Option+T` (macOS) or `Alt+T` (Windows/Linux)     | Toggle extended thinking                                            | Enable or disable extended thinking mode. Run `/terminal-setup` first to enable this shortcut |
 
 ### Text editing
 

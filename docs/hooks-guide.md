@@ -78,6 +78,7 @@ Each example includes a ready-to-use configuration block that you add to a [sett
 * [Auto-format code after edits](#auto-format-code-after-edits)
 * [Block edits to protected files](#block-edits-to-protected-files)
 * [Re-inject context after compaction](#re-inject-context-after-compaction)
+* [Audit configuration changes](#audit-configuration-changes)
 
 ### Get notified when Claude needs input
 
@@ -262,6 +263,32 @@ Any text your command writes to stdout is added to Claude's context. This exampl
 
 You can replace the `echo` with any command that produces dynamic output, like `git log --oneline -5` to show recent commits. For injecting context on every session start, consider using [CLAUDE.md](/en/memory) instead. For environment variables, see [`CLAUDE_ENV_FILE`](/en/hooks#persist-environment-variables) in the reference.
 
+### Audit configuration changes
+
+Track when settings or skills files change during a session. The `ConfigChange` event fires when an external process or editor modifies a configuration file, so you can log changes for compliance or block unauthorized modifications.
+
+This example appends each change to an audit log. Add this to `~/.claude/settings.json`:
+
+```json  theme={null}
+{
+  "hooks": {
+    "ConfigChange": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -c '{timestamp: now | todate, source: .source, file: .file_path}' >> ~/claude-config-audit.log"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The matcher filters by configuration type: `user_settings`, `project_settings`, `local_settings`, `policy_settings`, or `skills`. To block a change from taking effect, exit with code 2 or return `{"decision": "block"}`. See the [ConfigChange reference](/en/hooks#configchange) for the full input schema.
+
 ## How hooks work
 
 Hook events fire at specific lifecycle points in Claude Code. When an event fires, all matching hooks run in parallel, and identical hook commands are automatically deduplicated. The table below shows each event and when it triggers:
@@ -280,6 +307,7 @@ Hook events fire at specific lifecycle points in Claude Code. When an event fire
 | `Stop`               | When Claude finishes responding                                    |
 | `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle |
 | `TaskCompleted`      | When a task is being marked as completed                           |
+| `ConfigChange`       | When a configuration file changes during a session                 |
 | `PreCompact`         | Before context compaction                                          |
 | `SessionEnd`         | When a session terminates                                          |
 
