@@ -1,0 +1,2 @@
+This is a test file to trigger the solution indexer hook.
+The hook should run after this file is created.
