@@ -78,12 +78,7 @@ When `availableModels` is set, users cannot switch to models not in the list via
 
 ### Default model behavior
 
-The Default option in the model picker is not affected by `availableModels`. It always remains available and represents the system's runtime default based on the user's subscription tier:
-
-| User type                     | Default model |
-| :---------------------------- | :------------ |
-| Max, Team, or Pro subscribers | Opus 4.6      |
-| Pay-as-you-go (API) users     | Sonnet 4.5    |
+The Default option in the model picker is not affected by `availableModels`. It always remains available and represents the system's runtime default [based on the user's subscription tier](#default-model-setting).
 
 Even with `availableModels: []`, users can still use Claude Code with the Default model for their tier.
 
@@ -94,7 +89,7 @@ To fully control the model experience, use `availableModels` together with the `
 * **availableModels**: restricts what users can switch to
 * **model**: sets the explicit model override, taking precedence over the Default
 
-This example ensures all users run Sonnet 4.5 and can only choose between Sonnet and Haiku:
+This example ensures all users run Sonnet 4.6 and can only choose between Sonnet and Haiku:
 
 ```json  theme={null}
 {
@@ -157,6 +152,8 @@ Extended context is available for:
 
 * **API and pay-as-you-go users**: full access to 1M context
 * **Pro, Max, Teams, and Enterprise subscribers**: available with [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) enabled
+
+To disable 1M context entirely, set `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`. This removes 1M model variants from the model picker. See [environment variables](/en/settings#environment-variables).
 
 Selecting a 1M model does not immediately change billing. Your session uses standard rates until it exceeds 200K tokens of context. Beyond 200K tokens, requests are charged at [long-context pricing](https://platform.claude.com/docs/en/about-claude/pricing#long-context-pricing) with dedicated [rate limits](https://platform.claude.com/docs/en/api/rate-limits#long-context-rate-limits). For subscribers, tokens beyond 200K are billed as extra usage rather than through the subscription.
 

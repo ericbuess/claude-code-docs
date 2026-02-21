@@ -8,17 +8,18 @@
 
 ## CLI commands
 
-| Command                         | Description                                            | Example                                           |
-| :------------------------------ | :----------------------------------------------------- | :------------------------------------------------ |
-| `claude`                        | Start interactive REPL                                 | `claude`                                          |
-| `claude "query"`                | Start REPL with initial prompt                         | `claude "explain this project"`                   |
-| `claude -p "query"`             | Query via SDK, then exit                               | `claude -p "explain this function"`               |
-| `cat file \| claude -p "query"` | Process piped content                                  | `cat logs.txt \| claude -p "explain"`             |
-| `claude -c`                     | Continue most recent conversation in current directory | `claude -c`                                       |
-| `claude -c -p "query"`          | Continue via SDK                                       | `claude -c -p "Check for type errors"`            |
-| `claude -r "<session>" "query"` | Resume session by ID or name                           | `claude -r "auth-refactor" "Finish this PR"`      |
-| `claude update`                 | Update to latest version                               | `claude update`                                   |
-| `claude mcp`                    | Configure Model Context Protocol (MCP) servers         | See the [Claude Code MCP documentation](/en/mcp). |
+| Command                         | Description                                                        | Example                                           |
+| :------------------------------ | :----------------------------------------------------------------- | :------------------------------------------------ |
+| `claude`                        | Start interactive REPL                                             | `claude`                                          |
+| `claude "query"`                | Start REPL with initial prompt                                     | `claude "explain this project"`                   |
+| `claude -p "query"`             | Query via SDK, then exit                                           | `claude -p "explain this function"`               |
+| `cat file \| claude -p "query"` | Process piped content                                              | `cat logs.txt \| claude -p "explain"`             |
+| `claude -c`                     | Continue most recent conversation in current directory             | `claude -c`                                       |
+| `claude -c -p "query"`          | Continue via SDK                                                   | `claude -c -p "Check for type errors"`            |
+| `claude -r "<session>" "query"` | Resume session by ID or name                                       | `claude -r "auth-refactor" "Finish this PR"`      |
+| `claude update`                 | Update to latest version                                           | `claude update`                                   |
+| `claude agents`                 | List all configured [subagents](/en/sub-agents), grouped by source | `claude agents`                                   |
+| `claude mcp`                    | Configure Model Context Protocol (MCP) servers                     | See the [Claude Code MCP documentation](/en/mcp). |
 
 ## CLI flags
 
@@ -63,7 +64,6 @@ Customize Claude Code's behavior with these command-line flags:
 | `--print`, `-p`                        | Print response without interactive mode (see [Agent SDK documentation](https://platform.claude.com/docs/en/agent-sdk/overview) for programmatic usage details)                                            | `claude -p "query"`                                                                                |
 | `--remote`                             | Create a new [web session](/en/claude-code-on-the-web) on claude.ai with the provided task description                                                                                                    | `claude --remote "Fix the login bug"`                                                              |
 | `--resume`, `-r`                       | Resume a specific session by ID or name, or show an interactive picker to choose a session                                                                                                                | `claude --resume auth-refactor`                                                                    |
-| `--worktree`, `-w`                     | Start Claude in an isolated [git worktree](/en/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) at `<repo>/.claude/worktrees/<name>`. If no name is given, one is auto-generated    | `claude -w feature-auth`                                                                           |
 | `--session-id`                         | Use a specific session ID for the conversation (must be a valid UUID)                                                                                                                                     | `claude --session-id "550e8400-e29b-41d4-a716-446655440000"`                                       |
 | `--setting-sources`                    | Comma-separated list of setting sources to load (`user`, `project`, `local`)                                                                                                                              | `claude --setting-sources user,project`                                                            |
 | `--settings`                           | Path to a settings JSON file or a JSON string to load additional settings from                                                                                                                            | `claude --settings ./settings.json`                                                                |
@@ -75,6 +75,7 @@ Customize Claude Code's behavior with these command-line flags:
 | `--tools`                              | Restrict which built-in tools Claude can use (works in both interactive and print modes). Use `""` to disable all, `"default"` for all, or tool names like `"Bash,Edit,Read"`                             | `claude --tools "Bash,Edit,Read"`                                                                  |
 | `--verbose`                            | Enable verbose logging, shows full turn-by-turn output (helpful for debugging in both print and interactive modes)                                                                                        | `claude --verbose`                                                                                 |
 | `--version`, `-v`                      | Output the version number                                                                                                                                                                                 | `claude -v`                                                                                        |
+| `--worktree`, `-w`                     | Start Claude in an isolated [git worktree](/en/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) at `<repo>/.claude/worktrees/<name>`. If no name is given, one is auto-generated    | `claude -w feature-auth`                                                                           |
 
 <Tip>
   The `--output-format json` flag is particularly useful for scripting and

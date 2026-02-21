@@ -18,29 +18,31 @@ Hooks fire at specific points during a Claude Code session. When an event fires 
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/xcAz1d2i2To-I_QJ/images/hooks-lifecycle.svg?fit=max&auto=format&n=xcAz1d2i2To-I_QJ&q=85&s=783a0db47dd59602418763e037056d49" alt="Hook lifecycle diagram showing the sequence of hooks from SessionStart through the agentic loop to SessionEnd" data-og-width="520" width="520" data-og-height="960" height="960" data-path="images/hooks-lifecycle.svg" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/claude-code/xcAz1d2i2To-I_QJ/images/hooks-lifecycle.svg?w=280&fit=max&auto=format&n=xcAz1d2i2To-I_QJ&q=85&s=1fd947ad1c8fc4fcfbe85c8b4b7b528b 280w, https://mintcdn.com/claude-code/xcAz1d2i2To-I_QJ/images/hooks-lifecycle.svg?w=560&fit=max&auto=format&n=xcAz1d2i2To-I_QJ&q=85&s=794ba776ed6126344835c206f587c9dd 560w, https://mintcdn.com/claude-code/xcAz1d2i2To-I_QJ/images/hooks-lifecycle.svg?w=840&fit=max&auto=format&n=xcAz1d2i2To-I_QJ&q=85&s=d137272c869dd6f9315ec35f99338289 840w, https://mintcdn.com/claude-code/xcAz1d2i2To-I_QJ/images/hooks-lifecycle.svg?w=1100&fit=max&auto=format&n=xcAz1d2i2To-I_QJ&q=85&s=531c5f866a6fd56adf94ecfa156ac96a 1100w, https://mintcdn.com/claude-code/xcAz1d2i2To-I_QJ/images/hooks-lifecycle.svg?w=1650&fit=max&auto=format&n=xcAz1d2i2To-I_QJ&q=85&s=dc81c6d273cd26cd7f9a191ddcb92592 1650w, https://mintcdn.com/claude-code/xcAz1d2i2To-I_QJ/images/hooks-lifecycle.svg?w=2500&fit=max&auto=format&n=xcAz1d2i2To-I_QJ&q=85&s=8f29af9b4145e517655a8bdf7a9987c5 2500w" />
+    <img src="https://mintcdn.com/claude-code/rsuu-ovdPNos9Dnn/images/hooks-lifecycle.svg?fit=max&auto=format&n=rsuu-ovdPNos9Dnn&q=85&s=ce5f1225339bbccdfbb52e99205db912" alt="Hook lifecycle diagram showing the sequence of hooks from SessionStart through the agentic loop to SessionEnd, with WorktreeCreate and WorktreeRemove as standalone setup and teardown events" data-og-width="520" width="520" data-og-height="1020" height="1020" data-path="images/hooks-lifecycle.svg" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/claude-code/rsuu-ovdPNos9Dnn/images/hooks-lifecycle.svg?w=280&fit=max&auto=format&n=rsuu-ovdPNos9Dnn&q=85&s=7c7143c65492c1beb6bc66f5d206ba15 280w, https://mintcdn.com/claude-code/rsuu-ovdPNos9Dnn/images/hooks-lifecycle.svg?w=560&fit=max&auto=format&n=rsuu-ovdPNos9Dnn&q=85&s=dafaebf8f789f94edbf6bd66853c69df 560w, https://mintcdn.com/claude-code/rsuu-ovdPNos9Dnn/images/hooks-lifecycle.svg?w=840&fit=max&auto=format&n=rsuu-ovdPNos9Dnn&q=85&s=2caa51d2d95596f1f80b92e3f5f534fa 840w, https://mintcdn.com/claude-code/rsuu-ovdPNos9Dnn/images/hooks-lifecycle.svg?w=1100&fit=max&auto=format&n=rsuu-ovdPNos9Dnn&q=85&s=614def559f34f9b0c1dec93739d96b64 1100w, https://mintcdn.com/claude-code/rsuu-ovdPNos9Dnn/images/hooks-lifecycle.svg?w=1650&fit=max&auto=format&n=rsuu-ovdPNos9Dnn&q=85&s=ca45b85fdd8b2da81c69d12c453230cb 1650w, https://mintcdn.com/claude-code/rsuu-ovdPNos9Dnn/images/hooks-lifecycle.svg?w=2500&fit=max&auto=format&n=rsuu-ovdPNos9Dnn&q=85&s=7fd92d6b9713493f59962c9f295c9d2f 2500w" />
   </Frame>
 </div>
 
 The table below summarizes when each event fires. The [Hook events](#hook-events) section documents the full input schema and decision control options for each one.
 
-| Event                | When it fires                                                      |
-| :------------------- | :----------------------------------------------------------------- |
-| `SessionStart`       | When a session begins or resumes                                   |
-| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it               |
-| `PreToolUse`         | Before a tool call executes. Can block it                          |
-| `PermissionRequest`  | When a permission dialog appears                                   |
-| `PostToolUse`        | After a tool call succeeds                                         |
-| `PostToolUseFailure` | After a tool call fails                                            |
-| `Notification`       | When Claude Code sends a notification                              |
-| `SubagentStart`      | When a subagent is spawned                                         |
-| `SubagentStop`       | When a subagent finishes                                           |
-| `Stop`               | When Claude finishes responding                                    |
-| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle |
-| `TaskCompleted`      | When a task is being marked as completed                           |
-| `ConfigChange`       | When a configuration file changes during a session                 |
-| `PreCompact`         | Before context compaction                                          |
-| `SessionEnd`         | When a session terminates                                          |
+| Event                | When it fires                                                                                               |
+| :------------------- | :---------------------------------------------------------------------------------------------------------- |
+| `SessionStart`       | When a session begins or resumes                                                                            |
+| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                        |
+| `PreToolUse`         | Before a tool call executes. Can block it                                                                   |
+| `PermissionRequest`  | When a permission dialog appears                                                                            |
+| `PostToolUse`        | After a tool call succeeds                                                                                  |
+| `PostToolUseFailure` | After a tool call fails                                                                                     |
+| `Notification`       | When Claude Code sends a notification                                                                       |
+| `SubagentStart`      | When a subagent is spawned                                                                                  |
+| `SubagentStop`       | When a subagent finishes                                                                                    |
+| `Stop`               | When Claude finishes responding                                                                             |
+| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                          |
+| `TaskCompleted`      | When a task is being marked as completed                                                                    |
+| `ConfigChange`       | When a configuration file changes during a session                                                          |
+| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior |
+| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                        |
+| `PreCompact`         | Before context compaction                                                                                   |
+| `SessionEnd`         | When a session terminates                                                                                   |
 
 ### How a hook resolves
 
@@ -159,17 +161,17 @@ For details on settings file resolution, see [settings](/en/settings). Enterpris
 
 The `matcher` field is a regex string that filters when hooks fire. Use `"*"`, `""`, or omit `matcher` entirely to match all occurrences. Each event type matches on a different field:
 
-| Event                                                                  | What the matcher filters  | Example matcher values                                                             |
-| :--------------------------------------------------------------------- | :------------------------ | :--------------------------------------------------------------------------------- |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` | tool name                 | `Bash`, `Edit\|Write`, `mcp__.*`                                                   |
-| `SessionStart`                                                         | how the session started   | `startup`, `resume`, `clear`, `compact`                                            |
-| `SessionEnd`                                                           | why the session ended     | `clear`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`     |
-| `Notification`                                                         | notification type         | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`           |
-| `SubagentStart`                                                        | agent type                | `Bash`, `Explore`, `Plan`, or custom agent names                                   |
-| `PreCompact`                                                           | what triggered compaction | `manual`, `auto`                                                                   |
-| `SubagentStop`                                                         | agent type                | same values as `SubagentStart`                                                     |
-| `ConfigChange`                                                         | configuration source      | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills` |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`            | no matcher support        | always fires on every occurrence                                                   |
+| Event                                                                                           | What the matcher filters  | Example matcher values                                                             |
+| :---------------------------------------------------------------------------------------------- | :------------------------ | :--------------------------------------------------------------------------------- |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                          | tool name                 | `Bash`, `Edit\|Write`, `mcp__.*`                                                   |
+| `SessionStart`                                                                                  | how the session started   | `startup`, `resume`, `clear`, `compact`                                            |
+| `SessionEnd`                                                                                    | why the session ended     | `clear`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`     |
+| `Notification`                                                                                  | notification type         | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`           |
+| `SubagentStart`                                                                                 | agent type                | `Bash`, `Explore`, `Plan`, or custom agent names                                   |
+| `PreCompact`                                                                                    | what triggered compaction | `manual`, `auto`                                                                   |
+| `SubagentStop`                                                                                  | agent type                | same values as `SubagentStart`                                                     |
+| `ConfigChange`                                                                                  | configuration source      | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills` |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | no matcher support        | always fires on every occurrence                                                   |
 
 The matcher is a regex, so `Edit|Write` matches either tool and `Notebook.*` matches any tool starting with Notebook. The matcher runs against a field from the [JSON input](#hook-input-and-output) that Claude Code sends to your hook on stdin. For tool events, that field is `tool_name`. Each [hook event](#hook-events) section lists the full set of matcher values and the input schema for that event.
 
@@ -193,7 +195,7 @@ This example runs a linting script only when Claude writes or edits a file:
 }
 ```
 
-`UserPromptSubmit` and `Stop` don't support matchers and always fire on every occurrence. If you add a `matcher` field to these events, it is silently ignored.
+`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, and `WorktreeRemove` don't support matchers and always fire on every occurrence. If you add a `matcher` field to these events, it is silently ignored.
 
 #### Match MCP tools
 
@@ -463,6 +465,8 @@ Exit code 2 is the way a hook signals "stop, don't do this." The effect depends 
 | `SessionStart`       | No         | Shows stderr to user only                                                     |
 | `SessionEnd`         | No         | Shows stderr to user only                                                     |
 | `PreCompact`         | No         | Shows stderr to user only                                                     |
+| `WorktreeCreate`     | Yes        | Any non-zero exit code causes worktree creation to fail                       |
+| `WorktreeRemove`     | No         | Failures are logged in debug mode only                                        |
 
 ### JSON output
 
@@ -497,18 +501,20 @@ To stop Claude entirely regardless of event type:
 
 Not every event supports blocking or controlling behavior through JSON. The events that do each use a different set of fields to express that decision. Use this table as a quick reference before writing a hook:
 
-| Events                                                                              | Decision pattern     | Key fields                                                        |
-| :---------------------------------------------------------------------------------- | :------------------- | :---------------------------------------------------------------- |
-| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange | Top-level `decision` | `decision: "block"`, `reason`                                     |
-| TeammateIdle, TaskCompleted                                                         | Exit code only       | Exit code 2 blocks the action, stderr is fed back as feedback     |
-| PreToolUse                                                                          | `hookSpecificOutput` | `permissionDecision` (allow/deny/ask), `permissionDecisionReason` |
-| PermissionRequest                                                                   | `hookSpecificOutput` | `decision.behavior` (allow/deny)                                  |
+| Events                                                                              | Decision pattern     | Key fields                                                                  |
+| :---------------------------------------------------------------------------------- | :------------------- | :-------------------------------------------------------------------------- |
+| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange | Top-level `decision` | `decision: "block"`, `reason`                                               |
+| TeammateIdle, TaskCompleted                                                         | Exit code only       | Exit code 2 blocks the action, stderr is fed back as feedback               |
+| PreToolUse                                                                          | `hookSpecificOutput` | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`           |
+| PermissionRequest                                                                   | `hookSpecificOutput` | `decision.behavior` (allow/deny)                                            |
+| WorktreeCreate                                                                      | stdout path          | Hook prints absolute path to created worktree. Non-zero exit fails creation |
+| WorktreeRemove, Notification, SessionEnd, PreCompact                                | None                 | No decision control. Used for side effects like logging or cleanup          |
 
 Here are examples of each pattern in action:
 
 <Tabs>
   <Tab title="Top-level decision">
-    Used by `UserPromptSubmit`, `PostToolUse`, `PostToolUseFailure`, `Stop`, and `SubagentStop`. The only value is `"block"`. To allow the action to proceed, omit `decision` from your JSON, or exit 0 without any JSON at all:
+    Used by `UserPromptSubmit`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop`, and `ConfigChange`. The only value is `"block"`. To allow the action to proceed, omit `decision` from your JSON, or exit 0 without any JSON at all:
 
     ```json  theme={null}
     {
@@ -1308,6 +1314,92 @@ ConfigChange hooks can block configuration changes from taking effect. Use exit 
 
 `policy_settings` changes cannot be blocked. Hooks still fire for `policy_settings` sources, so you can use them for audit logging, but any blocking decision is ignored. This ensures enterprise-managed settings always take effect.
 
+### WorktreeCreate
+
+When you run `claude --worktree` or a [subagent uses `isolation: "worktree"`](/en/sub-agents#choose-the-subagent-scope), Claude Code creates an isolated working copy using `git worktree`. If you configure a WorktreeCreate hook, it replaces the default git behavior, letting you use a different version control system like SVN, Perforce, or Mercurial.
+
+The hook must print the absolute path to the created worktree directory on stdout. Claude Code uses this path as the working directory for the isolated session.
+
+This example creates an SVN working copy and prints the path for Claude Code to use. Replace the repository URL with your own:
+
+```json  theme={null}
+{
+  "hooks": {
+    "WorktreeCreate": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'NAME=$(jq -r .name); DIR=\"$HOME/.claude/worktrees/$NAME\"; svn checkout https://svn.example.com/repo/trunk \"$DIR\" >&2 && echo \"$DIR\"'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The hook reads the worktree `name` from the JSON input on stdin, checks out a fresh copy into a new directory, and prints the directory path. The `echo` on the last line is what Claude Code reads as the worktree path. Redirect any other output to stderr so it doesn't interfere with the path.
+
+#### WorktreeCreate input
+
+In addition to the [common input fields](#common-input-fields), WorktreeCreate hooks receive the `name` field. This is a slug identifier for the new worktree, either specified by the user or auto-generated (for example, `bold-oak-a3f2`).
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "hook_event_name": "WorktreeCreate",
+  "name": "feature-auth"
+}
+```
+
+#### WorktreeCreate output
+
+The hook must print the absolute path to the created worktree directory on stdout. If the hook fails or produces no output, worktree creation fails with an error.
+
+WorktreeCreate hooks do not use the standard allow/block decision model. Instead, the hook's success or failure determines the outcome. Only `type: "command"` hooks are supported.
+
+### WorktreeRemove
+
+The cleanup counterpart to [WorktreeCreate](#worktreecreate). This hook fires when a worktree is being removed, either when you exit a `--worktree` session and choose to remove it, or when a subagent with `isolation: "worktree"` finishes. For git-based worktrees, Claude handles cleanup automatically with `git worktree remove`. If you configured a WorktreeCreate hook for a non-git version control system, pair it with a WorktreeRemove hook to handle cleanup. Without one, the worktree directory is left on disk.
+
+Claude Code passes the path that WorktreeCreate printed on stdout as `worktree_path` in the hook input. This example reads that path and removes the directory:
+
+```json  theme={null}
+{
+  "hooks": {
+    "WorktreeRemove": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'jq -r .worktree_path | xargs rm -rf'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+#### WorktreeRemove input
+
+In addition to the [common input fields](#common-input-fields), WorktreeRemove hooks receive the `worktree_path` field, which is the absolute path to the worktree being removed.
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "hook_event_name": "WorktreeRemove",
+  "worktree_path": "/Users/.../my-project/.claude/worktrees/feature-auth"
+}
+```
+
+WorktreeRemove hooks have no decision control. They cannot block worktree removal but can perform cleanup tasks like removing version control state or archiving changes. Hook failures are logged in debug mode only. Only `type: "command"` hooks are supported.
+
 ### PreCompact
 
 Runs before Claude Code is about to run a compact operation.
@@ -1369,7 +1461,30 @@ SessionEnd hooks have no decision control. They cannot block session termination
 
 ## Prompt-based hooks
 
-In addition to Bash command hooks (`type: "command"`), Claude Code supports prompt-based hooks (`type: "prompt"`) that use an LLM to evaluate whether to allow or block an action. Prompt-based hooks work with the following events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `UserPromptSubmit`, `Stop`, `SubagentStop`, and `TaskCompleted`. `TeammateIdle` does not support prompt-based or agent-based hooks.
+In addition to Bash command hooks (`type: "command"`), Claude Code supports prompt-based hooks (`type: "prompt"`) that use an LLM to evaluate whether to allow or block an action, and agent hooks (`type: "agent"`) that spawn an agentic verifier with tool access. Not all events support every hook type.
+
+Events that support all three hook types (`command`, `prompt`, and `agent`):
+
+* `PermissionRequest`
+* `PostToolUse`
+* `PostToolUseFailure`
+* `PreToolUse`
+* `Stop`
+* `SubagentStop`
+* `TaskCompleted`
+* `UserPromptSubmit`
+
+Events that only support `type: "command"` hooks:
+
+* `ConfigChange`
+* `Notification`
+* `PreCompact`
+* `SessionEnd`
+* `SessionStart`
+* `SubagentStart`
+* `TeammateIdle`
+* `WorktreeCreate`
+* `WorktreeRemove`
 
 ### How prompt-based hooks work
 
