@@ -57,8 +57,8 @@
     "common-workflows.md": {
       "original_url": "https://code.claude.com/docs/en/common-workflows",
       "original_md_url": "https://code.claude.com/docs/en/common-workflows.md",
-      "hash": "ffa794568fb5168bca6b7a59321cee47d1a34f07dee926e8195692768f9a6eb8",
-      "last_updated": "2026-02-20T06:14:20.273175"
+      "hash": "e4939e24e8777e9be8885842e2c7ebf2cb28c2744f7ccbb307b7de0883a0026a",
+      "last_updated": "2026-02-21T06:08:09.904678"
     },
     "costs.md": {
       "original_url": "https://code.claude.com/docs/en/costs",
@@ -333,8 +333,8 @@
     "vs-code.md": {
       "original_url": "https://code.claude.com/docs/en/vs-code",
       "original_md_url": "https://code.claude.com/docs/en/vs-code.md",
-      "hash": "0ef5036a757b1e91ae748342d0c39de0936c0d3d77c31307d5966486f02ef24e",
-      "last_updated": "2026-02-20T06:14:46.935954"
+      "hash": "0e548d6798dc62eb32900f56efe6f5634463320067edaaf66525d25038dce31b",
+      "last_updated": "2026-02-21T06:08:37.509239"
     },
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
@@ -345,8 +345,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-02-21T03:43:04.225292",
-    "fetch_duration_seconds": 32.350304,
+    "last_fetch_completed": "2026-02-21T06:08:37.524441",
+    "fetch_duration_seconds": 33.319843,
     "total_pages_discovered": 56,
     "pages_fetched_successfully": 57,
     "pages_failed": 0,
@@ -356,7 +356,7 @@
     "total_files": 57,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-02-21T03:43:04.225324",
+  "last_updated": "2026-02-21T06:08:37.524469",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
