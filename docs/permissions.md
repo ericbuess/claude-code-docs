@@ -215,28 +215,35 @@ Use both for defense-in-depth:
 
 ## Managed settings
 
-For organizations that need centralized control over Claude Code configuration, administrators can deploy `managed-settings.json` files to system directories. These policy files follow the same format as regular settings files and cannot be overridden by user or project settings. For organizations without device management infrastructure, [server-managed settings](/en/server-managed-settings) provide an alternative that delivers configurations from Anthropic's servers.
+For organizations that need centralized control over Claude Code configuration, administrators can deploy managed settings through several mechanisms. These policy settings follow the same format as regular settings files and cannot be overridden by user or project settings. For organizations without device management infrastructure, [server-managed settings](/en/server-managed-settings) provide an alternative that delivers configurations from Anthropic's servers.
 
-**Managed settings file locations**:
+**MDM/OS-level policies**:
+
+* **macOS**: `com.anthropic.claudecode` managed preferences domain, deployed via configuration profiles
+* **Windows**: `HKLM\SOFTWARE\Policies\ClaudeCode` registry key with a `Settings` REG\_SZ value containing JSON
+* **Windows (user-level)**: `HKCU\SOFTWARE\Policies\ClaudeCode` (lowest policy priority)
+
+**Managed settings files**:
 
 * **macOS**: `/Library/Application Support/ClaudeCode/managed-settings.json`
 * **Linux and WSL**: `/etc/claude-code/managed-settings.json`
 * **Windows**: `C:\Program Files\ClaudeCode\managed-settings.json`
 
 <Note>
-  These are system-wide paths (not user home directories like `~/Library/...`) that require administrator privileges. They are designed to be deployed by IT administrators.
+  These are system-wide paths that require administrator privileges. Claude Code checks MDM/OS-level policies first, then falls back to managed settings files. Only one source is used.
 </Note>
 
 ### Managed-only settings
 
 Some settings are only effective in managed settings:
 
-| Setting                           | Description                                                                                                                                        |
-| :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `disableBypassPermissionsMode`    | Set to `"disable"` to prevent `bypassPermissions` mode and the `--dangerously-skip-permissions` flag                                               |
-| `allowManagedPermissionRulesOnly` | When `true`, prevents user and project settings from defining `allow`, `ask`, or `deny` permission rules. Only rules in managed settings apply     |
-| `allowManagedHooksOnly`           | When `true`, prevents loading of user, project, and plugin hooks. Only managed hooks and SDK hooks are allowed                                     |
-| `strictKnownMarketplaces`         | Controls which plugin marketplaces users can add. See [managed marketplace restrictions](/en/plugin-marketplaces#managed-marketplace-restrictions) |
+| Setting                           | Description                                                                                                                                                                                 |
+| :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `disableBypassPermissionsMode`    | Set to `"disable"` to prevent `bypassPermissions` mode and the `--dangerously-skip-permissions` flag                                                                                        |
+| `allowManagedPermissionRulesOnly` | When `true`, prevents user and project settings from defining `allow`, `ask`, or `deny` permission rules. Only rules in managed settings apply                                              |
+| `allowManagedHooksOnly`           | When `true`, prevents loading of user, project, and plugin hooks. Only managed hooks and SDK hooks are allowed                                                                              |
+| `strictKnownMarketplaces`         | Controls which plugin marketplaces users can add. See [managed marketplace restrictions](/en/plugin-marketplaces#managed-marketplace-restrictions)                                          |
+| `allow_remote_sessions`           | When `true`, allows users to start [Remote Control](/en/remote-control) and [web sessions](/en/claude-code-on-the-web). Defaults to `true`. Set to `false` to prevent remote session access |
 
 ## Settings precedence
 

@@ -83,17 +83,23 @@ Code through hierarchical settings:
 * **Project settings** are saved in your project directory:
   * `.claude/settings.json` for settings that are checked into source control and shared with your team
   * `.claude/settings.local.json` for settings that are not checked in, useful for personal preferences and experimentation. Claude Code will configure git to ignore `.claude/settings.local.json` when it is created.
-* **Managed settings**: For organizations that need centralized control, Claude Code supports `managed-settings.json` and `managed-mcp.json` files that can be deployed to system directories:
+* **Managed settings**: For organizations that need centralized control, Claude Code supports multiple delivery mechanisms for managed settings. All use the same JSON format and cannot be overridden by user or project settings:
 
-  * macOS: `/Library/Application Support/ClaudeCode/`
-  * Linux and WSL: `/etc/claude-code/`
-  * Windows: `C:\Program Files\ClaudeCode\`
+  * **Server-managed settings**: delivered from Anthropic's servers via the Claude.ai admin console. See [server-managed settings](/en/server-managed-settings).
+  * **MDM/OS-level policies**: delivered through native device management on macOS and Windows:
+    * macOS: `com.anthropic.claudecode` managed preferences domain (deployed via configuration profiles in Jamf, Kandji, or other MDM tools)
+    * Windows: `HKLM\SOFTWARE\Policies\ClaudeCode` registry key with a `Settings` REG\_SZ value containing JSON (deployed via Group Policy or Intune)
+    * Windows (user-level): `HKCU\SOFTWARE\Policies\ClaudeCode` (lowest policy priority, only used when no admin-level source exists)
+  * **File-based**: `managed-settings.json` and `managed-mcp.json` deployed to system directories:
+    * macOS: `/Library/Application Support/ClaudeCode/`
+    * Linux and WSL: `/etc/claude-code/`
+    * Windows: `C:\Program Files\ClaudeCode\`
 
   <Note>
-    These are system-wide paths (not user home directories like `~/Library/...`) that require administrator privileges. They are designed to be deployed by IT administrators.
+    Only one policy source is used. Claude Code checks sources in the order listed above and uses the first one found. Sources do not merge.
   </Note>
 
-  See [Managed settings](/en/permissions#managed-settings) and [Managed MCP configuration](/en/mcp#managed-mcp-configuration) for details. For organizations without device management infrastructure, see [server-managed settings](/en/server-managed-settings).
+  See [Managed settings](/en/permissions#managed-settings) and [Managed MCP configuration](/en/mcp#managed-mcp-configuration) for details.
 
   <Note>
     Managed deployments can also restrict **plugin marketplace additions** using
@@ -356,9 +362,10 @@ your-repo-file-index --query "$query" | head -20
 
 Settings apply in order of precedence. From highest to lowest:
 
-1. **Managed settings** ([`managed-settings.json`](/en/permissions#managed-settings) or [server-managed settings](/en/server-managed-settings))
-   * Policies deployed by IT/DevOps to system directories, or delivered from Anthropic's servers for Claude for Enterprise customers
+1. **Managed settings** ([server-managed](/en/server-managed-settings), [MDM/OS-level policies](#configuration-scopes), or [`managed-settings.json`](/en/permissions#managed-settings))
+   * Policies deployed by IT through server delivery, MDM configuration profiles, registry policies, or managed settings files
    * Cannot be overridden by user or project settings
+   * Within the managed tier, precedence is: server-managed > MDM/OS-level policies > `managed-settings.json` > HKCU registry (Windows only)
 
 2. **Command line arguments**
    * Temporary overrides for a specific session
@@ -375,6 +382,10 @@ Settings apply in order of precedence. From highest to lowest:
 This hierarchy ensures that organizational policies are always enforced while still allowing teams and individuals to customize their experience.
 
 For example, if your user settings allow `Bash(npm run *)` but a project's shared settings deny it, the project setting takes precedence and the command is blocked.
+
+### Verify active settings
+
+Run `/status` inside Claude Code to see which settings sources are active and where they come from. The output shows each configuration layer (managed, user, project) along with its origin, such as `Enterprise managed settings (remote)`, `Enterprise managed settings (plist)`, `Enterprise managed settings (HKLM)`, or `Enterprise managed settings (file)`. If a settings file contains errors, `/status` reports the issue so you can fix it.
 
 ### Key points about the configuration system
 
