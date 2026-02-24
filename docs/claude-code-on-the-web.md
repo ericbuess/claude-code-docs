@@ -20,9 +20,9 @@ Claude Code on the web lets developers kick off Claude Code from the Claude app.
 * **Repositories not on your local machine**: Work on code you don't have checked out locally
 * **Backend changes**: Where Claude Code can write tests and then write code to pass those tests
 
-Claude Code is also available on the Claude iOS app for kicking off tasks on the go and monitoring work in progress.
+Claude Code is also available on the Claude app for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) and [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude) for kicking off tasks on the go and monitoring work in progress.
 
-You can move between local and remote development: [send tasks from your terminal to run on the web](#from-terminal-to-web) with the `&` prefix, or [teleport web sessions back to your terminal](#from-web-to-terminal) to continue locally.
+You can move between local and remote development: [send tasks from your terminal to run on the web](#from-terminal-to-web) with the `&` prefix, or [teleport web sessions back to your terminal](#from-web-to-terminal) to continue locally. To use the web interface while running Claude Code on your own machine instead of cloud infrastructure, see [Remote Control](/en/remote-control).
 
 ## Who can use Claude Code on the web?
 

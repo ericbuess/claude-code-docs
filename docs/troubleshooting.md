@@ -192,23 +192,17 @@ This removes your stored authentication information and forces a clean login.
 
 Claude Code stores configuration in several locations:
 
-| File                          | Purpose                                                  |
-| :---------------------------- | :------------------------------------------------------- |
-| `~/.claude/settings.json`     | User settings (permissions, hooks, model overrides)      |
-| `.claude/settings.json`       | Project settings (checked into source control)           |
-| `.claude/settings.local.json` | Local project settings (not committed)                   |
-| `~/.claude.json`              | Global state (theme, OAuth, MCP servers)                 |
-| `.mcp.json`                   | Project MCP servers (checked into source control)        |
-| `managed-settings.json`       | [Managed settings](/en/settings#settings-files)          |
-| `managed-mcp.json`            | [Managed MCP servers](/en/mcp#managed-mcp-configuration) |
+| File                          | Purpose                                                                                                |
+| :---------------------------- | :----------------------------------------------------------------------------------------------------- |
+| `~/.claude/settings.json`     | User settings (permissions, hooks, model overrides)                                                    |
+| `.claude/settings.json`       | Project settings (checked into source control)                                                         |
+| `.claude/settings.local.json` | Local project settings (not committed)                                                                 |
+| `~/.claude.json`              | Global state (theme, OAuth, MCP servers)                                                               |
+| `.mcp.json`                   | Project MCP servers (checked into source control)                                                      |
+| `managed-mcp.json`            | [Managed MCP servers](/en/mcp#managed-mcp-configuration)                                               |
+| Managed settings              | [Managed settings](/en/settings#settings-files) (server-managed, MDM/OS-level policies, or file-based) |
 
 On Windows, `~` refers to your user home directory, such as `C:\Users\YourName`.
-
-**Managed file locations:**
-
-* macOS: `/Library/Application Support/ClaudeCode/`
-* Linux/WSL: `/etc/claude-code/`
-* Windows: `C:\Program Files\ClaudeCode\`
 
 For details on configuring these files, see [Settings](/en/settings) and [MCP](/en/mcp).
 

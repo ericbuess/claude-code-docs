@@ -106,6 +106,8 @@ When using [Claude Code on the web](/en/claude-code-on-the-web), additional secu
 
 For more details on cloud execution, see [Claude Code on the web](/en/claude-code-on-the-web).
 
+[Remote Control](/en/remote-control) sessions work differently: the web interface connects to a Claude Code process running on your local machine. All code execution and file access stays local, and the same data that flows during any local Claude Code session travels through the Anthropic API over TLS. No cloud VMs or sandboxing are involved. The connection uses multiple short-lived, narrowly scoped credentials, each limited to a specific purpose and expiring independently, to limit the blast radius of any single compromised credential.
+
 ## Security best practices
 
 ### Working with sensitive code
@@ -117,7 +119,7 @@ For more details on cloud execution, see [Claude Code on the web](/en/claude-cod
 
 ### Team security
 
-* Use [managed settings](/en/permissions#managed-settings) to enforce organizational standards
+* Use [managed settings](/en/settings#settings-files) to enforce organizational standards
 * Share approved permission configurations through version control
 * Train team members on security best practices
 * Monitor Claude Code usage through [OpenTelemetry metrics](/en/monitoring-usage)

@@ -24,12 +24,12 @@ To use server-managed settings, you need:
 
 ## Choose between server-managed and endpoint-managed settings
 
-Claude Code supports two approaches for centralized configuration. Server-managed settings deliver configuration from Anthropic's servers. [Endpoint-managed settings](/en/permissions#managed-settings) are deployed directly to devices, either through native OS policies (macOS managed preferences, Windows registry) or by placing a `managed-settings.json` file in a system directory.
+Claude Code supports two approaches for centralized configuration. Server-managed settings deliver configuration from Anthropic's servers. [Endpoint-managed settings](/en/settings#settings-files) are deployed directly to devices through native OS policies (macOS managed preferences, Windows registry) or managed settings files.
 
-| Approach                                                          | Best for                                                 | Security model                                                                                            |
-| :---------------------------------------------------------------- | :------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
-| **Server-managed settings**                                       | Organizations without MDM, or users on unmanaged devices | Settings delivered from Anthropic's servers at authentication time                                        |
-| **[Endpoint-managed settings](/en/permissions#managed-settings)** | Organizations with MDM or endpoint management            | Settings deployed to devices via MDM configuration profiles, registry policies, or managed settings files |
+| Approach                                                     | Best for                                                 | Security model                                                                                            |
+| :----------------------------------------------------------- | :------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| **Server-managed settings**                                  | Organizations without MDM, or users on unmanaged devices | Settings delivered from Anthropic's servers at authentication time                                        |
+| **[Endpoint-managed settings](/en/settings#settings-files)** | Organizations with MDM or endpoint management            | Settings deployed to devices via MDM configuration profiles, registry policies, or managed settings files |
 
 If your devices are enrolled in an MDM or endpoint management solution, endpoint-managed settings provide stronger security guarantees because the settings file can be protected from user modification at the OS level.
 
@@ -89,7 +89,7 @@ Server-managed settings have the following limitations during the beta period:
 
 ### Settings precedence
 
-Server-managed settings and [endpoint-managed settings](/en/permissions#managed-settings) both occupy the highest tier in the Claude Code [settings hierarchy](/en/settings#settings-precedence), and user or project settings cannot override them. When both are present, server-managed settings take precedence and the local `managed-settings.json` file is not used.
+Server-managed settings and [endpoint-managed settings](/en/settings#settings-files) both occupy the highest tier in the Claude Code [settings hierarchy](/en/settings#settings-precedence), and user or project settings cannot override them. When both are present, server-managed settings take precedence and endpoint-managed settings are not used.
 
 ### Fetch and caching behavior
 
@@ -152,13 +152,13 @@ Server-managed settings provide centralized policy enforcement, but they operate
 
 To detect runtime configuration changes, use [`ConfigChange` hooks](/en/hooks#configchange) to log modifications or block unauthorized changes before they take effect.
 
-For stronger enforcement guarantees, use [endpoint-managed settings](/en/permissions#managed-settings) on devices enrolled in an MDM solution.
+For stronger enforcement guarantees, use [endpoint-managed settings](/en/settings#settings-files) on devices enrolled in an MDM solution.
 
 ## See also
 
 Related pages for managing Claude Code configuration:
 
 * [Settings](/en/settings): complete configuration reference including all available settings
-* [Endpoint-managed settings](/en/permissions#managed-settings): file-based managed settings deployed by IT
+* [Endpoint-managed settings](/en/settings#settings-files): managed settings deployed to devices by IT
 * [Authentication](/en/authentication): set up user access to Claude Code
 * [Security](/en/security): security safeguards and best practices

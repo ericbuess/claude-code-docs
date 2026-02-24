@@ -253,7 +253,7 @@ Configure this via `/config` → **Auto-update channel**, or add it to your [set
 }
 ```
 
-For enterprise deployments, you can enforce a consistent release channel across your organization using [managed settings](/en/permissions#managed-settings).
+For enterprise deployments, you can enforce a consistent release channel across your organization using [managed settings](/en/settings#settings-files).
 
 ### Disable auto-updates
 
