@@ -13,6 +13,7 @@ This quickstart guide will have you using AI-powered coding assistance in just a
 Make sure you have:
 
 * A terminal or command prompt open
+  * If you've never used the terminal before, check out the [terminal guide](/en/terminal-guide)
 * A code project to work with
 * A [Claude subscription](https://claude.com/pricing) (Pro, Max, Teams, or Enterprise), [Claude Console](https://console.anthropic.com/) account, or access through a [supported cloud provider](/en/third-party-integrations)
 
@@ -44,13 +45,15 @@ To install Claude Code, use one of the following methods:
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
+    **Windows requires [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it.
+
     <Info>
       Native installations automatically update in the background to keep you on the latest version.
     </Info>
   </Tab>
 
   <Tab title="Homebrew">
-    ```sh  theme={null}
+    ```bash  theme={null}
     brew install --cask claude-code
     ```
 
