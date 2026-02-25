@@ -315,6 +315,53 @@ You can pin to a specific branch, tag, or commit:
 | `ref` | string | Optional. Git branch or tag (defaults to repository default branch)   |
 | `sha` | string | Optional. Full 40-character git commit SHA to pin to an exact version |
 
+### npm packages
+
+Plugins distributed as npm packages are installed using `npm install`. This works with any package on the public npm registry or a private registry your team hosts.
+
+```json  theme={null}
+{
+  "name": "my-npm-plugin",
+  "source": {
+    "source": "npm",
+    "package": "@acme/claude-plugin"
+  }
+}
+```
+
+To pin to a specific version, add the `version` field:
+
+```json  theme={null}
+{
+  "name": "my-npm-plugin",
+  "source": {
+    "source": "npm",
+    "package": "@acme/claude-plugin",
+    "version": "2.1.0"
+  }
+}
+```
+
+To install from a private or internal registry, add the `registry` field:
+
+```json  theme={null}
+{
+  "name": "my-npm-plugin",
+  "source": {
+    "source": "npm",
+    "package": "@acme/claude-plugin",
+    "version": "^2.0.0",
+    "registry": "https://npm.example.com"
+  }
+}
+```
+
+| Field      | Type   | Description                                                                                  |
+| :--------- | :----- | :------------------------------------------------------------------------------------------- |
+| `package`  | string | Required. Package name or scoped package (for example, `@org/plugin`)                        |
+| `version`  | string | Optional. Version or version range (for example, `2.1.0`, `^2.0.0`, `~1.5.0`)                |
+| `registry` | string | Optional. Custom npm registry URL. Defaults to the system npm registry (typically npmjs.org) |
+
 ### Advanced plugin entries
 
 This example shows a plugin entry using many of the optional fields, including custom paths for commands, agents, hooks, and MCP servers:
@@ -680,7 +727,6 @@ Run `claude plugin validate .` or `/plugin validate .` from your marketplace dir
 
 * `Marketplace has no plugins defined`: add at least one plugin to the `plugins` array
 * `No marketplace description provided`: add `metadata.description` to help users understand your marketplace
-* `Plugin "x" uses npm source which is not yet fully implemented`: use `github` or local path sources instead
 
 ### Plugin installation failures
 
@@ -712,6 +758,18 @@ For background auto-updates:
 * For GitHub, ensure the token has the `repo` scope for private repositories
 * For GitLab, ensure the token has at least `read_repository` scope
 * Verify the token hasn't expired
+
+### Git operations time out
+
+**Symptoms**: Plugin installation or marketplace updates fail with a timeout error like "Git clone timed out after 120s" or "Git pull timed out after 120s".
+
+**Cause**: Claude Code uses a 120-second timeout for all git operations, including cloning plugin repositories and pulling marketplace updates. Large repositories or slow network connections may exceed this limit.
+
+**Solution**: Increase the timeout using the `CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS` environment variable. The value is in milliseconds:
+
+```bash  theme={null}
+export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
+```
 
 ### Plugins with relative paths fail in URL-based marketplaces
 
