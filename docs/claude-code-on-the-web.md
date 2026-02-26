@@ -22,7 +22,7 @@ Claude Code on the web lets developers kick off Claude Code from the Claude app.
 
 Claude Code is also available on the Claude app for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) and [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude) for kicking off tasks on the go and monitoring work in progress.
 
-You can move between local and remote development: [send tasks from your terminal to run on the web](#from-terminal-to-web) with the `&` prefix, or [teleport web sessions back to your terminal](#from-web-to-terminal) to continue locally. To use the web interface while running Claude Code on your own machine instead of cloud infrastructure, see [Remote Control](/en/remote-control).
+You can [kick off new tasks on the web from your terminal](#from-terminal-to-web) with `--remote`, or [teleport web sessions back to your terminal](#from-web-to-terminal) to continue locally. To use the web interface while running Claude Code on your own machine instead of cloud infrastructure, see [Remote Control](/en/remote-control).
 
 ## Who can use Claude Code on the web?
 
@@ -69,50 +69,44 @@ This lets you refine changes through multiple rounds of feedback without creatin
 
 ## Moving tasks between web and terminal
 
-You can start tasks on the web and continue them in your terminal, or send tasks from your terminal to run on the web. Web sessions persist even if you close your laptop, and you can monitor them from anywhere including the Claude iOS app.
+You can start new tasks on the web from your terminal, or pull web sessions into your terminal to continue locally. Web sessions persist even if you close your laptop, and you can monitor them from anywhere including the Claude mobile app.
 
 <Note>
-  Session handoff is one-way: you can pull web sessions into your terminal, but you can't push an existing terminal session to the web. The [`&` prefix](#from-terminal-to-web) creates a *new* web session with your current conversation context.
+  Session handoff is one-way: you can pull web sessions into your terminal, but you can't push an existing terminal session to the web. The `--remote` flag creates a *new* web session for your current repository.
 </Note>
 
 ### From terminal to web
 
-Start a message with `&` inside Claude Code to send a task to run on the web:
-
-```
-& Fix the authentication bug in src/auth/login.ts
-```
-
-This creates a new web session on claude.ai with your current conversation context. The task runs in the cloud while you continue working locally. Use `/tasks` to check progress, or open the session on claude.ai or the Claude iOS app to interact directly. From there you can steer Claude, provide feedback, or answer questions just like any other conversation.
-
-You can also start a web session directly from the command line:
+Start a web session from the command line with the `--remote` flag:
 
 ```bash  theme={null}
 claude --remote "Fix the authentication bug in src/auth/login.ts"
 ```
 
-#### Tips for background tasks
+This creates a new web session on claude.ai. The task runs in the cloud while you continue working locally. Use `/tasks` to check progress, or open the session on claude.ai or the Claude mobile app to interact directly. From there you can steer Claude, provide feedback, or answer questions just like any other conversation.
 
-**Plan locally, execute remotely**: For complex tasks, start Claude in plan mode to collaborate on the approach before sending work to the web:
+#### Tips for remote tasks
+
+**Plan locally, execute remotely**: For complex tasks, start Claude in plan mode to collaborate on the approach, then send work to the web:
 
 ```bash  theme={null}
 claude --permission-mode plan
 ```
 
-In plan mode, Claude can only read files and explore the codebase. Once you're satisfied with the plan, send it to the web for autonomous execution:
+In plan mode, Claude can only read files and explore the codebase. Once you're satisfied with the plan, start a remote session for autonomous execution:
 
-```
-& Execute the migration plan we discussed
+```bash  theme={null}
+claude --remote "Execute the migration plan in docs/migration-plan.md"
 ```
 
 This pattern gives you control over the strategy while letting Claude execute autonomously in the cloud.
 
-**Run tasks in parallel**: Each `&` command creates its own web session that runs independently. You can kick off multiple tasks and they'll all run simultaneously in separate sessions:
+**Run tasks in parallel**: Each `--remote` command creates its own web session that runs independently. You can kick off multiple tasks and they'll all run simultaneously in separate sessions:
 
-```
-& Fix the flaky test in auth.spec.ts
-& Update the API documentation
-& Refactor the logger to use structured output
+```bash  theme={null}
+claude --remote "Fix the flaky test in auth.spec.ts"
+claude --remote "Update the API documentation"
+claude --remote "Refactor the logger to use structured output"
 ```
 
 Monitor all sessions with `/tasks`. When a session completes, you can create a PR from the web interface or [teleport](#from-web-to-terminal) the session to your terminal to continue working.
@@ -232,7 +226,7 @@ When you start a session in Claude Code on the web, here's what happens under th
 
 **To update an existing environment:** Select the current environment, to the right of the environment name, and select the settings button. This will open a dialog where you can update the environment name, network access, and environment variables.
 
-**To select your default environment from the terminal:** If you have multiple environments configured, run `/remote-env` to choose which one to use when starting web sessions from your terminal with `&` or `--remote`. With a single environment, this command shows your current configuration.
+**To select your default environment from the terminal:** If you have multiple environments configured, run `/remote-env` to choose which one to use when starting web sessions from your terminal with `--remote`. With a single environment, this command shows your current configuration.
 
 <Note>
   Environment variables must be specified as key-value pairs, in [`.env` format](https://www.dotenv.org/). For example:
