@@ -55,7 +55,7 @@ claude --model opus
 
 Example settings file:
 
-```
+```json  theme={null}
 {
     "permissions": {
         ...

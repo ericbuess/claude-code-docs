@@ -6,7 +6,7 @@
 
 > Welcome to Claude Code!
 
-This quickstart guide will have you using AI-powered coding assistance in just a few minutes. By the end, you'll understand how to use Claude Code for common development tasks.
+This quickstart guide will have you using AI-powered coding assistance in a few minutes. By the end, you'll understand how to use Claude Code for common development tasks.
 
 ## Before you begin
 
@@ -29,19 +29,19 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
@@ -53,7 +53,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash  theme={null}
+    ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
 
@@ -63,7 +63,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -114,47 +114,47 @@ You'll see the Claude Code welcome screen with your session information, recent 
 
 Let's start with understanding your codebase. Try one of these commands:
 
-```
+```text  theme={null}
 what does this project do?
 ```
 
 Claude will analyze your files and provide a summary. You can also ask more specific questions:
 
-```
+```text  theme={null}
 what technologies does this project use?
 ```
 
-```
+```text  theme={null}
 where is the main entry point?
 ```
 
-```
+```text  theme={null}
 explain the folder structure
 ```
 
 You can also ask Claude about its own capabilities:
 
-```
+```text  theme={null}
 what can Claude Code do?
 ```
 
-```
+```text  theme={null}
 how do I create custom skills in Claude Code?
 ```
 
-```
+```text  theme={null}
 can Claude Code work with Docker?
 ```
 
 <Note>
-  Claude Code reads your files as needed - you don't have to manually add context. Claude also has access to its own documentation and can answer questions about its features and capabilities.
+  Claude Code reads your project files as needed. You don't have to manually add context.
 </Note>
 
 ## Step 5: Make your first code change
 
 Now let's make Claude Code do some actual coding. Try a simple task:
 
-```
+```text  theme={null}
 add a hello world function to the main file
 ```
 
@@ -173,25 +173,25 @@ Claude Code will:
 
 Claude Code makes Git operations conversational:
 
-```
+```text  theme={null}
 what files have I changed?
 ```
 
-```
+```text  theme={null}
 commit my changes with a descriptive message
 ```
 
 You can also prompt for more complex Git operations:
 
-```
+```text  theme={null}
 create a new branch called feature/quickstart
 ```
 
-```
+```text  theme={null}
 show me the last 5 commits
 ```
 
-```
+```text  theme={null}
 help me resolve merge conflicts
 ```
 
@@ -201,13 +201,13 @@ Claude is proficient at debugging and feature implementation.
 
 Describe what you want in natural language:
 
-```
+```text  theme={null}
 add input validation to the user registration form
 ```
 
 Or fix existing issues:
 
-```
+```text  theme={null}
 there's a bug where users can submit empty forms - fix it
 ```
 
@@ -224,30 +224,30 @@ There are a number of ways to work with Claude:
 
 **Refactor code**
 
-```
+```text  theme={null}
 refactor the authentication module to use async/await instead of callbacks
 ```
 
 **Write tests**
 
-```
+```text  theme={null}
 write unit tests for the calculator functions
 ```
 
 **Update documentation**
 
-```
+```text  theme={null}
 update the README with installation instructions
 ```
 
 **Code review**
 
-```
+```text  theme={null}
 review my changes and suggest improvements
 ```
 
 <Tip>
-  **Remember**: Claude Code is your AI pair programmer. Talk to it like you would a helpful colleague - describe what you want to achieve, and it will help you get there.
+  Talk to Claude like you would a helpful colleague. Describe what you want to achieve, and it will help you get there.
 </Tip>
 
 ## Essential commands
@@ -282,7 +282,7 @@ For more, see [best practices](/en/best-practices) and [common workflows](/en/co
   <Accordion title="Use step-by-step instructions">
     Break complex tasks into steps:
 
-    ```
+    ```text  theme={null}
     1. create a new database table for user profiles
     2. create an API endpoint to get and update user profiles
     3. build a webpage that allows users to see and edit their information
@@ -292,11 +292,11 @@ For more, see [best practices](/en/best-practices) and [common workflows](/en/co
   <Accordion title="Let Claude explore first">
     Before making changes, let Claude understand your code:
 
-    ```
+    ```text  theme={null}
     analyze the database schema
     ```
 
-    ```
+    ```text  theme={null}
     build a dashboard showing products that are most frequently returned by our UK customers
     ```
   </Accordion>

@@ -200,7 +200,7 @@ jobs:
 
 In issue or PR comments:
 
-```
+```text  theme={null}
 @claude implement this feature based on the issue description
 @claude how should I implement user authentication for this endpoint?
 @claude fix the TypeError in the user dashboard component

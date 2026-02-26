@@ -278,7 +278,7 @@ Claude Code adds attribution to git commits and pull requests. These are configu
 
 **Default commit attribution:**
 
-```
+```text  theme={null}
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
    Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
@@ -286,7 +286,7 @@ Claude Code adds attribution to git commits and pull requests. These are configu
 
 **Default pull request attribution:**
 
-```
+```text  theme={null}
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 ```
 
@@ -326,7 +326,7 @@ The command runs with the same environment variables as [hooks](/en/hooks), incl
 
 Output newline-separated file paths to stdout (currently limited to 15):
 
-```
+```text  theme={null}
 src/components/Button.tsx
 src/components/Modal.tsx
 src/components/Form.tsx

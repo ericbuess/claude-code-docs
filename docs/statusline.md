@@ -31,7 +31,7 @@ Use the [`/statusline` command](#use-the-statusline-command) to have Claude Code
 
 The `/statusline` command accepts natural language instructions describing what you want displayed. Claude Code generates a script file in `~/.claude/` and updates your settings automatically:
 
-```
+```text  theme={null}
 /statusline show model name and context percentage with a progress bar
 ```
 

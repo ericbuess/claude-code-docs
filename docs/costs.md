@@ -22,7 +22,7 @@ This page covers how to [track your costs](#track-your-costs), [manage costs for
 
 The `/cost` command provides detailed token usage statistics for your current session:
 
-```
+```text  theme={null}
 Total cost:            $0.55
 Total duration (API):  6m 19.7s
 Total duration (wall): 6h 33m 10.2s

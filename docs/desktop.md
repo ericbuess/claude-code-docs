@@ -463,6 +463,8 @@ This table compares core capabilities between the CLI and Desktop. For a full li
 
 ### What's not available in Desktop
 
+The following features are only available in the CLI or VS Code extension:
+
 * **Third-party providers**: Desktop connects to Anthropic's API directly. Use the [CLI](/en/quickstart) with Bedrock, Vertex, or Foundry instead.
 * **Linux**: the desktop app is available on macOS and Windows only.
 * **Inline code suggestions**: Desktop does not provide autocomplete-style suggestions. It works through conversational prompts and explicit code changes.

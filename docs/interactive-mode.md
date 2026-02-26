@@ -13,9 +13,9 @@
 
   **macOS users**: Option/Alt key shortcuts (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`) require configuring Option as Meta in your terminal:
 
-  * **iTerm2**: Settings → Profiles → Keys → Set Left/Right Option key to "Esc+"
-  * **Terminal.app**: Settings → Profiles → Keyboard → Check "Use Option as Meta Key"
-  * **VS Code**: Settings → Profiles → Keys → Set Left/Right Option key to "Esc+"
+  * **iTerm2**: settings → Profiles → Keys → set Left/Right Option key to "Esc+"
+  * **Terminal.app**: settings → Profiles → Keyboard → check "Use Option as Meta Key"
+  * **VS Code**: settings → Profiles → Keys → set Left/Right Option key to "Esc+"
 
   See [Terminal configuration](/en/terminal-config) for details.
 </Note>
@@ -108,7 +108,7 @@ To create your own commands you can invoke with `/`, see [skills](/en/skills).
 | `/model`                  | Select or change the AI model. With Opus 4.6, use left/right arrows to [adjust effort level](/en/model-config#adjust-effort-level). The change takes effect immediately without waiting for the current response to finish |
 | `/permissions`            | View or update [permissions](/en/permissions#manage-permissions)                                                                                                                                                           |
 | `/plan`                   | Enter plan mode directly from the prompt                                                                                                                                                                                   |
-| `/rename <name>`          | Rename the current session for easier identification                                                                                                                                                                       |
+| `/rename [name]`          | Rename the current session. Without a name, generates one from conversation history (requires at least one message in the conversation context).                                                                           |
 | `/resume [session]`       | Resume a conversation by ID or name, or open the session picker                                                                                                                                                            |
 | `/rewind`                 | Rewind the conversation and/or code, or summarize from a selected message                                                                                                                                                  |
 | `/stats`                  | Visualize daily usage, session history, streaks, and model preferences                                                                                                                                                     |
@@ -204,18 +204,18 @@ Text objects work with operators like `d`, `c`, and `y`:
 
 Claude Code maintains command history for the current session:
 
-* History is stored per working directory
-* Cleared with `/clear` command
+* Input history is stored per working directory
+* Input history resets when you run `/clear` to start a new session. The previous session's conversation is preserved and can be resumed.
 * Use Up/Down arrows to navigate (see keyboard shortcuts above)
-* **Note**: History expansion (`!`) is disabled by default
+* **Note**: history expansion (`!`) is disabled by default
 
 ### Reverse search with Ctrl+R
 
 Press `Ctrl+R` to interactively search through your command history:
 
-1. **Start search**: Press `Ctrl+R` to activate reverse history search
-2. **Type query**: Enter text to search for in previous commands - the search term will be highlighted in matching results
-3. **Navigate matches**: Press `Ctrl+R` again to cycle through older matches
+1. **Start search**: press `Ctrl+R` to activate reverse history search
+2. **Type query**: enter text to search for in previous commands. The search term is highlighted in matching results
+3. **Navigate matches**: press `Ctrl+R` again to cycle through older matches
 4. **Accept match**:
    * Press `Tab` or `Esc` to accept the current match and continue editing
    * Press `Enter` to accept and execute the command immediately
@@ -223,7 +223,7 @@ Press `Ctrl+R` to interactively search through your command history:
    * Press `Ctrl+C` to cancel and restore your original input
    * Press `Backspace` on empty search to cancel
 
-The search displays matching commands with the search term highlighted, making it easy to find and reuse previous inputs.
+The search displays matching commands with the search term highlighted, so you can find and reuse previous inputs.
 
 ## Background bash commands
 

@@ -26,7 +26,7 @@ Plugins add skills to Claude Code, creating `/name` shortcuts that you or Claude
 
 **Skill structure**:
 
-```
+```text  theme={null}
 skills/
 ├── pdf-processor/
 │   ├── SKILL.md
@@ -408,7 +408,7 @@ The symlinked content will be copied into the plugin cache. This provides flexib
 
 A complete plugin follows this structure:
 
-```
+```text  theme={null}
 enterprise-plugin/
 ├── .claude-plugin/           # Metadata directory (optional)
 │   └── plugin.json             # plugin manifest
@@ -650,7 +650,7 @@ This shows:
 
 **Correct structure**: Components must be at the plugin root, not inside `.claude-plugin/`. Only `plugin.json` belongs in `.claude-plugin/`.
 
-```
+```text  theme={null}
 my-plugin/
 ├── .claude-plugin/
 │   └── plugin.json      ← Only manifest here
