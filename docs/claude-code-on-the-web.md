@@ -162,6 +162,23 @@ verification is not enabled by default.
 Enable repository access verification and/or withhold your name from your shared
 sessions by going to Settings > Claude Code > Sharing settings.
 
+## Managing sessions
+
+### Archiving sessions
+
+You can archive sessions to keep your session list organized. Archived sessions are hidden from the default session list but can be viewed by filtering for archived sessions.
+
+To archive a session, hover over the session in the sidebar and click the archive icon.
+
+### Deleting sessions
+
+Deleting a session permanently removes the session and its data. This action cannot be undone. You can delete a session in two ways:
+
+* **From the sidebar**: Filter for archived sessions, then hover over the session you want to delete and click the delete icon
+* **From the session menu**: Open a session, click the dropdown next to the session title, and select **Delete**
+
+You will be asked to confirm before a session is deleted.
+
 ## Cloud environment
 
 ### Default image
