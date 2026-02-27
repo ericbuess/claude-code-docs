@@ -103,6 +103,8 @@ Admins can enable fast mode in:
 * **Console** (API customers): [Claude Code preferences](https://platform.claude.com/claude-code/preferences)
 * **Claude AI** (Teams and Enterprise): [Admin Settings > Claude Code](https://claude.ai/admin-settings/claude-code)
 
+Another option to disable fast mode entirely is to set `CLAUDE_CODE_DISABLE_FAST_MODE=1`. See [Environment variables](/en/settings#environment-variables).
+
 ## Handle rate limits
 
 Fast mode has separate rate limits from standard Opus 4.6. When you hit the fast mode rate limit or run out of extra usage credits:
