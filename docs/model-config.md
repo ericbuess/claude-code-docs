@@ -140,6 +140,8 @@ Three levels are available: **low**, **medium**, and **high** (default).
 
 Effort is currently supported on Opus 4.6. The effort slider appears in `/model` when a supported model is selected.
 
+To disable adaptive reasoning on Opus 4.6 and Sonnet 4.6 and revert to the previous fixed thinking budget, set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. When disabled, these models use the fixed budget controlled by `MAX_THINKING_TOKENS`. See [environment variables](/en/settings#environment-variables).
+
 ### Extended context
 
 Opus 4.6 and Sonnet 4.6 support a [1 million token context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) for long sessions with large codebases.

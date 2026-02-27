@@ -8,6 +8,10 @@
 
 # Changelog
 
+## 2.1.61
+
+- Fixed concurrent writes corrupting config file on Windows
+
 ## 2.1.59
 
 - Claude automatically saves useful context to auto-memory. Manage with /memory

@@ -314,6 +314,13 @@ When your plugin is ready to share:
 
 Once your plugin is in a marketplace, others can install it using the instructions in [Discover and install plugins](/en/discover-plugins).
 
+### Submit your plugin to the official marketplace
+
+To submit a plugin to the official Anthropic marketplace, use one of the in-app submission forms:
+
+* **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
+* **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
+
 <Note>
   For complete technical specifications, debugging techniques, and distribution strategies, see [Plugins reference](/en/plugins-reference).
 </Note>
