@@ -218,14 +218,15 @@ For the complete rule syntax reference, including wildcard behavior, tool-specif
 
 Configure advanced sandboxing behavior. Sandboxing isolates bash commands from your filesystem and network. See [Sandboxing](/en/sandboxing) for details.
 
-**Filesystem and network restrictions** are configured via Read, Edit, and WebFetch permission rules, not via these sandbox settings.
-
 | Keys                              | Description                                                                                                                                                                                                                                                                                                                       | Example                         |
 | :-------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------ |
 | `enabled`                         | Enable bash sandboxing (macOS, Linux, and WSL2). Default: false                                                                                                                                                                                                                                                                   | `true`                          |
 | `autoAllowBashIfSandboxed`        | Auto-approve bash commands when sandboxed. Default: true                                                                                                                                                                                                                                                                          | `true`                          |
 | `excludedCommands`                | Commands that should run outside of the sandbox                                                                                                                                                                                                                                                                                   | `["git", "docker"]`             |
 | `allowUnsandboxedCommands`        | Allow commands to run outside the sandbox via the `dangerouslyDisableSandbox` parameter. When set to `false`, the `dangerouslyDisableSandbox` escape hatch is completely disabled and all commands must run sandboxed (or be in `excludedCommands`). Useful for enterprise policies that require strict sandboxing. Default: true | `false`                         |
+| `filesystem.allowWrite`           | Additional paths where sandboxed commands can write. Arrays are merged across all settings scopes: user, project, and managed paths are combined, not replaced. Also merged with paths from `Edit(...)` allow permission rules. See [path prefixes](#sandbox-path-prefixes) below.                                                | `["//tmp/build", "~/.kube"]`    |
+| `filesystem.denyWrite`            | Paths where sandboxed commands cannot write. Arrays are merged across all settings scopes. Also merged with paths from `Edit(...)` deny permission rules.                                                                                                                                                                         | `["//etc", "//usr/local/bin"]`  |
+| `filesystem.denyRead`             | Paths where sandboxed commands cannot read. Arrays are merged across all settings scopes. Also merged with paths from `Read(...)` deny permission rules.                                                                                                                                                                          | `["~/.aws/credentials"]`        |
 | `network.allowUnixSockets`        | Unix socket paths accessible in sandbox (for SSH agents, etc.)                                                                                                                                                                                                                                                                    | `["~/.ssh/agent-socket"]`       |
 | `network.allowAllUnixSockets`     | Allow all Unix socket connections in sandbox. Default: false                                                                                                                                                                                                                                                                      | `true`                          |
 | `network.allowLocalBinding`       | Allow binding to localhost ports (macOS only). Default: false                                                                                                                                                                                                                                                                     | `true`                          |
@@ -235,6 +236,17 @@ Configure advanced sandboxing behavior. Sandboxing isolates bash commands from y
 | `network.socksProxyPort`          | SOCKS5 proxy port used if you wish to bring your own proxy. If not specified, Claude will run its own proxy.                                                                                                                                                                                                                      | `8081`                          |
 | `enableWeakerNestedSandbox`       | Enable weaker sandbox for unprivileged Docker environments (Linux and WSL2 only). **Reduces security.** Default: false                                                                                                                                                                                                            | `true`                          |
 
+#### Sandbox path prefixes
+
+Paths in `filesystem.allowWrite`, `filesystem.denyWrite`, and `filesystem.denyRead` support these prefixes:
+
+| Prefix            | Meaning                                     | Example                                |
+| :---------------- | :------------------------------------------ | :------------------------------------- |
+| `//`              | Absolute path from filesystem root          | `//tmp/build` becomes `/tmp/build`     |
+| `~/`              | Relative to home directory                  | `~/.kube` becomes `$HOME/.kube`        |
+| `/`               | Relative to the settings file's directory   | `/build` becomes `$SETTINGS_DIR/build` |
+| `./` or no prefix | Relative path (resolved by sandbox runtime) | `./output`                             |
+
 **Configuration example:**
 
 ```json  theme={null}
@@ -243,6 +255,10 @@ Configure advanced sandboxing behavior. Sandboxing isolates bash commands from y
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
     "excludedCommands": ["docker"],
+    "filesystem": {
+      "allowWrite": ["//tmp/build", "~/.kube"],
+      "denyRead": ["~/.aws/credentials"]
+    },
     "network": {
       "allowedDomains": ["github.com", "*.npmjs.org", "registry.yarnpkg.com"],
       "allowUnixSockets": [
@@ -250,22 +266,14 @@ Configure advanced sandboxing behavior. Sandboxing isolates bash commands from y
       ],
       "allowLocalBinding": true
     }
-  },
-  "permissions": {
-    "deny": [
-      "Read(.envrc)",
-      "Read(~/.aws/**)"
-    ]
   }
 }
 ```
 
-**Filesystem and network restrictions** use standard permission rules:
+**Filesystem and network restrictions** can be configured in two ways that are merged together:
 
-* Use `Read` deny rules to block Claude from reading specific files or directories
-* Use `Edit` allow rules to let Claude write to directories beyond the current working directory
-* Use `Edit` deny rules to block writes to specific paths
-* Use `WebFetch` allow/deny rules to control which network domains Claude can access
+* **`sandbox.filesystem` settings** (shown above): Control paths at the OS-level sandbox boundary. These restrictions apply to all subprocess commands (e.g., `kubectl`, `terraform`, `npm`), not just Claude's file tools.
+* **Permission rules**: Use `Edit` allow/deny rules to control Claude's file tool access, `Read` deny rules to block reads, and `WebFetch` allow/deny rules to control network domains. Paths from these rules are also merged into the sandbox configuration.
 
 ### Attribution settings
 
@@ -396,6 +404,10 @@ Settings apply in order of precedence. From highest to lowest:
 This hierarchy ensures that organizational policies are always enforced while still allowing teams and individuals to customize their experience.
 
 For example, if your user settings allow `Bash(npm run *)` but a project's shared settings deny it, the project setting takes precedence and the command is blocked.
+
+<Note>
+  **Array settings merge across scopes.** When the same array-valued setting (such as `sandbox.filesystem.allowWrite` or `permissions.allow`) appears in multiple scopes, the arrays are **concatenated and deduplicated**, not replaced. This means lower-priority scopes can add entries without overriding those set by higher-priority scopes, and vice versa. For example, if managed settings set `allowWrite` to `["//opt/company-tools"]` and a user adds `["~/.kube"]`, both paths are included in the final configuration.
+</Note>
 
 ### Verify active settings
 

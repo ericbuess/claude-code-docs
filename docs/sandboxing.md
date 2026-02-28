@@ -42,6 +42,8 @@ The sandboxed bash tool restricts file system access to specific directories:
 * **Blocked access**: Cannot modify files outside the current working directory without explicit permission
 * **Configurable**: Define custom allowed and denied paths through settings
 
+You can grant write access to additional paths using `sandbox.filesystem.allowWrite` in your settings. These restrictions are enforced at the OS level (Seatbelt on macOS, bubblewrap on Linux), so they apply to all subprocess commands, including tools like `kubectl`, `terraform`, and `npm`, not just Claude's file tools.
+
 ### Network isolation
 
 Network access is controlled through a proxy server running outside the sandbox:
@@ -112,6 +114,36 @@ In both modes, the sandbox enforces the same filesystem and network restrictions
 ### Configure sandboxing
 
 Customize sandbox behavior through your `settings.json` file. See [Settings](/en/settings#sandbox-settings) for complete configuration reference.
+
+#### Granting subprocess write access to specific paths
+
+By default, sandboxed commands can only write to the current working directory. If subprocess commands like `kubectl`, `terraform`, or `npm` need to write outside the project directory, use `sandbox.filesystem.allowWrite` to grant access to specific paths:
+
+```json  theme={null}
+{
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "allowWrite": ["~/.kube", "//tmp/build"]
+    }
+  }
+}
+```
+
+These paths are enforced at the OS level, so all commands running inside the sandbox, including their child processes, respect them. This is the recommended approach when a tool needs write access to a specific location, rather than excluding the tool from the sandbox entirely with `excludedCommands`.
+
+When `allowWrite` (or `denyWrite`/`denyRead`) is defined in multiple [settings scopes](/en/settings#settings-precedence), the arrays are **merged**, meaning paths from every scope are combined, not replaced. For example, if managed settings allow writes to `//opt/company-tools` and a user adds `~/.kube` in their personal settings, both paths are included in the final sandbox configuration. This means users and projects can extend the list without duplicating or overriding paths set by higher-priority scopes.
+
+Path prefixes control how paths are resolved:
+
+| Prefix            | Meaning                                     | Example                                |
+| :---------------- | :------------------------------------------ | :------------------------------------- |
+| `//`              | Absolute path from filesystem root          | `//tmp/build` becomes `/tmp/build`     |
+| `~/`              | Relative to home directory                  | `~/.kube` becomes `$HOME/.kube`        |
+| `/`               | Relative to the settings file's directory   | `/build` becomes `$SETTINGS_DIR/build` |
+| `./` or no prefix | Relative path (resolved by sandbox runtime) | `./output`                             |
+
+You can also deny write or read access using `sandbox.filesystem.denyWrite` and `sandbox.filesystem.denyRead`. These are merged with any paths from `Edit(...)` and `Read(...)` permission rules.
 
 <Tip>
   Not all commands are compatible with sandboxing out of the box. Some notes that may help you make the most out of the sandbox:
@@ -191,11 +223,15 @@ Sandboxing and [permissions](/en/permissions) are complementary security layers 
 * **Permissions** control which tools Claude Code can use and are evaluated before any tool runs. They apply to all tools: Bash, Read, Edit, WebFetch, MCP, and others.
 * **Sandboxing** provides OS-level enforcement that restricts what Bash commands can access at the filesystem and network level. It applies only to Bash commands and their child processes.
 
-Filesystem and network restrictions are configured through permission rules, not sandbox settings:
+Filesystem and network restrictions are configured through both sandbox settings and permission rules:
 
+* Use `sandbox.filesystem.allowWrite` to grant subprocess write access to paths outside the working directory
+* Use `sandbox.filesystem.denyWrite` and `sandbox.filesystem.denyRead` to block subprocess access to specific paths
 * Use `Read` and `Edit` deny rules to block access to specific files or directories
 * Use `WebFetch` allow/deny rules to control domain access
 * Use sandbox `allowedDomains` to control which domains Bash commands can reach
+
+Paths from both `sandbox.filesystem` settings and permission rules are merged together into the final sandbox configuration.
 
 This [repository](https://github.com/anthropics/claude-code/tree/main/examples/settings) includes starter settings configurations for common deployment scenarios, including sandbox-specific examples. Use these as starting points and adjust them to fit your needs.
 
