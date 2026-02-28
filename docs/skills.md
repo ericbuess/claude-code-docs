@@ -16,6 +16,14 @@ Skills extend what Claude can do. Create a `SKILL.md` file with instructions, an
 
 Claude Code skills follow the [Agent Skills](https://agentskills.io) open standard, which works across multiple AI tools. Claude Code extends the standard with additional features like [invocation control](#control-who-invokes-a-skill), [subagent execution](#run-skills-in-a-subagent), and [dynamic context injection](#inject-dynamic-context).
 
+## Bundled skills
+
+Claude Code ships with two built-in skills available in every session:
+
+* **`/simplify`**: reviews your recently changed files for code reuse, quality, and efficiency issues, then fixes them. Run it after implementing a feature or bug fix to clean up your work. It spawns three review agents in parallel (code reuse, code quality, efficiency), aggregates their findings, and applies fixes. Pass optional text to focus on specific concerns: `/simplify focus on memory efficiency`.
+
+* **`/batch <instruction>`**: orchestrates large-scale changes across a codebase in parallel. Provide a description of the change and `/batch` researches the codebase, decomposes the work into 5 to 30 independent units, and presents a plan for your approval. Once approved, it spawns one background agent per unit, each in an isolated [git worktree](/en/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees). Each agent implements its unit, runs tests, and opens a pull request. Requires a git repository. Example: `/batch migrate src/ from Solid to React`.
+
 ## Getting started
 
 ### Create your first skill
@@ -112,7 +120,7 @@ The `SKILL.md` contains the main instructions and is required. Other files are o
 Skills defined in `.claude/skills/` within directories added via `--add-dir` are loaded automatically and picked up by live change detection, so you can edit them during a session without restarting.
 
 <Note>
-  CLAUDE.md files from `--add-dir` directories are not loaded by default. To load them, set `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`. See [Load memory from additional directories](/en/memory#load-memory-from-additional-directories).
+  CLAUDE.md files from `--add-dir` directories are not loaded by default. To load them, set `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`. See [Load from additional directories](/en/memory#load-from-additional-directories).
 </Note>
 
 ## Configure skills

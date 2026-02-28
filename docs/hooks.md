@@ -768,7 +768,7 @@ To block a prompt, return a JSON object with `decision` set to `"block"`:
 
 ### PreToolUse
 
-Runs after Claude creates tool parameters and before processing the tool call. Matches on tool name: `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `Task`, `WebFetch`, `WebSearch`, and any [MCP tool names](#match-mcp-tools).
+Runs after Claude creates tool parameters and before processing the tool call. Matches on tool name: `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `Agent`, `WebFetch`, `WebSearch`, and any [MCP tool names](#match-mcp-tools).
 
 Use [PreToolUse decision control](#pretooluse-decision-control) to allow, deny, or ask for permission to use the tool.
 
@@ -858,7 +858,7 @@ Searches the web.
 | `allowed_domains` | array  | `["docs.example.com"]`         | Optional: only include results from these domains |
 | `blocked_domains` | array  | `["spam.example.com"]`         | Optional: exclude results from these domains      |
 
-##### Task
+##### Agent
 
 Spawns a [subagent](/en/sub-agents).
 
@@ -1113,7 +1113,7 @@ Notification hooks cannot block or modify notifications. In addition to the [JSO
 
 ### SubagentStart
 
-Runs when a Claude Code subagent is spawned via the Task tool. Supports matchers to filter by agent type name (built-in agents like `Bash`, `Explore`, `Plan`, or custom agent names from `.claude/agents/`).
+Runs when a Claude Code subagent is spawned via the Agent tool. Supports matchers to filter by agent type name (built-in agents like `Bash`, `Explore`, `Plan`, or custom agent names from `.claude/agents/`).
 
 #### SubagentStart input
 
@@ -1517,9 +1517,9 @@ SessionEnd hooks have no decision control. They cannot block session termination
 
 ## Prompt-based hooks
 
-In addition to Bash command hooks (`type: "command"`), Claude Code supports prompt-based hooks (`type: "prompt"`) that use an LLM to evaluate whether to allow or block an action, and agent hooks (`type: "agent"`) that spawn an agentic verifier with tool access. Not all events support every hook type.
+In addition to command and HTTP hooks, Claude Code supports prompt-based hooks (`type: "prompt"`) that use an LLM to evaluate whether to allow or block an action, and agent hooks (`type: "agent"`) that spawn an agentic verifier with tool access. Not all events support every hook type.
 
-Events that support all three hook types (`command`, `prompt`, and `agent`):
+Events that support all four hook types (`command`, `http`, `prompt`, and `agent`):
 
 * `PermissionRequest`
 * `PostToolUse`

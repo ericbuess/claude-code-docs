@@ -167,20 +167,20 @@ Examples:
 * `mcp__puppeteer__*` wildcard syntax that also matches all tools from the `puppeteer` server
 * `mcp__puppeteer__puppeteer_navigate` matches the `puppeteer_navigate` tool provided by the `puppeteer` server
 
-### Task (subagents)
+### Agent (subagents)
 
-Use `Task(AgentName)` rules to control which [subagents](/en/sub-agents) Claude can use:
+Use `Agent(AgentName)` rules to control which [subagents](/en/sub-agents) Claude can use:
 
-* `Task(Explore)` matches the Explore subagent
-* `Task(Plan)` matches the Plan subagent
-* `Task(my-custom-agent)` matches a custom subagent named `my-custom-agent`
+* `Agent(Explore)` matches the Explore subagent
+* `Agent(Plan)` matches the Plan subagent
+* `Agent(my-custom-agent)` matches a custom subagent named `my-custom-agent`
 
 Add these rules to the `deny` array in your settings or use the `--disallowedTools` CLI flag to disable specific agents. To disable the Explore agent:
 
 ```json  theme={null}
 {
   "permissions": {
-    "deny": ["Task(Explore)"]
+    "deny": ["Agent(Explore)"]
   }
 }
 ```

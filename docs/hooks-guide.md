@@ -313,7 +313,11 @@ Hook events fire at specific lifecycle points in Claude Code. When an event fire
 | `PreCompact`         | Before context compaction                                                                                   |
 | `SessionEnd`         | When a session terminates                                                                                   |
 
-Each hook has a `type` that determines how it runs. Most hooks use `"type": "command"`, which runs a shell command. Two other options use a Claude model to make decisions: `"type": "prompt"` for single-turn evaluation and `"type": "agent"` for multi-turn verification with tool access. See [Prompt-based hooks](#prompt-based-hooks) and [Agent-based hooks](#agent-based-hooks) for details.
+Each hook has a `type` that determines how it runs. Most hooks use `"type": "command"`, which runs a shell command. Three other types are available:
+
+* `"type": "http"`: POST event data to a URL. See [HTTP hooks](#http-hooks).
+* `"type": "prompt"`: single-turn LLM evaluation. See [Prompt-based hooks](#prompt-based-hooks).
+* `"type": "agent"`: multi-turn verification with tool access. See [Agent-based hooks](#agent-based-hooks).
 
 ### Read input and return output
 
@@ -576,11 +580,50 @@ Use prompt hooks when the hook input data alone is enough to make a decision. Us
 
 For full configuration options, see [Agent-based hooks](/en/hooks#agent-based-hooks) in the reference.
 
+## HTTP hooks
+
+Use `type: "http"` hooks to POST event data to an HTTP endpoint instead of running a shell command. The endpoint receives the same JSON that a command hook would receive on stdin, and returns results through the HTTP response body using the same JSON format.
+
+HTTP hooks are useful when you want a web server, cloud function, or external service to handle hook logic: for example, a shared audit service that logs tool use events across a team.
+
+This example posts every tool use to a local logging service:
+
+```json  theme={null}
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://localhost:8080/hooks/tool-use",
+            "headers": {
+              "Authorization": "Bearer $MY_TOKEN"
+            },
+            "allowedEnvVars": ["MY_TOKEN"]
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The endpoint should return a JSON response body using the same [output format](/en/hooks#json-output) as command hooks. To block a tool call, return a 2xx response with the appropriate `hookSpecificOutput` fields. HTTP status codes alone cannot block actions.
+
+Header values support environment variable interpolation using `$VAR_NAME` or `${VAR_NAME}` syntax. Only variables listed in the `allowedEnvVars` array are resolved; all other `$VAR` references remain empty.
+
+<Note>
+  HTTP hooks must be configured by editing your settings JSON directly. The `/hooks` interactive menu only supports adding command hooks.
+</Note>
+
+For full configuration options and response handling, see [HTTP hooks](/en/hooks#http-hook-fields) in the reference.
+
 ## Limitations and troubleshooting
 
 ### Limitations
 
-* Hooks communicate through stdout, stderr, and exit codes only. They cannot trigger slash commands or tool calls directly.
+* Command hooks communicate through stdout, stderr, and exit codes only. They cannot trigger slash commands or tool calls directly. HTTP hooks communicate through the response body instead.
 * Hook timeout is 10 minutes by default, configurable per hook with the `timeout` field (in seconds).
 * `PostToolUse` hooks cannot undo actions since the tool has already executed.
 * `PermissionRequest` hooks do not fire in [non-interactive mode](/en/headless) (`-p`). Use `PreToolUse` hooks for automated permission decisions.

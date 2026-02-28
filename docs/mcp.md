@@ -614,7 +614,8 @@ Many cloud-based MCP servers require authentication. Claude Code supports OAuth 
 
   * Authentication tokens are stored securely and refreshed automatically
   * Use "Clear authentication" in the `/mcp` menu to revoke access
-  * If your browser doesn't open automatically, copy the provided URL
+  * If your browser doesn't open automatically, copy the provided URL and open it manually
+  * If the browser redirect fails with a connection error after authenticating, paste the full callback URL from your browser's address bar into the URL prompt that appears in Claude Code
   * OAuth authentication works with HTTP servers
 </Tip>
 
@@ -772,6 +773,12 @@ If you've logged into Claude Code with a [Claude.ai](https://claude.ai) account,
     Claude.ai servers appear in the list with indicators showing they come from Claude.ai.
   </Step>
 </Steps>
+
+To disable claude.ai MCP servers in Claude Code, set the `ENABLE_CLAUDEAI_MCP_SERVERS` environment variable to `false`:
+
+```bash  theme={null}
+ENABLE_CLAUDEAI_MCP_SERVERS=false claude
+```
 
 ## Use Claude Code as an MCP server
 
