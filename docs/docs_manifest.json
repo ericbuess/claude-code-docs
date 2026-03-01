@@ -51,8 +51,8 @@
     "cli-reference.md": {
       "original_url": "https://code.claude.com/docs/en/cli-reference",
       "original_md_url": "https://code.claude.com/docs/en/cli-reference.md",
-      "hash": "54bc29afa52fd24042549ce05e890866510cbc1e6bcfc053d7d19d1cb761ab5b",
-      "last_updated": "2026-02-28T21:01:25.009137"
+      "hash": "88e9f20da5fcb29eeebf62a38e1f3f4deb54e6c0c45ef3dbaf1e6c60f42a01e3",
+      "last_updated": "2026-03-01T03:49:24.531002"
     },
     "common-workflows.md": {
       "original_url": "https://code.claude.com/docs/en/common-workflows",
@@ -105,8 +105,8 @@
     "features-overview.md": {
       "original_url": "https://code.claude.com/docs/en/features-overview",
       "original_md_url": "https://code.claude.com/docs/en/features-overview.md",
-      "hash": "2a974a1512fd8118efa432db2932e6f3f7973fbf6d1d882ebf9be84ed83f019a",
-      "last_updated": "2026-02-28T21:01:30.525756"
+      "hash": "48d10eff2c1910247f43161024a2409a200dd71372223cf915bbaa790b545be0",
+      "last_updated": "2026-03-01T03:49:29.650401"
     },
     "github-actions.md": {
       "original_url": "https://code.claude.com/docs/en/github-actions",
@@ -141,8 +141,8 @@
     "hooks-guide.md": {
       "original_url": "https://code.claude.com/docs/en/hooks-guide",
       "original_md_url": "https://code.claude.com/docs/en/hooks-guide.md",
-      "hash": "097bbeef35954e650863b50b58ac939d282201f7f9d0f49d8d209476a64f16ab",
-      "last_updated": "2026-02-28T21:01:34.188531"
+      "hash": "5117fb760c523ee399ac959c9b8a5086b5942de515e6238e87b03f6f78aea1d4",
+      "last_updated": "2026-03-01T03:49:33.069603"
     },
     "how-claude-code-works.md": {
       "original_url": "https://code.claude.com/docs/en/how-claude-code-works",
@@ -153,8 +153,8 @@
     "interactive-mode.md": {
       "original_url": "https://code.claude.com/docs/en/interactive-mode",
       "original_md_url": "https://code.claude.com/docs/en/interactive-mode.md",
-      "hash": "454bab4c3af76ad6bb434aa4a6549b984b2f0c269c9d2654e4c112dab8740b7a",
-      "last_updated": "2026-02-28T21:01:35.388018"
+      "hash": "1acbbb3cc2871caeae880a8a0384a14b566b3a5a1cf838aa3364f520b44e0482",
+      "last_updated": "2026-03-01T03:49:34.229875"
     },
     "jetbrains.md": {
       "original_url": "https://code.claude.com/docs/en/jetbrains",
@@ -225,8 +225,8 @@
     "overview.md": {
       "original_url": "https://code.claude.com/docs/en/overview",
       "original_md_url": "https://code.claude.com/docs/en/overview.md",
-      "hash": "558388a50a3efc26658b535868b5f5540eb0c7da846782b58009fd744803df0b",
-      "last_updated": "2026-02-28T21:01:42.706128"
+      "hash": "b050524226210d2e16afb28daaa981abd071826a26f7390d019cb8959d290adf",
+      "last_updated": "2026-03-01T03:49:40.954962"
     },
     "permissions.md": {
       "original_url": "https://code.claude.com/docs/en/permissions",
@@ -297,8 +297,8 @@
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
       "original_md_url": "https://code.claude.com/docs/en/skills.md",
-      "hash": "660c9e0b3c047b5e9a1bb18f28ef07985061e27814a6888609d0ace40732faba",
-      "last_updated": "2026-02-28T21:01:50.112517"
+      "hash": "8b4f3a67a98b9f6c18bb155dbcc9dd06576f26f050a063dc0e3fc14f11078500",
+      "last_updated": "2026-03-01T03:49:47.703272"
     },
     "slack.md": {
       "original_url": "https://code.claude.com/docs/en/slack",
@@ -357,8 +357,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-01T00:06:34.985518",
-    "fetch_duration_seconds": 33.686478,
+    "last_fetch_completed": "2026-03-01T03:49:52.393896",
+    "fetch_duration_seconds": 32.595298,
     "total_pages_discovered": 58,
     "pages_fetched_successfully": 59,
     "pages_failed": 0,
@@ -368,7 +368,7 @@
     "total_files": 59,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-01T00:06:34.985556",
+  "last_updated": "2026-03-01T03:49:52.393920",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
