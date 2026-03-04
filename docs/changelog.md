@@ -8,6 +8,10 @@
 
 # Changelog
 
+## 2.1.66
+
+- Reduced spurious error logging
+
 ## 2.1.63
 
 - Added `/simplify` and `/batch` bundled slash commands
