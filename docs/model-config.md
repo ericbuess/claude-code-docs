@@ -130,7 +130,7 @@ and Sonnet's efficiency for execution.
 
 [Effort levels](https://platform.claude.com/docs/en/build-with-claude/effort) control adaptive reasoning, which dynamically allocates thinking based on task complexity. Lower effort is faster and cheaper for straightforward tasks, while higher effort provides deeper reasoning for complex problems.
 
-Three levels are available: **low**, **medium**, and **high**.
+Three levels are available: **low**, **medium**, and **high**. Opus 4.6 defaults to medium effort for Max and Team subscribers.
 
 **Setting effort:**
 
