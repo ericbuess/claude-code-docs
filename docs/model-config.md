@@ -128,9 +128,9 @@ and Sonnet's efficiency for execution.
 
 ### Adjust effort level
 
-[Effort levels](https://platform.claude.com/docs/en/build-with-claude/effort) control Opus 4.6's adaptive reasoning, which dynamically allocates thinking based on task complexity. Lower effort is faster and cheaper for straightforward tasks, while higher effort provides deeper reasoning for complex problems.
+[Effort levels](https://platform.claude.com/docs/en/build-with-claude/effort) control adaptive reasoning, which dynamically allocates thinking based on task complexity. Lower effort is faster and cheaper for straightforward tasks, while higher effort provides deeper reasoning for complex problems.
 
-Three levels are available: **low**, **medium**, and **high** (default).
+Three levels are available: **low**, **medium**, and **high**.
 
 **Setting effort:**
 
@@ -138,7 +138,7 @@ Three levels are available: **low**, **medium**, and **high** (default).
 * **Environment variable**: set `CLAUDE_CODE_EFFORT_LEVEL=low|medium|high`
 * **Settings**: set `effortLevel` in your settings file
 
-Effort is currently supported on Opus 4.6. The effort slider appears in `/model` when a supported model is selected.
+Effort is supported on Opus 4.6 and Sonnet 4.6. The effort slider appears in `/model` when a supported model is selected.
 
 To disable adaptive reasoning on Opus 4.6 and Sonnet 4.6 and revert to the previous fixed thinking budget, set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. When disabled, these models use the fixed budget controlled by `MAX_THINKING_TOKENS`. See [environment variables](/en/settings#environment-variables).
 
