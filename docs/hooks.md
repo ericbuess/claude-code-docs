@@ -632,7 +632,7 @@ Each event corresponds to a point in Claude Code's lifecycle where hooks can run
 
 Runs when Claude Code starts a new session or resumes an existing session. Useful for loading development context like existing issues or recent changes to your codebase, or setting up environment variables. For static context that does not require a script, use [CLAUDE.md](/en/memory) instead.
 
-SessionStart runs on every session, so keep these hooks fast.
+SessionStart runs on every session, so keep these hooks fast. Only `type: "command"` hooks are supported.
 
 The matcher value corresponds to how the session was initiated:
 
