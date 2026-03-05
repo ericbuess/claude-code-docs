@@ -234,7 +234,15 @@ Some settings are only effective in managed settings:
 
 ## Settings precedence
 
-Permission rules follow the same [settings precedence](/en/settings#settings-precedence) as all other Claude Code settings: managed settings have the highest precedence, followed by command line arguments, local project, shared project, and user settings.
+Permission rules follow the same [settings precedence](/en/settings#settings-precedence) as all other Claude Code settings:
+
+1. **Managed settings**: cannot be overridden by any other level, including command line arguments
+2. **Command line arguments**: temporary session overrides
+3. **Local project settings** (`.claude/settings.local.json`)
+4. **Shared project settings** (`.claude/settings.json`)
+5. **User settings** (`~/.claude/settings.json`)
+
+If a tool is denied at any level, no other level can allow it. For example, a managed settings deny cannot be overridden by `--allowedTools`, and `--disallowedTools` can add restrictions beyond what managed settings define.
 
 If a permission is allowed in user settings but denied in project settings, the project setting takes precedence and the permission is blocked.
 

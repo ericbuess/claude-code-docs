@@ -165,6 +165,11 @@ Claude Code sends the following JSON fields to your script via stdin:
 | `output_style.name`                                                       | Name of the current output style                                                                                                                                                             |
 | `vim.mode`                                                                | Current vim mode (`NORMAL` or `INSERT`) when [vim mode](/en/interactive-mode#vim-editor-mode) is enabled                                                                                     |
 | `agent.name`                                                              | Agent name when running with the `--agent` flag or agent settings configured                                                                                                                 |
+| `worktree.name`                                                           | Name of the active worktree. Present only during `--worktree` sessions                                                                                                                       |
+| `worktree.path`                                                           | Absolute path to the worktree directory                                                                                                                                                      |
+| `worktree.branch`                                                         | Git branch name for the worktree (for example, `"worktree-my-feature"`). Absent for hook-based worktrees                                                                                     |
+| `worktree.original_cwd`                                                   | The directory Claude was in before entering the worktree                                                                                                                                     |
+| `worktree.original_branch`                                                | Git branch checked out before entering the worktree. Absent for hook-based worktrees                                                                                                         |
 
 <Accordion title="Full JSON schema">
   Your status line command receives this JSON structure via stdin:
@@ -212,6 +217,13 @@ Claude Code sends the following JSON fields to your script via stdin:
     },
     "agent": {
       "name": "security-reviewer"
+    },
+    "worktree": {
+      "name": "my-feature",
+      "path": "/path/to/.claude/worktrees/my-feature",
+      "branch": "worktree-my-feature",
+      "original_cwd": "/path/to/project",
+      "original_branch": "main"
     }
   }
   ```
@@ -220,6 +232,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 
   * `vim`: appears only when vim mode is enabled
   * `agent`: appears only when running with the `--agent` flag or agent settings configured
+  * `worktree`: appears only during `--worktree` sessions. When present, `branch` and `original_branch` may also be absent for hook-based worktrees
 
   **Fields that may be `null`**:
 

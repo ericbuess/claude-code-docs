@@ -38,8 +38,8 @@ Customize Claude Code's behavior with these command-line flags:
 | `--agents`                             | Define custom [subagents](/en/sub-agents) dynamically via JSON (see below for format)                                                                                                                     | `claude --agents '{"reviewer":{"description":"Reviews code","prompt":"You are a code reviewer"}}'` |
 | `--allow-dangerously-skip-permissions` | Enable permission bypassing as an option without immediately activating it. Allows composing with `--permission-mode` (use with caution)                                                                  | `claude --permission-mode plan --allow-dangerously-skip-permissions`                               |
 | `--allowedTools`                       | Tools that execute without prompting for permission. See [permission rule syntax](/en/settings#permission-rule-syntax) for pattern matching. To restrict which tools are available, use `--tools` instead | `"Bash(git log *)" "Bash(git diff *)" "Read"`                                                      |
-| `--append-system-prompt`               | Append custom text to the end of the default system prompt (works in both interactive and print modes)                                                                                                    | `claude --append-system-prompt "Always use TypeScript"`                                            |
-| `--append-system-prompt-file`          | Load additional system prompt text from a file and append to the default prompt (print mode only)                                                                                                         | `claude -p --append-system-prompt-file ./extra-rules.txt "query"`                                  |
+| `--append-system-prompt`               | Append custom text to the end of the default system prompt                                                                                                                                                | `claude --append-system-prompt "Always use TypeScript"`                                            |
+| `--append-system-prompt-file`          | Load additional system prompt text from a file and append to the default prompt                                                                                                                           | `claude --append-system-prompt-file ./extra-rules.txt`                                             |
 | `--betas`                              | Beta headers to include in API requests (API key users only)                                                                                                                                              | `claude --betas interleaved-thinking`                                                              |
 | `--chrome`                             | Enable [Chrome browser integration](/en/chrome) for web automation and testing                                                                                                                            | `claude --chrome`                                                                                  |
 | `--continue`, `-c`                     | Load the most recent conversation in the current directory                                                                                                                                                | `claude --continue`                                                                                |
@@ -74,12 +74,12 @@ Customize Claude Code's behavior with these command-line flags:
 | `--setting-sources`                    | Comma-separated list of setting sources to load (`user`, `project`, `local`)                                                                                                                              | `claude --setting-sources user,project`                                                            |
 | `--settings`                           | Path to a settings JSON file or a JSON string to load additional settings from                                                                                                                            | `claude --settings ./settings.json`                                                                |
 | `--strict-mcp-config`                  | Only use MCP servers from `--mcp-config`, ignoring all other MCP configurations                                                                                                                           | `claude --strict-mcp-config --mcp-config ./mcp.json`                                               |
-| `--system-prompt`                      | Replace the entire system prompt with custom text (works in both interactive and print modes)                                                                                                             | `claude --system-prompt "You are a Python expert"`                                                 |
-| `--system-prompt-file`                 | Load system prompt from a file, replacing the default prompt (print mode only)                                                                                                                            | `claude -p --system-prompt-file ./custom-prompt.txt "query"`                                       |
+| `--system-prompt`                      | Replace the entire system prompt with custom text                                                                                                                                                         | `claude --system-prompt "You are a Python expert"`                                                 |
+| `--system-prompt-file`                 | Load system prompt from a file, replacing the default prompt                                                                                                                                              | `claude --system-prompt-file ./custom-prompt.txt`                                                  |
 | `--teleport`                           | Resume a [web session](/en/claude-code-on-the-web) in your local terminal                                                                                                                                 | `claude --teleport`                                                                                |
 | `--teammate-mode`                      | Set how [agent team](/en/agent-teams) teammates display: `auto` (default), `in-process`, or `tmux`. See [set up agent teams](/en/agent-teams#set-up-agent-teams)                                          | `claude --teammate-mode in-process`                                                                |
-| `--tools`                              | Restrict which built-in tools Claude can use (works in both interactive and print modes). Use `""` to disable all, `"default"` for all, or tool names like `"Bash,Edit,Read"`                             | `claude --tools "Bash,Edit,Read"`                                                                  |
-| `--verbose`                            | Enable verbose logging, shows full turn-by-turn output (helpful for debugging in both print and interactive modes)                                                                                        | `claude --verbose`                                                                                 |
+| `--tools`                              | Restrict which built-in tools Claude can use. Use `""` to disable all, `"default"` for all, or tool names like `"Bash,Edit,Read"`                                                                         | `claude --tools "Bash,Edit,Read"`                                                                  |
+| `--verbose`                            | Enable verbose logging, shows full turn-by-turn output                                                                                                                                                    | `claude --verbose`                                                                                 |
 | `--version`, `-v`                      | Output the version number                                                                                                                                                                                 | `claude -v`                                                                                        |
 | `--worktree`, `-w`                     | Start Claude in an isolated [git worktree](/en/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) at `<repo>/.claude/worktrees/<name>`. If no name is given, one is auto-generated    | `claude -w feature-auth`                                                                           |
 
@@ -124,14 +124,14 @@ For more details on creating and using subagents, see the [subagents documentati
 
 ### System prompt flags
 
-Claude Code provides four flags for customizing the system prompt, each serving a different purpose:
+Claude Code provides four flags for customizing the system prompt. All four work in both interactive and non-interactive modes.
 
-| Flag                          | Behavior                                    | Modes               | Use Case                                                             |
-| :---------------------------- | :------------------------------------------ | :------------------ | :------------------------------------------------------------------- |
-| `--system-prompt`             | **Replaces** entire default prompt          | Interactive + Print | Complete control over Claude's behavior and instructions             |
-| `--system-prompt-file`        | **Replaces** with file contents             | Print only          | Load prompts from files for reproducibility and version control      |
-| `--append-system-prompt`      | **Appends** to default prompt               | Interactive + Print | Add specific instructions while keeping default Claude Code behavior |
-| `--append-system-prompt-file` | **Appends** file contents to default prompt | Print only          | Load additional instructions from files while keeping defaults       |
+| Flag                          | Behavior                                    | Use case                                                             |
+| :---------------------------- | :------------------------------------------ | :------------------------------------------------------------------- |
+| `--system-prompt`             | **Replaces** entire default prompt          | Complete control over Claude's behavior and instructions             |
+| `--system-prompt-file`        | **Replaces** with file contents             | Load prompts from files for reproducibility and version control      |
+| `--append-system-prompt`      | **Appends** to default prompt               | Add specific instructions while keeping default Claude Code behavior |
+| `--append-system-prompt-file` | **Appends** file contents to default prompt | Load additional instructions from files while keeping defaults       |
 
 **When to use each:**
 
@@ -142,7 +142,7 @@ Claude Code provides four flags for customizing the system prompt, each serving 
 
 * **`--system-prompt-file`**: use when you want to load a custom prompt from a file, useful for team consistency or version-controlled prompt templates.
   ```bash  theme={null}
-  claude -p --system-prompt-file ./prompts/code-review.txt "Review this PR"
+  claude --system-prompt-file ./prompts/code-review.txt
   ```
 
 * **`--append-system-prompt`**: use when you want to add specific instructions while keeping Claude Code's default capabilities intact. This is the safest option for most use cases.
@@ -152,7 +152,7 @@ Claude Code provides four flags for customizing the system prompt, each serving 
 
 * **`--append-system-prompt-file`**: use when you want to append instructions from a file while keeping Claude Code's defaults. Useful for version-controlled additions.
   ```bash  theme={null}
-  claude -p --append-system-prompt-file ./prompts/style-rules.txt "Review this PR"
+  claude --append-system-prompt-file ./prompts/style-rules.txt
   ```
 
 `--system-prompt` and `--system-prompt-file` are mutually exclusive. The append flags can be used together with either replacement flag.

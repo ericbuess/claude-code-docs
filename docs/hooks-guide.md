@@ -293,25 +293,26 @@ The matcher filters by configuration type: `user_settings`, `project_settings`, 
 
 Hook events fire at specific lifecycle points in Claude Code. When an event fires, all matching hooks run in parallel, and identical hook commands are automatically deduplicated. The table below shows each event and when it triggers:
 
-| Event                | When it fires                                                                                               |
-| :------------------- | :---------------------------------------------------------------------------------------------------------- |
-| `SessionStart`       | When a session begins or resumes                                                                            |
-| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                        |
-| `PreToolUse`         | Before a tool call executes. Can block it                                                                   |
-| `PermissionRequest`  | When a permission dialog appears                                                                            |
-| `PostToolUse`        | After a tool call succeeds                                                                                  |
-| `PostToolUseFailure` | After a tool call fails                                                                                     |
-| `Notification`       | When Claude Code sends a notification                                                                       |
-| `SubagentStart`      | When a subagent is spawned                                                                                  |
-| `SubagentStop`       | When a subagent finishes                                                                                    |
-| `Stop`               | When Claude finishes responding                                                                             |
-| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                          |
-| `TaskCompleted`      | When a task is being marked as completed                                                                    |
-| `ConfigChange`       | When a configuration file changes during a session                                                          |
-| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior |
-| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                        |
-| `PreCompact`         | Before context compaction                                                                                   |
-| `SessionEnd`         | When a session terminates                                                                                   |
+| Event                | When it fires                                                                                                                                  |
+| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`       | When a session begins or resumes                                                                                                               |
+| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                           |
+| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                      |
+| `PermissionRequest`  | When a permission dialog appears                                                                                                               |
+| `PostToolUse`        | After a tool call succeeds                                                                                                                     |
+| `PostToolUseFailure` | After a tool call fails                                                                                                                        |
+| `Notification`       | When Claude Code sends a notification                                                                                                          |
+| `SubagentStart`      | When a subagent is spawned                                                                                                                     |
+| `SubagentStop`       | When a subagent finishes                                                                                                                       |
+| `Stop`               | When Claude finishes responding                                                                                                                |
+| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                             |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                       |
+| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session |
+| `ConfigChange`       | When a configuration file changes during a session                                                                                             |
+| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                    |
+| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                           |
+| `PreCompact`         | Before context compaction                                                                                                                      |
+| `SessionEnd`         | When a session terminates                                                                                                                      |
 
 Each hook has a `type` that determines how it runs. Most hooks use `"type": "command"`, which runs a shell command. Three other types are available:
 

@@ -219,13 +219,14 @@ Plugin sources tell Claude Code where to fetch each individual plugin listed in 
 
 Once a plugin is cloned or copied into the local machine, it is copied into the local versioned plugin cache at `~/.claude/plugins/cache`.
 
-| Source        | Type                            | Fields                                | Notes                                                             |
-| ------------- | ------------------------------- | ------------------------------------- | ----------------------------------------------------------------- |
-| Relative path | `string` (e.g. `"./my-plugin"`) | —                                     | Local directory within the marketplace repo. Must start with `./` |
-| `github`      | object                          | `repo`, `ref?`, `sha?`                |                                                                   |
-| `url`         | object                          | `url` (must end .git), `ref?`, `sha?` | Git URL source                                                    |
-| `npm`         | object                          | `package`, `version?`, `registry?`    | Installed via `npm install`                                       |
-| `pip`         | object                          | `package`, `version?`, `registry?`    | Installed via pip                                                 |
+| Source        | Type                            | Fields                                | Notes                                                                               |
+| ------------- | ------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------- |
+| Relative path | `string` (e.g. `"./my-plugin"`) | —                                     | Local directory within the marketplace repo. Must start with `./`                   |
+| `github`      | object                          | `repo`, `ref?`, `sha?`                |                                                                                     |
+| `url`         | object                          | `url` (must end .git), `ref?`, `sha?` | Git URL source                                                                      |
+| `git-subdir`  | object                          | `url`, `path`, `ref?`, `sha?`         | Subdirectory within a git repo. Clones sparsely to minimize bandwidth for monorepos |
+| `npm`         | object                          | `package`, `version?`, `registry?`    | Installed via `npm install`                                                         |
+| `pip`         | object                          | `package`, `version?`, `registry?`    | Installed via pip                                                                   |
 
 <Note>
   **Marketplace sources vs plugin sources**: These are different concepts that control different things.
@@ -314,6 +315,45 @@ You can pin to a specific branch, tag, or commit:
 | `url` | string | Required. Full git repository URL (must end with `.git`)              |
 | `ref` | string | Optional. Git branch or tag (defaults to repository default branch)   |
 | `sha` | string | Optional. Full 40-character git commit SHA to pin to an exact version |
+
+### Git subdirectories
+
+Use `git-subdir` to point to a plugin that lives inside a subdirectory of a git repository. Claude Code uses a sparse, partial clone to fetch only the subdirectory, minimizing bandwidth for large monorepos.
+
+```json  theme={null}
+{
+  "name": "my-plugin",
+  "source": {
+    "source": "git-subdir",
+    "url": "https://github.com/acme-corp/monorepo.git",
+    "path": "tools/claude-plugin"
+  }
+}
+```
+
+You can pin to a specific branch, tag, or commit:
+
+```json  theme={null}
+{
+  "name": "my-plugin",
+  "source": {
+    "source": "git-subdir",
+    "url": "https://github.com/acme-corp/monorepo.git",
+    "path": "tools/claude-plugin",
+    "ref": "v2.0.0",
+    "sha": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0"
+  }
+}
+```
+
+The `url` field also accepts a GitHub shorthand (`owner/repo`) or SSH URLs (`git@github.com:owner/repo.git`).
+
+| Field  | Type   | Description                                                                                              |
+| :----- | :----- | :------------------------------------------------------------------------------------------------------- |
+| `url`  | string | Required. Git repository URL, GitHub `owner/repo` shorthand, or SSH URL                                  |
+| `path` | string | Required. Subdirectory path within the repo containing the plugin (for example, `"tools/claude-plugin"`) |
+| `ref`  | string | Optional. Git branch or tag (defaults to repository default branch)                                      |
+| `sha`  | string | Optional. Full 40-character git commit SHA to pin to an exact version                                    |
 
 ### npm packages
 
@@ -560,7 +600,7 @@ Allow specific marketplaces only:
 }
 ```
 
-Allow all marketplaces from an internal git server using regex pattern matching:
+Allow all marketplaces from an internal git server using regex pattern matching on the host:
 
 ```json  theme={null}
 {
@@ -573,6 +613,21 @@ Allow all marketplaces from an internal git server using regex pattern matching:
 }
 ```
 
+Allow filesystem-based marketplaces from a specific directory using regex pattern matching on the path:
+
+```json  theme={null}
+{
+  "strictKnownMarketplaces": [
+    {
+      "source": "pathPattern",
+      "pathPattern": "^/opt/approved/"
+    }
+  ]
+}
+```
+
+Use `".*"` as the `pathPattern` to allow any filesystem path while still controlling network sources with `hostPattern`.
+
 #### How restrictions work
 
 Restrictions are validated early in the plugin installation process, before any network requests or filesystem operations occur. This prevents unauthorized marketplace access attempts.
@@ -582,6 +637,7 @@ The allowlist uses exact matching for most source types. For a marketplace to be
 * For GitHub sources: `repo` is required, and `ref` or `path` must also match if specified in the allowlist
 * For URL sources: the full URL must match exactly
 * For `hostPattern` sources: the marketplace host is matched against the regex pattern
+* For `pathPattern` sources: the marketplace's filesystem path is matched against the regex pattern
 
 Because `strictKnownMarketplaces` is set in [managed settings](/en/settings#settings-files), individual users and project configurations cannot override these restrictions.
 
