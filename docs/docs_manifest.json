@@ -147,8 +147,8 @@
     "how-claude-code-works.md": {
       "original_url": "https://code.claude.com/docs/en/how-claude-code-works",
       "original_md_url": "https://code.claude.com/docs/en/how-claude-code-works.md",
-      "hash": "571964af0d9624429f9569e976927df9c072dd4ab8f678d21dfafaee407d7d07",
-      "last_updated": "2026-03-06T00:12:19.556548"
+      "hash": "a4258d549cc361d17461124d9caa5cfb712df3dc847cb797350bf8e2836a53f2",
+      "last_updated": "2026-03-06T06:10:15.215097"
     },
     "interactive-mode.md": {
       "original_url": "https://code.claude.com/docs/en/interactive-mode",
@@ -357,8 +357,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-06T03:44:32.831628",
-    "fetch_duration_seconds": 33.65495,
+    "last_fetch_completed": "2026-03-06T06:10:34.288848",
+    "fetch_duration_seconds": 33.144964,
     "total_pages_discovered": 58,
     "pages_fetched_successfully": 59,
     "pages_failed": 0,
@@ -368,7 +368,7 @@
     "total_files": 59,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-06T03:44:32.831647",
+  "last_updated": "2026-03-06T06:10:34.288878",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

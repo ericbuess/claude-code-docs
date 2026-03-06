@@ -212,7 +212,7 @@ Check src/payments/ for the issue, especially token refresh.
 Write a failing test first, then fix it.
 ```
 
-Vague prompts like "fix the login bug" work, but you'll spend more time steering. Specific prompts like the above often succeed on the first attempt.
+Vague prompts work, but you'll spend more time steering. Specific prompts like the one above often succeed on the first attempt.
 
 ### Give Claude something to verify against
 
