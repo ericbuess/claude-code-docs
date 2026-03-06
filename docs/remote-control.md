@@ -54,13 +54,13 @@ You can start a new session directly in Remote Control, or connect a session tha
   <Tab title="From an existing session">
     If you're already in a Claude Code session and want to continue it remotely, use the `/remote-control` (or `/rc`) command:
 
-    ```
+    ```text  theme={null}
     /remote-control
     ```
 
     Pass a name as an argument to set a custom session title:
 
-    ```
+    ```text  theme={null}
     /remote-control My Project
     ```
 

@@ -28,22 +28,22 @@ Suppose you've just joined a new project and need to understand its structure qu
   </Step>
 
   <Step title="Ask for a high-level overview">
-    ```
-    > give me an overview of this codebase 
+    ```text  theme={null}
+    give me an overview of this codebase
     ```
   </Step>
 
   <Step title="Dive deeper into specific components">
-    ```
-    > explain the main architecture patterns used here 
-    ```
-
-    ```
-    > what are the key data models?
+    ```text  theme={null}
+    explain the main architecture patterns used here
     ```
 
+    ```text  theme={null}
+    what are the key data models?
     ```
-    > how is authentication handled?
+
+    ```text  theme={null}
+    how is authentication handled?
     ```
   </Step>
 </Steps>
@@ -62,20 +62,20 @@ Suppose you need to locate code related to a specific feature or functionality.
 
 <Steps>
   <Step title="Ask Claude to find relevant files">
-    ```
-    > find the files that handle user authentication 
+    ```text  theme={null}
+    find the files that handle user authentication
     ```
   </Step>
 
   <Step title="Get context on how components interact">
-    ```
-    > how do these authentication files work together? 
+    ```text  theme={null}
+    how do these authentication files work together?
     ```
   </Step>
 
   <Step title="Understand the execution flow">
-    ```
-    > trace the login process from front-end to database 
+    ```text  theme={null}
+    trace the login process from front-end to database
     ```
   </Step>
 </Steps>
@@ -96,20 +96,20 @@ Suppose you've encountered an error message and need to find and fix its source.
 
 <Steps>
   <Step title="Share the error with Claude">
-    ```
-    > I'm seeing an error when I run npm test 
+    ```text  theme={null}
+    I'm seeing an error when I run npm test
     ```
   </Step>
 
   <Step title="Ask for fix recommendations">
-    ```
-    > suggest a few ways to fix the @ts-ignore in user.ts 
+    ```text  theme={null}
+    suggest a few ways to fix the @ts-ignore in user.ts
     ```
   </Step>
 
   <Step title="Apply the fix">
-    ```
-    > update user.ts to add the null check you suggested 
+    ```text  theme={null}
+    update user.ts to add the null check you suggested
     ```
   </Step>
 </Steps>
@@ -130,26 +130,26 @@ Suppose you need to update old code to use modern patterns and practices.
 
 <Steps>
   <Step title="Identify legacy code for refactoring">
-    ```
-    > find deprecated API usage in our codebase 
+    ```text  theme={null}
+    find deprecated API usage in our codebase
     ```
   </Step>
 
   <Step title="Get refactoring recommendations">
-    ```
-    > suggest how to refactor utils.js to use modern JavaScript features 
+    ```text  theme={null}
+    suggest how to refactor utils.js to use modern JavaScript features
     ```
   </Step>
 
   <Step title="Apply the changes safely">
-    ```
-    > refactor utils.js to use ES2024 features while maintaining the same behavior 
+    ```text  theme={null}
+    refactor utils.js to use ES2024 features while maintaining the same behavior
     ```
   </Step>
 
   <Step title="Verify the refactoring">
-    ```
-    > run tests for the refactored code 
+    ```text  theme={null}
+    run tests for the refactored code
     ```
   </Step>
 </Steps>
@@ -170,8 +170,8 @@ Suppose you want to use specialized AI subagents to handle specific tasks more e
 
 <Steps>
   <Step title="View available subagents">
-    ```
-    > /agents
+    ```text  theme={null}
+    /agents
     ```
 
     This shows all available subagents and lets you create new ones.
@@ -180,28 +180,28 @@ Suppose you want to use specialized AI subagents to handle specific tasks more e
   <Step title="Use subagents automatically">
     Claude Code automatically delegates appropriate tasks to specialized subagents:
 
-    ```
-    > review my recent code changes for security issues
+    ```text  theme={null}
+    review my recent code changes for security issues
     ```
 
-    ```
-    > run all tests and fix any failures
+    ```text  theme={null}
+    run all tests and fix any failures
     ```
   </Step>
 
   <Step title="Explicitly request specific subagents">
-    ```
-    > use the code-reviewer subagent to check the auth module
+    ```text  theme={null}
+    use the code-reviewer subagent to check the auth module
     ```
 
-    ```
-    > have the debugger subagent investigate why users can't log in
+    ```text  theme={null}
+    have the debugger subagent investigate why users can't log in
     ```
   </Step>
 
   <Step title="Create custom subagents for your workflow">
-    ```
-    > /agents
+    ```text  theme={null}
+    /agents
     ```
 
     Then select "Create New subagent" and follow the prompts to define:
@@ -264,15 +264,18 @@ claude --permission-mode plan -p "Analyze the authentication system and suggest 
 claude --permission-mode plan
 ```
 
-```
-> I need to refactor our authentication system to use OAuth2. Create a detailed migration plan.
+```text  theme={null}
+I need to refactor our authentication system to use OAuth2. Create a detailed migration plan.
 ```
 
 Claude analyzes the current implementation and create a comprehensive plan. Refine with follow-ups:
 
+```text  theme={null}
+What about backward compatibility?
 ```
-> What about backward compatibility?
-> How should we handle database migration?
+
+```text  theme={null}
+How should we handle database migration?
 ```
 
 <Tip>Press `Ctrl+G` to open the plan in your default text editor, where you can edit it directly before Claude proceeds.</Tip>
@@ -298,26 +301,26 @@ Suppose you need to add tests for uncovered code.
 
 <Steps>
   <Step title="Identify untested code">
-    ```
-    > find functions in NotificationsService.swift that are not covered by tests 
+    ```text  theme={null}
+    find functions in NotificationsService.swift that are not covered by tests
     ```
   </Step>
 
   <Step title="Generate test scaffolding">
-    ```
-    > add tests for the notification service 
+    ```text  theme={null}
+    add tests for the notification service
     ```
   </Step>
 
   <Step title="Add meaningful test cases">
-    ```
-    > add test cases for edge conditions in the notification service 
+    ```text  theme={null}
+    add test cases for edge conditions in the notification service
     ```
   </Step>
 
   <Step title="Run and verify tests">
-    ```
-    > run the new tests and fix any failures 
+    ```text  theme={null}
+    run the new tests and fix any failures
     ```
   </Step>
 </Steps>
@@ -334,20 +337,20 @@ You can create pull requests by asking Claude directly ("create a pr for my chan
 
 <Steps>
   <Step title="Summarize your changes">
-    ```
-    > summarize the changes I've made to the authentication module
+    ```text  theme={null}
+    summarize the changes I've made to the authentication module
     ```
   </Step>
 
   <Step title="Generate a pull request">
-    ```
-    > create a pr
+    ```text  theme={null}
+    create a pr
     ```
   </Step>
 
   <Step title="Review and refine">
-    ```
-    > enhance the PR description with more context about the security improvements
+    ```text  theme={null}
+    enhance the PR description with more context about the security improvements
     ```
   </Step>
 </Steps>
@@ -364,26 +367,26 @@ Suppose you need to add or update documentation for your code.
 
 <Steps>
   <Step title="Identify undocumented code">
-    ```
-    > find functions without proper JSDoc comments in the auth module 
+    ```text  theme={null}
+    find functions without proper JSDoc comments in the auth module
     ```
   </Step>
 
   <Step title="Generate documentation">
-    ```
-    > add JSDoc comments to the undocumented functions in auth.js 
+    ```text  theme={null}
+    add JSDoc comments to the undocumented functions in auth.js
     ```
   </Step>
 
   <Step title="Review and enhance">
-    ```
-    > improve the generated documentation with more context and examples 
+    ```text  theme={null}
+    improve the generated documentation with more context and examples
     ```
   </Step>
 
   <Step title="Verify documentation">
-    ```
-    > check if the documentation follows our project standards 
+    ```text  theme={null}
+    check if the documentation follows our project standards
     ```
   </Step>
 </Steps>
@@ -412,36 +415,36 @@ Suppose you need to work with images in your codebase, and you want Claude's hel
   </Step>
 
   <Step title="Ask Claude to analyze the image">
-    ```
-    > What does this image show?
-    ```
-
-    ```
-    > Describe the UI elements in this screenshot
+    ```text  theme={null}
+    What does this image show?
     ```
 
+    ```text  theme={null}
+    Describe the UI elements in this screenshot
     ```
-    > Are there any problematic elements in this diagram?
+
+    ```text  theme={null}
+    Are there any problematic elements in this diagram?
     ```
   </Step>
 
   <Step title="Use images for context">
-    ```
-    > Here's a screenshot of the error. What's causing it?
+    ```text  theme={null}
+    Here's a screenshot of the error. What's causing it?
     ```
 
-    ```
-    > This is our current database schema. How should we modify it for the new feature?
+    ```text  theme={null}
+    This is our current database schema. How should we modify it for the new feature?
     ```
   </Step>
 
   <Step title="Get code suggestions from visual content">
-    ```
-    > Generate CSS to match this design mockup
+    ```text  theme={null}
+    Generate CSS to match this design mockup
     ```
 
-    ```
-    > What HTML structure would recreate this component?
+    ```text  theme={null}
+    What HTML structure would recreate this component?
     ```
   </Step>
 </Steps>
@@ -464,24 +467,24 @@ Use @ to quickly include files or directories without waiting for Claude to read
 
 <Steps>
   <Step title="Reference a single file">
-    ```
-    > Explain the logic in @src/utils/auth.js
+    ```text  theme={null}
+    Explain the logic in @src/utils/auth.js
     ```
 
     This includes the full content of the file in the conversation.
   </Step>
 
   <Step title="Reference a directory">
-    ```
-    > What's the structure of @src/components?
+    ```text  theme={null}
+    What's the structure of @src/components?
     ```
 
     This provides a directory listing with file information.
   </Step>
 
   <Step title="Reference MCP resources">
-    ```
-    > Show me the data from @github:repos/owner/repo/issues
+    ```text  theme={null}
+    Show me the data from @github:repos/owner/repo/issues
     ```
 
     This fetches data from connected MCP servers using the format @server:resource. See [MCP resources](/en/mcp#use-mcp-resources) for details.
@@ -561,8 +564,8 @@ Give sessions descriptive names to find them later. This is a best practice when
   <Step title="Name the current session">
     Use `/rename` during a session to give it a memorable name:
 
-    ```
-    > /rename auth-refactor
+    ```text  theme={null}
+    /rename auth-refactor
     ```
 
     You can also rename any session from the picker: run `/resume`, navigate to a session, and press `R`.
@@ -577,8 +580,8 @@ Give sessions descriptive names to find them later. This is a best practice when
 
     Or from inside an active session:
 
-    ```
-    > /resume auth-refactor
+    ```text  theme={null}
+    /resume auth-refactor
     ```
   </Step>
 </Steps>
@@ -859,28 +862,28 @@ Claude has built-in access to its documentation and can answer questions about i
 
 ### Example questions
 
-```
-> can Claude Code create pull requests?
-```
-
-```
-> how does Claude Code handle permissions?
+```text  theme={null}
+can Claude Code create pull requests?
 ```
 
-```
-> what skills are available?
-```
-
-```
-> how do I use MCP with Claude Code?
+```text  theme={null}
+how does Claude Code handle permissions?
 ```
 
-```
-> how do I configure Claude Code for Amazon Bedrock?
+```text  theme={null}
+what skills are available?
 ```
 
+```text  theme={null}
+how do I use MCP with Claude Code?
 ```
-> what are the limitations of Claude Code?
+
+```text  theme={null}
+how do I configure Claude Code for Amazon Bedrock?
+```
+
+```text  theme={null}
+what are the limitations of Claude Code?
 ```
 
 <Note>

@@ -532,57 +532,92 @@ If a required environment variable is not set and has no default value, Claude C
 {/* ### Example: Automate browser testing with Playwright
 
   ```bash
-  # 1. Add the Playwright MCP server
   claude mcp add --transport stdio playwright -- npx -y @playwright/mcp@latest
+  ```
 
-  # 2. Write and run browser tests
-  > "Test if the login flow works with test@example.com"
-  > "Take a screenshot of the checkout page on mobile"
-  > "Verify that the search feature returns results"
+  Then write and run browser tests:
+
+  ```text
+  Test if the login flow works with test@example.com
+  ```
+  ```text
+  Take a screenshot of the checkout page on mobile
+  ```
+  ```text
+  Verify that the search feature returns results
   ``` */}
 
 ### Example: Monitor errors with Sentry
 
 ```bash  theme={null}
-# 1. Add the Sentry MCP server
 claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
+```
 
-# 2. Use /mcp to authenticate with your Sentry account
-> /mcp
+Authenticate with your Sentry account:
 
-# 3. Debug production issues
-> "What are the most common errors in the last 24 hours?"
-> "Show me the stack trace for error ID abc123"
-> "Which deployment introduced these new errors?"
+```text  theme={null}
+/mcp
+```
+
+Then debug production issues:
+
+```text  theme={null}
+What are the most common errors in the last 24 hours?
+```
+
+```text  theme={null}
+Show me the stack trace for error ID abc123
+```
+
+```text  theme={null}
+Which deployment introduced these new errors?
 ```
 
 ### Example: Connect to GitHub for code reviews
 
 ```bash  theme={null}
-# 1. Add the GitHub MCP server
 claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+```
 
-# 2. In Claude Code, authenticate if needed
-> /mcp
-# Select "Authenticate" for GitHub
+Authenticate if needed by selecting "Authenticate" for GitHub:
 
-# 3. Now you can ask Claude to work with GitHub
-> "Review PR #456 and suggest improvements"
-> "Create a new issue for the bug we just found"
-> "Show me all open PRs assigned to me"
+```text  theme={null}
+/mcp
+```
+
+Then work with GitHub:
+
+```text  theme={null}
+Review PR #456 and suggest improvements
+```
+
+```text  theme={null}
+Create a new issue for the bug we just found
+```
+
+```text  theme={null}
+Show me all open PRs assigned to me
 ```
 
 ### Example: Query your PostgreSQL database
 
 ```bash  theme={null}
-# 1. Add the database server with your connection string
 claude mcp add --transport stdio db -- npx -y @bytebase/dbhub \
   --dsn "postgresql://readonly:pass@prod.db.com:5432/analytics"
+```
 
-# 2. Query your database naturally
-> "What's our total revenue this month?"
-> "Show me the schema for the orders table"
-> "Find customers who haven't made a purchase in 90 days"
+Then query your database naturally:
+
+```text  theme={null}
+What's our total revenue this month?
+```
+
+```text  theme={null}
+Show me the schema for the orders table
+```
+
+```text  theme={null}
+Find customers who haven't made a purchase in 90 days
 ```
 
 ## Authenticate with remote MCP servers
@@ -601,8 +636,8 @@ Many cloud-based MCP servers require authentication. Claude Code supports OAuth 
   <Step title="Use the /mcp command within Claude Code">
     In Claude code, use the command:
 
-    ```
-    > /mcp
+    ```text  theme={null}
+    /mcp
     ```
 
     Then follow the steps in your browser to login.
@@ -810,9 +845,8 @@ If you've logged into Claude Code with a [Claude.ai](https://claude.ai) account,
   <Step title="View and manage servers in Claude Code">
     In Claude Code, use the command:
 
-    ```
-    # Within Claude Code, see all MCP servers including Claude.ai ones
-    > /mcp
+    ```text  theme={null}
+    /mcp
     ```
 
     Claude.ai servers appear in the list with indicators showing they come from Claude.ai.
@@ -924,20 +958,20 @@ MCP servers can expose resources that you can reference using @ mentions, simila
   <Step title="Reference a specific resource">
     Use the format `@server:protocol://resource/path` to reference a resource:
 
-    ```
-    > Can you analyze @github:issue://123 and suggest a fix?
+    ```text  theme={null}
+    Can you analyze @github:issue://123 and suggest a fix?
     ```
 
-    ```
-    > Please review the API documentation at @docs:file://api/authentication
+    ```text  theme={null}
+    Please review the API documentation at @docs:file://api/authentication
     ```
   </Step>
 
   <Step title="Multiple resource references">
     You can reference multiple resources in a single prompt:
 
-    ```
-    > Compare @postgres:schema://users with @docs:file://database/user-model
+    ```text  theme={null}
+    Compare @postgres:schema://users with @docs:file://database/user-model
     ```
   </Step>
 </Steps>
@@ -1019,20 +1053,20 @@ MCP servers can expose prompts that become available as commands in Claude Code.
   </Step>
 
   <Step title="Execute a prompt without arguments">
-    ```
-    > /mcp__github__list_prs
+    ```text  theme={null}
+    /mcp__github__list_prs
     ```
   </Step>
 
   <Step title="Execute a prompt with arguments">
     Many prompts accept arguments. Pass them space-separated after the command:
 
-    ```
-    > /mcp__github__pr_review 456
+    ```text  theme={null}
+    /mcp__github__pr_review 456
     ```
 
-    ```
-    > /mcp__jira__create_issue "Bug in login flow" high
+    ```text  theme={null}
+    /mcp__jira__create_issue "Bug in login flow" high
     ```
   </Step>
 </Steps>
