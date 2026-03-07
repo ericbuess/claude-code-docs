@@ -10,18 +10,19 @@ The Code tab within the Claude Desktop app lets you use Claude Code through a gr
 
 Desktop adds these capabilities on top of the standard Claude Code experience:
 
-* Visual diff review with inline comments
-* Live app preview with dev servers
-* GitHub PR monitoring with auto-fix and auto-merge
-* Parallel sessions with automatic Git worktree isolation
-* Connectors for GitHub, Slack, Linear, and more
+* [Visual diff review](#review-changes-with-diff-view) with inline comments
+* [Live app preview](#preview-your-app) with dev servers
+* [GitHub PR monitoring](#monitor-pull-request-status) with auto-fix and auto-merge
+* [Parallel sessions](#work-in-parallel-with-sessions) with automatic Git worktree isolation
+* [Scheduled tasks](#schedule-recurring-tasks) that run Claude on a recurring schedule
+* [Connectors](#connect-external-tools) for GitHub, Slack, Linear, and more
 * Local, [SSH](#ssh-sessions), and [cloud](#run-long-running-tasks-remotely) environments
 
 <Tip>
   New to Desktop? Start with [Get started](/en/desktop-quickstart) to install the app and make your first edit.
 </Tip>
 
-This page covers [working with code](#work-with-code), [managing sessions](#manage-sessions), [extending Claude Code](#extend-claude-code), and [configuration](#environment-configuration). It also includes a [CLI comparison](#coming-from-the-cli) and [troubleshooting](#troubleshooting).
+This page covers [working with code](#work-with-code), [managing sessions](#manage-sessions), [extending Claude Code](#extend-claude-code), [scheduled tasks](#schedule-recurring-tasks), and [configuration](#environment-configuration). It also includes a [CLI comparison](#coming-from-the-cli) and [troubleshooting](#troubleshooting).
 
 ## Start a session
 
@@ -318,9 +319,75 @@ These configurations show common setups for different project types:
   </Tab>
 </Tabs>
 
+## Schedule recurring tasks
+
+Scheduled tasks start a new local session automatically at a time and frequency you choose. Use them for recurring work like daily code reviews, dependency update checks, or morning briefings that pull from your calendar and inbox.
+
+Tasks run on your machine, so the desktop app must be open and your computer awake for them to fire. See [How scheduled tasks run](#how-scheduled-tasks-run) for details on missed runs and catch-up behavior.
+
+<Note>
+  By default, scheduled tasks run against whatever state your working directory is in, including uncommitted changes. Enable the worktree toggle in the prompt input to give each run its own isolated Git worktree, the same way [parallel sessions](#work-in-parallel-with-sessions) work.
+</Note>
+
+To create a scheduled task, click **Schedule** in the sidebar, then **+ New task**. Configure these fields:
+
+| Field       | Description                                                                                                                                                                                                              |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Name        | Identifier for the task. Converted to lowercase kebab-case and used as the folder name on disk. Must be unique across your tasks.                                                                                        |
+| Description | Short summary shown in the task list.                                                                                                                                                                                    |
+| Prompt      | The instructions sent to Claude when the task runs. Write this the same way you'd write any message in the prompt box. The prompt input also includes controls for model, permission mode, working folder, and worktree. |
+| Frequency   | How often the task runs. See [frequency options](#frequency-options) below.                                                                                                                                              |
+
+You can also create a task by describing what you want in any session. For example, "set up a daily code review that runs every morning at 9am."
+
+### Frequency options
+
+* **Manual**: no schedule, only runs when you click **Run now**. Useful for saving a prompt you trigger on demand
+* **Hourly**: runs every hour. Each task gets a fixed offset of up to 10 minutes from the top of the hour to stagger API traffic
+* **Daily**: shows a time picker, defaults to 9:00 AM local time
+* **Weekdays**: same as Daily but skips Saturday and Sunday
+* **Weekly**: shows a time picker and a day picker
+
+For intervals the picker doesn't offer (every 15 minutes, first of each month, etc.), ask Claude in any Desktop session to set the schedule. Use plain language; for example, "schedule a task to run all the tests every 6 hours."
+
+### How scheduled tasks run
+
+Scheduled tasks run locally on your machine. Desktop checks the schedule every minute while the app is open and starts a fresh session when a task is due, independent of any manual sessions you have open. Each task gets a fixed delay of up to 10 minutes after the scheduled time to stagger API traffic. The delay is deterministic: the same task always starts at the same offset.
+
+When a task fires, you get a desktop notification and a new session appears under a **Scheduled** section in the sidebar. Open it to see what Claude did, review changes, or respond to permission prompts. The session works like any other: Claude can edit files, run commands, create commits, and open pull requests.
+
+Tasks only run while the desktop app is running and your computer is awake. If your computer sleeps through a scheduled time, the run is skipped. To prevent idle-sleep, enable **Keep computer awake** in Settings under **Desktop app → General**. Closing the laptop lid still puts it to sleep.
+
+### Missed runs
+
+When the app starts or your computer wakes, Desktop checks whether each task missed any runs in the last seven days. If it did, Desktop starts exactly one catch-up run for the most recently missed time and discards anything older. A daily task that missed six days runs once on wake. Desktop shows a notification when a catch-up run starts.
+
+Keep this in mind when writing prompts. A task scheduled for 9am might run at 11pm if your computer was asleep all day. If timing matters, add guardrails to the prompt itself, for example: "Only review today's commits. If it's after 5pm, skip the review and just post a summary of what was missed."
+
+### Permissions for scheduled tasks
+
+Each task has its own permission mode, which you set when creating or editing the task. Allow rules from `~/.claude/settings.json` also apply to scheduled task sessions. If a task runs in Ask mode and needs to run a tool it doesn't have permission for, the run stalls until you approve it. The session stays open in the sidebar so you can answer later.
+
+To avoid stalls, click **Run now** after creating a task, watch for permission prompts, and select "always allow" for each one. Future runs of that task auto-approve the same tools without prompting. You can review and revoke these approvals from the task's detail page.
+
+### Manage scheduled tasks
+
+Click a task in the **Schedule** list to open its detail page. From here you can:
+
+* **Run now**: start the task immediately without waiting for the next scheduled time
+* **Toggle repeats**: pause or resume scheduled runs without deleting the task
+* **Edit**: change the prompt, frequency, folder, or other settings
+* **Review history**: see every past run, including ones that were skipped because your computer was asleep
+* **Review allowed permissions**: see and revoke saved tool approvals for this task from the **Always allowed** panel
+* **Delete**: remove the task and archive all sessions it created
+
+You can also manage tasks by asking Claude in any Desktop session. For example, "pause my dependency-audit task", "delete the standup-prep task", or "show me my scheduled tasks."
+
+To edit a task's prompt on disk, open `~/.claude/scheduled-tasks/<task-name>/SKILL.md` (or under [`CLAUDE_CONFIG_DIR`](/en/settings#environment-variables) if set). The file uses YAML frontmatter for `name` and `description`, with the prompt as the body. Changes take effect on the next run. Schedule, folder, model, and enabled state are not in this file: change them through the Edit form or ask Claude.
+
 ## Environment configuration
 
-When starting a session, you choose between three environments:
+The environment you pick when [starting a session](#start-a-session) determines where Claude executes and how you connect:
 
 * **Local**: runs on your machine with direct access to your files
 * **Remote**: runs on Anthropic's cloud infrastructure. Sessions continue even if you close the app.
@@ -459,6 +526,7 @@ This table compares core capabilities between the CLI and Desktop. For a full li
 | File attachments                                      | not available                                             | images, PDFs                                                                                |
 | Session isolation                                     | [`--worktree`](/en/cli-reference) flag                    | automatic worktrees                                                                         |
 | Multiple sessions                                     | separate terminals                                        | sidebar tabs                                                                                |
+| Recurring tasks                                       | cron jobs, CI pipelines                                   | [scheduled tasks](#schedule-recurring-tasks)                                                |
 | Scripting and automation                              | [`--print`](/en/cli-reference), [Agent SDK](/en/headless) | not available                                                                               |
 
 ### What's not available in Desktop
