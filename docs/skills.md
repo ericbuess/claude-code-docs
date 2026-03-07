@@ -28,6 +28,8 @@ You invoke bundled skills the same way as any other skill: type `/` followed by 
 
 * **`/debug [description]`**: troubleshoots your current Claude Code session by reading the session debug log. Optionally describe the issue to focus the analysis.
 
+* **`/loop [interval] <prompt>`**: runs a prompt repeatedly on an interval while the session stays open. Claude parses the interval, schedules a recurring cron task, and confirms the cadence. Useful for polling a deployment, babysitting a PR, or periodically re-running another skill. Example: `/loop 5m check if the deploy finished`. See [Run prompts on a schedule](/en/scheduled-tasks).
+
 * **`/claude-api`**: loads Claude API reference material for your project's language (Python, TypeScript, Java, Go, Ruby, C#, PHP, or cURL) and Agent SDK reference for Python and TypeScript. Covers tool use, streaming, batches, structured outputs, and common pitfalls. Also activates automatically when your code imports `anthropic`, `@anthropic-ai/sdk`, or `claude_agent_sdk`.
 
 ## Getting started
