@@ -24,7 +24,7 @@ Claude Code supports two ways to add custom skills, agents, and hooks:
 * You're customizing Claude Code for a single project
 * The configuration is personal and doesn't need to be shared
 * You're experimenting with skills or hooks before packaging them
-* You want short skill names like `/hello` or `/review`
+* You want short skill names like `/hello` or `/deploy`
 
 **Use plugins when**:
 

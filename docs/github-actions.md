@@ -6,13 +6,10 @@
 
 > Learn about integrating Claude Code into your development workflow with Claude Code GitHub Actions
 
-Claude Code GitHub Actions brings AI-powered automation to your GitHub workflow. With a simple `@claude` mention in any PR or issue, Claude can analyze your code, create pull requests, implement features, and fix bugs - all while following your project's standards.
+Claude Code GitHub Actions brings AI-powered automation to your GitHub workflow. With a simple `@claude` mention in any PR or issue, Claude can analyze your code, create pull requests, implement features, and fix bugs - all while following your project's standards. For automatic reviews posted on every PR without a trigger, see [GitHub Code Review](/en/code-review).
 
 <Note>
-  Claude Code GitHub Actions is built on top of the [Claude
-  Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview), which enables programmatic integration of
-  Claude Code into your applications. You can use the SDK to build custom
-  automation workflows beyond GitHub Actions.
+  Claude Code GitHub Actions is built on top of the [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview), which enables programmatic integration of Claude Code into your applications. You can use the SDK to build custom automation workflows beyond GitHub Actions.
 </Note>
 
 <Info>
@@ -174,7 +171,7 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: "/review"
+          prompt: "Review this pull request for code quality, correctness, and security. Analyze the diff, then post your findings as review comments."
           claude_args: "--max-turns 5"
 ```
 
@@ -270,7 +267,7 @@ The Claude Code Action v1 simplifies configuration with unified parameters:
 Key features:
 
 * **Unified prompt interface** - Use `prompt` for all instructions
-* **Commands** - Prebuilt prompts like `/review` or `/fix`
+* **Skills** - Invoke installed [skills](/en/skills) directly from the prompt
 * **CLI passthrough** - Any Claude Code CLI argument via `claude_args`
 * **Flexible triggers** - Works with any GitHub event
 
@@ -627,15 +624,15 @@ Confirm API key is valid and has sufficient permissions. For Bedrock/Vertex, che
 
 The Claude Code Action v1 uses a simplified configuration:
 
-| Parameter           | Description                                            | Required |
-| ------------------- | ------------------------------------------------------ | -------- |
-| `prompt`            | Instructions for Claude (text or skill like `/review`) | No\*     |
-| `claude_args`       | CLI arguments passed to Claude Code                    | No       |
-| `anthropic_api_key` | Claude API key                                         | Yes\*\*  |
-| `github_token`      | GitHub token for API access                            | No       |
-| `trigger_phrase`    | Custom trigger phrase (default: "@claude")             | No       |
-| `use_bedrock`       | Use AWS Bedrock instead of Claude API                  | No       |
-| `use_vertex`        | Use Google Vertex AI instead of Claude API             | No       |
+| Parameter           | Description                                                        | Required |
+| ------------------- | ------------------------------------------------------------------ | -------- |
+| `prompt`            | Instructions for Claude (plain text or a [skill](/en/skills) name) | No\*     |
+| `claude_args`       | CLI arguments passed to Claude Code                                | No       |
+| `anthropic_api_key` | Claude API key                                                     | Yes\*\*  |
+| `github_token`      | GitHub token for API access                                        | No       |
+| `trigger_phrase`    | Custom trigger phrase (default: "@claude")                         | No       |
+| `use_bedrock`       | Use AWS Bedrock instead of Claude API                              | No       |
+| `use_vertex`        | Use Google Vertex AI instead of Claude API                         | No       |
 
 \*Prompt is optional - when omitted for issue/PR comments, Claude responds to trigger phrase\
 \*\*Required for direct Claude API, not for Bedrock/Vertex
