@@ -57,8 +57,8 @@
     "code-review.md": {
       "original_url": "https://code.claude.com/docs/en/code-review",
       "original_md_url": "https://code.claude.com/docs/en/code-review.md",
-      "hash": "13155e293eeaa7a47b48ce15398b98df932d9d1f1a97c555ffceab862441c0ee",
-      "last_updated": "2026-03-09T21:05:56.706169"
+      "hash": "3584aa84a5c3ad3495e982ca644d12abc571d26a96631c9036928fed0308b7bb",
+      "last_updated": "2026-03-10T00:05:16.836005"
     },
     "common-workflows.md": {
       "original_url": "https://code.claude.com/docs/en/common-workflows",
@@ -369,8 +369,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-09T21:06:25.978772",
-    "fetch_duration_seconds": 34.874785,
+    "last_fetch_completed": "2026-03-10T00:05:46.697002",
+    "fetch_duration_seconds": 35.474825,
     "total_pages_discovered": 60,
     "pages_fetched_successfully": 61,
     "pages_failed": 0,
@@ -380,7 +380,7 @@
     "total_files": 61,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-09T21:06:25.978798",
+  "last_updated": "2026-03-10T00:05:46.697032",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

@@ -99,7 +99,7 @@ Code Review reads your repository's `CLAUDE.md` files and treats newly-introduce
 
 Claude reads `CLAUDE.md` files at every level of your directory hierarchy, so rules in a subdirectory's `CLAUDE.md` apply only to files under that path. See the [memory documentation](/en/memory) for more on how `CLAUDE.md` works.
 
-For review-specific guidance that you don't want applied to general Claude Code sessions, use [`REVIEW.md`](#reviewmd) instead.
+For review-specific guidance that you don't want applied to general Claude Code sessions, use [`REVIEW.md`](#review-md) instead.
 
 ### REVIEW\.md
 
