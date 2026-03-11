@@ -96,6 +96,7 @@ In the table below, `<arg>` indicates a required argument and `[arg]` indicates 
 | :------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/add-dir <path>`         | Add a new working directory to the current session                                                                                                                                                                                                                                                                                                                 |
 | `/agents`                 | Manage [agent](/en/sub-agents) configurations                                                                                                                                                                                                                                                                                                                      |
+| `/btw <question>`         | Ask a quick [side question](#side-questions-with-%2Fbtw) without adding to the conversation                                                                                                                                                                                                                                                                        |
 | `/chrome`                 | Configure [Claude in Chrome](/en/chrome) settings                                                                                                                                                                                                                                                                                                                  |
 | `/clear`                  | Clear conversation history and free up context. Aliases: `/reset`, `/new`                                                                                                                                                                                                                                                                                          |
 | `/compact [instructions]` | Compact conversation with optional focus instructions                                                                                                                                                                                                                                                                                                              |
@@ -326,6 +327,25 @@ To disable prompt suggestions entirely, set the environment variable or toggle t
 ```bash  theme={null}
 export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 ```
+
+## Side questions with /btw
+
+Use `/btw` to ask a quick question about your current work without adding to the conversation history. This is useful when you want a fast answer but don't want to clutter the main context or derail Claude from a long-running task.
+
+```
+/btw what was the name of that config file again?
+```
+
+Side questions have full visibility into the current conversation, so you can ask about code Claude has already read, decisions it made earlier, or anything else from the session. The question and answer are ephemeral: they appear in a dismissible overlay and never enter the conversation history.
+
+* **Available while Claude is working**: you can run `/btw` even while Claude is processing a response. The side question runs independently and does not interrupt the main turn.
+* **No tool access**: side questions answer only from what is already in context. Claude cannot read files, run commands, or search when answering a side question.
+* **Single response**: there are no follow-up turns. If you need a back-and-forth, use a normal prompt instead.
+* **Low cost**: the side question reuses the parent conversation's prompt cache, so the additional cost is minimal.
+
+Press **Space**, **Enter**, or **Escape** to dismiss the answer and return to the prompt.
+
+`/btw` is the inverse of a [subagent](/en/sub-agents): it sees your full conversation but has no tools, while a subagent has full tools but starts with an empty context. Use `/btw` to ask about what Claude already knows from this session; use a subagent to go find out something new.
 
 ## Task list
 
