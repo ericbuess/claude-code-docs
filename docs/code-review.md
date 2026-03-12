@@ -146,7 +146,7 @@ The repositories table in admin settings also shows average cost per review for 
 
 ## Pricing
 
-Code Review is billed based on token usage. Reviews average \$15-25, scaling with PR size, codebase complexity, and how many issues require verification.
+Code Review is billed based on token usage. Reviews average \$15-25, scaling with PR size, codebase complexity, and how many issues require verification. Code Review usage is billed separately through [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) and does not count against your plan's included usage.
 
 The review trigger you choose affects total cost:
 

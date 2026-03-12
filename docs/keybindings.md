@@ -221,8 +221,8 @@ Actions available in the `MessageSelector` context:
 
 | Action                   | Default                                   | Description       |
 | :----------------------- | :---------------------------------------- | :---------------- |
-| `messageSelector:up`     | Up, K                                     | Move up in list   |
-| `messageSelector:down`   | Down, J                                   | Move down in list |
+| `messageSelector:up`     | Up, K, Ctrl+P                             | Move up in list   |
+| `messageSelector:down`   | Down, J, Ctrl+N                           | Move down in list |
 | `messageSelector:top`    | Ctrl+Up, Shift+Up, Meta+Up, Shift+K       | Jump to top       |
 | `messageSelector:bottom` | Ctrl+Down, Shift+Down, Meta+Down, Shift+J | Jump to bottom    |
 | `messageSelector:select` | Enter                                     | Select message    |

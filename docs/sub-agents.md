@@ -212,7 +212,7 @@ The following fields can be used in the YAML frontmatter. Only `name` and `descr
 | `description`     | Yes      | When Claude should delegate to this subagent                                                                                                                                                                                                                                |
 | `tools`           | No       | [Tools](#available-tools) the subagent can use. Inherits all tools if omitted                                                                                                                                                                                               |
 | `disallowedTools` | No       | Tools to deny, removed from inherited or specified list                                                                                                                                                                                                                     |
-| `model`           | No       | [Model](#choose-a-model) to use: `sonnet`, `opus`, `haiku`, or `inherit`. Defaults to `inherit`                                                                                                                                                                             |
+| `model`           | No       | [Model](#choose-a-model) to use: `sonnet`, `opus`, `haiku`, a full model ID (for example, `claude-opus-4-6`), or `inherit`. Defaults to `inherit`                                                                                                                           |
 | `permissionMode`  | No       | [Permission mode](#permission-modes): `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, or `plan`                                                                                                                                                                   |
 | `maxTurns`        | No       | Maximum number of agentic turns before the subagent stops                                                                                                                                                                                                                   |
 | `skills`          | No       | [Skills](/en/skills) to load into the subagent's context at startup. The full skill content is injected, not just made available for invocation. Subagents don't inherit skills from the parent conversation                                                                |
@@ -227,6 +227,7 @@ The following fields can be used in the YAML frontmatter. Only `name` and `descr
 The `model` field controls which [AI model](/en/model-config) the subagent uses:
 
 * **Model alias**: Use one of the available aliases: `sonnet`, `opus`, or `haiku`
+* **Full model ID**: Use a full model ID such as `claude-opus-4-6` or `claude-sonnet-4-6`. Accepts the same values as the `--model` flag
 * **inherit**: Use the same model as the main conversation
 * **Omitted**: If not specified, defaults to `inherit` (uses the same model as the main conversation)
 
@@ -272,6 +273,33 @@ tools: Agent, Read, Bash
 ```
 
 If `Agent` is omitted from the `tools` list entirely, the agent cannot spawn any subagents. This restriction only applies to agents running as the main thread with `claude --agent`. Subagents cannot spawn other subagents, so `Agent(agent_type)` has no effect in subagent definitions.
+
+#### Scope MCP servers to a subagent
+
+Use the `mcpServers` field to give a subagent access to [MCP](/en/mcp) servers that aren't available in the main conversation. Inline servers defined here are connected when the subagent starts and disconnected when it finishes. String references share the parent session's connection.
+
+Each entry in the list is either an inline server definition or a string referencing an MCP server already configured in your session:
+
+```yaml  theme={null}
+---
+name: browser-tester
+description: Tests features in a real browser using Playwright
+mcpServers:
+  # Inline definition: scoped to this subagent only
+  - playwright:
+      type: stdio
+      command: npx
+      args: ["-y", "@playwright/mcp@latest"]
+  # Reference by name: reuses an already-configured server
+  - github
+---
+
+Use the Playwright tools to navigate, screenshot, and interact with pages.
+```
+
+Inline definitions use the same schema as `.mcp.json` server entries (`stdio`, `http`, `sse`, `ws`), keyed by the server name.
+
+To keep an MCP server out of the main conversation entirely and avoid its tool descriptions consuming context there, define it inline here rather than in `.mcp.json`. The subagent gets the tools; the parent conversation does not.
 
 #### Permission modes
 

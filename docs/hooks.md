@@ -1570,6 +1570,12 @@ In addition to the [common input fields](#common-input-fields), SessionEnd hooks
 
 SessionEnd hooks have no decision control. They cannot block session termination but can perform cleanup tasks.
 
+SessionEnd hooks have a default timeout of 1.5 seconds. This applies to both session exit and `/clear`. If your hooks need more time, set the `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` environment variable to a higher value in milliseconds. Any per-hook `timeout` setting is also capped by this value.
+
+```bash  theme={null}
+CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
+```
+
 ## Prompt-based hooks
 
 In addition to command and HTTP hooks, Claude Code supports prompt-based hooks (`type: "prompt"`) that use an LLM to evaluate whether to allow or block an action, and agent hooks (`type: "agent"`) that spawn an agentic verifier with tool access. Not all events support every hook type.
