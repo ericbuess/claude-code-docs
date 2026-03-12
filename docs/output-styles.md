@@ -42,17 +42,23 @@ Output styles directly modify Claude Code's system prompt.
 
 ## Change your output style
 
-You can either:
+Run `/config` and select **Output style** to pick a style from a menu. Your
+selection is saved to `.claude/settings.local.json` at the
+[local project level](/en/settings).
 
-* Run `/output-style` to access a menu and select your output style (this can
-  also be accessed from the `/config` menu)
+To set a style without the menu, edit the `outputStyle` field directly in a
+settings file:
 
-* Run `/output-style [style]`, such as `/output-style explanatory`, to directly
-  switch to a style
+```json  theme={null}
+{
+  "outputStyle": "Explanatory"
+}
+```
 
-These changes apply to the [local project level](/en/settings) and are saved in
-`.claude/settings.local.json`. You can also directly edit the `outputStyle`
-field in a settings file at a different level.
+Because the output style is set in the system prompt at session start,
+changes take effect the next time you start a new session. This keeps the system
+prompt stable throughout a conversation so prompt caching can reduce latency and
+cost.
 
 ## Create a custom output style
 
@@ -81,13 +87,12 @@ project level (`.claude/output-styles`).
 
 ### Frontmatter
 
-Output style files support frontmatter, useful for specifying metadata about the
-command:
+Output style files support frontmatter for specifying metadata:
 
 | Frontmatter                | Purpose                                                                     | Default                 |
 | :------------------------- | :-------------------------------------------------------------------------- | :---------------------- |
 | `name`                     | Name of the output style, if not the file name                              | Inherits from file name |
-| `description`              | Description of the output style. Used only in the UI of `/output-style`     | None                    |
+| `description`              | Description of the output style, shown in the `/config` picker              | None                    |
 | `keep-coding-instructions` | Whether to keep the parts of Claude Code's system prompt related to coding. | false                   |
 
 ## Comparisons to related features
