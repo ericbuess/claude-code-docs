@@ -20,6 +20,10 @@ When you start a Remote Control session on your machine, Claude keeps running lo
 
 Unlike [Claude Code on the web](/en/claude-code-on-the-web), which runs on cloud infrastructure, Remote Control sessions run directly on your machine and interact with your local filesystem. The web and mobile interfaces are just a window into that local session.
 
+<Note>
+  Remote Control requires Claude Code v2.1.51 or later. Check your version with `claude --version`.
+</Note>
+
 This page covers setup, how to start and connect to sessions, and how Remote Control compares to Claude Code on the web.
 
 ## Requirements

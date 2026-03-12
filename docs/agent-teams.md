@@ -14,6 +14,10 @@ Agent teams let you coordinate multiple Claude Code instances working together. 
 
 Unlike [subagents](/en/sub-agents), which run within a single session and can only report back to the main agent, you can also interact with individual teammates directly without going through the lead.
 
+<Note>
+  Agent teams require Claude Code v2.1.32 or later. Check your version with `claude --version`.
+</Note>
+
 This page covers:
 
 * [When to use agent teams](#when-to-use-agent-teams), including best use cases and how they compare with subagents

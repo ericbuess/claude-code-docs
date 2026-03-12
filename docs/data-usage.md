@@ -59,7 +59,7 @@ For all first party users, you can learn more about what data is logged for [loc
 
 The diagram below shows how Claude Code connects to external services during installation and normal operation. Solid lines indicate required connections, while dashed lines represent optional or user-initiated data flows.
 
-<img src="https://mintcdn.com/claude-code/TBPmHzr19mDCuhZi/images/claude-code-data-flow.svg?fit=max&auto=format&n=TBPmHzr19mDCuhZi&q=85&s=e0239c69a0bbae485b726338e50f1082" alt="Diagram showing Claude Code's external connections: install/update connects to NPM, and user requests connect to Anthropic services including Console auth, public-api, and optionally Statsig, Sentry, and bug reporting" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/claude-code-data-flow.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=b3f71c69d743bff63343207dfb7ad6ce" alt="Diagram showing Claude Code's external connections: install/update connects to NPM, and user requests connect to Anthropic services including Console auth, public-api, and optionally Statsig, Sentry, and bug reporting" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
 Claude Code is installed from [NPM](https://www.npmjs.com/package/@anthropic-ai/claude-code). Claude Code runs locally. In order to interact with the LLM, Claude Code sends data over the network. This data includes all user prompts and model outputs. The data is encrypted in transit via TLS and is not encrypted at rest. Claude Code is compatible with most popular VPNs and LLM proxies.
 

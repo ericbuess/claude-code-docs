@@ -188,7 +188,7 @@ Each feature has a different loading strategy and context cost:
 
 Each feature loads at different points in your session. The tabs below explain when each one loads and what goes into context.
 
-<img src="https://mintcdn.com/claude-code/TBPmHzr19mDCuhZi/images/context-loading.svg?fit=max&auto=format&n=TBPmHzr19mDCuhZi&q=85&s=43114d93ae62bdc1ab6aa64660e2ba3b" alt="Context loading: CLAUDE.md and MCP load at session start and stay in every request. Skills load descriptions at start, full content on invocation. Subagents get isolated context. Hooks run externally." width="720" height="410" data-path="images/context-loading.svg" />
+<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/context-loading.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=729b5b634ba831d1d64772c6c9485b30" alt="Context loading: CLAUDE.md and MCP load at session start and stay in every request. Skills load descriptions at start, full content on invocation. Subagents get isolated context. Hooks run externally." width="720" height="410" data-path="images/context-loading.svg" />
 
 <Tabs>
   <Tab title="CLAUDE.md">
