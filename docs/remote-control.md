@@ -36,23 +36,43 @@ Before using Remote Control, confirm that your environment meets these condition
 
 ## Start a Remote Control session
 
-You can start a new session directly in Remote Control, or connect a session that's already running.
+You can start a dedicated Remote Control server, start an interactive session with Remote Control enabled, or connect a session that's already running.
 
 <Tabs>
-  <Tab title="New session">
+  <Tab title="Server mode">
     Navigate to your project directory and run:
 
     ```bash  theme={null}
     claude remote-control
     ```
 
-    The process stays running in your terminal, waiting for remote connections. It displays a session URL you can use to [connect from another device](#connect-from-another-device), and you can press spacebar to show a QR code for quick access from your phone. While a remote session is active, the terminal shows connection status and tool activity.
+    The process stays running in your terminal in server mode, waiting for remote connections. It displays a session URL you can use to [connect from another device](#connect-from-another-device), and you can press spacebar to show a QR code for quick access from your phone. While a remote session is active, the terminal shows connection status and tool activity.
 
-    This command supports the following flags:
+    Available flags:
 
-    * **`--name "My Project"`**: set a custom session title visible in the session list at claude.ai/code. You can also pass the name as a positional argument: `claude remote-control "My Project"`
-    * **`--verbose`**: show detailed connection and session logs
-    * **`--sandbox`** / **`--no-sandbox`**: enable or disable [sandboxing](/en/sandboxing) for filesystem and network isolation during the session. Sandboxing is off by default.
+    | Flag                         | Description                                                                                                                                                                                                                                                                                                                                                                      |
+    | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `--name "My Project"`        | Set a custom session title visible in the session list at claude.ai/code.                                                                                                                                                                                                                                                                                                        |
+    | `--spawn <mode>`             | How concurrent sessions are created. Press `w` at runtime to toggle.<br />• `same-dir` (default): all sessions share the current working directory, so they can conflict if editing the same files.<br />• `worktree`: each on-demand session gets its own [git worktree](/en/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees). Requires a git repository. |
+    | `--capacity <N>`             | Maximum number of concurrent sessions. Default is 32.                                                                                                                                                                                                                                                                                                                            |
+    | `--verbose`                  | Show detailed connection and session logs.                                                                                                                                                                                                                                                                                                                                       |
+    | `--sandbox` / `--no-sandbox` | Enable or disable [sandboxing](/en/sandboxing) for filesystem and network isolation. Off by default.                                                                                                                                                                                                                                                                             |
+  </Tab>
+
+  <Tab title="Interactive session">
+    To start a normal interactive Claude Code session with Remote Control enabled, use the `--remote-control` flag (or `--rc`):
+
+    ```bash  theme={null}
+    claude --remote-control
+    ```
+
+    Optionally pass a name for the session:
+
+    ```bash  theme={null}
+    claude --remote-control "My Project"
+    ```
+
+    This gives you a full interactive session in your terminal that you can also control from claude.ai or the Claude app. Unlike `claude remote-control` (server mode), you can type messages locally while the session is also available remotely.
   </Tab>
 
   <Tab title="From an existing session">
@@ -86,9 +106,9 @@ If you don't have the Claude app yet, use the `/mobile` command inside Claude Co
 
 ### Enable Remote Control for all sessions
 
-By default, Remote Control only activates when you explicitly run `claude remote-control` or `/remote-control`. To enable it automatically for every session, run `/config` inside Claude Code and set **Enable Remote Control for all sessions** to `true`. Set it back to `false` to disable.
+By default, Remote Control only activates when you explicitly run `claude remote-control`, `claude --remote-control`, or `/remote-control`. To enable it automatically for every interactive session, run `/config` inside Claude Code and set **Enable Remote Control for all sessions** to `true`. Set it back to `false` to disable.
 
-Each Claude Code instance supports one remote session at a time. If you run multiple instances, each one gets its own environment and session.
+With this setting on, each interactive Claude Code process registers one remote session. If you run multiple instances, each one gets its own environment and session. To run multiple concurrent sessions from a single process, use server mode with `--spawn` instead.
 
 ## Connection and security
 
@@ -104,7 +124,7 @@ Use Remote Control when you're in the middle of local work and want to keep goin
 
 ## Limitations
 
-* **One remote session at a time**: each Claude Code session supports one remote connection.
+* **One remote session per interactive process**: outside of server mode, each Claude Code instance supports one remote session at a time. Use server mode with `--spawn` to run multiple concurrent sessions from a single process.
 * **Terminal must stay open**: Remote Control runs as a local process. If you close the terminal or stop the `claude` process, the session ends. Run `claude remote-control` again to start a new one.
 * **Extended network outage**: if your machine is awake but unable to reach the network for more than roughly 10 minutes, the session times out and the process exits. Run `claude remote-control` again to start a new session.
 
