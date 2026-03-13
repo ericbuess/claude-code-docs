@@ -267,13 +267,13 @@ The extension has two types of settings:
 
 Claude Code is available as both a VS Code extension (graphical panel) and a CLI (command-line interface in the terminal). Some features are only available in the CLI. If you need a CLI-only feature, run `claude` in VS Code's integrated terminal.
 
-| Feature             | CLI                                           | VS Code Extension                                                                    |
-| ------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Commands and skills | [All](/en/interactive-mode#built-in-commands) | Subset (type `/` to see available)                                                   |
-| MCP server config   | Yes                                           | Partial (add servers via CLI; manage existing servers with `/mcp` in the chat panel) |
-| Checkpoints         | Yes                                           | Yes                                                                                  |
-| `!` bash shortcut   | Yes                                           | No                                                                                   |
-| Tab completion      | Yes                                           | No                                                                                   |
+| Feature             | CLI                 | VS Code Extension                                                                    |
+| ------------------- | ------------------- | ------------------------------------------------------------------------------------ |
+| Commands and skills | [All](/en/commands) | Subset (type `/` to see available)                                                   |
+| MCP server config   | Yes                 | Partial (add servers via CLI; manage existing servers with `/mcp` in the chat panel) |
+| Checkpoints         | Yes                 | Yes                                                                                  |
+| `!` bash shortcut   | Yes                 | No                                                                                   |
+| Tab completion      | Yes                 | No                                                                                   |
 
 ### Rewind with checkpoints
 

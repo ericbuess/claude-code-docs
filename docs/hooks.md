@@ -925,6 +925,8 @@ Spawns a [subagent](/en/sub-agents).
 | `updatedInput`             | Modifies the tool's input parameters before execution. Combine with `"allow"` to auto-approve, or `"ask"` to show the modified input to the user |
 | `additionalContext`        | String added to Claude's context before the tool executes                                                                                        |
 
+When a hook returns `"ask"`, the permission prompt displayed to the user includes a label identifying where the hook came from: for example, `[User]`, `[Project]`, `[Plugin]`, or `[Local]`. This helps users understand which configuration source is requesting confirmation.
+
 ```json  theme={null}
 {
   "hookSpecificOutput": {
@@ -1765,6 +1767,8 @@ The `timeout` field sets the maximum time in seconds for the background process.
 When an async hook fires, Claude Code starts the hook process and immediately continues without waiting for it to finish. The hook receives the same JSON input via stdin as a synchronous hook.
 
 After the background process exits, if the hook produced a JSON response with a `systemMessage` or `additionalContext` field, that content is delivered to Claude as context on the next conversation turn.
+
+Async hook completion notifications are suppressed by default. To see them, enable verbose mode with `Ctrl+O` or start Claude Code with `--verbose`.
 
 ### Example: run tests after file changes
 

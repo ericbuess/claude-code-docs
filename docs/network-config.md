@@ -89,5 +89,5 @@ Ensure these URLs are allowlisted in your proxy configuration and firewall rules
 ## Additional resources
 
 * [Claude Code settings](/en/settings)
-* [Environment variables reference](/en/settings#environment-variables)
+* [Environment variables reference](/en/env-vars)
 * [Troubleshooting guide](/en/troubleshooting)

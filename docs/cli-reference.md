@@ -35,7 +35,7 @@ Customize Claude Code's behavior with these command-line flags:
 | :------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
 | `--add-dir`                            | Add additional working directories for Claude to access (validates each path exists as a directory)                                                                                                       | `claude --add-dir ../apps ../lib`                                                                  |
 | `--agent`                              | Specify an agent for the current session (overrides the `agent` setting)                                                                                                                                  | `claude --agent my-custom-agent`                                                                   |
-| `--agents`                             | Define custom [subagents](/en/sub-agents) dynamically via JSON (see below for format)                                                                                                                     | `claude --agents '{"reviewer":{"description":"Reviews code","prompt":"You are a code reviewer"}}'` |
+| `--agents`                             | Define custom subagents dynamically via JSON. Uses the same field names as subagent [frontmatter](/en/sub-agents#supported-frontmatter-fields), plus a `prompt` field for the agent's instructions        | `claude --agents '{"reviewer":{"description":"Reviews code","prompt":"You are a code reviewer"}}'` |
 | `--allow-dangerously-skip-permissions` | Enable permission bypassing as an option without immediately activating it. Allows composing with `--permission-mode` (use with caution)                                                                  | `claude --permission-mode plan --allow-dangerously-skip-permissions`                               |
 | `--allowedTools`                       | Tools that execute without prompting for permission. See [permission rule syntax](/en/settings#permission-rule-syntax) for pattern matching. To restrict which tools are available, use `--tools` instead | `"Bash(git log *)" "Bash(git diff *)" "Read"`                                                      |
 | `--append-system-prompt`               | Append custom text to the end of the default system prompt                                                                                                                                                | `claude --append-system-prompt "Always use TypeScript"`                                            |
@@ -83,81 +83,20 @@ Customize Claude Code's behavior with these command-line flags:
 | `--version`, `-v`                      | Output the version number                                                                                                                                                                                 | `claude -v`                                                                                        |
 | `--worktree`, `-w`                     | Start Claude in an isolated [git worktree](/en/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) at `<repo>/.claude/worktrees/<name>`. If no name is given, one is auto-generated    | `claude -w feature-auth`                                                                           |
 
-<Tip>
-  The `--output-format json` flag is particularly useful for scripting and
-  automation, allowing you to parse Claude's responses programmatically.
-</Tip>
-
-### Agents flag format
-
-The `--agents` flag accepts a JSON object that defines one or more custom subagents. Each subagent requires a unique name (as the key) and a definition object with the following fields:
-
-| Field             | Required | Description                                                                                                                                                                                                         |
-| :---------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `description`     | Yes      | Natural language description of when the subagent should be invoked                                                                                                                                                 |
-| `prompt`          | Yes      | The system prompt that guides the subagent's behavior                                                                                                                                                               |
-| `tools`           | No       | Array of specific tools the subagent can use, for example `["Read", "Edit", "Bash"]`. If omitted, inherits all tools. Supports [`Agent(agent_type)`](/en/sub-agents#restrict-which-subagents-can-be-spawned) syntax |
-| `disallowedTools` | No       | Array of tool names to explicitly deny for this subagent                                                                                                                                                            |
-| `model`           | No       | Model to use: a short alias (`sonnet`, `opus`, `haiku`), a full model ID (for example, `claude-opus-4-6`), or `inherit`. If omitted, defaults to `inherit`                                                          |
-| `skills`          | No       | Array of [skill](/en/skills) names to preload into the subagent's context                                                                                                                                           |
-| `mcpServers`      | No       | Array of [MCP servers](/en/mcp) for this subagent. Each entry is a server name string or a `{name: config}` object                                                                                                  |
-| `maxTurns`        | No       | Maximum number of agentic turns before the subagent stops                                                                                                                                                           |
-
-Example:
-
-```bash  theme={null}
-claude --agents '{
-  "code-reviewer": {
-    "description": "Expert code reviewer. Use proactively after code changes.",
-    "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
-    "tools": ["Read", "Grep", "Glob", "Bash"],
-    "model": "sonnet"
-  },
-  "debugger": {
-    "description": "Debugging specialist for errors and test failures.",
-    "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
-  }
-}'
-```
-
-For more details on creating and using subagents, see the [subagents documentation](/en/sub-agents).
-
 ### System prompt flags
 
 Claude Code provides four flags for customizing the system prompt. All four work in both interactive and non-interactive modes.
 
-| Flag                          | Behavior                                    | Use case                                                             |
-| :---------------------------- | :------------------------------------------ | :------------------------------------------------------------------- |
-| `--system-prompt`             | **Replaces** entire default prompt          | Complete control over Claude's behavior and instructions             |
-| `--system-prompt-file`        | **Replaces** with file contents             | Load prompts from files for reproducibility and version control      |
-| `--append-system-prompt`      | **Appends** to default prompt               | Add specific instructions while keeping default Claude Code behavior |
-| `--append-system-prompt-file` | **Appends** file contents to default prompt | Load additional instructions from files while keeping defaults       |
+| Flag                          | Behavior                                    | Example                                                 |
+| :---------------------------- | :------------------------------------------ | :------------------------------------------------------ |
+| `--system-prompt`             | Replaces the entire default prompt          | `claude --system-prompt "You are a Python expert"`      |
+| `--system-prompt-file`        | Replaces with file contents                 | `claude --system-prompt-file ./prompts/review.txt`      |
+| `--append-system-prompt`      | Appends to the default prompt               | `claude --append-system-prompt "Always use TypeScript"` |
+| `--append-system-prompt-file` | Appends file contents to the default prompt | `claude --append-system-prompt-file ./style-rules.txt`  |
 
-**When to use each:**
+`--system-prompt` and `--system-prompt-file` are mutually exclusive. The append flags can be combined with either replacement flag.
 
-* **`--system-prompt`**: use when you need complete control over Claude's system prompt. This removes all default Claude Code instructions, giving you a blank slate.
-  ```bash  theme={null}
-  claude --system-prompt "You are a Python expert who only writes type-annotated code"
-  ```
-
-* **`--system-prompt-file`**: use when you want to load a custom prompt from a file, useful for team consistency or version-controlled prompt templates.
-  ```bash  theme={null}
-  claude --system-prompt-file ./prompts/code-review.txt
-  ```
-
-* **`--append-system-prompt`**: use when you want to add specific instructions while keeping Claude Code's default capabilities intact. This is the safest option for most use cases.
-  ```bash  theme={null}
-  claude --append-system-prompt "Always use TypeScript and include JSDoc comments"
-  ```
-
-* **`--append-system-prompt-file`**: use when you want to append instructions from a file while keeping Claude Code's defaults. Useful for version-controlled additions.
-  ```bash  theme={null}
-  claude --append-system-prompt-file ./prompts/style-rules.txt
-  ```
-
-`--system-prompt` and `--system-prompt-file` are mutually exclusive. The append flags can be used together with either replacement flag.
-
-For most use cases, `--append-system-prompt` or `--append-system-prompt-file` is recommended as they preserve Claude Code's built-in capabilities while adding your custom requirements. Use `--system-prompt` or `--system-prompt-file` only when you need complete control over the system prompt.
+For most use cases, use an append flag. Appending preserves Claude Code's built-in capabilities while adding your requirements. Use a replacement flag only when you need complete control over the system prompt.
 
 ## See also
 
