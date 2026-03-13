@@ -25,7 +25,9 @@ This page covers:
 
 ## How reviews work
 
-Once an admin [enables Code Review](#set-up-code-review) for your organization, reviews run automatically when a pull request opens or updates. Multiple agents analyze the diff and surrounding code in parallel on Anthropic infrastructure. Each agent looks for a different class of issue, then a verification step checks candidates against actual code behavior to filter out false positives. The results are deduplicated, ranked by severity, and posted as inline comments on the specific lines where issues were found. If no issues are found, Claude posts a short confirmation comment on the PR.
+Once an admin [enables Code Review](#set-up-code-review) for your organization, reviews trigger when a PR opens, on every push, or when manually requested, depending on the repository's configured behavior. Commenting `@claude review` [starts reviews on a PR](#manually-trigger-reviews) in any mode.
+
+When a review runs, multiple agents analyze the diff and surrounding code in parallel on Anthropic infrastructure. Each agent looks for a different class of issue, then a verification step checks candidates against actual code behavior to filter out false positives. The results are deduplicated, ranked by severity, and posted as inline comments on the specific lines where issues were found. If no issues are found, Claude posts a short confirmation comment on the PR.
 
 Reviews scale in cost with PR size and complexity, completing in 20 minutes on average. Admins can monitor review activity and spend via the [analytics dashboard](#view-usage).
 
@@ -73,18 +75,32 @@ An admin enables Code Review once for the organization and selects which reposit
   </Step>
 
   <Step title="Set review triggers per repo">
-    After setup completes, the Code Review section shows your repositories in a table. For each repository, use the dropdown to choose when reviews run:
+    After setup completes, the Code Review section shows your repositories in a table. For each repository, use the **Review Behavior** dropdown to choose when reviews run:
 
-    * **After PR creation only**: review runs once when a PR is opened or marked ready for review
-    * **After every push to PR branch**: review runs on every push, catching new issues as the PR evolves and auto-resolving threads when you fix flagged issues
+    * **Once after PR creation**: review runs once when a PR is opened or marked ready for review
+    * **After every push**: review runs on every push to the PR branch, catching new issues as the PR evolves and auto-resolving threads when you fix flagged issues
+    * **Manual**: reviews start only when someone [comments `@claude review` on a PR](#manually-trigger-reviews); subsequent pushes to that PR are then reviewed automatically
 
-    Reviewing on every push runs more reviews and costs more. Start with PR creation only and switch to on-push for repos where you want continuous coverage and automatic thread cleanup.
+    Reviewing on every push runs the most reviews and costs the most. Manual mode is useful for high-traffic repos where you want to opt specific PRs into review, or to only start reviewing your PRs once they're ready.
   </Step>
 </Steps>
 
 The repositories table also shows the average cost per review for each repo based on recent activity. Use the row actions menu to turn Code Review on or off per repository, or to remove a repository entirely.
 
-To verify setup, open a test PR. A check run named **Claude Code Review** appears within a few minutes. If it doesn't, confirm the repository is listed in your admin settings and the Claude GitHub App has access to it.
+To verify setup, open a test PR. If you chose an automatic trigger, a check run named **Claude Code Review** appears within a few minutes. If you chose Manual, comment `@claude review` on the PR to start the first review. If no check run appears, confirm the repository is listed in your admin settings and the Claude GitHub App has access to it.
+
+## Manually trigger reviews
+
+Comment `@claude review` on a pull request to start a review and opt that PR into push-triggered reviews going forward. This works regardless of the repository's configured trigger: use it to opt specific PRs into review in Manual mode, or to get an immediate re-review in other modes. Either way, pushes to that PR trigger reviews from then on.
+
+For the comment to trigger a review:
+
+* Post it as a top-level PR comment, not an inline comment on a diff line
+* Put `@claude review` at the start of the comment
+* You must have owner, member, or collaborator access to the repository
+* The PR must be open and not a draft
+
+If a review is already running on that PR, the request is queued until the in-progress review completes. You can monitor progress via the check run on the PR.
 
 ## Customize reviews
 
@@ -150,8 +166,11 @@ Code Review is billed based on token usage. Reviews average \$15-25, scaling wit
 
 The review trigger you choose affects total cost:
 
-* **After PR creation only**: runs once per PR
-* **After every push**: runs on each commit, multiplying cost by the number of pushes
+* **Once after PR creation**: runs once per PR
+* **After every push**: runs on each push, multiplying cost by the number of pushes
+* **Manual**: no reviews until someone comments `@claude review` on a PR
+
+In any mode, commenting `@claude review` [opts the PR into push-triggered reviews](#manually-trigger-reviews), so additional cost accrues per push after that comment.
 
 Costs appear on your Anthropic bill regardless of whether your organization uses AWS Bedrock or Google Vertex AI for other Claude Code features. To set a monthly spend cap for Code Review, go to [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) and configure the limit for the Claude Code Review service.
 
