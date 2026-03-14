@@ -40,7 +40,7 @@ Claude Code authenticates with Anthropic's servers using OAuth tokens or API key
 
 Anthropic reserves the right to take measures to enforce these restrictions and may do so without prior notice.
 
-For questions about permitted authentication methods for your use case, please [contact sales](https://www.anthropic.com/contact-sales).
+For questions about permitted authentication methods for your use case, please [contact sales](https://www.anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=legal_compliance_contact_sales).
 
 ## Security and trust
 
