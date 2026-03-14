@@ -131,15 +131,19 @@ and Sonnet's efficiency for execution.
 
 [Effort levels](https://platform.claude.com/docs/en/build-with-claude/effort) control adaptive reasoning, which dynamically allocates thinking based on task complexity. Lower effort is faster and cheaper for straightforward tasks, while higher effort provides deeper reasoning for complex problems.
 
-Three levels are available: **low**, **medium**, and **high**. Opus 4.6 defaults to medium effort for Max and Team subscribers.
+Three levels persist across sessions: **low**, **medium**, and **high**. A fourth level, **max**, provides the deepest reasoning with no constraint on token spending, so responses are slower and cost more than at `high`. `max` is available on Opus 4.6 only and applies to the current session without persisting. Opus 4.6 defaults to medium effort for Max and Team subscribers.
 
 **Setting effort:**
 
+* **`/effort`**: run `/effort low`, `/effort medium`, `/effort high`, or `/effort max` to change the level, or `/effort auto` to reset to the model default
 * **In `/model`**: use left/right arrow keys to adjust the effort slider when selecting a model
-* **Environment variable**: set `CLAUDE_CODE_EFFORT_LEVEL=low|medium|high`
-* **Settings**: set `effortLevel` in your settings file
+* **`--effort` flag**: pass `low`, `medium`, `high`, or `max` to set the level for a single session when launching Claude Code
+* **Environment variable**: set `CLAUDE_CODE_EFFORT_LEVEL` to `low`, `medium`, `high`, `max`, or `auto`
+* **Settings**: set `effortLevel` in your settings file to `"low"`, `"medium"`, or `"high"`
 
-Effort is supported on Opus 4.6 and Sonnet 4.6. The effort slider appears in `/model` when a supported model is selected. The current effort level is also displayed next to the logo and spinner (for example, "with low effort"), so you can confirm which setting is active without opening `/model`.
+The environment variable takes precedence, then your configured level, then the model default.
+
+Effort is supported on Opus 4.6 and Sonnet 4.6. The effort slider appears in `/model` when a supported model is selected. The current effort level is also displayed next to the logo and spinner, for example "with low effort", so you can confirm which setting is active without opening `/model`.
 
 To disable adaptive reasoning on Opus 4.6 and Sonnet 4.6 and revert to the previous fixed thinking budget, set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. When disabled, these models use the fixed budget controlled by `MAX_THINKING_TOKENS`. See [environment variables](/en/env-vars).
 
