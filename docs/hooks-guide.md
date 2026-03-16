@@ -561,7 +561,7 @@ Where you add a hook determines its scope:
 
 Run [`/hooks`](/en/hooks#the-hooks-menu) in Claude Code to browse all configured hooks grouped by event. To disable all hooks at once, set `"disableAllHooks": true` in your settings file.
 
-If you edit settings files directly while Claude Code is running, hook changes won't take effect until you review them in the `/hooks` menu or restart your session. This prevents unexpected hook modifications from taking effect mid-session.
+If you edit settings files directly while Claude Code is running, the file watcher normally picks up hook changes automatically.
 
 ## Prompt-based hooks
 
@@ -694,7 +694,7 @@ You see a message like "PreToolUse hook error: ..." in the transcript.
 
 You edited a settings file but the hooks don't appear in the menu.
 
-* Restart your session or open `/hooks` to reload. Manual file edits require a reload before they take effect.
+* File edits are normally picked up automatically. If they haven't appeared after a few seconds, the file watcher may have missed the change: restart your session to force a reload.
 * Verify your JSON is valid (trailing commas and comments are not allowed)
 * Confirm the settings file is in the correct location: `.claude/settings.json` for project hooks, `~/.claude/settings.json` for global hooks
 
