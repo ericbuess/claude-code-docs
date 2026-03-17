@@ -118,8 +118,8 @@
     "env-vars.md": {
       "original_url": "https://code.claude.com/docs/en/env-vars",
       "original_md_url": "https://code.claude.com/docs/en/env-vars.md",
-      "hash": "77a0ceecbbb37179bc0c07750006d72d2e986e0a45f677de37980a5024a25415",
-      "last_updated": "2026-03-16T21:10:05.255557"
+      "hash": "1bd7b110cff8ae8a0928b946ef0e0b4594f851cd38224fff1687832fd7f2326f",
+      "last_updated": "2026-03-17T00:08:15.134276"
     },
     "fast-mode.md": {
       "original_url": "https://code.claude.com/docs/en/fast-mode",
@@ -387,8 +387,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-16T21:10:30.965947",
-    "fetch_duration_seconds": 36.764487,
+    "last_fetch_completed": "2026-03-17T00:08:40.318712",
+    "fetch_duration_seconds": 36.500688,
     "total_pages_discovered": 64,
     "pages_fetched_successfully": 65,
     "pages_failed": 0,
@@ -398,7 +398,7 @@
     "total_files": 64,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-16T21:10:30.965973",
+  "last_updated": "2026-03-17T00:08:40.318741",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
