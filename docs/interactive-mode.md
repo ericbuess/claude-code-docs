@@ -84,6 +84,12 @@
 | `!` at start | Bash mode         | Run commands directly and add execution output to the session        |
 | `@`          | File path mention | Trigger file path autocomplete                                       |
 
+### Voice input
+
+| Shortcut     | Description            | Notes                                                                                                                                                      |
+| :----------- | :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hold `Space` | Push-to-talk dictation | Requires [voice dictation](/en/voice-dictation) to be enabled. Transcript inserts at cursor. [Rebindable](/en/voice-dictation#rebind-the-push-to-talk-key) |
+
 ## Built-in commands
 
 Type `/` in Claude Code to see all available commands, or type `/` followed by any letters to filter. The `/` menu shows both built-in commands and [bundled skills](/en/skills#bundled-skills) like `/simplify`. Not all commands are visible to every user since some depend on your platform or plan.
