@@ -207,6 +207,7 @@ To run commands in the background, you can either:
 * Output is buffered and Claude can retrieve it using the TaskOutput tool
 * Background tasks have unique IDs for tracking and output retrieval
 * Background tasks are automatically cleaned up when Claude Code exits
+* Background tasks are automatically terminated if output exceeds 5GB, with a note in stderr explaining why
 
 To disable all background task functionality, set the `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` environment variable to `1`. See [Environment variables](/en/env-vars) for details.
 

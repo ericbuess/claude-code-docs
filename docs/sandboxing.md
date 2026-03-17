@@ -132,7 +132,7 @@ By default, sandboxed commands can only write to the current working directory. 
 
 These paths are enforced at the OS level, so all commands running inside the sandbox, including their child processes, respect them. This is the recommended approach when a tool needs write access to a specific location, rather than excluding the tool from the sandbox entirely with `excludedCommands`.
 
-When `allowWrite` (or `denyWrite`/`denyRead`) is defined in multiple [settings scopes](/en/settings#settings-precedence), the arrays are **merged**, meaning paths from every scope are combined, not replaced. For example, if managed settings allow writes to `//opt/company-tools` and a user adds `~/.kube` in their personal settings, both paths are included in the final sandbox configuration. This means users and projects can extend the list without duplicating or overriding paths set by higher-priority scopes.
+When `allowWrite` (or `denyWrite`/`denyRead`/`allowRead`) is defined in multiple [settings scopes](/en/settings#settings-precedence), the arrays are **merged**, meaning paths from every scope are combined, not replaced. For example, if managed settings allow writes to `//opt/company-tools` and a user adds `~/.kube` in their personal settings, both paths are included in the final sandbox configuration. This means users and projects can extend the list without duplicating or overriding paths set by higher-priority scopes.
 
 Path prefixes control how paths are resolved:
 
@@ -143,7 +143,21 @@ Path prefixes control how paths are resolved:
 | `/`               | Relative to the settings file's directory   | `/build` becomes `$SETTINGS_DIR/build` |
 | `./` or no prefix | Relative path (resolved by sandbox runtime) | `./output`                             |
 
-You can also deny write or read access using `sandbox.filesystem.denyWrite` and `sandbox.filesystem.denyRead`. These are merged with any paths from `Edit(...)` and `Read(...)` permission rules.
+You can also deny write or read access using `sandbox.filesystem.denyWrite` and `sandbox.filesystem.denyRead`. These are merged with any paths from `Edit(...)` and `Read(...)` permission rules. To re-allow reading specific paths within a denied region, use `sandbox.filesystem.allowRead`, which takes precedence over `denyRead`. When `allowManagedReadPathsOnly` is enabled in managed settings, only managed `allowRead` entries are respected; user, project, and local `allowRead` entries are ignored.
+
+For example, to block reading from the entire home directory while still allowing reads from the current project:
+
+```json  theme={null}
+{
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "denyRead": ["~/"],
+      "allowRead": ["."]
+    }
+  }
+}
+```
 
 <Tip>
   Not all commands are compatible with sandboxing out of the box. Some notes that may help you make the most out of the sandbox:
@@ -227,6 +241,7 @@ Filesystem and network restrictions are configured through both sandbox settings
 
 * Use `sandbox.filesystem.allowWrite` to grant subprocess write access to paths outside the working directory
 * Use `sandbox.filesystem.denyWrite` and `sandbox.filesystem.denyRead` to block subprocess access to specific paths
+* Use `sandbox.filesystem.allowRead` to re-allow reading specific paths within a `denyRead` region
 * Use `Read` and `Edit` deny rules to block access to specific files or directories
 * Use `WebFetch` allow/deny rules to control domain access
 * Use sandbox `allowedDomains` to control which domains Bash commands can reach
