@@ -893,7 +893,7 @@ To minimize formatting issues:
 
 If you're experiencing issues not covered here:
 
-1. Use the `/bug` command within Claude Code to report problems directly to Anthropic
+1. Use the `/feedback` command within Claude Code to report problems directly to Anthropic
 2. Check the [GitHub repository](https://github.com/anthropics/claude-code) for known issues
 3. Run `/doctor` to diagnose issues. It checks:
    * Installation type, version, and search functionality

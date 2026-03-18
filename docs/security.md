@@ -75,7 +75,7 @@ For full details, please review our [Commercial Terms of Service](https://www.an
 2. Avoid piping untrusted content directly to Claude
 3. Verify proposed changes to critical files
 4. Use virtual machines (VMs) to run scripts and make tool calls, especially when interacting with external web services
-5. Report suspicious behavior with `/bug`
+5. Report suspicious behavior with `/feedback`
 
 <Warning>
   While these protections significantly reduce risk, no system is completely

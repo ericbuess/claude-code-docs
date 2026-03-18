@@ -19,13 +19,13 @@ We give you the choice to allow your data to be used to improve future Claude mo
 
 If you explicitly opt in to methods to provide us with materials to train on, such as via the [Development Partner Program](https://support.claude.com/en/articles/11174108-about-the-development-partner-program), we may use those materials provided to train our models. An organization admin can expressly opt-in to the Development Partner Program for their organization. Note that this program is available only for Anthropic first-party API, and not for Bedrock or Vertex users.
 
-### Feedback using the `/bug` command
+### Feedback using the `/feedback` command
 
-If you choose to send us feedback about Claude Code using the `/bug` command, we may use your feedback to improve our products and services. Transcripts shared via `/bug` are retained for 5 years.
+If you choose to send us feedback about Claude Code using the `/feedback` command, we may use your feedback to improve our products and services. Transcripts shared via `/feedback` are retained for 5 years.
 
 ### Session quality surveys
 
-When you see the "How is Claude doing this session?" prompt in Claude Code, responding to this survey (including selecting "Dismiss"), only your numeric rating (1, 2, 3, or dismiss) is recorded. We do not collect or store any conversation transcripts, inputs, outputs, or other session data as part of this survey. Unlike thumbs up/down feedback or `/bug` reports, this session quality survey is a simple product satisfaction metric. Your responses to this survey do not impact your data training preferences and cannot be used to train our AI models.
+When you see the "How is Claude doing this session?" prompt in Claude Code, responding to this survey (including selecting "Dismiss"), only your numeric rating (1, 2, 3, or dismiss) is recorded. We do not collect or store any conversation transcripts, inputs, outputs, or other session data as part of this survey. Unlike thumbs up/down feedback or `/feedback` reports, this session quality survey is a simple product satisfaction metric. Your responses to this survey do not impact your data training preferences and cannot be used to train our AI models.
 
 To disable these surveys, set `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. The survey is also disabled when `DISABLE_TELEMETRY` or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set. To control frequency instead of disabling, set [`feedbackSurveyRate`](/en/settings#available-settings) in your settings file to a probability between `0` and `1`.
 
@@ -82,17 +82,17 @@ Claude Code connects from users' machines to the Statsig service to log operatio
 
 Claude Code connects from users' machines to Sentry for operational error logging. The data is encrypted in transit using TLS and at rest using 256-bit AES encryption. Read more in the [Sentry security documentation](https://sentry.io/security/). To opt out of error logging, set the `DISABLE_ERROR_REPORTING` environment variable.
 
-When users run the `/bug` command, a copy of their full conversation history including code is sent to Anthropic. The data is encrypted in transit and at rest. Optionally, a Github issue is created in our public repository. To opt out of bug reporting, set the `DISABLE_BUG_COMMAND` environment variable.
+When users run the `/feedback` command, a copy of their full conversation history including code is sent to Anthropic. The data is encrypted in transit and at rest. Optionally, a Github issue is created in our public repository. To opt out, set the `DISABLE_FEEDBACK_COMMAND` environment variable.
 
 ## Default behaviors by API provider
 
 By default, error reporting, telemetry, and bug reporting are disabled when using Bedrock, Vertex, or Foundry. Session quality surveys are the exception and appear regardless of provider. You can opt out of all non-essential traffic, including surveys, at once by setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. Here are the full default behaviors:
 
-| Service                         | Claude API                                                           | Vertex API                                                           | Bedrock API                                                          | Foundry API                                                          |
-| ------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| **Statsig (Metrics)**           | Default on.<br />`DISABLE_TELEMETRY=1` to disable.                   | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1.                | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1.               | Default off.<br />`CLAUDE_CODE_USE_FOUNDRY` must be 1.               |
-| **Sentry (Errors)**             | Default on.<br />`DISABLE_ERROR_REPORTING=1` to disable.             | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1.                | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1.               | Default off.<br />`CLAUDE_CODE_USE_FOUNDRY` must be 1.               |
-| **Claude API (`/bug` reports)** | Default on.<br />`DISABLE_BUG_COMMAND=1` to disable.                 | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1.                | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1.               | Default off.<br />`CLAUDE_CODE_USE_FOUNDRY` must be 1.               |
-| **Session quality surveys**     | Default on.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. |
+| Service                              | Claude API                                                           | Vertex API                                                           | Bedrock API                                                          | Foundry API                                                          |
+| ------------------------------------ | -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| **Statsig (Metrics)**                | Default on.<br />`DISABLE_TELEMETRY=1` to disable.                   | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1.                | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1.               | Default off.<br />`CLAUDE_CODE_USE_FOUNDRY` must be 1.               |
+| **Sentry (Errors)**                  | Default on.<br />`DISABLE_ERROR_REPORTING=1` to disable.             | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1.                | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1.               | Default off.<br />`CLAUDE_CODE_USE_FOUNDRY` must be 1.               |
+| **Claude API (`/feedback` reports)** | Default on.<br />`DISABLE_FEEDBACK_COMMAND=1` to disable.            | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1.                | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1.               | Default off.<br />`CLAUDE_CODE_USE_FOUNDRY` must be 1.               |
+| **Session quality surveys**          | Default on.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. |
 
 All environment variables can be checked into `settings.json` ([read more](/en/settings)).

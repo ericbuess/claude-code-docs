@@ -210,7 +210,7 @@ By default, Claude Code requests permission for actions that might modify your s
 * **Permission allowlists**: permit specific tools you know are safe (like `npm run lint` or `git commit`)
 * **Sandboxing**: enable OS-level isolation that restricts filesystem and network access, allowing Claude to work more freely within defined boundaries
 
-Alternatively, use `--dangerously-skip-permissions` to bypass all permission checks for contained workflows like fixing lint errors or generating boilerplate.
+Alternatively, use `--dangerously-skip-permissions` to bypass permission prompts for contained workflows like fixing lint errors or generating boilerplate. See [permission modes](/en/permissions#permission-modes) for what is and isn't skipped.
 
 <Warning>
   Letting Claude run arbitrary commands can result in data loss, system corruption, or data exfiltration via prompt injection. Only use `--dangerously-skip-permissions` in a sandbox without internet access.
