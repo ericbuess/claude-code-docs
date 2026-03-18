@@ -35,10 +35,14 @@ Run `/terminal-setup` within Claude Code to automatically configure Shift+Enter 
 1. Open Settings → Profiles → Keyboard
 2. Check "Use Option as Meta Key"
 
-**For iTerm2 and VS Code terminal:**
+**For iTerm2:**
 
 1. Open Settings → Profiles → Keys
 2. Under General, set Left/Right Option key to "Esc+"
+
+**For VS Code terminal:**
+
+Set `"terminal.integrated.macOptionIsMeta": true` in VS Code settings.
 
 ### Notification setup
 

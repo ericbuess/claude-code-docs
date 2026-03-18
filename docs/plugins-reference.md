@@ -116,6 +116,7 @@ Plugins can provide event handlers that respond to Claude Code events automatica
 * `TeammateIdle`: When an agent team teammate is about to go idle
 * `TaskCompleted`: When a task is being marked as completed
 * `PreCompact`: Before conversation history is compacted
+* `PostCompact`: After conversation history is compacted
 
 **Hook types**:
 
