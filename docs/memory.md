@@ -230,6 +230,20 @@ Organizations can deploy a centrally managed CLAUDE.md that applies to all users
   </Step>
 </Steps>
 
+A managed CLAUDE.md and [managed settings](/en/settings#settings-files) serve different purposes. Use settings for technical enforcement and CLAUDE.md for behavioral guidance:
+
+| Concern                                        | Configure in                                              |
+| :--------------------------------------------- | :-------------------------------------------------------- |
+| Block specific tools, commands, or file paths  | Managed settings: `permissions.deny`                      |
+| Enforce sandbox isolation                      | Managed settings: `sandbox.enabled`                       |
+| Environment variables and API provider routing | Managed settings: `env`                                   |
+| Authentication method and organization lock    | Managed settings: `forceLoginMethod`, `forceLoginOrgUUID` |
+| Code style and quality guidelines              | Managed CLAUDE.md                                         |
+| Data handling and compliance reminders         | Managed CLAUDE.md                                         |
+| Behavioral instructions for Claude             | Managed CLAUDE.md                                         |
+
+Settings rules are enforced by the client regardless of what Claude decides to do. CLAUDE.md instructions shape Claude's behavior but are not a hard enforcement layer.
+
 #### Exclude specific CLAUDE.md files
 
 In large monorepos, ancestor CLAUDE.md files may contain instructions that aren't relevant to your work. The `claudeMdExcludes` setting lets you skip specific files by path or glob pattern.

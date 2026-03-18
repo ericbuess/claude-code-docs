@@ -114,7 +114,7 @@ To customize models further:
 
 ```bash  theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-6'
-export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```
 
 ## IAM configuration
@@ -150,7 +150,7 @@ If you encounter "model not found" 404 errors:
 * Confirm model is Enabled in [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
 * Verify you have access to the specified region
 * If using `CLOUD_ML_REGION=global`, check that your models support global endpoints in [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) under "Supported features". For models that don't support global endpoints, either:
-  * Specify a supported model via `ANTHROPIC_MODEL` or `ANTHROPIC_SMALL_FAST_MODEL`, or
+  * Specify a supported model via `ANTHROPIC_MODEL` or `ANTHROPIC_DEFAULT_HAIKU_MODEL`, or
   * Set a regional endpoint using `VERTEX_REGION_<MODEL_NAME>` environment variables
 
 If you encounter 429 errors:
