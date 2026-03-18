@@ -7,7 +7,7 @@
 > Continue a local Claude Code session from your phone, tablet, or any browser using Remote Control. Works with claude.ai/code and the Claude mobile app.
 
 <Note>
-  Remote Control is available on all plans. Team and Enterprise admins must first enable Claude Code in [admin settings](https://claude.ai/admin-settings/claude-code).
+  Remote Control is available on all plans. On Team and Enterprise, it is off by default until an admin enables the Remote Control toggle in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code).
 </Note>
 
 Remote Control connects [claude.ai/code](https://claude.ai/code) or the Claude app for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) and [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude) to a Claude Code session running on your machine. Start a task at your desk, then pick it up from your phone on the couch or a browser on another computer.
@@ -30,7 +30,7 @@ This page covers setup, how to start and connect to sessions, and how Remote Con
 
 Before using Remote Control, confirm that your environment meets these conditions:
 
-* **Subscription**: available on Pro, Max, Team, and Enterprise plans. Team and Enterprise admins must first enable Claude Code in [admin settings](https://claude.ai/admin-settings/claude-code). API keys are not supported.
+* **Subscription**: available on Pro, Max, Team, and Enterprise plans. On Team and Enterprise, an admin must first enable the Remote Control toggle in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code). API keys are not supported.
 * **Authentication**: run `claude` and use `/login` to sign in through claude.ai if you haven't already.
 * **Workspace trust**: run `claude` in your project directory at least once to accept the workspace trust dialog.
 
@@ -100,7 +100,14 @@ Once a Remote Control session is active, you have a few ways to connect from ano
 * **Scan the QR code** shown alongside the session URL to open it directly in the Claude app. With `claude remote-control`, press spacebar to toggle the QR code display.
 * **Open [claude.ai/code](https://claude.ai/code) or the Claude app** and find the session by name in the session list. Remote Control sessions show a computer icon with a green status dot when online.
 
-The remote session takes its name from the `--name` argument (or the name passed to `/remote-control`), your last message, your `/rename` value, or "Remote Control session" if there's no conversation history. If the environment already has an active session, you'll be asked whether to continue it or start a new one.
+The remote session title is chosen in this order:
+
+1. The name you passed to `--name`, `--remote-control`, or `/remote-control`
+2. The title you set with `/rename`
+3. The last meaningful message in existing conversation history
+4. Your first prompt once you send one
+
+If the environment already has an active session, you'll be asked whether to continue it or start a new one.
 
 If you don't have the Claude app yet, use the `/mobile` command inside Claude Code to display a download QR code for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) or [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude).
 
@@ -130,7 +137,26 @@ Use Remote Control when you're in the middle of local work and want to keep goin
 
 ## Troubleshooting
 
-If your terminal shows `Remote credentials fetch failed — see debug log`, Claude Code could not obtain a short-lived credential from the Anthropic API to establish the Remote Control connection. To see the full error detail, re-run with the `--verbose` flag:
+### "Remote Control is not yet enabled for your account"
+
+The eligibility check can fail with certain environment variables present:
+
+* `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` or `DISABLE_TELEMETRY`: unset them and try again.
+* `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, or `CLAUDE_CODE_USE_FOUNDRY`: Remote Control requires claude.ai authentication and does not work with third-party providers.
+
+If none of these are set, run `/logout` then `/login` to refresh.
+
+### "Remote Control is disabled by your organization's policy"
+
+This error has three distinct causes. The first is the most common on developer machines.
+
+* **You're authenticated with an API key or Console account**: Remote Control requires claude.ai OAuth. Run `/login` and choose the claude.ai option. If `ANTHROPIC_API_KEY` is set in your environment, unset it.
+* **Your Team or Enterprise admin hasn't enabled it**: Remote Control is off by default on these plans. An admin can turn it on at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code). The Remote Control toggle depends on the Claude Code on the web toggle on the same page; enable Claude Code on the web first if Remote Control appears unavailable.
+* **The admin toggle is grayed out**: your organization has a data retention or compliance configuration that is incompatible with Remote Control. This cannot be changed from the admin panel. Contact Anthropic support to discuss options.
+
+### "Remote credentials fetch failed"
+
+Claude Code could not obtain a short-lived credential from the Anthropic API to establish the connection. Re-run with `--verbose` to see the full error:
 
 ```bash  theme={null}
 claude remote-control --verbose
@@ -140,7 +166,7 @@ Common causes:
 
 * Not signed in: run `claude` and use `/login` to authenticate with your claude.ai account. API key authentication is not supported for Remote Control.
 * Network or proxy issue: a firewall or proxy may be blocking the outbound HTTPS request. Remote Control requires access to the Anthropic API on port 443.
-* Session creation failed: if you also see `Session creation failed — see debug log`, the failure happened earlier in setup. Check that your subscription (Pro, Max, Team, or Enterprise) is active.
+* Session creation failed: if you also see `Session creation failed — see debug log`, the failure happened earlier in setup. Check that your subscription is active.
 
 ## Related resources
 
