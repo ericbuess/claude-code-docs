@@ -382,8 +382,8 @@
     "vs-code.md": {
       "original_url": "https://code.claude.com/docs/en/vs-code",
       "original_md_url": "https://code.claude.com/docs/en/vs-code.md",
-      "hash": "444b96b0dc6f12e617b6171ba2acc8653788ca504ccd1d6c8cea4fafc5ffbbfa",
-      "last_updated": "2026-03-19T00:08:40.141180"
+      "hash": "431042c04776da6da146b36850a0952ddf5fe2db3478592bdb2025a7ba686d7c",
+      "last_updated": "2026-03-19T06:17:13.502926"
     },
     "zero-data-retention.md": {
       "original_url": "https://code.claude.com/docs/en/zero-data-retention",
@@ -393,8 +393,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-19T03:50:15.989812",
-    "fetch_duration_seconds": 37.036614,
+    "last_fetch_completed": "2026-03-19T06:17:14.194952",
+    "fetch_duration_seconds": 43.064526,
     "total_pages_discovered": 65,
     "pages_fetched_successfully": 66,
     "pages_failed": 0,
@@ -404,7 +404,7 @@
     "total_files": 65,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-19T03:50:15.989843",
+  "last_updated": "2026-03-19T06:17:14.194981",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
