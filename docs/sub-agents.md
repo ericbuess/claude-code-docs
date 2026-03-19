@@ -384,7 +384,7 @@ When memory is enabled:
 
 ##### Persistent memory tips
 
-* `user` is the recommended default scope. Use `project` or `local` when the subagent's knowledge is only relevant to a specific codebase.
+* `project` is the recommended default scope. It makes subagent knowledge shareable via version control. Use `user` when the subagent's knowledge is broadly applicable across projects, or `local` when the knowledge should not be checked into version control.
 * Ask the subagent to consult its memory before starting work: "Review this PR, and check your memory for patterns you've seen before."
 * Ask the subagent to update its memory after completing a task: "Now that you're done, save what you learned to your memory." Over time, this builds a knowledge base that makes the subagent more effective.
 * Include memory instructions directly in the subagent's markdown file so it proactively maintains its own knowledge base:

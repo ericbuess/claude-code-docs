@@ -124,7 +124,7 @@ By default, sandboxed commands can only write to the current working directory. 
   "sandbox": {
     "enabled": true,
     "filesystem": {
-      "allowWrite": ["~/.kube", "//tmp/build"]
+      "allowWrite": ["~/.kube", "/tmp/build"]
     }
   }
 }
@@ -132,16 +132,17 @@ By default, sandboxed commands can only write to the current working directory. 
 
 These paths are enforced at the OS level, so all commands running inside the sandbox, including their child processes, respect them. This is the recommended approach when a tool needs write access to a specific location, rather than excluding the tool from the sandbox entirely with `excludedCommands`.
 
-When `allowWrite` (or `denyWrite`/`denyRead`/`allowRead`) is defined in multiple [settings scopes](/en/settings#settings-precedence), the arrays are **merged**, meaning paths from every scope are combined, not replaced. For example, if managed settings allow writes to `//opt/company-tools` and a user adds `~/.kube` in their personal settings, both paths are included in the final sandbox configuration. This means users and projects can extend the list without duplicating or overriding paths set by higher-priority scopes.
+When `allowWrite` (or `denyWrite`/`denyRead`/`allowRead`) is defined in multiple [settings scopes](/en/settings#settings-precedence), the arrays are **merged**, meaning paths from every scope are combined, not replaced. For example, if managed settings allow writes to `/opt/company-tools` and a user adds `~/.kube` in their personal settings, both paths are included in the final sandbox configuration. This means users and projects can extend the list without duplicating or overriding paths set by higher-priority scopes.
 
 Path prefixes control how paths are resolved:
 
-| Prefix            | Meaning                                     | Example                                |
-| :---------------- | :------------------------------------------ | :------------------------------------- |
-| `//`              | Absolute path from filesystem root          | `//tmp/build` becomes `/tmp/build`     |
-| `~/`              | Relative to home directory                  | `~/.kube` becomes `$HOME/.kube`        |
-| `/`               | Relative to the settings file's directory   | `/build` becomes `$SETTINGS_DIR/build` |
-| `./` or no prefix | Relative path (resolved by sandbox runtime) | `./output`                             |
+| Prefix            | Meaning                                                                                | Example                                                                   |
+| :---------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `/`               | Absolute path from filesystem root                                                     | `/tmp/build` stays `/tmp/build`                                           |
+| `~/`              | Relative to home directory                                                             | `~/.kube` becomes `$HOME/.kube`                                           |
+| `./` or no prefix | Relative to the project root for project settings, or to `~/.claude` for user settings | `./output` in `.claude/settings.json` resolves to `<project-root>/output` |
+
+The older `//path` prefix for absolute paths still works. If you previously used single-slash `/path` expecting project-relative resolution, switch to `./path`. This syntax differs from [Read and Edit permission rules](/en/permissions#read-and-edit), which use `//path` for absolute and `/path` for project-relative. Sandbox filesystem paths use standard conventions: `/tmp/build` is an absolute path.
 
 You can also deny write or read access using `sandbox.filesystem.denyWrite` and `sandbox.filesystem.denyRead`. These are merged with any paths from `Edit(...)` and `Read(...)` permission rules. To re-allow reading specific paths within a denied region, use `sandbox.filesystem.allowRead`, which takes precedence over `denyRead`. When `allowManagedReadPathsOnly` is enabled in managed settings, only managed `allowRead` entries are respected; user, project, and local `allowRead` entries are ignored.
 

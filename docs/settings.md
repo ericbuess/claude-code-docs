@@ -205,7 +205,7 @@ These display preferences are stored in `~/.claude.json` rather than `settings.j
 
 | Key                          | Description                                                                                                                                                | Example |
 | :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- | :------ |
-| `showTurnDuration`           | Show turn duration messages after responses, e.g. "Cooked for 1m 6s". Default: `true`. Edit `~/.claude.json` directly to change                            | `false` |
+| `showTurnDuration`           | Show turn duration messages after responses, e.g. "Cooked for 1m 6s". Default: `true`. Appears in `/config` as **Show turn duration**                      | `false` |
 | `terminalProgressBarEnabled` | Show the terminal progress bar in supported terminals like Windows Terminal and iTerm2. Default: `true`. Appears in `/config` as **Terminal progress bar** | `false` |
 
 ### Worktree settings
@@ -253,8 +253,8 @@ Configure advanced sandboxing behavior. Sandboxing isolates bash commands from y
 | `autoAllowBashIfSandboxed`             | Auto-approve bash commands when sandboxed. Default: true                                                                                                                                                                                                                                                                                        | `true`                          |
 | `excludedCommands`                     | Commands that should run outside of the sandbox                                                                                                                                                                                                                                                                                                 | `["git", "docker"]`             |
 | `allowUnsandboxedCommands`             | Allow commands to run outside the sandbox via the `dangerouslyDisableSandbox` parameter. When set to `false`, the `dangerouslyDisableSandbox` escape hatch is completely disabled and all commands must run sandboxed (or be in `excludedCommands`). Useful for enterprise policies that require strict sandboxing. Default: true               | `false`                         |
-| `filesystem.allowWrite`                | Additional paths where sandboxed commands can write. Arrays are merged across all settings scopes: user, project, and managed paths are combined, not replaced. Also merged with paths from `Edit(...)` allow permission rules. See [path prefixes](#sandbox-path-prefixes) below.                                                              | `["//tmp/build", "~/.kube"]`    |
-| `filesystem.denyWrite`                 | Paths where sandboxed commands cannot write. Arrays are merged across all settings scopes. Also merged with paths from `Edit(...)` deny permission rules.                                                                                                                                                                                       | `["//etc", "//usr/local/bin"]`  |
+| `filesystem.allowWrite`                | Additional paths where sandboxed commands can write. Arrays are merged across all settings scopes: user, project, and managed paths are combined, not replaced. Also merged with paths from `Edit(...)` allow permission rules. See [path prefixes](#sandbox-path-prefixes) below.                                                              | `["/tmp/build", "~/.kube"]`     |
+| `filesystem.denyWrite`                 | Paths where sandboxed commands cannot write. Arrays are merged across all settings scopes. Also merged with paths from `Edit(...)` deny permission rules.                                                                                                                                                                                       | `["/etc", "/usr/local/bin"]`    |
 | `filesystem.denyRead`                  | Paths where sandboxed commands cannot read. Arrays are merged across all settings scopes. Also merged with paths from `Read(...)` deny permission rules.                                                                                                                                                                                        | `["~/.aws/credentials"]`        |
 | `filesystem.allowRead`                 | Paths to re-allow reading within `denyRead` regions. Takes precedence over `denyRead`. Arrays are merged across all settings scopes. Use this to create workspace-only read access patterns.                                                                                                                                                    | `["."]`                         |
 | `filesystem.allowManagedReadPathsOnly` | (Managed settings only) Only `allowRead` paths from managed settings are respected. `allowRead` entries from user, project, and local settings are ignored. Default: false                                                                                                                                                                      | `true`                          |
@@ -272,12 +272,13 @@ Configure advanced sandboxing behavior. Sandboxing isolates bash commands from y
 
 Paths in `filesystem.allowWrite`, `filesystem.denyWrite`, `filesystem.denyRead`, and `filesystem.allowRead` support these prefixes:
 
-| Prefix            | Meaning                                     | Example                                |
-| :---------------- | :------------------------------------------ | :------------------------------------- |
-| `//`              | Absolute path from filesystem root          | `//tmp/build` becomes `/tmp/build`     |
-| `~/`              | Relative to home directory                  | `~/.kube` becomes `$HOME/.kube`        |
-| `/`               | Relative to the settings file's directory   | `/build` becomes `$SETTINGS_DIR/build` |
-| `./` or no prefix | Relative path (resolved by sandbox runtime) | `./output`                             |
+| Prefix            | Meaning                                                                                | Example                                                                   |
+| :---------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `/`               | Absolute path from filesystem root                                                     | `/tmp/build` stays `/tmp/build`                                           |
+| `~/`              | Relative to home directory                                                             | `~/.kube` becomes `$HOME/.kube`                                           |
+| `./` or no prefix | Relative to the project root for project settings, or to `~/.claude` for user settings | `./output` in `.claude/settings.json` resolves to `<project-root>/output` |
+
+The older `//path` prefix for absolute paths still works. If you previously used single-slash `/path` expecting project-relative resolution, switch to `./path`. This syntax differs from [Read and Edit permission rules](/en/permissions#read-and-edit), which use `//path` for absolute and `/path` for project-relative. Sandbox filesystem paths use standard conventions: `/tmp/build` is an absolute path.
 
 **Configuration example:**
 
@@ -288,7 +289,7 @@ Paths in `filesystem.allowWrite`, `filesystem.denyWrite`, `filesystem.denyRead`,
     "autoAllowBashIfSandboxed": true,
     "excludedCommands": ["docker"],
     "filesystem": {
-      "allowWrite": ["//tmp/build", "~/.kube"],
+      "allowWrite": ["/tmp/build", "~/.kube"],
       "denyRead": ["~/.aws/credentials"]
     },
     "network": {
@@ -438,7 +439,7 @@ This hierarchy ensures that organizational policies are always enforced while st
 For example, if your user settings allow `Bash(npm run *)` but a project's shared settings deny it, the project setting takes precedence and the command is blocked.
 
 <Note>
-  **Array settings merge across scopes.** When the same array-valued setting (such as `sandbox.filesystem.allowWrite` or `permissions.allow`) appears in multiple scopes, the arrays are **concatenated and deduplicated**, not replaced. This means lower-priority scopes can add entries without overriding those set by higher-priority scopes, and vice versa. For example, if managed settings set `allowWrite` to `["//opt/company-tools"]` and a user adds `["~/.kube"]`, both paths are included in the final configuration.
+  **Array settings merge across scopes.** When the same array-valued setting (such as `sandbox.filesystem.allowWrite` or `permissions.allow`) appears in multiple scopes, the arrays are **concatenated and deduplicated**, not replaced. This means lower-priority scopes can add entries without overriding those set by higher-priority scopes, and vice versa. For example, if managed settings set `allowWrite` to `["/opt/company-tools"]` and a user adds `["~/.kube"]`, both paths are included in the final configuration.
 </Note>
 
 ### Verify active settings
