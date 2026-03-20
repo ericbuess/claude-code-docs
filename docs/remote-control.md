@@ -171,6 +171,7 @@ Common causes:
 ## Related resources
 
 * [Claude Code on the web](/en/claude-code-on-the-web): run sessions in Anthropic-managed cloud environments instead of on your machine
+* [Channels](/en/channels): forward Telegram or Discord into a session so Claude reacts to messages while you're away
 * [Authentication](/en/authentication): set up `/login` and manage credentials for claude.ai
 * [CLI reference](/en/cli-reference): full list of flags and commands including `claude remote-control`
 * [Security](/en/security): how Remote Control sessions fit into the Claude Code security model
