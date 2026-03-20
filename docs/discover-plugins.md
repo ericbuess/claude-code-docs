@@ -302,7 +302,7 @@ When you install, enable, or disable plugins during a session, run `/reload-plug
 /reload-plugins
 ```
 
-Claude Code reloads all active plugins and shows counts for reloaded commands, skills, agents, hooks, plugin MCP servers, and plugin LSP servers.
+Claude Code reloads all active plugins and shows counts for plugins, skills, agents, hooks, plugin MCP servers, and plugin LSP servers.
 
 ## Manage marketplaces
 

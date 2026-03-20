@@ -904,6 +904,11 @@ Community projects like [ccstatusline](https://github.com/sirmalloc/ccstatusline
 * If you see corrupted text, try simplifying your script to plain text output
 * Multi-line status lines with escape codes are more prone to rendering issues than single-line plain text
 
+**Workspace trust required**
+
+* The status line command only runs if you've accepted the workspace trust dialog for the current directory. Because `statusLine` executes a shell command, it requires the same trust acceptance as hooks and other shell-executing settings.
+* If trust isn't accepted, you'll see the notification `statusline skipped · restart to fix` instead of your status line output. Restart Claude Code and accept the trust prompt to enable it.
+
 **Script errors or hangs**
 
 * Scripts that exit with non-zero codes or produce no output cause the status line to go blank
