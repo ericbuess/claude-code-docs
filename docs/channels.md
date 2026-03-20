@@ -44,6 +44,8 @@ Each supported channel is a plugin that requires [Bun](https://bun.sh). For a ha
         ```
         /plugin install telegram@claude-plugins-official
         ```
+
+        If Claude Code reports that the plugin is not found in any marketplace, run `/plugin marketplace add anthropics/claude-plugins-official` first and retry the install.
       </Step>
 
       <Step title="Configure your token">
@@ -53,7 +55,7 @@ Each supported channel is a plugin that requires [Bun](https://bun.sh). For a ha
         /telegram:configure <token>
         ```
 
-        This saves it to `.claude/channels/telegram/.env` in your project. You can also set `TELEGRAM_BOT_TOKEN` in your shell environment before launching Claude Code.
+        This saves it to `~/.claude/channels/telegram/.env`. You can also set `TELEGRAM_BOT_TOKEN` in your shell environment before launching Claude Code.
       </Step>
 
       <Step title="Restart with channels enabled">
@@ -115,6 +117,8 @@ Each supported channel is a plugin that requires [Bun](https://bun.sh). For a ha
         ```
         /plugin install discord@claude-plugins-official
         ```
+
+        If Claude Code reports that the plugin is not found in any marketplace, run `/plugin marketplace add anthropics/claude-plugins-official` first and retry the install.
       </Step>
 
       <Step title="Configure your token">
@@ -124,7 +128,7 @@ Each supported channel is a plugin that requires [Bun](https://bun.sh). For a ha
         /discord:configure <token>
         ```
 
-        This saves it to `.claude/channels/discord/.env` in your project. You can also set `DISCORD_BOT_TOKEN` in your shell environment before launching Claude Code.
+        This saves it to `~/.claude/channels/discord/.env`. You can also set `DISCORD_BOT_TOKEN` in your shell environment before launching Claude Code.
       </Step>
 
       <Step title="Restart with channels enabled">
@@ -178,7 +182,7 @@ To try the fakechat demo, you'll need:
     /plugin install fakechat@claude-plugins-official
     ```
 
-    Fakechat is in the `claude-plugins-official` marketplace, which is added automatically for most setups. If you don't have it, run `/plugin marketplace add anthropics/claude-plugins-official` first.
+    If Claude Code reports that the plugin is not found in any marketplace, run `/plugin marketplace add anthropics/claude-plugins-official` first and retry the install.
   </Step>
 
   <Step title="Restart with the channel enabled">

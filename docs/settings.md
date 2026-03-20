@@ -573,6 +573,31 @@ Defines additional marketplaces that should be made available for the repository
 * `git`: Any git URL (uses `url`)
 * `directory`: Local filesystem path (uses `path`, for development only)
 * `hostPattern`: regex pattern to match marketplace hosts (uses `hostPattern`)
+* `settings`: inline marketplace declared directly in settings.json without a separate hosted repository (uses `name` and `plugins`)
+
+Use `source: 'settings'` to declare a small set of plugins inline without setting up a hosted marketplace repository. Plugins listed here must reference external sources such as GitHub or npm. You still need to enable each plugin separately in `enabledPlugins`.
+
+```json  theme={null}
+{
+  "extraKnownMarketplaces": {
+    "team-tools": {
+      "source": {
+        "source": "settings",
+        "name": "team-tools",
+        "plugins": [
+          {
+            "name": "code-formatter",
+            "source": {
+              "source": "github",
+              "repo": "acme-corp/code-formatter"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+```
 
 #### `strictKnownMarketplaces`
 

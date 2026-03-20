@@ -40,8 +40,8 @@
     "channels.md": {
       "original_url": "https://code.claude.com/docs/en/channels",
       "original_md_url": "https://code.claude.com/docs/en/channels.md",
-      "hash": "9fff1453abf645fd80ff654a1efcd9c2e58f905f87e87f072daac3279df80fa0",
-      "last_updated": "2026-03-20T00:07:42.518943"
+      "hash": "7821e99139e8a374084456c23aa511a74168c36aaaaedb2d2666fe8b32373465",
+      "last_updated": "2026-03-20T18:07:41.237379"
     },
     "channels-reference.md": {
       "original_url": "https://code.claude.com/docs/en/channels-reference",
@@ -70,8 +70,8 @@
     "cli-reference.md": {
       "original_url": "https://code.claude.com/docs/en/cli-reference",
       "original_md_url": "https://code.claude.com/docs/en/cli-reference.md",
-      "hash": "9fddd43d3eb57e8acfe1aa444ccc4ca0605dd534b4b875275e5ee614363825b2",
-      "last_updated": "2026-03-20T00:07:45.495815"
+      "hash": "759db9ff2db9dac8765e21a73e6e99a7f943da7223b72e10f061a483d0f73651",
+      "last_updated": "2026-03-20T18:07:44.311006"
     },
     "code-review.md": {
       "original_url": "https://code.claude.com/docs/en/code-review",
@@ -328,8 +328,8 @@
     "settings.md": {
       "original_url": "https://code.claude.com/docs/en/settings",
       "original_md_url": "https://code.claude.com/docs/en/settings.md",
-      "hash": "95e4f1a12b4f8e28fdd6fb45330ffc66fbbd01498e7673b168c756e63955ad15",
-      "last_updated": "2026-03-20T03:45:15.529597"
+      "hash": "b9e667667e22b71c593e5f6e4aeb73c2ce40567f6b293e94f2dd9bd4e844f3b1",
+      "last_updated": "2026-03-20T18:08:11.386051"
     },
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
@@ -340,8 +340,8 @@
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
       "original_md_url": "https://code.claude.com/docs/en/skills.md",
-      "hash": "ad28135a47ba4445fe168d2eff753bc4af92743474f0dc83ec6b81f3a85890c2",
-      "last_updated": "2026-03-13T18:07:22.153217"
+      "hash": "8d388d29ef5e529a23bcdd9bb9f74334d5607ef8eb3074689b3ed968f24b3e8b",
+      "last_updated": "2026-03-20T18:08:12.616814"
     },
     "slack.md": {
       "original_url": "https://code.claude.com/docs/en/slack",
@@ -352,8 +352,8 @@
     "statusline.md": {
       "original_url": "https://code.claude.com/docs/en/statusline",
       "original_md_url": "https://code.claude.com/docs/en/statusline.md",
-      "hash": "86ddff71f413152fe08db24c8c58899d857efec0dbdecf1d555d338589b9fc44",
-      "last_updated": "2026-03-20T03:45:17.850804"
+      "hash": "e10070be6faef757776bb4ff3aec4ed75c9bbcde5c689c32e00de951679a73dc",
+      "last_updated": "2026-03-20T18:08:13.835108"
     },
     "sub-agents.md": {
       "original_url": "https://code.claude.com/docs/en/sub-agents",
@@ -405,8 +405,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-20T15:13:33.324653",
-    "fetch_duration_seconds": 41.645504,
+    "last_fetch_completed": "2026-03-20T18:08:18.897041",
+    "fetch_duration_seconds": 42.019211,
     "total_pages_discovered": 67,
     "pages_fetched_successfully": 68,
     "pages_failed": 0,
@@ -416,7 +416,7 @@
     "total_files": 67,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-20T15:13:33.324676",
+  "last_updated": "2026-03-20T18:08:18.897067",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

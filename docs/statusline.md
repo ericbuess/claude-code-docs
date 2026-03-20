@@ -144,32 +144,34 @@ Your script runs after each new assistant message, when the permission mode chan
 
 Claude Code sends the following JSON fields to your script via stdin:
 
-| Field                                                                     | Description                                                                                                                                                                                  |
-| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `model.id`, `model.display_name`                                          | Current model identifier and display name                                                                                                                                                    |
-| `cwd`, `workspace.current_dir`                                            | Current working directory. Both fields contain the same value; `workspace.current_dir` is preferred for consistency with `workspace.project_dir`.                                            |
-| `workspace.project_dir`                                                   | Directory where Claude Code was launched, which may differ from `cwd` if the working directory changes during a session                                                                      |
-| `cost.total_cost_usd`                                                     | Total session cost in USD                                                                                                                                                                    |
-| `cost.total_duration_ms`                                                  | Total wall-clock time since the session started, in milliseconds                                                                                                                             |
-| `cost.total_api_duration_ms`                                              | Total time spent waiting for API responses in milliseconds                                                                                                                                   |
-| `cost.total_lines_added`, `cost.total_lines_removed`                      | Lines of code changed                                                                                                                                                                        |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens` | Cumulative token counts across the session                                                                                                                                                   |
-| `context_window.context_window_size`                                      | Maximum context window size in tokens. 200000 by default, or 1000000 for models with extended context.                                                                                       |
-| `context_window.used_percentage`                                          | Pre-calculated percentage of context window used                                                                                                                                             |
-| `context_window.remaining_percentage`                                     | Pre-calculated percentage of context window remaining                                                                                                                                        |
-| `context_window.current_usage`                                            | Token counts from the last API call, described in [context window fields](#context-window-fields)                                                                                            |
-| `exceeds_200k_tokens`                                                     | Whether the total token count (input, cache, and output tokens combined) from the most recent API response exceeds 200k. This is a fixed threshold regardless of actual context window size. |
-| `session_id`                                                              | Unique session identifier                                                                                                                                                                    |
-| `transcript_path`                                                         | Path to conversation transcript file                                                                                                                                                         |
-| `version`                                                                 | Claude Code version                                                                                                                                                                          |
-| `output_style.name`                                                       | Name of the current output style                                                                                                                                                             |
-| `vim.mode`                                                                | Current vim mode (`NORMAL` or `INSERT`) when [vim mode](/en/interactive-mode#vim-editor-mode) is enabled                                                                                     |
-| `agent.name`                                                              | Agent name when running with the `--agent` flag or agent settings configured                                                                                                                 |
-| `worktree.name`                                                           | Name of the active worktree. Present only during `--worktree` sessions                                                                                                                       |
-| `worktree.path`                                                           | Absolute path to the worktree directory                                                                                                                                                      |
-| `worktree.branch`                                                         | Git branch name for the worktree (for example, `"worktree-my-feature"`). Absent for hook-based worktrees                                                                                     |
-| `worktree.original_cwd`                                                   | The directory Claude was in before entering the worktree                                                                                                                                     |
-| `worktree.original_branch`                                                | Git branch checked out before entering the worktree. Absent for hook-based worktrees                                                                                                         |
+| Field                                                                            | Description                                                                                                                                                                                  |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `model.id`, `model.display_name`                                                 | Current model identifier and display name                                                                                                                                                    |
+| `cwd`, `workspace.current_dir`                                                   | Current working directory. Both fields contain the same value; `workspace.current_dir` is preferred for consistency with `workspace.project_dir`.                                            |
+| `workspace.project_dir`                                                          | Directory where Claude Code was launched, which may differ from `cwd` if the working directory changes during a session                                                                      |
+| `cost.total_cost_usd`                                                            | Total session cost in USD                                                                                                                                                                    |
+| `cost.total_duration_ms`                                                         | Total wall-clock time since the session started, in milliseconds                                                                                                                             |
+| `cost.total_api_duration_ms`                                                     | Total time spent waiting for API responses in milliseconds                                                                                                                                   |
+| `cost.total_lines_added`, `cost.total_lines_removed`                             | Lines of code changed                                                                                                                                                                        |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Cumulative token counts across the session                                                                                                                                                   |
+| `context_window.context_window_size`                                             | Maximum context window size in tokens. 200000 by default, or 1000000 for models with extended context.                                                                                       |
+| `context_window.used_percentage`                                                 | Pre-calculated percentage of context window used                                                                                                                                             |
+| `context_window.remaining_percentage`                                            | Pre-calculated percentage of context window remaining                                                                                                                                        |
+| `context_window.current_usage`                                                   | Token counts from the last API call, described in [context window fields](#context-window-fields)                                                                                            |
+| `exceeds_200k_tokens`                                                            | Whether the total token count (input, cache, and output tokens combined) from the most recent API response exceeds 200k. This is a fixed threshold regardless of actual context window size. |
+| `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | Percentage of the 5-hour or 7-day rate limit consumed, from 0 to 100                                                                                                                         |
+| `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | Unix epoch seconds when the 5-hour or 7-day rate limit window resets                                                                                                                         |
+| `session_id`                                                                     | Unique session identifier                                                                                                                                                                    |
+| `transcript_path`                                                                | Path to conversation transcript file                                                                                                                                                         |
+| `version`                                                                        | Claude Code version                                                                                                                                                                          |
+| `output_style.name`                                                              | Name of the current output style                                                                                                                                                             |
+| `vim.mode`                                                                       | Current vim mode (`NORMAL` or `INSERT`) when [vim mode](/en/interactive-mode#vim-editor-mode) is enabled                                                                                     |
+| `agent.name`                                                                     | Agent name when running with the `--agent` flag or agent settings configured                                                                                                                 |
+| `worktree.name`                                                                  | Name of the active worktree. Present only during `--worktree` sessions                                                                                                                       |
+| `worktree.path`                                                                  | Absolute path to the worktree directory                                                                                                                                                      |
+| `worktree.branch`                                                                | Git branch name for the worktree (for example, `"worktree-my-feature"`). Absent for hook-based worktrees                                                                                     |
+| `worktree.original_cwd`                                                          | The directory Claude was in before entering the worktree                                                                                                                                     |
+| `worktree.original_branch`                                                       | Git branch checked out before entering the worktree. Absent for hook-based worktrees                                                                                                         |
 
 <Accordion title="Full JSON schema">
   Your status line command receives this JSON structure via stdin:
@@ -212,6 +214,16 @@ Claude Code sends the following JSON fields to your script via stdin:
       }
     },
     "exceeds_200k_tokens": false,
+    "rate_limits": {
+      "five_hour": {
+        "used_percentage": 23.5,
+        "resets_at": 1738425600
+      },
+      "seven_day": {
+        "used_percentage": 41.2,
+        "resets_at": 1738857600
+      }
+    },
     "vim": {
       "mode": "NORMAL"
     },
@@ -233,6 +245,7 @@ Claude Code sends the following JSON fields to your script via stdin:
   * `vim`: appears only when vim mode is enabled
   * `agent`: appears only when running with the `--agent` flag or agent settings configured
   * `worktree`: appears only during `--worktree` sessions. When present, `branch` and `original_branch` may also be absent for hook-based worktrees
+  * `rate_limits`: appears only for Claude.ai subscribers (Pro/Max) after the first API response in the session. Each window (`five_hour`, `seven_day`) may be independently absent. Use `jq -r '.rate_limits.five_hour.used_percentage // empty'` to handle absence gracefully.
 
   **Fields that may be `null`**:
 
@@ -677,6 +690,72 @@ Each script gets the git remote URL, converts SSH format to HTTPS, and wraps the
       } catch {
           console.log(`[${model}]`);
       }
+  });
+  ```
+</CodeGroup>
+
+### Rate limit usage
+
+Display Claude.ai subscription rate limit usage in the status line. The `rate_limits` object contains `five_hour` (5-hour rolling window) and `seven_day` (weekly) windows. Each window provides `used_percentage` (0-100) and `resets_at` (Unix epoch seconds when the window resets).
+
+This field is only present for Claude.ai subscribers (Pro/Max) after the first API response. Each script handles the absent field gracefully:
+
+<CodeGroup>
+  ```bash Bash theme={null}
+  #!/bin/bash
+  input=$(cat)
+
+  MODEL=$(echo "$input" | jq -r '.model.display_name')
+  # "// empty" produces no output when rate_limits is absent
+  FIVE_H=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+  WEEK=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+
+  LIMITS=""
+  [ -n "$FIVE_H" ] && LIMITS="5h: $(printf '%.0f' "$FIVE_H")%"
+  [ -n "$WEEK" ] && LIMITS="${LIMITS:+$LIMITS }7d: $(printf '%.0f' "$WEEK")%"
+
+  [ -n "$LIMITS" ] && echo "[$MODEL] | $LIMITS" || echo "[$MODEL]"
+  ```
+
+  ```python Python theme={null}
+  #!/usr/bin/env python3
+  import json, sys
+
+  data = json.load(sys.stdin)
+  model = data['model']['display_name']
+
+  parts = []
+  rate = data.get('rate_limits', {})
+  five_h = rate.get('five_hour', {}).get('used_percentage')
+  week = rate.get('seven_day', {}).get('used_percentage')
+
+  if five_h is not None:
+      parts.append(f"5h: {five_h:.0f}%")
+  if week is not None:
+      parts.append(f"7d: {week:.0f}%")
+
+  if parts:
+      print(f"[{model}] | {' '.join(parts)}")
+  else:
+      print(f"[{model}]")
+  ```
+
+  ```javascript Node.js theme={null}
+  #!/usr/bin/env node
+  let input = '';
+  process.stdin.on('data', chunk => input += chunk);
+  process.stdin.on('end', () => {
+      const data = JSON.parse(input);
+      const model = data.model.display_name;
+
+      const parts = [];
+      const fiveH = data.rate_limits?.five_hour?.used_percentage;
+      const week = data.rate_limits?.seven_day?.used_percentage;
+
+      if (fiveH != null) parts.push(`5h: ${Math.round(fiveH)}%`);
+      if (week != null) parts.push(`7d: ${Math.round(week)}%`);
+
+      console.log(parts.length ? `[${model}] | ${parts.join(' ')}` : `[${model}]`);
   });
   ```
 </CodeGroup>
