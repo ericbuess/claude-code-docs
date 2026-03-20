@@ -352,9 +352,9 @@ Preserve all existing behavior and tests.
 
 ### Inject dynamic context
 
-The `!`command\`\` syntax runs shell commands before the skill content is sent to Claude. The command output replaces the placeholder, so Claude receives actual data, not the command itself.
+The `` !`<command>` `` syntax runs shell commands before the skill content is sent to Claude. The command output replaces the placeholder, so Claude receives actual data, not the command itself.
 
-This skill summarizes a pull request by fetching live PR data with the GitHub CLI. The `!`gh pr diff\`\` and other commands run first, and their output gets inserted into the prompt:
+This skill summarizes a pull request by fetching live PR data with the GitHub CLI. The `` !`gh pr diff` `` and other commands run first, and their output gets inserted into the prompt:
 
 ```yaml  theme={null}
 ---
@@ -376,7 +376,7 @@ Summarize this pull request...
 
 When this skill runs:
 
-1. Each `!`command\`\` executes immediately (before Claude sees anything)
+1. Each `` !`<command>` `` executes immediately (before Claude sees anything)
 2. The output replaces the placeholder in the skill content
 3. Claude receives the fully-rendered prompt with actual PR data
 
@@ -502,7 +502,7 @@ Run the visualization script from your project root:
 
 ```bash
 python ~/.claude/skills/codebase-visualizer/scripts/visualize.py .
-```text
+```
 
 This creates `codebase-map.html` in the current directory and opens it in your default browser.
 
