@@ -124,8 +124,8 @@
     "discover-plugins.md": {
       "original_url": "https://code.claude.com/docs/en/discover-plugins",
       "original_md_url": "https://code.claude.com/docs/en/discover-plugins.md",
-      "hash": "a943a6ca877ad336e3bd80ccd0dcafec1ee8d1d546ff02bccee0fc3342514e8c",
-      "last_updated": "2026-03-20T03:44:56.260513"
+      "hash": "4ee372e93b650c1fa54fe26f691e9373c29503516e01be0d879994c6af6db581",
+      "last_updated": "2026-03-20T15:13:04.573518"
     },
     "env-vars.md": {
       "original_url": "https://code.claude.com/docs/en/env-vars",
@@ -142,8 +142,8 @@
     "features-overview.md": {
       "original_url": "https://code.claude.com/docs/en/features-overview",
       "original_md_url": "https://code.claude.com/docs/en/features-overview.md",
-      "hash": "561370536d0d7ed02fbc72c14ad9ceafa36beb5b2e1f9cc14d320529f177a977",
-      "last_updated": "2026-03-12T21:06:39.593507"
+      "hash": "8ff0d769d5cece59088dfbf99032108e6a2db1808ba198f042fe3392735382da",
+      "last_updated": "2026-03-20T15:13:06.414949"
     },
     "github-actions.md": {
       "original_url": "https://code.claude.com/docs/en/github-actions",
@@ -226,8 +226,8 @@
     "memory.md": {
       "original_url": "https://code.claude.com/docs/en/memory",
       "original_md_url": "https://code.claude.com/docs/en/memory.md",
-      "hash": "0dc69630422f0b3de0f420122b1d19e5aaa4b2394ec83abb3c394f6529dc2c3c",
-      "last_updated": "2026-03-18T00:09:02.939851"
+      "hash": "dc98f1cd7217947e644c747d1d1333a236b7241f1b95b05ca04790f77df5df5c",
+      "last_updated": "2026-03-20T15:13:15.593478"
     },
     "microsoft-foundry.md": {
       "original_url": "https://code.claude.com/docs/en/microsoft-foundry",
@@ -274,8 +274,8 @@
     "plugin-marketplaces.md": {
       "original_url": "https://code.claude.com/docs/en/plugin-marketplaces",
       "original_md_url": "https://code.claude.com/docs/en/plugin-marketplaces.md",
-      "hash": "dbdd378ebb88a857c0f53cd35beaa0ad96d88cf85e25ba10d8ea3f5fc1d9a0ec",
-      "last_updated": "2026-03-20T03:45:10.466695"
+      "hash": "48ed00a91032e4e37e31be6d67be1967749d84d69a7714571693241f3089d7ea",
+      "last_updated": "2026-03-20T15:13:20.448256"
     },
     "plugins.md": {
       "original_url": "https://code.claude.com/docs/en/plugins",
@@ -322,8 +322,8 @@
     "server-managed-settings.md": {
       "original_url": "https://code.claude.com/docs/en/server-managed-settings",
       "original_md_url": "https://code.claude.com/docs/en/server-managed-settings.md",
-      "hash": "5b9110c4e0673ec260e4354d8edb0e54850437c97e1d1579051d2d558f9707d7",
-      "last_updated": "2026-03-16T18:15:49.057566"
+      "hash": "4fbe28dc73f886b3983d368d33a4e21d0c4965a8806ef0d31145ee6ac7176172",
+      "last_updated": "2026-03-20T15:13:25.404490"
     },
     "settings.md": {
       "original_url": "https://code.claude.com/docs/en/settings",
@@ -358,8 +358,8 @@
     "sub-agents.md": {
       "original_url": "https://code.claude.com/docs/en/sub-agents",
       "original_md_url": "https://code.claude.com/docs/en/sub-agents.md",
-      "hash": "439603d277c02f3b732651d6aa4bbc015309fa6881b44615e5e8d17b897a8ccb",
-      "last_updated": "2026-03-20T03:45:18.419436"
+      "hash": "c1a01b67a3631b716a37616a5fa471840a764b8f578deb6edb540344b2452e6f",
+      "last_updated": "2026-03-20T15:13:29.081859"
     },
     "terminal-config.md": {
       "original_url": "https://code.claude.com/docs/en/terminal-config",
@@ -405,8 +405,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-20T12:05:36.236841",
-    "fetch_duration_seconds": 38.976487,
+    "last_fetch_completed": "2026-03-20T15:13:33.324653",
+    "fetch_duration_seconds": 41.645504,
     "total_pages_discovered": 67,
     "pages_fetched_successfully": 68,
     "pages_failed": 0,
@@ -416,7 +416,7 @@
     "total_files": 67,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-20T12:05:36.236870",
+  "last_updated": "2026-03-20T15:13:33.324676",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

@@ -252,16 +252,27 @@ You can control what subagents can do through tool access, permission modes, and
 
 Subagents can use any of Claude Code's [internal tools](/en/tools-reference). By default, subagents inherit all tools from the main conversation, including MCP tools.
 
-To restrict tools, use the `tools` field (allowlist) or `disallowedTools` field (denylist):
+To restrict tools, use either the `tools` field (allowlist) or the `disallowedTools` field (denylist). This example uses `tools` to exclusively allow Read, Grep, Glob, and Bash. The subagent can't edit files, write files, or use any MCP tools:
 
 ```yaml  theme={null}
 ---
 name: safe-researcher
 description: Research agent with restricted capabilities
 tools: Read, Grep, Glob, Bash
+---
+```
+
+This example uses `disallowedTools` to inherit every tool from the main conversation except Write and Edit. The subagent keeps Bash, MCP tools, and everything else:
+
+```yaml  theme={null}
+---
+name: no-writes
+description: Inherits every tool except file writes
 disallowedTools: Write, Edit
 ---
 ```
+
+If both are set, `disallowedTools` is applied first, then `tools` is resolved against the remaining pool. A tool listed in both is removed.
 
 #### Restrict which subagents can be spawned
 
