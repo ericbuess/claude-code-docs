@@ -148,8 +148,8 @@
     "github-actions.md": {
       "original_url": "https://code.claude.com/docs/en/github-actions",
       "original_md_url": "https://code.claude.com/docs/en/github-actions.md",
-      "hash": "cadecd0fde2c121ea13d11d2d0e39a169afe7161dcee0b0fe8d9ce90e500ef8b",
-      "last_updated": "2026-03-09T21:06:02.616107"
+      "hash": "3f13d910dc7f9b3a666b3f1f49f826f602549f3b6874a600e3810f4099c16b14",
+      "last_updated": "2026-03-21T18:03:34.139162"
     },
     "gitlab-ci-cd.md": {
       "original_url": "https://code.claude.com/docs/en/gitlab-ci-cd",
@@ -405,8 +405,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-21T15:03:59.940942",
-    "fetch_duration_seconds": 38.452708,
+    "last_fetch_completed": "2026-03-21T18:03:58.824918",
+    "fetch_duration_seconds": 38.982917,
     "total_pages_discovered": 67,
     "pages_fetched_successfully": 68,
     "pages_failed": 0,
@@ -416,7 +416,7 @@
     "total_files": 67,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-21T15:03:59.940971",
+  "last_updated": "2026-03-21T18:03:58.824951",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

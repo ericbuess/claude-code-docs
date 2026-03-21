@@ -650,7 +650,7 @@ Common arguments:
 * `--max-turns`: Maximum conversation turns (default: 10)
 * `--model`: Model to use (for example, `claude-sonnet-4-6`)
 * `--mcp-config`: Path to MCP configuration
-* `--allowed-tools`: Comma-separated list of allowed tools
+* `--allowedTools`: Comma-separated list of allowed tools. The `--allowed-tools` alias also works.
 * `--debug`: Enable debug output
 
 ### Alternative integration methods
