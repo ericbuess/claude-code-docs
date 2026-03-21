@@ -202,12 +202,14 @@ The `$schema` line in the example above points to the [official JSON schema](htt
 
 ### Global config settings
 
-These display preferences are stored in `~/.claude.json` rather than `settings.json`. Adding them to `settings.json` will trigger a schema validation error.
+These settings are stored in `~/.claude.json` rather than `settings.json`. Adding them to `settings.json` will trigger a schema validation error.
 
-| Key                          | Description                                                                                                                                                | Example |
-| :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- | :------ |
-| `showTurnDuration`           | Show turn duration messages after responses, e.g. "Cooked for 1m 6s". Default: `true`. Appears in `/config` as **Show turn duration**                      | `false` |
-| `terminalProgressBarEnabled` | Show the terminal progress bar in supported terminals like Windows Terminal and iTerm2. Default: `true`. Appears in `/config` as **Terminal progress bar** | `false` |
+| Key                          | Description                                                                                                                                                                                                                                                                                                          | Example |
+| :--------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------ |
+| `autoConnectIde`             | Automatically connect to a running IDE when Claude Code starts from an external terminal. Default: `false`. Appears in `/config` as **Auto-connect to IDE (external terminal)** when running outside a VS Code or JetBrains terminal                                                                                 | `true`  |
+| `autoInstallIdeExtension`    | Automatically install the Claude Code IDE extension when running from a VS Code terminal. Default: `true`. Appears in `/config` as **Auto-install IDE extension** when running inside a VS Code or JetBrains terminal. You can also set the [`CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`](/en/env-vars) environment variable | `false` |
+| `showTurnDuration`           | Show turn duration messages after responses, e.g. "Cooked for 1m 6s". Default: `true`. Appears in `/config` as **Show turn duration**                                                                                                                                                                                | `false` |
+| `terminalProgressBarEnabled` | Show the terminal progress bar in supported terminals like Windows Terminal and iTerm2. Default: `true`. Appears in `/config` as **Terminal progress bar**                                                                                                                                                           | `false` |
 
 ### Worktree settings
 

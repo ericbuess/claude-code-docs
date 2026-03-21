@@ -30,7 +30,7 @@ This page covers setup, how to start and connect to sessions, and how Remote Con
 
 Before using Remote Control, confirm that your environment meets these conditions:
 
-* **Subscription**: available on Pro, Max, Team, and Enterprise plans. On Team and Enterprise, an admin must first enable the Remote Control toggle in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code). API keys are not supported.
+* **Subscription**: available on Pro, Max, Team, and Enterprise plans. API keys are not supported. On Team and Enterprise, an admin must first enable the Remote Control toggle in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code).
 * **Authentication**: run `claude` and use `/login` to sign in through claude.ai if you haven't already.
 * **Workspace trust**: run `claude` in your project directory at least once to accept the workspace trust dialog.
 
@@ -148,10 +148,10 @@ If none of these are set, run `/logout` then `/login` to refresh.
 
 ### "Remote Control is disabled by your organization's policy"
 
-This error has three distinct causes. The first is the most common on developer machines.
+This error has three distinct causes. Run `/status` first to see which login method and subscription you're using.
 
 * **You're authenticated with an API key or Console account**: Remote Control requires claude.ai OAuth. Run `/login` and choose the claude.ai option. If `ANTHROPIC_API_KEY` is set in your environment, unset it.
-* **Your Team or Enterprise admin hasn't enabled it**: Remote Control is off by default on these plans. An admin can turn it on at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code). The Remote Control toggle depends on the Claude Code on the web toggle on the same page; enable Claude Code on the web first if Remote Control appears unavailable.
+* **Your Team or Enterprise admin hasn't enabled it**: Remote Control is off by default on these plans. An admin can enable it at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) by turning on the **Remote Control** toggle. This is a server-side organization setting, not a [managed settings](/en/permissions#managed-only-settings) key.
 * **The admin toggle is grayed out**: your organization has a data retention or compliance configuration that is incompatible with Remote Control. This cannot be changed from the admin panel. Contact Anthropic support to discuss options.
 
 ### "Remote credentials fetch failed"

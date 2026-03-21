@@ -115,7 +115,7 @@ This example uses [Bun](https://bun.sh) as the runtime for its built-in HTTP ser
   </Step>
 
   <Step title="Register your server with Claude Code">
-    Add the server to `.mcp.json` so Claude Code knows how to start it. If you're adding it to a project-level `.mcp.json` in the same directory, use a relative path. If you're adding it to your user-level `~/.mcp.json`, use the full absolute path:
+    Add the server to your MCP config so Claude Code knows how to start it. For a project-level `.mcp.json` in the same directory, use a relative path. For user-level config in `~/.claude.json`, use the full absolute path so the server can be found from any project:
 
     ```json title=".mcp.json" theme={null}
     {
@@ -125,7 +125,7 @@ This example uses [Bun](https://bun.sh) as the runtime for its built-in HTTP ser
     }
     ```
 
-    Claude Code reads `.mcp.json` at startup and spawns each server as a subprocess.
+    Claude Code reads your MCP config at startup and spawns each server as a subprocess.
   </Step>
 
   <Step title="Test it">
@@ -135,7 +135,7 @@ This example uses [Bun](https://bun.sh) as the runtime for its built-in HTTP ser
     claude --dangerously-load-development-channels server:webhook
     ```
 
-    When Claude Code starts, it reads `.mcp.json`, spawns your `webhook.ts` as a subprocess, and the HTTP listener starts automatically on the port you configured (8788 in this example). You don't need to run the server yourself.
+    When Claude Code starts, it reads your MCP config, spawns your `webhook.ts` as a subprocess, and the HTTP listener starts automatically on the port you configured (8788 in this example). You don't need to run the server yourself.
 
     If you see "blocked by org policy," your Team or Enterprise admin needs to [enable channels](/en/channels#enterprise-controls) first.
 
