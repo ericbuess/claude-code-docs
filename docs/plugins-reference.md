@@ -58,10 +58,16 @@ Plugins can provide specialized subagents for specific tasks that Claude can inv
 ---
 name: agent-name
 description: What this agent specializes in and when Claude should invoke it
+model: sonnet
+effort: medium
+maxTurns: 20
+disallowedTools: Write, Edit
 ---
 
 Detailed system prompt for the agent describing its role, expertise, and behavior.
 ```
+
+Plugin agents support `name`, `description`, `model`, `effort`, `maxTurns`, `tools`, `disallowedTools`, `skills`, `memory`, `background`, and `isolation` frontmatter fields. The only valid `isolation` value is `"worktree"`. For security reasons, `hooks`, `mcpServers`, and `permissionMode` are not supported for plugin-shipped agents.
 
 **Integration points**:
 
