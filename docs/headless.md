@@ -34,9 +34,37 @@ This example asks Claude a question about your codebase and prints the response:
 claude -p "What does the auth module do?"
 ```
 
+### Start faster with bare mode
+
+Add `--bare` to reduce startup time by skipping auto-discovery of hooks, skills, plugins, MCP servers, auto memory, and CLAUDE.md. Without it, `claude -p` loads the same [context](/en/how-claude-code-works#the-context-window) an interactive session would, including anything configured in the working directory or `~/.claude`.
+
+Bare mode is useful for CI and scripts where you need the same result on every machine. A hook in a teammate's `~/.claude` or an MCP server in the project's `.mcp.json` won't run, because bare mode never reads them. Only flags you pass explicitly take effect.
+
+This example runs a one-off summarize task in bare mode and pre-approves the Read tool so the call completes without a permission prompt:
+
+```bash  theme={null}
+claude --bare -p "Summarize this file" --allowedTools "Read"
+```
+
+In bare mode Claude has access to the Bash, file read, and file edit tools. Pass any context you need with a flag:
+
+| To load                 | Use                                                     |
+| ----------------------- | ------------------------------------------------------- |
+| System prompt additions | `--append-system-prompt`, `--append-system-prompt-file` |
+| Settings                | `--settings <file-or-json>`                             |
+| MCP servers             | `--mcp-config <file-or-json>`                           |
+| Custom agents           | `--agents <json>`                                       |
+| A plugin directory      | `--plugin-dir <path>`                                   |
+
+Bare mode skips OAuth and keychain reads. Anthropic authentication must come from `ANTHROPIC_API_KEY` or an `apiKeyHelper` in the JSON passed to `--settings`. Bedrock, Vertex, and Foundry use their usual provider credentials.
+
+<Note>
+  `--bare` is the recommended mode for scripted and SDK calls, and will become the default for `-p` in a future release.
+</Note>
+
 ## Examples
 
-These examples highlight common CLI patterns.
+These examples highlight common CLI patterns. For CI and other scripted calls, add [`--bare`](#start-faster-with-bare-mode) so they don't pick up whatever happens to be configured locally.
 
 ### Get structured output
 
