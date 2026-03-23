@@ -162,6 +162,10 @@ verification is not enabled by default.
 Enable repository access verification and/or withhold your name from your shared
 sessions by going to Settings > Claude Code > Sharing settings.
 
+## Schedule recurring tasks
+
+Run Claude on a recurring schedule to automate work like daily PR reviews, dependency audits, and CI failure analysis. See [Schedule tasks on the web](/en/web-scheduled-tasks) for the full guide.
+
 ## Managing sessions
 
 ### Archiving sessions

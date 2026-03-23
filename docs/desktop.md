@@ -158,7 +158,7 @@ Connect external services, add reusable workflows, customize Claude's behavior, 
 
 ### Connect external tools
 
-For local and [SSH](#ssh-sessions) sessions, click the **+** button next to the prompt box and select **Connectors** to add integrations like Google Calendar, Slack, GitHub, Linear, Notion, and more. You can add connectors before or during a session. Connectors are not available for remote sessions.
+For local and [SSH](#ssh-sessions) sessions, click the **+** button next to the prompt box and select **Connectors** to add integrations like Google Calendar, Slack, GitHub, Linear, Notion, and more. You can add connectors before or during a session. The **+** button is not available in remote sessions, but [scheduled tasks](/en/web-scheduled-tasks) configure connectors at task creation time.
 
 To manage or disconnect connectors, go to Settings → Connectors in the desktop app, or select **Manage connectors** from the Connectors menu in the prompt box.
 
@@ -321,15 +321,26 @@ These configurations show common setups for different project types:
 
 ## Schedule recurring tasks
 
-Scheduled tasks start a new local session automatically at a time and frequency you choose. Use them for recurring work like daily code reviews, dependency update checks, or morning briefings that pull from your calendar and inbox.
+By default, scheduled tasks start a new session automatically at a time and frequency you choose. Use them for recurring work like daily code reviews, dependency update checks, or morning briefings that pull from your calendar and inbox.
 
-Tasks run on your machine, so the desktop app must be open and your computer awake for them to fire. See [How scheduled tasks run](#how-scheduled-tasks-run) for details on missed runs and catch-up behavior.
+### Compare scheduling options
+
+<Snippet file="scheduling-comparison.mdx" />
+
+The Schedule page supports two kinds of tasks:
+
+* **Local tasks**: run on your machine. They have direct access to your local files and tools, but the desktop app must be open and your computer awake for them to run.
+* **Remote tasks**: run on Anthropic-managed cloud infrastructure. They keep running even when your computer is off, but work against a fresh clone of your repository rather than your local checkout.
+
+Both kinds appear in the same task grid. Click **New task** to pick which kind to create. The rest of this section covers local tasks; for remote tasks, see [Cloud scheduled tasks](/en/web-scheduled-tasks).
+
+See [How scheduled tasks run](#how-scheduled-tasks-run) for details on missed runs and catch-up behavior for local tasks.
 
 <Note>
-  By default, scheduled tasks run against whatever state your working directory is in, including uncommitted changes. Enable the worktree toggle in the prompt input to give each run its own isolated Git worktree, the same way [parallel sessions](#work-in-parallel-with-sessions) work.
+  By default, local scheduled tasks run against whatever state your working directory is in, including uncommitted changes. Enable the worktree toggle in the prompt input to give each run its own isolated Git worktree, the same way [parallel sessions](#work-in-parallel-with-sessions) work.
 </Note>
 
-To create a scheduled task, click **Schedule** in the sidebar, then **+ New task**. Configure these fields:
+To create a local scheduled task, click **Schedule** in the sidebar, click **New task**, and choose **New local task**. Configure these fields:
 
 | Field       | Description                                                                                                                                                                                                              |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -352,11 +363,11 @@ For intervals the picker doesn't offer (every 15 minutes, first of each month, e
 
 ### How scheduled tasks run
 
-Scheduled tasks run locally on your machine. Desktop checks the schedule every minute while the app is open and starts a fresh session when a task is due, independent of any manual sessions you have open. Each task gets a fixed delay of up to 10 minutes after the scheduled time to stagger API traffic. The delay is deterministic: the same task always starts at the same offset.
+Local scheduled tasks run on your machine. Desktop checks the schedule every minute while the app is open and starts a fresh session when a task is due, independent of any manual sessions you have open. Each task gets a fixed delay of up to 10 minutes after the scheduled time to stagger API traffic. The delay is deterministic: the same task always starts at the same offset.
 
 When a task fires, you get a desktop notification and a new session appears under a **Scheduled** section in the sidebar. Open it to see what Claude did, review changes, or respond to permission prompts. The session works like any other: Claude can edit files, run commands, create commits, and open pull requests.
 
-Tasks only run while the desktop app is running and your computer is awake. If your computer sleeps through a scheduled time, the run is skipped. To prevent idle-sleep, enable **Keep computer awake** in Settings under **Desktop app → General**. Closing the laptop lid still puts it to sleep.
+Tasks only run while the desktop app is running and your computer is awake. If your computer sleeps through a scheduled time, the run is skipped. To prevent idle-sleep, enable **Keep computer awake** in Settings under **Desktop app → General**. Closing the laptop lid still puts it to sleep. For tasks that need to run even when your computer is off, use a [remote task](/en/web-scheduled-tasks) instead.
 
 ### Missed runs
 
