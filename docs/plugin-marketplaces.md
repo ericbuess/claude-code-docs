@@ -98,7 +98,7 @@ This example creates a marketplace with one plugin: a `/quality-review` skill fo
     Select some code in your editor and run your new command.
 
     ```shell  theme={null}
-    /review
+    /quality-review
     ```
   </Step>
 </Steps>

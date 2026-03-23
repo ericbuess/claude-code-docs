@@ -274,8 +274,8 @@
     "plugin-marketplaces.md": {
       "original_url": "https://code.claude.com/docs/en/plugin-marketplaces",
       "original_md_url": "https://code.claude.com/docs/en/plugin-marketplaces.md",
-      "hash": "48ed00a91032e4e37e31be6d67be1967749d84d69a7714571693241f3089d7ea",
-      "last_updated": "2026-03-20T15:13:20.448256"
+      "hash": "6168e4f8ef56b93633b75c283eb3f9d481572d671110a6a99f6dff1e495f4361",
+      "last_updated": "2026-03-23T21:08:40.857909"
     },
     "plugins.md": {
       "original_url": "https://code.claude.com/docs/en/plugins",
@@ -411,8 +411,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-23T18:13:08.481621",
-    "fetch_duration_seconds": 39.806639,
+    "last_fetch_completed": "2026-03-23T21:08:54.223020",
+    "fetch_duration_seconds": 40.807139,
     "total_pages_discovered": 68,
     "pages_fetched_successfully": 69,
     "pages_failed": 0,
@@ -422,7 +422,7 @@
     "total_files": 68,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-23T18:13:08.481648",
+  "last_updated": "2026-03-23T21:08:54.223052",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
