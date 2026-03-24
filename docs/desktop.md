@@ -4,7 +4,7 @@
 
 # Use Claude Code Desktop
 
-> Get more out of Claude Code Desktop: parallel sessions with Git isolation, visual diff review, app previews, PR monitoring, permission modes, connectors, and enterprise configuration.
+> Get more out of Claude Code Desktop: computer use, Dispatch sessions from your phone, parallel sessions with Git isolation, visual diff review, app previews, PR monitoring, connectors, and enterprise configuration.
 
 The Code tab within the Claude Desktop app lets you use Claude Code through a graphical interface instead of the terminal.
 
@@ -12,8 +12,10 @@ Desktop adds these capabilities on top of the standard Claude Code experience:
 
 * [Visual diff review](#review-changes-with-diff-view) with inline comments
 * [Live app preview](#preview-your-app) with dev servers
+* [Computer use](#let-claude-use-your-computer) to open apps and control your screen on macOS
 * [GitHub PR monitoring](#monitor-pull-request-status) with auto-fix and auto-merge
 * [Parallel sessions](#work-in-parallel-with-sessions) with automatic Git worktree isolation
+* [Dispatch](#sessions-from-dispatch) integration: send a task from your phone, get a session here
 * [Scheduled tasks](#schedule-recurring-tasks) that run Claude on a recurring schedule
 * [Connectors](#connect-external-tools) for GitHub, Slack, Linear, and more
 * Local, [SSH](#ssh-sessions), and [cloud](#run-long-running-tasks-remotely) environments
@@ -22,7 +24,7 @@ Desktop adds these capabilities on top of the standard Claude Code experience:
   New to Desktop? Start with [Get started](/en/desktop-quickstart) to install the app and make your first edit.
 </Tip>
 
-This page covers [working with code](#work-with-code), [managing sessions](#manage-sessions), [extending Claude Code](#extend-claude-code), [scheduled tasks](#schedule-recurring-tasks), and [configuration](#environment-configuration). It also includes a [CLI comparison](#coming-from-the-cli) and [troubleshooting](#troubleshooting).
+This page covers [working with code](#work-with-code), [computer use](#let-claude-use-your-computer), [managing sessions](#manage-sessions), [extending Claude Code](#extend-claude-code), [scheduled tasks](#schedule-recurring-tasks), and [configuration](#environment-configuration). It also includes a [CLI comparison](#coming-from-the-cli) and [troubleshooting](#troubleshooting).
 
 ## Start a session
 
@@ -121,9 +123,62 @@ Use the **Auto-fix** and **Auto-merge** toggles in the CI status bar to enable e
   PR monitoring requires the [GitHub CLI (`gh`)](https://cli.github.com/) to be installed and authenticated on your machine. If `gh` is not installed, Desktop prompts you to install it the first time you try to create a PR.
 </Note>
 
+## Let Claude use your computer
+
+Computer use lets Claude open your apps, control your screen, and work directly on your machine the way you would. Ask Claude to test a native app in the iOS simulator, interact with a desktop tool that has no CLI, or automate something that only works through a GUI.
+
+<Note>
+  Computer use is a research preview on macOS that requires a Pro or Max plan. It is not available on Team or Enterprise plans. The Claude Desktop app must be running.
+</Note>
+
+Computer use is off by default. [Enable it in Settings](#enable-computer-use) and grant the required macOS permissions before Claude can control your screen.
+
+<Warning>
+  Unlike the [sandboxed Bash tool](/en/sandboxing), computer use runs on your actual desktop with access to whatever you approve. Claude checks each action and flags potential prompt injection from on-screen content, but the trust boundary is different. See the [computer use safety guide](https://support.claude.com/en/articles/14128542) for best practices.
+</Warning>
+
+### When computer use applies
+
+Claude has several ways to interact with an app or service, and computer use is the broadest and slowest. It tries the most precise tool first:
+
+* If you have a [connector](#connect-external-tools) for a service, Claude uses the connector.
+* If the task is a shell command, Claude uses Bash.
+* If the task is browser work and you have [Claude in Chrome](/en/chrome) set up, Claude uses that.
+* If none of those apply, Claude uses computer use.
+
+The [per-app access tiers](#app-permissions) reinforce this: browsers are capped at view-only, and terminals and IDEs at click-only, steering Claude toward the dedicated tool even when computer use is active. Screen control is reserved for things nothing else can reach, like native apps, hardware control panels, the iOS simulator, or proprietary tools without an API.
+
+### Enable computer use
+
+Computer use is off by default. If you ask Claude to do something that needs it while it's off, Claude tells you it could do the task if you enable computer use in Settings. To enable it, open **Settings > Desktop app > General** and toggle **Computer use** on. Before the toggle takes effect, you need to grant two macOS system permissions:
+
+* **Accessibility**: lets Claude click, type, and scroll
+* **Screen Recording**: lets Claude see what's on your screen
+
+The Settings page shows the current status of each permission. If either is denied, click the badge to open the relevant System Settings pane.
+
+### App permissions
+
+The first time Claude needs to use an app, a prompt appears in your session. Click **Allow for this session** or **Deny**. Approvals last for the current session, or 30 minutes in [Dispatch-spawned sessions](#sessions-from-dispatch).
+
+The prompt also shows what level of control Claude gets for that app. These tiers are fixed by app category and can't be changed:
+
+| Tier         | What Claude can do                                       | Applies to                  |
+| :----------- | :------------------------------------------------------- | :-------------------------- |
+| View only    | See the app in screenshots                               | Browsers, trading platforms |
+| Click only   | Click and scroll, but not type or use keyboard shortcuts | Terminals, IDEs             |
+| Full control | Click, type, drag, and use keyboard shortcuts            | Everything else             |
+
+Apps with broad reach like Terminal, Finder, and System Settings show an extra warning in the prompt so you know what approving them grants.
+
+You can configure two settings in **Settings > Desktop app > General**:
+
+* **Denied apps**: add apps here to reject them without prompting. Claude may still affect a denied app indirectly through actions in an allowed app, but it can't interact with the denied app directly.
+* **Unhide apps when Claude finishes**: while Claude is working, your other windows are hidden so it interacts with only the approved app. When Claude finishes, hidden windows are restored unless you turn this setting off.
+
 ## Manage sessions
 
-Each session is an independent conversation with its own context and changes. You can run multiple sessions in parallel or send work to the cloud.
+Each session is an independent conversation with its own context and changes. You can run multiple sessions in parallel, send work to the cloud, or let Dispatch start sessions for you from your phone.
 
 ### Work in parallel with sessions
 
@@ -151,6 +206,20 @@ The **Continue in** menu, accessible from the VS Code icon in the bottom right o
 
 * **Claude Code on the Web**: sends your local session to continue running remotely. Desktop pushes your branch, generates a summary of the conversation, and creates a new remote session with the full context. You can then choose to archive the local session or keep it. This requires a clean working tree, and is not available for SSH sessions.
 * **Your IDE**: opens your project in a supported IDE at the current working directory.
+
+### Sessions from Dispatch
+
+[Dispatch](https://support.claude.com/en/articles/13947068) is a persistent conversation with Claude that lives in the [Cowork](https://claude.com/product/cowork#dispatch-and-computer-use) tab. You message Dispatch a task, and it decides how to handle it.
+
+A task can end up as a Code session in two ways: you ask for one directly, such as "open a Claude Code session and fix the login bug", or Dispatch decides the task is development work and spawns one on its own. Tasks that typically route to Code include fixing bugs, updating dependencies, running tests, or opening pull requests. Research, document editing, and spreadsheet work stay in Cowork.
+
+Either way, the Code session appears in the Code tab's sidebar with a **Dispatch** badge. You get a push notification on your phone when it finishes or needs your approval.
+
+If you have [computer use](#let-claude-use-your-computer) enabled, Dispatch-spawned Code sessions can use it too. App approvals in those sessions expire after 30 minutes and re-prompt, rather than lasting the full session like regular Code sessions.
+
+For setup, pairing, and Dispatch settings, see the [Dispatch help article](https://support.claude.com/en/articles/13947068). Dispatch requires a Pro or Max plan and is not available on Team or Enterprise plans.
+
+Dispatch is one of several ways to work with Claude when you're away from your terminal. See [Platforms and integrations](/en/platforms#work-when-you-are-away-from-your-terminal) to compare it with Remote Control, Channels, Slack, and scheduled tasks.
 
 ## Extend Claude Code
 
@@ -325,7 +394,23 @@ By default, scheduled tasks start a new session automatically at a time and freq
 
 ### Compare scheduling options
 
-<Snippet file="scheduling-comparison.mdx" />
+Claude Code offers three ways to schedule recurring work:
+
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
+| Requires machine on        | No                               | Yes                                             | Yes                            |
+| Requires open session      | No                               | No                                              | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+
+<Tip>
+  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
+</Tip>
 
 The Schedule page supports two kinds of tasks:
 
@@ -498,16 +583,16 @@ This table shows the desktop app equivalent for common CLI flags. Flags not list
 
 | CLI                                   | Desktop equivalent                                                                                                                       |
 | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `--model sonnet`                      | model dropdown next to the send button, before starting a session                                                                        |
-| `--resume`, `--continue`              | click a session in the sidebar                                                                                                           |
-| `--permission-mode`                   | mode selector next to the send button                                                                                                    |
+| `--model sonnet`                      | Model dropdown next to the send button, before starting a session                                                                        |
+| `--resume`, `--continue`              | Click a session in the sidebar                                                                                                           |
+| `--permission-mode`                   | Mode selector next to the send button                                                                                                    |
 | `--dangerously-skip-permissions`      | Bypass permissions mode. Enable in Settings → Claude Code → "Allow bypass permissions mode". Enterprise admins can disable this setting. |
-| `--add-dir`                           | add multiple repos with the **+** button in remote sessions                                                                              |
-| `--allowedTools`, `--disallowedTools` | not available in Desktop                                                                                                                 |
-| `--verbose`                           | not available. Check system logs: Console.app on macOS, Event Viewer → Windows Logs → Application on Windows                             |
-| `--print`, `--output-format`          | not available. Desktop is interactive only.                                                                                              |
-| `ANTHROPIC_MODEL` env var             | model dropdown next to the send button                                                                                                   |
-| `MAX_THINKING_TOKENS` env var         | set in shell profile; applies to local sessions. See [environment configuration](#environment-configuration).                            |
+| `--add-dir`                           | Add multiple repos with the **+** button in remote sessions                                                                              |
+| `--allowedTools`, `--disallowedTools` | Not available in Desktop                                                                                                                 |
+| `--verbose`                           | Not available. Check system logs: Console.app on macOS, Event Viewer → Windows Logs → Application on Windows                             |
+| `--print`, `--output-format`          | Not available. Desktop is interactive only.                                                                                              |
+| `ANTHROPIC_MODEL` env var             | Model dropdown next to the send button                                                                                                   |
+| `MAX_THINKING_TOKENS` env var         | Set in shell profile; applies to local sessions. See [environment configuration](#environment-configuration).                            |
 
 ### Shared configuration
 
@@ -529,17 +614,19 @@ This table compares core capabilities between the CLI and Desktop. For a full li
 
 | Feature                                               | CLI                                                       | Desktop                                                                                     |
 | ----------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Permission modes                                      | all modes including `dontAsk`                             | Ask permissions, Auto accept edits, Plan mode, and Bypass permissions via Settings          |
+| Permission modes                                      | All modes including `dontAsk`                             | Ask permissions, Auto accept edits, Plan mode, and Bypass permissions via Settings          |
 | `--dangerously-skip-permissions`                      | CLI flag                                                  | Bypass permissions mode. Enable in Settings → Claude Code → "Allow bypass permissions mode" |
-| [Third-party providers](/en/third-party-integrations) | Bedrock, Vertex, Foundry                                  | not available. Desktop connects to Anthropic's API directly.                                |
-| [MCP servers](/en/mcp)                                | configure in settings files                               | Connectors UI for local and SSH sessions, or settings files                                 |
-| [Plugins](/en/plugins)                                | `/plugin` command                                         | plugin manager UI                                                                           |
-| @mention files                                        | text-based                                                | with autocomplete                                                                           |
-| File attachments                                      | not available                                             | images, PDFs                                                                                |
-| Session isolation                                     | [`--worktree`](/en/cli-reference) flag                    | automatic worktrees                                                                         |
-| Multiple sessions                                     | separate terminals                                        | sidebar tabs                                                                                |
-| Recurring tasks                                       | cron jobs, CI pipelines                                   | [scheduled tasks](#schedule-recurring-tasks)                                                |
-| Scripting and automation                              | [`--print`](/en/cli-reference), [Agent SDK](/en/headless) | not available                                                                               |
+| [Third-party providers](/en/third-party-integrations) | Bedrock, Vertex, Foundry                                  | Not available. Desktop connects to Anthropic's API directly.                                |
+| [MCP servers](/en/mcp)                                | Configure in settings files                               | Connectors UI for local and SSH sessions, or settings files                                 |
+| [Plugins](/en/plugins)                                | `/plugin` command                                         | Plugin manager UI                                                                           |
+| @mention files                                        | Text-based                                                | With autocomplete                                                                           |
+| File attachments                                      | Not available                                             | Images, PDFs                                                                                |
+| Session isolation                                     | [`--worktree`](/en/cli-reference) flag                    | Automatic worktrees                                                                         |
+| Multiple sessions                                     | Separate terminals                                        | Sidebar tabs                                                                                |
+| Recurring tasks                                       | Cron jobs, CI pipelines                                   | [Scheduled tasks](#schedule-recurring-tasks)                                                |
+| Computer use                                          | Not available                                             | [App and screen control](#let-claude-use-your-computer) on macOS                            |
+| Dispatch integration                                  | Not available                                             | [Dispatch sessions](#sessions-from-dispatch) in the sidebar                                 |
+| Scripting and automation                              | [`--print`](/en/cli-reference), [Agent SDK](/en/headless) | Not available                                                                               |
 
 ### What's not available in Desktop
 

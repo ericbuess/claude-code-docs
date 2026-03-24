@@ -307,6 +307,13 @@ For implementation details and source code, visit the [GitHub repository](https:
 * **Compatibility**: Some tools that require specific system access patterns may need configuration adjustments, or may even need to be run outside of the sandbox
 * **Platform support**: Supports macOS, Linux, and WSL2. WSL1 is not supported. Native Windows support is planned.
 
+## What sandboxing does not cover
+
+The sandbox isolates Bash subprocesses. Other tools operate under different boundaries:
+
+* **Built-in file tools**: Read, Edit, and Write use the permission system directly rather than running through the sandbox. See [permissions](/en/permissions).
+* **Computer use on Desktop**: when Claude opens apps and controls your screen on macOS, it runs on your actual desktop rather than in an isolated environment. Per-app permission prompts gate each application. See [computer use](/en/desktop#let-claude-use-your-computer).
+
 ## See also
 
 * [Security](/en/security) - Comprehensive security features and best practices
