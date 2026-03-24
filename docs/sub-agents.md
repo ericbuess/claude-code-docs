@@ -327,7 +327,7 @@ To keep an MCP server out of the main conversation entirely and avoid its tool d
 
 #### Permission modes
 
-The `permissionMode` field controls how the subagent handles permission prompts. Subagents inherit the permission context from the main conversation but can override the mode.
+The `permissionMode` field controls how the subagent handles permission prompts. Subagents inherit the permission context from the main conversation and can override the mode, except when the parent mode takes precedence as described below.
 
 | Mode                | Behavior                                                           |
 | :------------------ | :----------------------------------------------------------------- |
@@ -338,10 +338,10 @@ The `permissionMode` field controls how the subagent handles permission prompts.
 | `plan`              | Plan mode (read-only exploration)                                  |
 
 <Warning>
-  Use `bypassPermissions` with caution. It skips permission prompts, allowing the subagent to execute operations without approval. Writes to `.git`, `.claude`, `.vscode`, and `.idea` directories still prompt for confirmation, except for `.claude/commands`, `.claude/agents`, and `.claude/skills`. See [permission modes](/en/permissions#permission-modes) for details.
+  Use `bypassPermissions` with caution. It skips permission prompts, allowing the subagent to execute operations without approval. Writes to `.git`, `.claude`, `.vscode`, and `.idea` directories still prompt for confirmation, except for `.claude/commands`, `.claude/agents`, and `.claude/skills`. See [permission modes](/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) for details.
 </Warning>
 
-If the parent uses `bypassPermissions`, this takes precedence and cannot be overridden.
+If the parent uses `bypassPermissions`, this takes precedence and cannot be overridden. If the parent uses [auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode), the subagent inherits auto mode and any `permissionMode` in its frontmatter is ignored: the classifier evaluates the subagent's tool calls with the same block and allow rules as the parent session.
 
 #### Preload skills into subagents
 

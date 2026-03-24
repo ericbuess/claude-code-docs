@@ -25,7 +25,7 @@ This page covers:
 * [Gate inbound messages](#gate-inbound-messages): sender checks to prevent prompt injection
 * [Relay permission prompts](#relay-permission-prompts): forward tool approval prompts to remote channels
 
-To use an existing channel instead of building one, see [Channels](/en/channels). Telegram, Discord, and fakechat are included in the research preview.
+To use an existing channel instead of building one, see [Channels](/en/channels). Telegram, Discord, iMessage, and fakechat are included in the research preview.
 
 ## Overview
 
@@ -421,7 +421,7 @@ await mcp.notification({ ... })
 
 Gate on the sender's identity, not the chat or room identity: `message.from.id` in the example, not `message.chat.id`. In group chats, these differ, and gating on the room would let anyone in an allowlisted group inject messages into the session.
 
-The [Telegram](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/telegram) and [Discord](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/discord) channels gate on a sender allowlist the same way. They bootstrap the list by pairing: the user DMs the bot, the bot replies with a pairing code, the user approves it in their Claude Code session, and their platform ID is added. See either implementation for the full pairing flow.
+The [Telegram](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/telegram) and [Discord](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/discord) channels gate on a sender allowlist the same way. They bootstrap the list by pairing: the user DMs the bot, the bot replies with a pairing code, the user approves it in their Claude Code session, and their platform ID is added. See either implementation for the full pairing flow. The [iMessage](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/imessage) channel takes a different approach: it detects the user's own addresses from the Messages database at startup and lets them through automatically, with other senders added by handle.
 
 ## Relay permission prompts
 
@@ -743,7 +743,7 @@ A channel published to your own marketplace still needs `--dangerously-load-deve
 
 ## See also
 
-* [Channels](/en/channels) to install and use Telegram, Discord, or the fakechat demo, and to enable channels for a Team or Enterprise org
+* [Channels](/en/channels) to install and use Telegram, Discord, iMessage, or the fakechat demo, and to enable channels for a Team or Enterprise org
 * [Working channel implementations](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins) for complete server code with pairing flows, reply tools, and file attachments
 * [MCP](/en/mcp) for the underlying protocol that channel servers implement
 * [Plugins](/en/plugins) to package your channel so users can install it with `/plugin install`
