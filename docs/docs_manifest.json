@@ -106,8 +106,8 @@
     "desktop.md": {
       "original_url": "https://code.claude.com/docs/en/desktop",
       "original_md_url": "https://code.claude.com/docs/en/desktop.md",
-      "hash": "571aba9fc42b0ed3449b5b5ed1ac34679bd26015c3f3fb9b6a885fc310962d5a",
-      "last_updated": "2026-03-24T18:14:32.227023"
+      "hash": "7da99158fef28b4a42869e9319055e15c2b6146fa4753a04fe4a8af651aa632e",
+      "last_updated": "2026-03-25T00:08:27.511820"
     },
     "desktop-quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-quickstart",
@@ -220,8 +220,8 @@
     "mcp.md": {
       "original_url": "https://code.claude.com/docs/en/mcp",
       "original_md_url": "https://code.claude.com/docs/en/mcp.md",
-      "hash": "f15349d1f16dad0580df14e5efabbe5d1e22a120484a5f681261d9a2f63e9143",
-      "last_updated": "2026-03-22T18:04:02.504715"
+      "hash": "85f504b84ae93f8ecd409946ef71cd864b178d186b0f1cc3285943bdae224f10",
+      "last_updated": "2026-03-25T00:08:38.541244"
     },
     "memory.md": {
       "original_url": "https://code.claude.com/docs/en/memory",
@@ -340,8 +340,8 @@
     "settings.md": {
       "original_url": "https://code.claude.com/docs/en/settings",
       "original_md_url": "https://code.claude.com/docs/en/settings.md",
-      "hash": "09ba8d7470b39f45f22fd80ba9cb0e5799d5783f254c384f1c63d7c91b2bc370",
-      "last_updated": "2026-03-24T18:14:56.247284"
+      "hash": "7f6a14ce613572fc08088e0edf31342ce40638bc7bb65e295b7cb2baa42828af",
+      "last_updated": "2026-03-25T00:08:50.094963"
     },
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
@@ -423,8 +423,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-24T21:10:34.467059",
-    "fetch_duration_seconds": 42.592133,
+    "last_fetch_completed": "2026-03-25T00:08:57.621395",
+    "fetch_duration_seconds": 40.167538,
     "total_pages_discovered": 70,
     "pages_fetched_successfully": 71,
     "pages_failed": 0,
@@ -434,7 +434,7 @@
     "total_files": 70,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-24T21:10:34.467091",
+  "last_updated": "2026-03-25T00:08:57.621419",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
