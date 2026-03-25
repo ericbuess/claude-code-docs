@@ -14,9 +14,7 @@ Run `claude --version` to check your installed version.
   * Added `managed-settings.d/` drop-in directory alongside `managed-settings.json`, letting separate teams deploy independent policy fragments that merge alphabetically
   * Added `CwdChanged` and `FileChanged` hook events for reactive environment management (e.g., direnv)
   * Added `sandbox.failIfUnavailable` setting to exit with an error when sandbox is enabled but cannot start, instead of running unsandboxed
-  * Added `disableDeepLinkRegistration` setting to prevent `claude-cli://` protocol handler registration
   * Added `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` to strip Anthropic and cloud provider credentials from subprocess environments (Bash tool, hooks, MCP stdio servers)
-  * Added transcript search — press `/` in transcript mode (`Ctrl+O`) to search, `n`/`N` to step through matches
   * Added `Ctrl+X Ctrl+E` as an alias for opening the external editor (readline-native binding; `Ctrl+G` still works)
   * Pasted images now insert an `[Image #N]` chip at the cursor so you can reference them positionally in your prompt
   * Agents can now declare `initialPrompt` in frontmatter to auto-submit a first turn

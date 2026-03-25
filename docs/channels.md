@@ -288,12 +288,14 @@ The allowlist also gates [permission relay](/en/channels-reference#relay-permiss
 
 ## Enterprise controls
 
-Channels are controlled by the `channelsEnabled` setting in [managed settings](/en/settings).
+On Team and Enterprise plans, channels are off by default. Admins control availability through two [managed settings](/en/settings) that users cannot override:
 
-| Plan type                  | Default behavior                                               |
-| :------------------------- | :------------------------------------------------------------- |
-| Pro / Max, no organization | Channels available; users opt in per session with `--channels` |
-| Team / Enterprise          | Channels disabled until an admin explicitly enables them       |
+| Setting                 | Purpose                                                                                                                                                                                                                                                     | When not configured            |
+| :---------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------- |
+| `channelsEnabled`       | Master switch. Must be `true` for any channel to deliver messages. Set via the [claude.ai Admin console](https://claude.ai/admin-settings/claude-code) toggle or directly in managed settings. Blocks all channels including the development flag when off. | Channels blocked               |
+| `allowedChannelPlugins` | Which plugins can register once channels are enabled. Replaces the Anthropic-maintained list when set. Only applies when `channelsEnabled` is `true`.                                                                                                       | Anthropic default list applies |
+
+Pro and Max users without an organization skip these checks entirely: channels are available and users opt in per session with `--channels`.
 
 ### Enable channels for your organization
 
@@ -301,11 +303,30 @@ Admins can enable channels from [**claude.ai → Admin settings → Claude Code 
 
 Once enabled, users in your organization can use `--channels` to opt channel servers into individual sessions. If the setting is disabled or unset, the MCP server still connects and its tools work, but channel messages won't arrive. A startup warning tells the user to have an admin enable the setting.
 
+### Restrict which channel plugins can run
+
+By default, any plugin on the Anthropic-maintained allowlist can register as a channel. Admins on Team and Enterprise plans can replace that allowlist with their own by setting `allowedChannelPlugins` in managed settings. Use this to restrict which official plugins are allowed, approve channels from your own internal marketplace, or both. Each entry names a plugin and the marketplace it comes from:
+
+```json  theme={null}
+{
+  "channelsEnabled": true,
+  "allowedChannelPlugins": [
+    { "marketplace": "claude-plugins-official", "plugin": "telegram" },
+    { "marketplace": "claude-plugins-official", "plugin": "discord" },
+    { "marketplace": "acme-corp-plugins", "plugin": "internal-alerts" }
+  ]
+}
+```
+
+When `allowedChannelPlugins` is set, it replaces the Anthropic allowlist entirely: only the listed plugins can register. Leave it unset to fall back to the default Anthropic allowlist. An empty array blocks all channel plugins from the allowlist, but `--dangerously-load-development-channels` can still bypass it for local testing. To block channels entirely including the development flag, leave `channelsEnabled` unset instead.
+
+This setting requires `channelsEnabled: true`. If a user passes a plugin to `--channels` that isn't on your list, Claude Code starts normally but the channel doesn't register, and the startup notice explains that the plugin isn't on the organization's approved list.
+
 ## Research preview
 
 Channels are a research preview feature. Availability is rolling out gradually, and the `--channels` flag syntax and protocol contract may change based on feedback.
 
-During the preview, `--channels` only accepts plugins from an Anthropic-maintained allowlist. The channel plugins in [claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins) are the approved set. If you pass something that isn't, Claude Code starts normally but the channel doesn't register, and the startup notice tells you why.
+During the preview, `--channels` only accepts plugins from an Anthropic-maintained allowlist, or from your organization's allowlist if an admin has set [`allowedChannelPlugins`](#restrict-which-channel-plugins-can-run). The channel plugins in [claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins) are the default approved set. If you pass something that isn't on the effective allowlist, Claude Code starts normally but the channel doesn't register, and the startup notice tells you why.
 
 To test a channel you're building, use `--dangerously-load-development-channels`. See [Test during the research preview](/en/channels-reference#test-during-the-research-preview) for information about testing custom channels that you build.
 

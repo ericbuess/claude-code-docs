@@ -18,36 +18,38 @@ Hooks fire at specific points during a Claude Code session. When an event fires 
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/2YzYcIR7V1VggfgF/images/hooks-lifecycle.svg?fit=max&auto=format&n=2YzYcIR7V1VggfgF&q=85&s=3004e6c5dc95c4fe7fa3eb40fdc4176c" alt="Hook lifecycle diagram showing the sequence of hooks from SessionStart through the agentic loop (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) to Stop or StopFailure, TeammateIdle, PreCompact, PostCompact, and SessionEnd, with Elicitation and ElicitationResult nested inside MCP tool execution and WorktreeCreate, WorktreeRemove, Notification, ConfigChange, and InstructionsLoaded as standalone async events" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/JCMefyZyaJwkJgv-/images/hooks-lifecycle.svg?fit=max&auto=format&n=JCMefyZyaJwkJgv-&q=85&s=f004f3fc7324fa2a4630e8d6559cf6dd" alt="Hook lifecycle diagram showing the sequence of hooks from SessionStart through the agentic loop (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) to Stop or StopFailure, TeammateIdle, PreCompact, PostCompact, and SessionEnd, with Elicitation and ElicitationResult nested inside MCP tool execution and WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, and FileChanged as standalone async events" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
 The table below summarizes when each event fires. The [Hook events](#hook-events) section documents the full input schema and decision control options for each one.
 
-| Event                | When it fires                                                                                                                                  |
-| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SessionStart`       | When a session begins or resumes                                                                                                               |
-| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                           |
-| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                      |
-| `PermissionRequest`  | When a permission dialog appears                                                                                                               |
-| `PostToolUse`        | After a tool call succeeds                                                                                                                     |
-| `PostToolUseFailure` | After a tool call fails                                                                                                                        |
-| `Notification`       | When Claude Code sends a notification                                                                                                          |
-| `SubagentStart`      | When a subagent is spawned                                                                                                                     |
-| `SubagentStop`       | When a subagent finishes                                                                                                                       |
-| `Stop`               | When Claude finishes responding                                                                                                                |
-| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                       |
-| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                             |
-| `TaskCompleted`      | When a task is being marked as completed                                                                                                       |
-| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session |
-| `ConfigChange`       | When a configuration file changes during a session                                                                                             |
-| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                    |
-| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                           |
-| `PreCompact`         | Before context compaction                                                                                                                      |
-| `PostCompact`        | After context compaction completes                                                                                                             |
-| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                      |
-| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                    |
-| `SessionEnd`         | When a session terminates                                                                                                                      |
+| Event                | When it fires                                                                                                                                          |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`       | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
+| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
+| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
+| `Notification`       | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`       | When a subagent finishes                                                                                                                               |
+| `Stop`               | When Claude finishes responding                                                                                                                        |
+| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
+| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`         | Before context compaction                                                                                                                              |
+| `PostCompact`        | After context compaction completes                                                                                                                     |
+| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`         | When a session terminates                                                                                                                              |
 
 ### How a hook resolves
 
@@ -166,21 +168,23 @@ For details on settings file resolution, see [settings](/en/settings). Enterpris
 
 The `matcher` field is a regex string that filters when hooks fire. Use `"*"`, `""`, or omit `matcher` entirely to match all occurrences. Each event type matches on a different field:
 
-| Event                                                                                           | What the matcher filters  | Example matcher values                                                                                                    |
-| :---------------------------------------------------------------------------------------------- | :------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                          | tool name                 | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                  | how the session started   | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                    | why the session ended     | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                  | notification type         | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                 | agent type                | `Bash`, `Explore`, `Plan`, or custom agent names                                                                          |
-| `PreCompact`, `PostCompact`                                                                     | what triggered compaction | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                  | agent type                | same values as `SubagentStart`                                                                                            |
-| `ConfigChange`                                                                                  | configuration source      | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `StopFailure`                                                                                   | error type                | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                            | load reason               | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                   | MCP server name           | your configured MCP server names                                                                                          |
-| `ElicitationResult`                                                                             | MCP server name           | same values as `Elicitation`                                                                                              |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | no matcher support        | always fires on every occurrence                                                                                          |
+| Event                                                                                           | What the matcher filters                | Example matcher values                                                                                                    |
+| :---------------------------------------------------------------------------------------------- | :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                          | tool name                               | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                  | how the session started                 | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                    | why the session ended                   | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                  | notification type                       | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                 | agent type                              | `Bash`, `Explore`, `Plan`, or custom agent names                                                                          |
+| `PreCompact`, `PostCompact`                                                                     | what triggered compaction               | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                  | agent type                              | same values as `SubagentStart`                                                                                            |
+| `ConfigChange`                                                                                  | configuration source                    | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `CwdChanged`                                                                                    | no matcher support                      | always fires on every directory change                                                                                    |
+| `FileChanged`                                                                                   | filename (basename of the changed file) | `.envrc`, `.env`, any filename you want to watch                                                                          |
+| `StopFailure`                                                                                   | error type                              | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                            | load reason                             | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                   | MCP server name                         | your configured MCP server names                                                                                          |
+| `ElicitationResult`                                                                             | MCP server name                         | same values as `Elicitation`                                                                                              |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | no matcher support                      | always fires on every occurrence                                                                                          |
 
 The matcher is a regex, so `Edit|Write` matches either tool and `Notebook.*` matches any tool starting with Notebook. The matcher runs against a field from the [JSON input](#hook-input-and-output) that Claude Code sends to your hook on stdin. For tool events, that field is `tool_name`. Each [hook event](#hook-events) section lists the full set of matcher values and the input schema for that event.
 
@@ -204,7 +208,7 @@ This example runs a linting script only when Claude writes or edits a file:
 }
 ```
 
-`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, and `WorktreeRemove` don't support matchers and always fire on every occurrence. If you add a `matcher` field to these events, it is silently ignored.
+`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, and `CwdChanged` don't support matchers and always fire on every occurrence. If you add a `matcher` field to these events, it is silently ignored.
 
 #### Match MCP tools
 
@@ -526,6 +530,8 @@ Exit code 2 is the way a hook signals "stop, don't do this." The effect depends 
 | `SubagentStart`      | No         | Shows stderr to user only                                                     |
 | `SessionStart`       | No         | Shows stderr to user only                                                     |
 | `SessionEnd`         | No         | Shows stderr to user only                                                     |
+| `CwdChanged`         | No         | Shows stderr to user only                                                     |
+| `FileChanged`        | No         | Shows stderr to user only                                                     |
 | `PreCompact`         | No         | Shows stderr to user only                                                     |
 | `PostCompact`        | No         | Shows stderr to user only                                                     |
 | `Elicitation`        | Yes        | Denies the elicitation                                                        |
@@ -579,16 +585,16 @@ To stop Claude entirely regardless of event type:
 
 Not every event supports blocking or controlling behavior through JSON. The events that do each use a different set of fields to express that decision. Use this table as a quick reference before writing a hook:
 
-| Events                                                                                             | Decision pattern               | Key fields                                                                                                                                                          |
-| :------------------------------------------------------------------------------------------------- | :----------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                | Top-level `decision`           | `decision: "block"`, `reason`                                                                                                                                       |
-| TeammateIdle, TaskCompleted                                                                        | Exit code or `continue: false` | Exit code 2 blocks the action with stderr feedback. JSON `{"continue": false, "stopReason": "..."}` also stops the teammate entirely, matching `Stop` hook behavior |
-| PreToolUse                                                                                         | `hookSpecificOutput`           | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                   |
-| PermissionRequest                                                                                  | `hookSpecificOutput`           | `decision.behavior` (allow/deny)                                                                                                                                    |
-| WorktreeCreate                                                                                     | stdout path                    | Hook prints absolute path to created worktree. Non-zero exit fails creation                                                                                         |
-| Elicitation                                                                                        | `hookSpecificOutput`           | `action` (accept/decline/cancel), `content` (form field values for accept)                                                                                          |
-| ElicitationResult                                                                                  | `hookSpecificOutput`           | `action` (accept/decline/cancel), `content` (form field values override)                                                                                            |
-| WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded, StopFailure | None                           | No decision control. Used for side effects like logging or cleanup                                                                                                  |
+| Events                                                                                                                      | Decision pattern               | Key fields                                                                                                                                                          |
+| :-------------------------------------------------------------------------------------------------------------------------- | :----------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                                         | Top-level `decision`           | `decision: "block"`, `reason`                                                                                                                                       |
+| TeammateIdle, TaskCompleted                                                                                                 | Exit code or `continue: false` | Exit code 2 blocks the action with stderr feedback. JSON `{"continue": false, "stopReason": "..."}` also stops the teammate entirely, matching `Stop` hook behavior |
+| PreToolUse                                                                                                                  | `hookSpecificOutput`           | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                   |
+| PermissionRequest                                                                                                           | `hookSpecificOutput`           | `decision.behavior` (allow/deny)                                                                                                                                    |
+| WorktreeCreate                                                                                                              | stdout path                    | Hook prints absolute path to created worktree. Non-zero exit fails creation                                                                                         |
+| Elicitation                                                                                                                 | `hookSpecificOutput`           | `action` (accept/decline/cancel), `content` (form field values for accept)                                                                                          |
+| ElicitationResult                                                                                                           | `hookSpecificOutput`           | `action` (accept/decline/cancel), `content` (form field values override)                                                                                            |
+| WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged | None                           | No decision control. Used for side effects like logging or cleanup                                                                                                  |
 
 Here are examples of each pattern in action:
 
@@ -730,7 +736,7 @@ exit 0
 Any variables written to this file will be available in all subsequent Bash commands that Claude Code executes during the session.
 
 <Note>
-  `CLAUDE_ENV_FILE` is available for SessionStart hooks. Other hook types do not have access to this variable.
+  `CLAUDE_ENV_FILE` is available for SessionStart, [CwdChanged](#cwdchanged), and [FileChanged](#filechanged) hooks. Other hook types do not have access to this variable.
 </Note>
 
 ### InstructionsLoaded
@@ -1495,6 +1501,75 @@ ConfigChange hooks can block configuration changes from taking effect. Use exit 
 
 `policy_settings` changes cannot be blocked. Hooks still fire for `policy_settings` sources, so you can use them for audit logging, but any blocking decision is ignored. This ensures enterprise-managed settings always take effect.
 
+### CwdChanged
+
+Runs when the working directory changes during a session, for example when Claude executes a `cd` command. Use this to react to directory changes: reload environment variables, activate project-specific toolchains, or run setup scripts automatically. Pairs with [FileChanged](#filechanged) for tools like [direnv](https://direnv.net/) that manage per-directory environment.
+
+CwdChanged hooks have access to `CLAUDE_ENV_FILE`. Variables written to that file persist into subsequent Bash commands for the session, just as in [SessionStart hooks](#persist-environment-variables). Only `type: "command"` hooks are supported.
+
+CwdChanged does not support matchers and fires on every directory change.
+
+#### CwdChanged input
+
+In addition to the [common input fields](#common-input-fields), CwdChanged hooks receive `old_cwd` and `new_cwd`.
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
+  "cwd": "/Users/my-project/src",
+  "hook_event_name": "CwdChanged",
+  "old_cwd": "/Users/my-project",
+  "new_cwd": "/Users/my-project/src"
+}
+```
+
+#### CwdChanged output
+
+In addition to the [JSON output fields](#json-output) available to all hooks, CwdChanged hooks can return `watchPaths` to dynamically set which file paths [FileChanged](#filechanged) watches:
+
+| Field        | Description                                                                                                                                                                                                                     |
+| :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `watchPaths` | Array of absolute paths. Replaces the current dynamic watch list (paths from your `matcher` configuration are always watched). Returning an empty array clears the dynamic list, which is typical when entering a new directory |
+
+CwdChanged hooks have no decision control. They cannot block the directory change.
+
+### FileChanged
+
+Runs when a watched file changes on disk. The `matcher` field in your hook configuration controls which filenames to watch: it is a pipe-separated list of basenames (filenames without directory paths, for example `".envrc|.env"`). The same `matcher` value is also used to filter which hooks run when a file changes, matching against the basename of the changed file. Useful for reloading environment variables when project configuration files are modified.
+
+FileChanged hooks have access to `CLAUDE_ENV_FILE`. Variables written to that file persist into subsequent Bash commands for the session, just as in [SessionStart hooks](#persist-environment-variables). Only `type: "command"` hooks are supported.
+
+#### FileChanged input
+
+In addition to the [common input fields](#common-input-fields), FileChanged hooks receive `file_path` and `event`.
+
+| Field       | Description                                                                                     |
+| :---------- | :---------------------------------------------------------------------------------------------- |
+| `file_path` | Absolute path to the file that changed                                                          |
+| `event`     | What happened: `"change"` (file modified), `"add"` (file created), or `"unlink"` (file deleted) |
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
+  "cwd": "/Users/my-project",
+  "hook_event_name": "FileChanged",
+  "file_path": "/Users/my-project/.envrc",
+  "event": "change"
+}
+```
+
+#### FileChanged output
+
+In addition to the [JSON output fields](#json-output) available to all hooks, FileChanged hooks can return `watchPaths` to dynamically update which file paths are watched:
+
+| Field        | Description                                                                                                                                                                                                                 |
+| :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `watchPaths` | Array of absolute paths. Replaces the current dynamic watch list (paths from your `matcher` configuration are always watched). Use this when your hook script discovers additional files to watch based on the changed file |
+
+FileChanged hooks have no decision control. They cannot block the file change from occurring.
+
 ### WorktreeCreate
 
 When you run `claude --worktree` or a [subagent uses `isolation: "worktree"`](/en/sub-agents#choose-the-subagent-scope), Claude Code creates an isolated working copy using `git worktree`. If you configure a WorktreeCreate hook, it replaces the default git behavior, letting you use a different version control system like SVN, Perforce, or Mercurial.
@@ -1807,8 +1882,10 @@ Events that support all four hook types (`command`, `http`, `prompt`, and `agent
 Events that only support `type: "command"` hooks:
 
 * `ConfigChange`
+* `CwdChanged`
 * `Elicitation`
 * `ElicitationResult`
+* `FileChanged`
 * `InstructionsLoaded`
 * `Notification`
 * `PostCompact`

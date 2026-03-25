@@ -85,7 +85,7 @@ Example managed settings configuration:
 | `OTEL_METRIC_EXPORT_INTERVAL`                       | Export interval in milliseconds (default: 60000)                                                                      | `5000`, `60000`                      |
 | `OTEL_LOGS_EXPORT_INTERVAL`                         | Logs export interval in milliseconds (default: 5000)                                                                  | `1000`, `10000`                      |
 | `OTEL_LOG_USER_PROMPTS`                             | Enable logging of user prompt content (default: disabled)                                                             | `1` to enable                        |
-| `OTEL_LOG_TOOL_DETAILS`                             | Enable logging of MCP server/tool names and skill names in tool events (default: disabled)                            | `1` to enable                        |
+| `OTEL_LOG_TOOL_DETAILS`                             | Enable logging of tool input arguments, MCP server/tool names, and skill names in tool events (default: disabled)     | `1` to enable                        |
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Metrics temporality preference (default: `delta`). Set to `cumulative` if your backend expects cumulative temporality | `delta`, `cumulative`                |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Interval for refreshing dynamic headers (default: 1740000ms / 29 minutes)                                             | `900000`                             |
 
@@ -390,6 +390,7 @@ Logged when a tool completes execution.
   * For Bash tool: includes `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox`, and `git_commit_id` (the commit SHA, when a `git commit` command succeeds)
   * For MCP tools (when `OTEL_LOG_TOOL_DETAILS=1`): includes `mcp_server_name`, `mcp_tool_name`
   * For Skill tool (when `OTEL_LOG_TOOL_DETAILS=1`): includes `skill_name`
+* `tool_input` (when `OTEL_LOG_TOOL_DETAILS=1`): JSON-serialized tool arguments. Individual values over 512 characters are truncated, and the full payload is bounded to \~4 K characters. Applies to all tools including MCP tools.
 
 #### API request event
 
@@ -534,7 +535,7 @@ For a comprehensive guide on measuring return on investment for Claude Code, inc
 * Raw file contents and code snippets are not included in metrics or events. Tool execution events include bash commands and file paths in the `tool_parameters` field, which may contain sensitive values. If your commands may include secrets, configure your telemetry backend to filter or redact `tool_parameters`
 * When authenticated via OAuth, `user.email` is included in telemetry attributes. If this is a concern for your organization, work with your telemetry backend to filter or redact this field
 * User prompt content is not collected by default. Only prompt length is recorded. To include prompt content, set `OTEL_LOG_USER_PROMPTS=1`
-* MCP server/tool names and skill names are not logged by default because they can reveal user-specific configurations. To include them, set `OTEL_LOG_TOOL_DETAILS=1`
+* Tool input arguments are not logged by default. To include them, set `OTEL_LOG_TOOL_DETAILS=1`. When enabled, `tool_result` events include MCP server/tool names and skill names plus a `tool_input` attribute with file paths, URLs, search patterns, and other arguments. Individual values over 512 characters are truncated and the total is bounded to \~4 K characters, but the arguments may still contain sensitive values. Configure your telemetry backend to filter or redact `tool_input` as needed
 
 ## Monitor Claude Code on Amazon Bedrock
 
