@@ -220,8 +220,8 @@
     "mcp.md": {
       "original_url": "https://code.claude.com/docs/en/mcp",
       "original_md_url": "https://code.claude.com/docs/en/mcp.md",
-      "hash": "85f504b84ae93f8ecd409946ef71cd864b178d186b0f1cc3285943bdae224f10",
-      "last_updated": "2026-03-25T00:08:38.541244"
+      "hash": "e8a134461a36deaa92bc67ec75b8b45b2ba3fe6635bf7a4f3f4aa68b8c759653",
+      "last_updated": "2026-03-25T03:47:27.708655"
     },
     "memory.md": {
       "original_url": "https://code.claude.com/docs/en/memory",
@@ -423,8 +423,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-25T00:08:57.621395",
-    "fetch_duration_seconds": 40.167538,
+    "last_fetch_completed": "2026-03-25T03:47:48.201575",
+    "fetch_duration_seconds": 42.758155,
     "total_pages_discovered": 70,
     "pages_fetched_successfully": 71,
     "pages_failed": 0,
@@ -434,7 +434,7 @@
     "total_files": 70,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-25T00:08:57.621419",
+  "last_updated": "2026-03-25T03:47:48.201604",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
