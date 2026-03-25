@@ -355,10 +355,11 @@ Set an action to `null` to unbind a default shortcut:
 
 These shortcuts cannot be rebound:
 
-| Shortcut | Reason                     |
-| :------- | :------------------------- |
-| Ctrl+C   | Hardcoded interrupt/cancel |
-| Ctrl+D   | Hardcoded exit             |
+| Shortcut | Reason                                         |
+| :------- | :--------------------------------------------- |
+| Ctrl+C   | Hardcoded interrupt/cancel                     |
+| Ctrl+D   | Hardcoded exit                                 |
+| Ctrl+M   | Identical to Enter in terminals (both send CR) |
 
 ## Terminal conflicts
 
