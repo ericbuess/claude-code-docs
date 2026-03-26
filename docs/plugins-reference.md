@@ -696,7 +696,7 @@ claude plugin update <plugin> [options]
 
 ### Debugging commands
 
-Use `claude --debug` (or `/debug` within the TUI) to see plugin loading details:
+Use `claude --debug` to see plugin loading details:
 
 This shows:
 

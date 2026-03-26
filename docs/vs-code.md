@@ -234,6 +234,31 @@ Some shortcuts depend on which panel is "focused" (receiving keyboard input). Wh
 | Show Logs                  | -                                                        | View extension debug logs                                                            |
 | Logout                     | -                                                        | Sign out of your Anthropic account                                                   |
 
+### Launch a VS Code tab from other tools
+
+The extension registers a URI handler at `vscode://anthropic.claude-code/open`. Use it to open a new Claude Code tab from your own tooling: a shell alias, a browser bookmarklet, or any script that can open a URL. If VS Code isn't already running, opening the URL launches it first. If VS Code is already running, the URL opens in whichever window is currently focused.
+
+Invoke the handler with your operating system's URL opener. On macOS:
+
+```bash  theme={null}
+open "vscode://anthropic.claude-code/open"
+```
+
+Use `xdg-open` on Linux or `start` on Windows.
+
+The handler accepts two optional query parameters:
+
+| Parameter | Description                                                                                                                                                                                                                                                                                                                                                                    |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `prompt`  | Text to pre-fill in the prompt box. Must be URL-encoded. The prompt is pre-filled but not submitted automatically.                                                                                                                                                                                                                                                             |
+| `session` | A session ID to resume instead of starting a new conversation. The session must belong to the workspace currently open in VS Code. If the session isn't found, a fresh conversation starts instead. If the session is already open in a tab, that tab is focused. To capture a session ID programmatically, see [Continue conversations](/en/headless#continue-conversations). |
+
+For example, to open a tab pre-filled with "review my changes":
+
+```text  theme={null}
+vscode://anthropic.claude-code/open?prompt=review%20my%20changes
+```
+
 ## Configure settings
 
 The extension has two types of settings:

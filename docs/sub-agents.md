@@ -245,6 +245,13 @@ The `model` field controls which [AI model](/en/model-config) the subagent uses:
 * **inherit**: Use the same model as the main conversation
 * **Omitted**: If not specified, defaults to `inherit` (uses the same model as the main conversation)
 
+When Claude invokes a subagent, it can also pass a `model` parameter for that specific invocation. Claude Code resolves the subagent's model in this order:
+
+1. The [`CLAUDE_CODE_SUBAGENT_MODEL`](/en/model-config#environment-variables) environment variable, if set
+2. The per-invocation `model` parameter
+3. The subagent definition's `model` frontmatter
+4. The main conversation's model
+
 ### Control subagent capabilities
 
 You can control what subagents can do through tool access, permission modes, and conditional rules.
