@@ -18,7 +18,7 @@ Hooks fire at specific points during a Claude Code session. When an event fires 
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/JCMefyZyaJwkJgv-/images/hooks-lifecycle.svg?fit=max&auto=format&n=JCMefyZyaJwkJgv-&q=85&s=f004f3fc7324fa2a4630e8d6559cf6dd" alt="Hook lifecycle diagram showing the sequence of hooks from SessionStart through the agentic loop (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) to Stop or StopFailure, TeammateIdle, PreCompact, PostCompact, and SessionEnd, with Elicitation and ElicitationResult nested inside MCP tool execution and WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, and FileChanged as standalone async events" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/1wr0LPds6lVWZkQB/images/hooks-lifecycle.svg?fit=max&auto=format&n=1wr0LPds6lVWZkQB&q=85&s=53a826e7bb64c6bff5f867506c0530ad" alt="Hook lifecycle diagram showing the sequence of hooks from SessionStart through the agentic loop (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) to Stop or StopFailure, TeammateIdle, PreCompact, PostCompact, and SessionEnd, with Elicitation and ElicitationResult nested inside MCP tool execution and WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, and FileChanged as standalone async events" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -35,10 +35,11 @@ The table below summarizes when each event fires. The [Hook events](#hook-events
 | `Notification`       | When Claude Code sends a notification                                                                                                                  |
 | `SubagentStart`      | When a subagent is spawned                                                                                                                             |
 | `SubagentStop`       | When a subagent finishes                                                                                                                               |
+| `TaskCreated`        | When a task is being created via `TaskCreate`                                                                                                          |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
 | `Stop`               | When Claude finishes responding                                                                                                                        |
 | `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
 | `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
-| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
 | `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
 | `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
 | `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
@@ -168,23 +169,23 @@ For details on settings file resolution, see [settings](/en/settings). Enterpris
 
 The `matcher` field is a regex string that filters when hooks fire. Use `"*"`, `""`, or omit `matcher` entirely to match all occurrences. Each event type matches on a different field:
 
-| Event                                                                                           | What the matcher filters                | Example matcher values                                                                                                    |
-| :---------------------------------------------------------------------------------------------- | :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                          | tool name                               | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                  | how the session started                 | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                    | why the session ended                   | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                  | notification type                       | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                 | agent type                              | `Bash`, `Explore`, `Plan`, or custom agent names                                                                          |
-| `PreCompact`, `PostCompact`                                                                     | what triggered compaction               | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                  | agent type                              | same values as `SubagentStart`                                                                                            |
-| `ConfigChange`                                                                                  | configuration source                    | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `CwdChanged`                                                                                    | no matcher support                      | always fires on every directory change                                                                                    |
-| `FileChanged`                                                                                   | filename (basename of the changed file) | `.envrc`, `.env`, any filename you want to watch                                                                          |
-| `StopFailure`                                                                                   | error type                              | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                            | load reason                             | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                   | MCP server name                         | your configured MCP server names                                                                                          |
-| `ElicitationResult`                                                                             | MCP server name                         | same values as `Elicitation`                                                                                              |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | no matcher support                      | always fires on every occurrence                                                                                          |
+| Event                                                                                                          | What the matcher filters                | Example matcher values                                                                                                    |
+| :------------------------------------------------------------------------------------------------------------- | :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                                         | tool name                               | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                 | how the session started                 | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                   | why the session ended                   | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                 | notification type                       | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                | agent type                              | `Bash`, `Explore`, `Plan`, or custom agent names                                                                          |
+| `PreCompact`, `PostCompact`                                                                                    | what triggered compaction               | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                 | agent type                              | same values as `SubagentStart`                                                                                            |
+| `ConfigChange`                                                                                                 | configuration source                    | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `CwdChanged`                                                                                                   | no matcher support                      | always fires on every directory change                                                                                    |
+| `FileChanged`                                                                                                  | filename (basename of the changed file) | `.envrc`, `.env`, any filename you want to watch                                                                          |
+| `StopFailure`                                                                                                  | error type                              | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                           | load reason                             | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                  | MCP server name                         | your configured MCP server names                                                                                          |
+| `ElicitationResult`                                                                                            | MCP server name                         | same values as `Elicitation`                                                                                              |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | no matcher support                      | always fires on every occurrence                                                                                          |
 
 The matcher is a regex, so `Edit|Write` matches either tool and `Notebook.*` matches any tool starting with Notebook. The matcher runs against a field from the [JSON input](#hook-input-and-output) that Claude Code sends to your hook on stdin. For tool events, that field is `tool_name`. Each [hook event](#hook-events) section lists the full set of matcher values and the input schema for that event.
 
@@ -208,7 +209,7 @@ This example runs a linting script only when Claude writes or edits a file:
 }
 ```
 
-`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, and `CwdChanged` don't support matchers and always fire on every occurrence. If you add a `matcher` field to these events, it is silently ignored.
+`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, and `CwdChanged` don't support matchers and always fire on every occurrence. If you add a `matcher` field to these events, it is silently ignored.
 
 #### Match MCP tools
 
@@ -522,6 +523,7 @@ Exit code 2 is the way a hook signals "stop, don't do this." The effect depends 
 | `Stop`               | Yes        | Prevents Claude from stopping, continues the conversation                     |
 | `SubagentStop`       | Yes        | Prevents the subagent from stopping                                           |
 | `TeammateIdle`       | Yes        | Prevents the teammate from going idle (teammate continues working)            |
+| `TaskCreated`        | Yes        | Prevents the task from being created                                          |
 | `TaskCompleted`      | Yes        | Prevents the task from being marked as completed                              |
 | `ConfigChange`       | Yes        | Blocks the configuration change from taking effect (except `policy_settings`) |
 | `StopFailure`        | No         | Output and exit code are ignored                                              |
@@ -589,7 +591,7 @@ Not every event supports blocking or controlling behavior through JSON. The even
 | Events                                                                                                                      | Decision pattern               | Key fields                                                                                                                                                          |
 | :-------------------------------------------------------------------------------------------------------------------------- | :----------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                                         | Top-level `decision`           | `decision: "block"`, `reason`                                                                                                                                       |
-| TeammateIdle, TaskCompleted                                                                                                 | Exit code or `continue: false` | Exit code 2 blocks the action with stderr feedback. JSON `{"continue": false, "stopReason": "..."}` also stops the teammate entirely, matching `Stop` hook behavior |
+| TeammateIdle, TaskCreated, TaskCompleted                                                                                    | Exit code or `continue: false` | Exit code 2 blocks the action with stderr feedback. JSON `{"continue": false, "stopReason": "..."}` also stops the teammate entirely, matching `Stop` hook behavior |
 | PreToolUse                                                                                                                  | `hookSpecificOutput`           | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                   |
 | PermissionRequest                                                                                                           | `hookSpecificOutput`           | `decision.behavior` (allow/deny)                                                                                                                                    |
 | WorktreeCreate                                                                                                              | path return                    | Command hook prints path on stdout; HTTP hook returns `hookSpecificOutput.worktreePath`. Hook failure or missing path fails creation                                |
@@ -1265,6 +1267,117 @@ In addition to the [common input fields](#common-input-fields), SubagentStop hoo
 
 SubagentStop hooks use the same decision control format as [Stop hooks](#stop-decision-control).
 
+### TaskCreated
+
+Runs when a task is being created via the `TaskCreate` tool. Use this to enforce naming conventions, require task descriptions, or prevent certain tasks from being created.
+
+When a `TaskCreated` hook exits with code 2, the task is not created and the stderr message is fed back to the model as feedback. To stop the teammate entirely instead of re-running it, return JSON with `{"continue": false, "stopReason": "..."}`. TaskCreated hooks do not support matchers and fire on every occurrence.
+
+#### TaskCreated input
+
+In addition to the [common input fields](#common-input-fields), TaskCreated hooks receive `task_id`, `task_subject`, and optionally `task_description`, `teammate_name`, and `team_name`.
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "TaskCreated",
+  "task_id": "task-001",
+  "task_subject": "Implement user authentication",
+  "task_description": "Add login and signup endpoints",
+  "teammate_name": "implementer",
+  "team_name": "my-project"
+}
+```
+
+| Field              | Description                                           |
+| :----------------- | :---------------------------------------------------- |
+| `task_id`          | Identifier of the task being created                  |
+| `task_subject`     | Title of the task                                     |
+| `task_description` | Detailed description of the task. May be absent       |
+| `teammate_name`    | Name of the teammate creating the task. May be absent |
+| `team_name`        | Name of the team. May be absent                       |
+
+#### TaskCreated decision control
+
+TaskCreated hooks support two ways to control task creation:
+
+* **Exit code 2**: the task is not created and the stderr message is fed back to the model as feedback.
+* **JSON `{"continue": false, "stopReason": "..."}`**: stops the teammate entirely, matching `Stop` hook behavior. The `stopReason` is shown to the user.
+
+This example blocks tasks whose subjects don't follow the required format:
+
+```bash  theme={null}
+#!/bin/bash
+INPUT=$(cat)
+TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
+
+if [[ ! "$TASK_SUBJECT" =~ ^\[TICKET-[0-9]+\] ]]; then
+  echo "Task subject must start with a ticket number, e.g. '[TICKET-123] Add feature'" >&2
+  exit 2
+fi
+
+exit 0
+```
+
+### TaskCompleted
+
+Runs when a task is being marked as completed. This fires in two situations: when any agent explicitly marks a task as completed through the TaskUpdate tool, or when an [agent team](/en/agent-teams) teammate finishes its turn with in-progress tasks. Use this to enforce completion criteria like passing tests or lint checks before a task can close.
+
+When a `TaskCompleted` hook exits with code 2, the task is not marked as completed and the stderr message is fed back to the model as feedback. To stop the teammate entirely instead of re-running it, return JSON with `{"continue": false, "stopReason": "..."}`. TaskCompleted hooks do not support matchers and fire on every occurrence.
+
+#### TaskCompleted input
+
+In addition to the [common input fields](#common-input-fields), TaskCompleted hooks receive `task_id`, `task_subject`, and optionally `task_description`, `teammate_name`, and `team_name`.
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "TaskCompleted",
+  "task_id": "task-001",
+  "task_subject": "Implement user authentication",
+  "task_description": "Add login and signup endpoints",
+  "teammate_name": "implementer",
+  "team_name": "my-project"
+}
+```
+
+| Field              | Description                                             |
+| :----------------- | :------------------------------------------------------ |
+| `task_id`          | Identifier of the task being completed                  |
+| `task_subject`     | Title of the task                                       |
+| `task_description` | Detailed description of the task. May be absent         |
+| `teammate_name`    | Name of the teammate completing the task. May be absent |
+| `team_name`        | Name of the team. May be absent                         |
+
+#### TaskCompleted decision control
+
+TaskCompleted hooks support two ways to control task completion:
+
+* **Exit code 2**: the task is not marked as completed and the stderr message is fed back to the model as feedback.
+* **JSON `{"continue": false, "stopReason": "..."}`**: stops the teammate entirely, matching `Stop` hook behavior. The `stopReason` is shown to the user.
+
+This example runs tests and blocks task completion if they fail:
+
+```bash  theme={null}
+#!/bin/bash
+INPUT=$(cat)
+TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
+
+# Run the test suite
+if ! npm test 2>&1; then
+  echo "Tests not passing. Fix failing tests before completing: $TASK_SUBJECT" >&2
+  exit 2
+fi
+
+exit 0
+```
+
 ### Stop
 
 Runs when the main Claude Code agent has finished responding. Does not run if
@@ -1372,62 +1485,6 @@ This example checks that a build artifact exists before allowing a teammate to g
 
 if [ ! -f "./dist/output.js" ]; then
   echo "Build artifact missing. Run the build before stopping." >&2
-  exit 2
-fi
-
-exit 0
-```
-
-### TaskCompleted
-
-Runs when a task is being marked as completed. This fires in two situations: when any agent explicitly marks a task as completed through the TaskUpdate tool, or when an [agent team](/en/agent-teams) teammate finishes its turn with in-progress tasks. Use this to enforce completion criteria like passing tests or lint checks before a task can close.
-
-When a `TaskCompleted` hook exits with code 2, the task is not marked as completed and the stderr message is fed back to the model as feedback. To stop the teammate entirely instead of re-running it, return JSON with `{"continue": false, "stopReason": "..."}`. TaskCompleted hooks do not support matchers and fire on every occurrence.
-
-#### TaskCompleted input
-
-In addition to the [common input fields](#common-input-fields), TaskCompleted hooks receive `task_id`, `task_subject`, and optionally `task_description`, `teammate_name`, and `team_name`.
-
-```json  theme={null}
-{
-  "session_id": "abc123",
-  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
-  "cwd": "/Users/...",
-  "permission_mode": "default",
-  "hook_event_name": "TaskCompleted",
-  "task_id": "task-001",
-  "task_subject": "Implement user authentication",
-  "task_description": "Add login and signup endpoints",
-  "teammate_name": "implementer",
-  "team_name": "my-project"
-}
-```
-
-| Field              | Description                                             |
-| :----------------- | :------------------------------------------------------ |
-| `task_id`          | Identifier of the task being completed                  |
-| `task_subject`     | Title of the task                                       |
-| `task_description` | Detailed description of the task. May be absent         |
-| `teammate_name`    | Name of the teammate completing the task. May be absent |
-| `team_name`        | Name of the team. May be absent                         |
-
-#### TaskCompleted decision control
-
-TaskCompleted hooks support two ways to control task completion:
-
-* **Exit code 2**: the task is not marked as completed and the stderr message is fed back to the model as feedback.
-* **JSON `{"continue": false, "stopReason": "..."}`**: stops the teammate entirely, matching `Stop` hook behavior. The `stopReason` is shown to the user.
-
-This example runs tests and blocks task completion if they fail:
-
-```bash  theme={null}
-#!/bin/bash
-INPUT=$(cat)
-TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
-
-# Run the test suite
-if ! npm test 2>&1; then
-  echo "Tests not passing. Fix failing tests before completing: $TASK_SUBJECT" >&2
   exit 2
 fi
 
@@ -1881,6 +1938,7 @@ Events that support all four hook types (`command`, `http`, `prompt`, and `agent
 * `Stop`
 * `SubagentStop`
 * `TaskCompleted`
+* `TaskCreated`
 * `UserPromptSubmit`
 
 Events that support `command` and `http` hooks but not `prompt` or `agent`:
