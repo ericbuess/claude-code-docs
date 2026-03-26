@@ -278,10 +278,11 @@ These fields apply to all hook types:
 
 In addition to the [common fields](#common-fields), command hooks accept these fields:
 
-| Field     | Required | Description                                                                                                         |
-| :-------- | :------- | :------------------------------------------------------------------------------------------------------------------ |
-| `command` | yes      | Shell command to execute                                                                                            |
-| `async`   | no       | If `true`, runs in the background without blocking. See [Run hooks in the background](#run-hooks-in-the-background) |
+| Field     | Required | Description                                                                                                                                                                                                                           |
+| :-------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `command` | yes      | Shell command to execute                                                                                                                                                                                                              |
+| `async`   | no       | If `true`, runs in the background without blocking. See [Run hooks in the background](#run-hooks-in-the-background)                                                                                                                   |
+| `shell`   | no       | Shell to use for this hook. Accepts `"bash"` (default) or `"powershell"`. Setting `"powershell"` runs the command via PowerShell on Windows. Does not require `CLAUDE_CODE_USE_POWERSHELL_TOOL` since hooks spawn PowerShell directly |
 
 #### HTTP hook fields
 
@@ -591,7 +592,7 @@ Not every event supports blocking or controlling behavior through JSON. The even
 | TeammateIdle, TaskCompleted                                                                                                 | Exit code or `continue: false` | Exit code 2 blocks the action with stderr feedback. JSON `{"continue": false, "stopReason": "..."}` also stops the teammate entirely, matching `Stop` hook behavior |
 | PreToolUse                                                                                                                  | `hookSpecificOutput`           | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                   |
 | PermissionRequest                                                                                                           | `hookSpecificOutput`           | `decision.behavior` (allow/deny)                                                                                                                                    |
-| WorktreeCreate                                                                                                              | stdout path                    | Hook prints absolute path to created worktree. Non-zero exit fails creation                                                                                         |
+| WorktreeCreate                                                                                                              | path return                    | Command hook prints path on stdout; HTTP hook returns `hookSpecificOutput.worktreePath`. Hook failure or missing path fails creation                                |
 | Elicitation                                                                                                                 | `hookSpecificOutput`           | `action` (accept/decline/cancel), `content` (form field values for accept)                                                                                          |
 | ElicitationResult                                                                                                           | `hookSpecificOutput`           | `action` (accept/decline/cancel), `content` (form field values override)                                                                                            |
 | WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged | None                           | No decision control. Used for side effects like logging or cleanup                                                                                                  |
@@ -1574,7 +1575,7 @@ FileChanged hooks have no decision control. They cannot block the file change fr
 
 When you run `claude --worktree` or a [subagent uses `isolation: "worktree"`](/en/sub-agents#choose-the-subagent-scope), Claude Code creates an isolated working copy using `git worktree`. If you configure a WorktreeCreate hook, it replaces the default git behavior, letting you use a different version control system like SVN, Perforce, or Mercurial.
 
-The hook must print the absolute path to the created worktree directory on stdout. Claude Code uses this path as the working directory for the isolated session.
+The hook must return the absolute path to the created worktree directory. Claude Code uses this path as the working directory for the isolated session. Command hooks print it on stdout; HTTP hooks return it via `hookSpecificOutput.worktreePath`.
 
 This example creates an SVN working copy and prints the path for Claude Code to use. Replace the repository URL with your own:
 
@@ -1613,15 +1614,18 @@ In addition to the [common input fields](#common-input-fields), WorktreeCreate h
 
 #### WorktreeCreate output
 
-The hook must print the absolute path to the created worktree directory on stdout. If the hook fails or produces no output, worktree creation fails with an error.
+WorktreeCreate hooks do not use the standard allow/block decision model. Instead, the hook's success or failure determines the outcome. The hook must return the absolute path to the created worktree directory:
 
-WorktreeCreate hooks do not use the standard allow/block decision model. Instead, the hook's success or failure determines the outcome. Only `type: "command"` hooks are supported.
+* **Command hooks** (`type: "command"`): print the path on stdout.
+* **HTTP hooks** (`type: "http"`): return `{ "hookSpecificOutput": { "hookEventName": "WorktreeCreate", "worktreePath": "/absolute/path" } }` in the response body.
+
+If the hook fails or produces no path, worktree creation fails with an error.
 
 ### WorktreeRemove
 
 The cleanup counterpart to [WorktreeCreate](#worktreecreate). This hook fires when a worktree is being removed, either when you exit a `--worktree` session and choose to remove it, or when a subagent with `isolation: "worktree"` finishes. For git-based worktrees, Claude handles cleanup automatically with `git worktree remove`. If you configured a WorktreeCreate hook for a non-git version control system, pair it with a WorktreeRemove hook to handle cleanup. Without one, the worktree directory is left on disk.
 
-Claude Code passes the path that WorktreeCreate printed on stdout as `worktree_path` in the hook input. This example reads that path and removes the directory:
+Claude Code passes the path returned by WorktreeCreate as `worktree_path` in the hook input. This example reads that path and removes the directory:
 
 ```json  theme={null}
 {
@@ -1654,7 +1658,7 @@ In addition to the [common input fields](#common-input-fields), WorktreeRemove h
 }
 ```
 
-WorktreeRemove hooks have no decision control. They cannot block worktree removal but can perform cleanup tasks like removing version control state or archiving changes. Hook failures are logged in debug mode only. Only `type: "command"` hooks are supported.
+WorktreeRemove hooks have no decision control. They cannot block worktree removal but can perform cleanup tasks like removing version control state or archiving changes. Hook failures are logged in debug mode only.
 
 ### PreCompact
 
@@ -1879,7 +1883,7 @@ Events that support all four hook types (`command`, `http`, `prompt`, and `agent
 * `TaskCompleted`
 * `UserPromptSubmit`
 
-Events that only support `type: "command"` hooks:
+Events that support `command` and `http` hooks but not `prompt` or `agent`:
 
 * `ConfigChange`
 * `CwdChanged`
@@ -1891,12 +1895,13 @@ Events that only support `type: "command"` hooks:
 * `PostCompact`
 * `PreCompact`
 * `SessionEnd`
-* `SessionStart`
 * `StopFailure`
 * `SubagentStart`
 * `TeammateIdle`
 * `WorktreeCreate`
 * `WorktreeRemove`
+
+`SessionStart` supports only `command` hooks.
 
 ### How prompt-based hooks work
 
@@ -2140,6 +2145,29 @@ Keep these practices in mind when writing hooks:
 * **Block path traversal**: check for `..` in file paths
 * **Use absolute paths**: specify full paths for scripts, using `"$CLAUDE_PROJECT_DIR"` for the project root
 * **Skip sensitive files**: avoid `.env`, `.git/`, keys, etc.
+
+## Windows PowerShell tool
+
+On Windows, you can run individual hooks in PowerShell by setting `"shell": "powershell"` on a command hook. Hooks spawn PowerShell directly, so this works regardless of whether `CLAUDE_CODE_USE_POWERSHELL_TOOL` is set. Claude Code auto-detects `pwsh.exe` (PowerShell 7+) with a fallback to `powershell.exe` (5.1).
+
+```json  theme={null}
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "Write-Host 'File written'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
 
 ## Debug hooks
 

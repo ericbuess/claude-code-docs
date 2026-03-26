@@ -26,6 +26,7 @@ Claude Code has access to a set of tools that help it understand and modify your
 | `ListMcpResourcesTool` | Lists resources exposed by connected [MCP servers](/en/mcp)                                                                                                                                                                                                                                                                                                                 | No                  |
 | `LSP`                  | Code intelligence via language servers. Reports type errors and warnings automatically after file edits. Also supports navigation operations: jump to definitions, find references, get type info, list symbols, find implementations, trace call hierarchies. Requires a [code intelligence plugin](/en/discover-plugins#code-intelligence) and its language server binary | No                  |
 | `NotebookEdit`         | Modifies Jupyter notebook cells                                                                                                                                                                                                                                                                                                                                             | Yes                 |
+| `PowerShell`           | Executes PowerShell commands on Windows. Opt-in preview. See [PowerShell tool](#powershell-tool)                                                                                                                                                                                                                                                                            | Yes                 |
 | `Read`                 | Reads the contents of files                                                                                                                                                                                                                                                                                                                                                 | No                  |
 | `ReadMcpResourceTool`  | Reads a specific MCP resource by URI                                                                                                                                                                                                                                                                                                                                        | No                  |
 | `Skill`                | Executes a [skill](/en/skills#control-who-invokes-a-skill) within the main conversation                                                                                                                                                                                                                                                                                     | Yes                 |
@@ -51,6 +52,42 @@ The Bash tool runs each command in a separate process with the following persist
 * Environment variables do not persist. An `export` in one command will not be available in the next.
 
 Activate your virtualenv or conda environment before launching Claude Code. To make environment variables persist across Bash commands, set [`CLAUDE_ENV_FILE`](/en/env-vars) to a shell script before launching Claude Code, or use a [SessionStart hook](/en/hooks#persist-environment-variables) to populate it dynamically.
+
+## PowerShell tool
+
+On Windows, Claude Code can run PowerShell commands natively instead of routing through Git Bash. This is an opt-in preview.
+
+### Enable the PowerShell tool
+
+Set `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` in your environment or in `settings.json`:
+
+```json  theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_USE_POWERSHELL_TOOL": "1"
+  }
+}
+```
+
+Claude Code auto-detects `pwsh.exe` (PowerShell 7+) with a fallback to `powershell.exe` (PowerShell 5.1). The Bash tool remains registered alongside the PowerShell tool, so you may need to ask Claude to use PowerShell.
+
+### Shell selection in settings, hooks, and skills
+
+Three additional settings control where PowerShell is used:
+
+* `"defaultShell": "powershell"` in [`settings.json`](/en/settings#available-settings): routes interactive `!` commands through PowerShell. Requires the PowerShell tool to be enabled.
+* `"shell": "powershell"` on individual [command hooks](/en/hooks#command-hook-fields): runs that hook in PowerShell. Hooks spawn PowerShell directly, so this works regardless of `CLAUDE_CODE_USE_POWERSHELL_TOOL`.
+* `shell: powershell` in [skill frontmatter](/en/skills#frontmatter-reference): runs `` !`command` `` blocks in PowerShell. Requires the PowerShell tool to be enabled.
+
+### Preview limitations
+
+The PowerShell tool has the following known limitations during the preview:
+
+* Auto mode does not work with the PowerShell tool yet
+* PowerShell profiles are not loaded
+* Sandboxing is not supported
+* Only supported on native Windows, not WSL
+* Git Bash is still required to start Claude Code
 
 ## See also
 

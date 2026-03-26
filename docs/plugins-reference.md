@@ -340,12 +340,12 @@ agent `agent-creator` for the plugin with name `plugin-dev` will appear as
 
 | Field          | Type                  | Description                                                                                                                                               | Example                                |
 | :------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------- |
-| `commands`     | string\|array         | Additional command files/directories                                                                                                                      | `"./custom/cmd.md"` or `["./cmd1.md"]` |
-| `agents`       | string\|array         | Additional agent files                                                                                                                                    | `"./custom/agents/reviewer.md"`        |
-| `skills`       | string\|array         | Additional skill directories                                                                                                                              | `"./custom/skills/"`                   |
+| `commands`     | string\|array         | Custom command files/directories (replaces default `commands/`)                                                                                           | `"./custom/cmd.md"` or `["./cmd1.md"]` |
+| `agents`       | string\|array         | Custom agent files (replaces default `agents/`)                                                                                                           | `"./custom/agents/reviewer.md"`        |
+| `skills`       | string\|array         | Custom skill directories (replaces default `skills/`)                                                                                                     | `"./custom/skills/"`                   |
 | `hooks`        | string\|array\|object | Hook config paths or inline config                                                                                                                        | `"./my-extra-hooks.json"`              |
 | `mcpServers`   | string\|array\|object | MCP config paths or inline config                                                                                                                         | `"./my-extra-mcp-config.json"`         |
-| `outputStyles` | string\|array         | Additional output style files/directories                                                                                                                 | `"./styles/"`                          |
+| `outputStyles` | string\|array         | Custom output style files/directories (replaces default `output-styles/`)                                                                                 | `"./styles/"`                          |
 | `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) configs for code intelligence (go to definition, find references, etc.) | `"./.lsp.json"`                        |
 | `userConfig`   | object                | User-configurable values prompted at enable time. See [User configuration](#user-configuration)                                                           | See below                              |
 | `channels`     | array                 | Channel declarations for message injection (Telegram, Slack, Discord style). See [Channels](#channels)                                                    | See below                              |
@@ -395,12 +395,12 @@ The `server` field is required and must match a key in the plugin's `mcpServers`
 
 ### Path behavior rules
 
-**Important**: Custom paths supplement default directories - they don't replace them.
+For `commands`, `agents`, `skills`, and `outputStyles`, custom paths replace the default directory. If the manifest specifies `commands`, the default `commands/` directory is not scanned. [Hooks](#hooks), [MCP servers](#mcp-servers), and [LSP servers](#lsp-servers) have different semantics for handling multiple sources.
 
-* If `commands/` exists, it's loaded in addition to custom command paths
-* All paths must be relative to plugin root and start with `./`
-* Commands from custom paths use the same naming and namespacing rules
-* Multiple paths can be specified as arrays for flexibility
+* All paths must be relative to the plugin root and start with `./`
+* Components from custom paths use the same naming and namespacing rules
+* Multiple paths can be specified as arrays
+* To keep the default directory and add more paths for commands, agents, skills, or output styles, include the default in your array: `"commands": ["./commands/", "./extras/deploy.md"]`
 
 **Path examples**:
 
@@ -538,6 +538,8 @@ enterprise-plugin/
 │   └── pdf-processor/
 │       ├── SKILL.md
 │       └── scripts/
+├── output-styles/            # Output style definitions
+│   └── terse.md
 ├── hooks/                    # Hook configurations
 │   ├── hooks.json           # Main hook config
 │   └── security-hooks.json  # Additional hooks
@@ -553,21 +555,22 @@ enterprise-plugin/
 ```
 
 <Warning>
-  The `.claude-plugin/` directory contains the `plugin.json` file. All other directories (commands/, agents/, skills/, hooks/) must be at the plugin root, not inside `.claude-plugin/`.
+  The `.claude-plugin/` directory contains the `plugin.json` file. All other directories (commands/, agents/, skills/, output-styles/, hooks/) must be at the plugin root, not inside `.claude-plugin/`.
 </Warning>
 
 ### File locations reference
 
-| Component       | Default Location             | Purpose                                                                                                                   |
-| :-------------- | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| **Manifest**    | `.claude-plugin/plugin.json` | Plugin metadata and configuration (optional)                                                                              |
-| **Commands**    | `commands/`                  | Skill Markdown files (legacy; use `skills/` for new skills)                                                               |
-| **Agents**      | `agents/`                    | Subagent Markdown files                                                                                                   |
-| **Skills**      | `skills/`                    | Skills with `<name>/SKILL.md` structure                                                                                   |
-| **Hooks**       | `hooks/hooks.json`           | Hook configuration                                                                                                        |
-| **MCP servers** | `.mcp.json`                  | MCP server definitions                                                                                                    |
-| **LSP servers** | `.lsp.json`                  | Language server configurations                                                                                            |
-| **Settings**    | `settings.json`              | Default configuration applied when the plugin is enabled. Only [`agent`](/en/sub-agents) settings are currently supported |
+| Component         | Default Location             | Purpose                                                                                                                   |
+| :---------------- | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| **Manifest**      | `.claude-plugin/plugin.json` | Plugin metadata and configuration (optional)                                                                              |
+| **Commands**      | `commands/`                  | Skill Markdown files (legacy; use `skills/` for new skills)                                                               |
+| **Agents**        | `agents/`                    | Subagent Markdown files                                                                                                   |
+| **Skills**        | `skills/`                    | Skills with `<name>/SKILL.md` structure                                                                                   |
+| **Output styles** | `output-styles/`             | Output style definitions                                                                                                  |
+| **Hooks**         | `hooks/hooks.json`           | Hook configuration                                                                                                        |
+| **MCP servers**   | `.mcp.json`                  | MCP server definitions                                                                                                    |
+| **LSP servers**   | `.lsp.json`                  | Language server configurations                                                                                            |
+| **Settings**      | `settings.json`              | Default configuration applied when the plugin is enabled. Only [`agent`](/en/sub-agents) settings are currently supported |
 
 ***
 
