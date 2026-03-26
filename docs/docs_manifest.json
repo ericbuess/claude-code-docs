@@ -70,8 +70,8 @@
     "cli-reference.md": {
       "original_url": "https://code.claude.com/docs/en/cli-reference",
       "original_md_url": "https://code.claude.com/docs/en/cli-reference.md",
-      "hash": "54d8525b23e54f48b6e9eae8bec3a80d41f4bca27b665929beefc59541eb3ff2",
-      "last_updated": "2026-03-26T00:09:50.505463"
+      "hash": "f6bab34b393de81dba14ea5026ed89ce524984741bed4a401b48ced852079d78",
+      "last_updated": "2026-03-26T06:20:33.618086"
     },
     "code-review.md": {
       "original_url": "https://code.claude.com/docs/en/code-review",
@@ -82,8 +82,8 @@
     "commands.md": {
       "original_url": "https://code.claude.com/docs/en/commands",
       "original_md_url": "https://code.claude.com/docs/en/commands.md",
-      "hash": "ae42354890cd2dd35f4c72e89b514959ae2bc49961b4f0f91514eb23b80294d5",
-      "last_updated": "2026-03-26T00:09:51.773880"
+      "hash": "004b40aea37408f2d701e8d0087d2b6fc24a444dfc8853121389817ad1a49b53",
+      "last_updated": "2026-03-26T06:20:34.825683"
     },
     "common-workflows.md": {
       "original_url": "https://code.claude.com/docs/en/common-workflows",
@@ -292,8 +292,8 @@
     "plugins.md": {
       "original_url": "https://code.claude.com/docs/en/plugins",
       "original_md_url": "https://code.claude.com/docs/en/plugins.md",
-      "hash": "fd9190577eaed4d341547e80e93e0a9934a265328a413d0ad728cfc05273a6a5",
-      "last_updated": "2026-03-20T03:45:11.033674"
+      "hash": "af997a33286650b989d97a592ceaebe4c6e11e9fefad6137ce9c70da6fcc121f",
+      "last_updated": "2026-03-26T06:20:56.142398"
     },
     "plugins-reference.md": {
       "original_url": "https://code.claude.com/docs/en/plugins-reference",
@@ -423,8 +423,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-26T03:55:49.329313",
-    "fetch_duration_seconds": 40.090715,
+    "last_fetch_completed": "2026-03-26T06:21:09.014900",
+    "fetch_duration_seconds": 42.628197,
     "total_pages_discovered": 70,
     "pages_fetched_successfully": 71,
     "pages_failed": 0,
@@ -434,7 +434,7 @@
     "total_files": 70,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-26T03:55:49.329334",
+  "last_updated": "2026-03-26T06:21:09.014922",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
