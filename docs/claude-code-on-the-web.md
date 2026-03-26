@@ -37,7 +37,7 @@ Claude Code on the web is available in research preview to:
 
 1. Visit [claude.ai/code](https://claude.ai/code)
 2. Connect your GitHub account
-3. Install the Claude GitHub app in your repositories
+3. Install the Claude GitHub App in your repositories
 4. Select your default environment
 5. Submit your coding task
 6. Review changes in diff view, iterate with comments, then create a pull request
@@ -66,6 +66,30 @@ From the diff view, you can:
 * Continue iterating with Claude based on what you see
 
 This lets you refine changes through multiple rounds of feedback without creating draft PRs or switching to GitHub.
+
+## Auto-fix pull requests
+
+Claude can watch a pull request and automatically respond to CI failures and review comments. Claude subscribes to GitHub activity on the PR, and when a check fails or a reviewer leaves a comment, Claude investigates and pushes a fix if one is clear.
+
+<Note>
+  Auto-fix requires the Claude GitHub App to be installed on your repository. If you haven't already, install it from the [GitHub App page](https://github.com/apps/claude) or when prompted during [setup](#getting-started).
+</Note>
+
+There are a few ways to turn on auto-fix depending on where the PR came from and what device you're using:
+
+* **PRs created in Claude Code on the web**: open the CI status bar and select **Auto-fix**
+* **From the mobile app**: tell Claude to auto-fix the PR, for example "watch this PR and fix any CI failures or review comments"
+* **Any existing PR**: paste the PR URL into a session and tell Claude to auto-fix it
+
+### How Claude responds to PR activity
+
+When auto-fix is active, Claude receives GitHub events for the PR including new review comments and CI check failures. For each event, Claude investigates and decides how to proceed:
+
+* **Clear fixes**: if Claude is confident in a fix and it doesn't conflict with earlier instructions, Claude makes the change, pushes it, and explains what was done in the session
+* **Ambiguous requests**: if a reviewer's comment could be interpreted multiple ways or involves something architecturally significant, Claude asks you before acting
+* **Duplicate or no-action events**: if an event is a duplicate or requires no change, Claude notes it in the session and moves on
+
+Claude may reply to review comment threads on GitHub as part of resolving them. These replies are posted using your GitHub account, so they appear under your username, but each reply is labeled as coming from Claude Code so reviewers know it was written by the agent and not by you directly.
 
 ## Moving tasks between web and terminal
 

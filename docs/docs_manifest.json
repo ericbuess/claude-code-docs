@@ -64,8 +64,8 @@
     "claude-code-on-the-web.md": {
       "original_url": "https://code.claude.com/docs/en/claude-code-on-the-web",
       "original_md_url": "https://code.claude.com/docs/en/claude-code-on-the-web.md",
-      "hash": "1e21c1e67ef542e98828c725a464373bc07c127647dd2f04a4f3287be878d43b",
-      "last_updated": "2026-03-23T18:12:34.828575"
+      "hash": "1fd3acbb493a83bf1f043c67651739822664f5d527d311c10b5b22f128d0fd06",
+      "last_updated": "2026-03-26T18:15:49.793896"
     },
     "cli-reference.md": {
       "original_url": "https://code.claude.com/docs/en/cli-reference",
@@ -184,8 +184,8 @@
     "how-claude-code-works.md": {
       "original_url": "https://code.claude.com/docs/en/how-claude-code-works",
       "original_md_url": "https://code.claude.com/docs/en/how-claude-code-works.md",
-      "hash": "323e428c0d6d1dfda2e9dad4986129baafa903447e2b2548aa7eae49d89d7a09",
-      "last_updated": "2026-03-24T18:14:40.155310"
+      "hash": "4d4d91ab5c205e961a151b1c1b66f758535717cfc2e213d85857ff1cda1c9d7e",
+      "last_updated": "2026-03-26T18:16:01.744094"
     },
     "interactive-mode.md": {
       "original_url": "https://code.claude.com/docs/en/interactive-mode",
@@ -226,8 +226,8 @@
     "memory.md": {
       "original_url": "https://code.claude.com/docs/en/memory",
       "original_md_url": "https://code.claude.com/docs/en/memory.md",
-      "hash": "61c0bf0b755e055bf63a71ff926756bc26c16cf4920289ea98afe52bdaa329cd",
-      "last_updated": "2026-03-26T00:10:06.742765"
+      "hash": "b82b5c413cdac1e92481c167e707a6c1f07d754b64b82c702edda00917f23bb0",
+      "last_updated": "2026-03-26T18:16:05.858750"
     },
     "microsoft-foundry.md": {
       "original_url": "https://code.claude.com/docs/en/microsoft-foundry",
@@ -423,8 +423,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-26T15:25:34.325349",
-    "fetch_duration_seconds": 40.975139,
+    "last_fetch_completed": "2026-03-26T18:16:25.088394",
+    "fetch_duration_seconds": 41.566752,
     "total_pages_discovered": 70,
     "pages_fetched_successfully": 71,
     "pages_failed": 0,
@@ -434,7 +434,7 @@
     "total_files": 70,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-26T15:25:34.325375",
+  "last_updated": "2026-03-26T18:16:25.088426",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
