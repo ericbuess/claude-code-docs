@@ -88,8 +88,8 @@
     "common-workflows.md": {
       "original_url": "https://code.claude.com/docs/en/common-workflows",
       "original_md_url": "https://code.claude.com/docs/en/common-workflows.md",
-      "hash": "2e4564ec66f7e38102827cec6d2f6fd712928c4db4c840427dc76347705571e1",
-      "last_updated": "2026-03-23T18:12:37.156002"
+      "hash": "1e662c6b7741e9a4d2c94f00ff643f4169ea609d736b034eeee1c78befc79504",
+      "last_updated": "2026-03-26T21:06:37.221598"
     },
     "costs.md": {
       "original_url": "https://code.claude.com/docs/en/costs",
@@ -106,8 +106,8 @@
     "desktop.md": {
       "original_url": "https://code.claude.com/docs/en/desktop",
       "original_md_url": "https://code.claude.com/docs/en/desktop.md",
-      "hash": "7da99158fef28b4a42869e9319055e15c2b6146fa4753a04fe4a8af651aa632e",
-      "last_updated": "2026-03-25T00:08:27.511820"
+      "hash": "56c8596846288d344a9890c07ea616355d17c2338eea2021838298bef0991fec",
+      "last_updated": "2026-03-26T21:06:39.022676"
     },
     "desktop-quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-quickstart",
@@ -423,8 +423,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-26T18:16:25.088394",
-    "fetch_duration_seconds": 41.566752,
+    "last_fetch_completed": "2026-03-26T21:07:12.220932",
+    "fetch_duration_seconds": 43.809123,
     "total_pages_discovered": 70,
     "pages_fetched_successfully": 71,
     "pages_failed": 0,
@@ -434,7 +434,7 @@
     "total_files": 70,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-26T18:16:25.088426",
+  "last_updated": "2026-03-26T21:07:12.220959",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

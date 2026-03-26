@@ -687,6 +687,20 @@ To clean up worktrees outside of a Claude session, use [manual worktree manageme
   Add `.claude/worktrees/` to your `.gitignore` to prevent worktree contents from appearing as untracked files in your main repository.
 </Tip>
 
+### Copy gitignored files to worktrees
+
+Git worktrees are fresh checkouts, so they don't include untracked files like `.env` or `.env.local` from your main repository. To automatically copy these files when Claude creates a worktree, add a `.worktreeinclude` file to your project root.
+
+The file uses `.gitignore` syntax to list which files to copy. Only files that match a pattern and are also gitignored get copied, so tracked files are never duplicated.
+
+```text .worktreeinclude theme={null}
+.env
+.env.local
+config/secrets.json
+```
+
+This applies to worktrees created with `--worktree`, subagent worktrees, and parallel sessions in the [desktop app](/en/desktop#work-in-parallel-with-sessions).
+
 ### Manage worktrees manually
 
 For more control over worktree location and branch configuration, create worktrees with Git directly. This is useful when you need to check out a specific existing branch or place the worktree outside the repository.
