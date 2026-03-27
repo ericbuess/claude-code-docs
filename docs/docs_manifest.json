@@ -67,6 +67,12 @@
       "hash": "1fd3acbb493a83bf1f043c67651739822664f5d527d311c10b5b22f128d0fd06",
       "last_updated": "2026-03-26T18:15:49.793896"
     },
+    "claude-directory.md": {
+      "original_url": "https://code.claude.com/docs/en/claude-directory",
+      "original_md_url": "https://code.claude.com/docs/en/claude-directory.md",
+      "hash": "a8e5c317f4d906b84cd9e905dd5aec67bfbdf25a923a002eff561d49b17afb84",
+      "last_updated": "2026-03-27T03:55:41.384543"
+    },
     "cli-reference.md": {
       "original_url": "https://code.claude.com/docs/en/cli-reference",
       "original_md_url": "https://code.claude.com/docs/en/cli-reference.md",
@@ -250,8 +256,8 @@
     "monitoring-usage.md": {
       "original_url": "https://code.claude.com/docs/en/monitoring-usage",
       "original_md_url": "https://code.claude.com/docs/en/monitoring-usage.md",
-      "hash": "558215a8b955a6a7aa544ef747a3e157c441bf18eb6f8b9ef04fbfb885eb6263",
-      "last_updated": "2026-03-25T21:08:42.890617"
+      "hash": "f3cb10aa82732ab500f4873f74b03b6d9cc7cc1f2f4e7017e56f4b135d0c2e72",
+      "last_updated": "2026-03-27T03:55:59.249139"
     },
     "network-config.md": {
       "original_url": "https://code.claude.com/docs/en/network-config",
@@ -429,18 +435,18 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-27T00:10:12.901864",
-    "fetch_duration_seconds": 40.457906,
-    "total_pages_discovered": 71,
-    "pages_fetched_successfully": 72,
+    "last_fetch_completed": "2026-03-27T03:56:16.172515",
+    "fetch_duration_seconds": 41.768338,
+    "total_pages_discovered": 72,
+    "pages_fetched_successfully": 73,
     "pages_failed": 0,
     "failed_pages": [],
     "sitemap_url": "https://code.claude.com/docs/sitemap.xml",
     "base_url": "https://code.claude.com",
-    "total_files": 71,
+    "total_files": 72,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-27T00:10:12.901903",
+  "last_updated": "2026-03-27T03:56:16.172543",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
