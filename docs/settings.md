@@ -541,6 +541,7 @@ Controls which plugins are enabled. Format: `"plugin-name@marketplace-name": tru
 * **User settings** (`~/.claude/settings.json`): Personal plugin preferences
 * **Project settings** (`.claude/settings.json`): Project-specific plugins shared with team
 * **Local settings** (`.claude/settings.local.json`): Per-machine overrides (not committed)
+* **Managed settings** (`managed-settings.json`): Organization-wide policy overrides that block installation at all scopes and hide the plugin from the marketplace
 
 **Example**:
 

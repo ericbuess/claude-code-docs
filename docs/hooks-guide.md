@@ -603,6 +603,39 @@ A few more examples showing matchers on different event types:
 
 For full matcher syntax, see the [Hooks reference](/en/hooks#configuration).
 
+#### Filter by tool name and arguments with the `if` field
+
+<Note>
+  The `if` field requires Claude Code v2.1.85 or later. Earlier versions ignore it and run the hook on every matched call.
+</Note>
+
+The `if` field uses [permission rule syntax](/en/permissions) to filter hooks by tool name and arguments together, so the hook process only spawns when the tool call matches. This goes beyond `matcher`, which filters at the group level by tool name only.
+
+For example, to run a hook only when Claude uses `git` commands rather than all Bash commands:
+
+```json  theme={null}
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git *)",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-git-policy.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The hook process only spawns when the Bash command starts with `git`. Other Bash commands skip this handler entirely. The `if` field accepts the same patterns as permission rules: `"Bash(git *)"`, `"Edit(*.ts)"`, and so on. To match multiple tool names, use separate handlers each with its own `if` value, or match at the `matcher` level where pipe alternation is supported.
+
+`if` only works on tool events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, and `PermissionRequest`. Adding it to any other event prevents the hook from running.
+
 ### Configure hook location
 
 Where you add a hook determines its scope:

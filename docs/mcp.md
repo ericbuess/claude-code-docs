@@ -749,7 +749,7 @@ Some MCP servers don't support automatic OAuth setup via Dynamic Client Registra
 
 ### Override OAuth metadata discovery
 
-If your MCP server returns errors on the standard OAuth metadata endpoint (`/.well-known/oauth-authorization-server`) but exposes a working OIDC endpoint, you can tell Claude Code to fetch OAuth metadata directly from a URL you specify, bypassing the standard discovery chain.
+If your MCP server's standard OAuth metadata endpoints return errors but the server exposes a working OIDC endpoint, you can point Claude Code at a specific metadata URL to bypass the default discovery chain. By default, Claude Code first checks RFC 9728 Protected Resource Metadata at `/.well-known/oauth-protected-resource`, then falls back to RFC 8414 authorization server metadata at `/.well-known/oauth-authorization-server`.
 
 Set `authServerMetadataUrl` in the `oauth` object of your server's config in `.mcp.json`:
 
@@ -806,6 +806,15 @@ The command can also be inline:
 * Dynamic headers override any static `headers` with the same name
 
 The helper runs fresh on each connection (at session start and on reconnect). There is no caching, so your script is responsible for any token reuse.
+
+Claude Code sets these environment variables when executing the helper:
+
+| Variable                      | Value                      |
+| :---------------------------- | :------------------------- |
+| `CLAUDE_CODE_MCP_SERVER_NAME` | the name of the MCP server |
+| `CLAUDE_CODE_MCP_SERVER_URL`  | the URL of the MCP server  |
+
+Use these to write a single helper script that serves multiple MCP servers.
 
 <Note>
   `headersHelper` executes arbitrary shell commands. When defined at project or local scope, it only runs after you accept the workspace trust dialog.
@@ -1077,13 +1086,13 @@ Tool search is enabled by default: MCP tools are deferred and discovered on dema
 
 Control tool search behavior with the `ENABLE_TOOL_SEARCH` environment variable:
 
-| Value      | Behavior                                                                           |
-| :--------- | :--------------------------------------------------------------------------------- |
-| (unset)    | Enabled by default. Disabled when `ANTHROPIC_BASE_URL` is a non-first-party host   |
-| `true`     | Always enabled, including for non-first-party `ANTHROPIC_BASE_URL`                 |
-| `auto`     | Activates when MCP tools exceed 10% of context                                     |
-| `auto:<N>` | Activates at custom threshold, where `<N>` is a percentage (e.g., `auto:5` for 5%) |
-| `false`    | Disabled, all MCP tools loaded upfront                                             |
+| Value      | Behavior                                                                                                                       |
+| :--------- | :----------------------------------------------------------------------------------------------------------------------------- |
+| (unset)    | All MCP tools deferred and loaded on demand. Falls back to loading upfront when `ANTHROPIC_BASE_URL` is a non-first-party host |
+| `true`     | All MCP tools deferred, including for non-first-party `ANTHROPIC_BASE_URL`                                                     |
+| `auto`     | Threshold mode: tools load upfront if they fit within 10% of the context window, deferred otherwise                            |
+| `auto:<N>` | Threshold mode with a custom percentage, where `<N>` is 0-100 (e.g., `auto:5` for 5%)                                          |
+| `false`    | All MCP tools loaded upfront, no deferral                                                                                      |
 
 ```bash  theme={null}
 # Use a custom 5% threshold
