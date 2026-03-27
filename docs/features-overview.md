@@ -168,7 +168,7 @@ For example, you might use CLAUDE.md for project conventions, a skill for your d
 
 ## Understand context costs
 
-Every feature you add consumes some of Claude's context. Too much can fill up your context window, but it can also add noise that makes Claude less effective; skills may not trigger correctly, or Claude may lose track of your conventions. Understanding these trade-offs helps you build an effective setup.
+Every feature you add consumes some of Claude's context. Too much can fill up your context window, but it can also add noise that makes Claude less effective; skills may not trigger correctly, or Claude may lose track of your conventions. Understanding these trade-offs helps you build an effective setup. For an interactive view of how these features combine in a running session, see [Explore the context window](/en/context-window).
 
 ### Context cost by feature
 
@@ -178,7 +178,7 @@ Each feature has a different loading strategy and context cost:
 | --------------- | ------------------------- | --------------------------------------------- | -------------------------------------------- |
 | **CLAUDE.md**   | Session start             | Full content                                  | Every request                                |
 | **Skills**      | Session start + when used | Descriptions at start, full content when used | Low (descriptions every request)\*           |
-| **MCP servers** | Session start             | All tool definitions and schemas              | Every request                                |
+| **MCP servers** | Session start             | Tool names; full schemas on demand            | Low until a tool is used                     |
 | **Subagents**   | When spawned              | Fresh context with specified skills           | Isolated from main session                   |
 | **Hooks**       | On trigger                | Nothing (runs externally)                     | Zero, unless hook returns additional context |
 
@@ -188,7 +188,7 @@ Each feature has a different loading strategy and context cost:
 
 Each feature loads at different points in your session. The tabs below explain when each one loads and what goes into context.
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/context-loading.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=729b5b634ba831d1d64772c6c9485b30" alt="Context loading: CLAUDE.md and MCP load at session start and stay in every request. Skills load descriptions at start, full content on invocation. Subagents get isolated context. Hooks run externally." width="720" height="410" data-path="images/context-loading.svg" />
+<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="Context loading: CLAUDE.md loads at session start and stays in every request. MCP tool names load at start with full schemas deferred until use. Skills load descriptions at start, full content on invocation. Subagents get isolated context. Hooks run externally." width="720" height="410" data-path="images/context-loading.svg" />
 
 <Tabs>
   <Tab title="CLAUDE.md">
@@ -220,9 +220,9 @@ Each feature loads at different points in your session. The tabs below explain w
   <Tab title="MCP servers">
     **When:** Session start.
 
-    **What loads:** All tool definitions and JSON schemas from connected servers.
+    **What loads:** Tool names from connected servers. Full JSON schemas stay deferred until Claude needs a specific tool.
 
-    **Context cost:** [Tool search](/en/mcp#scale-with-mcp-tool-search) (enabled by default) loads MCP tools up to 10% of context and defers the rest until needed.
+    **Context cost:** [Tool search](/en/mcp#scale-with-mcp-tool-search) is on by default, so idle MCP tools consume minimal context.
 
     **Reliability note:** MCP connections can fail silently mid-session. If a server disconnects, its tools disappear without warning. Claude may try to use a tool that no longer exists. If you notice Claude failing to use an MCP tool it previously could access, check the connection with `/mcp`.
 
