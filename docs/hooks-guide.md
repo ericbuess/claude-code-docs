@@ -97,6 +97,16 @@ This hook uses the `Notification` event, which fires when Claude is waiting for 
       }
     }
     ```
+
+    <Accordion title="If no notification appears">
+      `osascript` routes notifications through the built-in Script Editor app. If Script Editor doesn't have notification permission, the command fails silently, and macOS won't prompt you to grant it. Run this in Terminal once to make Script Editor appear in your notification settings:
+
+      ```bash  theme={null}
+      osascript -e 'display notification "test"'
+      ```
+
+      Nothing will appear yet. Open **System Settings > Notifications**, find **Script Editor** in the list, and turn on **Allow Notifications**. Run the command again to confirm the test notification appears.
+    </Accordion>
   </Tab>
 
   <Tab title="Linux">
