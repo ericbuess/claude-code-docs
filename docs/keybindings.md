@@ -59,7 +59,7 @@ Each binding block specifies a **context** where the bindings apply:
 | `HistorySearch`   | History search mode (Ctrl+R)                     |
 | `Task`            | Background task is running                       |
 | `ThemePicker`     | Theme picker dialog                              |
-| `Attachments`     | Image/attachment bar navigation                  |
+| `Attachments`     | Image attachment navigation in select dialogs    |
 | `Footer`          | Footer indicator navigation (tasks, teams, diff) |
 | `MessageSelector` | Rewind and summarize dialog message selection    |
 | `DiffDialog`      | Diff viewer navigation                           |
@@ -209,7 +209,7 @@ Actions available in the `Attachments` context:
 | `attachments:next`     | Right             | Next attachment            |
 | `attachments:previous` | Left              | Previous attachment        |
 | `attachments:remove`   | Backspace, Delete | Remove selected attachment |
-| `attachments:exit`     | Down, Escape      | Exit attachment bar        |
+| `attachments:exit`     | Down, Escape      | Exit attachment navigation |
 
 ### Footer actions
 

@@ -112,8 +112,8 @@
     "data-usage.md": {
       "original_url": "https://code.claude.com/docs/en/data-usage",
       "original_md_url": "https://code.claude.com/docs/en/data-usage.md",
-      "hash": "4de256b82c6690b99c44dd64512db0a79d95268a3b9564177e19e3a0b9bfcff9",
-      "last_updated": "2026-03-18T12:10:47.380766"
+      "hash": "ea7c79758a09cf6825a502dac477f12a91901a22c614c260ecfc498cc66f7930",
+      "last_updated": "2026-03-28T15:05:42.355923"
     },
     "desktop.md": {
       "original_url": "https://code.claude.com/docs/en/desktop",
@@ -142,8 +142,8 @@
     "env-vars.md": {
       "original_url": "https://code.claude.com/docs/en/env-vars",
       "original_md_url": "https://code.claude.com/docs/en/env-vars.md",
-      "hash": "f071af9f991b5031d89c590b9c9d3e2e2bceb3e255b3792e958e60a56eb040a6",
-      "last_updated": "2026-03-27T18:13:36.298537"
+      "hash": "3676bb7a88aab0dce2bb4e877014e5372f2c76781a7d94585cdef99f028c9a08",
+      "last_updated": "2026-03-28T15:05:45.292066"
     },
     "fast-mode.md": {
       "original_url": "https://code.claude.com/docs/en/fast-mode",
@@ -214,8 +214,8 @@
     "keybindings.md": {
       "original_url": "https://code.claude.com/docs/en/keybindings",
       "original_md_url": "https://code.claude.com/docs/en/keybindings.md",
-      "hash": "55dcb4de208f78c206bfcf0db33ff09b8ebf836d7cd026eef1b7cfac53984a2d",
-      "last_updated": "2026-03-26T15:25:13.075777"
+      "hash": "dede16a20ab2c735bb8df3f8b33c6031c2a5bb5aed1aa77d207903cdbba06663",
+      "last_updated": "2026-03-28T15:05:52.298646"
     },
     "legal-and-compliance.md": {
       "original_url": "https://code.claude.com/docs/en/legal-and-compliance",
@@ -435,8 +435,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-03-28T12:05:16.889142",
-    "fetch_duration_seconds": 43.476223,
+    "last_fetch_completed": "2026-03-28T15:06:13.969236",
+    "fetch_duration_seconds": 42.923165,
     "total_pages_discovered": 72,
     "pages_fetched_successfully": 73,
     "pages_failed": 0,
@@ -446,7 +446,7 @@
     "total_files": 72,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-03-28T12:05:16.889175",
+  "last_updated": "2026-03-28T15:06:13.969265",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
