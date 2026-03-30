@@ -10,6 +10,10 @@ This page is generated from the [CHANGELOG.md on GitHub](https://github.com/anth
 
 Run `claude --version` to check your installed version.
 
+<Update label="2.1.87" description="March 29, 2026">
+  * Fixed messages in Cowork Dispatch not getting delivered
+</Update>
+
 <Update label="2.1.86" description="March 27, 2026">
   * Added `X-Claude-Code-Session-Id` header to API requests so proxies can aggregate requests by session without parsing the body
   * Added `.jj` and `.sl` to VCS directory exclusion lists so Grep and file autocomplete don't descend into Jujutsu or Sapling metadata

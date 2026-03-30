@@ -14,7 +14,7 @@ Choose a platform based on how you like to work and where your project lives.
 
 | Platform                          | Best for                                                                                           | What you get                                                                                                                                         |
 | :-------------------------------- | :------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [CLI](/en/quickstart)             | Terminal workflows, scripting, remote servers                                                      | Full feature set, [Agent SDK](/en/headless), third-party providers                                                                                   |
+| [CLI](/en/quickstart)             | Terminal workflows, scripting, remote servers                                                      | Full feature set, [Agent SDK](/en/headless), [computer use](/en/computer-use) on Pro and Max, third-party providers                                  |
 | [Desktop](/en/desktop)            | Visual review, parallel sessions, managed setup                                                    | Diff viewer, app preview, [computer use](/en/desktop#let-claude-use-your-computer) and [Dispatch](/en/desktop#sessions-from-dispatch) on Pro and Max |
 | [VS Code](/en/vs-code)            | Working inside VS Code without switching to a terminal                                             | Inline diffs, integrated terminal, file context                                                                                                      |
 | [JetBrains](/en/jetbrains)        | Working inside IntelliJ, PyCharm, WebStorm, or other JetBrains IDEs                                | Diff viewer, selection sharing, terminal session                                                                                                     |
@@ -65,6 +65,7 @@ If you're not sure where to start, [install the CLI](/en/quickstart) and run it 
 ### Integrations
 
 * [Chrome](/en/chrome): automate browser tasks with your logged-in sessions
+* [Computer use](/en/computer-use): let Claude open apps and control your screen on macOS
 * [GitHub Actions](/en/github-actions): run Claude in your CI pipeline
 * [GitLab CI/CD](/en/gitlab-ci-cd): the same for GitLab
 * [Code Review](/en/code-review): automatic review on every pull request
