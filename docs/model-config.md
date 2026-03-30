@@ -85,19 +85,27 @@ Even with `availableModels: []`, users can still use Claude Code with the Defaul
 
 ### Control the model users run on
 
-To fully control the model experience, use `availableModels` together with the `model` setting:
+The `model` setting is an initial selection, not enforcement. It sets which model is active when a session starts, but users can still open `/model` and pick Default, which resolves to the system default for their tier regardless of what `model` is set to.
 
-* **availableModels**: restricts what users can switch to
-* **model**: sets the explicit model override, taking precedence over the Default
+To fully control the model experience, combine three settings:
 
-This example ensures all users run Sonnet 4.6 and can only choose between Sonnet and Haiku:
+* **`availableModels`**: restricts which named models users can switch to
+* **`model`**: sets the initial model selection when a session starts
+* **`ANTHROPIC_DEFAULT_SONNET_MODEL`** / **`ANTHROPIC_DEFAULT_OPUS_MODEL`** / **`ANTHROPIC_DEFAULT_HAIKU_MODEL`**: control what the Default option and the `sonnet`, `opus`, and `haiku` aliases resolve to
+
+This example starts users on Sonnet 4.5, limits the picker to Sonnet and Haiku, and pins Default to resolve to Sonnet 4.5 rather than the latest release:
 
 ```json  theme={null}
 {
-  "model": "sonnet",
-  "availableModels": ["sonnet", "haiku"]
+  "model": "claude-sonnet-4-5",
+  "availableModels": ["claude-sonnet-4-5", "haiku"],
+  "env": {
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-5"
+  }
 }
 ```
+
+Without the `env` block, a user who selects Default in the picker would get the latest Sonnet release, bypassing the version pin in `model` and `availableModels`.
 
 ### Merge behavior
 
