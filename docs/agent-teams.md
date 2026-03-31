@@ -225,7 +225,23 @@ Teams and tasks are stored locally:
 * **Team config**: `~/.claude/teams/{team-name}/config.json`
 * **Task list**: `~/.claude/tasks/{team-name}/`
 
+Claude Code generates both of these automatically when you create a team and updates them as teammates join, go idle, or leave. The team config holds runtime state such as session IDs and tmux pane IDs, so don't edit it by hand or pre-author it: your changes are overwritten on the next state update.
+
+To define reusable teammate roles, use [subagent definitions](#use-subagent-definitions-for-teammates) instead.
+
 The team config contains a `members` array with each teammate's name, agent ID, and agent type. Teammates can read this file to discover other team members.
+
+There is no project-level equivalent of the team config. A file like `.claude/teams/teams.json` in your project directory is not recognized as configuration; Claude treats it as an ordinary file.
+
+### Use subagent definitions for teammates
+
+When spawning a teammate, you can reference a [subagent](/en/sub-agents) type from any [subagent scope](/en/sub-agents#choose-the-subagent-scope): project, user, plugin, or CLI-defined. The teammate inherits that subagent's system prompt, tools, and model. This lets you define a role once, such as a security-reviewer or test-runner, and reuse it both as a delegated subagent and as an agent team teammate.
+
+To use a subagent definition, mention it by name when asking Claude to spawn the teammate:
+
+```text  theme={null}
+Spawn a teammate using the security-reviewer agent type to audit the auth module.
+```
 
 ### Permissions
 

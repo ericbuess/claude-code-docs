@@ -192,6 +192,8 @@ The `--agents` flag accepts JSON with the same [frontmatter](#supported-frontmat
   For security reasons, plugin subagents do not support the `hooks`, `mcpServers`, or `permissionMode` frontmatter fields. These fields are ignored when loading agents from a plugin. If you need them, copy the agent file into `.claude/agents/` or `~/.claude/agents/`. You can also add rules to [`permissions.allow`](/en/settings#permission-settings) in `settings.json` or `settings.local.json`, but these rules apply to the entire session, not just the plugin subagent.
 </Note>
 
+Subagent definitions from any of these scopes are also available to [agent teams](/en/agent-teams#use-subagent-definitions-for-teammates): when spawning a teammate, you can reference a subagent type and the teammate inherits its system prompt, tools, and model.
+
 ### Write subagent files
 
 Subagent files use YAML frontmatter for configuration, followed by the system prompt in Markdown:
