@@ -72,6 +72,10 @@ Other terminals, including the default macOS Terminal, do not support native not
 
 To add custom behavior when notifications fire, such as playing a sound or sending a message, configure a [notification hook](/en/hooks#notification). Hooks run alongside terminal notifications, not as a replacement.
 
+### Reduce flicker and memory usage
+
+If you see flicker during long sessions, or your terminal scroll position jumps to the top while Claude is working, try [fullscreen rendering](/en/fullscreen). It uses an alternate rendering path that keeps memory flat and adds mouse support. Enable it with `CLAUDE_CODE_NO_FLICKER=1`.
+
 ### Handling large inputs
 
 When working with extensive code or long instructions:
