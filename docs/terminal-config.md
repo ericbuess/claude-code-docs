@@ -17,6 +17,7 @@ For additional customization of the Claude Code interface itself, you can config
 You have several options for entering line breaks into Claude Code:
 
 * **Quick escape**: Type `\` followed by Enter to create a newline
+* **Ctrl+J**: Sends a line feed character, which works as a newline in any terminal without configuration
 * **Shift+Enter**: Works out of the box in iTerm2, WezTerm, Ghostty, and Kitty
 * **Keyboard shortcut**: Set up a keybinding to insert a newline in other terminals
 

@@ -214,6 +214,24 @@ By default, Claude has access to files in the directory where it was launched. Y
 
 Files in additional directories follow the same permission rules as the original working directory: they become readable without prompts, and file editing permissions follow the current permission mode.
 
+### Additional directories grant file access, not configuration
+
+Adding a directory extends where Claude can read and edit files. It does not make that directory a full configuration root: most `.claude/` configuration is not discovered from additional directories, though a few types are loaded as exceptions.
+
+The following configuration types are loaded from `--add-dir` directories:
+
+| Configuration                                      | Loaded from `--add-dir`                                           |
+| :------------------------------------------------- | :---------------------------------------------------------------- |
+| [Skills](/en/skills) in `.claude/skills/`          | Yes, with live reload                                             |
+| Plugin settings in `.claude/settings.json`         | `enabledPlugins` and `extraKnownMarketplaces` only                |
+| [CLAUDE.md](/en/memory) files and `.claude/rules/` | Only when `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` is set |
+
+Everything else, including subagents, commands, output styles, hooks, and other settings, is discovered only from the current working directory and its parents, your user directory at `~/.claude/`, and managed settings. To share that configuration across projects, use one of these approaches:
+
+* **User-level configuration**: place files in `~/.claude/agents/`, `~/.claude/output-styles/`, or `~/.claude/settings.json` to make them available in every project
+* **Plugins**: package and distribute configuration as a [plugin](/en/plugins) that teams can install
+* **Launch from the config directory**: run Claude Code from the directory containing the `.claude/` configuration you want
+
 ## How permissions interact with sandboxing
 
 Permissions and [sandboxing](/en/sandboxing) are complementary security layers:
