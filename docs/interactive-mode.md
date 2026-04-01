@@ -249,6 +249,7 @@ Bash mode:
 * Does not require Claude to interpret or approve the command
 * Supports history-based autocomplete: type a partial command and press **Tab** to complete from previous `!` commands in the current project
 * Exit with `Escape`, `Backspace`, or `Ctrl+U` on an empty prompt
+* Pasting text that starts with `!` into an empty prompt enters bash mode automatically, matching typed `!` behavior
 
 This is useful for quick shell operations while maintaining conversation context.
 

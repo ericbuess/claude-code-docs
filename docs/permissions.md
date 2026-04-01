@@ -273,6 +273,12 @@ The following settings are only read from managed settings. Placing them in user
   Access to [Remote Control](/en/remote-control) and [web sessions](/en/claude-code-on-the-web) is not controlled by a managed settings key. On Team and Enterprise plans, an admin enables or disables these features in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code).
 </Note>
 
+## Review auto mode denials
+
+When [auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode) denies a tool call, a notification appears and the denied action is recorded in `/permissions` under the Recently denied tab. Press `r` on a denied action to mark it for retry: when you exit the dialog, Claude Code sends a message telling the model it may retry that tool call and resumes the conversation.
+
+To react to denials programmatically, use the [`PermissionDenied` hook](/en/hooks#permissiondenied).
+
 ## Configure the auto mode classifier
 
 [Auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode) uses a classifier model to decide whether each action is safe to run without prompting. Out of the box it trusts only the working directory and, if present, the current repo's remotes. Actions like pushing to your company's source control org or writing to a team cloud bucket will be blocked as potential data exfiltration. The `autoMode` settings block lets you tell the classifier which infrastructure your organization trusts.

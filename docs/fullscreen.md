@@ -75,6 +75,8 @@ Scrolling up pauses auto-follow so new output does not pull you back to the bott
 
 These actions are rebindable. See [Keybindings](/en/keybindings) to customize them. The action names are `scroll:pageUp`, `scroll:pageDown`, `scroll:top`, and `scroll:bottom`. Additional actions with no default binding include `scroll:lineUp`, `scroll:lineDown`, `scroll:halfPageUp`, `scroll:halfPageDown`, `scroll:fullPageUp`, and `scroll:fullPageDown`.
 
+Mouse wheel scrolling requires your terminal to forward mouse events to Claude Code. Most terminals do this whenever an application requests it. iTerm2 makes it a per-profile setting: if the wheel does nothing but `PgUp` and `PgDn` work, open Settings → Profiles → Terminal and turn on Enable mouse reporting. The same setting is also required for click-to-expand and text selection to work.
+
 ### Adjust wheel scroll speed
 
 If mouse wheel scrolling feels slow, your terminal may be sending one scroll event per physical notch with no multiplier. Some terminals, like Ghostty and iTerm2 with faster scrolling enabled, already amplify wheel events. Others, including the VS Code integrated terminal, send exactly one event per notch. Claude Code cannot detect which.

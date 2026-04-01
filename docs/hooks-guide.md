@@ -394,6 +394,7 @@ Hook events fire at specific lifecycle points in Claude Code. When an event fire
 | `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
 | `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
 | `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
+| `PermissionDenied`   | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
 | `PostToolUse`        | After a tool call succeeds                                                                                                                             |
 | `PostToolUseFailure` | After a tool call fails                                                                                                                                |
 | `Notification`       | When Claude Code sends a notification                                                                                                                  |
@@ -489,11 +490,13 @@ For example, a `PreToolUse` hook can deny a tool call and tell Claude why, or es
 }
 ```
 
-Claude Code reads `permissionDecision` and cancels the tool call, then feeds `permissionDecisionReason` back to Claude as feedback. These three options are specific to `PreToolUse`:
+With `"deny"`, Claude Code cancels the tool call and feeds `permissionDecisionReason` back to Claude. These `permissionDecision` values are specific to `PreToolUse`:
 
 * `"allow"`: skip the interactive permission prompt. Deny and ask rules, including enterprise managed deny lists, still apply
 * `"deny"`: cancel the tool call and send the reason to Claude
 * `"ask"`: show the permission prompt to the user as normal
+
+A fourth value, `"defer"`, is available in [non-interactive mode](/en/headless) with the `-p` flag. It exits the process with the tool call preserved so an Agent SDK wrapper can collect input and resume. See [Defer a tool call for later](/en/hooks#defer-a-tool-call-for-later) in the reference.
 
 Returning `"allow"` skips the interactive prompt but does not override [permission rules](/en/permissions#manage-permissions). If a deny rule matches the tool call, the call is blocked even when your hook returns `"allow"`. If an ask rule matches, the user is still prompted. This means deny rules from any settings scope, including [managed settings](/en/settings#settings-files), always take precedence over hook approvals.
 
@@ -526,7 +529,7 @@ Each event type matches on a specific field. Matchers support exact strings and 
 
 | Event                                                                                                                        | What the matcher filters                | Example matcher values                                                                                                    |
 | :--------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                                                       | tool name                               | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                   | tool name                               | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
 | `SessionStart`                                                                                                               | how the session started                 | `startup`, `resume`, `clear`, `compact`                                                                                   |
 | `SessionEnd`                                                                                                                 | why the session ended                   | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
 | `Notification`                                                                                                               | notification type                       | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
@@ -646,7 +649,7 @@ For example, to run a hook only when Claude uses `git` commands rather than all 
 
 The hook process only spawns when the Bash command starts with `git`. Other Bash commands skip this handler entirely. The `if` field accepts the same patterns as permission rules: `"Bash(git *)"`, `"Edit(*.ts)"`, and so on. To match multiple tool names, use separate handlers each with its own `if` value, or match at the `matcher` level where pipe alternation is supported.
 
-`if` only works on tool events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, and `PermissionRequest`. Adding it to any other event prevents the hook from running.
+`if` only works on tool events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, and `PermissionDenied`. Adding it to any other event prevents the hook from running.
 
 ### Configure hook location
 
