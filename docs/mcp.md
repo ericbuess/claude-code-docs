@@ -1104,12 +1104,12 @@ ENABLE_TOOL_SEARCH=false claude
 
 Or set the value in your [settings.json `env` field](/en/settings#available-settings).
 
-You can also disable the MCPSearch tool specifically using the `disallowedTools` setting:
+You can also disable the `ToolSearch` tool specifically:
 
 ```json  theme={null}
 {
   "permissions": {
-    "deny": ["MCPSearch"]
+    "deny": ["ToolSearch"]
   }
 }
 ```
