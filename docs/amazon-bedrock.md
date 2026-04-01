@@ -248,6 +248,14 @@ Example configuration:
 
 ## Troubleshooting
 
+### Authentication loop with SSO and corporate proxies
+
+If browser tabs spawn repeatedly when using AWS SSO, remove the `awsAuthRefresh` setting from your [settings file](/en/settings). This can occur when corporate VPNs or TLS inspection proxies interrupt the SSO browser flow. Claude Code treats the interrupted connection as an authentication failure, re-runs `awsAuthRefresh`, and loops indefinitely.
+
+If your network environment interferes with automatic browser-based SSO flows, use `aws sso login` manually before starting Claude Code instead of relying on `awsAuthRefresh`.
+
+### Region issues
+
 If you encounter region issues:
 
 * Check model availability: `aws bedrock list-inference-profiles --region your-region`
