@@ -7,6 +7,8 @@
 > Enable computer use in the Claude Code CLI so Claude can open apps, click, type, and see your screen on macOS. Test native apps, debug visual issues, and automate GUI-only tools without leaving your terminal.
 
 <Note>
+  {/* plan-availability: feature=computer-use plans=pro,max */}
+
   Computer use is a research preview on macOS that requires a Pro or Max plan. It is not available on Team or Enterprise plans. It requires Claude Code v2.1.85 or later and an interactive session, so it is not available in non-interactive mode with the `-p` flag.
 </Note>
 
@@ -169,12 +171,12 @@ Claude controls the simulator the same way you would with a mouse.
 
 The CLI and Desktop surfaces share the same computer use engine. A few Desktop-specific controls aren't yet in the CLI:
 
-| Feature              | Desktop                                        | CLI                             |
-| :------------------- | :--------------------------------------------- | :------------------------------ |
-| Enable               | Toggle in **Settings > Desktop app > General** | Enable `computer-use` in `/mcp` |
-| Denied apps list     | Configurable in Settings                       | Not yet available               |
-| Auto-unhide toggle   | Optional                                       | Always on                       |
-| Dispatch integration | Dispatch-spawned sessions can use computer use | Not applicable                  |
+| Feature              | Desktop                                                  | CLI                             |
+| :------------------- | :------------------------------------------------------- | :------------------------------ |
+| Enable               | Toggle in **Settings > General** (under **Desktop app**) | Enable `computer-use` in `/mcp` |
+| Denied apps list     | Configurable in Settings                                 | Not yet available               |
+| Auto-unhide toggle   | Optional                                                 | Always on                       |
+| Dispatch integration | Dispatch-spawned sessions can use computer use           | Not applicable                  |
 
 ## Troubleshooting
 
