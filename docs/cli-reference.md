@@ -31,7 +31,7 @@ You can start sessions, pipe content, resume conversations, and manage updates w
 
 ## CLI flags
 
-Customize Claude Code's behavior with these command-line flags:
+Customize Claude Code's behavior with these command-line flags. `claude --help` does not list every flag, so a flag's absence from `--help` does not mean it is unavailable.
 
 | Flag                                      | Description                                                                                                                                                                                                                                                                                          | Example                                                                                            |
 | :---------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
