@@ -94,8 +94,8 @@
     "common-workflows.md": {
       "original_url": "https://code.claude.com/docs/en/common-workflows",
       "original_md_url": "https://code.claude.com/docs/en/common-workflows.md",
-      "hash": "8d0925d8739c66d4703755e29ccf79b831e78862ef6d148f6a53439b170bcc32",
-      "last_updated": "2026-04-02T18:12:16.602793"
+      "hash": "a10cfdca889795c293bfb706afa9ae22d7f7b014a0281c9343c6822df0d3422b",
+      "last_updated": "2026-04-02T21:08:13.280954"
     },
     "computer-use.md": {
       "original_url": "https://code.claude.com/docs/en/computer-use",
@@ -346,8 +346,8 @@
     "sandboxing.md": {
       "original_url": "https://code.claude.com/docs/en/sandboxing",
       "original_md_url": "https://code.claude.com/docs/en/sandboxing.md",
-      "hash": "a069f56874ff429588b5944ed43542a096b57af9ec864e56628c3bdf56fcb4d0",
-      "last_updated": "2026-04-01T00:11:21.581847"
+      "hash": "bd669b9521e0be8a317eab3d23e1fa28bfc9e489d1890f9170d94b598034b783",
+      "last_updated": "2026-04-02T21:08:37.443765"
     },
     "scheduled-tasks.md": {
       "original_url": "https://code.claude.com/docs/en/scheduled-tasks",
@@ -370,14 +370,14 @@
     "settings.md": {
       "original_url": "https://code.claude.com/docs/en/settings",
       "original_md_url": "https://code.claude.com/docs/en/settings.md",
-      "hash": "68c850c008b2f40015ea9ce81da5e6462bb4cba162ee945728d4b5be420e6eeb",
-      "last_updated": "2026-04-01T21:12:37.224760"
+      "hash": "7ace3a7c99bbec7e8b7f378af5c16162cdfe54f8318b816d5a88bbad4870b474",
+      "last_updated": "2026-04-02T21:08:39.715033"
     },
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
       "original_md_url": "https://code.claude.com/docs/en/setup.md",
-      "hash": "61b5e65bb1f3349ffe32a59e57bc07f1601e733aaf44cb2492115598abd140f2",
-      "last_updated": "2026-04-02T18:12:45.368764"
+      "hash": "de8cc3649f3d49ee1f8e6d04d381757f81d1095c9796ecaa35fe411fb2112337",
+      "last_updated": "2026-04-02T21:08:40.277907"
     },
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
@@ -453,8 +453,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-04-02T18:12:52.795676",
-    "fetch_duration_seconds": 45.801146,
+    "last_fetch_completed": "2026-04-02T21:08:47.132481",
+    "fetch_duration_seconds": 42.727685,
     "total_pages_discovered": 75,
     "pages_fetched_successfully": 76,
     "pages_failed": 0,
@@ -464,7 +464,7 @@
     "total_files": 75,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-04-02T18:12:52.795704",
+  "last_updated": "2026-04-02T21:08:47.132507",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
