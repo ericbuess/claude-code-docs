@@ -41,19 +41,19 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
@@ -67,7 +67,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash  theme={null}
+    ```bash theme={null} theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
 
@@ -77,7 +77,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell  theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -318,12 +318,92 @@ npm install -g @anthropic-ai/claude-code
 
 ### Binary integrity and code signing
 
-You can verify the integrity of Claude Code binaries using SHA256 checksums and code signatures.
+Each release publishes a `manifest.json` containing SHA256 checksums for every platform binary. The manifest is signed with an Anthropic GPG key, so verifying the signature on the manifest transitively verifies every binary it lists.
 
-* SHA256 checksums for all platforms are published in the release manifests at `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json`. Replace `{VERSION}` with a version number such as `2.0.30`.
-* Signed binaries are distributed for the following platforms:
-  * **macOS**: signed by "Anthropic PBC" and notarized by Apple
-  * **Windows**: signed by "Anthropic, PBC"
+#### Verify the manifest signature
+
+The following steps require a POSIX shell with `gpg` and `curl`. On Windows, run them in Git Bash or WSL.
+
+<Steps>
+  <Step title="Download and import the public key">
+    The release signing key is published at a fixed URL.
+
+    ```bash  theme={null}
+    curl -fsSL https://downloads.claude.ai/keys/claude-code.asc | gpg --import
+    ```
+
+    Display the fingerprint of the imported key.
+
+    ```bash  theme={null}
+    gpg --fingerprint security@anthropic.com
+    ```
+
+    Confirm the output includes this fingerprint:
+
+    ```text  theme={null}
+    31DD DE24 DDFA B679 F42D  7BD2 BAA9 29FF 1A7E CACE
+    ```
+  </Step>
+
+  <Step title="Download the manifest and signature">
+    Set `VERSION` to the release you want to verify.
+
+    ```bash  theme={null}
+    REPO=https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases
+    VERSION=2.1.89
+    curl -fsSLO "$REPO/$VERSION/manifest.json"
+    curl -fsSLO "$REPO/$VERSION/manifest.json.sig"
+    ```
+  </Step>
+
+  <Step title="Verify the signature">
+    Verify the detached signature against the manifest.
+
+    ```bash  theme={null}
+    gpg --verify manifest.json.sig manifest.json
+    ```
+
+    A valid result reports `Good signature from "Anthropic Claude Code Release Signing <security@anthropic.com>"`.
+
+    `gpg` also prints `WARNING: This key is not certified with a trusted signature!` for any freshly imported key. This is expected. The `Good signature` line confirms the cryptographic check passed. The fingerprint comparison in Step 1 confirms the key itself is authentic.
+  </Step>
+
+  <Step title="Check the binary against the manifest">
+    Compare the SHA256 checksum of your downloaded binary with the value listed under `platforms.<platform>.checksum` in `manifest.json`.
+
+    <Tabs>
+      <Tab title="Linux">
+        ```bash  theme={null}
+        sha256sum claude
+        ```
+      </Tab>
+
+      <Tab title="macOS">
+        ```bash  theme={null}
+        shasum -a 256 claude
+        ```
+      </Tab>
+
+      <Tab title="Windows PowerShell">
+        ```powershell  theme={null}
+        (Get-FileHash claude.exe -Algorithm SHA256).Hash.ToLower()
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+<Note>
+  Manifest signatures are available for releases from `2.1.89` onward. Earlier releases publish checksums in `manifest.json` without a detached signature.
+</Note>
+
+#### Platform code signatures
+
+In addition to the signed manifest, individual binaries carry platform-native code signatures where supported.
+
+* **macOS**: signed by "Anthropic PBC" and notarized by Apple. Verify with `codesign --verify --verbose ./claude`.
+* **Windows**: signed by "Anthropic, PBC". Verify with `Get-AuthenticodeSignature .\claude.exe`.
+* **Linux**: use the manifest signature above to verify integrity. Linux binaries are not individually code-signed.
 
 ## Uninstall Claude Code
 
