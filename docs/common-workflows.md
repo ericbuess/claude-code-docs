@@ -556,7 +556,7 @@ When starting Claude Code, you can resume a previous session:
 
 From inside an active session, use `/resume` to switch to a different conversation.
 
-Sessions are stored per project directory. The `/resume` picker shows sessions from the same git repository, including worktrees.
+Sessions are stored per project directory. The `/resume` picker shows interactive sessions from the same git repository, including worktrees. Sessions created by `claude -p` or SDK invocations do not appear in the picker, but you can still resume one by passing its session ID directly to `claude --resume <session-id>`.
 
 ### Name your sessions
 
@@ -972,7 +972,7 @@ what are the limitations of Claude Code?
 ```
 
 <Note>
-  Claude provides documentation-based answers to these questions. For executable examples and hands-on demonstrations, refer to the specific workflow sections above.
+  Claude provides documentation-based answers to these questions. For hands-on demonstrations, run `/powerup` for interactive lessons with animated demos, or refer to the specific workflow sections above.
 </Note>
 
 <Tip>

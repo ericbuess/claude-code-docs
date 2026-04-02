@@ -256,7 +256,7 @@ Connectors are [MCP servers](/en/mcp) with a graphical setup flow. Use them for 
 
 ### Use skills
 
-[Skills](/en/skills) extend what Claude can do. Claude loads them automatically when relevant, or you can invoke one directly: type `/` in the prompt box or click the **+** button and select **Slash commands** to browse what's available. This includes [built-in commands](/en/commands), your [custom skills](/en/skills#create-custom-skills), project skills from your codebase, and skills from any [installed plugins](/en/plugins). Select one and it appears highlighted in the input field. Type your task after it and send as usual.
+[Skills](/en/skills) extend what Claude can do. Claude loads them automatically when relevant, or you can invoke one directly: type `/` in the prompt box or click the **+** button and select **Slash commands** to browse what's available. This includes [built-in commands](/en/commands), your [custom skills](/en/skills#create-your-first-skill), project skills from your codebase, and skills from any [installed plugins](/en/plugins). Select one and it appears highlighted in the input field. Type your task after it and send as usual.
 
 ### Install plugins
 
@@ -537,7 +537,7 @@ Claude Code must be installed on the remote machine. Once connected, SSH session
 
 ## Enterprise configuration
 
-Organizations on Teams or Enterprise plans can manage desktop app behavior through admin console controls, managed settings files, and device management policies.
+Organizations on Team or Enterprise plans can manage desktop app behavior through admin console controls, managed settings files, and device management policies.
 
 ### Admin console controls
 
@@ -674,7 +674,7 @@ Click the version number to copy it to your clipboard.
 If you see `Error 403: Forbidden` or other authentication failures when using the Code tab:
 
 1. Sign out and back in from the app menu. This is the most common fix.
-2. Verify you have an active paid subscription: Pro, Max, Teams, or Enterprise.
+2. Verify you have an active paid subscription: Pro, Max, Team, or Enterprise.
 3. If the CLI works but Desktop does not, quit the desktop app completely, not just close the window, then reopen and sign in again.
 4. Check your internet connection and proxy settings.
 

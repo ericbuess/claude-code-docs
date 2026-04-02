@@ -149,6 +149,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 | `model.id`, `model.display_name`                                                 | Current model identifier and display name                                                                                                                                                    |
 | `cwd`, `workspace.current_dir`                                                   | Current working directory. Both fields contain the same value; `workspace.current_dir` is preferred for consistency with `workspace.project_dir`.                                            |
 | `workspace.project_dir`                                                          | Directory where Claude Code was launched, which may differ from `cwd` if the working directory changes during a session                                                                      |
+| `workspace.added_dirs`                                                           | Additional directories added via `/add-dir` or `--add-dir`. Empty array if none have been added                                                                                              |
 | `cost.total_cost_usd`                                                            | Total session cost in USD                                                                                                                                                                    |
 | `cost.total_duration_ms`                                                         | Total wall-clock time since the session started, in milliseconds                                                                                                                             |
 | `cost.total_api_duration_ms`                                                     | Total time spent waiting for API responses in milliseconds                                                                                                                                   |
@@ -162,6 +163,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 | `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | Percentage of the 5-hour or 7-day rate limit consumed, from 0 to 100                                                                                                                         |
 | `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | Unix epoch seconds when the 5-hour or 7-day rate limit window resets                                                                                                                         |
 | `session_id`                                                                     | Unique session identifier                                                                                                                                                                    |
+| `session_name`                                                                   | Custom session name set with the `--name` flag or `/rename`. Absent if no custom name has been set                                                                                           |
 | `transcript_path`                                                                | Path to conversation transcript file                                                                                                                                                         |
 | `version`                                                                        | Claude Code version                                                                                                                                                                          |
 | `output_style.name`                                                              | Name of the current output style                                                                                                                                                             |
@@ -180,6 +182,7 @@ Claude Code sends the following JSON fields to your script via stdin:
   {
     "cwd": "/current/working/directory",
     "session_id": "abc123...",
+    "session_name": "my-session",
     "transcript_path": "/path/to/transcript.jsonl",
     "model": {
       "id": "claude-opus-4-6",
@@ -187,9 +190,10 @@ Claude Code sends the following JSON fields to your script via stdin:
     },
     "workspace": {
       "current_dir": "/current/working/directory",
-      "project_dir": "/original/project/directory"
+      "project_dir": "/original/project/directory",
+      "added_dirs": []
     },
-    "version": "1.0.80",
+    "version": "2.1.90",
     "output_style": {
       "name": "default"
     },
@@ -242,6 +246,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 
   **Fields that may be absent** (not present in JSON):
 
+  * `session_name`: appears only when a custom name has been set with `--name` or `/rename`
   * `vim`: appears only when vim mode is enabled
   * `agent`: appears only when running with the `--agent` flag or agent settings configured
   * `worktree`: appears only during `--worktree` sessions. When present, `branch` and `original_branch` may also be absent for hook-based worktrees

@@ -25,7 +25,7 @@ The desktop app has three tabs:
 Chat and Cowork are covered in the [Claude Desktop support articles](https://support.claude.com/en/collections/16163169-claude-desktop). This page focuses on the **Code** tab.
 
 <Note>
-  Claude Code requires a [Pro, Max, Teams, or Enterprise subscription](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
+  Claude Code requires a [Pro, Max, Team, or Enterprise subscription](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
 </Note>
 
 ## Install
@@ -39,12 +39,12 @@ Chat and Cowork are covered in the [Claude Desktop support articles](https://sup
         Universal build for Intel and Apple Silicon
       </Card>
 
-      <Card title="Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code&utm_medium=docs">
+      <Card title="Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code&utm_medium=docs">
         For x64 processors
       </Card>
     </CardGroup>
 
-    For Windows ARM64, [download here](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs).
+    For Windows ARM64, [download here](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs).
 
     Linux is not currently supported.
   </Step>

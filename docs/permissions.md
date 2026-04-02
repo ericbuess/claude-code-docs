@@ -35,14 +35,14 @@ Claude Code supports several permission modes that control how tools are approve
 | Mode                | Description                                                                                                                      |
 | :------------------ | :------------------------------------------------------------------------------------------------------------------------------- |
 | `default`           | Standard behavior: prompts for permission on first use of each tool                                                              |
-| `acceptEdits`       | Automatically accepts file edit permissions for the session                                                                      |
+| `acceptEdits`       | Automatically accepts file edit permissions for the session, except writes to protected directories                              |
 | `plan`              | Plan Mode: Claude can analyze but not modify files or execute commands                                                           |
 | `auto`              | Auto-approves tool calls with background safety checks that verify actions align with your request. Currently a research preview |
 | `dontAsk`           | Auto-denies tools unless pre-approved via `/permissions` or `permissions.allow` rules                                            |
 | `bypassPermissions` | Skips permission prompts except for writes to protected directories (see warning below)                                          |
 
 <Warning>
-  `bypassPermissions` mode skips permission prompts. Writes to `.git`, `.claude`, `.vscode`, and `.idea` directories still prompt for confirmation to prevent accidental corruption of repository state and local configuration. Writes to `.claude/commands`, `.claude/agents`, and `.claude/skills` are exempt and do not prompt, because Claude routinely writes there when creating skills, subagents, and commands. Only use this mode in isolated environments like containers or VMs where Claude Code cannot cause damage. Administrators can prevent this mode by setting `permissions.disableBypassPermissionsMode` to `"disable"` in [managed settings](#managed-settings).
+  `bypassPermissions` mode skips permission prompts. Writes to `.git`, `.claude`, `.vscode`, `.idea`, and `.husky` directories still prompt for confirmation to prevent accidental corruption of repository state, editor configuration, and git hooks. Writes to `.claude/commands`, `.claude/agents`, and `.claude/skills` are exempt and do not prompt, because Claude routinely writes there when creating skills, subagents, and commands. Only use this mode in isolated environments like containers or VMs where Claude Code cannot cause damage. Administrators can prevent this mode by setting `permissions.disableBypassPermissionsMode` to `"disable"` in [managed settings](#managed-settings).
 </Warning>
 
 To prevent `bypassPermissions` or `auto` mode from being used, set `permissions.disableBypassPermissionsMode` or `permissions.disableAutoMode` to `"disable"` in any [settings file](/en/settings#settings-files). These are most useful in [managed settings](#managed-settings) where they cannot be overridden.

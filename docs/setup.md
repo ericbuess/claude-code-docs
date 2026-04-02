@@ -30,7 +30,7 @@ Claude Code runs on the following platforms and configurations:
 ## Install Claude Code
 
 <Tip>
-  Prefer a graphical interface? The [Desktop app](/en/desktop-quickstart) lets you use Claude Code without the terminal. Download it for [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) or [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs).
+  Prefer a graphical interface? The [Desktop app](/en/desktop-quickstart) lets you use Claude Code without the terminal. Download it for [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) or [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs).
 
   New to the terminal? See the [terminal guide](/en/terminal-guide) for step-by-step instructions.
 </Tip>
@@ -41,19 +41,19 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash theme={null} theme={null} theme={null} theme={null}
+    ```bash theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell theme={null} theme={null} theme={null} theme={null}
+    ```powershell theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch theme={null} theme={null} theme={null} theme={null}
+    ```batch theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
@@ -67,7 +67,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash theme={null} theme={null} theme={null} theme={null}
+    ```bash theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
 
@@ -77,7 +77,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell theme={null} theme={null} theme={null} theme={null}
+    ```powershell theme={null} theme={null} theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -155,7 +155,7 @@ claude doctor
 
 ## Authenticate
 
-Claude Code requires a Pro, Max, Teams, Enterprise, or Console account. The free Claude.ai plan does not include Claude Code access. You can also use Claude Code with a third-party API provider like [Amazon Bedrock](/en/amazon-bedrock), [Google Vertex AI](/en/google-vertex-ai), or [Microsoft Foundry](/en/microsoft-foundry).
+Claude Code requires a Pro, Max, Team, Enterprise, or Console account. The free Claude.ai plan does not include Claude Code access. You can also use Claude Code with a third-party API provider like [Amazon Bedrock](/en/amazon-bedrock), [Google Vertex AI](/en/google-vertex-ai), or [Microsoft Foundry](/en/microsoft-foundry).
 
 After installing, log in by running `claude` and following the browser prompts. See [Authentication](/en/authentication) for all account types and team setup options.
 
@@ -269,19 +269,19 @@ To install a specific version number:
 <Tabs>
   <Tab title="macOS, Linux, WSL">
     ```bash  theme={null}
-    curl -fsSL https://claude.ai/install.sh | bash -s 1.0.58
+    curl -fsSL https://claude.ai/install.sh | bash -s 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
     ```powershell  theme={null}
-    & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 1.0.58
+    & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows CMD">
     ```batch  theme={null}
-    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 1.0.58 && del install.cmd
+    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 2.1.89 && del install.cmd
     ```
   </Tab>
 </Tabs>
@@ -322,7 +322,7 @@ Each release publishes a `manifest.json` containing SHA256 checksums for every p
 
 #### Verify the manifest signature
 
-The following steps require a POSIX shell with `gpg` and `curl`. On Windows, run them in Git Bash or WSL.
+Steps 1-3 require a POSIX shell with `gpg` and `curl`. On Windows, run them in Git Bash or WSL. Step 4 includes a PowerShell option.
 
 <Steps>
   <Step title="Download and import the public key">

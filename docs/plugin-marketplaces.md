@@ -853,6 +853,20 @@ For background auto-updates:
 * For GitLab, ensure the token has at least `read_repository` scope
 * Verify the token hasn't expired
 
+### Marketplace updates fail in offline environments
+
+**Symptoms**: Marketplace `git pull` fails and Claude Code wipes the existing cache, causing plugins to become unavailable.
+
+**Cause**: By default, when a `git pull` fails, Claude Code removes the stale clone and attempts to re-clone. In offline or airgapped environments, re-cloning fails the same way, leaving the marketplace directory empty.
+
+**Solution**: Set `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` to keep the existing cache when the pull fails instead of wiping it:
+
+```bash  theme={null}
+export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
+```
+
+With this variable set, Claude Code retains the stale marketplace clone on `git pull` failure and continues using the last-known-good state. For fully offline deployments where the repository will never be reachable, use [`CLAUDE_CODE_PLUGIN_SEED_DIR`](#pre-populate-plugins-for-containers) to pre-populate the plugins directory at build time instead.
+
 ### Git operations time out
 
 **Symptoms**: Plugin installation or marketplace updates fail with a timeout error like "Git clone timed out after 120s" or "Git pull timed out after 120s".
