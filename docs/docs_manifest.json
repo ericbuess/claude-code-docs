@@ -33,8 +33,8 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "5701b92853172951df55e8d4a642a9ab5360cf3740bc6326eebc8fd019b43319",
-      "last_updated": "2026-04-01T04:00:51.989471",
+      "hash": "ff0ec7a52ca6074050857a42757b43222a05cfd6ba90baea579f11af208a5f60",
+      "last_updated": "2026-04-02T00:09:32.810091",
       "source": "claude-code-repository"
     },
     "channels.md": {
@@ -453,8 +453,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-04-01T21:12:44.685967",
-    "fetch_duration_seconds": 42.738352,
+    "last_fetch_completed": "2026-04-02T00:09:32.810118",
+    "fetch_duration_seconds": 45.038863,
     "total_pages_discovered": 75,
     "pages_fetched_successfully": 76,
     "pages_failed": 0,
@@ -464,7 +464,7 @@
     "total_files": 75,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-04-01T21:12:44.685991",
+  "last_updated": "2026-04-02T00:09:32.810146",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
