@@ -219,13 +219,13 @@ Plugin sources tell Claude Code where to fetch each individual plugin listed in 
 
 Once a plugin is cloned or copied into the local machine, it is copied into the local versioned plugin cache at `~/.claude/plugins/cache`.
 
-| Source        | Type                            | Fields                             | Notes                                                                               |
-| ------------- | ------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------- |
-| Relative path | `string` (e.g. `"./my-plugin"`) | none                               | Local directory within the marketplace repo. Must start with `./`                   |
-| `github`      | object                          | `repo`, `ref?`, `sha?`             |                                                                                     |
-| `url`         | object                          | `url`, `ref?`, `sha?`              | Git URL source                                                                      |
-| `git-subdir`  | object                          | `url`, `path`, `ref?`, `sha?`      | Subdirectory within a git repo. Clones sparsely to minimize bandwidth for monorepos |
-| `npm`         | object                          | `package`, `version?`, `registry?` | Installed via `npm install`                                                         |
+| Source        | Type                            | Fields                             | Notes                                                                                                                                             |
+| ------------- | ------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Relative path | `string` (e.g. `"./my-plugin"`) | none                               | Local directory within the marketplace repo. Must start with `./`. Resolved relative to the marketplace root, not the `.claude-plugin/` directory |
+| `github`      | object                          | `repo`, `ref?`, `sha?`             |                                                                                                                                                   |
+| `url`         | object                          | `url`, `ref?`, `sha?`              | Git URL source                                                                                                                                    |
+| `git-subdir`  | object                          | `url`, `path`, `ref?`, `sha?`      | Subdirectory within a git repo. Clones sparsely to minimize bandwidth for monorepos                                                               |
+| `npm`         | object                          | `package`, `version?`, `registry?` | Installed via `npm install`                                                                                                                       |
 
 <Note>
   **Marketplace sources vs plugin sources**: These are different concepts that control different things.
@@ -247,7 +247,7 @@ For plugins in the same repository, use a path starting with `./`:
 }
 ```
 
-Paths resolve relative to the marketplace root, which is the directory containing `.claude-plugin/`. In the example above, `./plugins/my-plugin` points to `<repo>/plugins/my-plugin`, even though `marketplace.json` lives at `<repo>/.claude-plugin/marketplace.json`. Do not use `../` to climb out of `.claude-plugin/`.
+Paths resolve relative to the marketplace root, which is the directory containing `.claude-plugin/`. In the example above, `./plugins/my-plugin` points to `<repo>/plugins/my-plugin`, even though `marketplace.json` lives at `<repo>/.claude-plugin/marketplace.json`. Do not use `../` to reference paths outside the marketplace root.
 
 <Note>
   Relative paths only work when users add your marketplace via Git (GitHub, GitLab, or git URL). If users add your marketplace via a direct URL to the `marketplace.json` file, relative paths will not resolve correctly. For URL-based distribution, use GitHub, npm, or git URL sources instead. See [Troubleshooting](#plugins-with-relative-paths-fail-in-url-based-marketplaces) for details.
@@ -576,7 +576,16 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
   cache/<marketplace>/<plugin>/<version>/...
 ```
 
-The simplest way to build a seed directory is to run Claude Code once during image build, install the plugins you need, then copy the resulting `~/.claude/plugins` directory into your image and point `CLAUDE_CODE_PLUGIN_SEED_DIR` at it.
+To build a seed directory, run Claude Code once during image build, install the plugins you need, then copy the resulting `~/.claude/plugins` directory into your image and point `CLAUDE_CODE_PLUGIN_SEED_DIR` at it.
+
+To skip the copy step, set `CLAUDE_CODE_PLUGIN_CACHE_DIR` to your target seed path during the build so plugins install directly there:
+
+```bash  theme={null}
+CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin marketplace add your-org/plugins
+CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your-plugins
+```
+
+Then set `CLAUDE_CODE_PLUGIN_SEED_DIR=/opt/claude-seed` in your container's runtime environment so Claude Code reads from the seed on startup.
 
 At startup, Claude Code registers marketplaces found in the seed's `known_marketplaces.json` into the primary configuration, and uses plugin caches found under `cache/` in place without re-cloning. This works in both interactive mode and non-interactive mode with the `-p` flag.
 
@@ -585,6 +594,7 @@ Behavior details:
 * **Read-only**: the seed directory is never written to. Auto-updates are disabled for seed marketplaces since git pull would fail on a read-only filesystem.
 * **Seed entries take precedence**: marketplaces declared in the seed overwrite any matching entries in the user's configuration on each startup. To opt out of a seed plugin, use `/plugin disable` rather than removing the marketplace.
 * **Path resolution**: Claude Code locates marketplace content by probing `$CLAUDE_CODE_PLUGIN_SEED_DIR/marketplaces/<name>/` at runtime, not by trusting paths stored inside the seed's JSON. This means the seed works correctly even when mounted at a different path than where it was built.
+* **Mutation is blocked**: running `/plugin marketplace remove` or `/plugin marketplace update` against a seed-managed marketplace fails with guidance to ask your administrator to update the seed image.
 * **Composes with settings**: if `extraKnownMarketplaces` or `enabledPlugins` declare a marketplace that already exists in the seed, Claude Code uses the seed copy instead of cloning.
 
 ### Managed marketplace restrictions
@@ -789,6 +799,115 @@ Install a test plugin to verify everything works:
 ```
 
 For complete plugin testing workflows, see [Test your plugins locally](/en/plugins#test-your-plugins-locally). For technical troubleshooting, see [Plugins reference](/en/plugins-reference).
+
+## Manage marketplaces from the CLI
+
+Claude Code provides non-interactive `claude plugin marketplace` subcommands for scripting and automation. These are equivalent to the `/plugin marketplace` commands available inside an interactive session.
+
+### Plugin marketplace add
+
+Add a marketplace from a GitHub repository, git URL, remote URL, or local path.
+
+```bash  theme={null}
+claude plugin marketplace add <source> [options]
+```
+
+**Arguments:**
+
+* `<source>`: GitHub `owner/repo` shorthand, git URL, remote URL to a `marketplace.json` file, or local directory path. To pin to a branch or tag, append `@ref` to the GitHub shorthand or `#ref` to a git URL
+
+**Options:**
+
+| Option                | Description                                                                                                                                         | Default |
+| :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- | :------ |
+| `--scope <scope>`     | Where to declare the marketplace: `user`, `project`, or `local`. See [Plugin installation scopes](/en/plugins-reference#plugin-installation-scopes) | `user`  |
+| `--sparse <paths...>` | Limit checkout to specific directories via git sparse-checkout. Useful for monorepos                                                                |         |
+
+Add a marketplace from GitHub using `owner/repo` shorthand:
+
+```bash  theme={null}
+claude plugin marketplace add acme-corp/claude-plugins
+```
+
+Pin to a specific branch or tag with `@ref`:
+
+```bash  theme={null}
+claude plugin marketplace add acme-corp/claude-plugins@v2.0
+```
+
+Add from a git URL on a non-GitHub host:
+
+```bash  theme={null}
+claude plugin marketplace add https://gitlab.example.com/team/plugins.git
+```
+
+Add from a remote URL that serves the `marketplace.json` file directly:
+
+```bash  theme={null}
+claude plugin marketplace add https://example.com/marketplace.json
+```
+
+Add from a local directory for testing:
+
+```bash  theme={null}
+claude plugin marketplace add ./my-marketplace
+```
+
+Declare the marketplace at project scope so it is shared with your team via `.claude/settings.json`:
+
+```bash  theme={null}
+claude plugin marketplace add acme-corp/claude-plugins --scope project
+```
+
+For a monorepo, limit the checkout to the directories that contain plugin content:
+
+```bash  theme={null}
+claude plugin marketplace add acme-corp/monorepo --sparse .claude-plugin plugins
+```
+
+### Plugin marketplace list
+
+List all configured marketplaces.
+
+```bash  theme={null}
+claude plugin marketplace list [options]
+```
+
+**Options:**
+
+| Option   | Description    |
+| :------- | :------------- |
+| `--json` | Output as JSON |
+
+### Plugin marketplace remove
+
+Remove a configured marketplace. The alias `rm` is also accepted.
+
+```bash  theme={null}
+claude plugin marketplace remove <name>
+```
+
+**Arguments:**
+
+* `<name>`: marketplace name to remove, as shown by `claude plugin marketplace list`. This is the `name` from `marketplace.json`, not the source you passed to `add`
+
+<Warning>
+  Removing a marketplace also uninstalls any plugins you installed from it. To refresh a marketplace without losing installed plugins, use `claude plugin marketplace update` instead.
+</Warning>
+
+### Plugin marketplace update
+
+Refresh marketplaces from their sources to retrieve new plugins and version changes.
+
+```bash  theme={null}
+claude plugin marketplace update [name]
+```
+
+**Arguments:**
+
+* `[name]`: marketplace name to update, as shown by `claude plugin marketplace list`. Updates all marketplaces if omitted
+
+Both `remove` and `update` fail when run against a seed-managed marketplace, which is read-only. When updating all marketplaces, seed-managed entries are skipped and other marketplaces still update. To change seed-provided plugins, ask your administrator to update the seed image. See [Pre-populate plugins for containers](#pre-populate-plugins-for-containers).
 
 ## Troubleshooting
 
