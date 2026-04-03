@@ -12,23 +12,23 @@
 
 Scheduled tasks let Claude re-run a prompt automatically on an interval. Use them to poll a deployment, babysit a PR, check back on a long-running build, or remind yourself to do something later in the session. To react to events as they happen instead of polling, see [Channels](/en/channels): your CI can push the failure into the session directly.
 
-Tasks are session-scoped: they live in the current Claude Code process and are gone when you exit. For durable scheduling that survives restarts, use [Cloud](/en/web-scheduled-tasks) or [Desktop](/en/desktop#schedule-recurring-tasks) scheduled tasks, or [GitHub Actions](/en/github-actions).
+Tasks are session-scoped: they live in the current Claude Code process and are gone when you exit. For durable scheduling that survives restarts, use [Cloud](/en/web-scheduled-tasks) or [Desktop](/en/desktop-scheduled-tasks) scheduled tasks, or [GitHub Actions](/en/github-actions).
 
 ## Compare scheduling options
 
 Claude Code offers three ways to schedule recurring work:
 
-|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
-| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
-| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
-| Requires machine on        | No                               | Yes                                             | Yes                            |
-| Requires open session      | No                               | No                                              | Yes                            |
-| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
-| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
-| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
-| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
-| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
-| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                           | Your machine                   |
+| Requires machine on        | No                               | Yes                                    | Yes                            |
+| Requires open session      | No                               | No                                     | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                    | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                    | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                  | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                    | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                               | 1 minute                       |
 
 <Tip>
   Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
@@ -119,7 +119,7 @@ The offset is derived from the task ID, so the same task always gets the same of
 
 ### Seven-day expiry
 
-Recurring tasks automatically expire 7 days after creation. The task fires one final time, then deletes itself. This bounds how long a forgotten loop can run. If you need a recurring task to last longer, cancel and recreate it before it expires, or use [Cloud scheduled tasks](/en/web-scheduled-tasks) or [Desktop scheduled tasks](/en/desktop#schedule-recurring-tasks) for durable scheduling.
+Recurring tasks automatically expire 7 days after creation. The task fires one final time, then deletes itself. This bounds how long a forgotten loop can run. If you need a recurring task to last longer, cancel and recreate it before it expires, or use [Cloud scheduled tasks](/en/web-scheduled-tasks) or [Desktop scheduled tasks](/en/desktop-scheduled-tasks) for durable scheduling.
 
 ## Cron expression reference
 
@@ -154,4 +154,4 @@ For cron-driven automation that needs to run unattended:
 
 * [Cloud scheduled tasks](/en/web-scheduled-tasks): run on Anthropic-managed infrastructure
 * [GitHub Actions](/en/github-actions): use a `schedule` trigger in CI
-* [Desktop scheduled tasks](/en/desktop#schedule-recurring-tasks): run locally on your machine
+* [Desktop scheduled tasks](/en/desktop-scheduled-tasks): run locally on your machine

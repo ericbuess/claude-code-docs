@@ -145,6 +145,12 @@ claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
 ```
 
+To set a baseline for the whole session instead of listing individual tools, pass a [permission mode](/en/permission-modes). `dontAsk` denies anything not in your `permissions.allow` rules, which is useful for locked-down CI runs. `acceptEdits` lets Claude write files without prompting, but shell commands and network requests still need an `--allowedTools` entry or a `permissions.allow` rule, otherwise the run aborts when one is attempted:
+
+```bash  theme={null}
+claude -p "Apply the lint fixes" --permission-mode acceptEdits
+```
+
 ### Create a commit
 
 This example reviews staged changes and creates a commit with an appropriate message:
