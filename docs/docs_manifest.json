@@ -9,8 +9,8 @@
     "amazon-bedrock.md": {
       "original_url": "https://code.claude.com/docs/en/amazon-bedrock",
       "original_md_url": "https://code.claude.com/docs/en/amazon-bedrock.md",
-      "hash": "c1d5c08cc4d5f01525b7a54917f26b40cb960bb3fdc68d8933d3a3569bcc0dee",
-      "last_updated": "2026-04-03T03:54:06.734253"
+      "hash": "7ad0a58fb6b9c5f60bbe75b2a10c6b8af5b0229bd4c09c74bba26d2d27232031",
+      "last_updated": "2026-04-03T18:07:44.921473"
     },
     "analytics.md": {
       "original_url": "https://code.claude.com/docs/en/analytics",
@@ -130,8 +130,8 @@
     "desktop-quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-quickstart",
       "original_md_url": "https://code.claude.com/docs/en/desktop-quickstart.md",
-      "hash": "ed9c0b44910e4fc1726399d78726e9f95eb2bddd94dd21f9eca9a6999875b85b",
-      "last_updated": "2026-04-02T18:12:20.241723"
+      "hash": "114beba2238c43f04fb110f675dde4eb4c8e60b16c43e32ad0f89c3aed73b2f2",
+      "last_updated": "2026-04-03T18:07:56.914194"
     },
     "devcontainer.md": {
       "original_url": "https://code.claude.com/docs/en/devcontainer",
@@ -453,8 +453,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-04-03T15:13:05.882810",
-    "fetch_duration_seconds": 49.232699,
+    "last_fetch_completed": "2026-04-03T18:08:31.696290",
+    "fetch_duration_seconds": 47.800694,
     "total_pages_discovered": 75,
     "pages_fetched_successfully": 76,
     "pages_failed": 0,
@@ -464,7 +464,7 @@
     "total_files": 75,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-04-03T15:13:05.882836",
+  "last_updated": "2026-04-03T18:08:31.696321",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
