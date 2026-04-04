@@ -35,7 +35,7 @@ Claude Code usage is subject to the [Anthropic Usage Policy](https://www.anthrop
 
 Claude Code authenticates with Anthropic's servers using OAuth tokens or API keys. These authentication methods serve different purposes:
 
-* **OAuth authentication** (used with Free, Pro, and Max plans) is intended exclusively for Claude Code and Claude.ai. Using OAuth tokens obtained through Claude Free, Pro, or Max accounts in any other product, tool, or service — including the [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) — is not permitted and constitutes a violation of the [Consumer Terms of Service](https://www.anthropic.com/legal/consumer-terms).
+* **OAuth authentication** is intended exclusively for purchasers of Claude Free, Pro, Max, Team, and Enterprise subscription plans and is designed to support ordinary use of Claude Code and other native Anthropic applications. More information about how users can authenticate with OAuth tokens can be found in [Logging in to your Claude account](https://support.claude.com/en/articles/13189465-logging-in-to-your-claude-account).
 * **Developers** building products or services that interact with Claude's capabilities, including those using the [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview), should use API key authentication through [Claude Console](https://platform.claude.com/) or a supported cloud provider. Anthropic does not permit third-party developers to offer Claude.ai login or to route requests through Free, Pro, or Max plan credentials on behalf of their users.
 
 Anthropic reserves the right to take measures to enforce these restrictions and may do so without prior notice.
