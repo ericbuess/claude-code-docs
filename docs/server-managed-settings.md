@@ -153,6 +153,22 @@ Claude Code fetches settings from Anthropic's servers at startup and polls for u
 
 Claude Code applies settings updates automatically without a restart, except for advanced settings like OpenTelemetry configuration, which require a full restart to take effect.
 
+### Enforce fail-closed startup
+
+By default, if the remote settings fetch fails at startup, the CLI continues without managed settings. For environments where this brief unenforced window is unacceptable, set `forceRemoteSettingsRefresh: true` in your managed settings.
+
+When this setting is active, the CLI blocks at startup until remote settings are freshly fetched. If the fetch fails, the CLI exits rather than proceeding without the policy. This setting self-perpetuates: once delivered from the server, it is also cached locally so that subsequent startups enforce the same behavior even before the first successful fetch of a new session.
+
+To enable this, add the key to your managed settings configuration:
+
+```json  theme={null}
+{
+  "forceRemoteSettingsRefresh": true
+}
+```
+
+Before enabling this setting, ensure your network policies allow connectivity to `api.anthropic.com`. If that endpoint is unreachable, the CLI exits at startup and users cannot start Claude Code.
+
 ### Security approval dialogs
 
 Certain settings that could pose security risks require explicit user approval before being applied:
@@ -186,13 +202,13 @@ Audit events include the type of action performed, the account and device that p
 
 Server-managed settings provide centralized policy enforcement, but they operate as a client-side control. On unmanaged devices, users with admin or sudo access can modify the Claude Code binary, filesystem, or network configuration.
 
-| Scenario                                         | Behavior                                                                                                        |
-| :----------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
-| User edits the cached settings file              | Tampered file applies at startup, but correct settings restore on the next server fetch                         |
-| User deletes the cached settings file            | First-launch behavior occurs: settings fetch asynchronously with a brief unenforced window                      |
-| API is unavailable                               | Cached settings apply if available, otherwise managed settings are not enforced until the next successful fetch |
-| User authenticates with a different organization | Settings are not delivered for accounts outside the managed organization                                        |
-| User sets a non-default `ANTHROPIC_BASE_URL`     | Server-managed settings are bypassed when using third-party API providers                                       |
+| Scenario                                         | Behavior                                                                                                                                                                                      |
+| :----------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| User edits the cached settings file              | Tampered file applies at startup, but correct settings restore on the next server fetch                                                                                                       |
+| User deletes the cached settings file            | First-launch behavior occurs: settings fetch asynchronously with a brief unenforced window                                                                                                    |
+| API is unavailable                               | Cached settings apply if available, otherwise managed settings are not enforced until the next successful fetch. With `forceRemoteSettingsRefresh: true`, the CLI exits instead of continuing |
+| User authenticates with a different organization | Settings are not delivered for accounts outside the managed organization                                                                                                                      |
+| User sets a non-default `ANTHROPIC_BASE_URL`     | Server-managed settings are bypassed when using third-party API providers                                                                                                                     |
 
 To detect runtime configuration changes, use [`ConfigChange` hooks](/en/hooks#configchange) to log modifications or block unauthorized changes before they take effect.
 

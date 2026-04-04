@@ -104,7 +104,7 @@ See the [commands reference](/en/commands) for the full list of built-in command
 
 ## Vim editor mode
 
-Enable vim-style editing with `/vim` command or configure permanently via `/config`.
+Enable vim-style editing via `/config` → Editor mode.
 
 ### Mode switching
 

@@ -1001,9 +1001,9 @@ This is particularly useful when working with MCP servers that:
 
 ### Override result size per tool
 
-If you're building an MCP server, you can allow individual tools to return results larger than the default limit by setting `_meta["anthropic/maxResultSizeChars"]` in the tool's `tools/list` response entry. Claude Code uses this value as the maximum result size for that tool, up to a hard ceiling of 500,000 characters.
+If you're building an MCP server, you can allow individual tools to return results larger than the default persist-to-disk threshold by setting `_meta["anthropic/maxResultSizeChars"]` in the tool's `tools/list` response entry. Claude Code raises that tool's threshold to the annotated value, up to a hard ceiling of 500,000 characters.
 
-This is useful for tools that return inherently large but necessary outputs, such as database schemas or full file trees. Without the annotation, results that exceed the default limit are persisted to disk and replaced with a file reference in the conversation.
+This is useful for tools that return inherently large but necessary outputs, such as database schemas or full file trees. Without the annotation, results that exceed the default threshold are persisted to disk and replaced with a file reference in the conversation.
 
 ```json  theme={null}
 {
@@ -1015,8 +1015,10 @@ This is useful for tools that return inherently large but necessary outputs, suc
 }
 ```
 
+The annotation raises the per-tool persist threshold but does not bypass the global `MAX_MCP_OUTPUT_TOKENS` limit, which defaults to 25,000 tokens or roughly 100,000 characters. To return results larger than that, users must also raise `MAX_MCP_OUTPUT_TOKENS`.
+
 <Warning>
-  If you frequently encounter output warnings with specific MCP servers you don't control, consider increasing the `MAX_MCP_OUTPUT_TOKENS` limit or asking the server author to add the `anthropic/maxResultSizeChars` annotation.
+  If you frequently encounter output warnings with specific MCP servers you don't control, consider increasing the `MAX_MCP_OUTPUT_TOKENS` limit. You can also ask the server author to add the `anthropic/maxResultSizeChars` annotation or to paginate their responses.
 </Warning>
 
 ## Respond to MCP elicitation requests
