@@ -90,7 +90,8 @@ show_freshness() {
         exit 1
     fi
     
-    # Try to sync with GitHub
+    # Force fetch - bypass throttle since user explicitly asked for freshness check
+    rm -f "$DOCS_PATH/.last_fetch"
     auto_update
     local sync_status=$?
     
