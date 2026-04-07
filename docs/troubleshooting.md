@@ -642,6 +642,28 @@ If you see `API Error: 403 {"error":{"type":"forbidden","message":"Request not a
 * **Console users**: confirm your account has the "Claude Code" or "Developer" role assigned by your admin
 * **Behind a proxy**: corporate proxies can interfere with API requests. See [network configuration](/en/network-config) for proxy setup.
 
+### Model not found or not accessible
+
+If you see `There's an issue with the selected model (...). It may not exist or you may not have access to it`, the API rejected the configured model name.
+
+Common causes:
+
+* A typo in the model name passed to `--model`
+* A stale or deprecated model ID saved in your settings
+* An API key without access to that model on your current usage tier
+
+Check where the model is set, in [priority order](/en/model-config#setting-your-model):
+
+* The `--model` flag
+* The `ANTHROPIC_MODEL` environment variable
+* The `model` field in `.claude/settings.local.json`
+* The `model` field in your project's `.claude/settings.json`
+* The `model` field in `~/.claude/settings.json`
+
+To clear a stale value, remove the `model` field from your settings or unset `ANTHROPIC_MODEL`, and Claude Code will fall back to the default model for your account.
+
+To browse models available to your account, start `claude` interactively and run `/model` to open the picker. For Vertex AI deployments, see [the Vertex AI troubleshooting section](/en/google-vertex-ai#troubleshooting).
+
 ### "This organization has been disabled" with an active subscription
 
 If you see `API Error: 400 ... "This organization has been disabled"` despite having an active Claude subscription, an `ANTHROPIC_API_KEY` environment variable is overriding your subscription. This commonly happens when an old API key from a previous employer or project is still set in your shell profile.

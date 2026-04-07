@@ -503,7 +503,7 @@ The exit code from your hook command tells Claude Code whether the action should
 
 **Exit 2** means a blocking error. Claude Code ignores stdout and any JSON in it. Instead, stderr text is fed back to Claude as an error message. The effect depends on the event: `PreToolUse` blocks the tool call, `UserPromptSubmit` rejects the prompt, and so on. See [exit code 2 behavior](#exit-code-2-behavior-per-event) for the full list.
 
-**Any other exit code** is a non-blocking error. stderr is shown in verbose mode (`Ctrl+O`) and execution continues.
+**Any other exit code** is a non-blocking error for most hook events. stderr is shown in verbose mode (`Ctrl+O`) and execution continues.
 
 For example, a hook command script that blocks dangerous Bash commands:
 
@@ -519,6 +519,10 @@ fi
 
 exit 0  # Success: tool call proceeds
 ```
+
+<Warning>
+  For most hook events, only exit code 2 blocks the action. Claude Code treats exit code 1 as a non-blocking error and proceeds with the action, even though 1 is the conventional Unix failure code. If your hook is meant to enforce a policy, use `exit 2`. The exception is `WorktreeCreate`, where any non-zero exit code aborts worktree creation.
+</Warning>
 
 #### Exit code 2 behavior per event
 
