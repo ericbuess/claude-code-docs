@@ -4,7 +4,7 @@
 
 # Schedule tasks on the web
 
-> Automate recurring work with cloud scheduled tasks
+> Schedule recurring Claude Code tasks on a cron-like interval. Automate PR reviews, dependency audits, and CI triage in cloud sessions.
 
 A scheduled task runs a prompt on a recurring cadence using Anthropic-managed infrastructure. Tasks keep working even when your computer is off.
 
@@ -65,13 +65,13 @@ The steps below walk through the web interface.
   </Step>
 
   <Step title="Select an environment">
-    Select a [cloud environment](/en/claude-code-on-the-web#cloud-environment) for the task. Environments control what the cloud session has access to:
+    Select a [cloud environment](/en/claude-code-on-the-web#the-cloud-environment) for the task. Environments control what the cloud session has access to:
 
     * **Network access**: set the level of internet access available during each run
     * **Environment variables**: provide API keys, tokens, or other secrets Claude can use
     * **Setup script**: run install commands before each session starts, like installing dependencies or configuring tools
 
-    A **Default** environment is available out of the box. To use a custom environment, [create one](/en/claude-code-on-the-web#cloud-environment) before creating the task.
+    A **Default** environment is available out of the box. To use a custom environment, [create one](/en/claude-code-on-the-web#the-cloud-environment) before creating the task.
   </Step>
 
   <Step title="Choose a schedule">
@@ -108,6 +108,8 @@ For custom intervals like every 2 hours or first of each month, pick the closest
 
 ### Repositories and branch permissions
 
+Scheduled tasks need GitHub access to clone repositories. When you create a task from the CLI with `/schedule`, Claude checks whether your account has GitHub connected and prompts you to run `/web-setup` if it doesn't. See [GitHub authentication options](/en/claude-code-on-the-web#github-authentication-options) for the two ways to grant access.
+
 Each repository you add is cloned on every run. Claude starts from the repository's default branch unless your prompt specifies otherwise.
 
 By default, Claude can only push to branches prefixed with `claude/`. This prevents scheduled tasks from accidentally modifying protected or long-lived branches.
@@ -124,7 +126,7 @@ To manage or add connectors outside of the task form, visit **Settings > Connect
 
 ### Environments
 
-Each task runs in a [cloud environment](/en/claude-code-on-the-web#cloud-environment) that controls network access, environment variables, and setup scripts. Configure environments before creating a task to give Claude access to APIs, install dependencies, or restrict network scope. See [cloud environment](/en/claude-code-on-the-web#cloud-environment) for the full setup guide.
+Each task runs in a [cloud environment](/en/claude-code-on-the-web#the-cloud-environment) that controls network access, environment variables, and setup scripts. Configure environments before creating a task to give Claude access to APIs, install dependencies, or restrict network scope. See [cloud environment](/en/claude-code-on-the-web#the-cloud-environment) for the full setup guide.
 
 ## Manage scheduled tasks
 
@@ -149,6 +151,6 @@ You can also manage tasks from the CLI with `/schedule`. Run `/schedule list` to
 
 * [Desktop scheduled tasks](/en/desktop-scheduled-tasks): schedule tasks that run on your machine with access to local files. The Desktop app's **Schedule** page shows both local and remote tasks in the same grid.
 * [`/loop` and CLI scheduled tasks](/en/scheduled-tasks): lightweight scheduling within a CLI session
-* [Cloud environment](/en/claude-code-on-the-web#cloud-environment): configure the runtime environment for cloud tasks
+* [Cloud environment](/en/claude-code-on-the-web#the-cloud-environment): configure the runtime environment for cloud tasks
 * [MCP connectors](/en/mcp): connect external services like Slack, Linear, and Google Drive
 * [GitHub Actions](/en/github-actions): run Claude in your CI pipeline on repo events

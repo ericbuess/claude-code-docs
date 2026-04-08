@@ -426,11 +426,17 @@ See the [plugin components reference](/en/plugins-reference#mcp-servers) for det
 
 ## MCP installation scopes
 
-MCP servers can be configured at three different scope levels, each serving distinct purposes for managing server accessibility and sharing. Understanding these scopes helps you determine the best way to configure servers for your specific needs.
+MCP servers can be configured at three scopes. The scope you choose controls which projects the server loads in and whether the configuration is shared with your team.
+
+| Scope                     | Loads in             | Shared with team         | Stored in                   |
+| ------------------------- | -------------------- | ------------------------ | --------------------------- |
+| [Local](#local-scope)     | Current project only | No                       | `~/.claude.json`            |
+| [Project](#project-scope) | Current project only | Yes, via version control | `.mcp.json` in project root |
+| [User](#user-scope)       | All your projects    | No                       | `~/.claude.json`            |
 
 ### Local scope
 
-Local-scoped servers represent the default configuration level and are stored in `~/.claude.json` under your project's path. These servers remain private to you and are only accessible when working within the current project directory. This scope is ideal for personal development servers, experimental configurations, or servers containing sensitive credentials that shouldn't be shared.
+Local scope is the default. A local-scoped server loads only in the project where you added it and stays private to you. Claude Code stores it in `~/.claude.json` under that project's path, so the same server won't appear in your other projects. Use local scope for personal development servers, experimental configurations, or servers with credentials you don't want in version control.
 
 <Note>
   The term "local scope" for MCP servers differs from general local settings. MCP local-scoped servers are stored in `~/.claude.json` (your home directory), while general local settings use `.claude/settings.local.json` (in the project directory). See [Settings](/en/settings#settings-files) for details on settings file locations.
@@ -442,6 +448,23 @@ claude mcp add --transport http stripe https://mcp.stripe.com
 
 # Explicitly specify local scope
 claude mcp add --transport http stripe --scope local https://mcp.stripe.com
+```
+
+The command writes the server into the entry for your current project inside `~/.claude.json`. The example below shows the result when you run it from `/path/to/your/project`:
+
+```json  theme={null}
+{
+  "projects": {
+    "/path/to/your/project": {
+      "mcpServers": {
+        "stripe": {
+          "type": "http",
+          "url": "https://mcp.stripe.com"
+        }
+      }
+    }
+  }
+}
 ```
 
 ### Project scope
@@ -477,22 +500,6 @@ User-scoped servers are stored in `~/.claude.json` and provide cross-project acc
 # Add a user server
 claude mcp add --transport http hubspot --scope user https://mcp.hubspot.com/anthropic
 ```
-
-### Choosing the right scope
-
-Select your scope based on:
-
-* **Local scope**: Personal servers, experimental configurations, or sensitive credentials specific to one project
-* **Project scope**: Team-shared servers, project-specific tools, or services required for collaboration
-* **User scope**: Personal utilities needed across multiple projects, development tools, or frequently used services
-
-<Note>
-  **Where are MCP servers stored?**
-
-  * **User and local scope**: `~/.claude.json` (in the `mcpServers` field or under project paths)
-  * **Project scope**: `.mcp.json` in your project root (checked into source control)
-  * **Managed**: `managed-mcp.json` in system directories (see [Managed MCP configuration](#managed-mcp-configuration))
-</Note>
 
 ### Scope hierarchy and precedence
 
