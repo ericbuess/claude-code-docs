@@ -88,7 +88,8 @@ tasks. [Your custom instructions here...]
 ```
 
 You can save these files at the user level (`~/.claude/output-styles`) or
-project level (`.claude/output-styles`).
+project level (`.claude/output-styles`). [Plugins](/en/plugins-reference) can
+also ship output styles in an `output-styles/` directory.
 
 ### Frontmatter
 

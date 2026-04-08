@@ -112,6 +112,10 @@ Without the `env` block, a user who selects Default in the picker would get the 
 
 When `availableModels` is set at multiple levels, such as user settings and project settings, arrays are merged and deduplicated. To enforce a strict allowlist, set `availableModels` in managed or policy settings which take highest priority.
 
+### Mantle model IDs
+
+When the [Bedrock Mantle endpoint](/en/amazon-bedrock#use-the-mantle-endpoint) is enabled, entries in `availableModels` that start with `anthropic.` are added to the `/model` picker as custom options and routed to the Mantle endpoint. This is an exception to the alias-only matching described in [Pin models for third-party deployments](#pin-models-for-third-party-deployments). The setting still restricts the picker to listed entries, so include the standard aliases alongside any Mantle IDs.
+
 ## Special model behavior
 
 ### `default` model setting
@@ -142,11 +146,11 @@ and Sonnet's efficiency for execution.
 
 Three levels persist across sessions: **low**, **medium**, and **high**. A fourth level, **max**, provides the deepest reasoning with no constraint on token spending, so responses are slower and cost more than at `high`. `max` is available on Opus 4.6 only and does not persist across sessions except through the `CLAUDE_CODE_EFFORT_LEVEL` environment variable.
 
-Opus 4.6 and Sonnet 4.6 default to medium effort. This applies to all providers, including Bedrock, Vertex AI, and direct API access.
+The default effort level depends on your plan. Pro and Max subscribers default to medium effort. All other users default to high effort: API key, Team, Enterprise, and third-party provider (Bedrock, Vertex AI, Foundry) users.
 
-Medium is the recommended level for most coding tasks: it balances speed and reasoning depth, and higher levels can cause the model to overthink routine work. Reserve `high` or `max` for tasks that genuinely benefit from deeper reasoning, such as hard debugging problems or complex architectural decisions.
+Your plan's default suits most coding tasks. Raise effort for work that benefits from deeper reasoning, such as hard debugging problems or complex architectural decisions. Higher levels can cause the model to overthink routine work.
 
-For one-off deep reasoning without changing your session setting, include "ultrathink" in your prompt to trigger high effort for that turn.
+For one-off deep reasoning without changing your session setting, include "ultrathink" in your prompt to trigger high effort for that turn. This has no effect if your session is already at high or max.
 
 **Setting effort:**
 

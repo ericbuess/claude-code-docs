@@ -265,6 +265,78 @@ Example configuration:
 }
 ```
 
+## Use the Mantle endpoint
+
+Mantle is an Amazon Bedrock endpoint that serves Claude models through the native Anthropic API shape rather than the Bedrock Invoke API. It uses the same AWS credentials, IAM permissions, and `awsAuthRefresh` configuration described earlier on this page.
+
+<Note>
+  Mantle requires Claude Code v2.1.94 or later. Run `claude --version` to check.
+</Note>
+
+### Enable Mantle
+
+With AWS credentials already configured, set `CLAUDE_CODE_USE_MANTLE` to route requests to the Mantle endpoint:
+
+```bash  theme={null}
+export CLAUDE_CODE_USE_MANTLE=1
+export AWS_REGION=us-east-1
+```
+
+Claude Code constructs the endpoint URL from `AWS_REGION`. To override it for a custom endpoint or gateway, set `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`.
+
+Run `/status` inside Claude Code to confirm. The provider line shows `Amazon Bedrock (Mantle)` when Mantle is active.
+
+### Select a Mantle model
+
+Mantle uses model IDs prefixed with `anthropic.` and without a version suffix, for example `anthropic.claude-haiku-4-5`. The models available to your account depend on what your organization has been granted; additional model IDs are listed in your onboarding materials from AWS. Contact your AWS account team to request access to allowlisted models.
+
+Set the model with the `--model` flag or with `/model` inside Claude Code:
+
+```bash  theme={null}
+claude --model anthropic.claude-haiku-4-5
+```
+
+### Run Mantle alongside the Invoke API
+
+The models available to you on Mantle may not include every model you use today. Setting both `CLAUDE_CODE_USE_BEDROCK` and `CLAUDE_CODE_USE_MANTLE` lets Claude Code call both endpoints from the same session. Model IDs that match the Mantle format are routed to Mantle, and all other model IDs go to the Bedrock Invoke API.
+
+```bash  theme={null}
+export CLAUDE_CODE_USE_BEDROCK=1
+export CLAUDE_CODE_USE_MANTLE=1
+```
+
+To surface a Mantle model in the `/model` picker, list its ID in `availableModels` in your [settings file](/en/settings). This setting also restricts the picker to the listed entries, so include every alias you want to keep available:
+
+```json  theme={null}
+{
+  "availableModels": ["opus", "sonnet", "haiku", "anthropic.claude-haiku-4-5"]
+}
+```
+
+Entries with the `anthropic.` prefix are added as custom picker options and routed to Mantle. Replace `anthropic.claude-haiku-4-5` with the model ID your account has been granted. See [Restrict model selection](/en/model-config#restrict-model-selection) for how `availableModels` interacts with other model settings.
+
+When both providers are active, `/status` shows `Amazon Bedrock + Amazon Bedrock (Mantle)`.
+
+### Route Mantle through a gateway
+
+If your organization routes model traffic through a centralized [LLM gateway](/en/llm-gateway) that injects AWS credentials server-side, disable client-side authentication so Claude Code sends requests without SigV4 signatures or `x-api-key` headers:
+
+```bash  theme={null}
+export CLAUDE_CODE_USE_MANTLE=1
+export CLAUDE_CODE_SKIP_MANTLE_AUTH=1
+export ANTHROPIC_BEDROCK_MANTLE_BASE_URL=https://your-gateway.example.com
+```
+
+### Mantle environment variables
+
+These variables are specific to the Mantle endpoint. See [Environment variables](/en/env-vars) for the full list.
+
+| Variable                            | Purpose                                           |
+| :---------------------------------- | :------------------------------------------------ |
+| `CLAUDE_CODE_USE_MANTLE`            | Enable the Mantle endpoint. Set to `1` or `true`. |
+| `ANTHROPIC_BEDROCK_MANTLE_BASE_URL` | Override the default Mantle endpoint URL          |
+| `CLAUDE_CODE_SKIP_MANTLE_AUTH`      | Skip client-side authentication for proxy setups  |
+
 ## Troubleshooting
 
 ### Authentication loop with SSO and corporate proxies
@@ -286,6 +358,14 @@ If you receive an error "on-demand throughput isn’t supported":
 * Specify the model as an [inference profile](https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-support.html) ID
 
 Claude Code uses the Bedrock [Invoke API](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_InvokeModelWithResponseStream.html) and does not support the Converse API.
+
+### Mantle endpoint errors
+
+If `/status` does not show `Amazon Bedrock (Mantle)` after you set `CLAUDE_CODE_USE_MANTLE`, the variable is not reaching the process. Confirm it is exported in the shell where you launched `claude`, or set it in the `env` block of your [settings file](/en/settings).
+
+A `403` from the Mantle endpoint with valid credentials means your AWS account has not been granted access to the model you requested. Contact your AWS account team to request access.
+
+A `400` that names the model ID means that model is not served on Mantle. Mantle has its own model lineup separate from the standard Bedrock catalog, so inference profile IDs such as `us.anthropic.claude-sonnet-4-6` will not work. Use a Mantle-format ID, or enable [both endpoints](#run-mantle-alongside-the-invoke-api) so Claude Code routes each request to the endpoint where the model is available.
 
 ## Additional resources
 

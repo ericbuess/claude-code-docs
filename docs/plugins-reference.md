@@ -403,6 +403,7 @@ For `commands`, `agents`, `skills`, and `outputStyles`, custom paths replace the
 * Components from custom paths use the same naming and namespacing rules
 * Multiple paths can be specified as arrays
 * To keep the default directory and add more paths for commands, agents, skills, or output styles, include the default in your array: `"commands": ["./commands/", "./extras/deploy.md"]`
+* When a skill path points to a directory that contains a `SKILL.md` directly, for example `"skills": ["./"]` pointing to the plugin root, the frontmatter `name` field in `SKILL.md` determines the skill's invocation name. This gives a stable name regardless of the install directory. If `name` is not set in the frontmatter, the directory basename is used as a fallback.
 
 **Path examples**:
 
@@ -499,6 +500,8 @@ Plugins are specified in one of two ways:
 * Through a marketplace, installed for future sessions.
 
 For security and verification purposes, Claude Code copies *marketplace* plugins to the user's local **plugin cache** (`~/.claude/plugins/cache`) rather than using them in-place. Understanding this behavior is important when developing plugins that reference external files.
+
+Each installed version is a separate directory in the cache. When you update or uninstall a plugin, the previous version directory is marked as orphaned and removed automatically 7 days later. The grace period lets concurrent Claude Code sessions that already loaded the old version keep running without errors.
 
 ### Path traversal limitations
 

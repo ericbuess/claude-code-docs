@@ -1398,12 +1398,15 @@ This page is an interactive explorer: click files in the tree to see what each o
 
 ## What's not shown
 
-The explorer covers the files you'll interact with most. A few things live elsewhere:
+The explorer covers files you author and edit. A few authored files live elsewhere:
 
-| File                    | Location                   | Purpose                                                                                                               |
-| ----------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `managed-settings.json` | System-level, varies by OS | Enterprise-enforced settings that you can't override. See [server-managed settings](/en/server-managed-settings).     |
-| `CLAUDE.local.md`       | Project root               | Your private preferences for this project, loaded alongside CLAUDE.md. Create it manually and add it to `.gitignore`. |
+| File                    | Location                   | Purpose                                                                                                                                                                                                                                                            |
+| ----------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `managed-settings.json` | System-level, varies by OS | Enterprise-enforced settings that you can't override. See [server-managed settings](/en/server-managed-settings).                                                                                                                                                  |
+| `CLAUDE.local.md`       | Project root               | Your private preferences for this project, loaded alongside CLAUDE.md. Create it manually and add it to `.gitignore`.                                                                                                                                              |
+| Installed plugins       | `~/.claude/plugins/`       | Cloned marketplaces, installed plugin versions, and per-plugin data, managed by `claude plugin` commands. Orphaned versions are deleted 7 days after a plugin update or uninstall. See [plugin caching](/en/plugins-reference#plugin-caching-and-file-resolution). |
+
+`~/.claude` also holds data Claude Code writes as you work: transcripts, prompt history, file snapshots, caches, and logs. See [application data](#application-data) below.
 
 ## File reference
 
@@ -1454,6 +1457,60 @@ The explorer shows what files can exist. To see what actually loaded in your cur
 | `/doctor`      | Installation and configuration diagnostics                                            |
 
 Run `/context` first for the overview, then the specific command for the area you want to investigate.
+
+## Application data
+
+Beyond the config you author, `~/.claude` holds data Claude Code writes during sessions. These files are plaintext. Anything that passes through a tool (file contents, command output, pasted text) lands in a transcript on disk.
+
+### Swept automatically
+
+Files older than [`cleanupPeriodDays`](/en/settings#available-settings) (default 30) are deleted on the next startup.
+
+| Path under `~/.claude/`                      | Contents                                                                                     |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `projects/<project>/<session>.jsonl`         | Full conversation transcript: every message, tool call, and tool result                      |
+| `projects/<project>/<session>/tool-results/` | Large tool outputs spilled to separate files                                                 |
+| `file-history/<session>/`                    | Pre-edit snapshots of files Claude changed, used for [checkpoint restore](/en/checkpointing) |
+| `plans/`                                     | Plan files written during [plan mode](/en/permission-modes#plan-mode)                        |
+| `debug/`                                     | Per-session debug logs                                                                       |
+| `paste-cache/`, `image-cache/`               | Contents of large pastes and attached images                                                 |
+| `session-env/`                               | Per-session environment metadata                                                             |
+
+### Not swept
+
+These persist until you delete them.
+
+| Path under `~/.claude/` | Contents                                                                              |
+| ----------------------- | ------------------------------------------------------------------------------------- |
+| `history.jsonl`         | Every prompt you've typed, with timestamp and project path. Used for up-arrow recall. |
+| `statsig/`              | Feature-flag cache and a stable anonymous device ID                                   |
+| `stats-cache.json`      | Aggregated token and cost counts shown by `/cost`                                     |
+| `backups/`              | Timestamped copies of `~/.claude.json` taken before config migrations                 |
+| `downloads/`            | Native binary downloads staged by the auto-updater                                    |
+| `todos/`                | Legacy per-session task lists. No longer written by current versions; safe to delete. |
+
+`shell-snapshots/` and `sockets/` are runtime files removed when the session exits cleanly.
+
+### Plaintext storage
+
+Transcripts and history are not encrypted at rest; OS file permissions are the only protection. If a tool reads a `.env` file or a command prints a credential, that value is written to `projects/<project>/<session>.jsonl`. To reduce exposure:
+
+* Lower `cleanupPeriodDays` to shorten how long transcripts are kept
+* For headless runs, pass `--no-session-persistence` with `-p`, or set `persistSession: false` in the SDK, to skip writing transcripts entirely. There is no interactive-mode equivalent.
+* Use [permission rules](/en/permissions) to deny reads of credential files
+
+### Clear local data
+
+You can delete these at any time. You lose the listed capability for past sessions; new sessions are unaffected.
+
+| Delete                                                       | You lose                                       |
+| ------------------------------------------------------------ | ---------------------------------------------- |
+| `~/.claude/projects/`                                        | Resume, continue, and rewind for past sessions |
+| `~/.claude/history.jsonl`                                    | Up-arrow prompt recall                         |
+| `~/.claude/file-history/`                                    | Checkpoint restore for past sessions           |
+| `~/.claude/debug/`, `paste-cache/`, `image-cache/`, `todos/` | Nothing user-facing                            |
+
+Don't delete `~/.claude.json`, `settings.json`, or `plugins/`: those hold your auth, preferences, and installed plugins.
 
 ## Related resources
 
