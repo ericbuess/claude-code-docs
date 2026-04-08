@@ -769,7 +769,7 @@ This field is only present for Claude.ai subscribers (Pro/Max) after the first A
 
 Your status line script runs frequently during active sessions. Commands like `git status` or `git diff` can be slow, especially in large repositories. This example caches git information to a temp file and only refreshes it every 5 seconds.
 
-Use a stable, fixed filename for the cache file like `/tmp/statusline-git-cache`. Each status line invocation runs as a new process, so process-based identifiers like `$$`, `os.getpid()`, or `process.pid` produce a different value every time and the cache is never reused.
+The cache filename needs to be stable across status line invocations within a session, but unique across sessions so concurrent sessions in different repositories don't read each other's cached git state. Process-based identifiers like `$$`, `os.getpid()`, or `process.pid` change on every invocation and defeat the cache. Use the `session_id` from the JSON input instead: it's stable for the lifetime of a session and unique per session.
 
 Each script checks if the cache file is missing or older than 5 seconds before running git commands:
 
@@ -780,8 +780,9 @@ Each script checks if the cache file is missing or older than 5 seconds before r
 
   MODEL=$(echo "$input" | jq -r '.model.display_name')
   DIR=$(echo "$input" | jq -r '.workspace.current_dir')
+  SESSION_ID=$(echo "$input" | jq -r '.session_id')
 
-  CACHE_FILE="/tmp/statusline-git-cache"
+  CACHE_FILE="/tmp/statusline-git-cache-$SESSION_ID"
   CACHE_MAX_AGE=5  # seconds
 
   cache_is_stale() {
@@ -817,8 +818,9 @@ Each script checks if the cache file is missing or older than 5 seconds before r
   data = json.load(sys.stdin)
   model = data['model']['display_name']
   directory = os.path.basename(data['workspace']['current_dir'])
+  session_id = data['session_id']
 
-  CACHE_FILE = "/tmp/statusline-git-cache"
+  CACHE_FILE = f"/tmp/statusline-git-cache-{session_id}"
   CACHE_MAX_AGE = 5  # seconds
 
   def cache_is_stale():
@@ -861,8 +863,9 @@ Each script checks if the cache file is missing or older than 5 seconds before r
       const data = JSON.parse(input);
       const model = data.model.display_name;
       const dir = path.basename(data.workspace.current_dir);
+      const sessionId = data.session_id;
 
-      const CACHE_FILE = '/tmp/statusline-git-cache';
+      const CACHE_FILE = `/tmp/statusline-git-cache-${sessionId}`;
       const CACHE_MAX_AGE = 5; // seconds
 
       const cacheIsStale = () => {

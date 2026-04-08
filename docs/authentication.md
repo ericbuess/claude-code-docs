@@ -14,6 +14,8 @@ After [installing Claude Code](/en/setup#install-claude-code), run `claude` in y
 
 If the browser doesn't open automatically, press `c` to copy the login URL to your clipboard, then paste it into your browser.
 
+If your browser shows a login code instead of redirecting back after you sign in, paste it into the terminal at the `Paste code here if prompted` prompt.
+
 You can authenticate with any of these account types:
 
 * **Claude Pro or Max subscription**: log in with your Claude.ai account. Subscribe at [claude.com/pricing](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=authentication_pro_max).

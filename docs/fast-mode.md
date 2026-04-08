@@ -124,7 +124,7 @@ This is useful for controlling costs in organizations where users run multiple c
 
 ## Handle rate limits
 
-Fast mode has separate rate limits from standard Opus 4.6. When you hit the fast mode rate limit or run out of extra usage credits:
+Fast mode has separate rate limits from standard Opus 4.6. When you hit the fast mode rate limit or run out of extra usage:
 
 1. Fast mode automatically falls back to standard Opus 4.6
 2. The `↯` icon turns gray to indicate cooldown

@@ -10,6 +10,10 @@ This page is generated from the [CHANGELOG.md on GitHub](https://github.com/anth
 
 Run `claude --version` to check your installed version.
 
+<Update label="2.1.96" description="April 8, 2026">
+  * Fixed Bedrock requests failing with `403 "Authorization header is missing"` when using `AWS_BEARER_TOKEN_BEDROCK` or `CLAUDE_CODE_SKIP_BEDROCK_AUTH` (regression in 2.1.94)
+</Update>
+
 <Update label="2.1.94" description="April 7, 2026">
   * Added support for Amazon Bedrock powered by Mantle, set `CLAUDE_CODE_USE_MANTLE=1`
   * Changed default effort level from medium to high for API-key, Bedrock/Vertex/Foundry, Team, and Enterprise users (control this with `/effort`)

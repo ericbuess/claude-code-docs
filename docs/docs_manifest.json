@@ -21,8 +21,8 @@
     "authentication.md": {
       "original_url": "https://code.claude.com/docs/en/authentication",
       "original_md_url": "https://code.claude.com/docs/en/authentication.md",
-      "hash": "0ba8fe2b803c153a0b50f4ea2d77a57347072b4197bfd40b37486c6a4ef89de3",
-      "last_updated": "2026-03-18T09:14:39.884815"
+      "hash": "7ae4c818ae2ea6a2c84c7be4bb92b2e96de31fe780ba6ccd19187dcf06f5c12f",
+      "last_updated": "2026-04-08T15:26:20.258958"
     },
     "best-practices.md": {
       "original_url": "https://code.claude.com/docs/en/best-practices",
@@ -160,8 +160,8 @@
     "fast-mode.md": {
       "original_url": "https://code.claude.com/docs/en/fast-mode",
       "original_md_url": "https://code.claude.com/docs/en/fast-mode.md",
-      "hash": "f1d458ae23db0f577a786718cc387190f4efbc020d4d7a6818b23b8064c94810",
-      "last_updated": "2026-04-02T18:12:22.678451"
+      "hash": "6741462f186f5a68e9a9700f6dfe2b0d6aac30e7cb8c916881c78ab9f28d1bb3",
+      "last_updated": "2026-04-08T15:26:34.996374"
     },
     "features-overview.md": {
       "original_url": "https://code.claude.com/docs/en/features-overview",
@@ -382,8 +382,8 @@
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
       "original_md_url": "https://code.claude.com/docs/en/setup.md",
-      "hash": "de8cc3649f3d49ee1f8e6d04d381757f81d1095c9796ecaa35fe411fb2112337",
-      "last_updated": "2026-04-02T21:08:40.277907"
+      "hash": "daf138bc358b5279118890698877b40546759fd1292d1590fca27ff1951d1d23",
+      "last_updated": "2026-04-08T15:26:58.074700"
     },
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
@@ -400,8 +400,8 @@
     "statusline.md": {
       "original_url": "https://code.claude.com/docs/en/statusline",
       "original_md_url": "https://code.claude.com/docs/en/statusline.md",
-      "hash": "41cc3cd8da43d13414ee4e140b39af3e3b89cc696f8674de171a4e91f265f1de",
-      "last_updated": "2026-04-02T18:12:47.251846"
+      "hash": "36c624483473c41544a19f7bbb0675160e66a5c9225ce621d16b7f331c36ae49",
+      "last_updated": "2026-04-08T15:26:59.936260"
     },
     "sub-agents.md": {
       "original_url": "https://code.claude.com/docs/en/sub-agents",
@@ -483,8 +483,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-04-08T12:13:36.900543",
-    "fetch_duration_seconds": 48.150243,
+    "last_fetch_completed": "2026-04-08T15:27:08.140613",
+    "fetch_duration_seconds": 50.170691,
     "total_pages_discovered": 80,
     "pages_fetched_successfully": 81,
     "pages_failed": 0,
@@ -494,7 +494,7 @@
     "total_files": 80,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-04-08T12:13:36.900584",
+  "last_updated": "2026-04-08T15:27:08.140640",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
