@@ -949,7 +949,7 @@ Or run a Bash script directly:
 
 ## Tips
 
-* **Test with mock input**: `echo '{"model":{"display_name":"Opus"},"context_window":{"used_percentage":25}}' | ./statusline.sh`
+* **Test with mock input**: `echo '{"model":{"display_name":"Opus"},"workspace":{"current_dir":"/home/user/project"},"context_window":{"used_percentage":25},"session_id":"test-session-abc"}' | ./statusline.sh`
 * **Keep output short**: the status bar has limited width, so long output may get truncated or wrap awkwardly
 * **Cache slow operations**: your script runs frequently during active sessions, so commands like `git status` can cause lag. See the [caching example](#cache-expensive-operations) for how to handle this.
 
@@ -981,8 +981,23 @@ Community projects like [ccstatusline](https://github.com/sirmalloc/ccstatusline
 **OSC 8 links not clickable**
 
 * Verify your terminal supports OSC 8 hyperlinks (iTerm2, Kitty, WezTerm)
+
 * Terminal.app does not support clickable links
+
+* If link text appears but isn't clickable, Claude Code may not have detected hyperlink support in your terminal. This commonly affects Windows Terminal and other emulators not in the auto-detection list. Set the `FORCE_HYPERLINK` environment variable to override detection before launching Claude Code:
+
+  ```bash  theme={null}
+  FORCE_HYPERLINK=1 claude
+  ```
+
+  In PowerShell, set the variable in the current session first:
+
+  ```powershell  theme={null}
+  $env:FORCE_HYPERLINK = "1"; claude
+  ```
+
 * SSH and tmux sessions may strip OSC sequences depending on configuration
+
 * If escape sequences appear as literal text like `\e]8;;`, use `printf '%b'` instead of `echo -e` for more reliable escape handling
 
 **Display glitches with escape sequences**

@@ -308,17 +308,17 @@ When disabled, preview tools are still available and you can ask Claude to verif
 
 Each entry in the `configurations` array accepts the following fields:
 
-| Field               | Type      | Description                                                                                                                                                                                                                    |
-| ------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `name`              | string    | A unique identifier for this server                                                                                                                                                                                            |
-| `runtimeExecutable` | string    | The command to run, such as `npm`, `yarn`, or `node`                                                                                                                                                                           |
-| `runtimeArgs`       | string\[] | Arguments passed to `runtimeExecutable`, such as `["run", "dev"]`                                                                                                                                                              |
-| `port`              | number    | The port your server listens on. Defaults to 3000                                                                                                                                                                              |
-| `cwd`               | string    | Working directory relative to your project root. Defaults to the project root. Use `${workspaceFolder}` to reference the project root explicitly                                                                               |
-| `env`               | object    | Additional environment variables as key-value pairs, such as `{ "NODE_ENV": "development" }`. Don't put secrets here since this file is committed to your repo. Secrets set in your shell profile are inherited automatically. |
-| `autoPort`          | boolean   | How to handle port conflicts. See below                                                                                                                                                                                        |
-| `program`           | string    | A script to run with `node`. See [when to use `program` vs `runtimeExecutable`](#when-to-use-program-vs-runtimeexecutable)                                                                                                     |
-| `args`              | string\[] | Arguments passed to `program`. Only used when `program` is set                                                                                                                                                                 |
+| Field               | Type      | Description                                                                                                                                                                                                                                                              |
+| ------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`              | string    | A unique identifier for this server                                                                                                                                                                                                                                      |
+| `runtimeExecutable` | string    | The command to run, such as `npm`, `yarn`, or `node`                                                                                                                                                                                                                     |
+| `runtimeArgs`       | string\[] | Arguments passed to `runtimeExecutable`, such as `["run", "dev"]`                                                                                                                                                                                                        |
+| `port`              | number    | The port your server listens on. Defaults to 3000                                                                                                                                                                                                                        |
+| `cwd`               | string    | Working directory relative to your project root. Defaults to the project root. Use `${workspaceFolder}` to reference the project root explicitly                                                                                                                         |
+| `env`               | object    | Additional environment variables as key-value pairs, such as `{ "NODE_ENV": "development" }`. Don't put secrets here since this file is committed to your repo. To pass secrets to your dev server, set them in the [local environment editor](#local-sessions) instead. |
+| `autoPort`          | boolean   | How to handle port conflicts. See below                                                                                                                                                                                                                                  |
+| `program`           | string    | A script to run with `node`. See [when to use `program` vs `runtimeExecutable`](#when-to-use-program-vs-runtimeexecutable)                                                                                                                                               |
+| `args`              | string\[] | Arguments passed to `program`. Only used when `program` is set                                                                                                                                                                                                           |
 
 ##### When to use `program` vs `runtimeExecutable`
 
@@ -417,9 +417,11 @@ The environment you pick when [starting a session](#start-a-session) determines 
 
 ### Local sessions
 
-Local sessions inherit environment variables from your shell. If you need additional variables, set them in your shell profile, such as `~/.zshrc` or `~/.bashrc`, and restart the desktop app. See [environment variables](/en/env-vars) for the full list of supported variables.
+The desktop app does not always inherit your full shell environment. On macOS, when you launch the app from the Dock or Finder, it reads your shell profile, such as `~/.zshrc` or `~/.bashrc`, to extract `PATH` and a fixed set of Claude Code variables, but other variables you export there are not picked up. On Windows, the app inherits user and system environment variables but does not read PowerShell profiles.
 
-[Extended thinking](/en/common-workflows#use-extended-thinking-thinking-mode) is enabled by default, which improves performance on complex reasoning tasks but uses additional tokens. To disable thinking entirely, set `MAX_THINKING_TOKENS=0` in your shell profile. On Opus, `MAX_THINKING_TOKENS` is ignored except for `0` because adaptive reasoning controls thinking depth instead.
+To set environment variables for local sessions and dev servers on any platform, open the environment dropdown in the prompt box, hover over **Local**, and click the gear icon to open the local environment editor. Variables you save here are stored encrypted on your machine and apply to every local session and preview server you start. You can also add variables to the `env` key in your `~/.claude/settings.json` file, though these reach Claude sessions only and not dev servers. See [environment variables](/en/env-vars) for the full list of supported variables.
+
+[Extended thinking](/en/common-workflows#use-extended-thinking-thinking-mode) is enabled by default, which improves performance on complex reasoning tasks but uses additional tokens. To disable thinking entirely, set `MAX_THINKING_TOKENS` to `0` in the local environment editor. On Opus 4.6 and Sonnet 4.6, any other `MAX_THINKING_TOKENS` value is ignored because adaptive reasoning controls thinking depth instead. To use a fixed thinking budget on these models, also set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` to `1`.
 
 ### Remote sessions
 
@@ -520,7 +522,7 @@ This table shows the desktop app equivalent for common CLI flags. Flags not list
 | `--verbose`                           | Not available. Check system logs: Console.app on macOS, Event Viewer → Windows Logs → Application on Windows                             |
 | `--print`, `--output-format`          | Not available. Desktop is interactive only.                                                                                              |
 | `ANTHROPIC_MODEL` env var             | Model dropdown next to the send button                                                                                                   |
-| `MAX_THINKING_TOKENS` env var         | Set in shell profile; applies to local sessions. See [environment configuration](#environment-configuration).                            |
+| `MAX_THINKING_TOKENS` env var         | Set in the local environment editor. See [environment configuration](#environment-configuration).                                        |
 
 ### Shared configuration
 

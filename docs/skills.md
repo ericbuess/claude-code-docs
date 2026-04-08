@@ -292,17 +292,30 @@ Here's how the two fields affect invocation and context loading:
   In a regular session, skill descriptions are loaded into context so Claude knows what's available, but full skill content only loads when invoked. [Subagents with preloaded skills](/en/sub-agents#preload-skills-into-subagents) work differently: the full skill content is injected at startup.
 </Note>
 
-### Restrict tool access
+### Skill content lifecycle
 
-Use the `allowed-tools` field to limit which tools Claude can use when a skill is active. This skill creates a read-only mode where Claude can explore files but not modify them:
+When you or Claude invoke a skill, the rendered `SKILL.md` content enters the conversation as a single message and stays there for the rest of the session. Claude Code does not re-read the skill file on later turns, so write guidance that should apply throughout a task as standing instructions rather than one-time steps.
+
+[Auto-compaction](/en/how-claude-code-works#when-context-fills-up) preserves invoked skills. When the conversation is summarized to free context, Claude Code re-attaches the most recent invocation of each skill after the summary (truncated if the skill is very large). If you invoke the same skill more than once, only the latest copy is carried forward through compaction.
+
+If a skill seems to stop influencing behavior after the first response, the skill content is still present. The model is choosing other tools or approaches. Strengthen the skill's `description` and instructions so the model keeps preferring it, or use [hooks](/en/hooks) to enforce behavior deterministically.
+
+### Pre-approve tools for a skill
+
+The `allowed-tools` field grants permission for the listed tools while the skill is active, so Claude can use them without prompting you for approval. It does not restrict which tools are available: every tool remains callable, and your [permission settings](/en/permissions) still govern tools that are not listed.
+
+This skill lets Claude run git commands without per-use approval whenever you invoke it:
 
 ```yaml  theme={null}
 ---
-name: safe-reader
-description: Read files without making changes
-allowed-tools: Read Grep Glob
+name: commit
+description: Stage and commit the current changes
+disable-model-invocation: true
+allowed-tools: Bash(git add *) Bash(git commit *) Bash(git status *)
 ---
 ```
+
+To block a skill from using certain tools, add deny rules in your [permission settings](/en/permissions) instead.
 
 ### Pass arguments to skills
 
