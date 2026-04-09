@@ -990,8 +990,9 @@ You can use this in Claude Desktop by adding this configuration to claude\_deskt
 When MCP tools produce large outputs, Claude Code helps manage the token usage to prevent overwhelming your conversation context:
 
 * **Output warning threshold**: Claude Code displays a warning when any MCP tool output exceeds 10,000 tokens
-* **Configurable limit**: You can adjust the maximum allowed MCP output tokens using the `MAX_MCP_OUTPUT_TOKENS` environment variable
-* **Default limit**: The default maximum is 25,000 tokens
+* **Configurable limit**: you can adjust the maximum allowed MCP output tokens using the `MAX_MCP_OUTPUT_TOKENS` environment variable
+* **Default limit**: the default maximum is 25,000 tokens
+* **Scope**: the environment variable applies to tools that don't declare their own limit. Tools that set [`anthropic/maxResultSizeChars`](#raise-the-limit-for-a-specific-tool) use that value instead for text content, regardless of what `MAX_MCP_OUTPUT_TOKENS` is set to. Tools that return image data are still subject to `MAX_MCP_OUTPUT_TOKENS`
 
 To increase the limit for tools that produce large outputs:
 
@@ -1006,7 +1007,7 @@ This is particularly useful when working with MCP servers that:
 * Generate detailed reports or documentation
 * Process extensive log files or debugging information
 
-### Override result size per tool
+### Raise the limit for a specific tool
 
 If you're building an MCP server, you can allow individual tools to return results larger than the default persist-to-disk threshold by setting `_meta["anthropic/maxResultSizeChars"]` in the tool's `tools/list` response entry. Claude Code raises that tool's threshold to the annotated value, up to a hard ceiling of 500,000 characters.
 
@@ -1017,15 +1018,15 @@ This is useful for tools that return inherently large but necessary outputs, suc
   "name": "get_schema",
   "description": "Returns the full database schema",
   "_meta": {
-    "anthropic/maxResultSizeChars": 500000
+    "anthropic/maxResultSizeChars": 200000
   }
 }
 ```
 
-The annotation raises the per-tool persist threshold but does not bypass the global `MAX_MCP_OUTPUT_TOKENS` limit, which defaults to 25,000 tokens or roughly 100,000 characters. To return results larger than that, users must also raise `MAX_MCP_OUTPUT_TOKENS`.
+The annotation applies independently of `MAX_MCP_OUTPUT_TOKENS` for text content, so users don't need to raise the environment variable for tools that declare it. Tools that return image data are still subject to the token limit.
 
 <Warning>
-  If you frequently encounter output warnings with specific MCP servers you don't control, consider increasing the `MAX_MCP_OUTPUT_TOKENS` limit. You can also ask the server author to add the `anthropic/maxResultSizeChars` annotation or to paginate their responses.
+  If you frequently encounter output warnings with specific MCP servers you don't control, consider increasing the `MAX_MCP_OUTPUT_TOKENS` limit. You can also ask the server author to add the `anthropic/maxResultSizeChars` annotation or to paginate their responses. The annotation has no effect on tools that return image content; for those, raising `MAX_MCP_OUTPUT_TOKENS` is the only option.
 </Warning>
 
 ## Respond to MCP elicitation requests

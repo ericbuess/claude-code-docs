@@ -163,7 +163,7 @@ Checkpoints are local to your session, separate from git. They only cover file c
 Press `Shift+Tab` to cycle through permission modes:
 
 * **Default**: Claude asks before file edits and shell commands
-* **Auto-accept edits**: Claude edits files without asking, still asks for commands
+* **Auto-accept edits**: Claude edits files and runs common filesystem commands like `mkdir` and `mv` without asking, still asks for other commands
 * **Plan mode**: Claude uses read-only tools only, creating a plan you can approve before execution
 * **Auto mode**: Claude evaluates all actions with background safety checks. Currently a research preview
 

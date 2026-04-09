@@ -205,7 +205,9 @@ Auto-approves file operations so Claude can edit code without prompting. Other t
 **Auto-approved operations:**
 
 * File edits (Edit, Write tools)
-* Filesystem commands: `mkdir`, `touch`, `rm`, `mv`, `cp`
+* Filesystem commands: `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, `sed`
+
+Both apply only to paths inside the working directory or `additionalDirectories`. Paths outside that scope and writes to protected paths still prompt.
 
 **Use when:** you trust Claude's edits and want faster iteration, such as during prototyping or when working in an isolated directory.
 

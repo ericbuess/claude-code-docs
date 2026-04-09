@@ -38,11 +38,11 @@ Fullscreen rendering changes how the CLI draws to your terminal. The input box s
 
 Because the conversation lives in the alternate screen buffer instead of your terminal's scrollback, a few things work differently:
 
-| Before                                              | Now                                                                                                                     | Details                                                                   |
-| :-------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `Cmd+f` or tmux search to find text                 | `Ctrl+o` then `/` to search, or `Ctrl+o` then `[` to write the conversation to native scrollback so `Cmd+f` works again | [Search and review the conversation](#search-and-review-the-conversation) |
-| Terminal's native click-and-drag to select and copy | In-app selection, copies automatically on mouse release                                                                 | [Use the mouse](#use-the-mouse)                                           |
-| `Cmd`-click to open a URL                           | Click the URL                                                                                                           | [Use the mouse](#use-the-mouse)                                           |
+| Before                                              | Now                                                                                                                                                            | Details                                                                   |
+| :-------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `Cmd+f` or tmux search to find text                 | `Ctrl+o` once for transcript mode (then `/` to search or `[` to write to scrollback), or `Ctrl+o` twice for focus view (last prompt + tool summary + response) | [Search and review the conversation](#search-and-review-the-conversation) |
+| Terminal's native click-and-drag to select and copy | In-app selection, copies automatically on mouse release                                                                                                        | [Use the mouse](#use-the-mouse)                                           |
+| `Cmd`-click to open a URL                           | Click the URL                                                                                                                                                  | [Use the mouse](#use-the-mouse)                                           |
 
 If mouse capture interferes with your workflow, you can [turn it off](#keep-native-text-selection) while keeping the flicker-free rendering.
 
@@ -89,7 +89,9 @@ A value of `3` matches the default in `vim` and similar applications. The settin
 
 ## Search and review the conversation
 
-Press `Ctrl+o` to enter transcript mode. With fullscreen rendering active, transcript mode gains `less`-style navigation and search:
+In fullscreen rendering, `Ctrl+o` cycles through three states: normal prompt, transcript mode, and focus view. Press it once to enter transcript mode, press it again to return to a focus view showing just your last prompt, a one-line summary of tool calls with edit diffstats, and the final response. Press it a third time to return to the normal prompt screen.
+
+Transcript mode gains `less`-style navigation and search:
 
 | Key                                  | Action                                                                                                 |
 | :----------------------------------- | :----------------------------------------------------------------------------------------------------- |
@@ -99,14 +101,15 @@ Press `Ctrl+o` to enter transcript mode. With fullscreen rendering active, trans
 | `g` / `G` or `Home` / `End`          | Jump to top or bottom                                                                                  |
 | `Ctrl+u` / `Ctrl+d`                  | Scroll half a page                                                                                     |
 | `Ctrl+b` / `Ctrl+f` or `Space` / `b` | Scroll a full page                                                                                     |
-| `Esc`, `q`, or `Ctrl+o`              | Exit transcript mode                                                                                   |
+| `Ctrl+o`                             | Advance to focus view                                                                                  |
+| `Esc` or `q`                         | Exit transcript mode and return to the prompt                                                          |
 
 Your terminal's `Cmd+f` and tmux search don't see the conversation because it lives in the alternate screen buffer, not the native scrollback. To hand the content back to your terminal, press `Ctrl+o` to enter transcript mode first, then:
 
 * **`[`**: writes the full conversation into your terminal's native scrollback buffer, with all tool output expanded. The conversation is now ordinary text in your terminal, so `Cmd+f`, tmux copy mode, and any other native tool can search or select it. Long sessions may pause for a moment while this happens. This lasts until you exit transcript mode with `Esc` or `q`, which returns you to fullscreen rendering. The next `Ctrl+o` starts fresh.
 * **`v`**: writes the conversation to a temporary file and opens it in `$VISUAL` or `$EDITOR`.
 
-Press `Esc`, `q`, or `Ctrl+o` to return to the prompt.
+Press `Esc` or `q` to return to the prompt.
 
 ## Use with tmux
 

@@ -32,14 +32,14 @@ Rules are evaluated in order: **deny -> ask -> allow**. The first matching rule 
 
 Claude Code supports several permission modes that control how tools are approved. See [Permission modes](/en/permission-modes) for when to use each one. Set the `defaultMode` in your [settings files](/en/settings#settings-files):
 
-| Mode                | Description                                                                                                                      |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------------------- |
-| `default`           | Standard behavior: prompts for permission on first use of each tool                                                              |
-| `acceptEdits`       | Automatically accepts file edit permissions for the session, except writes to protected directories                              |
-| `plan`              | Plan Mode: Claude can analyze but not modify files or execute commands                                                           |
-| `auto`              | Auto-approves tool calls with background safety checks that verify actions align with your request. Currently a research preview |
-| `dontAsk`           | Auto-denies tools unless pre-approved via `/permissions` or `permissions.allow` rules                                            |
-| `bypassPermissions` | Skips permission prompts except for writes to protected directories (see warning below)                                          |
+| Mode                | Description                                                                                                                                                        |
+| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`           | Standard behavior: prompts for permission on first use of each tool                                                                                                |
+| `acceptEdits`       | Automatically accepts file edits and common filesystem commands (`mkdir`, `touch`, `mv`, `cp`, etc.) for paths in the working directory or `additionalDirectories` |
+| `plan`              | Plan Mode: Claude can analyze but not modify files or execute commands                                                                                             |
+| `auto`              | Auto-approves tool calls with background safety checks that verify actions align with your request. Currently a research preview                                   |
+| `dontAsk`           | Auto-denies tools unless pre-approved via `/permissions` or `permissions.allow` rules                                                                              |
+| `bypassPermissions` | Skips permission prompts except for writes to protected directories (see warning below)                                                                            |
 
 <Warning>
   `bypassPermissions` mode skips permission prompts. Writes to `.git`, `.claude`, `.vscode`, `.idea`, and `.husky` directories still prompt for confirmation to prevent accidental corruption of repository state, editor configuration, and git hooks. Writes to `.claude/commands`, `.claude/agents`, and `.claude/skills` are exempt and do not prompt, because Claude routinely writes there when creating skills, subagents, and commands. Only use this mode in isolated environments like containers or VMs where Claude Code cannot cause damage. Administrators can prevent this mode by setting `permissions.disableBypassPermissionsMode` to `"disable"` in [managed settings](#managed-settings).

@@ -95,7 +95,7 @@
   }
   ```
 
-  <a className="digest-feature-link" href="/en/mcp#override-result-size-per-tool">MCP reference</a>
+  <a className="digest-feature-link" href="/en/mcp#raise-the-limit-for-a-specific-tool">MCP reference</a>
 </div>
 
 <div className="digest-feature">
