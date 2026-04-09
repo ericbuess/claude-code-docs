@@ -36,7 +36,7 @@ Before using Remote Control, confirm that your environment meets these condition
 
 ## Start a Remote Control session
 
-You can start a dedicated Remote Control server, start an interactive session with Remote Control enabled, or connect a session that's already running.
+You can start a Remote Control session from the CLI or the VS Code extension. The CLI offers three invocation modes; VS Code uses the `/remote-control` command.
 
 <Tabs>
   <Tab title="Server mode">
@@ -91,13 +91,27 @@ You can start a dedicated Remote Control server, start an interactive session wi
 
     This starts a Remote Control session that carries over your current conversation history and displays a session URL and QR code you can use to [connect from another device](#connect-from-another-device). The `--verbose`, `--sandbox`, and `--no-sandbox` flags are not available with this command.
   </Tab>
+
+  <Tab title="VS Code">
+    In the [Claude Code VS Code extension](/en/vs-code), type `/remote-control` or `/rc` in the prompt box, or open the command menu with `/` and select it. Requires Claude Code v2.1.79 or later.
+
+    ```text  theme={null}
+    /remote-control
+    ```
+
+    A banner appears above the prompt box showing connection status. Once connected, click **Open in browser** in the banner to go directly to the session, or find it in the session list at [claude.ai/code](https://claude.ai/code). The session URL is also posted in the conversation.
+
+    To disconnect, click the close icon on the banner or run `/remote-control` again.
+
+    Unlike the CLI, the VS Code command does not accept a name argument or display a QR code. The session title is derived from your conversation history or first prompt.
+  </Tab>
 </Tabs>
 
 ### Connect from another device
 
 Once a Remote Control session is active, you have a few ways to connect from another device:
 
-* **Open the session URL** in any browser to go directly to the session on [claude.ai/code](https://claude.ai/code). Both `claude remote-control` and `/remote-control` display this URL in the terminal.
+* **Open the session URL** in any browser to go directly to the session on [claude.ai/code](https://claude.ai/code).
 * **Scan the QR code** shown alongside the session URL to open it directly in the Claude app. With `claude remote-control`, press spacebar to toggle the QR code display.
 * **Open [claude.ai/code](https://claude.ai/code) or the Claude app** and find the session by name in the session list. Remote Control sessions show a computer icon with a green status dot when online.
 
@@ -135,7 +149,7 @@ Use Remote Control when you're in the middle of local work and want to keep goin
 ## Limitations
 
 * **One remote session per interactive process**: outside of server mode, each Claude Code instance supports one remote session at a time. Use server mode with `--spawn` to run multiple concurrent sessions from a single process.
-* **Terminal must stay open**: Remote Control runs as a local process. If you close the terminal or stop the `claude` process, the session ends. Run `claude remote-control` again to start a new one.
+* **Local process must keep running**: Remote Control runs as a local process. If you close the terminal, quit VS Code, or otherwise stop the `claude` process, the session ends.
 * **Extended network outage**: if your machine is awake but unable to reach the network for more than roughly 10 minutes, the session times out and the process exits. Run `claude remote-control` again to start a new session.
 * **Ultraplan disconnects Remote Control**: starting an [ultraplan](/en/ultraplan) session disconnects any active Remote Control session because both features occupy the claude.ai/code interface and only one can be connected at a time.
 

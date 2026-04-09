@@ -520,8 +520,8 @@
     "remote-control.md": {
       "original_url": "https://code.claude.com/docs/en/remote-control",
       "original_md_url": "https://code.claude.com/docs/en/remote-control.md",
-      "hash": "440332e73a0f7269e5cdea967be22eca319d3a409ad0855ce2958eb6ba815e6d",
-      "last_updated": "2026-04-04T18:05:25.801933"
+      "hash": "5a3dec441f424d07fd6d1c439b76a07776c251245ef7250b2ad22913d5c9c2a2",
+      "last_updated": "2026-04-09T15:28:59.096476"
     },
     "sandboxing.md": {
       "original_url": "https://code.claude.com/docs/en/sandboxing",
@@ -663,8 +663,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-04-09T12:14:37.926345",
-    "fetch_duration_seconds": 64.255638,
+    "last_fetch_completed": "2026-04-09T15:29:12.912699",
+    "fetch_duration_seconds": 66.073152,
     "total_pages_discovered": 110,
     "pages_fetched_successfully": 111,
     "pages_failed": 0,
@@ -674,7 +674,7 @@
     "total_files": 110,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-04-09T12:14:37.926372",
+  "last_updated": "2026-04-09T15:29:12.912723",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
