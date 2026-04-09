@@ -75,7 +75,7 @@ Configure the Claude Code plugin by going to **Settings → Tools → Claude Cod
 
 #### General Settings
 
-* **Claude command**: Specify a custom command to run Claude (for example, `claude`, `/usr/local/bin/claude`, or `npx @anthropic/claude`)
+* **Claude command**: Specify a custom command to run Claude (for example, `claude`, `/usr/local/bin/claude`, or `npx @anthropic-ai/claude-code`)
 * **Suppress notification for Claude command not found**: Skip notifications about not finding the Claude command
 * **Enable using Option+Enter for multi-line prompts** (macOS only): When enabled, Option+Enter inserts new lines in Claude Code prompts. Disable if experiencing issues with the Option key being captured unexpectedly (requires terminal restart)
 * **Enable automatic updates**: Automatically check for and install plugin updates (applied on restart)

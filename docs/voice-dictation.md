@@ -135,4 +135,4 @@ Common issues when voice dictation does not activate or record:
 * [Customize keyboard shortcuts](/en/keybindings): rebind `voice:pushToTalk` and other CLI keyboard actions
 * [Configure settings](/en/settings): full reference for `voiceEnabled`, `language`, and other settings keys
 * [Interactive mode](/en/interactive-mode): keyboard shortcuts, input modes, and session controls
-* [Built-in commands](/en/commands): reference for `/voice`, `/config`, and all other commands
+* [Commands](/en/commands): reference for `/voice`, `/config`, and all other commands

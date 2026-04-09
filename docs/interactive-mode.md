@@ -75,11 +75,11 @@
 
 ### Quick commands
 
-| Shortcut     | Description       | Notes                                                                |
-| :----------- | :---------------- | :------------------------------------------------------------------- |
-| `/` at start | Command or skill  | See [built-in commands](#built-in-commands) and [skills](/en/skills) |
-| `!` at start | Bash mode         | Run commands directly and add execution output to the session        |
-| `@`          | File path mention | Trigger file path autocomplete                                       |
+| Shortcut     | Description       | Notes                                                         |
+| :----------- | :---------------- | :------------------------------------------------------------ |
+| `/` at start | Command or skill  | See [commands](#commands) and [skills](/en/skills)            |
+| `!` at start | Bash mode         | Run commands directly and add execution output to the session |
+| `@`          | File path mention | Trigger file path autocomplete                                |
 
 ### Transcript viewer
 
@@ -96,11 +96,11 @@ When the transcript viewer is open (toggled with `Ctrl+O`), these shortcuts are 
 | :----------- | :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Hold `Space` | Push-to-talk dictation | Requires [voice dictation](/en/voice-dictation) to be enabled. Transcript inserts at cursor. [Rebindable](/en/voice-dictation#rebind-the-push-to-talk-key) |
 
-## Built-in commands
+## Commands
 
-Type `/` in Claude Code to see all available commands, or type `/` followed by any letters to filter. The `/` menu shows both built-in commands and [bundled skills](/en/skills#bundled-skills) like `/simplify`. Not all commands are visible to every user since some depend on your platform or plan.
+Type `/` in Claude Code to see all available commands, or type `/` followed by any letters to filter. The `/` menu shows everything you can invoke: built-in commands, bundled and user-authored [skills](/en/skills), and commands contributed by [plugins](/en/plugins) and [MCP servers](/en/mcp#use-mcp-prompts-as-commands). Not all built-in commands are visible to every user since some depend on your platform or plan.
 
-See the [commands reference](/en/commands) for the full list of built-in commands. To create your own commands, see [skills](/en/skills).
+See the [commands reference](/en/commands) for the full list of commands included in Claude Code.
 
 ## Vim editor mode
 

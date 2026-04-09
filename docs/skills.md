@@ -9,7 +9,7 @@
 Skills extend what Claude can do. Create a `SKILL.md` file with instructions, and Claude adds it to its toolkit. Claude uses skills when relevant, or you can invoke one directly with `/skill-name`.
 
 <Note>
-  For built-in commands like `/help` and `/compact`, see the [built-in commands reference](/en/commands).
+  For built-in commands like `/help` and `/compact`, and bundled skills like `/debug` and `/simplify`, see the [commands reference](/en/commands).
 
   **Custom commands have been merged into skills.** A file at `.claude/commands/deploy.md` and a skill at `.claude/skills/deploy/SKILL.md` both create `/deploy` and work the same way. Your existing `.claude/commands/` files keep working. Skills add optional features: a directory for supporting files, frontmatter to [control whether you or Claude invokes them](#control-who-invokes-a-skill), and the ability for Claude to load them automatically when relevant.
 </Note>
@@ -18,17 +18,9 @@ Claude Code skills follow the [Agent Skills](https://agentskills.io) open standa
 
 ## Bundled skills
 
-Bundled skills ship with Claude Code and are available in every session. Unlike [built-in commands](/en/commands), which execute fixed logic directly, bundled skills are prompt-based: they give Claude a detailed playbook and let it orchestrate the work using its tools. This means bundled skills can spawn parallel agents, read files, and adapt to your codebase.
+Claude Code includes a set of bundled skills that are available in every session, including `/simplify`, `/batch`, `/debug`, `/loop`, and `/claude-api`. Unlike built-in commands, which execute fixed logic directly, bundled skills are prompt-based: they give Claude a detailed playbook and let it orchestrate the work using its tools. You invoke them the same way as any other skill, by typing `/` followed by the skill name.
 
-You invoke bundled skills the same way as any other skill: type `/` followed by the skill name. In the table below, `<arg>` indicates a required argument and `[arg]` indicates an optional one.
-
-| Skill                       | Purpose                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| :-------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/batch <instruction>`      | Orchestrate large-scale changes across a codebase in parallel. Researches the codebase, decomposes the work into 5 to 30 independent units, and presents a plan. Once approved, spawns one background agent per unit in an isolated [git worktree](/en/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees). Each agent implements its unit, runs tests, and opens a pull request. Requires a git repository. Example: `/batch migrate src/ from Solid to React` |
-| `/claude-api`               | Load Claude API reference material for your project's language (Python, TypeScript, Java, Go, Ruby, C#, PHP, or cURL). Covers tool use, streaming, batches, structured outputs, Managed Agents, and common pitfalls. Also activates automatically when your code imports `anthropic` or `@anthropic-ai/sdk`                                                                                                                                                                        |
-| `/debug [description]`      | Enable debug logging for the current session and troubleshoot issues by reading the session debug log. Debug logging is off by default unless you started with `claude --debug`, so running `/debug` mid-session starts capturing logs from that point forward. Optionally describe the issue to focus the analysis                                                                                                                                                                |
-| `/loop [interval] <prompt>` | Run a prompt repeatedly on an interval while the session stays open. Useful for polling a deployment, babysitting a PR, or periodically re-running another skill. Example: `/loop 5m check if the deploy finished`. See [Run prompts on a schedule](/en/scheduled-tasks)                                                                                                                                                                                                           |
-| `/simplify [focus]`         | Review your recently changed files for code reuse, quality, and efficiency issues, then fix them. Spawns three review agents in parallel, aggregates their findings, and applies fixes. Pass text to focus on specific concerns: `/simplify focus on memory efficiency`                                                                                                                                                                                                            |
+Bundled skills are listed alongside built-in commands in the [commands reference](/en/commands), marked **Skill** in the Purpose column.
 
 ## Getting started
 
@@ -722,5 +714,5 @@ To raise the limit, set the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variabl
 * **[Plugins](/en/plugins)**: package and distribute skills with other extensions
 * **[Hooks](/en/hooks)**: automate workflows around tool events
 * **[Memory](/en/memory)**: manage CLAUDE.md files for persistent context
-* **[Built-in commands](/en/commands)**: reference for built-in `/` commands
+* **[Commands](/en/commands)**: reference for built-in commands and bundled skills
 * **[Permissions](/en/permissions)**: control tool and skill access

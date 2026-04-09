@@ -36,7 +36,7 @@ Claude Code offers three ways to schedule recurring work:
 
 ## Schedule a recurring prompt with /loop
 
-The `/loop` [bundled skill](/en/skills#bundled-skills) is the quickest way to schedule a recurring prompt. Pass an optional interval and a prompt, and Claude sets up a cron job that fires in the background while the session stays open.
+The `/loop` [bundled skill](/en/commands) is the quickest way to schedule a recurring prompt. Pass an optional interval and a prompt, and Claude sets up a cron job that fires in the background while the session stays open.
 
 ```text  theme={null}
 /loop 5m check if the deployment finished and tell me what happened
