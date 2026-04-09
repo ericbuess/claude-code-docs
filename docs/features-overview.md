@@ -12,7 +12,7 @@ Claude Code combines a model that reasons about your code with [built-in tools](
   For how the core agentic loop works, see [How Claude Code works](/en/how-claude-code-works).
 </Note>
 
-**New to Claude Code?** Start with [CLAUDE.md](/en/memory) for project conventions. Add other extensions as you need them.
+**New to Claude Code?** Start with [CLAUDE.md](/en/memory) for project conventions, then add other extensions [as specific triggers come up](#build-your-setup-over-time).
 
 ## Overview
 
@@ -42,6 +42,22 @@ Features range from always-on context that Claude sees every session, to on-dema
 | **Hook**                           | Deterministic script that runs on events                   | Predictable automation, no LLM involved                                         | Run ESLint after every file edit                                                |
 
 **[Plugins](/en/plugins)** are the packaging layer. A plugin bundles skills, hooks, subagents, and MCP servers into a single installable unit. Plugin skills are namespaced (like `/my-plugin:review`) so multiple plugins can coexist. Use plugins when you want to reuse the same setup across multiple repositories or distribute to others via a **[marketplace](/en/plugin-marketplaces)**.
+
+### Build your setup over time
+
+You don't need to configure everything up front. Each feature has a recognizable trigger, and most teams add them in roughly this order:
+
+| Trigger                                                                          | Add                                             |
+| :------------------------------------------------------------------------------- | :---------------------------------------------- |
+| Claude gets a convention or command wrong twice                                  | Add it to [CLAUDE.md](/en/memory)               |
+| You keep typing the same prompt to start a task                                  | Save it as a user-invocable [skill](/en/skills) |
+| You paste the same playbook or multi-step procedure into chat for the third time | Capture it as a [skill](/en/skills)             |
+| You keep copying data from a browser tab Claude can't see                        | Connect that system as an [MCP server](/en/mcp) |
+| A side task floods your conversation with output you won't reference again       | Route it through a [subagent](/en/sub-agents)   |
+| You want something to happen every time without asking                           | Write a [hook](/en/hooks-guide)                 |
+| A second repository needs the same setup                                         | Package it as a [plugin](/en/plugins)           |
+
+The same triggers tell you when to update what you already have. A repeated mistake or a recurring review comment is a CLAUDE.md edit, not a one-off correction in chat. A workflow you keep tweaking by hand is a skill that needs another revision.
 
 ### Compare similar features
 

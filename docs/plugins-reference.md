@@ -304,9 +304,9 @@ The manifest is optional. If omitted, Claude Code auto-discovers components in [
   "repository": "https://github.com/author/plugin",
   "license": "MIT",
   "keywords": ["keyword1", "keyword2"],
+  "skills": "./custom/skills/",
   "commands": ["./custom/commands/special.md"],
   "agents": "./custom/agents/",
-  "skills": "./custom/skills/",
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
@@ -342,9 +342,9 @@ agent `agent-creator` for the plugin with name `plugin-dev` will appear as
 
 | Field          | Type                  | Description                                                                                                                                               | Example                                |
 | :------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------- |
-| `commands`     | string\|array         | Custom command files/directories (replaces default `commands/`)                                                                                           | `"./custom/cmd.md"` or `["./cmd1.md"]` |
+| `skills`       | string\|array         | Custom skill directories containing `<name>/SKILL.md` (replaces default `skills/`)                                                                        | `"./custom/skills/"`                   |
+| `commands`     | string\|array         | Custom flat `.md` skill files or directories (replaces default `commands/`)                                                                               | `"./custom/cmd.md"` or `["./cmd1.md"]` |
 | `agents`       | string\|array         | Custom agent files (replaces default `agents/`)                                                                                                           | `"./custom/agents/reviewer.md"`        |
-| `skills`       | string\|array         | Custom skill directories (replaces default `skills/`)                                                                                                     | `"./custom/skills/"`                   |
 | `hooks`        | string\|array\|object | Hook config paths or inline config                                                                                                                        | `"./my-extra-hooks.json"`              |
 | `mcpServers`   | string\|array\|object | MCP config paths or inline config                                                                                                                         | `"./my-extra-mcp-config.json"`         |
 | `outputStyles` | string\|array         | Custom output style files/directories (replaces default `output-styles/`)                                                                                 | `"./styles/"`                          |
@@ -397,12 +397,12 @@ The `server` field is required and must match a key in the plugin's `mcpServers`
 
 ### Path behavior rules
 
-For `commands`, `agents`, `skills`, and `outputStyles`, custom paths replace the default directory. If the manifest specifies `commands`, the default `commands/` directory is not scanned. [Hooks](#hooks), [MCP servers](#mcp-servers), and [LSP servers](#lsp-servers) have different semantics for handling multiple sources.
+For `skills`, `commands`, `agents`, and `outputStyles`, custom paths replace the default directory. If the manifest specifies `skills`, the default `skills/` directory is not scanned. [Hooks](#hooks), [MCP servers](#mcp-servers), and [LSP servers](#lsp-servers) have different semantics for handling multiple sources.
 
 * All paths must be relative to the plugin root and start with `./`
 * Components from custom paths use the same naming and namespacing rules
 * Multiple paths can be specified as arrays
-* To keep the default directory and add more paths for commands, agents, skills, or output styles, include the default in your array: `"commands": ["./commands/", "./extras/deploy.md"]`
+* To keep the default directory and add more paths for skills, commands, agents, or output styles, include the default in your array: `"skills": ["./skills/", "./extras/"]`
 * When a skill path points to a directory that contains a `SKILL.md` directly, for example `"skills": ["./"]` pointing to the plugin root, the frontmatter `name` field in `SKILL.md` determines the skill's invocation name. This gives a stable name regardless of the install directory. If `name` is not set in the frontmatter, the directory basename is used as a fallback.
 
 **Path examples**:
@@ -530,19 +530,19 @@ A complete plugin follows this structure:
 enterprise-plugin/
 ├── .claude-plugin/           # Metadata directory (optional)
 │   └── plugin.json             # plugin manifest
-├── commands/                 # Default command location
-│   ├── status.md
-│   └── logs.md
-├── agents/                   # Default agent location
-│   ├── security-reviewer.md
-│   ├── performance-tester.md
-│   └── compliance-checker.md
-├── skills/                   # Agent Skills
+├── skills/                   # Skills
 │   ├── code-reviewer/
 │   │   └── SKILL.md
 │   └── pdf-processor/
 │       ├── SKILL.md
 │       └── scripts/
+├── commands/                 # Skills as flat .md files
+│   ├── status.md
+│   └── logs.md
+├── agents/                   # Subagent definitions
+│   ├── security-reviewer.md
+│   ├── performance-tester.md
+│   └── compliance-checker.md
 ├── output-styles/            # Output style definitions
 │   └── terse.md
 ├── hooks/                    # Hook configurations
@@ -570,9 +570,9 @@ enterprise-plugin/
 | Component         | Default Location             | Purpose                                                                                                                                  |
 | :---------------- | :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
 | **Manifest**      | `.claude-plugin/plugin.json` | Plugin metadata and configuration (optional)                                                                                             |
-| **Commands**      | `commands/`                  | Skill Markdown files (legacy; use `skills/` for new skills)                                                                              |
-| **Agents**        | `agents/`                    | Subagent Markdown files                                                                                                                  |
 | **Skills**        | `skills/`                    | Skills with `<name>/SKILL.md` structure                                                                                                  |
+| **Commands**      | `commands/`                  | Skills as flat Markdown files. Use `skills/` for new plugins                                                                             |
+| **Agents**        | `agents/`                    | Subagent Markdown files                                                                                                                  |
 | **Output styles** | `output-styles/`             | Output style definitions                                                                                                                 |
 | **Hooks**         | `hooks/hooks.json`           | Hook configuration                                                                                                                       |
 | **MCP servers**   | `.mcp.json`                  | MCP server definitions                                                                                                                   |
@@ -713,7 +713,7 @@ This shows:
 
 * Which plugins are being loaded
 * Any errors in plugin manifests
-* Command, agent, and hook registration
+* Skill, agent, and hook registration
 * MCP server initialization
 
 ### Common issues
@@ -721,7 +721,7 @@ This shows:
 | Issue                               | Cause                           | Solution                                                                                                                                                        |
 | :---------------------------------- | :------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Plugin not loading                  | Invalid `plugin.json`           | Run `claude plugin validate` or `/plugin validate` to check `plugin.json`, skill/agent/command frontmatter, and `hooks/hooks.json` for syntax and schema errors |
-| Commands not appearing              | Wrong directory structure       | Ensure `commands/` at root, not in `.claude-plugin/`                                                                                                            |
+| Skills not appearing                | Wrong directory structure       | Ensure `skills/` or `commands/` is at the plugin root, not inside `.claude-plugin/`                                                                             |
 | Hooks not firing                    | Script not executable           | Run `chmod +x script.sh`                                                                                                                                        |
 | MCP server fails                    | Missing `${CLAUDE_PLUGIN_ROOT}` | Use variable for all plugin paths                                                                                                                               |
 | Path errors                         | Absolute paths used             | All paths must be relative and start with `./`                                                                                                                  |
@@ -773,7 +773,7 @@ This shows:
 
 ### Directory structure mistakes
 
-**Symptoms**: Plugin loads but components (commands, agents, hooks) are missing.
+**Symptoms**: Plugin loads but components (skills, agents, hooks) are missing.
 
 **Correct structure**: Components must be at the plugin root, not inside `.claude-plugin/`. Only `plugin.json` belongs in `.claude-plugin/`.
 

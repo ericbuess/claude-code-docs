@@ -125,10 +125,32 @@ Because hold detection relies on key-repeat, avoid binding a bare letter key lik
 Common issues when voice dictation does not activate or record:
 
 * **`Voice mode requires a Claude.ai account`**: you are authenticated with an API key or a third-party provider. Run `/login` to sign in with a Claude.ai account.
-* **`Microphone access is denied`**: grant microphone permission to your terminal in system settings. On macOS, go to System Settings → Privacy & Security → Microphone. On Windows, go to Settings → Privacy → Microphone. Then run `/voice` again.
+* **`Microphone access is denied`**: grant microphone permission to your terminal in system settings. On macOS, go to System Settings → Privacy & Security → Microphone and enable your terminal app, then run `/voice` again. On Windows, go to Settings → Privacy & security → Microphone and turn on microphone access for desktop apps, then run `/voice` again. If your terminal isn't listed in the macOS settings, see [Terminal not listed in macOS Microphone settings](#terminal-not-listed-in-macos-microphone-settings).
 * **`No audio recording tool found` on Linux**: the native audio module could not load and no fallback is installed. Install SoX with the command shown in the error message, for example `sudo apt-get install sox`.
 * **Nothing happens when holding `Space`**: watch the prompt input while you hold. If spaces keep accumulating, voice dictation is off; run `/voice` to enable it. If only one or two spaces appear and then nothing, voice dictation is on but hold detection is not triggering. Hold detection requires your terminal to send key-repeat events, so it cannot detect a held key if key-repeat is disabled at the OS level.
 * **Transcription is garbled or in the wrong language**: dictation defaults to English. If you are dictating in another language, set it in `/config` first. See [Change the dictation language](#change-the-dictation-language).
+
+### Terminal not listed in macOS Microphone settings
+
+If your terminal app does not appear under System Settings → Privacy & Security → Microphone, there is no toggle you can enable. Reset the permission state for your terminal so the next `/voice` run triggers a fresh macOS permission prompt.
+
+<Steps>
+  <Step title="Reset the microphone permission for your terminal">
+    Run `tccutil reset Microphone <bundle-id>`, replacing `<bundle-id>` with your terminal's identifier: `com.apple.Terminal` for the built-in Terminal, or `com.googlecode.iterm2` for iTerm2. For other terminals, look up the identifier with `osascript -e 'id of app "AppName"'`.
+
+    <Warning>
+      You can run `tccutil reset Microphone` without a bundle ID, but it revokes microphone access from every app on your Mac, including apps like Zoom or Slack. Each app will need to re-request access on next use, so don't run it during an active call.
+    </Warning>
+  </Step>
+
+  <Step title="Quit and relaunch your terminal">
+    macOS won't re-prompt a process that is already running. Quit the terminal app with Cmd+Q, not just close its windows, then open it again.
+  </Step>
+
+  <Step title="Trigger a fresh prompt">
+    Start Claude Code and run `/voice`. macOS prompts for microphone access; allow it.
+  </Step>
+</Steps>
 
 ## See also
 

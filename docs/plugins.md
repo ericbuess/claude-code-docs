@@ -182,9 +182,9 @@ You've created a plugin with a skill, but plugins can include much more: custom 
 | Directory         | Location    | Purpose                                                                        |
 | :---------------- | :---------- | :----------------------------------------------------------------------------- |
 | `.claude-plugin/` | Plugin root | Contains `plugin.json` manifest (optional if components use default locations) |
-| `commands/`       | Plugin root | Skills as Markdown files                                                       |
+| `skills/`         | Plugin root | Skills as `<name>/SKILL.md` directories                                        |
+| `commands/`       | Plugin root | Skills as flat Markdown files. Use `skills/` for new plugins                   |
 | `agents/`         | Plugin root | Custom agent definitions                                                       |
-| `skills/`         | Plugin root | Agent Skills with `SKILL.md` files                                             |
 | `hooks/`          | Plugin root | Event handlers in `hooks.json`                                                 |
 | `.mcp.json`       | Plugin root | MCP server configurations                                                      |
 | `.lsp.json`       | Plugin root | LSP server configurations for code intelligence                                |
@@ -302,7 +302,7 @@ As you make changes to your plugin, run `/reload-plugins` to pick up the updates
 If your plugin isn't working as expected:
 
 1. **Check the structure**: Ensure your directories are at the plugin root, not inside `.claude-plugin/`
-2. **Test components individually**: Check each command, agent, and hook separately
+2. **Test components individually**: Check each skill, agent, and hook separately
 3. **Use validation and debugging tools**: See [Debugging and development tools](/en/plugins-reference#debugging-and-development-tools) for CLI commands and troubleshooting techniques
 
 ### Share your plugins

@@ -691,7 +691,7 @@ When you exit a worktree session, Claude handles cleanup based on whether you ma
 * **No changes**: the worktree and its branch are removed automatically
 * **Changes or commits exist**: Claude prompts you to keep or remove the worktree. Keeping preserves the directory and branch so you can return later. Removing deletes the worktree directory and its branch, discarding all uncommitted changes and commits
 
-Subagent worktrees orphaned by a crash or an interrupted parallel run are removed automatically at startup once they are older than your [`cleanupPeriodDays`](/en/settings#available-settings) setting, provided they have no modifications to tracked files and no unpushed commits. Untracked files (new files never staged with `git add`) are not checked and do not prevent removal. Worktrees you create with `--worktree` are never removed by this sweep.
+Subagent worktrees orphaned by a crash or an interrupted parallel run are removed automatically at startup once they are older than your [`cleanupPeriodDays`](/en/settings#available-settings) setting, provided they have no uncommitted changes, no untracked files, and no unpushed commits. Worktrees you create with `--worktree` are never removed by this sweep.
 
 To clean up worktrees outside of a Claude session, use [manual worktree management](#manage-worktrees-manually).
 

@@ -15,22 +15,31 @@ Before configuring Claude Code with Bedrock, ensure you have:
 * AWS CLI installed and configured (optional - only needed if you don't have another mechanism for getting credentials)
 * Appropriate IAM permissions
 
-<Note>
-  If you are deploying Claude Code to multiple users, [pin your model versions](#4-pin-model-versions) to prevent breakage when Anthropic releases new models.
-</Note>
+To sign in with your own Bedrock credentials, follow [Sign in with Bedrock](#sign-in-with-bedrock) below. To deploy Claude Code across a team, use the [manual setup](#set-up-manually) steps and [pin your model versions](#4-pin-model-versions) before rolling out.
 
-## Set up with the interactive wizard
+## Sign in with Bedrock
 
-The login screen includes an interactive Bedrock setup wizard for first-time configuration. Select **3rd-party platform** at the `claude` login prompt, then choose **Amazon Bedrock** to launch it. The wizard guides you through each step and writes the resulting configuration to your settings:
+If you have AWS credentials and want to start using Claude Code through Bedrock, the login wizard walks you through it. You complete the AWS-side prerequisites once per account; the wizard handles the Claude Code side.
 
-* AWS authentication
-* Region selection
-* Credential verification
-* Model pinning
+<Steps>
+  <Step title="Enable Anthropic models in your AWS account">
+    In the [Amazon Bedrock console](https://console.aws.amazon.com/bedrock/), open the Model catalog, select an Anthropic model, and submit the use case form. Access is granted immediately after submission. See [Submit use case details](#1-submit-use-case-details) for AWS Organizations and [IAM configuration](#iam-configuration) for the permissions your role needs.
+  </Step>
 
-Once Bedrock is active, use `/setup-bedrock` to return to the wizard and update your credentials, region, or model pins.
+  <Step title="Start Claude Code and choose Bedrock">
+    Run `claude`. At the login prompt, select **3rd-party platform**, then **Amazon Bedrock**.
+  </Step>
 
-## Setup
+  <Step title="Follow the wizard prompts">
+    Choose how you authenticate to AWS: an AWS profile detected from your `~/.aws` directory, a Bedrock API key, an access key and secret, or credentials already in your environment. The wizard picks up your region, verifies which Claude models your account can invoke, and lets you pin them. It saves the result to the `env` block of your [user settings file](/en/settings), so you don't need to export environment variables yourself.
+  </Step>
+</Steps>
+
+After you've signed in, run `/setup-bedrock` any time to reopen the wizard and change your credentials, region, or model pins.
+
+## Set up manually
+
+To configure Bedrock through environment variables instead of the wizard, for example in CI or a scripted enterprise rollout, follow the steps below.
 
 ### 1. Submit use case details
 
@@ -143,7 +152,7 @@ When enabling Bedrock for Claude Code, keep the following in mind:
 ### 4. Pin model versions
 
 <Warning>
-  Pin specific model versions for every deployment. If you use model aliases (`sonnet`, `opus`, `haiku`) without pinning, Claude Code may attempt to use a newer model version that isn't available in your Bedrock account, breaking existing users when Anthropic releases updates.
+  Pin specific model versions when deploying to multiple users. Without pinning, model aliases such as `sonnet` and `opus` resolve to the latest version, which may not yet be available in your Bedrock account when Anthropic releases an update. Claude Code [falls back](#startup-model-checks) to the previous version at startup when the latest is unavailable, but pinning lets you control when your users move to a new model.
 </Warning>
 
 Set these environment variables to specific Bedrock model IDs:
@@ -196,6 +205,14 @@ This example maps three Opus versions to distinct ARNs so users can switch betwe
 ```
 
 When a user selects one of these versions in `/model`, Claude Code calls Bedrock with the mapped ARN. Versions without an override fall back to the built-in Bedrock model ID or any matching inference profile discovered at startup. See [Override model IDs per version](/en/model-config#override-model-ids-per-version) for details on how overrides interact with `availableModels` and other model settings.
+
+## Startup model checks
+
+When Claude Code starts with Bedrock configured, it verifies that the models it intends to use are accessible in your account. This check requires Claude Code v2.1.94 or later.
+
+If you have pinned a model version that is older than the current Claude Code default, and your account can invoke the newer version, Claude Code prompts you to update the pin. Accepting writes the new model ID to your [user settings file](/en/settings) and restarts Claude Code. Declining is remembered until the next default version change. Pins that point to an [application inference profile ARN](#map-each-model-version-to-an-inference-profile) are skipped, since those are managed by your administrator.
+
+If you have not pinned a model and the current default is unavailable in your account, Claude Code falls back to the previous version for the current session and shows a notice. The fallback is not persisted. Enable the newer model in your Bedrock account or [pin a version](#4-pin-model-versions) to make the choice permanent.
 
 ## IAM configuration
 

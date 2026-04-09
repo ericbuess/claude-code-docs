@@ -6,9 +6,9 @@
 
 > Adapt Claude Code for uses beyond software engineering
 
-Output styles allow you to use Claude Code as any type of agent while keeping
-its core capabilities, such as running local scripts, reading/writing files, and
-tracking TODOs.
+Output styles change how Claude responds, not what Claude knows. They modify the system prompt to set role, tone, and output format while keeping core capabilities like running scripts, reading and writing files, and tracking TODOs. Use one when you keep re-prompting for the same voice or format every turn, or when you want Claude to act as something other than a software engineer.
+
+For instructions about your project, conventions, or codebase, use [CLAUDE.md](/en/memory) instead.
 
 ## Built-in output styles
 
