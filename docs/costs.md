@@ -16,9 +16,9 @@
 
 > Track token usage, set team spend limits, and reduce Claude Code costs with context management, model selection, extended thinking settings, and preprocessing hooks.
 
-Claude Code consumes tokens for each interaction. Costs vary based on codebase size, query complexity, and conversation length. The average cost is \$6 per developer per day, with daily costs remaining below \$12 for 90% of users.
+Claude Code charges by API token consumption. Per-developer costs vary widely based on model selection, codebase size, and usage patterns such as running multiple instances or automation.
 
-For team usage, Claude Code charges by API token consumption. On average, Claude Code costs \~\$100-200/developer per month with Sonnet 4.6 though there is large variance depending on how many instances users are running and whether they're using it in automation.
+Across enterprise deployments, the average cost is around \$13 per developer per active day and \$150-250 per developer per month, with costs remaining below \$30 per active day for 90% of users. To estimate spend for your own team, start with a small pilot group and use the tracking tools below to establish a baseline before wider rollout.
 
 This page covers how to [track your costs](#track-your-costs), [manage costs for teams](#managing-costs-for-teams), and [reduce token usage](#reduce-token-usage).
 
@@ -210,4 +210,4 @@ These background processes consume a small amount of tokens (typically under \$0
 
 ## Understanding changes in Claude Code behavior
 
-Claude Code regularly receives updates that may change how features work, including cost reporting. Run `claude --version` to check your current version. For specific billing questions, contact Anthropic support through your [Console account](https://platform.claude.com/login). For team deployments, start with a small pilot group to establish usage patterns before wider rollout.
+Claude Code regularly receives updates that may change how features work, including cost reporting. Run `claude --version` to check your current version. For specific billing questions, contact Anthropic support through your [Console account](https://platform.claude.com/login).

@@ -78,6 +78,8 @@ The example below checks CI and review comments, with Claude waiting longer betw
 /loop check whether CI passed and address any review comments
 ```
 
+When you ask for a dynamic `/loop` schedule, Claude may use the [Monitor tool](/en/tools-reference#monitor-tool) directly. Monitor runs a background script and streams each output line back, which avoids polling altogether and is often more token-efficient and responsive than re-running a prompt on an interval.
+
 A dynamically scheduled loop appears in your [scheduled task list](#manage-scheduled-tasks) like any other task, so you can list or cancel it the same way. The [jitter rules](#jitter) don't apply to it, but the [seven-day expiry](#seven-day-expiry) does: the loop ends automatically seven days after you start it.
 
 <Note>
