@@ -44,37 +44,87 @@ Claude Code offers three ways to schedule recurring work:
   Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
 </Tip>
 
-## Schedule a recurring prompt with /loop
+## Run a prompt repeatedly with /loop
 
-The `/loop` [bundled skill](/en/commands) is the quickest way to schedule a recurring prompt. Pass an optional interval and a prompt, and Claude sets up a cron job that fires in the background while the session stays open.
+The `/loop` [bundled skill](/en/commands) is the quickest way to run a prompt on repeat while the session stays open. Both the interval and the prompt are optional, and what you provide determines how the loop behaves.
+
+| What you provide          | Example                     | What happens                                                                                                  |
+| :------------------------ | :-------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| Interval and prompt       | `/loop 5m check the deploy` | Your prompt runs on a [fixed schedule](#run-on-a-fixed-interval)                                              |
+| Prompt only               | `/loop check the deploy`    | Your prompt runs at an [interval Claude chooses](#let-claude-choose-the-interval) each iteration              |
+| Interval only, or nothing | `/loop`                     | The [built-in maintenance prompt](#run-the-built-in-maintenance-prompt) runs, or your `loop.md` if one exists |
+
+You can also pass another command as the prompt, for example `/loop 20m /review-pr 1234`, to re-run a packaged workflow each iteration.
+
+### Run on a fixed interval
+
+When you supply an interval, Claude converts it to a cron expression, schedules the job, and confirms the cadence and job ID.
 
 ```text  theme={null}
 /loop 5m check if the deployment finished and tell me what happened
 ```
 
-Claude parses the interval, converts it to a cron expression, schedules the job, and confirms the cadence and job ID.
+The interval can lead the prompt as a bare token like `30m`, or trail it as a clause like `every 2 hours`. Supported units are `s` for seconds, `m` for minutes, `h` for hours, and `d` for days.
 
-### Interval syntax
+Seconds are rounded up to the nearest minute since cron has one-minute granularity. Intervals that don't map to a clean cron step, such as `7m` or `90m`, are rounded to the nearest interval that does and Claude tells you what it picked.
 
-Intervals are optional. You can lead with them, trail with them, or leave them out entirely.
+### Let Claude choose the interval
 
-| Form                    | Example                               | Parsed interval              |
-| :---------------------- | :------------------------------------ | :--------------------------- |
-| Leading token           | `/loop 30m check the build`           | every 30 minutes             |
-| Trailing `every` clause | `/loop check the build every 2 hours` | every 2 hours                |
-| No interval             | `/loop check the build`               | defaults to every 10 minutes |
+When you omit the interval, Claude chooses one dynamically instead of running on a fixed cron schedule. After each iteration it picks a delay between one minute and one hour based on what it observed: short waits while a build is finishing or a PR is active, longer waits when nothing is pending. The chosen delay and the reason for it are printed at the end of each iteration.
 
-Supported units are `s` for seconds, `m` for minutes, `h` for hours, and `d` for days. Seconds are rounded up to the nearest minute since cron has one-minute granularity. Intervals that don't divide evenly into their unit, such as `7m` or `90m`, are rounded to the nearest clean interval and Claude tells you what it picked.
-
-### Loop over another command
-
-The scheduled prompt can itself be a command or skill invocation. This is useful for re-running a workflow you've already packaged.
+The example below checks CI and review comments, with Claude waiting longer between iterations once the PR goes quiet:
 
 ```text  theme={null}
-/loop 20m /review-pr 1234
+/loop check whether CI passed and address any review comments
 ```
 
-Each time the job fires, Claude runs `/review-pr 1234` as if you had typed it.
+A dynamically scheduled loop appears in your [scheduled task list](#manage-scheduled-tasks) like any other task, so you can list or cancel it the same way. The [jitter rules](#jitter) don't apply to it, but the [seven-day expiry](#seven-day-expiry) does: the loop ends automatically seven days after you start it.
+
+<Note>
+  On Bedrock, Vertex AI, and Microsoft Foundry, a prompt with no interval runs on a fixed 10-minute schedule instead.
+</Note>
+
+### Run the built-in maintenance prompt
+
+When you omit the prompt, Claude uses a built-in maintenance prompt instead of one you supply. On each iteration it works through the following, in order:
+
+* continue any unfinished work from the conversation
+* tend to the current branch's pull request: review comments, failed CI runs, merge conflicts
+* run cleanup passes such as bug hunts or simplification when nothing else is pending
+
+Claude does not start new initiatives outside that scope, and irreversible actions such as pushing or deleting only proceed when they continue something the transcript already authorized.
+
+```text  theme={null}
+/loop
+```
+
+A bare `/loop` runs this prompt at a [dynamically chosen interval](#let-claude-choose-the-interval). Add an interval, for example `/loop 15m`, to run it on a fixed schedule instead. To replace the built-in prompt with your own default, see [Customize the default prompt with loop.md](#customize-the-default-prompt-with-loop-md).
+
+<Note>
+  On Bedrock, Vertex AI, and Microsoft Foundry, `/loop` with no prompt prints the usage message instead of starting the maintenance loop.
+</Note>
+
+### Customize the default prompt with loop.md
+
+A `loop.md` file replaces the built-in maintenance prompt with your own instructions. It defines a single default prompt for bare `/loop`, not a list of separate scheduled tasks, and is ignored whenever you supply a prompt on the command line. To schedule additional prompts alongside it, use `/loop <prompt>` or [ask Claude directly](#manage-scheduled-tasks).
+
+Claude looks for the file in two locations and uses the first one it finds.
+
+| Path                | Scope                                                            |
+| :------------------ | :--------------------------------------------------------------- |
+| `.claude/loop.md`   | Project-level. Takes precedence when both files exist.           |
+| `~/.claude/loop.md` | User-level. Applies in any project that does not define its own. |
+
+The file is plain Markdown with no required structure. Write it as if you were typing the `/loop` prompt directly. The following example keeps a release branch healthy:
+
+```markdown title=".claude/loop.md" theme={null}
+Check the `release/next` PR. If CI is red, pull the failing job log,
+diagnose, and push a minimal fix. If new review comments have arrived,
+address each one and resolve the thread. If everything is green and
+quiet, say so in one line.
+```
+
+Edits to `loop.md` take effect on the next iteration, so you can refine the instructions while a loop is running. When no `loop.md` exists in either location, the loop falls back to the built-in maintenance prompt. Keep the file concise: content beyond 25,000 bytes is truncated.
 
 ## Set a one-time reminder
 

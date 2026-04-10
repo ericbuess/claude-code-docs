@@ -104,7 +104,7 @@ Bash rules support glob patterns with `*`. Wildcards can appear at any position 
 }
 ```
 
-The space before `*` matters: `Bash(ls *)` matches `ls -la` but not `lsof`, while `Bash(ls*)` matches both. The legacy `:*` suffix syntax is equivalent to ` *` but is deprecated.
+The space before `*` matters: `Bash(ls *)` matches `ls -la` but not `lsof`, while `Bash(ls*)` matches both. The `:*` suffix is an equivalent way to write a trailing wildcard. `Bash(ls:*)` matches the same commands as `Bash(ls *)`.
 
 ## Tool-specific permission rules
 

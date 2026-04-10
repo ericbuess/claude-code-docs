@@ -64,7 +64,9 @@ Permission rules can be configured using `/permissions` or in [permission settin
 
 The Bash tool runs each command in a separate process with the following persistence behavior:
 
-* Working directory persists across commands. Set `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=1` to reset to the project directory after each command.
+* When Claude runs `cd`, the new working directory carries over to later Bash commands as long as it stays inside the project directory or an [additional working directory](/en/permissions#working-directories) you added with `--add-dir`, `/add-dir`, or `additionalDirectories` in settings.
+  * If `cd` lands outside those directories, Claude Code resets to the project directory and appends `Shell cwd was reset to <dir>` to the tool result.
+  * To disable this carry-over so every Bash command starts in the project directory, set `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=1`.
 * Environment variables do not persist. An `export` in one command will not be available in the next.
 
 Activate your virtualenv or conda environment before launching Claude Code. To make environment variables persist across Bash commands, set [`CLAUDE_ENV_FILE`](/en/env-vars) to a shell script before launching Claude Code, or use a [SessionStart hook](/en/hooks#persist-environment-variables) to populate it dynamically.

@@ -118,6 +118,12 @@ When Claude starts controlling your screen, other visible apps are hidden so Cla
 
 When Claude finishes the turn, hidden apps are restored automatically.
 
+### Screenshots are downscaled automatically
+
+Claude Code downscales every screenshot before sending it to the model. You don't need to lower your display resolution or resize windows on Retina or other high-resolution displays. A 16-inch MacBook Pro at native Retina resolution captures at 3456×2234 and downscales to roughly 1372×887, preserving aspect ratio.
+
+There is no setting to change the target size. If on-screen text or controls are too small for Claude to read after downscaling, increase their size in the app rather than changing your display resolution.
+
 ### Stop at any time
 
 When Claude acquires the lock, a macOS notification appears: "Claude is using your computer · press Esc to stop." Press `Esc` anywhere to abort the current action immediately, or press `Ctrl+C` in the terminal. Either way, Claude releases the lock, unhides your apps, and returns control to you.
