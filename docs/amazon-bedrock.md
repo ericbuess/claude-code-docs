@@ -326,7 +326,8 @@ Set the following environment variables to enable Bedrock:
 export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1  # or your preferred region
 
-# Optional: Override the region for the small/fast model (Haiku)
+# Optional: Override the region for the small/fast model (Haiku).
+# Also applies to Bedrock Mantle.
 export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
 
 # Optional: Override the Bedrock endpoint URL for custom endpoints or gateways
@@ -538,11 +539,12 @@ export ANTHROPIC_BEDROCK_MANTLE_BASE_URL=https://your-gateway.example.com
 
 These variables are specific to the Mantle endpoint. See [Environment variables](/en/env-vars) for the full list.
 
-| Variable                            | Purpose                                           |
-| :---------------------------------- | :------------------------------------------------ |
-| `CLAUDE_CODE_USE_MANTLE`            | Enable the Mantle endpoint. Set to `1` or `true`. |
-| `ANTHROPIC_BEDROCK_MANTLE_BASE_URL` | Override the default Mantle endpoint URL          |
-| `CLAUDE_CODE_SKIP_MANTLE_AUTH`      | Skip client-side authentication for proxy setups  |
+| Variable                                | Purpose                                                             |
+| :-------------------------------------- | :------------------------------------------------------------------ |
+| `CLAUDE_CODE_USE_MANTLE`                | Enable the Mantle endpoint. Set to `1` or `true`.                   |
+| `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`     | Override the default Mantle endpoint URL                            |
+| `CLAUDE_CODE_SKIP_MANTLE_AUTH`          | Skip client-side authentication for proxy setups                    |
+| `ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION` | Override AWS region for the Haiku-class model (shared with Bedrock) |
 
 ## Troubleshooting
 

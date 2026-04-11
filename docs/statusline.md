@@ -1037,6 +1037,6 @@ Community projects like [ccstatusline](https://github.com/sirmalloc/ccstatusline
 
 **Notifications share the status line row**
 
-* System notifications like MCP server errors, auto-updates, and token warnings display on the right side of the same row as your status line
+* System notifications like MCP server errors and auto-updates display on the right side of the same row as your status line. Transient notifications such as the context-low warning also cycle through this area.
 * Enabling verbose mode adds a token counter to this area
 * On narrow terminals, these notifications may truncate your status line output
