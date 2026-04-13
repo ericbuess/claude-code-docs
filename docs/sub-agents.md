@@ -509,6 +509,10 @@ Subagents can define [hooks](/en/hooks) that run during the subagent's lifecycle
 
 Define hooks directly in the subagent's markdown file. These hooks only run while that specific subagent is active and are cleaned up when it finishes.
 
+<Note>
+  Frontmatter hooks fire when the agent is spawned as a subagent through the Agent tool or an @-mention. They do not fire when the agent runs as the main session via [`--agent`](#invoke-subagents-explicitly) or the `agent` setting. For session-wide hooks, configure them in [`settings.json`](/en/hooks).
+</Note>
+
 All [hook events](/en/hooks#hook-events) are supported. The most common events for subagents are:
 
 | Event         | Matcher input | When it fires                                                       |

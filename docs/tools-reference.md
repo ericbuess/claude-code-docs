@@ -99,7 +99,7 @@ The Monitor tool lets Claude watch something in the background and react when it
 
 Claude writes a small script for the watch, runs it in the background, and receives each output line as it arrives. You keep working in the same session and Claude interjects when an event lands. Stop a monitor by asking Claude to cancel it or by ending the session.
 
-Monitor uses the same [permission rules as Bash](/en/permissions#tool-specific-permission-rules), so `allow` and `deny` patterns you have set for Bash apply here too. It is not available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry.
+Monitor uses the same [permission rules as Bash](/en/permissions#tool-specific-permission-rules), so `allow` and `deny` patterns you have set for Bash apply here too. It is not available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry. It is also not available when `DISABLE_TELEMETRY` or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set.
 
 ## PowerShell tool
 
