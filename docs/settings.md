@@ -198,6 +198,7 @@ The `$schema` line in the example above points to the [official JSON schema](htt
 | `includeCoAuthoredBy`             | **Deprecated**: Use `attribution` instead. Whether to include the `co-authored-by Claude` byline in git commits and pull requests (default: `true`)                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                                                                                                                        |
 | `includeGitInstructions`          | Include built-in commit and PR workflow instructions and the git status snapshot in Claude's system prompt (default: `true`). Set to `false` to remove both, for example when using your own git workflow skills. The `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` environment variable takes precedence over this setting when set                                                                                                                                                                                                                            | `false`                                                                                                                        |
 | `language`                        | Configure Claude's preferred response language (e.g., `"japanese"`, `"spanish"`, `"french"`). Claude will respond in this language by default. Also sets the [voice dictation](/en/voice-dictation#change-the-dictation-language) language                                                                                                                                                                                                                                                                                                               | `"japanese"`                                                                                                                   |
+| `minimumVersion`                  | Prevent the auto-updater from downgrading below a specific version. Automatically set when switching to the stable channel and choosing to stay on the current version until stable catches up. Used with `autoUpdatesChannel`                                                                                                                                                                                                                                                                                                                           | `"2.1.85"`                                                                                                                     |
 | `model`                           | Override the default model to use for Claude Code                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | `"claude-sonnet-4-6"`                                                                                                          |
 | `modelOverrides`                  | Map Anthropic model IDs to provider-specific model IDs such as Bedrock inference profile ARNs. Each model picker entry uses its mapped value when calling the provider API. See [Override model IDs per version](/en/model-config#override-model-ids-per-version)                                                                                                                                                                                                                                                                                        | `{"claude-opus-4-6": "arn:aws:bedrock:..."}`                                                                                   |
 | `otelHeadersHelper`               | Script to generate dynamic OpenTelemetry headers. Runs at startup and periodically (see [Dynamic headers](/en/monitoring-usage#dynamic-headers))                                                                                                                                                                                                                                                                                                                                                                                                         | `/bin/generate_otel_headers.sh`                                                                                                |
@@ -310,7 +311,7 @@ The older `//path` prefix for absolute paths still works. If you previously used
 
 **Configuration example:**
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "enabled": true,
@@ -350,7 +351,7 @@ Claude Code adds attribution to git commits and pull requests. These are configu
 
 **Default commit attribution:**
 
-```text  theme={null}
+```text theme={null}
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
    Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
@@ -358,13 +359,13 @@ Claude Code adds attribution to git commits and pull requests. These are configu
 
 **Default pull request attribution:**
 
-```text  theme={null}
+```text theme={null}
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 ```
 
 **Example:**
 
-```json  theme={null}
+```json theme={null}
 {
   "attribution": {
     "commit": "Generated with AI\n\nCo-Authored-By: AI <ai@example.com>",
@@ -381,7 +382,7 @@ Claude Code adds attribution to git commits and pull requests. These are configu
 
 Configure a custom command for `@` file path autocomplete. The built-in file suggestion uses fast filesystem traversal, but large monorepos may benefit from project-specific indexing such as a pre-built file index or custom tooling.
 
-```json  theme={null}
+```json theme={null}
 {
   "fileSuggestion": {
     "type": "command",
@@ -392,13 +393,13 @@ Configure a custom command for `@` file path autocomplete. The built-in file sug
 
 The command runs with the same environment variables as [hooks](/en/hooks), including `CLAUDE_PROJECT_DIR`. It receives JSON via stdin with a `query` field:
 
-```json  theme={null}
+```json theme={null}
 {"query": "src/comp"}
 ```
 
 Output newline-separated file paths to stdout (currently limited to 15):
 
-```text  theme={null}
+```text theme={null}
 src/components/Button.tsx
 src/components/Modal.tsx
 src/components/Form.tsx
@@ -406,7 +407,7 @@ src/components/Form.tsx
 
 **Example:**
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 query=$(cat | jq -r '.query')
 your-repo-file-index --query "$query" | head -20
@@ -426,7 +427,7 @@ These settings control which hooks are allowed to run and what HTTP hooks can ac
 
 Limit which URLs HTTP hooks can target. Supports `*` as a wildcard for matching. When the array is defined, HTTP hooks targeting non-matching URLs are silently blocked.
 
-```json  theme={null}
+```json theme={null}
 {
   "allowedHttpHookUrls": ["https://hooks.example.com/*", "http://localhost:*"]
 }
@@ -436,7 +437,7 @@ Limit which URLs HTTP hooks can target. Supports `*` as a wildcard for matching.
 
 Limit which environment variable names HTTP hooks can interpolate into header values. Each hook's effective `allowedEnvVars` is the intersection of its own list and this setting.
 
-```json  theme={null}
+```json theme={null}
 {
   "httpHookAllowedEnvVars": ["MY_TOKEN", "HOOK_SECRET"]
 }
@@ -492,7 +493,7 @@ Claude Code's internal system prompt is not published. To add custom instruction
 
 To prevent Claude Code from accessing files containing sensitive information like API keys, secrets, and environment files, use the `permissions.deny` setting in your `.claude/settings.json` file:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": [
@@ -525,7 +526,7 @@ Claude Code supports a plugin system that lets you extend functionality with ski
 
 Plugin-related settings in `settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "formatter@acme-tools": true,
@@ -554,7 +555,7 @@ Controls which plugins are enabled. Format: `"plugin-name@marketplace-name": tru
 
 **Example**:
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "code-formatter@team-tools": true,
@@ -577,7 +578,7 @@ Defines additional marketplaces that should be made available for the repository
 
 **Example**:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "acme-tools": {
@@ -606,7 +607,7 @@ Defines additional marketplaces that should be made available for the repository
 
 Use `source: 'settings'` to declare a small set of plugins inline without setting up a hosted marketplace repository. Plugins listed here must reference external sources such as GitHub or npm. You still need to enable each plugin separately in `enabledPlugins`.
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "team-tools": {
@@ -657,7 +658,7 @@ The allowlist supports multiple marketplace source types. Most sources use exact
 
 1. **GitHub repositories**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "github", "repo": "acme-corp/approved-plugins" }
 { "source": "github", "repo": "acme-corp/security-tools", "ref": "v2.0" }
 { "source": "github", "repo": "acme-corp/plugins", "ref": "main", "path": "marketplace" }
@@ -667,7 +668,7 @@ Fields: `repo` (required), `ref` (optional: branch/tag/SHA), `path` (optional: s
 
 2. **Git repositories**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "git", "url": "https://gitlab.example.com/tools/plugins.git" }
 { "source": "git", "url": "https://bitbucket.org/acme-corp/plugins.git", "ref": "production" }
 { "source": "git", "url": "ssh://git@git.example.com/plugins.git", "ref": "v3.1", "path": "approved" }
@@ -677,7 +678,7 @@ Fields: `url` (required), `ref` (optional: branch/tag/SHA), `path` (optional: su
 
 3. **URL-based marketplaces**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "url", "url": "https://plugins.example.com/marketplace.json" }
 { "source": "url", "url": "https://cdn.example.com/marketplace.json", "headers": { "Authorization": "Bearer ${TOKEN}" } }
 ```
@@ -690,7 +691,7 @@ Fields: `url` (required), `headers` (optional: HTTP headers for authenticated ac
 
 4. **NPM packages**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "npm", "package": "@acme-corp/claude-plugins" }
 { "source": "npm", "package": "@acme-corp/approved-marketplace" }
 ```
@@ -699,7 +700,7 @@ Fields: `package` (required, supports scoped packages)
 
 5. **File paths**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "file", "path": "/usr/local/share/claude/acme-marketplace.json" }
 { "source": "file", "path": "/opt/acme-corp/plugins/marketplace.json" }
 ```
@@ -708,7 +709,7 @@ Fields: `path` (required: absolute path to marketplace.json file)
 
 6. **Directory paths**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "directory", "path": "/usr/local/share/claude/acme-plugins" }
 { "source": "directory", "path": "/opt/acme-corp/approved-marketplaces" }
 ```
@@ -717,7 +718,7 @@ Fields: `path` (required: absolute path to directory containing `.claude-plugin/
 
 7. **Host pattern matching**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "hostPattern", "hostPattern": "^github\\.example\\.com$" }
 { "source": "hostPattern", "hostPattern": "^gitlab\\.internal\\.example\\.com$" }
 ```
@@ -737,7 +738,7 @@ Host extraction by source type:
 
 Example: allow specific marketplaces only:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -763,7 +764,7 @@ Example: allow specific marketplaces only:
 
 Example - Disable all marketplace additions:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": []
 }
@@ -771,7 +772,7 @@ Example - Disable all marketplace additions:
 
 Example: allow all marketplaces from an internal git server:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -792,7 +793,7 @@ Marketplace sources must match **exactly** for a user's addition to be allowed. 
 
 Examples of sources that **do NOT match**:
 
-```json  theme={null}
+```json theme={null}
 // These are DIFFERENT sources:
 { "source": "github", "repo": "acme-corp/plugins" }
 { "source": "github", "repo": "acme-corp/plugins", "ref": "main" }
@@ -818,7 +819,7 @@ Examples of sources that **do NOT match**:
 
 `strictKnownMarketplaces` uses direct source objects:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     { "source": "github", "repo": "acme-corp/plugins" }
@@ -828,7 +829,7 @@ Examples of sources that **do NOT match**:
 
 `extraKnownMarketplaces` requires named marketplaces:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "acme-tools": {
@@ -842,7 +843,7 @@ Examples of sources that **do NOT match**:
 
 `strictKnownMarketplaces` is a policy gate: it controls what users may add but does not register any marketplaces. To both restrict and pre-register a marketplace for all users, set both in `managed-settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     { "source": "github", "repo": "acme-corp/plugins" }

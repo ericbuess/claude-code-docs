@@ -66,7 +66,7 @@ Each supported channel is a plugin that requires [Bun](https://bun.sh). For a ha
       <Step title="Restart with channels enabled">
         Exit Claude Code and restart with the channel flag. This starts the Telegram plugin, which begins polling for messages from your bot:
 
-        ```bash  theme={null}
+        ```bash theme={null}
         claude --channels plugin:telegram@claude-plugins-official
         ```
       </Step>
@@ -141,7 +141,7 @@ Each supported channel is a plugin that requires [Bun](https://bun.sh). For a ha
       <Step title="Restart with channels enabled">
         Exit Claude Code and restart with the channel flag. This connects the Discord plugin so your bot can receive and respond to messages:
 
-        ```bash  theme={null}
+        ```bash theme={null}
         claude --channels plugin:discord@claude-plugins-official
         ```
       </Step>
@@ -191,7 +191,7 @@ Each supported channel is a plugin that requires [Bun](https://bun.sh). For a ha
       <Step title="Restart with channels enabled">
         Exit Claude Code and restart with the channel flag:
 
-        ```bash  theme={null}
+        ```bash theme={null}
         claude --channels plugin:imessage@claude-plugins-official
         ```
       </Step>
@@ -233,7 +233,7 @@ To try the fakechat demo, you'll need:
   <Step title="Install the fakechat channel plugin">
     Start a Claude Code session and run the install command:
 
-    ```text  theme={null}
+    ```text theme={null}
     /plugin install fakechat@claude-plugins-official
     ```
 
@@ -243,7 +243,7 @@ To try the fakechat demo, you'll need:
   <Step title="Restart with the channel enabled">
     Exit Claude Code, then restart with `--channels` and pass the fakechat plugin you installed:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --channels plugin:fakechat@claude-plugins-official
     ```
 
@@ -257,7 +257,7 @@ To try the fakechat demo, you'll need:
   <Step title="Push a message in">
     Open the fakechat UI at [http://localhost:8787](http://localhost:8787) and type a message:
 
-    ```text  theme={null}
+    ```text theme={null}
     hey, what's in my working directory?
     ```
 
@@ -307,7 +307,7 @@ Once enabled, users in your organization can use `--channels` to opt channel ser
 
 By default, any plugin on the Anthropic-maintained allowlist can register as a channel. Admins on Team and Enterprise plans can replace that allowlist with their own by setting `allowedChannelPlugins` in managed settings. Use this to restrict which official plugins are allowed, approve channels from your own internal marketplace, or both. Each entry names a plugin and the marketplace it comes from:
 
-```json  theme={null}
+```json theme={null}
 {
   "channelsEnabled": true,
   "allowedChannelPlugins": [

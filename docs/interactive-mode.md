@@ -235,7 +235,7 @@ To disable all background task functionality, set the `CLAUDE_CODE_DISABLE_BACKG
 
 Run bash commands directly without going through Claude by prefixing your input with `!`:
 
-```bash  theme={null}
+```bash theme={null}
 ! npm test
 ! git status
 ! ls -la
@@ -268,7 +268,7 @@ Suggestions are automatically skipped after the first turn of a conversation, in
 
 To disable prompt suggestions entirely, set the environment variable or toggle the setting in `/config`:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 ```
 

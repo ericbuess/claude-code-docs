@@ -116,7 +116,7 @@ The `event` field contains the raw streaming event from the [Claude API](https:/
 
 With partial messages enabled, you receive messages in this order:
 
-```text  theme={null}
+```text theme={null}
 StreamEvent (message_start)
 StreamEvent (content_block_start) - text block
 StreamEvent (content_block_delta) - text chunks...

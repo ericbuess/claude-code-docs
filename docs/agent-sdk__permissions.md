@@ -56,7 +56,7 @@ This page focuses on **allow and deny rules** and **permission modes**. For the 
 
 For a locked-down agent, pair `allowedTools` with `permissionMode: "dontAsk"`. Listed tools are approved; anything else is denied outright instead of prompting:
 
-```typescript  theme={null}
+```typescript theme={null}
 const options = {
   allowedTools: ["Read", "Glob", "Grep"],
   permissionMode: "dontAsk"

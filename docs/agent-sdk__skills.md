@@ -89,7 +89,7 @@ Skills are defined as directories containing a `SKILL.md` file with YAML frontma
 
 **Example directory structure**:
 
-```bash  theme={null}
+```bash theme={null}
 .claude/skills/processing-pdfs/
 └── SKILL.md
 ```
@@ -260,7 +260,7 @@ See the "Using Skills with the SDK" section above for the complete pattern.
 
 **Verify filesystem location**:
 
-```bash  theme={null}
+```bash theme={null}
 # Check project Skills
 ls .claude/skills/*/SKILL.md
 

@@ -26,7 +26,7 @@ The keybindings configuration file is an object with a `bindings` array. Each bl
 
 This example binds `Ctrl+E` to open an external editor in the chat context, and unbinds `Ctrl+U`:
 
-```json  theme={null}
+```json theme={null}
 {
   "$schema": "https://www.schemastore.org/claude-code-keybindings.json",
   "$docs": "https://code.claude.com/docs/en/keybindings",
@@ -342,7 +342,7 @@ Use modifier keys with the `+` separator:
 
 For example:
 
-```text  theme={null}
+```text theme={null}
 ctrl+k          Single key with modifier
 shift+tab       Shift + Tab
 meta+p          Command/Meta + P
@@ -359,7 +359,7 @@ Uppercase letters with modifiers (e.g., `ctrl+K`) are treated as stylistic and d
 
 Chords are sequences of keystrokes separated by spaces:
 
-```text  theme={null}
+```text theme={null}
 ctrl+k ctrl+s   Press Ctrl+K, release, then Ctrl+S
 ```
 
@@ -376,7 +376,7 @@ ctrl+k ctrl+s   Press Ctrl+K, release, then Ctrl+S
 
 Set an action to `null` to unbind a default shortcut:
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {
@@ -391,7 +391,7 @@ Set an action to `null` to unbind a default shortcut:
 
 This also works for chord bindings. Unbinding every chord that shares a prefix frees that prefix for use as a single-key binding:
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {

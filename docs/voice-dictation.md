@@ -31,7 +31,7 @@ Voice mode enabled. Hold Space to record. Dictation language: en (/config to cha
 
 Voice dictation persists across sessions. Run `/voice` again to turn it off, or set it directly in your [user settings file](/en/settings):
 
-```json  theme={null}
+```json theme={null}
 {
   "voiceEnabled": true
 }
@@ -90,7 +90,7 @@ Voice dictation uses the same [`language` setting](/en/settings) that controls C
 
 Set the language in `/config` or directly in settings. You can use either the [BCP 47 language code](https://en.wikipedia.org/wiki/IETF_language_tag) or the language name:
 
-```json  theme={null}
+```json theme={null}
 {
   "language": "japanese"
 }
@@ -102,7 +102,7 @@ If your `language` setting is not in the supported list, `/voice` warns you on e
 
 The push-to-talk key is bound to `voice:pushToTalk` in the `Chat` context and defaults to `Space`. Rebind it in [`~/.claude/keybindings.json`](/en/keybindings):
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {

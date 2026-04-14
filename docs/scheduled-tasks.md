@@ -50,7 +50,7 @@ You can also pass another command as the prompt, for example `/loop 20m /review-
 
 When you supply an interval, Claude converts it to a cron expression, schedules the job, and confirms the cadence and job ID.
 
-```text  theme={null}
+```text theme={null}
 /loop 5m check if the deployment finished and tell me what happened
 ```
 
@@ -64,7 +64,7 @@ When you omit the interval, Claude chooses one dynamically instead of running on
 
 The example below checks CI and review comments, with Claude waiting longer between iterations once the PR goes quiet:
 
-```text  theme={null}
+```text theme={null}
 /loop check whether CI passed and address any review comments
 ```
 
@@ -86,7 +86,7 @@ When you omit the prompt, Claude uses a built-in maintenance prompt instead of o
 
 Claude does not start new initiatives outside that scope, and irreversible actions such as pushing or deleting only proceed when they continue something the transcript already authorized.
 
-```text  theme={null}
+```text theme={null}
 /loop
 ```
 
@@ -122,11 +122,11 @@ Edits to `loop.md` take effect on the next iteration, so you can refine the inst
 
 For one-shot reminders, describe what you want in natural language instead of using `/loop`. Claude schedules a single-fire task that deletes itself after running.
 
-```text  theme={null}
+```text theme={null}
 remind me at 3pm to push the release branch
 ```
 
-```text  theme={null}
+```text theme={null}
 in 45 minutes, check whether the integration tests passed
 ```
 
@@ -136,11 +136,11 @@ Claude pins the fire time to a specific minute and hour using a cron expression 
 
 Ask Claude in natural language to list or cancel tasks, or reference the underlying tools directly.
 
-```text  theme={null}
+```text theme={null}
 what scheduled tasks do I have?
 ```
 
-```text  theme={null}
+```text theme={null}
 cancel the deploy check job
 ```
 

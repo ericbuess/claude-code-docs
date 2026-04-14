@@ -67,7 +67,7 @@
 
   <p className="digest-feature-try">Set the env var and restart Claude Code:</p>
 
-  ```bash  theme={null}
+  ```bash theme={null}
   export CLAUDE_CODE_NO_FLICKER=1
   claude
   ```

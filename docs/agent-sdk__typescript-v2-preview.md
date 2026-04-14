@@ -20,7 +20,7 @@ The V2 Claude Agent TypeScript SDK removes the need for async generators and yie
 
 The V2 interface is included in the existing SDK package:
 
-```bash  theme={null}
+```bash theme={null}
 npm install @anthropic-ai/claude-agent-sdk
 ```
 
@@ -30,7 +30,7 @@ npm install @anthropic-ai/claude-agent-sdk
 
 For simple single-turn queries where you don't need to maintain a session, use `unstable_v2_prompt()`. This example sends a math question and logs the answer:
 
-```typescript  theme={null}
+```typescript theme={null}
 import { unstable_v2_prompt } from "@anthropic-ai/claude-agent-sdk";
 
 const result = await unstable_v2_prompt("What is 2 + 2?", {
@@ -44,7 +44,7 @@ if (result.subtype === "success") {
 <details>
   <summary>See the same operation in V1</summary>
 
-  ```typescript  theme={null}
+  ```typescript theme={null}
   import { query } from "@anthropic-ai/claude-agent-sdk";
 
   const q = query({
@@ -71,7 +71,7 @@ This explicit separation makes it easier to add logic between turns (like proces
 
 The example below creates a session, sends "Hello!" to Claude, and prints the text response. It uses [`await using`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-2.html#using-declarations-and-explicit-resource-management) (TypeScript 5.2+) to automatically close the session when the block exits. You can also call `session.close()` manually.
 
-```typescript  theme={null}
+```typescript theme={null}
 import { unstable_v2_createSession } from "@anthropic-ai/claude-agent-sdk";
 
 await using session = unstable_v2_createSession({
@@ -96,7 +96,7 @@ for await (const msg of session.stream()) {
 
   In V1, both input and output flow through a single async generator. For a basic prompt this looks similar, but adding multi-turn logic requires restructuring to use an input generator.
 
-  ```typescript  theme={null}
+  ```typescript theme={null}
   import { query } from "@anthropic-ai/claude-agent-sdk";
 
   const q = query({
@@ -122,7 +122,7 @@ Sessions persist context across multiple exchanges. To continue a conversation, 
 
 This example asks a math question, then asks a follow-up that references the previous answer:
 
-```typescript  theme={null}
+```typescript theme={null}
 import { unstable_v2_createSession } from "@anthropic-ai/claude-agent-sdk";
 
 await using session = unstable_v2_createSession({
@@ -158,7 +158,7 @@ for await (const msg of session.stream()) {
 <details>
   <summary>See the same operation in V1</summary>
 
-  ```typescript  theme={null}
+  ```typescript theme={null}
   import { query } from "@anthropic-ai/claude-agent-sdk";
 
   // Must create an async iterable to feed messages
@@ -201,7 +201,7 @@ If you have a session ID from a previous interaction, you can resume it later. T
 
 This example creates a session, stores its ID, closes it, then resumes the conversation:
 
-```typescript  theme={null}
+```typescript theme={null}
 import {
   unstable_v2_createSession,
   unstable_v2_resumeSession,
@@ -250,7 +250,7 @@ for await (const msg of resumedSession.stream()) {
 <details>
   <summary>See the same operation in V1</summary>
 
-  ```typescript  theme={null}
+  ```typescript theme={null}
   import { query } from "@anthropic-ai/claude-agent-sdk";
 
   // Create initial session
@@ -301,7 +301,7 @@ Sessions can be closed manually or automatically using [`await using`](https://w
 
 **Automatic cleanup (TypeScript 5.2+):**
 
-```typescript  theme={null}
+```typescript theme={null}
 import { unstable_v2_createSession } from "@anthropic-ai/claude-agent-sdk";
 
 await using session = unstable_v2_createSession({
@@ -312,7 +312,7 @@ await using session = unstable_v2_createSession({
 
 **Manual cleanup:**
 
-```typescript  theme={null}
+```typescript theme={null}
 import { unstable_v2_createSession } from "@anthropic-ai/claude-agent-sdk";
 
 const session = unstable_v2_createSession({
@@ -328,7 +328,7 @@ session.close();
 
 Creates a new session for multi-turn conversations.
 
-```typescript  theme={null}
+```typescript theme={null}
 function unstable_v2_createSession(options: {
   model: string;
   // Additional options supported
@@ -339,7 +339,7 @@ function unstable_v2_createSession(options: {
 
 Resumes an existing session by ID.
 
-```typescript  theme={null}
+```typescript theme={null}
 function unstable_v2_resumeSession(
   sessionId: string,
   options: {
@@ -353,7 +353,7 @@ function unstable_v2_resumeSession(
 
 One-shot convenience function for single-turn queries.
 
-```typescript  theme={null}
+```typescript theme={null}
 function unstable_v2_prompt(
   prompt: string,
   options: {
@@ -365,7 +365,7 @@ function unstable_v2_prompt(
 
 ### SDKSession interface
 
-```typescript  theme={null}
+```typescript theme={null}
 interface SDKSession {
   readonly sessionId: string;
   send(message: string | SDKUserMessage): Promise<void>;

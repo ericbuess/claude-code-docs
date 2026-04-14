@@ -207,7 +207,7 @@ Write clear, specific descriptions so Claude can match tasks to the right subage
 
 To guarantee Claude uses a specific subagent, mention it by name in your prompt:
 
-```text  theme={null}
+```text theme={null}
 "Use the code-reviewer agent to check the authentication module"
 ```
 

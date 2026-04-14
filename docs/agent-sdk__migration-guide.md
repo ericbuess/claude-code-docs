@@ -28,13 +28,13 @@ The Claude Code SDK has been renamed to the **Claude Agent SDK** and its documen
 
 **1. Uninstall the old package:**
 
-```bash  theme={null}
+```bash theme={null}
 npm uninstall @anthropic-ai/claude-code
 ```
 
 **2. Install the new package:**
 
-```bash  theme={null}
+```bash theme={null}
 npm install @anthropic-ai/claude-agent-sdk
 ```
 
@@ -42,7 +42,7 @@ npm install @anthropic-ai/claude-agent-sdk
 
 Change all imports from `@anthropic-ai/claude-code` to `@anthropic-ai/claude-agent-sdk`:
 
-```typescript  theme={null}
+```typescript theme={null}
 // Before
 import { query, tool, createSdkMcpServer } from "@anthropic-ai/claude-code";
 
@@ -56,7 +56,7 @@ If you have the package listed in your `package.json`, update it:
 
 Before:
 
-```json  theme={null}
+```json theme={null}
 {
   "dependencies": {
     "@anthropic-ai/claude-code": "^0.0.42"
@@ -66,7 +66,7 @@ Before:
 
 After:
 
-```json  theme={null}
+```json theme={null}
 {
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.0"
@@ -80,13 +80,13 @@ That's it! No other code changes are required.
 
 **1. Uninstall the old package:**
 
-```bash  theme={null}
+```bash theme={null}
 pip uninstall claude-code-sdk
 ```
 
 **2. Install the new package:**
 
-```bash  theme={null}
+```bash theme={null}
 pip install claude-agent-sdk
 ```
 
@@ -94,7 +94,7 @@ pip install claude-agent-sdk
 
 Change all imports from `claude_code_sdk` to `claude_agent_sdk`:
 
-```python  theme={null}
+```python theme={null}
 # Before
 from claude_code_sdk import query, ClaudeCodeOptions
 
@@ -106,7 +106,7 @@ from claude_agent_sdk import query, ClaudeAgentOptions
 
 Change `ClaudeCodeOptions` to `ClaudeAgentOptions`:
 
-```python  theme={null}
+```python theme={null}
 # Before
 from claude_code_sdk import query, ClaudeCodeOptions
 
@@ -134,7 +134,7 @@ Make any code changes needed to complete the migration.
 
 **Migration:**
 
-```python  theme={null}
+```python theme={null}
 # BEFORE (claude-code-sdk)
 from claude_code_sdk import query, ClaudeCodeOptions
 

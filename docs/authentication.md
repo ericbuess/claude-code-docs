@@ -140,13 +140,13 @@ If you have an active Claude subscription but also have `ANTHROPIC_API_KEY` set 
 
 For CI pipelines, scripts, or other environments where interactive browser login isn't available, generate a one-year OAuth token with `claude setup-token`:
 
-```bash  theme={null}
+```bash theme={null}
 claude setup-token
 ```
 
 The command walks you through OAuth authorization and prints a token to the terminal. It does not save the token anywhere; copy it and set it as the `CLAUDE_CODE_OAUTH_TOKEN` environment variable wherever you want to authenticate:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_OAUTH_TOKEN=your-token
 ```
 

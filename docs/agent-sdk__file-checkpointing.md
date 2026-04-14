@@ -248,7 +248,7 @@ The following example shows the complete flow: enable checkpointing, capture the
 
     If you capture the session ID and checkpoint ID, you can also rewind from the CLI:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude -p --resume <session-id> --rewind-files <checkpoint-uuid>
     ```
   </Step>
@@ -673,13 +673,13 @@ Before you begin, make sure you have the [Claude Agent SDK installed](/en/agent-
 
     <Tabs>
       <Tab title="Python">
-        ```bash  theme={null}
+        ```bash theme={null}
         python try_checkpointing.py
         ```
       </Tab>
 
       <Tab title="TypeScript">
-        ```bash  theme={null}
+        ```bash theme={null}
         npx tsx try_checkpointing.ts
         ```
       </Tab>

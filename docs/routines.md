@@ -164,7 +164,7 @@ Send a POST request to the `/fire` endpoint with the bearer token in the `Author
 
 The example below triggers a routine from a shell:
 
-```bash  theme={null}
+```bash theme={null}
 curl -X POST https://api.anthropic.com/v1/claude_code/routines/trig_01ABCDEFGHJKLMNOPQRSTUVW/fire \
   -H "Authorization: Bearer sk-ant-oat01-xxxxx" \
   -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
@@ -175,7 +175,7 @@ curl -X POST https://api.anthropic.com/v1/claude_code/routines/trig_01ABCDEFGHJK
 
 A successful request returns a JSON body with the new session ID and URL:
 
-```json  theme={null}
+```json theme={null}
 {
   "type": "routine_fire",
   "claude_code_session_id": "session_01HJKLMNOPQRSTUVWXYZ",

@@ -57,7 +57,7 @@ The table below summarizes when each event fires. The [Hook events](#hook-events
 
 To see how these pieces fit together, consider this `PreToolUse` hook that blocks destructive shell commands. The `matcher` narrows to Bash tool calls and the `if` condition narrows further to commands starting with `rm`, so `block-rm.sh` only spawns when both filters match:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PreToolUse": [
@@ -78,7 +78,7 @@ To see how these pieces fit together, consider this `PreToolUse` hook that block
 
 The script reads the JSON input from stdin, extracts the command, and returns a `permissionDecision` of `"deny"` if it contains `rm -rf`:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # .claude/hooks/block-rm.sh
 COMMAND=$(jq -r '.tool_input.command')
@@ -106,7 +106,7 @@ Now suppose Claude Code decides to run `Bash "rm -rf /tmp/build"`. Here's what h
   <Step title="Event fires">
     The `PreToolUse` event fires. Claude Code sends the tool input as JSON on stdin to the hook:
 
-    ```json  theme={null}
+    ```json theme={null}
     { "tool_name": "Bash", "tool_input": { "command": "rm -rf /tmp/build" }, ... }
     ```
   </Step>
@@ -122,7 +122,7 @@ Now suppose Claude Code decides to run `Bash "rm -rf /tmp/build"`. Here's what h
   <Step title="Hook handler runs">
     The script inspects the full command and finds `rm -rf`, so it prints a decision to stdout:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hookSpecificOutput": {
         "hookEventName": "PreToolUse",
@@ -207,7 +207,7 @@ The matcher runs against a field from the [JSON input](#hook-input-and-output) t
 
 This example runs a linting script only when Claude writes or edits a file:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -246,7 +246,7 @@ To match every tool from a server, append `.*` to the server prefix. The `.*` is
 
 This example logs all memory server operations and validates write operations from any MCP server:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PreToolUse": [
@@ -321,7 +321,7 @@ Error handling differs from command hooks: non-2xx responses, connection failure
 
 This example sends `PreToolUse` events to a local validation service, authenticating with a token from the `MY_TOKEN` environment variable:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PreToolUse": [
@@ -367,7 +367,7 @@ Use environment variables to reference hook scripts relative to the project or p
   <Tab title="Project scripts">
     This example uses `$CLAUDE_PROJECT_DIR` to run a style checker from the project's `.claude/hooks/` directory after any `Write` or `Edit` tool call:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PostToolUse": [
@@ -391,7 +391,7 @@ Use environment variables to reference hook scripts relative to the project or p
 
     This example runs a formatting script bundled with the plugin:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "description": "Automatic code formatting",
       "hooks": {
@@ -425,7 +425,7 @@ Hooks use the same configuration format as settings-based hooks but are scoped t
 
 This skill defines a `PreToolUse` hook that runs a security validation script before each `Bash` command:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: secure-operations
 description: Perform operations with security checks
@@ -490,7 +490,7 @@ When running with `--agent` or inside a subagent, two additional fields are incl
 
 For example, a `PreToolUse` hook for a Bash command receives this on stdin:
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/home/user/.claude/projects/.../transcript.jsonl",
@@ -518,7 +518,7 @@ The exit code from your hook command tells Claude Code whether the action should
 
 For example, a hook command script that blocks dangerous Bash commands:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # Reads JSON input from stdin, checks the command
 command=$(jq -r '.tool_input.command' < /dev/stdin)
@@ -607,7 +607,7 @@ The JSON object supports three kinds of fields:
 
 To stop Claude entirely regardless of event type:
 
-```json  theme={null}
+```json theme={null}
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
 
@@ -633,7 +633,7 @@ Here are examples of each pattern in action:
   <Tab title="Top-level decision">
     Used by `UserPromptSubmit`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop`, `ConfigChange`, and `PreCompact`. The only value is `"block"`. To allow the action to proceed, omit `decision` from your JSON, or exit 0 without any JSON at all:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "decision": "block",
       "reason": "Test suite must pass before proceeding"
@@ -644,7 +644,7 @@ Here are examples of each pattern in action:
   <Tab title="PreToolUse">
     Uses `hookSpecificOutput` for richer control: allow, deny, or escalate to the user. You can also modify tool input before it runs or inject additional context for Claude. See [PreToolUse decision control](#pretooluse-decision-control) for the full set of options.
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hookSpecificOutput": {
         "hookEventName": "PreToolUse",
@@ -658,7 +658,7 @@ Here are examples of each pattern in action:
   <Tab title="PermissionRequest">
     Uses `hookSpecificOutput` to allow or deny a permission request on behalf of the user. When allowing, you can also modify the tool's input or apply permission rules so the user isn't prompted again. See [PermissionRequest decision control](#permissionrequest-decision-control) for the full set of options.
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hookSpecificOutput": {
         "hookEventName": "PermissionRequest",
@@ -699,7 +699,7 @@ The matcher value corresponds to how the session was initiated:
 
 In addition to the [common input fields](#common-input-fields), SessionStart hooks receive `source`, `model`, and optionally `agent_type`. The `source` field indicates how the session started: `"startup"` for new sessions, `"resume"` for resumed sessions, `"clear"` after `/clear`, or `"compact"` after compaction. The `model` field contains the model identifier. If you start Claude Code with `claude --agent <name>`, an `agent_type` field contains the agent name.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -718,7 +718,7 @@ Any text your hook script prints to stdout is added as context for Claude. In ad
 | :------------------ | :------------------------------------------------------------------------ |
 | `additionalContext` | String added to Claude's context. Multiple hooks' values are concatenated |
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
@@ -733,7 +733,7 @@ SessionStart hooks have access to the `CLAUDE_ENV_FILE` environment variable, wh
 
 To set individual environment variables, write `export` statements to `CLAUDE_ENV_FILE`. Use append (`>>`) to preserve variables set by other hooks:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 
 if [ -n "$CLAUDE_ENV_FILE" ]; then
@@ -747,7 +747,7 @@ exit 0
 
 To capture all environment changes from setup commands, compare the exported variables before and after:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 
 ENV_BEFORE=$(export -p | sort)
@@ -789,7 +789,7 @@ In addition to the [common input fields](#common-input-fields), InstructionsLoad
 | `trigger_file_path` | Path to the file whose access triggered this load, for lazy loads                                                                                                                                             |
 | `parent_file_path`  | Path to the parent instruction file that included this one, for `include` loads                                                                                                                               |
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
@@ -815,7 +815,7 @@ block certain types of prompts.
 
 In addition to the [common input fields](#common-input-fields), UserPromptSubmit hooks receive the `prompt` field containing the text the user submitted.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -846,7 +846,7 @@ To block a prompt, return a JSON object with `decision` set to `"block"`:
 | `additionalContext` | String added to Claude's context                                                                                   |
 | `sessionTitle`      | Sets the session title, same effect as `/rename`. Use to name sessions automatically based on the prompt content   |
 
-```json  theme={null}
+```json theme={null}
 {
   "decision": "block",
   "reason": "Explanation for decision",
@@ -990,7 +990,7 @@ When multiple PreToolUse hooks return different decisions, precedence is `deny` 
 
 When a hook returns `"ask"`, the permission prompt displayed to the user includes a label identifying where the hook came from: for example, `[User]`, `[Project]`, `[Plugin]`, or `[Local]`. This helps users understand which configuration source is requesting confirmation.
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PreToolUse",
@@ -1028,7 +1028,7 @@ The `AskUserQuestion` tool is the typical case: Claude wants to ask the user som
 
 The `deferred_tool_use` field carries the tool's `id`, `name`, and `input`. The `input` is the parameters Claude generated for the tool call, captured before execution:
 
-```json  theme={null}
+```json theme={null}
 {
   "type": "result",
   "subtype": "success",
@@ -1063,7 +1063,7 @@ Matches on tool name, same values as PreToolUse.
 
 PermissionRequest hooks receive `tool_name` and `tool_input` fields like PreToolUse hooks, but without `tool_use_id`. An optional `permission_suggestions` array contains the "always allow" options the user would normally see in the permission dialog. The difference is when the hook fires: PermissionRequest hooks run when a permission dialog is about to be shown to the user, while PreToolUse hooks run before tool execution regardless of permission status.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1098,7 +1098,7 @@ PermissionRequest hooks receive `tool_name` and `tool_input` fields like PreTool
 | `message`            | For `"deny"` only: tells Claude why the permission was denied                                                                                                       |
 | `interrupt`          | For `"deny"` only: if `true`, stops Claude                                                                                                                          |
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PermissionRequest",
@@ -1146,7 +1146,7 @@ Matches on tool name, same values as PreToolUse.
 
 `PostToolUse` hooks fire after a tool has already executed successfully. The input includes both `tool_input`, the arguments sent to the tool, and `tool_response`, the result it returned. The exact schema for both depends on the tool.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1177,7 +1177,7 @@ Matches on tool name, same values as PreToolUse.
 | `additionalContext`    | Additional context for Claude to consider                                                  |
 | `updatedMCPToolOutput` | For [MCP tools](#match-mcp-tools) only: replaces the tool's output with the provided value |
 
-```json  theme={null}
+```json theme={null}
 {
   "decision": "block",
   "reason": "Explanation for decision",
@@ -1198,7 +1198,7 @@ Matches on tool name, same values as PreToolUse.
 
 PostToolUseFailure hooks receive the same `tool_name` and `tool_input` fields as PostToolUse, along with error information as top-level fields:
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1229,7 +1229,7 @@ PostToolUseFailure hooks receive the same `tool_name` and `tool_input` fields as
 | :------------------ | :------------------------------------------------------------ |
 | `additionalContext` | Additional context for Claude to consider alongside the error |
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PostToolUseFailure",
@@ -1248,7 +1248,7 @@ Matches on tool name, same values as PreToolUse.
 
 In addition to the [common input fields](#common-input-fields), PermissionDenied hooks receive `tool_name`, `tool_input`, `tool_use_id`, and `reason`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1273,7 +1273,7 @@ In addition to the [common input fields](#common-input-fields), PermissionDenied
 
 PermissionDenied hooks can tell the model it may retry the denied tool call. Return a JSON object with `hookSpecificOutput.retry` set to `true`:
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PermissionDenied",
@@ -1290,7 +1290,7 @@ Runs when Claude Code sends notifications. Matches on notification type: `permis
 
 Use separate matchers to run different handlers depending on the notification type. This configuration triggers a permission-specific alert script when Claude needs permission approval and a different notification when Claude has been idle:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Notification": [
@@ -1321,7 +1321,7 @@ Use separate matchers to run different handlers depending on the notification ty
 
 In addition to the [common input fields](#common-input-fields), Notification hooks receive `message` with the notification text, an optional `title`, and `notification_type` indicating which type fired.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1347,7 +1347,7 @@ Runs when a Claude Code subagent is spawned via the Agent tool. Supports matcher
 
 In addition to the [common input fields](#common-input-fields), SubagentStart hooks receive `agent_id` with the unique identifier for the subagent and `agent_type` with the agent name (built-in agents like `"Bash"`, `"Explore"`, `"Plan"`, or custom agent names).
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1364,7 +1364,7 @@ SubagentStart hooks cannot block subagent creation, but they can inject context 
 | :------------------ | :------------------------------------- |
 | `additionalContext` | String added to the subagent's context |
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "SubagentStart",
@@ -1381,7 +1381,7 @@ Runs when a Claude Code subagent has finished responding. Matches on agent type,
 
 In addition to the [common input fields](#common-input-fields), SubagentStop hooks receive `stop_hook_active`, `agent_id`, `agent_type`, `agent_transcript_path`, and `last_assistant_message`. The `agent_type` field is the value used for matcher filtering. The `transcript_path` is the main session's transcript, while `agent_transcript_path` is the subagent's own transcript stored in a nested `subagents/` folder. The `last_assistant_message` field contains the text content of the subagent's final response, so hooks can access it without parsing the transcript file.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../abc123.jsonl",
@@ -1408,7 +1408,7 @@ When a `TaskCreated` hook exits with code 2, the task is not created and the std
 
 In addition to the [common input fields](#common-input-fields), TaskCreated hooks receive `task_id`, `task_subject`, and optionally `task_description`, `teammate_name`, and `team_name`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1440,7 +1440,7 @@ TaskCreated hooks support two ways to control task creation:
 
 This example blocks tasks whose subjects don't follow the required format:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 INPUT=$(cat)
 TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
@@ -1463,7 +1463,7 @@ When a `TaskCompleted` hook exits with code 2, the task is not marked as complet
 
 In addition to the [common input fields](#common-input-fields), TaskCompleted hooks receive `task_id`, `task_subject`, and optionally `task_description`, `teammate_name`, and `team_name`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1495,7 +1495,7 @@ TaskCompleted hooks support two ways to control task completion:
 
 This example runs tests and blocks task completion if they fail:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 INPUT=$(cat)
 TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
@@ -1519,7 +1519,7 @@ the stoppage occurred due to a user interrupt. API errors fire
 
 In addition to the [common input fields](#common-input-fields), Stop hooks receive `stop_hook_active` and `last_assistant_message`. The `stop_hook_active` field is `true` when Claude Code is already continuing as a result of a stop hook. Check this value or process the transcript to prevent Claude Code from running indefinitely. The `last_assistant_message` field contains the text content of Claude's final response, so hooks can access it without parsing the transcript file.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1540,7 +1540,7 @@ In addition to the [common input fields](#common-input-fields), Stop hooks recei
 | `decision` | `"block"` prevents Claude from stopping. Omit to allow Claude to stop      |
 | `reason`   | Required when `decision` is `"block"`. Tells Claude why it should continue |
 
-```json  theme={null}
+```json theme={null}
 {
   "decision": "block",
   "reason": "Must be provided when Claude is blocked from stopping"
@@ -1561,7 +1561,7 @@ In addition to the [common input fields](#common-input-fields), StopFailure hook
 | `error_details`          | Additional details about the error, when available                                                                                                                                                                                               |
 | `last_assistant_message` | The rendered error text shown in the conversation. Unlike `Stop` and `SubagentStop`, where this field holds Claude's conversational output, for `StopFailure` it contains the API error string itself, such as `"API Error: Rate limit reached"` |
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1585,7 +1585,7 @@ When a `TeammateIdle` hook exits with code 2, the teammate receives the stderr m
 
 In addition to the [common input fields](#common-input-fields), TeammateIdle hooks receive `teammate_name` and `team_name`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1611,7 +1611,7 @@ TeammateIdle hooks support two ways to control teammate behavior:
 
 This example checks that a build artifact exists before allowing a teammate to go idle:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 
 if [ ! -f "./dist/output.js" ]; then
@@ -1640,7 +1640,7 @@ The matcher filters on the configuration source:
 
 This example logs all configuration changes for security auditing:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "ConfigChange": [
@@ -1661,7 +1661,7 @@ This example logs all configuration changes for security auditing:
 
 In addition to the [common input fields](#common-input-fields), ConfigChange hooks receive `source` and optionally `file_path`. The `source` field indicates which configuration type changed, and `file_path` provides the path to the specific file that was modified.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1681,7 +1681,7 @@ ConfigChange hooks can block configuration changes from taking effect. Use exit 
 | `decision` | `"block"` prevents the configuration change from being applied. Omit to allow the change |
 | `reason`   | Explanation shown to the user when `decision` is `"block"`                               |
 
-```json  theme={null}
+```json theme={null}
 {
   "decision": "block",
   "reason": "Configuration changes to project settings require admin approval"
@@ -1702,7 +1702,7 @@ CwdChanged does not support matchers and fires on every directory change.
 
 In addition to the [common input fields](#common-input-fields), CwdChanged hooks receive `old_cwd` and `new_cwd`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
@@ -1743,7 +1743,7 @@ In addition to the [common input fields](#common-input-fields), FileChanged hook
 | `file_path` | Absolute path to the file that changed                                                          |
 | `event`     | What happened: `"change"` (file modified), `"add"` (file created), or `"unlink"` (file deleted) |
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
@@ -1774,7 +1774,7 @@ The hook must return the absolute path to the created worktree directory. Claude
 
 This example creates an SVN working copy and prints the path for Claude Code to use. Replace the repository URL with your own:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "WorktreeCreate": [
@@ -1797,7 +1797,7 @@ The hook reads the worktree `name` from the JSON input on stdin, checks out a fr
 
 In addition to the [common input fields](#common-input-fields), WorktreeCreate hooks receive the `name` field. This is a slug identifier for the new worktree, either specified by the user or auto-generated (for example, `bold-oak-a3f2`).
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1822,7 +1822,7 @@ The cleanup counterpart to [WorktreeCreate](#worktreecreate). This hook fires wh
 
 Claude Code passes the path returned by WorktreeCreate as `worktree_path` in the hook input. This example reads that path and removes the directory:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "WorktreeRemove": [
@@ -1843,7 +1843,7 @@ Claude Code passes the path returned by WorktreeCreate as `worktree_path` in the
 
 In addition to the [common input fields](#common-input-fields), WorktreeRemove hooks receive the `worktree_path` field, which is the absolute path to the worktree being removed.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1874,7 +1874,7 @@ Blocking automatic compaction has different effects depending on when it fires. 
 
 In addition to the [common input fields](#common-input-fields), PreCompact hooks receive `trigger` and `custom_instructions`. For `manual`, `custom_instructions` contains what the user passes into `/compact`. For `auto`, `custom_instructions` is empty.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1900,7 +1900,7 @@ The same matcher values apply as for `PreCompact`:
 
 In addition to the [common input fields](#common-input-fields), PostCompact hooks receive `trigger` and `compact_summary`. The `compact_summary` field contains the conversation summary generated by the compact operation.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1933,7 +1933,7 @@ The `reason` field in the hook input indicates why the session ended:
 
 In addition to the [common input fields](#common-input-fields), SessionEnd hooks receive a `reason` field indicating why the session ended. See the [reason table](#sessionend) above for all values.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1947,7 +1947,7 @@ SessionEnd hooks have no decision control. They cannot block session termination
 
 SessionEnd hooks have a default timeout of 1.5 seconds. This applies to session exit, `/clear`, and switching sessions via interactive `/resume`. If a hook needs more time, set a per-hook `timeout` in the hook configuration. The overall budget is automatically raised to the highest per-hook timeout configured in settings files, up to 60 seconds. Timeouts set on plugin-provided hooks do not raise the budget. To override the budget explicitly, set the `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` environment variable in milliseconds.
 
-```bash  theme={null}
+```bash theme={null}
 CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 ```
 
@@ -1963,7 +1963,7 @@ In addition to the [common input fields](#common-input-fields), Elicitation hook
 
 For form-mode elicitation (the most common case):
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1984,7 +1984,7 @@ For form-mode elicitation (the most common case):
 
 For URL-mode elicitation (browser-based authentication):
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -2002,7 +2002,7 @@ For URL-mode elicitation (browser-based authentication):
 
 To respond programmatically without showing the dialog, return a JSON object with `hookSpecificOutput`:
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "Elicitation",
@@ -2031,7 +2031,7 @@ The matcher field matches against the MCP server name.
 
 In addition to the [common input fields](#common-input-fields), ElicitationResult hooks receive `mcp_server_name`, `action`, and optional `mode`, `elicitation_id`, and `content` fields.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -2050,7 +2050,7 @@ In addition to the [common input fields](#common-input-fields), ElicitationResul
 
 To override the user's response, return a JSON object with `hookSpecificOutput`:
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "ElicitationResult",
@@ -2118,7 +2118,7 @@ Set `type` to `"prompt"` and provide a `prompt` string instead of a `command`. U
 
 This `Stop` hook asks the LLM to evaluate whether all tasks are complete before allowing Claude to finish:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Stop": [
@@ -2146,7 +2146,7 @@ This `Stop` hook asks the LLM to evaluate whether all tasks are complete before 
 
 The LLM must respond with JSON containing:
 
-```json  theme={null}
+```json theme={null}
 {
   "ok": true | false,
   "reason": "Explanation for the decision"
@@ -2162,7 +2162,7 @@ The LLM must respond with JSON containing:
 
 This `Stop` hook uses a detailed prompt to check three conditions before allowing Claude to stop. If `"ok"` is `false`, Claude continues working with the provided reason as its next instruction. `SubagentStop` hooks use the same format to evaluate whether a [subagent](/en/sub-agents) should stop:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Stop": [
@@ -2210,7 +2210,7 @@ The response schema is the same as prompt hooks: `{ "ok": true }` to allow or `{
 
 This `Stop` hook verifies that all unit tests pass before allowing Claude to finish:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Stop": [
@@ -2238,7 +2238,7 @@ Add `"async": true` to a command hook's configuration to run it in the backgroun
 
 This hook runs a test script after every `Write` tool call. Claude continues working immediately while `run-tests.sh` executes for up to 120 seconds. When the script finishes, its output is delivered on the next conversation turn:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -2272,7 +2272,7 @@ Async hook completion notifications are suppressed by default. To see them, enab
 
 This hook starts a test suite in the background whenever Claude writes a file, then reports the results back to Claude when the tests finish. Save this script to `.claude/hooks/run-tests-async.sh` in your project and make it executable with `chmod +x`:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # run-tests-async.sh
 
@@ -2298,7 +2298,7 @@ fi
 
 Then add this configuration to `.claude/settings.json` in your project root. The `async: true` flag lets Claude keep working while tests run:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -2351,7 +2351,7 @@ Keep these practices in mind when writing hooks:
 
 On Windows, you can run individual hooks in PowerShell by setting `"shell": "powershell"` on a command hook. Hooks spawn PowerShell directly, so this works regardless of whether `CLAUDE_CODE_USE_POWERSHELL_TOOL` is set. Claude Code auto-detects `pwsh.exe` (PowerShell 7+) with a fallback to `powershell.exe` (5.1).
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -2374,7 +2374,7 @@ On Windows, you can run individual hooks in PowerShell by setting `"shell": "pow
 
 Hook execution details, including which hooks matched, their exit codes, and full stdout and stderr, are written to the debug log file. Start Claude Code with `claude --debug-file <path>` to write the log to a known location, or run `claude --debug` and read the log at `~/.claude/debug/<session-id>.txt`. The `--debug` flag does not print to the terminal.
 
-```text  theme={null}
+```text theme={null}
 [DEBUG] Executing hooks for PostToolUse:Write
 [DEBUG] Found 1 hook commands to execute
 [DEBUG] Executing hook command: <Your command> with timeout 600000ms

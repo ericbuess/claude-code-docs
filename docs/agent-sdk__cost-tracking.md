@@ -85,7 +85,7 @@ Each assistant message contains a nested `BetaMessage` (accessed via `message.me
 
 The following example accumulates input and output tokens across all steps, counting each unique message ID only once:
 
-```typescript  theme={null}
+```typescript theme={null}
 import { query } from "@anthropic-ai/claude-agent-sdk";
 
 const seenIds = new Set<string>();
@@ -116,7 +116,7 @@ The result message includes [`modelUsage`](/en/agent-sdk/typescript#model-usage)
 
 The following example runs a query and prints the cost and token breakdown for each model used:
 
-```typescript  theme={null}
+```typescript theme={null}
 import { query } from "@anthropic-ai/claude-agent-sdk";
 
 for await (const message of query({ prompt: "Summarize this project" })) {

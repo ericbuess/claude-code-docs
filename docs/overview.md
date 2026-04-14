@@ -22,19 +22,19 @@ Choose your environment to get started. Most surfaces require a [Claude subscrip
       <Tab title="Native Install (Recommended)">
         **macOS, Linux, WSL:**
 
-        ```bash  theme={null}
+        ```bash theme={null}
         curl -fsSL https://claude.ai/install.sh | bash
         ```
 
         **Windows PowerShell:**
 
-        ```powershell  theme={null}
+        ```powershell theme={null}
         irm https://claude.ai/install.ps1 | iex
         ```
 
         **Windows CMD:**
 
-        ```batch  theme={null}
+        ```batch theme={null}
         curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
         ```
 
@@ -48,7 +48,7 @@ Choose your environment to get started. Most surfaces require a [Claude subscrip
       </Tab>
 
       <Tab title="Homebrew">
-        ```bash  theme={null}
+        ```bash theme={null}
         brew install --cask claude-code
         ```
 
@@ -60,7 +60,7 @@ Choose your environment to get started. Most surfaces require a [Claude subscrip
       </Tab>
 
       <Tab title="WinGet">
-        ```powershell  theme={null}
+        ```powershell theme={null}
         winget install Anthropic.ClaudeCode
         ```
 
@@ -72,7 +72,7 @@ Choose your environment to get started. Most surfaces require a [Claude subscrip
 
     Then start Claude Code in any project:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     cd your-project
     claude
     ```
@@ -134,7 +134,7 @@ Here are some of the ways you can use Claude Code:
   <Accordion title="Automate the work you keep putting off" icon="wand-magic-sparkles">
     Claude Code handles the tedious tasks that eat up your day: writing tests for untested code, fixing lint errors across a project, resolving merge conflicts, updating dependencies, and writing release notes.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude "write tests for the auth module, run them, and fix any failures"
     ```
   </Accordion>
@@ -148,7 +148,7 @@ Here are some of the ways you can use Claude Code:
   <Accordion title="Create commits and pull requests" icon="code-branch">
     Claude Code works directly with git. It stages changes, writes commit messages, creates branches, and opens pull requests.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude "commit my changes with a descriptive message"
     ```
 
@@ -176,7 +176,7 @@ Here are some of the ways you can use Claude Code:
   <Accordion title="Pipe, script, and automate with the CLI" icon="terminal">
     Claude Code is composable and follows the Unix philosophy. Pipe logs into it, run it in CI, or chain it with other tools:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Analyze recent log output
     tail -200 app.log | claude -p "Slack me if you see any anomalies"
 

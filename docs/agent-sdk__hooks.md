@@ -732,7 +732,7 @@ This example forwards every notification to a Slack channel. It requires a [Slac
 
 Matchers only match **tool names**, not file paths or other arguments. To filter by file path, check `tool_input.file_path` inside your hook:
 
-```typescript  theme={null}
+```typescript theme={null}
 const myHook: HookCallback = async (input, toolUseID, { signal }) => {
   const preInput = input as PreToolUseHookInput;
   const toolInput = preInput.tool_input as Record<string, unknown>;
@@ -758,7 +758,7 @@ const myHook: HookCallback = async (input, toolUseID, { signal }) => {
 
 * Ensure `updatedInput` is inside `hookSpecificOutput`, not at the top level:
 
-  ```typescript  theme={null}
+  ```typescript theme={null}
   return {
     hookSpecificOutput: {
       hookEventName: "PreToolUse",

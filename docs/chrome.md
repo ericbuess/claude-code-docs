@@ -45,7 +45,7 @@ Before using Claude Code with Chrome, you need:
   <Step title="Launch Claude Code with Chrome">
     Start Claude Code with the `--chrome` flag:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --chrome
     ```
 
@@ -55,7 +55,7 @@ Before using Claude Code with Chrome, you need:
   <Step title="Ask Claude to use the browser">
     This example navigates to a page, interacts with it, and reports what it finds, all from your terminal or editor:
 
-    ```text  theme={null}
+    ```text theme={null}
     Go to code.claude.com/docs, click on the search box,
     type "hooks", and tell me what results appear
     ```
@@ -88,7 +88,7 @@ These examples show common ways to combine browser actions with coding tasks. Ru
 
 When developing a web app, ask Claude to verify your changes work correctly:
 
-```text  theme={null}
+```text theme={null}
 I just updated the login form validation. Can you open localhost:3000,
 try submitting the form with invalid data, and check if the error
 messages appear correctly?
@@ -100,7 +100,7 @@ Claude navigates to your local server, interacts with the form, and reports what
 
 Claude can read console output to help diagnose problems. Tell Claude what patterns to look for rather than asking for all console output, since logs can be verbose:
 
-```text  theme={null}
+```text theme={null}
 Open the dashboard page and check the console for any errors when
 the page loads.
 ```
@@ -111,7 +111,7 @@ Claude reads the console messages and can filter for specific patterns or error 
 
 Speed up repetitive data entry tasks:
 
-```text  theme={null}
+```text theme={null}
 I have a spreadsheet of customer contacts in contacts.csv. For each row,
 go to the CRM at crm.example.com, click "Add Contact", and fill in the
 name, email, and phone fields.
@@ -123,7 +123,7 @@ Claude reads your local file, navigates the web interface, and enters the data f
 
 Use Claude to write directly in your documents without API setup:
 
-```text  theme={null}
+```text theme={null}
 Draft a project update based on the recent commits and add it to my
 Google Doc at docs.google.com/document/d/abc123
 ```
@@ -134,7 +134,7 @@ Claude opens the document, clicks into the editor, and types the content. This w
 
 Pull structured information from websites:
 
-```text  theme={null}
+```text theme={null}
 Go to the product listings page and extract the name, price, and
 availability for each item. Save the results as a CSV file.
 ```
@@ -145,7 +145,7 @@ Claude navigates to the page, reads the content, and compiles the data into a st
 
 Coordinate tasks across multiple websites:
 
-```text  theme={null}
+```text theme={null}
 Check my calendar for meetings tomorrow, then for each meeting with
 an external attendee, look up their company website and add a note
 about what they do.
@@ -157,7 +157,7 @@ Claude works across tabs to gather information and complete the workflow.
 
 Create shareable recordings of browser interactions:
 
-```text  theme={null}
+```text theme={null}
 Record a GIF showing how to complete the checkout flow, from adding
 an item to the cart through to the confirmation page.
 ```

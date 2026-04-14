@@ -114,7 +114,7 @@ When you resume a session with `claude --continue` or `claude --resume`, you pic
 
 To branch off and try a different approach without affecting the original session, use the `--fork-session` flag:
 
-```bash  theme={null}
+```bash theme={null}
 claude --continue --fork-session
 ```
 
@@ -189,13 +189,13 @@ Built-in commands also guide you through setup:
 
 Claude Code is conversational. You don't need perfect prompts. Start with what you want, then refine:
 
-```text  theme={null}
+```text theme={null}
 Fix the login bug
 ```
 
 \[Claude investigates, tries something]
 
-```text  theme={null}
+```text theme={null}
 That's not quite right. The issue is in the session handling.
 ```
 
@@ -211,7 +211,7 @@ You can interrupt Claude at any point. If it's going down the wrong path, just t
 
 The more precise your initial prompt, the fewer corrections you'll need. Reference specific files, mention constraints, and point to example patterns.
 
-```text  theme={null}
+```text theme={null}
 The checkout flow is broken for users with expired cards.
 Check src/payments/ for the issue, especially token refresh.
 Write a failing test first, then fix it.
@@ -223,7 +223,7 @@ Vague prompts work, but you'll spend more time steering. Specific prompts like t
 
 Claude performs better when it can check its own work. Include test cases, paste screenshots of expected UI, or define the output you want.
 
-```text  theme={null}
+```text theme={null}
 Implement validateEmail. Test cases: 'user@example.com' → true,
 'invalid' → false, 'user@.com' → false. Run the tests after.
 ```
@@ -234,7 +234,7 @@ For visual work, paste a screenshot of the design and ask Claude to compare its 
 
 For complex problems, separate research from coding. Use plan mode (`Shift+Tab` twice) to analyze the codebase first:
 
-```text  theme={null}
+```text theme={null}
 Read src/auth/ and understand how we handle sessions.
 Then create a plan for adding OAuth support.
 ```
@@ -245,7 +245,7 @@ Review the plan, refine it through conversation, then let Claude implement. This
 
 Think of delegating to a capable colleague. Give context and direction, then trust Claude to figure out the details:
 
-```text  theme={null}
+```text theme={null}
 The checkout flow is broken for users with expired cards.
 The relevant code is in src/payments/. Can you investigate and fix it?
 ```

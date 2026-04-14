@@ -99,7 +99,7 @@ On Windows, Claude Code can run PowerShell commands natively instead of routing 
 
 Set `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` in your environment or in `settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "CLAUDE_CODE_USE_POWERSHELL_TOOL": "1"
@@ -133,7 +133,7 @@ The PowerShell tool has the following known limitations during the preview:
 
 Your exact tool set depends on your provider, platform, and settings. To check what's loaded in a running session, ask Claude directly:
 
-```text  theme={null}
+```text theme={null}
 What tools do you have access to?
 ```
 

@@ -33,7 +33,7 @@ Run `/terminal-setup` within Claude Code to automatically configure Shift+Enter 
 
 Inside tmux, `Shift+Enter` submits instead of inserting a newline unless extended key reporting is enabled. Add these lines to `~/.tmux.conf`, then run `tmux source-file ~/.tmux.conf` to reload your configuration:
 
-```text  theme={null}
+```text theme={null}
 set -s extended-keys on
 set -as terminal-features 'xterm*:extkeys'
 ```

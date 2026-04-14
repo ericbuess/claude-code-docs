@@ -59,13 +59,13 @@ The Agent SDK includes built-in tools for reading files, running commands, and e
   <Step title="Install the SDK">
     <Tabs>
       <Tab title="TypeScript">
-        ```bash  theme={null}
+        ```bash theme={null}
         npm install @anthropic-ai/claude-agent-sdk
         ```
       </Tab>
 
       <Tab title="Python">
-        ```bash  theme={null}
+        ```bash theme={null}
         pip install claude-agent-sdk
         ```
       </Tab>
@@ -75,7 +75,7 @@ The Agent SDK includes built-in tools for reading files, running commands, and e
   <Step title="Set your API key">
     Get an API key from the [Console](https://platform.claude.com/), then set it as an environment variable:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     export ANTHROPIC_API_KEY=your-api-key
     ```
 

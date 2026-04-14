@@ -110,7 +110,7 @@ The search mechanism matches queries against tool names and descriptions. Names 
 
 You can also add a system prompt section listing available tool categories. This gives the agent context about what kinds of tools are available to search for:
 
-```text  theme={null}
+```text theme={null}
 You can search for tools to interact with Slack, GitHub, and Jira.
 ```
 

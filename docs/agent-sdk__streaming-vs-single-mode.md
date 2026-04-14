@@ -23,7 +23,7 @@ It allows the agent to operate as a long lived process that takes in user input,
 
 ### How It Works
 
-```mermaid  theme={null}
+```mermaid theme={null}
 sequenceDiagram
     participant App as Your Application
     participant Agent as Claude Agent

@@ -74,7 +74,7 @@ After enabling agent teams, tell Claude to create an agent team and describe the
 
 This example works well because the three roles are independent and can explore the problem without waiting on each other:
 
-```text  theme={null}
+```text theme={null}
 I'm designing a CLI tool that helps developers track TODO comments across
 their codebase. Create an agent team to explore this from different angles: one
 teammate on UX, one on technical architecture, one playing devil's advocate.
@@ -103,7 +103,7 @@ Agent teams support two display modes:
 
 The default is `"auto"`, which uses split panes if you're already running inside a tmux session, and in-process otherwise. The `"tmux"` setting enables split-pane mode and auto-detects whether to use tmux or iTerm2 based on your terminal. To override, set `teammateMode` in your [global config](/en/settings#global-config-settings) at `~/.claude.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "teammateMode": "in-process"
 }
@@ -111,7 +111,7 @@ The default is `"auto"`, which uses split panes if you're already running inside
 
 To force in-process mode for a single session, pass it as a flag:
 
-```bash  theme={null}
+```bash theme={null}
 claude --teammate-mode in-process
 ```
 
@@ -124,7 +124,7 @@ Split-pane mode requires either [tmux](https://github.com/tmux/tmux/wiki) or iTe
 
 Claude decides the number of teammates to spawn based on your task, or you can specify exactly what you want:
 
-```text  theme={null}
+```text theme={null}
 Create a team with 4 teammates to refactor these modules in parallel.
 Use Sonnet for each teammate.
 ```
@@ -133,7 +133,7 @@ Use Sonnet for each teammate.
 
 For complex or risky tasks, you can require teammates to plan before implementing. The teammate works in read-only plan mode until the lead approves their approach:
 
-```text  theme={null}
+```text theme={null}
 Spawn an architect teammate to refactor the authentication module.
 Require plan approval before they make any changes.
 ```
@@ -164,7 +164,7 @@ Task claiming uses file locking to prevent race conditions when multiple teammat
 
 To gracefully end a teammate's session:
 
-```text  theme={null}
+```text theme={null}
 Ask the researcher teammate to shut down
 ```
 
@@ -174,7 +174,7 @@ The lead sends a shutdown request. The teammate can approve, exiting gracefully,
 
 When you're done, ask the lead to clean up:
 
-```text  theme={null}
+```text theme={null}
 Clean up the team
 ```
 
@@ -239,7 +239,7 @@ When spawning a teammate, you can reference a [subagent](/en/sub-agents) type fr
 
 To use a subagent definition, mention it by name when asking Claude to spawn the teammate:
 
-```text  theme={null}
+```text theme={null}
 Spawn a teammate using the security-reviewer agent type to audit the auth module.
 ```
 
@@ -282,7 +282,7 @@ These examples show how agent teams handle tasks where parallel exploration adds
 
 A single reviewer tends to gravitate toward one type of issue at a time. Splitting review criteria into independent domains means security, performance, and test coverage all get thorough attention simultaneously. The prompt assigns each teammate a distinct lens so they don't overlap:
 
-```text  theme={null}
+```text theme={null}
 Create an agent team to review PR #142. Spawn three reviewers:
 - One focused on security implications
 - One checking performance impact
@@ -296,7 +296,7 @@ Each reviewer works from the same PR but applies a different filter. The lead sy
 
 When the root cause is unclear, a single agent tends to find one plausible explanation and stop looking. The prompt fights this by making teammates explicitly adversarial: each one's job is not only to investigate its own theory but to challenge the others'.
 
-```text  theme={null}
+```text theme={null}
 Users report the app exits after one message instead of staying connected.
 Spawn 5 agent teammates to investigate different hypotheses. Have them talk to
 each other to try to disprove each other's theories, like a scientific
@@ -313,7 +313,7 @@ With multiple independent investigators actively trying to disprove each other, 
 
 Teammates load project context automatically, including CLAUDE.md, MCP servers, and skills, but they don't inherit the lead's conversation history. See [Context and communication](#context-and-communication) for details. Include task-specific details in the spawn prompt:
 
-```text  theme={null}
+```text theme={null}
 Spawn a security reviewer teammate with the prompt: "Review the authentication module
 at src/auth/ for security vulnerabilities. Focus on token handling, session
 management, and input validation. The app uses JWT tokens stored in
@@ -348,7 +348,7 @@ Scale up only when the work genuinely benefits from having teammates work simult
 
 Sometimes the lead starts implementing tasks itself instead of waiting for teammates. If you notice this:
 
-```text  theme={null}
+```text theme={null}
 Wait for your teammates to complete their tasks before proceeding
 ```
 
@@ -373,7 +373,7 @@ If teammates aren't appearing after you ask Claude to create a team:
 * In in-process mode, teammates may already be running but not visible. Press Shift+Down to cycle through active teammates.
 * Check that the task you gave Claude was complex enough to warrant a team. Claude decides whether to spawn teammates based on the task.
 * If you explicitly requested split panes, ensure tmux is installed and available in your PATH:
-  ```bash  theme={null}
+  ```bash theme={null}
   which tmux
   ```
 * For iTerm2, verify the `it2` CLI is installed and the Python API is enabled in iTerm2 preferences.
@@ -397,7 +397,7 @@ The lead may decide the team is finished before all tasks are actually complete.
 
 If a tmux session persists after the team ends, it may not have been fully cleaned up. List sessions and kill the one created by the team:
 
-```bash  theme={null}
+```bash theme={null}
 tmux ls
 tmux kill-session -t <session-name>
 ```

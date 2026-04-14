@@ -129,7 +129,7 @@ Pass MCP servers directly in the `mcpServers` option:
 
 Create a `.mcp.json` file at your project root. The SDK does not load filesystem settings by default, so set `settingSources: ["project"]` (Python: `setting_sources=["project"]`) in your options for the file to be picked up:
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "filesystem": {
@@ -177,7 +177,7 @@ Wildcards (`*`) let you allow all tools from a server without listing each one i
 
 To see what tools an MCP server provides, check the server's documentation or connect to the server and inspect the `system` init message:
 
-```typescript  theme={null}
+```typescript theme={null}
 for await (const message of query({ prompt: "...", options })) {
   if (message.type === "system" && message.subtype === "init") {
     console.log("Available MCP tools:", message.mcp_servers);
@@ -233,7 +233,7 @@ Local processes that communicate via stdin/stdout. Use this for MCP servers you 
   </Tab>
 
   <Tab title=".mcp.json">
-    ```json  theme={null}
+    ```json theme={null}
     {
       "mcpServers": {
         "github": {
@@ -289,7 +289,7 @@ Use HTTP or SSE for cloud-hosted MCP servers and remote APIs:
   </Tab>
 
   <Tab title=".mcp.json">
-    ```json  theme={null}
+    ```json theme={null}
     {
       "mcpServers": {
         "remote-api": {
@@ -363,7 +363,7 @@ Use the `env` field to pass API keys, tokens, and other credentials to the MCP s
   </Tab>
 
   <Tab title=".mcp.json">
-    ```json  theme={null}
+    ```json theme={null}
     {
       "mcpServers": {
         "github": {
@@ -423,7 +423,7 @@ For HTTP and SSE servers, pass authentication headers directly in the server con
   </Tab>
 
   <Tab title=".mcp.json">
-    ```json  theme={null}
+    ```json theme={null}
     {
       "mcpServers": {
         "secure-api": {
@@ -489,7 +489,7 @@ This example connects to the [GitHub MCP server](https://github.com/modelcontext
 
 Before running, create a [GitHub personal access token](https://github.com/settings/tokens) with `repo` scope and set it as an environment variable:
 
-```bash  theme={null}
+```bash theme={null}
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 ```
 
@@ -719,7 +719,7 @@ The SDK emits a `system` message with subtype `init` at the start of each query.
 
 Check the `init` message to see which servers failed to connect:
 
-```typescript  theme={null}
+```typescript theme={null}
 if (message.type === "system" && message.subtype === "init") {
   for (const server of message.mcp_servers) {
     if (server.status === "failed") {

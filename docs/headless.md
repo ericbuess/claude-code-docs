@@ -14,7 +14,7 @@ The [Agent SDK](/en/agent-sdk/overview) gives you the same tools, agent loop, an
 
 To run Claude Code programmatically from the CLI, pass `-p` with your prompt and any [CLI options](/en/cli-reference):
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
@@ -30,7 +30,7 @@ Add the `-p` (or `--print`) flag to any `claude` command to run it non-interacti
 
 This example asks Claude a question about your codebase and prints the response:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "What does the auth module do?"
 ```
 
@@ -42,7 +42,7 @@ Bare mode is useful for CI and scripts where you need the same result on every m
 
 This example runs a one-off summarize task in bare mode and pre-approves the Read tool so the call completes without a permission prompt:
 
-```bash  theme={null}
+```bash theme={null}
 claude --bare -p "Summarize this file" --allowedTools "Read"
 ```
 
@@ -76,7 +76,7 @@ Use `--output-format` to control how responses are returned:
 
 This example returns a project summary as JSON with session metadata, with the text result in the `result` field:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Summarize this project" --output-format json
 ```
 
@@ -84,7 +84,7 @@ To get output conforming to a specific schema, use `--output-format json` with `
 
 This example extracts function names and returns them as an array of strings:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Extract the main function names from auth.py" \
   --output-format json \
   --json-schema '{"type":"object","properties":{"functions":{"type":"array","items":{"type":"string"}}},"required":["functions"]}'
@@ -93,7 +93,7 @@ claude -p "Extract the main function names from auth.py" \
 <Tip>
   Use a tool like [jq](https://jqlang.github.io/jq/) to parse the response and extract specific fields:
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # Extract the text result
   claude -p "Summarize this project" --output-format json | jq -r '.result'
 
@@ -109,13 +109,13 @@ claude -p "Extract the main function names from auth.py" \
 
 Use `--output-format stream-json` with `--verbose` and `--include-partial-messages` to receive tokens as they're generated. Each line is a JSON object representing an event:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Explain recursion" --output-format stream-json --verbose --include-partial-messages
 ```
 
 The following example uses [jq](https://jqlang.github.io/jq/) to filter for text deltas and display just the streaming text. The `-r` flag outputs raw strings (no quotes) and `-j` joins without newlines so tokens stream continuously:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Write a poem" --output-format stream-json --verbose --include-partial-messages | \
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
@@ -140,14 +140,14 @@ For programmatic streaming with callbacks and message objects, see [Stream respo
 
 Use `--allowedTools` to let Claude use certain tools without prompting. This example runs a test suite and fixes failures, allowing Claude to execute Bash commands and read/edit files without asking for permission:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
 ```
 
 To set a baseline for the whole session instead of listing individual tools, pass a [permission mode](/en/permission-modes). `dontAsk` denies anything not in your `permissions.allow` rules, which is useful for locked-down CI runs. `acceptEdits` lets Claude write files without prompting and also auto-approves common filesystem commands such as `mkdir`, `touch`, `mv`, and `cp`. Other shell commands and network requests still need an `--allowedTools` entry or a `permissions.allow` rule, otherwise the run aborts when one is attempted:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Apply the lint fixes" --permission-mode acceptEdits
 ```
 
@@ -155,7 +155,7 @@ claude -p "Apply the lint fixes" --permission-mode acceptEdits
 
 This example reviews staged changes and creates a commit with an appropriate message:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Look at my staged changes and create an appropriate commit" \
   --allowedTools "Bash(git diff *),Bash(git log *),Bash(git status *),Bash(git commit *)"
 ```
@@ -170,7 +170,7 @@ The `--allowedTools` flag uses [permission rule syntax](/en/settings#permission-
 
 Use `--append-system-prompt` to add instructions while keeping Claude Code's default behavior. This example pipes a PR diff to Claude and instructs it to review for security vulnerabilities:
 
-```bash  theme={null}
+```bash theme={null}
 gh pr diff "$1" | claude -p \
   --append-system-prompt "You are a security engineer. Review for vulnerabilities." \
   --output-format json
@@ -182,7 +182,7 @@ See [system prompt flags](/en/cli-reference#system-prompt-flags) for more option
 
 Use `--continue` to continue the most recent conversation, or `--resume` with a session ID to continue a specific conversation. This example runs a review, then sends follow-up prompts:
 
-```bash  theme={null}
+```bash theme={null}
 # First request
 claude -p "Review this codebase for performance issues"
 
@@ -193,7 +193,7 @@ claude -p "Generate a summary of all issues found" --continue
 
 If you're running multiple conversations, capture the session ID to resume a specific one:
 
-```bash  theme={null}
+```bash theme={null}
 session_id=$(claude -p "Start a review" --output-format json | jq -r '.session_id')
 claude -p "Continue that review" --resume "$session_id"
 ```
