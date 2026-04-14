@@ -207,8 +207,8 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "4a57c87513b2ddf576a54c2624cf74f199457f5311430ab803dd1e653eef785a",
-      "last_updated": "2026-04-14T00:16:28.752179",
+      "hash": "d2cfde24f6d25f891a73dc38827cc93faaf9fac3ba2023b1f43e4da969594b7d",
+      "last_updated": "2026-04-14T06:32:00.092637",
       "source": "claude-code-repository"
     },
     "channels.md": {
@@ -232,8 +232,8 @@
     "chrome.md": {
       "original_url": "https://code.claude.com/docs/en/chrome",
       "original_md_url": "https://code.claude.com/docs/en/chrome.md",
-      "hash": "86a12c76193181680e7c1c087b2b5ec98e39285a14bd50a987a85bcfb3a27497",
-      "last_updated": "2026-04-10T00:11:44.601949"
+      "hash": "73ad5cba6c5aebae5a8fec80803f33cec0ed5407149c79de617391da4cefcbdf",
+      "last_updated": "2026-04-14T06:31:18.906304"
     },
     "claude-code-on-the-web.md": {
       "original_url": "https://code.claude.com/docs/en/claude-code-on-the-web",
@@ -286,8 +286,8 @@
     "costs.md": {
       "original_url": "https://code.claude.com/docs/en/costs",
       "original_md_url": "https://code.claude.com/docs/en/costs.md",
-      "hash": "05578150cad02a920d67f2d93a3bdc99fc5c957205cd38bbd48940f3bfb1dd20",
-      "last_updated": "2026-04-14T04:00:08.950741"
+      "hash": "68e8ddfd1017026f7ee2745d51c237cc518c34c6628178e7b7fbda32795c5ce3",
+      "last_updated": "2026-04-14T06:31:24.041546"
     },
     "data-usage.md": {
       "original_url": "https://code.claude.com/docs/en/data-usage",
@@ -604,8 +604,8 @@
     "troubleshooting.md": {
       "original_url": "https://code.claude.com/docs/en/troubleshooting",
       "original_md_url": "https://code.claude.com/docs/en/troubleshooting.md",
-      "hash": "aac790eafbd9674e99ba7bd633be3e31b1aece0dcb278edb84dbbf2ca356473b",
-      "last_updated": "2026-04-14T04:00:41.170738"
+      "hash": "75f5a25ab95094ad900d02f6a5348296d37dd4701679dc885a95a3b553efee64",
+      "last_updated": "2026-04-14T06:31:54.345557"
     },
     "ultraplan.md": {
       "original_url": "https://code.claude.com/docs/en/ultraplan",
@@ -669,8 +669,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-04-14T04:00:47.284693",
-    "fetch_duration_seconds": 67.502355,
+    "last_fetch_completed": "2026-04-14T06:32:00.092676",
+    "fetch_duration_seconds": 63.253226,
     "total_pages_discovered": 111,
     "pages_fetched_successfully": 112,
     "pages_failed": 0,
@@ -680,7 +680,7 @@
     "total_files": 111,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-04-14T04:00:47.284720",
+  "last_updated": "2026-04-14T06:32:00.092697",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

@@ -26,7 +26,7 @@ Find the error message or symptom you're seeing:
 | `'bash' is not recognized as the name of a cmdlet`                      | [Use the Windows installer command](#windows-wrong-install-command)                                                     |
 | `Claude Code on Windows requires git-bash`                              | [Install or configure Git Bash](#windows-claude-code-on-windows-requires-git-bash)                                      |
 | `Claude Code does not support 32-bit Windows`                           | [Open Windows PowerShell, not the x86 entry](#windows-claude-code-does-not-support-32-bit-windows)                      |
-| `Error loading shared library`                                          | [Wrong binary variant for your system](#linux-wrong-binary-variant-installed-muslglibc-mismatch)                        |
+| `Error loading shared library`                                          | [Wrong binary variant for your system](#linux-wrong-binary-variant-installed-musl/glibc-mismatch)                       |
 | `Illegal instruction` on Linux                                          | [Architecture mismatch](#illegal-instruction-on-linux)                                                                  |
 | `dyld: cannot load`, `dyld: Symbol not found`, or `Abort trap` on macOS | [Binary incompatibility](#dyld-cannot-load-on-macos)                                                                    |
 | `Invoke-Expression: Missing argument in parameter list`                 | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                   |
@@ -453,7 +453,7 @@ If you installed an older version of Claude Desktop, it may register a `Claude.e
 
 Update Claude Desktop to the latest version to fix this issue.
 
-### Windows: "Claude Code on Windows requires git-bash"
+### Windows: Claude Code on Windows requires git-bash
 
 Claude Code on native Windows needs [Git for Windows](https://git-scm.com/downloads/win), which includes Git Bash.
 
@@ -471,7 +471,7 @@ Claude Code on native Windows needs [Git for Windows](https://git-scm.com/downlo
 
 If your Git is installed somewhere else, find the path by running `where.exe git` in PowerShell and use the `bin\bash.exe` path from that directory.
 
-### Windows: "Claude Code does not support 32-bit Windows"
+### Windows: Claude Code does not support 32-bit Windows
 
 Windows includes two PowerShell entries in the Start menu: `Windows PowerShell` and `Windows PowerShell (x86)`. The x86 entry runs as a 32-bit process and triggers this error even on a 64-bit machine. To check which case you're in, run this in the same window that produced the error:
 
@@ -697,7 +697,7 @@ To clear a stale value, remove the `model` field from your settings or unset `AN
 
 To browse models available to your account, start `claude` interactively and run `/model` to open the picker. For Vertex AI deployments, see [the Vertex AI troubleshooting section](/en/google-vertex-ai#troubleshooting).
 
-### "This organization has been disabled" with an active subscription
+### This organization has been disabled with an active subscription
 
 If you see `API Error: 400 ... "This organization has been disabled"` despite having an active Claude subscription, an `ANTHROPIC_API_KEY` environment variable is overriding your subscription. This commonly happens when an old API key from a previous employer or project is still set in your shell profile.
 
@@ -723,7 +723,7 @@ claude
 
 Or copy the URL manually: when the login prompt appears, press `c` to copy the OAuth URL, then paste it into your Windows browser.
 
-### "Not logged in" or token expired
+### Not logged in or token expired
 
 If Claude Code prompts you to log in again after a session, your OAuth token may have expired.
 
