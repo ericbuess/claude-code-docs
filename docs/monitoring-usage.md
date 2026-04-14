@@ -477,6 +477,41 @@ Logged when a tool permission decision is made (accept/reject).
 * `decision`: Either `"accept"` or `"reject"`
 * `source`: Decision source - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, or `"user_reject"`
 
+#### Plugin installed event
+
+Logged when a plugin finishes installing, from both the `claude plugin install` CLI command and the interactive `/plugin` UI.
+
+**Event Name**: `claude_code.plugin_installed`
+
+**Attributes**:
+
+* All [standard attributes](#standard-attributes)
+* `event.name`: `"plugin_installed"`
+* `event.timestamp`: ISO 8601 timestamp
+* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `plugin.name`: Name of the installed plugin
+* `plugin.version`: Plugin version when declared in the marketplace entry
+* `marketplace.name`: Marketplace the plugin was installed from
+* `marketplace.is_official`: `"true"` if the marketplace is an official Anthropic marketplace, `"false"` otherwise
+* `install.trigger`: `"cli"` or `"ui"`
+
+#### Skill activated event
+
+Logged when a skill is invoked.
+
+**Event Name**: `claude_code.skill_activated`
+
+**Attributes**:
+
+* All [standard attributes](#standard-attributes)
+* `event.name`: `"skill_activated"`
+* `event.timestamp`: ISO 8601 timestamp
+* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `skill.name`: Name of the skill
+* `skill.source`: Where the skill was loaded from (for example, `"bundled"`, `"userSettings"`, `"projectSettings"`, `"plugin"`)
+* `plugin.name`: Name of the owning plugin when the skill is provided by a plugin
+* `marketplace.name`: Marketplace the owning plugin was installed from, when the skill is provided by a plugin
+
 ## Interpret metrics and events data
 
 The exported metrics and events support a range of analyses:

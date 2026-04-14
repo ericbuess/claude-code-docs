@@ -31,7 +31,7 @@ You have several options for entering line breaks into Claude Code:
 * **Shift+Enter**: Works out of the box in iTerm2, WezTerm, Ghostty, and Kitty
 * **Keyboard shortcut**: Set up a keybinding to insert a newline in other terminals
 
-**Set up Shift+Enter for other terminals**
+#### Set up Shift+Enter with /terminal-setup
 
 Run `/terminal-setup` within Claude Code to automatically configure Shift+Enter for VS Code, Alacritty, Zed, and Warp.
 
@@ -39,21 +39,36 @@ Run `/terminal-setup` within Claude Code to automatically configure Shift+Enter 
   The `/terminal-setup` command is only visible in terminals that require manual configuration. If you're using iTerm2, WezTerm, Ghostty, or Kitty, you won't see this command because Shift+Enter already works natively.
 </Note>
 
-**Set up Option+Enter (VS Code, iTerm2 or macOS Terminal.app)**
+#### Set up Shift+Enter in tmux
 
-**For Mac Terminal.app:**
+Inside tmux, `Shift+Enter` submits instead of inserting a newline unless extended key reporting is enabled. Add these lines to `~/.tmux.conf`, then run `tmux source-file ~/.tmux.conf` to reload your configuration:
 
-1. Open Settings → Profiles → Keyboard
-2. Check "Use Option as Meta Key"
+```text  theme={null}
+set -s extended-keys on
+set -as terminal-features 'xterm*:extkeys'
+```
 
-**For iTerm2:**
+Claude Code requests extended keys at startup, but tmux ignores the request unless `extended-keys` is set to `on`. The `terminal-features` line tells tmux that your outer terminal can send these sequences.
 
-1. Open Settings → Profiles → Keys
-2. Under General, set Left/Right Option key to "Esc+"
+#### Set up Option+Enter on macOS
 
-**For VS Code terminal:**
+On macOS, you can use Option+Enter as the newline keybinding in Terminal.app, iTerm2, and the VS Code terminal after enabling the Option-as-Meta setting.
 
-Set `"terminal.integrated.macOptionIsMeta": true` in VS Code settings.
+<Tabs>
+  <Tab title="Terminal.app">
+    1. Open Settings → Profiles → Keyboard
+    2. Check "Use Option as Meta Key"
+  </Tab>
+
+  <Tab title="iTerm2">
+    1. Open Settings → Profiles → Keys
+    2. Under General, set Left/Right Option key to "Esc+"
+  </Tab>
+
+  <Tab title="VS Code">
+    Set `"terminal.integrated.macOptionIsMeta": true` in VS Code settings.
+  </Tab>
+</Tabs>
 
 ### Notification setup
 
