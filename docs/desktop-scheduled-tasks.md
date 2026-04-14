@@ -12,17 +12,17 @@ By default, scheduled tasks start a new session automatically at a time and freq
 
 Claude Code offers three ways to schedule recurring work:
 
-|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
-| :------------------------- | :------------------------------- | :------------------------------------- | :----------------------------- |
-| Runs on                    | Anthropic cloud                  | Your machine                           | Your machine                   |
-| Requires machine on        | No                               | Yes                                    | Yes                            |
-| Requires open session      | No                               | No                                     | Yes                            |
-| Persistent across restarts | Yes                              | Yes                                    | No (session-scoped)            |
-| Access to local files      | No (fresh clone)                 | Yes                                    | Yes                            |
-| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors | Inherits from session          |
-| Permission prompts         | No (runs autonomously)           | Configurable per task                  | Inherits from session          |
-| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                    | Yes                            |
-| Minimum interval           | 1 hour                           | 1 minute                               | 1 minute                       |
+|                            | [Cloud](/en/routines)          | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :----------------------------- | :------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                | Your machine                           | Your machine                   |
+| Requires machine on        | No                             | Yes                                    | Yes                            |
+| Requires open session      | No                             | No                                     | Yes                            |
+| Persistent across restarts | Yes                            | Yes                                    | No (session-scoped)            |
+| Access to local files      | No (fresh clone)               | Yes                                    | Yes                            |
+| MCP servers                | Connectors configured per task | [Config files](/en/mcp) and connectors | Inherits from session          |
+| Permission prompts         | No (runs autonomously)         | Configurable per task                  | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI     | Yes                                    | Yes                            |
+| Minimum interval           | 1 hour                         | 1 minute                               | 1 minute                       |
 
 <Tip>
   Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
@@ -33,7 +33,7 @@ The Schedule page supports two kinds of tasks:
 * **Local tasks**: run on your machine. They have direct access to your local files and tools, but the desktop app must be open and your computer awake for them to run.
 * **Remote tasks**: run on Anthropic-managed cloud infrastructure. They keep running even when your computer is off, but work against a fresh clone of your repository rather than your local checkout.
 
-Both kinds appear in the same task grid. Click **New task** to pick which kind to create. The rest of this page covers local tasks; for remote tasks, see [Cloud scheduled tasks](/en/web-scheduled-tasks).
+Both kinds appear in the same task grid. Click **New task** to pick which kind to create. The rest of this page covers local tasks; for remote tasks, see [Routines](/en/routines).
 
 See [How scheduled tasks run](#how-scheduled-tasks-run) for details on missed runs and catch-up behavior for local tasks.
 
@@ -72,7 +72,7 @@ Local scheduled tasks run on your machine. Desktop checks the schedule every min
 
 When a task fires, you get a desktop notification and a new session appears under a **Scheduled** section in the sidebar. Open it to see what Claude did, review changes, or respond to permission prompts. The session works like any other: Claude can edit files, run commands, create commits, and open pull requests.
 
-Tasks only run while the desktop app is running and your computer is awake. If your computer sleeps through a scheduled time, the run is skipped. To prevent idle-sleep, enable **Keep computer awake** in Settings under **Desktop app → General**. Closing the laptop lid still puts it to sleep. For tasks that need to run even when your computer is off, use a [remote task](/en/web-scheduled-tasks) instead.
+Tasks only run while the desktop app is running and your computer is awake. If your computer sleeps through a scheduled time, the run is skipped. To prevent idle-sleep, enable **Keep computer awake** in Settings under **Desktop app → General**. Closing the laptop lid still puts it to sleep. For tasks that need to run even when your computer is off, or that should trigger automatically on an API call or GitHub event, use a [routine](/en/routines) instead.
 
 ## Missed runs
 
@@ -103,7 +103,7 @@ To edit a task's prompt on disk, open `~/.claude/scheduled-tasks/<task-name>/SKI
 
 ## Related resources
 
-* [Cloud scheduled tasks](/en/web-scheduled-tasks): schedule tasks that run on Anthropic-managed infrastructure even when your computer is off
+* [Routines](/en/routines): run tasks on Anthropic-managed infrastructure on a schedule, via API call, or in response to GitHub events, even when your computer is off
 * [Run prompts on a schedule](/en/scheduled-tasks): session-scoped scheduling with `/loop` in the CLI
 * [Claude Code GitHub Actions](/en/github-actions): run Claude on a schedule in CI instead of on your machine
 * [Use Claude Code Desktop](/en/desktop): the full Desktop app guide

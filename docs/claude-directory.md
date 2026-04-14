@@ -1496,7 +1496,7 @@ The following paths are not covered by automatic cleanup and persist indefinitel
 Transcripts and history are not encrypted at rest. OS file permissions are the only protection. If a tool reads a `.env` file or a command prints a credential, that value is written to `projects/<project>/<session>.jsonl`. To reduce exposure:
 
 * Lower `cleanupPeriodDays` to shorten how long transcripts are kept
-* In non-interactive mode, pass `--no-session-persistence` alongside `-p` to skip writing transcripts entirely. In the Agent SDK, set `persistSession: false`. There is no interactive-mode equivalent.
+* Set the [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/en/env-vars) environment variable to skip writing transcripts and prompt history in any mode. In non-interactive mode, you can instead pass `--no-session-persistence` alongside `-p`, or set `persistSession: false` in the Agent SDK.
 * Use [permission rules](/en/permissions) to deny reads of credential files
 
 ### Clear local data
