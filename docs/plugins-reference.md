@@ -505,6 +505,8 @@ For security and verification purposes, Claude Code copies *marketplace* plugins
 
 Each installed version is a separate directory in the cache. When you update or uninstall a plugin, the previous version directory is marked as orphaned and removed automatically 7 days later. The grace period lets concurrent Claude Code sessions that already loaded the old version keep running without errors.
 
+Claude's Glob and Grep tools skip orphaned version directories during searches, so file results don't include outdated plugin code.
+
 ### Path traversal limitations
 
 Installed plugins cannot reference files outside their directory. Paths that traverse outside the plugin root (such as `../shared-utils`) will not work after installation because those external files are not copied to the cache.

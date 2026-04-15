@@ -160,7 +160,7 @@ Each routine has its own token, scoped to triggering that routine only. To rotat
 
 #### Trigger a routine
 
-Send a POST request to the `/fire` endpoint with the bearer token in the `Authorization` header. The request body accepts an optional `text` field that's appended to the routine's configured prompt as a one-shot user turn. Use `text` to pass context like an alert body or a failing log.
+Send a POST request to the `/fire` endpoint with the bearer token in the `Authorization` header. The request body accepts an optional `text` field for run-specific context such as an alert body or a failing log, passed to the routine alongside its saved prompt. The value is freeform text and is not parsed: if you send JSON or another structured payload, the routine receives it as a literal string.
 
 The example below triggers a routine from a shell:
 

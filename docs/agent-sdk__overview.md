@@ -33,7 +33,7 @@ Build AI agents that autonomously read files, run commands, search the web, edit
   import { query } from "@anthropic-ai/claude-agent-sdk";
 
   for await (const message of query({
-    prompt: "Find and fix the bug in auth.py",
+    prompt: "Find and fix the bug in auth.ts",
     options: { allowedTools: ["Read", "Edit", "Bash"] }
   })) {
     console.log(message); // Claude reads the file, finds the bug, edits it
@@ -506,7 +506,7 @@ The Claude Platform offers multiple ways to build with Claude. Here's how the Ag
       }
 
       // Agent SDK: Claude handles tools autonomously
-      for await (const message of query({ prompt: "Fix the bug in auth.py" })) {
+      for await (const message of query({ prompt: "Fix the bug in auth.ts" })) {
         console.log(message);
       }
       ```
