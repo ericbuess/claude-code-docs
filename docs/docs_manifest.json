@@ -238,8 +238,8 @@
     "claude-code-on-the-web.md": {
       "original_url": "https://code.claude.com/docs/en/claude-code-on-the-web",
       "original_md_url": "https://code.claude.com/docs/en/claude-code-on-the-web.md",
-      "hash": "80745a2fc0082dfaa83ec997056c2a50cd0189e5a11ba3160104b8e3034b4c12",
-      "last_updated": "2026-04-14T21:14:15.722640"
+      "hash": "29cb742c863e47468e98274f49136881f2412355da2e6a55f1090b15741dbf51",
+      "last_updated": "2026-04-15T18:19:57.340125"
     },
     "claude-directory.md": {
       "original_url": "https://code.claude.com/docs/en/claude-directory",
@@ -256,8 +256,8 @@
     "code-review.md": {
       "original_url": "https://code.claude.com/docs/en/code-review",
       "original_md_url": "https://code.claude.com/docs/en/code-review.md",
-      "hash": "80924a91ee3d4c89b459b1040d6cdc9b56511da32c9c30df8a493f575f02f449",
-      "last_updated": "2026-04-14T21:14:17.494237"
+      "hash": "09694cae755eeeffd1a92280efbfb770f2e673d7c1ef77700530e52d2fa79c42",
+      "last_updated": "2026-04-15T18:19:59.148774"
     },
     "commands.md": {
       "original_url": "https://code.claude.com/docs/en/commands",
@@ -328,8 +328,8 @@
     "env-vars.md": {
       "original_url": "https://code.claude.com/docs/en/env-vars",
       "original_md_url": "https://code.claude.com/docs/en/env-vars.md",
-      "hash": "8c9b9ae4ba6caab5e497013128e7d450a440bb2da3a4f5d7dfb20cce012eca63",
-      "last_updated": "2026-04-15T15:23:50.810639"
+      "hash": "5172b144540d0e6f457c7b270846d85921caa1bd34dfe225456ae29fa94b7dcc",
+      "last_updated": "2026-04-15T18:20:06.527634"
     },
     "fast-mode.md": {
       "original_url": "https://code.claude.com/docs/en/fast-mode",
@@ -406,8 +406,8 @@
     "jetbrains.md": {
       "original_url": "https://code.claude.com/docs/en/jetbrains",
       "original_md_url": "https://code.claude.com/docs/en/jetbrains.md",
-      "hash": "ea60616a5ca6a980d3f4a2c7ef3c6ee75df6dce8d28de1c3146db720fca3bd81",
-      "last_updated": "2026-04-14T21:14:32.324026"
+      "hash": "4cf6bd8c229981beb0adc8e884986c3bb951dbf1bec563dcd83ec11a0a9200a1",
+      "last_updated": "2026-04-15T18:20:14.639024"
     },
     "keybindings.md": {
       "original_url": "https://code.claude.com/docs/en/keybindings",
@@ -669,8 +669,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-04-15T15:24:26.138773",
-    "fetch_duration_seconds": 69.077334,
+    "last_fetch_completed": "2026-04-15T18:20:41.533642",
+    "fetch_duration_seconds": 69.775118,
     "total_pages_discovered": 111,
     "pages_fetched_successfully": 112,
     "pages_failed": 0,
@@ -680,7 +680,7 @@
     "total_files": 111,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-04-15T15:24:26.138800",
+  "last_updated": "2026-04-15T18:20:41.533666",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
