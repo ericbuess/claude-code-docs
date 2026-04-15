@@ -16,7 +16,7 @@ Each routine can have one or more triggers attached to it:
 
 * **Scheduled**: run on a recurring cadence like hourly, nightly, or weekly
 * **API**: trigger on demand by sending an HTTP POST to a per-routine endpoint with a bearer token
-* **GitHub**: run automatically in response to repository events such as pull requests, pushes, issues, or workflow runs
+* **GitHub**: run automatically in response to repository events such as pull requests or releases
 
 A single routine can combine triggers. For example, a PR review routine can run nightly, trigger from a deploy script, and also react to every new PR.
 
@@ -229,28 +229,12 @@ GitHub triggers are configured from the web UI only.
 
 #### Supported events
 
-GitHub triggers can subscribe to any of the following event categories. Within each category you can pick a specific action, such as `pull_request.opened`, or react to all actions in the category.
+GitHub triggers can subscribe to either of the following event categories. Within each category you can pick a specific action, such as `pull_request.opened`, or react to all actions in the category.
 
-| Event                       | Triggers when                                                                 |
-| :-------------------------- | :---------------------------------------------------------------------------- |
-| Pull request                | A PR is opened, closed, assigned, labeled, synchronized, or otherwise updated |
-| Pull request review         | A PR review is submitted, edited, or dismissed                                |
-| Pull request review comment | A comment on a PR diff is created, edited, or deleted                         |
-| Push                        | Commits are pushed to a branch                                                |
-| Release                     | A release is created, published, edited, or deleted                           |
-| Issues                      | An issue is opened, edited, closed, labeled, or otherwise updated             |
-| Issue comment               | A comment on an issue or PR is created, edited, or deleted                    |
-| Sub issues                  | A sub-issue or parent issue is added or removed                               |
-| Commit comment              | A commit or diff is commented on                                              |
-| Discussion                  | A discussion is created, edited, answered, or otherwise updated               |
-| Discussion comment          | A discussion comment is created, edited, or deleted                           |
-| Check run                   | A check run is created, requested, rerequested, or completed                  |
-| Check suite                 | A check suite completes or is requested                                       |
-| Merge queue entry           | A PR enters or leaves the merge queue                                         |
-| Workflow run                | A GitHub Actions workflow run starts or completes                             |
-| Workflow job                | A GitHub Actions job is queued or completes                                   |
-| Workflow dispatch           | A workflow is manually triggered                                              |
-| Repository dispatch         | A custom repository\_dispatch event is sent                                   |
+| Event        | Triggers when                                                                 |
+| :----------- | :---------------------------------------------------------------------------- |
+| Pull request | A PR is opened, closed, assigned, labeled, synchronized, or otherwise updated |
+| Release      | A release is created, published, edited, or deleted                           |
 
 #### Filter pull requests
 
@@ -268,6 +252,10 @@ Use filters to narrow which pull requests start a new session. All filter condit
 | Is merged   | Whether the PR has been merged   |
 | From fork   | Whether the PR comes from a fork |
 
+Each filter pairs a field with an operator: equals, contains, starts with, is one of, is not one of, or matches regex.
+
+The `matches regex` operator tests the entire field value, not a substring within it. To match any title containing `hotfix`, write `.*hotfix.*`. Without the surrounding `.*`, the filter matches only a title that is exactly `hotfix` with nothing before or after. For literal substring matching without regex syntax, use the `contains` operator instead.
+
 A few example filter combinations:
 
 * **Auth module review**: base branch `main`, head branch contains `auth-provider`. Sends any PR that touches authentication to a focused reviewer.
@@ -277,7 +265,7 @@ A few example filter combinations:
 
 #### How sessions map to events
 
-Each matching GitHub event starts a new session. Session reuse across events is not available for GitHub-triggered routines, so two pushes or two PR updates produce two independent sessions.
+Each matching GitHub event starts a new session. Session reuse across events is not available for GitHub-triggered routines, so two PR updates produce two independent sessions.
 
 ## Manage routines
 
