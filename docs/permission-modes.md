@@ -33,7 +33,7 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
   <Tab title="CLI">
     **During a session**: press `Shift+Tab` to cycle `default` → `acceptEdits` → `plan`. The current mode appears in the status bar. Not every mode is in the default cycle:
 
-    * `auto`: appears after you opt in with `--enable-auto-mode` or the persisted equivalent in settings
+    * `auto`: appears when your account meets the [auto mode requirements](#eliminate-prompts-with-auto-mode)
     * `bypassPermissions`: appears after you start with `--permission-mode bypassPermissions`, `--dangerously-skip-permissions`, or `--allow-dangerously-skip-permissions`; the `--allow-` variant adds the mode to the cycle without activating it
     * `dontAsk`: never appears in the cycle; set it with `--permission-mode dontAsk`
 
@@ -139,7 +139,7 @@ Each approve option also offers to clear the planning context first.
 ## Eliminate prompts with auto mode
 
 <Note>
-  Auto mode requires Claude Code v2.1.83 or later.
+  Auto mode requires Claude Code v2.1.83 or later. On Max, Team, Enterprise, and Anthropic API plans, auto mode appears in the `Shift+Tab` cycle without the `--enable-auto-mode` flag.
 </Note>
 
 Auto mode lets Claude execute without permission prompts. A separate classifier model reviews actions before they run, blocking anything that escalates beyond your request, targets unrecognized infrastructure, or appears driven by hostile content Claude read.
@@ -150,18 +150,12 @@ Auto mode lets Claude execute without permission prompts. A separate classifier 
 
 Auto mode is available only when your account meets all of these requirements:
 
-* **Plan**: Team, Enterprise, or API. Not available on Pro or Max.
+* **Plan**: Max, Team, Enterprise, or API. Not available on Pro.
 * **Admin**: on Team and Enterprise, an admin must enable it in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code) before users can turn it on. Admins can also lock it off by setting `permissions.disableAutoMode` to `"disable"` in [managed settings](/en/permissions#managed-settings).
-* **Model**: Claude Sonnet 4.6 or Opus 4.6. Not available on Haiku or claude-3 models.
+* **Model**: Claude Sonnet 4.6, Opus 4.6, or later on Team, Enterprise, and API plans; Claude Opus 4.7 on Max plans. Not available on Haiku or claude-3 models.
 * **Provider**: Anthropic API only. Not available on Bedrock, Vertex, or Foundry.
 
 If Claude Code reports auto mode as unavailable, one of these requirements is unmet; this is not a transient outage.
-
-Once enabled, start with the flag and `auto` joins the `Shift+Tab` cycle:
-
-```bash theme={null}
-claude --enable-auto-mode
-```
 
 ### What the classifier blocks by default
 
@@ -229,7 +223,7 @@ Repeated blocks usually mean the classifier is missing context about your infras
   </Accordion>
 
   <Accordion title="Cost and latency">
-    The classifier currently runs on Claude Sonnet 4.6 regardless of your main session model. Classifier calls count toward your token usage. Each check sends a portion of the transcript plus the pending action, adding a round-trip before execution. Reads and working-directory edits outside protected paths skip the classifier, so the overhead comes mainly from shell commands and network operations.
+    The classifier uses the same model as your main session. Classifier calls count toward your token usage. Each check sends a portion of the transcript plus the pending action, adding a round-trip before execution. Reads and working-directory edits outside protected paths skip the classifier, so the overhead comes mainly from shell commands and network operations.
   </Accordion>
 </AccordionGroup>
 

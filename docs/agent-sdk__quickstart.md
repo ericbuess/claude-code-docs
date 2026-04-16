@@ -305,6 +305,18 @@ With `Bash` enabled, try: `"Write unit tests for utils.py, run them, and fix any
 
 The example above uses `acceptEdits` mode, which auto-approves file operations so the agent can run without interactive prompts. If you want to prompt users for approval, use `default` mode and provide a [`canUseTool` callback](/en/agent-sdk/user-input) that collects user input. For more control, see [Permissions](/en/agent-sdk/permissions).
 
+## Troubleshooting
+
+### API error `thinking.type.enabled` is not supported for this model
+
+Claude Opus 4.7 replaces `thinking.type.enabled` with `thinking.type.adaptive`. Older Agent SDK versions fail with the following API error when you select `claude-opus-4-7`:
+
+```text theme={null}
+API Error: 400 {"type":"invalid_request_error","message":"\"thinking.type.enabled\" is not supported for this model. Use \"thinking.type.adaptive\" and \"output_config.effort\" to control thinking behavior."}
+```
+
+Upgrade to Agent SDK v0.2.111 or later to use Opus 4.7.
+
 ## Next steps
 
 Now that you've created your first agent, learn how to extend its capabilities and tailor it to your use case:

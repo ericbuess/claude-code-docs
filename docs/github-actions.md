@@ -13,7 +13,7 @@ Claude Code GitHub Actions brings AI-powered automation to your GitHub workflow.
 </Note>
 
 <Info>
-  **Claude Opus 4.6 is now available.** Claude Code GitHub Actions default to Sonnet. To use Opus 4.6, configure the [model parameter](#breaking-changes-reference) to use `claude-opus-4-6`.
+  **Claude Opus 4.7 is now available.** Claude Code GitHub Actions default to Sonnet. To use Opus 4.7, configure the [model parameter](#breaking-changes-reference) to use `claude-opus-4-7`.
 </Info>
 
 ## Why use Claude Code GitHub Actions?

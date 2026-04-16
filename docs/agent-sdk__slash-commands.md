@@ -196,7 +196,7 @@ Create `.claude/commands/security-check.md`:
 ---
 allowed-tools: Read, Grep, Glob
 description: Run security vulnerability scan
-model: claude-opus-4-6
+model: claude-opus-4-7
 ---
 
 Analyze the codebase for security vulnerabilities including:
