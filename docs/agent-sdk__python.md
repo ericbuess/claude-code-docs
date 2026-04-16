@@ -858,13 +858,15 @@ class SystemPromptPreset(TypedDict):
     type: Literal["preset"]
     preset: Literal["claude_code"]
     append: NotRequired[str]
+    exclude_dynamic_sections: NotRequired[bool]
 ```
 
-| Field    | Required | Description                                                   |
-| :------- | :------- | :------------------------------------------------------------ |
-| `type`   | Yes      | Must be `"preset"` to use a preset system prompt              |
-| `preset` | Yes      | Must be `"claude_code"` to use Claude Code's system prompt    |
-| `append` | No       | Additional instructions to append to the preset system prompt |
+| Field                      | Required | Description                                                                                                                                                                                                                                                                                                      |
+| :------------------------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                     | Yes      | Must be `"preset"` to use a preset system prompt                                                                                                                                                                                                                                                                 |
+| `preset`                   | Yes      | Must be `"claude_code"` to use Claude Code's system prompt                                                                                                                                                                                                                                                       |
+| `append`                   | No       | Additional instructions to append to the preset system prompt                                                                                                                                                                                                                                                    |
+| `exclude_dynamic_sections` | No       | Move per-session context such as working directory, git status, and memory paths from the system prompt into the first user message. Improves prompt-cache reuse across users and machines. See [Modify system prompts](/en/agent-sdk/modifying-system-prompts#improve-prompt-caching-across-users-and-machines) |
 
 ### `SettingSource`
 

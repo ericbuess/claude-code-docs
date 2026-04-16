@@ -6,7 +6,7 @@
 
 > Welcome to Claude Code!
 
-export const InstallConfigurator = () => {
+export const InstallConfigurator = ({defaultSurface = 'terminal'}) => {
   const TERM = {
     mac: {
       label: 'macOS / Linux',
@@ -44,12 +44,14 @@ export const InstallConfigurator = () => {
   const ALT_TARGETS = {
     desktop: {
       name: 'Desktop',
+      tagline: 'The full agent in a native app for macOS and Windows.',
       installLabel: 'Download the app',
       installHref: 'https://claude.com/download?utm_source=claude_code&utm_medium=docs&utm_content=configurator_desktop_download',
       guideHref: '/en/desktop-quickstart'
     },
     vscode: {
       name: 'VS Code',
+      tagline: 'Review diffs, manage context, and chat without leaving your editor.',
       installLabel: 'Install from Marketplace',
       installHref: 'https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code',
       altCmd: 'code --install-extension anthropic.claude-code',
@@ -57,6 +59,7 @@ export const InstallConfigurator = () => {
     },
     jetbrains: {
       name: 'JetBrains',
+      tagline: 'Native plugin for IntelliJ, PyCharm, WebStorm, and other JetBrains IDEs.',
       installLabel: 'Install from Marketplace',
       installHref: 'https://plugins.jetbrains.com/plugin/27310-claude-code-beta-',
       guideHref: '/en/jetbrains'
@@ -114,7 +117,7 @@ export const InstallConfigurator = () => {
       <line x1="12" y1="16" x2="12" y2="12" />
       <line x1="12" y1="8" x2="12.01" y2="8" />
     </svg>;
-  const [target, setTarget] = useState('terminal');
+  const [target, setTarget] = useState(defaultSurface);
   const [team, setTeam] = useState(false);
   const [provider, setProvider] = useState('anthropic');
   const [pkg, setPkg] = useState(() => (/Win/).test(navigator.userAgent) ? 'win' : 'mac');
@@ -296,7 +299,6 @@ export const InstallConfigurator = () => {
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
   padding: 0 8px; overflow-x: auto;
 }
-.cc-ic-subtab-spacer { flex: 1; }
 .cc-ic-subtab {
   appearance: none; background: none; border: none;
   padding: 12px 16px; font-size: 12px;
@@ -310,23 +312,28 @@ export const InstallConfigurator = () => {
   left: 12px; right: 12px; bottom: -0.5px;
   height: 2px; background: var(--ic-clay);
 }
-.cc-ic-cmd-toggle {
-  display: flex; align-items: center; gap: 8px; font-family: inherit;
-  background: none; border: none;
-  padding: 0 12px; font-size: 11px;
-  color: rgba(255, 255, 255, 0.5);
+.cc-ic-shell-switch {
+  display: inline-flex; gap: 2px;
+  margin: 14px 26px 0; padding: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  font-family: inherit;
+}
+.cc-ic-shell-option {
+  font: inherit; font-size: 12px; font-weight: 500;
+  padding: 5px 12px; border-radius: 6px;
+  background: transparent; border: none;
+  color: rgba(255, 255, 255, 0.55);
   cursor: pointer; user-select: none; white-space: nowrap;
+  transition: color 120ms ease, background-color 120ms ease;
 }
-.cc-ic-cmd-toggle:hover { color: rgba(255, 255, 255, 0.75); }
-.cc-ic-mini-check {
-  width: 12px; height: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 3px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
+.cc-ic-shell-option:hover { color: rgba(255, 255, 255, 0.85); }
+.cc-ic-shell-option.cc-ic-active {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
-.cc-ic-mini-check svg { color: #fff; display: none; }
-.cc-ic-cmd-toggle.cc-ic-checked .cc-ic-mini-check { background: var(--ic-clay-deep); border-color: var(--ic-clay-deep); }
-.cc-ic-cmd-toggle.cc-ic-checked .cc-ic-mini-check svg { display: block; }
 
 .cc-ic-card-body { padding: 24px 26px; display: flex; align-items: flex-start; gap: 14px; }
 .cc-ic-prompt {
@@ -356,16 +363,24 @@ export const InstallConfigurator = () => {
 .cc-ic-below a { color: var(--ic-gray-700); border-bottom: 0.5px solid var(--ic-border-default); }
 .cc-ic-below a:hover { color: var(--ic-clay-deep); border-bottom-color: var(--ic-clay-deep); }
 .cc-ic-handoff {
-  padding: 20px 22px;
-  background: var(--ic-gray-000);
+  padding: 22px 24px;
+  background: linear-gradient(180deg, #faf9f4 0%, #f3f1e9 100%);
   border: 0.5px solid var(--ic-border-default);
   border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(31, 30, 29, 0.04), 0 6px 16px -4px rgba(31, 30, 29, 0.06);
 }
-.cc-ic-handoff-head {
-  font-size: 14px; line-height: 1.55; color: var(--ic-gray-700);
-  margin-bottom: 14px;
+.dark .cc-ic-handoff {
+  background: linear-gradient(180deg, #262624 0%, #1f1e1d 100%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 16px -4px rgba(0, 0, 0, 0.4);
 }
-.cc-ic-handoff-head strong { font-weight: 550; color: var(--ic-slate); }
+.cc-ic-handoff-title {
+  font-size: 16px; font-weight: 550; color: var(--ic-slate);
+  letter-spacing: -0.01em; margin-bottom: 4px;
+}
+.cc-ic-handoff-sub {
+  font-size: 14px; line-height: 1.5; color: var(--ic-gray-700);
+  margin-bottom: 18px;
+}
 .cc-ic-handoff-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .cc-ic-handoff-alt {
   margin-top: 12px; font-size: 12px; color: var(--ic-gray-550);
@@ -453,12 +468,21 @@ export const InstallConfigurator = () => {
             {Object.keys(TERM).map(k => <button key={k} type="button" role="tab" aria-selected={pkg === k} className={'cc-ic-subtab' + (pkg === k ? ' cc-ic-active' : '')} onClick={() => setPkg(k)}>
                 {TERM[k].label}
               </button>)}
-            <span className="cc-ic-subtab-spacer" />
-            {isWinInstaller && <button type="button" role="switch" aria-checked={winCmd} className={'cc-ic-cmd-toggle' + (winCmd ? ' cc-ic-checked' : '')} onClick={() => setWinCmd(!winCmd)}>
-                <span className="cc-ic-mini-check">{iconCheck(9)}</span>
-                <span>CMD instead of PowerShell</span>
-              </button>}
           </div>
+          {isWinInstaller && <div className="cc-ic-shell-switch" role="tablist" aria-label="Shell">
+              {[{
+    k: 'ps',
+    label: 'PowerShell'
+  }, {
+    k: 'cmd',
+    label: 'CMD'
+  }].map(({k, label}) => {
+    const active = k === 'cmd' === winCmd;
+    return <button key={k} type="button" role="tab" aria-selected={active} className={'cc-ic-shell-option' + (active ? ' cc-ic-active' : '')} onClick={() => setWinCmd(k === 'cmd')}>
+                    {label}
+                  </button>;
+  })}
+            </div>}
           {cardBodyCmd(terminalCmd, isWinPrompt ? '>' : '$')}
         </div>}
 
@@ -479,10 +503,8 @@ export const InstallConfigurator = () => {
         </div>}
 
       {alt && <div className="cc-ic-handoff">
-          <div className="cc-ic-handoff-head">
-            <strong>The steps below use the command line.</strong>{' '}
-            Prefer {alt.name}? Install here, then follow the {alt.name} guide instead.
-          </div>
+          <div className="cc-ic-handoff-title">Claude Code for {alt.name}</div>
+          <div className="cc-ic-handoff-sub">{alt.tagline}</div>
           <div className="cc-ic-handoff-actions">
             <a href={alt.installHref} className="cc-ic-btn-clay" {...alt.installHref.startsWith('http') ? {
     target: '_blank',
@@ -518,6 +540,7 @@ export const Experiment = ({flag, treatment, children}) => {
   const bucket = (seed, vid) => fnv1a(fnv1a(seed + vid) + '') % 10000 < 5000 ? 'control' : 'treatment';
   const [decision] = useState(() => {
     const params = new URLSearchParams(location.search);
+    const preBucketed = document.documentElement.dataset['gb_' + flag.replace(/-/g, '_')];
     const force = params.get('gb-force');
     if (force) {
       for (const p of force.split(',')) {
@@ -579,8 +602,9 @@ export const Experiment = ({flag, treatment, children}) => {
         track: false
       };
     }
+    const variant = preBucketed === '1' ? 'treatment' : preBucketed === '0' ? 'control' : bucket(flag, vid);
     return {
-      variant: bucket(flag, vid),
+      variant,
       track: true,
       vid
     };
@@ -614,7 +638,11 @@ export const Experiment = ({flag, treatment, children}) => {
 
 This quickstart guide will have you using AI-powered coding assistance in a few minutes. By the end, you'll understand how to use Claude Code for common development tasks.
 
-<Experiment flag="quickstart-install-configurator" treatment={<InstallConfigurator />} />
+<div className="install-configurator-slot">
+  <Experiment flag="install-configurator-default-surface" treatment={<InstallConfigurator defaultSurface="desktop" />}>
+    <InstallConfigurator />
+  </Experiment>
+</div>
 
 ## Before you begin
 

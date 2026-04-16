@@ -133,6 +133,23 @@ With GitHub connected and an environment created, you're ready to submit tasks.
   </Step>
 </Steps>
 
+## Pre-fill sessions
+
+You can prefill the prompt, repositories, and environment for a new session by adding query parameters to the [claude.ai/code](https://claude.ai/code) URL. Use this to build integrations such as a button in your issue tracker that opens Claude Code with the issue description as the prompt.
+
+| Parameter      | Description                                                                                                                                                      |
+| :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prompt`       | Prompt text to prefill in the input box. The alias `q` is also accepted.                                                                                         |
+| `prompt_url`   | URL to fetch the prompt text from, for prompts too long to embed in a query string. The URL must allow cross-origin requests. Ignored when `prompt` is also set. |
+| `repositories` | Comma-separated list of `owner/repo` slugs to preselect. The alias `repo` is also accepted.                                                                      |
+| `environment`  | Name or ID of the [environment](#connect-github-and-create-an-environment) to preselect.                                                                         |
+
+URL-encode each value. The example below opens the form with a prompt and a repository already selected:
+
+```text theme={null}
+https://claude.ai/code?prompt=Fix%20the%20login%20bug&repositories=acme/webapp
+```
+
 ## Review and iterate
 
 When Claude finishes, review the changes, leave feedback on specific lines, and keep going until the diff looks right.
