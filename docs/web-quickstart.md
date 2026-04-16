@@ -71,7 +71,7 @@ Setup is a one-time process. If you already use the GitHub CLI, you can [do this
     * **Name**: a display label. Useful when you have multiple environments for different projects or access levels.
     * **Network access**: controls what the session can reach on the internet. The default, `Trusted`, allows connections to [common package registries](/en/claude-code-on-the-web#default-allowed-domains) like npm, PyPI, and RubyGems while blocking general internet access.
     * **Environment variables**: optional variables available in every session, in `.env` format. Don't wrap values in quotes, since quotes are stored as part of the value. These are visible to anyone who can edit this environment.
-    * **Setup script**: an optional Bash script that runs before Claude Code launches when a new session is created. Use it to install system tools the cloud VM doesn't include, like `apt install -y gh`, or to start services your project needs. See [Setup scripts](/en/claude-code-on-the-web#setup-scripts) for examples and debugging tips.
+    * **Setup script**: an optional Bash script that runs before Claude Code launches. Use it to install system tools the cloud VM doesn't include, like `apt install -y gh`. The result is [cached](/en/claude-code-on-the-web#environment-caching), so the script doesn't re-run on every session. See [Setup scripts](/en/claude-code-on-the-web#setup-scripts) for examples and debugging tips.
 
     For a first project, leave the defaults and click **Create environment**. You can [edit it later or create additional environments](/en/claude-code-on-the-web#configure-your-environment) for different projects.
   </Step>

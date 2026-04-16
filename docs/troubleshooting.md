@@ -14,25 +14,26 @@
 
 Find the error message or symptom you're seeing:
 
-| What you see                                                            | Solution                                                                                                                |
-| :---------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
-| `command not found: claude` or `'claude' is not recognized`             | [Fix your PATH](#command-not-found-claude-after-installation)                                                           |
-| `syntax error near unexpected token '<'`                                | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                   |
-| `curl: (56) Failure writing output to destination`                      | [Download script first, then run it](#curl-56-failure-writing-output-to-destination)                                    |
-| `Killed` during install on Linux                                        | [Add swap space for low-memory servers](#install-killed-on-low-memory-linux-servers)                                    |
-| `TLS connect error` or `SSL/TLS secure channel`                         | [Update CA certificates](#tls-or-ssl-connection-errors)                                                                 |
-| `Failed to fetch version` or can't reach download server                | [Check network and proxy settings](#check-network-connectivity)                                                         |
-| `irm is not recognized` or `&& is not valid`                            | [Use the right command for your shell](#windows-wrong-install-command)                                                  |
-| `'bash' is not recognized as the name of a cmdlet`                      | [Use the Windows installer command](#windows-wrong-install-command)                                                     |
-| `Claude Code on Windows requires git-bash`                              | [Install or configure Git Bash](#windows-claude-code-on-windows-requires-git-bash)                                      |
-| `Claude Code does not support 32-bit Windows`                           | [Open Windows PowerShell, not the x86 entry](#windows-claude-code-does-not-support-32-bit-windows)                      |
-| `Error loading shared library`                                          | [Wrong binary variant for your system](#linux-wrong-binary-variant-installed-musl/glibc-mismatch)                       |
-| `Illegal instruction` on Linux                                          | [Architecture mismatch](#illegal-instruction-on-linux)                                                                  |
-| `dyld: cannot load`, `dyld: Symbol not found`, or `Abort trap` on macOS | [Binary incompatibility](#dyld-cannot-load-on-macos)                                                                    |
-| `Invoke-Expression: Missing argument in parameter list`                 | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                   |
-| `App unavailable in region`                                             | Claude Code is not available in your country. See [supported countries](https://www.anthropic.com/supported-countries). |
-| `unable to get local issuer certificate`                                | [Configure corporate CA certificates](#tls-or-ssl-connection-errors)                                                    |
-| `OAuth error` or `403 Forbidden`                                        | [Fix authentication](#authentication-issues)                                                                            |
+| What you see                                                                            | Solution                                                                                                                |
+| :-------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| `command not found: claude` or `'claude' is not recognized`                             | [Fix your PATH](#command-not-found-claude-after-installation)                                                           |
+| `syntax error near unexpected token '<'`                                                | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                   |
+| `curl: (56) Failure writing output to destination`                                      | [Download script first, then run it](#curl-56-failure-writing-output-to-destination)                                    |
+| `Killed` during install on Linux                                                        | [Add swap space for low-memory servers](#install-killed-on-low-memory-linux-servers)                                    |
+| `TLS connect error` or `SSL/TLS secure channel`                                         | [Update CA certificates](#tls-or-ssl-connection-errors)                                                                 |
+| `Failed to fetch version` or can't reach download server                                | [Check network and proxy settings](#check-network-connectivity)                                                         |
+| `irm is not recognized` or `&& is not valid`                                            | [Use the right command for your shell](#windows-wrong-install-command)                                                  |
+| `'bash' is not recognized as the name of a cmdlet`                                      | [Use the Windows installer command](#windows-wrong-install-command)                                                     |
+| `Claude Code on Windows requires git-bash`                                              | [Install or configure Git Bash](#windows-claude-code-on-windows-requires-git-bash)                                      |
+| `Claude Code does not support 32-bit Windows`                                           | [Open Windows PowerShell, not the x86 entry](#windows-claude-code-does-not-support-32-bit-windows)                      |
+| `Error loading shared library`                                                          | [Wrong binary variant for your system](#linux-wrong-binary-variant-installed-musl/glibc-mismatch)                       |
+| `Illegal instruction` on Linux                                                          | [Architecture mismatch](#illegal-instruction-on-linux)                                                                  |
+| `dyld: cannot load`, `dyld: Symbol not found`, or `Abort trap` on macOS                 | [Binary incompatibility](#dyld-cannot-load-on-macos)                                                                    |
+| `Invoke-Expression: Missing argument in parameter list`                                 | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                   |
+| `App unavailable in region`                                                             | Claude Code is not available in your country. See [supported countries](https://www.anthropic.com/supported-countries). |
+| `unable to get local issuer certificate`                                                | [Configure corporate CA certificates](#tls-or-ssl-connection-errors)                                                    |
+| `OAuth error` or `403 Forbidden`                                                        | [Fix authentication](#authentication-issues)                                                                            |
+| `API Error: 500`, `529 Overloaded`, `429`, or other 4xx and 5xx errors not listed above | See the [Error reference](/en/errors)                                                                                   |
 
 If your issue isn't listed, work through these diagnostic steps.
 
@@ -779,6 +780,8 @@ Claude Code is designed to work with most development environments, but may cons
 2. Close and restart Claude Code between major tasks
 3. Consider adding large build directories to your `.gitignore` file
 
+If memory usage stays high after these steps, run `/heapdump` to write a JavaScript heap snapshot and a memory breakdown to `~/Desktop`. The breakdown shows resident set size, JS heap, array buffers, and unaccounted native memory, which helps identify whether the growth is in JavaScript objects or in native code. Open the `.heapsnapshot` file in Chrome DevTools under Memory → Load to inspect retainers. Attach both files when reporting a memory issue on [GitHub](https://github.com/anthropics/claude-code/issues).
+
 ### Auto-compaction stops with a thrashing error
 
 If you see `Autocompact is thrashing: the context refilled to the limit...`, automatic compaction succeeded but a file or tool output immediately refilled the context window several times in a row. Claude Code stops retrying to avoid wasting API calls on a loop that isn't making progress.
@@ -963,14 +966,15 @@ To minimize formatting issues:
 
 If you're experiencing issues not covered here:
 
-1. Use the `/feedback` command within Claude Code to report problems directly to Anthropic
-2. Check the [GitHub repository](https://github.com/anthropics/claude-code) for known issues
-3. Run `/doctor` to diagnose issues. It checks:
+1. See the [Error reference](/en/errors) for `API Error: 5xx`, `529 Overloaded`, `429`, and request validation errors that appear during a session
+2. Use the `/feedback` command within Claude Code to report problems directly to Anthropic
+3. Check the [GitHub repository](https://github.com/anthropics/claude-code) for known issues
+4. Run `/doctor` to diagnose issues. It checks:
    * Installation type, version, and search functionality
    * Auto-update status and available versions
    * Invalid settings files (malformed JSON, incorrect types)
-   * MCP server configuration errors
+   * MCP server configuration errors, including the same server name defined in multiple scopes with different endpoints
    * Keybinding configuration problems
    * Context usage warnings (large CLAUDE.md files, high MCP token usage, unreachable permission rules)
    * Plugin and agent loading errors
-4. Ask Claude directly about its capabilities and features - Claude has built-in access to its documentation
+5. Ask Claude directly about its capabilities and features - Claude has built-in access to its documentation

@@ -123,7 +123,7 @@ echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID}"
 
 Claude runs tests as part of working on a task. Ask for it in your prompt, like "fix the failing tests in `tests/`" or "run pytest after each change." Test runners like pytest, jest, and cargo test work out of the box since they're pre-installed.
 
-PostgreSQL and Redis are pre-installed but not running by default. Start each one in a [setup script](#setup-scripts) or ask Claude to start it during the session:
+PostgreSQL and Redis are pre-installed but not running by default. Ask Claude to start each one during the session:
 
 ```bash theme={null}
 service postgresql start
@@ -133,9 +133,11 @@ service postgresql start
 service redis-server start
 ```
 
-Docker is available for running containerized services. Network access to pull images follows your environment's [access level](#access-levels).
+Docker is available for running containerized services. Ask Claude to run `docker compose up` to start your project's services. Network access to pull images follows your environment's [access level](#access-levels), and the [Trusted defaults](#default-allowed-domains) include Docker Hub and other common registries.
 
-To add packages that aren't pre-installed, use a [setup script](#setup-scripts) so they're available at session start. You can also ask Claude to install packages during the session, but those installs don't persist across sessions.
+If your images are large or slow to pull, add `docker compose pull` or `docker compose build` to your [setup script](#setup-scripts). The pulled images are saved in the [cached environment](#environment-caching), so each new session has them on disk. The cache stores files only, not running processes, so Claude still starts the containers each session.
+
+To add packages that aren't pre-installed, use a [setup script](#setup-scripts). The script's output is [cached](#environment-caching), so packages you install there are available at the start of every session without reinstalling each time. You can also ask Claude to install packages mid-session, but those installs don't carry over to other sessions.
 
 ### Resource limits
 
@@ -181,13 +183,21 @@ This example installs the `gh` CLI, which isn't pre-installed:
 apt update && apt install -y gh
 ```
 
-Setup scripts run only when creating a new session. They are skipped when resuming an existing session.
-
 If the script exits non-zero, the session fails to start. Append `|| true` to non-critical commands to avoid blocking the session on an intermittent install failure.
 
 <Note>
   Setup scripts that install packages need network access to reach registries. The default **Trusted** network access allows connections to [common package registries](#default-allowed-domains) including npm, PyPI, RubyGems, and crates.io. Scripts will fail to install packages if your environment uses **None** network access.
 </Note>
+
+### Environment caching
+
+The setup script runs the first time you start a session in an environment. After it completes, Anthropic snapshots the filesystem and reuses that snapshot as the starting point for later sessions. New sessions start with your dependencies, tools, and Docker images already on disk, and the setup script step is skipped. This keeps startup fast even when the script installs large toolchains or pulls container images.
+
+The cache captures files, not running processes. Anything the setup script writes to disk carries over. Services or containers it starts do not, so start those per session by asking Claude or with a [SessionStart hook](#setup-scripts-vs-sessionstart-hooks).
+
+The setup script runs again to rebuild the cache when you change the environment's setup script or allowed network hosts, and when the cache reaches its expiry after roughly seven days. Resuming an existing session never re-runs the setup script.
+
+You don't need to enable caching or manage snapshots yourself.
 
 ### Setup scripts vs. SessionStart hooks
 
@@ -195,12 +205,12 @@ Use a setup script to install things the cloud needs but your laptop already has
 
 Both run at the start of a session, but they belong to different places:
 
-|               | Setup scripts                                     | SessionStart hooks                                             |
-| ------------- | ------------------------------------------------- | -------------------------------------------------------------- |
-| Attached to   | The cloud environment                             | Your repository                                                |
-| Configured in | Cloud environment UI                              | `.claude/settings.json` in your repo                           |
-| Runs          | Before Claude Code launches, on new sessions only | After Claude Code launches, on every session including resumed |
-| Scope         | Cloud environments only                           | Both local and cloud                                           |
+|               | Setup scripts                                                                                | SessionStart hooks                                             |
+| ------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Attached to   | The cloud environment                                                                        | Your repository                                                |
+| Configured in | Cloud environment UI                                                                         | `.claude/settings.json` in your repo                           |
+| Runs          | Before Claude Code launches, when no [cached environment](#environment-caching) is available | After Claude Code launches, on every session including resumed |
+| Scope         | Cloud environments only                                                                      | Both local and cloud                                           |
 
 SessionStart hooks can also be defined in your user-level `~/.claude/settings.json` locally, but user-level settings don't carry over to cloud sessions. In the cloud, only hooks committed to the repo run.
 
@@ -245,11 +255,11 @@ SessionStart hooks have some limitations in cloud sessions:
 * **No cloud-only scoping**: hooks run in both local and cloud sessions. To skip local execution, check the `CLAUDE_CODE_REMOTE` environment variable as shown above.
 * **Requires network access**: install commands need to reach package registries. If your environment uses **None** network access, these hooks fail. The [default allowlist](#default-allowed-domains) under **Trusted** covers npm, PyPI, RubyGems, and crates.io.
 * **Proxy compatibility**: all outbound traffic passes through a [security proxy](#security-proxy). Some package managers don't work correctly with this proxy. Bun is a known example.
-* **Adds startup latency**: hooks run each time a session starts or resumes. Keep install scripts fast by checking whether dependencies are already present before reinstalling.
+* **Adds startup latency**: hooks run each time a session starts or resumes, unlike setup scripts which benefit from [environment caching](#environment-caching). Keep install scripts fast by checking whether dependencies are already present before reinstalling.
 
 To persist environment variables for subsequent Bash commands, write to the file at `$CLAUDE_ENV_FILE`. See [SessionStart hooks](/en/hooks#sessionstart) for details.
 
-Custom environment images and snapshots are not yet supported.
+Replacing the base image with your own Docker image is not yet supported. Use a setup script to install what you need on top of the [provided image](#installed-tools), or run your image as a container alongside Claude with `docker compose`.
 
 ## Network access
 
@@ -744,6 +754,32 @@ Each cloud session is separated from your machine and from other sessions throug
 * **Credential protection**: sensitive credentials such as git credentials or signing keys are never inside the sandbox with Claude Code. Authentication is handled through a secure proxy using scoped credentials.
 * **Secure analysis**: code is analyzed and modified within isolated VMs before creating PRs
 
+## Troubleshooting
+
+For runtime API errors that appear in the conversation such as `API Error: 500`, `529 Overloaded`, `429`, or `Prompt is too long`, see the [Error reference](/en/errors). Those errors and their fixes are shared with the CLI and Desktop app. The sections below cover issues specific to cloud sessions.
+
+### Session creation failed
+
+If a new session fails to start with `Session creation failed` or stalls at provisioning, Claude Code could not allocate a cloud environment.
+
+* Check [status.claude.com](https://status.claude.com) for cloud session incidents
+* Retry after a minute, as capacity is provisioned on demand
+* Confirm your repository is reachable. Private repositories require either the GitHub App installed with access to that repository, or a `gh` token synced via `/web-setup`. See [GitHub authentication options](#github-authentication-options).
+
+### Remote Control session expired or access denied
+
+`--teleport` connects through the same Remote Control session infrastructure that cloud sessions use, so authentication and session-expiry errors surface with Remote Control wording. You may see `Remote Control session has expired` or `Access denied`. The connection token is short-lived and scoped to your account.
+
+* Run `/login` locally to refresh your credentials, then reconnect
+* Confirm you are signed in to the same account that owns the session
+* If you see `Remote Control may not be available for this organization`, your admin has not enabled remote sessions for your plan
+
+### Environment expired
+
+Cloud sessions stop after a period of inactivity and the underlying environment is reclaimed. From a local terminal, this surfaces as `Could not resume session ... its environment has expired. Creating a fresh session instead.` On the web, the session is marked expired in the session list.
+
+Reopen the session from [claude.ai/code](https://claude.ai/code) to provision a fresh environment with your conversation history restored.
+
 ## Limitations
 
 Before relying on cloud sessions for a workflow, account for these constraints:
@@ -754,6 +790,8 @@ Before relying on cloud sessions for a workflow, account for these constraints:
 
 ## Related resources
 
+* [Ultraplan](/en/ultraplan): draft a plan in a cloud session and review it in your browser
+* [Ultrareview](/en/ultrareview): run a deep multi-agent code review in a cloud sandbox
 * [Routines](/en/routines): automate work on a schedule, via API call, or in response to GitHub events
 * [Hooks configuration](/en/hooks): run scripts at session lifecycle events
 * [Settings reference](/en/settings): all configuration options

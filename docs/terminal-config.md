@@ -8,7 +8,7 @@
 
 ### Themes and appearance
 
-Claude cannot control the theme of your terminal. That's handled by your terminal application. You can match Claude Code's theme to your terminal any time via the `/config` command.
+Claude cannot control the theme of your terminal. That's handled by your terminal application. You can match Claude Code's theme to your terminal via the `/theme` command. Select `auto` in the theme picker to have Claude Code follow your terminal's dark or light mode automatically.
 
 For additional customization of the Claude Code interface itself, you can configure a [custom status line](/en/statusline) to display contextual information like the current model, working directory, or git branch at the bottom of your terminal.
 
@@ -90,7 +90,7 @@ To add custom behavior when notifications fire, such as playing a sound or sendi
 
 ### Reduce flicker and memory usage
 
-If you see flicker during long sessions, or your terminal scroll position jumps to the top while Claude is working, try [fullscreen rendering](/en/fullscreen). It uses an alternate rendering path that keeps memory flat and adds mouse support. Enable it with `CLAUDE_CODE_NO_FLICKER=1`.
+If you see flicker during long sessions, or your terminal scroll position jumps to the top while Claude is working, try [fullscreen rendering](/en/fullscreen). It uses an alternate rendering path that keeps memory flat and adds mouse support. Run `/tui fullscreen` to switch in your current conversation.
 
 ### Handling large inputs
 

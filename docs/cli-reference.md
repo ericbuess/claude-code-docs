@@ -30,6 +30,8 @@ You can start sessions, pipe content, resume conversations, and manage updates w
 | `claude remote-control`         | Start a [Remote Control](/en/remote-control) server to control Claude Code from Claude.ai or the Claude app. Runs in server mode (no local interactive session). See [Server mode flags](/en/remote-control#start-a-remote-control-session) | `claude remote-control --name "My Project"`                 |
 | `claude setup-token`            | Generate a long-lived OAuth token for CI and scripts. Prints the token to the terminal without saving it. Requires a Claude subscription. See [Generate a long-lived token](/en/authentication#generate-a-long-lived-token)                 | `claude setup-token`                                        |
 
+If you mistype a subcommand, Claude Code suggests the closest match and exits without starting a session. For example, `claude udpate` prints `Did you mean claude update?`.
+
 ## CLI flags
 
 Customize Claude Code's behavior with these command-line flags. `claude --help` does not list every flag, so a flag's absence from `--help` does not mean it is unavailable.

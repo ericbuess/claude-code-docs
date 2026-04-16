@@ -1090,13 +1090,13 @@ PermissionRequest hooks receive `tool_name` and `tool_input` fields like PreTool
 
 `PermissionRequest` hooks can allow or deny permission requests. In addition to the [JSON output fields](#json-output) available to all hooks, your hook script can return a `decision` object with these event-specific fields:
 
-| Field                | Description                                                                                                                                                         |
-| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `behavior`           | `"allow"` grants the permission, `"deny"` denies it                                                                                                                 |
-| `updatedInput`       | For `"allow"` only: modifies the tool's input parameters before execution. Replaces the entire input object, so include unchanged fields alongside modified ones    |
-| `updatedPermissions` | For `"allow"` only: array of [permission update entries](#permission-update-entries) to apply, such as adding an allow rule or changing the session permission mode |
-| `message`            | For `"deny"` only: tells Claude why the permission was denied                                                                                                       |
-| `interrupt`          | For `"deny"` only: if `true`, stops Claude                                                                                                                          |
+| Field                | Description                                                                                                                                                                                                                     |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `behavior`           | `"allow"` grants the permission, `"deny"` denies it. [Deny and ask rules](/en/permissions#manage-permissions) are still evaluated, so a hook returning `"allow"` does not override a matching deny rule                         |
+| `updatedInput`       | For `"allow"` only: modifies the tool's input parameters before execution. Replaces the entire input object, so include unchanged fields alongside modified ones. The modified input is re-evaluated against deny and ask rules |
+| `updatedPermissions` | For `"allow"` only: array of [permission update entries](#permission-update-entries) to apply, such as adding an allow rule or changing the session permission mode                                                             |
+| `message`            | For `"deny"` only: tells Claude why the permission was denied                                                                                                                                                                   |
+| `interrupt`          | For `"deny"` only: if `true`, stops Claude                                                                                                                                                                                      |
 
 ```json theme={null}
 {
@@ -1124,6 +1124,10 @@ The `updatedPermissions` output field and the [`permission_suggestions` input fi
 | `setMode`           | `mode`, `destination`              | Changes the permission mode. Valid modes are `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, and `plan`                                                           |
 | `addDirectories`    | `directories`, `destination`       | Adds working directories. `directories` is an array of path strings                                                                                                         |
 | `removeDirectories` | `directories`, `destination`       | Removes working directories                                                                                                                                                 |
+
+<Note>
+  `setMode` with `bypassPermissions` only takes effect if the session was launched with bypass mode already available: `--dangerously-skip-permissions`, `--permission-mode bypassPermissions`, `--allow-dangerously-skip-permissions`, or `permissions.defaultMode: "bypassPermissions"` in settings, and the mode is not disabled by [`permissions.disableBypassPermissionsMode`](/en/permissions#managed-settings). Otherwise the update is a no-op. `bypassPermissions` is never persisted as `defaultMode` regardless of `destination`.
+</Note>
 
 The `destination` field on every entry determines whether the change stays in memory or persists to a settings file.
 

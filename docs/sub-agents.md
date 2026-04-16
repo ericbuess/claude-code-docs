@@ -361,7 +361,7 @@ The `permissionMode` field controls how the subagent handles permission prompts.
   Use `bypassPermissions` with caution. It skips permission prompts, allowing the subagent to execute operations without approval. Writes to `.git`, `.claude`, `.vscode`, `.idea`, and `.husky` directories still prompt for confirmation, except for `.claude/commands`, `.claude/agents`, and `.claude/skills`. See [permission modes](/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) for details.
 </Warning>
 
-If the parent uses `bypassPermissions`, this takes precedence and cannot be overridden. If the parent uses [auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode), the subagent inherits auto mode and any `permissionMode` in its frontmatter is ignored: the classifier evaluates the subagent's tool calls with the same block and allow rules as the parent session.
+If the parent uses `bypassPermissions` or `acceptEdits`, this takes precedence and cannot be overridden. If the parent uses [auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode), the subagent inherits auto mode and any `permissionMode` in its frontmatter is ignored: the classifier evaluates the subagent's tool calls with the same block and allow rules as the parent session.
 
 #### Preload skills into subagents
 

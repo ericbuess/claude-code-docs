@@ -259,15 +259,21 @@ To choose a different [installation scope](/en/settings#configuration-scopes), u
 
 You may also see plugins with **managed** scope—these are installed by administrators via [managed settings](/en/settings#settings-files) and cannot be modified.
 
-Run `/plugin` and go to the **Installed** tab to see your plugins grouped by scope.
-
 <Warning>
   Make sure you trust a plugin before installing it. Anthropic does not control what MCP servers, files, or other software are included in plugins and cannot verify that they work as intended. Check each plugin's homepage for more information.
 </Warning>
 
 ## Manage installed plugins
 
-Run `/plugin` and go to the **Installed** tab to view, enable, disable, or uninstall your plugins. Type to filter the list by plugin name or description.
+Run `/plugin` and go to the **Installed** tab to view, enable, disable, or uninstall your plugins. The list is grouped by scope and sorted so you see problems first: plugins with load errors or unresolved dependencies appear at the top, followed by your favorites, with disabled plugins folded behind a collapsed header at the bottom.
+
+From the list you can:
+
+* press `f` to favorite or unfavorite the selected plugin
+* type to filter by plugin name or description
+* press Enter to open a plugin's detail view and enable, disable, or uninstall it
+
+When you install a plugin that declares dependencies, the install output lists which dependencies were auto-installed alongside it.
 
 You can also manage plugins with direct commands.
 

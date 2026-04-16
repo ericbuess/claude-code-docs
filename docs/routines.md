@@ -74,7 +74,7 @@ Routines belong to your individual claude.ai account. They are not shared with t
 
     * **Network access**: set the level of internet access available during each run
     * **Environment variables**: provide API keys, tokens, or other secrets Claude can use
-    * **Setup script**: run install commands before each session starts, like installing dependencies or configuring tools
+    * **Setup script**: install dependencies and tools the routine needs. The result is [cached](/en/claude-code-on-the-web#environment-caching), so the script doesn't re-run on every session
 
     A **Default** environment is provided. To use a custom environment, [create one](/en/claude-code-on-the-web#the-cloud-environment) before creating the routine.
   </Step>

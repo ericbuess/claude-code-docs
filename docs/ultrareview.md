@@ -54,7 +54,7 @@ Ultrareview is a premium feature that bills against extra usage rather than your
 | Max                 | 3 free runs, one-time | billed as [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 | Team and Enterprise | none                  | billed as [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 
-Pro and Max subscribers receive three free ultrareview runs to try the feature. These three runs are a one-time allotment per account and do not refresh. After you use them, each review is billed to extra usage and typically costs $5 to $20 depending on the size of the change.
+Pro and Max subscribers receive three free ultrareview runs to try the feature. These three runs are a one-time allotment per account and do not refresh. After you use them, each review is billed to extra usage and typically costs \$5 to \$20 depending on the size of the change.
 
 Because ultrareview always bills as extra usage outside the free runs, your account or organization must have extra usage enabled before you can launch a paid review. If extra usage is not enabled, Claude Code blocks the launch and links you to the billing settings where you can turn it on. You can also run `/extra-usage` to check or change your current setting.
 
@@ -68,13 +68,13 @@ Use `/tasks` to see running and completed reviews, open the detail view for a re
 
 Both commands review code, but they target different stages of your workflow.
 
-|          | `/review`                      | `/ultrareview`                                  |
-| -------- | ------------------------------ | ----------------------------------------------- |
-| Runs     | locally in your session        | remotely in a cloud sandbox                     |
-| Depth    | single-pass review             | multi-agent fleet with independent verification |
-| Duration | seconds to a few minutes       | roughly 5 to 10 minutes                         |
-| Cost     | counts toward normal usage     | free runs, then extra usage                     |
-| Best for | quick feedback while iterating | pre-merge confidence on substantial changes     |
+|          | `/review`                      | `/ultrareview`                                                |
+| -------- | ------------------------------ | ------------------------------------------------------------- |
+| Runs     | locally in your session        | remotely in a cloud sandbox                                   |
+| Depth    | single-pass review             | multi-agent fleet with independent verification               |
+| Duration | seconds to a few minutes       | roughly 5 to 10 minutes                                       |
+| Cost     | counts toward normal usage     | free runs, then roughly \$5 to \$20 per review as extra usage |
+| Best for | quick feedback while iterating | pre-merge confidence on substantial changes                   |
 
 Use `/review` for fast feedback as you work. Use `/ultrareview` before merging a substantial change when you want a deeper pass that catches issues a single review might miss.
 

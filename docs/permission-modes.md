@@ -139,7 +139,7 @@ Each approve option also offers to clear the planning context first.
 ## Eliminate prompts with auto mode
 
 <Note>
-  Auto mode requires Claude Code v2.1.83 or later. On Max, Team, Enterprise, and Anthropic API plans, auto mode appears in the `Shift+Tab` cycle without the `--enable-auto-mode` flag.
+  Auto mode requires Claude Code v2.1.83 or later.
 </Note>
 
 Auto mode lets Claude execute without permission prompts. A separate classifier model reviews actions before they run, blocking anything that escalates beyond your request, targets unrecognized infrastructure, or appears driven by hostile content Claude read.
@@ -155,7 +155,7 @@ Auto mode is available only when your account meets all of these requirements:
 * **Model**: Claude Sonnet 4.6, Opus 4.6, or Opus 4.7 on Team, Enterprise, and API plans; Claude Opus 4.7 only on Max plans. Other models, including Haiku and claude-3 models, are not supported.
 * **Provider**: Anthropic API only. Not available on Bedrock, Vertex, or Foundry.
 
-If Claude Code reports auto mode as unavailable, one of these requirements is unmet; this is not a transient outage.
+If Claude Code reports auto mode as unavailable, one of these requirements is unmet; this is not a transient outage. A separate message that names a model and says auto mode "cannot determine the safety" of an action is a transient classifier outage; see the [error reference](/en/errors#auto-mode-cannot-determine-the-safety-of-an-action).
 
 ### What the classifier blocks by default
 
@@ -179,9 +179,14 @@ The classifier trusts your working directory and your repo's configured remotes.
 * Reading `.env` and sending credentials to their matching API
 * Read-only HTTP requests
 * Pushing to the branch you started on or one Claude created
-* Sandbox network access requests
 
-Run `claude auto-mode defaults` to see the full rule lists. If routine actions get blocked, an administrator can add trusted repos, buckets, and services via the `autoMode.environment` setting: see [Configure the auto mode classifier](/en/permissions#configure-the-auto-mode-classifier).
+Sandbox network access requests are routed through the classifier rather than allowed by default. Run `claude auto-mode defaults` to see the full rule lists. If routine actions get blocked, an administrator can add trusted repos, buckets, and services via the `autoMode.environment` setting: see [Configure the auto mode classifier](/en/permissions#configure-the-auto-mode-classifier).
+
+### Boundaries you state in conversation
+
+The classifier treats boundaries you state in the conversation as a block signal. If you tell Claude "don't push" or "wait until I review before deploying", the classifier blocks matching actions even when the default rules would allow them. A boundary stays in force until you lift it in a later message. Claude's own judgment that a condition was met does not lift it.
+
+Boundaries are not stored as rules. The classifier re-reads them from the transcript on each check, so a boundary can be lost if [context compaction](/en/costs#reduce-token-usage) removes the message that stated it. For a hard guarantee, add a [deny rule](/en/permissions#permission-rule-syntax) instead.
 
 ### When auto mode falls back
 
@@ -223,13 +228,13 @@ Repeated blocks usually mean the classifier is missing context about your infras
   </Accordion>
 
   <Accordion title="Cost and latency">
-    The classifier uses the same model as your main session. Classifier calls count toward your token usage. Each check sends a portion of the transcript plus the pending action, adding a round-trip before execution. Reads and working-directory edits outside protected paths skip the classifier, so the overhead comes mainly from shell commands and network operations.
+    The classifier runs on a server-configured model that is independent of your `/model` selection, so switching models does not change classifier availability. Classifier calls count toward your token usage. Each check sends a portion of the transcript plus the pending action, adding a round-trip before execution. Reads and working-directory edits outside protected paths skip the classifier, so the overhead comes mainly from shell commands and network operations.
   </Accordion>
 </AccordionGroup>
 
 ## Allow only pre-approved tools with dontAsk mode
 
-`dontAsk` mode auto-denies every tool that is not explicitly allowed. Only actions matching your `permissions.allow` rules can execute; explicit `ask` rules are also denied rather than prompting. This makes the mode fully non-interactive for CI pipelines or restricted environments where you pre-define exactly what Claude may do.
+`dontAsk` mode auto-denies every tool call that would otherwise prompt. Only actions matching your `permissions.allow` rules and [read-only Bash commands](/en/permissions#read-only-commands) can execute; explicit `ask` rules are denied rather than prompting. This makes the mode fully non-interactive for CI pipelines or restricted environments where you pre-define exactly what Claude may do.
 
 Set it at startup with the flag:
 

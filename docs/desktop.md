@@ -654,6 +654,8 @@ The following features are only available in the CLI or VS Code extension:
 
 ## Troubleshooting
 
+The sections below cover issues specific to the desktop app. For runtime API errors that appear in the chat such as `API Error: 500`, `529 Overloaded`, `429`, or `Prompt is too long`, see the [Error reference](/en/errors). Those errors and their fixes are the same across the CLI, desktop, and web.
+
 ### Check your version
 
 To see which version of the desktop app you're running:

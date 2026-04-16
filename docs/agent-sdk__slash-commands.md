@@ -6,7 +6,7 @@
 
 > Learn how to use slash commands to control Claude Code sessions through the SDK
 
-Slash commands provide a way to control Claude Code sessions with special commands that start with `/`. These commands can be sent through the SDK to perform actions like clearing conversation history, compacting messages, or getting help.
+Slash commands provide a way to control Claude Code sessions with special commands that start with `/`. These commands can be sent through the SDK to perform actions like compacting context, listing context usage, or invoking custom commands. Only commands that work without an interactive terminal are dispatchable through the SDK; the `system/init` message lists the ones available in your session.
 
 ## Discovering Available Slash Commands
 
@@ -22,7 +22,7 @@ The Claude Agent SDK provides information about available slash commands in the 
   })) {
     if (message.type === "system" && message.subtype === "init") {
       console.log("Available slash commands:", message.slash_commands);
-      // Example output: ["/compact", "/clear", "/help"]
+      // Example output: ["/compact", "/context", "/cost"]
     }
   }
   ```
@@ -36,7 +36,7 @@ The Claude Agent SDK provides information about available slash commands in the 
       async for message in query(prompt="Hello Claude", options=ClaudeAgentOptions(max_turns=1)):
           if isinstance(message, SystemMessage) and message.subtype == "init":
               print("Available slash commands:", message.data["slash_commands"])
-              # Example output: ["/compact", "/clear", "/help"]
+              # Example output: ["/compact", "/context", "/cost"]
 
 
   asyncio.run(main())
@@ -117,42 +117,9 @@ The `/compact` command reduces the size of your conversation history by summariz
   ```
 </CodeGroup>
 
-### `/clear` - Clear Conversation
+### Clearing the conversation
 
-The `/clear` command starts a fresh conversation by clearing all previous history:
-
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  import { query } from "@anthropic-ai/claude-agent-sdk";
-
-  // Clear conversation and start fresh
-  for await (const message of query({
-    prompt: "/clear",
-    options: { maxTurns: 1 }
-  })) {
-    if (message.type === "system" && message.subtype === "init") {
-      console.log("Conversation cleared, new session started");
-      console.log("Session ID:", message.session_id);
-    }
-  }
-  ```
-
-  ```python Python theme={null}
-  import asyncio
-  from claude_agent_sdk import query, ClaudeAgentOptions, SystemMessage
-
-
-  async def main():
-      # Clear conversation and start fresh
-      async for message in query(prompt="/clear", options=ClaudeAgentOptions(max_turns=1)):
-          if isinstance(message, SystemMessage) and message.subtype == "init":
-              print("Conversation cleared, new session started")
-              print("Session ID:", message.data["session_id"])
-
-
-  asyncio.run(main())
-  ```
-</CodeGroup>
+The interactive `/clear` command is not available in the SDK. Each `query()` call already starts a fresh conversation, so to clear context, end the current `query()` and start a new one. The previous conversation stays on disk and can be returned to by passing its session ID to the [`resume` option](/en/agent-sdk/sessions#resume-by-id).
 
 ## Creating Custom Slash Commands
 
@@ -232,7 +199,7 @@ Once defined in the filesystem, custom commands are automatically available thro
     if (message.type === "system" && message.subtype === "init") {
       // Will include both built-in and custom commands
       console.log("Available commands:", message.slash_commands);
-      // Example: ["/compact", "/clear", "/help", "/refactor", "/security-check"]
+      // Example: ["/compact", "/context", "/cost", "/refactor", "/security-check"]
     }
   }
   ```
@@ -257,7 +224,7 @@ Once defined in the filesystem, custom commands are automatically available thro
           if isinstance(message, SystemMessage) and message.subtype == "init":
               # Will include both built-in and custom commands
               print("Available commands:", message.data["slash_commands"])
-              # Example: ["/compact", "/clear", "/help", "/refactor", "/security-check"]
+              # Example: ["/compact", "/context", "/cost", "/refactor", "/security-check"]
 
 
   asyncio.run(main())
@@ -325,7 +292,7 @@ Create `.claude/commands/git-commit.md`:
 
 ```markdown theme={null}
 ---
-allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*)
+allowed-tools: Bash(git add *), Bash(git status *), Bash(git commit *)
 description: Create a git commit
 ---
 
@@ -383,7 +350,7 @@ Create `.claude/commands/code-review.md`:
 
 ```markdown theme={null}
 ---
-allowed-tools: Read, Grep, Glob, Bash(git diff:*)
+allowed-tools: Read, Grep, Glob, Bash(git diff *)
 description: Comprehensive code review
 ---
 

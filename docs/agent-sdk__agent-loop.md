@@ -51,7 +51,7 @@ As the loop runs, the SDK yields a stream of messages. Each message carries a ty
 * **`AssistantMessage`:** emitted after each Claude response, including the final text-only one. Contains text content blocks and tool call blocks from that turn.
 * **`UserMessage`:** emitted after each tool execution with the tool result content sent back to Claude. Also emitted for any user inputs you stream mid-loop.
 * **`StreamEvent`:** only emitted when partial messages are enabled. Contains raw API streaming events (text deltas, tool input chunks). See [Stream responses](/en/agent-sdk/streaming-output).
-* **`ResultMessage`:** the last message, always. Contains the final text result, token usage, cost, and session ID. Check the `subtype` field to determine whether the task succeeded or hit a limit. See [Handle the result](#handle-the-result).
+* **`ResultMessage`:** marks the end of the agent loop. Contains the final text result, token usage, cost, and session ID. Check the `subtype` field to determine whether the task succeeded or hit a limit. A small number of trailing system events, such as `prompt_suggestion`, can arrive after it, so iterate the stream to completion rather than breaking on the result. See [Handle the result](#handle-the-result).
 
 These five types cover the full agent loop lifecycle in both SDKs. The TypeScript SDK also yields additional observability events (hook events, tool progress, rate limits, task notifications) that provide extra detail but are not required to drive the loop. See the [Python message types reference](/en/agent-sdk/python#message-types) and [TypeScript message types reference](/en/agent-sdk/typescript#message-types) for the complete lists.
 
@@ -133,7 +133,7 @@ Claude determines which tools to call based on the task, but you control whether
 * **`disallowed_tools` / `disallowedTools`** blocks listed tools, regardless of other settings. See [Permissions](/en/agent-sdk/permissions) for the order that rules are checked before a tool runs.
 * **`permission_mode` / `permissionMode`** controls what happens to tools that aren't covered by allow or deny rules. See [Permission mode](#permission-mode) for available modes.
 
-You can also scope individual tools with rules like `"Bash(npm:*)"` to allow only specific commands. See [Permissions](/en/agent-sdk/permissions) for the full rule syntax.
+You can also scope individual tools with rules like `"Bash(npm *)"` to allow only specific commands. See [Permissions](/en/agent-sdk/permissions) for the full rule syntax.
 
 When a tool is denied, Claude receives a rejection message as the tool result and typically attempts a different approach or reports that it couldn't proceed.
 
@@ -203,13 +203,13 @@ The context window is the total amount of information available to Claude during
 
 Here's how each component affects context in the SDK:
 
-| Source                   | When it loads                                                                         | Impact                                                                                                                             |
-| :----------------------- | :------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------- |
-| **System prompt**        | Every request                                                                         | Small fixed cost, always present                                                                                                   |
-| **CLAUDE.md files**      | Session start, when [`settingSources`](/en/agent-sdk/claude-code-features) is enabled | Full content in every request (but prompt-cached, so only the first request pays full cost)                                        |
-| **Tool definitions**     | Every request                                                                         | Each tool adds its schema; use [MCP tool search](/en/agent-sdk/mcp#mcp-tool-search) to load tools on-demand instead of all at once |
-| **Conversation history** | Accumulates over turns                                                                | Grows with each turn: prompts, responses, tool inputs, tool outputs                                                                |
-| **Skill descriptions**   | Session start (with setting sources enabled)                                          | Short summaries; full content loads only when invoked                                                                              |
+| Source                   | When it loads                                                             | Impact                                                                                                                             |
+| :----------------------- | :------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------- |
+| **System prompt**        | Every request                                                             | Small fixed cost, always present                                                                                                   |
+| **CLAUDE.md files**      | Session start, via [`settingSources`](/en/agent-sdk/claude-code-features) | Full content in every request (but prompt-cached, so only the first request pays full cost)                                        |
+| **Tool definitions**     | Every request                                                             | Each tool adds its schema; use [MCP tool search](/en/agent-sdk/mcp#mcp-tool-search) to load tools on-demand instead of all at once |
+| **Conversation history** | Accumulates over turns                                                    | Grows with each turn: prompts, responses, tool inputs, tool outputs                                                                |
+| **Skill descriptions**   | Session start, via setting sources                                        | Short summaries; full content loads only when invoked                                                                              |
 
 Large tool outputs consume significant context. Reading a big file or running a command with verbose output can use thousands of tokens in a single turn. Context accumulates across turns, so longer sessions with many tool calls build up significantly more context than short ones.
 

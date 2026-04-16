@@ -51,7 +51,7 @@ The following diagram shows the message stream from a single `query()` call, wit
 
 ## Get the total cost of a query
 
-The result message ([TypeScript](/en/agent-sdk/typescript#sdk-result-message), [Python](/en/agent-sdk/python#result-message)) is the last message in every `query()` call. It includes `total_cost_usd`, the cumulative cost across all steps in that call. This works for both success and error results. If you use sessions to make multiple `query()` calls, each result only reflects the cost of that individual call.
+The result message ([TypeScript](/en/agent-sdk/typescript#sdk-result-message), [Python](/en/agent-sdk/python#result-message)) marks the end of the agent loop for a `query()` call. It includes `total_cost_usd`, the cumulative estimated cost across all steps in that call. This works for both success and error results. If you use sessions to make multiple `query()` calls, each result only reflects the cost of that individual call.
 
 The following examples iterate over the message stream from a `query()` call and print the total cost when the `result` message arrives:
 

@@ -452,7 +452,7 @@ For details, see [Bedrock IAM documentation](https://docs.aws.amazon.com/bedrock
 
 Claude Opus 4.7, Opus 4.6, and Sonnet 4.6 support the [1M token context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) on Amazon Bedrock. Claude Code automatically enables the extended context window when you select a 1M model variant.
 
-To enable the 1M context window for your pinned model, append `[1m]` to the model ID. See [Pin models for third-party deployments](/en/model-config#pin-models-for-third-party-deployments) for details.
+The [setup wizard](#sign-in-with-bedrock) offers a 1M context option when it pins models. To enable it for a manually pinned model instead, append `[1m]` to the model ID. See [Pin models for third-party deployments](/en/model-config#pin-models-for-third-party-deployments) for details.
 
 ## AWS Guardrails
 

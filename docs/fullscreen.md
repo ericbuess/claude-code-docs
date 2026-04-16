@@ -7,7 +7,7 @@
 > Enable a smoother, flicker-free rendering mode with mouse support and stable memory usage in long conversations.
 
 <Note>
-  Fullscreen rendering is an opt-in [research preview](#research-preview) and requires Claude Code v2.1.89 or later. Enable it with `CLAUDE_CODE_NO_FLICKER=1`. Behavior may change based on feedback.
+  Fullscreen rendering is an opt-in [research preview](#research-preview) and requires Claude Code v2.1.89 or later. Run `/tui fullscreen` to switch in your current conversation, or set `CLAUDE_CODE_NO_FLICKER=1` on versions before v2.1.110. Behavior may change based on feedback.
 </Note>
 
 Fullscreen rendering is an alternative rendering path for the Claude Code CLI that eliminates flicker, keeps memory usage flat in long conversations, and adds mouse support. It draws the interface on the terminal's alternate screen buffer, like `vim` or `htop`, and only renders messages that are currently visible. This reduces the amount of data sent to your terminal on each update.
@@ -20,17 +20,15 @@ The difference is most noticeable in terminal emulators where rendering throughp
 
 ## Enable fullscreen rendering
 
-Set the `CLAUDE_CODE_NO_FLICKER` environment variable when starting Claude Code:
+Run `/tui fullscreen` inside any Claude Code conversation. The CLI saves the [`tui` setting](/en/settings#available-settings) and relaunches into fullscreen with your conversation intact, so you can switch mid-session without losing context. Run `/tui` with no argument to print which renderer is active.
+
+You can also set the `CLAUDE_CODE_NO_FLICKER` environment variable before starting Claude Code:
 
 ```bash theme={null}
 CLAUDE_CODE_NO_FLICKER=1 claude
 ```
 
-To enable it for every session, export the variable in your shell profile such as `~/.zshrc` or `~/.bashrc`:
-
-```bash theme={null}
-export CLAUDE_CODE_NO_FLICKER=1
-```
+The `tui` setting and the environment variable are equivalent. The `/tui` command clears `CLAUDE_CODE_NO_FLICKER` from the relaunched process so the setting it writes takes effect.
 
 ## What changes
 
@@ -38,11 +36,11 @@ Fullscreen rendering changes how the CLI draws to your terminal. The input box s
 
 Because the conversation lives in the alternate screen buffer instead of your terminal's scrollback, a few things work differently:
 
-| Before                                              | Now                                                                                                                                                            | Details                                                                   |
-| :-------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `Cmd+f` or tmux search to find text                 | `Ctrl+o` once for transcript mode (then `/` to search or `[` to write to scrollback), or `Ctrl+o` twice for focus view (last prompt + tool summary + response) | [Search and review the conversation](#search-and-review-the-conversation) |
-| Terminal's native click-and-drag to select and copy | In-app selection, copies automatically on mouse release                                                                                                        | [Use the mouse](#use-the-mouse)                                           |
-| `Cmd`-click to open a URL                           | Click the URL                                                                                                                                                  | [Use the mouse](#use-the-mouse)                                           |
+| Before                                              | Now                                                                            | Details                                                                   |
+| :-------------------------------------------------- | :----------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `Cmd+f` or tmux search to find text                 | `Ctrl+o` for transcript mode, then `/` to search or `[` to write to scrollback | [Search and review the conversation](#search-and-review-the-conversation) |
+| Terminal's native click-and-drag to select and copy | In-app selection, copies automatically on mouse release                        | [Use the mouse](#use-the-mouse)                                           |
+| `Cmd`-click to open a URL                           | Click the URL                                                                  | [Use the mouse](#use-the-mouse)                                           |
 
 If mouse capture interferes with your workflow, you can [turn it off](#keep-native-text-selection) while keeping the flicker-free rendering.
 
@@ -71,13 +69,17 @@ Fullscreen rendering handles scrolling inside the app. Use these shortcuts to na
 
 On keyboards without dedicated `PgUp`, `PgDn`, `Home`, or `End` keys, like MacBook keyboards, hold `Fn` with the arrow keys: `Fn+↑` sends `PgUp`, `Fn+↓` sends `PgDn`, `Fn+←` sends `Home`, and `Fn+→` sends `End`. That makes `Ctrl+Fn+→` the jump-to-bottom shortcut. If that feels awkward, scroll to the bottom with the mouse wheel to resume following, or rebind `scroll:bottom` to something reachable.
 
-Scrolling up pauses auto-follow so new output does not pull you back to the bottom. Press `Ctrl+End` or scroll to the bottom to resume following.
-
 These actions are rebindable. See [Scroll actions](/en/keybindings#scroll-actions) for the full list of action names, including half-page and full-page variants that have no default binding.
 
-Mouse wheel scrolling requires your terminal to forward mouse events to Claude Code. Most terminals do this whenever an application requests it. iTerm2 makes it a per-profile setting: if the wheel does nothing but `PgUp` and `PgDn` work, open Settings → Profiles → Terminal and turn on Enable mouse reporting. The same setting is also required for click-to-expand and text selection to work.
+### Auto-follow
 
-### Adjust wheel scroll speed
+Scrolling up pauses auto-follow so new output does not pull you back to the bottom. Press `Ctrl+End` or scroll to the bottom to resume following.
+
+To turn auto-follow off entirely so the view stays where you leave it, open `/config` and set Auto-scroll to off. With auto-scroll disabled, the view never jumps to the bottom on its own. Permission prompts and other dialogs that need a response still scroll into view regardless of this setting.
+
+### Mouse wheel scrolling
+
+Mouse wheel scrolling requires your terminal to forward mouse events to Claude Code. Most terminals do this whenever an application requests it. iTerm2 makes it a per-profile setting: if the wheel does nothing but `PgUp` and `PgDn` work, open Settings → Profiles → Terminal and turn on Enable mouse reporting. The same setting is also required for click-to-expand and text selection to work.
 
 If mouse wheel scrolling feels slow, your terminal may be sending one scroll event per physical notch with no multiplier. Some terminals, like Ghostty and iTerm2 with faster scrolling enabled, already amplify wheel events. Others, including the VS Code integrated terminal, send exactly one event per notch. Claude Code cannot detect which.
 
@@ -91,7 +93,7 @@ A value of `3` matches the default in `vim` and similar applications. The settin
 
 ## Search and review the conversation
 
-In fullscreen rendering, `Ctrl+o` cycles through three states: normal prompt, transcript mode, and focus view. Press it once to enter transcript mode, press it again to return to a focus view showing just your last prompt, a one-line summary of tool calls with edit diffstats, and the final response. Press it a third time to return to the normal prompt screen.
+`Ctrl+o` toggles between the normal prompt and transcript mode. For a quieter view that shows only your last prompt, a one-line summary of tool calls with edit diffstats, and the final response, run `/focus`. The setting persists across sessions. Run `/focus` again to turn it off.
 
 Transcript mode gains `less`-style navigation and search:
 
@@ -103,8 +105,7 @@ Transcript mode gains `less`-style navigation and search:
 | `g` / `G` or `Home` / `End`          | Jump to top or bottom                                                                                  |
 | `Ctrl+u` / `Ctrl+d`                  | Scroll half a page                                                                                     |
 | `Ctrl+b` / `Ctrl+f` or `Space` / `b` | Scroll a full page                                                                                     |
-| `Ctrl+o`                             | Advance to focus view                                                                                  |
-| `Esc` or `q`                         | Exit transcript mode and return to the prompt                                                          |
+| `Ctrl+o`, `Esc`, or `q`              | Exit transcript mode and return to the prompt                                                          |
 
 Your terminal's `Cmd+f` and tmux search don't see the conversation because it lives in the alternate screen buffer, not the native scrollback. To hand the content back to your terminal, press `Ctrl+o` to enter transcript mode first, then:
 
@@ -147,4 +148,4 @@ Fullscreen rendering is a research preview feature. It has been tested on common
 
 If you encounter a problem, run `/feedback` inside Claude Code to report it, or open an issue on the [claude-code GitHub repo](https://github.com/anthropics/claude-code/issues). Include your terminal emulator name and version.
 
-To turn fullscreen rendering off, unset the environment variable or set `CLAUDE_CODE_NO_FLICKER=0`.
+To turn fullscreen rendering off, run `/tui default`, or unset the environment variable if you enabled it that way.

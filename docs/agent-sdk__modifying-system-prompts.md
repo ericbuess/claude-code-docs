@@ -37,12 +37,7 @@ CLAUDE.md files provide project-specific context and instructions that are autom
 * **Project-level:** `CLAUDE.md` or `.claude/CLAUDE.md` in your working directory
 * **User-level:** `~/.claude/CLAUDE.md` for global instructions across all projects
 
-**IMPORTANT:** The SDK only reads CLAUDE.md files when you explicitly configure `settingSources` (TypeScript) or `setting_sources` (Python):
-
-* Include `'project'` to load project-level CLAUDE.md
-* Include `'user'` to load user-level CLAUDE.md (`~/.claude/CLAUDE.md`)
-
-The `claude_code` system prompt preset does NOT automatically load CLAUDE.md - you must also specify setting sources.
+CLAUDE.md files are read when the corresponding setting source is enabled: `'project'` for project-level CLAUDE.md and `'user'` for `~/.claude/CLAUDE.md`. With default `query()` options both sources are enabled, so CLAUDE.md loads automatically. If you set `settingSources` (TypeScript) or `setting_sources` (Python) explicitly, include the sources you need. CLAUDE.md loading is controlled by setting sources, not by the `claude_code` preset.
 
 **Content format:**
 CLAUDE.md files use plain markdown and can contain:
@@ -83,8 +78,6 @@ CLAUDE.md files use plain markdown and can contain:
   ```typescript TypeScript theme={null}
   import { query } from "@anthropic-ai/claude-agent-sdk";
 
-  // IMPORTANT: You must specify settingSources to load CLAUDE.md
-  // The claude_code preset alone does NOT load CLAUDE.md files
   const messages = [];
 
   for await (const message of query({
@@ -94,7 +87,7 @@ CLAUDE.md files use plain markdown and can contain:
         type: "preset",
         preset: "claude_code" // Use Claude Code's system prompt
       },
-      settingSources: ["project"] // Required to load CLAUDE.md from project
+      settingSources: ["project"] // Loads CLAUDE.md from project
     }
   })) {
     messages.push(message);
@@ -106,8 +99,6 @@ CLAUDE.md files use plain markdown and can contain:
   ```python Python theme={null}
   from claude_agent_sdk import query, ClaudeAgentOptions
 
-  # IMPORTANT: You must specify setting_sources to load CLAUDE.md
-  # The claude_code preset alone does NOT load CLAUDE.md files
   messages = []
 
   async for message in query(
@@ -117,7 +108,7 @@ CLAUDE.md files use plain markdown and can contain:
               "type": "preset",
               "preset": "claude_code",  # Use Claude Code's system prompt
           },
-          setting_sources=["project"],  # Required to load CLAUDE.md from project
+          setting_sources=["project"],  # Loads CLAUDE.md from project
       ),
   ):
       messages.append(message)
@@ -141,7 +132,7 @@ CLAUDE.md files use plain markdown and can contain:
 * ✅ Persistent across all sessions in a project
 * ✅ Shared with team via git
 * ✅ Automatic discovery (no code changes needed)
-* ⚠️ Requires loading settings via `settingSources`
+* ⚠️ Not loaded if you pass `settingSources: []`
 
 ### Method 2: Output styles (persistent configurations)
 
@@ -424,7 +415,7 @@ You can provide a custom string as `systemPrompt` to replace the default entirel
 * "Run `npm run lint:fix` before committing"
 * "Database migrations are in the `migrations/` directory"
 
-**Important:** To load CLAUDE.md files, you must explicitly set `settingSources: ['project']` (TypeScript) or `setting_sources=["project"]` (Python). The `claude_code` system prompt preset does NOT automatically load CLAUDE.md without this setting.
+CLAUDE.md files load when the `project` setting source is enabled, which it is for default `query()` options. If you set `settingSources` (TypeScript) or `setting_sources` (Python) explicitly, include `'project'` to keep loading project-level CLAUDE.md.
 
 ### When to use output styles
 

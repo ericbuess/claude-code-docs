@@ -387,6 +387,10 @@ When the hook approves, Claude Code exits plan mode and restores whatever permis
 
 To set a specific permission mode instead, your hook's output can include an `updatedPermissions` array with a `setMode` entry. The `mode` value is any permission mode like `default`, `acceptEdits`, or `bypassPermissions`, and `destination: "session"` applies it for the current session only.
 
+<Note>
+  `bypassPermissions` only applies if the session was launched with bypass mode already available: `--dangerously-skip-permissions`, `--permission-mode bypassPermissions`, `--allow-dangerously-skip-permissions`, or `permissions.defaultMode: "bypassPermissions"` in settings, and not disabled by [`permissions.disableBypassPermissionsMode`](/en/permissions#managed-settings). It is never persisted as `defaultMode`.
+</Note>
+
 To switch the session to `acceptEdits`, your hook writes this JSON to stdout:
 
 ```json theme={null}

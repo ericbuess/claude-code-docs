@@ -556,7 +556,15 @@ When starting Claude Code, you can resume a previous session:
 
 From inside an active session, use `/resume` to switch to a different conversation.
 
-Sessions are stored per project directory. The `/resume` picker shows interactive sessions from the same git repository, including worktrees. When you select a session from another worktree of the same repository, Claude Code resumes it directly without requiring you to switch directories first. Sessions created by `claude -p` or SDK invocations do not appear in the picker, but you can still resume one by passing its session ID or custom name to `claude --resume <session-id-or-name>`. Custom names set with `--name` or `/rename` are accepted in addition to session IDs.
+Sessions are stored per project directory. By default, the `/resume` picker shows interactive sessions from the current worktree, with keyboard shortcuts to widen the list to other worktrees or projects, search, preview, and rename. See [Use the session picker](#use-the-session-picker) below for the full shortcut reference.
+
+When you select a session from another worktree of the same repository, Claude Code resumes it directly without requiring you to switch directories first. Selecting a session from an unrelated project copies a `cd` and resume command to your clipboard instead.
+
+Resuming by name resolves across the current repository and its worktrees. Both `claude --resume <name>` and `/resume <name>` look for an exact match and resume it directly, even if the session lives in a different worktree.
+
+When the name is ambiguous, `claude --resume <name>` opens the picker with the name pre-filled as a search term. `/resume <name>` from inside a session reports an error instead, so run `/resume` with no argument to open the picker and choose.
+
+Sessions created by `claude -p` or SDK invocations do not appear in the picker, but you can still resume one by passing its session ID directly to `claude --resume <session-id>`.
 
 ### Name your sessions
 
@@ -576,7 +584,7 @@ Give sessions descriptive names to find them later. This is a best practice when
     /rename auth-refactor
     ```
 
-    You can also rename any session from the picker: run `/resume`, navigate to a session, and press `R`.
+    You can also rename any session from the picker: run `/resume`, navigate to a session, and press `Ctrl+R`.
   </Step>
 
   <Step title="Resume by name later">
@@ -600,26 +608,28 @@ The `/resume` command (or `claude --resume` without arguments) opens an interact
 
 **Keyboard shortcuts in the picker:**
 
-| Shortcut  | Action                                            |
-| :-------- | :------------------------------------------------ |
-| `↑` / `↓` | Navigate between sessions                         |
-| `→` / `←` | Expand or collapse grouped sessions               |
-| `Enter`   | Select and resume the highlighted session         |
-| `P`       | Preview the session content                       |
-| `R`       | Rename the highlighted session                    |
-| `/`       | Search to filter sessions                         |
-| `A`       | Toggle between current directory and all projects |
-| `B`       | Filter to sessions from your current git branch   |
-| `Esc`     | Exit the picker or search mode                    |
+| Shortcut                                          | Action                                                                                                                                             |
+| :------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `↑` / `↓`                                         | Navigate between sessions                                                                                                                          |
+| `→` / `←`                                         | Expand or collapse grouped sessions                                                                                                                |
+| `Enter`                                           | Select and resume the highlighted session                                                                                                          |
+| `Space`                                           | Preview the session content. `Ctrl+V` also works on terminals that do not capture it as paste                                                      |
+| `Ctrl+R`                                          | Rename the highlighted session                                                                                                                     |
+| `/` or any printable character other than `Space` | Enter search mode and filter sessions                                                                                                              |
+| `Ctrl+A`                                          | Show sessions from all projects on this machine. Press again to restore the current repository                                                     |
+| `Ctrl+W`                                          | Show sessions from all worktrees of the current repository. Press again to restore the current worktree. Only shown in multi-worktree repositories |
+| `Ctrl+B`                                          | Filter to sessions from your current git branch. Press again to show sessions from all branches                                                    |
+| `Esc`                                             | Exit the picker or search mode                                                                                                                     |
 
 **Session organization:**
 
 The picker displays sessions with helpful metadata:
 
-* Session name or initial prompt
+* Session name if set, otherwise the conversation summary or first user prompt
 * Time elapsed since last activity
 * Message count
 * Git branch (if applicable)
+* Project path, shown after widening to all projects with `Ctrl+A`
 
 Forked sessions (created with `/branch`, `/rewind`, or `--fork-session`) are grouped together under their root session, making it easier to find related conversations.
 
@@ -631,7 +641,7 @@ Forked sessions (created with `/branch`, `/rewind`, or `--fork-session`) are gro
   * Use `--resume session-name` when you know which session you need
   * Use `--resume` (without a name) when you need to browse and select
   * For scripts, use `claude --continue --print "prompt"` to resume in non-interactive mode
-  * Press `P` in the picker to preview a session before resuming it
+  * Press `Space` in the picker to preview a session before resuming it
   * The resumed conversation starts with the same model and configuration as the original
 
   How it works:
@@ -935,7 +945,7 @@ Pick a scheduling option based on where you want the task to run:
 | [Routines](/en/routines)                               | Anthropic-managed infrastructure  | Tasks that should run even when your computer is off. Can also trigger on API calls or GitHub events in addition to a schedule. Configure at [claude.ai/code/routines](https://claude.ai/code/routines). |
 | [Desktop scheduled tasks](/en/desktop-scheduled-tasks) | Your machine, via the desktop app | Tasks that need direct access to local files, tools, or uncommitted changes.                                                                                                                             |
 | [GitHub Actions](/en/github-actions)                   | Your CI pipeline                  | Tasks tied to repo events like opened PRs, or cron schedules that should live alongside your workflow config.                                                                                            |
-| [`/loop`](/en/scheduled-tasks)                         | The current CLI session           | Quick polling while a session is open. Tasks are cancelled when you exit.                                                                                                                                |
+| [`/loop`](/en/scheduled-tasks)                         | The current CLI session           | Quick polling while a session is open. Tasks stop when you start a new conversation; `--resume` and `--continue` restore unexpired ones.                                                                 |
 
 <Tip>
   When writing prompts for scheduled tasks, be explicit about what success looks like and what to do with results. The task runs autonomously, so it can't ask clarifying questions. For example: "Review open PRs labeled `needs-review`, leave inline comments on any issues, and post a summary in the `#eng-reviews` Slack channel."

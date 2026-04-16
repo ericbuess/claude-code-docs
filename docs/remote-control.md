@@ -146,12 +146,49 @@ Remote Control and [Claude Code on the web](/en/claude-code-on-the-web) both use
 
 Use Remote Control when you're in the middle of local work and want to keep going from another device. Use Claude Code on the web when you want to kick off a task without any local setup, work on a repo you don't have cloned, or run multiple tasks in parallel.
 
+## Mobile push notifications
+
+When Remote Control is active, Claude can send push notifications to your phone.
+
+Claude decides when to push. It typically sends one when a long-running task finishes or when it needs a decision from you to continue. You can also request a push in your prompt, for example `notify me when the tests finish`. Beyond the on/off toggle below, there is no per-event configuration.
+
+<Note>
+  Mobile push notifications require Claude Code v2.1.110 or later.
+</Note>
+
+To set up mobile push notifications:
+
+<Steps>
+  <Step title="Install the Claude mobile app">
+    Download the Claude app for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) or [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude).
+  </Step>
+
+  <Step title="Sign in with your Claude Code account">
+    Use the same account and organization you use for Claude Code in the terminal.
+  </Step>
+
+  <Step title="Allow notifications">
+    Accept the notification permission prompt from the operating system.
+  </Step>
+
+  <Step title="Enable push in Claude Code">
+    In your terminal, run `/config` and enable **Push when Claude decides**.
+  </Step>
+</Steps>
+
+If notifications don't arrive:
+
+* If `/config` shows **No mobile registered**, open the Claude app on your phone so it can refresh its push token. The warning clears the next time Remote Control connects.
+* On iOS, Focus modes and notification summaries can suppress or delay pushes. Check Settings → Notifications → Claude.
+* On Android, aggressive battery optimization can delay delivery. Exempt the Claude app from battery optimization in system settings.
+
 ## Limitations
 
 * **One remote session per interactive process**: outside of server mode, each Claude Code instance supports one remote session at a time. Use [server mode](#start-a-remote-control-session) to run multiple concurrent sessions from a single process.
 * **Local process must keep running**: Remote Control runs as a local process. If you close the terminal, quit VS Code, or otherwise stop the `claude` process, the session ends.
 * **Extended network outage**: if your machine is awake but unable to reach the network for more than roughly 10 minutes, the session times out and the process exits. Run `claude remote-control` again to start a new session.
 * **Ultraplan disconnects Remote Control**: starting an [ultraplan](/en/ultraplan) session disconnects any active Remote Control session because both features occupy the claude.ai/code interface and only one can be connected at a time.
+* **Some commands are local-only**: commands that open an interactive picker in the terminal, such as `/mcp`, `/plugin`, or `/resume`, work only from the local CLI. Commands that produce text output, including `/compact`, `/clear`, `/context`, `/cost`, `/exit`, `/recap`, and `/reload-plugins`, work from mobile and web.
 
 ## Troubleshooting
 

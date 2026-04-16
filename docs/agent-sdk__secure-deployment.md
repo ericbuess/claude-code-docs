@@ -16,7 +16,7 @@ Not every deployment needs maximum security. A developer running Claude Code on 
 
 ## Threat model
 
-Agents can take unintended actions due to prompt injection (instructions embedded in content they process) or model error. Claude models are designed to resist this, and Claude Opus 4.7 is the most robust frontier model available. See the [model overview](https://platform.claude.com/docs/en/about-claude/models/overview) for details.
+Agents can take unintended actions due to prompt injection (instructions embedded in content they process) or model error. Claude models are designed to resist this; see the [model overview](https://platform.claude.com/docs/en/about-claude/models/overview) and the system card for the model you deploy for evaluation details.
 
 Defense in depth is still good practice though. For example, if an agent processes a malicious file that instructs it to send customer data to an external server, network controls can block that request entirely.
 
@@ -25,7 +25,7 @@ Defense in depth is still good practice though. For example, if an agent process
 Claude Code includes several security features that address common concerns. See the [security documentation](/en/security) for full details.
 
 * **Permissions system**: Every tool and bash command can be configured to allow, block, or prompt the user for approval. Use glob patterns to create rules like "allow all npm commands" or "block any command with sudo". Organizations can set policies that apply across all users. See [permissions](/en/permissions).
-* **Static analysis**: Before executing bash commands, Claude Code runs static analysis to identify potentially risky operations. Commands that modify system files or access sensitive directories are flagged and require explicit user approval.
+* **Command parsing for permissions**: Before executing bash commands, Claude Code parses them into an AST and matches the result against your permission rules. Commands that cannot be parsed cleanly, or that do not match an allow rule, require explicit approval. A small set of constructs such as `eval` always require approval regardless of allow rules. This is a permission gate, not a sandbox; it does not infer whether a command is dangerous from its target path or effects.
 * **Web search summarization**: Search results are summarized rather than passing raw content directly into the context, reducing the risk of prompt injection from malicious web content.
 * **Sandbox mode**: Bash commands can run in a sandboxed environment that restricts filesystem and network access. See the [sandboxing documentation](/en/sandboxing) for details.
 

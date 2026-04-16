@@ -99,21 +99,21 @@ Actions for navigating command history:
 
 Actions available in the `Chat` context:
 
-| Action                | Default                   | Description                         |
-| :-------------------- | :------------------------ | :---------------------------------- |
-| `chat:cancel`         | Escape                    | Cancel current input                |
-| `chat:clearInput`     | Ctrl+L                    | Clear prompt input                  |
-| `chat:killAgents`     | Ctrl+X Ctrl+K             | Kill all background agents          |
-| `chat:cycleMode`      | Shift+Tab\*               | Cycle permission modes              |
-| `chat:modelPicker`    | Cmd+P / Meta+P            | Open model picker                   |
-| `chat:fastMode`       | Meta+O                    | Toggle fast mode                    |
-| `chat:thinkingToggle` | Cmd+T / Meta+T            | Toggle extended thinking            |
-| `chat:submit`         | Enter                     | Submit message                      |
-| `chat:newline`        | Ctrl+J                    | Insert a newline without submitting |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Undo last action                    |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Open in external editor             |
-| `chat:stash`          | Ctrl+S                    | Stash current prompt                |
-| `chat:imagePaste`     | Ctrl+V (Alt+V on Windows) | Paste image                         |
+| Action                | Default                   | Description                                       |
+| :-------------------- | :------------------------ | :------------------------------------------------ |
+| `chat:cancel`         | Escape                    | Cancel current input                              |
+| `chat:clearInput`     | Ctrl+L                    | Clear prompt input and force a full screen redraw |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | Kill all background agents                        |
+| `chat:cycleMode`      | Shift+Tab\*               | Cycle permission modes                            |
+| `chat:modelPicker`    | Cmd+P / Meta+P            | Open model picker                                 |
+| `chat:fastMode`       | Meta+O                    | Toggle fast mode                                  |
+| `chat:thinkingToggle` | Cmd+T / Meta+T            | Toggle extended thinking                          |
+| `chat:submit`         | Enter                     | Submit message                                    |
+| `chat:newline`        | Ctrl+J                    | Insert a newline without submitting               |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Undo last action                                  |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Open in external editor                           |
+| `chat:stash`          | Ctrl+S                    | Stash current prompt                              |
+| `chat:imagePaste`     | Ctrl+V (Alt+V on Windows) | Paste image                                       |
 
 \*On Windows without VT mode (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), defaults to Meta+M.
 
@@ -279,10 +279,11 @@ Actions available in the `Select` context:
 
 Actions available in the `Plugin` context:
 
-| Action           | Default | Description              |
-| :--------------- | :------ | :----------------------- |
-| `plugin:toggle`  | Space   | Toggle plugin selection  |
-| `plugin:install` | I       | Install selected plugins |
+| Action            | Default | Description                                                                |
+| :---------------- | :------ | :------------------------------------------------------------------------- |
+| `plugin:toggle`   | Space   | Toggle plugin selection                                                    |
+| `plugin:install`  | I       | Install selected plugins                                                   |
+| `plugin:favorite` | F       | Favorite the selected plugin so it sorts near the top of the Installed tab |
 
 ### Settings actions
 
