@@ -183,7 +183,7 @@ Each level trades token spend against capability. The default suits most coding 
 
 The effort scale is calibrated per model, so the same level name does not represent the same underlying value across models.
 
-For one-off deep reasoning without changing your session setting, include "ultrathink" in your prompt to raise effort for that turn. This has no effect if your session is already at the highest available level.
+For one-off deep reasoning without changing your session setting, include "ultrathink" in your prompt. This adds an in-context instruction telling the model to reason more on that turn; it does not change the effort level sent to the API.
 
 #### Set the effort level
 

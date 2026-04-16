@@ -115,15 +115,15 @@ You can also hold `Shift` while dragging files into the prompt box to add them a
 
 ### Resume past conversations
 
-Click the dropdown at the top of the Claude Code panel to access your conversation history. You can search by keyword or browse by time (Today, Yesterday, Last 7 days, etc.). Click any conversation to resume it with the full message history. New sessions receive AI-generated titles based on your first message. Hover over a session to reveal rename and remove actions: rename to give it a descriptive title, or remove to delete it from the list. For more on resuming sessions, see [Common workflows](/en/common-workflows#resume-previous-conversations).
+Click the **Session history** button at the top of the Claude Code panel to access your conversation history. You can search by keyword or browse by time (Today, Yesterday, Last 7 days, etc.). Click any conversation to resume it with the full message history. New sessions receive AI-generated titles based on your first message. Hover over a session to reveal rename and remove actions: rename to give it a descriptive title, or remove to delete it from the list. For more on resuming sessions, see [Common workflows](/en/common-workflows#resume-previous-conversations).
 
 ### Resume remote sessions from Claude.ai
 
 If you use [Claude Code on the web](/en/claude-code-on-the-web), you can resume those remote sessions directly in VS Code. This requires signing in with **Claude.ai Subscription**, not Anthropic Console.
 
 <Steps>
-  <Step title="Open Past Conversations">
-    Click the **Past Conversations** dropdown at the top of the Claude Code panel.
+  <Step title="Open session history">
+    Click the **Session history** button at the top of the Claude Code panel.
   </Step>
 
   <Step title="Select the Remote tab">

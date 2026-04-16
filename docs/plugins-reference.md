@@ -311,7 +311,11 @@ The manifest is optional. If omitted, Claude Code auto-discovers components in [
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
   "lspServers": "./.lsp.json",
-  "monitors": "./monitors.json"
+  "monitors": "./monitors.json",
+  "dependencies": [
+    "helper-lib",
+    { "name": "secrets-vault", "version": "~2.1.0" }
+  ]
 }
 ```
 
@@ -341,18 +345,19 @@ agent `agent-creator` for the plugin with name `plugin-dev` will appear as
 
 ### Component path fields
 
-| Field          | Type                  | Description                                                                                                                                                               | Example                                |
-| :------------- | :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------- |
-| `skills`       | string\|array         | Custom skill directories containing `<name>/SKILL.md` (replaces default `skills/`)                                                                                        | `"./custom/skills/"`                   |
-| `commands`     | string\|array         | Custom flat `.md` skill files or directories (replaces default `commands/`)                                                                                               | `"./custom/cmd.md"` or `["./cmd1.md"]` |
-| `agents`       | string\|array         | Custom agent files (replaces default `agents/`)                                                                                                                           | `"./custom/agents/reviewer.md"`        |
-| `hooks`        | string\|array\|object | Hook config paths or inline config                                                                                                                                        | `"./my-extra-hooks.json"`              |
-| `mcpServers`   | string\|array\|object | MCP config paths or inline config                                                                                                                                         | `"./my-extra-mcp-config.json"`         |
-| `outputStyles` | string\|array         | Custom output style files/directories (replaces default `output-styles/`)                                                                                                 | `"./styles/"`                          |
-| `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) configs for code intelligence (go to definition, find references, etc.)                 | `"./.lsp.json"`                        |
-| `monitors`     | string\|array\|object | Background [Monitor](/en/tools-reference#monitor-tool) configurations that auto-arm when the plugin is enabled at session start or when a skill in this plugin is invoked | `"./monitors.json"`                    |
-| `userConfig`   | object                | User-configurable values prompted at enable time. See [User configuration](#user-configuration)                                                                           | See below                              |
-| `channels`     | array                 | Channel declarations for message injection (Telegram, Slack, Discord style). See [Channels](#channels)                                                                    | See below                              |
+| Field          | Type                  | Description                                                                                                                                                               | Example                                              |
+| :------------- | :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------------- |
+| `skills`       | string\|array         | Custom skill directories containing `<name>/SKILL.md` (replaces default `skills/`)                                                                                        | `"./custom/skills/"`                                 |
+| `commands`     | string\|array         | Custom flat `.md` skill files or directories (replaces default `commands/`)                                                                                               | `"./custom/cmd.md"` or `["./cmd1.md"]`               |
+| `agents`       | string\|array         | Custom agent files (replaces default `agents/`)                                                                                                                           | `"./custom/agents/reviewer.md"`                      |
+| `hooks`        | string\|array\|object | Hook config paths or inline config                                                                                                                                        | `"./my-extra-hooks.json"`                            |
+| `mcpServers`   | string\|array\|object | MCP config paths or inline config                                                                                                                                         | `"./my-extra-mcp-config.json"`                       |
+| `outputStyles` | string\|array         | Custom output style files/directories (replaces default `output-styles/`)                                                                                                 | `"./styles/"`                                        |
+| `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) configs for code intelligence (go to definition, find references, etc.)                 | `"./.lsp.json"`                                      |
+| `monitors`     | string\|array\|object | Background [Monitor](/en/tools-reference#monitor-tool) configurations that auto-arm when the plugin is enabled at session start or when a skill in this plugin is invoked | `"./monitors.json"`                                  |
+| `userConfig`   | object                | User-configurable values prompted at enable time. See [User configuration](#user-configuration)                                                                           | See below                                            |
+| `channels`     | array                 | Channel declarations for message injection (Telegram, Slack, Discord style). See [Channels](#channels)                                                                    | See below                                            |
+| `dependencies` | array                 | Other plugins this plugin requires, optionally with semver version constraints. See [Constrain plugin dependency versions](/en/plugin-dependencies)                       | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
 
 ### User configuration
 
