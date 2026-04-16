@@ -2268,7 +2268,7 @@ type AccountInfo = {
 
 ### `ModelUsage`
 
-Per-model usage statistics returned in result messages.
+Per-model usage statistics returned in result messages. The `costUSD` value is a client-side estimate. See [Track cost and usage](/en/agent-sdk/cost-tracking) for billing caveats.
 
 ```typescript theme={null}
 type ModelUsage = {

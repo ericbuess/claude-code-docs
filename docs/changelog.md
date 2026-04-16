@@ -18,7 +18,7 @@
 - Improved `/plugin` Installed tab — items needing attention and favorites appear at the top, disabled items are hidden behind a fold, and `f` favorites the selected item
 - Improved `/doctor` to warn when an MCP server is defined in multiple config scopes with different endpoints
 - `--resume`/`--continue` now resurrects unexpired scheduled tasks
-- `/autocompact`, `/context`, `/exit`, and `/reload-plugins` now work from Remote Control (mobile/web) clients
+- `/context`, `/exit`, and `/reload-plugins` now work from Remote Control (mobile/web) clients
 - Write tool now informs the model when you edit the proposed content in the IDE diff before accepting
 - Bash tool now enforces the documented maximum timeout instead of accepting arbitrarily large values
 - SDK/headless sessions now read `TRACEPARENT`/`TRACESTATE` from the environment for distributed trace linking

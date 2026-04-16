@@ -155,7 +155,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 | `workspace.project_dir`                                                          | Directory where Claude Code was launched, which may differ from `cwd` if the working directory changes during a session                                                                                                                    |
 | `workspace.added_dirs`                                                           | Additional directories added via `/add-dir` or `--add-dir`. Empty array if none have been added                                                                                                                                            |
 | `workspace.git_worktree`                                                         | Git worktree name when the current directory is inside a linked worktree created with `git worktree add`. Absent in the main working tree. Populated for any git worktree, unlike `worktree.*` which applies only to `--worktree` sessions |
-| `cost.total_cost_usd`                                                            | Total session cost in USD                                                                                                                                                                                                                  |
+| `cost.total_cost_usd`                                                            | Estimated session cost in USD, computed client-side. May differ from your actual bill                                                                                                                                                      |
 | `cost.total_duration_ms`                                                         | Total wall-clock time since the session started, in milliseconds                                                                                                                                                                           |
 | `cost.total_api_duration_ms`                                                     | Total time spent waiting for API responses in milliseconds                                                                                                                                                                                 |
 | `cost.total_lines_added`, `cost.total_lines_removed`                             | Lines of code changed                                                                                                                                                                                                                      |
@@ -460,7 +460,7 @@ Each script checks if the current directory is a git repository, counts staged a
 
 ### Cost and duration tracking
 
-Track your session's API costs and elapsed time. The `cost.total_cost_usd` field accumulates the cost of all API calls in the current session. The `cost.total_duration_ms` field measures total elapsed time since the session started, while `cost.total_api_duration_ms` tracks only the time spent waiting for API responses.
+Track your session's API costs and elapsed time. The `cost.total_cost_usd` field accumulates the estimated cost of all API calls in the current session. The `cost.total_duration_ms` field measures total elapsed time since the session started, while `cost.total_api_duration_ms` tracks only the time spent waiting for API responses.
 
 Each script formats cost as currency and converts milliseconds to minutes and seconds:
 

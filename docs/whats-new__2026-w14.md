@@ -7,7 +7,7 @@
 > Computer use in the CLI, interactive in-product lessons, flicker-free rendering, per-tool MCP result-size overrides, and plugin executables on PATH.
 
 <div className="digest-meta">
-  <span>Releases <a href="/en/changelog#2-1-86">v2.1.86 → v2.1.91</a></span>
+  <span>Releases <a href="/docs/en/changelog#2-1-86">v2.1.86 → v2.1.91</a></span>
   <span>5 features · March 30 – April 3</span>
 </div>
 
@@ -29,7 +29,7 @@
   > Open the iOS simulator, tap through onboarding, and screenshot each step
   ```
 
-  <a className="digest-feature-link" href="/en/computer-use">Computer use guide</a>
+  <a className="digest-feature-link" href="/docs/en/computer-use">Computer use guide</a>
 </div>
 
 <div className="digest-feature">
@@ -50,7 +50,7 @@
   > /powerup
   ```
 
-  <a className="digest-feature-link" href="/en/commands">Commands reference</a>
+  <a className="digest-feature-link" href="/docs/en/commands">Commands reference</a>
 </div>
 
 <div className="digest-feature">
@@ -72,7 +72,7 @@
   claude
   ```
 
-  <a className="digest-feature-link" href="/en/fullscreen">Fullscreen rendering</a>
+  <a className="digest-feature-link" href="/docs/en/fullscreen">Fullscreen rendering</a>
 </div>
 
 <div className="digest-feature">
@@ -95,7 +95,7 @@
   }
   ```
 
-  <a className="digest-feature-link" href="/en/mcp#raise-the-limit-for-a-specific-tool">MCP reference</a>
+  <a className="digest-feature-link" href="/docs/en/mcp#raise-the-limit-for-a-specific-tool">MCP reference</a>
 </div>
 
 <div className="digest-feature">
@@ -116,7 +116,7 @@
       └── my-tool
   ```
 
-  <a className="digest-feature-link" href="/en/plugins-reference#file-locations-reference">Plugins reference</a>
+  <a className="digest-feature-link" href="/docs/en/plugins-reference#file-locations-reference">Plugins reference</a>
 </div>
 
 <div className="digest-wins">

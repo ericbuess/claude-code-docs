@@ -7,7 +7,7 @@
 > Ultraplan cloud planning, the Monitor tool with self-pacing /loop, /team-onboarding for packaging your setup, and /autofix-pr from your terminal.
 
 <div className="digest-meta">
-  <span>Releases <a href="/en/changelog#2-1-92">v2.1.92 → v2.1.101</a></span>
+  <span>Releases <a href="/docs/en/changelog#2-1-92">v2.1.92 → v2.1.101</a></span>
   <span>4 features · April 6–10</span>
 </div>
 
@@ -29,7 +29,7 @@
   > /ultraplan migrate the auth service from sessions to JWTs
   ```
 
-  <a className="digest-feature-link" href="/en/ultraplan">Ultraplan guide</a>
+  <a className="digest-feature-link" href="/docs/en/ultraplan">Ultraplan guide</a>
 </div>
 
 <div className="digest-feature">
@@ -56,7 +56,7 @@
   > /loop check CI on my PR
   ```
 
-  <a className="digest-feature-link" href="/en/tools-reference#monitor-tool">Monitor tool reference</a>
+  <a className="digest-feature-link" href="/docs/en/tools-reference#monitor-tool">Monitor tool reference</a>
 </div>
 
 <div className="digest-feature">
@@ -77,7 +77,7 @@
   > /autofix-pr
   ```
 
-  <a className="digest-feature-link" href="/en/claude-code-on-the-web#auto-fix-pull-requests">Auto-fix pull requests</a>
+  <a className="digest-feature-link" href="/docs/en/claude-code-on-the-web#auto-fix-pull-requests">Auto-fix pull requests</a>
 </div>
 
 <div className="digest-feature">
@@ -94,7 +94,7 @@
   > /team-onboarding
   ```
 
-  <a className="digest-feature-link" href="/en/commands">Commands reference</a>
+  <a className="digest-feature-link" href="/docs/en/commands">Commands reference</a>
 </div>
 
 <div className="digest-wins">
@@ -102,7 +102,7 @@
 
   <div className="digest-wins-grid">
     <div>Focus view: press <code>Ctrl+O</code> in flicker-free mode to collapse the view to your last prompt, a one-line tool summary with diffstats, and Claude's final response</div>
-    <div>Guided <a href="/en/amazon-bedrock">Bedrock</a> and <a href="/en/google-vertex-ai">Vertex AI</a> setup wizards on the login screen: pick "3rd-party platform" for step-by-step auth, region, credential check, and model pinning</div>
+    <div>Guided <a href="/docs/en/amazon-bedrock">Bedrock</a> and <a href="/docs/en/google-vertex-ai">Vertex AI</a> setup wizards on the login screen: pick "3rd-party platform" for step-by-step auth, region, credential check, and model pinning</div>
     <div><code>/agents</code> gets a tabbed layout: a Running tab shows live subagents with a <code>● N running</code> count, plus Run agent and View running instance actions in the Library tab</div>
     <div>Default effort level is now <code>high</code> for API-key, Bedrock, Vertex, Foundry, Team, and Enterprise users (control with <code>/effort</code>)</div>
     <div><code>/cost</code> shows a per-model and cache-hit breakdown for subscription users</div>

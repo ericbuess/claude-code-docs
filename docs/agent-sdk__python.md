@@ -1447,16 +1447,16 @@ The `usage` dict contains the following keys when present:
 
 The `model_usage` dict maps model names to per-model usage. The inner dict keys use camelCase because the value is passed through unmodified from the underlying CLI process, matching the TypeScript [`ModelUsage`](/en/agent-sdk/typescript#model-usage) type:
 
-| Key                        | Type    | Description                                |
-| -------------------------- | ------- | ------------------------------------------ |
-| `inputTokens`              | `int`   | Input tokens for this model.               |
-| `outputTokens`             | `int`   | Output tokens for this model.              |
-| `cacheReadInputTokens`     | `int`   | Cache read tokens for this model.          |
-| `cacheCreationInputTokens` | `int`   | Cache creation tokens for this model.      |
-| `webSearchRequests`        | `int`   | Web search requests made by this model.    |
-| `costUSD`                  | `float` | Cost in USD for this model.                |
-| `contextWindow`            | `int`   | Context window size for this model.        |
-| `maxOutputTokens`          | `int`   | Maximum output token limit for this model. |
+| Key                        | Type    | Description                                                                                                                              |
+| -------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `inputTokens`              | `int`   | Input tokens for this model.                                                                                                             |
+| `outputTokens`             | `int`   | Output tokens for this model.                                                                                                            |
+| `cacheReadInputTokens`     | `int`   | Cache read tokens for this model.                                                                                                        |
+| `cacheCreationInputTokens` | `int`   | Cache creation tokens for this model.                                                                                                    |
+| `webSearchRequests`        | `int`   | Web search requests made by this model.                                                                                                  |
+| `costUSD`                  | `float` | Estimated cost in USD for this model, computed client-side. See [Track cost and usage](/en/agent-sdk/cost-tracking) for billing caveats. |
+| `contextWindow`            | `int`   | Context window size for this model.                                                                                                      |
+| `maxOutputTokens`          | `int`   | Maximum output token limit for this model.                                                                                               |
 
 ### `StreamEvent`
 
@@ -2228,7 +2228,7 @@ Documentation of input/output schemas for all built-in Claude Code tools. While 
 {
     "result": str,  # Final result from the subagent
     "usage": dict | None,  # Token usage statistics
-    "total_cost_usd": float | None,  # Total cost in USD
+    "total_cost_usd": float | None,  # Estimated total cost in USD
     "duration_ms": int | None,  # Execution duration in milliseconds
 }
 ```

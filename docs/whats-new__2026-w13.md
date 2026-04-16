@@ -7,7 +7,7 @@
 > Auto mode for hands-off permissions, computer use built in, PR auto-fix in the cloud, transcript search, and a PowerShell tool for Windows.
 
 <div className="digest-meta">
-  <span>Releases <a href="/en/changelog#2-1-83">v2.1.83 → v2.1.85</a></span>
+  <span>Releases <a href="/docs/en/changelog#2-1-83">v2.1.83 → v2.1.85</a></span>
   <span>6 features · March 23–27</span>
 </div>
 
@@ -33,7 +33,7 @@
   }
   ```
 
-  <a className="digest-feature-link" href="/en/permission-modes">Permission modes guide</a>
+  <a className="digest-feature-link" href="/docs/en/permission-modes">Permission modes guide</a>
 </div>
 
 <div className="digest-feature">
@@ -54,7 +54,7 @@
   > Open the iOS simulator, tap through the onboarding flow, and screenshot each step
   ```
 
-  <a className="digest-feature-link" href="/en/desktop#let-claude-use-your-computer">Computer use guide</a>
+  <a className="digest-feature-link" href="/docs/en/desktop#let-claude-use-your-computer">Computer use guide</a>
 </div>
 
 <div className="digest-feature">
@@ -71,7 +71,7 @@
 
   <p className="digest-feature-try">After creating a PR on Claude Code web, toggle Auto fix in the CI panel.</p>
 
-  <a className="digest-feature-link" href="/en/claude-code-on-the-web#auto-fix-pull-requests">Auto-fix pull requests</a>
+  <a className="digest-feature-link" href="/docs/en/claude-code-on-the-web#auto-fix-pull-requests">Auto-fix pull requests</a>
 </div>
 
 <div className="digest-feature">
@@ -91,7 +91,7 @@
   N         # previous match
   ```
 
-  <a className="digest-feature-link" href="/en/fullscreen#search-and-review-the-conversation">Fullscreen guide</a>
+  <a className="digest-feature-link" href="/docs/en/fullscreen#search-and-review-the-conversation">Fullscreen guide</a>
 </div>
 
 <div className="digest-feature">
@@ -113,7 +113,7 @@
   }
   ```
 
-  <a className="digest-feature-link" href="/en/tools-reference#powershell-tool">PowerShell tool docs</a>
+  <a className="digest-feature-link" href="/docs/en/tools-reference#powershell-tool">PowerShell tool docs</a>
 </div>
 
 <div className="digest-feature">
@@ -140,7 +140,7 @@
   }
   ```
 
-  <a className="digest-feature-link" href="/en/hooks">Hooks reference</a>
+  <a className="digest-feature-link" href="/docs/en/hooks">Hooks reference</a>
 </div>
 
 <div className="digest-wins">
