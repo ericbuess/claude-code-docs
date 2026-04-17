@@ -8,6 +8,20 @@
 
 The Code tab within the Claude Desktop app lets you use Claude Code through a graphical interface instead of the terminal.
 
+<CardGroup cols={2}>
+  <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    Universal build for Intel and Apple Silicon
+  </Card>
+
+  <Card title="Download for Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    For x64 processors
+  </Card>
+</CardGroup>
+
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). Linux is not supported.
+
+After installing, launch Claude, sign in, and click the **Code** tab. See the [Get started guide](/en/desktop-quickstart) for a full walkthrough of your first session.
+
 Desktop adds these capabilities on top of the standard Claude Code experience:
 
 * [Parallel sessions](#work-in-parallel-with-sessions) with automatic Git worktree isolation
@@ -21,10 +35,6 @@ Desktop adds these capabilities on top of the standard Claude Code experience:
 * [Scheduled tasks](/en/desktop-scheduled-tasks) that run Claude on a recurring schedule
 * [Connectors](#connect-external-tools) for GitHub, Slack, Linear, and more
 * Local, [SSH](#ssh-sessions), and [cloud](#run-long-running-tasks-remotely) environments
-
-<Tip>
-  New to Desktop? Start with [Get started](/en/desktop-quickstart) to install the app and make your first edit.
-</Tip>
 
 <Note>
   The workspace layout, terminal, file editor, side chats, and view modes described on this page require Claude Desktop v1.2581.0 or later. Open **Claude → Check for Updates** on macOS or **Help → Check for Updates** on Windows to update.
