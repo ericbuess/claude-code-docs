@@ -24,6 +24,10 @@ The V2 interface is included in the existing SDK package:
 npm install @anthropic-ai/claude-agent-sdk
 ```
 
+<Note>
+  The SDK bundles a native Claude Code binary for your platform as an optional dependency, so you don't need to install Claude Code separately.
+</Note>
+
 ## Quick start
 
 ### One-shot prompt

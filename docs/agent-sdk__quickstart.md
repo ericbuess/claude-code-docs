@@ -59,6 +59,10 @@ Use the Agent SDK to build an AI agent that reads your code, finds bugs, and fix
         ```
       </Tab>
     </Tabs>
+
+    <Note>
+      The TypeScript SDK bundles a native Claude Code binary for your platform as an optional dependency, so you don't need to install Claude Code separately.
+    </Note>
   </Step>
 
   <Step title="Set your API key">
