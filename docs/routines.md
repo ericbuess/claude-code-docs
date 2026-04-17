@@ -250,7 +250,6 @@ Use filters to narrow which pull requests start a new session. All filter condit
 | Labels      | Labels applied to the PR         |
 | Is draft    | Whether the PR is in draft state |
 | Is merged   | Whether the PR has been merged   |
-| From fork   | Whether the PR comes from a fork |
 
 Each filter pairs a field with an operator: equals, contains, starts with, is one of, is not one of, or matches regex.
 
@@ -259,7 +258,6 @@ The `matches regex` operator tests the entire field value, not a substring withi
 A few example filter combinations:
 
 * **Auth module review**: base branch `main`, head branch contains `auth-provider`. Sends any PR that touches authentication to a focused reviewer.
-* **External contributor triage**: from fork is `true`. Routes every fork-based PR through an extra security and style review before a human looks at it.
 * **Ready-for-review only**: is draft is `false`. Skips drafts so the routine only runs when the PR is ready for review.
 * **Label-gated backport**: labels include `needs-backport`. Triggers a port-to-another-branch routine only when a maintainer tags the PR.
 
