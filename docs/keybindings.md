@@ -315,20 +315,26 @@ Actions available in the `Chat` context when [voice dictation](/en/voice-dictati
 
 Actions available in the `Scroll` context when [fullscreen rendering](/en/fullscreen) is enabled:
 
-| Action                | Default              | Description                                                                                             |
-| :-------------------- | :------------------- | :------------------------------------------------------------------------------------------------------ |
-| `scroll:lineUp`       | (unbound)            | Scroll up one line. Mouse wheel scrolling triggers this action                                          |
-| `scroll:lineDown`     | (unbound)            | Scroll down one line. Mouse wheel scrolling triggers this action                                        |
-| `scroll:pageUp`       | PageUp               | Scroll up half the viewport height                                                                      |
-| `scroll:pageDown`     | PageDown             | Scroll down half the viewport height                                                                    |
-| `scroll:top`          | Ctrl+Home            | Jump to the start of the conversation                                                                   |
-| `scroll:bottom`       | Ctrl+End             | Jump to the latest message and re-enable auto-follow                                                    |
-| `scroll:halfPageUp`   | (unbound)            | Scroll up half the viewport height. Same behavior as `scroll:pageUp`, provided for vi-style rebinds     |
-| `scroll:halfPageDown` | (unbound)            | Scroll down half the viewport height. Same behavior as `scroll:pageDown`, provided for vi-style rebinds |
-| `scroll:fullPageUp`   | (unbound)            | Scroll up the full viewport height                                                                      |
-| `scroll:fullPageDown` | (unbound)            | Scroll down the full viewport height                                                                    |
-| `selection:copy`      | Ctrl+Shift+C / Cmd+C | Copy the selected text to the clipboard                                                                 |
-| `selection:clear`     | (unbound)            | Clear the active text selection                                                                         |
+| Action                      | Default              | Description                                                                                               |
+| :-------------------------- | :------------------- | :-------------------------------------------------------------------------------------------------------- |
+| `scroll:lineUp`             | (unbound)            | Scroll up one line. Mouse wheel scrolling triggers this action                                            |
+| `scroll:lineDown`           | (unbound)            | Scroll down one line. Mouse wheel scrolling triggers this action                                          |
+| `scroll:pageUp`             | PageUp               | Scroll up half the viewport height                                                                        |
+| `scroll:pageDown`           | PageDown             | Scroll down half the viewport height                                                                      |
+| `scroll:top`                | Ctrl+Home            | Jump to the start of the conversation                                                                     |
+| `scroll:bottom`             | Ctrl+End             | Jump to the latest message and re-enable auto-follow                                                      |
+| `scroll:halfPageUp`         | (unbound)            | Scroll up half the viewport height. Same behavior as `scroll:pageUp`, provided for vi-style rebinds       |
+| `scroll:halfPageDown`       | (unbound)            | Scroll down half the viewport height. Same behavior as `scroll:pageDown`, provided for vi-style rebinds   |
+| `scroll:fullPageUp`         | (unbound)            | Scroll up the full viewport height                                                                        |
+| `scroll:fullPageDown`       | (unbound)            | Scroll down the full viewport height                                                                      |
+| `selection:copy`            | Ctrl+Shift+C / Cmd+C | Copy the selected text to the clipboard                                                                   |
+| `selection:clear`           | (unbound)            | Clear the active text selection                                                                           |
+| `selection:extendLeft`      | Shift+Left           | Extend the active selection one column left                                                               |
+| `selection:extendRight`     | Shift+Right          | Extend the active selection one column right                                                              |
+| `selection:extendUp`        | Shift+Up             | Extend the active selection one row up. Scrolls the viewport when the selection reaches the top edge      |
+| `selection:extendDown`      | Shift+Down           | Extend the active selection one row down. Scrolls the viewport when the selection reaches the bottom edge |
+| `selection:extendLineStart` | Shift+Home           | Extend the active selection to the start of the line                                                      |
+| `selection:extendLineEnd`   | Shift+End            | Extend the active selection to the end of the line                                                        |
 
 ## Keystroke syntax
 
