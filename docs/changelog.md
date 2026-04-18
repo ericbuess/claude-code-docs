@@ -10,6 +10,10 @@ This page is generated from the [CHANGELOG.md on GitHub](https://github.com/anth
 
 Run `claude --version` to check your installed version.
 
+<Update label="2.1.114" description="April 18, 2026">
+  * Fixed a crash in the permission dialog when an agent teams teammate requested tool permission
+</Update>
+
 <Update label="2.1.113" description="April 17, 2026">
   * Changed the CLI to spawn a native Claude Code binary (via a per-platform optional dependency) instead of bundled JavaScript
   * Added `sandbox.network.deniedDomains` setting to block specific domains even when a broader `allowedDomains` wildcard would otherwise permit them
