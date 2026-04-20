@@ -448,7 +448,7 @@ Each hook has a `type` that determines how it runs. Most hooks use `"type": "com
 
 * `"type": "http"`: POST event data to a URL. See [HTTP hooks](#http-hooks).
 * `"type": "prompt"`: single-turn LLM evaluation. See [Prompt-based hooks](#prompt-based-hooks).
-* `"type": "agent"`: multi-turn verification with tool access. See [Agent-based hooks](#agent-based-hooks).
+* `"type": "agent"`: multi-turn verification with tool access. Agent hooks are experimental and may change. See [Agent-based hooks](#agent-based-hooks).
 
 ### Read input and return output
 
@@ -724,6 +724,10 @@ This example uses a `Stop` hook to ask the model whether all requested tasks are
 For full configuration options, see [Prompt-based hooks](/en/hooks#prompt-based-hooks) in the reference.
 
 ## Agent-based hooks
+
+<Warning>
+  Agent hooks are experimental. Behavior and configuration may change in future releases. For production workflows, prefer [command hooks](/en/hooks#command-hook-fields).
+</Warning>
 
 When verification requires inspecting files or running commands, use `type: "agent"` hooks. Unlike prompt hooks which make a single LLM call, agent hooks spawn a subagent that can read files, search code, and use other tools to verify conditions before returning a decision.
 
