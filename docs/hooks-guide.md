@@ -316,17 +316,27 @@ The matcher filters by configuration type: `user_settings`, `project_settings`, 
 
 Some projects set different environment variables depending on which directory you are in. Tools like [direnv](https://direnv.net/) do this automatically in your shell, but Claude's Bash tool does not pick up those changes on its own.
 
-A `CwdChanged` hook fixes this: it runs each time Claude changes directory, so you can reload the correct variables for the new location. The hook writes the updated values to `CLAUDE_ENV_FILE`, which Claude Code applies before each Bash command. Add this to `~/.claude/settings.json`:
+Pairing a `SessionStart` hook with a `CwdChanged` hook fixes this. `SessionStart` loads the variables for the directory you launch in, and `CwdChanged` reloads them each time Claude changes directory. Both write to `CLAUDE_ENV_FILE`, which Claude Code runs as a script preamble before each Bash command. Add this to `~/.claude/settings.json`:
 
 ```json theme={null}
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
+          }
+        ]
+      }
+    ],
     "CwdChanged": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "direnv export bash >> \"$CLAUDE_ENV_FILE\""
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
           }
         ]
       }
@@ -334,6 +344,8 @@ A `CwdChanged` hook fixes this: it runs each time Claude changes directory, so y
   }
 }
 ```
+
+Run `direnv allow` once in each directory that has an `.envrc` so direnv is permitted to load it. If you use devbox or nix instead of direnv, the same pattern works with `devbox shellenv` or `devbox global shellenv` in place of `direnv export bash`.
 
 To react to specific files instead of every directory change, use `FileChanged` with a `matcher` listing the filenames to watch, separated by `|`. To build the watch list, this value is split into literal filenames rather than evaluated as a regex. See [FileChanged](/en/hooks#filechanged) for how the same value also filters which hook groups run when a file changes. This example watches `.envrc` and `.env` in the working directory:
 
@@ -346,7 +358,7 @@ To react to specific files instead of every directory change, use `FileChanged` 
         "hooks": [
           {
             "type": "command",
-            "command": "direnv export bash >> \"$CLAUDE_ENV_FILE\""
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
           }
         ]
       }
@@ -649,7 +661,7 @@ For full matcher syntax, see the [Hooks reference](/en/hooks#configuration).
   The `if` field requires Claude Code v2.1.85 or later. Earlier versions ignore it and run the hook on every matched call.
 </Note>
 
-The `if` field uses [permission rule syntax](/en/permissions) to filter hooks by tool name and arguments together, so the hook process only spawns when the tool call matches. This goes beyond `matcher`, which filters at the group level by tool name only.
+The `if` field uses [permission rule syntax](/en/permissions) to filter hooks by tool name and arguments together, so the hook process only spawns when the tool call matches, or when a Bash command is too complex to parse. This goes beyond `matcher`, which filters at the group level by tool name only.
 
 For example, to run a hook only when Claude uses `git` commands rather than all Bash commands:
 
@@ -672,9 +684,9 @@ For example, to run a hook only when Claude uses `git` commands rather than all 
 }
 ```
 
-The hook process only spawns when the Bash command starts with `git`. Other Bash commands skip this handler entirely. The `if` field accepts the same patterns as permission rules: `"Bash(git *)"`, `"Edit(*.ts)"`, and so on. To match multiple tool names, use separate handlers each with its own `if` value, or match at the `matcher` level where pipe alternation is supported.
+The hook process only spawns when a subcommand of the Bash command matches `git *`, or when the command is too complex to parse into subcommands. For compound commands like `npm test && git push`, Claude Code evaluates each subcommand and fires the hook because `git push` matches. The `if` field accepts the same patterns as permission rules: `"Bash(git *)"`, `"Edit(*.ts)"`, and so on. To match multiple tool names, use separate handlers each with its own `if` value, or match at the `matcher` level where pipe alternation is supported.
 
-`if` only works on tool events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, and `PermissionDenied`. Adding it to any other event prevents the hook from running.
+`if` only works on tool events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, and `PermissionRequest`. Adding it to any other event prevents the hook from running.
 
 ### Configure hook location
 

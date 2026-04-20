@@ -2,116 +2,157 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Optimize your terminal setup
+# Configure your terminal for Claude Code
 
-> Claude Code works best when your terminal is properly configured. Follow these guidelines to optimize your experience.
+> Fix Shift+Enter for newlines, get a terminal bell when Claude finishes, configure tmux, match the color theme, and enable Vim mode in the Claude Code CLI.
 
-### Themes and appearance
+Claude Code works in any terminal without configuration. This page is for when something specific is not behaving the way you expect. Find your symptom below. If everything already feels right, you do not need this page.
 
-Claude cannot control the theme of your terminal. That's handled by your terminal application. You can match Claude Code's theme to your terminal via the `/theme` command. Select `auto` in the theme picker to have Claude Code follow your terminal's dark or light mode automatically.
+* [Shift+Enter submits instead of inserting a newline](#enter-multiline-prompts)
+* [Option-key shortcuts do nothing on macOS](#enable-option-key-shortcuts-on-macos)
+* [No sound or alert when Claude finishes](#get-a-terminal-bell-or-notification)
+* [You run Claude Code inside tmux](#configure-tmux)
+* [Display flickers or scrollback jumps](#switch-to-fullscreen-rendering)
+* [You want Vim keys in the prompt](#edit-prompts-with-vim-keybindings)
 
-For additional customization of the Claude Code interface itself, you can configure a [custom status line](/en/statusline) to display contextual information like the current model, working directory, or git branch at the bottom of your terminal.
+This page is about getting your terminal to send the right signals to Claude Code. To change which keys Claude Code itself responds to, see [keybindings](/en/keybindings) instead.
 
-### Line breaks
+## Enter multiline prompts
 
-You have several options for entering line breaks into Claude Code:
+Pressing Enter submits your message. To add a line break without submitting, press Ctrl+J, or type `\` and then press Enter. Both work in every terminal with no setup.
 
-* **Quick escape**: Type `\` followed by Enter to create a newline
-* **Ctrl+J**: Sends a line feed character, which works as a newline in any terminal without configuration
-* **Shift+Enter**: Works out of the box in iTerm2, WezTerm, Ghostty, and Kitty
-* **Keyboard shortcut**: Set up a keybinding to insert a newline in other terminals
+In most terminals you can also press Shift+Enter, but support varies by terminal emulator:
 
-#### Set up Shift+Enter with /terminal-setup
+| Terminal                                                                            | Shift+Enter for newline                     |
+| :---------------------------------------------------------------------------------- | :------------------------------------------ |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal                               | Works without setup                         |
+| VS Code, Cursor, Windsurf, Alacritty, Zed                                           | Run `/terminal-setup` once                  |
+| Windows Terminal, gnome-terminal, JetBrains IDEs such as PyCharm and Android Studio | Not available; use Ctrl+J or `\` then Enter |
 
-Run `/terminal-setup` within Claude Code to automatically configure Shift+Enter for VS Code, Alacritty, Zed, and Warp.
+For VS Code, Cursor, Windsurf, Alacritty, and Zed, `/terminal-setup` writes Shift+Enter and other keybindings into the terminal's configuration file. If it reports a conflict such as `Found existing VSCode terminal Shift+Enter key binding`, remove that entry from the terminal's own keybindings file, for example VS Code's `keybindings.json`, and run the command again. Run `/terminal-setup` directly in the host terminal rather than inside tmux or screen, since it needs to write to the host terminal's configuration.
 
-<Note>
-  The `/terminal-setup` command is only visible in terminals that require manual configuration. If you're using iTerm2, WezTerm, Ghostty, or Kitty, you won't see this command because Shift+Enter already works natively.
-</Note>
+If you are running inside tmux, Shift+Enter also requires the [tmux configuration below](#configure-tmux) even when the outer terminal supports it.
 
-#### Set up Shift+Enter in tmux
+To bind newline to a different key, or to swap behavior so Enter inserts a newline and Shift+Enter submits, map the `chat:newline` and `chat:submit` actions in your [keybindings file](/en/keybindings).
 
-Inside tmux, `Shift+Enter` submits instead of inserting a newline unless extended key reporting is enabled. Add these lines to `~/.tmux.conf`, then run `tmux source-file ~/.tmux.conf` to reload your configuration:
+## Enable Option key shortcuts on macOS
 
-```text theme={null}
+Some Claude Code shortcuts use the Option key, such as Option+Enter for a newline or Option+P to switch models. On macOS, most terminals do not send Option as a modifier by default, so these shortcuts do nothing until you enable it. The terminal setting for this is usually labeled "Use Option as Meta Key"; Meta is the historical Unix name for the key now labeled Option or Alt.
+
+<Tabs>
+  <Tab title="Apple Terminal">
+    Open Settings → Profiles → Keyboard and check "Use Option as Meta Key".
+
+    If you accepted Claude Code's first-run prompt that offered "Option+Enter for newlines and visual bell", this is already done. That prompt runs `/terminal-setup` for you, which enables Option as Meta and switches the audio bell to a visual screen flash in your Apple Terminal profile.
+  </Tab>
+
+  <Tab title="iTerm2">
+    Open Settings → Profiles → Keys → General and set Left Option key and Right Option key to "Esc+".
+  </Tab>
+
+  <Tab title="VS Code">
+    Add `"terminal.integrated.macOptionIsMeta": true` to your VS Code settings.
+  </Tab>
+</Tabs>
+
+For Ghostty, Kitty, and other terminals, look for an Option-as-Alt or Option-as-Meta setting in the terminal's configuration file.
+
+## Get a terminal bell or notification
+
+When Claude finishes a task or pauses for a permission prompt, it fires a notification event. Surfacing this as a terminal bell or desktop notification lets you switch to other work while a long task runs.
+
+Claude Code sends a desktop notification only in Ghostty, Kitty, and iTerm2; every other terminal needs a [Notification hook](#play-a-sound-with-a-notification-hook) instead. The notification also reaches your local machine over SSH, so a remote session can still alert you. Ghostty and Kitty forward it to your OS notification center without further setup. iTerm2 requires you to enable forwarding:
+
+<Steps>
+  <Step title="Open iTerm2 notification settings">
+    Go to Settings → Profiles → Terminal.
+  </Step>
+
+  <Step title="Enable alerts">
+    Check "Notification Center Alerts", then click "Filter Alerts" and enable "Send escape sequence-generated alerts".
+  </Step>
+</Steps>
+
+If notifications still do not appear, confirm that your terminal application has notification permission in your OS settings, and if you are running inside tmux, [enable passthrough](#configure-tmux).
+
+### Play a sound with a Notification hook
+
+In any terminal you can configure a [Notification hook](/en/hooks-guide#get-notified-when-claude-needs-input) to play a sound or run a custom command when Claude needs your attention. Hooks run alongside the desktop notification rather than replacing it. Terminals such as Warp or Apple Terminal rely on a hook alone since Claude Code does not send them a desktop notification.
+
+The example below plays a system sound on macOS. The linked guide has desktop notification commands for macOS, Linux, and Windows.
+
+```json ~/.claude/settings.json theme={null}
+{
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [{ "type": "command", "command": "afplay /System/Library/Sounds/Glass.aiff" }]
+      }
+    ]
+  }
+}
+```
+
+## Configure tmux
+
+When Claude Code runs inside tmux, two things break by default: Shift+Enter submits instead of inserting a newline, and desktop notifications and the [progress bar](/en/settings#global-config-settings) never reach the outer terminal. Add these lines to `~/.tmux.conf`, then run `tmux source-file ~/.tmux.conf` to apply them to the running server:
+
+```bash ~/.tmux.conf theme={null}
+set -g allow-passthrough on
 set -s extended-keys on
 set -as terminal-features 'xterm*:extkeys'
 ```
 
-Claude Code requests extended keys at startup, but tmux ignores the request unless `extended-keys` is set to `on`. The `terminal-features` line tells tmux that your outer terminal can send these sequences.
+The `allow-passthrough` line lets notifications and progress updates reach iTerm2, Ghostty, or Kitty instead of being swallowed by tmux. The `extended-keys` lines let tmux distinguish Shift+Enter from plain Enter so the newline shortcut works.
 
-#### Set up Option+Enter on macOS
+## Match the color theme
 
-On macOS, you can use Option+Enter as the newline keybinding in Terminal.app, iTerm2, and the VS Code terminal after enabling the Option-as-Meta setting.
+Use the `/theme` command, or the theme picker in `/config`, to choose a Claude Code theme that matches your terminal. Selecting the auto option detects your terminal's light or dark background, so the theme follows OS appearance changes whenever your terminal does. The available themes are built in; there is no custom theme file. Claude Code does not control the terminal's own color scheme, which is set by the terminal application.
 
-<Tabs>
-  <Tab title="Terminal.app">
-    1. Open Settings → Profiles → Keyboard
-    2. Check "Use Option as Meta Key"
-  </Tab>
+To customize what appears at the bottom of the interface, configure a [custom status line](/en/statusline) that shows the current model, working directory, git branch, or other context.
 
-  <Tab title="iTerm2">
-    1. Open Settings → Profiles → Keys
-    2. Under General, set Left/Right Option key to "Esc+"
-  </Tab>
+## Switch to fullscreen rendering
 
-  <Tab title="VS Code">
-    Set `"terminal.integrated.macOptionIsMeta": true` in VS Code settings.
-  </Tab>
-</Tabs>
+If the display flickers or the scroll position jumps while Claude is working, switch to [fullscreen rendering mode](/en/fullscreen). It draws to a separate screen the terminal reserves for full-screen apps instead of appending to your normal scrollback, which keeps memory usage flat and adds mouse support for scrolling and selection. In this mode you scroll with the mouse or PageUp inside Claude Code rather than with your terminal's native scrollback; see the [fullscreen page](/en/fullscreen#search-and-review-the-conversation) for how to search and copy.
 
-### Notification setup
+Run `/tui fullscreen` to switch in the current session with your conversation intact. To make it the default, set the `CLAUDE_CODE_NO_FLICKER` environment variable before starting Claude Code:
 
-When Claude finishes working and is waiting for your input, it fires a notification event. You can surface this event as a desktop notification through your terminal or run custom logic with [notification hooks](/en/hooks#notification).
+<CodeGroup>
+  ```bash Bash and Zsh theme={null}
+  CLAUDE_CODE_NO_FLICKER=1 claude
+  ```
 
-#### Terminal notifications
+  ```powershell PowerShell theme={null}
+  $env:CLAUDE_CODE_NO_FLICKER = "1"; claude
+  ```
 
-Kitty and Ghostty support desktop notifications without additional configuration. iTerm 2 requires setup:
+  ```json ~/.claude/settings.json theme={null}
+  {
+    "env": {
+      "CLAUDE_CODE_NO_FLICKER": "1"
+    }
+  }
+  ```
+</CodeGroup>
 
-1. Open iTerm 2 Settings → Profiles → Terminal
-2. Enable "Notification Center Alerts"
-3. Click "Filter Alerts" and check "Send escape sequence-generated alerts"
+## Paste large content
 
-If notifications aren't appearing, verify that your terminal app has notification permissions in your OS settings.
+When you paste more than 10,000 characters into the prompt, Claude Code collapses the input to a `[Pasted text]` placeholder so the input box stays usable. The full content is still sent to Claude when you submit.
 
-When running Claude Code inside tmux, notifications and the [terminal progress bar](/en/settings#global-config-settings) only reach the outer terminal, such as iTerm2, Kitty, or Ghostty, if you enable passthrough in your tmux configuration:
+The VS Code integrated terminal can drop characters from very large pastes before they reach Claude Code, so prefer file-based workflows there. For very large inputs such as entire files or long logs, write the content to a file and ask Claude to read it instead of pasting. This keeps the conversation transcript readable and lets Claude reference the file by path in later turns.
 
-```
-set -g allow-passthrough on
-```
+## Edit prompts with Vim keybindings
 
-Without this setting, tmux intercepts the escape sequences and they do not reach the terminal application.
+Claude Code includes a Vim-style editing mode for the prompt input. Enable it through `/config` → Editor mode, or by setting the [`editorMode`](/en/settings#global-config-settings) global config key to `"vim"` in `~/.claude.json`. Set Editor mode back to `normal` to turn it off.
 
-Other terminals, including the default macOS Terminal, do not support native notifications. Use [notification hooks](/en/hooks#notification) instead.
+Vim mode supports a subset of NORMAL-mode motions and operators, such as `hjkl` navigation and `d`/`c`/`y` with text objects. See the [Vim editor mode reference](/en/interactive-mode#vim-editor-mode) for the full key table. Vim motions are not remappable through the keybindings file.
 
-#### Notification hooks
+Pressing Enter still submits your prompt in INSERT mode, unlike standard Vim. Use `o` or `O` in NORMAL mode, or Ctrl+J, to insert a newline instead.
 
-To add custom behavior when notifications fire, such as playing a sound or sending a message, configure a [notification hook](/en/hooks#notification). Hooks run alongside terminal notifications, not as a replacement.
+## Related resources
 
-### Reduce flicker and memory usage
-
-If you see flicker during long sessions, or your terminal scroll position jumps to the top while Claude is working, try [fullscreen rendering](/en/fullscreen). It uses an alternate rendering path that keeps memory flat and adds mouse support. Run `/tui fullscreen` to switch in your current conversation.
-
-### Handling large inputs
-
-When working with extensive code or long instructions:
-
-* **Avoid direct pasting**: Claude Code may struggle with very long pasted content
-* **Use file-based workflows**: Write content to a file and ask Claude to read it
-* **Be aware of VS Code limitations**: The VS Code terminal is particularly prone to truncating long pastes
-
-### Vim Mode
-
-Claude Code supports a subset of Vim keybindings that can be enabled via `/config` → Editor mode. To set the mode directly in your config file, set the [`editorMode`](/en/settings#global-config-settings) global config key to `"vim"` in `~/.claude.json`.
-
-The supported subset includes:
-
-* Mode switching: `Esc` (to NORMAL), `i`/`I`, `a`/`A`, `o`/`O` (to INSERT)
-* Navigation: `h`/`j`/`k`/`l`, `w`/`e`/`b`, `0`/`$`/`^`, `gg`/`G`, `f`/`F`/`t`/`T` with `;`/`,` repeat
-* Editing: `x`, `dw`/`de`/`db`/`dd`/`D`, `cw`/`ce`/`cb`/`cc`/`C`, `.` (repeat)
-* Yank/paste: `yy`/`Y`, `yw`/`ye`/`yb`, `p`/`P`
-* Text objects: `iw`/`aw`, `iW`/`aW`, `i"`/`a"`, `i'`/`a'`, `i(`/`a(`, `i[`/`a[`, `i{`/`a{`
-* Indentation: `>>`/`<<`
-* Line operations: `J` (join lines)
-
-See [Interactive mode](/en/interactive-mode#vim-editor-mode) for the complete reference.
+* [Interactive mode](/en/interactive-mode): full keyboard shortcut reference and the Vim key table
+* [Keybindings](/en/keybindings): remap any Claude Code shortcut, including Enter and Shift+Enter
+* [Fullscreen rendering](/en/fullscreen): details on scrolling, search, and copy in fullscreen mode
+* [Hooks guide](/en/hooks-guide): more Notification hook examples for Linux and Windows
+* [Troubleshooting](/en/troubleshooting): fixes for issues outside terminal configuration
