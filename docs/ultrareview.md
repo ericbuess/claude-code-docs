@@ -48,13 +48,13 @@ Before launching, Claude Code shows a confirmation dialog with the review scope 
 
 Ultrareview is a premium feature that bills against extra usage rather than your plan's included usage.
 
-| Plan                | Included free runs    | After free runs                                                                                            |
-| ------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Pro                 | 3 free runs, one-time | billed as [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
-| Max                 | 3 free runs, one-time | billed as [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
-| Team and Enterprise | none                  | billed as [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
+| Plan                | Included free runs              | After free runs                                                                                            |
+| ------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Pro                 | 3 free runs through May 5, 2026 | billed as [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
+| Max                 | 3 free runs through May 5, 2026 | billed as [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
+| Team and Enterprise | none                            | billed as [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 
-Pro and Max subscribers receive three free ultrareview runs to try the feature. These three runs are a one-time allotment per account and do not refresh. After you use them, each review is billed to extra usage and typically costs \$5 to \$20 depending on the size of the change.
+Pro and Max subscribers receive three free ultrareview runs to try the feature. These three runs are a one-time allotment per account, do not refresh, and expire on May 5, 2026. After you use all three, or after the free run period ends, each review is billed to extra usage and typically costs \$5 to \$20 depending on the size of the change.
 
 Because ultrareview always bills as extra usage outside the free runs, your account or organization must have extra usage enabled before you can launch a paid review. If extra usage is not enabled, Claude Code blocks the launch and links you to the billing settings where you can turn it on. You can also run `/extra-usage` to check or change your current setting.
 
