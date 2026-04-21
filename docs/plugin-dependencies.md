@@ -8,7 +8,7 @@
 
 A plugin can depend on other plugins by listing them in `plugin.json` or in its marketplace entry. By default, a dependency tracks the latest available version, so an upstream release can change the dependency under your plugin without warning. Version constraints let you hold a dependency at a tested version range until you choose to move.
 
-When you install a plugin that declares dependencies, Claude Code resolves and installs them automatically and lists which dependencies were added at the end of the install output.
+When you install a plugin that declares dependencies, Claude Code resolves and installs them automatically and lists which dependencies were added at the end of the install output. If a dependency later goes missing, `/reload-plugins` and the background plugin auto-update install it automatically, provided its marketplace is already in your configured marketplaces. Dependencies from a marketplace you have not added are left unresolved.
 
 This guide is for plugin authors who declare dependencies in `plugin.json` and for marketplace maintainers who tag releases. To install plugins that have dependencies, see [Discover and install plugins](/en/discover-plugins). For the full manifest schema, see the [Plugins reference](/en/plugins-reference).
 
@@ -43,13 +43,40 @@ The following manifest declares one unversioned dependency and one constrained d
 
 An entry can be a bare string with only the plugin name, like `"audit-logger"` in the example above, which depends on whatever version that plugin's marketplace provides. For more control, use an object with these fields:
 
-| Field         | Type   | Description                                                                                                                                                                                    |
-| :------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`        | string | Plugin name. Resolves within the same marketplace as the declaring plugin. Required.                                                                                                           |
-| `version`     | string | A [semver range](https://github.com/npm/node-semver#ranges) such as `~2.1.0`, `^2.0`, `>=1.4`, or `=2.1.0`. The dependency is fetched at the highest tagged version that satisfies this range. |
-| `marketplace` | string | A different marketplace to resolve `name` in. Cross-marketplace dependencies are blocked unless the target marketplace is allowlisted in the root marketplace's `marketplace.json`.            |
+| Field         | Type   | Description                                                                                                                                                                                                                                                             |
+| :------------ | :----- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`        | string | Plugin name. Resolves within the same marketplace as the declaring plugin. Required.                                                                                                                                                                                    |
+| `version`     | string | A [semver range](https://github.com/npm/node-semver#ranges) such as `~2.1.0`, `^2.0`, `>=1.4`, or `=2.1.0`. The dependency is fetched at the highest tagged version that satisfies this range.                                                                          |
+| `marketplace` | string | A different marketplace to resolve `name` in. Cross-marketplace dependencies are blocked unless the target marketplace is listed in [`allowCrossMarketplaceDependenciesOn`](#depend-on-a-plugin-from-another-marketplace) in the root marketplace's `marketplace.json`. |
 
 The `version` field accepts any expression supported by Node's `semver` package, including caret, tilde, hyphen, and comparator ranges. Pre-release versions such as `2.0.0-beta.1` are excluded unless your range opts in with a pre-release suffix like `^2.0.0-0`.
+
+## Depend on a plugin from another marketplace
+
+By default, Claude Code refuses to auto-install a dependency that lives in a different marketplace than the plugin declaring it. This prevents one marketplace from silently pulling in plugins from a source you have not reviewed.
+
+To allow it, the maintainer of the root marketplace adds the target marketplace name to `allowCrossMarketplaceDependenciesOn` in `marketplace.json`. The root marketplace is the one that hosts the plugin the user is installing; only its allowlist is consulted, so trust does not chain through intermediate marketplaces.
+
+The following `marketplace.json` allows `deploy-kit` to depend on a plugin from `acme-shared`:
+
+```json .claude-plugin/marketplace.json theme={null}
+{
+  "name": "acme-tools",
+  "owner": { "name": "Acme" },
+  "allowCrossMarketplaceDependenciesOn": ["acme-shared"],
+  "plugins": [
+    {
+      "name": "deploy-kit",
+      "source": "./deploy-kit",
+      "dependencies": [
+        { "name": "audit-logger", "marketplace": "acme-shared" }
+      ]
+    }
+  ]
+}
+```
+
+If the field is missing or does not include the target marketplace, install fails with a `cross-marketplace` error naming the field to set. Users can still install the dependency manually first, which satisfies the constraint without changing the allowlist.
 
 ## Tag plugin releases for version resolution
 

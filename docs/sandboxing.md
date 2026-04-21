@@ -97,13 +97,13 @@ You can enable sandboxing by running the `/sandbox` command:
 
 This opens a menu where you can choose between sandbox modes. If required dependencies are missing (such as `bubblewrap` or `socat` on Linux), the menu displays installation instructions for your platform.
 
-By default, if the sandbox cannot start (missing dependencies, unsupported platform, or platform restrictions), Claude Code shows a warning and runs commands without sandboxing. To make this a hard failure instead, set [`sandbox.failIfUnavailable`](/en/settings#sandbox-settings) to `true`. This is intended for managed deployments that require sandboxing as a security gate.
+By default, if the sandbox cannot start (missing dependencies or unsupported platform), Claude Code shows a warning and runs commands without sandboxing. To make this a hard failure instead, set [`sandbox.failIfUnavailable`](/en/settings#sandbox-settings) to `true`. This is intended for managed deployments that require sandboxing as a security gate.
 
 ### Sandbox modes
 
 Claude Code offers two sandbox modes:
 
-**Auto-allow mode**: Bash commands will attempt to run inside the sandbox and are automatically allowed without requiring permission. Commands that cannot be sandboxed (such as those needing network access to non-allowed hosts) fall back to the regular permission flow. Explicit deny rules are always respected. Ask rules apply only to commands that fall back to the regular permission flow.
+**Auto-allow mode**: Bash commands will attempt to run inside the sandbox and are automatically allowed without requiring permission. Commands that cannot be sandboxed (such as those needing network access to non-allowed hosts) fall back to the regular permission flow. Explicit deny rules are always respected, and `rm` or `rmdir` commands that target `/`, your home directory, or other critical system paths still trigger a permission prompt. Ask rules apply only to commands that fall back to the regular permission flow.
 
 **Regular permissions mode**: All bash commands go through the standard permission flow, even when sandboxed. This provides more control but requires more approvals.
 

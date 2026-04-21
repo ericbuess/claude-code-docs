@@ -112,10 +112,10 @@ Claude Code requires access to the following URLs:
 
 Ensure these URLs are allowlisted in your proxy configuration and firewall rules. This is especially important when using Claude Code in containerized or restricted network environments.
 
-The native installer and update checks also require the following URLs. Allowlist both, since the installer and auto-updater fetch from `storage.googleapis.com` while plugin downloads use `downloads.claude.ai`. If you install Claude Code through npm or manage your own binary distribution, end users may not need access:
+The native installer and update checks also require the following URLs. Allowlist both, since clients running older Claude Code versions fetch from `storage.googleapis.com`. If you install Claude Code through npm or manage your own binary distribution, end users may not need access:
 
-* `storage.googleapis.com`: download bucket for the Claude Code binary and auto-updater
-* `downloads.claude.ai`: CDN hosting the install script, version pointers, manifests, signing keys, and plugin executables
+* `downloads.claude.ai`: download host for the Claude Code binary, auto-updater, version pointers, manifests, install script, signing keys, and plugin executables
+* `storage.googleapis.com`: legacy download host used by older clients
 
 The [Chrome integration](/en/chrome) connects to the browser extension over a WebSocket bridge. If you use Claude in Chrome, allowlist `bridge.claudeusercontent.com` for outbound WebSocket connections.
 

@@ -159,15 +159,22 @@ Define subagents directly in your code using the `agents` parameter. This exampl
 
 ### AgentDefinition configuration
 
-| Field         | Type                                         | Required | Description                                                      |
-| :------------ | :------------------------------------------- | :------- | :--------------------------------------------------------------- |
-| `description` | `string`                                     | Yes      | Natural language description of when to use this agent           |
-| `prompt`      | `string`                                     | Yes      | The agent's system prompt defining its role and behavior         |
-| `tools`       | `string[]`                                   | No       | Array of allowed tool names. If omitted, inherits all tools      |
-| `model`       | `'sonnet' \| 'opus' \| 'haiku' \| 'inherit'` | No       | Model override for this agent. Defaults to main model if omitted |
-| `skills`      | `string[]`                                   | No       | List of skill names available to this agent                      |
-| `memory`      | `'user' \| 'project' \| 'local'`             | No       | Memory source for this agent (Python only)                       |
-| `mcpServers`  | `(string \| object)[]`                       | No       | MCP servers available to this agent, by name or inline config    |
+| Field             | Type                                                        | Required | Description                                                                                                                                                 |
+| :---------------- | :---------------------------------------------------------- | :------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `description`     | `string`                                                    | Yes      | Natural language description of when to use this agent                                                                                                      |
+| `prompt`          | `string`                                                    | Yes      | The agent's system prompt defining its role and behavior                                                                                                    |
+| `tools`           | `string[]`                                                  | No       | Array of allowed tool names. If omitted, inherits all tools                                                                                                 |
+| `disallowedTools` | `string[]`                                                  | No       | Array of tool names to remove from the agent's tool set                                                                                                     |
+| `model`           | `string`                                                    | No       | Model override for this agent. Accepts an alias such as `'sonnet'`, `'opus'`, `'haiku'`, `'inherit'`, or a full model ID. Defaults to main model if omitted |
+| `skills`          | `string[]`                                                  | No       | List of skill names available to this agent                                                                                                                 |
+| `memory`          | `'user' \| 'project' \| 'local'`                            | No       | Memory source for this agent                                                                                                                                |
+| `mcpServers`      | `(string \| object)[]`                                      | No       | MCP servers available to this agent, by name or inline config                                                                                               |
+| `maxTurns`        | `number`                                                    | No       | Maximum number of agentic turns before the agent stops                                                                                                      |
+| `background`      | `boolean`                                                   | No       | Run this agent as a non-blocking background task when invoked                                                                                               |
+| `effort`          | `'low' \| 'medium' \| 'high' \| 'xhigh' \| 'max' \| number` | No       | Reasoning effort level for this agent                                                                                                                       |
+| `permissionMode`  | `PermissionMode`                                            | No       | Permission mode for tool execution within this agent                                                                                                        |
+
+In the Python SDK, these field names use camelCase to match the wire format. See the [`AgentDefinition` reference](/en/agent-sdk/python#agent-definition) for details.
 
 <Note>
   Subagents cannot spawn their own subagents. Don't include `Agent` in a subagent's `tools` array.

@@ -144,7 +144,9 @@ Traces give you the most detailed view of an agent run. With `CLAUDE_CODE_ENHANC
 * **`claude_code.interaction`:** wraps a single turn of the agent loop, from receiving a prompt to producing a response.
 * **`claude_code.llm_request`:** wraps each call to the Claude API, with model name, latency, and token counts as attributes.
 * **`claude_code.tool`:** wraps each tool invocation, with child spans for the permission wait (`claude_code.tool.blocked_on_user`) and the execution itself (`claude_code.tool.execution`).
-* **`claude_code.hook`:** wraps each [hook](/en/agent-sdk/hooks) execution.
+* **`claude_code.hook`:** wraps each [hook](/en/agent-sdk/hooks) execution. Requires detailed beta tracing (`ENABLE_BETA_TRACING_DETAILED=1` and `BETA_TRACING_ENDPOINT`) in addition to the variables above.
+
+The `llm_request`, `tool`, and `hook` spans are children of the enclosing `claude_code.interaction` span. When the agent spawns a subagent through the Task tool, the subagent's `llm_request` and `tool` spans nest under the parent agent's `claude_code.tool` span, so the full delegation chain appears as one trace.
 
 Spans carry a `session.id` attribute by default. When you make several `query()` calls against the same [session](/en/agent-sdk/sessions), filter on `session.id` in your backend to see them as one timeline. The attribute is omitted if `OTEL_METRICS_INCLUDE_SESSION_ID` is set to a falsy value.
 
@@ -153,6 +155,14 @@ Spans carry a `session.id` attribute by default. When you make several `query()`
   [Traces (beta)](/en/monitoring-usage#traces-beta) in the Monitoring reference
   for the trace exporter configuration variables.
 </Note>
+
+## Link traces to your application
+
+The SDK automatically propagates W3C trace context into the CLI subprocess. When you call `query()` while an OpenTelemetry span is active in your application, the SDK injects `TRACEPARENT` and `TRACESTATE` into the child process environment, and the CLI reads them so its `claude_code.interaction` span becomes a child of your span. The agent run then appears inside your application's trace instead of as a disconnected root.
+
+The CLI also forwards `TRACEPARENT` to every Bash and PowerShell command it runs. If a command launched through the Bash tool emits its own OpenTelemetry spans, those spans nest under the `claude_code.tool.execution` span that wraps the command.
+
+Auto-injection is skipped when you set `TRACEPARENT` explicitly in `options.env`, so you can pin a specific parent context if needed. Interactive CLI sessions ignore inbound `TRACEPARENT` entirely; only Agent SDK and `claude -p` runs honor it. See [Traces (beta)](/en/monitoring-usage#traces-beta) in the Monitoring reference for the full span and attribute reference.
 
 ## Tag telemetry from your agent
 
@@ -186,13 +196,14 @@ The following example renames the service and attaches deployment metadata. Thes
 
 ## Control sensitive data in exports
 
-Telemetry is structural by default. Durations, model names, and tool names are recorded on every span; token counts are recorded when the underlying API request returns usage data, so spans for failed or aborted requests may omit them. The content your agent reads and writes is not recorded by default. Three opt-in variables add content to the exported data:
+Telemetry is structural by default. Durations, model names, and tool names are recorded on every span; token counts are recorded when the underlying API request returns usage data, so spans for failed or aborted requests may omit them. The content your agent reads and writes is not recorded by default. These opt-in variables add content to the exported data:
 
-| Variable                  | Adds                                                                                                                                             |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `OTEL_LOG_USER_PROMPTS=1` | Prompt text on `claude_code.user_prompt` events and on the `claude_code.interaction` span                                                        |
-| `OTEL_LOG_TOOL_DETAILS=1` | Tool input arguments (file paths, shell commands, search patterns) on `claude_code.tool_result` events                                           |
-| `OTEL_LOG_TOOL_CONTENT=1` | Full tool input and output bodies as span events on `claude_code.tool`, truncated at 60 KB. Requires [tracing](#read-agent-traces) to be enabled |
+| Variable                  | Adds                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `OTEL_LOG_USER_PROMPTS=1` | Prompt text on `claude_code.user_prompt` events and on the `claude_code.interaction` span                                                                                                                                                                                                                                                                                                                                                                   |
+| `OTEL_LOG_TOOL_DETAILS=1` | Tool input arguments (file paths, shell commands, search patterns) on `claude_code.tool_result` events                                                                                                                                                                                                                                                                                                                                                      |
+| `OTEL_LOG_TOOL_CONTENT=1` | Full tool input and output bodies as span events on `claude_code.tool`, truncated at 60 KB. Requires [tracing](#read-agent-traces) to be enabled                                                                                                                                                                                                                                                                                                            |
+| `OTEL_LOG_RAW_API_BODIES` | Full Anthropic Messages API request and response JSON as `claude_code.api_request_body` and `claude_code.api_response_body` log events. Set to `1` for inline bodies truncated at 60 KB, or `file:<dir>` for untruncated bodies on disk with a `body_ref` path in the event. Bodies include the entire conversation history and have extended-thinking content redacted. Enabling this implies consent to everything the three variables above would reveal |
 
 Leave these unset unless your observability pipeline is approved to store the data your agent handles. See [Security and privacy](/en/monitoring-usage#security-and-privacy) in the Monitoring reference for the full list of attributes and redaction behavior.
 

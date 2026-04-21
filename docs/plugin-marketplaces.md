@@ -167,13 +167,14 @@ Each plugin entry needs at minimum a `name` and `source` (where to fetch it from
 | `name`  | string | Yes      | Name of the maintainer or team   |
 | `email` | string | No       | Contact email for the maintainer |
 
-### Optional metadata
+### Optional fields
 
-| Field                  | Type   | Description                                                                                                                                                               |
-| :--------------------- | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `metadata.description` | string | Brief marketplace description                                                                                                                                             |
-| `metadata.version`     | string | Marketplace version                                                                                                                                                       |
-| `metadata.pluginRoot`  | string | Base directory prepended to relative plugin source paths (for example, `"./plugins"` lets you write `"source": "formatter"` instead of `"source": "./plugins/formatter"`) |
+| Field                                 | Type   | Description                                                                                                                                                                                                                                                        |
+| :------------------------------------ | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `metadata.description`                | string | Brief marketplace description                                                                                                                                                                                                                                      |
+| `metadata.version`                    | string | Marketplace version                                                                                                                                                                                                                                                |
+| `metadata.pluginRoot`                 | string | Base directory prepended to relative plugin source paths (for example, `"./plugins"` lets you write `"source": "formatter"` instead of `"source": "./plugins/formatter"`)                                                                                          |
+| `allowCrossMarketplaceDependenciesOn` | array  | Other marketplaces that plugins in this marketplace may depend on. Dependencies from a marketplace not listed here are blocked at install. See [Depend on a plugin from another marketplace](/en/plugin-dependencies#depend-on-a-plugin-from-another-marketplace). |
 
 ## Plugin entries
 

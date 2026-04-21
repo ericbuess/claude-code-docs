@@ -41,15 +41,15 @@ If your issue isn't listed, work through these diagnostic steps.
 
 ### Check network connectivity
 
-The installer downloads from `storage.googleapis.com`. Verify you can reach it:
+The installer downloads from `downloads.claude.ai`. Verify you can reach it:
 
 ```bash theme={null}
-curl -sI https://storage.googleapis.com
+curl -sI https://downloads.claude.ai
 ```
 
 If this fails, your network may be blocking the connection. Common causes:
 
-* Corporate firewalls or proxies blocking Google Cloud Storage
+* Corporate firewalls or proxies blocking `downloads.claude.ai`
 * Regional network restrictions: try a VPN or alternative network
 * TLS/SSL issues: update your system's CA certificates, or check if `HTTPS_PROXY` is configured
 
@@ -279,9 +279,9 @@ The `curl ... | bash` command downloads the script and passes it directly to Bas
 
 **Solutions:**
 
-1. **Check network stability**: Claude Code binaries are hosted on Google Cloud Storage. Test that you can reach it:
+1. **Check network stability**: Claude Code binaries are hosted at `downloads.claude.ai`. Test that you can reach it:
    ```bash theme={null}
-   curl -fsSL https://storage.googleapis.com -o /dev/null
+   curl -fsSL https://downloads.claude.ai -o /dev/null
    ```
    If the command completes silently, your connection is fine and the issue is likely intermittent. Retry the install command. If you see an error, your network may be blocking the download.
 
@@ -337,15 +337,15 @@ Errors like `curl: (35) TLS connect error`, `schannel: next InitializeSecurityCo
    ```
    Alternatively, install with `winget install Anthropic.ClaudeCode`, which avoids curl entirely.
 
-### `Failed to fetch version from storage.googleapis.com`
+### `Failed to fetch version from downloads.claude.ai`
 
-The installer couldn't reach the download server. This typically means `storage.googleapis.com` is blocked on your network.
+The installer couldn't reach the download server. This typically means `downloads.claude.ai` is blocked on your network.
 
 **Solutions:**
 
 1. **Test connectivity directly**:
    ```bash theme={null}
-   curl -sI https://storage.googleapis.com
+   curl -sI https://downloads.claude.ai
    ```
 
 2. **If behind a proxy**, set `HTTPS_PROXY` so the installer can route through it. See [proxy configuration](/en/network-config#proxy-configuration) for details.
@@ -502,7 +502,7 @@ This can happen on glibc-based systems that have musl cross-compilation packages
    ```
    If it shows `linux-vdso.so` or references to `/lib/x86_64-linux-gnu/`, you're on glibc. If it shows `musl`, you're on musl.
 
-2. **If you're on glibc but got the musl binary**, remove the installation and reinstall. You can also manually download the correct binary from the GCS bucket at `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json`. File a [GitHub issue](https://github.com/anthropics/claude-code/issues) with the output of `ldd /bin/ls` and `ls /lib/libc.musl*`.
+2. **If you're on glibc but got the musl binary**, remove the installation and reinstall. You can also manually download the correct binary using the manifest at `https://downloads.claude.ai/claude-code-releases/{VERSION}/manifest.json`. File a [GitHub issue](https://github.com/anthropics/claude-code/issues) with the output of `ldd /bin/ls` and `ls /lib/libc.musl*`.
 
 3. **If you're actually on musl** (Alpine Linux), install the required packages:
    ```bash theme={null}
