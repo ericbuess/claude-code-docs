@@ -539,6 +539,29 @@ Once added, the connection appears in the environment dropdown. Select it to sta
 
 The remote machine must run Linux or macOS, and Claude Code must be installed on it. Once connected, SSH sessions support permission modes, connectors, plugins, and MCP servers.
 
+#### Pre-configure SSH connections for your team
+
+Administrators can distribute SSH connections to team members by adding `sshConfigs` to a [managed settings](/en/settings#settings-precedence) file. Connections defined this way appear in each user's environment dropdown automatically and are shown as managed, so users can select them but cannot edit or delete them in the app.
+
+The following example pre-configures a single connection that opens in `~/projects` on the remote host:
+
+```json theme={null}
+{
+  "sshConfigs": [
+    {
+      "id": "shared-dev-vm",
+      "name": "Shared Dev VM",
+      "sshHost": "user@dev.example.com",
+      "sshPort": 22,
+      "sshIdentityFile": "~/.ssh/id_ed25519",
+      "startDirectory": "~/projects"
+    }
+  ]
+}
+```
+
+Each entry requires `id`, `name`, and `sshHost`. The `sshPort`, `sshIdentityFile`, and `startDirectory` fields are optional. Users can also add `sshConfigs` to their own `~/.claude/settings.json`, which is where connections added through the dialog are stored.
+
 ## Enterprise configuration
 
 Organizations on Team or Enterprise plans can manage desktop app behavior through admin console controls, managed settings files, and device management policies.
@@ -561,6 +584,7 @@ Managed settings override project and user settings and apply when Desktop spawn
 | `permissions.disableBypassPermissionsMode` | set to `"disable"` to prevent users from enabling Bypass permissions mode.                                                                                                                    |
 | `disableAutoMode`                          | set to `"disable"` to prevent users from enabling [Auto](/en/permission-modes#eliminate-prompts-with-auto-mode) mode. Removes Auto from the mode selector. Also accepted under `permissions`. |
 | `autoMode`                                 | customize what the auto mode classifier trusts and blocks across your organization. See [Configure the auto mode classifier](/en/permissions#configure-the-auto-mode-classifier).             |
+| `sshConfigs`                               | pre-configure [SSH connections](#pre-configure-ssh-connections-for-your-team) that appear in the environment dropdown. Users cannot edit or delete managed connections.                       |
 
 `permissions.disableBypassPermissionsMode` and `disableAutoMode` also work in user and project settings, but placing them in managed settings prevents users from overriding them. `autoMode` is read from user settings, `.claude/settings.local.json`, and managed settings, but not from the checked-in `.claude/settings.json`: a cloned repo cannot inject its own classifier rules. For the complete list of managed-only settings including `allowManagedPermissionRulesOnly` and `allowManagedHooksOnly`, see [managed-only settings](/en/permissions#managed-only-settings).
 

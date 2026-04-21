@@ -1390,11 +1390,13 @@ themselves by leaving a TODO(human) marker instead of writing it.`
 
 Claude Code reads instructions, settings, skills, subagents, and memory from your project directory and from `~/.claude` in your home directory. Commit project files to git to share them with your team; files in `~/.claude` are personal configuration that applies across all your projects.
 
-If you set [`CLAUDE_CONFIG_DIR`](/en/env-vars), every `~/.claude` path on this page lives under that directory instead.
+On Windows, `~/.claude` resolves to `%USERPROFILE%\.claude`. If you set [`CLAUDE_CONFIG_DIR`](/en/env-vars), every `~/.claude` path on this page lives under that directory instead.
 
 Most users only edit `CLAUDE.md` and `settings.json`. The rest of the directory is optional: add skills, rules, or subagents as you need them.
 
-This page is an interactive explorer: click files in the tree to see what each one does, when it loads, and an example. For a quick reference, see the [file reference table](#file-reference) below.
+## Explore the directory
+
+Click files in the tree to see what each one does, when it loads, and an example.
 
 <ClaudeExplorer />
 
@@ -1406,9 +1408,25 @@ The explorer covers files you author and edit. A few related files live elsewher
 | ----------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `managed-settings.json` | System-level, varies by OS | Enterprise-enforced settings that you can't override. See [server-managed settings](/en/server-managed-settings).                                                                                                                                                  |
 | `CLAUDE.local.md`       | Project root               | Your private preferences for this project, loaded alongside CLAUDE.md. Create it manually and add it to `.gitignore`.                                                                                                                                              |
-| Installed plugins       | `~/.claude/plugins/`       | Cloned marketplaces, installed plugin versions, and per-plugin data, managed by `claude plugin` commands. Orphaned versions are deleted 7 days after a plugin update or uninstall. See [plugin caching](/en/plugins-reference#plugin-caching-and-file-resolution). |
+| Installed plugins       | `~/.claude/plugins`        | Cloned marketplaces, installed plugin versions, and per-plugin data, managed by `claude plugin` commands. Orphaned versions are deleted 7 days after a plugin update or uninstall. See [plugin caching](/en/plugins-reference#plugin-caching-and-file-resolution). |
 
 `~/.claude` also holds data Claude Code writes as you work: transcripts, prompt history, file snapshots, caches, and logs. See [application data](#application-data) below.
+
+## Choose the right file
+
+Different kinds of customization live in different files. Use this table to find where a change belongs.
+
+| You want to                                        | Edit                                     | Scope             | Reference                                          |
+| :------------------------------------------------- | :--------------------------------------- | :---------------- | :------------------------------------------------- |
+| Give Claude project context and conventions        | `CLAUDE.md`                              | project or global | [Memory](/en/memory)                               |
+| Allow or block specific tool calls                 | `settings.json` `permissions` or `hooks` | project or global | [Permissions](/en/permissions), [Hooks](/en/hooks) |
+| Run a script before or after tool calls            | `settings.json` `hooks`                  | project or global | [Hooks](/en/hooks)                                 |
+| Set environment variables for the session          | `settings.json` `env`                    | project or global | [Settings](/en/settings#available-settings)        |
+| Keep personal overrides out of git                 | `settings.local.json`                    | project only      | [Settings scopes](/en/settings#settings-files)     |
+| Add a prompt or capability you invoke with `/name` | `skills/<name>/SKILL.md`                 | project or global | [Skills](/en/skills)                               |
+| Define a specialized subagent with its own tools   | `agents/*.md`                            | project or global | [Subagents](/en/sub-agents)                        |
+| Connect external tools over MCP                    | `.mcp.json`                              | project only      | [MCP](/en/mcp)                                     |
+| Change how Claude formats responses                | `output-styles/*.md`                     | project or global | [Output styles](/en/output-styles)                 |
 
 ## File reference
 
@@ -1442,6 +1460,27 @@ Click a filename to open that node in the explorer above.
 | [`~/.claude.json`](#ce-claude-json)                 | Global only        |        | App state, OAuth, UI toggles, personal MCP servers    | [Global config](/en/settings#global-config-settings)                 |
 | [`projects/<project>/memory/`](#ce-global-projects) | Global only        |        | Auto memory: Claude's notes to itself across sessions | [Auto memory](/en/memory#auto-memory)                                |
 | [`keybindings.json`](#ce-keybindings)               | Global only        |        | Custom keyboard shortcuts                             | [Keybindings](/en/keybindings)                                       |
+
+## Troubleshoot configuration
+
+If a setting, hook, or file isn't taking effect, scan the symptoms below.
+
+| Symptom                                                          | Cause                                                                                  | Fix                                                                                                                                                                                                       |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hook never fires                                                 | `matcher` is a JSON array instead of a string                                          | Use a single string with `\|` to match multiple tools, for example `"Edit\|Write"`. See [matcher patterns](/en/hooks#matcher-patterns).                                                                   |
+| Hook never fires                                                 | `matcher` value is lowercase, for example `"bash"`                                     | Matching is case-sensitive. Tool names are capitalized: `Bash`, `Edit`, `Write`, `Read`.                                                                                                                  |
+| Hook never fires                                                 | Hooks are in a standalone `.claude/hooks.json` file                                    | There is no standalone hooks file. Define hooks under the `"hooks"` key in `settings.json`. See [hook configuration](/en/hooks).                                                                          |
+| Permissions, hooks, or env set globally are ignored              | Configuration was added to `~/.claude.json`                                            | `~/.claude.json` holds app state and UI toggles. `permissions`, `hooks`, and `env` belong in `~/.claude/settings.json`. These are two different files.                                                    |
+| A `settings.json` value seems ignored                            | The same key is set in `settings.local.json`                                           | `settings.local.json` overrides `settings.json`, and both override `~/.claude/settings.json`. See [settings precedence](/en/settings#settings-precedence).                                                |
+| Skill doesn't appear in `/skills`                                | Skill file is at `.claude/skills/name.md` instead of in a folder                       | Use a folder with `SKILL.md` inside: `.claude/skills/name/SKILL.md`.                                                                                                                                      |
+| Subdirectory `CLAUDE.md` instructions seem ignored               | Subdirectory files load on demand, not at session start                                | They load when Claude reads a file in that directory with the Read tool, not at launch and not when writing or creating files there. See [how CLAUDE.md files load](/en/memory#how-claude-md-files-load). |
+| Subagent ignores `CLAUDE.md` instructions                        | Subagents don't always inherit project memory                                          | Put critical rules in the agent file body, which becomes the subagent's system prompt. See [subagent configuration](/en/sub-agents).                                                                      |
+| Cleanup logic never runs at session end                          | No `SessionEnd` hook configured                                                        | `SessionStart` and `SessionEnd` both exist. See the [hook events list](/en/hooks#hook-events).                                                                                                            |
+| MCP servers in `.mcp.json` never load                            | File is under `.claude/` or uses Claude Desktop's config format                        | Project MCP config lives at the repository root as `.mcp.json`, not inside `.claude/`. See [MCP configuration](/en/mcp).                                                                                  |
+| Project MCP server added but doesn't appear                      | The one-time approval prompt was dismissed                                             | Project-scoped servers require approval. Run `/mcp` to see status and approve.                                                                                                                            |
+| MCP server fails to start from some directories                  | `command` or `args` uses a relative file path                                          | Use absolute paths for local scripts. Executables on your `PATH` like `npx` or `uvx` work as-is.                                                                                                          |
+| MCP server starts without expected environment variables         | Variables are in `settings.json` `env`, which doesn't propagate to MCP child processes | Set per-server `env` inside `.mcp.json` instead.                                                                                                                                                          |
+| `Bash(rm *)` deny rule doesn't block `/bin/rm` or `find -delete` | Prefix rules match the literal command string, not the underlying executable           | Add explicit patterns for each variant, or use a [PreToolUse hook](/en/hooks-guide) or the [sandbox](/en/sandboxing) for a hard guarantee.                                                                |
 
 ## Check what loaded
 

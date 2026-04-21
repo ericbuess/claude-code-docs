@@ -403,6 +403,14 @@ Suppose you need to add or update documentation for your code.
 
 ***
 
+## Work in notes and non-code folders
+
+Claude Code works in any directory. Run it inside a notes vault, a documentation folder, or any collection of markdown files to search, edit, and reorganize content the same way you would code.
+
+The `.claude/` directory and `CLAUDE.md` sit alongside other tools' config directories without conflict. Claude reads files fresh on each tool call, so it sees edits you make in another application the next time it reads that file.
+
+***
+
 ## Work with images
 
 Suppose you need to work with images in your codebase, and you want Claude's help analyzing image content.
