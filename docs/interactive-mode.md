@@ -312,7 +312,7 @@ When you return to the terminal after stepping away, Claude Code shows a one-lin
 
 Run `/recap` to generate a summary on demand. To turn automatic recaps off, open `/config` and disable **Session recap**.
 
-Session recap is on by default for every plan and provider. To override the `/config` toggle, set [`CLAUDE_CODE_ENABLE_AWAY_SUMMARY`](/en/env-vars) to `0` or `1`. The recap is always skipped in non-interactive mode.
+Session recap is on by default for every plan and provider. The recap is always skipped in non-interactive mode.
 
 ## PR review status
 

@@ -639,14 +639,7 @@ export const Experiment = ({flag, treatment, children}) => {
 Claude Code is an AI-powered coding assistant that helps you build features, fix bugs, and automate development tasks. It understands your entire codebase and can work across multiple files and tools to get things done.
 
 <div data-gb-slot="overview-install-configurator">
-  <Experiment
-    flag="overview-install-configurator"
-    treatment={
-<Experiment flag="install-configurator-default-surface" treatment={<InstallConfigurator defaultSurface="desktop" />}>
-  <InstallConfigurator />
-</Experiment>
-}
-  />
+  <Experiment flag="overview-install-configurator" treatment={<InstallConfigurator />} />
 </div>
 
 ## Get started
