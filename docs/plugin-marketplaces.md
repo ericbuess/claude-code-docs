@@ -677,7 +677,7 @@ Use `".*"` as the `pathPattern` to allow any filesystem path while still control
 
 #### How restrictions work
 
-Restrictions are validated early in the plugin installation process, before any network requests or filesystem operations occur. This prevents unauthorized marketplace access attempts.
+Restrictions are checked before any network or filesystem operation. The check runs on marketplace add and on plugin install, update, refresh, and auto-update. If a marketplace was added before the policy was configured and its source no longer matches the allowlist, Claude Code refuses to install or update plugins from it. The same enforcement applies to `blockedMarketplaces`.
 
 The allowlist uses exact matching for most source types. For a marketplace to be allowed, all specified fields must match exactly:
 

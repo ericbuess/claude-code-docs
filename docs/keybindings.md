@@ -307,9 +307,9 @@ Actions available in the `Doctor` context:
 
 Actions available in the `Chat` context when [voice dictation](/en/voice-dictation) is enabled:
 
-| Action             | Default | Description              |
-| :----------------- | :------ | :----------------------- |
-| `voice:pushToTalk` | Space   | Hold to dictate a prompt |
+| Action             | Default | Description                                              |
+| :----------------- | :------ | :------------------------------------------------------- |
+| `voice:pushToTalk` | Space   | Dictate a prompt. Hold or tap depending on `/voice` mode |
 
 ### Scroll actions
 

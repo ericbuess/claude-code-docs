@@ -24,7 +24,13 @@ Subagents help you:
 
 Claude uses each subagent's description to decide when to delegate tasks. When you create a subagent, write a clear description so Claude knows when to use it.
 
-Claude Code includes several built-in subagents like **Explore**, **Plan**, and **general-purpose**. You can also create custom subagents to handle specific tasks. This page covers the [built-in subagents](#built-in-subagents), [how to create your own](#quickstart-create-your-first-subagent), [full configuration options](#configure-subagents), [patterns for working with subagents](#work-with-subagents), and [example subagents](#example-subagents).
+Claude Code includes several built-in subagents like **Explore**, **Plan**, and **general-purpose**. You can also create custom subagents to handle specific tasks. This page covers:
+
+* [Built-in subagents](#built-in-subagents)
+* [How to create your own](#quickstart-create-your-first-subagent)
+* [Full configuration options](#configure-subagents)
+* [Patterns for working with subagents](#work-with-subagents)
+* [Example subagents](#example-subagents)
 
 ## Built-in subagents
 
@@ -320,6 +326,15 @@ If `Agent` is omitted from the `tools` list entirely, the agent cannot spawn any
 #### Scope MCP servers to a subagent
 
 Use the `mcpServers` field to give a subagent access to [MCP](/en/mcp) servers that aren't available in the main conversation. Inline servers defined here are connected when the subagent starts and disconnected when it finishes. String references share the parent session's connection.
+
+<Note>
+  The `mcpServers` field applies in both contexts where an agent file can run:
+
+  * As a subagent, spawned through the Agent tool or an @-mention
+  * As the main session, launched with [`--agent`](#invoke-subagents-explicitly) or the `agent` setting
+
+  When the agent is the main session, inline server definitions connect at startup alongside servers from [`.mcp.json`](/en/mcp) and settings files.
+</Note>
 
 Each entry in the list is either an inline server definition or a string referencing an MCP server already configured in your session:
 

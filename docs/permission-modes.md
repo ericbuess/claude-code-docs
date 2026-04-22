@@ -159,7 +159,7 @@ If Claude Code reports auto mode as unavailable, one of these requirements is un
 
 ### What the classifier blocks by default
 
-The classifier trusts your working directory and your repo's configured remotes. Everything else is treated as external until you [configure trusted infrastructure](/en/permissions#configure-the-auto-mode-classifier).
+The classifier trusts your working directory and your repo's configured remotes. Everything else is treated as external until you [configure trusted infrastructure](/en/auto-mode-config).
 
 **Blocked by default**:
 
@@ -180,7 +180,7 @@ The classifier trusts your working directory and your repo's configured remotes.
 * Read-only HTTP requests
 * Pushing to the branch you started on or one Claude created
 
-Sandbox network access requests are routed through the classifier rather than allowed by default. Run `claude auto-mode defaults` to see the full rule lists. If routine actions get blocked, an administrator can add trusted repos, buckets, and services via the `autoMode.environment` setting: see [Configure the auto mode classifier](/en/permissions#configure-the-auto-mode-classifier).
+Sandbox network access requests are routed through the classifier rather than allowed by default. Run `claude auto-mode defaults` to see the full rule lists. If routine actions get blocked, an administrator can add trusted repos, buckets, and services via the `autoMode.environment` setting: see [Configure auto mode](/en/auto-mode-config).
 
 ### Boundaries you state in conversation
 
@@ -196,7 +196,7 @@ If the classifier blocks an action 3 times in a row or 20 times total, auto mode
 
 In [non-interactive mode](/en/headless) with the `-p` flag, repeated blocks abort the session since there is no user to prompt.
 
-Repeated blocks usually mean the classifier is missing context about your infrastructure. Use `/feedback` to report false positives, or have an administrator [configure trusted infrastructure](/en/permissions#configure-the-auto-mode-classifier).
+Repeated blocks usually mean the classifier is missing context about your infrastructure. Use `/feedback` to report false positives, or have an administrator [configure trusted infrastructure](/en/auto-mode-config).
 
 <AccordionGroup>
   <Accordion title="How the classifier evaluates actions">
@@ -279,7 +279,8 @@ Protected files:
 
 ## See also
 
-* [Permissions](/en/permissions): allow, ask, and deny rules; auto mode classifier configuration; managed policies
+* [Permissions](/en/permissions): allow, ask, and deny rules; managed policies
+* [Configure auto mode](/en/auto-mode-config): tell the classifier which infrastructure your organization trusts
 * [Hooks](/en/hooks): custom permission logic via `PreToolUse` and `PermissionRequest` hooks
 * [Ultraplan](/en/ultraplan): run plan mode in a Claude Code on the web session with browser-based review
 * [Security](/en/security): safeguards and best practices

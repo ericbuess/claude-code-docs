@@ -345,7 +345,7 @@ Prompt is too long
 * Run `/compact` to summarize earlier turns and free space, or `/clear` to start fresh
 * Run `/context` to see a breakdown of what is consuming the window: system prompt, tools, memory files, and messages
 * Disable MCP servers you are not using with `/mcp disable <name>` to remove their tool definitions from context
-* Trim large `CLAUDE.md` memory files or split them into [imports](/en/memory)
+* Trim large `CLAUDE.md` memory files, or move instructions into [path-scoped rules](/en/memory#path-specific-rules) that load only when relevant
 * Subagents inherit every MCP tool definition from the parent session, which can fill their context window before the first turn. Disable MCP servers you are not using before spawning subagents.
 * Auto-compact is on by default and normally prevents this error. If you have set [`DISABLE_AUTO_COMPACT`](/en/env-vars), re-enable it or run `/compact` manually before the window fills.
 
@@ -511,7 +511,7 @@ If Claude's answers seem less capable than you expect but no error is shown, the
 Check these first:
 
 * **Model selection**: run `/model` to confirm you are on the model you expect. A previous `/model` choice or an `ANTHROPIC_MODEL` environment variable may have you on a smaller model than you intended.
-* **Effort level**: run `/effort` to check the current reasoning level and raise it for hard debugging or design work. Defaults vary by model and plan, so check before assuming you are below the maximum. See [Adjust effort level](/en/model-config#adjust-effort-level) for per-model defaults and the `ultrathink` shortcut.
+* **Effort level**: run `/effort` to check the current reasoning level and raise it for hard debugging or design work. Defaults vary by model, so check before assuming you are below the maximum. See [Adjust effort level](/en/model-config#adjust-effort-level) for per-model defaults and the `ultrathink` shortcut.
 * **Context pressure**: run `/context` to see how full the window is. If it is near capacity, run `/compact` at a natural breakpoint or `/clear` to start fresh. See [Explore the context window](/en/context-window) for how auto-compact affects earlier turns.
 * **Stale instructions**: large or outdated `CLAUDE.md` files and MCP tool definitions consume context and can steer responses. `/doctor` flags oversized memory files and subagent definitions; `/context` shows MCP tool token usage.
 

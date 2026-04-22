@@ -340,10 +340,11 @@ When Claude runs long-running commands, the extension shows progress in the stat
 
 MCP (Model Context Protocol) servers give Claude access to external tools, databases, and APIs.
 
-To add an MCP server, open the integrated terminal (`` Ctrl+` `` or `` Cmd+` ``) and run:
+To add an MCP server, open the integrated terminal (`` Ctrl+` `` or `` Cmd+` ``) and run `claude mcp add`. The example below adds GitHub's remote MCP server, which authenticates with a [personal access token](https://github.com/settings/personal-access-tokens) passed as a header:
 
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 Once configured, ask Claude to use the tools (e.g., "Review PR #456").
