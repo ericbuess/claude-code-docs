@@ -1463,41 +1463,7 @@ Click a filename to open that node in the explorer above.
 
 ## Troubleshoot configuration
 
-If a setting, hook, or file isn't taking effect, scan the symptoms below.
-
-| Symptom                                                          | Cause                                                                                  | Fix                                                                                                                                                                                                       |
-| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Hook never fires                                                 | `matcher` is a JSON array instead of a string                                          | Use a single string with `\|` to match multiple tools, for example `"Edit\|Write"`. See [matcher patterns](/en/hooks#matcher-patterns).                                                                   |
-| Hook never fires                                                 | `matcher` value is lowercase, for example `"bash"`                                     | Matching is case-sensitive. Tool names are capitalized: `Bash`, `Edit`, `Write`, `Read`.                                                                                                                  |
-| Hook never fires                                                 | Hooks are in a standalone `.claude/hooks.json` file                                    | There is no standalone hooks file. Define hooks under the `"hooks"` key in `settings.json`. See [hook configuration](/en/hooks).                                                                          |
-| Permissions, hooks, or env set globally are ignored              | Configuration was added to `~/.claude.json`                                            | `~/.claude.json` holds app state and UI toggles. `permissions`, `hooks`, and `env` belong in `~/.claude/settings.json`. These are two different files.                                                    |
-| A `settings.json` value seems ignored                            | The same key is set in `settings.local.json`                                           | `settings.local.json` overrides `settings.json`, and both override `~/.claude/settings.json`. See [settings precedence](/en/settings#settings-precedence).                                                |
-| Skill doesn't appear in `/skills`                                | Skill file is at `.claude/skills/name.md` instead of in a folder                       | Use a folder with `SKILL.md` inside: `.claude/skills/name/SKILL.md`.                                                                                                                                      |
-| Subdirectory `CLAUDE.md` instructions seem ignored               | Subdirectory files load on demand, not at session start                                | They load when Claude reads a file in that directory with the Read tool, not at launch and not when writing or creating files there. See [how CLAUDE.md files load](/en/memory#how-claude-md-files-load). |
-| Subagent ignores `CLAUDE.md` instructions                        | Subagents don't always inherit project memory                                          | Put critical rules in the agent file body, which becomes the subagent's system prompt. See [subagent configuration](/en/sub-agents).                                                                      |
-| Cleanup logic never runs at session end                          | No `SessionEnd` hook configured                                                        | `SessionStart` and `SessionEnd` both exist. See the [hook events list](/en/hooks#hook-events).                                                                                                            |
-| MCP servers in `.mcp.json` never load                            | File is under `.claude/` or uses Claude Desktop's config format                        | Project MCP config lives at the repository root as `.mcp.json`, not inside `.claude/`. See [MCP configuration](/en/mcp).                                                                                  |
-| Project MCP server added but doesn't appear                      | The one-time approval prompt was dismissed                                             | Project-scoped servers require approval. Run `/mcp` to see status and approve.                                                                                                                            |
-| MCP server fails to start from some directories                  | `command` or `args` uses a relative file path                                          | Use absolute paths for local scripts. Executables on your `PATH` like `npx` or `uvx` work as-is.                                                                                                          |
-| MCP server starts without expected environment variables         | Variables are in `settings.json` `env`, which doesn't propagate to MCP child processes | Set per-server `env` inside `.mcp.json` instead.                                                                                                                                                          |
-| `Bash(rm *)` deny rule doesn't block `/bin/rm` or `find -delete` | Prefix rules match the literal command string, not the underlying executable           | Add explicit patterns for each variant, or use a [PreToolUse hook](/en/hooks-guide) or the [sandbox](/en/sandboxing) for a hard guarantee.                                                                |
-
-## Check what loaded
-
-The explorer shows what files can exist. To see what actually loaded in your current session, use these commands:
-
-| Command        | Shows                                                                                 |
-| -------------- | ------------------------------------------------------------------------------------- |
-| `/context`     | Token usage by category: system prompt, memory files, skills, MCP tools, and messages |
-| `/memory`      | Which CLAUDE.md and rules files loaded, plus auto-memory entries                      |
-| `/agents`      | Configured subagents and their settings                                               |
-| `/hooks`       | Active hook configurations                                                            |
-| `/mcp`         | Connected MCP servers and their status                                                |
-| `/skills`      | Available skills from project, user, and plugin sources                               |
-| `/permissions` | Current allow and deny rules                                                          |
-| `/doctor`      | Installation and configuration diagnostics                                            |
-
-Run `/context` first for the overview, then the specific command for the area you want to investigate.
+If a setting, hook, or file isn't taking effect, see [Debug your configuration](/en/debug-your-config) for the inspection commands and a symptom-first lookup table.
 
 ## Application data
 

@@ -719,6 +719,7 @@ To raise the limit, set the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variabl
 
 ## Related resources
 
+* **[Debug your configuration](/en/debug-your-config)**: diagnose why a skill isn't appearing or triggering
 * **[Subagents](/en/sub-agents)**: delegate tasks to specialized agents
 * **[Plugins](/en/plugins)**: package and distribute skills with other extensions
 * **[Hooks](/en/hooks)**: automate workflows around tool events
