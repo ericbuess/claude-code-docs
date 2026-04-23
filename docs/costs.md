@@ -14,13 +14,13 @@ This page covers how to [track your costs](#track-your-costs), [manage costs for
 
 ## Track your costs
 
-### Using the `/cost` command
+### Using the `/usage` command
 
 <Note>
-  The `/cost` command shows API token usage and is intended for API users. Claude Max and Pro subscribers have usage included in their subscription, so `/cost` data isn't relevant for billing purposes. Subscribers can use `/stats` to view usage patterns.
+  The Session block in `/usage` shows API token usage and is intended for API users. Claude Max and Pro subscribers have usage included in their subscription, so the session cost figure isn't relevant for billing purposes. Subscribers see plan usage bars and activity stats on the same screen.
 </Note>
 
-The `/cost` command provides detailed token usage statistics for your current session. The dollar figure is an estimate computed locally from token counts and may differ from your actual bill. For authoritative billing, see the Usage page in the [Claude Console](https://platform.claude.com/usage).
+The `/usage` command provides detailed token usage statistics for your current session. The dollar figure is an estimate computed locally from token counts and may differ from your actual bill. For authoritative billing, see the Usage page in the [Claude Console](https://platform.claude.com/usage).
 
 ```text theme={null}
 Total cost:            $0.55
@@ -82,7 +82,7 @@ The following strategies help you keep context small and reduce per-message cost
 
 ### Manage context proactively
 
-Use `/cost` to check your current token usage, or [configure your status line](/en/statusline#context-window-usage) to display it continuously.
+Use `/usage` to check your current token usage, or [configure your status line](/en/statusline#context-window-usage) to display it continuously.
 
 * **Clear between tasks**: Use `/clear` to start fresh when switching to unrelated work. Stale context wastes tokens on every subsequent message. Use `/rename` before clearing so you can easily find the session later, then `/resume` to return to it.
 * **Add custom compaction instructions**: `/compact Focus on code samples and API usage` tells Claude what to preserve during summarization.
@@ -194,7 +194,7 @@ For longer or more complex work, these habits help avoid wasted tokens from goin
 Claude Code uses tokens for some background functionality even when idle:
 
 * **Conversation summarization**: Background jobs that summarize previous conversations for the `claude --resume` feature
-* **Command processing**: Some commands like `/cost` may generate requests to check status
+* **Command processing**: Some commands like `/usage` may generate requests to check status
 
 These background processes consume a small amount of tokens (typically under \$0.04 per session) even without active interaction.
 

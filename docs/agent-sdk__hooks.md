@@ -144,26 +144,27 @@ The following example puts these steps together. It registers a `PreToolUse` hoo
 
 The SDK provides hooks for different stages of agent execution. Some hooks are available in both SDKs, while others are TypeScript-only.
 
-| Hook Event           | Python SDK | TypeScript SDK | What triggers it                        | Example use case                                |
-| -------------------- | ---------- | -------------- | --------------------------------------- | ----------------------------------------------- |
-| `PreToolUse`         | Yes        | Yes            | Tool call request (can block or modify) | Block dangerous shell commands                  |
-| `PostToolUse`        | Yes        | Yes            | Tool execution result                   | Log all file changes to audit trail             |
-| `PostToolUseFailure` | Yes        | Yes            | Tool execution failure                  | Handle or log tool errors                       |
-| `UserPromptSubmit`   | Yes        | Yes            | User prompt submission                  | Inject additional context into prompts          |
-| `Stop`               | Yes        | Yes            | Agent execution stop                    | Save session state before exit                  |
-| `SubagentStart`      | Yes        | Yes            | Subagent initialization                 | Track parallel task spawning                    |
-| `SubagentStop`       | Yes        | Yes            | Subagent completion                     | Aggregate results from parallel tasks           |
-| `PreCompact`         | Yes        | Yes            | Conversation compaction request         | Archive full transcript before summarizing      |
-| `PermissionRequest`  | Yes        | Yes            | Permission dialog would be displayed    | Custom permission handling                      |
-| `SessionStart`       | No         | Yes            | Session initialization                  | Initialize logging and telemetry                |
-| `SessionEnd`         | No         | Yes            | Session termination                     | Clean up temporary resources                    |
-| `Notification`       | Yes        | Yes            | Agent status messages                   | Send agent status updates to Slack or PagerDuty |
-| `Setup`              | No         | Yes            | Session setup/maintenance               | Run initialization tasks                        |
-| `TeammateIdle`       | No         | Yes            | Teammate becomes idle                   | Reassign work or notify                         |
-| `TaskCompleted`      | No         | Yes            | Background task completes               | Aggregate results from parallel tasks           |
-| `ConfigChange`       | No         | Yes            | Configuration file changes              | Reload settings dynamically                     |
-| `WorktreeCreate`     | No         | Yes            | Git worktree created                    | Track isolated workspaces                       |
-| `WorktreeRemove`     | No         | Yes            | Git worktree removed                    | Clean up workspace resources                    |
+| Hook Event           | Python SDK | TypeScript SDK | What triggers it                                                               | Example use case                                |
+| -------------------- | ---------- | -------------- | ------------------------------------------------------------------------------ | ----------------------------------------------- |
+| `PreToolUse`         | Yes        | Yes            | Tool call request (can block or modify)                                        | Block dangerous shell commands                  |
+| `PostToolUse`        | Yes        | Yes            | Tool execution result                                                          | Log all file changes to audit trail             |
+| `PostToolUseFailure` | Yes        | Yes            | Tool execution failure                                                         | Handle or log tool errors                       |
+| `PostToolBatch`      | No         | Yes            | A full batch of tool calls resolves, once per batch before the next model call | Inject conventions once for the whole batch     |
+| `UserPromptSubmit`   | Yes        | Yes            | User prompt submission                                                         | Inject additional context into prompts          |
+| `Stop`               | Yes        | Yes            | Agent execution stop                                                           | Save session state before exit                  |
+| `SubagentStart`      | Yes        | Yes            | Subagent initialization                                                        | Track parallel task spawning                    |
+| `SubagentStop`       | Yes        | Yes            | Subagent completion                                                            | Aggregate results from parallel tasks           |
+| `PreCompact`         | Yes        | Yes            | Conversation compaction request                                                | Archive full transcript before summarizing      |
+| `PermissionRequest`  | Yes        | Yes            | Permission dialog would be displayed                                           | Custom permission handling                      |
+| `SessionStart`       | No         | Yes            | Session initialization                                                         | Initialize logging and telemetry                |
+| `SessionEnd`         | No         | Yes            | Session termination                                                            | Clean up temporary resources                    |
+| `Notification`       | Yes        | Yes            | Agent status messages                                                          | Send agent status updates to Slack or PagerDuty |
+| `Setup`              | No         | Yes            | Session setup/maintenance                                                      | Run initialization tasks                        |
+| `TeammateIdle`       | No         | Yes            | Teammate becomes idle                                                          | Reassign work or notify                         |
+| `TaskCompleted`      | No         | Yes            | Background task completes                                                      | Aggregate results from parallel tasks           |
+| `ConfigChange`       | No         | Yes            | Configuration file changes                                                     | Reload settings dynamically                     |
+| `WorktreeCreate`     | No         | Yes            | Git worktree created                                                           | Track isolated workspaces                       |
+| `WorktreeRemove`     | No         | Yes            | Git worktree removed                                                           | Clean up workspace resources                    |
 
 ## Configure hooks
 

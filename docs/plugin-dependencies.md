@@ -82,16 +82,19 @@ If the field is missing or does not include the target marketplace, install fail
 
 Version constraints resolve against git tags on the marketplace repository. For Claude Code to find a dependency's available versions, the upstream plugin's releases must be tagged using a specific naming convention.
 
-Tag each release as `{plugin-name}--v{version}`, where `{version}` matches the `version` field in that commit's `plugin.json`.
+Tag each release as `{plugin-name}--v{version}`, where `{version}` matches the `version` field in that commit's `plugin.json`. From the plugin directory, run:
 
 ```bash theme={null}
-git tag secrets-vault--v2.1.0
-git push origin secrets-vault--v2.1.0
+claude plugin tag --push
 ```
+
+The `claude plugin tag` command derives the tag name from the plugin's manifest and the enclosing marketplace entry. Before creating the tag, it validates the plugin contents, checks that `plugin.json` and the marketplace entry agree on the version, requires a clean working tree under the plugin directory, and refuses if the tag already exists. Add `--dry-run` to see what would be tagged without creating it. Running `git tag secrets-vault--v2.1.0` directly is equivalent if you keep `plugin.json` and the marketplace entry in sync yourself.
 
 The plugin name prefix lets one marketplace repository host multiple plugins with independent version lines. The `--v` separator is parsed as a prefix match on the full plugin name, so plugin names that contain hyphens are handled correctly.
 
 When you install a plugin that declares `{ "name": "secrets-vault", "version": "~2.1.0" }`, Claude Code lists the marketplace's tags, filters to those starting with `secrets-vault--v`, and fetches the highest version satisfying `~2.1.0`. If no matching tag exists, the dependent plugin is disabled with an error listing the available versions.
+
+The resolved tag's semver is recorded separately from `plugin.json`'s `version`, so constraint checks use the tag that was actually fetched even if `plugin.json` at that commit has a stale value. The cache directory name for a tag-resolved install includes a 12-character commit-SHA suffix, so if a maintainer force-moves a tag to a different commit, the next install gets a fresh cache directory instead of reusing stale content.
 
 <Note>
   For `npm` marketplace sources, the constraint does not control which version is fetched, since tag-based resolution applies only to git-backed sources. The constraint is still checked at load time, and the dependent plugin is disabled with `dependency-version-unsatisfied` if the installed version does not satisfy it.
@@ -107,7 +110,7 @@ When several installed plugins constrain the same dependency, Claude Code inters
 | `~2.1`            | `~3.0`            | Install of plugin B fails with `range-conflict`. Plugin A and the dependency stay as they were. |
 | `=2.1.0`          | none              | The dependency stays at `2.1.0`. Auto-update skips newer versions while plugin A is installed.  |
 
-Auto-update checks each constrained dependency against every installed plugin's range before applying an update. If the marketplace moves a dependency to a version outside any range, the update is skipped and the skip message names the constraining plugin.
+Auto-update checks each constrained dependency against every installed plugin's range before applying an update. If the marketplace moves a dependency to a version outside any range, the update is skipped and the skip appears in `/doctor` and the `/plugin` Errors tab, naming the constraining plugin.
 
 When you uninstall the last plugin that constrains a dependency, the dependency is no longer held and resumes tracking its marketplace entry on the next update.
 
@@ -129,4 +132,4 @@ To check for these errors programmatically, run `claude plugin list --json` and 
 * [Create plugins](/en/plugins): build plugins with skills, agents, and hooks
 * [Create and distribute a plugin marketplace](/en/plugin-marketplaces): host plugins for your team
 * [Plugins reference](/en/plugins-reference#plugin-manifest-schema): the full `plugin.json` schema
-* [Version management](/en/plugins-reference#version-management): semantic versioning guidance for plugin releases
+* [Version management](/en/plugins-reference#version-management): how a plugin's own version is resolved and used as the cache key

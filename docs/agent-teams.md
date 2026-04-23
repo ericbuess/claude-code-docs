@@ -262,11 +262,7 @@ Each teammate has its own context window. When spawned, a teammate loads the sam
 * **Automatic message delivery**: when teammates send messages, they're delivered automatically to recipients. The lead doesn't need to poll for updates.
 * **Idle notifications**: when a teammate finishes and stops, they automatically notify the lead.
 * **Shared task list**: all agents can see task status and claim available work.
-
-**Teammate messaging:**
-
-* **message**: send a message to one specific teammate
-* **broadcast**: send to all teammates simultaneously. Use sparingly, as costs scale with team size.
+* **Teammate messaging**: send a message to one specific teammate by name. To reach everyone, send one message per recipient.
 
 The lead assigns every teammate a name when it spawns them, and any teammate can message any other by that name. To get predictable names you can reference in later prompts, tell the lead what to call each teammate in your spawn instruction.
 
