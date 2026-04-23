@@ -89,6 +89,8 @@ To install Claude Code, use one of the following methods:
   </Tab>
 </Tabs>
 
+You can also install with [apt, dnf, or apk](/en/setup#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
+
 After installation completes, open a terminal in the project you want to work in and start Claude Code:
 
 ```bash theme={null}
@@ -171,14 +173,14 @@ After installing, log in by running `claude` and following the browser prompts. 
 
 ## Update Claude Code
 
-Native installations automatically update in the background. You can [configure the release channel](#configure-release-channel) to control whether you receive updates immediately or on a delayed stable schedule, or [disable auto-updates](#disable-auto-updates) entirely. Homebrew and WinGet installations require manual updates.
+Native installations automatically update in the background. You can [configure the release channel](#configure-release-channel) to control whether you receive updates immediately or on a delayed stable schedule, or [disable auto-updates](#disable-auto-updates) entirely. Homebrew, WinGet, and [Linux package manager](#install-with-linux-package-managers) installations require manual updates.
 
 ### Auto-updates
 
 Claude Code checks for updates on startup and periodically while running. Updates download and install in the background, then take effect the next time you start Claude Code.
 
 <Note>
-  Homebrew and WinGet installations do not auto-update. For Homebrew, run `brew upgrade claude-code` or `brew upgrade claude-code@latest`, depending on which cask you installed. For WinGet, run `winget upgrade Anthropic.ClaudeCode`.
+  Homebrew, WinGet, apt, dnf, and apk installations do not auto-update. For Homebrew, run `brew upgrade claude-code` or `brew upgrade claude-code@latest`, depending on which cask you installed. For WinGet, run `winget upgrade Anthropic.ClaudeCode`. For Linux package managers, see the upgrade commands in [Install with Linux package managers](#install-with-linux-package-managers).
 
   **Known issue:** Claude Code may notify you of updates before the new version is available in these package managers. If an upgrade fails, wait and try again later.
 
@@ -243,7 +245,7 @@ claude update
 
 ## Advanced installation options
 
-These options are for version pinning, migrating from npm, and verifying binary integrity.
+These options are for version pinning, Linux package managers, npm, and verifying binary integrity.
 
 ### Install a specific version
 
@@ -312,6 +314,67 @@ To install a specific version number:
     ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 2.1.89 && del install.cmd
     ```
+  </Tab>
+</Tabs>
+
+### Install with Linux package managers
+
+Claude Code publishes signed apt, dnf, and apk repositories. Replace `stable` with `latest` for the rolling channel. Package manager installations do not auto-update through Claude Code; updates arrive through your normal system upgrade workflow.
+
+All repositories are signed with the [Claude Code release signing key](#binary-integrity-and-code-signing). Before trusting the key, verify it as described in each tab.
+
+<Tabs>
+  <Tab title="apt">
+    For Debian and Ubuntu. To use the rolling channel, change both `stable` occurrences in the `deb` line: the URL path and the suite name.
+
+    ```bash theme={null}
+    sudo install -d -m 0755 /etc/apt/keyrings
+    sudo curl -fsSL https://downloads.claude.ai/keys/claude-code.asc \
+      -o /etc/apt/keyrings/claude-code.asc
+    echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main" \
+      | sudo tee /etc/apt/sources.list.d/claude-code.list
+    sudo apt update
+    sudo apt install claude-code
+    ```
+
+    Verify the GPG key fingerprint before trusting it: `gpg --show-keys /etc/apt/keyrings/claude-code.asc` should report `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE`.
+
+    To upgrade later, run `sudo apt update && sudo apt upgrade claude-code`.
+  </Tab>
+
+  <Tab title="dnf">
+    For Fedora and RHEL:
+
+    ```bash theme={null}
+    sudo tee /etc/yum.repos.d/claude-code.repo <<'EOF'
+    [claude-code]
+    name=Claude Code
+    baseurl=https://downloads.claude.ai/claude-code/rpm/stable
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://downloads.claude.ai/keys/claude-code.asc
+    EOF
+    sudo dnf install claude-code
+    ```
+
+    dnf downloads the key on first install and prompts you to confirm the fingerprint. Verify it matches `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE` before accepting.
+
+    To upgrade later, run `sudo dnf upgrade claude-code`.
+  </Tab>
+
+  <Tab title="apk">
+    For Alpine Linux:
+
+    ```sh theme={null}
+    wget -O /etc/apk/keys/claude-code.rsa.pub \
+      https://downloads.claude.ai/keys/claude-code.rsa.pub
+    echo "https://downloads.claude.ai/claude-code/apk/stable" >> /etc/apk/repositories
+    apk add claude-code
+    ```
+
+    Verify the downloaded key with `sha256sum /etc/apk/keys/claude-code.rsa.pub`, which should report `395759c1f7449ef4cdef305a42e820f3c766d6090d142634ebdb049f113168b6`.
+
+    To upgrade later, run `apk update && apk upgrade claude-code`.
   </Tab>
 </Tabs>
 
@@ -418,7 +481,7 @@ In addition to the signed manifest, individual binaries carry platform-native co
 
 * **macOS**: signed by "Anthropic PBC" and notarized by Apple. Verify with `codesign --verify --verbose ./claude`.
 * **Windows**: signed by "Anthropic, PBC". Verify with `Get-AuthenticodeSignature .\claude.exe`.
-* **Linux**: use the manifest signature above to verify integrity. Linux binaries are not individually code-signed.
+* **Linux**: binaries are not individually code-signed. If you download directly from the `claude-code-releases` bucket or use the native installer, verify integrity with the manifest signature above. If you install with [apt, dnf, or apk](#install-with-linux-package-managers), your package manager verifies signatures automatically using the repository signing key.
 
 ## Uninstall Claude Code
 
@@ -465,6 +528,34 @@ Remove the WinGet package:
 ```powershell theme={null}
 winget uninstall Anthropic.ClaudeCode
 ```
+
+### apt / dnf / apk
+
+Remove the package and the repository configuration:
+
+<Tabs>
+  <Tab title="apt">
+    ```bash theme={null}
+    sudo apt remove claude-code
+    sudo rm /etc/apt/sources.list.d/claude-code.list /etc/apt/keyrings/claude-code.asc
+    ```
+  </Tab>
+
+  <Tab title="dnf">
+    ```bash theme={null}
+    sudo dnf remove claude-code
+    sudo rm /etc/yum.repos.d/claude-code.repo
+    ```
+  </Tab>
+
+  <Tab title="apk">
+    ```sh theme={null}
+    apk del claude-code
+    sed -i '\|downloads.claude.ai/claude-code/apk|d' /etc/apk/repositories
+    rm /etc/apk/keys/claude-code.rsa.pub
+    ```
+  </Tab>
+</Tabs>
 
 ### npm
 

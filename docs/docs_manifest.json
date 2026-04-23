@@ -213,8 +213,8 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "9696e6822f87032f97cfd7835c610d12e4de24d4167c37be704bcac7d459a047",
-      "last_updated": "2026-04-23T00:17:58.959124",
+      "hash": "ebb985585a24ef25fe883f12bb7093b79bdb47a1d22171d8f256b03788761b81",
+      "last_updated": "2026-04-23T04:04:25.812879",
       "source": "claude-code-repository"
     },
     "channels.md": {
@@ -490,8 +490,8 @@
     "overview.md": {
       "original_url": "https://code.claude.com/docs/en/overview",
       "original_md_url": "https://code.claude.com/docs/en/overview.md",
-      "hash": "7473bcb4d6cfcbf401867ea3954fd9fc49eac3a6262ad373a99c53ce129cca23",
-      "last_updated": "2026-04-22T00:12:50.666759"
+      "hash": "c9b1de8da843043aa56976215d55adfaad66980c7b67675ab2a7583d3293cc61",
+      "last_updated": "2026-04-23T04:03:40.477044"
     },
     "permission-modes.md": {
       "original_url": "https://code.claude.com/docs/en/permission-modes",
@@ -538,8 +538,8 @@
     "quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/quickstart",
       "original_md_url": "https://code.claude.com/docs/en/quickstart.md",
-      "hash": "bb20f168f076efde49d6291617048f5e42e3d489d5be021e49fd1161a9676d86",
-      "last_updated": "2026-04-22T00:12:55.253160"
+      "hash": "fc751d9be10a9f33e925ad64d4aa567cd56aed50f34b7897e22b6452b00d905c",
+      "last_updated": "2026-04-23T04:03:54.078645"
     },
     "remote-control.md": {
       "original_url": "https://code.claude.com/docs/en/remote-control",
@@ -586,8 +586,8 @@
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
       "original_md_url": "https://code.claude.com/docs/en/setup.md",
-      "hash": "543dee6332abe992404bcd5faf0706fbc3f1f892f7efe1520f43197f8c60b459",
-      "last_updated": "2026-04-21T21:14:19.355189"
+      "hash": "b8c6c73ba2150333991f03bec099ffd6964152cd0a71dc53ac6387915733c057",
+      "last_updated": "2026-04-23T04:04:05.118507"
     },
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
@@ -699,8 +699,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-04-23T00:17:58.959160",
-    "fetch_duration_seconds": 65.442337,
+    "last_fetch_completed": "2026-04-23T04:04:25.812921",
+    "fetch_duration_seconds": 219.978101,
     "total_pages_discovered": 116,
     "pages_fetched_successfully": 117,
     "pages_failed": 0,
@@ -710,7 +710,7 @@
     "total_files": 116,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-04-23T00:17:58.959180",
+  "last_updated": "2026-04-23T04:04:25.812941",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
