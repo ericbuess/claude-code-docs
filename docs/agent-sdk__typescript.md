@@ -895,6 +895,7 @@ type SDKResultMessage =
       modelUsage: { [modelName: string]: ModelUsage };
       permission_denials: SDKPermissionDenial[];
       structured_output?: unknown;
+      deferred_tool_use?: { id: string; name: string; input: Record<string, unknown> };
     }
   | {
       type: "result";
@@ -917,6 +918,8 @@ type SDKResultMessage =
       errors: string[];
     };
 ```
+
+When a `PreToolUse` hook returns `permissionDecision: "defer"`, the result has `stop_reason: "tool_deferred"` and `deferred_tool_use` carries the pending tool's `id`, `name`, and `input`. Read this field to surface the request in your own UI, then resume with the same `session_id` to continue. See [Defer a tool call for later](/en/hooks#defer-a-tool-call-for-later) for the full round trip.
 
 ### `SDKSystemMessage`
 
@@ -1326,7 +1329,7 @@ type SyncHookJSONOutput = {
   hookSpecificOutput?:
     | {
         hookEventName: "PreToolUse";
-        permissionDecision?: "allow" | "deny" | "ask";
+        permissionDecision?: "allow" | "deny" | "ask" | "defer";
         permissionDecisionReason?: string;
         updatedInput?: Record<string, unknown>;
         additionalContext?: string;
