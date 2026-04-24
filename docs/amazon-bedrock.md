@@ -369,9 +369,12 @@ export ANTHROPIC_MODEL='arn:aws:bedrock:us-east-2:your-account-id:application-in
 
 # Optional: Disable prompt caching if needed
 export DISABLE_PROMPT_CACHING=1
+
+# Optional: Request 1-hour prompt cache TTL instead of the 5-minute default
+export ENABLE_PROMPT_CACHING_1H=1
 ```
 
-<Note>[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) may not be available in all regions.</Note>
+<Note>[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) may not be available in all regions. Cache writes with a 1-hour TTL are billed at a higher rate than 5-minute writes.</Note>
 
 #### Map each model version to an inference profile
 

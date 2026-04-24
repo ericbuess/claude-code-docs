@@ -275,6 +275,12 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
 
 For current and legacy model IDs, see [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview). See [Model configuration](/en/model-config#pin-models-for-third-party-deployments) for the full list of environment variables.
 
+[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) is enabled automatically. To request a 1-hour cache TTL instead of the 5-minute default, set the following variable; cache writes with a 1-hour TTL are billed at a higher rate:
+
+```bash theme={null}
+export ENABLE_PROMPT_CACHING_1H=1
+```
+
 ## Azure RBAC configuration
 
 The `Azure AI User` and `Cognitive Services User` default roles include all required permissions for invoking Claude models.
