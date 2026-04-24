@@ -110,7 +110,7 @@ When several installed plugins constrain the same dependency, Claude Code inters
 | `~2.1`            | `~3.0`            | Install of plugin B fails with `range-conflict`. Plugin A and the dependency stay as they were. |
 | `=2.1.0`          | none              | The dependency stays at `2.1.0`. Auto-update skips newer versions while plugin A is installed.  |
 
-Auto-update checks each constrained dependency against every installed plugin's range before applying an update. If the marketplace moves a dependency to a version outside any range, the update is skipped and the skip appears in `/doctor` and the `/plugin` Errors tab, naming the constraining plugin.
+Auto-update fetches a constrained dependency at the highest git tag that satisfies every installed plugin's range, rather than at the marketplace's latest version, so the dependency continues to receive updates within its allowed range. If no tag satisfies all ranges, the update is skipped and the skip appears in `/doctor` and the `/plugin` Errors tab, naming the constraining plugin.
 
 When you uninstall the last plugin that constrains a dependency, the dependency is no longer held and resumes tracking its marketplace entry on the next update.
 

@@ -209,7 +209,7 @@ Repeated blocks usually mean the classifier is missing context about your infras
 
     On entering auto mode, broad allow rules that grant arbitrary code execution are dropped:
 
-    * Blanket `Bash(*)`
+    * Blanket `Bash(*)` or `PowerShell(*)`
     * Wildcarded interpreters like `Bash(python*)`
     * Package-manager run commands
     * `Agent` allow rules

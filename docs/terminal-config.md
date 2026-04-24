@@ -95,7 +95,7 @@ The example below plays a system sound on macOS. The linked guide has desktop no
 
 ## Configure tmux
 
-When Claude Code runs inside tmux, two things break by default: Shift+Enter submits instead of inserting a newline, and desktop notifications and the [progress bar](/en/settings#global-config-settings) never reach the outer terminal. Add these lines to `~/.tmux.conf`, then run `tmux source-file ~/.tmux.conf` to apply them to the running server:
+When Claude Code runs inside tmux, two things break by default: Shift+Enter submits instead of inserting a newline, and desktop notifications and the [progress bar](/en/settings#available-settings) never reach the outer terminal. Add these lines to `~/.tmux.conf`, then run `tmux source-file ~/.tmux.conf` to apply them to the running server:
 
 ```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
@@ -177,7 +177,7 @@ The VS Code integrated terminal can drop characters from very large pastes befor
 
 ## Edit prompts with Vim keybindings
 
-Claude Code includes a Vim-style editing mode for the prompt input. Enable it through `/config` → Editor mode, or by setting the [`editorMode`](/en/settings#global-config-settings) global config key to `"vim"` in `~/.claude.json`. Set Editor mode back to `normal` to turn it off.
+Claude Code includes a Vim-style editing mode for the prompt input. Enable it through `/config` → Editor mode, or by setting [`editorMode`](/en/settings#available-settings) to `"vim"` in `~/.claude/settings.json`. Set Editor mode back to `normal` to turn it off.
 
 Vim mode supports a subset of NORMAL- and VISUAL-mode motions and operators, such as `hjkl` navigation, `v`/`V` selection, and `d`/`c`/`y` with text objects. See the [Vim editor mode reference](/en/interactive-mode#vim-editor-mode) for the full key table. Vim motions are not remappable through the keybindings file.
 

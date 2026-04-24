@@ -295,6 +295,8 @@ Most model versions have a corresponding `VERTEX_REGION_CLAUDE_*` variable. See 
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) is enabled automatically. To disable it, set `DISABLE_PROMPT_CACHING=1`. To request a 1-hour cache TTL instead of the 5-minute default, set `ENABLE_PROMPT_CACHING_1H=1`; cache writes with a 1-hour TTL are billed at a higher rate. For heightened rate limits, contact Google Cloud support. When using Vertex AI, the `/login` and `/logout` commands are disabled since authentication is handled through Google Cloud credentials.
 
+[MCP tool search](/en/mcp#scale-with-mcp-tool-search) is disabled by default on Vertex AI because the endpoint does not accept the required beta header. All MCP tool definitions load upfront instead. To opt in, set `ENABLE_TOOL_SEARCH=true`.
+
 ### 5. Pin model versions
 
 <Warning>

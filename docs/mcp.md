@@ -352,17 +352,6 @@ An MCP server can also push messages directly into your session so Claude can re
   * Use `/mcp` to authenticate with remote servers that require OAuth 2.0 authentication
 </Tip>
 
-<Warning>
-  **Windows Users**: On native Windows (not WSL), local MCP servers that use `npx` require the `cmd /c` wrapper to ensure proper execution.
-
-  ```bash theme={null}
-  # This creates command="cmd" which Windows can execute
-  claude mcp add --transport stdio my-server -- cmd /c npx -y @some/package
-  ```
-
-  Without the `cmd /c` wrapper, you'll encounter "Connection closed" errors because Windows cannot directly execute `npx`. (See the note above for an explanation of the `--` parameter.)
-</Warning>
-
 ### Plugin-provided MCP servers
 
 [Plugins](/en/plugins) can bundle MCP servers, automatically providing tools and integrations when the plugin is enabled. Plugin MCP servers work identically to user-configured servers.
@@ -1140,17 +1129,17 @@ Claude Code truncates tool descriptions and server instructions at 2KB each. Kee
 
 ### Configure tool search
 
-Tool search is enabled by default: MCP tools are deferred and discovered on demand. When `ANTHROPIC_BASE_URL` points to a non-first-party host, tool search is disabled by default because most proxies do not forward `tool_reference` blocks. Set `ENABLE_TOOL_SEARCH` explicitly if your proxy does. This feature requires models that support `tool_reference` blocks: Sonnet 4 and later, or Opus 4 and later. Haiku models do not support tool search.
+Tool search is enabled by default: MCP tools are deferred and discovered on demand. It is disabled by default on Vertex AI, which does not accept the tool search beta header, and when `ANTHROPIC_BASE_URL` points to a non-first-party host, since most proxies do not forward `tool_reference` blocks. Set `ENABLE_TOOL_SEARCH` explicitly to opt in. This feature requires models that support `tool_reference` blocks: Sonnet 4 and later, or Opus 4 and later. Haiku models do not support tool search.
 
 Control tool search behavior with the `ENABLE_TOOL_SEARCH` environment variable:
 
-| Value      | Behavior                                                                                                                       |
-| :--------- | :----------------------------------------------------------------------------------------------------------------------------- |
-| (unset)    | All MCP tools deferred and loaded on demand. Falls back to loading upfront when `ANTHROPIC_BASE_URL` is a non-first-party host |
-| `true`     | All MCP tools deferred, including for non-first-party `ANTHROPIC_BASE_URL`                                                     |
-| `auto`     | Threshold mode: tools load upfront if they fit within 10% of the context window, deferred otherwise                            |
-| `auto:<N>` | Threshold mode with a custom percentage, where `<N>` is 0-100 (e.g., `auto:5` for 5%)                                          |
-| `false`    | All MCP tools loaded upfront, no deferral                                                                                      |
+| Value      | Behavior                                                                                                                                       |
+| :--------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| (unset)    | All MCP tools deferred and loaded on demand. Falls back to loading upfront on Vertex AI or when `ANTHROPIC_BASE_URL` is a non-first-party host |
+| `true`     | All MCP tools deferred, including on Vertex AI and for non-first-party `ANTHROPIC_BASE_URL`                                                    |
+| `auto`     | Threshold mode: tools load upfront if they fit within 10% of the context window, deferred otherwise                                            |
+| `auto:<N>` | Threshold mode with a custom percentage, where `<N>` is 0-100 (e.g., `auto:5` for 5%)                                                          |
+| `false`    | All MCP tools loaded upfront, no deferral                                                                                                      |
 
 ```bash theme={null}
 # Use a custom 5% threshold

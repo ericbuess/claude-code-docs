@@ -127,7 +127,6 @@ The same main-session working-directory reset behavior described under the Bash 
 
 The PowerShell tool has the following known limitations during the preview:
 
-* Auto mode does not work with the PowerShell tool yet
 * PowerShell profiles are not loaded
 * On Windows, sandboxing is not supported
 * On Windows, Git Bash is still required to start Claude Code
