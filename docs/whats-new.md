@@ -8,6 +8,22 @@
 
 The weekly dev digest highlights the features most likely to change how you work. Each entry includes runnable code, a short demo, and a link to the full docs. For every bug fix and minor improvement, see the [changelog](/en/changelog).
 
+<Update label="Week 17" description="April 20–24, 2026" tags={["v2.1.114–v2.1.119"]}>
+  **`/ultrareview`** opens as a public research preview: a fleet of bug-hunting agents runs in the cloud and findings land back in your CLI or Desktop automatically.
+
+  Also this week: **session recap** shows you what happened while a terminal was unfocused; **custom themes** let you build and ship color palettes from `/theme` or a plugin; and **Claude Code on the web** gets a redesign with a new sessions sidebar and drag-and-drop layout.
+
+  [Read the Week 17 digest →](/en/whats-new/2026-w17)
+</Update>
+
+<Update label="Week 16" description="April 13–17, 2026" tags={["v2.1.105–v2.1.113"]}>
+  **Claude Opus 4.7** lands as the new default on Max and Team Premium, with a new `xhigh` effort level that's the recommended setting for most coding work and an interactive `/effort` slider to dial it in.
+
+  Also this week: **Routines** on Claude Code on the web fire templated cloud agents from a schedule, GitHub event, or API call; `/ultrareview` runs parallel multi-agent code review in the cloud; `/usage` shows what's driving your limits; and the CLI moves to native binaries.
+
+  [Read the Week 16 digest →](/en/whats-new/2026-w16)
+</Update>
+
 <Update label="Week 15" description="April 6–10, 2026" tags={["v2.1.92–v2.1.101"]}>
   **Ultraplan** enters early preview: draft a plan in the cloud from your CLI, review and comment on it in a web editor, then run it remotely or pull it back local. The first run now auto-creates a cloud environment for you.
 
