@@ -534,6 +534,21 @@ The Claude Platform offers multiple ways to build with Claude. Here's how the Ag
 
     Many teams use both: CLI for daily development, SDK for production. Workflows translate directly between them.
   </Tab>
+
+  <Tab title="Agent SDK vs Managed Agents">
+    [Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) is a hosted REST API: Anthropic runs the agent and the sandbox, and your application sends events and streams back results. The **Agent SDK** is a library that runs the agent loop inside your own process.
+
+    |                    | Agent SDK                                                                    | Managed Agents                                                                                                |
+    | ------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+    | **Runs in**        | Your process, your infrastructure                                            | Anthropic-managed infrastructure                                                                              |
+    | **Interface**      | Python or TypeScript library                                                 | REST API                                                                                                      |
+    | **Agent works on** | Files on your infrastructure                                                 | A managed sandbox per session                                                                                 |
+    | **Session state**  | JSONL on your filesystem                                                     | Anthropic-hosted event log                                                                                    |
+    | **Custom tools**   | In-process Python or TypeScript functions                                    | Claude triggers the tool; you execute and return results                                                      |
+    | **Best for**       | Local prototyping, agents that work directly on your filesystem and services | Production agents without operating sandbox or session infrastructure, long-running and asynchronous sessions |
+
+    A common path is to prototype with the Agent SDK locally, then move to Managed Agents for production.
+  </Tab>
 </Tabs>
 
 ## Changelog
