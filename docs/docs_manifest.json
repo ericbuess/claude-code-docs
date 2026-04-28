@@ -717,8 +717,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-04-27T21:20:37.722522",
-    "fetch_duration_seconds": 66.903559,
+    "last_fetch_completed": "2026-04-28T00:19:05.880480",
+    "fetch_duration_seconds": 66.288595,
     "total_pages_discovered": 119,
     "pages_fetched_successfully": 120,
     "pages_failed": 0,
@@ -728,7 +728,7 @@
     "total_files": 119,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-04-27T21:20:37.722554",
+  "last_updated": "2026-04-28T00:19:05.880506",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
