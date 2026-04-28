@@ -154,28 +154,30 @@ Every span carries the [standard attributes](#standard-attributes) plus a `span.
 
 **`claude_code.llm_request`**
 
-| Attribute                | Description                                                                      | Gated by |
-| ------------------------ | -------------------------------------------------------------------------------- | -------- |
-| `model`                  | Model identifier                                                                 |          |
-| `gen_ai.system`          | Always `anthropic`. OpenTelemetry GenAI semantic convention                      |          |
-| `gen_ai.request.model`   | Same value as `model`. OpenTelemetry GenAI semantic convention                   |          |
-| `query_source`           | Subsystem that issued the request, such as `repl_main_thread` or a subagent name |          |
-| `speed`                  | `fast` or `normal`                                                               |          |
-| `llm_request.context`    | `interaction`, `tool`, or `standalone` depending on the parent span              |          |
-| `duration_ms`            | Wall-clock duration including retries                                            |          |
-| `ttft_ms`                | Time to first token in milliseconds                                              |          |
-| `input_tokens`           | Input token count from the API usage block                                       |          |
-| `output_tokens`          | Output token count                                                               |          |
-| `cache_read_tokens`      | Tokens read from prompt cache                                                    |          |
-| `cache_creation_tokens`  | Tokens written to prompt cache                                                   |          |
-| `request_id`             | Anthropic API request ID from the `request-id` response header                   |          |
-| `gen_ai.response.id`     | Same value as `request_id`. OpenTelemetry GenAI semantic convention              |          |
-| `client_request_id`      | Client-generated `x-client-request-id` of the final attempt                      |          |
-| `attempt`                | Total attempts made for this request                                             |          |
-| `success`                | `true` or `false`                                                                |          |
-| `status_code`            | HTTP status code when the request failed                                         |          |
-| `error`                  | Error message when the request failed                                            |          |
-| `response.has_tool_call` | `true` when the response contained tool-use blocks                               |          |
+| Attribute                        | Description                                                                                                           | Gated by |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------- |
+| `model`                          | Model identifier                                                                                                      |          |
+| `gen_ai.system`                  | Always `anthropic`. OpenTelemetry GenAI semantic convention                                                           |          |
+| `gen_ai.request.model`           | Same value as `model`. OpenTelemetry GenAI semantic convention                                                        |          |
+| `query_source`                   | Subsystem that issued the request, such as `repl_main_thread` or a subagent name                                      |          |
+| `speed`                          | `fast` or `normal`                                                                                                    |          |
+| `llm_request.context`            | `interaction`, `tool`, or `standalone` depending on the parent span                                                   |          |
+| `duration_ms`                    | Wall-clock duration including retries                                                                                 |          |
+| `ttft_ms`                        | Time to first token in milliseconds                                                                                   |          |
+| `input_tokens`                   | Input token count from the API usage block                                                                            |          |
+| `output_tokens`                  | Output token count                                                                                                    |          |
+| `cache_read_tokens`              | Tokens read from prompt cache                                                                                         |          |
+| `cache_creation_tokens`          | Tokens written to prompt cache                                                                                        |          |
+| `request_id`                     | Anthropic API request ID from the `request-id` response header                                                        |          |
+| `gen_ai.response.id`             | Same value as `request_id`. OpenTelemetry GenAI semantic convention                                                   |          |
+| `client_request_id`              | Client-generated `x-client-request-id` of the final attempt                                                           |          |
+| `attempt`                        | Total attempts made for this request                                                                                  |          |
+| `success`                        | `true` or `false`                                                                                                     |          |
+| `status_code`                    | HTTP status code when the request failed                                                                              |          |
+| `error`                          | Error message when the request failed                                                                                 |          |
+| `response.has_tool_call`         | `true` when the response contained tool-use blocks                                                                    |          |
+| `stop_reason`                    | API response `stop_reason`, such as `end_turn`, `tool_use`, `max_tokens`, `stop_sequence`, `pause_turn`, or `refusal` |          |
+| `gen_ai.response.finish_reasons` | Same value as `stop_reason`, wrapped in a string array. OpenTelemetry GenAI semantic convention                       |          |
 
 Each retry attempt is also recorded as a `gen_ai.request.attempt` span event with `attempt` and `client_request_id` attributes.
 
@@ -226,7 +228,7 @@ This span is emitted only when detailed beta tracing is active, which requires `
 | `num_cancelled`          | Count of hooks cancelled before completion       |                         |
 
 <Note>
-  Additional content-bearing attributes such as `new_context`, `system_prompt_preview`, `tool_input`, and `response.model_output` are emitted only when detailed beta tracing is active. They are not part of the stable span schema.
+  Additional content-bearing attributes such as `new_context`, `system_prompt_preview`, `user_system_prompt`, `tool_input`, and `response.model_output` are emitted only when detailed beta tracing is active. They are not part of the stable span schema. `user_system_prompt` additionally requires `OTEL_LOG_USER_PROMPTS=1`. It carries only the system prompt text you provide via the `systemPrompt` SDK option or `--system-prompt` and `--append-system-prompt` flags, truncated at 60 KB, and is emitted once per session rather than per request.
 </Note>
 
 ### Dynamic headers

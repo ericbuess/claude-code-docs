@@ -25,7 +25,15 @@ If you choose to send us feedback about Claude Code using the `/feedback` comman
 
 ### Session quality surveys
 
-When you see the "How is Claude doing this session?" prompt in Claude Code, responding to this survey (including selecting "Dismiss"), only your numeric rating (1, 2, 3, or dismiss) is recorded. We do not collect or store any conversation transcripts, inputs, outputs, or other session data as part of this survey. Unlike thumbs up/down feedback or `/feedback` reports, this session quality survey is a simple product satisfaction metric. Your responses to this survey do not impact your data training preferences and cannot be used to train our AI models.
+When you see the "How is Claude doing this session?" prompt in Claude Code, responding to this survey, including selecting "Dismiss", records only your rating. We do not collect or store any conversation transcripts, inputs, outputs, or other session data as part of the rating prompt itself. Unlike thumbs up/down feedback or `/feedback` reports, this session quality survey is a simple product satisfaction metric.
+
+After the rating prompt, you may see a separate follow-up asking "Can Anthropic look at your session transcript to help us improve Claude Code?". This is an optional second step distinct from the rating:
+
+* **Yes**: uploads your conversation transcript, any subagent transcripts, and the raw session log file from disk to Anthropic. Known API key and token patterns are redacted before upload. Source code, file contents, and other conversation content are uploaded as-is. Shared transcripts are retained for up to 6 months.
+* **No**: declines without sending anything
+* **Don't ask again**: declines and stops this follow-up from appearing in future sessions
+
+Nothing is uploaded unless you explicitly select **Yes**. Organizations with [zero data retention](/en/zero-data-retention), or where product feedback is disabled by organization policy, never see this follow-up. Your responses to this survey, including session transcripts submitted after the rating prompt, do not impact your data training preferences and cannot be used to train our AI models.
 
 To disable these surveys, set `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. The survey is also disabled when `DISABLE_TELEMETRY` or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set. To control frequency instead of disabling, set [`feedbackSurveyRate`](/en/settings#available-settings) in your settings file to a probability between `0` and `1`.
 

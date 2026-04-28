@@ -129,7 +129,6 @@ The PowerShell tool has the following known limitations during the preview:
 
 * PowerShell profiles are not loaded
 * On Windows, sandboxing is not supported
-* On Windows, Git Bash is still required to start Claude Code
 
 ## Check which tools are available
 

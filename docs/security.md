@@ -130,7 +130,7 @@ For more details on cloud execution, see [Claude Code on the web](/en/claude-cod
 If you discover a security vulnerability in Claude Code:
 
 1. Do not disclose it publicly
-2. Report it through our [HackerOne program](https://hackerone.com/anthropic-vdp/reports/new?type=team\&report_type=vulnerability)
+2. Report it through our [HackerOne program](https://hackerone.com/4f1f16ba-10d3-4d09-9ecc-c721aad90f24/embedded_submissions/new)
 3. Include detailed reproduction steps
 4. Allow time for us to address the issue before public disclosure
 

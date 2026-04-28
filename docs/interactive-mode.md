@@ -81,7 +81,7 @@
 | Shortcut     | Description       | Notes                                                         |
 | :----------- | :---------------- | :------------------------------------------------------------ |
 | `/` at start | Command or skill  | See [commands](#commands) and [skills](/en/skills)            |
-| `!` at start | Bash mode         | Run commands directly and add execution output to the session |
+| `!` at start | Shell mode        | Run commands directly and add execution output to the session |
 | `@`          | File path mention | Trigger file path autocomplete                                |
 
 ### Transcript viewer
@@ -259,9 +259,9 @@ To disable all background task functionality, set the `CLAUDE_CODE_DISABLE_BACKG
 * Development servers
 * Long-running processes (docker, terraform)
 
-### Bash mode with `!` prefix
+### Shell mode with `!` prefix
 
-Run bash commands directly without going through Claude by prefixing your input with `!`:
+Run shell commands directly without going through Claude by prefixing your input with `!`:
 
 ```bash theme={null}
 ! npm test
@@ -269,7 +269,7 @@ Run bash commands directly without going through Claude by prefixing your input 
 ! ls -la
 ```
 
-Bash mode:
+Shell mode:
 
 * Adds the command and its output to the conversation context
 * Shows real-time progress and output
@@ -277,7 +277,7 @@ Bash mode:
 * Does not require Claude to interpret or approve the command
 * Supports history-based autocomplete: type a partial command and press **Tab** to complete from previous `!` commands in the current project
 * Exit with `Escape`, `Backspace`, or `Ctrl+U` on an empty prompt
-* Pasting text that starts with `!` into an empty prompt enters bash mode automatically, matching typed `!` behavior
+* Pasting text that starts with `!` into an empty prompt enters shell mode automatically, matching typed `!` behavior
 
 This is useful for quick shell operations while maintaining conversation context.
 

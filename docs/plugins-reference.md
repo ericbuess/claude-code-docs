@@ -407,15 +407,16 @@ agent `agent-creator` for the plugin with name `plugin-dev` will appear as
 
 ### Metadata fields
 
-| Field         | Type   | Description                                                                                                                                                                                                                                                                                                                                      | Example                                            |
-| :------------ | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
-| `version`     | string | Optional. Semantic version. Setting this pins the plugin to that version string, so users only receive updates when you bump it. If omitted, Claude Code falls back to the git commit SHA, so every commit is treated as a new version. If also set in the marketplace entry, `plugin.json` wins. See [Version management](#version-management). | `"2.1.0"`                                          |
-| `description` | string | Brief explanation of plugin purpose                                                                                                                                                                                                                                                                                                              | `"Deployment automation tools"`                    |
-| `author`      | object | Author information                                                                                                                                                                                                                                                                                                                               | `{"name": "Dev Team", "email": "dev@company.com"}` |
-| `homepage`    | string | Documentation URL                                                                                                                                                                                                                                                                                                                                | `"https://docs.example.com"`                       |
-| `repository`  | string | Source code URL                                                                                                                                                                                                                                                                                                                                  | `"https://github.com/user/plugin"`                 |
-| `license`     | string | License identifier                                                                                                                                                                                                                                                                                                                               | `"MIT"`, `"Apache-2.0"`                            |
-| `keywords`    | array  | Discovery tags                                                                                                                                                                                                                                                                                                                                   | `["deployment", "ci-cd"]`                          |
+| Field         | Type   | Description                                                                                                                                                                                                                                                                                                                                      | Example                                                           |
+| :------------ | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `$schema`     | string | JSON Schema URL for editor autocomplete and validation. Claude Code ignores this field at load time.                                                                                                                                                                                                                                             | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `version`     | string | Optional. Semantic version. Setting this pins the plugin to that version string, so users only receive updates when you bump it. If omitted, Claude Code falls back to the git commit SHA, so every commit is treated as a new version. If also set in the marketplace entry, `plugin.json` wins. See [Version management](#version-management). | `"2.1.0"`                                                         |
+| `description` | string | Brief explanation of plugin purpose                                                                                                                                                                                                                                                                                                              | `"Deployment automation tools"`                                   |
+| `author`      | object | Author information                                                                                                                                                                                                                                                                                                                               | `{"name": "Dev Team", "email": "dev@company.com"}`                |
+| `homepage`    | string | Documentation URL                                                                                                                                                                                                                                                                                                                                | `"https://docs.example.com"`                                      |
+| `repository`  | string | Source code URL                                                                                                                                                                                                                                                                                                                                  | `"https://github.com/user/plugin"`                                |
+| `license`     | string | License identifier                                                                                                                                                                                                                                                                                                                               | `"MIT"`, `"Apache-2.0"`                                           |
+| `keywords`    | array  | Discovery tags                                                                                                                                                                                                                                                                                                                                   | `["deployment", "ci-cd"]`                                         |
 
 ### Component path fields
 
@@ -748,15 +749,42 @@ claude plugin uninstall <plugin> [options]
 
 **Options:**
 
-| Option                | Description                                                                   | Default |
-| :-------------------- | :---------------------------------------------------------------------------- | :------ |
-| `-s, --scope <scope>` | Uninstall from scope: `user`, `project`, or `local`                           | `user`  |
-| `--keep-data`         | Preserve the plugin's [persistent data directory](#persistent-data-directory) |         |
-| `-h, --help`          | Display help for command                                                      |         |
+| Option                | Description                                                                                              | Default |
+| :-------------------- | :------------------------------------------------------------------------------------------------------- | :------ |
+| `-s, --scope <scope>` | Uninstall from scope: `user`, `project`, or `local`                                                      | `user`  |
+| `--keep-data`         | Preserve the plugin's [persistent data directory](#persistent-data-directory)                            |         |
+| `--prune`             | Also remove auto-installed dependencies that no other plugin requires. See [plugin prune](#plugin-prune) |         |
+| `-y, --yes`           | Skip the `--prune` confirmation prompt. Required when stdin is not a TTY                                 |         |
+| `-h, --help`          | Display help for command                                                                                 |         |
 
 **Aliases:** `remove`, `rm`
 
 By default, uninstalling from the last remaining scope also deletes the plugin's `${CLAUDE_PLUGIN_DATA}` directory. Use `--keep-data` to preserve it, for example when reinstalling after testing a new version.
+
+### plugin prune
+
+Remove auto-installed plugin dependencies that are no longer required by any installed plugin. Dependencies that Claude Code pulled in to satisfy another plugin's [`dependencies`](/en/plugin-dependencies) field are removed; plugins you installed directly are never touched.
+
+```bash theme={null}
+claude plugin prune [options]
+```
+
+**Options:**
+
+| Option                | Description                                                    | Default |
+| :-------------------- | :------------------------------------------------------------- | :------ |
+| `-s, --scope <scope>` | Prune at scope: `user`, `project`, or `local`                  | `user`  |
+| `--dry-run`           | List what would be removed without removing anything           |         |
+| `-y, --yes`           | Skip the confirmation prompt. Required when stdin is not a TTY |         |
+| `-h, --help`          | Display help for command                                       |         |
+
+**Aliases:** `autoremove`
+
+The command lists orphaned dependencies and asks for confirmation before removing them. To remove a plugin and clean up its dependencies in one step, run `claude plugin uninstall <plugin> --prune`.
+
+<Note>
+  `claude plugin prune` requires Claude Code v2.1.121 or later.
+</Note>
 
 ### plugin enable
 

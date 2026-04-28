@@ -1271,23 +1271,36 @@ Matches on tool name, same values as PreToolUse.
 
 `PostToolUse` hooks can provide feedback to Claude after tool execution. In addition to the [JSON output fields](#json-output) available to all hooks, your hook script can return these event-specific fields:
 
-| Field                  | Description                                                                                |
-| :--------------------- | :----------------------------------------------------------------------------------------- |
-| `decision`             | `"block"` prompts Claude with the `reason`. Omit to allow the action to proceed            |
-| `reason`               | Explanation shown to Claude when `decision` is `"block"`                                   |
-| `additionalContext`    | Additional context for Claude to consider                                                  |
-| `updatedMCPToolOutput` | For [MCP tools](#match-mcp-tools) only: replaces the tool's output with the provided value |
+| Field                  | Description                                                                                                                  |
+| :--------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| `decision`             | `"block"` prompts Claude with the `reason`. Omit to allow the action to proceed                                              |
+| `reason`               | Explanation shown to Claude when `decision` is `"block"`                                                                     |
+| `additionalContext`    | Additional context for Claude to consider                                                                                    |
+| `updatedToolOutput`    | Replaces the tool's output with the provided value before it is sent to Claude. The value must match the tool's output shape |
+| `updatedMCPToolOutput` | Replaces the output for [MCP tools](#match-mcp-tools) only. Prefer `updatedToolOutput`, which works for all tools            |
+
+The example below replaces the output of a `Bash` call. The replacement value matches the `Bash` tool's output shape:
 
 ```json theme={null}
 {
-  "decision": "block",
-  "reason": "Explanation for decision",
   "hookSpecificOutput": {
     "hookEventName": "PostToolUse",
-    "additionalContext": "Additional information for Claude"
+    "additionalContext": "Additional information for Claude",
+    "updatedToolOutput": {
+      "stdout": "[redacted]",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false
+    }
   }
 }
 ```
+
+<Warning>
+  `updatedToolOutput` only changes what Claude sees. The tool has already run by the time the hook fires, so any files written, commands executed, or network requests sent have already taken effect. Telemetry such as OpenTelemetry tool spans and analytics events also captures the original output before the hook runs. To prevent or modify a tool call before it runs, use a [PreToolUse](#pretooluse) hook instead.
+
+  The replacement value must match the tool's output shape. Built-in tools return structured objects rather than plain strings. For example, `Bash` returns an object with `stdout`, `stderr`, `interrupted`, and `isImage` fields. For built-in tools, a value that does not match the tool's output schema is ignored and the original output is used. MCP tool output is passed through without schema validation. Stripping error details that Claude needs can cause it to proceed on a false assumption.
+</Warning>
 
 ### PostToolUseFailure
 

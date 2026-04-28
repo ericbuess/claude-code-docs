@@ -417,7 +417,8 @@ Create an IAM policy with the required permissions for Claude Code:
       "Action": [
         "bedrock:InvokeModel",
         "bedrock:InvokeModelWithResponseStream",
-        "bedrock:ListInferenceProfiles"
+        "bedrock:ListInferenceProfiles",
+        "bedrock:GetInferenceProfile"
       ],
       "Resource": [
         "arn:aws:bedrock:*:*:inference-profile/*",
@@ -444,6 +445,10 @@ Create an IAM policy with the required permissions for Claude Code:
 ```
 
 For more restrictive permissions, you can limit the Resource to specific inference profile ARNs.
+
+`bedrock:GetInferenceProfile` lets Claude Code resolve an [application inference profile ARN](#map-each-model-version-to-an-inference-profile) to its backing foundation model, which is used to select the correct request shape for that model.
+
+If the token is missing this permission, Claude Code recovers automatically by retrying once with the alternate shape, so requests still succeed but each new model adds an extra round-trip. Granting the permission avoids the retry. This applies most often to `AWS_BEARER_TOKEN_BEDROCK` deployments, where the token's policy is typically narrower than a full IAM role.
 
 For details, see [Bedrock IAM documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam.html).
 

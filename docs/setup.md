@@ -20,7 +20,7 @@ Claude Code runs on the following platforms and configurations:
   * Alpine Linux 3.19+
 * **Hardware**: 4 GB+ RAM, x64 or ARM64 processor
 * **Network**: internet connection required. See [network configuration](/en/network-config#network-access-requirements).
-* **Shell**: Bash, Zsh, PowerShell, or CMD. Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win). WSL setups do not.
+* **Shell**: Bash, Zsh, PowerShell, or CMD. Native Windows setups recommend [Git for Windows](https://git-scm.com/downloads/win); PowerShell is used as a fallback when Git Bash is absent. WSL setups do not require Git for Windows.
 * **Location**: [Anthropic supported countries](https://www.anthropic.com/supported-countries)
 
 ### Additional dependencies
@@ -59,7 +59,7 @@ To install Claude Code, use one of the following methods:
 
     If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
-    **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
+    [Git for Windows](https://git-scm.com/downloads/win) is recommended on native Windows so Claude Code can use the Bash tool. If Git for Windows is not installed, Claude Code uses PowerShell as the shell tool instead. WSL setups do not need Git for Windows.
 
     <Info>
       Native installations automatically update in the background to keep you on the latest version.
@@ -103,11 +103,11 @@ If you encounter any issues during installation, see the [troubleshooting guide]
 
 You can run Claude Code natively on Windows or inside WSL. Pick based on where your projects are located and which features you need:
 
-| Option         | Requires                                             | [Sandboxing](/en/sandboxing) | When to use                                     |
-| -------------- | ---------------------------------------------------- | ---------------------------- | ----------------------------------------------- |
-| Native Windows | [Git for Windows](https://git-scm.com/downloads/win) | Not supported                | Windows-native projects and tools               |
-| WSL 2          | WSL 2 enabled                                        | Supported                    | Linux toolchains or sandboxed command execution |
-| WSL 1          | WSL 1 enabled                                        | Not supported                | If WSL 2 is unavailable                         |
+| Option         | Requires                                                                                    | [Sandboxing](/en/sandboxing) | When to use                                     |
+| -------------- | ------------------------------------------------------------------------------------------- | ---------------------------- | ----------------------------------------------- |
+| Native Windows | [Git for Windows](https://git-scm.com/downloads/win) recommended; PowerShell used if absent | Not supported                | Windows-native projects and tools               |
+| WSL 2          | WSL 2 enabled                                                                               | Supported                    | Linux toolchains or sandboxed command execution |
+| WSL 1          | WSL 1 enabled                                                                               | Not supported                | If WSL 2 is unavailable                         |
 
 **Option 1: Native Windows with Git Bash**
 
@@ -115,7 +115,7 @@ Install [Git for Windows](https://git-scm.com/downloads/win), then run the insta
 
 Whether you install from PowerShell or CMD only affects which install command you run. Your prompt shows `PS C:\Users\YourName>` in PowerShell and `C:\Users\YourName>` without the `PS` in CMD. If you're new to the terminal, the [terminal guide](/en/terminal-guide#windows) walks through each step.
 
-After installation, launch `claude` from PowerShell, CMD, or Git Bash. Claude Code uses Git Bash internally to execute commands regardless of where you launched it. If Claude Code can't find your Git Bash installation, set the path in your [settings.json file](/en/settings):
+After installation, launch `claude` from PowerShell, CMD, or Git Bash. When Git Bash is installed, Claude Code uses it internally to execute commands regardless of where you launched it. If Claude Code can't find your Git Bash installation, set the path in your [settings.json file](/en/settings):
 
 ```json theme={null}
 {
