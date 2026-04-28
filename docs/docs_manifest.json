@@ -216,6 +216,12 @@
       "hash": "5fdbbed47aa5d0239bf0219f87a76f122d383664765462771fbf8756d23eadeb",
       "last_updated": "2026-04-21T04:00:54.822296"
     },
+    "champion-kit.md": {
+      "original_url": "https://code.claude.com/docs/en/champion-kit",
+      "original_md_url": "https://code.claude.com/docs/en/champion-kit.md",
+      "hash": "c3574420815a3daae4062535ff3db41b5be6dd0c269cb5e4b6d500dc615ca176",
+      "last_updated": "2026-04-28T18:27:24.146976"
+    },
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
@@ -283,6 +289,12 @@
       "hash": "c90940612369f186a5359c13c37e0d85ded6946780a7c8a6f6a07332802577fc",
       "last_updated": "2026-04-23T18:18:59.027875"
     },
+    "communications-kit.md": {
+      "original_url": "https://code.claude.com/docs/en/communications-kit",
+      "original_md_url": "https://code.claude.com/docs/en/communications-kit.md",
+      "hash": "14f4728a03fac9f77a12588acf76308f1e2fc8b271c7d7af19b05c07b69d2f9e",
+      "last_updated": "2026-04-28T18:27:30.856448"
+    },
     "computer-use.md": {
       "original_url": "https://code.claude.com/docs/en/computer-use",
       "original_md_url": "https://code.claude.com/docs/en/computer-use.md",
@@ -346,8 +358,8 @@
     "env-vars.md": {
       "original_url": "https://code.claude.com/docs/en/env-vars",
       "original_md_url": "https://code.claude.com/docs/en/env-vars.md",
-      "hash": "47d960f77f817b98f780214d5d0db9d48032901f34421d0bbb5db2898d16dea5",
-      "last_updated": "2026-04-28T06:48:40.124188"
+      "hash": "4688db5d15297a69a598d70d95d0da4772ae225c47b166a467d558289b9f5654",
+      "last_updated": "2026-04-28T18:27:37.021475"
     },
     "errors.md": {
       "original_url": "https://code.claude.com/docs/en/errors",
@@ -412,8 +424,8 @@
     "hooks.md": {
       "original_url": "https://code.claude.com/docs/en/hooks",
       "original_md_url": "https://code.claude.com/docs/en/hooks.md",
-      "hash": "3ddb08ca095508f2055e9f207028880c09a1957c64bf2080b88895ebb64750ab",
-      "last_updated": "2026-04-28T06:48:45.527757"
+      "hash": "e4f760ec7734b3bd8645e31d9c13b28861b3b90de5e6a377a69bae15d2244f9b",
+      "last_updated": "2026-04-28T18:27:43.193951"
     },
     "hooks-guide.md": {
       "original_url": "https://code.claude.com/docs/en/hooks-guide",
@@ -454,8 +466,8 @@
     "llm-gateway.md": {
       "original_url": "https://code.claude.com/docs/en/llm-gateway",
       "original_md_url": "https://code.claude.com/docs/en/llm-gateway.md",
-      "hash": "c5a367f97d0575ca7ff75d70681ab3318fde97cc1341cd4428fb8c628d99ceb4",
-      "last_updated": "2026-04-14T21:14:34.073742"
+      "hash": "ca7810a9e73b5a62ad4fb79d5e07959e76e600fe23d60e985dc4132900f788e8",
+      "last_updated": "2026-04-28T18:27:47.047832"
     },
     "mcp.md": {
       "original_url": "https://code.claude.com/docs/en/mcp",
@@ -538,8 +550,8 @@
     "plugins.md": {
       "original_url": "https://code.claude.com/docs/en/plugins",
       "original_md_url": "https://code.claude.com/docs/en/plugins.md",
-      "hash": "47f40108ccea2a470fe949492b973f8d0cf9b29a9fdb51241c8735642da33461",
-      "last_updated": "2026-04-23T18:19:21.556041"
+      "hash": "102220dfe69bf18a901ceb343016ad481737d940efc6cac68fc8db6128181ddb",
+      "last_updated": "2026-04-28T18:27:54.932224"
     },
     "plugins-reference.md": {
       "original_url": "https://code.claude.com/docs/en/plugins-reference",
@@ -658,8 +670,8 @@
     "ultrareview.md": {
       "original_url": "https://code.claude.com/docs/en/ultrareview",
       "original_md_url": "https://code.claude.com/docs/en/ultrareview.md",
-      "hash": "202e57c05b76ea9323f555e17ee2c7692404da81ac20fdfe5448606cebb82228",
-      "last_updated": "2026-04-28T06:49:07.555115"
+      "hash": "89f8f1c7ee05b61943386524ea4364e060befcf5b97ae5a1295a07b5eb67495e",
+      "last_updated": "2026-04-28T18:28:06.309120"
     },
     "voice-dictation.md": {
       "original_url": "https://code.claude.com/docs/en/voice-dictation",
@@ -723,18 +735,18 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-04-28T15:45:51.045236",
-    "fetch_duration_seconds": 70.720205,
-    "total_pages_discovered": 120,
-    "pages_fetched_successfully": 121,
+    "last_fetch_completed": "2026-04-28T18:28:11.830315",
+    "fetch_duration_seconds": 68.991416,
+    "total_pages_discovered": 122,
+    "pages_fetched_successfully": 123,
     "pages_failed": 0,
     "failed_pages": [],
     "sitemap_url": "https://code.claude.com/docs/sitemap.xml",
     "base_url": "https://code.claude.com",
-    "total_files": 120,
+    "total_files": 122,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-04-28T15:45:51.045267",
+  "last_updated": "2026-04-28T18:28:11.830340",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

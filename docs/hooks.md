@@ -655,6 +655,41 @@ To stop Claude entirely regardless of event type:
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
 
+#### Add context for Claude
+
+The `additionalContext` field passes a string from your hook into Claude's context window. Claude Code wraps the string in a system reminder and inserts it into the conversation at the point where the hook fired. Claude reads the reminder on the next model request, but it does not appear as a chat message in the interface.
+
+Return `additionalContext` inside `hookSpecificOutput` alongside the event name:
+
+```json theme={null}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PostToolUse",
+    "additionalContext": "This file is generated. Edit src/schema.ts and run `bun generate` instead."
+  }
+}
+```
+
+Where the reminder appears depends on the event:
+
+* [SessionStart](#sessionstart) and [SubagentStart](#subagentstart): at the start of the conversation, before the first prompt
+* [UserPromptSubmit](#userpromptsubmit) and [UserPromptExpansion](#userpromptexpansion): alongside the submitted prompt
+* [PreToolUse](#pretooluse), [PostToolUse](#posttooluse), [PostToolUseFailure](#posttoolusefailure), and [PostToolBatch](#posttoolbatch): next to the tool result
+
+When several hooks return `additionalContext` for the same event, Claude receives all of the values. If a value exceeds 10,000 characters, Claude Code writes the full text to a file in the session directory and passes Claude the file path with a short preview instead.
+
+Use `additionalContext` for information Claude should know about the current state of your environment or the operation that just ran:
+
+* **Environment state**: the current branch, deployment target, or active feature flags
+* **Conditional project rules**: which test command applies to the file just edited, which directories are read-only in this worktree
+* **External data**: open issues assigned to you, recent CI results, content fetched from an internal service
+
+For instructions that never change, prefer [CLAUDE.md](/en/memory). It loads without running a script and is the standard place for static project conventions.
+
+Write the text as factual statements rather than imperative system instructions. Phrasing such as "The deployment target is production" or "This repo uses `bun test`" reads as project information. Text framed as out-of-band system commands can trigger Claude's prompt-injection defenses, which causes Claude to surface the text to you instead of treating it as context.
+
+Once injected, the text is saved in the session transcript. For mid-session events like `PostToolUse` or `UserPromptSubmit`, resuming with `--continue` or `--resume` replays the saved text rather than re-running the hook for past turns, so values like timestamps or commit SHAs become stale on resume. `SessionStart` hooks run again on resume with `source` set to `"resume"`, so they can refresh their context.
+
 #### Decision control
 
 Not every event supports blocking or controlling behavior through JSON. The events that do each use a different set of fields to express that decision. Use this table as a quick reference before writing a hook:
@@ -758,18 +793,20 @@ In addition to the [common input fields](#common-input-fields), SessionStart hoo
 
 Any text your hook script prints to stdout is added as context for Claude. In addition to the [JSON output fields](#json-output) available to all hooks, you can return these event-specific fields:
 
-| Field               | Description                                                               |
-| :------------------ | :------------------------------------------------------------------------ |
-| `additionalContext` | String added to Claude's context. Multiple hooks' values are concatenated |
+| Field               | Description                                                                                                                                                                                           |
+| :------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext` | String added to Claude's context at the start of the conversation, before the first prompt. See [Add context for Claude](#add-context-for-claude) for how the text is delivered and what to put in it |
 
 ```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "My additional context here"
+    "additionalContext": "Current branch: feat/auth-refactor\nUncommitted changes: src/auth.ts, src/login.tsx\nActive issue: #4211 Migrate to OAuth2"
   }
 }
 ```
+
+Since plain stdout already reaches Claude for this event, a hook that only loads context can print to stdout directly without building JSON. Use the JSON form when you need to combine context with other fields such as `suppressOutput`.
 
 #### Persist environment variables
 
@@ -883,12 +920,12 @@ Plain stdout is shown as hook output in the transcript. The `additionalContext` 
 
 To block a prompt, return a JSON object with `decision` set to `"block"`:
 
-| Field               | Description                                                                                                        |
-| :------------------ | :----------------------------------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` prevents the prompt from being processed and erases it from context. Omit to allow the prompt to proceed |
-| `reason`            | Shown to the user when `decision` is `"block"`. Not added to context                                               |
-| `additionalContext` | String added to Claude's context                                                                                   |
-| `sessionTitle`      | Sets the session title, same effect as `/rename`. Use to name sessions automatically based on the prompt content   |
+| Field               | Description                                                                                                            |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------- |
+| `decision`          | `"block"` prevents the prompt from being processed and erases it from context. Omit to allow the prompt to proceed     |
+| `reason`            | Shown to the user when `decision` is `"block"`. Not added to context                                                   |
+| `additionalContext` | String added to Claude's context alongside the submitted prompt. See [Add context for Claude](#add-context-for-claude) |
+| `sessionTitle`      | Sets the session title, same effect as `/rename`. Use to name sessions automatically based on the prompt content       |
 
 ```json theme={null}
 {
@@ -938,11 +975,11 @@ In addition to the [common input fields](#common-input-fields), UserPromptExpans
 
 `UserPromptExpansion` hooks can block the expansion or add context. All [JSON output fields](#json-output) are available.
 
-| Field               | Description                                                                      |
-| :------------------ | :------------------------------------------------------------------------------- |
-| `decision`          | `"block"` prevents the slash command from expanding. Omit to allow it to proceed |
-| `reason`            | Shown to the user when `decision` is `"block"`                                   |
-| `additionalContext` | String added to Claude's context alongside the expanded prompt                   |
+| Field               | Description                                                                                                           |
+| :------------------ | :-------------------------------------------------------------------------------------------------------------------- |
+| `decision`          | `"block"` prevents the slash command from expanding. Omit to allow it to proceed                                      |
+| `reason`            | Shown to the user when `decision` is `"block"`                                                                        |
+| `additionalContext` | String added to Claude's context alongside the expanded prompt. See [Add context for Claude](#add-context-for-claude) |
 
 ```json theme={null}
 {
@@ -1076,7 +1113,7 @@ Asks the user one to four multiple-choice questions.
 | `permissionDecision`       | `"allow"` skips the permission prompt. `"deny"` prevents the tool call. `"ask"` prompts the user to confirm. `"defer"` exits gracefully so the tool can be resumed later. [Deny and ask rules](/en/permissions#manage-permissions) are still evaluated regardless of what the hook returns |
 | `permissionDecisionReason` | For `"allow"` and `"ask"`, shown to the user but not Claude. For `"deny"`, shown to Claude. For `"defer"`, ignored                                                                                                                                                                         |
 | `updatedInput`             | Modifies the tool's input parameters before execution. Replaces the entire input object, so include unchanged fields alongside modified ones. Combine with `"allow"` to auto-approve, or `"ask"` to show the modified input to the user. For `"defer"`, ignored                            |
-| `additionalContext`        | String added to Claude's context before the tool executes. For `"defer"`, ignored                                                                                                                                                                                                          |
+| `additionalContext`        | String added to Claude's context alongside the tool result. Ignored when `permissionDecision` is `"defer"`. See [Add context for Claude](#add-context-for-claude)                                                                                                                          |
 
 When multiple PreToolUse hooks return different decisions, precedence is `deny` > `defer` > `ask` > `allow`.
 
@@ -1275,7 +1312,7 @@ Matches on tool name, same values as PreToolUse.
 | :--------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
 | `decision`             | `"block"` prompts Claude with the `reason`. Omit to allow the action to proceed                                              |
 | `reason`               | Explanation shown to Claude when `decision` is `"block"`                                                                     |
-| `additionalContext`    | Additional context for Claude to consider                                                                                    |
+| `additionalContext`    | String added to Claude's context alongside the tool result. See [Add context for Claude](#add-context-for-claude)            |
 | `updatedToolOutput`    | Replaces the tool's output with the provided value before it is sent to Claude. The value must match the tool's output shape |
 | `updatedMCPToolOutput` | Replaces the output for [MCP tools](#match-mcp-tools) only. Prefer `updatedToolOutput`, which works for all tools            |
 
@@ -1341,9 +1378,9 @@ PostToolUseFailure hooks receive the same `tool_name` and `tool_input` fields as
 
 `PostToolUseFailure` hooks can provide context to Claude after a tool failure. In addition to the [JSON output fields](#json-output) available to all hooks, your hook script can return these event-specific fields:
 
-| Field               | Description                                                   |
-| :------------------ | :------------------------------------------------------------ |
-| `additionalContext` | Additional context for Claude to consider alongside the error |
+| Field               | Description                                                                                                 |
+| :------------------ | :---------------------------------------------------------------------------------------------------------- |
+| `additionalContext` | String added to Claude's context alongside the error. See [Add context for Claude](#add-context-for-claude) |
 
 ```json theme={null}
 {
@@ -1396,9 +1433,9 @@ In addition to the [common input fields](#common-input-fields), PostToolBatch ho
 
 `PostToolBatch` hooks can inject context for Claude. In addition to the [JSON output fields](#json-output) available to all hooks, your hook script can return these event-specific fields:
 
-| Field               | Description                                             |
-| :------------------ | :------------------------------------------------------ |
-| `additionalContext` | Context string injected once before the next model call |
+| Field               | Description                                                                                                                                                                                         |
+| :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext` | Context string injected once before the next model call. See [Add context for Claude](#add-context-for-claude) for delivery details, what to put in it, and how resumed sessions handle past values |
 
 ```json theme={null}
 {
@@ -1408,12 +1445,6 @@ In addition to the [common input fields](#common-input-fields), PostToolBatch ho
   }
 }
 ```
-
-<Note>
-  Injected `additionalContext` is persisted to the session transcript. On `--continue` or `--resume`, the saved text is replayed from disk and the hook does not re-run for past turns. Prefer static context such as conventions or file-type guidance over dynamic values like timestamps or the current commit SHA, since those become stale on resume.
-
-  Frame the context as factual information rather than imperative system instructions. Text written as out-of-band system commands can trigger Claude's prompt-injection defenses, which surfaces the injection to the user instead of acting on it.
-</Note>
 
 Returning `decision: "block"` or `continue: false` stops the agentic loop before the next model call.
 
@@ -1512,11 +1543,7 @@ In addition to the [common input fields](#common-input-fields), Notification hoo
 }
 ```
 
-Notification hooks cannot block or modify notifications. In addition to the [JSON output fields](#json-output) available to all hooks, you can return `additionalContext` to add context to the conversation:
-
-| Field               | Description                      |
-| :------------------ | :------------------------------- |
-| `additionalContext` | String added to Claude's context |
+Notification hooks cannot block or modify notifications. They are intended for side effects such as forwarding the notification to an external service. The [common JSON output fields](#json-output) such as `systemMessage` apply.
 
 ### SubagentStart
 
@@ -1539,9 +1566,9 @@ In addition to the [common input fields](#common-input-fields), SubagentStart ho
 
 SubagentStart hooks cannot block subagent creation, but they can inject context into the subagent. In addition to the [JSON output fields](#json-output) available to all hooks, you can return:
 
-| Field               | Description                            |
-| :------------------ | :------------------------------------- |
-| `additionalContext` | String added to the subagent's context |
+| Field               | Description                                                                                                                                             |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `additionalContext` | String added to the subagent's context at the start of its conversation, before its first prompt. See [Add context for Claude](#add-context-for-claude) |
 
 ```json theme={null}
 {

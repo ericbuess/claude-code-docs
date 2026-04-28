@@ -45,6 +45,8 @@ Claude Code includes the following headers on every API request:
 | :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `X-Claude-Code-Session-Id` | A unique identifier for the current Claude Code session. Proxies can use this to aggregate all API requests from a single session without parsing the request body. |
 
+Claude Code also prepends a short attribution block to the system prompt containing the client version and a fingerprint derived from the conversation. The Anthropic API strips this block before processing, so it does not affect first-party prompt caching. If your gateway implements its own prompt cache keyed on the full request body, set [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/en/env-vars) to omit it.
+
 ## Configuration
 
 ### Model selection
