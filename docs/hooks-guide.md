@@ -428,6 +428,7 @@ Hook events fire at specific lifecycle points in Claude Code. When an event fire
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `Setup`               | When you start Claude Code with `--init-only`, or with `--init` or `--maintenance` in `-p` mode. For one-time preparation in CI or scripts             |
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
@@ -507,7 +508,7 @@ exit 0  # exit 0 = let it proceed
 The exit code determines what happens next:
 
 * **Exit 0**: the action proceeds. For `UserPromptSubmit`, `UserPromptExpansion`, and `SessionStart` hooks, anything you write to stdout is added to Claude's context.
-* **Exit 2**: the action is blocked. Write a reason to stderr, and Claude receives it as feedback so it can adjust.
+* **Exit 2**: the action is blocked. Write a reason to stderr, and Claude receives it as feedback so it can adjust. Some events cannot be blocked: for `SessionStart`, `Setup`, `Notification`, and others, exit 2 shows stderr to the user and execution continues. See [exit code 2 behavior per event](/en/hooks#exit-code-2-behavior-per-event) for the full list.
 * **Any other exit code**: the action proceeds. The transcript shows a `<hook name> hook error` notice followed by the first line of stderr; the full stderr goes to the [debug log](/en/hooks#debug-hooks).
 
 #### Structured JSON output
@@ -565,15 +566,20 @@ Without a matcher, a hook fires on every occurrence of its event. Matchers let y
 
 The `"Edit|Write"` matcher fires only when Claude uses the `Edit` or `Write` tool, not when it uses `Bash`, `Read`, or any other tool. See [Matcher patterns](/en/hooks#matcher-patterns) for how plain names and regular expressions are evaluated.
 
+<Note>
+  Claude can also create or modify files by running shell commands through the `Bash` tool. If your hook must see every file change, such as for compliance scanning or audit logging, add a [`Stop`](/en/hooks#stop) hook that scans the working tree once per turn. For per-call coverage instead, also match `Bash` and have your script list modified and untracked files with `git status --porcelain`.
+</Note>
+
 Each event type matches on a specific field:
 
 | Event                                                                                                                                         | What the matcher filters                                              | Example matcher values                                                                                                    |
 | :-------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
 | `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                                    | tool name                                                             | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
 | `SessionStart`                                                                                                                                | how the session started                                               | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `Setup`                                                                                                                                       | which CLI flag triggered setup                                        | `init`, `maintenance`                                                                                                     |
 | `SessionEnd`                                                                                                                                  | why the session ended                                                 | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                                                | notification type                                                     | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                                               | agent type                                                            | `Bash`, `Explore`, `Plan`, or custom agent names                                                                          |
+| `Notification`                                                                                                                                | notification type                                                     | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`  |
+| `SubagentStart`                                                                                                                               | agent type                                                            | `general-purpose`, `Explore`, `Plan`, or custom agent names                                                               |
 | `PreCompact`, `PostCompact`                                                                                                                   | what triggered compaction                                             | `manual`, `auto`                                                                                                          |
 | `SubagentStop`                                                                                                                                | agent type                                                            | same values as `SubagentStart`                                                                                            |
 | `ConfigChange`                                                                                                                                | configuration source                                                  | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |

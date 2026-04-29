@@ -18,7 +18,7 @@ Hooks fire at specific points during a Claude Code session. When an event fires 
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/_SQ1BnFTP0QUrae-/images/hooks-lifecycle.svg?fit=max&auto=format&n=_SQ1BnFTP0QUrae-&q=85&s=75bd3d4bdefd4f08a7d736167243fd78" alt="Hook lifecycle diagram showing SessionStart, then a per-turn loop containing UserPromptSubmit, UserPromptExpansion for slash commands, the nested agentic loop (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, PostToolBatch, SubagentStart/Stop, TaskCreated, TaskCompleted), and Stop or StopFailure, followed by TeammateIdle, PreCompact, PostCompact, and SessionEnd, with Elicitation and ElicitationResult nested inside MCP tool execution, PermissionDenied as a side branch from PermissionRequest for auto-mode denials, and WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, and FileChanged as standalone async events" width="520" height="1228" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/ZIW26Z9pnpsXLhbS/images/hooks-lifecycle.svg?fit=max&auto=format&n=ZIW26Z9pnpsXLhbS&q=85&s=ee23691324deb6501df09bfdae560b64" alt="Hook lifecycle diagram showing optional Setup feeding into SessionStart, then a per-turn loop containing UserPromptSubmit, UserPromptExpansion for slash commands, the nested agentic loop (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, PostToolBatch, SubagentStart/Stop, TaskCreated, TaskCompleted), and Stop or StopFailure, followed by TeammateIdle, PreCompact, PostCompact, and SessionEnd, with Elicitation and ElicitationResult nested inside MCP tool execution, PermissionDenied as a side branch from PermissionRequest for auto-mode denials, and WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, and FileChanged as standalone async events" width="520" height="1228" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -27,6 +27,7 @@ The table below summarizes when each event fires. The [Hook events](#hook-events
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `Setup`               | When you start Claude Code with `--init-only`, or with `--init` or `--maintenance` in `-p` mode. For one-time preparation in CI or scripts             |
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
@@ -191,9 +192,10 @@ Each event type matches on a different field:
 | :------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
 | `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                      | tool name                                                    | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
 | `SessionStart`                                                                                                                  | how the session started                                      | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `Setup`                                                                                                                         | which CLI flag triggered setup                               | `init`, `maintenance`                                                                                                     |
 | `SessionEnd`                                                                                                                    | why the session ended                                        | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                                  | notification type                                            | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                                 | agent type                                                   | `Bash`, `Explore`, `Plan`, or custom agent names                                                                          |
+| `Notification`                                                                                                                  | notification type                                            | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`  |
+| `SubagentStart`                                                                                                                 | agent type                                                   | `general-purpose`, `Explore`, `Plan`, or custom agent names                                                               |
 | `PreCompact`, `PostCompact`                                                                                                     | what triggered compaction                                    | `manual`, `auto`                                                                                                          |
 | `SubagentStop`                                                                                                                  | agent type                                                   | same values as `SubagentStart`                                                                                            |
 | `ConfigChange`                                                                                                                  | configuration source                                         | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
@@ -601,6 +603,7 @@ Exit code 2 is the way a hook signals "stop, don't do this." The effect depends 
 | `Notification`        | No         | Shows stderr to user only                                                                                                            |
 | `SubagentStart`       | No         | Shows stderr to user only                                                                                                            |
 | `SessionStart`        | No         | Shows stderr to user only                                                                                                            |
+| `Setup`               | No         | Shows stderr to user only                                                                                                            |
 | `SessionEnd`          | No         | Shows stderr to user only                                                                                                            |
 | `CwdChanged`          | No         | Shows stderr to user only                                                                                                            |
 | `FileChanged`         | No         | Shows stderr to user only                                                                                                            |
@@ -672,7 +675,7 @@ Return `additionalContext` inside `hookSpecificOutput` alongside the event name:
 
 Where the reminder appears depends on the event:
 
-* [SessionStart](#sessionstart) and [SubagentStart](#subagentstart): at the start of the conversation, before the first prompt
+* [SessionStart](#sessionstart), [Setup](#setup), and [SubagentStart](#subagentstart): at the start of the conversation, before the first prompt
 * [UserPromptSubmit](#userpromptsubmit) and [UserPromptExpansion](#userpromptexpansion): alongside the submitted prompt
 * [PreToolUse](#pretooluse), [PostToolUse](#posttooluse), [PostToolUseFailure](#posttoolusefailure), and [PostToolBatch](#posttoolbatch): next to the tool result
 
@@ -848,8 +851,56 @@ exit 0
 Any variables written to this file will be available in all subsequent Bash commands that Claude Code executes during the session.
 
 <Note>
-  `CLAUDE_ENV_FILE` is available for SessionStart, [CwdChanged](#cwdchanged), and [FileChanged](#filechanged) hooks. Other hook types do not have access to this variable.
+  `CLAUDE_ENV_FILE` is available for SessionStart, [Setup](#setup), [CwdChanged](#cwdchanged), and [FileChanged](#filechanged) hooks. Other hook types do not have access to this variable.
 </Note>
+
+### Setup
+
+Fires only when you launch Claude Code with `--init-only`, or with `--init` or `--maintenance` in print mode (`-p`). It does not fire on normal startup. Use it for one-time dependency installation or scheduled cleanup that you trigger explicitly from CI or scripts, separate from normal session startup. For per-session initialization, use [SessionStart](#sessionstart) instead.
+
+The matcher value corresponds to the CLI flag that triggered the hook:
+
+| Matcher       | When it fires                              |
+| :------------ | :----------------------------------------- |
+| `init`        | `claude --init-only` or `claude -p --init` |
+| `maintenance` | `claude -p --maintenance`                  |
+
+`--init-only` runs Setup hooks and `SessionStart` hooks with the `startup` matcher, then exits without starting a conversation. `--init` and `--maintenance` fire Setup hooks only when combined with `-p` (print mode); in an interactive session those two flags do not currently fire Setup hooks.
+
+Because Setup does not fire on every launch, a plugin that needs a dependency installed cannot rely on Setup alone. The practical pattern is to check for the dependency on first use and install on miss, for example a hook or skill that tests for `${CLAUDE_PLUGIN_DATA}/node_modules` and runs `npm install` if absent. See the [persistent data directory](/en/plugins-reference#persistent-data-directory) for where to store installed dependencies.
+
+#### Setup input
+
+In addition to the [common input fields](#common-input-fields), Setup hooks receive a `trigger` field set to either `"init"` or `"maintenance"`:
+
+```json theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "hook_event_name": "Setup",
+  "trigger": "init"
+}
+```
+
+#### Setup decision control
+
+Setup hooks cannot block. On exit code 2, stderr is shown to the user; on any other non-zero exit code, stderr appears only when you launch with `--verbose`. In both cases execution continues. To pass information into Claude's context, return `additionalContext` in JSON output; plain stdout is written to the debug log only. In addition to the [JSON output fields](#json-output) available to all hooks, you can return these event-specific fields:
+
+| Field               | Description                                                               |
+| :------------------ | :------------------------------------------------------------------------ |
+| `additionalContext` | String added to Claude's context. Multiple hooks' values are concatenated |
+
+```json theme={null}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "Setup",
+    "additionalContext": "Dependencies installed: node_modules, .venv"
+  }
+}
+```
+
+Setup hooks have access to `CLAUDE_ENV_FILE`. Variables written to that file persist into subsequent Bash commands for the session, just as in [SessionStart hooks](#persist-environment-variables). Only `type: "command"` and `type: "mcp_tool"` hooks are supported.
 
 ### InstructionsLoaded
 
@@ -1496,7 +1547,7 @@ When `retry` is `true`, Claude Code adds a message to the conversation telling t
 
 ### Notification
 
-Runs when Claude Code sends notifications. Matches on notification type: `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`. Omit the matcher to run hooks for all notification types.
+Runs when Claude Code sends notifications. Matches on notification type: `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`. Omit the matcher to run hooks for all notification types.
 
 Use separate matchers to run different handlers depending on the notification type. This configuration triggers a permission-specific alert script when Claude needs permission approval and a different notification when Claude has been idle:
 
@@ -1547,11 +1598,11 @@ Notification hooks cannot block or modify notifications. They are intended for s
 
 ### SubagentStart
 
-Runs when a Claude Code subagent is spawned via the Agent tool. Supports matchers to filter by agent type name (built-in agents like `Bash`, `Explore`, `Plan`, or custom agent names from `.claude/agents/`).
+Runs when a Claude Code subagent is spawned via the Agent tool. Supports matchers to filter by agent type name (built-in agents like `general-purpose`, `Explore`, `Plan`, or custom agent names from `.claude/agents/`).
 
 #### SubagentStart input
 
-In addition to the [common input fields](#common-input-fields), SubagentStart hooks receive `agent_id` with the unique identifier for the subagent and `agent_type` with the agent name (built-in agents like `"Bash"`, `"Explore"`, `"Plan"`, or custom agent names).
+In addition to the [common input fields](#common-input-fields), SubagentStart hooks receive `agent_id` with the unique identifier for the subagent and `agent_type` with the agent name (built-in agents like `"general-purpose"`, `"Explore"`, `"Plan"`, or custom agent names).
 
 ```json theme={null}
 {

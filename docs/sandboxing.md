@@ -87,6 +87,10 @@ On **Linux and WSL2**, install the required packages first:
   </Tab>
 </Tabs>
 
+WSL1 does not support sandboxing because it lacks the required Linux namespace primitives. If you see `Sandboxing requires WSL2`, upgrade your distribution to WSL2 or run Claude Code without sandboxing.
+
+On WSL2, sandboxed commands cannot launch Windows binaries such as `cmd.exe`, `powershell.exe`, or anything under `/mnt/c/`. WSL hands these off to the Windows host over a Unix socket, which the sandbox blocks. If a command needs to invoke a Windows binary, add it to [`excludedCommands`](/en/settings#sandbox-settings) so it runs outside the sandbox.
+
 ### Enable sandboxing
 
 You can enable sandboxing by running the `/sandbox` command:

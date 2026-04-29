@@ -25,7 +25,7 @@ For complete information on plugin structure and how to create plugins, see [Plu
 
 ## Loading plugins
 
-Load plugins by providing their local file system paths in your options configuration. The SDK supports loading multiple plugins from different locations.
+Load plugins by providing their local file system paths in your options configuration. The `type` field must be `"local"`, the only value the SDK accepts. To use a plugin distributed through a [marketplace](/en/plugin-marketplaces) or remote repository, download it first and provide the local directory path. The SDK supports loading multiple plugins from different locations.
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
