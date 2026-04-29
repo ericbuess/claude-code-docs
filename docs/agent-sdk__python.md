@@ -3149,9 +3149,10 @@ class SandboxNetworkConfig(TypedDict, total=False):
     allowedDomains: list[str]
     deniedDomains: list[str]
     allowManagedDomainsOnly: bool
-    allowLocalBinding: bool
     allowUnixSockets: list[str]
     allowAllUnixSockets: bool
+    allowLocalBinding: bool
+    allowMachLookup: list[str]
     httpProxyPort: int
     socksProxyPort: int
 ```
@@ -3161,9 +3162,10 @@ class SandboxNetworkConfig(TypedDict, total=False):
 | `allowedDomains`          | `list[str]` | `[]`    | Domain names that sandboxed processes can access                                                                                                       |
 | `deniedDomains`           | `list[str]` | `[]`    | Domain names that sandboxed processes cannot access. Takes precedence over `allowedDomains`                                                            |
 | `allowManagedDomainsOnly` | `bool`      | `False` | Managed-settings only: when set in managed settings, ignore `allowedDomains` from non-managed settings sources. Has no effect when set via SDK options |
-| `allowLocalBinding`       | `bool`      | `False` | Allow processes to bind to local ports (e.g., for dev servers)                                                                                         |
 | `allowUnixSockets`        | `list[str]` | `[]`    | Unix socket paths that processes can access (e.g., Docker socket)                                                                                      |
 | `allowAllUnixSockets`     | `bool`      | `False` | Allow access to all Unix sockets                                                                                                                       |
+| `allowLocalBinding`       | `bool`      | `False` | Allow processes to bind to local ports (e.g., for dev servers)                                                                                         |
+| `allowMachLookup`         | `list[str]` | `[]`    | macOS only: XPC/Mach service names to allow. Supports a trailing wildcard                                                                              |
 | `httpProxyPort`           | `int`       | `None`  | HTTP proxy port for network requests                                                                                                                   |
 | `socksProxyPort`          | `int`       | `None`  | SOCKS proxy port for network requests                                                                                                                  |
 
