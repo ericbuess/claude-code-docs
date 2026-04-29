@@ -3118,16 +3118,6 @@ class SandboxSettings(TypedDict, total=False):
 | `ignoreViolations`          | [`SandboxIgnoreViolations`](#sandbox-ignore-violations) | `None`  | Configure which sandbox violations to ignore                                                                                                                                                                                            |
 | `enableWeakerNestedSandbox` | `bool`                                                  | `False` | Enable a weaker nested sandbox for compatibility                                                                                                                                                                                        |
 
-<Note>
-  **Filesystem and network access restrictions** are NOT configured via sandbox settings. Instead, they are derived from [permission rules](/en/settings#permission-settings):
-
-  * **Filesystem read restrictions**: Read deny rules
-  * **Filesystem write restrictions**: Edit allow/deny rules
-  * **Network restrictions**: WebFetch allow/deny rules
-
-  Use sandbox settings for command execution sandboxing, and permission rules for filesystem and network access control.
-</Note>
-
 #### Example usage
 
 ```python theme={null}
@@ -3156,6 +3146,9 @@ Network-specific configuration for sandbox mode.
 
 ```python theme={null}
 class SandboxNetworkConfig(TypedDict, total=False):
+    allowedDomains: list[str]
+    deniedDomains: list[str]
+    allowManagedDomainsOnly: bool
     allowLocalBinding: bool
     allowUnixSockets: list[str]
     allowAllUnixSockets: bool
@@ -3163,13 +3156,20 @@ class SandboxNetworkConfig(TypedDict, total=False):
     socksProxyPort: int
 ```
 
-| Property              | Type        | Default | Description                                                       |
-| :-------------------- | :---------- | :------ | :---------------------------------------------------------------- |
-| `allowLocalBinding`   | `bool`      | `False` | Allow processes to bind to local ports (e.g., for dev servers)    |
-| `allowUnixSockets`    | `list[str]` | `[]`    | Unix socket paths that processes can access (e.g., Docker socket) |
-| `allowAllUnixSockets` | `bool`      | `False` | Allow access to all Unix sockets                                  |
-| `httpProxyPort`       | `int`       | `None`  | HTTP proxy port for network requests                              |
-| `socksProxyPort`      | `int`       | `None`  | SOCKS proxy port for network requests                             |
+| Property                  | Type        | Default | Description                                                                                                                                            |
+| :------------------------ | :---------- | :------ | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `allowedDomains`          | `list[str]` | `[]`    | Domain names that sandboxed processes can access                                                                                                       |
+| `deniedDomains`           | `list[str]` | `[]`    | Domain names that sandboxed processes cannot access. Takes precedence over `allowedDomains`                                                            |
+| `allowManagedDomainsOnly` | `bool`      | `False` | Managed-settings only: when set in managed settings, ignore `allowedDomains` from non-managed settings sources. Has no effect when set via SDK options |
+| `allowLocalBinding`       | `bool`      | `False` | Allow processes to bind to local ports (e.g., for dev servers)                                                                                         |
+| `allowUnixSockets`        | `list[str]` | `[]`    | Unix socket paths that processes can access (e.g., Docker socket)                                                                                      |
+| `allowAllUnixSockets`     | `bool`      | `False` | Allow access to all Unix sockets                                                                                                                       |
+| `httpProxyPort`           | `int`       | `None`  | HTTP proxy port for network requests                                                                                                                   |
+| `socksProxyPort`          | `int`       | `None`  | SOCKS proxy port for network requests                                                                                                                  |
+
+<Note>
+  The built-in sandbox proxy enforces the network allowlist based on the requested hostname and does not terminate or inspect TLS traffic, so techniques such as [domain fronting](https://en.wikipedia.org/wiki/Domain_fronting) can potentially bypass it. See [Sandboxing security limitations](/en/sandboxing#security-limitations) for details and [Secure deployment](/en/agent-sdk/secure-deployment#traffic-forwarding) for configuring a TLS-terminating proxy.
+</Note>
 
 ### `SandboxIgnoreViolations`
 
