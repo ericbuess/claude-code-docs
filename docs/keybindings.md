@@ -99,21 +99,22 @@ Actions for navigating command history:
 
 Actions available in the `Chat` context:
 
-| Action                | Default                   | Description                                       |
-| :-------------------- | :------------------------ | :------------------------------------------------ |
-| `chat:cancel`         | Escape                    | Cancel current input                              |
-| `chat:clearInput`     | Ctrl+L                    | Clear prompt input and force a full screen redraw |
-| `chat:killAgents`     | Ctrl+X Ctrl+K             | Kill all background agents                        |
-| `chat:cycleMode`      | Shift+Tab\*               | Cycle permission modes                            |
-| `chat:modelPicker`    | Meta+P                    | Open model picker                                 |
-| `chat:fastMode`       | Meta+O                    | Toggle fast mode                                  |
-| `chat:thinkingToggle` | Meta+T                    | Toggle extended thinking                          |
-| `chat:submit`         | Enter                     | Submit message                                    |
-| `chat:newline`        | Ctrl+J                    | Insert a newline without submitting               |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Undo last action                                  |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Open in external editor                           |
-| `chat:stash`          | Ctrl+S                    | Stash current prompt                              |
-| `chat:imagePaste`     | Ctrl+V (Alt+V on Windows) | Paste image                                       |
+| Action                | Default                   | Description                                                                                                                                                         |
+| :-------------------- | :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `chat:cancel`         | Escape                    | Cancel current input                                                                                                                                                |
+| `chat:clearInput`     | Ctrl+L                    | Clear prompt input and force a full screen redraw. In [fullscreen rendering](/en/fullscreen#clear-the-conversation), press twice within two seconds to run `/clear` |
+| `chat:clearScreen`    | Cmd+K                     | In [fullscreen rendering](/en/fullscreen#clear-the-conversation), press twice within two seconds to run `/clear`                                                    |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | Kill all background agents                                                                                                                                          |
+| `chat:cycleMode`      | Shift+Tab\*               | Cycle permission modes                                                                                                                                              |
+| `chat:modelPicker`    | Meta+P                    | Open model picker                                                                                                                                                   |
+| `chat:fastMode`       | Meta+O                    | Toggle fast mode                                                                                                                                                    |
+| `chat:thinkingToggle` | Meta+T                    | Toggle extended thinking                                                                                                                                            |
+| `chat:submit`         | Enter                     | Submit message                                                                                                                                                      |
+| `chat:newline`        | Ctrl+J                    | Insert a newline without submitting                                                                                                                                 |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Undo last action                                                                                                                                                    |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Open in external editor                                                                                                                                             |
+| `chat:stash`          | Ctrl+S                    | Stash current prompt                                                                                                                                                |
+| `chat:imagePaste`     | Ctrl+V (Alt+V on Windows) | Paste image                                                                                                                                                         |
 
 \*On Windows without VT mode (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), defaults to Meta+M.
 
@@ -421,11 +422,12 @@ If you unbind some but not all chords on a prefix, pressing the prefix still ent
 
 These shortcuts cannot be rebound:
 
-| Shortcut | Reason                                         |
-| :------- | :--------------------------------------------- |
-| Ctrl+C   | Hardcoded interrupt/cancel                     |
-| Ctrl+D   | Hardcoded exit                                 |
-| Ctrl+M   | Identical to Enter in terminals (both send CR) |
+| Shortcut  | Reason                                         |
+| :-------- | :--------------------------------------------- |
+| Ctrl+C    | Hardcoded interrupt/cancel                     |
+| Ctrl+D    | Hardcoded exit                                 |
+| Ctrl+M    | Identical to Enter in terminals (both send CR) |
+| Caps Lock | Not delivered to terminal applications         |
 
 ## Terminal conflicts
 

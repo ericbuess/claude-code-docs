@@ -489,10 +489,10 @@ export const InstallConfigurator = ({defaultSurface = 'terminal'}) => {
       {}
       {target === 'terminal' && <div className="cc-ic-below">
           {isWinInstaller && <span>
-              Requires{' '}
               <a href="https://git-scm.com/downloads/win" target="_blank" rel="noopener">
                 Git for Windows
-              </a>.
+              </a>{' '}
+              recommended. PowerShell is used if Git Bash is absent.
             </span>}
           {(pkg === 'brew' || pkg === 'winget') && <span>
               Does not auto-update. Run{' '}
@@ -674,7 +674,7 @@ Choose your environment to get started. Most surfaces require a [Claude subscrip
 
         If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
-        [Git for Windows](https://git-scm.com/downloads/win) is required on native Windows so Claude Code can use the Bash tool. WSL setups do not need Git for Windows.
+        [Git for Windows](https://git-scm.com/downloads/win) is recommended on native Windows so Claude Code can use the Bash tool. If Git for Windows is not installed, Claude Code uses PowerShell as the shell tool instead. WSL setups do not need Git for Windows.
 
         <Info>
           Native installations automatically update in the background to keep you on the latest version.

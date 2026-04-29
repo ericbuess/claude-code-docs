@@ -357,7 +357,7 @@ You can create pull requests by asking Claude directly ("create a pr for my chan
   </Step>
 </Steps>
 
-When you create a PR using `gh pr create`, the session is automatically linked to that PR. You can resume it later with `claude --from-pr <number>`.
+When you create a PR using `gh pr create`, the session is automatically linked to that PR. To return to it later, run `claude --from-pr <number>` or paste the PR URL into the [`/resume` picker](#use-the-session-picker) search.
 
 <Tip>
   Review Claude's generated PR before submitting and ask Claude to highlight potential risks or considerations.
@@ -618,18 +618,18 @@ The `/resume` command (or `claude --resume` without arguments) opens an interact
 
 **Keyboard shortcuts in the picker:**
 
-| Shortcut                                          | Action                                                                                                                                             |
-| :------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `↑` / `↓`                                         | Navigate between sessions                                                                                                                          |
-| `→` / `←`                                         | Expand or collapse grouped sessions                                                                                                                |
-| `Enter`                                           | Select and resume the highlighted session                                                                                                          |
-| `Space`                                           | Preview the session content. `Ctrl+V` also works on terminals that do not capture it as paste                                                      |
-| `Ctrl+R`                                          | Rename the highlighted session                                                                                                                     |
-| `/` or any printable character other than `Space` | Enter search mode and filter sessions                                                                                                              |
-| `Ctrl+A`                                          | Show sessions from all projects on this machine. Press again to restore the current repository                                                     |
-| `Ctrl+W`                                          | Show sessions from all worktrees of the current repository. Press again to restore the current worktree. Only shown in multi-worktree repositories |
-| `Ctrl+B`                                          | Filter to sessions from your current git branch. Press again to show sessions from all branches                                                    |
-| `Esc`                                             | Exit the picker or search mode                                                                                                                     |
+| Shortcut                                          | Action                                                                                                                                                       |
+| :------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `↑` / `↓`                                         | Navigate between sessions                                                                                                                                    |
+| `→` / `←`                                         | Expand or collapse grouped sessions                                                                                                                          |
+| `Enter`                                           | Select and resume the highlighted session                                                                                                                    |
+| `Space`                                           | Preview the session content. `Ctrl+V` also works on terminals that do not capture it as paste                                                                |
+| `Ctrl+R`                                          | Rename the highlighted session                                                                                                                               |
+| `/` or any printable character other than `Space` | Enter search mode and filter sessions. Paste a GitHub, GitHub Enterprise, GitLab, or Bitbucket pull or merge request URL to find the session that created it |
+| `Ctrl+A`                                          | Show sessions from all projects on this machine. Press again to restore the current repository                                                               |
+| `Ctrl+W`                                          | Show sessions from all worktrees of the current repository. Press again to restore the current worktree. Only shown in multi-worktree repositories           |
+| `Ctrl+B`                                          | Filter to sessions from your current git branch. Press again to show sessions from all branches                                                              |
+| `Esc`                                             | Exit the picker or search mode                                                                                                                               |
 
 **Session organization:**
 

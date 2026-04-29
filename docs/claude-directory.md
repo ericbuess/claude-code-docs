@@ -485,7 +485,7 @@ Every finding must include a concrete fix.`
           badge: 'local',
           oneLiner: 'Custom keyboard shortcuts',
           when: 'Read at session start and hot-reloaded when you edit the file',
-          description: <>Rebind keyboard shortcuts in the interactive CLI. Run <C>/keybindings</C> to create or open this file with a schema reference. Ctrl+C, Ctrl+D, and Ctrl+M are reserved and cannot be rebound.</>,
+          description: <>Rebind keyboard shortcuts in the interactive CLI. Run <C>/keybindings</C> to create or open this file with a schema reference. Ctrl+C, Ctrl+D, Ctrl+M, and Caps Lock are reserved and cannot be rebound.</>,
           exampleIntro: <>This example binds <C>Ctrl+E</C> to open your external editor and unbinds <C>Ctrl+U</C> by setting it to <C>null</C>. The <C>context</C> field scopes bindings to a specific part of the CLI, here the main chat input.</>,
           example: `{
   "$schema": "https://www.schemastore.org/claude-code-keybindings.json",

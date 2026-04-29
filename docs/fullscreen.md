@@ -116,6 +116,10 @@ Your terminal's `Cmd+f` and tmux search don't see the conversation because it li
 
 Press `Esc` or `q` to return to the prompt.
 
+## Clear the conversation
+
+Press `Ctrl+L` twice within two seconds to run `/clear` and start a new conversation. The first press clears the input box and shows a hint; the second press clears the conversation. On macOS, double-pressing `Cmd+K` also runs `/clear`.
+
 ## Use with tmux
 
 Fullscreen rendering works inside tmux, with two caveats.

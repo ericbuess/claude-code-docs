@@ -944,6 +944,8 @@ If you've logged into Claude Code with a [Claude.ai](https://claude.ai) account,
   </Step>
 </Steps>
 
+A server you've added in Claude Code takes [precedence](#scope-hierarchy-and-precedence) over a claude.ai connector that points at the same URL. When this happens, `/mcp` lists the connector as hidden and shows how to remove the duplicate if you'd rather use the connector.
+
 To disable claude.ai MCP servers in Claude Code, set the `ENABLE_CLAUDEAI_MCP_SERVERS` environment variable to `false`:
 
 ```bash theme={null}

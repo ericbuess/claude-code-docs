@@ -916,7 +916,7 @@ Each script checks if the cache file is missing or older than 5 seconds before r
 
 ### Windows configuration
 
-On Windows, Claude Code runs status line commands through Git Bash. You can invoke PowerShell from that shell:
+On Windows, Claude Code runs status line commands through Git Bash when Git Bash is installed, or through PowerShell when Git Bash is absent. To run a PowerShell script as your status line, invoke it via `powershell`; this works from either shell:
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -943,7 +943,7 @@ On Windows, Claude Code runs status line commands through Git Bash. You can invo
   ```
 </CodeGroup>
 
-Or run a Bash script directly:
+Or, when Git Bash is installed, run a Bash script directly:
 
 <CodeGroup>
   ```json settings.json theme={null}

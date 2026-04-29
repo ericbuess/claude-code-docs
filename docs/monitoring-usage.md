@@ -573,7 +573,7 @@ Logged when an API request to Claude fails.
 * `event.sequence`: monotonically increasing counter for ordering events within a session
 * `model`: Model used (for example, "claude-sonnet-4-6")
 * `error`: Error message
-* `status_code`: HTTP status code as a string, or `"undefined"` for non-HTTP errors
+* `status_code`: HTTP status code as a number. Absent for non-HTTP errors such as connection failures.
 * `duration_ms`: Request duration in milliseconds
 * `attempt`: Total number of attempts made, including the initial request (`1` means no retries occurred)
 * `request_id`: Anthropic API request ID from the response's `request-id` header, such as `"req_011..."`. Present only when the API returns one.
@@ -741,6 +741,21 @@ Logged when a skill is invoked.
 * `plugin.name` (when `OTEL_LOG_TOOL_DETAILS=1` or the plugin is from an official marketplace): Name of the owning plugin when the skill is provided by a plugin
 * `marketplace.name` (when `OTEL_LOG_TOOL_DETAILS=1` or the plugin is from an official marketplace): Marketplace the owning plugin was installed from, when the skill is provided by a plugin
 
+#### At mention event
+
+Logged when Claude Code resolves an `@`-mention in a prompt. Not every mention emits an event: early-exit paths such as permission denials, oversized files, PDF reference attachments, and directory listing failures return without logging.
+
+**Event Name**: `claude_code.at_mention`
+
+**Attributes**:
+
+* All [standard attributes](#standard-attributes)
+* `event.name`: `"at_mention"`
+* `event.timestamp`: ISO 8601 timestamp
+* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `mention_type`: Type of mention (`"file"`, `"directory"`, `"agent"`, `"mcp_resource"`)
+* `success`: Whether the mention resolved successfully (`"true"` or `"false"`)
+
 #### API retries exhausted event
 
 Logged once when an API request fails after more than one attempt. Emitted alongside the final `api_error` event.
@@ -755,7 +770,7 @@ Logged once when an API request fails after more than one attempt. Emitted along
 * `event.sequence`: monotonically increasing counter for ordering events within a session
 * `model`: Model used
 * `error`: Final error message
-* `status_code`: HTTP status code as a string
+* `status_code`: HTTP status code as a number. Absent for non-HTTP errors.
 * `total_attempts`: Total number of attempts made
 * `total_retry_duration_ms`: Total wall-clock time across all attempts
 * `speed`: `"fast"` or `"normal"`
