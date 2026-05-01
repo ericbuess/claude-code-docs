@@ -115,6 +115,8 @@ By default, error reporting, telemetry, and bug reporting are disabled when usin
 
 All environment variables can be checked into `settings.json` (see [settings reference](/en/settings)).
 
+As of v2.1.126, when a host platform sets `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, Statsig metrics default to on for Vertex, Bedrock, and Foundry, and follow the standard `DISABLE_TELEMETRY` opt-out. Sentry error reporting and `/feedback` reports remain off by default on those providers.
+
 ### WebFetch domain safety check
 
 Before fetching a URL, the WebFetch tool sends the requested hostname to `api.anthropic.com` to check it against a safety blocklist maintained by Anthropic. Only the hostname is sent, not the full URL, path, or page contents. Results are cached per hostname for five minutes.

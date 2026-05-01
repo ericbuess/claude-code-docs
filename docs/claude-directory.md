@@ -1529,7 +1529,40 @@ Transcripts and history are not encrypted at rest. OS file permissions are the o
 
 ### Clear local data
 
-You can delete any of the application-data paths above at any time. New sessions are unaffected. The table below shows what you lose for past sessions.
+Run `claude project purge` to delete the state Claude Code holds for one project:
+
+* Transcripts and auto memory under `projects/`
+* Per-session `tasks/`, `debug/`, and `file-history/` entries
+* Matching prompt lines in `history.jsonl`
+* The project's entry in `~/.claude.json`
+
+The command prints the full deletion plan and asks for confirmation before removing anything.
+
+Preview the plan without deleting anything:
+
+```bash theme={null}
+claude project purge ~/work/my-repo --dry-run
+```
+
+Delete with a single confirmation prompt:
+
+```bash theme={null}
+claude project purge ~/work/my-repo
+```
+
+Omit the path to pick a project from an interactive list.
+
+Skip the confirmation prompt for use in scripts:
+
+```bash theme={null}
+claude project purge ~/work/my-repo --yes
+```
+
+Pass `--all` instead of a path to purge state for every project at once, which deletes `history.jsonl` outright rather than filtering it. Pass `-i` to step through the deletion plan one item at a time.
+
+The command leaves `shell-snapshots/` and `backups/` alone because those are not project-scoped, and warns about them in the plan output. It exits with status 1 if no state matches the given path.
+
+You can also delete any of the application-data paths above by hand. New sessions are unaffected. The table below shows what you lose for past sessions.
 
 | Delete                                                                                                                                                                                       | You lose                                                   |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |

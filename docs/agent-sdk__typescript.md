@@ -835,7 +835,7 @@ type SDKAssistantMessage = {
 
 The `message` field is a [`BetaMessage`](https://platform.claude.com/docs/en/api/messages/create) from the Anthropic SDK. It includes fields like `id`, `content`, `model`, `stop_reason`, and `usage`.
 
-`SDKAssistantMessageError` is one of: `'authentication_failed'`, `'billing_error'`, `'rate_limit'`, `'invalid_request'`, `'server_error'`, `'max_output_tokens'`, or `'unknown'`.
+`SDKAssistantMessageError` is one of: `'authentication_failed'`, `'oauth_org_not_allowed'`, `'billing_error'`, `'rate_limit'`, `'invalid_request'`, `'server_error'`, `'max_output_tokens'`, or `'unknown'`.
 
 ### `SDKUserMessage`
 
@@ -851,6 +851,7 @@ type SDKUserMessage = {
   isSynthetic?: boolean;
   shouldQuery?: boolean;
   tool_use_result?: unknown;
+  origin?: SDKMessageOrigin;
 };
 ```
 
@@ -869,6 +870,7 @@ type SDKUserMessageReplay = {
   parent_tool_use_id: string | null;
   isSynthetic?: boolean;
   tool_use_result?: unknown;
+  origin?: SDKMessageOrigin;
   isReplay: true;
 };
 ```
@@ -896,6 +898,7 @@ type SDKResultMessage =
       permission_denials: SDKPermissionDenial[];
       structured_output?: unknown;
       deferred_tool_use?: { id: string; name: string; input: Record<string, unknown> };
+      origin?: SDKMessageOrigin;
     }
   | {
       type: "result";
@@ -916,8 +919,11 @@ type SDKResultMessage =
       modelUsage: { [modelName: string]: ModelUsage };
       permission_denials: SDKPermissionDenial[];
       errors: string[];
+      origin?: SDKMessageOrigin;
     };
 ```
+
+The `origin` field forwards the [`SDKMessageOrigin`](#sdkmessageorigin) of the user message that triggered this result. When a background task finishes and the SDK injects a synthetic follow-up turn, the resulting `SDKResultMessage` carries `origin: { kind: "task-notification" }`. Check this field to distinguish results that answer your prompt from results emitted for background-task follow-ups, so you can route or suppress the latter. The field is absent for results emitted before any user turn, such as startup errors.
 
 When a `PreToolUse` hook returns `permissionDecision: "defer"`, the result has `stop_reason: "tool_deferred"` and `deferred_tool_use` carries the pending tool's `id`, `name`, and `input`. Read this field to surface the request in your own UI, then resume with the same `session_id` to continue. See [Defer a tool call for later](/en/hooks#defer-a-tool-call-for-later) for the full round trip.
 
@@ -1008,6 +1014,27 @@ type SDKPermissionDenial = {
   tool_input: Record<string, unknown>;
 };
 ```
+
+### `SDKMessageOrigin`
+
+Provenance of a user-role message. This appears as `origin` on [`SDKUserMessage`](#sdkusermessage) and is forwarded onto the corresponding [`SDKResultMessage`](#sdkresultmessage) so you can tell what triggered a given turn.
+
+```typescript theme={null}
+type SDKMessageOrigin =
+  | { kind: "human" }
+  | { kind: "channel"; server: string }
+  | { kind: "peer"; from: string; name?: string }
+  | { kind: "task-notification" }
+  | { kind: "coordinator" };
+```
+
+| `kind`              | Meaning                                                                                                                                 |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `human`             | Direct input from the end user. On user messages, an absent `origin` also means human input.                                            |
+| `channel`           | Message arriving on a [channel](/en/channels). `server` is the source MCP server name.                                                  |
+| `peer`              | Message from another agent session via `SendMessage`. `from` is the sender address; `name` is the sender's display name when available. |
+| `task-notification` | Synthetic turn injected after a background task finished. See [`SDKTaskNotificationMessage`](#sdktasknotificationmessage).              |
+| `coordinator`       | Message from a team coordinator in an [agent team](/en/agent-teams).                                                                    |
 
 ## Hook Types
 

@@ -19,9 +19,9 @@ Each mode makes a different tradeoff between convenience and oversight. The tabl
 | [`plan`](#analyze-before-you-edit-with-plan-mode)                   | Reads only                                                                             | Exploring a codebase before changing it |
 | [`auto`](#eliminate-prompts-with-auto-mode)                         | Everything, with background safety checks                                              | Long tasks, reducing prompt fatigue     |
 | [`dontAsk`](#allow-only-pre-approved-tools-with-dontask-mode)       | Only pre-approved tools                                                                | Locked-down CI and scripts              |
-| [`bypassPermissions`](#skip-all-checks-with-bypasspermissions-mode) | Everything except protected paths                                                      | Isolated containers and VMs only        |
+| [`bypassPermissions`](#skip-all-checks-with-bypasspermissions-mode) | Everything                                                                             | Isolated containers and VMs only        |
 
-Regardless of mode, writes to [protected paths](#protected-paths) are never auto-approved, guarding repository state and Claude's own configuration against accidental corruption.
+In every mode except `bypassPermissions`, writes to [protected paths](#protected-paths) are never auto-approved, guarding repository state and Claude's own configuration against accidental corruption.
 
 Modes set the baseline. Layer [permission rules](/en/permissions#manage-permissions) on top to pre-approve or block specific tools in any mode except `bypassPermissions`, which skips the permission layer entirely.
 
@@ -107,6 +107,8 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
 `acceptEdits` mode lets Claude create and edit files in your working directory without prompting. The status bar shows `⏵⏵ accept edits on` while this mode is active.
 
 In addition to file edits, `acceptEdits` mode auto-approves common filesystem Bash commands: `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`. These commands are also auto-approved when prefixed with safe environment variables such as `LANG=C` or `NO_COLOR=1`, or process wrappers such as `timeout`, `nice`, or `nohup`. Like file edits, auto-approval applies only to paths inside your working directory or `additionalDirectories`. Paths outside that scope, writes to [protected paths](#protected-paths), and all other Bash commands still prompt.
+
+When the [PowerShell tool](/en/tools-reference#powershell-tool) is enabled, `acceptEdits` mode also auto-approves `Set-Content`, `Add-Content`, `Clear-Content`, and `Remove-Item` on in-scope paths, along with their common aliases. The same scope and protected-path rules apply.
 
 Use `acceptEdits` when you want to review changes in your editor or via `git diff` after the fact rather than approving each edit inline. Press `Shift+Tab` once from default mode to enter it, or start with it directly:
 
@@ -244,7 +246,7 @@ claude --permission-mode dontAsk
 
 ## Skip all checks with bypassPermissions mode
 
-`bypassPermissions` mode disables permission prompts and safety checks so tool calls execute immediately. Writes to [protected paths](#protected-paths) are the only actions that still prompt. Only use this mode in isolated environments like containers, VMs, or dev containers without internet access, where Claude Code cannot damage your host system.
+`bypassPermissions` mode disables permission prompts and safety checks so tool calls execute immediately. As of v2.1.126 this includes writes to [protected paths](#protected-paths), which earlier versions still prompted for. Removals targeting the filesystem root or home directory, such as `rm -rf /` and `rm -rf ~`, still prompt as a circuit breaker against model error. Only use this mode in isolated environments like containers, VMs, or dev containers without internet access, where Claude Code cannot damage your host system.
 
 You cannot enter `bypassPermissions` from a session that was started without one of the enabling flags; restart with one to enable it:
 
@@ -260,7 +262,7 @@ The `--dangerously-skip-permissions` flag is equivalent.
 
 ## Protected paths
 
-Writes to a small set of paths are never auto-approved, in every mode. This prevents accidental corruption of repository state and Claude's own configuration. In `default`, `acceptEdits`, `plan`, and `bypassPermissions` these writes prompt; in `auto` they route to the classifier; in `dontAsk` they are denied.
+Writes to a small set of paths are never auto-approved, in every mode except `bypassPermissions`. This prevents accidental corruption of repository state and Claude's own configuration. In `default`, `acceptEdits`, and `plan` these writes prompt; in `auto` they route to the classifier; in `dontAsk` they are denied; in `bypassPermissions` they are allowed.
 
 Protected directories:
 

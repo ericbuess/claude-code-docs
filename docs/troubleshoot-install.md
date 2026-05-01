@@ -735,26 +735,26 @@ claude
 
 Check `~/.zshrc`, `~/.bashrc`, or `~/.profile` for `export ANTHROPIC_API_KEY=...` lines and remove them to make the change permanent. On Windows, check your PowerShell profile at `$PROFILE` and your User environment variables for `ANTHROPIC_API_KEY`. Run `/status` inside Claude Code to confirm which authentication method is active.
 
-### OAuth login fails in WSL2
+### OAuth login fails in WSL2, SSH, or containers
 
-Browser-based login in WSL2 can fail in two ways: WSL can't open your Windows browser, or the terminal won't accept the pasted authorization code.
+When Claude Code runs in WSL2, on a remote machine over SSH, or inside a container, the browser usually opens on a different host and its redirect can't reach Claude Code's local callback server. After you sign in, the browser shows a login code instead of redirecting back automatically. Paste that code into the terminal at the `Paste code here if prompted` prompt to complete login.
 
-If the browser doesn't open, set the `BROWSER` environment variable to your Windows browser path:
+If the browser doesn't open at all from WSL2, set the `BROWSER` environment variable to your Windows browser path:
 
 ```bash theme={null}
 export BROWSER="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
 claude
 ```
 
-Or press `c` at the login prompt to copy the OAuth URL and paste it into your Windows browser yourself.
+Alternatively, press `c` at the interactive login prompt to copy the OAuth URL, or copy the URL that `claude auth login` prints, and open it in a browser on your local machine.
 
-If the browser opens but pasting the code back into the terminal does nothing, your terminal's paste binding likely isn't reaching the prompt. Try your terminal's alternate paste shortcut, often right-click or Shift+Insert in Windows Terminal, or run login outside the interactive UI:
+If pasting the code into the interactive prompt does nothing, your terminal's paste binding likely isn't reaching the input field. Try your terminal's alternate paste shortcut, often right-click or Shift+Insert in Windows Terminal, or use `claude auth login` instead, which reads the pasted code from standard input:
 
 ```bash theme={null}
 claude auth login
 ```
 
-This fallback also applies on native Windows or any terminal where pasting the code into the interactive prompt fails.
+This fallback also applies on native Windows or any terminal where pasting into the interactive prompt fails.
 
 ### Not logged in or token expired
 

@@ -24,6 +24,8 @@ The Team and Enterprise dashboard includes:
 * **Leaderboard**: top contributors ranked by Claude Code usage
 * **Data export**: download contribution data as CSV for custom reporting
 
+For per-user token counts and cost estimates, configure [OpenTelemetry export](/en/monitoring-usage).
+
 ### Enable contribution metrics
 
 <Note>
