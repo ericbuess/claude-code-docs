@@ -8,6 +8,10 @@
 
 [Auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode) lets Claude Code run without permission prompts by routing each tool call through a classifier that blocks anything irreversible, destructive, or aimed outside your environment. Use the `autoMode` settings block to tell that classifier which repos, buckets, and domains your organization trusts, so it stops blocking routine internal operations.
 
+<Note>
+  Auto mode is available on Max, Team, Enterprise, and API plans through the Anthropic API. It is not available on Pro or on Bedrock, Vertex, or Foundry. If Claude Code reports auto mode as unavailable for your account, check the [full requirements](/en/permission-modes#eliminate-prompts-with-auto-mode), which also cover the supported models and admin enablement on Team and Enterprise plans.
+</Note>
+
 Out of the box, the classifier trusts only the working directory and the current repo's configured remotes. Actions like pushing to your company's source-control org or writing to a team cloud bucket are blocked until you add them to `autoMode.environment`.
 
 For how to enable auto mode and what it blocks by default, see [Permission modes](/en/permission-modes#eliminate-prompts-with-auto-mode). This page is the configuration reference.

@@ -207,8 +207,8 @@
     "auto-mode-config.md": {
       "original_url": "https://code.claude.com/docs/en/auto-mode-config",
       "original_md_url": "https://code.claude.com/docs/en/auto-mode-config.md",
-      "hash": "f0dacf586667107596043ac9c0c66a5e32e0b6e8eb041700a743f32cf1b4d597",
-      "last_updated": "2026-04-23T18:18:52.611999"
+      "hash": "1df68d255bf8ac8e36874c38498061fee26c7ce682fd607b9c219ff73e32c16a",
+      "last_updated": "2026-05-01T00:19:27.689986"
     },
     "best-practices.md": {
       "original_url": "https://code.claude.com/docs/en/best-practices",
@@ -478,8 +478,8 @@
     "memory.md": {
       "original_url": "https://code.claude.com/docs/en/memory",
       "original_md_url": "https://code.claude.com/docs/en/memory.md",
-      "hash": "6f982898a5dd8c592c0791d5f63eb59fcd28f239f74a556294bda5e661a31c42",
-      "last_updated": "2026-04-22T21:15:08.964187"
+      "hash": "653cda25f546e83503e05f6670ccf4ceca63ed12699212d8bbb20f1c745628c2",
+      "last_updated": "2026-05-01T00:19:52.969695"
     },
     "microsoft-foundry.md": {
       "original_url": "https://code.claude.com/docs/en/microsoft-foundry",
@@ -741,8 +741,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-04-30T21:19:55.352742",
-    "fetch_duration_seconds": 65.810212,
+    "last_fetch_completed": "2026-05-01T00:20:16.731241",
+    "fetch_duration_seconds": 68.319307,
     "total_pages_discovered": 123,
     "pages_fetched_successfully": 124,
     "pages_failed": 0,
@@ -752,7 +752,7 @@
     "total_files": 123,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-04-30T21:19:55.352768",
+  "last_updated": "2026-05-01T00:20:16.731265",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
