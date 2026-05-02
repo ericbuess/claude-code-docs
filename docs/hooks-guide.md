@@ -171,6 +171,19 @@ This hook uses the `Notification` event, which fires when Claude is waiting for 
   </Tab>
 </Tabs>
 
+The empty `matcher` fires on all notification types. To fire only on specific events, set it to one of these values:
+
+| Matcher                | Fires when                                             |
+| :--------------------- | :----------------------------------------------------- |
+| `permission_prompt`    | Claude needs you to approve a tool use                 |
+| `idle_prompt`          | Claude is done and waiting for your next prompt        |
+| `auth_success`         | Authentication completes                               |
+| `elicitation_dialog`   | An MCP server opens an elicitation form                |
+| `elicitation_complete` | An MCP elicitation form is submitted or dismissed      |
+| `elicitation_response` | An MCP elicitation response is sent back to the server |
+
+Type `/hooks` and select `Notification` to confirm the hook is registered. For the full event schema, see the [Notification reference](/en/hooks#notification).
+
 ### Auto-format code after edits
 
 Automatically run [Prettier](https://prettier.io/) on every file Claude edits, so formatting stays consistent without manual intervention.

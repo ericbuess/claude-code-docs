@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Best Practices for Claude Code
+# Best practices for Claude Code
 
 > Tips and patterns for getting the most out of Claude Code, from configuring your environment to scaling across parallel sessions.
 
@@ -52,15 +52,15 @@ Your verification can also be a test suite, a linter, or a Bash command that che
   Separate research and planning from implementation to avoid solving the wrong problem.
 </Tip>
 
-Letting Claude jump straight to coding can produce code that solves the wrong problem. Use [Plan Mode](/en/common-workflows#use-plan-mode-for-safe-code-analysis) to separate exploration from execution.
+Letting Claude jump straight to coding can produce code that solves the wrong problem. Use [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode) to separate exploration from execution.
 
 The recommended workflow has four phases:
 
 <Steps>
   <Step title="Explore">
-    Enter Plan Mode. Claude reads files and answers questions without making changes.
+    Enter plan mode. Claude reads files and answers questions without making changes.
 
-    ```txt claude (Plan Mode) theme={null}
+    ```txt claude (plan mode) theme={null}
     read /src/auth and understand how we handle sessions and login.
     also look at how we manage environment variables for secrets.
     ```
@@ -69,7 +69,7 @@ The recommended workflow has four phases:
   <Step title="Plan">
     Ask Claude to create a detailed implementation plan.
 
-    ```txt claude (Plan Mode) theme={null}
+    ```txt claude (plan mode) theme={null}
     I want to add Google OAuth. What files need to change?
     What's the session flow? Create a plan.
     ```
@@ -78,9 +78,9 @@ The recommended workflow has four phases:
   </Step>
 
   <Step title="Implement">
-    Switch back to Normal Mode and let Claude code, verifying against its plan.
+    Switch out of plan mode and let Claude code, verifying against its plan.
 
-    ```txt claude (Normal Mode) theme={null}
+    ```txt claude (default mode) theme={null}
     implement the OAuth flow from your plan. write tests for the
     callback handler, run the test suite and fix any failures.
     ```
@@ -89,14 +89,14 @@ The recommended workflow has four phases:
   <Step title="Commit">
     Ask Claude to commit with a descriptive message and create a PR.
 
-    ```txt claude (Normal Mode) theme={null}
+    ```txt claude (default mode) theme={null}
     commit with a descriptive message and open a PR
     ```
   </Step>
 </Steps>
 
 <Callout>
-  Plan Mode is useful, but also adds overhead.
+  Plan mode is useful, but also adds overhead.
 
   For tasks where the scope is clear and the fix is small (like fixing a typo, adding a log line, or renaming a variable) ask Claude to do it directly.
 
@@ -438,17 +438,10 @@ Instead of carefully planning every move, you can tell Claude to try something r
 ### Resume conversations
 
 <Tip>
-  Run `claude --continue` to pick up where you left off, or `--resume` to choose from recent sessions.
+  Name sessions with `/rename` and treat them like branches: each workstream gets its own persistent context.
 </Tip>
 
-Claude Code saves conversations locally. When a task spans multiple sessions, you don't have to re-explain the context:
-
-```bash theme={null}
-claude --continue    # Resume the most recent conversation
-claude --resume      # Select from recent conversations
-```
-
-Use `/rename` to give sessions descriptive names like `"oauth-migration"` or `"debugging-memory-leak"` so you can find them later. Treat sessions like branches: different workstreams can have separate, persistent contexts.
+Claude Code saves conversations locally, so when a task spans multiple sittings you don't have to re-explain the context. Run `claude --continue` to pick up the most recent session, or `claude --resume` to choose from a list. Give sessions descriptive names like `oauth-migration` so you can find them later. See [Manage sessions](/en/sessions) for the full set of resume, branch, and naming controls.
 
 ***
 
@@ -464,7 +457,7 @@ Everything so far assumes one human, one Claude, and one conversation. But Claud
   Use `claude -p "prompt"` in CI, pre-commit hooks, or scripts. Add `--output-format stream-json` for streaming JSON output.
 </Tip>
 
-With `claude -p "your prompt"`, you can run Claude non-interactively, without a session. Non-interactive mode is how you integrate Claude into CI pipelines, pre-commit hooks, or any automated workflow. The output formats let you parse results programmatically: plain text, JSON, or streaming JSON.
+With `claude -p "your prompt"`, you can run Claude non-interactively, without a session. [Non-interactive mode](/en/headless) is how you integrate Claude into CI pipelines, pre-commit hooks, or any automated workflow. The output formats let you parse results programmatically: plain text, JSON, or streaming JSON.
 
 ```bash theme={null}
 # One-off queries
@@ -483,11 +476,12 @@ claude -p "Analyze this log file" --output-format stream-json
   Run multiple Claude sessions in parallel to speed up development, run isolated experiments, or start complex workflows.
 </Tip>
 
-There are three main ways to run parallel sessions:
+Pick the parallel approach that fits how much coordination you want to do yourself:
 
-* [Claude Code desktop app](/en/desktop#work-in-parallel-with-sessions): Manage multiple local sessions visually. Each session gets its own isolated worktree.
-* [Claude Code on the web](/en/claude-code-on-the-web): Run on Anthropic's secure cloud infrastructure in isolated VMs.
-* [Agent teams](/en/agent-teams): Automated coordination of multiple sessions with shared tasks, messaging, and a team lead.
+* [Worktrees](/en/worktrees): run separate CLI sessions in isolated git checkouts so edits don't collide
+* [Desktop app](/en/desktop#work-in-parallel-with-sessions): manage multiple local sessions visually, each in its own worktree
+* [Claude Code on the web](/en/claude-code-on-the-web): run sessions on Anthropic-managed cloud infrastructure in isolated VMs
+* [Agent teams](/en/agent-teams): automated coordination of multiple sessions with shared tasks, messaging, and a team lead
 
 Beyond parallelizing work, multiple sessions enable quality-focused workflows. A fresh context improves code review since Claude won't be biased toward code it just wrote.
 

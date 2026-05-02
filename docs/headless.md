@@ -66,6 +66,32 @@ Bare mode skips OAuth and keychain reads. Anthropic authentication must come fro
 
 These examples highlight common CLI patterns. For CI and other scripted calls, add [`--bare`](#start-faster-with-bare-mode) so they don't pick up whatever happens to be configured locally.
 
+### Pipe data through Claude
+
+Non-interactive mode reads stdin, so you can pipe data in and redirect the response out like any other command-line tool.
+
+This example pipes a build log into Claude and writes the explanation to a file:
+
+```bash theme={null}
+cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
+```
+
+With `--output-format json`, the response payload includes `total_cost_usd` and a per-model cost breakdown, so scripted callers can track spend per invocation without consulting the [usage dashboard](/en/costs).
+
+### Add Claude to a build script
+
+You can wrap a non-interactive call in a script to use Claude as a project-specific linter or reviewer.
+
+This `package.json` script pipes the diff against `main` into Claude and asks it to report typos. Piping the diff means Claude doesn't need Bash permission to read it, and the escaped double quotes keep the script portable to Windows:
+
+```json theme={null}
+{
+  "scripts": {
+    "lint:claude": "git diff main | claude -p \"you are a typo linter. for each typo in this diff, report filename:line on one line and the issue on the next. return nothing else.\""
+  }
+}
+```
+
 ### Get structured output
 
 Use `--output-format` to control how responses are returned:
