@@ -409,7 +409,7 @@ If you see "unknown command" or the `/plugin` command doesn't appear:
 1. **Check your version**: Run `claude --version` to see what's installed.
 2. **Update Claude Code**:
    * **Homebrew**: `brew upgrade claude-code` (or `brew upgrade claude-code@latest` if you installed that cask)
-   * **npm**: `npm update -g @anthropic-ai/claude-code`
+   * **npm**: `npm install -g @anthropic-ai/claude-code@latest`
    * **Native installer**: Re-run the install command from [Setup](/en/setup)
 3. **Restart Claude Code**: After updating, restart your terminal and run `claude` again.
 
