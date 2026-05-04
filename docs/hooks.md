@@ -2417,7 +2417,15 @@ The LLM must respond with JSON containing:
 | `ok`     | `true` allows the action, `false` blocks it              |
 | `reason` | Required when `ok` is `false`. Explanation for the block |
 
-For `Stop` and `SubagentStop`, an `ok: false` reason is fed back to Claude as its next instruction and the turn continues. For all other supported events, the turn ends and the reason appears in the chat as a warning line; Claude does not see it. This is equivalent to returning `"continue": false` from a command hook. If you need different blocking semantics on those events, use a [command hook](#command-hook-fields) with the per-event fields described in [Decision control](#decision-control).
+What happens on `ok: false` depends on the event:
+
+* `Stop` and `SubagentStop`: the reason is fed back to Claude as its next instruction and the turn continues
+* `PreToolUse`: the tool call is denied and the reason is returned to Claude as the tool error, equivalent to a command hook's `permissionDecision: "deny"`
+* `PostToolUse`, `PostToolBatch`, `UserPromptSubmit`, and `UserPromptExpansion`: the turn ends and the reason appears in the chat as a warning line, equivalent to returning `"continue": false` from a command hook
+* `PostToolUseFailure`, `TaskCreated`, and `TaskCompleted`: the reason is returned to Claude as a tool error, similar to `PreToolUse`
+* `PermissionRequest`: `ok: false` has no effect. To deny an approval from a hook, use a [command hook](#command-hook-fields) returning `hookSpecificOutput.decision.behavior: "deny"`
+
+If you need finer control on any event, use a [command hook](#command-hook-fields) with the per-event fields described in [Decision control](#decision-control).
 
 ### Example: Multi-criteria Stop hook
 
