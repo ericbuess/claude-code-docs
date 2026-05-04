@@ -589,7 +589,11 @@ If running `claude` or the installer prints `Illegal instruction`, the native bi
 
 **Architecture mismatch.** The installer downloaded the wrong binary, for example x86 on an ARM server. Check with `uname -m` on macOS or Linux, or `$env:PROCESSOR_ARCHITECTURE` in PowerShell. If the result doesn't match the binary you received, [file a GitHub issue](https://github.com/anthropics/claude-code/issues) with the output.
 
-**Missing instruction set on older CPUs.** If your architecture is correct but you still see `Illegal instruction`, your CPU likely lacks AVX or another instruction the binary requires. This affects roughly pre-2013 Intel and AMD processors. There is currently no native-binary workaround; track [issue #50384](https://github.com/anthropics/claude-code/issues/50384) for status, and include your CPU model from `cat /proc/cpuinfo | grep "model name" | head -1` on Linux or `sysctl -n machdep.cpu.brand_string` on macOS when reporting.
+**Missing AVX instruction set.** If your architecture is correct but you still see `Illegal instruction`, your CPU likely lacks AVX or another instruction the binary requires. This affects roughly pre-2013 Intel and AMD processors, and virtual machines where the hypervisor does not pass AVX through to the guest.
+
+On a VPS or VM, run `grep -m1 -ow avx /proc/cpuinfo`; an empty result means AVX is not available to the guest.
+
+There is no native-binary workaround; track [issue #50384](https://github.com/anthropics/claude-code/issues/50384) for status, and include your CPU model from `grep -m1 "model name" /proc/cpuinfo` on Linux or `sysctl -n machdep.cpu.brand_string` on macOS when reporting.
 
 Alternative install methods download the same native binary and won't resolve either cause.
 

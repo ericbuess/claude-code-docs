@@ -197,11 +197,11 @@ When `OTEL_LOG_TOOL_CONTENT=1`, this span also records a `tool.output` span even
 
 **`claude_code.tool.blocked_on_user`**
 
-| Attribute     | Description                                         | Gated by |
-| ------------- | --------------------------------------------------- | -------- |
-| `duration_ms` | Time spent waiting for the permission decision      |          |
-| `decision`    | `accept` or `reject`                                |          |
-| `source`      | Decision source, matching the `tool_decision` event |          |
+| Attribute     | Description                                                               | Gated by |
+| ------------- | ------------------------------------------------------------------------- | -------- |
+| `duration_ms` | Time spent waiting for the permission decision                            |          |
+| `decision`    | `accept` or `reject`                                                      |          |
+| `source`      | Decision source, matching the [Tool decision event](#tool-decision-event) |          |
 
 **`claude_code.tool.execution`**
 
@@ -458,7 +458,7 @@ Incremented when user accepts or rejects Edit, Write, or NotebookEdit tool usage
 * All [standard attributes](#standard-attributes)
 * `tool_name`: Tool name (`"Edit"`, `"Write"`, `"NotebookEdit"`)
 * `decision`: User decision (`"accept"`, `"reject"`)
-* `source`: Decision source - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, or `"user_reject"`
+* `source`: Where the decision came from. One of `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, or `"user_reject"`. See the [Tool decision event](#tool-decision-event) for what each value means.
 * `language`: Programming language of the edited file, such as `"TypeScript"`, `"Python"`, `"JavaScript"`, or `"Markdown"`. Returns `"unknown"` for unrecognized file extensions.
 
 #### Active time counter
@@ -524,7 +524,7 @@ Logged when a tool completes execution.
 * `error_type`: Error category string when the tool failed, such as `"Error:ENOENT"` or `"ShellError"`
 * `error` (when `OTEL_LOG_TOOL_DETAILS=1`): Full error message when the tool failed
 * `decision_type`: Either `"accept"` or `"reject"`
-* `decision_source`: Decision source - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, or `"user_reject"`
+* `decision_source`: Where the decision came from. One of `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, or `"user_reject"`. See the [Tool decision event](#tool-decision-event) for what each value means.
 * `tool_input_size_bytes`: Size of the JSON-serialized tool input in bytes
 * `tool_result_size_bytes`: Size of the tool result in bytes
 * `mcp_server_scope`: MCP server scope identifier (for MCP tools)
@@ -635,7 +635,13 @@ Logged when a tool permission decision is made (accept/reject).
 * `tool_name`: Name of the tool (for example, "Read", "Edit", "Write", "NotebookEdit")
 * `tool_use_id`: Unique identifier for this tool invocation. Matches the `tool_use_id` passed to hooks, allowing correlation between OTel events and hook-captured data.
 * `decision`: Either `"accept"` or `"reject"`
-* `source`: Decision source - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, or `"user_reject"`
+* `source`: Where the decision came from:
+  * `"config"`: Decided automatically without prompting, based on project settings, enterprise managed policy, `--allowedTools` or `--disallowedTools` flags, the active permission mode, or because the tool is inherently safe.
+  * `"hook"`: A `PreToolUse` or `PermissionRequest` hook returned the decision.
+  * `"user_permanent"`: Emitted when the user chose "Always allow" when prompted, saving a rule to their personal settings. Also emitted for later calls that match that saved rule. Treated as an accept.
+  * `"user_temporary"`: Emitted when the user chose "Yes" or "Yes, for this session" when prompted, without saving a rule. Also emitted for later calls in the same session that match that session-scoped allow. Treated as an accept.
+  * `"user_abort"`: Emitted when the user dismissed the permission prompt without answering. Treated as a reject.
+  * `"user_reject"`: Emitted when the user chose "No" when prompted, or a call matched a deny rule in their personal settings. Treated as a reject.
 
 #### Permission mode changed event
 
