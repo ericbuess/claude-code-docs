@@ -144,7 +144,9 @@ The dictation key is bound to `voice:pushToTalk` in the `Chat` context and defau
 
 Setting `"space": null` removes the default binding. Omit it if you want both keys active.
 
-In hold mode, avoid binding a bare letter key like `v` since hold detection relies on key-repeat and the letter types into the prompt during warmup. Use `Space`, or use a modifier combination like `meta+k` to start recording on the first keypress with no warmup. Tap mode has no warmup, so any key works. See [customize keyboard shortcuts](/en/keybindings) for the full keybinding syntax.
+In hold mode, avoid binding a bare letter key like `v` since hold detection relies on key-repeat and the letter types into the prompt during warmup. Use `Space`, or use a modifier combination like `meta+k` to start recording on the first keypress with no warmup. Tap mode has no warmup, so most keys work.
+
+Some keys are not delivered to terminal applications and cannot be bound at all. For example, `Caps Lock` shows an error if you try to bind it. See [customize keyboard shortcuts](/en/keybindings) for the full keybinding syntax and the list of reserved shortcuts.
 
 ## Troubleshooting
 

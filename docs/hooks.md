@@ -976,7 +976,7 @@ To block a prompt, return a JSON object with `decision` set to `"block"`:
 | `decision`          | `"block"` prevents the prompt from being processed and erases it from context. Omit to allow the prompt to proceed     |
 | `reason`            | Shown to the user when `decision` is `"block"`. Not added to context                                                   |
 | `additionalContext` | String added to Claude's context alongside the submitted prompt. See [Add context for Claude](#add-context-for-claude) |
-| `sessionTitle`      | Sets the session title, same effect as `/rename`. Use to name sessions automatically based on the prompt content       |
+| `sessionTitle`      | Sets the session title. Use to name sessions automatically based on the prompt content                                 |
 
 ```json theme={null}
 {

@@ -476,6 +476,16 @@ The Spark icon appears in the **Editor Toolbar** (top-right of editor) when you 
 
 Alternatively, click "✱ Claude Code" in the **Status Bar** (bottom-right corner). This works even without a file open. You can also use the **Command Palette** (`Cmd+Shift+P` / `Ctrl+Shift+P`) and type "Claude Code".
 
+### Cmd+Esc does nothing on macOS
+
+On macOS Tahoe and later, the system Game Overlay shortcut is bound to `Cmd+Esc` by default and intercepts the keypress before it reaches VS Code. To free the shortcut:
+
+1. Open System Settings
+2. Go to Keyboard, then Keyboard Shortcuts, then Game Controllers
+3. Clear the Game Overlay checkbox
+
+Alternatively, rebind the extension to a different key: open the VS Code [Keyboard Shortcuts editor](https://code.visualstudio.com/docs/configure/keybindings) (`Cmd+K Cmd+S`), search for `Claude Code: Focus input`, and assign a new binding.
+
 ### Claude Code never responds
 
 If Claude Code isn't responding to your prompts:
