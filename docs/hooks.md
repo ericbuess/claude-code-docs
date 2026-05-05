@@ -2412,10 +2412,10 @@ The LLM must respond with JSON containing:
 }
 ```
 
-| Field    | Description                                              |
-| :------- | :------------------------------------------------------- |
-| `ok`     | `true` allows the action, `false` blocks it              |
-| `reason` | Required when `ok` is `false`. Explanation for the block |
+| Field    | Description                                                         |
+| :------- | :------------------------------------------------------------------ |
+| `ok`     | `true` to allow, `false` to block. See the per-event behavior below |
+| `reason` | Required when `ok` is `false`. Explanation for the decision         |
 
 What happens on `ok: false` depends on the event:
 
