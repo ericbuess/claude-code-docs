@@ -7,7 +7,7 @@
 > Use channels to push messages, alerts, and webhooks into your Claude Code session from an MCP server. Forward CI results, chat messages, and monitoring events so Claude can react while you're away.
 
 <Note>
-  Channels are in [research preview](#research-preview) and require Claude Code v2.1.80 or later. They require claude.ai login. Console and API key authentication is not supported. Team and Enterprise organizations must [explicitly enable them](#enterprise-controls).
+  Channels are in [research preview](#research-preview) and require Claude Code v2.1.80 or later. They require Anthropic authentication through claude.ai or a Console API key, and are not available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry. Team and Enterprise organizations must [explicitly enable them](#enterprise-controls).
 </Note>
 
 A channel is an MCP server that pushes events into your running Claude Code session, so Claude can react to things that happen while you're not at the terminal. Channels can be two-way: Claude reads the event and replies back through the same channel, like a chat bridge. Events only arrive while the session is open, so for an always-on setup you run Claude in a background process or persistent terminal.
@@ -23,7 +23,7 @@ This page covers:
 * [Supported channels](#supported-channels): Telegram, Discord, and iMessage setup
 * [Install and run a channel](#quickstart) with fakechat, a localhost demo
 * [Who can push messages](#security): sender allowlists and how you pair
-* [Enable channels for your organization](#enterprise-controls) on Team and Enterprise
+* [Enable channels for your organization](#enterprise-controls) if you manage a Team, Enterprise, or Console org
 * [How channels compare](#how-channels-compare) to web sessions, Slack, MCP, and Remote Control
 
 To build your own channel, see the [Channels reference](/en/channels-reference).
@@ -225,9 +225,9 @@ Once you install and enable fakechat, you can type in the browser and the messag
 
 To try the fakechat demo, you'll need:
 
-* Claude Code [installed and authenticated](/en/quickstart#step-1-install-claude-code) with a claude.ai account
+* Claude Code [installed and authenticated](/en/quickstart#step-1-install-claude-code) with a claude.ai account or a Claude Console API key
 * [Bun](https://bun.sh) installed. The pre-built channel plugins are Bun scripts. Check with `bun --version`; if that fails, [install Bun](https://bun.sh/docs/installation).
-* **Team/Enterprise users**: your organization admin must [enable channels](#enterprise-controls) in managed settings
+* **Team, Enterprise, or managed Console org**: your admin must [enable channels](#enterprise-controls) in managed settings
 
 <Steps>
   <Step title="Install the fakechat channel plugin">
@@ -280,7 +280,7 @@ Telegram and Discord bootstrap the list by pairing:
 
 iMessage works differently: texting yourself bypasses the gate automatically, and you add other contacts by handle with `/imessage:access allow`.
 
-On top of that, you control which servers are enabled each session with `--channels`, and on Team and Enterprise plans your organization controls availability with [`channelsEnabled`](#enterprise-controls).
+On top of that, you control which servers are enabled each session with `--channels`, and your organization controls availability with [`channelsEnabled`](#enterprise-controls) on claude.ai Team and Enterprise plans and on Console organizations that deploy managed settings.
 
 Being in `.mcp.json` isn't enough to push messages: a server also has to be named in `--channels`.
 
@@ -288,12 +288,17 @@ The allowlist also gates [permission relay](/en/channels-reference#relay-permiss
 
 ## Enterprise controls
 
-On Team and Enterprise plans, channels are off by default. Admins control availability through two [managed settings](/en/settings) that users cannot override:
+Admins control availability through two [managed settings](/en/settings) that users cannot override. The default depends on how you authenticate:
 
-| Setting                 | Purpose                                                                                                                                                                                                                                                     | When not configured            |
-| :---------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------- |
-| `channelsEnabled`       | Master switch. Must be `true` for any channel to deliver messages. Set via the [claude.ai Admin console](https://claude.ai/admin-settings/claude-code) toggle or directly in managed settings. Blocks all channels including the development flag when off. | Channels blocked               |
-| `allowedChannelPlugins` | Which plugins can register once channels are enabled. Replaces the Anthropic-maintained list when set. Only applies when `channelsEnabled` is `true`.                                                                                                       | Anthropic default list applies |
+* **claude.ai Team and Enterprise**: channels are blocked until an admin enables them.
+* **Anthropic Console with API key authentication**: channels are permitted by default. You only need this setting if your organization deploys managed settings.
+
+In all cases, no channel runs until a user opts it in for the session with `--channels`.
+
+| Setting                 | Purpose                                                                                                                                                                                                                                                     | When not configured                                                                                                                                                                    |
+| :---------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `channelsEnabled`       | Master switch. Must be `true` for any channel to deliver messages. Set via the [claude.ai Admin console](https://claude.ai/admin-settings/claude-code) toggle or directly in managed settings. Blocks all channels including the development flag when off. | claude.ai Team and Enterprise: channels blocked. Console: channels allowed unless your organization deploys managed settings, in which case channels are blocked until this key is set |
+| `allowedChannelPlugins` | Which plugins can register once channels are enabled. Replaces the Anthropic-maintained list when set. Only applies when `channelsEnabled` is `true`.                                                                                                       | Anthropic default list applies                                                                                                                                                         |
 
 Pro and Max users without an organization skip these checks entirely: channels are available and users opt in per session with `--channels`.
 

@@ -24,7 +24,7 @@ This guide covers how hooks work, how to configure them, and provides examples f
   </Step>
 
   <Step title="The SDK collects registered hooks">
-    The SDK checks for hooks registered for that event type. This includes callback hooks you pass in `options.hooks` and shell command hooks from settings files when the corresponding [`settingSources`](/en/agent-sdk/typescript#setting-source) or [`setting_sources`](/en/agent-sdk/python#setting-source) entry is enabled, which it is for default `query()` options.
+    The SDK checks for hooks registered for that event type. This includes callback hooks you pass in `options.hooks` and shell command hooks from settings files when the corresponding [`settingSources`](/en/agent-sdk/typescript#settingsource) or [`setting_sources`](/en/agent-sdk/python#settingsource) entry is enabled, which it is for default `query()` options.
   </Step>
 
   <Step title="Matchers filter which hooks run">
@@ -225,7 +225,7 @@ Use the `matcher` pattern to target specific tools whenever possible. A matcher 
 
 Every hook callback receives three arguments:
 
-* **Input data:** a typed object containing event details. Each hook type has its own input shape (for example, `PreToolUseHookInput` includes `tool_name` and `tool_input`, while `NotificationHookInput` includes `message`). See the full type definitions in the [TypeScript](/en/agent-sdk/typescript#hook-input) and [Python](/en/agent-sdk/python#hook-input) SDK references.
+* **Input data:** a typed object containing event details. Each hook type has its own input shape (for example, `PreToolUseHookInput` includes `tool_name` and `tool_input`, while `NotificationHookInput` includes `message`). See the full type definitions in the [TypeScript](/en/agent-sdk/typescript#hookinput) and [Python](/en/agent-sdk/python#hookinput) SDK references.
   * All hook inputs share `session_id`, `cwd`, and `hook_event_name`.
   * `agent_id` and `agent_type` are populated when the hook fires inside a subagent. In TypeScript, these are on the base hook input and available to all hook types. In Python, they are on `PreToolUse`, `PostToolUse`, and `PostToolUseFailure` only.
 * **Tool use ID** (`str | None` / `string | undefined`): correlates `PreToolUse` and `PostToolUse` events for the same tool call.
@@ -238,7 +238,7 @@ Your callback returns an object with two categories of fields:
 * **Top-level fields** control the conversation: `systemMessage` injects a message into the conversation visible to the model, and `continue` (`continue_` in Python) determines whether the agent keeps running after this hook.
 * **`hookSpecificOutput`** controls the current operation. The fields inside depend on the hook event type. For `PreToolUse` hooks, this is where you set `permissionDecision` (`"allow"`, `"deny"`, or `"ask"`), `permissionDecisionReason`, and `updatedInput`. In the TypeScript SDK, `permissionDecision` also accepts `"defer"` to end the query and [resume later](/en/hooks#defer-a-tool-call-for-later); this value is not available in the Python SDK. For `PostToolUse` hooks, you can set `additionalContext` to append information to the tool result, or `updatedToolOutput` to replace the tool's output entirely before Claude sees it.
 
-Return `{}` to allow the operation without changes. SDK callback hooks use the same JSON output format as [Claude Code shell command hooks](/en/hooks#json-output), which documents every field and event-specific option. For the SDK type definitions, see the [TypeScript](/en/agent-sdk/typescript#sync-hook-json-output) and [Python](/en/agent-sdk/python#sync-hook-json-output) SDK references.
+Return `{}` to allow the operation without changes. SDK callback hooks use the same JSON output format as [Claude Code shell command hooks](/en/hooks#json-output), which documents every field and event-specific option. For the SDK type definitions, see the [TypeScript](/en/agent-sdk/typescript#synchookjsonoutput) and [Python](/en/agent-sdk/python#synchookjsonoutput) SDK references.
 
 <Note>
   When multiple hooks or permission rules apply, **deny** takes priority over **defer**, which takes priority over **ask**, which takes priority over **allow**. If any hook returns `deny`, the operation is blocked regardless of other hooks.
@@ -417,19 +417,20 @@ By default, the agent may prompt for permission before using certain tools. This
   ```
 </CodeGroup>
 
-### Chain multiple hooks
+### Register multiple hooks
 
-Hooks execute in the order they appear in the array. Keep each hook focused on a single responsibility and chain multiple hooks for complex logic:
+When an event fires, all matching hooks run in parallel. For permission decisions, the most restrictive result wins: a single `deny` blocks the tool call regardless of what the other hooks return. Because completion order is non-deterministic, write each hook to act independently rather than relying on another hook having run first.
+
+The example below registers three independent checks for every tool call:
 
 <CodeGroup>
   ```python Python theme={null}
   options = ClaudeAgentOptions(
       hooks={
           "PreToolUse": [
-              HookMatcher(hooks=[rate_limiter]),  # First: check rate limits
-              HookMatcher(hooks=[authorization_check]),  # Second: verify permissions
-              HookMatcher(hooks=[input_sanitizer]),  # Third: sanitize inputs
-              HookMatcher(hooks=[audit_logger]),  # Last: log the action
+              HookMatcher(hooks=[authorization_check]),
+              HookMatcher(hooks=[input_validator]),
+              HookMatcher(hooks=[audit_logger]),
           ]
       }
   )
@@ -439,10 +440,9 @@ Hooks execute in the order they appear in the array. Keep each hook focused on a
   const options = {
     hooks: {
       PreToolUse: [
-        { hooks: [rateLimiter] }, // First: check rate limits
-        { hooks: [authorizationCheck] }, // Second: verify permissions
-        { hooks: [inputSanitizer] }, // Third: sanitize inputs
-        { hooks: [auditLogger] } // Last: log the action
+        { hooks: [authorizationCheck] },
+        { hooks: [inputValidator] },
+        { hooks: [auditLogger] }
       ]
     }
   };
@@ -489,7 +489,7 @@ Use regex patterns to match multiple tools. This example registers three matcher
 
 ### Track subagent activity
 
-Use `SubagentStop` hooks to monitor when subagents finish their work. See the full input type in the [TypeScript](/en/agent-sdk/typescript#hook-input) and [Python](/en/agent-sdk/python#hook-input) SDK references. This example logs a summary each time a subagent completes:
+Use `SubagentStop` hooks to monitor when subagents finish their work. See the full input type in the [TypeScript](/en/agent-sdk/typescript#hookinput) and [Python](/en/agent-sdk/python#hookinput) SDK references. This example logs a summary each time a subagent completes:
 
 <CodeGroup>
   ```python Python theme={null}
@@ -727,7 +727,7 @@ This example forwards every notification to a Slack channel. It requires a [Slac
 * Check that your matcher pattern matches the tool name exactly
 * Ensure the hook is under the correct event type in `options.hooks`
 * For non-tool hooks like `Stop` and `SubagentStop`, matchers match against different fields (see [matcher patterns](/en/hooks#matcher-patterns))
-* Hooks may not fire when the agent hits the [`max_turns`](/en/agent-sdk/python#claude-agent-options) limit because the session ends before hooks can execute
+* Hooks may not fire when the agent hits the [`max_turns`](/en/agent-sdk/python#claudeagentoptions) limit because the session ends before hooks can execute
 
 ### Matcher not filtering as expected
 
@@ -775,7 +775,7 @@ const myHook: HookCallback = async (input, toolUseID, { signal }) => {
 
 ### Session hooks not available in Python
 
-`SessionStart` and `SessionEnd` can be registered as SDK callback hooks in TypeScript, but are not available in the Python SDK (`HookEvent` omits them). In Python, they are only available as [shell command hooks](/en/hooks#hook-events) defined in settings files (for example, `.claude/settings.json`). To load shell command hooks from your SDK application, include the appropriate setting source with [`setting_sources`](/en/agent-sdk/python#setting-source) or [`settingSources`](/en/agent-sdk/typescript#setting-source):
+`SessionStart` and `SessionEnd` can be registered as SDK callback hooks in TypeScript, but are not available in the Python SDK (`HookEvent` omits them). In Python, they are only available as [shell command hooks](/en/hooks#hook-events) defined in settings files (for example, `.claude/settings.json`). To load shell command hooks from your SDK application, include the appropriate setting source with [`setting_sources`](/en/agent-sdk/python#settingsource) or [`settingSources`](/en/agent-sdk/typescript#settingsource):
 
 <CodeGroup>
   ```python Python theme={null}

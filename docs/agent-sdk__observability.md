@@ -194,6 +194,37 @@ The following example renames the service and attaches deployment metadata. Thes
   ```
 </CodeGroup>
 
+## Attribute actions to your end users
+
+The CLI attaches [identity attributes](/en/monitoring-usage#standard-attributes) to every event based on the credential it uses to call Anthropic. When you build an application that serves many end users from one deployment, these attributes identify your service's credential, not the end user on whose behalf the agent acted.
+
+To make tool calls and MCP activity attributable to your application's end users, inject end-user identity as resource attributes on each `query()` call. Percent-encode values before interpolating them, since `OTEL_RESOURCE_ATTRIBUTES` [reserves commas, spaces, and equals signs](/en/monitoring-usage#multi-team-organization-support). The following example attaches the requesting user and tenant to every span and event from one request:
+
+<CodeGroup>
+  ```python Python theme={null}
+  from urllib.parse import quote
+
+  options = ClaudeAgentOptions(
+      env={
+          # ... exporter configuration ...
+          "OTEL_RESOURCE_ATTRIBUTES": f"enduser.id={quote(request.user_id)},tenant.id={quote(request.tenant_id)}",
+      },
+  )
+  ```
+
+  ```typescript TypeScript theme={null}
+  const options = {
+    env: {
+      ...process.env,
+      // ... exporter configuration ...
+      OTEL_RESOURCE_ATTRIBUTES: `enduser.id=${encodeURIComponent(request.userId)},tenant.id=${encodeURIComponent(request.tenantId)}`,
+    },
+  };
+  ```
+</CodeGroup>
+
+With end-user identity attached, the `tool_decision`, `tool_result`, `mcp_server_connection`, and `permission_mode_changed` events become a per-user audit trail you can forward to a Security Information and Event Management (SIEM) platform. See [Audit security events](/en/monitoring-usage#audit-security-events) in the Monitoring reference for the full list of security-relevant events and the attributes each one carries.
+
 ## Control sensitive data in exports
 
 Telemetry is structural by default. Durations, model names, and tool names are recorded on every span; token counts are recorded when the underlying API request returns usage data, so spans for failed or aborted requests may omit them. The content your agent reads and writes is not recorded by default. These opt-in variables add content to the exported data:
