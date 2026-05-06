@@ -421,7 +421,7 @@ Incremented when code is added or removed.
 
 #### Pull request counter
 
-Incremented when creating pull requests via Claude Code.
+Incremented when Claude Code creates a pull request or merge request through a shell command or an MCP tool.
 
 **Attributes**:
 

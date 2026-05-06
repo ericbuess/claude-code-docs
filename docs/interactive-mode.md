@@ -221,7 +221,7 @@ Press `Ctrl+R` to interactively search through your command history:
 1. **Start search**: press `Ctrl+R` to activate reverse history search
 2. **Type query**: enter text to search for in previous commands. The search term is highlighted in matching results
 3. **Navigate matches**: press `Ctrl+R` again to cycle through older matches
-4. **Change scope**: press `Ctrl+S` to cycle between this session, this project, and all projects
+4. **Change scope**: search defaults to prompts from all projects. Press `Ctrl+S` to cycle the scope through this session, this project, and all projects
 5. **Accept match**:
    * Press `Tab` or `Esc` to accept the current match and continue editing
    * Press `Enter` to accept and execute the command immediately
