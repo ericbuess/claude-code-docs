@@ -141,7 +141,7 @@ When a tool is denied, Claude receives a rejection message as the tool result an
 
 When Claude requests multiple tool calls in a single turn, both SDKs can run them concurrently or sequentially depending on the tool. Read-only tools (like `Read`, `Glob`, `Grep`, and MCP tools marked as read-only) can run concurrently. Tools that modify state (like `Edit`, `Write`, and `Bash`) run sequentially to avoid conflicts.
 
-Custom tools default to sequential execution. To enable parallel execution for a custom tool, mark it as read-only in its annotations: `readOnly` in [TypeScript](/en/agent-sdk/typescript#tool) or `readOnlyHint` in [Python](/en/agent-sdk/python#tool).
+Custom tools default to sequential execution. To enable parallel execution for a custom tool, set `readOnlyHint` in its annotations. Both the [TypeScript](/en/agent-sdk/typescript#tool) and [Python](/en/agent-sdk/python#tool) SDKs use this field name from the MCP SDK.
 
 ## Control how the loop runs
 
@@ -174,7 +174,7 @@ If you don't set `effort`, the Python SDK leaves the parameter unset and defers 
   `effort` trades latency and token cost for reasoning depth within each response. [Extended thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) is a separate feature that produces visible chain-of-thought blocks in the output. They are independent: you can set `effort: "low"` with extended thinking enabled, or `effort: "max"` without it.
 </Note>
 
-Use lower effort for agents doing simple, well-scoped tasks (like listing files or running a single grep) to reduce cost and latency. `effort` is set at the top-level `query()` options, not per-subagent.
+Use lower effort for agents doing simple, well-scoped tasks (like listing files or running a single grep) to reduce cost and latency. Set `effort` in the top-level `query()` options for the whole session, or per subagent with the `effort` field on [`AgentDefinition`](/en/agent-sdk/subagents#agentdefinition-configuration) to override the session level.
 
 ### Permission mode
 
@@ -184,7 +184,7 @@ The permission mode option (`permission_mode` in Python, `permissionMode` in Typ
 | :------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `"default"`                | Tools not covered by allow rules trigger your approval callback; no callback means deny                                                                                              |
 | `"acceptEdits"`            | Auto-approves file edits and common filesystem commands (`mkdir`, `touch`, `mv`, `cp`, etc.); other Bash commands follow default rules                                               |
-| `"plan"`                   | No tool execution; Claude produces a plan for review                                                                                                                                 |
+| `"plan"`                   | Read-only tools run; Claude explores and produces a plan without editing your source files                                                                                           |
 | `"dontAsk"`                | Never prompts. Tools pre-approved by [permission rules](/en/settings#permission-settings) run, everything else is denied                                                             |
 | `"auto"` (TypeScript only) | Uses a model classifier to approve or deny each tool call. See [Auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode) for availability and behavior                      |
 | `"bypassPermissions"`      | Runs all allowed tools without asking. Cannot be used when running as root on Unix. Use only in isolated environments where the agent's actions cannot affect systems you care about |

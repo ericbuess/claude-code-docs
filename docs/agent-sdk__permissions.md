@@ -18,7 +18,7 @@ When Claude requests a tool, the SDK checks permissions in this order:
 
 <Steps>
   <Step title="Hooks">
-    Run [hooks](/en/agent-sdk/hooks) first, which can allow, deny, or continue to the next step
+    Run [hooks](/en/agent-sdk/hooks) first. A hook can deny the call outright or pass it on. A hook that returns `allow` does not skip the deny and ask rules below; those are evaluated regardless of the hook result.
   </Step>
 
   <Step title="Deny rules">
@@ -38,7 +38,7 @@ When Claude requests a tool, the SDK checks permissions in this order:
   </Step>
 </Steps>
 
-<img src="https://mintcdn.com/claude-code/gvy2DIUELtNA8qD3/images/agent-sdk/permissions-flow.svg?fit=max&auto=format&n=gvy2DIUELtNA8qD3&q=85&s=0ccd63043a9ffc2a34d863602e043f72" alt="Permission evaluation flow diagram" width="920" height="260" data-path="images/agent-sdk/permissions-flow.svg" />
+<img src="https://mintcdn.com/claude-code/FEspvVUyRuaWjm0s/images/agent-sdk/permissions-flow.svg?fit=max&auto=format&n=FEspvVUyRuaWjm0s&q=85&s=a1759b0cf4541281a9fdd8f5348228e8" alt="Permission evaluation flow diagram" width="920" height="260" data-path="images/agent-sdk/permissions-flow.svg" />
 
 This page focuses on **allow and deny rules** and **permission modes**. For the other steps:
 
@@ -83,7 +83,7 @@ The SDK supports these permission modes:
 | `dontAsk`                | Deny instead of prompting    | Anything not pre-approved by `allowed_tools` or rules is denied; `canUseTool` is never called                                                 |
 | `acceptEdits`            | Auto-accept file edits       | File edits and [filesystem operations](#accept-edits-mode-acceptedits) (`mkdir`, `rm`, `mv`, etc.) are automatically approved                 |
 | `bypassPermissions`      | Bypass all permission checks | All tools run without permission prompts (use with caution)                                                                                   |
-| `plan`                   | Planning mode                | No tool execution; Claude plans without making changes                                                                                        |
+| `plan`                   | Planning mode                | Read-only tools run; Claude analyzes and plans without editing your source files                                                              |
 | `auto` (TypeScript only) | Model-classified approvals   | A model classifier approves or denies each tool call. See [Auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode) for availability |
 
 <Warning>
@@ -145,24 +145,24 @@ You can set the permission mode once when starting a query, or change it dynamic
     <CodeGroup>
       ```python Python theme={null}
       import asyncio
-      from claude_agent_sdk import query, ClaudeAgentOptions
+      from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions
 
 
       async def main():
-          q = query(
-              prompt="Help me refactor this code",
+          async with ClaudeSDKClient(
               options=ClaudeAgentOptions(
                   permission_mode="default",  # Start in default mode
-              ),
-          )
+              )
+          ) as client:
+              await client.query("Help me refactor this code")
 
-          # Change mode dynamically mid-session
-          await q.set_permission_mode("acceptEdits")
+              # Change mode dynamically mid-session
+              await client.set_permission_mode("acceptEdits")
 
-          # Process messages with the new permission mode
-          async for message in q:
-              if hasattr(message, "result"):
-                  print(message.result)
+              # Process messages with the new permission mode
+              async for message in client.receive_response():
+                  if hasattr(message, "result"):
+                      print(message.result)
 
 
       asyncio.run(main())
@@ -229,7 +229,7 @@ Auto-approves all tool uses without prompts. Hooks still execute and can block o
 
 #### Plan mode (`plan`)
 
-Prevents tool execution entirely. Claude can analyze code and create plans but cannot make changes. Claude may use `AskUserQuestion` to clarify requirements before finalizing the plan. See [Handle approvals and user input](/en/agent-sdk/user-input#handle-clarifying-questions) for handling these prompts.
+Restricts Claude to read-only tools. Claude can read files and run read-only shell commands to explore the codebase but does not edit your source files. Claude may use `AskUserQuestion` to clarify requirements before finalizing the plan. See [Handle approvals and user input](/en/agent-sdk/user-input#handle-clarifying-questions) for handling these prompts.
 
 **Use when:** you want Claude to propose changes without executing them, such as during code review or when you need to approve changes before they're made.
 
