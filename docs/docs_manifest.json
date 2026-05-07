@@ -93,8 +93,8 @@
     "agent-sdk__python.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/python",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/python.md",
-      "hash": "62713fa90456a30a54d2252beaecda4c8a0919f87d951bf70427d5676ac3e871",
-      "last_updated": "2026-05-07T04:13:25.011311"
+      "hash": "ad63eeafcead52268c0a245b99bed7bf5a7644ed5bda4b8656a60ff2ed7ae057",
+      "last_updated": "2026-05-07T15:43:32.938649"
     },
     "agent-sdk__quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/quickstart",
@@ -484,8 +484,8 @@
     "memory.md": {
       "original_url": "https://code.claude.com/docs/en/memory",
       "original_md_url": "https://code.claude.com/docs/en/memory.md",
-      "hash": "7a03f7cec59986e35225812ea520be2ebeaa00f8cae1bdcc21d481d2d44970dd",
-      "last_updated": "2026-05-04T04:17:21.904055"
+      "hash": "3f5ba4a74fa1ee4d5a6e580012e1b568f4956ad47e7ebfe9e300bd5088d07677",
+      "last_updated": "2026-05-07T15:44:08.195676"
     },
     "microsoft-foundry.md": {
       "original_url": "https://code.claude.com/docs/en/microsoft-foundry",
@@ -747,8 +747,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-05-07T12:31:43.886818",
-    "fetch_duration_seconds": 67.408644,
+    "last_fetch_completed": "2026-05-07T15:44:31.463308",
+    "fetch_duration_seconds": 66.827311,
     "total_pages_discovered": 124,
     "pages_fetched_successfully": 125,
     "pages_failed": 0,
@@ -758,7 +758,7 @@
     "total_files": 124,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-05-07T12:31:43.886842",
+  "last_updated": "2026-05-07T15:44:31.463337",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

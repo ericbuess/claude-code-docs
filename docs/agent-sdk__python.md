@@ -1499,13 +1499,17 @@ class ResultMessage:
     is_error: bool
     num_turns: int
     session_id: str
+    stop_reason: str | None = None
     total_cost_usd: float | None = None
     usage: dict[str, Any] | None = None
     result: str | None = None
-    stop_reason: str | None = None
     structured_output: Any = None
     model_usage: dict[str, Any] | None = None
+    permission_denials: list[Any] | None = None
     deferred_tool_use: DeferredToolUse | None = None
+    errors: list[str] | None = None
+    api_error_status: int | None = None
+    uuid: str | None = None
 ```
 
 The `usage` dict contains the following keys when present:
