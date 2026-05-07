@@ -2495,7 +2495,7 @@ type Usage = {
 
 ### `CallToolResult`
 
-MCP tool result type (from `@modelcontextprotocol/sdk/types.js`).
+MCP tool result type (from `@modelcontextprotocol/sdk/types.js`). `structuredContent` is a JSON object that can be returned alongside `content`, including image blocks. See [Return structured data](/en/agent-sdk/custom-tools#return-structured-data).
 
 ```typescript theme={null}
 type CallToolResult = {
@@ -2503,6 +2503,7 @@ type CallToolResult = {
     type: "text" | "image" | "resource";
     // Additional fields vary by type
   }>;
+  structuredContent?: Record<string, unknown>;
   isError?: boolean;
 };
 ```
