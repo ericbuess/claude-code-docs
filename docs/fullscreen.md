@@ -93,6 +93,12 @@ export CLAUDE_CODE_SCROLL_SPEED=3
 
 A value of `3` matches the default in `vim` and similar applications. The setting accepts values from 1 to 20.
 
+### Scroll in the JetBrains IDE terminal
+
+In the JetBrains IDE terminal, Claude Code applies its own scroll handling and ignores `CLAUDE_CODE_SCROLL_SPEED`. The terminal sends scroll events at a much higher rate than other emulators, so a multiplier tuned elsewhere overshoots here.
+
+In 2025.2, the terminal also has scroll-wheel bugs that produce spurious arrow keys and wrong-direction events. Claude Code detects these at runtime and mitigates them automatically, so trackpad and mouse wheel scrolling work without configuration. For the best scroll experience, upgrade to 2025.3 or later. Claude Code shows a hint the first time you scroll if it detects the bug.
+
 ## Search and review the conversation
 
 `Ctrl+o` toggles between the normal prompt and transcript mode. For a quieter view that shows only your last prompt, a one-line summary of tool calls with edit diffstats, and the final response, run `/focus`. The setting persists across sessions. Run `/focus` again to turn it off.
@@ -158,4 +164,4 @@ Fullscreen rendering is a research preview feature. It has been tested on common
 
 If you encounter a problem, run `/feedback` inside Claude Code to report it, or open an issue on the [claude-code GitHub repo](https://github.com/anthropics/claude-code/issues). Include your terminal emulator name and version.
 
-To turn fullscreen rendering off, run `/tui default`, or unset the environment variable if you enabled it that way.
+To turn fullscreen rendering off, run `/tui default`, or unset `CLAUDE_CODE_NO_FLICKER` if you enabled it that way. To force the classic renderer regardless of the saved `tui` setting, set `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1`. The classic renderer keeps the conversation in your terminal's native scrollback so `Cmd+f` and tmux copy mode work as usual.
