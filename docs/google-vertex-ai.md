@@ -266,8 +266,23 @@ For more information, see [Google Cloud authentication documentation](https://cl
 Claude Code v2.1.121 or later supports [X.509 certificate-based Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation-with-x509-certificates) through the same Application Default Credentials chain. Set `GOOGLE_APPLICATION_CREDENTIALS` to the path of your credential configuration file.
 
 <Note>
-  When authenticating, Claude Code will automatically use the project ID from the `ANTHROPIC_VERTEX_PROJECT_ID` environment variable. To override this, set one of these environment variables: `GCLOUD_PROJECT`, `GOOGLE_CLOUD_PROJECT`, or `GOOGLE_APPLICATION_CREDENTIALS`.
+  Claude Code uses `ANTHROPIC_VERTEX_PROJECT_ID` as the project ID for Vertex AI requests. The `GCLOUD_PROJECT` and `GOOGLE_CLOUD_PROJECT` environment variables and the credential file referenced by `GOOGLE_APPLICATION_CREDENTIALS` take precedence over it. If none of these are set, the project ID is resolved from your `gcloud` configuration or the attached service account.
 </Note>
+
+#### Advanced credential configuration
+
+Claude Code supports automatic credential refresh for GCP through the `gcpAuthRefresh` setting. When Claude Code detects that your GCP credentials are expired or cannot be loaded, it runs the configured command to obtain new credentials before retrying the request.
+
+```json theme={null}
+{
+  "gcpAuthRefresh": "gcloud auth application-default login",
+  "env": {
+    "ANTHROPIC_VERTEX_PROJECT_ID": "your-project-id"
+  }
+}
+```
+
+The command's output is displayed to the user, but interactive input isn't supported. This works well for browser-based authentication flows where the CLI shows a URL and you complete authentication in the browser. The refresh command times out after three minutes if authentication does not complete. If you set `gcpAuthRefresh` in project settings such as `.claude/settings.json`, the command runs only after you accept the workspace trust prompt.
 
 ### 4. Configure Claude Code
 
@@ -362,6 +377,12 @@ Claude Opus 4.7, Opus 4.6, and Sonnet 4.6 support the [1M token context window](
 The [setup wizard](#sign-in-with-vertex-ai) offers a 1M context option when it pins models. To enable it for a manually pinned model instead, append `[1m]` to the model ID. See [Pin models for third-party deployments](/en/model-config#pin-models-for-third-party-deployments) for details.
 
 ## Troubleshooting
+
+If you encounter "Could not load the default credentials" errors:
+
+* Run `gcloud auth application-default login` to set up Application Default Credentials
+* Set `GOOGLE_APPLICATION_CREDENTIALS` to a service account key file path
+* See [Configure GCP credentials](#3-configure-gcp-credentials) for all options
 
 If you encounter quota issues:
 

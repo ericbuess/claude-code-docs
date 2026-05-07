@@ -197,7 +197,7 @@ For example, `anthropics/claude-code` refers to the `claude-code` repository own
 
 ### Add from other Git hosts
 
-Add any git repository by providing the full URL. This works with any Git host, including GitLab, Bitbucket, and self-hosted servers:
+Add any git repository by providing the full URL. This works with any Git host, including GitLab, Bitbucket, and self-hosted servers. Include the `.git` suffix so Claude Code clones the repository rather than treating the URL as a direct link to a hosted `marketplace.json` file.
 
 Using HTTPS:
 

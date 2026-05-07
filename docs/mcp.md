@@ -427,7 +427,7 @@ See the [plugin components reference](/en/plugins-reference#mcp-servers) for det
 
 ## MCP installation scopes
 
-MCP servers can be configured at three scopes. The scope you choose controls which projects the server loads in and whether the configuration is shared with your team.
+MCP servers can be configured at three scopes. The scope you choose controls which projects the server loads in and whether the configuration is shared with your team. Administrators can also deploy servers at the enterprise level via [managed configuration](#managed-mcp-configuration).
 
 | Scope                     | Loads in             | Shared with team         | Stored in                   |
 | ------------------------- | -------------------- | ------------------------ | --------------------------- |
