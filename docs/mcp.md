@@ -1359,7 +1359,7 @@ URL patterns support wildcards using `*` to match any sequence of characters. Th
 * `https://*.example.com/*` - Allow any subdomain of example.com
 * `http://localhost:*/*` - Allow any port on localhost
 
-Hostname matching is case-insensitive and ignores a trailing FQDN dot, matching DNS semantics. A pattern like `*://Mcp.Example.com/*` matches `https://mcp.example.com/api`, and `https://mcp.example.com.` is treated the same as `https://mcp.example.com`. Schemes and paths remain case-sensitive.
+Hostname matching is case-insensitive and ignores a trailing FQDN dot, matching DNS semantics. A pattern like `*://Mcp.Example.com/*` matches `https://mcp.example.com/api`, and `https://mcp.example.com.` is treated the same as `https://mcp.example.com`. Paths remain case-sensitive.
 
 **Remote server behavior**:
 

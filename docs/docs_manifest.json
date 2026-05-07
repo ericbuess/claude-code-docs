@@ -165,8 +165,8 @@
     "agent-sdk__typescript.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/typescript",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/typescript.md",
-      "hash": "72ba6226394cb3233e37752fa9c270058705c00e2890502c39ebb358d8a54a66",
-      "last_updated": "2026-05-07T09:48:37.289655"
+      "hash": "0e9e1b03752635ccd1412ba28c502951876c55a8f4b2b0b67b670ff26ba6214c",
+      "last_updated": "2026-05-07T12:30:51.432671"
     },
     "agent-sdk__typescript-v2-preview.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/typescript-v2-preview",
@@ -478,8 +478,8 @@
     "mcp.md": {
       "original_url": "https://code.claude.com/docs/en/mcp",
       "original_md_url": "https://code.claude.com/docs/en/mcp.md",
-      "hash": "43678f6ece77e77099058de1b2f10a5161c6d17d383b77b16a2738c294fe5ef0",
-      "last_updated": "2026-05-07T09:49:06.054790"
+      "hash": "604a902d1cc1ff5a728099ce0730531aeeacb82231200bd3a8653061342d66a5",
+      "last_updated": "2026-05-07T12:31:19.831742"
     },
     "memory.md": {
       "original_url": "https://code.claude.com/docs/en/memory",
@@ -747,8 +747,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-05-07T09:49:30.445966",
-    "fetch_duration_seconds": 68.493249,
+    "last_fetch_completed": "2026-05-07T12:31:43.886818",
+    "fetch_duration_seconds": 67.408644,
     "total_pages_discovered": 124,
     "pages_fetched_successfully": 125,
     "pages_failed": 0,
@@ -758,7 +758,7 @@
     "total_files": 124,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-05-07T09:49:30.445992",
+  "last_updated": "2026-05-07T12:31:43.886842",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
