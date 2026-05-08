@@ -20,7 +20,7 @@ When using the Claude Agent SDK, Skills are:
 2. **Loaded from filesystem**: Skills are loaded from filesystem locations governed by `settingSources` (TypeScript) or `setting_sources` (Python)
 3. **Automatically discovered**: Once filesystem settings are loaded, Skill metadata is discovered at startup from user and project directories; full content loaded when triggered
 4. **Model-invoked**: Claude autonomously chooses when to use them based on context
-5. **Enabled via allowed\_tools**: Add `"Skill"` to your `allowed_tools` to enable Skills
+5. **Filtered via the `skills` option**: Discovered skills are enabled by default. Pass a list of skill names, `"all"`, or `[]` to control which are available in the session
 
 Unlike subagents (which can be defined programmatically), Skills must be created as filesystem artifacts. The SDK does not provide a programmatic API for registering Skills.
 
@@ -30,12 +30,9 @@ Unlike subagents (which can be defined programmatically), Skills must be created
 
 ## Using Skills with the SDK
 
-To use Skills with the SDK, you need to:
+Set the `skills` option on `query()` to control which Skills are available to the session. When omitted, discovered Skills are enabled and the Skill tool is available, matching CLI behavior. Pass `"all"` to enable every discovered Skill, a list of Skill names to enable only those, or `[]` to disable all. When you set `skills`, the SDK enables the Skill tool automatically, so you do not need to list it in `allowedTools`.
 
-1. Include `"Skill"` in your `allowed_tools` configuration
-2. Configure `settingSources`/`setting_sources` to load Skills from the filesystem
-
-Once configured, Claude automatically discovers Skills from the specified directories and invokes them when relevant to the user's request.
+Once configured, Claude automatically discovers Skills from the filesystem and invokes them when relevant to the user's request.
 
 <CodeGroup>
   ```python Python theme={null}
@@ -47,7 +44,8 @@ Once configured, Claude automatically discovers Skills from the specified direct
       options = ClaudeAgentOptions(
           cwd="/path/to/project",  # Project with .claude/skills/
           setting_sources=["user", "project"],  # Load Skills from filesystem
-          allowed_tools=["Skill", "Read", "Write", "Bash"],  # Enable Skill tool
+          skills="all",  # Enable every discovered Skill
+          allowed_tools=["Read", "Write", "Bash"],
       )
 
       async for message in query(
@@ -67,13 +65,28 @@ Once configured, Claude automatically discovers Skills from the specified direct
     options: {
       cwd: "/path/to/project", // Project with .claude/skills/
       settingSources: ["user", "project"], // Load Skills from filesystem
-      allowedTools: ["Skill", "Read", "Write", "Bash"] // Enable Skill tool
+      skills: "all", // Enable every discovered Skill
+      allowedTools: ["Read", "Write", "Bash"]
     }
   })) {
     console.log(message);
   }
   ```
 </CodeGroup>
+
+To enable only specific Skills, pass their names. Names match the `name` field in `SKILL.md` or the Skill's directory name. Use `plugin:skill` for plugin-provided Skills.
+
+<CodeGroup>
+  ```python Python theme={null}
+  options = ClaudeAgentOptions(skills=["pdf", "docx"])
+  ```
+
+  ```typescript TypeScript theme={null}
+  const options = { skills: ["pdf", "docx"] };
+  ```
+</CodeGroup>
+
+The `skills` option is a context filter, not a sandbox. Unlisted Skills are hidden from the model and rejected by the Skill tool, but their files remain on disk and are reachable through Read and Bash.
 
 ## Skill Locations
 
@@ -117,7 +130,8 @@ To control tool access for Skills in SDK applications, use `allowedTools` to pre
   ```python Python theme={null}
   options = ClaudeAgentOptions(
       setting_sources=["user", "project"],  # Load Skills from filesystem
-      allowed_tools=["Skill", "Read", "Grep", "Glob"],
+      skills="all",
+      allowed_tools=["Read", "Grep", "Glob"],
   )
 
   async for message in query(prompt="Analyze the codebase structure", options=options):
@@ -129,7 +143,8 @@ To control tool access for Skills in SDK applications, use `allowedTools` to pre
     prompt: "Analyze the codebase structure",
     options: {
       settingSources: ["user", "project"], // Load Skills from filesystem
-      allowedTools: ["Skill", "Read", "Grep", "Glob"],
+      skills: "all",
+      allowedTools: ["Read", "Grep", "Glob"],
       permissionMode: "dontAsk" // Deny anything not in allowedTools
     }
   })) {
@@ -146,7 +161,7 @@ To see which Skills are available in your SDK application, simply ask Claude:
   ```python Python theme={null}
   options = ClaudeAgentOptions(
       setting_sources=["user", "project"],  # Load Skills from filesystem
-      allowed_tools=["Skill"],
+      skills="all",
   )
 
   async for message in query(prompt="What Skills are available?", options=options):
@@ -158,7 +173,7 @@ To see which Skills are available in your SDK application, simply ask Claude:
     prompt: "What Skills are available?",
     options: {
       settingSources: ["user", "project"], // Load Skills from filesystem
-      allowedTools: ["Skill"]
+      skills: "all"
     }
   })) {
     console.log(message);
@@ -177,7 +192,8 @@ Test Skills by asking questions that match their descriptions:
   options = ClaudeAgentOptions(
       cwd="/path/to/project",
       setting_sources=["user", "project"],  # Load Skills from filesystem
-      allowed_tools=["Skill", "Read", "Bash"],
+      skills="all",
+      allowed_tools=["Read", "Bash"],
   )
 
   async for message in query(prompt="Extract text from invoice.pdf", options=options):
@@ -190,7 +206,8 @@ Test Skills by asking questions that match their descriptions:
     options: {
       cwd: "/path/to/project",
       settingSources: ["user", "project"], // Load Skills from filesystem
-      allowedTools: ["Skill", "Read", "Bash"]
+      skills: "all",
+      allowedTools: ["Read", "Bash"]
     }
   })) {
     console.log(message);
@@ -209,12 +226,12 @@ Claude automatically invokes the relevant Skill if the description matches your 
 <CodeGroup>
   ```python Python theme={null}
   # Skills not loaded: setting_sources excludes user and project
-  options = ClaudeAgentOptions(setting_sources=[], allowed_tools=["Skill"])
+  options = ClaudeAgentOptions(setting_sources=[], skills="all")
 
   # Skills loaded: user and project sources included
   options = ClaudeAgentOptions(
       setting_sources=["user", "project"],
-      allowed_tools=["Skill"],
+      skills="all",
   )
   ```
 
@@ -222,13 +239,13 @@ Claude automatically invokes the relevant Skill if the description matches your 
   // Skills not loaded: settingSources excludes user and project
   const options = {
     settingSources: [],
-    allowedTools: ["Skill"]
+    skills: "all"
   };
 
   // Skills loaded: user and project sources included
   const options = {
     settingSources: ["user", "project"],
-    allowedTools: ["Skill"]
+    skills: "all"
   };
   ```
 </CodeGroup>
@@ -243,7 +260,7 @@ For more details on `settingSources`/`setting_sources`, see the [TypeScript SDK 
   options = ClaudeAgentOptions(
       cwd="/path/to/project",  # Must contain .claude/skills/
       setting_sources=["user", "project"],  # Loads skills from these sources
-      allowed_tools=["Skill"],
+      skills="all",
   )
   ```
 
@@ -252,7 +269,7 @@ For more details on `settingSources`/`setting_sources`, see the [TypeScript SDK 
   const options = {
     cwd: "/path/to/project", // Must contain .claude/skills/
     settingSources: ["user", "project"], // Loads skills from these sources
-    allowedTools: ["Skill"]
+    skills: "all"
   };
   ```
 </CodeGroup>
@@ -271,7 +288,7 @@ ls ~/.claude/skills/*/SKILL.md
 
 ### Skill Not Being Used
 
-**Check the Skill tool is enabled**: Confirm `"Skill"` is in your `allowedTools`.
+**Check the `skills` option**: If you passed a `skills` list, confirm the skill's name is included. Passing `[]` disables all skills.
 
 **Check the description**: Ensure it's specific and includes relevant keywords. See [Agent Skills Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices#writing-effective-descriptions) for guidance on writing effective descriptions.
 

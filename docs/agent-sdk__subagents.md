@@ -166,7 +166,7 @@ Define subagents directly in your code using the `agents` parameter. This exampl
 | `tools`           | `string[]`                                                  | No       | Array of allowed tool names. If omitted, inherits all tools                                                                                                 |
 | `disallowedTools` | `string[]`                                                  | No       | Array of tool names to remove from the agent's tool set                                                                                                     |
 | `model`           | `string`                                                    | No       | Model override for this agent. Accepts an alias such as `'sonnet'`, `'opus'`, `'haiku'`, `'inherit'`, or a full model ID. Defaults to main model if omitted |
-| `skills`          | `string[]`                                                  | No       | List of skill names available to this agent                                                                                                                 |
+| `skills`          | `string[]`                                                  | No       | List of skill names to preload into the agent's context at startup. Unlisted skills remain invocable through the Skill tool                                 |
 | `memory`          | `'user' \| 'project' \| 'local'`                            | No       | Memory source for this agent                                                                                                                                |
 | `mcpServers`      | `(string \| object)[]`                                      | No       | MCP servers available to this agent, by name or inline config                                                                                               |
 | `maxTurns`        | `number`                                                    | No       | Maximum number of agentic turns before the agent stops                                                                                                      |
@@ -192,11 +192,11 @@ You can also define subagents as markdown files in `.claude/agents/` directories
 
 A subagent's context window starts fresh (no parent conversation) but isn't empty. The only channel from parent to subagent is the Agent tool's prompt string, so include any file paths, error messages, or decisions the subagent needs directly in that prompt.
 
-| The subagent receives                                                        | The subagent does not receive                      |
-| :--------------------------------------------------------------------------- | :------------------------------------------------- |
-| Its own system prompt (`AgentDefinition.prompt`) and the Agent tool's prompt | The parent's conversation history or tool results  |
-| Project CLAUDE.md (loaded via `settingSources`)                              | Skills (unless listed in `AgentDefinition.skills`) |
-| Tool definitions (inherited from parent, or the subset in `tools`)           | The parent's system prompt                         |
+| The subagent receives                                                        | The subagent does not receive                                      |
+| :--------------------------------------------------------------------------- | :----------------------------------------------------------------- |
+| Its own system prompt (`AgentDefinition.prompt`) and the Agent tool's prompt | The parent's conversation history or tool results                  |
+| Project CLAUDE.md (loaded via `settingSources`)                              | Preloaded skill content, unless listed in `AgentDefinition.skills` |
+| Tool definitions (inherited from parent, or the subset in `tools`)           | The parent's system prompt                                         |
 
 <Note>
   The parent receives the subagent's final message verbatim as the Agent tool result, but may summarize it in its own response. To preserve subagent output verbatim in the user-facing response, include an instruction to do so in the prompt or `systemPrompt` option you pass to the **main** `query()` call.
