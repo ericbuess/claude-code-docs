@@ -405,7 +405,7 @@ Agent teams are experimental. Current limitations to be aware of:
 * **No session resumption with in-process teammates**: `/resume` and `/rewind` do not restore in-process teammates. After resuming a session, the lead may attempt to message teammates that no longer exist. If this happens, tell the lead to spawn new teammates.
 * **Task status can lag**: teammates sometimes fail to mark tasks as completed, which blocks dependent tasks. If a task appears stuck, check whether the work is actually done and update the task status manually or tell the lead to nudge the teammate.
 * **Shutdown can be slow**: teammates finish their current request or tool call before shutting down, which can take time.
-* **One team per session**: a lead can only manage one team at a time. Clean up the current team before starting a new one.
+* **One team at a time**: a lead can only manage one team. Clean up the current team before creating a new one.
 * **No nested teams**: teammates cannot spawn their own teams or teammates. Only the lead can manage the team.
 * **Lead is fixed**: the session that creates the team is the lead for its lifetime. You can't promote a teammate to lead or transfer leadership.
 * **Permissions set at spawn**: all teammates start with the lead's permission mode. You can change individual teammate modes after spawning, but you can't set per-teammate modes at spawn time.
