@@ -35,6 +35,7 @@ Match the message you see in your terminal to a section below.
 | `does not meet scope requirement user:profile`                                       | [Authentication](#oauth-scope-requirement)                                                                                    |
 | `Unable to connect to API`                                                           | [Network](#unable-to-connect-to-api)                                                                                          |
 | `SSL certificate verification failed`                                                | [Network](#ssl-certificate-errors)                                                                                            |
+| `403` with `x-deny-reason: host_not_allowed` in a cloud or routine session           | [Network](#host-not-allowed-in-a-cloud-session)                                                                               |
 | `Prompt is too long`                                                                 | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Error during compaction: Conversation too long`                                     | [Request errors](#error-during-compaction-conversation-too-long)                                                              |
 | `Request too large`                                                                  | [Request errors](#request-too-large)                                                                                          |
@@ -282,7 +283,7 @@ OAuth token does not meet scope requirement: user:profile
 
 ## Network and connection errors
 
-These errors mean Claude Code could not reach the API at all. They almost always originate in your local network, proxy, or firewall rather than Anthropic infrastructure.
+These errors mean a network request from Claude Code failed to reach its destination. They usually originate in your local network, proxy, or firewall, or in the cloud environment's network policy.
 
 ### Unable to connect to API
 
@@ -327,6 +328,27 @@ Unable to connect to API: Self-signed certificate detected
 * Export your organization's CA bundle and point Claude Code at it with `NODE_EXTRA_CA_CERTS=/path/to/ca-bundle.pem`
 * See [Network configuration](/en/network-config#custom-ca-certificates) for full setup instructions
 * Do not set `NODE_TLS_REJECT_UNAUTHORIZED=0`, which disables certificate validation entirely
+
+### Host not allowed in a cloud session
+
+An outbound HTTP request from a cloud session or routine was blocked by the environment's network policy.
+
+```text theme={null}
+HTTP 403
+x-deny-reason: host_not_allowed
+```
+
+You may also see a TLS certificate that doesn't match the destination's real certificate. The cloud environment routes outbound traffic through a proxy that enforces the network policy, so a mismatched certificate means the proxy terminated the connection, not the destination.
+
+This is not a client-side network problem. Cloud sessions and [routines](/en/routines) run inside a sandboxed environment whose outbound traffic is filtered to the environment's allowlist. The **Default** environment uses **Trusted** access, which permits the [default allowlist](/en/claude-code-on-the-web#default-allowed-domains) of package registries, cloud provider APIs, container registries, and common development domains but blocks everything else.
+
+**What to do:**
+
+* Open the routine for editing, or start a cloud session. Select the cloud icon showing your environment's name, such as **Default**, to open the selector. Hover over your environment and click the settings icon.
+* In the **Update cloud environment** dialog, change **Network access** from **Trusted** to **Custom**, then add the blocked domain to **Allowed domains**. Enter one domain per line. Check **Also include default list of common package managers** to keep the [default allowlist](/en/claude-code-on-the-web#default-allowed-domains) alongside your custom domains. Select **Full** instead if you want unrestricted access.
+* Click **Save changes**. The next run uses the updated allowlist.
+
+See [Network access](/en/claude-code-on-the-web#network-access) for access levels and the default allowlist. Local CLI sessions are not affected by this policy.
 
 ## Request errors
 

@@ -76,7 +76,7 @@ Routines belong to your individual claude.ai account. They are not shared with t
     * **Environment variables**: provide API keys, tokens, or other secrets Claude can use
     * **Setup script**: install dependencies and tools the routine needs. The result is [cached](/en/claude-code-on-the-web#environment-caching), so the script doesn't re-run on every session
 
-    A **Default** environment is provided. To use a custom environment, [create one](/en/claude-code-on-the-web#the-cloud-environment) before creating the routine.
+    A **Default** environment is provided with **Trusted** network access, which allows the [default set](/en/claude-code-on-the-web#default-allowed-domains) of package registries, cloud provider APIs, container registries, and common development domains, but blocks everything else. If your routine needs to reach your own services or a domain outside that list, edit the environment's [network access](/en/claude-code-on-the-web#network-access) before running. To use a separate environment, [create one](/en/claude-code-on-the-web#configure-your-environment) first.
   </Step>
 
   <Step title="Select a trigger">
@@ -162,7 +162,7 @@ API triggers are added to an existing routine from the web. The CLI cannot curre
   </Step>
 
   <Step title="Add an API trigger">
-    Scroll to the **Select a trigger** section below the prompt, click **Add another trigger**, and choose **API**.
+    Scroll to the **Select a trigger** section below the **Instructions** box, click **Add another trigger**, and choose **API**.
   </Step>
 
   <Step title="Copy the URL and generate a token">
@@ -291,6 +291,10 @@ Click a routine in the list to open its detail page. The detail page shows the r
 
 Click any run to open it as a full session. From there you can see what Claude did, review changes, create a pull request, or continue the conversation. Each run session works like any other session: use the dropdown menu next to the session title to rename, archive, or delete it.
 
+<Note>
+  A green status in the run list means the session started and exited without an infrastructure error. It does not mean the task in your prompt succeeded. Open the run to read the transcript and confirm what Claude actually did. Blocked network requests, missing connector tools, and task-level failures all surface there rather than in the status indicator.
+</Note>
+
 ### Edit and control routines
 
 From the routine detail page you can:
@@ -316,9 +320,37 @@ When you create a routine, all of your currently connected connectors are includ
 
 To manage or add connectors outside of the routine form, visit **Settings > Connectors** on claude.ai or use `/schedule update` in the CLI.
 
-### Environments
+### Environments and network access
 
-Each routine runs in a [cloud environment](/en/claude-code-on-the-web#the-cloud-environment) that controls network access, environment variables, and setup scripts. Configure environments before creating a routine to give Claude access to APIs, install dependencies, or restrict network scope. See [cloud environment](/en/claude-code-on-the-web#the-cloud-environment) for the full setup guide.
+Each routine runs in a [cloud environment](/en/claude-code-on-the-web#the-cloud-environment) that controls network access, environment variables, and setup scripts. The routine inherits the environment's network policy on every run.
+
+The **Default** environment uses **Trusted** network access: the [default allowlist](/en/claude-code-on-the-web#default-allowed-domains) of package registries, cloud provider APIs, container registries, and common development domains is reachable, but arbitrary domains are not. Outbound requests to other hosts fail with `403` and `x-deny-reason: host_not_allowed`. MCP connector traffic is routed through Anthropic's servers, so the connectors you add to the routine work without adding their hosts to **Allowed domains**. Remove any connectors you don't need under [Connectors](#connectors).
+
+To allow additional domains:
+
+<Steps>
+  <Step title="Open the routine for editing">
+    On the routine's detail page, click the pencil icon to open **Edit routine**.
+  </Step>
+
+  <Step title="Open the environment selector">
+    Below the **Instructions** box, select the cloud icon showing your environment's name, such as **Default**.
+  </Step>
+
+  <Step title="Open the environment settings">
+    Hover over the environment in the list and click the settings icon that appears on the right.
+  </Step>
+
+  <Step title="Change the network access level">
+    In the **Update cloud environment** dialog, change **Network access** to **Custom** and enter your domains in **Allowed domains**. Check **Also include default list of common package managers** to keep the [default allowlist](/en/claude-code-on-the-web#default-allowed-domains) alongside your custom domains. Select **Full** instead for unrestricted access.
+  </Step>
+
+  <Step title="Save">
+    Click **Save changes**. The new policy applies from the next run.
+  </Step>
+</Steps>
+
+See [Network access](/en/claude-code-on-the-web#network-access) for details on access levels and the default allowlist.
 
 ## Usage and limits
 

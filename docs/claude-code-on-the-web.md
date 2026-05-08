@@ -156,7 +156,7 @@ Environments control [network access](#network-access), environment variables, a
 | Action                         | How                                                                                                                                                                                                                      |
 | :----------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Add an environment             | Select the current environment to open the selector, then select **Add environment**. The dialog includes name, network access level, environment variables, and setup script.                                           |
-| Edit an environment            | Select the settings icon to the right of the environment name.                                                                                                                                                           |
+| Edit an environment            | Select the cloud icon showing the current environment's name to open the selector, hover over an environment, and click the settings icon that appears on the right.                                                     |
 | Archive an environment         | Open the environment for editing and select **Archive**. Archived environments are hidden from the selector but existing sessions keep running.                                                                          |
 | Set the default for `--remote` | Run `/remote-env` in your terminal. If you have a single environment, this command shows your current configuration. `/remote-env` only selects the default; add, edit, and archive environments from the web interface. |
 
@@ -266,6 +266,12 @@ Replacing the base image with your own Docker image is not yet supported. Use a 
 ## Network access
 
 Network access controls outbound connections from the cloud environment. Each environment specifies one access level, and you can extend it with custom allowed domains. The default is **Trusted**, which allows package registries and other [allowlisted domains](#default-allowed-domains).
+
+To change an environment's network access, [open it for editing](#configure-your-environment) and use the **Network access** selector in the dialog. There is no separate Environments page. The cloud icon appears wherever you start a cloud session or configure a [routine](/en/routines#environments-and-network-access).
+
+<Note>
+  MCP connector traffic is routed through Anthropic's servers, so the connectors you enable on a session or routine work without adding their hosts to **Allowed domains**. Connectors are configured per session or per routine; remove any you don't need to limit which tools Claude can reach. This relies on the same Anthropic-bound channel noted under [Security and isolation](#security-and-isolation).
+</Note>
 
 ### Access levels
 
