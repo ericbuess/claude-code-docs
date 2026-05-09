@@ -308,6 +308,57 @@ function tagSession(
 | `tag`         | `string \| null` | required    | Tag string, or `null` to clear                                         |
 | `options.dir` | `string`         | `undefined` | Project directory path. When omitted, searches all project directories |
 
+### `resolveSettings()`
+
+Resolves the effective Claude Code settings for a given directory using the same merge engine as the CLI, without spawning the Claude CLI. Use it to inspect what configuration a `query()` call would see before invoking one.
+
+<Note>
+  This function is alpha and its API may change before stabilization. It reads MDM sources, including macOS plist and Windows HKLM/HKCU, for parity with CLI startup, but does not execute the admin-configured `policyHelper` subprocess. The `permissions.defaultMode` field is returned as-is from all tiers including project settings. The trust filter the CLI applies before honoring escalating permission modes is not applied.
+</Note>
+
+```typescript theme={null}
+function resolveSettings(
+  options?: ResolveSettingsOptions
+): Promise<ResolvedSettings>;
+```
+
+#### Parameters
+
+`resolveSettings()` accepts a single options object. All fields are optional.
+
+| Parameter                       | Type                                  | Default         | Description                                                                                                                               |
+| :------------------------------ | :------------------------------------ | :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| `options.cwd`                   | `string`                              | `process.cwd()` | Directory to resolve project and local settings relative to                                                                               |
+| `options.settingSources`        | [`SettingSource`](#settingsource)`[]` | All sources     | Which filesystem sources to load. Pass `[]` to skip user, project, and local settings. Managed policy settings load in all cases          |
+| `options.managedSettings`       | `Settings`                            | `undefined`     | Restrictive policy-tier settings merged at the managed-policy precedence level. Non-restrictive keys such as `model` are silently dropped |
+| `options.serverManagedSettings` | `Settings`                            | `undefined`     | Server-managed settings payload from `/api/claude_code/settings`. Non-restrictive keys pass through unfiltered                            |
+
+#### Return type: `ResolvedSettings`
+
+`resolveSettings()` returns an object describing the merged settings and the source that contributed each key.
+
+| Property     | Type                                                | Description                                                            |
+| :----------- | :-------------------------------------------------- | :--------------------------------------------------------------------- |
+| `effective`  | `Settings`                                          | Merged settings after applying all enabled sources in precedence order |
+| `provenance` | `Partial<Record<keyof Settings, ProvenanceEntry>>`  | For each top-level key in `effective`, which source supplied the value |
+| `sources`    | `Array<{ source, settings, path?, policyOrigin? }>` | Per-source raw settings, ordered from lowest to highest precedence     |
+
+#### Example
+
+The example below resolves settings for a project directory and prints the source that controls the cleanup period.
+
+```typescript theme={null}
+import { resolveSettings } from "@anthropic-ai/claude-agent-sdk";
+
+const { effective, provenance } = await resolveSettings({
+  cwd: "/path/to/project",
+  settingSources: ["user", "project", "local"],
+});
+
+console.log(`Cleanup period: ${effective.cleanupPeriodDays} days`);
+console.log(`Set by: ${provenance.cleanupPeriodDays?.source}`);
+```
+
 ## Types
 
 ### `Options`
@@ -864,6 +915,7 @@ type SDKMessage =
   | SDKFilesPersistedEvent
   | SDKToolUseSummaryMessage
   | SDKRateLimitEvent
+  | SDKPermissionDeniedMessage
   | SDKPromptSuggestionMessage;
 ```
 
@@ -1051,6 +1103,36 @@ type SDKPluginInstallMessage = {
   session_id: string;
 };
 ```
+
+### `SDKPermissionDeniedMessage`
+
+Stream event emitted when the permission system auto-denies a tool call without an interactive prompt. Use it to render the denial in your UI as it happens, rather than only observing the `is_error` tool result that follows. The interactive ask path reaches your application separately through the [`canUseTool`](#canusetool) callback. Denials issued by a `PreToolUse` hook are not reported through this event.
+
+This event requires Claude Code v2.1.136 or later.
+
+```typescript theme={null}
+type SDKPermissionDeniedMessage = {
+  type: "system";
+  subtype: "permission_denied";
+  tool_name: string;
+  tool_use_id: string;
+  agent_id?: string;
+  decision_reason_type?: string;
+  decision_reason?: string;
+  message: string;
+  uuid: UUID;
+  session_id: string;
+};
+```
+
+| Field                  | Type     | Description                                                                                                              |
+| ---------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `tool_name`            | `string` | Name of the tool that was denied                                                                                         |
+| `tool_use_id`          | `string` | ID of the `tool_use` block this denial answers                                                                           |
+| `agent_id`             | `string` | Subagent ID when the denied call originated inside a subagent. Mirrors the field on `can_use_tool` for host-side routing |
+| `decision_reason_type` | `string` | Discriminator for the component that decided, such as `"rule"`, `"mode"`, `"classifier"`, or `"asyncAgent"`              |
+| `decision_reason`      | `string` | Human-readable reason from the deciding component, when available                                                        |
+| `message`              | `string` | Rejection message returned to the model in the `tool_result`                                                             |
 
 ### `SDKPermissionDenial`
 

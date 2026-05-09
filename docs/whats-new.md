@@ -8,6 +8,22 @@
 
 The weekly dev digest highlights the features most likely to change how you work. Each entry includes runnable code, a short demo, and a link to the full docs. For every bug fix and minor improvement, see the [changelog](/en/changelog).
 
+<Update label="Week 19" description="May 4–8, 2026" tags={["v2.1.128–v2.1.136"]}>
+  **Plugins load from `.zip` archives and URLs**: `--plugin-dir` now accepts `.zip` files, and `--plugin-url` fetches a plugin archive for the current session.
+
+  Also this week: **`worktree.baseRef`** chooses whether new worktrees branch from the remote default or local `HEAD`; **auto mode hard deny rules** block actions unconditionally regardless of allow exceptions; and **hooks see the active effort level** via `effort.level` and `$CLAUDE_EFFORT`.
+
+  [Read the Week 19 digest →](/en/whats-new/2026-w19)
+</Update>
+
+<Update label="Week 18" description="April 27 – May 1, 2026" tags={["v2.1.120–v2.1.126"]}>
+  **Windows without Git Bash**: Git for Windows is no longer required, and Claude Code uses PowerShell as the shell tool when Bash is absent.
+
+  Also this week: **`claude ultrareview`** brings cloud code review to CI and scripts; **`claude project purge`** cleans up local state for a project; and pasting a **PR URL into `/resume`** finds the session that created it.
+
+  [Read the Week 18 digest →](/en/whats-new/2026-w18)
+</Update>
+
 <Update label="Week 17" description="April 20–24, 2026" tags={["v2.1.114–v2.1.119"]}>
   **`/ultrareview`** opens as a public research preview: a fleet of bug-hunting agents runs in the cloud and findings land back in your CLI or Desktop automatically.
 
@@ -19,7 +35,7 @@ The weekly dev digest highlights the features most likely to change how you work
 <Update label="Week 16" description="April 13–17, 2026" tags={["v2.1.105–v2.1.113"]}>
   **Claude Opus 4.7** lands as the new default on Max and Team Premium, with a new `xhigh` effort level that's the recommended setting for most coding work and an interactive `/effort` slider to dial it in.
 
-  Also this week: **Routines** on Claude Code on the web fire templated cloud agents from a schedule, GitHub event, or API call; `/ultrareview` runs parallel multi-agent code review in the cloud; `/usage` shows what's driving your limits; and the CLI moves to native binaries.
+  Also this week: **Routines** on Claude Code on the web fire templated cloud agents from a schedule, GitHub event, or API call; **mobile push notifications** ping your phone when a long task finishes or Claude needs you; `/usage` shows what's driving your limits; and the CLI moves to native binaries.
 
   [Read the Week 16 digest →](/en/whats-new/2026-w16)
 </Update>

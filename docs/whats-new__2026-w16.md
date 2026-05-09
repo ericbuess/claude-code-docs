@@ -4,7 +4,7 @@
 
 # Week 16 · April 13–17, 2026
 
-> Claude Opus 4.7 with the new xhigh effort level, Routines on Claude Code on the web, /ultrareview cloud code review, a /usage breakdown that shows what's driving your limits, and native binaries replacing the bundled JavaScript.
+> Claude Opus 4.7 with the new xhigh effort level, Routines on Claude Code on the web, mobile push notifications that ping your phone when Claude needs you, a /usage breakdown that shows what's driving your limits, and native binaries replacing the bundled JavaScript.
 
 <div className="digest-meta">
   <span>Releases <a href="/docs/en/changelog#2-1-105">v2.1.105 → v2.1.113</a></span>
@@ -73,25 +73,23 @@
 
 <div className="digest-feature">
   <div className="digest-feature-header">
-    <span className="digest-feature-title">/ultrareview</span>
-    <span className="digest-feature-pill">v2.1.111</span>
+    <span className="digest-feature-title">Mobile push notifications</span>
+    <span className="digest-feature-pill">mobile</span>
   </div>
 
-  <p className="digest-feature-lede">Comprehensive code review in the cloud. Ultrareview fans your branch out across parallel reviewers on Claude Code on the web, runs an adversarial critique pass over each finding, and returns a verified findings report while your terminal stays free. Call it with no arguments to review your current branch, or pass a PR number to fetch and review that PR. The launch dialog now shows a diffstat so you know what's going up before you confirm.</p>
+  <p className="digest-feature-lede">With <a href="/docs/en/remote-control">Remote Control</a> connected, Claude can send a push notification to your phone when a long task finishes or it needs a decision to keep going. Turn it on with "Push when Claude decides" in <code>/config</code>, or ask for one in your prompt. Useful when you kick off a long agent run and want to step away from the terminal.</p>
 
-  <p className="digest-feature-try">Review the branch you're on:</p>
+  <Frame>
+    <video autoPlay muted loop playsInline className="w-full" src="https://mintcdn.com/claude-code/uII1TETOZxBUZ3lB/images/whats-new/push-notifications.mp4?fit=max&auto=format&n=uII1TETOZxBUZ3lB&q=85&s=c91a967139596500cbdb581a53822ac1" data-path="images/whats-new/push-notifications.mp4" />
+  </Frame>
 
-  ```text Claude Code theme={null}
-  > /ultrareview
-  ```
-
-  <p className="digest-feature-try">Or point it at a PR:</p>
+  <p className="digest-feature-try">Ask Claude to ping you when it's done:</p>
 
   ```text Claude Code theme={null}
-  > /ultrareview 1234
+  > notify me when the tests pass
   ```
 
-  <a className="digest-feature-link" href="/docs/en/ultrareview">Ultrareview guide</a>
+  <a className="digest-feature-link" href="/docs/en/remote-control#mobile-push-notifications">Remote Control: mobile push notifications</a>
 </div>
 
 <div className="digest-feature">
@@ -116,10 +114,10 @@
   <p className="digest-wins-title">Other wins</p>
 
   <div className="digest-wins-grid">
+    <div>New <a href="/docs/en/ultrareview"><code>/ultrareview</code></a>: comprehensive code review in the cloud using parallel multi-agent analysis and an adversarial critique pass. Run it bare to review your current branch, or <code>/ultrareview \<PR#></code> for a specific PR</div>
     <div><a href="/docs/en/permission-modes#eliminate-prompts-with-auto-mode">Auto mode</a> is now available for Max subscribers on Opus 4.7, and the <code>--enable-auto-mode</code> flag is no longer required</div>
     <div><a href="/docs/en/interactive-mode#session-recap">Session recap</a> shows a one-line summary of what happened while you were away; run <code>/recap</code> on demand or turn it off from <code>/config</code></div>
     <div>New <code>/tui</code> command and <code>tui</code> setting switch between classic and flicker-free rendering mid-conversation; focus view moved from <code>Ctrl+O</code> to its own <code>/focus</code> command</div>
-    <div>Push notification tool: with <a href="/docs/en/remote-control">Remote Control</a> connected and "Push when Claude decides" enabled, Claude can ping your phone when it needs you</div>
     <div>Plugins can ship background watchers via a top-level <code>monitors</code> manifest key that auto-arms at session start or on skill invoke</div>
     <div>"Auto (match terminal)" option in <code>/theme</code> follows your terminal's dark/light mode</div>
     <div><code>/fewer-permission-prompts</code> scans your transcripts for common read-only Bash and MCP calls and proposes an allowlist for <code>.claude/settings.json</code></div>

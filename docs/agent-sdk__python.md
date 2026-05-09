@@ -2334,7 +2334,9 @@ Asks the user clarifying questions during execution. See [Handle approvals and u
             "multiSelect": bool,  # Set to true to allow multiple selections
         }
     ],
-    "answers": dict | None,  # User answers populated by the permission system
+    "answers": dict[str, str | list[str]] | None,
+    # User answers populated by the permission system. Multi-select
+    # answers may be a list of labels or a comma-joined string
 }
 ```
 

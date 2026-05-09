@@ -474,7 +474,7 @@ The following steps show how to handle clarifying questions:
     | `question` field (e.g., `"How should I format the output?"`) | Key    |
     | Selected option's `label` field (e.g., `"Summary"`)          | Value  |
 
-    For multi-select questions, join multiple labels with `", "`. If you [support free-text input](#support-free-text-input), use the user's custom text as the value.
+    For multi-select questions, pass an array of labels or join them with `", "`. If you [support free-text input](#support-free-text-input), use the user's custom text as the value.
 
     <CodeGroup>
       ```python Python theme={null}
@@ -483,7 +483,7 @@ The following steps show how to handle clarifying questions:
               "questions": input_data.get("questions", []),
               "answers": {
                   "How should I format the output?": "Summary",
-                  "Which sections should I include?": "Introduction, Conclusion",
+                  "Which sections should I include?": ["Introduction", "Conclusion"],
               },
           }
       )
@@ -584,7 +584,7 @@ Return an `answers` object mapping each question's `question` field to the selec
 | `questions` | Pass through the original questions array (required for tool processing) |
 | `answers`   | Object where keys are question text and values are selected labels       |
 
-For multi-select questions, join multiple labels with `", "`. For free-text input, use the user's custom text directly.
+For multi-select questions, pass an array of labels or join them with `", "`. For free-text input, use the user's custom text directly.
 
 ```json theme={null}
 {
@@ -593,7 +593,7 @@ For multi-select questions, join multiple labels with `", "`. For free-text inpu
   ],
   "answers": {
     "How should I format the output?": "Summary",
-    "Which sections should I include?": "Introduction, Conclusion"
+    "Which sections should I include?": ["Introduction", "Conclusion"]
   }
 }
 ```

@@ -31,6 +31,7 @@ Match the message you see in your terminal to a section below.
 | `Not logged in · Please run /login`                                                  | [Authentication](#not-logged-in)                                                                                              |
 | `Invalid API key`                                                                    | [Authentication](#invalid-api-key)                                                                                            |
 | `This organization has been disabled`                                                | [Authentication](#this-organization-has-been-disabled)                                                                        |
+| `Routines are disabled by your organization's policy`                                | [Authentication](#routines-are-disabled-by-your-organizations-policy)                                                         |
 | `OAuth token revoked` / `OAuth token has expired`                                    | [Authentication](#oauth-token-revoked-or-expired)                                                                             |
 | `does not meet scope requirement user:profile`                                       | [Authentication](#oauth-scope-requirement)                                                                                    |
 | `Unable to connect to API`                                                           | [Network](#unable-to-connect-to-api)                                                                                          |
@@ -251,6 +252,21 @@ Environment variables take precedence over `/login`, so a key exported in your s
 * Unset `ANTHROPIC_API_KEY` in the current shell and remove it from your shell profile, then relaunch `claude`
 * Run `/status` afterward to confirm the active credential is your subscription
 * If no environment variable is set and the error persists, the disabled organization is the one tied to your `/login`. Contact support or sign in with a different account.
+
+### Routines are disabled by your organization's policy
+
+Your Team or Enterprise admin has turned off routines at the organization level. The error appears when you try to create or run a routine, including from `/schedule` and the [Routines](/en/routines) UI on claude.ai/code.
+
+```text theme={null}
+Routines are disabled by your organization's policy.
+```
+
+This is a server-side setting, so it cannot be overridden from local settings, environment variables, or CLI flags.
+
+**What to do:**
+
+* Ask your admin to enable the **Routines** toggle at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code)
+* For one-off scheduled work that does not require organization-level routines, see [scheduled tasks](/en/scheduled-tasks)
 
 ### OAuth token revoked or expired
 

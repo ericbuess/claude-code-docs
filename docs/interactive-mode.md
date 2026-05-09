@@ -289,7 +289,7 @@ When you first open a session, a grayed-out example command appears in the promp
 
 After Claude responds, suggestions continue to appear based on your conversation history, such as a follow-up step from a multi-part request or a natural continuation of your workflow.
 
-* Press **Tab** or **Right arrow** to accept the suggestion, or press **Enter** to accept and submit
+* Press **Tab** or **Right arrow** to place the suggestion in the prompt input, then **Enter** to submit
 * Start typing to dismiss it
 
 The suggestion runs as a background request that reuses the parent conversation's prompt cache, so the additional cost is minimal. Claude Code skips suggestion generation when the cache is cold to avoid unnecessary cost.
