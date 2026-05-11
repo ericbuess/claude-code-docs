@@ -610,8 +610,8 @@
     "settings.md": {
       "original_url": "https://code.claude.com/docs/en/settings",
       "original_md_url": "https://code.claude.com/docs/en/settings.md",
-      "hash": "0b1e85fe696ef5aabce951d48e1380cb22e62c15740773c171d653a8e8d35d0d",
-      "last_updated": "2026-05-09T04:07:54.184657"
+      "hash": "9b2570f88995eed0b2988fd3ef2e430316a19b721b6122d45ea8fa009dbb17be",
+      "last_updated": "2026-05-11T00:20:08.746029"
     },
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
@@ -622,8 +622,8 @@
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
       "original_md_url": "https://code.claude.com/docs/en/skills.md",
-      "hash": "15145cbf7369c5532061cfe16254a55305dda0a7516941b944fedc0c19c313e7",
-      "last_updated": "2026-05-06T15:43:52.965744"
+      "hash": "2a978a793ab2683df3fe3aefdd76748bc16d70b98d94733adc4f38404c54b5a5",
+      "last_updated": "2026-05-11T00:20:09.856967"
     },
     "slack.md": {
       "original_url": "https://code.claude.com/docs/en/slack",
@@ -759,8 +759,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-05-10T21:15:18.621381",
-    "fetch_duration_seconds": 69.790238,
+    "last_fetch_completed": "2026-05-11T00:20:22.290623",
+    "fetch_duration_seconds": 70.726868,
     "total_pages_discovered": 126,
     "pages_fetched_successfully": 127,
     "pages_failed": 0,
@@ -770,7 +770,7 @@
     "total_files": 126,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-05-10T21:15:18.621407",
+  "last_updated": "2026-05-11T00:20:22.290653",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
