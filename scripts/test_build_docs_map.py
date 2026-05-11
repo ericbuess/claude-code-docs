@@ -108,3 +108,40 @@ def test_build_map_writes_grouped_output(tmp_path):
     assert "**Summary:**" in content
     assert "**Keywords:**" in content
     assert "DOCS_MAP.md" not in [line.strip() for line in content.split("###")[1:]]
+
+
+def test_extract_summary_skips_jsx_blocks():
+    content = """# Title
+
+export const ContactSalesCard = ({surface}) => {
+  return (
+    <div className="foo">
+      <p>Contact</p>
+    </div>
+  );
+}
+
+This is the actual prose paragraph that should be extracted.
+"""
+    summary = extract_summary(content)
+    assert "actual prose paragraph" in summary
+    assert "ContactSalesCard" not in summary
+    assert "const" not in summary
+    assert "div" not in summary
+
+
+def test_tokenize_strips_jsx_terms():
+    text = """# Title
+
+export const Foo = ({bar}) => {
+  return <div>baz</div>;
+}
+
+The prose content has tokens like hooks and events.
+"""
+    tokens = tokenize(text)
+    assert "hooks" in tokens
+    assert "events" in tokens
+    assert "const" not in tokens
+    assert "div" not in tokens
+    assert "return" not in tokens

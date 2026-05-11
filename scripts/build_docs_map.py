@@ -20,8 +20,33 @@ def extract_title(content: str, filename: str) -> str:
     return base.title()
 
 
+def _strip_jsx_blocks(text: str) -> str:
+    """Remove JSX/JS component blocks using brace-depth tracking."""
+    lines = text.split('\n')
+    result = []
+    in_jsx = False
+    jsx_depth = 0
+    for line in lines:
+        stripped = line.strip()
+        if not in_jsx and re.match(r'^(export\s+(const|default|function)|import\s+)', stripped):
+            in_jsx = True
+            jsx_depth = line.count('{') - line.count('}')
+            if jsx_depth <= 0:
+                in_jsx = False
+            continue
+        if in_jsx:
+            jsx_depth += line.count('{') - line.count('}')
+            if jsx_depth <= 0:
+                in_jsx = False
+            continue
+        result.append(line)
+    return '\n'.join(result)
+
+
 def strip_markdown(text: str) -> str:
     """Remove markdown syntax for clean text extraction."""
+    # Strip JSX/JS component blocks (Mintlify pattern: export const Foo = (...) => { ... })
+    text = _strip_jsx_blocks(text)
     text = re.sub(r'```[\s\S]*?```', '', text)
     text = re.sub(r'`[^`]+`', '', text)
     text = re.sub(r'!\[[^\]]*\]\([^)]+\)', '', text)
@@ -38,6 +63,8 @@ def extract_summary(content: str, max_chars: int = 200) -> str:
 
     lines = content.split('\n')
     in_code = False
+    in_jsx = False
+    jsx_depth = 0
     para_lines = []
     for line in lines:
         stripped = line.strip()
@@ -45,6 +72,18 @@ def extract_summary(content: str, max_chars: int = 200) -> str:
             in_code = not in_code
             continue
         if in_code:
+            continue
+        # Skip JSX component blocks
+        if not in_jsx and re.match(r'^(export\s+(const|default|function)|import\s+)', stripped):
+            in_jsx = True
+            jsx_depth = line.count('{') - line.count('}')
+            if jsx_depth <= 0:
+                in_jsx = False
+            continue
+        if in_jsx:
+            jsx_depth += line.count('{') - line.count('}')
+            if jsx_depth <= 0:
+                in_jsx = False
             continue
         if stripped.startswith('#'):
             if para_lines:
