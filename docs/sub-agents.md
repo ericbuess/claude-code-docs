@@ -11,7 +11,7 @@ Subagents are specialized AI assistants that handle specific types of tasks. Use
 Each subagent runs in its own context window with a custom system prompt, specific tool access, and independent permissions. When Claude encounters a task that matches a subagent's description, it delegates to that subagent, which works independently and returns results. To see the context savings in practice, the [context window visualization](/en/context-window) walks through a session where a subagent handles research in its own separate window.
 
 <Note>
-  If you need multiple agents working in parallel and communicating with each other, see [agent teams](/en/agent-teams) instead. Subagents work within a single session; agent teams coordinate across separate sessions.
+  Subagents work within a single session. To run many independent sessions in parallel and monitor them from one place, see [background agents](/en/agent-view). For sessions that communicate with each other, see [agent teams](/en/agent-teams).
 </Note>
 
 Subagents help you:
@@ -158,7 +158,7 @@ The `/agents` command opens a tabbed interface for managing subagents. The **Run
 
 This is the recommended way to create and manage subagents. For manual creation or automation, you can also add subagent files directly.
 
-To list all configured subagents from the command line without starting an interactive session, run `claude agents`. This shows agents grouped by source and indicates which are overridden by higher-priority definitions.
+To list all configured subagents from the command line without opening [agent view](/en/agent-view), pipe the output of `claude agents`. For example, `claude agents | cat` prints agents grouped by source and indicates which are overridden by higher-priority definitions.
 
 ### Choose the subagent scope
 
