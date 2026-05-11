@@ -2608,10 +2608,12 @@ Runs a background script and delivers each stdout line to Claude as an event so 
 
 ```python theme={null}
 {
-    "response": str,  # AI model's response to the prompt
+    "bytes": int,  # Size of the fetched content in bytes
+    "code": int,  # HTTP response code
+    "codeText": str,  # HTTP response code text
+    "result": str,  # Processed result from applying the prompt to the content
+    "durationMs": int,  # Time to fetch and process the content, in milliseconds
     "url": str,  # URL that was fetched
-    "final_url": str | None,  # Final URL after redirects
-    "status_code": int | None,  # HTTP status code
 }
 ```
 
@@ -2633,9 +2635,9 @@ Runs a background script and delivers each stdout line to Claude as an event so 
 
 ```python theme={null}
 {
-    "results": [{"title": str, "url": str, "snippet": str, "metadata": dict | None}],
-    "total_results": int,
-    "query": str,
+    "query": str,  # The search query
+    "results": list[str | {"tool_use_id": str, "content": list[{"title": str, "url": str}]}],
+    "durationSeconds": float,  # Search duration in seconds
 }
 ```
 
