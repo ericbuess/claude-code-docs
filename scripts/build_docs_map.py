@@ -4,7 +4,11 @@ Build a navigation map of all docs in docs/ folder.
 Outputs docs/DOCS_MAP.md — used by the /query skill to identify relevant files.
 """
 
+import math
 import re
+from collections import Counter
+from datetime import datetime, timezone
+from pathlib import Path
 
 
 def extract_title(content: str, filename: str) -> str:
@@ -74,9 +78,6 @@ def extract_summary(content: str, max_chars: int = 200) -> str:
     return summary
 
 
-import math
-from collections import Counter
-
 STOPWORDS = {
     'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of',
     'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were', 'be', 'been', 'being',
@@ -125,9 +126,6 @@ def top_keywords(tfidf_scores: dict, n: int = 8) -> list[str]:
     return [term for term, score in sorted_terms[:n]]
 
 
-from datetime import datetime, timezone
-from pathlib import Path
-
 DOCS_DIR_DEFAULT = Path(__file__).resolve().parent.parent / "docs"
 
 
@@ -169,7 +167,7 @@ def build_map(docs_dir: Path = None, output_file: Path = None) -> None:
     lines.append(f"> {len(docs)} files indexed.")
     lines.append("")
     lines.append("Used by the `/query` skill to identify relevant docs for a given question.")
-    lines.append("Each entry shows the file, its title, a short summary, and discriminative keywords (TF-IDF).")
+    lines.append("Each entry shows the file, its title, a short summary, and discriminative keywords.")
     lines.append("")
     lines.append("---")
     lines.append("")
