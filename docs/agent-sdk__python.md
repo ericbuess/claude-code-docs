@@ -2645,6 +2645,10 @@ Runs a background script and delivers each stdout line to Claude as an event so 
 
 **Tool name:** `TodoWrite`
 
+<Note>
+  `TodoWrite` is deprecated and will be removed in a future release. Use `TaskCreate`, `TaskGet`, `TaskUpdate`, and `TaskList` instead. Set `CLAUDE_CODE_ENABLE_TASKS=1` to opt in. See [Migrate to Task tools](/en/agent-sdk/todo-tracking#migrate-to-task-tools) for how monitoring code changes.
+</Note>
+
 **Input:**
 
 ```python theme={null}
@@ -2665,6 +2669,114 @@ Runs a background script and delivers each stdout line to Claude as an event so 
 {
     "message": str,  # Success message
     "stats": {"total": int, "pending": int, "in_progress": int, "completed": int},
+}
+```
+
+### TaskCreate
+
+**Tool name:** `TaskCreate`
+
+**Input:**
+
+```python theme={null}
+{
+    "subject": str,  # Short task title
+    "description": str,  # Detailed task body
+    "activeForm": str | None,  # Present-tense label shown while in progress
+    "metadata": dict | None,  # Arbitrary caller metadata
+}
+```
+
+**Output:**
+
+```python theme={null}
+{
+    "task": {"id": str, "subject": str},  # Created task with assigned ID
+}
+```
+
+### TaskUpdate
+
+**Tool name:** `TaskUpdate`
+
+**Input:**
+
+```python theme={null}
+{
+    "taskId": str,  # ID of the task to patch
+    "status": Literal["pending", "in_progress", "completed", "deleted"] | None,
+    "subject": str | None,
+    "description": str | None,
+    "activeForm": str | None,
+    "addBlocks": list[str] | None,  # Task IDs this task now blocks
+    "addBlockedBy": list[str] | None,  # Task IDs that now block this task
+    "owner": str | None,
+    "metadata": dict | None,
+}
+```
+
+**Output:**
+
+```python theme={null}
+{
+    "success": bool,
+    "taskId": str,
+    "updatedFields": list[str],  # Names of fields that changed
+    "error": str | None,
+    "statusChange": {"from": str, "to": str} | None,
+}
+```
+
+### TaskGet
+
+**Tool name:** `TaskGet`
+
+**Input:**
+
+```python theme={null}
+{
+    "taskId": str,  # ID of the task to read
+}
+```
+
+**Output:**
+
+```python theme={null}
+{
+    "task": {
+        "id": str,
+        "subject": str,
+        "description": str,
+        "status": Literal["pending", "in_progress", "completed"],
+        "blocks": list[str],
+        "blockedBy": list[str],
+    } | None,  # None when the ID is not found
+}
+```
+
+### TaskList
+
+**Tool name:** `TaskList`
+
+**Input:**
+
+```python theme={null}
+{}
+```
+
+**Output:**
+
+```python theme={null}
+{
+    "tasks": [
+        {
+            "id": str,
+            "subject": str,
+            "status": Literal["pending", "in_progress", "completed"],
+            "owner": str | None,
+            "blockedBy": list[str],
+        }
+    ],
 }
 ```
 
