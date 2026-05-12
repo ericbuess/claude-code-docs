@@ -25,7 +25,7 @@ Rules:
 
 - One cohesive question → N = 1
 - Explicit numbering (1./2./3. or bullets) → follow numbering
-- Independent parts joined by `and`/`ve` → split (only if each part is independently answerable)
+- Independent parts joined by a coordinating conjunction (e.g., `and`, `or`) → split, but only if each part is independently answerable from docs
 - Trim and normalize each sub-question to a clear standalone form
 
 Output internally:
@@ -106,8 +106,11 @@ Batching table:
 | 3  | [3]          |
 | 4  | [3, 1]       |
 | 5  | [3, 2]       |
+| 6  | [3, 3]       |
 | 7  | [3, 3, 1]    |
 | 15 | [3, 3, 3, 3, 3] |
+
+General rule: `ceil(N/3)` batches; first floor(N/3) batches have 3 calls each; final batch has N mod 3 calls (or 3 if N is a multiple of 3).
 
 For each batch of up to 3 consecutive sub-questions:
 
