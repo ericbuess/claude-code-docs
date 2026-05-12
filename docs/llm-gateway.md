@@ -39,11 +39,15 @@ Failure to forward headers or preserve body fields may result in reduced functio
 
 **Request headers**
 
-Claude Code includes the following headers on every API request:
+Claude Code includes the following headers on API requests:
 
-| Header                     | Description                                                                                                                                                         |
-| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `X-Claude-Code-Session-Id` | A unique identifier for the current Claude Code session. Proxies can use this to aggregate all API requests from a single session without parsing the request body. |
+| Header                          | Description                                                                                                                                                                                                                                                              |
+| :------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id`      | A unique identifier for the current Claude Code session. Proxies can use this to aggregate all API requests from a single session without parsing the request body.                                                                                                      |
+| `X-Claude-Code-Agent-Id`        | Identifier of the subagent or teammate that issued the request. Your proxy can use this to attribute API cost to individual parallel subagents within a session, without parsing the request body. Present only for requests made by an in-process subagent or teammate. |
+| `X-Claude-Code-Parent-Agent-Id` | Identifier of the agent that spawned the agent making the request. Use this with `X-Claude-Code-Agent-Id` to attribute API costs across nested agents in your proxy. Present only when the requesting agent was itself spawned by another agent.                         |
+
+Both agent ID headers are ephemeral per-spawn identifiers, not persistent user or device IDs.
 
 Claude Code also prepends a short attribution block to the system prompt containing the client version and a fingerprint derived from the conversation. The Anthropic API strips this block before processing, so it does not affect first-party prompt caching. If your gateway implements its own prompt cache keyed on the full request body, set [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/en/env-vars) to omit it.
 

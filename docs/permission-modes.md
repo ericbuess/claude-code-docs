@@ -138,6 +138,8 @@ When the plan is ready, Claude presents it and asks how to proceed. From that pr
 * Keep planning with feedback
 * Refine with [Ultraplan](/en/ultraplan) for browser-based review
 
+Approving a plan exits plan mode and switches the session to the permission mode each approve option describes, so Claude starts editing. To plan again, cycle back to plan mode with `Shift+Tab`, or prefix your next prompt with `/plan`.
+
 Press `Ctrl+G` to open the proposed plan in your default text editor and edit it directly before Claude proceeds. When [`showClearContextOnPlanAccept`](/en/settings#available-settings) is enabled, each approve option also offers to clear the planning context first.
 
 Accepting a plan also names the session from the plan content automatically, unless you've already set a name with `--name` or `/rename`.
@@ -161,6 +163,8 @@ To make plan mode the default for a project, set `defaultMode` in `.claude/setti
 </Note>
 
 Auto mode lets Claude execute without permission prompts. A separate classifier model reviews actions before they run, blocking anything that escalates beyond your request, targets unrecognized infrastructure, or appears driven by hostile content Claude read.
+
+Auto mode also instructs Claude to execute immediately and minimize clarifying questions. To get that behavior while keeping permission prompts, set the [Proactive output style](/en/output-styles) instead.
 
 <Warning>
   Auto mode is a research preview. It reduces prompts but does not guarantee safety. Use it for tasks where you trust the general direction, not as a replacement for review on sensitive operations.

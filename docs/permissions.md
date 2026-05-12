@@ -28,6 +28,10 @@ You can view and manage Claude Code's tool permissions with `/permissions`. This
 
 Rules are evaluated in order: **deny -> ask -> allow**. The first matching rule wins, so deny rules always take precedence.
 
+<Note>
+  Permission rules are enforced by Claude Code, not by the model. Instructions in your prompt or `CLAUDE.md` shape what Claude tries to do, but they don't change what Claude Code allows. To grant or revoke access, use `/permissions`, the rules described here, a [permission mode](/en/permission-modes), or a [PreToolUse hook](#extend-permissions-with-hooks).
+</Note>
+
 ## Permission modes
 
 Claude Code supports several permission modes that control how tools are approved. See [Permission modes](/en/permission-modes) for when to use each one. Set the `defaultMode` in your [settings files](/en/settings#settings-files):
@@ -153,7 +157,7 @@ A `cd` into a path inside your working directory or an [additional directory](#w
 
   * **Restrict Bash network tools**: use deny rules to block `curl`, `wget`, and similar commands, then use the WebFetch tool with `WebFetch(domain:github.com)` permission for allowed domains
   * **Use PreToolUse hooks**: implement a hook that validates URLs in Bash commands and blocks disallowed domains
-  * Instructing Claude Code about your allowed curl patterns via CLAUDE.md
+  * **Add CLAUDE.md guidance**: describe your allowed curl patterns in `CLAUDE.md`. This shapes what Claude tries but doesn't enforce a boundary, so pair it with one of the options above
 
   Note that using WebFetch alone does not prevent network access. If Bash is allowed, Claude can still use `curl`, `wget`, or other tools to reach any URL.
 </Warning>

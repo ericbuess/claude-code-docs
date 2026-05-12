@@ -289,6 +289,10 @@ claude mcp add --transport sse private-api https://api.company.com/sse \
 
 Stdio servers run as local processes on your machine. They're ideal for tools that need direct system access or custom scripts.
 
+Claude Code sets `CLAUDE_PROJECT_DIR` in the spawned server's environment to the project root, so your server can resolve project-relative paths without depending on the working directory. This is the same directory hooks receive in their `CLAUDE_PROJECT_DIR` variable. Read it from inside your server process, for example `process.env.CLAUDE_PROJECT_DIR` in Node or `os.environ["CLAUDE_PROJECT_DIR"]` in Python. Your server can also call the MCP `roots/list` request, which returns the directory Claude Code was launched from.
+
+This variable is set in the server's environment, not in Claude Code's own environment, so referencing it via `${VAR}` expansion in a project- or user-scoped `.mcp.json` `command` or `args` requires a default such as `${CLAUDE_PROJECT_DIR:-.}`. Plugin-provided MCP configurations substitute `${CLAUDE_PROJECT_DIR}` directly and don't need the default.
+
 ```bash theme={null}
 # Basic syntax
 claude mcp add [options] <name> -- <command> [args...]
@@ -406,7 +410,7 @@ Or inline in `plugin.json`:
 **Plugin MCP features**:
 
 * **Automatic lifecycle**: At session startup, servers for enabled plugins connect automatically. If you enable or disable a plugin during a session, run `/reload-plugins` to connect or disconnect its MCP servers
-* **Environment variables**: use `${CLAUDE_PLUGIN_ROOT}` for bundled plugin files and `${CLAUDE_PLUGIN_DATA}` for [persistent state](/en/plugins-reference#persistent-data-directory) that survives plugin updates
+* **Environment variables**: use `${CLAUDE_PLUGIN_ROOT}` for bundled plugin files, `${CLAUDE_PLUGIN_DATA}` for [persistent state](/en/plugins-reference#persistent-data-directory) that survives plugin updates, and `${CLAUDE_PROJECT_DIR}` for the stable project root
 * **User environment access**: Access to same environment variables as manually configured servers
 * **Multiple transport types**: Support stdio, SSE, and HTTP transports (transport support may vary by server)
 
@@ -645,6 +649,8 @@ Find customers who haven't made a purchase in 90 days
 ## Authenticate with remote MCP servers
 
 Many cloud-based MCP servers require authentication. Claude Code supports OAuth 2.0 for secure connections.
+
+Claude Code marks a remote server as needing authentication when the server responds with `401 Unauthorized` and a `WWW-Authenticate` header pointing to its authorization server. Any custom server that returns that response gets the same `/mcp` authentication flow as any other remote server.
 
 <Steps>
   <Step title="Add the server that requires authentication">
@@ -1139,17 +1145,17 @@ Claude Code truncates tool descriptions and server instructions at 2KB each. Kee
 
 ### Configure tool search
 
-Tool search is enabled by default: MCP tools are deferred and discovered on demand. It is disabled by default on Vertex AI, which does not accept the tool search beta header, and when `ANTHROPIC_BASE_URL` points to a non-first-party host, since most proxies do not forward `tool_reference` blocks. Set `ENABLE_TOOL_SEARCH` explicitly to opt in. This feature requires models that support `tool_reference` blocks: Sonnet 4 and later, or Opus 4 and later. Haiku models do not support tool search.
+Tool search is enabled by default: MCP tools are deferred and discovered on demand. It is disabled by default on Vertex AI, which does not accept the tool search beta header, and when `ANTHROPIC_BASE_URL` points to a non-first-party host, since most proxies do not forward `tool_reference` blocks. If your proxy forwards `tool_reference` blocks, set `ENABLE_TOOL_SEARCH` explicitly to override the fallback. This feature requires models that support `tool_reference` blocks: Sonnet 4 and later, or Opus 4 and later. Haiku models do not support tool search.
 
 Control tool search behavior with the `ENABLE_TOOL_SEARCH` environment variable:
 
-| Value      | Behavior                                                                                                                                       |
-| :--------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| (unset)    | All MCP tools deferred and loaded on demand. Falls back to loading upfront on Vertex AI or when `ANTHROPIC_BASE_URL` is a non-first-party host |
-| `true`     | All MCP tools deferred, including on Vertex AI and for non-first-party `ANTHROPIC_BASE_URL`                                                    |
-| `auto`     | Threshold mode: tools load upfront if they fit within 10% of the context window, deferred otherwise                                            |
-| `auto:<N>` | Threshold mode with a custom percentage, where `<N>` is 0-100 (e.g., `auto:5` for 5%)                                                          |
-| `false`    | All MCP tools loaded upfront, no deferral                                                                                                      |
+| Value      | Behavior                                                                                                                                                               |
+| :--------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (unset)    | All MCP tools deferred and loaded on demand. Falls back to loading upfront on Vertex AI or when `ANTHROPIC_BASE_URL` is a non-first-party host                         |
+| `true`     | All MCP tools deferred. Claude Code sends the beta header even on Vertex AI and through proxies. Requests fail if the backend does not support `tool_reference` blocks |
+| `auto`     | Threshold mode: tools load upfront if they fit within 10% of the context window, deferred otherwise                                                                    |
+| `auto:<N>` | Threshold mode with a custom percentage, where `<N>` is 0-100 (e.g., `auto:5` for 5%)                                                                                  |
+| `false`    | All MCP tools loaded upfront, no deferral                                                                                                                              |
 
 ```bash theme={null}
 # Use a custom 5% threshold

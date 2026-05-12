@@ -97,7 +97,7 @@ Plugins can provide event handlers that respond to Claude Code events automatica
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format-code.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/format-code.sh"
           }
         ]
       }
@@ -289,7 +289,7 @@ The following `monitors/monitors.json` watches a deployment status endpoint and 
 [
   {
     "name": "deploy-status",
-    "command": "${CLAUDE_PLUGIN_ROOT}/scripts/poll-deploy.sh ${user_config.api_endpoint}",
+    "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/poll-deploy.sh ${user_config.api_endpoint}",
     "description": "Deployment status changes"
   },
   {
@@ -317,7 +317,7 @@ To declare monitors inline, set `experimental.monitors` in `plugin.json` to the 
 | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `when` | Controls when the monitor starts. `"always"` starts it at session start and on plugin reload, and is the default. `"on-skill-invoke:<skill-name>"` starts it the first time the named skill in this plugin is dispatched |
 
-The `command` value supports the same [variable substitutions](#environment-variables) as MCP and LSP server configs: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${user_config.*}`, and any `${ENV_VAR}` from the environment. Prefix the command with `cd "${CLAUDE_PLUGIN_ROOT}" && ` if the script needs to run from the plugin's own directory.
+The `command` value supports the same [variable substitutions](#environment-variables) as MCP and LSP server configs: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${CLAUDE_PROJECT_DIR}`, `${user_config.*}`, and any `${ENV_VAR}` from the environment. Prefix the command with `cd "${CLAUDE_PLUGIN_ROOT}" && ` if the script needs to run from the plugin's own directory.
 
 Disabling a plugin mid-session does not stop monitors that are already running. They stop when the session ends.
 
@@ -542,13 +542,15 @@ For all path fields:
 
 ### Environment variables
 
-Claude Code provides two variables for referencing plugin paths. Both are substituted inline anywhere they appear in skill content, agent content, hook commands, monitor commands, and MCP or LSP server configs. Both are also exported as environment variables to hook processes and MCP or LSP server subprocesses.
+Claude Code provides three variables for referencing paths. All are substituted inline anywhere they appear in skill content, agent content, hook commands, monitor commands, and MCP or LSP server configs. All are also exported as environment variables to hook processes and MCP or LSP server subprocesses.
 
-**`${CLAUDE_PLUGIN_ROOT}`**: the absolute path to your plugin's installation directory. Use this to reference scripts, binaries, and config files bundled with the plugin. This path changes when the plugin updates. The previous version's directory remains on disk for about seven days after an update before cleanup, but treat it as ephemeral and do not write state here.
+**`${CLAUDE_PLUGIN_ROOT}`**: the absolute path to your plugin's installation directory. Use this to reference scripts, binaries, and config files bundled with the plugin. In hook and monitor commands, wrap it in double quotes, as in `"${CLAUDE_PLUGIN_ROOT}"`, so paths containing spaces or special characters are passed as a single argument. This path changes when the plugin updates. The previous version's directory remains on disk for about seven days after an update before cleanup, but treat it as ephemeral and do not write state here.
 
 When a plugin updates mid-session, hook commands, monitors, MCP servers, and LSP servers keep using the previous version's path. Run `/reload-plugins` to switch hooks, MCP servers, and LSP servers to the new path; monitors require a session restart.
 
 **`${CLAUDE_PLUGIN_DATA}`**: a persistent directory for plugin state that survives updates. Use this for installed dependencies such as `node_modules` or Python virtual environments, generated code, caches, and any other files that should persist across plugin versions. The directory is created automatically the first time this variable is referenced.
+
+**`${CLAUDE_PROJECT_DIR}`**: the project root. This is the same directory hooks receive in their `CLAUDE_PROJECT_DIR` variable. Use this to reference project-local scripts or config files. Wrap in quotes to handle paths with spaces, for example `"${CLAUDE_PROJECT_DIR}/scripts/server.sh"`. MCP servers can also call the MCP `roots/list` request, which returns the directory Claude Code was launched from.
 
 ```json theme={null}
 {
@@ -558,7 +560,7 @@ When a plugin updates mid-session, hook commands, monitors, MCP servers, and LSP
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/process.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/process.sh"
           }
         ]
       }
@@ -631,12 +633,20 @@ Claude's Glob and Grep tools skip orphaned version directories during searches, 
 
 Installed plugins cannot reference files outside their directory. Paths that traverse outside the plugin root (such as `../shared-utils`) will not work after installation because those external files are not copied to the cache.
 
-### Working with external dependencies
+### Share files within a marketplace with symlinks
 
-If your plugin needs to access files outside its directory, you can create symbolic links to external files within your plugin directory. Symlinks are preserved in the cache rather than dereferenced, and they resolve to their target at runtime. The following command creates a link from inside your plugin directory to a shared utilities location:
+If your plugin needs to share files with other parts of the same marketplace, you can create symbolic links inside your plugin directory. How a symlink is handled when the plugin is copied into the cache depends on where its target resolves:
+
+* **Within the plugin's own directory:** the symlink is preserved as a relative symlink in the cache, so it keeps resolving to the copied target at runtime.
+* **Elsewhere within the same marketplace:** the symlink is dereferenced. The target's content is copied into the cache in its place. This lets a meta-plugin's `skills/` directory link to skills defined by other plugins in the marketplace.
+* **Outside the marketplace:** the symlink is skipped for security. This prevents plugins from pulling arbitrary host files such as system paths into the cache.
+
+For plugins installed with `--plugin-dir` or from a local path, only symlinks that resolve within the plugin's own directory are preserved. All others are skipped.
+
+The following command creates a link from inside a marketplace plugin to a shared skill defined by a sibling plugin. On Windows, use `mklink /D` from an elevated Command Prompt or enable Developer Mode:
 
 ```bash theme={null}
-ln -s /path/to/shared-utils ./shared-utils
+ln -s ../../shared-plugin/skills/foo ./skills/foo
 ```
 
 This provides flexibility while maintaining the security benefits of the caching system.
@@ -877,6 +887,56 @@ claude plugin list [options]
 | `--available` | Include available plugins from marketplaces. Requires `--json` |         |
 | `-h, --help`  | Display help for command                                       |         |
 
+### plugin details
+
+Show a plugin's component inventory and projected token cost. The output lists all components the plugin contributes, grouped as Skills (skills and commands), Agents, Hooks, and MCP servers, along with an estimate of how many tokens it adds to each session.
+
+```bash theme={null}
+claude plugin details <name>
+```
+
+**Arguments:**
+
+* `<name>`: Plugin name or `plugin-name@marketplace-name`
+
+**Options:**
+
+| Option       | Description              | Default |
+| :----------- | :----------------------- | :------ |
+| `-h, --help` | Display help for command |         |
+
+The output shows two cost figures for each component:
+
+* **Always-on:** tokens added to every session by the plugin's listing text, such as skill descriptions, agent descriptions, and command names, regardless of whether any component fires.
+* **On-invoke:** tokens a component costs when it fires. Shown per component, not as a plugin total, because a typical session invokes only a subset of components.
+
+This example shows what the output looks like for a plugin with two skills:
+
+```
+security-guidance 1.2.0
+  Real-time security analysis for Claude Code sessions
+  Source: security-guidance@claude-code-marketplace
+
+Component inventory
+  Skills (2)  scan-dependencies, review-changes
+  Agents (0)
+  Hooks (1)  (harness-only — no model context cost)
+  MCP servers (0)
+
+Projected token cost
+  Always-on:   ~180 tok   added to every session
+
+Per-component (rounded)
+  component            always-on  on-invoke
+  scan-dependencies        ~100      ~2400
+  review-changes            ~80      ~1800
+
+  On-invoke cost is paid each time a skill or agent fires.
+  Token counts are estimates and may differ from actual usage.
+```
+
+The always-on total is computed via the `count_tokens` API for your active model. Per-component numbers are proportionally scaled from that total. If the API is unreachable, the command falls back to a character-based estimate.
+
 ### plugin tag
 
 Create a release git tag for the plugin in the current directory. Run from inside the plugin's folder. See [Tag plugin releases](/en/plugin-dependencies#tag-plugin-releases-for-version-resolution).
@@ -940,7 +1000,7 @@ This shows:
 
 1. Check the script is executable: `chmod +x ./scripts/your-script.sh`
 2. Verify the shebang line: First line should be `#!/bin/bash` or `#!/usr/bin/env bash`
-3. Check the path uses `${CLAUDE_PLUGIN_ROOT}`: `"command": "${CLAUDE_PLUGIN_ROOT}/scripts/your-script.sh"`
+3. Check the path uses `${CLAUDE_PLUGIN_ROOT}`: `"command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/your-script.sh"`
 4. Test the script manually: `./scripts/your-script.sh`
 
 **Hook not triggering on expected events**:

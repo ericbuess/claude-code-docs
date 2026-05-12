@@ -12,7 +12,7 @@ Claude requests user input in two situations: when it needs **permission to use 
 
 For clarifying questions, Claude generates the questions and options. Your role is to present them to users and return their selections. You can't add your own questions to this flow; if you need to ask users something yourself, do that separately in your application logic.
 
-The callback can stay pending indefinitely. Execution remains paused until your callback returns, and the SDK only cancels the wait when the query itself is cancelled. If a user might take longer to respond than your process can reasonably stay running, the TypeScript SDK supports the [`defer` hook decision](/en/hooks#defer-a-tool-call-for-later), which lets the process exit and resume later from the persisted session; this option is not available in the Python SDK.
+The callback can stay pending indefinitely. Execution remains paused until your callback returns, and the SDK only cancels the wait when the query itself is cancelled. If a user might take longer to respond than your process can reasonably stay running, return the [`defer` hook decision](/en/hooks#defer-a-tool-call-for-later), which lets the process exit and resume later from the persisted session.
 
 This guide shows you how to detect each type of request and respond appropriately.
 
