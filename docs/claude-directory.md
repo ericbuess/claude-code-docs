@@ -1497,6 +1497,7 @@ Files in the paths below are deleted on startup once they're older than [`cleanu
 | Path under `~/.claude/`                      | Contents                                                                                                          |
 | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `projects/<project>/<session>.jsonl`         | Full conversation transcript: every message, tool call, and tool result                                           |
+| `projects/<project>/<session>/subagents/`    | [Subagent](/en/sub-agents) conversation transcripts, removed with the parent session transcript when it ages out  |
 | `projects/<project>/<session>/tool-results/` | Large tool outputs spilled to separate files                                                                      |
 | `file-history/<session>/`                    | Pre-edit snapshots of files Claude changed, used for [checkpoint restore](/en/checkpointing)                      |
 | `plans/`                                     | Plan files written during [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode)                |

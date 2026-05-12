@@ -895,7 +895,7 @@ You see a message like "PreToolUse hook error: ..." in the transcript.
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
   echo $?  # Check the exit code
   ```
-* If you see "command not found", use absolute paths or `$CLAUDE_PROJECT_DIR` to reference scripts
+* If you see "command not found", use absolute paths or `${CLAUDE_PROJECT_DIR}` to reference scripts. To avoid shell quoting entirely, add `"args": []` to switch to [exec form](/en/hooks#exec-form-and-shell-form), which spawns the script directly without a shell
 * If you see "jq: command not found", install `jq` or use Python/Node.js for JSON parsing
 * If the script isn't running at all, make it executable: `chmod +x ./my-hook.sh`
 
