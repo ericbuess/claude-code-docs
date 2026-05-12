@@ -27,6 +27,9 @@ Thumbs.db
 .last_check
 claude-docs-helper.sh
 
+# User-generated query outputs (created by /query feature)
+/query/
+
 # Test files
 test_*.txt
 test_*.md
