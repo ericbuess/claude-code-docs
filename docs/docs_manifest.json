@@ -268,8 +268,8 @@
     "claude-code-on-the-web.md": {
       "original_url": "https://code.claude.com/docs/en/claude-code-on-the-web",
       "original_md_url": "https://code.claude.com/docs/en/claude-code-on-the-web.md",
-      "hash": "13161c6ad0be0b450d5650a6c394885a4d7b2e5fbfd3709ac004e9877647aae6",
-      "last_updated": "2026-05-13T00:22:45.753469"
+      "hash": "74444633978fba0a557a195f818f23d9e78d640ef96d10a31b2c429f01a8ec08",
+      "last_updated": "2026-05-13T04:18:06.067136"
     },
     "claude-directory.md": {
       "original_url": "https://code.claude.com/docs/en/claude-directory",
@@ -520,8 +520,8 @@
     "model-config.md": {
       "original_url": "https://code.claude.com/docs/en/model-config",
       "original_md_url": "https://code.claude.com/docs/en/model-config.md",
-      "hash": "102484ec86ba64838f0a865c804d6949391eaab4417f482789af2acfd19da95d",
-      "last_updated": "2026-05-12T00:21:39.550247"
+      "hash": "dea8866d7cb61a9494e2e80d66c3f7d93158df2a5ba69be7d469fdc66dc70096",
+      "last_updated": "2026-05-13T04:18:33.262761"
     },
     "monitoring-usage.md": {
       "original_url": "https://code.claude.com/docs/en/monitoring-usage",
@@ -628,8 +628,8 @@
     "server-managed-settings.md": {
       "original_url": "https://code.claude.com/docs/en/server-managed-settings",
       "original_md_url": "https://code.claude.com/docs/en/server-managed-settings.md",
-      "hash": "643488788c409d25986adcdde4c82a5c3fb2b539e344bcc3a7cd89595d272379",
-      "last_updated": "2026-05-09T04:07:53.652167"
+      "hash": "4dad5ea0d5229a2cd574ade6b737ae16021f3f2aaa621c145587393857fb9bbc",
+      "last_updated": "2026-05-13T04:18:44.635957"
     },
     "settings.md": {
       "original_url": "https://code.claude.com/docs/en/settings",
@@ -789,8 +789,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-05-13T00:23:31.922777",
-    "fetch_duration_seconds": 69.946671,
+    "last_fetch_completed": "2026-05-13T04:19:02.230535",
+    "fetch_duration_seconds": 82.166578,
     "total_pages_discovered": 131,
     "pages_fetched_successfully": 132,
     "pages_failed": 0,
@@ -800,7 +800,7 @@
     "total_files": 131,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-05-13T00:23:31.922807",
+  "last_updated": "2026-05-13T04:19:02.230586",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

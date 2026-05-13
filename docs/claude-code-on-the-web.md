@@ -743,6 +743,8 @@ There are a few ways to turn on auto-fix depending on where the PR came from and
 * **From the mobile app**: tell Claude to auto-fix the PR, for example "watch this PR and fix any CI failures or review comments"
 * **Any existing PR**: paste the PR URL into a session and tell Claude to auto-fix it
 
+Auto-fix is a per-PR toggle. To stop monitoring, open the CI status bar in the web session and clear the **Auto-fix** toggle, or tell Claude to stop watching the PR.
+
 ### How Claude responds to PR activity
 
 When auto-fix is active, Claude receives GitHub events for the PR including new review comments and CI check failures. For each event, Claude investigates and decides how to proceed:
