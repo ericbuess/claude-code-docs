@@ -271,7 +271,7 @@ Configure how `--worktree` creates and manages git worktrees.
 | :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------ |
 | `worktree.baseRef`            | Which ref new worktrees branch from. `"fresh"` (default) branches from `origin/<default-branch>` for a clean tree matching the remote. `"head"` branches from your current local `HEAD`, so unpushed commits and feature-branch state are present in the worktree. Applies to `--worktree`, the `EnterWorktree` tool, and subagent isolation | `"head"`                              |
 | `worktree.symlinkDirectories` | Directories to symlink from the main repository into each worktree to avoid duplicating large directories on disk. No directories are symlinked by default                                                                                                                                                                                   | `["node_modules", ".cache"]`          |
-| `worktree.sparsePaths`        | Directories to check out in each worktree via git sparse-checkout (cone mode). Only the listed paths are written to disk, which is faster in large monorepos                                                                                                                                                                                 | `["packages/my-app", "shared/utils"]` |
+| `worktree.sparsePaths`        | Directories to check out in each worktree via git sparse-checkout. Only the listed directories plus root-level files are written to disk, which is faster in large monorepos                                                                                                                                                                 | `["packages/my-app", "shared/utils"]` |
 
 To copy gitignored files like `.env` into new worktrees, use a [`.worktreeinclude` file](/en/worktrees#copy-gitignored-files-into-worktrees) in your project root instead of a setting.
 
@@ -513,6 +513,7 @@ Settings apply in order of precedence. From highest to lowest:
    * Policies deployed by IT through server delivery, MDM configuration profiles, registry policies, or managed settings files
    * Cannot be overridden by any other level, including command line arguments
    * Within the managed tier, precedence is: server-managed > MDM/OS-level policies > file-based (`managed-settings.d/*.json` + `managed-settings.json`) > HKCU registry (Windows only). Only one managed source is used; sources do not merge across tiers. Within the file-based tier, drop-in files and the base file are merged together.
+   * Embedding hosts such as Claude Desktop can supply policy via the SDK `managedSettings` option. By default this is ignored when any managed-settings tier is present. Administrators can opt in by setting [`parentSettingsBehavior`](#available-settings) to `"merge"`. The embedder's values are filtered so they can tighten managed policy but not loosen it.
 
 2. **Command line arguments**
    * Temporary overrides for a specific session. JSON passed via `--settings <file-or-json>` merges with file-based settings using the same rules as the other layers: a key set here overrides the same key in local, project, or user settings, and omitting a key leaves the lower-layer value in place
@@ -674,6 +675,8 @@ Defines additional marketplaces that should be made available for the repository
 * `directory`: Local filesystem path (uses `path`, for development only)
 * `hostPattern`: regex pattern to match marketplace hosts (uses `hostPattern`)
 * `settings`: inline marketplace declared directly in settings.json without a separate hosted repository (uses `name` and `plugins`)
+
+Each marketplace entry also accepts an optional `autoUpdate` Boolean. Set `"autoUpdate": true` alongside `source` to make Claude Code refresh that marketplace and update its installed plugins at startup. When omitted, official Anthropic marketplaces default to `true` and all other marketplaces default to `false`. See [Configure auto-updates](/en/discover-plugins#configure-auto-updates).
 
 Use `source: 'settings'` to declare a small set of plugins inline without setting up a hosted marketplace repository. Plugins listed here must reference external sources such as GitHub or npm. You still need to enable each plugin separately in `enabledPlugins`.
 

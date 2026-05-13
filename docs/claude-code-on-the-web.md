@@ -32,10 +32,14 @@ This page covers:
 
 Cloud sessions need access to your GitHub repositories to clone code and push branches. You can grant access in two ways:
 
-| Method           | How it works                                                                                                                                 | Best for                                        |
-| :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------- |
-| **GitHub App**   | Install the Claude GitHub App on specific repositories during [web onboarding](/en/web-quickstart). Access is scoped per repository.         | Teams that want explicit per-repo authorization |
-| **`/web-setup`** | Run `/web-setup` in your terminal to sync your local `gh` CLI token to your Claude account. Access matches whatever your `gh` token can see. | Individual developers who already use `gh`      |
+| Method           | How it works                                                                                | Best for                                                                |
+| :--------------- | :------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------- |
+| **GitHub App**   | Authorize the Claude GitHub App during [web onboarding](/en/web-quickstart).                | Browser onboarding; teams that want [Auto-fix](#auto-fix-pull-requests) |
+| **`/web-setup`** | Run `/web-setup` in your terminal to sync your local `gh` CLI token to your Claude account. | Individual developers who already use `gh`                              |
+
+<Note>
+  With either method, a cloud session can access any repository the connecting GitHub account can see, not just the repositories the Claude GitHub App is installed on. App installation enables PR webhooks for [Auto-fix](#auto-fix-pull-requests); it is not a session-level access control. To restrict which repositories your team can reach from cloud sessions, restrict access on GitHub itself, for example by limiting team or repository membership for the connected GitHub accounts.
+</Note>
 
 Either method works. [`/schedule`](/en/routines) checks for either form of access and prompts you to run `/web-setup` if neither is configured. See [Connect from your terminal](/en/web-quickstart#connect-from-your-terminal) for the `/web-setup` walkthrough.
 
@@ -772,7 +776,7 @@ If a new session fails to start with `Session creation failed` or stalls at prov
 
 * Check [status.claude.com](https://status.claude.com) for cloud session incidents
 * Retry after a minute, as capacity is provisioned on demand
-* Confirm your repository is reachable. Private repositories require either the GitHub App installed with access to that repository, or a `gh` token synced via `/web-setup`. See [GitHub authentication options](#github-authentication-options).
+* Confirm your repository is reachable. The connecting GitHub account must have access to the repository on GitHub, either through the Claude GitHub App authorization or a `gh` token synced via `/web-setup` — installing the App on the repository is not required. See [GitHub authentication options](#github-authentication-options).
 
 ### Remote Control session expired or access denied
 

@@ -67,15 +67,15 @@ This example loads both user-level and project-level settings by setting `settin
 
 Each source loads settings from a specific location, where `<cwd>` is the working directory you pass via the `cwd` option, or the process's current directory if unset. For the full type definition, see [`SettingSource`](/en/agent-sdk/typescript#settingsource) (TypeScript) or [`SettingSource`](/en/agent-sdk/python#settingsource) (Python).
 
-| Source      | What it loads                                                                                   | Location                                                                                                                            |
-| :---------- | :---------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
-| `"project"` | Project CLAUDE.md, `.claude/rules/*.md`, project skills, project hooks, project `settings.json` | `<cwd>/.claude/` and each parent directory up to the filesystem root (stopping when a `.claude/` is found or no more parents exist) |
-| `"user"`    | User CLAUDE.md, `~/.claude/rules/*.md`, user skills, user settings                              | `~/.claude/`                                                                                                                        |
-| `"local"`   | CLAUDE.local.md (gitignored), `.claude/settings.local.json`                                     | `<cwd>/`                                                                                                                            |
+| Source      | What it loads                                                                                   | Location                                                                                                                                                                            |
+| :---------- | :---------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `"project"` | Project CLAUDE.md, `.claude/rules/*.md`, project skills, project hooks, project `settings.json` | `<cwd>/.claude/` for `settings.json` and hooks; `<cwd>` and every parent directory for CLAUDE.md and rules; `<cwd>` and every parent directory up to the repository root for skills |
+| `"user"`    | User CLAUDE.md, `~/.claude/rules/*.md`, user skills, user settings                              | `~/.claude/`                                                                                                                                                                        |
+| `"local"`   | CLAUDE.local.md, `.claude/settings.local.json`                                                  | `<cwd>/.claude/` for `settings.local.json`; `<cwd>` and every parent directory for CLAUDE.local.md                                                                                  |
 
 Omitting `settingSources` is equivalent to `["user", "project", "local"]`.
 
-The `cwd` option determines where the SDK looks for project settings. If neither `cwd` nor any of its parent directories contains a `.claude/` folder, project-level features won't load.
+The `cwd` option determines where the SDK looks for project-level inputs. CLAUDE.md and rules load from `<cwd>` and from every parent directory. Skills load from `<cwd>` and from every parent directory up to the repository root. Project `settings.json` and hooks load only from `<cwd>/.claude/` with no parent-directory fallback.
 
 ### What settingSources does not control
 
@@ -97,15 +97,15 @@ The `cwd` option determines where the SDK looks for project settings. If neither
 
 ### CLAUDE.md load locations
 
-| Level                 | Location                                       | When loaded                                                                                         |
-| :-------------------- | :--------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| Project (root)        | `<cwd>/CLAUDE.md` or `<cwd>/.claude/CLAUDE.md` | `settingSources` includes `"project"`                                                               |
-| Project rules         | `<cwd>/.claude/rules/*.md`                     | `settingSources` includes `"project"`                                                               |
-| Project (parent dirs) | `CLAUDE.md` files in directories above `cwd`   | `settingSources` includes `"project"`, loaded at session start                                      |
-| Project (child dirs)  | `CLAUDE.md` files in subdirectories of `cwd`   | `settingSources` includes `"project"`, loaded on demand when the agent reads a file in that subtree |
-| Local (gitignored)    | `<cwd>/CLAUDE.local.md`                        | `settingSources` includes `"local"`                                                                 |
-| User                  | `~/.claude/CLAUDE.md`                          | `settingSources` includes `"user"`                                                                  |
-| User rules            | `~/.claude/rules/*.md`                         | `settingSources` includes `"user"`                                                                  |
+| Level                 | Location                                                                      | When loaded                                                                                         |
+| :-------------------- | :---------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| Project (root)        | `<cwd>/CLAUDE.md` or `<cwd>/.claude/CLAUDE.md`                                | `settingSources` includes `"project"`                                                               |
+| Project rules         | `<cwd>/.claude/rules/*.md` and `.claude/rules/*.md` in every parent directory | `settingSources` includes `"project"`                                                               |
+| Project (parent dirs) | `CLAUDE.md` files in directories above `cwd`                                  | `settingSources` includes `"project"`, loaded at session start                                      |
+| Project (child dirs)  | `CLAUDE.md` files in subdirectories of `cwd`                                  | `settingSources` includes `"project"`, loaded on demand when the agent reads a file in that subtree |
+| Local                 | `<cwd>/CLAUDE.local.md` and `CLAUDE.local.md` in every parent directory       | `settingSources` includes `"local"`                                                                 |
+| User                  | `~/.claude/CLAUDE.md`                                                         | `settingSources` includes `"user"`                                                                  |
+| User rules            | `~/.claude/rules/*.md`                                                        | `settingSources` includes `"user"`                                                                  |
 
 All levels are additive: if both project and user CLAUDE.md files exist, the agent sees both. There is no hard precedence rule between levels; if instructions conflict, the outcome depends on how Claude interprets them. Write non-conflicting rules, or state precedence explicitly in the more specific file ("These project instructions override any conflicting user-level defaults").
 

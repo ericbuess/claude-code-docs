@@ -80,6 +80,8 @@ Or in any Claude Code [settings file](/en/settings#settings-files), including us
 
 Fast mode for Opus 4.6 remains available alongside Opus 4.7. The two share the same fast mode rate limit pool: usage on either model draws from the same limits.
 
+To pin fast mode to Opus 4.6 explicitly, set `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`. This variable takes precedence, so fast mode runs on Opus 4.6 regardless of whether `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE` is set.
+
 ## Understand the cost tradeoff
 
 Fast mode has higher per-token pricing than standard Opus:
