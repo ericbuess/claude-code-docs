@@ -108,14 +108,17 @@ Output styles are saved configurations that modify Claude's system prompt. They'
 
 #### Create an output style
 
-An output style is a markdown file with a `name` and `description` in its frontmatter, followed by the prompt content. Save it to `~/.claude/output-styles/` for a user-level style available in every project, or `.claude/output-styles/` in your repository for a project-level style you can commit and share with your team.
+An output style is a markdown file with [frontmatter](/en/output-styles#frontmatter) for metadata, followed by the prompt content. Save it to `~/.claude/output-styles/` for a user-level style available in every project, or `.claude/output-styles/` in your repository for a project-level style you can commit and share with your team.
 
-The example below defines a code-review persona. Save it as `~/.claude/output-styles/code-reviewer.md` to make it available across projects:
+By default, a custom output style replaces the `claude_code` preset's software engineering instructions with your own. To keep them and layer your instructions on top, set `keep-coding-instructions: true` in the frontmatter. Keep them when your agent is still doing software engineering work. Leave them out when you're replacing the role entirely.
+
+The example below defines a code-review persona that keeps the coding instructions, since reviewing code still benefits from Claude Code's security and code-quality guidance. Save it as `~/.claude/output-styles/code-reviewer.md` to make it available across projects:
 
 ```markdown ~/.claude/output-styles/code-reviewer.md theme={null}
 ---
 name: Code Reviewer
 description: Thorough code review assistant
+keep-coding-instructions: true
 ---
 
 You are an expert code reviewer.
@@ -298,17 +301,17 @@ You can provide a custom string as `systemPrompt` to replace the default entirel
 
 The four customization methods differ in where they live, how they're shared, and what they preserve from the `claude_code` preset.
 
-| Feature                 | CLAUDE.md        | Output Styles   | `systemPrompt` with append | Custom `systemPrompt`  |
-| ----------------------- | ---------------- | --------------- | -------------------------- | ---------------------- |
-| **Persistence**         | Per-project file | Saved as files  | Session only               | Session only           |
-| **Reusability**         | Per-project      | Across projects | Code duplication           | Code duplication       |
-| **Management**          | On filesystem    | CLI + files     | In code                    | In code                |
-| **Default tools**       | Preserved        | Preserved       | Preserved                  | Lost (unless included) |
-| **Built-in safety**     | Maintained       | Maintained      | Maintained                 | Must be added          |
-| **Environment context** | Automatic        | Automatic       | Automatic                  | Must be provided       |
-| **Customization level** | Additions only   | Replace default | Additions only             | Complete control       |
-| **Version control**     | With project     | Yes             | With code                  | With code              |
-| **Scope**               | Project-specific | User or project | Code session               | Code session           |
+| Feature                 | CLAUDE.md        | Output Styles             | `systemPrompt` with append | Custom `systemPrompt`  |
+| ----------------------- | ---------------- | ------------------------- | -------------------------- | ---------------------- |
+| **Persistence**         | Per-project file | Saved as files            | Session only               | Session only           |
+| **Reusability**         | Per-project      | Across projects           | Code duplication           | Code duplication       |
+| **Management**          | On filesystem    | CLI + files               | In code                    | In code                |
+| **Default tools**       | Preserved        | Preserved                 | Preserved                  | Lost (unless included) |
+| **Built-in safety**     | Maintained       | Maintained                | Maintained                 | Must be added          |
+| **Environment context** | Automatic        | Automatic                 | Automatic                  | Must be provided       |
+| **Customization level** | Additions only   | Replace or extend default | Additions only             | Complete control       |
+| **Version control**     | With project     | Yes                       | With code                  | With code              |
+| **Scope**               | Project-specific | User or project           | Code session               | Code session           |
 
 "With append" means using `systemPrompt: { type: "preset", preset: "claude_code", append: "..." }` in TypeScript or `system_prompt={"type": "preset", "preset": "claude_code", "append": "..."}` in Python. CLAUDE.md doesn't change the system prompt itself: the SDK injects its content into the conversation as project context.
 

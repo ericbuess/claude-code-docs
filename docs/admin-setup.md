@@ -24,7 +24,7 @@ This page walks through the deployment decisions in order. Each row links to the
 
 ## Choose your API provider
 
-Claude Code connects to Claude through one of several API providers. Your choice affects billing, authentication, and which compliance posture you inherit.
+Claude Code connects to Claude through one of several API providers. Your choice affects billing, authentication, which compliance posture you inherit, and which Claude Code features your developers can use.
 
 | Provider                      | Choose this when                                                                                                                      |
 | :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
@@ -33,6 +33,8 @@ Claude Code connects to Claude through one of several API providers. Your choice
 | Amazon Bedrock                | You want to inherit existing AWS compliance controls and billing                                                                      |
 | Google Vertex AI              | You want to inherit existing GCP compliance controls and billing                                                                      |
 | Microsoft Foundry             | You want to inherit existing Azure compliance controls and billing                                                                    |
+
+Some Claude Code features require a Claude.ai account. [Claude Code on the web](/en/claude-code-on-the-web), [Routines](/en/routines), [Code Review](/en/code-review), [Remote Control](/en/remote-control), and the [Chrome extension](/en/chrome) are not available through Console API keys or cloud-provider credentials alone. If you deploy through Bedrock, Vertex, or Foundry, plan whether developers also need Claude for Teams or Enterprise seats. Each feature page lists its plan requirements.
 
 For the full provider comparison covering authentication, regions, and feature parity, see the [enterprise deployment overview](/en/third-party-integrations). Each provider's auth setup is in [Authentication](/en/authentication).
 

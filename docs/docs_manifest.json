@@ -3,8 +3,8 @@
     "admin-setup.md": {
       "original_url": "https://code.claude.com/docs/en/admin-setup",
       "original_md_url": "https://code.claude.com/docs/en/admin-setup.md",
-      "hash": "ba9cd82c874721f1fd847c606a9d910e2b837eec876f2dafcc564be885783131",
-      "last_updated": "2026-05-11T18:32:20.609651"
+      "hash": "a5bab48043e96a23ab584460d7c100ca39c143a23184961eff69cef95c93d000",
+      "last_updated": "2026-05-13T21:28:35.986615"
     },
     "agent-sdk__agent-loop.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/agent-loop",
@@ -63,8 +63,8 @@
     "agent-sdk__modifying-system-prompts.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/modifying-system-prompts",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/modifying-system-prompts.md",
-      "hash": "af41260408973313885891d13a1eb06d425aa9ae20dc44dc885c19e636849731",
-      "last_updated": "2026-05-12T18:31:29.384254"
+      "hash": "532a8726dc4fc5108784d4c2a64767e98735bc91b18655df613584dc0e9da41b",
+      "last_updated": "2026-05-13T21:28:41.379975"
     },
     "agent-sdk__observability.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/observability",
@@ -508,8 +508,8 @@
     "memory.md": {
       "original_url": "https://code.claude.com/docs/en/memory",
       "original_md_url": "https://code.claude.com/docs/en/memory.md",
-      "hash": "a765a6e0ed9c1b93a6b1848fcc157a7a907ec0e81610d7f77004a013156647f6",
-      "last_updated": "2026-05-12T00:21:38.480495"
+      "hash": "43cc7c19f53ff5732d68c78aab50e9276aad51a1355ad8c19f305bd3f14b3173",
+      "last_updated": "2026-05-13T21:29:21.441005"
     },
     "microsoft-foundry.md": {
       "original_url": "https://code.claude.com/docs/en/microsoft-foundry",
@@ -538,8 +538,8 @@
     "output-styles.md": {
       "original_url": "https://code.claude.com/docs/en/output-styles",
       "original_md_url": "https://code.claude.com/docs/en/output-styles.md",
-      "hash": "308c93ff7cdbd3f2160ec94c3309c834fcdc1717f10805c219c0db628b2e06b1",
-      "last_updated": "2026-05-12T18:32:17.218250"
+      "hash": "088447ec94c1474bf18982d459cbce74c68d6dcdb8042c21157b85e8d7c79419",
+      "last_updated": "2026-05-13T21:29:24.140359"
     },
     "overview.md": {
       "original_url": "https://code.claude.com/docs/en/overview",
@@ -789,8 +789,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-05-13T18:33:59.347560",
-    "fetch_duration_seconds": 79.338495,
+    "last_fetch_completed": "2026-05-13T21:29:46.371241",
+    "fetch_duration_seconds": 70.548204,
     "total_pages_discovered": 131,
     "pages_fetched_successfully": 132,
     "pages_failed": 0,
@@ -800,7 +800,7 @@
     "total_files": 131,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-05-13T18:33:59.347593",
+  "last_updated": "2026-05-13T21:29:46.371267",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
