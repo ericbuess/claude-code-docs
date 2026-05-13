@@ -7,14 +7,10 @@
 > Build production AI agents with Claude Code as a library
 
 <Note>
-  The Claude Code SDK has been renamed to the Claude Agent SDK. If you're migrating from the old SDK, see the [Migration Guide](/en/agent-sdk/migration-guide).
+  Starting June 15, 2026, Agent SDK and `claude -p` usage on subscription plans will draw from a new monthly Agent SDK credit, separate from your interactive usage limits. See [Use the Claude Agent SDK with your Claude plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan) for details.
 </Note>
 
 Build AI agents that autonomously read files, run commands, search the web, edit code, and more. The Agent SDK gives you the same tools, agent loop, and context management that power Claude Code, programmable in Python and TypeScript.
-
-<Note>
-  Opus 4.7 (`claude-opus-4-7`) requires Agent SDK v0.2.111 or later. If you see a `thinking.type.enabled` API error, see [Troubleshooting](/en/agent-sdk/quickstart#troubleshooting).
-</Note>
 
 <CodeGroup>
   ```python Python theme={null}

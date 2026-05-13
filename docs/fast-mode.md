@@ -22,7 +22,7 @@ What to know:
 
 * Use `/fast` to toggle on fast mode in Claude Code CLI. Also available via `/fast` in Claude Code VS Code Extension.
 * By default, `/fast` runs on Opus 4.6. To run fast mode on Opus 4.7 instead, set the [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7) environment variable.
-* Fast mode pricing is \$30/150 MTok on both Opus 4.6 and Opus 4.7.
+* Fast mode pricing is $30/$150 MTok on both Opus 4.6 and Opus 4.7.
 * Available to all Claude Code users on subscription plans (Pro/Max/Team/Enterprise) and Claude Console.
 * For Claude Code users on subscription plans (Pro/Max/Team/Enterprise), fast mode is available via extra usage only and not included in the subscription rate limits.
 
