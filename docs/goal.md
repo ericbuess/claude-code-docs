@@ -108,7 +108,7 @@ A goal that was still active when a session ended is restored when you resume th
 
 ### Run non-interactively
 
-`/goal` works in [non-interactive mode](/en/headless) and through [Remote Control](/en/remote-control). Setting a goal with `-p` runs the loop to completion in a single invocation:
+`/goal` works in [non-interactive mode](/en/headless), in the [desktop app](/en/desktop), and through [Remote Control](/en/remote-control). Setting a goal with `-p` runs the loop to completion in a single invocation:
 
 ```bash theme={null}
 claude -p "/goal CHANGELOG.md has an entry for every PR merged this week"

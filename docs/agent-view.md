@@ -303,6 +303,10 @@ To set defaults for every session you dispatch from agent view, pass any of `--p
 claude agents --permission-mode plan --model opus --effort high
 ```
 
+<Note>
+  Passing `--permission-mode`, `--model`, or `--effort` to `claude agents` requires Claude Code v2.1.142 or later. Earlier versions reject these flags with an unknown-option error.
+</Note>
+
 The active defaults appear in the footer below the dispatch input.
 
 Without these flags, the session uses the `defaultMode` from that directory's settings or the `permissionMode` from the dispatched [subagent's frontmatter](/en/sub-agents#supported-frontmatter-fields), and the model shown in the agent view header.

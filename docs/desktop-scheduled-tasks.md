@@ -90,9 +90,11 @@ Click a task in the **Routines** list to open its detail page. From here you can
 * **Edit**: change the instructions, schedule, folder, or other settings
 * **Review history**: see every past run, including skipped runs. Hover a skipped entry to see why: your computer was asleep, the previous run was still in progress, or other scheduled tasks were already running. Click **Show more** to load older entries.
 * **Review allowed permissions**: see and revoke saved tool approvals for this task from the **Always allowed** panel
-* **Delete**: remove the task and archive all sessions it created
+* **Delete**: remove the task and archive all sessions it created. An **Also delete files on disk** checkbox appears in the confirmation dialog; check it to also remove the task's `SKILL.md` file and associated data from `~/.claude/scheduled-tasks/`.
 
 You can also list, create, edit, and pause tasks by asking Claude in any Desktop session. For example, "pause my dependency-audit task" or "show me my scheduled tasks." To delete a task, use the **Delete** button on its detail page.
+
+A scheduled task can also modify its own schedule or prompt from within a running session using the `update_scheduled_task` MCP tool. This lets a task reschedule itself based on what it finds, for example, rescheduling a code review to run earlier when it detects a release branch has been created.
 
 To edit a task's prompt on disk, open `~/.claude/scheduled-tasks/<task-name>/SKILL.md` (or under [`CLAUDE_CONFIG_DIR`](/en/env-vars) if set). The file uses YAML frontmatter for `name` and `description`, with the prompt as the body. Changes take effect on the next run. Schedule, folder, model, and enabled state are not in this file: change them through the Edit form or ask Claude.
 
