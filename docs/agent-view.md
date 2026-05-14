@@ -247,7 +247,7 @@ When agent view is grouped by directory, the highlighted row's directory becomes
 
 Run `/background` or its alias `/bg` to move the current conversation into a background session. Pass a prompt such as `/bg run the test suite and fix any failures` to give one more instruction first.
 
-Backgrounding from an interactive session starts a fresh process that resumes from the saved conversation, so running subagents and background commands do not transfer to it. Claude asks you to confirm before backgrounding when any are running. Once in the background, the session can start new subagents and background commands, and those keep running across later detach and reattach.
+Backgrounding from an interactive session starts a fresh process that resumes from the saved conversation, so running subagents, [monitors](/en/tools-reference#monitor-tool), and background commands do not transfer to it. Claude asks you to confirm before backgrounding when any are running. Once in the background, the session can start new subagents, monitors, and background commands, and those keep running across later detach and reattach.
 
 ### From your shell
 
