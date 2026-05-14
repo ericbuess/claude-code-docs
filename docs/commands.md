@@ -26,7 +26,7 @@ Most commands are useful at a specific point in a session, from setting up a pro
 
 **Between sessions.** `/clear` starts fresh on a new task while keeping project memory. `/resume` and `/branch` let you return to or fork an earlier conversation. `/teleport` pulls a web session into this terminal, and `/remote-control` lets you continue this local session from another device.
 
-**When something is wrong.** `/rewind` rolls code and conversation back to a checkpoint. `/doctor` and `/debug` diagnose install and runtime issues, and `/feedback` reports a bug with session context attached.
+**When something is wrong.** `/rewind` rolls code and conversation back to a checkpoint, or summarizes part of the conversation. `/doctor` and `/debug` diagnose install and runtime issues, and `/feedback` reports a bug with session context attached.
 
 ## All commands
 

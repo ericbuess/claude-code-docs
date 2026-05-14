@@ -158,8 +158,6 @@ The `/agents` command opens a tabbed interface for managing subagents. The **Run
 
 This is the recommended way to create and manage subagents. For manual creation or automation, you can also add subagent files directly.
 
-To list all configured subagents from the command line without opening [agent view](/en/agent-view), pipe the output of `claude agents`. For example, `claude agents | cat` prints agents grouped by source and indicates which are overridden by higher-priority definitions.
-
 ### Choose the subagent scope
 
 Subagents are Markdown files with YAML frontmatter. Store them in different locations depending on scope. When multiple subagents share the same name, the higher-priority location wins.

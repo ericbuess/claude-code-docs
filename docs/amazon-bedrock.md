@@ -170,7 +170,10 @@ Bedrock API keys provide a simpler authentication method without needing full AW
 
 Claude Code supports automatic credential refresh for AWS SSO and corporate identity providers. Add these settings to your Claude Code settings file (see [Settings](/en/settings) for file locations).
 
-When Claude Code detects that your AWS credentials are expired (either locally based on their timestamp or when Bedrock returns a credential error), it will automatically run your configured `awsAuthRefresh` and/or `awsCredentialExport` commands to obtain new credentials before retrying the request.
+These two settings have different trigger conditions:
+
+* **`awsAuthRefresh`**: runs only when Claude Code detects that your AWS credentials are expired, either locally based on their timestamp or when Bedrock returns a credential error, then retries the request with refreshed credentials.
+* **`awsCredentialExport`**: runs at session start and on each credential reload, even when the credentials in your AWS default credential provider chain are still valid. Use this when your Bedrock account requires cross-account credentials that differ from the ones the default provider chain would resolve.
 
 ##### Example configuration
 
@@ -187,7 +190,7 @@ When Claude Code detects that your AWS credentials are expired (either locally b
 
 **`awsAuthRefresh`**: Use this for commands that modify the `.aws` directory, such as updating credentials, SSO cache, or config files. The command's output is displayed to the user, but interactive input isn't supported. This works well for browser-based SSO flows where the CLI displays a URL or code and you complete authentication in the browser.
 
-**`awsCredentialExport`**: Only use this if you can't modify `.aws` and must directly return credentials. Output is captured silently and not shown to the user. The command must output JSON in this format:
+**`awsCredentialExport`**: Only use this if you can't modify `.aws` and must directly return credentials. This command runs whenever credentials need to be refreshed, not only when credentials are expired. Output is captured silently and not shown to the user. The command must output JSON in this format:
 
 ```json theme={null}
 {
@@ -465,7 +468,7 @@ If you encounter region issues:
 * Switch to a supported region: `export AWS_REGION=us-east-1`
 * Consider using inference profiles for cross-region access
 
-If you receive an error "on-demand throughput isn’t supported":
+If you receive an error "on-demand throughput isn't supported":
 
 * Specify the model as an [inference profile](https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-support.html) ID
 

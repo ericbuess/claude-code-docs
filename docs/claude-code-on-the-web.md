@@ -782,7 +782,7 @@ If a new session fails to start with `Session creation failed` or stalls at prov
 
 ### Remote Control session expired or access denied
 
-`--teleport` connects through the same Remote Control session infrastructure that cloud sessions use, so authentication and session-expiry errors surface with Remote Control wording. You may see `Remote Control session has expired` or `Access denied`. The connection token is short-lived and scoped to your account.
+`--teleport` connects through the same Remote Control session infrastructure that cloud sessions use, so authentication and session-expiry errors surface with Remote Control wording. You may see `Remote Control session expired` or `Access denied`. The connection token is short-lived and scoped to your account.
 
 * Run `/login` locally to refresh your credentials, then reconnect
 * Confirm you are signed in to the same account that owns the session

@@ -389,6 +389,7 @@ Configuration object for the `query()` function.
 | `fallbackModel`                   | `string`                                                                                                 | `undefined`                                 | Model to use if primary fails                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `forkSession`                     | `boolean`                                                                                                | `false`                                     | When resuming with `resume`, fork to a new session ID instead of continuing the original session                                                                                                                                                                                                                                                                                                                                                                                    |
 | `hooks`                           | `Partial<Record<`[`HookEvent`](#hookevent)`, `[`HookCallbackMatcher`](#hookcallbackmatcher)`[]>>`        | `{}`                                        | Hook callbacks for events                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `includeHookEvents`               | `boolean`                                                                                                | `false`                                     | Include hook lifecycle events in the message stream as [`SDKHookStartedMessage`](#sdkhookstartedmessage), [`SDKHookProgressMessage`](#sdkhookprogressmessage), and [`SDKHookResponseMessage`](#sdkhookresponsemessage)                                                                                                                                                                                                                                                              |
 | `includePartialMessages`          | `boolean`                                                                                                | `false`                                     | Include partial message events                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `maxBudgetUsd`                    | `number`                                                                                                 | `undefined`                                 | Stop the query when the client-side cost estimate reaches this USD value. Compared against the same estimate as `total_cost_usd`; see [Track cost and usage](/en/agent-sdk/cost-tracking) for accuracy caveats                                                                                                                                                                                                                                                                      |
 | `maxThinkingTokens`               | `number`                                                                                                 | `undefined`                                 | *Deprecated:* Use `thinking` instead. Maximum tokens for thinking process                                                                                                                                                                                                                                                                                                                                                                                                           |
@@ -1596,7 +1597,11 @@ type ToolInputSchemas =
   | ReadMcpResourceInput
   | SubscribeMcpResourceInput
   | SubscribePollingInput
+  | TaskCreateInput
+  | TaskGetInput
+  | TaskListInput
   | TaskStopInput
+  | TaskUpdateInput
   | TodoWriteInput
   | UnsubscribeMcpResourceInput
   | UnsubscribePollingInput
@@ -1850,7 +1855,6 @@ Creates and manages a structured task list for tracking progress.
 **Tool name:** `TaskCreate`
 
 ```typescript theme={null}
-// Not yet exported from the SDK; define locally.
 type TaskCreateInput = {
   subject: string;
   description: string;
@@ -1866,7 +1870,6 @@ Creates a single task and returns its assigned ID.
 **Tool name:** `TaskUpdate`
 
 ```typescript theme={null}
-// Not yet exported from the SDK; define locally.
 type TaskUpdateInput = {
   taskId: string;
   status?: "pending" | "in_progress" | "completed" | "deleted";
@@ -1887,7 +1890,6 @@ Patches one task by ID. Set `status` to `"deleted"` to remove it.
 **Tool name:** `TaskGet`
 
 ```typescript theme={null}
-// Not yet exported from the SDK; define locally.
 type TaskGetInput = {
   taskId: string;
 };
@@ -1900,7 +1902,6 @@ Returns full details for one task, or `null` when the ID is not found.
 **Tool name:** `TaskList`
 
 ```typescript theme={null}
-// Not yet exported from the SDK; define locally.
 type TaskListInput = {};
 ```
 
@@ -1983,7 +1984,11 @@ type ToolOutputSchemas =
   | MonitorOutput
   | NotebookEditOutput
   | ReadMcpResourceOutput
+  | TaskCreateOutput
+  | TaskGetOutput
+  | TaskListOutput
   | TaskStopOutput
+  | TaskUpdateOutput
   | TodoWriteOutput
   | WebFetchOutput
   | WebSearchOutput;
@@ -2347,7 +2352,6 @@ Returns the previous and updated task lists.
 **Tool name:** `TaskCreate`
 
 ```typescript theme={null}
-// Not yet exported from the SDK; define locally.
 type TaskCreateOutput = {
   task: {
     id: string;
@@ -2363,7 +2367,6 @@ Returns the created task with its assigned ID.
 **Tool name:** `TaskUpdate`
 
 ```typescript theme={null}
-// Not yet exported from the SDK; define locally.
 type TaskUpdateOutput = {
   success: boolean;
   taskId: string;
@@ -2383,7 +2386,6 @@ Returns the update result, including which fields changed.
 **Tool name:** `TaskGet`
 
 ```typescript theme={null}
-// Not yet exported from the SDK; define locally.
 type TaskGetOutput = {
   task: {
     id: string;
@@ -2403,7 +2405,6 @@ Returns the full task record, or `null` when the ID is not found.
 **Tool name:** `TaskList`
 
 ```typescript theme={null}
-// Not yet exported from the SDK; define locally.
 type TaskListOutput = {
   tasks: Array<{
     id: string;

@@ -297,7 +297,7 @@ These fields apply to all hook types:
 | :-------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`          | yes      | `"command"`, `"http"`, `"mcp_tool"`, `"prompt"`, or `"agent"`                                                                                                                                                                                                                                                                                                                                                                                          |
 | `if`            | no       | Permission rule syntax to filter when this hook runs, such as `"Bash(git *)"` or `"Edit(*.ts)"`. The hook only spawns if the tool call matches the pattern, or if a Bash command is too complex to parse. Only evaluated on tool events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, and `PermissionDenied`. On other events, a hook with `if` set never runs. Uses the same syntax as [permission rules](/en/permissions) |
-| `timeout`       | no       | Seconds before canceling. Defaults: 600 for command, 30 for prompt, 60 for agent                                                                                                                                                                                                                                                                                                                                                                       |
+| `timeout`       | no       | Seconds before canceling. Defaults: 600 for `command`, `http`, and `mcp_tool`; 30 for `prompt`; 60 for `agent`. [`UserPromptSubmit`](#userpromptsubmit) lowers the `command`, `http`, and `mcp_tool` default to 30                                                                                                                                                                                                                                     |
 | `statusMessage` | no       | Custom spinner message displayed while the hook runs                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `once`          | no       | If `true`, runs once per session then is removed. Only honored for hooks declared in [skill frontmatter](#hooks-in-skills-and-agents); ignored in settings files and agent frontmatter                                                                                                                                                                                                                                                                 |
 
@@ -558,6 +558,8 @@ Direct edits to hooks in settings files are normally picked up automatically by 
 
 Command hooks receive JSON data via stdin and communicate results through exit codes, stdout, and stderr. HTTP hooks receive the same JSON as the POST request body and communicate results through the HTTP response body. This section covers fields and behavior common to all events. Each event's section under [Hook events](#hook-events) includes its specific input schema and decision control options.
 
+On macOS and Linux, command hooks run in their own session without a controlling terminal as of v2.1.139. The hook process and any child processes cannot open `/dev/tty` or send escape sequences directly to the Claude Code interface. Windows has no `/dev/tty`. To surface a message to the user on any platform, return [`systemMessage`](#json-output) in JSON output. To trigger a desktop notification, set a window title, or ring the bell, return [`terminalSequence`](#emit-terminal-notifications) instead.
+
 ### Common input fields
 
 Hook events receive these fields as JSON, in addition to event-specific fields documented in each [hook event](#hook-events) section. For command hooks, this JSON arrives via stdin. For HTTP hooks, it arrives as the POST request body.
@@ -685,7 +687,7 @@ Exit codes let you allow or block, but JSON output gives you finer-grained contr
 
 Your hook's stdout must contain only the JSON object. If your shell profile prints text on startup, it can interfere with JSON parsing. See [JSON validation failed](/en/hooks-guide#json-validation-failed) in the troubleshooting guide.
 
-Hook output injected into context (`additionalContext`, `systemMessage`, or plain stdout) is capped at 10,000 characters. Output that exceeds this limit is saved to a file and replaced with a preview and file path, the same way large tool results are handled.
+Hook output strings, including `additionalContext`, `systemMessage`, and plain stdout, are capped at 10,000 characters. Output that exceeds this limit is saved to a file and replaced with a preview and file path, the same way large tool results are handled.
 
 The JSON object supports three kinds of fields:
 
@@ -693,18 +695,53 @@ The JSON object supports three kinds of fields:
 * **Top-level `decision` and `reason`** are used by some events to block or provide feedback.
 * **`hookSpecificOutput`** is a nested object for events that need richer control. It requires a `hookEventName` field set to the event name.
 
-| Field            | Default | Description                                                                                                                |
-| :--------------- | :------ | :------------------------------------------------------------------------------------------------------------------------- |
-| `continue`       | `true`  | If `false`, Claude stops processing entirely after the hook runs. Takes precedence over any event-specific decision fields |
-| `stopReason`     | none    | Message shown to the user when `continue` is `false`. Not shown to Claude                                                  |
-| `suppressOutput` | `false` | If `true`, omits stdout from the debug log                                                                                 |
-| `systemMessage`  | none    | Warning message shown to the user                                                                                          |
+| Field              | Default | Description                                                                                                                                                                                                                                                                                                                          |
+| :----------------- | :------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `continue`         | `true`  | If `false`, Claude stops processing entirely after the hook runs. Takes precedence over any event-specific decision fields                                                                                                                                                                                                           |
+| `stopReason`       | none    | Message shown to the user when `continue` is `false`. Not shown to Claude                                                                                                                                                                                                                                                            |
+| `suppressOutput`   | `false` | If `true`, omits stdout from the debug log                                                                                                                                                                                                                                                                                           |
+| `systemMessage`    | none    | Warning message shown to the user                                                                                                                                                                                                                                                                                                    |
+| `terminalSequence` | none    | A terminal escape sequence for Claude Code to emit on your behalf, such as a desktop notification, window title, or bell. Restricted to OSC `0`/`1`/`2`/`9`/`99`/`777` and BEL. If the value contains anything outside the allowlist, the field is ignored. Use this instead of writing to `/dev/tty`, which is unavailable to hooks |
 
 To stop Claude entirely regardless of event type:
 
 ```json theme={null}
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
+
+#### Emit terminal notifications
+
+The `terminalSequence` field requires Claude Code v2.1.141 or later.
+
+Hooks run without a controlling terminal, so writing escape sequences directly to `/dev/tty` fails. Instead, return the escape sequence in the `terminalSequence` field and Claude Code emits it for you through its own terminal write path. This is race-free, works inside tmux and GNU screen, and works on Windows where there is no `/dev/tty`.
+
+The field accepts a string of one or more allowlisted escape sequences:
+
+* OSC `0`, `1`, `2`: window and icon titles
+* OSC `9`: iTerm2, ConEmu, Windows Terminal, and WezTerm notifications, including `9;4` taskbar progress
+* OSC `99`: Kitty notifications
+* OSC `777`: urxvt, Ghostty, and Warp notifications
+* Bare BEL
+
+Sequences may be terminated with BEL or with ST. Anything outside the allowlist, including CSI cursor and color sequences, OSC palette sequences, OSC 8 hyperlinks, OSC 52 clipboard writes, and OSC 1337, is rejected and the field is ignored.
+
+The example below fires a desktop notification from a `Notification` hook. The escape sequence is built with `printf` octal escapes so the control bytes never appear on the shell command line, and `jq -n --arg` builds the JSON output so quotes, backslashes, and newlines in the notification message are escaped correctly:
+
+```bash theme={null}
+#!/bin/bash
+# Notification hook: ping the desktop when Claude Code needs attention.
+input=$(cat)
+title="Claude Code"
+body=$(jq -r '.message // "Needs your attention"' <<<"$input")
+seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
+jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
+```
+
+The `{ "terminalSequence": "..." }` shape is the same from any shell or language. On Windows, build the escape string in PowerShell or a script and emit the same JSON object.
+
+<Note>
+  `terminalSequence` is the supported replacement for hooks that previously wrote escape sequences directly to `/dev/tty`. The allowlist is restricted to sequences that cannot move the cursor or alter colors, so a hook can never corrupt an on-screen prompt.
+</Note>
 
 #### Add context for Claude
 
@@ -990,6 +1027,8 @@ InstructionsLoaded hooks have no decision control. They cannot block or modify i
 Runs when the user submits a prompt, before Claude processes it. This allows you
 to add additional context based on the prompt/conversation, validate prompts, or
 block certain types of prompts.
+
+`UserPromptSubmit` hooks have a default timeout of 30 seconds for `command`, `http`, and `mcp_tool` types, shorter than the 600-second default for those types on other events. Because this hook runs before every prompt and blocks model processing until it completes, a stuck hook stalls the session. If your hook needs more time, set the `timeout` field in the hook entry.
 
 #### UserPromptSubmit input
 
@@ -2604,7 +2643,7 @@ The `timeout` field sets the maximum time in seconds for the background process.
 
 When an async hook fires, Claude Code starts the hook process and immediately continues without waiting for it to finish. The hook receives the same JSON input via stdin as a synchronous hook.
 
-After the background process exits, if the hook produced a JSON response with a `systemMessage` or `additionalContext` field, that content is delivered to Claude as context on the next conversation turn.
+After the background process exits, if the hook produced a JSON response with an `additionalContext` field, that content is delivered to Claude as context on the next conversation turn. A `systemMessage` field is shown to you, not to Claude.
 
 Async hook completion notifications are suppressed by default. To see them, enable verbose mode with `Ctrl+O` or start Claude Code with `--verbose`.
 
@@ -2625,15 +2664,16 @@ if [[ "$FILE_PATH" != *.ts && "$FILE_PATH" != *.js ]]; then
   exit 0
 fi
 
-# Run tests and report results via systemMessage
+# Run tests and report results to Claude via additionalContext
 RESULT=$(npm test 2>&1)
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -eq 0 ]; then
-  echo "{\"systemMessage\": \"Tests passed after editing $FILE_PATH\"}"
+  MSG="Tests passed after editing $FILE_PATH"
 else
-  echo "{\"systemMessage\": \"Tests failed after editing $FILE_PATH: $RESULT\"}"
+  MSG="Tests failed after editing $FILE_PATH: $RESULT"
 fi
+jq -nc --arg msg "$MSG" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $msg}}'
 ```
 
 Then add this configuration to `.claude/settings.json` in your project root. The `async: true` flag lets Claude keep working while tests run:

@@ -396,7 +396,7 @@ During long sessions, Claude's context window can fill with irrelevant conversat
 * Use `/clear` frequently between tasks to reset the context window entirely
 * When auto compaction triggers, Claude summarizes what matters most, including code patterns, file states, and key decisions
 * For more control, run `/compact <instructions>`, like `/compact Focus on the API changes`
-* To compact only part of the conversation, use `Esc + Esc` or `/rewind`, select a message checkpoint, and choose **Summarize from here**. This condenses messages from that point forward while keeping earlier context intact.
+* To compact only part of the conversation, use `Esc + Esc` or `/rewind`, select a message checkpoint, and choose **Summarize from here** or **Summarize up to here**. The first condenses messages from that point forward while keeping earlier context intact; the second condenses earlier messages while keeping recent ones in full. See [Restore vs. summarize](/en/checkpointing#restore-vs-summarize).
 * Customize compaction behavior in CLAUDE.md with instructions like `"When compacting, always preserve the full list of modified files and any test commands"` to ensure critical context survives summarization
 * For quick questions that don't need to stay in context, use [`/btw`](/en/interactive-mode#side-questions-with-%2Fbtw). The answer appears in a dismissible overlay and never enters conversation history, so you can check a detail without growing context.
 
@@ -424,10 +424,10 @@ use a subagent to review this code for edge cases
 ### Rewind with checkpoints
 
 <Tip>
-  Every action Claude makes creates a checkpoint. You can restore conversation, code, or both to any previous checkpoint.
+  Every prompt you send creates a checkpoint. You can restore conversation, code, or both to any previous checkpoint.
 </Tip>
 
-Claude automatically checkpoints before changes. Double-tap `Escape` or run `/rewind` to open the rewind menu. You can restore conversation only, restore code only, restore both, or summarize from a selected message. See [Checkpointing](/en/checkpointing) for details.
+Claude automatically snapshots files before each change so a checkpoint can restore them. Double-tap `Escape` or run `/rewind` to open the rewind menu. You can restore conversation only, restore code only, restore both, or summarize from a selected message. See [Checkpointing](/en/checkpointing) for details.
 
 Instead of carefully planning every move, you can tell Claude to try something risky. If it doesn't work, rewind and try a different approach. Checkpoints persist across sessions, so you can close your terminal and still rewind later.
 
