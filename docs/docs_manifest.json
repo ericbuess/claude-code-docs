@@ -189,8 +189,8 @@
     "agent-view.md": {
       "original_url": "https://code.claude.com/docs/en/agent-view",
       "original_md_url": "https://code.claude.com/docs/en/agent-view.md",
-      "hash": "e7ac0ec004c98b68ffa853f336707cb9cc67b52619d036e6a0d6e1e0ce196707",
-      "last_updated": "2026-05-14T00:24:04.179245"
+      "hash": "ada6957bf29595dfe366dbcd358d48ac6dd246eb3004a64d05b2d5149c62fb4b",
+      "last_updated": "2026-05-14T06:54:15.243740"
     },
     "agents.md": {
       "original_url": "https://code.claude.com/docs/en/agents",
@@ -789,8 +789,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-05-14T04:18:05.836554",
-    "fetch_duration_seconds": 69.491834,
+    "last_fetch_completed": "2026-05-14T06:55:09.339855",
+    "fetch_duration_seconds": 71.246943,
     "total_pages_discovered": 131,
     "pages_fetched_successfully": 132,
     "pages_failed": 0,
@@ -800,7 +800,7 @@
     "total_files": 131,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-05-14T04:18:05.836581",
+  "last_updated": "2026-05-14T06:55:09.339886",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
