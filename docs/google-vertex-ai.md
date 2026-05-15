@@ -227,7 +227,9 @@ Claude Code uses these default models when no pinning variables are set:
 | Model type       | Default value                |
 | :--------------- | :--------------------------- |
 | Primary model    | `claude-sonnet-4-5@20250929` |
-| Small/fast model | `claude-haiku-4-5@20251001`  |
+| Small/fast model | Same as primary model        |
+
+Background tasks such as session title generation use the small/fast model, normally a Haiku-class model. On Vertex AI, Claude Code defaults this to the primary model because Haiku may not be enabled in every project or region. To use Haiku for background tasks, set `ANTHROPIC_DEFAULT_HAIKU_MODEL` to a model ID that is available in your project.
 
 To customize models further:
 
