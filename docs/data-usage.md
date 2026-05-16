@@ -99,7 +99,9 @@ Claude Code connects from users' machines to Anthropic to log operational metric
 
 Claude Code connects from users' machines to Sentry for operational error logging. The data is encrypted in transit using TLS and at rest using 256-bit AES encryption. Read more in the [Sentry security documentation](https://sentry.io/security/). To opt out of error logging, set the `DISABLE_ERROR_REPORTING` environment variable.
 
-When users run the `/feedback` command, a copy of their full conversation history including code is sent to Anthropic. The data is encrypted in transit via TLS. Optionally, a GitHub issue is created in the public repository. To opt out, set the `DISABLE_FEEDBACK_COMMAND` environment variable to `1`.
+When you run the `/feedback` command, a copy of your conversation history including code is sent to Anthropic. Before submitting, you choose how much history to include: the current session only, which is the default, or also other sessions from the same project over the last 24 hours or 7 days. The data is encrypted in transit via TLS. Optionally, a GitHub issue is created in the public repository. To opt out, set the `DISABLE_FEEDBACK_COMMAND` environment variable to `1`.
+
+When you use a third-party provider such as Bedrock or Vertex, or have no Anthropic credentials configured, `/feedback` writes the report to a local archive under `~/.claude/feedback-bundles/` instead of sending it to Anthropic. Known API key and token patterns are redacted before the archive is written. Nothing leaves your machine until you send that file to your Anthropic account representative or attach it to a support request.
 
 ## Default behaviors by API provider
 

@@ -953,17 +953,19 @@ Claude Code truncates tool descriptions and server instructions at 2KB each. Kee
 
 ### Configure tool search
 
-Tool search is enabled by default: MCP tools are deferred and discovered on demand. It is disabled by default on Vertex AI, which does not accept the tool search beta header, and when `ANTHROPIC_BASE_URL` points to a non-first-party host, since most proxies do not forward `tool_reference` blocks. If your proxy forwards `tool_reference` blocks, set `ENABLE_TOOL_SEARCH` explicitly to override the fallback. This feature requires models that support `tool_reference` blocks: Sonnet 4 and later, or Opus 4 and later. Haiku models do not support tool search.
+Tool search is enabled by default: MCP tools are deferred and discovered on demand. Claude Code disables it by default on Vertex AI. It is also disabled when `ANTHROPIC_BASE_URL` points to a non-first-party host, since most proxies do not forward `tool_reference` blocks. Set `ENABLE_TOOL_SEARCH` explicitly to override either fallback.
+
+Tool search requires a model that supports `tool_reference` blocks: Sonnet 4 and later, or Opus 4 and later. Haiku models do not support it. On Vertex AI, tool search is supported for Claude Sonnet 4.5 and later and Claude Opus 4.5 and later.
 
 Control tool search behavior with the `ENABLE_TOOL_SEARCH` environment variable:
 
-| Value      | Behavior                                                                                                                                                               |
-| :--------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| (unset)    | All MCP tools deferred and loaded on demand. Falls back to loading upfront on Vertex AI or when `ANTHROPIC_BASE_URL` is a non-first-party host                         |
-| `true`     | All MCP tools deferred. Claude Code sends the beta header even on Vertex AI and through proxies. Requests fail if the backend does not support `tool_reference` blocks |
-| `auto`     | Threshold mode: tools load upfront if they fit within 10% of the context window, deferred otherwise                                                                    |
-| `auto:<N>` | Threshold mode with a custom percentage, where `<N>` is 0-100 (e.g., `auto:5` for 5%)                                                                                  |
-| `false`    | All MCP tools loaded upfront, no deferral                                                                                                                              |
+| Value    | Behavior                                                                                                                                                                                                                          |
+| :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (unset)  | All MCP tools deferred and loaded on demand. Falls back to loading upfront on Vertex AI or when `ANTHROPIC_BASE_URL` is a non-first-party host                                                                                    |
+| `true`   | All MCP tools deferred. Claude Code sends the beta header even on Vertex AI and through proxies. Requests fail on Vertex AI models earlier than Sonnet 4.5 or Opus 4.5, or on proxies that do not support `tool_reference` blocks |
+| `auto`   | Threshold mode: tools load upfront if they fit within 10% of the context window, deferred otherwise                                                                                                                               |
+| `auto:N` | Threshold mode with a custom percentage, where `N` is 0-100. For example, `auto:5` for 5%                                                                                                                                         |
+| `false`  | All MCP tools loaded upfront, no deferral                                                                                                                                                                                         |
 
 ```bash theme={null}
 # Use a custom 5% threshold
