@@ -520,14 +520,14 @@
     "microsoft-foundry.md": {
       "original_url": "https://code.claude.com/docs/en/microsoft-foundry",
       "original_md_url": "https://code.claude.com/docs/en/microsoft-foundry.md",
-      "hash": "a309a54a2e2be46ede40b10df355c636948d17a8b7adb449eb709f38a90a39b1",
-      "last_updated": "2026-05-15T18:28:56.296211"
+      "hash": "2b9270f40dea16737d9c09d1b6c06fcf8855fa001a88e1a1175040ff1ca13b2b",
+      "last_updated": "2026-05-17T00:20:39.978692"
     },
     "model-config.md": {
       "original_url": "https://code.claude.com/docs/en/model-config",
       "original_md_url": "https://code.claude.com/docs/en/model-config.md",
-      "hash": "dea8866d7cb61a9494e2e80d66c3f7d93158df2a5ba69be7d469fdc66dc70096",
-      "last_updated": "2026-05-13T04:18:33.262761"
+      "hash": "5e7319e820a3039631bc726fcb5e58a8aca0070f33008c8ec4e4559c1446085c",
+      "last_updated": "2026-05-17T00:20:40.514713"
     },
     "monitoring-usage.md": {
       "original_url": "https://code.claude.com/docs/en/monitoring-usage",
@@ -652,8 +652,8 @@
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
       "original_md_url": "https://code.claude.com/docs/en/skills.md",
-      "hash": "0e2de15c2b49351ebc491865c9889d3bbbe4ed196de8f1587d372f583efdc910",
-      "last_updated": "2026-05-13T00:23:19.408095"
+      "hash": "8271c224849df9e77e6bad926eee3c92414aa36746c69f11f9e13f1d1cec32fd",
+      "last_updated": "2026-05-17T00:20:51.630361"
     },
     "slack.md": {
       "original_url": "https://code.claude.com/docs/en/slack",
@@ -795,8 +795,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-05-16T21:15:10.008606",
-    "fetch_duration_seconds": 71.067049,
+    "last_fetch_completed": "2026-05-17T00:21:03.983049",
+    "fetch_duration_seconds": 70.007143,
     "total_pages_discovered": 132,
     "pages_fetched_successfully": 133,
     "pages_failed": 0,
@@ -806,7 +806,7 @@
     "total_files": 132,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-05-16T21:15:10.008636",
+  "last_updated": "2026-05-17T00:21:03.983082",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

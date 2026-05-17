@@ -407,6 +407,8 @@ When this skill runs:
 
 This is preprocessing, not something Claude executes. Claude only sees the final result.
 
+Substitution runs once over the original file. Command output is inserted as plain text and is not re-scanned for further `` !`<command>` `` placeholders, so a command cannot emit a placeholder for a later pass to expand.
+
 For multi-line commands, use a fenced code block opened with ` ```! ` instead of the inline form:
 
 ````markdown theme={null}
