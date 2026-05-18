@@ -46,17 +46,17 @@ Before launching, Claude Code shows a confirmation dialog with the review scope 
 
 ## Pricing and free runs
 
-Ultrareview is a premium feature that bills against extra usage rather than your plan's included usage.
+Ultrareview is a premium feature that bills against usage credits rather than your plan's included usage.
 
-| Plan                | Included free runs | After free runs                                                                                            |
-| ------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------- |
-| Pro                 | 3 free runs        | billed as [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
-| Max                 | 3 free runs        | billed as [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
-| Team and Enterprise | none               | billed as [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
+| Plan                | Included free runs | After free runs                                                                                              |
+| ------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------ |
+| Pro                 | 3 free runs        | billed as [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
+| Max                 | 3 free runs        | billed as [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
+| Team and Enterprise | none               | billed as [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 
-Pro and Max subscribers receive three free ultrareview runs to try the feature. These three runs are a one-time allotment per account and do not refresh. After you use all three, or after the free run period ends, each review is billed to extra usage and typically costs \$5 to \$20 depending on the size of the change. A run counts once the remote session starts, so a review that you stop early or that fails to complete still uses a free run. For a paid review, extra usage is billed only for the portion that ran.
+Pro and Max subscribers receive three free ultrareview runs to try the feature. These three runs are a one-time allotment per account and do not refresh. After you use all three, or after the free run period ends, each review is billed to usage credits and typically costs \$5 to \$20 depending on the size of the change. A run counts once the remote session starts, so a review that you stop early or that fails to complete still uses a free run. For a paid review, usage credits are billed only for the portion that ran.
 
-Because ultrareview always bills as extra usage outside the free runs, your account or organization must have extra usage enabled before you can launch a paid review. If extra usage is not enabled, Claude Code blocks the launch and links you to the billing settings where you can turn it on. You can also run `/extra-usage` to check or change your current setting.
+Because ultrareview always bills as usage credits outside the free runs, your account or organization must have usage credits turned on before you can launch a paid review. If usage credits are not turned on, Claude Code blocks the launch and links you to the billing settings where you can turn them on. You can also run `/usage-credits` to check or change your current setting.
 
 ## Track a running review
 
@@ -83,7 +83,7 @@ Progress messages and the live session URL go to stderr so stdout stays parseabl
 | `--json`              | Print the raw `bugs.json` payload instead of the formatted findings |
 | `--timeout <minutes>` | Maximum minutes to wait for the review to finish. Defaults to 30    |
 
-Running `claude ultrareview` requires the same authentication and extra usage configuration as `/ultrareview`. The subcommand exits with code 0 when the review completes with or without findings, code 1 when the review fails to launch, the remote session errors, or the timeout elapses, and code 130 when interrupted with Ctrl-C. The remote review keeps running if you interrupt the subcommand; follow the session URL printed to stderr to watch it in the browser.
+Running `claude ultrareview` requires the same authentication and usage credit configuration as `/ultrareview`. The subcommand exits with code 0 when the review completes with or without findings, code 1 when the review fails to launch, the remote session errors, or the timeout elapses, and code 130 when interrupted with Ctrl-C. The remote review keeps running if you interrupt the subcommand; follow the session URL printed to stderr to watch it in the browser.
 
 For automatic reviews on GitHub pull requests, [Code Review](/en/code-review) integrates with your repository directly and posts findings as inline PR comments without a CLI step.
 
@@ -91,13 +91,13 @@ For automatic reviews on GitHub pull requests, [Code Review](/en/code-review) in
 
 Both commands review code, but they target different stages of your workflow.
 
-|          | `/review`                      | `/ultrareview`                                                |
-| -------- | ------------------------------ | ------------------------------------------------------------- |
-| Runs     | locally in your session        | remotely in a cloud sandbox                                   |
-| Depth    | single-pass review             | multi-agent fleet with independent verification               |
-| Duration | seconds to a few minutes       | roughly 5 to 10 minutes                                       |
-| Cost     | counts toward normal usage     | free runs, then roughly \$5 to \$20 per review as extra usage |
-| Best for | quick feedback while iterating | pre-merge confidence on substantial changes                   |
+|          | `/review`                      | `/ultrareview`                                                  |
+| -------- | ------------------------------ | --------------------------------------------------------------- |
+| Runs     | locally in your session        | remotely in a cloud sandbox                                     |
+| Depth    | single-pass review             | multi-agent fleet with independent verification                 |
+| Duration | seconds to a few minutes       | roughly 5 to 10 minutes                                         |
+| Cost     | counts toward normal usage     | free runs, then roughly \$5 to \$20 per review as usage credits |
+| Best for | quick feedback while iterating | pre-merge confidence on substantial changes                     |
 
 Use `/review` for fast feedback as you work. Use `/ultrareview` before merging a substantial change when you want a deeper pass that catches issues a single review might miss.
 
