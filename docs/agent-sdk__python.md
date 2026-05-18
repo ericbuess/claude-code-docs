@@ -18,19 +18,19 @@ The Python SDK provides two ways to interact with Claude Code:
 
 ### Quick comparison
 
-| Feature             | `query()`                     | `ClaudeSDKClient`                  |
-| :------------------ | :---------------------------- | :--------------------------------- |
-| **Session**         | Creates new session each time | Reuses same session                |
-| **Conversation**    | Single exchange               | Multiple exchanges in same context |
-| **Connection**      | Managed automatically         | Manual control                     |
-| **Streaming Input** | ✅ Supported                   | ✅ Supported                        |
-| **Interrupts**      | ❌ Not supported               | ✅ Supported                        |
-| **Hooks**           | ✅ Supported                   | ✅ Supported                        |
-| **Custom Tools**    | ✅ Supported                   | ✅ Supported                        |
-| **Continue Chat**   | ❌ New session each time       | ✅ Maintains conversation           |
-| **Use Case**        | One-off tasks                 | Continuous conversations           |
+| Feature             | `query()`                                      | `ClaudeSDKClient`                  |
+| :------------------ | :--------------------------------------------- | :--------------------------------- |
+| **Session**         | Creates a new session by default               | Reuses same session                |
+| **Conversation**    | Single exchange                                | Multiple exchanges in same context |
+| **Connection**      | Managed automatically                          | Manual control                     |
+| **Streaming Input** | ✅ Supported                                    | ✅ Supported                        |
+| **Interrupts**      | ❌ Not supported                                | ✅ Supported                        |
+| **Hooks**           | ✅ Supported                                    | ✅ Supported                        |
+| **Custom Tools**    | ✅ Supported                                    | ✅ Supported                        |
+| **Continue Chat**   | Manual via `continue_conversation` or `resume` | ✅ Automatic                        |
+| **Use Case**        | One-off tasks                                  | Continuous conversations           |
 
-### When to use `query()` (new session each time)
+### When to use `query()` (one-off tasks)
 
 **Best for:**
 
@@ -53,7 +53,7 @@ The Python SDK provides two ways to interact with Claude Code:
 
 ### `query()`
 
-Creates a new session for each interaction with Claude Code. Returns an async iterator that yields messages as they arrive. Each call to `query()` starts fresh with no memory of previous interactions.
+Creates a new session for each interaction with Claude Code by default. Returns an async iterator that yields messages as they arrive. Each call to `query()` starts fresh with no memory of previous interactions unless you pass `continue_conversation=True` or `resume` in [`ClaudeAgentOptions`](#claudeagentoptions). See [Sessions](/en/agent-sdk/sessions).
 
 ```python theme={null}
 async def query(
