@@ -4,9 +4,86 @@
 
 # Environment variables
 
-> Complete reference for environment variables that control Claude Code behavior.
+> Reference for environment variables that control Claude Code behavior.
 
-Claude Code supports the following environment variables to control its behavior. Set them in your shell before launching `claude`, or configure them in [`settings.json`](/en/settings#available-settings) under the `env` key to apply them to every session or roll them out across your team.
+Environment variables can control Claude Code behavior such as model selection, authentication, request routing, and feature toggles. Many of the same behaviors can also be configured through a [settings file](/en/settings) field, a [CLI flag](/en/cli-reference), or an in-session command like `/model`.
+
+This page covers how to:
+
+* [Set environment variables](#set-environment-variables) in your shell or in a settings file
+* [Check which value applies](#precedence) when a behavior can be set more than one way
+* [Look up the variables Claude Code reads](#variables)
+
+## Set environment variables
+
+A variable you set in your shell lasts for that terminal session, while a variable in a settings file applies every time `claude` runs.
+
+### In your shell
+
+Set the variable before launching `claude`:
+
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash theme={null}
+    export API_TIMEOUT_MS="1200000"
+    claude
+    ```
+
+    To set it for every session, add the `export` line to `~/.bashrc`, `~/.zshrc`, or your shell's profile file.
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    ```powershell theme={null}
+    $env:API_TIMEOUT_MS = "1200000"
+    claude
+    ```
+
+    To set it for every session, run `[Environment]::SetEnvironmentVariable("API_TIMEOUT_MS", "1200000", "User")` and open a new terminal.
+  </Tab>
+
+  <Tab title="Windows CMD">
+    ```batch theme={null}
+    set API_TIMEOUT_MS=1200000
+    claude
+    ```
+
+    To set it for every session, run `setx API_TIMEOUT_MS "1200000"` and open a new terminal.
+  </Tab>
+</Tabs>
+
+### In settings files
+
+Add variables under the `env` key in a `settings.json` file. Claude Code reads them directly from the file at startup, so they take effect no matter how `claude` was launched.
+
+```json ~/.claude/settings.json theme={null}
+{
+  "env": {
+    "API_TIMEOUT_MS": "1200000",
+    "BASH_DEFAULT_TIMEOUT_MS": "300000"
+  }
+}
+```
+
+The file you choose controls who the variables apply to:
+
+| File                          | Applies to                                                   |
+| :---------------------------- | :----------------------------------------------------------- |
+| `~/.claude/settings.json`     | You, in every project                                        |
+| `.claude/settings.json`       | Everyone working in the project, checked into source control |
+| `.claude/settings.local.json` | You, in this project only, not checked in                    |
+| Managed settings              | Everyone in your organization, deployed by an admin          |
+
+See [Settings files](/en/settings#settings-files) for where each file lives and [Settings precedence](/en/settings#settings-precedence) for how they combine when more than one sets the same variable.
+
+## Precedence
+
+Where the same behavior has both an environment variable and a settings field, the environment variable takes precedence. For example, `ANTHROPIC_MODEL` overrides the `model` setting, and `CLAUDE_CODE_AUTO_CONNECT_IDE` overrides `autoConnectIde`. The settings field applies when the environment variable is not set.
+
+How an environment variable interacts with CLI flags and in-session commands varies per feature: `--model` and `/model` override `ANTHROPIC_MODEL`, while `CLAUDE_CODE_EFFORT_LEVEL` overrides `/effort`. When a variable interacts with another configuration source, its row in the [Variables](#variables) list states the precedence or links to the page that documents it.
+
+Claude Code reads environment variables at startup, so changes take effect the next time you launch `claude`.
+
+## Variables
 
 | Variable                                                | Purpose                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | :------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -97,7 +174,7 @@ Claude Code supports the following environment variables to control its behavior
 | `CLAUDE_CODE_DISABLE_VIRTUAL_SCROLL`                    | Set to `1` to disable virtual scrolling in [fullscreen rendering](/en/fullscreen) and render every message in the transcript. Use this if scrolling in fullscreen mode shows blank regions where messages should appear                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `CLAUDE_CODE_EFFORT_LEVEL`                              | Set the effort level for supported models. Values: `low`, `medium`, `high`, `xhigh`, `max`, or `auto` to use the model default. Available levels depend on the model. Takes precedence over `/effort` and the `effortLevel` setting. See [Adjust effort level](/en/model-config#adjust-effort-level)                                                                                                                                                                                                                                                                                                                                                        |
 | `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`                       | Override [session recap](/en/interactive-mode#session-recap) availability. Set to `0` to force recaps off regardless of the `/config` toggle. Set to `1` to force recaps on when [`awaySummaryEnabled`](/en/settings#available-settings) is `false`. Takes precedence over the setting and `/config` toggle                                                                                                                                                                                                                                                                                                                                                 |
-| `CLAUDE_CODE_ENABLE_BACKGROUND_PLUGIN_REFRESH`          | Set to `1` to refresh plugin state at turn boundaries in [non-interactive mode](/en/headless) after a background install completes. Off by default because the refresh changes the system prompt mid-session, which invalidates [prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) for that turn                                                                                                                                                                                                                                                                                                                        |
+| `CLAUDE_CODE_ENABLE_BACKGROUND_PLUGIN_REFRESH`          | Set to `1` to refresh plugin state at turn boundaries in [non-interactive mode](/en/headless) after a background install completes. Off by default because the refresh changes the system prompt mid-session, which invalidates [prompt caching](/en/prompt-caching) for that turn                                                                                                                                                                                                                                                                                                                                                                          |
 | `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`           | Set to `1` to route the "How is Claude doing?" session quality survey to your own [OpenTelemetry collector](/en/monitoring-usage) when Anthropic-bound nonessential traffic is blocked. Survey ratings are emitted only as OTEL events to your configured collector. No survey data is sent to Anthropic in this mode. Applies when `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `DISABLE_TELEMETRY`, or `DO_NOT_TRACK` is set, and has no effect otherwise. `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` and the organization product feedback policy take precedence                                                                                              |
 | `CLAUDE_CODE_ENABLE_FINE_GRAINED_TOOL_STREAMING`        | Controls whether tool call inputs stream from the API as Claude generates them. With this off, a large tool input such as a long file write arrives only after Claude finishes generating it, which can look like it's hanging. Enabled by default on the Anthropic API. On Bedrock and Vertex, enabled per model where the deployed container supports it. Set to `0` to opt out. Set to `1` to force on when routing through a proxy via `ANTHROPIC_BASE_URL`, `ANTHROPIC_VERTEX_BASE_URL`, or `ANTHROPIC_BEDROCK_BASE_URL`. Off by default on Foundry and [gateway](/en/llm-gateway) connections                                                         |
 | `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY`            | Set to `1` to populate the `/model` picker from your gateway's `/v1/models` endpoint when `ANTHROPIC_BASE_URL` points at an Anthropic-compatible gateway such as LiteLLM, Kong, or an internal proxy. Off by default because gateways backed by a shared API key would otherwise show every user every model the key can access. Discovered models are still filtered by the [`availableModels`](/en/settings#available-settings) allowlist                                                                                                                                                                                                                 |
@@ -203,7 +280,7 @@ Claude Code supports the following environment variables to control its behavior
 | `DISABLE_INTERLEAVED_THINKING`                          | Set to `1` to prevent sending the interleaved-thinking beta header. Useful when your LLM gateway or provider does not support [interleaved thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking#interleaved-thinking)                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `DISABLE_LOGIN_COMMAND`                                 | Set to `1` to hide the `/login` command. Useful when authentication is handled externally via API keys or `apiKeyHelper`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `DISABLE_LOGOUT_COMMAND`                                | Set to `1` to hide the `/logout` command                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `DISABLE_PROMPT_CACHING`                                | Set to `1` to disable prompt caching for all models (takes precedence over per-model settings)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `DISABLE_PROMPT_CACHING`                                | Set to `1` to disable [prompt caching](/en/prompt-caching#disable-prompt-caching) for all models (takes precedence over per-model settings)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `DISABLE_PROMPT_CACHING_HAIKU`                          | Set to `1` to disable prompt caching for Haiku models                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `DISABLE_PROMPT_CACHING_OPUS`                           | Set to `1` to disable prompt caching for Opus models                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `DISABLE_PROMPT_CACHING_SONNET`                         | Set to `1` to disable prompt caching for Sonnet models                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -212,7 +289,7 @@ Claude Code supports the following environment variables to control its behavior
 | `DISABLE_UPGRADE_COMMAND`                               | Set to `1` to hide the `/upgrade` command                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `DO_NOT_TRACK`                                          | Set to `1` to opt out of telemetry. Equivalent to setting `DISABLE_TELEMETRY`. Honored as the [standard cross-tool convention](https://consoledonottrack.com/)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `ENABLE_CLAUDEAI_MCP_SERVERS`                           | Set to `false` to disable [claude.ai MCP servers](/en/mcp#use-mcp-servers-from-claude-ai) in Claude Code. Enabled by default for logged-in users                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `ENABLE_PROMPT_CACHING_1H`                              | Set to `1` to request a 1-hour prompt cache TTL instead of the default 5 minutes. Intended for API key, [Bedrock](/en/amazon-bedrock), [Vertex](/en/google-vertex-ai), [Foundry](/en/microsoft-foundry), and [Claude Platform on AWS](/en/claude-platform-on-aws) users. Subscription users receive 1-hour TTL automatically. 1-hour cache writes are billed at a higher rate                                                                                                                                                                                                                                                                               |
+| `ENABLE_PROMPT_CACHING_1H`                              | Set to `1` to request a 1-hour [prompt cache TTL](/en/prompt-caching#cache-lifetime) instead of the default 5 minutes. Intended for API key, [Bedrock](/en/amazon-bedrock), [Vertex](/en/google-vertex-ai), [Foundry](/en/microsoft-foundry), and [Claude Platform on AWS](/en/claude-platform-on-aws) users. Subscription users within included usage receive 1-hour TTL automatically. 1-hour cache writes are billed at a higher rate                                                                                                                                                                                                                    |
 | `ENABLE_PROMPT_CACHING_1H_BEDROCK`                      | Deprecated. Use `ENABLE_PROMPT_CACHING_1H` instead                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `ENABLE_TOOL_SEARCH`                                    | Controls [MCP tool search](/en/mcp#scale-with-mcp-tool-search). Unset: all MCP tools deferred by default, but loaded upfront on Vertex AI or when `ANTHROPIC_BASE_URL` points to a non-first-party host. Values: `true` (always defer and send the beta header, requests fail on Vertex AI models earlier than Sonnet 4.5 or Opus 4.5, or on proxies that do not support `tool_reference`), `auto` (threshold mode: load upfront if tools fit within 10% of context), `auto:N` (custom threshold, e.g., `auto:5` for 5%), `false` (load all upfront)                                                                                                        |
 | `FALLBACK_FOR_ALL_PRIMARY_MODELS`                       | Set to any non-empty value to trigger fallback to [`--fallback-model`](/en/cli-reference#cli-flags) after repeated overload errors on any primary model. By default, only Opus models trigger the fallback                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -260,7 +337,7 @@ Standard OpenTelemetry exporter variables (`OTEL_METRICS_EXPORTER`, `OTEL_LOGS_E
 
 ## See also
 
-* [Settings](/en/settings): configure environment variables in `settings.json` so they apply to every session
+* [Settings](/en/settings): all `settings.json` configuration, including the `env` key
 * [CLI reference](/en/cli-reference): launch-time flags
 * [Network configuration](/en/network-config): proxy and TLS setup
 * [Monitoring](/en/monitoring-usage): OpenTelemetry configuration

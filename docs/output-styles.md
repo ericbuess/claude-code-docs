@@ -36,7 +36,7 @@ To set a style without the menu, edit the `outputStyle` field directly in a sett
 }
 ```
 
-Because the output style is set in the system prompt at session start, changes take effect the next time you start a new session. This keeps the system prompt stable throughout a conversation so prompt caching can reduce latency and cost.
+Output style is part of the system prompt, which Claude Code reads once at session start. Changes take effect after `/clear` or a new session. See [How Claude Code uses prompt caching](/en/prompt-caching#changing-output-style) for what an output style change does to the cache.
 
 ## Create a custom output style
 
@@ -72,7 +72,7 @@ A custom output style is a Markdown file: frontmatter for metadata, then the ins
   </Step>
 
   <Step title="Switch to your style">
-    Run `/config` and select your style under **Output style**. It takes effect the next time you start a session.
+    Run `/config` and select your style under **Output style**. It takes effect after `/clear` or the next time you start a session.
   </Step>
 </Steps>
 

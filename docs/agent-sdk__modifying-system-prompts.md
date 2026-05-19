@@ -136,7 +136,7 @@ Once created, activate output styles via:
 
 * **CLI**: run `/config` and select an output style
 * **Settings**: set `outputStyle` in `.claude/settings.local.json`
-* **TypeScript SDK**: set `options.outputStyle` to the style's name
+* **TypeScript SDK**: set `outputStyle` inside the inline `settings` object passed to `query()`, or point `settings` at a settings file that sets it. `outputStyle` is not a top-level `Options` field
 
 The Python SDK does not have an option to select an output style programmatically. For code-only deployments where you can't write to `.claude/settings.local.json`, use `append` or a custom prompt string instead.
 
@@ -429,6 +429,6 @@ The example below assumes a Code Reviewer output style is already active. The `a
 
 * [Output styles](/en/output-styles): create, manage, and share output styles for the CLI, including the file format and storage locations
 * [How Claude remembers your project](/en/memory): what to put in CLAUDE.md, where to place it, and how to write effective project instructions
-* [TypeScript SDK reference](/en/agent-sdk/typescript): the full `Options` type, including `systemPrompt`, `settingSources`, and `outputStyle`
+* [TypeScript SDK reference](/en/agent-sdk/typescript): the full `Options` type, including `systemPrompt`, `settingSources`, and `settings`
 * [Python SDK reference](/en/agent-sdk/python): the full `ClaudeAgentOptions` type, including `system_prompt` and `setting_sources`
 * [Settings](/en/settings): the `settings.json` reference, including where output styles and other configuration are stored

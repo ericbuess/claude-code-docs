@@ -292,6 +292,8 @@ The `current_usage` object contains:
 * `cache_creation_input_tokens`: tokens written to cache
 * `cache_read_input_tokens`: tokens read from cache
 
+For what the cache fields mean and how they're billed, see [check cache performance](/en/prompt-caching#check-cache-performance).
+
 The `used_percentage` field is calculated from input tokens only: `input_tokens + cache_creation_input_tokens + cache_read_input_tokens`. It does not include `output_tokens`.
 
 If you calculate context percentage manually from `current_usage`, use the same input-only formula to match `used_percentage`.

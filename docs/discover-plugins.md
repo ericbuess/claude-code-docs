@@ -39,12 +39,7 @@ To install a plugin from the official marketplace, use `/plugin install <name>@c
 If Claude Code reports that the plugin is not found in any marketplace, your marketplace is either missing or outdated. Run `/plugin marketplace update claude-plugins-official` to refresh it, or `/plugin marketplace add anthropics/claude-plugins-official` if you haven't added it before. Then retry the install.
 
 <Note>
-  The official marketplace is maintained by Anthropic. To submit a plugin to the official marketplace, use one of the in-app submission forms:
-
-  * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
-  * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
-
-  To distribute plugins independently, [create your own marketplace](/en/plugin-marketplaces) and share it with users.
+  The official marketplace is curated by Anthropic, and inclusion is at Anthropic's discretion. The in-app submission forms add plugins to the [community marketplace](#community-marketplace), not the official one. To distribute plugins independently, [create your own marketplace](/en/plugin-marketplaces) and share it with users.
 </Note>
 
 The official marketplace includes several categories of plugins:
@@ -110,6 +105,22 @@ Customize how Claude responds:
 
 * **explanatory-output-style**: Educational insights about implementation choices
 * **learning-output-style**: Interactive learning mode for skill building
+
+## Community marketplace
+
+The community marketplace at [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) hosts third-party plugins that have passed Anthropic's automated validation and safety screening. Each plugin is pinned to a specific commit SHA in the catalog. Unlike the official marketplace, you add it manually:
+
+```shell theme={null}
+/plugin marketplace add anthropics/claude-plugins-community
+```
+
+Then install plugins from it using the `claude-community` marketplace name:
+
+```shell theme={null}
+/plugin install <plugin-name>@claude-community
+```
+
+To submit your own plugin to the community marketplace, see [Submit your plugin to the community marketplace](/en/plugins#submit-your-plugin-to-the-community-marketplace) in the create-plugins guide.
 
 ## Try it: add the demo marketplace
 

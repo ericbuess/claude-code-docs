@@ -292,10 +292,10 @@ Pass `--name` to set the session's display name in agent view instead of the aut
 claude --bg --name "flaky-test-fix" "investigate the flaky SettingsChangeDetector test"
 ```
 
-After backgrounding, Claude prints the session's short ID and the commands for managing it:
+After backgrounding, Claude prints the session's short ID and the commands for managing it. When you pass `--name`, the name appears after the short ID:
 
 ```text theme={null}
-backgrounded · 7c5dcf5d
+backgrounded · 7c5dcf5d · flaky-test-fix
   claude agents             list sessions
   claude attach 7c5dcf5d    open in this terminal
   claude logs 7c5dcf5d      show recent output
@@ -416,7 +416,7 @@ Background sessions are hosted by a per-user supervisor process, separate from y
 
 The supervisor and its sessions authenticate with the same credentials as your interactive sessions and make no additional network connections beyond the model API.
 
-Each background session is its own Claude Code process, managed by the supervisor rather than tied to your terminal. A session that's actively working, waiting for your input, or has a terminal attached keeps its process running.
+Each background session is its own Claude Code process, managed by the supervisor rather than tied to your terminal. A session that's actively working, waiting for your input, or has a terminal attached keeps its process running. A running background shell command, subagent, workflow, or monitor counts as active work, so a long-running process such as a dev server keeps the session alive.
 
 Once a session finishes and sits unattached for about an hour, the supervisor stops its process to free resources. The transcript and state stay on disk, and the next time you attach, peek, or reply, the supervisor starts a fresh process from where it left off. When every session has finished and no terminal is connected, the supervisor itself exits and starts again the next time you need it.
 

@@ -1611,4 +1611,5 @@ For deeper coverage of the features shown in the timeline, see these pages:
 * [Store instructions and memories](/en/memory): CLAUDE.md hierarchy and auto memory
 * [Subagents](/en/sub-agents): delegate research to a separate context window
 * [Best practices](/en/best-practices): managing context as your primary constraint
+* [Prompt caching](/en/prompt-caching): which actions invalidate the cached prefix
 * [Reduce token usage](/en/costs#reduce-token-usage): strategies for keeping context usage low
