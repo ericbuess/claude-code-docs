@@ -181,7 +181,7 @@ Within a group:
 
 To remove a session from the list, press `Ctrl+X` to stop it and `Ctrl+X` again within two seconds to delete it. Pressing `Ctrl+X` on a group header deletes every session in that group after confirmation.
 
-Deleting removes the session from agent view and removes its conversation transcript. If Claude [created a worktree](#how-file-edits-are-isolated) for the session, deleting removes that worktree too, including any uncommitted changes in it, so push or commit work you want to keep first. A worktree you created yourself and started the session inside is left in place.
+Deleting removes the session from agent view. If Claude [created a worktree](#how-file-edits-are-isolated) for the session, deleting removes that worktree too, including any uncommitted changes in it, so push or commit work you want to keep first. A worktree you created yourself and started the session inside is left in place. The conversation transcript stays on your local machine and remains available through `claude --resume`.
 
 Older completed sessions fold into a `… N more` row to keep the list short. Failures and sessions with an open pull request always stay visible.
 
@@ -268,6 +268,8 @@ Configuration flags from the original launch carry through to the backgrounded s
 * `--fallback-model`
 * `--allow-dangerously-skip-permissions`
 
+Directories you added during the session with [`/add-dir`](/en/permissions#additional-directories-grant-file-access-not-configuration) also carry through.
+
 Carrying `--allow-dangerously-skip-permissions` through keeps `bypassPermissions` reachable in the backgrounded session, but it does not grant anything new. The mode still requires the same one-time interactive acceptance described in [Permission mode, model, and effort](#permission-mode-model-and-effort) before any session can use it.
 
 ### From your shell
@@ -307,7 +309,7 @@ Every background session, whether started from agent view, `/bg`, or `claude --b
 Claude skips the worktree when:
 
 * The session is already inside a linked git worktree, whether Claude created it under `.claude/worktrees/` or you created it with `git worktree add` somewhere else
-* The working directory isn't a git repository
+* The working directory isn't a git repository and no [`WorktreeCreate` hook](/en/hooks#worktreecreate) is configured
 * The write is outside the working directory
 
 To turn off worktree isolation for a repository where git worktrees are impractical, set [`worktree.bgIsolation`](/en/settings#worktree-settings) to `"none"`. Background sessions then edit your working copy directly without moving into a worktree first. Add the setting to the project's `.claude/settings.json`:
@@ -324,7 +326,7 @@ To turn off worktree isolation for a repository where git worktrees are impracti
   The `worktree.bgIsolation` setting requires Claude Code v2.1.143 or later.
 </Note>
 
-Outside a git repository, sessions write to the working directory directly and aren't isolated from each other, so avoid dispatching parallel sessions that edit the same files.
+Outside a git repository, sessions write to the working directory directly and aren't isolated from each other, so avoid dispatching parallel sessions that edit the same files. If you use a different version control system, configure a [`WorktreeCreate` hook](/en/worktrees#non-git-version-control) and Claude isolates edits the same way it does for git.
 
 Deleting a session in agent view (`Ctrl+X` twice) removes a worktree Claude created for it, including any uncommitted changes, so merge or push the changes you want to keep first. Deleting from the shell with [`claude rm`](#manage-sessions-from-the-shell) keeps a worktree that has uncommitted changes and prints its path so you can clean it up yourself. A worktree you created yourself and started the session inside is left in place either way.
 
@@ -334,7 +336,7 @@ To make a subagent always run in its own worktree regardless of how it was start
 
 ### Set the model
 
-The model name shown in the agent view header is the dispatch default. New sessions you start from the input use this model, which is the same setting [`/model`](/en/model-config) controls in any session. To override it for the whole agent view session, pass `--model` when opening agent view. See [Permission mode, model, and effort](#permission-mode-model-and-effort).
+The model name shown in the agent view header is the dispatch default. New sessions you start from the input use this model, which comes from the [`model` setting](/en/settings#available-settings) in your user settings. Set it by pressing `d` on a model in the [`/model` picker](/en/model-config), or edit the setting directly. To override it for the whole agent view session, pass `--model` when opening agent view. See [Permission mode, model, and effort](#permission-mode-model-and-effort).
 
 Each background session can run on a different model. To override it for one session:
 
@@ -392,17 +394,17 @@ claude agents --settings ./ci-settings.json --add-dir ../shared-lib
 
 Every background session has a short ID you can use from the shell. The ID is printed when you start a session with `claude --bg`, and each session's ID is its directory name under `~/.claude/jobs/`. These commands are useful for scripting or when you don't want to open agent view.
 
-| Command                      | Purpose                                                                                                                                                                                                                             |
-| :--------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `claude agents`              | Open agent view                                                                                                                                                                                                                     |
-| `claude agents --cwd <path>` | Open agent view scoped to sessions started under `<path>`                                                                                                                                                                           |
-| `claude attach <id>`         | Attach to a session in this terminal                                                                                                                                                                                                |
-| `claude logs <id>`           | Print the session's recent output                                                                                                                                                                                                   |
-| `claude stop <id>`           | Stop a session. Also accepts `claude kill`                                                                                                                                                                                          |
-| `claude respawn <id>`        | Restart a session, running or stopped, with its conversation intact, e.g. to pick up an updated Claude Code binary                                                                                                                  |
-| `claude respawn --all`       | Restart every running session, e.g. to move all sessions onto an updated Claude Code binary at once                                                                                                                                 |
-| `claude rm <id>`             | Remove a session and its transcript. Removes a worktree Claude created for the session if it has no uncommitted changes; otherwise prints the worktree path so you can clean it up. Leaves a worktree you created yourself in place |
-| `claude daemon status`       | Print the [supervisor's](#the-supervisor-process) state, version, socket directory, and worker count                                                                                                                                |
+| Command                      | Purpose                                                                                                                                                                                                                                                                                                                                 |
+| :--------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `claude agents`              | Open agent view                                                                                                                                                                                                                                                                                                                         |
+| `claude agents --cwd <path>` | Open agent view scoped to sessions started under `<path>`                                                                                                                                                                                                                                                                               |
+| `claude attach <id>`         | Attach to a session in this terminal                                                                                                                                                                                                                                                                                                    |
+| `claude logs <id>`           | Print the session's recent output                                                                                                                                                                                                                                                                                                       |
+| `claude stop <id>`           | Stop a session. Also accepts `claude kill`                                                                                                                                                                                                                                                                                              |
+| `claude respawn <id>`        | Restart a session, running or stopped, with its conversation intact, e.g. to pick up an updated Claude Code binary                                                                                                                                                                                                                      |
+| `claude respawn --all`       | Restart every running session, e.g. to move all sessions onto an updated Claude Code binary at once                                                                                                                                                                                                                                     |
+| `claude rm <id>`             | Remove a session from the list. Removes a worktree Claude created for the session if it has no uncommitted changes; otherwise prints the worktree path so you can clean it up. Leaves a worktree you created yourself in place. The conversation transcript stays on your local machine and remains available through `claude --resume` |
+| `claude daemon status`       | Print the [supervisor's](#the-supervisor-process) state, version, socket directory, and worker count                                                                                                                                                                                                                                    |
 
 ## How background sessions are hosted
 

@@ -221,13 +221,13 @@ function getSessionMessages(
 
 #### Return type: `SessionMessage`
 
-| Property             | Type                    | Description                             |
-| :------------------- | :---------------------- | :-------------------------------------- |
-| `type`               | `"user" \| "assistant"` | Message role                            |
-| `uuid`               | `string`                | Unique message identifier               |
-| `session_id`         | `string`                | Session this message belongs to         |
-| `message`            | `unknown`               | Raw message payload from the transcript |
-| `parent_tool_use_id` | `null`                  | Reserved                                |
+| Property             | Type                    | Description                                                                                                                     |
+| :------------------- | :---------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| `type`               | `"user" \| "assistant"` | Message role                                                                                                                    |
+| `uuid`               | `string`                | Unique message identifier                                                                                                       |
+| `session_id`         | `string`                | Session this message belongs to                                                                                                 |
+| `message`            | `unknown`               | Raw message payload from the transcript                                                                                         |
+| `parent_tool_use_id` | `string \| null`        | For subagent messages, the `tool_use_id` of the spawning `Agent` tool call. `null` for main-session messages and older sessions |
 
 #### Example
 
@@ -938,7 +938,7 @@ type SDKAssistantMessage = {
 
 The `message` field is a [`BetaMessage`](https://platform.claude.com/docs/en/api/messages/create) from the Anthropic SDK. It includes fields like `id`, `content`, `model`, `stop_reason`, and `usage`.
 
-`SDKAssistantMessageError` is one of: `'authentication_failed'`, `'oauth_org_not_allowed'`, `'billing_error'`, `'rate_limit'`, `'invalid_request'`, `'server_error'`, `'max_output_tokens'`, or `'unknown'`.
+`SDKAssistantMessageError` is one of: `'authentication_failed'`, `'oauth_org_not_allowed'`, `'billing_error'`, `'rate_limit'`, `'invalid_request'`, `'model_not_found'`, `'server_error'`, `'max_output_tokens'`, or `'unknown'`. `'model_not_found'` means the selected model doesn't exist or isn't available to your account or deployment.
 
 ### `SDKUserMessage`
 
@@ -992,6 +992,7 @@ type SDKResultMessage =
       duration_ms: number;
       duration_api_ms: number;
       is_error: boolean;
+      api_error_status?: number | null;
       num_turns: number;
       result: string;
       stop_reason: string | null;
@@ -1025,6 +1026,8 @@ type SDKResultMessage =
       origin?: SDKMessageOrigin;
     };
 ```
+
+The `api_error_status` field carries the HTTP status code of the API error that terminated the conversation. It is absent or `null` when the turn ended without an API error.
 
 The `origin` field forwards the [`SDKMessageOrigin`](#sdkmessageorigin) of the user message that triggered this result. When a background task finishes and the SDK injects a synthetic follow-up turn, the resulting `SDKResultMessage` carries `origin: { kind: "task-notification" }`. Check this field to distinguish results that answer your prompt from results emitted for background-task follow-ups, so you can route or suppress the latter. The field is absent for results emitted before any user turn, such as startup errors.
 

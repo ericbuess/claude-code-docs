@@ -138,7 +138,7 @@ Anthropic also maintains a [demo plugins marketplace](https://github.com/anthrop
   </Step>
 
   <Step title="Install a plugin">
-    Select a plugin to view its details. {/* min-version: 2.1.143 */}On Claude Code v2.1.143 and later, the details pane includes a **Context cost** estimate so you can see how many tokens the plugin will add to your [context window](/en/features-overview#understand-context-costs) every turn before you install it.
+    Select a plugin to view its details. {/* min-version: 2.1.143 */}On Claude Code v2.1.143 and later, the details pane includes a **Context cost** estimate so you can see how many tokens the plugin will add to your [context window](/en/features-overview#understand-context-costs) every turn before you install it. {/* min-version: 2.1.144 */}On v2.1.144 and later, the pane also shows the plugin's **Last updated** date.
 
     Choose an installation scope:
 

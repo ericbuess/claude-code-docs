@@ -25,7 +25,7 @@
 
   <p className="digest-feature-try">Cycle to auto with Shift+Tab, or set it as your default:</p>
 
-  ```json .claude/settings.json {3} theme={null}
+  ```json ~/.claude/settings.json {3} theme={null}
   {
     "permissions": {
       "defaultMode": "auto"

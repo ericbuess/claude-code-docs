@@ -261,10 +261,11 @@ Actions available in the `DiffDialog` context:
 
 Actions available in the `ModelPicker` context:
 
-| Action                       | Default | Description           |
-| :--------------------------- | :------ | :-------------------- |
-| `modelPicker:decreaseEffort` | Left    | Decrease effort level |
-| `modelPicker:increaseEffort` | Right   | Increase effort level |
+| Action                       | Default | Description                                       |
+| :--------------------------- | :------ | :------------------------------------------------ |
+| `modelPicker:decreaseEffort` | Left    | Decrease effort level                             |
+| `modelPicker:increaseEffort` | Right   | Increase effort level                             |
+| `modelPicker:setAsDefault`   | d       | Set highlighted model as default for new sessions |
 
 ### Select actions
 
