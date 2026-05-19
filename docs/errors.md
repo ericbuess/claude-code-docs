@@ -203,8 +203,10 @@ This is [retried automatically](#automatic-retries) before being shown.
 You have hit the rate limit configured for your API key, Amazon Bedrock project, or Google Vertex AI project.
 
 ```text theme={null}
-API Error: Request rejected (429) · this may be a temporary capacity issue
+API Error: Request rejected (429) · this may be a temporary capacity issue. If it persists, check status.claude.com.
 ```
+
+The trailing sentence names where to check service health and varies by provider. Bedrock and Vertex AI configurations name that provider's service status instead of the Anthropic status page.
 
 **What to do:**
 
