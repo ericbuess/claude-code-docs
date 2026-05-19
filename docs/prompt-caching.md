@@ -58,6 +58,7 @@ These actions cause the next request to miss part or all of the cache. You see a
 
 * [Switching models](#switching-models)
 * [Connecting or disconnecting an MCP server](#connecting-or-disconnecting-an-mcp-server)
+* [Denying an entire tool](#denying-an-entire-tool)
 * [Compacting the conversation](#compacting-the-conversation)
 * [Upgrading Claude Code](#upgrading-claude-code)
 
@@ -74,6 +75,12 @@ Tool definitions sit in the system prompt layer, so the cache invalidates when t
 Editing your MCP config does not by itself change the cache. The new config takes effect only after a restart, which is when the server connects or disconnects.
 
 [MCP tool search](/en/mcp#scale-with-mcp-tool-search) reduces how much each tool contributes to the prefix by deferring full tool definitions, but the set of tool names still has to stay stable for the cache to remain valid.
+
+### Denying an entire tool
+
+Adding a bare tool name like `Bash` or `WebFetch` as a [deny rule](/en/permissions#manage-permissions) removes that tool from Claude's context entirely. Tool definitions sit in the system prompt layer, so adding or removing one of these rules mid-session invalidates the cache the same way an MCP server connecting or disconnecting does. The change takes effect on the next turn whether you add it through `/permissions` or by [editing a settings file directly](/en/settings#when-edits-take-effect).
+
+Only a bare tool name, or the equivalent `Bash(*)` form, has this effect. Scoped deny rules like `Bash(rm *)`, and all allow and ask rules, don't change which tools Claude sees. Claude Code checks them when Claude attempts a call, leaving the prefix intact.
 
 ### Compacting the conversation
 
