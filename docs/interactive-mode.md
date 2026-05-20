@@ -349,9 +349,8 @@ When working on a branch with an open pull request, Claude Code displays a click
 * Yellow: pending review
 * Red: changes requested
 * Gray: draft
-* Purple: merged
 
-`Cmd+click` (Mac) or `Ctrl+click` (Windows/Linux) the link to open the pull request in your browser. The status updates automatically every 60 seconds.
+The badge disappears once the pull request merges or closes. `Cmd+click` (Mac) or `Ctrl+click` (Windows/Linux) the link to open the pull request in your browser. The status refreshes every 60 seconds, and immediately after a `gh pr` or `git push` command runs in the session.
 
 <Note>
   PR status requires the `gh` CLI to be installed and authenticated (`gh auth login`).

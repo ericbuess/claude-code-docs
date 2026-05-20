@@ -198,15 +198,17 @@ Each retry attempt is also recorded as a `gen_ai.request.attempt` span event wit
 
 **`claude_code.tool`**
 
-| Attribute       | Description                                                 | Gated by                |
-| --------------- | ----------------------------------------------------------- | ----------------------- |
-| `tool_name`     | Tool name                                                   |                         |
-| `duration_ms`   | Wall-clock duration including permission wait and execution |                         |
-| `result_tokens` | Approximate token size of the tool result                   |                         |
-| `file_path`     | Target file path for Read, Edit, and Write tools            | `OTEL_LOG_TOOL_DETAILS` |
-| `full_command`  | Command string for the Bash tool                            | `OTEL_LOG_TOOL_DETAILS` |
-| `skill_name`    | Skill name for the Skill tool                               | `OTEL_LOG_TOOL_DETAILS` |
-| `subagent_type` | Subagent type for the Task tool                             | `OTEL_LOG_TOOL_DETAILS` |
+| Attribute         | Description                                                                                                        | Gated by                |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| `tool_name`       | Tool name                                                                                                          |                         |
+| `duration_ms`     | Wall-clock duration including permission wait and execution                                                        |                         |
+| `result_tokens`   | Approximate token size of the tool result                                                                          |                         |
+| `agent_id`        | Identifier of the subagent or teammate that ran the tool. Absent on the main session                               |                         |
+| `parent_agent_id` | Identifier of the agent that spawned this one. Absent for the main session and for agents spawned directly from it |                         |
+| `file_path`       | Target file path for Read, Edit, and Write tools                                                                   | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`    | Command string for the Bash tool                                                                                   | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`      | Skill name for the Skill tool                                                                                      | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type`   | Subagent type for the Task tool                                                                                    | `OTEL_LOG_TOOL_DETAILS` |
 
 When `OTEL_LOG_TOOL_CONTENT=1`, this span also records a `tool.output` span event whose attributes contain the tool's input and output bodies, truncated at 60 KB per attribute.
 

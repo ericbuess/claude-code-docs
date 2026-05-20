@@ -409,6 +409,31 @@ This name is used for namespacing components. For example, in the UI, the
 agent `agent-creator` for the plugin with name `plugin-dev` will appear as
 `plugin-dev:agent-creator`.
 
+### Unrecognized fields
+
+Claude Code ignores top-level fields it does not recognize. You can keep
+metadata from another ecosystem in `plugin.json` and the plugin still loads.
+This makes it practical to maintain one manifest that doubles as a VS Code or
+Cursor extension manifest, an npm `package.json`, or an MCPB/DXT bundle
+manifest.
+
+`claude plugin validate` reports unrecognized fields as warnings, not errors.
+If a field is one or two characters off from a recognized one, the warning
+suggests the likely intended name. A plugin with only unrecognized-field
+warnings still passes validation and loads at runtime.
+
+Fields with the wrong type still fail. For example, a `keywords` value that is
+a string instead of an array is a load error, and `claude plugin validate`
+reports it as one.
+
+Pass `--strict` to treat warnings as errors. Use it in CI to catch a misspelled
+field name or a field left over from another tool's manifest before publishing,
+even though the plugin would load at runtime.
+
+```bash theme={null}
+claude plugin validate ./my-plugin --strict
+```
+
 ### Metadata fields
 
 | Field         | Type   | Description                                                                                                                                                                                                                                                                                                                                      | Example                                                           |

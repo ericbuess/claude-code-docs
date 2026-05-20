@@ -247,7 +247,7 @@ The PowerShell tool has the following known limitations during the preview:
 
 The Read tool takes a file path and returns the contents with line numbers. Claude is instructed to always pass absolute paths.
 
-By default, Read returns the file from the start. Files over a size threshold return an error rather than partial content, prompting Claude to retry with `offset` and `limit` to read a specific range.
+By default, Read returns the file from the start. When a whole-file read exceeds the token limit, Read returns the first page with a `PARTIAL view` notice that tells Claude how much of the file it received and how to read more with `offset` and `limit`. A read that passes an explicit `offset` or `limit` and still exceeds the token limit returns an error.
 
 Read handles several file types beyond plain text:
 

@@ -18,6 +18,36 @@ npm install @anthropic-ai/claude-agent-sdk
   The SDK bundles a native Claude Code binary for your platform as an optional dependency such as `@anthropic-ai/claude-agent-sdk-darwin-arm64`. You don't need to install Claude Code separately. If your package manager skips optional dependencies, the SDK throws `Native CLI binary for <platform> not found`; set [`pathToClaudeCodeExecutable`](#options) to a separately installed `claude` binary instead.
 </Note>
 
+### Compile to a single executable
+
+When you compile your application into a single-file executable with `bun build --compile`, the SDK cannot resolve the bundled CLI binary at runtime. `require.resolve` does not work inside the compiled executable's `$bunfs` virtual filesystem, so the SDK throws `Native CLI binary for <platform> not found`.
+
+To work around this, embed the platform binary as a file asset, extract it to a real path at startup with `extractFromBunfs()`, and pass that path to [`pathToClaudeCodeExecutable`](#options).
+
+The `extractFromBunfs()` helper requires `@anthropic-ai/claude-agent-sdk` v0.3.144 or later. The example below builds for macOS on Apple Silicon:
+
+```typescript theme={null}
+import binPath from "@anthropic-ai/claude-agent-sdk-darwin-arm64/claude" with { type: "file" };
+import { extractFromBunfs } from "@anthropic-ai/claude-agent-sdk/extract";
+import { query } from "@anthropic-ai/claude-agent-sdk";
+
+const cliPath = extractFromBunfs(binPath);
+
+for await (const message of query({
+  prompt: "Hello",
+  options: { pathToClaudeCodeExecutable: cliPath },
+})) {
+  console.log(message);
+}
+```
+
+`extractFromBunfs()` copies the embedded binary out of the compiled executable's virtual filesystem to a per-user temp directory and returns the real path. Outside a compiled executable it returns the input path unchanged, so the same code runs in development without modification.
+
+Each compiled executable embeds a single platform's binary. Match the platform package in the import to your `--target`:
+
+* To cross-compile, install the non-matching platform package, for example `npm install @anthropic-ai/claude-agent-sdk-linux-x64 --force`.
+* On Windows, the binary subpath is `claude.exe`, for example `@anthropic-ai/claude-agent-sdk-win32-x64/claude.exe`.
+
 ## Functions
 
 ### `query()`
@@ -1399,6 +1429,8 @@ type StopHookInput = BaseHookInput & {
   hook_event_name: "Stop";
   stop_hook_active: boolean;
   last_assistant_message?: string;
+  background_tasks?: BackgroundTaskSummary[];
+  session_crons?: SessionCronSummary[];
 };
 ```
 
@@ -1422,6 +1454,27 @@ type SubagentStopHookInput = BaseHookInput & {
   agent_transcript_path: string;
   agent_type: string;
   last_assistant_message?: string;
+  background_tasks?: BackgroundTaskSummary[];
+  session_crons?: SessionCronSummary[];
+};
+
+type BackgroundTaskSummary = {
+  id: string;
+  type: string;
+  status: string;
+  description: string;
+  command?: string;
+  agent_type?: string;
+  server?: string;
+  tool?: string;
+  name?: string;
+};
+
+type SessionCronSummary = {
+  id: string;
+  schedule: string;
+  recurring: boolean;
+  prompt: string;
 };
 ```
 

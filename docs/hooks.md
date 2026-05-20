@@ -1751,6 +1751,8 @@ Runs when a Claude Code subagent has finished responding. Matches on agent type,
 
 In addition to the [common input fields](#common-input-fields), SubagentStop hooks receive `stop_hook_active`, `agent_id`, `agent_type`, `agent_transcript_path`, and `last_assistant_message`. The `agent_type` field is the value used for matcher filtering. The `transcript_path` is the main session's transcript, while `agent_transcript_path` is the subagent's own transcript stored in a nested `subagents/` folder. The `last_assistant_message` field contains the text content of the subagent's final response, so hooks can access it without parsing the transcript file.
 
+SubagentStop hooks also receive the `background_tasks` and `session_crons` arrays described under [Stop input](#stop-input), available in Claude Code v2.1.145 or later. Both arrays are scoped to the parent session, not the subagent.
+
 ```json theme={null}
 {
   "session_id": "abc123",
@@ -1762,7 +1764,9 @@ In addition to the [common input fields](#common-input-fields), SubagentStop hoo
   "agent_id": "def456",
   "agent_type": "Explore",
   "agent_transcript_path": "~/.claude/projects/.../abc123/subagents/agent-def456.jsonl",
-  "last_assistant_message": "Analysis complete. Found 3 potential issues..."
+  "last_assistant_message": "Analysis complete. Found 3 potential issues...",
+  "background_tasks": [],
+  "session_crons": []
 }
 ```
 
@@ -1891,9 +1895,36 @@ the stoppage occurred due to a user interrupt. API errors fire
 
 #### Stop input
 
-In addition to the [common input fields](#common-input-fields), Stop hooks receive `stop_hook_active` and `last_assistant_message`. The `stop_hook_active` field is `true` when Claude Code is already continuing as a result of a stop hook. Check this value or process the transcript to avoid blocking on a condition that will never resolve. Claude Code overrides the hook and ends the turn after 8 consecutive blocks.
+In addition to the [common input fields](#common-input-fields), Stop hooks receive `stop_hook_active`, `last_assistant_message`, `background_tasks`, and `session_crons`. The `stop_hook_active` field is `true` when Claude Code is already continuing as a result of a stop hook. Check this value or process the transcript to avoid blocking on a condition that will never resolve. Claude Code overrides the hook and ends the turn after 8 consecutive blocks.
 
 The `last_assistant_message` field contains the text content of Claude's final response, so hooks can access it without parsing the transcript file.
+
+The `background_tasks` and `session_crons` arrays, available in Claude Code v2.1.145 or later, let hooks distinguish "session is done" from "session is paused waiting for background work to wake it back up". Both arrays are present when the task registry is reachable and are empty when nothing is in flight or scheduled.
+
+Each entry in `background_tasks` describes one in-flight task and uses these fields:
+
+| Field         | Description                                                                                                                                                                                                                                          |
+| :------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`          | Task identifier                                                                                                                                                                                                                                      |
+| `type`        | Friendly task-type label such as `shell`, `subagent`, `monitor`, `workflow`, `teammate`, `cloud session`, or `MCP task`. Each label identifies which Claude Code feature created the task. Falls back to the raw discriminant for unrecognized types |
+| `status`      | Current task status                                                                                                                                                                                                                                  |
+| `description` | Free-text description, capped at 1000 characters with an in-string `… [+N chars]` marker when clipped                                                                                                                                                |
+| `command`     | Shell command line, capped at 1000 characters. Present only for `shell` tasks                                                                                                                                                                        |
+| `agent_type`  | Subagent type name. Present only for `subagent` tasks                                                                                                                                                                                                |
+| `server`      | MCP server name. Present only for `monitor` and `MCP task` tasks                                                                                                                                                                                     |
+| `tool`        | MCP tool name. Present only for `monitor` and `MCP task` tasks                                                                                                                                                                                       |
+| `name`        | Workflow name. Present only for `workflow` tasks                                                                                                                                                                                                     |
+
+Each entry in `session_crons` describes one session-scoped scheduled wakeup, sourced from `CronCreate` and `/loop`:
+
+| Field       | Description                                                                                                          |
+| :---------- | :------------------------------------------------------------------------------------------------------------------- |
+| `id`        | Cron task identifier                                                                                                 |
+| `schedule`  | Cron expression, for example `0 9 * * 1-5`                                                                           |
+| `recurring` | `false` for one-shot wakeups whose schedule encodes a single fire time, `true` for tasks that re-fire on every match |
+| `prompt`    | Prompt submitted when the cron fires, capped at 1000 characters with the same `… [+N chars]` marker                  |
+
+This example shows a Stop input with one in-flight shell task and one recurring cron:
 
 ```json theme={null}
 {
@@ -1903,7 +1934,24 @@ The `last_assistant_message` field contains the text content of Claude's final r
   "permission_mode": "default",
   "hook_event_name": "Stop",
   "stop_hook_active": true,
-  "last_assistant_message": "I've completed the refactoring. Here's a summary..."
+  "last_assistant_message": "I've completed the refactoring. Here's a summary...",
+  "background_tasks": [
+    {
+      "id": "task-001",
+      "type": "shell",
+      "status": "running",
+      "description": "tail logs",
+      "command": "tail -f /var/log/syslog"
+    }
+  ],
+  "session_crons": [
+    {
+      "id": "cron-001",
+      "schedule": "0 9 * * 1-5",
+      "recurring": true,
+      "prompt": "check the build"
+    }
+  ]
 }
 ```
 
