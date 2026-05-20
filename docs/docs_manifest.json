@@ -237,8 +237,8 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "88ed0249e7d9834eb3a2e5f18ec6665bca1c31162e5e7eae84ddb5872031714d",
-      "last_updated": "2026-05-19T21:29:15.194539",
+      "hash": "ad474f5040199cb7a6acae2518132537f93e8c470b500b9f46bb6a1ab0465cfc",
+      "last_updated": "2026-05-20T00:26:11.433012",
       "source": "claude-code-repository"
     },
     "channels.md": {
@@ -616,8 +616,8 @@
     "routines.md": {
       "original_url": "https://code.claude.com/docs/en/routines",
       "original_md_url": "https://code.claude.com/docs/en/routines.md",
-      "hash": "9edc52477468f6bedda15381bc07180ef4bd0a800ecc69b5122369156c78cba9",
-      "last_updated": "2026-05-19T16:04:48.725435"
+      "hash": "27213e9ed746e4bde09615714f53bf8e5478c2d6948ee0bdf4eae1df96f73606",
+      "last_updated": "2026-05-20T00:25:54.915420"
     },
     "sandboxing.md": {
       "original_url": "https://code.claude.com/docs/en/sandboxing",
@@ -807,8 +807,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-05-19T21:29:15.194580",
-    "fetch_duration_seconds": 86.926039,
+    "last_fetch_completed": "2026-05-20T00:26:11.433061",
+    "fetch_duration_seconds": 71.097222,
     "total_pages_discovered": 134,
     "pages_fetched_successfully": 135,
     "pages_failed": 0,
@@ -818,7 +818,7 @@
     "total_files": 134,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-05-19T21:29:15.194597",
+  "last_updated": "2026-05-20T00:26:11.433084",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
