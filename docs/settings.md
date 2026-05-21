@@ -247,6 +247,7 @@ A few keys are read once at session start and apply on the next restart instead:
 | `sshConfigs`                      | SSH connections to show in the [Desktop](/en/desktop#pre-configure-ssh-connections-for-your-team) environment dropdown. Each entry requires `id`, `name`, and `sshHost`; `sshPort`, `sshIdentityFile`, and `startDirectory` are optional. When set in managed settings, connections are read-only for users. Read from managed and user settings only                                                                                                                                                                                                                                  | `[{"id": "dev-vm", "name": "Dev VM", "sshHost": "user@dev.example.com"}]`                                                      |
 | `statusLine`                      | Configure a custom status line to display context. See [`statusLine` documentation](/en/statusline)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `{"type": "command", "command": "~/.claude/statusline.sh"}`                                                                    |
 | `strictKnownMarketplaces`         | (Managed settings only) Allowlist of plugin marketplace sources. Undefined = no restrictions, empty array = lockdown. Enforced on marketplace add and on plugin install, update, refresh, and auto-update, so a marketplace added before the policy was set cannot be used to fetch plugins. See [Managed marketplace restrictions](/en/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                                                                                                          | `[{ "source": "github", "repo": "acme-corp/plugins" }]`                                                                        |
+| `strictPluginOnlyCustomization`   | (Managed settings only) Block skills, agents, hooks, and MCP servers from user and project sources, so they can only come from plugins or managed settings. `true` locks all four surfaces; an array locks only the named ones. See [`strictPluginOnlyCustomization`](#strictpluginonlycustomization)                                                                                                                                                                                                                                                                                  | `["skills", "hooks"]`                                                                                                          |
 | `syntaxHighlightingDisabled`      | Disable syntax highlighting in diffs, code blocks, and file previews                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | `true`                                                                                                                         |
 | `teammateMode`                    | How [agent team](/en/agent-teams) teammates display: `auto` (picks split panes in tmux or iTerm2, in-process otherwise), `in-process`, or `tmux`. `--teammate-mode` overrides this for one session. See [choose a display mode](/en/agent-teams#choose-a-display-mode)                                                                                                                                                                                                                                                                                                                 | `"in-process"`                                                                                                                 |
 | `terminalProgressBarEnabled`      | Show the terminal progress bar in supported terminals: ConEmu, Ghostty 1.2.0+, and iTerm2 3.6.6+. Default: `true`. Appears in `/config` as **Terminal progress bar**                                                                                                                                                                                                                                                                                                                                                                                                                   | `false`                                                                                                                        |
@@ -962,6 +963,33 @@ With only `strictKnownMarketplaces` set, users can still add the allowed marketp
 * Managed settings have the highest precedence and cannot be overridden
 
 See [Managed marketplace restrictions](/en/plugin-marketplaces#managed-marketplace-restrictions) for user-facing documentation.
+
+#### `strictPluginOnlyCustomization`
+
+**Managed settings only**: blocks skills, agents, hooks, and MCP servers from user and project sources, so they can only come from plugins or managed settings. Combine it with `strictKnownMarketplaces` to control the full customization supply chain: the marketplace allowlist controls which plugins users can install, and this setting blocks everything that doesn't come from a plugin or from managed settings.
+
+<Note>
+  `strictPluginOnlyCustomization` requires Claude Code v2.1.82 or later. Earlier versions ignore the key and keep loading user and project customizations, so the lockdown isn't enforced until clients update.
+</Note>
+
+The value is either `true` to lock all four surfaces, or an array naming the surfaces to lock:
+
+```json theme={null}
+{
+  "strictPluginOnlyCustomization": ["skills", "hooks"]
+}
+```
+
+For each locked surface, Claude Code skips user-level and project-level sources and loads only plugin-provided and managed sources:
+
+| Surface  | Blocked when locked                               | Still loads                                                                         |
+| :------- | :------------------------------------------------ | :---------------------------------------------------------------------------------- |
+| `skills` | `~/.claude/skills/`, `.claude/skills/`            | Plugin skills, bundled skills, skills in the managed policy directory               |
+| `agents` | `~/.claude/agents/`, `.claude/agents/`            | Plugin agents, built-in agents, agents in the managed policy directory              |
+| `hooks`  | Hooks in user, project, and local `settings.json` | Plugin hooks, hooks in managed settings                                             |
+| `mcp`    | Servers in `~/.claude.json` and `.mcp.json`       | Plugin MCP servers, [`managed-mcp.json`](/en/mcp#managed-mcp-configuration) servers |
+
+Surface names that a Claude Code version doesn't recognize are ignored rather than failing the settings file, so you can add new surface names before all clients have updated.
 
 ### Managing plugins
 
