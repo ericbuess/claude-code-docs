@@ -1915,7 +1915,7 @@ Each entry in `background_tasks` describes one in-flight task and uses these fie
 | `tool`        | MCP tool name. Present only for `monitor` and `MCP task` tasks                                                                                                                                                                                       |
 | `name`        | Workflow name. Present only for `workflow` tasks                                                                                                                                                                                                     |
 
-Each entry in `session_crons` describes one session-scoped scheduled wakeup, sourced from `CronCreate` and `/loop`:
+Each entry in `session_crons` describes one session-scoped scheduled wakeup, sourced from `CronCreate`, `ScheduleWakeup`, and `/loop`:
 
 | Field       | Description                                                                                                          |
 | :---------- | :------------------------------------------------------------------------------------------------------------------- |
