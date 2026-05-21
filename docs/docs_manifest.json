@@ -646,8 +646,8 @@
     "scheduled-tasks.md": {
       "original_url": "https://code.claude.com/docs/en/scheduled-tasks",
       "original_md_url": "https://code.claude.com/docs/en/scheduled-tasks.md",
-      "hash": "0725620f2665d463ea9f38fad0fd3e068b5b72d7debc3b387744970d35689202",
-      "last_updated": "2026-05-21T00:26:05.778068"
+      "hash": "aa581e159df1905ebe40e4f52ad465654f1563f2e29f3f30aae81b33c6203abc",
+      "last_updated": "2026-05-21T18:33:25.356374"
     },
     "security.md": {
       "original_url": "https://code.claude.com/docs/en/security",
@@ -831,8 +831,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-05-21T16:05:17.749456",
-    "fetch_duration_seconds": 79.875468,
+    "last_fetch_completed": "2026-05-21T18:33:42.131903",
+    "fetch_duration_seconds": 76.842008,
     "total_pages_discovered": 138,
     "pages_fetched_successfully": 139,
     "pages_failed": 0,
@@ -842,7 +842,7 @@
     "total_files": 138,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-05-21T16:05:17.749492",
+  "last_updated": "2026-05-21T18:33:42.131929",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
