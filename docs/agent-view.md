@@ -176,7 +176,7 @@ Agent view groups sessions so the ones that need input are at the top, with `Rea
 
 Within a group:
 
-* Press `Ctrl+T` to pin a session to the top
+* Press `Ctrl+T` to pin a session to the top and [keep its process running](#the-supervisor-process) while idle
 * Press `Shift+↑` or `Shift+↓` to reorder sessions
 * Press `Ctrl+R` to rename a session
 * Press `Enter` on a group header to collapse it
@@ -421,9 +421,11 @@ The supervisor and its sessions authenticate with the same credentials as your i
 
 Each background session is its own Claude Code process, managed by the supervisor rather than tied to your terminal. A session that's actively working, waiting for your input, or has a terminal attached keeps its process running. A running background shell command, subagent, workflow, or monitor counts as active work, so a long-running process such as a dev server keeps the session alive.
 
-Once a session finishes and sits unattached for about an hour, the supervisor stops its process to free resources. The transcript and state stay on disk, and the next time you attach, peek, or reply, the supervisor starts a fresh process from where it left off. When every session has finished and no terminal is connected, the supervisor itself exits and starts again the next time you need it.
+Once a session finishes and sits unattached for about an hour, the supervisor stops its process to free resources. A session you have [pinned](#organize-the-list) with `Ctrl+T` is exempt and keeps its process running while idle. The transcript and state stay on disk either way, and the next time you attach, peek, or reply to a stopped session, the supervisor starts a fresh process from where it left off. When every session has finished and no terminal is connected, the supervisor itself exits and starts again the next time you need it.
 
-The supervisor watches the installed Claude Code binary on disk and restarts into the new version after the regular [auto-updater](/en/setup#auto-updates) replaces it. This is a local file watch, not a network check. Background sessions are detached processes, so they keep running through the restart and the new supervisor reconnects to them.
+When the host runs low on memory, the supervisor stops idle non-pinned sessions first and stops idle pinned ones only if that freed nothing.
+
+The supervisor watches the installed Claude Code binary on disk and restarts into the new version after the regular [auto-updater](/en/setup#auto-updates) replaces it. This is a local file watch, not a network check. Background sessions are detached processes, so they keep running through the restart and the new supervisor reconnects to them. An idle pinned session is also restarted in place onto the new version so it picks up the update without you reattaching.
 
 ### Where state is stored
 
@@ -469,7 +471,7 @@ Sleep alone does not cause this. Sessions are preserved across sleep and the sup
 
 ### A session is slow to respond after attaching
 
-Once a session has finished and sat unattached for about an hour, the supervisor stops its process to free resources. Attaching starts a fresh process from where it left off, which takes a moment. Sessions that are working or waiting on you are never stopped this way.
+Once a session has finished and sat unattached for about an hour, the supervisor stops its process to free resources. Attaching starts a fresh process from where it left off, which takes a moment. Sessions that are working, waiting on you, or [pinned](#organize-the-list) are not stopped this way, so pin a session with `Ctrl+T` to keep it responsive.
 
 ### `.claude/worktrees/` is filling up
 

@@ -8,6 +8,10 @@
 
 # Changelog
 
+## 2.1.148
+
+- Fixed the Bash tool returning exit code 127 on every command for some users (a regression introduced in 2.1.147)
+
 ## 2.1.147
 
 - Pinned background sessions (`Ctrl+T` in `claude agents`) now stay alive when idle, are restarted in place to apply Claude Code updates, and are shed under memory pressure only after non-pinned sessions

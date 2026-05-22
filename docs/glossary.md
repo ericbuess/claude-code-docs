@@ -56,7 +56,7 @@ Learn more: [Start faster with bare mode](/en/headless#start-faster-with-bare-mo
 
 ### Bundled skills
 
-Prompt-based playbooks included with Claude Code, such as `/batch`, `/simplify`, `/debug`, and `/loop`. Unlike built-in commands, which execute fixed logic, bundled skills give Claude a detailed prompt and let it orchestrate the work, so they can spawn agents, read files, and adapt to your codebase.
+Prompt-based playbooks included with Claude Code, such as `/batch`, `/code-review`, `/debug`, and `/loop`. Unlike built-in commands, which execute fixed logic, bundled skills give Claude a detailed prompt and let it orchestrate the work, so they can spawn agents, read files, and adapt to your codebase.
 
 Learn more: [Bundled skills](/en/skills#bundled-skills)
 

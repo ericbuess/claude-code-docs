@@ -16,7 +16,8 @@ Match the error message or symptom you're seeing to a fix:
 | :------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------- |
 | `command not found: claude` or `'claude' is not recognized`                                 | [Fix your PATH](#command-not-found-claude-after-installation)                                                           |
 | `syntax error near unexpected token '<'`                                                    | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                   |
-| `curl: (56) Failure writing output to destination`                                          | [Check connectivity or use an alternative installer](#curl-56-failure-writing-output-to-destination)                    |
+| `curl: (22) The requested URL returned error: 403`                                          | [Install script returned 403](#install-script-returns-html-instead-of-a-shell-script)                                   |
+| `curl: (23)` or `curl: (56) Failure writing output to destination`                          | [Check connectivity or use an alternative installer](#curl-56-failure-writing-output-to-destination)                    |
 | `Killed` during install on Linux                                                            | [Add swap space for low-memory servers](#install-killed-on-low-memory-linux-servers)                                    |
 | `TLS connect error` or `SSL/TLS secure channel`                                             | [Update CA certificates](#tls-or-ssl-connection-errors)                                                                 |
 | `Failed to fetch version` or can't reach download server                                    | [Check network and proxy settings](#check-network-connectivity)                                                         |
@@ -298,7 +299,15 @@ On PowerShell, the same problem appears as:
 Invoke-Expression: Missing argument in parameter list.
 ```
 
-This means the install URL returned an HTML page instead of the install script. If the HTML page says "App unavailable in region," Claude Code is not available in your country. See [supported countries](https://www.anthropic.com/supported-countries).
+Depending on how the request was routed, you may instead see a 403 with no HTML body:
+
+```text theme={null}
+curl: (22) The requested URL returned error: 403
+```
+
+These all mean the install URL returned an HTML page or an error status instead of the install script. If the HTML page says "App unavailable in region," Claude Code is not available in your country. See [supported countries](https://www.anthropic.com/supported-countries).
+
+A bare 403 with no body often has the same cause, but it can also come from a corporate proxy or firewall blocking the download. If you are in a supported country and still see the 403, work through [Check network connectivity](#check-network-connectivity) before trying the alternative installers below, since those reach the same hosts.
 
 Otherwise, this can happen due to network issues, regional routing, or a temporary service disruption.
 
@@ -335,7 +344,7 @@ This means the install directory isn't in your shell's search path. See [Verify 
 
 ### `curl: (56) Failure writing output to destination`
 
-The `curl ... | bash` command downloads the script and pipes it to Bash for execution. This error means the connection broke before the script finished downloading. Common causes include network interruptions, the download being blocked mid-stream, or system resource limits.
+The `curl ... | bash` command downloads the script and pipes it to Bash for execution. This error, and the related `curl: (23) Failure writing output to destination`, means Bash did not receive the complete script. Exit code 56 indicates the download itself was interrupted, and exit code 23 indicates curl could not write what it received to the pipe, usually because Bash exited early.
 
 **Solutions:**
 
@@ -527,12 +536,11 @@ Update Claude Desktop to the latest version to fix this issue.
 
 ### Claude Code on Windows requires either Git for Windows (for bash) or PowerShell
 
-Claude Code on native Windows needs at least one shell: either [Git for Windows](https://git-scm.com/downloads/win) for Bash, or PowerShell. When neither is found, this error appears at startup. If only PowerShell is found, Claude Code uses the PowerShell tool instead of Bash.
+Git for Windows is optional. Claude Code uses the [PowerShell tool](/en/tools-reference#powershell-tool) when Git Bash is absent, so this error means neither shell was found.
 
-**If neither is installed**, install one:
+**If PowerShell is missing from your PATH**, its default location is `C:\Windows\System32\WindowsPowerShell\v1.0\`. Add that directory to your `PATH`, or install [PowerShell 7](https://aka.ms/powershell), which provides `pwsh`.
 
-* Git for Windows: download from [git-scm.com/downloads/win](https://git-scm.com/downloads/win). During setup, select "Add to PATH." Restart your terminal after installing.
-* PowerShell 7: download from [aka.ms/powershell](https://aka.ms/powershell).
+**To install Git for Windows instead**, download it from [git-scm.com/downloads/win](https://git-scm.com/downloads/win). During setup, select "Add to PATH." Restart your terminal after installing. Installing it enables the Bash tool, useful when working with Bash-based scripts and tooling.
 
 **If Git is already installed** but Claude Code can't find it, set the path in your [settings.json file](/en/settings):
 

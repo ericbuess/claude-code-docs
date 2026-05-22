@@ -227,6 +227,8 @@ On Windows, set the variable to `0` to opt out of the rollout. On Linux, macOS, 
 
 On Windows, Claude Code auto-detects `pwsh.exe` for PowerShell 7+ with a fallback to `powershell.exe` for PowerShell 5.1. When the tool is enabled, Claude treats PowerShell as the primary shell. The Bash tool remains available for POSIX scripts when Git Bash is installed.
 
+Claude Code spawns PowerShell with `-ExecutionPolicy Bypass` at process scope only, so `.ps1` scripts and module imports work on default Windows installs without changing the machine's policy. Process-scope bypass does not override Group Policy `MachinePolicy` or `UserPolicy`, so enterprise lockdowns still apply. To respect the machine's effective execution policy instead, set `CLAUDE_CODE_POWERSHELL_RESPECT_EXECUTION_POLICY=1`.
+
 ### Shell selection in settings, hooks, and skills
 
 Three additional settings control where PowerShell is used:
