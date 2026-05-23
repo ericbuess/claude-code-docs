@@ -123,7 +123,7 @@ Create `agent.py` if you're using the Python SDK, or `agent.ts` for TypeScript:
       async for message in query(
           prompt="Review utils.py for bugs that would cause crashes. Fix any issues you find.",
           options=ClaudeAgentOptions(
-              allowed_tools=["Read", "Edit", "Glob"],  # Tools Claude can use
+              allowed_tools=["Read", "Edit", "Glob"],  # Auto-approve these tools
               permission_mode="acceptEdits",  # Auto-approve file edits
           ),
       ):
@@ -148,7 +148,7 @@ Create `agent.py` if you're using the Python SDK, or `agent.ts` for TypeScript:
   for await (const message of query({
     prompt: "Review utils.py for bugs that would cause crashes. Fix any issues you find.",
     options: {
-      allowedTools: ["Read", "Edit", "Glob"], // Tools Claude can use
+      allowedTools: ["Read", "Edit", "Glob"], // Auto-approve these tools
       permissionMode: "acceptEdits" // Auto-approve file edits
     }
   })) {

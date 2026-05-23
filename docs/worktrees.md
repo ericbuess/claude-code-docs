@@ -80,6 +80,8 @@ This applies to worktrees created with `--worktree`, [subagent worktrees](#isola
 
 Subagents can run in their own worktrees so parallel edits don't conflict. Ask Claude to "use worktrees for your agents", or set it permanently on a [custom subagent](/en/sub-agents#supported-frontmatter-fields) by adding `isolation: worktree` to the frontmatter. Each subagent gets a temporary worktree that is removed automatically when the subagent finishes without changes.
 
+Subagent worktrees use the same [base branch](#choose-the-base-branch) as `--worktree`, so they branch from your repository's default branch unless `worktree.baseRef` is set to `"head"`.
+
 ## Clean up worktrees
 
 When you exit a worktree session, cleanup depends on whether you made changes:
