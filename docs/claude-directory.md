@@ -1494,20 +1494,21 @@ Beyond the config you author, `~/.claude` holds data Claude Code writes during s
 
 Files in the paths below are deleted on startup once they're older than [`cleanupPeriodDays`](/en/settings#available-settings). The default is 30 days.
 
-| Path under `~/.claude/`                      | Contents                                                                                                                 |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `projects/<project>/<session>.jsonl`         | Full conversation transcript: every message, tool call, and tool result                                                  |
-| `projects/<project>/<session>/subagents/`    | [Subagent](/en/sub-agents) conversation transcripts, removed with the parent session transcript when it ages out         |
-| `projects/<project>/<session>/tool-results/` | Large tool outputs spilled to separate files                                                                             |
-| `file-history/<session>/`                    | Pre-edit snapshots of files Claude changed, used for [checkpoint restore](/en/checkpointing)                             |
-| `plans/`                                     | Plan files written during [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode)                       |
-| `debug/`                                     | Per-session debug logs, written only when you start with `--debug` or run `/debug`                                       |
-| `paste-cache/`, `image-cache/`               | Contents of large pastes and attached images                                                                             |
-| `session-env/`                               | Per-session environment metadata                                                                                         |
-| `tasks/`                                     | Per-session task lists written by the task tools                                                                         |
-| `shell-snapshots/`                           | Captured shell environment used by the Bash tool. Removed on clean exit. The sweep clears any left after a crash.        |
-| `backups/`                                   | Timestamped copies of `~/.claude.json` taken before config migrations                                                    |
-| `feedback-bundles/`                          | Redacted transcript archives written by `/feedback` on third-party providers, for sending to your Anthropic account team |
+| Path under `~/.claude/`                      | Contents                                                                                                                  |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `projects/<project>/<session>.jsonl`         | Full conversation transcript: every message, tool call, and tool result                                                   |
+| `projects/<project>/<session>/subagents/`    | [Subagent](/en/sub-agents) conversation transcripts, removed with the parent session transcript when it ages out          |
+| `projects/<project>/<session>/tool-results/` | Large tool outputs spilled to separate files                                                                              |
+| `file-history/<session>/`                    | Pre-edit snapshots of files Claude changed, used for [checkpoint restore](/en/checkpointing)                              |
+| `plans/`                                     | Plan files written during [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode)                        |
+| `debug/`                                     | Per-session debug logs, written only when you start with `--debug` or run `/debug`                                        |
+| `paste-cache/`, `image-cache/`               | Contents of large pastes and attached images                                                                              |
+| `session-env/`                               | Per-session environment metadata                                                                                          |
+| `tasks/`                                     | Per-session task lists written by the task tools                                                                          |
+| `shell-snapshots/`                           | Captured shell environment used by the Bash tool. Removed on clean exit. The sweep clears any left after a crash.         |
+| `backups/`                                   | Timestamped copies of `~/.claude.json` taken before config migrations                                                     |
+| `feedback-bundles/`                          | Redacted transcript archives written by `/feedback` on third-party providers, for sending to your Anthropic account team  |
+| `todos/`, `statsig/`, `logs/`                | Legacy directories from older versions. No longer written. The sweep removes their contents and then the empty directory. |
 
 ### Kept until you delete them
 
@@ -1518,7 +1519,6 @@ The following paths are not covered by automatic cleanup and persist indefinitel
 | `history.jsonl`         | Every prompt you've typed, with timestamp and project path. Used for up-arrow recall.                                                                                           |
 | `stats-cache.json`      | Aggregated token and cost counts shown by `/usage`                                                                                                                              |
 | `remote-settings.json`  | Cached copy of [server-managed settings](/en/server-managed-settings) for your organization. Only present when your organization has configured them. Refreshed on each launch. |
-| `todos/`                | Legacy per-session task lists. No longer written by current versions; safe to delete.                                                                                           |
 
 Other small cache and lock files appear depending on which features you use and are safe to delete.
 
@@ -1567,15 +1567,15 @@ The command leaves `shell-snapshots/` and `backups/` alone because those are not
 
 You can also delete any of the application-data paths above by hand. New sessions are unaffected. The table below shows what you lose for past sessions.
 
-| Delete                                                                                                                                                                                       | You lose                                                   |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `~/.claude/projects/`                                                                                                                                                                        | Resume, continue, and rewind for past sessions             |
-| `~/.claude/history.jsonl`                                                                                                                                                                    | Up-arrow prompt recall                                     |
-| `~/.claude/file-history/`                                                                                                                                                                    | Checkpoint restore for past sessions                       |
-| `~/.claude/stats-cache.json`                                                                                                                                                                 | Historical totals shown by `/usage`                        |
-| `~/.claude/remote-settings.json`                                                                                                                                                             | Nothing. Re-fetched on next launch.                        |
-| `~/.claude/debug/`, `~/.claude/plans/`, `~/.claude/paste-cache/`, `~/.claude/image-cache/`, `~/.claude/session-env/`, `~/.claude/tasks/`, `~/.claude/shell-snapshots/`, `~/.claude/backups/` | Nothing user-facing                                        |
-| `~/.claude/todos/`                                                                                                                                                                           | Nothing. Legacy directory not written by current versions. |
+| Delete                                                                                                                                                                                       | You lose                                                     |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `~/.claude/projects/`                                                                                                                                                                        | Resume, continue, and rewind for past sessions               |
+| `~/.claude/history.jsonl`                                                                                                                                                                    | Up-arrow prompt recall                                       |
+| `~/.claude/file-history/`                                                                                                                                                                    | Checkpoint restore for past sessions                         |
+| `~/.claude/stats-cache.json`                                                                                                                                                                 | Historical totals shown by `/usage`                          |
+| `~/.claude/remote-settings.json`                                                                                                                                                             | Nothing. Re-fetched on next launch.                          |
+| `~/.claude/debug/`, `~/.claude/plans/`, `~/.claude/paste-cache/`, `~/.claude/image-cache/`, `~/.claude/session-env/`, `~/.claude/tasks/`, `~/.claude/shell-snapshots/`, `~/.claude/backups/` | Nothing user-facing                                          |
+| `~/.claude/todos/`, `~/.claude/statsig/`, `~/.claude/logs/`                                                                                                                                  | Nothing. Legacy directories not written by current versions. |
 
 Don't delete `~/.claude.json`, `~/.claude/settings.json`, or `~/.claude/plugins/`: those hold your auth, preferences, and installed plugins.
 

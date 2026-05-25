@@ -40,7 +40,7 @@ Claude Code supports a range of restriction levels. Each pattern uses one or bot
 
 ## Exclusive control with managed-mcp.json
 
-If you deploy a `managed-mcp.json` file, Claude Code loads only the servers that file defines. Users cannot add, modify, or use any other MCP servers, including plugin-provided servers and claude.ai connectors.
+If you deploy a `managed-mcp.json` file, Claude Code loads only the servers that file defines. Users cannot add, modify, or use any other MCP servers, including plugin-provided servers. The file also suppresses claude.ai connectors unless you [allow them alongside the managed set](#allow-claude-ai-connectors-alongside-the-managed-set).
 
 Two other settings can further filter the managed set:
 
@@ -108,6 +108,14 @@ Deploy a `managed-mcp.json` containing an empty server map to block every MCP se
 ```
 
 Users see no MCP servers in `/mcp`, and `claude mcp add` fails with the enterprise-policy error above. Servers users had previously configured stop loading the next time they start a session, with no warning that policy is the reason.
+
+### Allow claude.ai connectors alongside the managed set
+
+Deploying `managed-mcp.json` suppresses [claude.ai connectors](/en/mcp#use-mcp-servers-from-claude-ai) by default, including connectors an administrator configured for the organization in the claude.ai admin console. To load those connectors alongside the servers in `managed-mcp.json`, set `"allowAllClaudeAiMcps": true` in a [managed settings source](/en/admin-setup#decide-how-settings-reach-devices). Requires Claude Code v2.1.149 or later.
+
+With the setting enabled, Claude Code loads the same claude.ai connectors it would load if `managed-mcp.json` were not deployed. [Allowlists and denylists](#policy-based-control-with-allowlists-and-denylists) still apply to those connectors, so you can block specific ones with `deniedMcpServers`. The setting affects only claude.ai connectors; plugin-provided servers stay suppressed.
+
+Claude Code reads this setting only from admin-controlled policy tiers: server-managed settings, an MDM-deployed plist or HKLM registry key, or a system `managed-settings.json` file. Placing it in user or project settings has no effect, so users cannot re-enable connectors that exclusive control suppressed.
 
 ## Policy-based control with allowlists and denylists
 
@@ -323,12 +331,13 @@ When [OpenTelemetry export](/en/monitoring-usage) is configured, Claude Code can
 
 Every file and setting this page covers, what it controls, and how to deliver it:
 
-| Surface                      | What it controls                            | Where it lives                                                                                                               | How to deliver                                                                                                                                                              |
-| :--------------------------- | :------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `managed-mcp.json`           | Fixed server set, exclusive control         | System path: `/Library/Application Support/ClaudeCode/`, `/etc/claude-code/`, or `C:\Program Files\ClaudeCode\`              | MDM, GPO, fleet management, or any process with administrator privileges. Cannot be set through server-managed settings                                                     |
-| `allowedMcpServers`          | Allowlist of permitted servers              | Any [settings file](/en/settings#settings-files); entries from every source merge unless `allowManagedMcpServersOnly` is set | For enforcement, a [managed settings source](/en/admin-setup#decide-how-settings-reach-devices): server-managed settings, `managed-settings.json`, MDM profile, or registry |
-| `deniedMcpServers`           | Denylist of blocked servers                 | Any settings file; entries from every source merge                                                                           | Same as `allowedMcpServers`                                                                                                                                                 |
-| `allowManagedMcpServersOnly` | Locks the allowlist to managed sources only | Managed settings sources only; the setting has no effect elsewhere                                                           | Same as `allowedMcpServers`                                                                                                                                                 |
+| Surface                      | What it controls                                                                    | Where it lives                                                                                                               | How to deliver                                                                                                                                                              |
+| :--------------------------- | :---------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `managed-mcp.json`           | Fixed server set, exclusive control                                                 | System path: `/Library/Application Support/ClaudeCode/`, `/etc/claude-code/`, or `C:\Program Files\ClaudeCode\`              | MDM, GPO, fleet management, or any process with administrator privileges. Cannot be set through server-managed settings                                                     |
+| `allowedMcpServers`          | Allowlist of permitted servers                                                      | Any [settings file](/en/settings#settings-files); entries from every source merge unless `allowManagedMcpServersOnly` is set | For enforcement, a [managed settings source](/en/admin-setup#decide-how-settings-reach-devices): server-managed settings, `managed-settings.json`, MDM profile, or registry |
+| `deniedMcpServers`           | Denylist of blocked servers                                                         | Any settings file; entries from every source merge                                                                           | Same as `allowedMcpServers`                                                                                                                                                 |
+| `allowManagedMcpServersOnly` | Locks the allowlist to managed sources only                                         | Managed settings sources only; the setting has no effect elsewhere                                                           | Same as `allowedMcpServers`                                                                                                                                                 |
+| `allowAllClaudeAiMcps`       | Loads claude.ai connectors alongside `managed-mcp.json` instead of suppressing them | Managed settings sources only; the setting has no effect elsewhere                                                           | Same as `allowedMcpServers`                                                                                                                                                 |
 
 ## Related resources
 
