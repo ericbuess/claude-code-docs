@@ -537,7 +537,7 @@ Logged when a user submits a prompt.
 
 #### Tool result event
 
-Logged when a tool completes execution.
+Logged when a tool completes execution. Not emitted if the tool call was rejected; see the [Tool decision event](#tool-decision-event) for rejections.
 
 **Event Name**: `claude_code.tool_result`
 
@@ -553,8 +553,8 @@ Logged when a tool completes execution.
 * `duration_ms`: Execution time in milliseconds
 * `error_type`: Error category string when the tool failed, such as `"Error:ENOENT"` or `"ShellError"`
 * `error` (when `OTEL_LOG_TOOL_DETAILS=1`): Full error message when the tool failed
-* `decision_type`: Either `"accept"` or `"reject"`
-* `decision_source`: Where the decision came from. One of `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, or `"user_reject"`. See the [Tool decision event](#tool-decision-event) for what each value means.
+* `decision_type`: Always `"accept"`, since this event is only emitted after the tool runs (rejected calls don't produce a tool result)
+* `decision_source`: Where the permission decision came from. One of `"config"`, `"hook"`, `"user_permanent"`, or `"user_temporary"`. See the [Tool decision event](#tool-decision-event) for what each value means. The reject-only sources `"user_abort"` and `"user_reject"` never appear on this event.
 * `tool_input_size_bytes`: Size of the JSON-serialized tool input in bytes
 * `tool_result_size_bytes`: Size of the tool result in bytes
 * `mcp_server_scope`: MCP server scope identifier (for MCP tools)
@@ -666,12 +666,12 @@ Logged when a tool permission decision is made (accept/reject).
 * `tool_use_id`: Unique identifier for this tool invocation. Matches the `tool_use_id` passed to hooks, allowing correlation between OTel events and hook-captured data.
 * `decision`: Either `"accept"` or `"reject"`
 * `source`: Where the decision came from:
-  * `"config"`: Decided automatically without prompting, based on project settings, allow rules in the user's personal settings, enterprise managed policy, `--allowedTools` or `--disallowedTools` flags, the active permission mode, a session-scoped grant from an earlier prompt in the same interactive CLI session, or because the tool is inherently safe. The event does not indicate which of these sources matched.
+  * `"config"`: Decided automatically without prompting, based on project settings, allow or deny rules in the user's personal settings, enterprise managed policy, `--allowedTools` or `--disallowedTools` flags, the active permission mode, a session-scoped grant from an earlier prompt in the same interactive CLI session, or because the tool is inherently safe. The event does not indicate which of these sources matched.
   * `"hook"`: A `PreToolUse` or `PermissionRequest` hook returned the decision.
   * `"user_permanent"`: Emitted when the user chose "Yes, and don't ask again for ..." at a permission prompt, which saves an allow rule to their personal settings. In the interactive CLI this is emitted only for that choice itself; later calls that match the saved rule emit `"config"` instead. In Agent SDK or non-interactive `-p` sessions, both the initial choice and later rule matches emit `"user_permanent"`. Treated as an accept.
   * `"user_temporary"`: Emitted when the user chose "Yes" at a permission prompt for a one-time approval, or chose one of the "... during this session" options on a file edit or read prompt. In the interactive CLI this is emitted only for the choice itself; later calls allowed by that session-scoped grant emit `"config"` instead. In Agent SDK or non-interactive `-p` sessions, both the choice and later matches emit `"user_temporary"`. Treated as an accept.
   * `"user_abort"`: Emitted when the user dismissed the permission prompt without answering. Treated as a reject.
-  * `"user_reject"`: Emitted when the user chose "No" when prompted, or a call matched a deny rule in their personal settings. Treated as a reject.
+  * `"user_reject"`: Emitted when the user chose "No" when prompted. In the interactive CLI this is emitted only for that choice itself; calls that match a deny rule in the user's personal settings emit `"config"` instead. In Agent SDK or non-interactive `-p` sessions, calls that match a deny rule in personal settings emit `"user_reject"`. Treated as a reject.
 
 #### Permission mode changed event
 

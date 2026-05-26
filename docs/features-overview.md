@@ -156,7 +156,7 @@ Some features can seem similar. Here's how to tell them apart.
 
     These solve different problems and work well together:
 
-    **MCP** gives Claude the ability to interact with external systems. Without MCP, Claude can't query your database or post to Slack.
+    **MCP** gives Claude purpose-built tools for an external system, with the connection and authentication handled by the server.
 
     **Skills** give Claude knowledge about how to use those tools effectively, plus workflows you can trigger with `/<name>`. A skill might include your team's database schema and query patterns, or a `/post-to-slack` workflow with your team's message formatting rules.
 
@@ -265,9 +265,7 @@ Each feature loads at different points in your session. The tabs below explain w
 
     **Context cost:** [Tool search](/en/mcp#scale-with-mcp-tool-search) is on by default, so idle MCP tools consume minimal context.
 
-    **Reliability note:** MCP connections can fail silently mid-session. If a server disconnects, its tools disappear without warning. Claude may try to use a tool that no longer exists. If you notice Claude failing to use an MCP tool it previously could access, check the connection with `/mcp`.
-
-    <Tip>Run `/mcp` to see token costs per server. Disconnect servers you're not actively using.</Tip>
+    <Tip>Run `/mcp` to see connection status and token costs per server. Claude Code [reconnects to remote servers automatically](/en/mcp#automatic-reconnection) if they drop, and you can disconnect servers you're not actively using.</Tip>
   </Tab>
 
   <Tab title="Code intelligence">
