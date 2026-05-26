@@ -166,7 +166,7 @@ Anthropic also maintains a [demo plugins marketplace](https://github.com/anthrop
     You can also install directly from the command line:
 
     ```shell theme={null}
-    /plugin install commit-commands@anthropics-claude-code
+    /plugin install commit-commands@claude-code-plugins
     ```
 
     See [Configuration scopes](/en/settings#configuration-scopes) to learn more about scopes.
