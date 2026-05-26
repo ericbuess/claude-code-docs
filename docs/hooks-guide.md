@@ -93,6 +93,8 @@ Each example includes a ready-to-use configuration block that you add to a [sett
 * [Reload environment when directory or files change](#reload-environment-when-directory-or-files-change)
 * [Auto-approve specific permission prompts](#auto-approve-specific-permission-prompts)
 
+For a production example of hooks that run a separate model review and feed findings back into the session, see [how the `security-guidance` plugin integrates with Claude Code](/en/security-guidance#how-the-plugin-integrates-with-claude-code).
+
 ### Get notified when Claude needs input
 
 Get a desktop notification whenever Claude finishes working and needs your input, so you can switch to other tasks without checking the terminal.

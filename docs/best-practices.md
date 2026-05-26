@@ -44,6 +44,8 @@ UI changes can be verified using the [Claude in Chrome extension](/en/chrome). I
 
 Your verification can also be a test suite, a linter, or a Bash command that checks output. Invest in making your verification rock-solid.
 
+Have Claude show evidence rather than asserting success: the test output, the command it ran and what it returned, or a screenshot of the result. Reviewing evidence is faster than re-running the verification yourself, and it works for sessions you weren't watching.
+
 ***
 
 ## Explore first, then plan, then code
@@ -198,7 +200,7 @@ You can place CLAUDE.md files in several locations:
 * **Project root (`./CLAUDE.md`)**: check into git to share with your team
 * **Project root (`./CLAUDE.local.md`)**: personal project-specific notes; add this file to your `.gitignore` so it isn't shared with your team
 * **Parent directories**: useful for monorepos where both `root/CLAUDE.md` and `root/foo/CLAUDE.md` are pulled in automatically
-* **Child directories**: Claude pulls in child CLAUDE.md files on demand when working with files in those directories
+* **Child directories**: Claude pulls in child CLAUDE.md files on demand when it reads a file in those directories
 
 ### Configure permissions
 
@@ -362,6 +364,8 @@ Keep interviewing until we've covered everything, then write a complete spec to 
 
 Once the spec is complete, start a fresh session to execute it. The new session has clean context focused entirely on implementation, and you have a written spec to reference.
 
+The most useful specs are self-contained: they name the files and interfaces involved, state what is out of scope, and end with an end-to-end verification step that proves the feature works. Time spent making the spec precise pays off more than time spent watching the implementation.
+
 ***
 
 ## Manage your session
@@ -454,7 +458,7 @@ Everything so far assumes one human, one Claude, and one conversation. But Claud
 ### Run non-interactive mode
 
 <Tip>
-  Use `claude -p "prompt"` in CI, pre-commit hooks, or scripts. Add `--output-format stream-json` for streaming JSON output.
+  Use `claude -p "prompt"` in CI, pre-commit hooks, or scripts. Add `--output-format stream-json --verbose` for streaming JSON output.
 </Tip>
 
 With `claude -p "your prompt"`, you can run Claude non-interactively, without a session. [Non-interactive mode](/en/headless) is how you integrate Claude into CI pipelines, pre-commit hooks, or any automated workflow. The output formats let you parse results programmatically: plain text, JSON, or streaming JSON.
@@ -467,7 +471,7 @@ claude -p "Explain what this project does"
 claude -p "List all API endpoints" --output-format json
 
 # Streaming for real-time processing
-claude -p "Analyze this log file" --output-format stream-json
+claude -p "Analyze this log file" --output-format stream-json --verbose
 ```
 
 ### Run multiple Claude sessions
@@ -539,6 +543,28 @@ claude --permission-mode auto -p "fix all lint errors"
 ```
 
 For non-interactive runs with the `-p` flag, auto mode aborts if the classifier repeatedly blocks actions, since there is no user to fall back to. See [when auto mode falls back](/en/permission-modes#when-auto-mode-falls-back) for thresholds.
+
+### Add an adversarial review step
+
+<Tip>
+  Before treating a task as done, have a subagent review the diff in a fresh context and report gaps.
+</Tip>
+
+The longer Claude works unattended, the more an independent check matters before you count the work as done. A reviewer running in a fresh [subagent](/en/sub-agents) context sees only the diff and the criteria you give it, not the reasoning that produced the change, so it evaluates the result on its own terms.
+
+For a correctness check, run the bundled [`/code-review` skill](/en/commands), which reviews the current diff for bugs in a fresh subagent and returns findings to the session. To check the diff against your plan instead, write the review prompt yourself. Name the work to check, the plan to check it against, and what counts as a finding:
+
+```text theme={null}
+Use a subagent to review the rate limiter diff against PLAN.md. Check that
+every requirement is implemented, the listed edge cases have tests, and
+nothing outside the task's scope changed. Report gaps, not style preferences.
+```
+
+Because the reviewer runs as a subagent, the implementing session receives the gaps directly and can fix them and re-review without you copying findings between windows. For longer autonomous runs, an [agent team](/en/agent-teams) can keep this loop going across many tasks while you spot-check the recorded findings.
+
+<Callout>
+  A reviewer prompted to find gaps will usually report some, even when the work is sound, because that is what it was asked to do. Chasing every finding leads to over-engineering: extra abstraction layers, defensive code, and tests for cases that can't happen. Tell the reviewer to flag only gaps that affect correctness or the stated requirements, and treat the rest as optional.
+</Callout>
 
 ***
 
