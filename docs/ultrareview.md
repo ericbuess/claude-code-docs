@@ -4,13 +4,13 @@
 
 # Find bugs with ultrareview
 
-> Run a deep, multi-agent code review in the cloud with /ultrareview to find and verify bugs before you merge.
+> Run a deep, multi-agent code review in the cloud with /code-review ultra to find and verify bugs before you merge.
 
 <Note>
-  Ultrareview is a research preview feature available in Claude Code v2.1.86 and later. The feature, pricing, and availability may change based on feedback.
+  Ultrareview is a research preview feature available in Claude Code v2.1.86 and later. The feature, pricing, and availability may change based on feedback. The command is now invoked as `/code-review ultra`, and `/ultrareview` remains as an alias.
 </Note>
 
-Ultrareview is a deep code review that runs on Claude Code on the web infrastructure. When you run `/ultrareview`, Claude Code launches a fleet of reviewer agents in a remote sandbox to find bugs in your branch or pull request.
+Ultrareview is a deep code review that runs on Claude Code on the web infrastructure. When you run `/code-review ultra`, Claude Code launches a fleet of reviewer agents in a remote sandbox to find bugs in your branch or pull request.
 
 Compared to a local `/review`, ultrareview offers:
 
@@ -25,7 +25,7 @@ Ultrareview requires authentication with a Claude.ai account because it runs on 
 Start a review from any git repository in the Claude Code CLI.
 
 ```text theme={null}
-/ultrareview
+/code-review ultra
 ```
 
 Without arguments, ultrareview reviews the diff between your current branch and the default branch, including any uncommitted and staged changes in your working tree. Claude Code bundles the repository state and uploads it to a remote sandbox for the review.
@@ -33,16 +33,16 @@ Without arguments, ultrareview reviews the diff between your current branch and 
 To review a GitHub pull request instead, pass the PR number.
 
 ```text theme={null}
-/ultrareview 1234
+/code-review ultra 1234
 ```
 
-In PR mode, the remote sandbox clones the pull request directly from GitHub rather than bundling your local working tree. PR mode requires a `github.com` remote on the repository.
+In PR mode, the remote sandbox clones the pull request directly from the host rather than bundling your local working tree. PR mode works with repositories on `github.com` and on [GitHub Enterprise Server](/en/github-enterprise-server) instances that an admin has connected to Claude Code.
 
 <Tip>
-  If your repository is too large to bundle, Claude Code prompts you to use PR mode instead. Push your branch and open a draft PR, then run `/ultrareview <PR-number>`.
+  If your repository is too large to bundle, Claude Code prompts you to use PR mode instead. Push your branch and open a draft PR, then run `/code-review ultra <PR-number>`.
 </Tip>
 
-Before launching, Claude Code shows a confirmation dialog with the review scope (including the file and line count when reviewing a branch), your remaining free runs, and the estimated cost. After you confirm, the review continues in the background and you can keep using your session. The command runs only when you invoke it with `/ultrareview`; Claude does not start an ultrareview on its own.
+Before launching, Claude Code shows a confirmation dialog with the review scope (including the file and line count when reviewing a branch), your remaining free runs, and the estimated cost. After you confirm, the review continues in the background and you can keep using your session. The command runs only when you invoke it with `/code-review ultra`; Claude does not start an ultrareview on its own.
 
 ## Pricing and free runs
 
@@ -66,7 +66,7 @@ Use `/tasks` to see running and completed reviews, open the detail view for a re
 
 ## Run ultrareview non-interactively
 
-Use the `claude ultrareview` subcommand to start an ultrareview from CI or a script without an interactive session. The subcommand launches the same review as `/ultrareview`, blocks until the remote review finishes, prints the findings to stdout, and exits with code 0 on success or 1 on failure.
+Use the `claude ultrareview` subcommand to start an ultrareview from CI or a script without an interactive session. The subcommand launches the same review as `/code-review ultra`, blocks until the remote review finishes, prints the findings to stdout, and exits with code 0 on success or 1 on failure.
 
 ```bash theme={null}
 claude ultrareview
@@ -83,7 +83,7 @@ Progress messages and the live session URL go to stderr so stdout stays parseabl
 | `--json`              | Print the raw `bugs.json` payload instead of the formatted findings |
 | `--timeout <minutes>` | Maximum minutes to wait for the review to finish. Defaults to 30    |
 
-Running `claude ultrareview` requires the same authentication and usage credit configuration as `/ultrareview`. The subcommand exits with code 0 when the review completes with or without findings, code 1 when the review fails to launch, the remote session errors, or the timeout elapses, and code 130 when interrupted with Ctrl-C. The remote review keeps running if you interrupt the subcommand; follow the session URL printed to stderr to watch it in the browser.
+Running `claude ultrareview` requires the same authentication and usage credit configuration as `/code-review ultra`. The subcommand exits with code 0 when the review completes with or without findings, code 1 when the review fails to launch, the remote session errors, or the timeout elapses, and code 130 when interrupted with Ctrl-C. The remote review keeps running if you interrupt the subcommand; follow the session URL printed to stderr to watch it in the browser.
 
 For automatic reviews on GitHub pull requests, [Code Review](/en/code-review) integrates with your repository directly and posts findings as inline PR comments without a CLI step.
 
@@ -91,7 +91,7 @@ For automatic reviews on GitHub pull requests, [Code Review](/en/code-review) in
 
 Both commands review code, but they target different stages of your workflow.
 
-|          | `/review`                      | `/ultrareview`                                                  |
+|          | `/review`                      | `/code-review ultra`                                            |
 | -------- | ------------------------------ | --------------------------------------------------------------- |
 | Runs     | locally in your session        | remotely in a cloud sandbox                                     |
 | Depth    | single-pass review             | multi-agent fleet with independent verification                 |
@@ -99,7 +99,7 @@ Both commands review code, but they target different stages of your workflow.
 | Cost     | counts toward normal usage     | free runs, then roughly \$5 to \$20 per review as usage credits |
 | Best for | quick feedback while iterating | pre-merge confidence on substantial changes                     |
 
-Use `/review` for fast feedback as you work. Use `/ultrareview` before merging a substantial change when you want a deeper pass that catches issues a single review might miss.
+Use `/review` for fast feedback as you work. Use `/code-review ultra` before merging a substantial change when you want a deeper pass that catches issues a single review might miss.
 
 ## Related resources
 

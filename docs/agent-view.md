@@ -87,7 +87,7 @@ Pinned
   ✽ clawd walk cycle          Write assets/sprites/clawd-walk.png           3m
 
 Ready for review
-  ∙ jump physics              github.com/example/game/pull/2048          ●  2h
+  ∙ jump physics              Opened PR with collision fix            ⧉ PR #2048  2h
 
 Needs input
   ✻ power-up design           needs input: double jump or wall climb?       1m
@@ -123,7 +123,7 @@ Separately, the icon's shape shows whether the underlying process is running:
 | `∙`                 | The process has exited. You can still peek, reply, or attach, and Claude restarts from where it left off          |
 | `✢`                 | A [`/loop`](/en/scheduled-tasks) session sleeping between iterations. The row shows its run count and a countdown |
 
-The `●` that can appear at the right edge of a row is the [pull request status](#pull-request-status) indicator, not part of the state icon. A number before it is the count of pull requests the session has opened.
+The `⧉ PR #N` label that can appear at the right edge of a row is the [pull request the session opened](#pull-request-status), not part of the state icon. When a session has opened more than one pull request, the label adds a `+N` suffix counting the others.
 
 The terminal tab title shows the awaiting-input count while agent view is open: `2 awaiting input · claude agents` when sessions need input, or `claude agents` when none do.
 
@@ -139,16 +139,20 @@ Each refresh is one short Haiku-class request through your normal provider, bill
 
 ### Pull request status
 
-When a session opens a pull request, a status dot appears at the right edge of the row, linked to the pull request in terminals that support hyperlinks. When the session has opened more than one pull request, the count appears before the dot and the color reflects whichever one most needs attention.
+When a session opens a pull request, a `⧉ PR #1234` label appears at the right edge of the row, linked to the pull request in terminals that support hyperlinks. The label persists when you send a follow-up to the session, so the pull request remains visible while the row reverts to live progress.
 
-| Dot color | Pull request status                           |
-| :-------- | :-------------------------------------------- |
-| Yellow    | Waiting on checks or review, or checks failed |
-| Green     | Checks passed and no review is blocking       |
-| Purple    | Merged                                        |
-| Grey      | Draft or closed                               |
+When a session has opened more than one pull request, the label shows the open pull request that most needs attention and adds a `+N` suffix counting the others. Open the [peek panel](#peek-and-reply) to see them all.
 
-For most tasks this row is where you pick up the result: review and merge the pull request when the dot turns green.
+The `⧉` icon is colored by the pull request's status:
+
+| Color  | Pull request status                           |
+| :----- | :-------------------------------------------- |
+| Yellow | Waiting on checks or review, or checks failed |
+| Green  | Checks passed and no review is blocking       |
+| Purple | Merged                                        |
+| Grey   | Draft or closed                               |
+
+For most tasks this column is where you pick up the result: review and merge the pull request when its `⧉` icon turns green.
 
 ### Peek and reply
 
