@@ -478,8 +478,8 @@
     "interactive-mode.md": {
       "original_url": "https://code.claude.com/docs/en/interactive-mode",
       "original_md_url": "https://code.claude.com/docs/en/interactive-mode.md",
-      "hash": "ff748b5d6c8f5ab91072e4a43408b596b43f246360cd69fd724e8db079552be7",
-      "last_updated": "2026-05-22T04:25:37.573026"
+      "hash": "6aa576a0ca27e6d47222a3b66303452dde27b97989bbaa738717bba087a183e2",
+      "last_updated": "2026-05-27T16:17:11.913487"
     },
     "jetbrains.md": {
       "original_url": "https://code.claude.com/docs/en/jetbrains",
@@ -849,8 +849,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-05-27T13:00:14.164914",
-    "fetch_duration_seconds": 75.313344,
+    "last_fetch_completed": "2026-05-27T16:17:46.055064",
+    "fetch_duration_seconds": 78.469217,
     "total_pages_discovered": 141,
     "pages_fetched_successfully": 142,
     "pages_failed": 0,
@@ -860,7 +860,7 @@
     "total_files": 141,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-05-27T13:00:14.164944",
+  "last_updated": "2026-05-27T16:17:46.055094",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

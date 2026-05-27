@@ -318,10 +318,17 @@ Side questions have full visibility into the current conversation, so you can as
 
 * **Available while Claude is working**: you can run `/btw` even while Claude is processing a response. The side question runs independently and does not interrupt the main turn.
 * **No tool access**: side questions answer only from what is already in context. Claude cannot read files, run commands, or search when answering a side question.
-* **Single response**: there are no follow-up turns. If you need a back-and-forth, use a normal prompt instead.
+* **Single response**: there are no follow-up turns in the overlay. To continue the thread, fork it into its own session with `f`.
 * **Low cost**: the side question reuses the parent conversation's prompt cache, so the additional cost is minimal.
 
-Press **Space**, **Enter**, or **Escape** to dismiss the answer and return to the prompt.
+Once the answer appears, the overlay accepts these keys. Earlier side questions from the same session appear as a dimmed list above the current answer; they stay out of the conversation history but remain visible in the overlay until you clear them.
+
+| Key                        | Action                                                                                                                                                                                                                                                                    |
+| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Space`, `Enter`, `Escape` | Dismiss the answer and return to the prompt                                                                                                                                                                                                                               |
+| `Up` / `Down`              | Scroll the answer                                                                                                                                                                                                                                                         |
+| `f`                        | Fork into a new session. The fork inherits the parent conversation plus this question and answer as real transcript turns, so you can continue with full tool access. The original session is preserved under [`/resume`](/en/commands). Available in local sessions only |
+| `x`                        | Clear the list of earlier `/btw` exchanges shown above the current answer                                                                                                                                                                                                 |
 
 `/btw` is the inverse of a [subagent](/en/sub-agents): it sees your full conversation but has no tools, while a subagent has full tools but starts with an empty context. Use `/btw` to ask about what Claude already knows from this session; use a subagent to go find out something new.
 
