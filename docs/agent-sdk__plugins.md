@@ -4,9 +4,9 @@
 
 # Plugins in the SDK
 
-> Load custom plugins to extend Claude Code with commands, agents, skills, and hooks through the Agent SDK
+> Load custom plugins to extend Claude Code with skills, agents, hooks, and MCP servers through the Agent SDK
 
-Plugins allow you to extend Claude Code with custom functionality that can be shared across projects. Through the Agent SDK, you can programmatically load plugins from local directories to add custom slash commands, agents, skills, hooks, and MCP servers to your agent sessions.
+Plugins allow you to extend Claude Code with custom functionality that can be shared across projects. Through the Agent SDK, you can programmatically load plugins from local directories to add skills, agents, hooks, and MCP servers to your agent sessions.
 
 ## What are plugins?
 
@@ -97,9 +97,13 @@ When plugins load successfully, they appear in the system initialization message
       console.log("Plugins:", message.plugins);
       // Example: [{ name: "my-plugin", path: "./my-plugin" }]
 
-      // Check available commands from plugins
+      // Plugin skills appear with the plugin name as a prefix
+      console.log("Skills:", message.skills);
+      // Example: ["my-plugin:greet"]
+
+      // Plugin commands use the same prefix, and skills appear here too
       console.log("Commands:", message.slash_commands);
-      // Example: ["compact", "context", "my-plugin:custom-command"]
+      // Example: ["compact", "context", "my-plugin:custom-command", "my-plugin:greet"]
     }
   }
   ```
@@ -121,9 +125,13 @@ When plugins load successfully, they appear in the system initialization message
               print("Plugins:", message.data.get("plugins"))
               # Example: [{"name": "my-plugin", "path": "./my-plugin"}]
 
-              # Check available commands from plugins
+              # Plugin skills appear with the plugin name as a prefix
+              print("Skills:", message.data.get("skills"))
+              # Example: ["my-plugin:greet"]
+
+              # Plugin commands use the same prefix, and skills appear here too
               print("Commands:", message.data.get("slash_commands"))
-              # Example: ["compact", "context", "my-plugin:custom-command"]
+              # Example: ["compact", "context", "my-plugin:custom-command", "my-plugin:greet"]
 
 
   asyncio.run(main())
@@ -132,7 +140,7 @@ When plugins load successfully, they appear in the system initialization message
 
 ## Using plugin skills
 
-Skills from plugins are automatically namespaced with the plugin name to avoid conflicts. When invoked as slash commands, the format is `plugin-name:skill-name`.
+Skills from plugins are automatically namespaced with the plugin name to avoid conflicts. To invoke one directly, send `/plugin-name:skill-name` as the prompt.
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
@@ -203,6 +211,7 @@ Here's a full example demonstrating plugin loading and usage:
     })) {
       if (message.type === "system" && message.subtype === "init") {
         console.log("Loaded plugins:", message.plugins);
+        console.log("Available skills:", message.skills);
         console.log("Available commands:", message.slash_commands);
       }
 
@@ -246,6 +255,7 @@ Here's a full example demonstrating plugin loading and usage:
       ):
           if isinstance(message, SystemMessage) and message.subtype == "init":
               print(f"Loaded plugins: {message.data.get('plugins')}")
+              print(f"Available skills: {message.data.get('skills')}")
               print(f"Available commands: {message.data.get('slash_commands')}")
 
           if isinstance(message, AssistantMessage):
@@ -327,9 +337,9 @@ If your plugin doesn't appear in the init message:
 
 If plugin skills don't work:
 
-1. **Use the namespace**: Plugin skills require the `plugin-name:skill-name` format when invoked as slash commands
-2. **Check init message**: Verify the skill appears in `slash_commands` with the correct namespace
-3. **Validate skill files**: Ensure each skill has a `SKILL.md` file in its own subdirectory under `skills/` (for example, `skills/my-skill/SKILL.md`)
+1. **Use the namespace**: invoke plugin skills as `/plugin-name:skill-name`
+2. **Check init message**: verify the skill appears in the `skills` list with the correct namespace
+3. **Validate skill files**: ensure each skill has a `SKILL.md` file in its own subdirectory under `skills/`, for example `skills/my-skill/SKILL.md`
 
 ### Path resolution issues
 
@@ -343,6 +353,6 @@ If relative paths don't work:
 
 * [Plugins](/en/plugins) - Complete plugin development guide
 * [Plugins reference](/en/plugins-reference) - Technical specifications
-* [Slash Commands](/en/agent-sdk/slash-commands) - Using slash commands in the SDK
+* [Commands](/en/agent-sdk/slash-commands) - Using commands in the SDK
 * [Subagents](/en/agent-sdk/subagents) - Working with specialized agents
 * [Skills](/en/agent-sdk/skills) - Using Agent Skills

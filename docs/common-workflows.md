@@ -23,6 +23,8 @@ These are prompt patterns for everyday tasks like exploring unfamiliar code, deb
 
 ### Understand new codebases
 
+For configuring Claude Code in a monorepo or large codebase, see [Monorepos and large repos](/en/large-codebases).
+
 #### Get a quick codebase overview
 
 Suppose you've just joined a new project and need to understand its structure quickly.

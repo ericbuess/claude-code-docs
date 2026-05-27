@@ -16,6 +16,9 @@ The plugin is the in-session companion to [Code Review](/en/code-review), which 
 
 * Claude Code CLI version 2.1.144 or later
 * Python 3.8 or later on your `PATH`. The plugin tries `python3`, `python`, and `py -3` in that order
+* A git repository for the directory you work in. The end-of-turn and commit reviews diff against git state and skip silently outside a repository. The per-edit pattern check works anywhere
+
+On first run the plugin creates a virtual environment under `~/.claude/security/` and installs the Claude Agent SDK into it, which requires `pip` and network access. If that install fails, the commit review falls back to a single-shot review instead of the agentic one. On Windows the virtual environment step is skipped, so the agentic commit review runs only if `claude-agent-sdk` is already importable and otherwise falls back the same way.
 
 ## Install the plugin
 
@@ -25,13 +28,13 @@ In a Claude Code session, install from the [official Anthropic marketplace](/en/
 /plugin install security-guidance@claude-plugins-official
 ```
 
-Then activate it in the current session:
+The install prompts for a scope. Choose user scope to write the plugin to your user settings, so it loads in every new local session you start on this machine. If Claude Code reports that the marketplace is not found, run `/plugin marketplace add anthropics/claude-plugins-official` first, then retry the install.
+
+Then activate it in the current session with `/reload-plugins`, which applies pending plugin changes without a restart:
 
 ```text theme={null}
 /reload-plugins
 ```
-
-The install writes to your user settings, so the plugin loads in every new local session you start on this machine. Sessions that were already running need `/reload-plugins` to load it.
 
 ### Enable in cloud sessions and shared repositories
 
@@ -90,7 +93,7 @@ You see both the finding and Claude's resolution directly in your session. The r
 
 When Claude runs `git commit` or `git push` through its Bash tool, the plugin runs a deeper agentic review of the change in the background. This review reads surrounding code, including callers, sanitizers, and related files, to decide whether a finding is real before reporting it. The extra context keeps false positives low on patterns that look dangerous in isolation but are safe in your codebase.
 
-This layer fires only on commits and pushes Claude makes through its Bash tool. Commits you run from your own shell, including the `!` shell escape inside a session, are not reviewed. Commit and push reviews are capped at 20 per rolling hour.
+This layer fires only on commits and pushes Claude makes through its Bash tool. Commits you run from your own shell, including the `!` shell escape inside a session, are not reviewed. Commit and push reviews are capped at 20 per rolling hour. If the commit review's findings duplicate what the end-of-turn review already reported, Claude is not re-prompted, so a clean commit produces no visible output from this layer.
 
 ### Review independence and limits
 
@@ -129,18 +132,18 @@ patterns:
     reminder: "Hardcoded API key prefix. Load credentials from the secret manager."
   - rule_name: tenant_unfiltered_query
     regex: "\\.objects\\.all\\(\\)"
-    paths: ["src/tenants/**"]
+    paths: ["**/src/tenants/**"]
     reminder: "Multi-tenant code must filter by org_id."
 ```
 
-| Field           | Type   | Description                                                     |
-| :-------------- | :----- | :-------------------------------------------------------------- |
-| `rule_name`     | string | Identifier shown in the warning                                 |
-| `reminder`      | string | Warning text appended to Claude's context, capped at 1 KB       |
-| `regex`         | string | Python regex matched against the edited content                 |
-| `substrings`    | list   | Literal substrings; provide this or `regex`                     |
-| `paths`         | list   | Optional glob patterns; the rule applies only to matching files |
-| `exclude_paths` | list   | Optional glob patterns to skip                                  |
+| Field           | Type   | Description                                                                                                                                             |
+| :-------------- | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `rule_name`     | string | Identifier shown in the warning                                                                                                                         |
+| `reminder`      | string | Warning text appended to Claude's context, capped at 1 KB                                                                                               |
+| `regex`         | string | Python regex matched against the edited content                                                                                                         |
+| `substrings`    | list   | Literal substrings; provide this or `regex`                                                                                                             |
+| `paths`         | list   | Optional glob patterns; the rule applies only to matching files. Globs match against the full file path, so prefix project-relative patterns with `**/` |
+| `exclude_paths` | list   | Optional glob patterns to skip; same matching as `paths`                                                                                                |
 
 The plugin also reads `.claude/security-patterns.yml` and `.claude/security-patterns.json` with the same schema. JSON works on any Python install. The YAML forms require PyYAML to be importable, which the plugin does not install for you. The plugin loads up to 50 custom rules and skips regexes that look prone to catastrophic backtracking.
 
@@ -158,7 +161,7 @@ The plugin loads all locations that exist and concatenates them, with a combined
 
 ## Usage cost
 
-The [per-edit pattern check](#on-each-file-edit) makes no model call and adds no cost. The [end-of-turn](#at-the-end-of-each-turn) and [commit](#on-each-commit-or-push-claude-makes) reviews each spend additional model usage that counts toward your [usage](/en/costs) like any other Claude request. The commit review is agentic and may take several model turns per commit. The increase scales with how often Claude edits files and commits in the session.
+The [per-edit pattern check](#on-each-file-edit) makes no model call and adds no cost. The [end-of-turn](#at-the-end-of-each-turn) and [commit](#on-each-commit-or-push-claude-makes) reviews each spend additional model usage that counts toward your [usage](/en/costs) like any other Claude request. The commit review is agentic and may take several model turns per commit, capped at 20 reviews per rolling hour. Expect roughly one review call per turn that changes files and one deeper review per commit, both subject to the caps above.
 
 Both model-backed reviews use Claude Opus 4.7 by default. Set `SECURITY_REVIEW_MODEL` to choose a different model for the end-of-turn review and `SG_AGENTIC_MODEL` for the commit review.
 
@@ -216,6 +219,16 @@ The plugin is one layer in a defense-in-depth approach. It catches issues earlie
 | In CI           | Your existing static analysis and dependency scanners     | Language-specific rules, supply-chain checks, and policy enforcement the plugin does not attempt |
 
 Each later stage catches what earlier ones miss. The plugin's value is reducing the volume that reaches them, not eliminating the need for them.
+
+## Troubleshooting
+
+The plugin writes runtime diagnostics to `~/.claude/security/log.txt`. Check there first if reviews are not appearing.
+
+Common reasons a review layer skips without a message in the conversation:
+
+* The directory is not a git repository: the end-of-turn and commit reviews require git state and skip outside a repository
+* The session has no Anthropic authentication: the model-backed reviews skip and only the per-edit pattern check runs
+* A `security-patterns.yaml` file is present but PyYAML is not importable: the file is ignored. Use `security-patterns.json` instead
 
 ## Related resources
 
