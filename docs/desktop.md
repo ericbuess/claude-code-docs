@@ -78,7 +78,7 @@ The `dontAsk` permission mode is available only in the [CLI](/en/permission-mode
 
 <span id="auto-mode-availability" />
 
-Auto mode is a research preview available to all users on the Anthropic API. It is not available on third-party providers. It requires Claude Sonnet 4.6, Opus 4.6, or Opus 4.7.
+Auto mode is a research preview available to all users on the Anthropic API. It is not available on third-party providers. It requires Claude Opus 4.6 or later, or Sonnet 4.6.
 
 <Tip title="Best practice">
   Start complex tasks in Plan mode so Claude maps out an approach before making changes. Once you approve the plan, switch to Auto accept edits or Ask permissions to execute it. See [explore first, then plan, then code](/en/best-practices#explore-first-then-plan-then-code) for more on this workflow.
@@ -306,7 +306,7 @@ Press **Cmd+;** on macOS or **Ctrl+;** on Windows to open a side chat, or type `
 
 ### Watch background tasks
 
-The tasks pane shows the background work running inside the current session: subagents, background shell commands, and workflows. Open it from the **Views** menu or drag it into your layout.
+The tasks pane shows the background work running inside the current session: subagents, background shell commands, and dynamic workflows. Open it from the **Views** menu or drag it into your layout.
 
 Click any entry to see its output in the subagent pane or stop it. To see what other sessions are doing, use the [sidebar](#work-in-parallel-with-sessions).
 
@@ -520,7 +520,7 @@ The desktop app does not always inherit your full shell environment. On macOS, w
 
 To set environment variables for local sessions and dev servers on any platform, open the environment dropdown in the prompt box, hover over **Local**, and click the gear icon to open the local environment editor. Variables you save here are stored encrypted on your machine and apply to every local session and preview server you start. You can also add variables to the `env` key in your `~/.claude/settings.json` file, though these reach Claude sessions only and not dev servers. See [environment variables](/en/env-vars) for the full list of supported variables.
 
-[Extended thinking](/en/model-config#extended-thinking) is enabled by default, which improves performance on complex reasoning tasks but uses additional tokens. To disable thinking entirely, set `MAX_THINKING_TOKENS` to `0` in the local environment editor. On models with [adaptive reasoning](/en/model-config#adjust-effort-level), any other `MAX_THINKING_TOKENS` value is ignored because adaptive reasoning controls thinking depth instead. On Opus 4.6 and Sonnet 4.6, set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` to `1` to use a fixed thinking budget; Opus 4.7 always uses adaptive reasoning and has no fixed-budget mode.
+[Extended thinking](/en/model-config#extended-thinking) is enabled by default, which improves performance on complex reasoning tasks but uses additional tokens. To disable thinking entirely, set `MAX_THINKING_TOKENS` to `0` in the local environment editor. On models with [adaptive reasoning](/en/model-config#adjust-effort-level), any other `MAX_THINKING_TOKENS` value is ignored because adaptive reasoning controls thinking depth instead. On Opus 4.6 and Sonnet 4.6, set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` to `1` to use a fixed thinking budget; Opus 4.7 and later always use adaptive reasoning and have no fixed-budget mode.
 
 ### Remote sessions
 

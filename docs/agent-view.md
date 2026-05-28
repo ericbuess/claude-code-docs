@@ -425,7 +425,7 @@ Background sessions are hosted by a per-user supervisor process, separate from y
 
 The supervisor and its sessions authenticate with the same credentials as your interactive sessions and make no additional network connections beyond the model API.
 
-Each background session is its own Claude Code process, managed by the supervisor rather than tied to your terminal. A session that's actively working, waiting for your input, or has a terminal attached keeps its process running. A running background shell command, subagent, workflow, or monitor counts as active work, so a long-running process such as a dev server keeps the session alive.
+Each background session is its own Claude Code process, managed by the supervisor rather than tied to your terminal. A session that's actively working, waiting for your input, or has a terminal attached keeps its process running. A running background shell command, subagent, dynamic workflow, or monitor counts as active work, so a long-running process such as a dev server keeps the session alive.
 
 Once a session finishes and sits unattached for about an hour, the supervisor stops its process to free resources. A session you have [pinned](#organize-the-list) with `Ctrl+T` is exempt and keeps its process running while idle. The transcript and state stay on disk either way, and the next time you attach, peek, or reply to a stopped session, the supervisor starts a fresh process from where it left off. When every session has finished and no terminal is connected, the supervisor itself exits and starts again the next time you need it.
 
@@ -463,7 +463,7 @@ Before you dispatch your first session, agent view shows a short onboarding hint
 
 ### Cannot open agents because background tasks are running
 
-If pressing `←` to background the current session shows `Cannot open agents — N background task(s) running`, the session has in-flight work such as a subagent, a workflow, or a background shell command, and the shortcut won't silently abandon it. Run `/tasks` to see what's running, then `/bg` to confirm abandoning them. See [From inside a session](#from-inside-a-session) for what does and doesn't transfer when you background.
+If pressing `←` to background the current session shows `Cannot open agents — N background task(s) running`, the session has in-flight work such as a subagent, a dynamic workflow, or a background shell command, and the shortcut won't silently abandon it. Run `/tasks` to see what's running, then `/bg` to confirm abandoning them. See [From inside a session](#from-inside-a-session) for what does and doesn't transfer when you background.
 
 ### Prompt rejected as too short
 
