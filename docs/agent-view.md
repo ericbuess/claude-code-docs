@@ -87,7 +87,7 @@ Pinned
   ✽ clawd walk cycle          Write assets/sprites/clawd-walk.png           3m
 
 Ready for review
-  ∙ jump physics              Opened PR with collision fix            ⧉ PR #2048  2h
+  ∙ jump physics              Opened PR with collision fix              PR #2048  2h
 
 Needs input
   ✻ power-up design           needs input: double jump or wall climb?       1m
@@ -123,7 +123,7 @@ Separately, the icon's shape shows whether the underlying process is running:
 | `∙`                 | The process has exited. You can still peek, reply, or attach, and Claude restarts from where it left off          |
 | `✢`                 | A [`/loop`](/en/scheduled-tasks) session sleeping between iterations. The row shows its run count and a countdown |
 
-The `⧉ PR #N` label that can appear at the right edge of a row is the [pull request the session opened](#pull-request-status), not part of the state icon. When a session has opened more than one pull request, the label adds a `+N` suffix counting the others.
+The `PR #N` label that can appear at the right edge of a row is the [pull request the session opened](#pull-request-status), not part of the state icon. When a session has opened more than one pull request, the label shows a count instead, such as `3 PRs`.
 
 The terminal tab title shows the awaiting-input count while agent view is open: `2 awaiting input · claude agents` when sessions need input, or `claude agents` when none do.
 
@@ -139,11 +139,11 @@ Each refresh is one short Haiku-class request through your normal provider, bill
 
 ### Pull request status
 
-When a session opens a pull request, a `⧉ PR #1234` label appears at the right edge of the row, linked to the pull request in terminals that support hyperlinks. The label persists when you send a follow-up to the session, so the pull request remains visible while the row reverts to live progress.
+When a session opens a pull request, a `PR #1234` label appears at the right edge of the row, linked to the pull request in terminals that support hyperlinks. The label persists when you send a follow-up to the session, so the pull request remains visible while the row reverts to live progress.
 
-When a session has opened more than one pull request, the label shows the open pull request that most needs attention and adds a `+N` suffix counting the others. Open the [peek panel](#peek-and-reply) to see them all.
+When a session has opened more than one pull request, the label shows a count instead, such as `3 PRs`, colored by the open pull request that most needs attention. Open the [peek panel](#peek-and-reply) to see them all.
 
-The `⧉` icon is colored by the pull request's status:
+The pull request number is colored by its status:
 
 | Color  | Pull request status                           |
 | :----- | :-------------------------------------------- |
@@ -152,7 +152,7 @@ The `⧉` icon is colored by the pull request's status:
 | Purple | Merged                                        |
 | Grey   | Draft or closed                               |
 
-For most tasks this column is where you pick up the result: review and merge the pull request when its `⧉` icon turns green.
+For most tasks this column is where you pick up the result: review and merge the pull request when its number turns green.
 
 ### Peek and reply
 
@@ -243,7 +243,7 @@ Prefix or mention parts of the prompt to control how the session starts:
 | `<agent-name> <prompt>`           | If the first word matches a custom [subagent](/en/sub-agents) name, that subagent runs as the session's main agent with the configuration from its frontmatter |
 | `@<agent-name>`                   | Mention a custom subagent anywhere in the prompt to run it as the main agent                                                                                   |
 | `@<repo>`                         | Mention a repository under the directory you opened agent view from to run the session there                                                                   |
-| `/<skill>`                        | Suggest [skills](/en/skills) to dispatch as the prompt                                                                                                         |
+| `/<command>`                      | Suggest [skills](/en/skills) and [commands](/en/commands) to dispatch as the prompt                                                                            |
 | `#<number>` or a pull request URL | If a session is already working on that PR, select it instead of dispatching                                                                                   |
 | `Shift+Enter`                     | Dispatch and immediately attach to the new session                                                                                                             |
 
@@ -263,7 +263,7 @@ When agent view is grouped by directory, the highlighted row's directory becomes
 
 ### From inside a session
 
-Run `/background` or its alias `/bg` to move the current conversation into a background session. Pass a prompt such as `/bg run the test suite and fix any failures` to give one more instruction first.
+Run `/background` or its alias `/bg` to move the current conversation into a background session. Pass a prompt such as `/bg run the test suite and fix any failures` to give one more instruction first. If Claude is responding when you run `/bg`, the response continues in the background session.
 
 Backgrounding from an interactive session starts a fresh process that resumes from the saved conversation, so running subagents, [monitors](/en/tools-reference#monitor-tool), and background commands do not transfer to it. Claude asks you to confirm before backgrounding when any are running. Once in the background, the session can start new subagents, monitors, and background commands, and those keep running across later detach and reattach.
 
@@ -344,12 +344,12 @@ To make a subagent always run in its own worktree regardless of how it was start
 
 ### Set the model
 
-The model name shown in the agent view header is the dispatch default. New sessions you start from the input use this model, which comes from the [`model` setting](/en/settings#available-settings) in your user settings. Set it by pressing `d` on a model in the [`/model` picker](/en/model-config), or edit the setting directly. To override it for the whole agent view session, pass `--model` when opening agent view. See [Permission mode, model, and effort](#permission-mode-model-and-effort).
+The model name shown in the agent view header is the dispatch default. New sessions you start from the input use this model, which comes from the [`model` setting](/en/settings#available-settings) in your user settings. Set it by selecting a model in the [`/model` picker](/en/model-config), or edit the setting directly. To override it for the whole agent view session, pass `--model` when opening agent view. See [Permission mode, model, and effort](#permission-mode-model-and-effort).
 
 Each background session can run on a different model. To override it for one session:
 
 * From the shell, pass `--model` with `claude --bg`.
-* Attach to a running session and run `/model` there. The change persists if the session is respawned.
+* Attach to a running session, open `/model`, and press `s` on a model to switch for that session only. The change persists if the session is respawned.
 * Dispatch a [subagent](/en/sub-agents) whose frontmatter sets a `model` field.
 
 ### Permission mode, model, and effort

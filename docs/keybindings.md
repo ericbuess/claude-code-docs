@@ -272,11 +272,11 @@ The diff detail view also binds pager-style keys to the standard [scroll actions
 
 Actions available in the `ModelPicker` context:
 
-| Action                       | Default | Description                                       |
-| :--------------------------- | :------ | :------------------------------------------------ |
-| `modelPicker:decreaseEffort` | Left    | Decrease effort level                             |
-| `modelPicker:increaseEffort` | Right   | Increase effort level                             |
-| `modelPicker:setAsDefault`   | d       | Set highlighted model as default for new sessions |
+| Action                        | Default | Description                                  |
+| :---------------------------- | :------ | :------------------------------------------- |
+| `modelPicker:decreaseEffort`  | Left    | Decrease effort level                        |
+| `modelPicker:increaseEffort`  | Right   | Increase effort level                        |
+| `modelPicker:thisSessionOnly` | s       | Apply highlighted model to this session only |
 
 ### Select actions
 

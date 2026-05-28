@@ -55,13 +55,20 @@ You can configure your model in several ways, listed in order of priority:
 4. **Settings** - Configure permanently in your settings file using the `model`
    field.
 
-As of v2.1.144, `/model` applies to the current session only and is not written to settings. To save your choice as the default for new sessions, press `d` on the highlighted row in the picker, which writes the `model` field in your user settings. Managed settings take precedence and reapply on the next launch.
+As of v2.1.153, `/model` saves your choice as the default for new sessions by writing the `model` field in your user settings. In the picker:
 
-The `--model` flag and `ANTHROPIC_MODEL` environment variable also apply only to the session you launch with them. To run different models in different terminals at the same time, launch each one with its own `--model` flag rather than switching with `/model`.
+* `Enter`: switch model and save as your default
+* `s`: switch model for this session only
+
+Typing `/model <name>` directly behaves like `Enter`. Project and managed settings still take precedence and reapply on the next launch.
+
+In v2.1.144 through v2.1.152, `/model` applied to the current session only and `d` in the picker saved a default.
+
+The `--model` flag and `ANTHROPIC_MODEL` environment variable apply only to the session you launch with them. To run different models in different terminals at the same time, launch each one with its own `--model` flag rather than switching with `/model`.
 
 Resumed sessions started with `claude --resume`, `--continue`, or the `/resume` picker keep the model they were using when the transcript was saved, regardless of the current `model` setting. If that model has been retired, the session falls through to the normal precedence order. This prevents another session's `/model` choice from changing the model on resume.
 
-When the active model at startup comes from project or managed settings rather than your own selection, the startup header shows which settings file set it. Run `/model` to override for the current session.
+When the active model at startup comes from project or managed settings rather than your own selection, the startup header shows which settings file set it. Run `/model` to override; the project or managed setting reapplies on the next launch.
 
 Example usage:
 

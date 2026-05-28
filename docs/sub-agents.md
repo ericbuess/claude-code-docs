@@ -394,6 +394,16 @@ Inline definitions use the same schema as `.mcp.json` server entries (`stdio`, `
 
 To keep an MCP server out of the main conversation entirely and avoid its tool descriptions consuming context there, define it inline here rather than in `.mcp.json`. The subagent gets the tools; the parent conversation does not.
 
+As of v2.1.153, the MCP restrictions that apply to the main session also cover servers declared in subagent frontmatter:
+
+* [`--strict-mcp-config`](/en/cli-reference) and [`--bare`](/en/cli-reference)
+* [Enterprise managed MCP configuration](/en/managed-mcp)
+* [`allowedMcpServers` and `deniedMcpServers` policies](/en/managed-mcp#policy-based-control-with-allowlists-and-denylists)
+
+When one of these blocks a server, Claude Code skips it and shows a warning naming the blocked servers.
+
+Managed-settings restrictions apply to every subagent regardless of how it is defined. `--strict-mcp-config` does not filter servers you pass inline via `--agents` or the SDK `agents` option, since those are explicit caller input.
+
 #### Permission modes
 
 The `permissionMode` field controls how the subagent handles permission prompts. Subagents inherit the permission context from the main conversation and can override the mode, except when the parent mode takes precedence as described below.

@@ -940,6 +940,7 @@ Logged when conversation compaction completes.
 * `pre_tokens`: Approximate token count before compaction
 * `post_tokens`: Approximate token count after compaction
 * `error`: Error message when compaction failed
+* `precompute_reuse`: Only set when `trigger` is `"manual"`. Auto-compaction can prepare a summary in the background before the context window fills, and this attribute records whether `/compact` reused that prepared summary. `"hit"` means it was reused; `"miss_custom_instructions"`, `"miss_hook"`, and `"miss_not_ready"` give the reason a fresh summary was computed instead. {/* min-version: 2.1.153 */}Requires Claude Code v2.1.153 or later
 
 #### Feedback survey event
 
