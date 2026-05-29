@@ -26,7 +26,8 @@ Use the Agent SDK to build an AI agent that reads your code, finds bugs, and fix
     Create a new directory for this quickstart:
 
     ```bash theme={null}
-    mkdir my-agent && cd my-agent
+    mkdir my-agent
+    cd my-agent
     ```
 
     For your own projects, you can run the SDK from any folder; it will have access to files in that directory and its subdirectories by default.
@@ -43,20 +44,34 @@ Use the Agent SDK to build an AI agent that reads your code, finds bugs, and fix
       </Tab>
 
       <Tab title="Python (uv)">
-        [uv Python package manager](https://docs.astral.sh/uv/) is a fast Python package manager that handles virtual environments automatically:
+        [uv](https://docs.astral.sh/uv/) is a fast Python package manager that handles virtual environments automatically:
 
         ```bash theme={null}
-        uv init && uv add claude-agent-sdk
+        uv init
+        uv add claude-agent-sdk
         ```
       </Tab>
 
       <Tab title="Python (pip)">
-        Create a virtual environment first, then install:
+        Create and activate a virtual environment, then install the package.
+
+        On macOS or Linux:
 
         ```bash theme={null}
-        python3 -m venv .venv && source .venv/bin/activate
-        pip3 install claude-agent-sdk
+        python3 -m venv .venv
+        source .venv/bin/activate
+        pip install claude-agent-sdk
         ```
+
+        On Windows:
+
+        ```powershell theme={null}
+        py -m venv .venv
+        .venv\Scripts\Activate.ps1
+        pip install claude-agent-sdk
+        ```
+
+        If PowerShell blocks `Activate.ps1` with an execution policy error, run `Set-ExecutionPolicy -Scope Process RemoteSigned` first.
       </Tab>
     </Tabs>
 
