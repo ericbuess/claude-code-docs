@@ -62,7 +62,7 @@ Fast mode has higher per-token pricing than standard Opus, with the multiplier v
 | Opus 4.8              | \$10         | \$50          |
 | Opus 4.7 and Opus 4.6 | \$30         | \$150         |
 
-Fast mode pricing is flat across the full 1M token context window.
+Fast mode pricing is flat across the full 1M token context window. For the standard Opus rate to compare against, see the [Claude pricing reference](https://platform.claude.com/docs/en/about-claude/pricing).
 
 When you switch into fast mode mid-conversation, you pay the full fast mode uncached input token price for the entire conversation context. This costs more than if you had enabled fast mode from the start.
 

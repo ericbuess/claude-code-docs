@@ -626,7 +626,7 @@ Plugin-related settings in `settings.json`:
 
 #### `enabledPlugins`
 
-Controls which plugins are enabled. Format: `"plugin-name@marketplace-name": true/false`
+Controls which plugins are enabled. Format: `"plugin-name@marketplace-name": true/false`. A plugin with no entry at any scope falls back to its [`defaultEnabled`](/en/plugins-reference#default-enablement) value.
 
 **Scopes**:
 
