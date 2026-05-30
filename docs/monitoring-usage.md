@@ -141,7 +141,7 @@ In Agent SDK and non-interactive sessions started with `-p`, Claude Code also re
 
 #### Span hierarchy
 
-Each user prompt starts a `claude_code.interaction` root span. API calls, tool calls, and hook executions are recorded as its children. Tool spans have two child spans of their own: one for the time spent waiting on a permission decision and one for the execution itself. When the Task tool spawns a subagent, the subagent's API and tool spans nest under the parent's `claude_code.tool` span.
+Each user prompt starts a `claude_code.interaction` root span. API calls, tool calls, and hook executions are recorded as its children. Tool spans have two child spans of their own: one for the time spent waiting on a permission decision and one for the execution itself. When the Agent tool, or legacy Task tool, spawns a subagent, the subagent's API and tool spans nest under the parent's `claude_code.tool` span.
 
 ```text theme={null}
 claude_code.interaction
@@ -150,7 +150,7 @@ claude_code.interaction
 └── claude_code.tool
     ├── claude_code.tool.blocked_on_user
     ├── claude_code.tool.execution
-    └── (Task tool) subagent claude_code.llm_request / claude_code.tool spans
+    └── (Agent tool) subagent claude_code.llm_request / claude_code.tool spans
 ```
 
 In Agent SDK and `claude -p` sessions, `claude_code.interaction` itself becomes a child of the caller's span when `TRACEPARENT` is set in the environment.
@@ -211,7 +211,7 @@ Each retry attempt is also recorded as a `gen_ai.request.attempt` span event wit
 | `file_path`       | Target file path for Read, Edit, and Write tools                                                                   | `OTEL_LOG_TOOL_DETAILS` |
 | `full_command`    | Command string for the Bash tool                                                                                   | `OTEL_LOG_TOOL_DETAILS` |
 | `skill_name`      | Skill name for the Skill tool                                                                                      | `OTEL_LOG_TOOL_DETAILS` |
-| `subagent_type`   | Subagent type for the Task tool                                                                                    | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type`   | Subagent type for the Agent tool or legacy Task tool                                                               | `OTEL_LOG_TOOL_DETAILS` |
 
 When `OTEL_LOG_TOOL_CONTENT=1`, this span also records a `tool.output` span event whose attributes contain the tool's input and output bodies, truncated at 60 KB per attribute.
 
@@ -566,9 +566,10 @@ Logged when a tool completes execution. Not emitted if the tool call was rejecte
 * `mcp_server_scope`: MCP server scope identifier (for MCP tools)
 * `tool_parameters` (when `OTEL_LOG_TOOL_DETAILS=1`): JSON string containing tool-specific parameters:
   * For Bash tool: includes `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox`, and `git_commit_id` (the commit SHA, when a `git commit` command succeeds)
+  * For WorkspaceBash tool: includes `bash_command`, `full_command`, `timeout`
   * For MCP tools: includes `mcp_server_name`, `mcp_tool_name`
   * For Skill tool: includes `skill_name`
-  * For Task tool: includes `subagent_type`
+  * For Agent tool or legacy Task tool: includes `subagent_type`
 * `tool_input` (when `OTEL_LOG_TOOL_DETAILS=1`): JSON-serialized tool arguments. Individual values over 512 characters are truncated, and the full payload is bounded to \~4 K characters. Applies to all tools including MCP tools.
 
 #### API request event
@@ -680,6 +681,12 @@ Logged when a tool permission decision is made (accept/reject).
   * `"user_temporary"`: Emitted when the user chose "Yes" at a permission prompt for a one-time approval, or chose one of the "... during this session" options on a file edit or read prompt. In the interactive CLI this is emitted only for the choice itself; later calls allowed by that session-scoped grant emit `"config"` instead. In Agent SDK or non-interactive `-p` sessions, both the choice and later matches emit `"user_temporary"`. Treated as an accept.
   * `"user_abort"`: Emitted when the user dismissed the permission prompt without answering. Treated as a reject.
   * `"user_reject"`: Emitted when the user chose "No" when prompted. In the interactive CLI this is emitted only for that choice itself; calls that match a deny rule in the user's personal settings emit `"config"` instead. In Agent SDK or non-interactive `-p` sessions, calls that match a deny rule in personal settings emit `"user_reject"`. Treated as a reject.
+* `tool_parameters` (when `OTEL_LOG_TOOL_DETAILS=1`): JSON string containing tool-specific parameters. Same shape as the [Tool result event](#tool-result-event), minus post-execution fields such as `git_commit_id`. Values may differ from `tool_result` for an accepted call if the permission decision rewrites the tool input via `updatedInput`. Use this attribute to see which command was rejected when `decision` is `"reject"`.
+  * For Bash tool: includes `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox`
+  * For WorkspaceBash tool: includes `bash_command`, `full_command`, `timeout`
+  * For MCP tools: includes `mcp_server_name`, `mcp_tool_name`
+  * For Skill tool: includes `skill_name`
+  * For Agent tool or legacy Task tool: includes `subagent_type`
 
 #### Permission mode changed event
 
@@ -1040,23 +1047,27 @@ To capture MCP server activity with full call detail, enable the logs exporter a
 | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `mcp_server_connection` | Server connect, disconnect, and connection failure with `server_name`, `transport_type`, `server_scope`, and error detail                                                                          |
 | `tool_result`           | Each MCP tool call with `tool_name` and `mcp_server_scope`, a `tool_parameters` payload containing `mcp_server_name` and `mcp_tool_name`, and a `tool_input` payload containing the call arguments |
-| `tool_decision`         | Whether the call was allowed or denied, and whether the decision came from config, a hook, or the user                                                                                             |
+| `tool_decision`         | Whether the call was allowed or denied, whether the decision came from config, a hook, or the user, and a `tool_parameters` payload containing `mcp_server_name` and `mcp_tool_name`               |
 
-Without `OTEL_LOG_TOOL_DETAILS`, `tool_result` events still carry `tool_name` and `mcp_server_scope` but omit the `mcp_server_name`/`mcp_tool_name` breakdown and the arguments, and `mcp_server_connection` events omit `server_name` and the error message.
+Without `OTEL_LOG_TOOL_DETAILS`, these events drop the identifying detail:
+
+* `tool_result`: keeps `tool_name` and `mcp_server_scope`, omits `mcp_server_name`, `mcp_tool_name`, and arguments
+* `tool_decision`: keeps `tool_name`, omits `tool_parameters`
+* `mcp_server_connection`: omits `server_name` and the error message
 
 ### Map security questions to events
 
 When building detection rules, look up the signal you want to monitor and query your backend for the corresponding event and attributes:
 
-| Signal                                    | Event                                        | Key attributes                                               |
-| ----------------------------------------- | -------------------------------------------- | ------------------------------------------------------------ |
-| Tool call allowed or denied, and by what  | `tool_decision`                              | `decision`, `source`, `tool_name`                            |
-| Permission mode escalation                | `permission_mode_changed`                    | `from_mode`, `to_mode`, `trigger`                            |
-| Policy hook blocked an action             | `hook_execution_complete`                    | `hook_event`, `num_blocking`                                 |
-| Login, logout, and authentication failure | `auth`                                       | `action`, `success`, `error_category`                        |
-| MCP server connect or failure             | `mcp_server_connection`                      | `status`, `server_name`, `error_code`                        |
-| Plugin installed and its source           | `plugin_installed`                           | `plugin.name`, `marketplace.name`, `marketplace.is_official` |
-| Commands run and files touched            | `tool_result` with `OTEL_LOG_TOOL_DETAILS=1` | `tool_parameters`, `tool_input`                              |
+| Signal                                    | Event                                                                                 | Key attributes                                               |
+| ----------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Tool call allowed or denied, and by what  | `tool_decision`                                                                       | `decision`, `source`, `tool_name`, `tool_parameters`         |
+| Permission mode escalation                | `permission_mode_changed`                                                             | `from_mode`, `to_mode`, `trigger`                            |
+| Policy hook blocked an action             | `hook_execution_complete`                                                             | `hook_event`, `num_blocking`                                 |
+| Login, logout, and authentication failure | `auth`                                                                                | `action`, `success`, `error_category`                        |
+| MCP server connect or failure             | `mcp_server_connection`                                                               | `status`, `server_name`, `error_code`                        |
+| Plugin installed and its source           | `plugin_installed`                                                                    | `plugin.name`, `marketplace.name`, `marketplace.is_official` |
+| Commands run and files touched            | `tool_result` (executed) or `tool_decision` (rejected) with `OTEL_LOG_TOOL_DETAILS=1` | `tool_parameters`; `tool_input` (`tool_result` only)         |
 
 Claude Code emits the raw event stream only. Anomaly detection, baselining, correlation across sessions, and alerting are the responsibility of your SIEM or observability backend.
 
@@ -1124,7 +1135,11 @@ For a comprehensive guide on measuring return on investment for Claude Code, inc
 * Raw file contents and code snippets are not included in metrics or events. Trace spans are a separate data path: see the `OTEL_LOG_TOOL_CONTENT` bullet below
 * When authenticated via OAuth, `user.email` is included in telemetry attributes. If this is a concern for your organization, work with your telemetry backend to filter or redact this field
 * User prompt content is not collected by default. Only prompt length is recorded. To include prompt content, set `OTEL_LOG_USER_PROMPTS=1`
-* Tool input arguments and parameters are not logged by default. To include them, set `OTEL_LOG_TOOL_DETAILS=1`. When enabled, `tool_result` events include a `tool_parameters` attribute with Bash commands, MCP server and tool names, and skill names, plus a `tool_input` attribute with file paths, URLs, search patterns, and other arguments. `user_prompt` events include the verbatim `command_name` for custom, plugin, and MCP commands. Trace spans include the same `tool_input` attribute and input-derived attributes such as `file_path`. Individual values over 512 characters are truncated and the total is bounded to \~4 K characters, but the arguments may still contain sensitive values. Configure your telemetry backend to filter or redact these attributes as needed
+* Tool input arguments and parameters are not logged by default. To include them, set `OTEL_LOG_TOOL_DETAILS=1`. This data is sent only to the OTEL endpoint you configure, never to Anthropic. Arguments may still contain sensitive values, so configure your telemetry backend to filter or redact these attributes as needed. When enabled:
+  * `tool_result` and `tool_decision` events include a `tool_parameters` attribute with Bash commands, MCP server and tool names, and skill names. Fields such as `full_command` are emitted untruncated
+  * `tool_result` events additionally include a `tool_input` attribute with file paths, URLs, search patterns, and other arguments. Individual values over 512 characters are truncated and the total is bounded to \~4 K characters
+  * `user_prompt` events include the verbatim `command_name` for custom, plugin, and MCP commands
+  * Trace spans include the same `tool_input` attribute and input-derived attributes such as `file_path`, with the same truncation as `tool_input`
 * Tool input and output content is not logged in trace spans by default. To include it, set `OTEL_LOG_TOOL_CONTENT=1`. When enabled, span events include full tool input and output content truncated at 60 KB per span. This can include raw file contents from Read tool results and Bash command output. Configure your telemetry backend to filter or redact these attributes as needed
 * Raw Anthropic Messages API request and response bodies are not logged by default. To include them, set `OTEL_LOG_RAW_API_BODIES`. With `=1`, each API call emits `api_request_body` and `api_response_body` log events whose `body` attribute is the JSON-serialized payload, truncated at 60 KB. With `=file:<dir>`, untruncated bodies are written to `.request.json` and `.response.json` files under that directory and the events carry a `body_ref` path instead of the inline body. Ship the directory with a log collector or sidecar rather than through the telemetry stream. In both modes, bodies contain the full conversation history (system prompt, every prior user and assistant turn, tool results), so enabling this implies consent to everything the other `OTEL_LOG_*` content flags would reveal. Claude's extended-thinking content is always redacted from these bodies regardless of other settings
 

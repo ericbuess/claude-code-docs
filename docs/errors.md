@@ -610,6 +610,7 @@ All three variants mean the same thing: the sequence of `tool_use`, `tool_result
 
 **What to do:**
 
+* {/* max-version: 2.1.155 */}If you are using Opus 4.7 or Opus 4.8, run `claude update` first. Versions before v2.1.156 can trigger this error during normal tool use, and `/rewind` does not clear it.
 * Run `/rewind`, or press Esc twice, to step back to a checkpoint before the corrupted turn and continue from there. See [Checkpointing](/en/checkpointing) for how checkpoints are created and restored.
 
 ### Usage Policy refusal

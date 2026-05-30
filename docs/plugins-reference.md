@@ -357,6 +357,49 @@ Plugins use the same scope system as other Claude Code configurations. For insta
 
 ***
 
+## Skills-directory plugins
+
+Any folder under a skills directory that contains a `.claude-plugin/plugin.json` manifest is loaded as a plugin named `<name>@skills-dir` on the next session, with no marketplace and no install step. Scaffold one with [`plugin init`](#plugin-init). Unlike a marketplace install, the plugin is discovered in place rather than copied into the plugin cache.
+
+A skills directory tree supports three distinct things:
+
+| What you have                                 | What it is                                                                          |
+| :-------------------------------------------- | :---------------------------------------------------------------------------------- |
+| `<skills-dir>/foo/SKILL.md` with no manifest  | A plain [skill](/en/skills) named `foo`                                             |
+| `<skills-dir>/foo/.claude-plugin/plugin.json` | A plugin `foo@skills-dir`, which can bundle its own skills, agents, hooks, and more |
+| `<plugin>/skills/bar/SKILL.md`                | A skill `bar` packaged inside a plugin                                              |
+
+### Choose where the plugin loads from
+
+| Skills directory        | Scope    | Loads                                                                            |
+| :---------------------- | :------- | :------------------------------------------------------------------------------- |
+| `~/.claude/skills/`     | personal | In every project, since the location is yours alone                              |
+| `<cwd>/.claude/skills/` | project  | Only after you accept the workspace [trust dialog](/en/settings) for that folder |
+
+A project-scope plugin is checked into the repository and reaches every collaborator who clones it. Because that content comes from the repository rather than from you, it loads only after the same trust gate that governs `.claude/settings.json`, and components that run code are restricted further:
+
+* MCP servers it declares go through the [same per-server approval](/en/mcp) as a project `.mcp.json`
+* LSP servers start only after you trust the workspace
+* [Background monitors](#monitors) do not load
+
+Personal-scope plugins have none of these restrictions.
+
+<Warning>
+  Project-scope `@skills-dir` plugins load only from the `.claude/skills/` of the directory where you start Claude Code. They do not [walk up to the repository root](/en/skills#automatic-discovery-from-parent-and-nested-directories) the way plain skills and commands do, so launching from a subdirectory misses a plugin that lives at the repo root. Launch from the repository root, or run `/reload-plugins` after changing directories.
+</Warning>
+
+### Edit, reload, and disable a skills-directory plugin
+
+Changes you make to a skill's `SKILL.md` take effect immediately in the current session. Changes to the plugin's other components, such as `hooks/`, `.mcp.json`, `agents/`, and `output-styles/`, do not. Run `/reload-plugins` or restart Claude Code to pick those up. See [Live change detection](/en/skills#live-change-detection).
+
+To stop loading a skills-directory plugin, delete its folder or disable it by name. There is no `uninstall` step because nothing was installed from a marketplace.
+
+```bash theme={null}
+claude plugin disable my-tool@skills-dir
+```
+
+***
+
 ## Plugin manifest schema
 
 The `.claude-plugin/plugin.json` file defines your plugin's metadata and configuration. This section documents all supported fields and options.
@@ -770,6 +813,60 @@ A `CLAUDE.md` file at the plugin root is not loaded as project context. Plugins 
 ## CLI commands reference
 
 Claude Code provides CLI commands for non-interactive plugin management, useful for scripting and automation.
+
+### plugin init
+
+Scaffold a new plugin at `~/.claude/skills/<name>/`. On the next Claude Code session it loads automatically as `<name>@skills-dir` and appears in `/plugin` and `claude plugin list` with no install step.
+
+See [Skills-directory plugins](#skills-directory-plugins) for scope and trust requirements.
+
+```bash theme={null}
+claude plugin init <name> [options]
+```
+
+**Arguments:**
+
+* `<name>`: Plugin name. Becomes the skill namespace and the directory name under `~/.claude/skills/`, so it cannot contain spaces or path separators.
+
+**Options:**
+
+| Option                   | Description                                                                                                         | Default                 |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------ | :---------------------- |
+| `--description <text>`   | Manifest description                                                                                                |                         |
+| `--author <name>`        | Author name                                                                                                         | `git config user.name`  |
+| `--author-email <email>` | Author email                                                                                                        | `git config user.email` |
+| `--with <components...>` | Also scaffold component folders. Valid values: `skills`, `agents`, `hooks`, `mcp`, `lsp`, `output-style`, `channel` |                         |
+| `-f, --force`            | Overwrite an existing `.claude-plugin/` at the target                                                               |                         |
+| `-h, --help`             | Display help for command                                                                                            |                         |
+
+**Aliases:** `new`
+
+Each `--with` value adds a starter file for that component, ready to edit:
+
+| Component      | What it scaffolds                                                                                         |
+| :------------- | :-------------------------------------------------------------------------------------------------------- |
+| `skills`       | An extra namespaced `<name>:example` skill alongside the default one                                      |
+| `agents`       | An `agents/` subagent definition                                                                          |
+| `hooks`        | A `hooks/hooks.json` with a sample event handler                                                          |
+| `mcp`          | A `.mcp.json` with HTTP and stdio server examples                                                         |
+| `lsp`          | A `.lsp.json` language-server example                                                                     |
+| `output-style` | An `output-styles/<name>.md` that applies automatically while the plugin is enabled                       |
+| `channel`      | An MCP-based [channel](/en/channels): a stdio server (`server.ts`), its `.mcp.json`, and a `package.json` |
+
+The scaffolded plugin uses the `@skills-dir` source rather than a marketplace. Admins can block this source with `strictKnownMarketplaces` or by adding `{"source": "skills-dir"}` to `blockedMarketplaces` in [managed settings](/en/plugin-marketplaces#managed-marketplace-restrictions). When blocked, `plugin init` fails before writing.
+
+**Examples:**
+
+```bash theme={null}
+# Scaffold a minimal plugin
+claude plugin init my-helper
+
+# Scaffold with skill and hook folders
+claude plugin init my-helper --with skills hooks
+
+# Overwrite an existing scaffold
+claude plugin init my-helper --force
+```
 
 ### plugin install
 

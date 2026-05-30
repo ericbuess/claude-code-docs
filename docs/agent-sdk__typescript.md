@@ -538,7 +538,12 @@ interface Query extends AsyncGenerator<SDKMessage, void> {
 
 #### `applyFlagSettings()`
 
-Changes any [setting](/en/settings) on a running session without restarting the query. Use it when a setting that has no dedicated setter needs to change mid-session, such as tightening `permissions` after the agent reads untrusted input. `setModel()` and `setPermissionMode()` are dedicated setters for those two keys; `applyFlagSettings()` is the general form that accepts any subset of the settings keys, and passing `model` here behaves the same as `setModel()`.
+Changes [settings](/en/settings) on a running session without restarting the query. Use it when a setting that has no dedicated setter needs to change mid-session, such as tightening `permissions` after the agent reads untrusted input. `setModel()` and `setPermissionMode()` are dedicated setters for those two keys; `applyFlagSettings()` is the general form that accepts any subset of the settings keys, and passing `model` here behaves the same as `setModel()`.
+
+Only some keys take effect mid-session:
+
+* **Applied on the next turn**: `model`, `effortLevel`, `ultracode`, `permissions`, `hooks`, `skillOverrides`, `fastMode`, `awaySummaryEnabled`
+* **No effect mid-session**: `agent` and the system prompt options. These are resolved once at startup, so the running session keeps the original value even though the call succeeds. To change them, start a new session.
 
 The values are written to the flag-settings layer, the same layer the inline `settings` option of `query()` populates at startup. Flag settings sit near the top of the [settings precedence order](/en/settings#settings-precedence): they override user, project, and local settings, and only managed policy settings can override them. This is the same tier the [on-page precedence section](#settings-precedence) calls programmatic options.
 
@@ -1703,7 +1708,8 @@ type ToolInputSchemas =
   | UnsubscribeMcpResourceInput
   | UnsubscribePollingInput
   | WebFetchInput
-  | WebSearchInput;
+  | WebSearchInput
+  | WorkflowInput;
 ```
 
 ### Agent
@@ -1927,6 +1933,30 @@ type WebSearchInput = {
 
 Searches the web and returns formatted results.
 
+### Workflow
+
+**Tool name:** `Workflow`
+
+```typescript theme={null}
+type WorkflowInput = {
+  script?: string;
+  name?: string;
+  scriptPath?: string;
+  args?: unknown;
+  resumeFromRunId?: string;
+};
+```
+
+Runs a [dynamic workflow](/en/workflows): a script that orchestrates many subagents in the background and returns one consolidated result. The `Workflow` tool is available in Agent SDK v0.3.149 and later. At least one of `script`, `name`, or `scriptPath` is required.
+
+| Field             | Type      | Description                                                                                                                                                                                                                               |
+| ----------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `script`          | `string`  | Inline workflow script. Must begin with `export const meta = { name, description, phases }` as a literal, followed by the script body using `agent()`, `parallel()`, `pipeline()`, and `phase()`                                          |
+| `name`            | `string`  | Name of a built-in workflow or one saved in `.claude/workflows/`. Resolved to a script                                                                                                                                                    |
+| `scriptPath`      | `string`  | Path to a workflow script file on disk. Takes precedence over `script` and `name`. Every invocation persists its script and returns the path in the result, so you can edit that file and re-invoke with the same `scriptPath` to iterate |
+| `args`            | `unknown` | Input value exposed to the script as the global `args`, for parameterized named workflows such as a research question or a list of file paths. Pass arrays and objects as actual JSON values, not as a JSON-encoded string                |
+| `resumeFromRunId` | `string`  | Run ID of a prior `Workflow` invocation to resume. Completed `agent()` calls with unchanged inputs return cached results; only changed or new calls run live. Same session only                                                           |
+
 ### TodoWrite
 
 **Tool name:** `TodoWrite`
@@ -2088,7 +2118,8 @@ type ToolOutputSchemas =
   | TaskUpdateOutput
   | TodoWriteOutput
   | WebFetchOutput
-  | WebSearchOutput;
+  | WebSearchOutput
+  | WorkflowOutput;
 ```
 
 ### Agent
@@ -2151,10 +2182,11 @@ type AskUserQuestionOutput = {
     multiSelect: boolean;
   }>;
   answers: Record<string, string>;
+  response?: string;
 };
 ```
 
-Returns the questions asked and the user's answers.
+Returns the questions asked and the user's answers. `response` is set when the user typed a freeform reply instead of answering the structured questions; when present, Claude receives "The user responded: …" instead of the per-question answer list.
 
 ### Bash
 
@@ -2418,6 +2450,34 @@ type WebSearchOutput = {
 ```
 
 Returns search results from the web.
+
+### Workflow
+
+**Tool name:** `Workflow`
+
+```typescript theme={null}
+type WorkflowOutput = {
+  status: "async_launched";
+  taskId: string;
+  runId?: string;
+  summary?: string;
+  transcriptDir?: string;
+  scriptPath?: string;
+  error?: string;
+};
+```
+
+Returns immediately after the tool accepts the invocation. The final result arrives later as a task completion. Check `error` before treating the run as started: a script that fails its syntax check returns `status: "async_launched"` with `error` set, and never runs.
+
+| Field           | Type               | Description                                                                                                                     |
+| --------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `status`        | `"async_launched"` | The tool accepted the invocation. This is the only value the field takes                                                        |
+| `taskId`        | `string`           | Background task identifier for the run                                                                                          |
+| `runId`         | `string`           | Workflow run identifier to pass as `resumeFromRunId` on a later invocation                                                      |
+| `summary`       | `string`           | One-line description of what the workflow does                                                                                  |
+| `transcriptDir` | `string`           | Directory where subagent transcripts are written during execution                                                               |
+| `scriptPath`    | `string`           | Path to the persisted workflow script for this run. Edit it and pass back as `scriptPath` to rerun without resending the script |
+| `error`         | `string`           | Set when the script fails its syntax check. When present, the run did not start despite the `async_launched` status             |
 
 ### TodoWrite
 

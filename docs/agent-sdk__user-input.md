@@ -625,12 +625,13 @@ An option with an HTML preview:
 
 Return an `answers` object mapping each question's `question` field to the selected option's `label`:
 
-| Field       | Description                                                              |
-| ----------- | ------------------------------------------------------------------------ |
-| `questions` | Pass through the original questions array (required for tool processing) |
-| `answers`   | Object where keys are question text and values are selected labels       |
+| Field       | Description                                                                          |
+| ----------- | ------------------------------------------------------------------------------------ |
+| `questions` | Pass through the original questions array (required for tool processing)             |
+| `answers`   | Object where keys are question text and values are selected labels                   |
+| `response`  | Optional freeform reply the user typed instead of answering the structured questions |
 
-For multi-select questions, pass an array of labels or join them with `", "`. For free-text input, use the user's custom text directly.
+For multi-select questions, pass an array of labels or join them with `", "`. For per-question free text such as an "Other" option, put the user's text in `answers[question]` as shown in [Support free-text input](#support-free-text-input). Set `response` only when your UI lets the user dismiss the question card and type a general reply that isn't an answer to any specific question. When `response` is set, Claude receives "The user responded: …" instead of the per-question answer list.
 
 ```json theme={null}
 {
