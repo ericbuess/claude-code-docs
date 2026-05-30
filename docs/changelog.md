@@ -10,6 +10,10 @@ This page is generated from the [CHANGELOG.md on GitHub](https://github.com/anth
 
 Run `claude --version` to check your installed version.
 
+<Update label="2.1.158" description="May 30, 2026">
+  * Auto mode is now available on Bedrock, Vertex, and Foundry for Opus 4.7 and Opus 4.8. Opt in by setting `CLAUDE_CODE_ENABLE_AUTO_MODE=1`
+</Update>
+
 <Update label="2.1.157" description="May 29, 2026">
   * Plugins in `.claude/skills` directories are now automatically loaded, no marketplace required
   * Added `claude plugin init <name>` to scaffold a new plugin in `.claude/skills`
