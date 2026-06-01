@@ -330,7 +330,7 @@ Each feature has its own guide with setup instructions, examples, and configurat
   </Card>
 
   <Card title="Hooks" icon="bolt" href="/en/hooks-guide">
-    Automate workflows with hooks
+    Automate actions with hooks
   </Card>
 
   <Card title="Plugins" icon="puzzle-piece" href="/en/plugins">

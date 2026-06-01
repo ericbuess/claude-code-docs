@@ -7,7 +7,7 @@
 > Reference for Claude Code hook events, configuration schema, JSON input/output formats, exit codes, async hooks, HTTP hooks, prompt hooks, and MCP tool hooks.
 
 <Tip>
-  For a quickstart guide with examples, see [Automate workflows with hooks](/en/hooks-guide).
+  For a quickstart guide with examples, see [Automate actions with hooks](/en/hooks-guide).
 </Tip>
 
 Hooks are user-defined shell commands, HTTP endpoints, or LLM prompts that execute automatically at specific points in Claude Code's lifecycle. Use this reference to look up event schemas, configuration options, JSON input/output formats, and advanced features like async hooks, HTTP hooks, and MCP tool hooks. If you're setting up hooks for the first time, start with the [guide](/en/hooks-guide) instead.
@@ -298,7 +298,7 @@ These fields apply to all hook types:
 | :-------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`          | yes      | `"command"`, `"http"`, `"mcp_tool"`, `"prompt"`, or `"agent"`                                                                                                                                                                                                                                                                                                                                                                                          |
 | `if`            | no       | Permission rule syntax to filter when this hook runs, such as `"Bash(git *)"` or `"Edit(*.ts)"`. The hook only spawns if the tool call matches the pattern, or if a Bash command is too complex to parse. Only evaluated on tool events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, and `PermissionDenied`. On other events, a hook with `if` set never runs. Uses the same syntax as [permission rules](/en/permissions) |
-| `timeout`       | no       | Seconds before canceling. Defaults: 600 for `command`, `http`, and `mcp_tool`; 30 for `prompt`; 60 for `agent`. [`UserPromptSubmit`](#userpromptsubmit) lowers the `command`, `http`, and `mcp_tool` default to 30                                                                                                                                                                                                                                     |
+| `timeout`       | no       | Seconds before canceling. Defaults: 600 for `command`, `http`, and `mcp_tool`; 30 for `prompt`; 60 for `agent`. [`UserPromptSubmit`](#userpromptsubmit) lowers the `command`, `http`, and `mcp_tool` default to 30, and [`MessageDisplay`](#messagedisplay) lowers it to 10                                                                                                                                                                            |
 | `statusMessage` | no       | Custom spinner message displayed while the hook runs                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `once`          | no       | If `true`, runs once per session then is removed. Only honored for hooks declared in [skill frontmatter](#hooks-in-skills-and-agents); ignored in settings files and agent frontmatter                                                                                                                                                                                                                                                                 |
 
@@ -1048,7 +1048,7 @@ Runs when the user submits a prompt, before Claude processes it. This allows you
 to add additional context based on the prompt/conversation, validate prompts, or
 block certain types of prompts.
 
-`UserPromptSubmit` hooks have a default timeout of 30 seconds for `command`, `http`, and `mcp_tool` types, shorter than the 600-second default for those types on other events. Because this hook runs before every prompt and blocks model processing until it completes, a stuck hook stalls the session. If your hook needs more time, set the `timeout` field in the hook entry.
+`UserPromptSubmit` hooks have a default timeout of 30 seconds for `command`, `http`, and `mcp_tool` types, shorter than the 600-second default for those types on most other events. Because this hook runs before every prompt and blocks model processing until it completes, a stuck hook stalls the session. If your hook needs more time, set the `timeout` field in the hook entry.
 
 #### UserPromptSubmit input
 
@@ -1153,9 +1153,19 @@ In addition to the [common input fields](#common-input-fields), UserPromptExpans
 
 ### MessageDisplay
 
-Runs while an assistant message streams to the screen. Claude Code displays the message in increments: each time a batch of newly completed lines is ready to render, the hook runs once with those lines and Claude Code renders the hook's replacement text in their place. A long message produces several calls; a short message may produce only one. Use this to reformat, redact, or condense Claude's responses as they appear on screen.
+Runs while an assistant message streams to the screen. Claude Code displays the message in increments: each time a batch of newly completed lines is ready to render, the hook runs once with those lines and Claude Code renders the hook's replacement text in their place. A long message produces several calls; a short message may produce only one.
 
-MessageDisplay is display-only: the replacement text changes only what is rendered on screen. The transcript and what Claude sees keep the original text, so Claude never sees the replacement, and verbose mode shows the original. MessageDisplay does not support matchers and fires for every assistant message that streams text; messages with no text, such as tool-call-only responses, do not trigger it.
+Use MessageDisplay to:
+
+* strip markdown for a minimal display
+* transform the text an Agent SDK application shows its users
+* redact API keys or internal hostnames from Claude's responses
+
+Claude Code holds each batch until your hook returns, so keep the hook fast. If the hook fails or times out, Claude Code displays the original text. The default timeout for this event is 10 seconds; if your hook needs more time, set the `timeout` field in the hook entry.
+
+MessageDisplay is display-only: the replacement text changes only what is rendered on screen. The transcript and what Claude sees keep the original text, so Claude never sees the replacement, and verbose mode shows the original. The hook receives assistant message text only, so tool results and the text you type render unchanged.
+
+MessageDisplay does not support matchers and fires for every assistant message that streams text; messages with no text, such as tool-call-only responses, do not trigger it.
 
 In non-interactive runs, including Agent SDK queries and `claude -p`, MessageDisplay runs once per assistant message instead of once per batch of lines. The single call arrives after the message completes and carries the full message text: `index` is `0`, `final` is `true`, and `delta` holds the entire message. A hook that collects the `delta` text for each message receives the same total text in both modes.
 
@@ -1194,6 +1204,86 @@ In addition to the [JSON output fields](#json-output) available to all hooks, Me
 | `displayContent` | Text displayed in place of the delta. Omit it to display the original |
 
 MessageDisplay hooks have no decision control. They cannot block the message or change what is stored in the transcript or sent to Claude.
+
+This example strips markdown formatting from Claude's responses for a plain-text display. The script reads each batch from stdin, removes bold markers and inline code backticks from `delta`, and returns the result as `displayContent`.
+
+<Tabs>
+  <Tab title="macOS/Linux">
+    Register a command hook for the event in your settings file:
+
+    ```json theme={null}
+    {
+      "hooks": {
+        "MessageDisplay": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/plain-display.sh",
+                "args": []
+              }
+            ]
+          }
+        ]
+      }
+    }
+    ```
+
+    Save this script to `.claude/hooks/plain-display.sh` in your project and make it executable with `chmod +x`:
+
+    ```bash theme={null}
+    #!/bin/bash
+    jq '{hookSpecificOutput: {hookEventName: "MessageDisplay", displayContent: (.delta | gsub("\\*\\*"; "") | gsub("`"; ""))}}'
+    ```
+
+    The script needs `jq` on your `PATH`.
+  </Tab>
+
+  <Tab title="Windows (PowerShell)">
+    Register a command hook that runs the script through PowerShell:
+
+    ```json theme={null}
+    {
+      "hooks": {
+        "MessageDisplay": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "powershell.exe",
+                "args": [
+                  "-NoProfile",
+                  "-ExecutionPolicy",
+                  "Bypass",
+                  "-File",
+                  "${CLAUDE_PROJECT_DIR}/.claude/hooks/plain-display.ps1"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+    ```
+
+    The `-NoProfile` flag skips loading your PowerShell profile so the hook starts fast, and `-ExecutionPolicy Bypass` lets PowerShell run the local script file.
+
+    Save this script to `.claude/hooks/plain-display.ps1` in your project:
+
+    ```powershell theme={null}
+    $batch = [Console]::In.ReadToEnd() | ConvertFrom-Json
+    $text = $batch.delta -replace '\*\*', '' -replace '`', ''
+    @{
+      hookSpecificOutput = @{
+        hookEventName = "MessageDisplay"
+        displayContent = $text
+      }
+    } | ConvertTo-Json
+    ```
+  </Tab>
+</Tabs>
+
+Batches with no markdown pass through unchanged. If the script fails, for example because `jq` is missing, Claude Code displays the original text and notes the failure only in [debug output](#debug-hooks), not in the session.
 
 ### PreToolUse
 

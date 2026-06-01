@@ -12,6 +12,8 @@ Speak your prompts instead of typing them in the Claude Code CLI. Your speech is
   Voice dictation requires Claude Code v2.1.69 or later. Tap mode requires v2.1.116 or later. Check your version with `claude --version`.
 </Note>
 
+Dictation also works in [agent view](/en/agent-view#peek-and-reply). Hold or tap your push-to-talk key while the dispatch input or a peek-panel reply is focused to dictate to a background session.
+
 ## Requirements
 
 Voice dictation streams your recorded audio to Anthropic's servers for transcription. Audio is not processed locally. The speech-to-text service is only available when you authenticate with a Claude.ai account, and is not available when Claude Code is configured to use an Anthropic API key directly, Amazon Bedrock, Google Vertex AI, or Microsoft Foundry. Voice dictation is also not available when your organization has HIPAA compliance enabled. Transcription does not consume Claude messages or tokens and does not count toward the limits shown in `/usage`. See [data usage](/en/data-usage) for how Anthropic handles your data.

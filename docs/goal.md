@@ -21,12 +21,12 @@ Use a goal for substantial work with a verifiable end state:
 
 This page covers how to:
 
-* [Compare autonomous workflow approaches](#compare-to-other-autonomous-workflows): `/loop`, Stop hooks, and auto mode
+* [Compare ways to keep a session running](#compare-ways-to-keep-a-session-running): `/loop`, Stop hooks, and auto mode
 * [Set a goal](#set-a-goal) and [write an effective condition](#write-an-effective-condition)
 * [Check status](#check-status), [clear early](#clear-a-goal), and [run non-interactively](#run-non-interactively)
 * See [how evaluation works](#how-evaluation-works) and [requirements](#requirements)
 
-## Compare to other autonomous workflows
+## Compare ways to keep a session running
 
 Three approaches keep the current session running between prompts. Pick based on what should start the next turn:
 

@@ -676,7 +676,9 @@ Desktop and CLI read the same configuration files, so your setup carries over:
 * **Models**: Sonnet, Opus, and Haiku are available in both. In Desktop, select the model from the dropdown next to the send button. You can change the model mid-session from the same dropdown.
 
 <Note>
-  **MCP servers: desktop chat app vs Claude Code**: MCP servers configured for the Claude Desktop chat app in `claude_desktop_config.json` are separate from Claude Code and will not appear in the Code tab. To use MCP servers in Claude Code, configure them in `~/.claude.json` or your project's `.mcp.json` file. See [MCP configuration](/en/mcp#installing-mcp-servers) for details.
+  **MCP servers from the Claude Desktop chat app**: the Desktop app loads MCP servers from `claude_desktop_config.json` into Code tab sessions, alongside servers from `~/.claude.json` and `.mcp.json`. A server defined in `claude_desktop_config.json` is available in both the Desktop chat surface and the Code tab.
+
+  The standalone CLI does not read `claude_desktop_config.json`. On macOS and WSL, run `claude mcp add-from-claude-desktop` to copy those servers into `~/.claude.json`. See [Import MCP servers from Claude Desktop](/en/mcp#import-mcp-servers-from-claude-desktop) for the import flow and scope options.
 </Note>
 
 ### Feature comparison

@@ -333,6 +333,8 @@ When you install, enable, or disable plugins during a session, run `/reload-plug
 
 Claude Code reloads all active plugins and shows counts for plugins, skills, agents, hooks, plugin MCP servers, and plugin LSP servers.
 
+Reloading has a token cost on the next request: newly loaded components announce themselves in content appended to the conversation, while the existing history still reads from the prompt cache. A plugin that provides MCP servers costs more when its tools aren't deferred by [tool search](/en/mcp#scale-with-mcp-tool-search): the change invalidates the cache and the next request re-reads the entire conversation. See [enabling or disabling a plugin](/en/prompt-caching#enabling-or-disabling-a-plugin) for details.
+
 ## Manage marketplaces
 
 You can manage marketplaces through the interactive `/plugin` interface or with CLI commands.

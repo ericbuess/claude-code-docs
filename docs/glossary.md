@@ -82,9 +82,9 @@ Learn more: [The `.claude` directory](/en/claude-directory)
 
 ### CLAUDE.md
 
-A markdown file of persistent instructions you write for Claude, loaded at the start of every session as a user message after the system prompt. Put project conventions, architecture notes, and "always do X" rules here. CLAUDE.md survives [compaction](#compaction) and is re-read fresh from disk afterward.
+A markdown file of persistent instructions you write for Claude, loaded at the start of every session as a user message after the system prompt. Put project conventions, architecture notes, and "always do X" rules here. Project-root CLAUDE.md survives [compaction](#compaction) and is re-read fresh from disk afterward.
 
-You can place CLAUDE.md at project scope in `./CLAUDE.md` or `./.claude/CLAUDE.md`, at user scope in `~/.claude/CLAUDE.md`, or as [managed policy](#managed-settings) for your organization. More specific locations take precedence.
+You can place CLAUDE.md at project scope in `./CLAUDE.md` or `./.claude/CLAUDE.md`, at user scope in `~/.claude/CLAUDE.md`, or as [managed policy](#managed-settings) for your organization. All discovered files are concatenated into context rather than overriding each other, ordered from broadest scope to most specific.
 
 Learn more: [CLAUDE.md files](/en/memory#claude-md-files)
 

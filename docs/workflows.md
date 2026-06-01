@@ -25,18 +25,18 @@ This page covers how to:
 
 ## When to use a workflow
 
-[Subagents](/en/sub-agents), [skills](/en/skills), and workflows can all run a multi-step task. The difference is who holds the plan:
+[Subagents](/en/sub-agents), [skills](/en/skills), [agent teams](/en/agent-teams), and workflows can all run a multi-step task. The difference is who holds the plan:
 
-|                                 | Subagents                      | Skills                       | Workflows                            |
-| :------------------------------ | :----------------------------- | :--------------------------- | :----------------------------------- |
-| What it is                      | A worker Claude spawns         | Instructions Claude follows  | A script the runtime executes        |
-| Who decides what runs next      | Claude, turn by turn           | Claude, following the prompt | The script                           |
-| Where intermediate results live | Claude's context window        | Claude's context window      | Script variables                     |
-| What's repeatable               | The worker definition          | The instructions             | The orchestration itself             |
-| Scale                           | A few delegated tasks per turn | Same as subagents            | Dozens to hundreds of agents per run |
-| Interruption                    | Restarts the turn              | Restarts the turn            | Resumable in the same session        |
+|                                 | Subagents                      | Skills                       | Agent teams                            | Workflows                            |
+| :------------------------------ | :----------------------------- | :--------------------------- | :------------------------------------- | :----------------------------------- |
+| What it is                      | A worker Claude spawns         | Instructions Claude follows  | A lead agent supervising peer sessions | A script the runtime executes        |
+| Who decides what runs next      | Claude, turn by turn           | Claude, following the prompt | The lead agent, turn by turn           | The script                           |
+| Where intermediate results live | Claude's context window        | Claude's context window      | A shared task list                     | Script variables                     |
+| What's repeatable               | The worker definition          | The instructions             | The team definition                    | The orchestration itself             |
+| Scale                           | A few delegated tasks per turn | Same as subagents            | A handful of long-running peers        | Dozens to hundreds of agents per run |
+| Interruption                    | Restarts the turn              | Restarts the turn            | Teammates keep running                 | Resumable in the same session        |
 
-A workflow moves the plan into code. With subagents and skills, Claude is the orchestrator: it decides turn by turn what to spawn next, and every result lands in Claude's context. A workflow script holds the loop, the branching, and the intermediate results itself, so Claude's context holds only the final answer.
+A workflow moves the plan into code. With subagents, skills, and agent teams, Claude is the orchestrator: it decides turn by turn what to spawn or assign next, and every result lands in a context window. A workflow script holds the loop, the branching, and the intermediate results itself, so Claude's context holds only the final answer.
 
 Moving the plan into code also lets a workflow apply a repeatable quality pattern, not just run more agents: it can have independent agents adversarially review each other's findings before they're reported, or draft a plan from several angles and weigh them against each other, so you get a more trustworthy result than a single pass.
 
@@ -124,11 +124,11 @@ To run a single task as a workflow without changing the session's effort level, 
 Run a workflow to audit every API endpoint under src/routes/ for missing auth checks
 ```
 
-Claude Code highlights the word in your input and Claude writes a workflow script for the task instead of working through it turn by turn.
+Claude Code highlights the word in your input and Claude writes a workflow script for the task instead of working through it turn by turn. If you didn't mean to start a workflow, press `Option+W` on macOS or `Alt+W` on Windows and Linux to dismiss the highlight for this prompt, or press backspace while the cursor is right after the highlighted word. To stop the word from triggering at all, turn off Workflow keyword trigger in `/config`.
 
 If the run does what you wanted, you can [save it as a command](#save-the-workflow-for-reuse) afterward.
 
-If Claude Code highlights the word when you didn't mean to trigger one, press `alt+w` to ignore it for this prompt, or press backspace while the cursor is right after the highlighted word. To stop the word from triggering at all, turn off Workflow keyword trigger in `/config`.
+If you already have an orchestrator built another way, such as a folder of subagent prompts or a skill that fans work out, you can point Claude at it and ask for a workflow that does the same thing.
 
 ### Let Claude decide with ultracode
 
@@ -186,6 +186,8 @@ If a project workflow and a personal workflow share a name, the project one runs
 
 The workflow runtime executes the script in an isolated environment, separate from your conversation. Intermediate results stay in script variables instead of landing in Claude's context.
 
+Every run writes its script to a file under your session's directory in `~/.claude/projects/`. Claude receives the path when the run starts, so you can ask for it. You can open that file to read the orchestration Claude wrote, diff it against a previous run's script, or edit it and ask Claude to relaunch from the edited version.
+
 The runtime tracks each agent's result as the run progresses, which is what makes a run [resumable](#resume-after-a-pause) within the same session.
 
 ### Behavior and limits
@@ -211,7 +213,9 @@ Resume works within the same Claude Code session. If you exit Claude Code while 
 
 ### Cost
 
-A workflow spawns many agents, so a single run can use meaningfully more tokens than working through the same task in conversation. Runs count toward your plan's usage and rate limits like any other session. You can stop a running workflow from `/workflows` at any time without losing completed work.
+A workflow spawns many agents, so a single run can use meaningfully more tokens than working through the same task in conversation. Runs count toward your plan's usage and rate limits like any other session.
+
+To gauge the spend before committing to a large task, run the workflow on a small slice first: one directory instead of the whole repo, or a narrow question instead of a broad one. The `/workflows` view shows each agent's token usage as the run progresses, and you can stop the run there at any time without losing completed work. The runtime's [agent caps](#behavior-and-limits) limit how many agents a single run can spawn, which bounds the cost of a runaway script.
 
 Every agent in a workflow uses your session's model unless the script routes a stage to a different one. To control the model cost:
 

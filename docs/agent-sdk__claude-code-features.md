@@ -81,11 +81,12 @@ The `cwd` option determines where the SDK looks for project-level inputs. CLAUDE
 
 `settingSources` covers user, project, and local settings. A few inputs are read regardless of its value:
 
-| Input                                                 | Behavior                                 | To disable                                                                                  |
-| :---------------------------------------------------- | :--------------------------------------- | :------------------------------------------------------------------------------------------ |
-| Managed policy settings                               | Always loaded when present on the host   | Remove the managed settings file                                                            |
-| `~/.claude.json` global config                        | Always read                              | Relocate with `CLAUDE_CONFIG_DIR` in `env`                                                  |
-| Auto memory at `~/.claude/projects/<project>/memory/` | Loaded by default into the system prompt | Set `autoMemoryEnabled: false` in settings, or `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1` in `env` |
+| Input                                                              | Behavior                                                                                                                  | To disable                                                                                  |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------ |
+| Managed policy settings                                            | Always loaded when present on the host                                                                                    | Remove the managed settings file                                                            |
+| `~/.claude.json` global config                                     | Always read                                                                                                               | Relocate with `CLAUDE_CONFIG_DIR` in `env`                                                  |
+| Auto memory at `~/.claude/projects/<project>/memory/`              | Loaded by default into the system prompt                                                                                  | Set `autoMemoryEnabled: false` in settings, or `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1` in `env` |
+| [claude.ai MCP connectors](/en/mcp#use-mcp-servers-from-claude-ai) | Loaded when the active authentication method is a claude.ai subscription. Passing `mcpServers: {}` does not suppress them | Set `strictMcpConfig: true`, or `ENABLE_CLAUDEAI_MCP_SERVERS=false` in `env`                |
 
 <Warning>
   Do not rely on default `query()` options for multi-tenant isolation. Because the inputs above are read regardless of `settingSources`, an SDK process can pick up host-level configuration and per-directory memory. For multi-tenant deployments, run each tenant in its own filesystem and set `settingSources: []` plus `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1` in `env`. See [Secure deployment](/en/agent-sdk/secure-deployment).

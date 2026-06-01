@@ -235,5 +235,5 @@ Common reasons a review layer skips without a message in the conversation:
 To go deeper on the pieces this page touches:
 
 * [Code Review](/en/code-review): set up the PR-time multi-agent review
-* [Automate workflows with hooks](/en/hooks-guide): build your own checks at the same lifecycle points
+* [Automate actions with hooks](/en/hooks-guide): build your own checks at the same lifecycle points
 * [Discover and install plugins](/en/discover-plugins#official-anthropic-marketplace): browse other official plugins
