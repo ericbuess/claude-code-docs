@@ -540,17 +540,19 @@ Claude Code sends beta-only fields such as `context_management`, `effort`, and t
 
 ### There's an issue with the selected model
 
-The configured model name was not recognized or your account lacks access to it.
+The configured model name was not recognized or your account lacks access to it. As of v2.1.160 the trailing hint, shown here in its interactive form, varies by surface.
 
 ```text theme={null}
-There's an issue with the selected model (claude-...). It may not exist or you may not have access to it. Run /model to select a different one.
+There's an issue with the selected model (claude-...). It may not exist or you may not have access to it. Run /model to pick a different model.
 ```
 
 **What to do:**
 
-* Run `/model` to pick from models available to your account
+* **Interactive CLI**: run `/model` to pick from models available to your account.
+* **Non-interactive mode (`-p`)**: pass `--model` with a valid alias or ID, or set [`ANTHROPIC_MODEL`](/en/env-vars). The error text shows `Run --model` on this surface.
+* **Agent SDK**: the error text omits the hint because the model is set programmatically. Set [`model` on `Options`](/en/agent-sdk/typescript#options) in TypeScript or [`ClaudeAgentOptions(model=...)`](/en/agent-sdk/python#claudeagentoptions) in Python, and handle the structured `model_not_found` error to surface your own retry or model picker.
 * Use an alias such as `sonnet` or `opus` instead of a full versioned ID. Aliases track the latest release so they do not go stale. See [Model configuration](/en/model-config).
-* If the wrong model keeps coming back, a stale ID is set somewhere. Check in [priority order](/en/model-config#setting-your-model): the `--model` flag, the `ANTHROPIC_MODEL` environment variable, then the `model` field in `.claude/settings.local.json`, your project's `.claude/settings.json`, and `~/.claude/settings.json`. Remove the stale value and Claude Code falls back to your account default.
+* If the wrong model keeps coming back in the CLI, a stale ID is set somewhere. Check in [priority order](/en/model-config#setting-your-model): the `--model` flag, the `ANTHROPIC_MODEL` environment variable, then the `model` field in `.claude/settings.local.json`, your project's `.claude/settings.json`, and `~/.claude/settings.json`. Remove the stale value and Claude Code falls back to your account default.
 * For Vertex AI deployments, see [Vertex AI troubleshooting](/en/google-vertex-ai#troubleshooting).
 
 ### Claude Opus is not available with the Claude Pro plan
