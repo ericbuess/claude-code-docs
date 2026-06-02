@@ -182,6 +182,18 @@ Press Enter to save. The workflow runs as `/<name>` in future sessions from eith
 
 If a project workflow and a personal workflow share a name, the project one runs.
 
+### Pass input to a saved workflow
+
+A saved workflow can accept input through the `args` parameter. The script reads it as a global named `args`. Use this to supply a research question, a list of target paths, or a configuration object at invocation time instead of editing the script for each run.
+
+The following prompt runs a saved workflow with a list of issue numbers:
+
+```text theme={null}
+> Run /triage-issues on issues 1024, 1025, and 1030
+```
+
+Claude passes the list as structured data, so the script can call array and object methods on `args` directly without parsing it first. If `args` is omitted, the global is `undefined` inside the script.
+
 ## How a workflow runs
 
 The workflow runtime executes the script in an isolated environment, separate from your conversation. Intermediate results stay in script variables instead of landing in Claude's context.
