@@ -304,8 +304,8 @@
     "commands.md": {
       "original_url": "https://code.claude.com/docs/en/commands",
       "original_md_url": "https://code.claude.com/docs/en/commands.md",
-      "hash": "a6110b1a88becdc331b0c298f569d5da8ace5aa1968b05b0c95bf46194a4a3ab",
-      "last_updated": "2026-05-29T00:27:23.043197"
+      "hash": "b2d0eee704f52af82f648c7d7f1aedba11187888d13d8a1450683c3e6aeac22c",
+      "last_updated": "2026-06-02T21:57:06.689250"
     },
     "common-workflows.md": {
       "original_url": "https://code.claude.com/docs/en/common-workflows",
@@ -478,8 +478,8 @@
     "interactive-mode.md": {
       "original_url": "https://code.claude.com/docs/en/interactive-mode",
       "original_md_url": "https://code.claude.com/docs/en/interactive-mode.md",
-      "hash": "4ab7591234fb2e7ab1497f252d2c76faa49c2fb2502c7ce0e4732892f03ef6d1",
-      "last_updated": "2026-05-30T00:25:23.660839"
+      "hash": "bee2d7b2a92817a585ffc089da68177e147e57b05eb4594206d0041feda90848",
+      "last_updated": "2026-06-02T21:57:31.794955"
     },
     "jetbrains.md": {
       "original_url": "https://code.claude.com/docs/en/jetbrains",
@@ -730,8 +730,8 @@
     "terminal-config.md": {
       "original_url": "https://code.claude.com/docs/en/terminal-config",
       "original_md_url": "https://code.claude.com/docs/en/terminal-config.md",
-      "hash": "ad5e5785d465c6f612abca7d79db0c8b254af8bc7313243a4511c1871278583b",
-      "last_updated": "2026-05-30T00:25:57.173319"
+      "hash": "a1e41a5439a7c85b4391e068cebfd4bb293bfcd1f15d126fe6b0a0ce9b26bba3",
+      "last_updated": "2026-06-02T21:58:05.252344"
     },
     "third-party-integrations.md": {
       "original_url": "https://code.claude.com/docs/en/third-party-integrations",
@@ -778,8 +778,8 @@
     "vs-code.md": {
       "original_url": "https://code.claude.com/docs/en/vs-code",
       "original_md_url": "https://code.claude.com/docs/en/vs-code.md",
-      "hash": "8391b4e439b13290e3ebee674427ba4ff7e6fa3b701cef8221e7ec8aed9bec05",
-      "last_updated": "2026-05-29T00:28:36.592609"
+      "hash": "d91903216e5d11d34f4b0db7b679a61c83f15036b2481ee42406b546c67ed819",
+      "last_updated": "2026-06-02T21:58:11.804769"
     },
     "web-quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/web-quickstart",
@@ -873,8 +873,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-06-02T19:08:22.789703",
-    "fetch_duration_seconds": 134.147715,
+    "last_fetch_completed": "2026-06-02T21:58:24.443336",
+    "fetch_duration_seconds": 125.287798,
     "total_pages_discovered": 145,
     "pages_fetched_successfully": 146,
     "pages_failed": 0,
@@ -884,7 +884,7 @@
     "total_files": 145,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-06-02T19:08:22.789733",
+  "last_updated": "2026-06-02T21:58:24.443360",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

@@ -26,12 +26,12 @@ In most terminals you can also press Shift+Enter, but support varies by terminal
 | Terminal                                                                | Shift+Enter for newline                     |
 | :---------------------------------------------------------------------- | :------------------------------------------ |
 | Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal | Works without setup                         |
-| VS Code, Cursor, Windsurf, Alacritty, Zed                               | Run `/terminal-setup` once                  |
+| VS Code, Cursor, Devin Desktop, Alacritty, Zed                          | Run `/terminal-setup` once                  |
 | gnome-terminal, JetBrains IDEs such as PyCharm and Android Studio       | Not available; use Ctrl+J or `\` then Enter |
 
-For VS Code, Cursor, Windsurf, Alacritty, and Zed, `/terminal-setup` writes Shift+Enter and other keybindings into the terminal's configuration file. Existing bindings are left in place; if you see a message such as `VSCode terminal Shift+Enter key binding already configured`, no change was made. Run `/terminal-setup` directly in the host terminal rather than inside tmux or screen, since it needs to write to the host terminal's configuration.
+For VS Code, Cursor, Devin Desktop, Alacritty, and Zed, `/terminal-setup` writes Shift+Enter and other keybindings into the terminal's configuration file. Existing bindings are left in place; if you see a message such as `VSCode terminal Shift+Enter key binding already configured`, no change was made. Run `/terminal-setup` directly in the host terminal rather than inside tmux or screen, since it needs to write to the host terminal's configuration.
 
-In VS Code, Cursor, and Windsurf, `/terminal-setup` also updates two editor settings: it sets `terminal.integrated.gpuAcceleration` to `"off"` to prevent garbled text in the integrated terminal, and it sets `terminal.integrated.mouseWheelScrollSensitivity` for smoother scrolling in [fullscreen mode](/en/fullscreen). To undo the GPU acceleration change, set it back to `"auto"` and reload the editor window.
+In VS Code, Cursor, and Devin Desktop, `/terminal-setup` also updates two editor settings: it sets `terminal.integrated.gpuAcceleration` to `"off"` to prevent garbled text in the integrated terminal, and it sets `terminal.integrated.mouseWheelScrollSensitivity` for smoother scrolling in [fullscreen mode](/en/fullscreen). To undo the GPU acceleration change, set it back to `"auto"` and reload the editor window.
 
 If you are running inside tmux, Shift+Enter also requires the [tmux configuration below](#configure-tmux) even when the outer terminal supports it.
 
