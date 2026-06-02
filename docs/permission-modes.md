@@ -226,7 +226,7 @@ Repeated blocks usually mean the classifier is missing context about your infras
   <Accordion title="How the classifier evaluates actions">
     Each action goes through a fixed decision order. The first matching step wins:
 
-    1. Actions matching your [allow or deny rules](/en/permissions#manage-permissions) resolve immediately
+    1. Actions matching your [allow or deny rules](/en/permissions#manage-permissions) resolve immediately, except writes to [protected paths](#protected-paths), which route to the classifier even when an allow rule matches
     2. Read-only actions and file edits in your working directory are auto-approved, except writes to [protected paths](#protected-paths)
     3. Everything else goes to the classifier
     4. If the classifier blocks, Claude receives the reason and tries an alternative
