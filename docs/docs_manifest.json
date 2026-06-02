@@ -39,8 +39,8 @@
     "agent-sdk__hooks.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/hooks",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/hooks.md",
-      "hash": "c8fd25deb1cb58d5ee0c92ed013145c3591f84b71628ab347ced548de5cec674",
-      "last_updated": "2026-06-02T00:29:50.932404"
+      "hash": "051751c535dfa7766cafb9d001ad8ef9678d04e84435ac8822a0f90305086e10",
+      "last_updated": "2026-06-02T16:29:32.872306"
     },
     "agent-sdk__hosting.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/hosting",
@@ -873,8 +873,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-06-02T13:08:17.510428",
-    "fetch_duration_seconds": 148.98532,
+    "last_fetch_completed": "2026-06-02T16:31:35.082171",
+    "fetch_duration_seconds": 128.57797,
     "total_pages_discovered": 145,
     "pages_fetched_successfully": 146,
     "pages_failed": 0,
@@ -884,7 +884,7 @@
     "total_files": 145,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-06-02T13:08:17.510476",
+  "last_updated": "2026-06-02T16:31:35.082199",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
