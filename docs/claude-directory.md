@@ -1556,7 +1556,7 @@ Transcripts and history are not encrypted at rest. OS file permissions are the o
 
 ### Clear local data
 
-Run `claude project purge` to delete the state Claude Code holds for one project:
+Run `claude project purge` to delete the state Claude Code holds for one project. The command requires Claude Code v2.1.124 or later. It deletes:
 
 * Transcripts and auto memory under `projects/`
 * Per-session `tasks/`, `debug/`, and `file-history/` entries

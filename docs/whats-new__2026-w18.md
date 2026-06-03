@@ -31,7 +31,7 @@
 <div className="digest-feature">
   <div className="digest-feature-header">
     <span className="digest-feature-title">claude project purge</span>
-    <span className="digest-feature-pill">v2.1.126</span>
+    <span className="digest-feature-pill">v2.1.124</span>
   </div>
 
   <p className="digest-feature-lede">Delete all Claude Code state for a project: transcripts, tasks, file history, and the project's config entry. Supports `--dry-run` to preview, `-y`/`--yes` to skip confirmation, `-i`/`--interactive` to choose, and `--all` to clear every project.</p>

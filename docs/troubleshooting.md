@@ -57,6 +57,10 @@ If Claude Code seems unresponsive:
 
 Restarting doesn't lose your conversation. Run `claude --resume` in the same directory to pick the session back up.
 
+### Garbled or corrupted text in an editor's integrated terminal
+
+If characters render as boxes, smears, or the wrong glyphs when running Claude Code in the VS Code, Cursor, or Devin Desktop integrated terminal, the terminal's GPU renderer is likely the cause. Run `/terminal-setup` inside Claude Code to set `terminal.integrated.gpuAcceleration` to `"off"`, or set it manually in your editor settings and reload the window. See [Terminal configuration](/en/terminal-config) for the other settings `/terminal-setup` writes.
+
 ### Search and discovery issues
 
 If the Search tool, `@file` mentions, custom agents, or custom skills aren't finding files, the bundled `ripgrep` binary may not run on your system. Install your platform's `ripgrep` package and tell Claude Code to use it instead:

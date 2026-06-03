@@ -106,12 +106,13 @@ For `grpc`, the OpenTelemetry SDK reads the standard OTLP variables directly, so
 
 The following environment variables control which attributes are included in metrics to manage cardinality:
 
-| Environment Variable                | Description                                                           | Default Value | Example to Disable |
-| ----------------------------------- | --------------------------------------------------------------------- | ------------- | ------------------ |
-| `OTEL_METRICS_INCLUDE_SESSION_ID`   | Include session.id attribute in metrics                               | `true`        | `false`            |
-| `OTEL_METRICS_INCLUDE_VERSION`      | Include app.version attribute in metrics                              | `false`       | `true`             |
-| `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | Include user.account\_uuid and user.account\_id attributes in metrics | `true`        | `false`            |
-| `OTEL_METRICS_INCLUDE_ENTRYPOINT`   | Include app.entrypoint attribute in metrics                           | `false`       | `true`             |
+| Environment Variable                       | Description                                                                     | Default Value | Example to Disable |
+| ------------------------------------------ | ------------------------------------------------------------------------------- | ------------- | ------------------ |
+| `OTEL_METRICS_INCLUDE_SESSION_ID`          | Include session.id attribute in metrics                                         | `true`        | `false`            |
+| `OTEL_METRICS_INCLUDE_VERSION`             | Include app.version attribute in metrics                                        | `false`       | `true`             |
+| `OTEL_METRICS_INCLUDE_ACCOUNT_UUID`        | Include user.account\_uuid and user.account\_id attributes in metrics           | `true`        | `false`            |
+| `OTEL_METRICS_INCLUDE_ENTRYPOINT`          | Include app.entrypoint attribute in metrics                                     | `false`       | `true`             |
+| `OTEL_METRICS_INCLUDE_RESOURCE_ATTRIBUTES` | Include keys from `OTEL_RESOURCE_ATTRIBUTES` as attributes on metric datapoints | `true`        | `false`            |
 
 These variables help control the cardinality of metrics, which affects storage requirements and query performance in your metrics backend. Lower cardinality generally means better performance and lower storage costs but less granular data for analysis.
 
@@ -303,6 +304,10 @@ These custom attributes will be included in all metrics and events, allowing you
 * Create team-specific dashboards
 * Set up alerts for specific teams
 
+Claude Code attaches these values as attributes on every metric datapoint and event record, in addition to sending them in the OTLP resource block. Because most metrics backends expose datapoint attributes as queryable labels, you can group and filter metrics by your custom keys directly. Custom keys never override the [standard attributes](#standard-attributes) such as `user.id` or `session.id`: when a key collides, Claude Code keeps the built-in value.
+
+Each custom key becomes a label on every metric series, so high-cardinality values increase storage cost in your metrics backend. To send custom attributes in the resource block only and omit them from datapoint labels, set `OTEL_METRICS_INCLUDE_RESOURCE_ATTRIBUTES=false`. See [Metrics cardinality control](#metrics-cardinality-control).
+
 <Warning>
   **Important formatting requirements for OTEL\_RESOURCE\_ATTRIBUTES:**
 
@@ -383,17 +388,18 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 
 All metrics and events share these standard attributes:
 
-| Attribute           | Description                                                                                                 | Controlled By                                       |
-| ------------------- | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| `session.id`        | Unique session identifier                                                                                   | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true)   |
-| `app.version`       | Current Claude Code version                                                                                 | `OTEL_METRICS_INCLUDE_VERSION` (default: false)     |
-| `app.entrypoint`    | How the session was launched, such as `cli`, `sdk-cli`, `sdk-ts`, `sdk-py`, or `claude-vscode`              | `OTEL_METRICS_INCLUDE_ENTRYPOINT` (default: false)  |
-| `organization.id`   | Organization UUID (when authenticated)                                                                      | Always included when available                      |
-| `user.account_uuid` | Account UUID (when authenticated)                                                                           | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
-| `user.account_id`   | Account ID in tagged format matching Anthropic admin APIs (when authenticated), such as `user_01BWBeN28...` | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
-| `user.id`           | Anonymous device/installation identifier, generated per Claude Code installation                            | Always included                                     |
-| `user.email`        | User email address (when authenticated via OAuth)                                                           | Always included when available                      |
-| `terminal.type`     | Terminal type, such as `iTerm.app`, `vscode`, `cursor`, or `tmux`                                           | Always included when detected                       |
+| Attribute                            | Description                                                                                                                           | Controlled By                                              |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `session.id`                         | Unique session identifier                                                                                                             | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true)          |
+| `app.version`                        | Current Claude Code version                                                                                                           | `OTEL_METRICS_INCLUDE_VERSION` (default: false)            |
+| `app.entrypoint`                     | How the session was launched, such as `cli`, `sdk-cli`, `sdk-ts`, `sdk-py`, or `claude-vscode`                                        | `OTEL_METRICS_INCLUDE_ENTRYPOINT` (default: false)         |
+| `organization.id`                    | Organization UUID (when authenticated)                                                                                                | Always included when available                             |
+| `user.account_uuid`                  | Account UUID (when authenticated)                                                                                                     | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true)        |
+| `user.account_id`                    | Account ID in tagged format matching Anthropic admin APIs (when authenticated), such as `user_01BWBeN28...`                           | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true)        |
+| `user.id`                            | Anonymous device/installation identifier, generated per Claude Code installation                                                      | Always included                                            |
+| `user.email`                         | User email address (when authenticated via OAuth)                                                                                     | Always included when available                             |
+| `terminal.type`                      | Terminal type, such as `iTerm.app`, `vscode`, `cursor`, or `tmux`                                                                     | Always included when detected                              |
+| Keys from `OTEL_RESOURCE_ATTRIBUTES` | Custom attributes you set, such as `department` or `team.id`. See [Multi-team organization support](#multi-team-organization-support) | `OTEL_METRICS_INCLUDE_RESOURCE_ATTRIBUTES` (default: true) |
 
 Events additionally include the following attributes. These are never attached to metrics because they would cause unbounded cardinality:
 
