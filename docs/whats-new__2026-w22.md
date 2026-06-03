@@ -44,7 +44,7 @@
     <img className="w-full" src="https://mintcdn.com/claude-code/QsIrGXGFg6xd7joy/images/whats-new/dynamic-workflows.png?fit=max&auto=format&n=QsIrGXGFg6xd7joy&q=85&s=26671fa8607cec3453ed9753f821bd4f" alt="Claude Code on Opus 4.8 showing a Dynamic workflow requested indicator for a prompt that asks for a workflow to migrate every internal fetch() call" width="3840" height="2160" data-path="images/whats-new/dynamic-workflows.png" />
   </Frame>
 
-  <p className="digest-feature-try">Describe the task and include the word workflow:</p>
+  <p className="digest-feature-try">Describe the task and ask for a workflow:</p>
 
   ```text Claude Code theme={null}
   > create a workflow that migrates every internal fetch() call to the new HttpClient wrapper

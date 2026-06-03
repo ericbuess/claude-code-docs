@@ -111,20 +111,20 @@ The progress view shows each phase with its agent counts, token totals, and elap
 
 You can have Claude write a workflow for your task in two ways:
 
-* [Ask for a workflow](#ask-for-a-workflow-in-your-prompt) in your prompt with the word `workflow`, and Claude writes one for the task.
+* [Ask for a workflow](#ask-for-a-workflow-in-your-prompt) in your prompt, either in your own words or by including the keyword `ultracode`, and Claude writes one for the task.
 * [Let Claude decide with ultracode](#let-claude-decide-with-ultracode): set `/effort ultracode` and Claude plans a workflow for every substantive task in the session.
 
 You can also run a workflow command that already exists: a [bundled workflow](#bundled-workflows) like `/deep-research`, or one you've [saved](#save-the-workflow-for-reuse).
 
 ### Ask for a workflow in your prompt
 
-To run a single task as a workflow without changing the session's effort level, include the word `workflow` anywhere in your prompt.
+To run a single task as a workflow without changing the session's effort level, include the keyword `ultracode` in your prompt. Asking in your own words, for example "use a workflow" or "run a workflow", also works: Claude treats a direct request as the same opt-in. Before v2.1.160 the literal trigger keyword was `workflow`; natural-language requests work in both versions.
 
 ```text theme={null}
-Run a workflow to audit every API endpoint under src/routes/ for missing auth checks
+ultracode: audit every API endpoint under src/routes/ for missing auth checks
 ```
 
-Claude Code highlights the word in your input and Claude writes a workflow script for the task instead of working through it turn by turn. If you didn't mean to start a workflow, press `Option+W` on macOS or `Alt+W` on Windows and Linux to dismiss the highlight for this prompt, or press backspace while the cursor is right after the highlighted word. To stop the word from triggering at all, turn off Workflow keyword trigger in `/config`.
+Claude Code highlights the keyword in your input and Claude writes a workflow script for the task instead of working through it turn by turn. If you didn't mean to start a workflow, press `Option+W` on macOS or `Alt+W` on Windows and Linux to dismiss the highlight for this prompt, or press backspace while the cursor is right after the highlighted keyword. To stop the keyword from triggering at all, turn off Ultracode keyword trigger in `/config`.
 
 If the run does what you wanted, you can [save it as a command](#save-the-workflow-for-reuse) afterward.
 
@@ -246,7 +246,7 @@ To turn workflows off for yourself:
 
 To turn workflows off for your whole organization, set `"disableWorkflows": true` in [managed settings](/en/server-managed-settings), or use the toggle on the [Claude Code admin settings](https://claude.ai/admin-settings/claude-code) page.
 
-When workflows are disabled, the bundled workflow commands are unavailable, the `workflow` keyword no longer triggers a run, and `ultracode` is removed from the `/effort` menu.
+When workflows are disabled, the bundled workflow commands are unavailable, the `ultracode` keyword no longer triggers a run, and `ultracode` is removed from the `/effort` menu.
 
 ## Related resources
 

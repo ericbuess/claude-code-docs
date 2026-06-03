@@ -174,12 +174,34 @@ Auto mode is available only when your account meets all of these requirements:
 
 * **Plan**: All plans.
 * **Admin**: on Team and Enterprise, an admin must enable it in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code) before users can turn it on. Admins can also lock it off by setting `permissions.disableAutoMode` to `"disable"` in [managed settings](/en/permissions#managed-settings).
-* **Model**: Claude Opus 4.6 or later, or Sonnet 4.6. Older models, including Sonnet 4.5, Opus 4.5, Haiku, and claude-3 models, are not supported.
-* **Provider**: Anthropic API only. Not available on Bedrock, Vertex, or Foundry.
+* **Model**: on the Anthropic API, Claude Opus 4.6 or later, or Sonnet 4.6. On Amazon Bedrock, Google Cloud Vertex AI, and Microsoft Foundry, only Claude Opus 4.7 and Opus 4.8. Older models, including Sonnet 4.5, Opus 4.5, Haiku, and claude-3 models, are not supported on any provider.
+* **Provider**: available by default on the Anthropic API. On Amazon Bedrock, Google Cloud Vertex AI, and Microsoft Foundry, auto mode is off until you [set `CLAUDE_CODE_ENABLE_AUTO_MODE`](#enable-auto-mode-on-bedrock-vertex-ai-or-foundry).
 
 If Claude Code reports auto mode as unavailable, one of these requirements is unmet; this is not a transient outage. A separate message that names a model and says auto mode "cannot determine the safety" of an action is a transient classifier outage; see the [error reference](/en/errors#auto-mode-cannot-determine-the-safety-of-an-action).
 
 If you set `defaultMode: "auto"` in [settings](/en/settings#available-settings) and the session starts in `default` mode with no error, the setting is likely in `.claude/settings.json` or `.claude/settings.local.json`. Claude Code ignores `auto` from those files so a repository cannot grant itself auto mode. Move it to `~/.claude/settings.json`.
+
+### Enable auto mode on Bedrock, Vertex AI, or Foundry
+
+On [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud Vertex AI](/en/google-vertex-ai), and [Microsoft Foundry](/en/microsoft-foundry), auto mode does not appear in the `Shift+Tab` cycle until `CLAUDE_CODE_ENABLE_AUTO_MODE` is set to `1`. Only Claude Opus 4.7 and Opus 4.8 are supported on these providers.
+
+To enable it for one developer, add the variable to the `env` block in `~/.claude/settings.json`:
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_AUTO_MODE": "1"
+  }
+}
+```
+
+To enable it for your organization, add the same `env` block to [managed settings](/en/settings#settings-files).
+
+Once the variable is set, auto mode appears in the `Shift+Tab` cycle for every session. To make it the default starting mode, also set `"permissions": {"defaultMode": "auto"}` in user or managed settings. On these providers, Claude Code ignores `defaultMode: "auto"` unless `CLAUDE_CODE_ENABLE_AUTO_MODE` is also set.
+
+To prevent developers from enabling auto mode, set `disableAutoMode` to `"disable"` in managed settings. This overrides the enable variable.
+
+If you connect through an [LLM gateway](/en/llm-gateway) configured with `ANTHROPIC_BASE_URL`, auto mode may already be reachable without the enable variable, because the gateway routes requests through the Anthropic API. The `disableAutoMode` setting applies the same way in that configuration.
 
 ### What the classifier blocks by default
 
@@ -292,22 +314,38 @@ The check is skipped automatically inside a recognized sandbox. To run autonomou
 
 ## Protected paths
 
-Writes to a small set of paths are never auto-approved, in every mode except `bypassPermissions`. This prevents accidental corruption of repository state and Claude's own configuration. In `default`, `acceptEdits`, and `plan` these writes prompt; in `auto` they route to the classifier; in `dontAsk` they are denied; in `bypassPermissions` they are allowed.
+Writes to a small set of paths are never auto-approved, in every mode except `bypassPermissions`. This prevents accidental corruption of repository state and Claude's own configuration.
+
+| Mode                             | Protected-path writes    |
+| :------------------------------- | :----------------------- |
+| `default`, `acceptEdits`, `plan` | Prompted                 |
+| `auto`                           | Routed to the classifier |
+| `dontAsk`                        | Denied                   |
+| `bypassPermissions`              | Allowed                  |
 
 Protected directories:
 
 * `.git`
+* `.config/git`
 * `.vscode`
 * `.idea`
 * `.husky`
 * `.cargo`
+* `.devcontainer`
+* `.yarn`
+* `.mvn`
 * `.claude`, except for `.claude/commands`, `.claude/agents`, `.claude/skills`, and `.claude/worktrees` where Claude routinely creates content
 
 Protected files:
 
 * `.gitconfig`, `.gitmodules`
-* `.bashrc`, `.bash_profile`, `.zshrc`, `.zprofile`, `.profile`
-* `.ripgreprc`
+* `.bashrc`, `.bash_profile`, `.bash_login`, `.bash_aliases`, `.bash_logout`, `.zshrc`, `.zprofile`, `.zshenv`, `.zlogin`, `.zlogout`, `.profile`, `.envrc`
+* `.npmrc`, `.yarnrc`, `.yarnrc.yml`, `.pnp.cjs`, `.pnp.loader.mjs`, `.pnpmfile.cjs`, `bunfig.toml`, `.bunfig.toml`
+* `.bazelrc`, `.bazelversion`, `.bazeliskrc`
+* `.pre-commit-config.yaml`, `lefthook.yml`, `lefthook.yaml`, `.lefthook.yml`, `.lefthook.yaml`
+* `gradle-wrapper.properties`, `maven-wrapper.properties`
+* `.devcontainer.json`
+* `.ripgreprc`, `pyrightconfig.json`
 * `.mcp.json`, `.claude.json`
 
 ## See also
