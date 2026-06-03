@@ -7,7 +7,7 @@
 > Run Claude Code on Claude Opus 4.8, orchestrate large tasks with dynamic workflows, catch security issues with the security-guidance plugin, and use fast mode on Opus 4.8 at a lower price.
 
 <div className="digest-meta">
-  <span>Releases <a href="/en/changelog#2-1-150">v2.1.150 → v2.1.157</a></span>
+  <span>Releases <a href="/docs/en/changelog#2-1-150">v2.1.150 → v2.1.157</a></span>
   <span>4 features · May 25–29</span>
 </div>
 
@@ -29,7 +29,7 @@
   > /model claude-opus-4-8
   ```
 
-  <a className="digest-feature-link" href="/en/model-config#available-models">Model configuration</a>
+  <a className="digest-feature-link" href="/docs/en/model-config#available-models">Model configuration</a>
 </div>
 
 <div className="digest-feature">
@@ -50,7 +50,7 @@
   > create a workflow that migrates every internal fetch() call to the new HttpClient wrapper
   ```
 
-  <a className="digest-feature-link" href="/en/workflows">Dynamic workflows</a>
+  <a className="digest-feature-link" href="/docs/en/workflows">Dynamic workflows</a>
 </div>
 
 <div className="digest-feature">
@@ -77,7 +77,7 @@
   > /reload-plugins
   ```
 
-  <a className="digest-feature-link" href="/en/security-guidance">Security guidance plugin</a>
+  <a className="digest-feature-link" href="/docs/en/security-guidance">Security guidance plugin</a>
 </div>
 
 <div className="digest-feature">
@@ -94,7 +94,7 @@
   > /fast
   ```
 
-  <a className="digest-feature-link" href="/en/fast-mode#understand-the-cost-tradeoff">Fast mode pricing</a>
+  <a className="digest-feature-link" href="/docs/en/fast-mode#understand-the-cost-tradeoff">Fast mode pricing</a>
 </div>
 
 <div className="digest-wins">

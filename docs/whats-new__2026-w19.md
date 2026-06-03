@@ -7,7 +7,7 @@
 > Load plugins from .zip archives and URLs, search command history across every project with Ctrl+R, branch new worktrees from local HEAD or the remote default, and block actions unconditionally with auto mode hard deny rules.
 
 <div className="digest-meta">
-  <span>Releases <a href="/en/changelog#2-1-128">v2.1.128 → v2.1.136</a></span>
+  <span>Releases <a href="/docs/en/changelog#2-1-128">v2.1.128 → v2.1.136</a></span>
   <span>2 features · May 4–8</span>
 </div>
 
@@ -24,7 +24,7 @@
   claude --plugin-url https://example.com/my-plugin.zip
   ```
 
-  <a className="digest-feature-link" href="/en/plugins">Plugins guide</a>
+  <a className="digest-feature-link" href="/docs/en/plugins">Plugins guide</a>
 </div>
 
 <div className="digest-feature">
@@ -35,7 +35,7 @@
 
   <p className="digest-feature-lede"><code>Ctrl+R</code> reverse-search now defaults to all prompts across every project, restoring the behavior from before v2.1.124. Press <code>Ctrl+S</code> while searching to narrow back to the current project or session. Handy when you remember a command you ran in another repo last week and don't want to go digging for it.</p>
 
-  <a className="digest-feature-link" href="/en/interactive-mode#command-history">Interactive mode: command history</a>
+  <a className="digest-feature-link" href="/docs/en/interactive-mode#command-history">Interactive mode: command history</a>
 </div>
 
 <div className="digest-wins">

@@ -7,7 +7,7 @@
 > Manage every Claude Code session from one screen with agent view, keep Claude working toward a goal until a condition holds, and run fast mode on Opus 4.7 by default.
 
 <div className="digest-meta">
-  <span>Releases <a href="/en/changelog#2-1-139">v2.1.139 → v2.1.142</a></span>
+  <span>Releases <a href="/docs/en/changelog#2-1-139">v2.1.139 → v2.1.142</a></span>
   <span>3 features · May 11–15</span>
 </div>
 
@@ -29,7 +29,7 @@
   claude agents
   ```
 
-  <a className="digest-feature-link" href="/en/agent-view">Agent view</a>
+  <a className="digest-feature-link" href="/docs/en/agent-view">Agent view</a>
 </div>
 
 <div className="digest-feature">
@@ -50,7 +50,7 @@
   > /goal all tests in test/auth pass and the lint step is clean
   ```
 
-  <a className="digest-feature-link" href="/en/goal">Goals</a>
+  <a className="digest-feature-link" href="/docs/en/goal">Goals</a>
 </div>
 
 <div className="digest-feature">
@@ -59,7 +59,7 @@
     <span className="digest-feature-pill">research preview</span>
   </div>
 
-  <p className="digest-feature-lede"><code>/fast</code> now runs on Opus 4.7 by default instead of Opus 4.6. Fast mode is a high-speed Opus configuration: the same model quality at about 2.5x the speed for a higher per-token cost, useful for rapid iteration and live debugging. Pricing is unchanged at $30/$150 per MTok, the same as Opus 4.6 fast mode. To pin fast mode to Opus 4.6, set <code>CLAUDE\_CODE\_OPUS\_4\_6\_FAST\_MODE\_OVERRIDE=1</code>.</p>
+  <p className="digest-feature-lede"><code>/fast</code> now runs on Opus 4.7 by default instead of Opus 4.6. Fast mode is a high-speed Opus configuration: the same model quality at about 2.5x the speed for a higher per-token cost, useful for rapid iteration and live debugging. Pricing is unchanged at \$30/\$150 per MTok, the same as Opus 4.6 fast mode. To pin fast mode to Opus 4.6, set <code>CLAUDE\_CODE\_OPUS\_4\_6\_FAST\_MODE\_OVERRIDE=1</code>.</p>
 
   <Frame>
     <img className="w-full" src="https://mintcdn.com/claude-code/ITvjicPxe1SM3GX7/images/whats-new/fast-mode-opus-47.png?fit=max&auto=format&n=ITvjicPxe1SM3GX7&q=85&s=6b6d92f7748ce5328a1ee9a269fb1a87" alt="The Claude Code model picker showing Opus 4.7 Fast 1M as the default with the Fast toggle on" width="3840" height="2160" data-path="images/whats-new/fast-mode-opus-47.png" />
@@ -71,7 +71,7 @@
   > /fast
   ```
 
-  <a className="digest-feature-link" href="/en/fast-mode#use-fast-mode-on-opus-4-7">Fast mode on Opus 4.7</a>
+  <a className="digest-feature-link" href="/docs/en/fast-mode#understand-the-cost-tradeoff">Fast mode on Opus 4.7</a>
 </div>
 
 <div className="digest-wins">

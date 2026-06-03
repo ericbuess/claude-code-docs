@@ -694,6 +694,8 @@ Defines additional marketplaces that should be made available for the repository
 * `hostPattern`: regex pattern to match marketplace hosts (uses `hostPattern`)
 * `settings`: inline marketplace declared directly in settings.json without a separate hosted repository (uses `name` and `plugins`)
 
+The `git` source type works with any git hosting service, including self-hosted GitLab and Bitbucket. Claude Code clones the repository with the same authentication that `git clone` would use on that machine: configured credential helpers, SSH keys, or a host-specific token environment variable. See [Private repositories](/en/plugin-marketplaces#private-repositories) for setup details.
+
 For `github` and `git` sources, set `"skipLfs": true` inside the `source` object (alongside `repo` or `url`) to skip Git LFS downloads when Claude Code clones or updates the marketplace repository. LFS pointer files remain as pointers instead of downloading their content. Use this when the repository contains large LFS objects unrelated to plugin content. {/* min-version: 2.1.153 */}Requires Claude Code v2.1.153 or later.
 
 Each marketplace entry also accepts an optional `autoUpdate` Boolean. Set `"autoUpdate": true` alongside `source` to make Claude Code refresh that marketplace and update its installed plugins at startup. When omitted, official Anthropic marketplaces default to `true` and all other marketplaces default to `false`. See [Configure auto-updates](/en/discover-plugins#configure-auto-updates).

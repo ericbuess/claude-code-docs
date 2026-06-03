@@ -204,15 +204,23 @@ The message handling inside the loop filters for human-readable output. Without 
 Your agent is ready. Run it with the following command:
 
 <Tabs>
-  <Tab title="Python">
-    ```bash theme={null}
-    python3 agent.py
-    ```
-  </Tab>
-
   <Tab title="TypeScript">
     ```bash theme={null}
     npx tsx agent.ts
+    ```
+  </Tab>
+
+  <Tab title="Python (uv)">
+    ```bash theme={null}
+    uv run agent.py
+    ```
+  </Tab>
+
+  <Tab title="Python (pip)">
+    With your virtual environment still activated:
+
+    ```bash theme={null}
+    python agent.py
     ```
   </Tab>
 </Tabs>
