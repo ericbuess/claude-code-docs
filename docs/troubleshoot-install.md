@@ -55,6 +55,8 @@ The installer downloads from `downloads.claude.ai`. Verify you can reach it:
 curl -sI https://downloads.claude.ai/claude-code-releases/latest
 ```
 
+In PowerShell, run `curl.exe -sI` instead. PowerShell aliases `curl` to `Invoke-WebRequest`, which rejects the `-sI` flags.
+
 An `HTTP/2 200` line means you reached the server. If you see no output, `Could not resolve host`, or a connection timeout, your network is blocking the connection. Common causes:
 
 * Corporate firewalls or proxies blocking `downloads.claude.ai`

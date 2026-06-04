@@ -108,21 +108,23 @@ This variable is set in the server's environment, not in Claude Code's own envir
 claude mcp add [options] <name> -- <command> [args...]
 
 # Real example: Add Airtable server
-claude mcp add --transport stdio --env AIRTABLE_API_KEY=YOUR_KEY airtable \
+claude mcp add --env AIRTABLE_API_KEY=YOUR_KEY --transport stdio airtable \
   -- npx -y airtable-mcp-server
 ```
 
 <Note>
-  **Important: Option ordering**
+  **Important: Separate server arguments with `--`**
 
-  All options (`--transport`, `--env`, `--scope`, `--header`) must come **before** the server name. The `--` (double dash) then separates the server name from the command and arguments that get passed to the MCP server.
+  For stdio servers, the `--` (double dash) separates Claude's own options, such as `--transport`, `--env`, and `--scope`, from the command and arguments that run the server. Everything after `--` is passed to the server untouched.
 
   For example:
 
   * `claude mcp add --transport stdio myserver -- npx server` → runs `npx server`
-  * `claude mcp add --transport stdio --env KEY=value myserver -- python server.py --port 8080` → runs `python server.py --port 8080` with `KEY=value` in environment
+  * `claude mcp add --env KEY=value --transport stdio myserver -- python server.py --port 8080` → runs `python server.py --port 8080` with `KEY=value` in environment
 
-  This prevents conflicts between Claude's flags and the server's flags.
+  Without `--`, Claude Code would try to parse the server's flags, like `--port` above, as its own options.
+
+  `--env` accepts multiple `KEY=value` pairs. If the server name comes directly after `--env`, the CLI reads the name as another pair and rejects it, so place at least one other option between `--env` and the server name, as in the examples above.
 </Note>
 
 ### Option 4: Add a remote WebSocket server
