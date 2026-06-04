@@ -1534,6 +1534,15 @@ class ResultMessage:
     uuid: str | None = None
 ```
 
+The `subtype` field determines which other fields are populated. It is one of `"success"`, `"error_during_execution"`, `"error_max_turns"`, `"error_max_budget_usd"`, or `"error_max_structured_output_retries"`. The Python dataclass flattens all variants into one shape, so fields that don't apply to the returned subtype are `None`.
+
+Several fields carry diagnostic detail when the conversation ends on an error:
+
+* `is_error`: `True` when the conversation ended in an error state. Always `True` on the `error_*` subtypes. On `subtype="success"` it is `True` when the final model request failed, meaning the agent loop completed but the last API call returned an error.
+* `api_error_status`: the HTTP status code of the terminating API error. `None` when the turn ended without one. Populated only on `subtype="success"`.
+* `result`: text of the final assistant message on `subtype="success"`, or `None` on the `error_*` subtypes. When `subtype="success"` and `is_error=True`, this holds the API error string if one is available but can be empty, so check `api_error_status` and the preceding `AssistantMessage` content for detail.
+* `errors`: loop-level error strings such as the max-turns message. Populated only on the `error_*` subtypes.
+
 The `usage` dict contains the following keys when present:
 
 | Key                           | Type  | Description                              |
