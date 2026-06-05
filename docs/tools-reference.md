@@ -172,7 +172,8 @@ The LSP tool gives Claude code intelligence from a running language server. Afte
 * Jump to a symbol's definition
 * Find all references to a symbol
 * Get type information at a position
-* List symbols in a file or workspace
+* List symbols in a file
+* Search for a symbol by name across the workspace
 * Find implementations of an interface
 * Trace call hierarchies
 
@@ -275,7 +276,9 @@ A few behaviors shape the response Claude receives:
 * Responses are cached for 15 minutes, so repeated fetches of the same URL return quickly.
 * When a URL redirects to a different host, WebFetch returns a text result that names the original URL and the redirect target instead of following it. Claude then fetches the new URL with a second WebFetch call.
 
-In the default and `acceptEdits` permission modes, WebFetch prompts the first time it reaches a new domain. To allow a domain in advance without a prompt, add a permission rule like `WebFetch(domain:example.com)`. The `auto` and `bypassPermissions` [permission modes](/en/permissions#permission-modes) skip the prompt entirely.
+In the default and `acceptEdits` permission modes, WebFetch prompts the first time it reaches a new domain, except for a built-in set of preapproved documentation domains that fetch without a prompt. To allow another domain in advance without a prompt, add a permission rule like `WebFetch(domain:example.com)`. The `auto` and `bypassPermissions` [permission modes](/en/permissions#permission-modes) skip the prompt entirely.
+
+An explicit `WebFetch(domain:...)` rule in `deny`, `ask`, or `allow` takes precedence over the preapproved set, so you can block a preapproved domain or require a prompt for it.
 
 WebFetch sets a `User-Agent` header beginning with `Claude-User`, and an `Accept` header that prefers Markdown over HTML so servers that support content negotiation can return Markdown directly. [Sandbox](/en/sandboxing) network rules are configured separately, so a domain you want a sandboxed process to reach still needs an explicit sandbox permission rule.
 

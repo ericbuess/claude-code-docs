@@ -42,7 +42,7 @@ The link itself can be hosted anywhere, but the session always opens locally on 
 
 A deep link never executes anything on its own. The link only chooses a directory and fills the prompt box. If you click a link from a page you do not trust, the prompt is still inert: nothing reaches the model until you read what was filled in and press Enter.
 
-When the session opens, a banner above the input shows that an external link launched it and which directory it selected. For prompts over 1,000 characters, the banner tells you to scroll and review the full text before pressing Enter, since long prompts can push instructions off screen. Permission rules, `CLAUDE.md`, and trust prompts for the selected directory apply the same way as for any other session.
+When the session opens, a warning line below the input box reads `Prompt from an external link` and stays visible until you send or clear the prompt. For prompts over 1,000 characters, the warning includes the character count and tells you to scroll and review the full text before pressing Enter, since long prompts can push instructions off screen. Permission rules, `CLAUDE.md`, and trust prompts for the selected directory apply the same way as for any other session.
 
 ## Build a link
 
@@ -88,7 +88,7 @@ Use `repo` when the link is shared and each person clones to a different locatio
 * The lookup only finds paths where you have already run Claude Code at least once.
 * The link does not change which branch is checked out. The session opens in whatever state that directory is currently in.
 
-The launched session shows which path it picked and when that clone last fetched from the remote, so you can tell if you are looking at stale code.
+The welcome header shows which path it picked so you can confirm the right clone opened.
 
 ## Examples
 

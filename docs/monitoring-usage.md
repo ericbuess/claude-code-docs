@@ -202,17 +202,19 @@ Each retry attempt is also recorded as a `gen_ai.request.attempt` span event wit
 
 **`claude_code.tool`**
 
-| Attribute         | Description                                                                                                        | Gated by                |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| `tool_name`       | Tool name                                                                                                          |                         |
-| `duration_ms`     | Wall-clock duration including permission wait and execution                                                        |                         |
-| `result_tokens`   | Approximate token size of the tool result                                                                          |                         |
-| `agent_id`        | Identifier of the subagent or teammate that ran the tool. Absent on the main session                               |                         |
-| `parent_agent_id` | Identifier of the agent that spawned this one. Absent for the main session and for agents spawned directly from it |                         |
-| `file_path`       | Target file path for Read, Edit, and Write tools                                                                   | `OTEL_LOG_TOOL_DETAILS` |
-| `full_command`    | Command string for the Bash tool                                                                                   | `OTEL_LOG_TOOL_DETAILS` |
-| `skill_name`      | Skill name for the Skill tool                                                                                      | `OTEL_LOG_TOOL_DETAILS` |
-| `subagent_type`   | Subagent type for the Agent tool or legacy Task tool                                                               | `OTEL_LOG_TOOL_DETAILS` |
+| Attribute             | Description                                                                                                                                                                                                                          | Gated by                |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| `tool_name`           | Tool name                                                                                                                                                                                                                            |                         |
+| `duration_ms`         | Wall-clock duration including permission wait and execution                                                                                                                                                                          |                         |
+| `result_tokens`       | Approximate token size of the tool result                                                                                                                                                                                            |                         |
+| `agent_id`            | Identifier of the subagent or teammate that ran the tool. Absent on the main session                                                                                                                                                 |                         |
+| `parent_agent_id`     | Identifier of the agent that spawned this one. Absent for the main session and for agents spawned directly from it                                                                                                                   |                         |
+| `tool_use_id`         | The model's `tool_use` block id for this call. Matches the `tool_use_id` on the [tool\_result](#tool-result-event) and [tool\_decision](#tool-decision-event) events and in hook payloads, so you can join the span to those records |                         |
+| `gen_ai.tool.call.id` | Same value as `tool_use_id`. OpenTelemetry GenAI semantic convention                                                                                                                                                                 |                         |
+| `file_path`           | Target file path for Read, Edit, and Write tools                                                                                                                                                                                     | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`        | Command string for the Bash tool                                                                                                                                                                                                     | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`          | Skill name for the Skill tool                                                                                                                                                                                                        | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type`       | Subagent type for the Agent tool or legacy Task tool                                                                                                                                                                                 | `OTEL_LOG_TOOL_DETAILS` |
 
 When `OTEL_LOG_TOOL_CONTENT=1`, this span also records a `tool.output` span event whose attributes contain the tool's input and output bodies, truncated at 60 KB per attribute.
 
@@ -226,11 +228,13 @@ When `OTEL_LOG_TOOL_CONTENT=1`, this span also records a `tool.output` span even
 
 **`claude_code.tool.execution`**
 
-| Attribute     | Description                                                                                                                                       | Gated by                |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| `duration_ms` | Time spent running the tool body                                                                                                                  |                         |
-| `success`     | `true` or `false`                                                                                                                                 |                         |
-| `error`       | Error category string when execution failed, such as `Error:ENOENT` or `ShellError`. Contains the full error message instead when the gate is set | `OTEL_LOG_TOOL_DETAILS` |
+| Attribute             | Description                                                                                                                                       | Gated by                |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `duration_ms`         | Time spent running the tool body                                                                                                                  |                         |
+| `tool_use_id`         | Same value as on the parent `claude_code.tool` span                                                                                               |                         |
+| `gen_ai.tool.call.id` | Same value as `tool_use_id`. OpenTelemetry GenAI semantic convention                                                                              |                         |
+| `success`             | `true` or `false`                                                                                                                                 |                         |
+| `error`               | Error category string when execution failed, such as `Error:ENOENT` or `ShellError`. Contains the full error message instead when the gate is set | `OTEL_LOG_TOOL_DETAILS` |
 
 **`claude_code.hook`**
 
@@ -820,6 +824,7 @@ Logged when a skill is invoked, whether Claude calls it through the Skill tool o
 * `skill.name`: Name of the skill. For user-defined and third-party plugin skills the value is the placeholder `"custom_skill"` unless `OTEL_LOG_TOOL_DETAILS=1`
 * `invocation_trigger`: How the skill was triggered (`"user-slash"`, `"claude-proactive"`, or `"nested-skill"`)
 * `skill.source`: Where the skill was loaded from (for example, `"bundled"`, `"userSettings"`, `"projectSettings"`, `"plugin"`)
+* `skill.kind`: `"workflow"` when the skill is a workflow skill. Absent otherwise
 * `plugin.name` (when `OTEL_LOG_TOOL_DETAILS=1` or the plugin is from an official marketplace): Name of the owning plugin when the skill is provided by a plugin
 * `marketplace.name` (when `OTEL_LOG_TOOL_DETAILS=1` or the plugin is from an official marketplace): Marketplace the owning plugin was installed from, when the skill is provided by a plugin
 
