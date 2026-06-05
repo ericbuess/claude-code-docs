@@ -630,6 +630,21 @@ Logged when an API request to Claude fails.
 * `effort`: [Effort level](/en/model-config#adjust-effort-level) applied to the request. Absent when the model does not support effort.
 * `agent.name`, `skill.name`, `plugin.name`, `marketplace.name`, `mcp_server.name`, `mcp_tool.name`: Skill, plugin, agent, and MCP attribution for the request. See [Cost counter](#cost-counter) for definitions and redaction behavior.
 
+#### API refusal event
+
+Logged when an API request returns `stop_reason: "refusal"`. Refusals arrive on a successful response stream rather than as an HTTP error, so the `api_error` event does not fire for them. This event lets you track refusal frequency.
+
+**Event Name**: `claude_code.api_refusal`
+
+**Attributes**:
+
+* All [standard attributes](#standard-attributes)
+* `event.name`: `"api_refusal"`
+* `event.timestamp`: ISO 8601 timestamp
+* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `model`: Model identifier from the request
+* `request_id`: Anthropic API request ID from the response's `request-id` header, such as `"req_011..."`. Present only when the API returns one.
+
 #### API request body event
 
 Logged for each API request attempt when `OTEL_LOG_RAW_API_BODIES` is set. One event is emitted per attempt, so retries with adjusted parameters each produce their own event.
@@ -749,6 +764,9 @@ Logged when an MCP server connects, disconnects, or fails to connect.
 * `server_scope`: Scope the server is configured at, such as `"user"`, `"project"`, or `"local"`
 * `duration_ms`: Connection attempt duration in milliseconds
 * `error_code`: Error code when the connection failed
+* `is_plugin`: `true` when the server is provided by a plugin, `false` otherwise
+* `plugin_id_hash` (when `is_plugin` is `true`): Stable hash of the plugin name and marketplace, for grouping events by plugin without exposing the name
+* `plugin.name` (when `is_plugin` is `true`): Name of the plugin that provides the server. For third-party plugins this is the literal string `"third-party"` unless `OTEL_LOG_TOOL_DETAILS=1`; this protects third-party plugin names from appearing in logs by default. Plugins from official Anthropic sources are always identified by name. The `plugin_id_hash` and `plugin.name` attributes flow to your own monitoring backend and are not sent to Anthropic
 * `server_name` (when `OTEL_LOG_TOOL_DETAILS=1`): Configured server name
 * `error` (when `OTEL_LOG_TOOL_DETAILS=1`): Full error message when the connection failed
 
@@ -1064,7 +1082,7 @@ Without `OTEL_LOG_TOOL_DETAILS`, these events drop the identifying detail:
 
 * `tool_result`: keeps `tool_name` and `mcp_server_scope`, omits `mcp_server_name`, `mcp_tool_name`, and arguments
 * `tool_decision`: keeps `tool_name`, omits `tool_parameters`
-* `mcp_server_connection`: omits `server_name` and the error message
+* `mcp_server_connection`: omits `server_name` and the error message, but keeps `is_plugin`, `plugin_id_hash`, and `plugin.name`, with non-Anthropic plugin names redacted to the literal `"third-party"`, so plugin-provided servers remain distinguishable without detailed logging
 
 ### Map security questions to events
 
@@ -1076,7 +1094,7 @@ When building detection rules, look up the signal you want to monitor and query 
 | Permission mode escalation                | `permission_mode_changed`                                                             | `from_mode`, `to_mode`, `trigger`                            |
 | Policy hook blocked an action             | `hook_execution_complete`                                                             | `hook_event`, `num_blocking`                                 |
 | Login, logout, and authentication failure | `auth`                                                                                | `action`, `success`, `error_category`                        |
-| MCP server connect or failure             | `mcp_server_connection`                                                               | `status`, `server_name`, `error_code`                        |
+| MCP server connect or failure             | `mcp_server_connection`                                                               | `status`, `server_name`, `is_plugin`, `error_code`           |
 | Plugin installed and its source           | `plugin_installed`                                                                    | `plugin.name`, `marketplace.name`, `marketplace.is_official` |
 | Commands run and files touched            | `tool_result` (executed) or `tool_decision` (rejected) with `OTEL_LOG_TOOL_DETAILS=1` | `tool_parameters`; `tool_input` (`tool_result` only)         |
 

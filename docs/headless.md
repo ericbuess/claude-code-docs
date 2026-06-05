@@ -62,6 +62,10 @@ Bare mode skips OAuth and keychain reads. Anthropic authentication must come fro
   `--bare` is the recommended mode for scripted and SDK calls, and will become the default for `-p` in a future release.
 </Note>
 
+### Background tasks at exit
+
+If Claude starts a [background Bash task](/en/tools-reference#bash-tool-behavior) during a `claude -p` run, for example a dev server or a watch build, that task is terminated about five seconds after Claude returns its final result and stdin closes. The grace period lets a task that finishes right after the result still deliver its output. Before v2.1.163, a never-exiting background process would hold the `claude -p` invocation open indefinitely.
+
 ## Examples
 
 These examples highlight common CLI patterns. For CI and other scripted calls, add [`--bare`](#start-faster-with-bare-mode) so they don't pick up whatever happens to be configured locally.

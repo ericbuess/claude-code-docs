@@ -717,7 +717,7 @@ For full matcher syntax, see the [Hooks reference](/en/hooks#configuration).
   The `if` field requires Claude Code v2.1.85 or later. Earlier versions ignore it and run the hook on every matched call.
 </Note>
 
-The `if` field uses [permission rule syntax](/en/permissions) to filter hooks by tool name and arguments together, so the hook process only spawns when the tool call matches, or when a Bash command is too complex to parse. This goes beyond `matcher`, which filters at the group level by tool name only.
+The `if` field uses [permission rule syntax](/en/permissions) to filter hooks by tool name and arguments together, so the hook process only spawns when the tool call matches. This goes beyond `matcher`, which filters at the group level by tool name only.
 
 For example, to run a hook only when Claude uses `git` commands rather than all Bash commands:
 
@@ -740,7 +740,19 @@ For example, to run a hook only when Claude uses `git` commands rather than all 
 }
 ```
 
-The hook process only spawns when a subcommand of the Bash command matches `git *`, or when the command is too complex to parse into subcommands. For compound commands like `npm test && git push`, Claude Code evaluates each subcommand and fires the hook because `git push` matches. The `if` field accepts the same patterns as permission rules: `"Bash(git *)"`, `"Edit(*.ts)"`, and so on. To match multiple tool names, use separate handlers each with its own `if` value, or match at the `matcher` level where pipe alternation is supported.
+Whether your hook command runs depends on the shape of your `if` pattern and the Bash command Claude is invoking:
+
+| `if` pattern       | Bash command           | Hook runs? | Why                                                                                    |
+| :----------------- | :--------------------- | :--------- | :------------------------------------------------------------------------------------- |
+| `Bash(git *)`      | `git push`             | yes        | command name matches                                                                   |
+| `Bash(git *)`      | `npm test && git push` | yes        | each subcommand is checked; `git push` matches                                         |
+| `Bash(git *)`      | `echo $(git log)`      | yes        | commands inside `$()` and backticks are checked; `git log` matches                     |
+| `Bash(git *)`      | `echo $(date)`         | no         | no subcommand matches `git *`                                                          |
+| `Bash(git push *)` | `echo $(date)`         | yes        | patterns that constrain past the command name fail open on `$()`, backticks, or `$VAR` |
+
+The filter also fails open, running your hook regardless of pattern, when the Bash command cannot be parsed. Because the filter is best-effort, use the [permission system](/en/permissions) rather than a hook to enforce a hard allow or deny.
+
+The `if` field accepts the same patterns as permission rules: `"Bash(git *)"`, `"Edit(*.ts)"`, and so on. To match multiple tool names, use separate handlers each with its own `if` value, or match at the `matcher` level where pipe alternation is supported.
 
 `if` only works on tool events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, and `PermissionDenied`. Adding it to any other event prevents the hook from running.
 
