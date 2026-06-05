@@ -404,10 +404,10 @@ Claude Code adds attribution to git commits and pull requests. These are configu
 **Default commit attribution:**
 
 ```text theme={null}
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-   Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 ```
+
+The model name in the trailer reflects the active model for the session.
 
 **Default pull request attribution:**
 
