@@ -1,0 +1,283 @@
+{
+  "project": "Claude Code Docs - Windows Port",
+  "version": "0.3.3-windows",
+  "created": "2025-08-14",
+  "overview": "Port the claude-code-docs tool from bash/Unix to Windows PowerShell",
+  "tasks": [
+    {
+      "id": "1",
+      "name": "Create project plan JSON file",
+      "status": "completed",
+      "subtasks": [
+        {
+          "id": "1.1",
+          "name": "Analyze existing bash scripts",
+          "status": "completed"
+        },
+        {
+          "id": "1.2",
+          "name": "Document all required functionality",
+          "status": "completed"
+        },
+        {
+          "id": "1.3",
+          "name": "Create JSON plan structure",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Create Windows installer script (Install-ClaudeCodeDocs.ps1)",
+      "status": "completed",
+      "subtasks": [
+        {
+          "id": "2.1",
+          "name": "Port dependency checking (git, jq equivalent)",
+          "status": "completed"
+        },
+        {
+          "id": "2.2",
+          "name": "Port installation directory logic ($env:USERPROFILE\\.claude-code-docs)",
+          "status": "completed"
+        },
+        {
+          "id": "2.3",
+          "name": "Port git clone/pull operations",
+          "status": "completed"
+        },
+        {
+          "id": "2.4",
+          "name": "Port existing installation detection",
+          "status": "completed"
+        },
+        {
+          "id": "2.5",
+          "name": "Port migration logic from old locations",
+          "status": "completed"
+        },
+        {
+          "id": "2.6",
+          "name": "Port settings.json manipulation for hooks",
+          "status": "completed"
+        },
+        {
+          "id": "2.7",
+          "name": "Port command file creation",
+          "status": "completed"
+        },
+        {
+          "id": "2.8",
+          "name": "Add Windows-specific error handling",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Create Windows helper script (claude-docs-helper.ps1)",
+      "status": "completed",
+      "subtasks": [
+        {
+          "id": "3.1",
+          "name": "Port sanitize_input function",
+          "status": "completed"
+        },
+        {
+          "id": "3.2",
+          "name": "Port auto_update function",
+          "status": "completed"
+        },
+        {
+          "id": "3.3",
+          "name": "Port show_freshness function",
+          "status": "completed"
+        },
+        {
+          "id": "3.4",
+          "name": "Port read_doc function",
+          "status": "completed"
+        },
+        {
+          "id": "3.5",
+          "name": "Port list_docs function",
+          "status": "completed"
+        },
+        {
+          "id": "3.6",
+          "name": "Port whats_new function",
+          "status": "completed"
+        },
+        {
+          "id": "3.7",
+          "name": "Port hook_check function",
+          "status": "completed"
+        },
+        {
+          "id": "3.8",
+          "name": "Port command argument parsing",
+          "status": "completed"
+        },
+        {
+          "id": "3.9",
+          "name": "Port uninstall function",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Create Windows uninstaller script (Uninstall-ClaudeCodeDocs.ps1)",
+      "status": "completed",
+      "subtasks": [
+        {
+          "id": "4.1",
+          "name": "Port find_all_installations function",
+          "status": "completed"
+        },
+        {
+          "id": "4.2",
+          "name": "Port command file removal",
+          "status": "completed"
+        },
+        {
+          "id": "4.3",
+          "name": "Port settings.json hook removal",
+          "status": "completed"
+        },
+        {
+          "id": "4.4",
+          "name": "Port directory cleanup logic",
+          "status": "completed"
+        },
+        {
+          "id": "4.5",
+          "name": "Port backup creation",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Create docs.md command file for Windows",
+      "status": "completed",
+      "subtasks": [
+        {
+          "id": "5.1",
+          "name": "Adapt paths for Windows",
+          "status": "completed"
+        },
+        {
+          "id": "5.2",
+          "name": "Update execute command for PowerShell",
+          "status": "completed"
+        },
+        {
+          "id": "5.3",
+          "name": "Maintain all /docs functionality",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Create README for Windows version",
+      "status": "completed",
+      "subtasks": [
+        {
+          "id": "6.1",
+          "name": "Document Windows prerequisites",
+          "status": "completed"
+        },
+        {
+          "id": "6.2",
+          "name": "Document installation process",
+          "status": "completed"
+        },
+        {
+          "id": "6.3",
+          "name": "Document usage examples",
+          "status": "completed"
+        },
+        {
+          "id": "6.4",
+          "name": "Document troubleshooting",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Create batch wrapper scripts for easier execution",
+      "status": "completed",
+      "subtasks": [
+        {
+          "id": "7.1",
+          "name": "Create install.bat wrapper",
+          "status": "completed"
+        },
+        {
+          "id": "7.2",
+          "name": "Create uninstall.bat wrapper",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "name": "Test and verify all components",
+      "status": "completed",
+      "subtasks": [
+        {
+          "id": "8.1",
+          "name": "Created testing checklist document",
+          "status": "completed"
+        },
+        {
+          "id": "8.2",
+          "name": "Documented test scenarios for /docs command",
+          "status": "completed"
+        },
+        {
+          "id": "8.3",
+          "name": "Documented test scenarios for auto-update",
+          "status": "completed"
+        },
+        {
+          "id": "8.4",
+          "name": "Documented test scenarios for uninstallation",
+          "status": "completed"
+        }
+      ]
+    }
+  ],
+  "technical_considerations": {
+    "path_translations": {
+      "$HOME": "$env:USERPROFILE",
+      "~": "$env:USERPROFILE",
+      "/": "\\",
+      ".claude-code-docs": ".claude-code-docs"
+    },
+    "tool_alternatives": {
+      "jq": "ConvertFrom-Json and ConvertTo-Json cmdlets",
+      "sed": "PowerShell string manipulation",
+      "grep": "Select-String or Where-Object",
+      "column": "Format-Wide or custom formatting"
+    },
+    "challenges": [
+      "JSON manipulation in PowerShell is different from jq",
+      "Git operations need to handle Windows line endings",
+      "PowerShell execution policy may need adjustment",
+      "Path separators need conversion",
+      "Hook command execution differs on Windows"
+    ]
+  },
+  "deliverables": [
+    "Install-ClaudeCodeDocs.ps1 - Main installer script",
+    "claude-docs-helper.ps1 - Helper script for /docs command",
+    "Uninstall-ClaudeCodeDocs.ps1 - Uninstaller script",
+    "install.bat - Simple batch wrapper for installation",
+    "uninstall.bat - Simple batch wrapper for uninstallation",
+    "README-WINDOWS.md - Windows-specific documentation"
+  ]
+}
