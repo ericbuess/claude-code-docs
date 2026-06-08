@@ -363,7 +363,7 @@ allowed-tools: Bash(git add *) Bash(git commit *) Bash(git status *)
 ---
 ```
 
-To block a skill from using certain tools, add deny rules in your [permission settings](/en/permissions) instead.
+To remove tools from Claude's available pool while a skill is active, list them in `disallowed-tools` in the skill's frontmatter. The restriction clears when you send your next message. To block tools across all skills and prompts, add deny rules in your [permission settings](/en/permissions).
 
 ### Pass arguments to skills
 
