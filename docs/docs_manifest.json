@@ -3,8 +3,8 @@
     "admin-setup.md": {
       "original_url": "https://code.claude.com/docs/en/admin-setup",
       "original_md_url": "https://code.claude.com/docs/en/admin-setup.md",
-      "hash": "190b6d3439aebf12e56c26bf2a8ea1ea2cc095d4150fb4466065e2be58d604d5",
-      "last_updated": "2026-06-05T21:28:30.798645"
+      "hash": "ae715734998dcf940dc74a09532ab32a508b24bb4614fcb43a27615800172b37",
+      "last_updated": "2026-06-08T21:31:24.737766"
     },
     "agent-sdk__agent-loop.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/agent-loop",
@@ -340,8 +340,8 @@
     "data-usage.md": {
       "original_url": "https://code.claude.com/docs/en/data-usage",
       "original_md_url": "https://code.claude.com/docs/en/data-usage.md",
-      "hash": "79c533f68cbda4cbd26b259655cf3f733b939614b7828339d65949529fda8630",
-      "last_updated": "2026-05-16T00:19:34.142818"
+      "hash": "ecc7662b644a3159ea841b3a09ae6c526405fb6cdd5cb4d5d1216302c47ca0cb",
+      "last_updated": "2026-06-08T21:32:07.696938"
     },
     "debug-your-config.md": {
       "original_url": "https://code.claude.com/docs/en/debug-your-config",
@@ -868,13 +868,13 @@
     "zero-data-retention.md": {
       "original_url": "https://code.claude.com/docs/en/zero-data-retention",
       "original_md_url": "https://code.claude.com/docs/en/zero-data-retention.md",
-      "hash": "b5bb43beaae018996f861687204cf76f9bf0819ea456b9b86fd75e28a01dcecf",
-      "last_updated": "2026-05-02T18:14:32.601164"
+      "hash": "f0d8e85c9395dd56366142dc0decede7c0484ea331dd906ab6babb80b8229595",
+      "last_updated": "2026-06-08T21:33:27.811600"
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-06-08T18:48:05.405880",
-    "fetch_duration_seconds": 243.902726,
+    "last_fetch_completed": "2026-06-08T21:33:27.831213",
+    "fetch_duration_seconds": 124.854031,
     "total_pages_discovered": 145,
     "pages_fetched_successfully": 146,
     "pages_failed": 0,
@@ -884,7 +884,7 @@
     "total_files": 145,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-06-08T18:48:05.405913",
+  "last_updated": "2026-06-08T21:33:27.831237",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
