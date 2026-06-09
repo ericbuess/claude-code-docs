@@ -317,6 +317,7 @@ Environments run behind an HTTP/HTTPS network proxy for security and abuse preve
 * Protection against malicious requests
 * Rate limiting and abuse prevention
 * Content filtering for enhanced security
+* A DNS-level audit trail of requested hostnames
 
 ### Default allowed domains
 

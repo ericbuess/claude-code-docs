@@ -654,7 +654,13 @@ The check evaluates the full conversation, not only your latest prompt, so sendi
 
 ## Responses seem lower quality than usual
 
-If Claude's answers seem less capable than you expect but no error is shown, the cause is usually conversation state rather than the model itself. Claude Code does not silently change model versions. It can switch to a fallback model in specific cases such as an Opus quota being reached or a Bedrock or Vertex AI region lacking your model; the Model selection check below catches both, and [Model configuration](/en/model-config) explains when fallback applies.
+If Claude's answers seem less capable than you expect but no error is shown, the cause is usually conversation state rather than the model itself. Claude Code does not silently change model versions. It can switch to a fallback model in three specific cases:
+
+* A configured [`--fallback-model`](/en/cli-reference#cli-flags) takes over after an availability error, for that turn only, with a notice in the transcript
+* A Bedrock or Vertex AI startup check finds your default model unavailable
+* [Automatic model fallback](/en/model-config#automatic-model-fallback) on Fable 5 moves the session to the default Opus model and shows a notice in the transcript
+
+The Model selection check below catches the second and third cases; the first appears as a transcript notice rather than a `/model` change. [Model configuration](/en/model-config) explains when each fallback applies.
 
 Check these first:
 

@@ -12,10 +12,6 @@ Claude Code GitHub Actions brings AI-powered automation to your GitHub workflow.
   Claude Code GitHub Actions is built on top of the [Claude Agent SDK](/en/agent-sdk/overview), which enables programmatic integration of Claude Code into your applications. You can use the SDK to build custom automation workflows beyond GitHub Actions.
 </Note>
 
-<Info>
-  **Claude Opus 4.8 is now available.** Claude Code GitHub Actions default to Sonnet. To use Opus 4.8, configure the [model parameter](#breaking-changes-reference) to use `claude-opus-4-8`.
-</Info>
-
 ## Why use Claude Code GitHub Actions?
 
 * **Instant PR creation**: Describe what you need, and Claude creates a complete PR with all necessary changes

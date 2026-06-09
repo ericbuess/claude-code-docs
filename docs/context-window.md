@@ -1609,7 +1609,7 @@ You can also act before the automatic pass runs:
 * **Clear between tasks**: run `/clear` when switching to unrelated work. Old conversation crowds out the files you need next and costs tokens on every message.
 * **Delegate large reads**: send research to a [subagent](/en/sub-agents) so the file contents stay in its context window, not yours.
 
-If you need a larger window rather than a smaller conversation, Opus 4.6 and later, and Sonnet 4.6, support a 1 million token context window. See [Extended context](/en/model-config#extended-context) for availability by plan and how to select a `[1m]` model variant. Compaction works the same way at the larger limit.
+If you need a larger window rather than a smaller conversation, Fable 5, Opus 4.6 and later, and Sonnet 4.6 support a 1 million token context window. See [Extended context](/en/model-config#extended-context) for availability by plan and how to select a `[1m]` model variant. Compaction works the same way at the larger limit.
 
 ## Check your own session
 
