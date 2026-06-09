@@ -1033,7 +1033,7 @@ Common alerts to consider:
 * Unusual token consumption
 * High session volume from specific users
 
-All metrics can be segmented by `user.account_uuid`, `user.account_id`, `organization.id`, `session.id`, `model`, and `app.version`.
+All metrics can be segmented by the [standard attributes](#standard-attributes). The `model` attribute is available on `claude_code.token.usage` and `claude_code.cost.usage` only; activity counters have never carried it. Per-model breakdowns of lines of code or commits can only be approximated by joining against the token or cost metrics on `session.id`, since one session can span multiple models.
 
 ### Detect retry exhaustion
 

@@ -26,7 +26,7 @@ You can view and manage Claude Code's tool permissions with `/permissions`. This
 * **Ask** rules prompt for confirmation whenever Claude Code tries to use the specified tool.
 * **Deny** rules prevent Claude Code from using the specified tool.
 
-Rules are evaluated in order: **deny -> ask -> allow**. The first matching rule wins, so deny rules always take precedence.
+Rules are evaluated in order: deny, then ask, then allow. The first match in that order determines the outcome, and rule specificity does not change the order. A matching ask rule prompts even when a more specific allow rule also matches the same call.
 
 Deny rules behave differently depending on whether they name a tool or scope a pattern within one. A bare tool name like `Bash` removes the tool from Claude's context entirely, so Claude never sees it. A scoped rule like `Bash(rm *)` leaves the tool available and blocks matching calls when Claude attempts them.
 

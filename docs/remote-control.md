@@ -74,6 +74,8 @@ You can start a Remote Control session from the CLI or the VS Code extension. Th
     ```
 
     This gives you a full interactive session in your terminal that you can also control from claude.ai or the Claude app. Unlike `claude remote-control` (server mode), you can type messages locally while the session is also available remotely.
+
+    As of v2.1.162, a `Remote Control active` indicator stays in the footer below the input box while Remote Control is connected. The indicator text is a link to the session on claude.ai, so you can reopen it from the terminal at any time. Select the indicator with the down arrow key and press Enter to open a status panel with the session URL and a QR code.
   </Tab>
 
   <Tab title="From an existing session">
@@ -89,7 +91,11 @@ You can start a Remote Control session from the CLI or the VS Code extension. Th
     /remote-control My Project
     ```
 
-    This starts a Remote Control session that carries over your current conversation history and displays a session URL and QR code you can use to [connect from another device](#connect-from-another-device). The `--verbose`, `--sandbox`, and `--no-sandbox` flags are not available with this command.
+    This starts a Remote Control session that carries over your current conversation history.
+
+    As of v2.1.162, a `Remote Control active` indicator appears in the footer below the input box and stays visible while the connection is up. The indicator text is a link to the session on claude.ai. Select it with the down arrow key and press Enter, or run `/remote-control` again, to open a status panel with the session URL and a QR code you can use to [connect from another device](#connect-from-another-device).
+
+    The `--verbose`, `--sandbox`, and `--no-sandbox` flags are not available with this command.
   </Tab>
 
   <Tab title="VS Code">

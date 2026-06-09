@@ -180,6 +180,8 @@ Multiple Claude Code installations can cause version mismatches or unexpected be
     ls -la ~/.local/bin/claude
     ```
 
+    If either `ls` command prints `No such file or directory`, that's not an error. It means nothing is installed at that location, so move on to the next check.
+
     ```bash theme={null}
     ls -la ~/.claude/local/
     ```

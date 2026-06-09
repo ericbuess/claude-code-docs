@@ -27,6 +27,7 @@ Match the message you see in your terminal to a section below.
 | `Auto mode could not evaluate this action and is blocking it for safety`                      | [Server errors](#auto-mode-cannot-determine-the-safety-of-an-action)                                                          |
 | `Auto mode classifier transcript exceeded context window`                                     | [Server errors](#auto-mode-cannot-determine-the-safety-of-an-action)                                                          |
 | `You've hit your session limit` / `You've hit your weekly limit`                              | [Usage limits](#you%E2%80%99ve-hit-your-session-limit)                                                                        |
+| `Usage credits required for 1M context`                                                       | [Usage limits](#usage-credits-required-for-1m-context)                                                                        |
 | `Server is temporarily limiting requests`                                                     | [Usage limits](#server-is-temporarily-limiting-requests)                                                                      |
 | `Request rejected (429)`                                                                      | [Usage limits](#request-rejected-429)                                                                                         |
 | `Credit balance is too low`                                                                   | [Usage limits](#credit-balance-is-too-low)                                                                                    |
@@ -188,6 +189,23 @@ Claude Code blocks further requests until the reset time shown in the message.
 * To upgrade your plan for higher base limits, see [claude.com/pricing](https://claude.com/pricing)
 
 To watch your remaining allowance before you hit the limit, add the `rate_limits` fields to a [custom status line](/en/statusline#rate-limit-usage), or in the Desktop app click the [usage ring](/en/desktop#check-usage) next to the model picker.
+
+### Usage credits required for 1M context
+
+The selected model uses the 1M-token extended context window, and your plan only includes it through usage credits.
+
+```text theme={null}
+API Error: Usage credits required for 1M context · run /usage-credits to turn them on, or /model to switch to standard context
+```
+
+This is an entitlement check, not a quota exhaustion. It fires even when your session and weekly allowances have capacity remaining. See [Extended context](/en/model-config#extended-context) for which plans include 1M context directly and which require usage credits.
+
+**What to do:**
+
+* Run `/model` and select the variant without the `[1m]` suffix to fall back to the standard context window
+* Run `/usage-credits` to turn on metered billing for the 1M variant on Pro and Max, or to request it from your admin on Team and Enterprise
+* If the error persists after `/model`, a 1M model ID may be set elsewhere. See [There's an issue with the selected model](#there%E2%80%99s-an-issue-with-the-selected-model) for the configuration locations to check in priority order.
+* To remove 1M variants from the model picker entirely, set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/en/env-vars)
 
 ### Server is temporarily limiting requests
 

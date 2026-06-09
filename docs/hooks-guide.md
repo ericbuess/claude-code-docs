@@ -760,14 +760,14 @@ The `if` field accepts the same patterns as permission rules: `"Bash(git *)"`, `
 
 Where you add a hook determines its scope:
 
-| Location                                                   | Scope                              | Shareable                          |
-| :--------------------------------------------------------- | :--------------------------------- | :--------------------------------- |
-| `~/.claude/settings.json`                                  | All your projects                  | No, local to your machine          |
-| `.claude/settings.json`                                    | Single project                     | Yes, can be committed to the repo  |
-| `.claude/settings.local.json`                              | Single project                     | No, gitignored                     |
-| Managed policy settings                                    | Organization-wide                  | Yes, admin-controlled              |
-| [Plugin](/en/plugins) `hooks/hooks.json`                   | When plugin is enabled             | Yes, bundled with the plugin       |
-| [Skill](/en/skills) or [agent](/en/sub-agents) frontmatter | While the skill or agent is active | Yes, defined in the component file |
+| Location                                                   | Scope                              | Shareable                                  |
+| :--------------------------------------------------------- | :--------------------------------- | :----------------------------------------- |
+| `~/.claude/settings.json`                                  | All your projects                  | No, local to your machine                  |
+| `.claude/settings.json`                                    | Single project                     | Yes, can be committed to the repo          |
+| `.claude/settings.local.json`                              | Single project                     | No, gitignored when Claude Code creates it |
+| Managed policy settings                                    | Organization-wide                  | Yes, admin-controlled                      |
+| [Plugin](/en/plugins) `hooks/hooks.json`                   | When plugin is enabled             | Yes, bundled with the plugin               |
+| [Skill](/en/skills) or [agent](/en/sub-agents) frontmatter | While the skill or agent is active | Yes, defined in the component file         |
 
 Run [`/hooks`](/en/hooks#the-%2Fhooks-menu) in Claude Code to browse all configured hooks grouped by event. To disable hooks, set `"disableAllHooks": true` in your settings file. Hooks configured in managed settings still run unless `disableAllHooks` is also set there.
 

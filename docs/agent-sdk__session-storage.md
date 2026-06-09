@@ -146,6 +146,8 @@ The SDK ships an `InMemorySessionStore` for development and testing. The example
   ```
 </CodeGroup>
 
+The second query prints a summary of the files from the first query, which shows the agent resumed with full context from the store.
+
 ## Write your own adapter
 
 Implement `append` and `load` against your backend. Add `listSessions`, `delete`, and `listSubkeys` if you want `listSessions()`, `deleteSession()`, and subagent resume to work against the store.

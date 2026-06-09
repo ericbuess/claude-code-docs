@@ -14,12 +14,12 @@ Claude Code uses a **scope system** to determine where configurations apply and 
 
 ### Available scopes
 
-| Scope       | Location                                                                           | Who it affects                       | Shared with team?      |
-| :---------- | :--------------------------------------------------------------------------------- | :----------------------------------- | :--------------------- |
-| **Managed** | Server-managed settings, plist / registry, or system-level `managed-settings.json` | All users on the machine             | Yes (deployed by IT)   |
-| **User**    | `~/.claude/` directory                                                             | You, across all projects             | No                     |
-| **Project** | `.claude/` in repository                                                           | All collaborators on this repository | Yes (committed to git) |
-| **Local**   | `.claude/settings.local.json`                                                      | You, in this repository only         | No (gitignored)        |
+| Scope       | Location                                                                           | Who it affects                       | Shared with team?                           |
+| :---------- | :--------------------------------------------------------------------------------- | :----------------------------------- | :------------------------------------------ |
+| **Managed** | Server-managed settings, plist / registry, or system-level `managed-settings.json` | All users on the machine             | Yes (deployed by IT)                        |
+| **User**    | `~/.claude/` directory                                                             | You, across all projects             | No                                          |
+| **Project** | `.claude/` in repository                                                           | All collaborators on this repository | Yes (committed to git)                      |
+| **Local**   | `.claude/settings.local.json`                                                      | You, in this repository only         | No (gitignored when Claude Code creates it) |
 
 ### When to use each scope
 
@@ -84,7 +84,7 @@ Code through hierarchical settings:
   projects.
 * **Project settings** are saved in your project directory:
   * `.claude/settings.json` for settings that are checked into source control and shared with your team
-  * `.claude/settings.local.json` for settings that are not checked in, useful for personal preferences and experimentation. Claude Code will configure git to ignore `.claude/settings.local.json` when it is created.
+  * `.claude/settings.local.json` for settings that are not checked in, useful for personal preferences and experimentation. When Claude Code creates `.claude/settings.local.json`, it configures git to ignore the file. If you create the file yourself, add it to your gitignore manually.
 * **Managed settings**: For organizations that need centralized control, Claude Code supports multiple delivery mechanisms for managed settings. All use the same JSON format and cannot be overridden by user or project settings:
 
   * **Server-managed settings**: delivered from Anthropic's servers via the Claude.ai admin console. See [server-managed settings](/en/server-managed-settings).
@@ -334,7 +334,7 @@ To copy gitignored files like `.env` into new worktrees, use a [`.worktreeinclud
 
 ### Permission rule syntax
 
-Permission rules follow the format `Tool` or `Tool(specifier)`. Rules are evaluated in order: deny rules first, then ask, then allow. The first matching rule wins.
+Permission rules follow the format `Tool` or `Tool(specifier)`. Rules are evaluated in order: deny rules first, then ask, then allow. The first match determines the outcome regardless of rule specificity. See the [permission rule evaluation order](/en/permissions#manage-permissions) for details.
 
 Quick examples:
 
@@ -491,6 +491,7 @@ src/components/Form.tsx
 ```bash theme={null}
 #!/bin/bash
 query=$(cat | jq -r '.query')
+# Replace your-repo-file-index with your own file search command
 your-repo-file-index --query "$query" | head -20
 ```
 
@@ -584,7 +585,7 @@ For example, if your user settings set `permissions.defaultMode` to `acceptEdits
 
 Run `/status` inside Claude Code to see which settings sources are active. The Status tab includes a `Setting sources` line that lists each layer Claude Code loaded for the current session, such as `User settings` or `Project local settings`. When [managed settings](/en/admin-setup#decide-how-settings-reach-devices) are in effect, the entry shows the delivery channel in parentheses, for example `Enterprise managed settings (remote)`, `(plist)`, `(HKLM)`, `(HKCU)`, or `(file)`. A layer appears in the list only when that source is loaded with at least one key, so an empty list means no settings sources were found.
 
-The `Setting sources` line confirms which sources are being read. It does not show which layer supplied each individual key. The Config tab in the same dialog is an editor for a fixed set of toggles such as theme and verbose output, not a view of your `settings.json` contents. If a settings file contains errors, such as invalid JSON or a value that fails validation, `/status` reports the issue so you can fix it.
+The `Setting sources` line confirms which sources are being read. It does not show which layer supplied each individual key. The Config tab in the same dialog is an editor for a fixed set of toggles such as theme and verbose output, not a view of your `settings.json` contents. If a settings file contains errors, such as invalid JSON or a value that fails validation, Claude Code shows a setup issues notice at startup and `/status` lists the affected files. Run `/doctor` to see the details for each error.
 
 ### Key points about the configuration system
 
@@ -662,7 +663,7 @@ Controls which plugins are enabled. Format: `"plugin-name@marketplace-name": tru
 
 * **User settings** (`~/.claude/settings.json`): Personal plugin preferences
 * **Project settings** (`.claude/settings.json`): Project-specific plugins shared with team
-* **Local settings** (`.claude/settings.local.json`): Per-machine overrides (not committed)
+* **Local settings** (`.claude/settings.local.json`): Per-machine overrides, gitignored when Claude Code creates it
 * **Managed settings** (`managed-settings.json`): Organization-wide policy overrides that block installation at all scopes and hide the plugin from the marketplace
 
 <Note>

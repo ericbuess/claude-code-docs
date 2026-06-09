@@ -164,7 +164,7 @@ Task claiming uses file locking to prevent race conditions when multiple teammat
 
 ### Shut down teammates
 
-To gracefully end a teammate's session:
+To gracefully end a teammate's session, refer to it by name. For example, with a teammate named researcher:
 
 ```text theme={null}
 Ask the researcher teammate to shut down
@@ -180,7 +180,7 @@ When you're done, ask the lead to clean up:
 Clean up the team
 ```
 
-This removes the shared team resources. When the lead runs cleanup, it checks for active teammates and fails if any are still running, so shut them down first.
+This removes the shared team resources. When the lead runs cleanup, it checks for active teammates and fails if any are still running, so shut them down first. Claude often cleans up on its own when the team's work is done, so a later cleanup request may report that there is nothing to clean up.
 
 <Warning>
   Always use the lead to clean up. Teammates should not run cleanup because their team context may not resolve correctly, potentially leaving resources in an inconsistent state.
@@ -227,7 +227,7 @@ Teams and tasks are stored locally:
 * **Team config**: `~/.claude/teams/{team-name}/config.json`
 * **Task list**: `~/.claude/tasks/{team-name}/`
 
-Claude Code generates both of these automatically when you create a team and updates them as teammates join, go idle, or leave. The team config holds runtime state such as session IDs and tmux pane IDs, so don't edit it by hand or pre-author it: your changes are overwritten on the next state update.
+Claude Code generates both of these automatically when you create a team and updates them as teammates join, go idle, or leave. Both directories exist only while the team is active: they are removed when the team is cleaned up or when the session ends. The team config holds runtime state such as session IDs and tmux pane IDs, so don't edit it by hand or pre-author it: your changes are overwritten on the next state update.
 
 To define reusable teammate roles, use [subagent definitions](#use-subagent-definitions-for-teammates) instead.
 

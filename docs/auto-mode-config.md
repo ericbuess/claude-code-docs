@@ -33,7 +33,7 @@ For rules that apply across projects, such as trusted infrastructure or organiza
 | Scope                          | File                                            | Use for                                              |
 | :----------------------------- | :---------------------------------------------- | :--------------------------------------------------- |
 | One developer                  | `~/.claude/settings.json`                       | Personal trusted infrastructure                      |
-| One project, one developer     | `.claude/settings.local.json`                   | Per-project trusted buckets or services, gitignored  |
+| One project, one developer     | `.claude/settings.local.json`                   | Per-project trusted buckets or services              |
 | Organization-wide              | [Managed settings](/en/server-managed-settings) | Trusted infrastructure distributed to all developers |
 | `--settings` flag or Agent SDK | Inline JSON                                     | Per-invocation overrides for automation              |
 

@@ -238,6 +238,7 @@ Disabling caching is occasionally useful when debugging caching behavior with a 
 | `DISABLE_PROMPT_CACHING_HAIKU`  | Disable for Haiku only  |
 | `DISABLE_PROMPT_CACHING_SONNET` | Disable for Sonnet only |
 | `DISABLE_PROMPT_CACHING_OPUS`   | Disable for Opus only   |
+| `DISABLE_PROMPT_CACHING_FABLE`  | Disable for Fable only  |
 
 To set caching policy across an organization, put any of these or the [TTL variables](#cache-lifetime) in the `env` block of [managed settings](/en/settings#settings-files). For normal use, leave caching enabled.
 
