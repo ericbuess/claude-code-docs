@@ -481,7 +481,7 @@ const result = query({
 * `API_TIMEOUT_MS`: per-request timeout on the Anthropic client, in milliseconds. Default `600000`. Applies to the main loop and all subagents.
 * `CLAUDE_CODE_MAX_RETRIES`: maximum API retries. Default `10`. Each retry gets its own `API_TIMEOUT_MS` window, so worst-case wall time is roughly `API_TIMEOUT_MS × (CLAUDE_CODE_MAX_RETRIES + 1)` plus backoff.
 * `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS`: stall watchdog for subagents launched with `run_in_background`. Default `600000`. Resets on each stream event; on stall it aborts the subagent, marks the task failed, and surfaces the error to the parent with any partial result. Does not apply to synchronous subagents.
-* `CLAUDE_ENABLE_STREAM_WATCHDOG=1` with `CLAUDE_STREAM_IDLE_TIMEOUT_MS`: aborts the request when headers have arrived but the response body stops streaming. Off by default. `CLAUDE_STREAM_IDLE_TIMEOUT_MS` defaults to `300000` and is clamped to that minimum. The aborted request goes through the normal retry path.
+* `CLAUDE_ENABLE_STREAM_WATCHDOG=1` with `CLAUDE_STREAM_IDLE_TIMEOUT_MS`: aborts the request when headers have arrived but the response body stops streaming. When `CLAUDE_ENABLE_STREAM_WATCHDOG` is unset, the default is server-controlled on the direct Anthropic API and off on other providers. `CLAUDE_STREAM_IDLE_TIMEOUT_MS` defaults to `300000` and is clamped to that minimum. The aborted request goes through the normal retry path.
 
 ### `Query` object
 
@@ -776,7 +776,7 @@ Programmatic options such as `agents`, `allowedTools`, and `settings` override u
 type PermissionMode =
   | "default" // Standard permission behavior
   | "acceptEdits" // Auto-accept file edits
-  | "bypassPermissions" // Bypass all permission checks
+  | "bypassPermissions" // Bypass permission checks; explicit ask rules still prompt
   | "plan" // Planning mode - read-only tools only
   | "dontAsk" // Don't prompt for permissions, deny if not pre-approved
   | "auto"; // Use a model classifier to approve or deny each tool call
@@ -1053,6 +1053,7 @@ type SDKResultMessage =
       result: string;
       stop_reason: string | null;
       ttft_ms?: number;
+      ttft_stream_ms?: number;
       total_cost_usd: number;
       usage: NonNullableUsage;
       modelUsage: { [modelName: string]: ModelUsage };
@@ -1091,7 +1092,8 @@ type SDKResultMessage =
 Several fields on the result carry diagnostic detail beyond `subtype`:
 
 * `api_error_status`: the HTTP status code of the API error that terminated the conversation. Absent or `null` when the turn ended without an API error.
-* `ttft_ms`: time to first token in milliseconds. Present on the success arm only.
+* `ttft_ms`: time to first token in milliseconds, measured when the first complete assistant message arrives. Present on the success arm only.
+* `ttft_stream_ms`: time in milliseconds until the first `message_start` stream event, when the response stream opens. Lower than `ttft_ms`; the gap between the two is time spent streaming the first message. Present on the success arm only.
 * `terminal_reason`: why the loop ended. One of `"completed"`, `"max_turns"`, `"tool_deferred"`, `"aborted_streaming"`, `"aborted_tools"`, `"hook_stopped"`, `"stop_hook_prevented"`, `"blocking_limit"`, `"rapid_refill_breaker"`, `"prompt_too_long"`, `"image_error"`, or `"model_error"`.
 * `fast_mode_state`: one of `"on"`, `"off"`, or `"cooldown"`.
 
@@ -2899,7 +2901,7 @@ MCP tool result type (from `@modelcontextprotocol/sdk/types.js`). `structuredCon
 ```typescript theme={null}
 type CallToolResult = {
   content: Array<{
-    type: "text" | "image" | "resource";
+    type: "text" | "image" | "audio" | "resource" | "resource_link";
     // Additional fields vary by type
   }>;
   structuredContent?: Record<string, unknown>;
@@ -3450,7 +3452,7 @@ This pattern enables you to:
 <Warning>
   Commands running with `dangerouslyDisableSandbox: true` have full system access. Ensure your `canUseTool` handler validates these requests carefully.
 
-  If `permissionMode` is set to `bypassPermissions` and `allowUnsandboxedCommands` is enabled, the model can autonomously execute commands outside the sandbox without any approval prompts. This combination effectively allows the model to escape sandbox isolation silently.
+  If `permissionMode` is set to `bypassPermissions` and `allowUnsandboxedCommands` is enabled, the model can autonomously execute commands outside the sandbox without approval prompts (an explicit [`ask` rule](/en/agent-sdk/permissions#how-permissions-are-evaluated) still forces one). This combination effectively allows the model to escape sandbox isolation silently.
 </Warning>
 
 ## See also

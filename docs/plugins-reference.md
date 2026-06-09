@@ -42,6 +42,8 @@ skills/
 * Claude can invoke them automatically based on task context
 * Skills can include supporting files alongside SKILL.md
 
+If a plugin has no `skills/` directory and no `skills` manifest field, a `SKILL.md` at the plugin root is loaded as a single skill. Set the frontmatter `name` field to control the skill's invocation name. Without it, Claude Code falls back to the install directory name, which for marketplace-installed plugins is a version string that changes on every update. For plugins that ship more than one skill, use the `skills/` directory layout shown above.
+
 For complete details, see [Skills](/en/skills).
 
 ### Agents
@@ -243,16 +245,17 @@ LSP integration provides:
 
 **Optional fields:**
 
-| Field                   | Description                                            |
-| :---------------------- | :----------------------------------------------------- |
-| `args`                  | Command-line arguments for the LSP server              |
-| `transport`             | Communication transport: `stdio` (default) or `socket` |
-| `env`                   | Environment variables to set when starting the server  |
-| `initializationOptions` | Options passed to the server during initialization     |
-| `settings`              | Settings passed via `workspace/didChangeConfiguration` |
-| `workspaceFolder`       | Workspace folder path for the server                   |
-| `startupTimeout`        | Max time to wait for server startup (milliseconds)     |
-| `maxRestarts`           | Maximum number of restart attempts before giving up    |
+| Field                   | Description                                                                                                                                                         |
+| :---------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `args`                  | Command-line arguments for the LSP server                                                                                                                           |
+| `transport`             | Communication transport: `stdio` (default) or `socket`                                                                                                              |
+| `env`                   | Environment variables to set when starting the server                                                                                                               |
+| `initializationOptions` | Options passed to the server during initialization                                                                                                                  |
+| `settings`              | Settings passed via `workspace/didChangeConfiguration`                                                                                                              |
+| `workspaceFolder`       | Workspace folder path for the server                                                                                                                                |
+| `startupTimeout`        | Max time to wait for server startup (milliseconds)                                                                                                                  |
+| `maxRestarts`           | Maximum number of restart attempts before giving up                                                                                                                 |
+| `diagnostics`           | Whether to push diagnostics into Claude's context after edits (default `true`). Set to `false` to keep code navigation but suppress automatic diagnostic injection. |
 
 <Warning>
   **You must install the language server binary separately.** LSP plugins configure how Claude Code connects to a language server, but they don't include the server itself. If you see `Executable not found in $PATH` in the `/plugin` Errors tab, install the required binary for your language.

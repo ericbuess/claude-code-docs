@@ -149,7 +149,7 @@ Anthropic also maintains a [demo plugins marketplace](https://github.com/anthrop
     * **Marketplaces**: add, remove, or update your added marketplaces
     * **Errors**: view any plugin loading errors
 
-    Go to the **Discover** tab to see plugins from the marketplace you just added. {/* min-version: 2.1.154 */}Plugins marked as relevant to your current working directory are pinned at the top with a **suggested for this directory** label.
+    Go to the **Discover** tab to see plugins from the marketplace you just added. {/* min-version: 2.1.154 */}When your administrator has allowlisted the marketplace via the [`pluginSuggestionMarketplaces`](/en/settings#available-settings) managed setting, plugins marked as relevant to your current working directory are pinned at the top with a **suggested for this directory** label.
   </Step>
 
   <Step title="Install a plugin">
@@ -294,6 +294,8 @@ From the list you can:
 * type to filter by plugin name or description
 * press Enter to open a plugin's detail view and enable, disable, or uninstall it
 
+The detail view shows the components the plugin contributes: commands, skills, agents, hooks, MCP servers, and LSP servers. The same inventory is available from the command line with `claude plugin details`.
+
 When you install a plugin that declares dependencies, the install output lists which dependencies were auto-installed alongside it.
 
 You can also manage plugins with direct commands.
@@ -341,7 +343,7 @@ When you install, enable, or disable plugins during a session, run `/reload-plug
 
 Claude Code reloads all active plugins and shows counts for plugins, skills, agents, hooks, plugin MCP servers, and plugin LSP servers.
 
-Reloading has a token cost on the next request: newly loaded components announce themselves in content appended to the conversation, while the existing history still reads from the prompt cache. A plugin that provides MCP servers costs more when its tools aren't deferred by [tool search](/en/mcp#scale-with-mcp-tool-search): the change invalidates the cache and the next request re-reads the entire conversation. See [enabling or disabling a plugin](/en/prompt-caching#enabling-or-disabling-a-plugin) for details.
+Reloading has a token cost on the next request: newly loaded components announce themselves in content appended to the conversation, while the existing history still reads from the prompt cache. A plugin that provides MCP servers costs more when its tools aren't deferred by [tool search](/en/mcp#scale-with-mcp-tool-search): the change invalidates the cache and the next request re-reads the entire conversation. {/* min-version: 2.1.163 */}In that case `/reload-plugins` shows a warning and does not apply the reload; pass `--force` to apply anyway. See [enabling or disabling a plugin](/en/prompt-caching#enabling-or-disabling-a-plugin) for details.
 
 ## Manage marketplaces
 

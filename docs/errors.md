@@ -33,6 +33,7 @@ Match the message you see in your terminal to a section below.
 | `Not logged in · Please run /login`                                                           | [Authentication](#not-logged-in)                                                                                              |
 | `Invalid API key`                                                                             | [Authentication](#invalid-api-key)                                                                                            |
 | `This organization has been disabled`                                                         | [Authentication](#this-organization-has-been-disabled)                                                                        |
+| `Your organization has disabled API key authentication`                                       | [Authentication](#your-organization-has-disabled-api-key-authentication)                                                      |
 | `Your organization has disabled Claude subscription access`                                   | [Authentication](#your-organization-has-disabled-claude-subscription-access)                                                  |
 | `Routines are disabled by your organization's policy`                                         | [Authentication](#routines-are-disabled-by-your-organization%E2%80%99s-policy)                                                |
 | `OAuth token revoked` / `OAuth token has expired`                                             | [Authentication](#oauth-token-revoked-or-expired)                                                                             |
@@ -288,6 +289,27 @@ Environment variables take precedence over `/login`, so a key exported in your s
 * Run `/status` afterward to confirm the active credential is your subscription
 * If no environment variable is set and the error persists, the disabled organization is the one tied to your `/login`. Contact support or sign in with a different account.
 
+### Your organization has disabled API key authentication
+
+Your Console organization's admin has turned off API key authentication, so the API rejects the key Claude Code is sending. The recovery hint after the `·` varies by where the key came from:
+
+```text theme={null}
+Your organization has disabled API key authentication · Run /login to sign in with your claude.ai account
+Your organization has disabled API key authentication · Unset ANTHROPIC_API_KEY to use your claude.ai account instead
+Your organization has disabled API key authentication · Unset ANTHROPIC_API_KEY and run /login to sign in with your claude.ai account
+Your organization has disabled API key authentication · Unset the apiKeyHelper setting and run /login to sign in with your claude.ai account
+```
+
+Environment variables and `apiKeyHelper` take precedence over `/login`, so running `/login` alone does not help while either is still supplying a key. See [Authentication precedence](/en/authentication#authentication-precedence).
+
+**What to do:**
+
+* If the message names `ANTHROPIC_API_KEY`, unset it in the current shell and remove it from your shell profile or `.env` file, then relaunch `claude`
+* If the message names `apiKeyHelper`, remove the [`apiKeyHelper`](/en/settings#available-settings) setting from your `settings.json`
+* Run `/login` to sign in with your claude.ai account
+* Run `/status` afterward to confirm the active credential is your subscription rather than an API key
+* If you need API key authentication for automation, ask your organization admin to re-enable it in the Console
+
 ### Your organization has disabled Claude subscription access
 
 Your Claude organization does not allow signing in to Claude Code with a subscription login. Running `/login` again with the same account returns the same error.
@@ -480,11 +502,10 @@ Image was too large. Double press esc to go back and try again with a smaller im
 API Error: 400 ... image dimensions exceed max allowed size
 ```
 
-The image stays in conversation history after the error, so every subsequent message fails with the same error until you remove it.
+{/* min-version: 2.1.142 */}Claude Code replaces the unprocessable image with a text placeholder and retries, so subsequent messages succeed. On versions before 2.1.142, a pasted image could remain in the conversation and repeat the same error on every subsequent message. To recover on those versions, press Esc twice and step back past the turn where the image was added.
 
 **What to do:**
 
-* Press Esc twice and step back past the turn where the image was added
 * Resize the image before pasting. The API accepts images up to 8000 pixels on the longest edge for a single image, or 2000 pixels when many images are in context.
 * Take a tighter screenshot of the relevant region instead of the full screen
 

@@ -178,9 +178,9 @@ Actions available in the `HistorySearch` context:
 
 Actions available in the `Task` context:
 
-| Action            | Default | Description             |
-| :---------------- | :------ | :---------------------- |
-| `task:background` | Ctrl+B  | Background current task |
+| Action            | Default               | Description                                                                                                                                 |
+| :---------------- | :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `task:background` | Ctrl+B, Ctrl+X Ctrl+B | Background current task. {/* min-version: 2.1.169 */}The Ctrl+X Ctrl+B chord requires v2.1.169 or later and avoids the tmux prefix conflict |
 
 ### Theme actions
 

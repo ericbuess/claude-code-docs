@@ -45,10 +45,10 @@ Claude Code supports several permission modes that control how tools are approve
 | `plan`              | Plan Mode: Claude reads files and runs read-only shell commands to explore but does not edit your source files                                                     |
 | `auto`              | Auto-approves tool calls with background safety checks that verify actions align with your request. Currently a research preview                                   |
 | `dontAsk`           | Auto-denies tools unless pre-approved via `/permissions` or `permissions.allow` rules                                                                              |
-| `bypassPermissions` | Skips all permission prompts. Root and home directory removals such as `rm -rf /` still prompt as a circuit breaker                                                |
+| `bypassPermissions` | Skips permission prompts, except those forced by explicit `ask` rules. Root and home directory removals such as `rm -rf /` also still prompt as a circuit breaker  |
 
 <Warning>
-  `bypassPermissions` mode skips all permission prompts, including writes to `.git`, `.config/git`, `.claude`, `.vscode`, `.idea`, `.husky`, `.cargo`, `.devcontainer`, `.yarn`, and `.mvn`. Removals targeting the filesystem root or home directory, such as `rm -rf /` and `rm -rf ~`, still prompt as a circuit breaker against model error. Only use this mode in isolated environments like containers or VMs where Claude Code cannot cause damage. Administrators can prevent this mode by setting `permissions.disableBypassPermissionsMode` to `"disable"` in [managed settings](#managed-settings).
+  `bypassPermissions` mode skips permission prompts, including for writes to `.git`, `.config/git`, `.claude`, `.vscode`, `.idea`, `.husky`, `.cargo`, `.devcontainer`, `.yarn`, and `.mvn`. Explicit `ask` rules still force a prompt, and removals targeting the filesystem root or home directory, such as `rm -rf /` and `rm -rf ~`, still prompt as a circuit breaker against model error. Only use this mode in isolated environments like containers or VMs where Claude Code cannot cause damage. Administrators can prevent this mode by setting `permissions.disableBypassPermissionsMode` to `"disable"` in [managed settings](#managed-settings).
 </Warning>
 
 To prevent `bypassPermissions` or `auto` mode from being used, set `permissions.disableBypassPermissionsMode` or `permissions.disableAutoMode` to `"disable"` in any [settings file](/en/settings#settings-files). These are most useful in [managed settings](#managed-settings) where they cannot be overridden.
@@ -103,6 +103,24 @@ Bash rules support glob patterns with `*`. Wildcards can appear at any position 
 The space before `*` matters: `Bash(ls *)` matches `ls -la` but not `lsof`, while `Bash(ls*)` matches both. The `:*` suffix is an equivalent way to write a trailing wildcard, so `Bash(ls:*)` matches the same commands as `Bash(ls *)`.
 
 The permission dialog writes the space-separated form when you select "Yes, don't ask again" for a command prefix. The `:*` form is only recognized at the end of a pattern. In a pattern like `Bash(git:* push)`, the colon is treated as a literal character and won't match git commands.
+
+### Tool name wildcards
+
+Deny and ask rules also accept glob patterns in the tool-name position. The pattern must match the full tool name: `"*"` matches every tool, and `"mcp__*"` matches every MCP tool across all servers. A tool matched by a bare-name glob deny rule is removed from Claude's context, the same as a bare tool name. This configuration denies every MCP tool:
+
+```json theme={null}
+{
+  "permissions": {
+    "deny": [
+      "mcp__*"
+    ]
+  }
+}
+```
+
+Allow rules accept tool-name globs only after a literal `mcp__<server>__` prefix. The server segment must be glob-free so the rule names a specific server you configured. `mcp__puppeteer__*` matches every tool from the `puppeteer` server, and `mcp__github__get_*` matches its `get_` tools. An unanchored allow glob such as `"*"`, `"B*"`, or `"mcp__*"` is skipped with a warning and does not auto-approve anything.
+
+A deny or ask rule whose tool name matches no known tool produces a startup warning to catch typos. Tool names containing `_` or `*` are exempt from the check.
 
 ## Tool-specific permission rules
 
@@ -262,6 +280,22 @@ Add these rules to the `deny` array in your settings or use the `--disallowedToo
 }
 ```
 
+### Cd
+
+`Cd` rules control which directories the [`/cd` command](/en/commands) can move the session to. `Cd` is not a model-invocable tool: Claude cannot call it, and the rules apply only when you run `/cd` yourself.
+
+A bare `Cd` deny rule disables `/cd` entirely. A `Cd(<path-pattern>)` deny rule blocks matching targets. Deny rules check every spelling of the target, including each symlink hop it resolves through, so a rule written for one path also blocks targets that resolve to it.
+
+Adding any `Cd` allow rule switches `/cd` to allowlist mode: the resolved target directory must match one of your allow rules, or `/cd` refuses. With no `Cd` rules configured, `/cd` keeps its default behavior and prompts you to trust an unfamiliar directory.
+
+Path patterns share the `//`, `~/`, and `/` anchors from [Read and Edit rules](#read-and-edit), but matching is anchored to the whole directory path rather than gitignore-style. `*` matches exactly one path segment and `**` matches across segments. A trailing `/**` also matches its named root.
+
+| Rule                  | Matches                                   | Does not match               |
+| --------------------- | ----------------------------------------- | ---------------------------- |
+| `Cd(~/code/*)`        | `~/code/app`                              | `~/code/app/src`, `~/code`   |
+| `Cd(~/code/**)`       | `~/code` and any directory under it       | directories outside `~/code` |
+| `Cd(**/node_modules)` | any `node_modules` directory at any depth | `node_modules/pkg`           |
+
 ## Extend permissions with hooks
 
 [Claude Code hooks](/en/hooks-guide) provide a way to register custom shell commands to perform permission evaluation at runtime. When Claude Code makes a tool call, PreToolUse hooks run before the permission prompt. The hook output can deny the tool call, force a prompt, or skip the prompt to let the call proceed.
@@ -279,6 +313,8 @@ By default, Claude has access to files in the directory where it was launched. Y
 * **Persistent configuration**: add to `additionalDirectories` in [settings files](/en/settings#settings-files)
 
 Files in additional directories follow the same permission rules as the original working directory: they become readable without prompts, and file editing permissions follow the current permission mode.
+
+To change the session's primary working directory instead of adding another, use [`/cd`](/en/commands). The `/cd` command requires Claude Code v2.1.169 or later. Unlike `/add-dir`, it relocates the session: the new directory's `CLAUDE.md` is loaded and `--resume` finds the session from there.
 
 ### Additional directories grant file access, not configuration
 
@@ -314,7 +350,7 @@ Use both for defense-in-depth:
 * Filesystem restrictions in the sandbox combine the [`sandbox.filesystem`](/en/sandboxing) settings with Read and Edit deny rules; both are merged into the final sandbox boundary
 * Network restrictions combine WebFetch permission rules with the sandbox's `allowedDomains` and `deniedDomains` lists
 
-When sandboxing is enabled with `autoAllowBashIfSandboxed: true`, which is the default, sandboxed Bash commands run without prompting even if your permissions include `ask: Bash(*)`. The sandbox boundary substitutes for the per-command prompt. Explicit deny rules still apply, and `rm` or `rmdir` commands that target `/`, your home directory, or other critical system paths still trigger a prompt. See [sandbox modes](/en/sandboxing#sandbox-modes) to change this behavior.
+When sandboxing is enabled with `autoAllowBashIfSandboxed: true`, which is the default, sandboxed Bash commands run without prompting even if your permissions include a bare `Bash` ask rule, or the [equivalent `Bash(*)` form](#match-all-uses-of-a-tool): the sandbox boundary substitutes for that whole-tool prompt. Content-scoped ask rules like `Bash(git push *)` still force a prompt, explicit deny rules still apply, and `rm` or `rmdir` commands that target `/`, your home directory, or other critical system paths still trigger a prompt. Commands that won't run sandboxed, such as excluded commands, respect the bare `Bash` ask rule as usual. See [sandbox modes](/en/sandboxing#sandbox-modes) to change this behavior.
 
 ## Managed settings
 

@@ -54,7 +54,7 @@ Ultrareview is a premium feature that bills against usage credits rather than yo
 | Max                 | 3 free runs        | billed as [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 | Team and Enterprise | none               | billed as [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 
-Pro and Max subscribers receive three free ultrareview runs to try the feature. These three runs are a one-time allotment per account and do not refresh. After you use all three, or after the free run period ends, each review is billed to usage credits and typically costs \$5 to \$20 depending on the size of the change. A run counts once the remote session starts, so a review that you stop early or that fails to complete still uses a free run. For a paid review, usage credits are billed only for the portion that ran.
+Pro and Max subscribers receive three free ultrareview runs to try the feature. These three runs are a one-time allotment per account and do not refresh. After you use all three, or after the free run period ends, each review is billed to usage credits and typically costs \$5 to \$20 depending on the size of the change. A run counts once the cloud session starts, so a review that you stop early or that fails to complete still uses a free run. For a paid review, usage credits are billed only for the portion that ran.
 
 Because ultrareview always bills as usage credits outside the free runs, your account or organization must have usage credits turned on before you can launch a paid review. If usage credits are not turned on, Claude Code blocks the launch and links you to the billing settings where you can turn them on. You can also run `/usage-credits` to check or change your current setting.
 
@@ -83,7 +83,7 @@ Progress messages and the live session URL go to stderr so stdout stays parseabl
 | `--json`              | Print the raw `bugs.json` payload instead of the formatted findings |
 | `--timeout <minutes>` | Maximum minutes to wait for the review to finish. Defaults to 30    |
 
-Running `claude ultrareview` requires the same authentication and usage credit configuration as `/code-review ultra`. The subcommand exits with code 0 when the review completes with or without findings, code 1 when the review fails to launch, the remote session errors, or the timeout elapses, and code 130 when interrupted with Ctrl-C. The remote review keeps running if you interrupt the subcommand; follow the session URL printed to stderr to watch it in the browser.
+Running `claude ultrareview` requires the same authentication and usage credit configuration as `/code-review ultra`. The subcommand exits with code 0 when the review completes with or without findings, code 1 when the review fails to launch, the cloud session errors, or the timeout elapses, and code 130 when interrupted with Ctrl-C. The remote review keeps running if you interrupt the subcommand; follow the session URL printed to stderr to watch it in the browser.
 
 For automatic reviews on GitHub pull requests, [Code Review](/en/code-review) integrates with your repository directly and posts findings as inline PR comments without a CLI step.
 
@@ -103,6 +103,6 @@ Use `/review` for fast feedback as you work. Use `/code-review ultra` before mer
 
 ## Related resources
 
-* [Claude Code on the web](/en/claude-code-on-the-web): learn how remote sessions and cloud sandboxes work
+* [Claude Code on the web](/en/claude-code-on-the-web): learn how cloud sessions and cloud sandboxes work
 * [Plan complex changes with ultraplan](/en/ultraplan): the planning counterpart to ultrareview for upfront design work
 * [Manage costs effectively](/en/costs): track usage and set spending limits

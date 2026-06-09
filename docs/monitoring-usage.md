@@ -826,6 +826,7 @@ Logged once per enabled plugin at session start. Use this event to inventory whi
 * `skill_path_count`: number of skill directories the plugin declares
 * `command_path_count`: number of command directories the plugin declares
 * `agent_path_count`: number of agent directories the plugin declares
+* `safe_mode`: `"true"` when the session was started with [`--safe-mode`](/en/cli-reference), `"false"` otherwise. In safe mode this event reports configured inventory only; the plugin's commands, skills, hooks, and MCP servers do not load. {/* min-version: 2.1.169 */}Requires Claude Code v2.1.169 or later
 
 #### Skill activated event
 
@@ -895,6 +896,7 @@ Logged once per configured hook at session start. Use this event to inventory wh
 * `hook_event`: hook event type, such as `"PreToolUse"` or `"PostToolUse"`
 * `hook_type`: hook implementation type: `"command"`, `"prompt"`, `"mcp_tool"`, `"http"`, or `"agent"`
 * `hook_source`: where the hook is defined: `"userSettings"`, `"projectSettings"`, `"localSettings"`, `"flagSettings"`, `"policySettings"`, or `"pluginHook"`
+* `safe_mode`: `"true"` when the session was started with [`--safe-mode`](/en/cli-reference), `"false"` otherwise. {/* min-version: 2.1.169 */}Requires Claude Code v2.1.169 or later
 * `hook_matcher` (when `OTEL_LOG_TOOL_DETAILS=1`): the matcher string from the hook configuration, when one is set
 * `plugin.name` (when `hook_source` is `"pluginHook"`): name of the contributing plugin. For plugins outside the official marketplace and built-in bundle the value is `"third-party"` unless `OTEL_LOG_TOOL_DETAILS=1`
 * `plugin_id_hash` (when `hook_source` is `"pluginHook"`): deterministic hash of the plugin name and marketplace, sent only to your configured exporter. Lets you count distinct contributing plugins without recording their names
@@ -916,6 +918,7 @@ Logged when one or more hooks begin executing for a hook event.
 * `num_hooks`: Number of matching hook commands
 * `managed_only`: `"true"` when only managed-policy hooks are permitted
 * `hook_source`: `"policySettings"` or `"merged"`
+* `safe_mode`: `"true"` when the session was started with [`--safe-mode`](/en/cli-reference), `"false"` otherwise. {/* min-version: 2.1.169 */}Requires Claude Code v2.1.169 or later
 * `hook_definitions`: JSON-serialized hook configuration. Included only when both detailed beta tracing and `OTEL_LOG_TOOL_DETAILS=1` are enabled
 
 #### Hook execution complete event
@@ -940,6 +943,7 @@ Logged when all hooks for a hook event have finished.
 * `total_duration_ms`: Wall-clock duration of all matching hooks
 * `managed_only`: `"true"` when only managed-policy hooks are permitted
 * `hook_source`: `"policySettings"` or `"merged"`
+* `safe_mode`: `"true"` when the session was started with [`--safe-mode`](/en/cli-reference), `"false"` otherwise. {/* min-version: 2.1.169 */}Requires Claude Code v2.1.169 or later
 * `hook_definitions`: JSON-serialized hook configuration. Included only when both detailed beta tracing and `OTEL_LOG_TOOL_DETAILS=1` are enabled
 
 #### Hook plugin metrics event

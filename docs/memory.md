@@ -381,7 +381,7 @@ Claude reads and writes memory files during your session. When you see "Writing 
 
 ### Audit and edit your memory
 
-Auto memory files are plain markdown you can edit or delete at any time. Run [`/memory`](#view-and-edit-with-memory) to browse and open memory files from within a session.
+Auto memory files are plain markdown you can edit or delete at any time. Run [`/memory`](#view-and-edit-with-%2Fmemory) to browse and open memory files from within a session.
 
 ## View and edit with `/memory`
 

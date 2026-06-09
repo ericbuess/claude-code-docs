@@ -32,7 +32,7 @@ A tool is defined by four parts, passed as arguments to the [`tool()`](/en/agent
 * **Description:** what the tool does. Claude reads this to decide when to call it.
 * **Input schema:** the arguments Claude must provide. In TypeScript this is always a [Zod schema](https://zod.dev/), and the handler's `args` are typed from it automatically. In Python this is a dict mapping names to types, like `{"latitude": float}`, which the SDK converts to JSON Schema for you. The Python decorator also accepts a full [JSON Schema](https://json-schema.org/understanding-json-schema/about) dict directly when you need enums, ranges, optional fields, or nested objects.
 * **Handler:** the async function that runs when Claude calls the tool. It receives the validated arguments and must return an object with:
-  * `content` (required): an array of result blocks, each with a `type` of `"text"`, `"image"`, or `"resource"`. See [Return images and resources](#return-images-and-resources) for non-text blocks.
+  * `content` (required): an array of result blocks, each with a `type` of `"text"`, `"image"`, `"audio"`, `"resource"`, or `"resource_link"`. See [Return images and resources](#return-images-and-resources) for non-text blocks.
   * `structuredContent` (optional): a JSON object holding the result as machine-readable data, returned alongside `content`. See [Return structured data](#return-structured-data).
   * `isError` (optional): set to `true` to signal a tool failure so Claude can react to it. See [Handle errors](#handle-errors).
 
@@ -439,7 +439,7 @@ The example below catches two kinds of failures inside the handler instead of le
 
 ## Return images and resources
 
-The `content` array in a tool result accepts `text`, `image`, and `resource` blocks. You can mix them in the same response.
+The `content` array in a tool result accepts `text`, `image`, `audio`, `resource`, and `resource_link` blocks. You can mix them in the same response. Audio blocks are saved to disk and Claude receives a text block with the saved file path. Resource link blocks are converted to a text block containing the link's name, URI, and description.
 
 ### Images
 

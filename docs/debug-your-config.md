@@ -68,7 +68,9 @@ If `/hooks` shows the hook but it still does not fire, the next step is to watch
 
 ## Test against a clean configuration
 
-If targeted checks don't isolate the cause, or your configuration is in an unknown state, compare against a session that loads nothing from your usual setup. Point [`CLAUDE_CONFIG_DIR`](/en/env-vars) at an empty directory to bypass everything under `~/.claude`, and launch from a directory that has no `.claude` folder, `.mcp.json`, or `CLAUDE.md` so project configuration is also skipped.
+{/* min-version: 2.1.169 */}Start with [`claude --safe-mode`](/en/cli-reference#cli-flags), which launches a session with all customizations disabled, including `CLAUDE.md`, skills, plugins, hooks, MCP servers, and custom commands and agents. Authentication, model selection, built-in tools, and permissions work normally. If the problem disappears in safe mode, one of those surfaces is the cause; use the targeted checks above to find which. Managed settings deployed by your organization still partially apply, so policy-configured hooks and status line run even in safe mode.
+
+If the problem persists in safe mode, or your settings themselves are suspect, compare against a session that loads nothing from your usual setup. Point [`CLAUDE_CONFIG_DIR`](/en/env-vars) at an empty directory to bypass everything under `~/.claude`, and launch from a directory that has no `.claude` folder, `.mcp.json`, or `CLAUDE.md` so project configuration is also skipped.
 
 ```bash theme={null}
 cd /tmp && CLAUDE_CONFIG_DIR=/tmp/claude-clean claude

@@ -95,7 +95,7 @@ Example settings file:
 
 Enterprise administrators can use `availableModels` in [managed or policy settings](/en/settings#settings-files) to restrict which models users can select.
 
-When `availableModels` is set, users cannot switch to models not in the list via `/model`, `--model` flag, or `ANTHROPIC_MODEL` environment variable.
+When `availableModels` is set, users cannot switch to models not in the list via `/model`, `--model` flag, or `ANTHROPIC_MODEL` environment variable. Elements of a [fallback model chain](#fallback-model-chains) outside the list are dropped.
 
 ```json theme={null}
 {
@@ -170,6 +170,33 @@ and Sonnet's efficiency for execution.
 
 The plan-mode Opus phase runs with the standard 200K context window. The automatic 1M upgrade described in [Extended context](#extended-context) applies to the `opus` model setting and does not extend to `opusplan`.
 
+### Fallback model chains
+
+When the primary model is overloaded, unavailable, or returns another non-retryable server error, Claude Code can switch to a fallback model instead of failing the request. Authentication, billing, rate-limit, request-size, and transport errors never trigger a switch; those follow their normal retry and error handling.
+
+Configure one or more fallback models and Claude Code tries them in order, showing a notice when it switches. The switch lasts for the current turn only, so your next message tries the primary model first again. Chains are capped at three models after duplicate removal, and extra entries are ignored.
+
+Set a chain for one session with the `--fallback-model` flag, which accepts a comma-separated list:
+
+```bash theme={null}
+claude --fallback-model sonnet,haiku
+```
+
+To persist a chain across sessions, set `fallbackModel` in [settings](/en/settings) as an array:
+
+```json theme={null}
+{
+  "fallbackModel": ["claude-sonnet-4-6", "claude-haiku-4-5"]
+}
+```
+
+The `--fallback-model` flag takes precedence over the `fallbackModel` setting. Each element accepts a model name or alias, and `"default"` expands to the default model.
+
+Two cases cause an element to be skipped:
+
+* **Unavailable model**: a model that can't be reached, such as a retired model pinned in settings, is skipped and Claude Code continues to the next element.
+* **Outside the allowlist**: an element not permitted by [`availableModels`](#restrict-model-selection) is dropped when the chain is read and never tried.
+
 ### Adjust effort level
 
 [Effort levels](https://platform.claude.com/docs/en/build-with-claude/effort) control adaptive reasoning, which lets the model decide whether and how much to think on each step based on task complexity. Lower effort is faster and cheaper for straightforward tasks, while higher effort provides deeper reasoning for complex problems.
@@ -237,11 +264,11 @@ On Opus 4.6 and Sonnet 4.6, you can set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1
 
 Extended thinking is the reasoning Claude emits before responding. On models that support [adaptive reasoning](#adjust-effort-level), the effort level is the primary control for how much thinking happens; the settings below turn thinking on or off and control how it displays.
 
-| Control                        | How to set it                                                                                                                                       |
-| :----------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Toggle for the current session | Press `Option+T` on macOS or `Alt+T` on Windows and Linux                                                                                           |
-| Set the global default         | Run `/config` and toggle thinking mode. Saved as `alwaysThinkingEnabled` in `~/.claude/settings.json`                                               |
-| Disable regardless of effort   | Set [`MAX_THINKING_TOKENS=0`](/en/env-vars). Other values apply only with a [fixed thinking budget](#adaptive-reasoning-and-fixed-thinking-budgets) |
+| Control                        | How to set it                                                                                                                                                                                                                                                                                            |
+| :----------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Toggle for the current session | Press `Option+T` on macOS or `Alt+T` on Windows and Linux                                                                                                                                                                                                                                                |
+| Set the global default         | Run `/config` and toggle thinking mode. Saved as `alwaysThinkingEnabled` in `~/.claude/settings.json`                                                                                                                                                                                                    |
+| Disable regardless of effort   | Set [`MAX_THINKING_TOKENS=0`](/en/env-vars). On [third-party providers](/en/third-party-integrations) this omits the `thinking` parameter instead, and adaptive-reasoning models may still think. Other values apply only with a [fixed thinking budget](#adaptive-reasoning-and-fixed-thinking-budgets) |
 
 Thinking output is collapsed by default. Press `Ctrl+O` to toggle verbose mode and see the reasoning as gray italic text. Interactive sessions on the Anthropic API receive redacted thinking blocks by default, so set `showThinkingSummaries: true` in [settings](/en/settings) if you want the full summaries available when you expand. You are charged for all thinking tokens generated, even when collapsed or redacted.
 

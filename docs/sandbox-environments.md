@@ -59,7 +59,7 @@ Match your goal to a row below, then read the detail section that follows.
 
 [Permission modes](/en/permission-modes) decide whether a tool call runs and whether you are prompted first. Isolation restricts what a command can access once it runs. The two work together: when a permission mode lets actions run without asking you, an isolation boundary limits what those actions can reach.
 
-`--dangerously-skip-permissions` removes per-action review entirely, so an isolation boundary is the only thing limiting what Claude can do. Always run it inside a container, a VM, or the [sandbox runtime](#sandbox-runtime), so that file tools, MCP servers, and hooks are also inside the boundary.
+`--dangerously-skip-permissions` removes per-action review other than explicit [ask rules](/en/permissions#manage-permissions), so an isolation boundary is the only thing limiting what Claude can do. Always run it inside a container, a VM, or the [sandbox runtime](#sandbox-runtime), so that file tools, MCP servers, and hooks are also inside the boundary.
 
 [Auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode) replaces the prompt with a classifier that reviews actions and blocks ones that escalate beyond the request, target unrecognized infrastructure, or appear driven by hostile content Claude read. The classifier is a per-action control, not an isolation boundary, so an isolation boundary still adds defense in depth for unattended runs, and is not required the way it is for `--dangerously-skip-permissions`.
 

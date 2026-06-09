@@ -169,7 +169,7 @@ Define subagents directly in your code using the `agents` parameter. This exampl
 | `skills`          | `string[]`                                                  | No       | List of skill names to preload into the agent's context at startup. Unlisted skills remain invocable through the Skill tool                                 |
 | `memory`          | `'user' \| 'project' \| 'local'`                            | No       | Memory source for this agent                                                                                                                                |
 | `mcpServers`      | `(string \| object)[]`                                      | No       | MCP servers available to this agent, by name or inline config                                                                                               |
-| `initialPrompt`   | `string`                                                    | No       | Auto-submitted as the first user turn when this agent runs as the main thread agent                                                                         |
+| `initialPrompt`   | `string`                                                    | No       | Auto-submitted as the first user turn when this agent runs as the main thread agent. Ignored when the agent is invoked as a subagent                        |
 | `maxTurns`        | `number`                                                    | No       | Maximum number of agentic turns before the agent stops                                                                                                      |
 | `background`      | `boolean`                                                   | No       | Run this agent as a non-blocking background task when invoked                                                                                               |
 | `effort`          | `'low' \| 'medium' \| 'high' \| 'xhigh' \| 'max' \| number` | No       | Reasoning effort level for this agent                                                                                                                       |
@@ -392,7 +392,7 @@ This example iterates through streamed messages, logging when a subagent is invo
 
 Subagents can be resumed to continue where they left off. Resumed subagents retain their full conversation history, including all previous tool calls, results, and reasoning. The subagent picks up exactly where it stopped rather than starting fresh.
 
-When a subagent completes, the Agent tool result includes a text block containing `agentId: <id>`. The built-in [`Explore` and `Plan` agents](/en/sub-agents#built-in-subagents) are one-shot and omit this trailer, so use a custom agent or `general-purpose` when you need to resume. To resume a subagent programmatically:
+When a subagent completes, the Agent tool result includes a text block containing `agentId: <id>`. The built-in [`Explore` and `Plan` agents](/en/sub-agents#built-in-subagents) are one-shot and do not return an `agentId`, so use a custom agent or `general-purpose` when you need to resume. To resume a subagent programmatically:
 
 1. **Capture the session ID**: Extract `session_id` from messages during the first query
 2. **Extract the agent ID**: Parse `agentId` from the Agent tool result text

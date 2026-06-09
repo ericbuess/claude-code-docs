@@ -154,6 +154,18 @@ Claude Code fetches settings from Anthropic's servers at startup and polls for u
 
 Claude Code applies settings updates automatically without a restart, except for advanced settings like OpenTelemetry configuration, which require a full restart to take effect.
 
+### Invalid entries in delivered settings
+
+Delivered payloads parse tolerantly with the same rules as the other managed sources. When a payload contains an entry that fails schema validation, Claude Code strips that entry, surfaces a validation error, and applies every remaining valid setting. See [Invalid entries in managed settings](/en/settings#invalid-entries-in-managed-settings) for the field-level behavior, including how security-enforcement fields are handled. Requires Claude Code v2.1.169 or later.
+
+Server-managed delivery adds these behaviors:
+
+* The cache at `~/.claude/remote-settings.json` stores the salvaged payload with invalid entries removed. The raw invalid payload is never persisted.
+* When no field in the payload can be salvaged, Claude Code keeps the last-accepted cached settings and records a fatal error.
+* The [security approval dialog](#security-approval-dialogs) evaluates the salvaged payload, so a stripped invalid entry is never presented for approval and never executes.
+
+To debug delivery issues, run `claude --debug-file <path>` and search the log for `Remote settings`. Validate a payload change with `claude doctor` on a test machine before rolling it out to the organization.
+
 ### Enforce fail-closed startup
 
 By default, if the remote settings fetch fails at startup, the CLI continues without managed settings. For environments where this brief unenforced window is unacceptable, set `forceRemoteSettingsRefresh: true` in your managed settings.

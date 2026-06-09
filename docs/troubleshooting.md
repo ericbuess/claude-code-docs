@@ -32,6 +32,7 @@ Claude Code is designed to work with most development environments, but may cons
 1. Use `/compact` regularly to reduce context size
 2. Close and restart Claude Code between major tasks
 3. Consider adding large build directories to your `.gitignore` file
+4. Restart with [`claude --safe-mode`](/en/cli-reference#cli-flags) to check whether a plugin, MCP server, or hook is the source. It disables all customizations for the session; if usage drops, see [Debug your configuration](/en/debug-your-config#test-against-a-clean-configuration) to find which one
 
 If memory usage stays high after these steps, run `/heapdump` to write a JavaScript heap snapshot and a memory breakdown to `~/Desktop`. On Linux without a Desktop folder, the files are written to your home directory.
 
