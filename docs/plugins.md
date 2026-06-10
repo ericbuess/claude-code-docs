@@ -377,8 +377,10 @@ Anthropic maintains two public marketplaces for Claude Code plugins:
 
 To submit your plugin for community-marketplace review, use one of the in-app forms:
 
-* **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
+* **claude.ai**: [claude.ai/admin-settings/directory/submissions/plugins/new](https://claude.ai/admin-settings/directory/submissions/plugins/new)
 * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
+
+The claude.ai form requires a Team or Enterprise organization and directory management access; organization Owners have this access by default. Individual authors who aren't part of a Team or Enterprise organization can use the Console form instead.
 
 Run `claude plugin validate` locally before you submit. The review pipeline runs the same check on every submission, along with automated safety screening.
 
