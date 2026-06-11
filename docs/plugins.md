@@ -372,7 +372,7 @@ Once your plugin is in a marketplace, others can install it using the instructio
 
 Anthropic maintains two public marketplaces for Claude Code plugins:
 
-* **`claude-plugins-official`**: a curated set of plugins maintained by Anthropic. Available automatically in every Claude Code installation.
+* **`claude-plugins-official`**: a curated set of plugins maintained by Anthropic. Registered automatically the first time you start Claude Code interactively. A non-interactive script that runs before that first launch must add it explicitly with `claude plugin marketplace add anthropics/claude-plugins-official`.
 * **`claude-community`**: the public community marketplace where third-party submissions land after review. Users add it with `/plugin marketplace add anthropics/claude-plugins-community` and install from it as `@claude-community`.
 
 To submit your plugin for community-marketplace review, use one of the in-app forms:
