@@ -466,8 +466,8 @@
     "hooks.md": {
       "original_url": "https://code.claude.com/docs/en/hooks",
       "original_md_url": "https://code.claude.com/docs/en/hooks.md",
-      "hash": "0b644e2208f80b860530d578d85872d405d9c529c500b34fd24ed7c223a22ab7",
-      "last_updated": "2026-06-10T00:29:53.312809"
+      "hash": "feee00c05e7d816e1e07d4b0a5bebf73b3297423a9c21d30cce7433eaccb16f0",
+      "last_updated": "2026-06-12T16:03:31.530478"
     },
     "hooks-guide.md": {
       "original_url": "https://code.claude.com/docs/en/hooks-guide",
@@ -879,8 +879,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-06-12T13:02:03.093201",
-    "fetch_duration_seconds": 127.950735,
+    "last_fetch_completed": "2026-06-12T16:06:36.520694",
+    "fetch_duration_seconds": 269.041931,
     "total_pages_discovered": 146,
     "pages_fetched_successfully": 147,
     "pages_failed": 0,
@@ -890,7 +890,7 @@
     "total_files": 146,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-06-12T13:02:03.093228",
+  "last_updated": "2026-06-12T16:06:36.520727",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
