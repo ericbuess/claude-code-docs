@@ -251,6 +251,8 @@ session_id=$(claude -p "Start a review" --output-format json | jq -r '.session_i
 claude -p "Continue that review" --resume "$session_id"
 ```
 
+Run both commands from the same directory: session ID lookup is scoped to the current project directory and its git worktrees. See [Resume a session](/en/sessions#resume-a-session) for the full scope rules.
+
 ## Next steps
 
 * [Agent SDK quickstart](/en/agent-sdk/quickstart): build your first agent with Python or TypeScript
