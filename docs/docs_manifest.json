@@ -249,8 +249,8 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "e80eb22cccc4b764f1cc7764928857e1b7df2e503a8ca4293d15d443dd472c2b",
-      "last_updated": "2026-06-11T07:33:47.800966",
+      "hash": "4499fbc5c46799c488cfb3165d5ef65fb7334287a703fc44a8198d64818fb522",
+      "last_updated": "2026-06-12T04:30:21.126443",
       "source": "claude-code-repository"
     },
     "channels.md": {
@@ -490,8 +490,8 @@
     "jetbrains.md": {
       "original_url": "https://code.claude.com/docs/en/jetbrains",
       "original_md_url": "https://code.claude.com/docs/en/jetbrains.md",
-      "hash": "30cfc860e00d3e221b3029e17d2520fd6212f03be4e704fb16d21454b789ffe6",
-      "last_updated": "2026-05-18T21:24:43.047147"
+      "hash": "fa9151fa2e9e6dbca83ba2f07dfe2328f07ef199e8ab3e6c0065ce72ec797e18",
+      "last_updated": "2026-06-12T04:29:25.652447"
     },
     "keybindings.md": {
       "original_url": "https://code.claude.com/docs/en/keybindings",
@@ -784,8 +784,8 @@
     "vs-code.md": {
       "original_url": "https://code.claude.com/docs/en/vs-code",
       "original_md_url": "https://code.claude.com/docs/en/vs-code.md",
-      "hash": "778e31d691f137862819dfd283b8a5e3e93e6593ba491201e286d36a4198b131",
-      "last_updated": "2026-06-12T00:32:28.025574"
+      "hash": "61b7c9c61ff32e7e176ee8acd577d8e299ef8dd163577b89cc41860347177e98",
+      "last_updated": "2026-06-12T04:30:07.883016"
     },
     "web-quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/web-quickstart",
@@ -879,8 +879,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-06-12T00:32:42.793003",
-    "fetch_duration_seconds": 142.568196,
+    "last_fetch_completed": "2026-06-12T04:30:21.126474",
+    "fetch_duration_seconds": 136.767794,
     "total_pages_discovered": 146,
     "pages_fetched_successfully": 147,
     "pages_failed": 0,
@@ -890,7 +890,7 @@
     "total_files": 146,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-06-12T00:32:42.793030",
+  "last_updated": "2026-06-12T04:30:21.126496",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
