@@ -585,9 +585,16 @@ For example, if your user settings set `permissions.defaultMode` to `acceptEdits
 
 ### Verify active settings
 
-Run `/status` inside Claude Code to see which settings sources are active. The Status tab includes a `Setting sources` line that lists each layer Claude Code loaded for the current session, such as `User settings` or `Project local settings`. When [managed settings](/en/admin-setup#decide-how-settings-reach-devices) are in effect, the entry shows the delivery channel in parentheses, for example `Enterprise managed settings (remote)`, `(plist)`, `(HKLM)`, `(HKCU)`, or `(file)`. A layer appears in the list only when that source is loaded with at least one key, so an empty list means no settings sources were found.
+Run `/status` and check the `Setting sources` line on the **Status** tab. It lists every settings layer Claude Code loaded for this session:
 
-The `Setting sources` line confirms which sources are being read. It does not show which layer supplied each individual key. The Config tab in the same dialog is an editor for a fixed set of toggles such as theme and verbose output, not a view of your `settings.json` contents. If a settings file contains errors, such as invalid JSON or a value that fails validation, Claude Code shows a setup issues notice at startup and `/status` lists the affected files. Run `/doctor` to see the details for each error.
+* If a layer such as `User settings` or `Project local settings` appears, that file is being read.
+* If a layer is missing, that file was not found or contains no keys.
+
+When [managed settings](/en/admin-setup#decide-how-settings-reach-devices) are in effect, the entry shows the delivery channel in parentheses, for example `Enterprise managed settings (remote)`, `(plist)`, `(HKLM)`, `(HKCU)`, or `(file)`.
+
+If a settings file has invalid JSON or a value that fails validation, Claude Code shows a setup issues notice at startup and the **Status** tab lists the affected files. Run `/doctor` for the details of each error.
+
+The line confirms which files are being read, not which layer supplied each individual key. The **Config** tab in the same dialog edits built-in toggles such as theme and verbose output, not your `settings.json` contents.
 
 ### Key points about the configuration system
 
