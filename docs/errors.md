@@ -32,6 +32,7 @@ Match the message you see in your terminal to a section below.
 | `Request rejected (429)`                                                                      | [Usage limits](#request-rejected-429)                                                                                         |
 | `Credit balance is too low`                                                                   | [Usage limits](#credit-balance-is-too-low)                                                                                    |
 | `Not logged in · Please run /login`                                                           | [Authentication](#not-logged-in)                                                                                              |
+| `Could not resolve authentication method`                                                     | [Authentication](#could-not-resolve-authentication-method)                                                                    |
 | `Invalid API key`                                                                             | [Authentication](#invalid-api-key)                                                                                            |
 | `This organization has been disabled`                                                         | [Authentication](#this-organization-has-been-disabled)                                                                        |
 | `Your organization has disabled API key authentication`                                       | [Authentication](#your-organization-has-disabled-api-key-authentication)                                                      |
@@ -200,6 +201,8 @@ API Error: Usage credits required for 1M context · run /usage-credits to turn t
 
 This is an entitlement check, not a quota exhaustion. It fires even when your session and weekly allowances have capacity remaining. See [Extended context](/en/model-config#extended-context) for which plans include 1M context directly and which require usage credits.
 
+{/* min-version: 2.1.172 */}When this error appears mid-conversation because the context grew past 200K tokens, Claude Code automatically compacts the conversation back under the standard context limit and keeps the session at that limit afterward, so no action is needed. On versions before v2.1.172, the error repeated on every subsequent request including `/compact`; run `/clear` on those versions to recover. The steps below apply when you explicitly selected a `[1m]` model.
+
 **What to do:**
 
 * Run `/model` and select the variant without the `[1m]` suffix to fall back to the standard context window
@@ -273,6 +276,23 @@ Not logged in · Please run /login
 * See [Authentication precedence](/en/authentication#authentication-precedence) to understand which credential wins when several are present
 
 If you are prompted to log in repeatedly, see [Not logged in or token expired](/en/troubleshoot-install#not-logged-in-or-token-expired) for system clock and macOS Keychain fixes.
+
+### Could not resolve authentication method
+
+The session reached the API client without any credential. This appears in [background sessions](/en/agent-view), cloud sessions, and Agent SDK contexts where the interactive login check does not run before the first request.
+
+```text theme={null}
+Could not resolve authentication method. Expected one of apiKey, authToken, credentials, config, or profile to be set. Or for one of the "X-Api-Key" or "Authorization" headers to be explicitly omitted
+```
+
+{/* min-version: 2.1.174 */}Before v2.1.174, a background or cloud session assigned to an idle pre-initialized worker could fail this way even when valid credentials were configured. Upgrade to recover. On current versions the error means no credential was available to the worker process.
+
+**What to do:**
+
+* Upgrade to v2.1.174 or later if this appears in a background or cloud session and your credentials are already configured
+* Confirm `ANTHROPIC_API_KEY`, `CLAUDE_CODE_OAUTH_TOKEN`, or your cloud provider credentials are set in the environment that launches the worker, not only in your interactive shell
+* For the Agent SDK, see [authentication setup](/en/agent-sdk/overview#get-started)
+* Run `/status` in an interactive session in the same environment to confirm which credential source resolves
 
 ### Invalid API key
 
@@ -668,7 +688,7 @@ The check evaluates the full conversation, not only your latest prompt, so sendi
 
 * Press Esc twice or run `/rewind` to step back to a checkpoint before the turn that triggered the refusal, then rephrase or take a different approach. See [Checkpointing](/en/checkpointing).
 * If you cannot identify which turn caused it, run `/clear` to start a fresh conversation in the same project. Your previous conversation is preserved on disk and remains available in `/resume`.
-* In [non-interactive mode](/en/headless) (`-p`), where rewind is unavailable, retry with a rephrased prompt or start a new session without `--continue`.
+* In [non-interactive mode](/en/headless) (`-p`), where rewind is unavailable, retry with a rephrased prompt in a new session without `--continue`. Policy checks vary by model, so switching to a different model with `--model` may also resolve the refusal in some cases.
 
 ## Responses seem lower quality than usual
 

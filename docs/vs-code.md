@@ -141,6 +141,14 @@ If you use [Claude Code on the web](/en/claude-code-on-the-web), you can resume 
   Only web sessions started with a GitHub repository appear in the Remote tab. Resuming loads the conversation history locally; changes are not synced back to claude.ai.
 </Note>
 
+### Check account and usage
+
+Run `/usage` from the command menu to open the Account & usage dialog. It shows your signed-in account, plan, and usage bars for the current session and week with how long until each limit resets.
+
+The dialog also breaks down what is contributing to your plan limits. It flags behaviors that account for 10% or more of recent usage, such as cache misses, long context, and subagent-heavy or highly parallel sessions, each with a tip to reduce it. Attribution tables show how much usage came from each skill, subagent, plugin, and MCP server. Requires Claude Code v2.1.174 or later.
+
+Use the Day and Week toggle to switch between the last 24 hours and the last 7 days. The figures are approximate and computed from local sessions on this machine, so usage from other devices or claude.ai is not included. For more on tracking and reducing usage, see [Track your costs](/en/costs#track-your-costs).
+
 ## Customize your workflow
 
 Once you're up and running, you can reposition the Claude panel, run multiple sessions, or switch to terminal mode.

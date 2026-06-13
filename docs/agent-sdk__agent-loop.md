@@ -165,7 +165,7 @@ The `effort` option controls how much reasoning Claude applies. Lower effort lev
 | `"low"`    | Minimal reasoning, fast responses | File lookups, listing directories                              |
 | `"medium"` | Balanced reasoning                | Routine edits, standard tasks                                  |
 | `"high"`   | Thorough analysis                 | Refactors, debugging                                           |
-| `"xhigh"`  | Extended reasoning depth          | Coding and agentic tasks; recommended on Opus 4.8 and Opus 4.7 |
+| `"xhigh"`  | Extended reasoning depth          | Coding and agentic tasks; recommended on Fable 5 and Opus 4.7+ |
 | `"max"`    | Maximum reasoning depth           | Multi-step problems requiring deep analysis                    |
 
 If you don't set `effort`, both SDKs leave the parameter unset and defer to the model's default behavior.
@@ -266,13 +266,13 @@ See [Session management](/en/agent-sdk/sessions) for the full guide on resume, c
 
 When the loop ends, the `ResultMessage` tells you what happened and gives you the output. The `subtype` field (available in both SDKs) is the primary way to check termination state.
 
-| Result subtype                        | What happened                                                                    | `result` field available? |
-| :------------------------------------ | :------------------------------------------------------------------------------- | :-----------------------: |
-| `success`                             | Claude finished the task normally                                                |            Yes            |
-| `error_max_turns`                     | Hit the `maxTurns` limit before finishing                                        |             No            |
-| `error_max_budget_usd`                | Hit the `maxBudgetUsd` limit before finishing                                    |             No            |
-| `error_during_execution`              | An error interrupted the loop (for example, an API failure or cancelled request) |             No            |
-| `error_max_structured_output_retries` | Structured output validation failed after the configured retry limit             |             No            |
+| Result subtype                        | What happened                                                                                                                                                                           | `result` field available? |
+| :------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-----------------------: |
+| `success`                             | Claude finished the task normally                                                                                                                                                       |            Yes            |
+| `error_max_turns`                     | Hit the `maxTurns` limit before finishing                                                                                                                                               |             No            |
+| `error_max_budget_usd`                | Hit the `maxBudgetUsd` limit before finishing                                                                                                                                           |             No            |
+| `error_during_execution`              | An error interrupted the loop (for example, an API failure or cancelled request)                                                                                                        |             No            |
+| `error_max_structured_output_retries` | No valid structured output was produced within the configured retry limit: every attempt failed validation, or a model fallback retracted the completed output with no successful retry |             No            |
 
 The `result` field (the final text output) is only present on the `success` variant, so always check the subtype before reading it. All result subtypes carry `total_cost_usd`, `usage`, `num_turns`, and `session_id` so you can track cost and resume even after errors. In Python, `total_cost_usd` and `usage` are typed as optional and may be `None` on some error paths, so guard before formatting them. See [Tracking costs and usage](/en/agent-sdk/cost-tracking) for details on interpreting the `usage` fields.
 

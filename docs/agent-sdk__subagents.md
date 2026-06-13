@@ -178,7 +178,7 @@ Define subagents directly in your code using the `agents` parameter. This exampl
 In the Python SDK, these field names use camelCase to match the wire format. See the [`AgentDefinition` reference](/en/agent-sdk/python#agentdefinition) for details.
 
 <Note>
-  Subagents cannot spawn their own subagents. Don't include `Agent` in a subagent's `tools` array.
+  {/* min-version: 2.1.172 */}As of Claude Code v2.1.172, subagents can spawn their own subagents. A background subagent five levels below the main agent cannot spawn further subagents; foreground subagents can spawn at any depth. To prevent a subagent from spawning others, omit `Agent` from its `tools` array or add it to `disallowedTools`. See [nested subagents](/en/sub-agents#spawn-nested-subagents) for the full depth rules.
 </Note>
 
 ### Filesystem-based definition (alternative)

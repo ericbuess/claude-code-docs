@@ -1412,17 +1412,20 @@ Spawns a [subagent](/en/sub-agents).
 
 In `PostToolUse`, `tool_response` for a completed Agent call carries the subagent's final text along with usage telemetry. Read these fields to record per-subagent cost from a hook:
 
-| Field               | Type   | Example                                               | Description                                                                                                         |
-| :------------------ | :----- | :---------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
-| `status`            | string | `"completed"`                                         | `"completed"` for synchronous calls, `"async_launched"` for `run_in_background: true`                               |
-| `agentId`           | string | `"a4d2c8f1e0b3a297"`                                  | Identifier for the subagent run                                                                                     |
-| `content`           | array  | `[{"type": "text", "text": "Found 12 endpoints..."}]` | The subagent's final text blocks                                                                                    |
-| `totalTokens`       | number | `12450`                                               | Total tokens billed across the subagent's turns                                                                     |
-| `totalDurationMs`   | number | `48211`                                               | Wall-clock duration of the subagent run                                                                             |
-| `totalToolUseCount` | number | `7`                                                   | Count of tool calls the subagent made                                                                               |
-| `usage`             | object | `{"input_tokens": 8320, ...}`                         | Per-type token breakdown: `input_tokens`, `output_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens` |
+| Field               | Type   | Example                                               | Description                                                                                                                              |
+| :------------------ | :----- | :---------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| `status`            | string | `"completed"`                                         | `"completed"` for synchronous calls, `"async_launched"` for `run_in_background: true`                                                    |
+| `agentId`           | string | `"a4d2c8f1e0b3a297"`                                  | Identifier for the subagent run                                                                                                          |
+| `content`           | array  | `[{"type": "text", "text": "Found 12 endpoints..."}]` | The subagent's final text blocks                                                                                                         |
+| `resolvedModel`     | string | `"claude-sonnet-4-5"`                                 | Model the subagent ran on, which may differ from the requested model. {/* min-version: 2.1.174 */}Requires Claude Code v2.1.174 or later |
+| `totalTokens`       | number | `12450`                                               | Total tokens billed across the subagent's turns                                                                                          |
+| `totalDurationMs`   | number | `48211`                                               | Wall-clock duration of the subagent run                                                                                                  |
+| `totalToolUseCount` | number | `7`                                                   | Count of tool calls the subagent made                                                                                                    |
+| `usage`             | object | `{"input_tokens": 8320, ...}`                         | Per-type token breakdown: `input_tokens`, `output_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`                      |
 
-For `run_in_background: true` calls, the tool returns immediately after launching the subagent, so `tool_response` carries no usage fields. It has `status: "async_launched"`, `agentId`, `description`, `prompt`, and `outputFile` instead.
+For `run_in_background: true` calls, the tool returns immediately after launching the subagent, so `tool_response` carries no usage fields. It has `status: "async_launched"`, `agentId`, `description`, `prompt`, `outputFile`, and `resolvedModel`.
+
+The `resolvedModel` field names the model the subagent actually runs on, which can differ from the `model` value in `tool_input`. It requires Claude Code v2.1.174 or later.
 
 <a id="askuserquestion" />
 

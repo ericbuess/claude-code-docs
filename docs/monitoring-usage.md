@@ -446,6 +446,7 @@ Incremented when code is added or removed.
 
 * All [standard attributes](#standard-attributes)
 * `type`: (`"added"`, `"removed"`)
+* `model`: Model identifier for the model that made the change (for example, "claude-sonnet-4-6"). {/* min-version: 2.1.172 */}Requires Claude Code v2.1.172 or later
 
 #### Pull request counter
 
@@ -823,6 +824,7 @@ Logged once per enabled plugin at session start. Use this event to inventory whi
 * `plugin_id_hash`: deterministic hash of the plugin name and marketplace, sent only to your configured exporter. Lets you count how many distinct third-party plugins are loaded across your fleet without recording their names
 * `has_hooks`: whether the plugin contributes hooks
 * `has_mcp`: whether the plugin contributes MCP servers
+* `host_owned_mcp`: `true` when the SDK host manages this plugin's MCP connections and Claude Code skipped reading the plugin's MCP server configuration, `false` otherwise. {/* min-version: 2.1.172 */}Requires Claude Code v2.1.172 or later
 * `skill_path_count`: number of skill directories the plugin declares
 * `command_path_count`: number of command directories the plugin declares
 * `agent_path_count`: number of agent directories the plugin declares
@@ -1010,7 +1012,7 @@ The exported metrics and events support a range of analyses:
 | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `claude_code.token.usage`                                     | Break down by `type` (input/output), user, team, model, `skill.name`, `plugin.name`, or `agent.name` |
 | `claude_code.session.count`                                   | Track adoption and engagement over time                                                              |
-| `claude_code.lines_of_code.count`                             | Measure productivity by tracking code additions/removals                                             |
+| `claude_code.lines_of_code.count`                             | Measure productivity by tracking code additions and removals, broken down by model                   |
 | `claude_code.commit.count` & `claude_code.pull_request.count` | Understand impact on development workflows                                                           |
 
 ### Cost monitoring
@@ -1033,7 +1035,7 @@ Common alerts to consider:
 * Unusual token consumption
 * High session volume from specific users
 
-All metrics can be segmented by the [standard attributes](#standard-attributes). The `model` attribute is available on `claude_code.token.usage` and `claude_code.cost.usage` only; activity counters have never carried it. Per-model breakdowns of lines of code or commits can only be approximated by joining against the token or cost metrics on `session.id`, since one session can span multiple models.
+All metrics can be segmented by the [standard attributes](#standard-attributes). The `model` attribute is available on `claude_code.token.usage`, `claude_code.cost.usage`, and {/* min-version: 2.1.172 */}from v2.1.172, `claude_code.lines_of_code.count`. Per-model breakdowns of commits can only be approximated by joining against the token or cost metrics on `session.id`, since one session can span multiple models.
 
 ### Detect retry exhaustion
 

@@ -92,9 +92,11 @@ Set `CLAUDE_CODE_SCROLL_SPEED` to multiply the base scroll distance:
 export CLAUDE_CODE_SCROLL_SPEED=3
 ```
 
-A value of `3` matches the default in `vim` and similar applications. The setting accepts values from 1 to 20.
+A value of `3` matches the default in `vim` and similar applications. The setting accepts values from 1 to 20, and fractional values below 1 such as `0.5` to slow accelerated trackpad and wheel scrolling in terminals on the native scroll path.
 
 To adjust scroll speed interactively, run `/scroll-speed`. The dialog shows a ruler you can scroll while it is open so you can feel the change immediately. Press `←` and `→` to adjust, `r` to reset to the auto-detected default, and `Enter` to save. The command writes the same value the `CLAUDE_CODE_SCROLL_SPEED` environment variable sets, persisted to `~/.claude/settings.json`. The command is not available in the JetBrains IDE terminal.
+
+Separately from the base speed, Claude Code accelerates the scroll rate when you spin the wheel quickly, so a fast spin covers more distance than the same number of slow notches. {/* min-version: 2.1.174 */}To turn acceleration off and keep a constant rate per notch, set `wheelScrollAccelerationEnabled` to `false` in [`settings.json`](/en/settings#available-settings). This setting requires Claude Code v2.1.174 or later.
 
 ### Scroll in the JetBrains IDE terminal
 

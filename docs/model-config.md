@@ -113,7 +113,14 @@ Example settings file:
 
 Enterprise administrators can use `availableModels` in [managed or policy settings](/en/settings#settings-files) to restrict which models users can select.
 
-When `availableModels` is set, users cannot switch to models not in the list via `/model`, `--model` flag, or `ANTHROPIC_MODEL` environment variable. Elements of a [fallback model chain](#fallback-model-chains) outside the list are dropped.
+When `availableModels` is set, the allowlist applies to every surface where a user can name a model:
+
+* **Main session model**: `/model`, the `--model` flag, and the `ANTHROPIC_MODEL` environment variable
+* **Subagent models**: the `model` field in [subagent](/en/sub-agents#choose-a-model) frontmatter, the Agent tool's `model` parameter, the model picker in `/agents`, and `CLAUDE_CODE_SUBAGENT_MODEL`
+* **Advisor model**: the configured [`advisorModel`](/en/advisor) setting
+* **Fallback chains**: elements of a [fallback model chain](#fallback-model-chains) outside the list are dropped
+
+Switching to a blocked model with `/model` is rejected with an error, while a blocked `--model` flag or `ANTHROPIC_MODEL` value is ignored at startup and the session starts on the default model. A blocked subagent or advisor override falls back to the inherited or default model rather than failing the request.
 
 ```json theme={null}
 {
@@ -157,7 +164,7 @@ When `availableModels` is set at multiple levels, such as user settings and proj
 
 ### Mantle model IDs
 
-When the [Bedrock Mantle endpoint](/en/amazon-bedrock#use-the-mantle-endpoint) is enabled, entries in `availableModels` that start with `anthropic.` are added to the `/model` picker as custom options and routed to the Mantle endpoint. This is an exception to the alias-only matching described in [Pin models for third-party deployments](#pin-models-for-third-party-deployments). The setting still restricts the picker to listed entries, so include the standard aliases alongside any Mantle IDs.
+When the [Bedrock Mantle endpoint](/en/amazon-bedrock#use-the-mantle-endpoint) is enabled, entries in `availableModels` that start with `anthropic.` are added to the `/model` picker as custom options and routed to the Mantle endpoint. The setting still restricts the picker to listed entries, so include the standard aliases alongside any Mantle IDs.
 
 ## Special model behavior
 
@@ -186,7 +193,7 @@ The `opusplan` model alias provides an automated hybrid approach:
 This gives you the best of both worlds: Opus's superior reasoning for planning,
 and Sonnet's efficiency for execution.
 
-The plan-mode Opus phase runs with the standard 200K context window. The automatic 1M upgrade described in [Extended context](#extended-context) applies to the `opus` model setting and does not extend to `opusplan`.
+The plan-mode Opus phase uses the same context window as the `opus` model setting. On subscription tiers where Opus is [automatically upgraded to 1M context](#extended-context), `opusplan` receives the upgrade in plan mode as well. To force 1M context for both phases when you are not on an auto-upgrade tier, set the model to `opusplan[1m]`.
 
 For a hybrid approach where Claude decides mid-task when to consult a second model rather than switching at the plan boundary, see the [advisor tool](/en/advisor).
 
@@ -428,14 +435,14 @@ To enable [extended context](#extended-context) for a pinned model, append `[1m]
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-8[1m]'
 ```
 
-The `[1m]` suffix applies the 1M context window to all usage of the `opus` and `sonnet` aliases. It does not extend the plan-mode Opus phase of `opusplan`, which [remains capped at 200K](#opusplan-model-setting).
+The `[1m]` suffix applies the 1M context window to all usage of the `opus` and `sonnet` aliases, including the plan-mode Opus phase of [`opusplan`](#opusplan-model-setting).
 
 * Claude Code strips the suffix before sending the model ID to your provider.
 * Only append `[1m]` when the underlying model [supports 1M context](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window).
 * The suffix is read per variable, not per model. On Bedrock, Vertex, and Foundry, a model ID without `[1m]` in one variable uses 200K context even if another variable sets the same model with the suffix.
 
 <Note>
-  The `settings.availableModels` allowlist still applies when using third-party providers. Filtering matches on the model alias (`fable`, `opus`, `sonnet`, `haiku`), not the provider-specific model ID.
+  The `settings.availableModels` allowlist still applies when using third-party providers. Filtering matches on the model alias such as `opus`, the version prefix such as `claude-opus-4-8`, or the full model ID. Any `[1m]` suffix is stripped from both the allowlist entry and the requested model before matching, so an entry of `claude-opus-4-8` permits both the standard and 1M-context Opus rows. Provider-specific prefixes such as `us.anthropic.` are not stripped: list the same form in `availableModels` that the picker shows, or map it through [`modelOverrides`](#override-model-ids-per-version).
 </Note>
 
 ### Customize pinned model display and capabilities
