@@ -400,24 +400,6 @@ If a required environment variable is not set and has no default value, Claude C
 
 ## Practical examples
 
-{/* ### Example: Automate browser testing with Playwright
-
-```bash
-claude mcp add --transport stdio playwright -- npx -y @playwright/mcp@latest
-```
-
-Then write and run browser tests:
-
-```text
-Test if the login flow works with test@example.com
-```
-```text
-Take a screenshot of the checkout page on mobile
-```
-```text
-Verify that the search feature returns results
-``` */}
-
 ### Example: Monitor errors with Sentry
 
 ```bash theme={null}
