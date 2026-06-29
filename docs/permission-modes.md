@@ -176,8 +176,8 @@ Auto mode is available only when your account meets all of these requirements:
 
 * **Plan**: All plans.
 * **Owner**: on Team and Enterprise, an Owner must enable it in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code) before users can turn it on. Administrators can also lock it off by setting `permissions.disableAutoMode` to `"disable"` in [managed settings](/en/permissions#managed-settings).
-* **Model**: on the Anthropic API, Claude Opus 4.6 or later, or Sonnet 4.6. On Amazon Bedrock, Google Cloud Vertex AI, and Microsoft Foundry, only Claude Opus 4.7 and Opus 4.8. Older models, including Sonnet 4.5, Opus 4.5, Haiku, and claude-3 models, are not supported on any provider.
-* **Provider**: available by default on the Anthropic API. On Amazon Bedrock, Google Cloud Vertex AI, and Microsoft Foundry, auto mode is off until you [set `CLAUDE_CODE_ENABLE_AUTO_MODE`](#enable-auto-mode-on-bedrock-vertex-ai-or-foundry).
+* **Model**: on the Anthropic API, Claude Opus 4.6 or later, or Sonnet 4.6. On Amazon Bedrock, Google Cloud Vertex AI, Microsoft Foundry, and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, only Claude Opus 4.7 and Opus 4.8. Older models, including Sonnet 4.5, Opus 4.5, Haiku, and claude-3 models, are not supported on any provider.
+* **Provider**: available by default on the Anthropic API. On Amazon Bedrock, Google Cloud Vertex AI, Microsoft Foundry, and signed-in Claude apps gateway sessions, auto mode is off until you [set `CLAUDE_CODE_ENABLE_AUTO_MODE`](#enable-auto-mode-on-bedrock-vertex-ai-or-foundry).
 
 If Claude Code reports auto mode as unavailable, one of these requirements is unmet; this is not a transient outage. A separate message that names a model and says auto mode "cannot determine the safety" of an action is a transient classifier outage; see the [error reference](/en/errors#auto-mode-cannot-determine-the-safety-of-an-action).
 
@@ -185,7 +185,7 @@ If you set `defaultMode: "auto"` in [settings](/en/settings#available-settings) 
 
 ### Enable auto mode on Bedrock, Vertex AI, or Foundry
 
-On [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud Vertex AI](/en/google-vertex-ai), and [Microsoft Foundry](/en/microsoft-foundry), auto mode does not appear in the `Shift+Tab` cycle until `CLAUDE_CODE_ENABLE_AUTO_MODE` is set to `1`. The variable works in Claude Code v2.1.158 and later. Only Claude Opus 4.7 and Opus 4.8 are supported on these providers.
+On [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud Vertex AI](/en/google-vertex-ai), [Microsoft Foundry](/en/microsoft-foundry), and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, auto mode does not appear in the `Shift+Tab` cycle until `CLAUDE_CODE_ENABLE_AUTO_MODE` is set to `1`. The variable works in Claude Code v2.1.158 and later. Only Claude Opus 4.7 and Opus 4.8 are supported on these providers.
 
 To enable it for one developer, add the variable to the `env` block in `~/.claude/settings.json`:
 
@@ -203,7 +203,7 @@ Once the variable is set, auto mode appears in the `Shift+Tab` cycle for every s
 
 To prevent developers from enabling auto mode, set `disableAutoMode` to `"disable"` in managed settings. This overrides the enable variable.
 
-If you connect through an [LLM gateway](/en/llm-gateway) configured with `ANTHROPIC_BASE_URL`, auto mode may already be reachable without the enable variable, because the gateway routes requests through the Anthropic API. The `disableAutoMode` setting applies the same way in that configuration.
+If you connect through an [LLM gateway](/en/llm-gateway) configured with `ANTHROPIC_BASE_URL`, auto mode may already be reachable without the enable variable, because the gateway routes requests through the Anthropic API. This does not apply to a signed-in [Claude apps gateway](/en/claude-apps-gateway) session, which is its own provider class and requires the enable variable. The `disableAutoMode` setting applies the same way in either configuration.
 
 ### What the classifier blocks by default
 

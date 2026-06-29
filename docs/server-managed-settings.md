@@ -135,7 +135,7 @@ Server-managed settings have the following limitations:
 
 Server-managed settings and [endpoint-managed settings](/en/settings#settings-files) both occupy the highest tier in the Claude Code [settings hierarchy](/en/settings#settings-precedence). No other settings level can override them, including command line arguments.
 
-Within the managed tier, the first source that delivers a non-empty configuration wins. Server-managed settings are checked first, then endpoint-managed settings. Sources do not merge: if server-managed settings deliver any keys at all, endpoint-managed settings are ignored entirely. If server-managed settings deliver nothing, endpoint-managed settings apply.
+Within the managed tier, a configured [`policyHelper`](/en/settings#compute-managed-settings-with-a-policy-helper) preempts every other managed source, including server-managed settings: its output becomes the only managed configuration for the run. Otherwise the first source that delivers a non-empty configuration wins. Server-managed settings are checked first, then endpoint-managed settings. Sources do not merge: if server-managed settings deliver any keys at all, other endpoint-managed settings are ignored. One exception applies: a small set of [cross-source lock keys](/en/settings#settings-precedence), such as the sandbox allowlist locks, is honored when any admin-controlled managed source sets them; the user-writable HKCU registry tier is excluded. If server-managed settings deliver nothing, endpoint-managed settings apply.
 
 If you clear your server-managed configuration in the admin console with the intent of falling back to an endpoint-managed plist or registry policy, be aware that [cached settings](#fetch-and-caching-behavior) persist on client machines until the next successful fetch. Run `/status` to see which managed source is active.
 
@@ -196,6 +196,7 @@ Certain settings that could pose security risks require explicit user approval b
 * **Shell command settings**: settings that execute shell commands
 * **Custom environment variables**: variables not in the known safe allowlist
 * **Hook configurations**: any hook definition
+* **Managed CLAUDE.md content**: a `claudeMd` value delivered through managed settings
 
 When these settings are present, users see a security dialog explaining what is being configured. Users must approve to proceed. If a user rejects the settings, Claude Code exits.
 
@@ -211,7 +212,9 @@ Server-managed settings require a direct connection to `api.anthropic.com`, and 
 * Google Vertex AI
 * Microsoft Foundry
 * [Claude Platform on AWS](/en/claude-platform-on-aws)
-* Custom API endpoints via `ANTHROPIC_BASE_URL` or [LLM gateways](/en/llm-gateway)
+* Custom API endpoints via `ANTHROPIC_BASE_URL` or third-party [LLM gateways](/en/llm-gateway)
+
+For Bedrock, Vertex AI, and Foundry deployments, a self-hosted [Claude apps gateway](/en/claude-apps-gateway) provides the equivalent remote managed-settings delivery: gateway-signed-in clients fetch managed settings from the gateway instead of `api.anthropic.com`. The failure semantics differ at startup: a gateway client that can't reach the gateway exits with an error instead of falling back to cached settings, while the hourly background refresh is fail-open on both channels.
 
 ## Audit logging
 

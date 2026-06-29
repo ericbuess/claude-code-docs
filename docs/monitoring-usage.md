@@ -402,6 +402,8 @@ All metrics and events share these standard attributes:
 | `terminal.type`                      | Terminal type, such as `iTerm.app`, `vscode`, `cursor`, or `tmux`                                                                                                                                                                    | Always included when detected                              |
 | Keys from `OTEL_RESOURCE_ATTRIBUTES` | Custom attributes you set, such as `department` or `team.id`. See [Multi-team organization support](#multi-team-organization-support)                                                                                                | `OTEL_METRICS_INCLUDE_RESOURCE_ATTRIBUTES` (default: true) |
 
+When Claude Code is signed in to a [Claude apps gateway](/en/claude-apps-gateway), the CLI stamps exports with the authenticated identity from the gateway session: `user.id` is the IdP subject rather than an anonymous installation identifier, `user.email` is the signed-in email, and `user.groups` carries IdP group membership as a comma-separated string. Each export also carries `identity.source: gateway-oidc`. The gateway identity is applied last, so `user.*` and `identity.*` keys set through `OTEL_RESOURCE_ATTRIBUTES` are ignored on gateway sessions.
+
 Events additionally include the following attributes. These are never attached to metrics because they would cause unbounded cardinality:
 
 * `prompt.id`: UUID correlating a user prompt with all subsequent events until the next prompt. See [Event correlation attributes](#event-correlation-attributes).
@@ -1072,11 +1074,11 @@ OpenTelemetry events are the audit data source for Claude Code activity. Every e
 
 ### Attribute actions to users
 
-The [standard attributes](#standard-attributes) on each event include the authenticated user's identity: `user.email`, `user.account_uuid`, `user.account_id`, and `organization.id` when signed in with a Claude account, plus the installation-scoped `user.id` and the per-session `session.id`.
+The [standard attributes](#standard-attributes) on each event include the authenticated user's identity: `user.email`, `user.account_uuid`, `user.account_id`, and `organization.id` when signed in with a Claude account, plus `user.id` and the per-session `session.id`. `user.id` is an installation-scoped identifier, except on [Claude apps gateway](/en/claude-apps-gateway) sessions, where it is the IdP subject from the gateway-issued token.
 
-MCP tool calls, Bash commands, and file edits are therefore attributed to the developer who started the session. Claude Code doesn't act under a separate service account; the identity recorded on each event is the developer's own Claude account.
+MCP tool calls, Bash commands, and file edits are therefore attributed to the developer who started the session. Claude Code doesn't act under a separate service account; the identity recorded on each event is the developer's own Claude account, or the developer's IdP identity on a [Claude apps gateway](/en/claude-apps-gateway) session.
 
-When Claude Code authenticates with a direct API key, or against Bedrock, Vertex AI, or Microsoft Foundry, there is no Claude account in the session and only `user.id` and `session.id` are populated. In these deployments, attach user identity yourself with `OTEL_RESOURCE_ATTRIBUTES`, set per user through the [managed settings](#administrator-configuration) file or a launch wrapper:
+When Claude Code authenticates with a direct API key, or against Bedrock, Vertex AI, or Microsoft Foundry, there is no Claude account in the session and only `user.id` and `session.id` are populated. In these deployments, attach user identity yourself with `OTEL_RESOURCE_ATTRIBUTES`, set per user through the [managed settings](#administrator-configuration) file or a launch wrapper. Claude apps gateway sessions need none of this: the CLI stamps the IdP identity automatically, as described in [Standard attributes](#standard-attributes).
 
 ```bash theme={null}
 export OTEL_RESOURCE_ATTRIBUTES="enduser.id=jdoe@example.com,enduser.directory_id=S-1-5-21-..."
