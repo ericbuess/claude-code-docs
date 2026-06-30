@@ -8,7 +8,7 @@
 
 The desktop app gives you Claude Code with a graphical interface built for running multiple sessions side by side: a sidebar for managing parallel work, a drag-and-drop layout with an integrated terminal and file editor, visual diff review, live app preview, GitHub PR monitoring with auto-merge, and scheduled tasks. No terminal required.
 
-<CardGroup cols={2}>
+<CardGroup cols={3}>
   <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
     Universal build for Intel and Apple Silicon
   </Card>
@@ -16,9 +16,13 @@ The desktop app gives you Claude Code with a graphical interface built for runni
   <Card title="Download for Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code&utm_medium=docs">
     For x64 processors
   </Card>
+
+  <Card title="Get Claude for Linux (beta)" icon="linux" href="/en/desktop-linux">
+    apt or .deb for Ubuntu and Debian
+  </Card>
 </CardGroup>
 
-For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). The desktop app is not available on Linux; use the [CLI](/en/quickstart) instead.
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). On Linux, install with apt; see [Claude Desktop on Linux](/en/desktop-linux).
 
 <Note>
   Claude Code requires a [Pro, Max, Team, or Enterprise subscription](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
@@ -38,7 +42,7 @@ Chat and Cowork are covered in the [Claude Desktop support articles](https://sup
 
 <Steps>
   <Step title="Install and sign in">
-    Download the installer for your platform from the links above and run it. Launch Claude from your Applications folder on macOS or the Start menu on Windows, then sign in with your Anthropic account.
+    On macOS and Windows, download the installer from the links above and run it. On Linux, follow the install steps in [Claude Desktop on Linux](/en/desktop-linux). Launch Claude from your Applications folder on macOS, the Start menu on Windows, or your application launcher on Linux, then sign in with your Anthropic account.
   </Step>
 
   <Step title="Open the Code tab">

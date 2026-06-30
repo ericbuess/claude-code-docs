@@ -7,7 +7,7 @@
 > Run Claude Code through Amazon Bedrock, Google Cloud, or Microsoft Foundry behind a self-hosted gateway with SSO sign-in, per-group model access, and OTLP telemetry.
 
 <Note>
-  If a third-party cloud isn't a requirement, [Claude for Enterprise](/en/authentication#claude-for-teams-or-enterprise) is usually the better fit: richer admin capabilities, such as SCIM provisioning, and nothing to host. Claude for Enterprise subscriptions are available through AWS Marketplace, where purchases can count toward an AWS spend commitment. The gateway is designed for organizations that must route inference through their own cloud provider, for example to meet [data residency](/en/claude-apps-gateway-deploy#compliance-posture) requirements.
+  The Claude apps gateway is designed for organizations that must — or prefer to — route inference through their own cloud provider, for example to meet data residency requirements. If you don't have this requirement, and want access to other features such as SCIM provisioning or Claude Code on web & mobile, Claude Enterprise may be a better fit. See the feature availability page for a full comparison of all deployment methods.
 </Note>
 
 Claude apps gateway is a self-hosted service that sits between your developers' Claude Code clients and your model provider. Developers sign in with your corporate identity provider (IdP) instead of holding API keys or cloud credentials. The gateway holds the upstream credential, enforces model access and [managed settings](/en/permissions#managed-settings) by IdP group, and relays usage telemetry to your own observability stack.

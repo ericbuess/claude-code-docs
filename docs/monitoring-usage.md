@@ -446,7 +446,7 @@ Incremented when code is added or removed.
 
 * All [standard attributes](#standard-attributes)
 * `type`: (`"added"`, `"removed"`)
-* `model`: Model identifier for the model that made the change (for example, "claude-sonnet-4-6"). {/* min-version: 2.1.172 */}Requires Claude Code v2.1.172 or later
+* `model`: Model identifier for the model that made the change (for example, "claude-sonnet-5")
 
 #### Pull request counter
 
@@ -471,7 +471,7 @@ Incremented after each API request.
 **Attributes**:
 
 * All [standard attributes](#standard-attributes)
-* `model`: Model identifier (for example, "claude-sonnet-4-6")
+* `model`: Model identifier (for example, "claude-sonnet-5")
 * `query_source`: Category of the subsystem that issued the request. One of `"main"`, `"subagent"`, or `"auxiliary"`
 * `speed`: `"fast"` when the request used fast mode. Absent otherwise
 * `effort`: [Effort level](/en/model-config#adjust-effort-level) applied to the request: `"low"`, `"medium"`, `"high"`, `"xhigh"`, or `"max"`. Absent when the model doesn't support effort.
@@ -490,7 +490,7 @@ Incremented after each API request.
 
 * All [standard attributes](#standard-attributes)
 * `type`: (`"input"`, `"output"`, `"cacheRead"`, `"cacheCreation"`)
-* `model`: Model identifier (for example, "claude-sonnet-4-6")
+* `model`: Model identifier (for example, "claude-sonnet-5")
 * `query_source`: Category of the subsystem that issued the request. One of `"main"`, `"subagent"`, or `"auxiliary"`
 * `speed`: `"fast"` when the request used fast mode. Absent otherwise
 * `effort`: [Effort level](/en/model-config#adjust-effort-level) applied to the request. See [Cost counter](#cost-counter) for details.
@@ -613,7 +613,7 @@ Logged for each API request to Claude.
 * `event.name`: `"api_request"`
 * `event.timestamp`: ISO 8601 timestamp
 * `event.sequence`: monotonically increasing counter for ordering events within a session
-* `model`: Model used (for example, "claude-sonnet-4-6")
+* `model`: Model used (for example, "claude-sonnet-5")
 * `cost_usd`: Estimated cost in USD
 * `duration_ms`: Request duration in milliseconds
 * `input_tokens`: Number of input tokens
@@ -638,7 +638,7 @@ Logged when an API request to Claude fails.
 * `event.name`: `"api_error"`
 * `event.timestamp`: ISO 8601 timestamp
 * `event.sequence`: monotonically increasing counter for ordering events within a session
-* `model`: Model used (for example, "claude-sonnet-4-6")
+* `model`: Model used (for example, "claude-sonnet-5")
 * `error`: Error message
 * `status_code`: HTTP status code as a number. Absent for non-HTTP errors such as connection failures.
 * `duration_ms`: Request duration in milliseconds

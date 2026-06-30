@@ -914,7 +914,7 @@ In addition to the [common input fields](#common-input-fields), SessionStart hoo
   "cwd": "/Users/...",
   "hook_event_name": "SessionStart",
   "source": "startup",
-  "model": "claude-sonnet-4-6"
+  "model": "claude-sonnet-5"
 }
 ```
 
