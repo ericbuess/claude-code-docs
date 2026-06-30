@@ -181,7 +181,7 @@ Three things to know about how `SessionStore` behaves:
 
 * **Transcripts only**: `SessionStore` mirrors transcripts, not `CLAUDE.md` memory files or other working-directory artifacts. Mount a shared volume or sync those separately.
 * **Mirror, not replacement**: the subprocess writes to local disk first, and the store receives a copy of each batch. Local writes remain authoritative.
-* **`mirror_error` messages**: if the store rejects or times out, the SDK emits a `{ type: "system", subtype: "mirror_error" }` message and continues the query without retry. Alert on these if store durability matters.
+* **`mirror_error` messages**: a batch the store rejects is sent up to three times in total, with a short backoff before each retry; a timed-out call isn't retried. If the batch still fails, the SDK drops it, emits a `{ type: "system", subtype: "mirror_error" }` message, and continues the query. Alert on these if store durability matters.
 
 ### Observability
 

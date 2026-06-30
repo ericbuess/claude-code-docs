@@ -481,7 +481,7 @@ const result = query({
 * `API_TIMEOUT_MS`: per-request timeout on the Anthropic client, in milliseconds. Default `600000`. Applies to the main loop and all subagents.
 * `CLAUDE_CODE_MAX_RETRIES`: maximum API retries. Default `10`, capped at `15`. Each retry gets its own `API_TIMEOUT_MS` window, so worst-case wall time is roughly `API_TIMEOUT_MS × (CLAUDE_CODE_MAX_RETRIES + 1)` plus backoff. For unattended runs that need to wait through longer outages, set `CLAUDE_CODE_RETRY_WATCHDOG=1` to retry capacity errors indefinitely.
 * `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS`: stall watchdog for subagents launched with `run_in_background`. Default `600000`. Resets on each stream event; on stall it aborts the subagent, marks the task failed, and surfaces the error to the parent with any partial result. Does not apply to synchronous subagents.
-* `CLAUDE_ENABLE_STREAM_WATCHDOG=1` with `CLAUDE_STREAM_IDLE_TIMEOUT_MS`: aborts the request when headers have arrived but the response body stops streaming. When `CLAUDE_ENABLE_STREAM_WATCHDOG` is unset, the default is server-controlled on the direct Anthropic API and off on other providers. `CLAUDE_STREAM_IDLE_TIMEOUT_MS` defaults to `300000` and is clamped to that minimum. The aborted request goes through the normal retry path.
+* `CLAUDE_ENABLE_STREAM_WATCHDOG` with `CLAUDE_STREAM_IDLE_TIMEOUT_MS`: aborts the request when headers have arrived but the response body stops streaming. The watchdog is on by default for all providers; set `CLAUDE_ENABLE_STREAM_WATCHDOG=0` to disable it. `CLAUDE_STREAM_IDLE_TIMEOUT_MS` defaults to `300000` and is clamped to that minimum. The aborted request goes through the normal retry path.
 
 ### `Query` object
 
@@ -499,6 +499,7 @@ interface Query extends AsyncGenerator<SDKMessage, void> {
   setMaxThinkingTokens(maxThinkingTokens: number | null): Promise<void>;
   applyFlagSettings(settings: { [K in keyof Settings]?: Settings[K] | null }): Promise<void>;
   initializationResult(): Promise<SDKControlInitializeResponse>;
+  reinitialize(): Promise<SDKControlInitializeResponse>;
   supportedCommands(): Promise<SlashCommand[]>;
   supportedModels(): Promise<ModelInfo[]>;
   supportedAgents(): Promise<AgentInfo[]>;
@@ -515,26 +516,27 @@ interface Query extends AsyncGenerator<SDKMessage, void> {
 
 #### Methods
 
-| Method                                 | Description                                                                                                                                                                                                   |
-| :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `interrupt()`                          | Interrupts the query (only available in streaming input mode)                                                                                                                                                 |
-| `rewindFiles(userMessageId, options?)` | Restores files to their state at the specified user message. Pass `{ dryRun: true }` to preview changes. Requires `enableFileCheckpointing: true`. See [File checkpointing](/en/agent-sdk/file-checkpointing) |
-| `setPermissionMode()`                  | Changes the permission mode (only available in streaming input mode)                                                                                                                                          |
-| `setModel()`                           | Changes the model (only available in streaming input mode)                                                                                                                                                    |
-| `setMaxThinkingTokens()`               | *Deprecated:* Use the `thinking` option instead. Changes the maximum thinking tokens                                                                                                                          |
-| `applyFlagSettings(settings)`          | Merges settings into the session's flag settings layer at runtime (only available in streaming input mode). See [`applyFlagSettings()`](#applyflagsettings)                                                   |
-| `initializationResult()`               | Returns the full initialization result including supported commands, models, account info, and output style configuration                                                                                     |
-| `supportedCommands()`                  | Returns available slash commands                                                                                                                                                                              |
-| `supportedModels()`                    | Returns available models with display info                                                                                                                                                                    |
-| `supportedAgents()`                    | Returns available subagents as [`AgentInfo`](#agentinfo)`[]`                                                                                                                                                  |
-| `mcpServerStatus()`                    | Returns status of connected MCP servers                                                                                                                                                                       |
-| `accountInfo()`                        | Returns account information                                                                                                                                                                                   |
-| `reconnectMcpServer(serverName)`       | Reconnect an MCP server by name                                                                                                                                                                               |
-| `toggleMcpServer(serverName, enabled)` | Enable or disable an MCP server by name                                                                                                                                                                       |
-| `setMcpServers(servers)`               | Dynamically replace the set of MCP servers for this session. Returns info about which servers were added, removed, and any errors                                                                             |
-| `streamInput(stream)`                  | Stream input messages to the query for multi-turn conversations                                                                                                                                               |
-| `stopTask(taskId)`                     | Stop a running background task by ID                                                                                                                                                                          |
-| `close()`                              | Close the query and terminate the underlying process. Forcefully ends the query and cleans up all resources                                                                                                   |
+| Method                                 | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `interrupt()`                          | Interrupts the query (only available in streaming input mode)                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `rewindFiles(userMessageId, options?)` | Restores files to their state at the specified user message. Pass `{ dryRun: true }` to preview changes. Requires `enableFileCheckpointing: true`. See [File checkpointing](/en/agent-sdk/file-checkpointing)                                                                                                                                                                                                                                                                |
+| `setPermissionMode()`                  | Changes the permission mode (only available in streaming input mode)                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `setModel()`                           | Changes the model (only available in streaming input mode)                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `setMaxThinkingTokens()`               | *Deprecated:* Use the `thinking` option instead. Changes the maximum thinking tokens                                                                                                                                                                                                                                                                                                                                                                                         |
+| `applyFlagSettings(settings)`          | Merges settings into the session's flag settings layer at runtime (only available in streaming input mode). See [`applyFlagSettings()`](#applyflagsettings)                                                                                                                                                                                                                                                                                                                  |
+| `initializationResult()`               | Returns the full initialization result including supported commands, models, account info, and output style configuration                                                                                                                                                                                                                                                                                                                                                    |
+| `reinitialize()`                       | {/* min-version: 2.1.195 */}Re-sends the `initialize` control request to the running CLI and returns a fresh result instead of the cached first-connect result. Use it after a transport gap, such as reattaching to a session after a disconnect, so pending permission requests reach your `canUseTool` callback again. Make the callback idempotent per request ID, because a request whose response was lost is dispatched again. Requires Claude Code v2.1.195 or later |
+| `supportedCommands()`                  | Returns available slash commands                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `supportedModels()`                    | Returns available models with display info                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `supportedAgents()`                    | Returns available subagents as [`AgentInfo`](#agentinfo)`[]`                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `mcpServerStatus()`                    | Returns status of connected MCP servers                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `accountInfo()`                        | Returns account information                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `reconnectMcpServer(serverName)`       | Reconnect an MCP server by name                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `toggleMcpServer(serverName, enabled)` | Enable or disable an MCP server by name                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `setMcpServers(servers)`               | Dynamically replace the set of MCP servers for this session. Returns info about which servers were added, removed, and any errors                                                                                                                                                                                                                                                                                                                                            |
+| `streamInput(stream)`                  | Stream input messages to the query for multi-turn conversations                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `stopTask(taskId)`                     | Stop a running background task by ID                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `close()`                              | Close the query and terminate the underlying process. Forcefully ends the query and cleans up all resources                                                                                                                                                                                                                                                                                                                                                                  |
 
 #### `applyFlagSettings()`
 
@@ -605,7 +607,7 @@ type SDKControlInitializeResponse = {
 
 When a client sends `initialize` to a session that is already running, the control-response wrapper also carries an optional `pending_permission_requests` array. The field is on the response wrapper itself, not in the `SDKControlInitializeResponse` payload above. Each entry is a complete `control_request` message with the same `{ type: "control_request", request_id, request }` shape the session streams for permission requests while running.
 
-These are requests that were issued before the client connected and are still awaiting a reply, so read this array to surface in-flight permission prompts immediately; they will not be re-sent.
+These are requests that were issued before the client connected and are still awaiting a reply. The SDK reads the array for you and dispatches each entry to your [`canUseTool`](#canusetool) callback, the same redelivery that [`reinitialize()`](#query-object) triggers after a transport gap. Handle repeated request IDs idempotently, because an entry can repeat a request the callback already received before the connection dropped.
 
 ### `AgentDefinition`
 
@@ -1371,12 +1373,15 @@ type BaseHookInput = {
   session_id: string;
   transcript_path: string;
   cwd: string;
+  prompt_id?: string;
   permission_mode?: string;
   effort?: { level: string };
   agent_id?: string;
   agent_type?: string;
 };
 ```
+
+The `prompt_id` field is a UUID identifying the user prompt currently being processed. It matches the [`prompt.id` attribute on OpenTelemetry events](/en/monitoring-usage#event-correlation-attributes) and is absent until the first user input. Requires Claude Code v2.1.196 or later.
 
 #### `PreToolUseHookInput`
 
@@ -1819,14 +1824,20 @@ Executes bash commands in a persistent shell session with optional timeout and b
 
 ```typescript theme={null}
 type MonitorInput = {
-  command: string;
+  command?: string;
+  ws?: {
+    url: string;
+    protocols?: string[];
+  };
   description: string;
   timeout_ms?: number;
   persistent?: boolean;
 };
 ```
 
-Runs a background script and delivers each stdout line to Claude as an event so it can react without polling. Set `persistent: true` for session-length watches such as log tails. Monitor follows the same permission rules as Bash. See the [Monitor tool reference](/en/tools-reference#monitor-tool) for behavior and provider availability.
+Runs a background source and delivers each event to Claude so it can react without polling: `command` runs a script and emits one event per stdout line, and `ws` opens a WebSocket and emits one event per text frame. Provide exactly one of `command` or `ws`. {/* min-version: 2.1.195 */}The `ws` source requires Claude Code v2.1.195 or later.
+
+Set `persistent: true` for session-length watches such as log tails. When Monitor runs a command, it follows the same permission rules as Bash; a WebSocket watch prompts for approval separately. See the [Monitor tool reference](/en/tools-reference#monitor-tool) for behavior and provider availability.
 
 ### TaskOutput
 

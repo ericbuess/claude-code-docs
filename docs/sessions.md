@@ -26,7 +26,9 @@ Sessions created with [`claude -p`](/en/headless) or the [Agent SDK](/en/agent-s
 
 ### Where the session picker looks
 
-Sessions are stored per project directory. By default the session picker shows interactive sessions from the current worktree, plus sessions started elsewhere that added the current directory with `/add-dir`. {/* min-version: 2.1.169 */}From v2.1.169, moving a session with [`/cd`](/en/commands) relocates it to the new directory's project storage, so it appears in that directory's picker afterward. Use `Ctrl+W` to widen to all worktrees of the repository or `Ctrl+A` to widen to every project on this machine.
+Sessions are stored per project directory. By default the session picker shows interactive sessions from the current worktree, plus sessions started elsewhere that added the current directory with `/add-dir`. Use `Ctrl+W` to widen to all worktrees of the repository or `Ctrl+A` to widen to every project on this machine.
+
+{/* min-version: 2.1.169 */}From v2.1.169, moving a session with [`/cd`](/en/commands) relocates it to the new directory's project storage, so it appears in that directory's picker afterward. {/* min-version: 2.1.196 */}As of v2.1.196, a moved session stays out of the old directory's picker even after a crash or forced exit. On earlier versions, it could also reappear in the old directory's list after an exit that wasn't clean when the old path contained special characters such as underscores.
 
 Selecting a session from another worktree of the same repository resumes it in place. Selecting a session from an unrelated project copies a `cd` and resume command to your clipboard instead.
 
@@ -49,6 +51,10 @@ Give sessions descriptive names so they're findable in the session picker and re
 | On plan accept          | Accepting a plan in [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode) names the session from the plan content unless you've already set one |
 
 Once a session is named, return to it with `claude --resume <name>` or `/resume <name>`. See [Resume a session](#resume-a-session) for how name resolution behaves across worktrees.
+
+{/* min-version: 2.1.196 */}Interactive sessions you never name still get a default display name when they start. Requires Claude Code v2.1.196 or later. The default combines the working directory's name with a two-character suffix, for example `my-app-3f`, and identifies the session in listings of running sessions, such as [agent view](/en/agent-view) and `claude agents --json` output.
+
+The default isn't a resume handle: `claude --resume <name>`, `/resume <name>`, and the session picker match only names you set. Naming the session replaces the default.
 
 ## Use the session picker
 
@@ -103,7 +109,7 @@ For how compaction interacts with CLAUDE.md, skills, and rules, see the [context
 
 ## Export and locate session data
 
-Run `/export` to copy the current conversation to your clipboard or save it as a plain-text file, with messages and tool outputs rendered as readable text. Pass a filename to write directly to that file.
+Run `/export` to open a menu that lets you copy the current conversation to your clipboard or save it as a plain-text file, with messages and tool outputs rendered as readable text. Pass a filename to skip the menu and write directly to that file.
 
 ### Access conversations from scripts
 

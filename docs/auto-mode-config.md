@@ -21,6 +21,7 @@ This page covers how to:
 * [Choose where to set rules](#where-the-classifier-reads-configuration) across CLAUDE.md, user settings, and managed settings
 * [Define trusted infrastructure](#define-trusted-infrastructure) with `autoMode.environment`
 * [Override the block and allow rules](#override-the-block-and-allow-rules) when the defaults don't fit your pipeline
+* [Route all shell commands through the classifier](#route-all-shell-commands-through-the-classifier) with `autoMode.classifyAllShell`
 * [Inspect your effective config](#inspect-the-defaults-and-your-effective-config) with the `claude auto-mode` subcommands
 * [Review denials](#review-denials) so you know what to add next
 
@@ -49,7 +50,16 @@ Entries from each scope are combined. A developer can extend `environment`, `all
 
 For most organizations, `autoMode.environment` is the only field you need to set. It tells the classifier which repos, buckets, and domains are trusted: the classifier uses it to decide what "external" means, so any destination not listed is a potential exfiltration target.
 
-The default environment list trusts the working repo and its configured remotes. To add your own entries alongside that default, include the literal string `"$defaults"` in the array. The default entries are spliced in at that position, so your custom entries can go before or after them.
+As of Claude Code v2.1.195, `claude auto-mode defaults` prints two kinds of environment entry.
+
+* **Trust slots**: name what the classifier treats as inside your boundary. The slots are Trusted repo, Source control, Trusted internal domains, Trusted cloud buckets, Key internal services, and Internal package registry. The repo and source-control entries default to the working repository and its configured remotes. Every other trust slot defaults to `None configured`, so nothing else is trusted until you add it.
+* **Sensitivity slots**: name what the protective rules treat as high-risk. The slots are PII / regulated-data locations, Sensitive remote targets, and Protected IaC scopes. Each defaults to a broad heuristic, such as treating any host or namespace whose name carries `prod` or `production` as a sensitive remote target, so the protective rules are active before you configure anything. Naming concrete targets in a sensitivity slot makes those rules apply to the named targets instead of the heuristic.
+
+Versions before v2.1.195 print only the first five trust slots.
+
+To add your own entries alongside the defaults, include the literal string `"$defaults"` in the array. The default entries are spliced in at that position, so your custom entries can go before or after them.
+
+The following example keeps the default entries and adds an organization's repos, buckets, domains, and services.
 
 ```json theme={null}
 {
@@ -72,7 +82,13 @@ Entries are prose, not regex or tool patterns. The classifier reads them as natu
 * **Cloud providers and trusted buckets**: bucket names or prefixes that Claude should be able to read from and write to
 * **Trusted internal domains**: hostnames for APIs, dashboards, and services inside your network, like `*.internal.example.com`
 * **Key internal services**: CI, artifact registries, internal package indexes, incident tooling
+* **Internal package registry**: the private npm, PyPI, or other registry that installs should route through, so installs that bypass it for a public registry get blocked
+* **PII / regulated-data locations**: the buckets, databases, or paths that hold personal or regulated data, so the classifier protects those locations instead of guessing from content
+* **Sensitive remote targets**: the namespaces, hosts, or containers that count as production, so remote shells and port-forwards into them need your explicit approval
+* **Protected IaC scopes**: the infrastructure resources whose apply or destroy should always require you to name the change
 * **Additional context**: regulated-industry constraints, multi-tenant infrastructure, or compliance requirements that affect what the classifier should treat as risky
+
+The Internal package registry, PII / regulated-data locations, Sensitive remote targets, and Protected IaC scopes entries require Claude Code v2.1.195 or later. Earlier versions still read them as plain context but don't have the built-in rules that target them.
 
 A useful starting template: fill in the bracketed fields and remove any lines that don't apply.
 
@@ -155,6 +171,28 @@ Each section is evaluated independently, so setting `environment` alone leaves t
 
 Only omit `"$defaults"` when you intend to take full ownership of the list. To do that safely, run `claude auto-mode defaults` to print the built-in rules, copy them into your settings file, then review each rule against your own pipeline and risk tolerance.
 
+## Route all shell commands through the classifier
+
+By default, narrow Bash and PowerShell allow rules such as `Bash(npm test)` carry over into auto mode and resolve before the classifier runs. Auto mode suspends only the broad rules that grant arbitrary code execution, such as `Bash(*)` or wildcarded interpreters. This means a narrow rule can still let a destructive argument through without the classifier seeing it, for example a script path or flag the rule's prefix didn't anticipate.
+
+Set `autoMode.classifyAllShell` to `true` to suspend every Bash and PowerShell allow rule while auto mode is active, so the classifier evaluates every shell command regardless of your allow list.
+
+```json theme={null}
+{
+  "autoMode": {
+    "classifyAllShell": true
+  }
+}
+```
+
+This trades latency for coverage: a command that an allow rule would have approved instantly now waits for a classifier decision, and each shell command counts as a classifier call.
+
+The setting applies only while auto mode is active, and your allow rules behave normally in other permission modes.
+
+<Note>
+  `autoMode.classifyAllShell` requires Claude Code v2.1.193 or later. Earlier versions ignore the key and continue to carry narrow shell allow rules into auto mode.
+</Note>
+
 ## Inspect the defaults and your effective config
 
 Three CLI subcommands help you inspect and validate your configuration.
@@ -184,6 +222,8 @@ If you need to remove or rewrite a built-in rule rather than add alongside it, s
 ## Review denials
 
 When auto mode denies a tool call, the denial is recorded in `/permissions` under the Recently denied tab. Press `r` on a denied action to mark it for retry: when you exit the dialog, Claude Code sends a message telling the model it may retry that tool call and resumes the conversation.
+
+In Claude Code v2.1.193 and later, the classifier's reason for each denial appears alongside the blocked tool call in the transcript, in the denial notification, and under each entry on the Recently denied tab. Use the reason to decide whether the fix is an `environment` entry, an `allow` exception, or retrying with explicit intent in your next message.
 
 Repeated denials for the same destination usually mean the classifier is missing context. Add that destination to `autoMode.environment`, then run `claude auto-mode config` to confirm it took effect.
 

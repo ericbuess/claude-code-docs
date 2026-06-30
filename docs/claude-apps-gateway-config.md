@@ -468,13 +468,13 @@ If a device also has a local `managed-settings.json` or MDM-delivered policy, th
 
 Embedding hosts can supply policy through the SDK `managedSettings` option. It is ignored by default and applies only when a managed source opts in with [`parentSettingsBehavior: "merge"`](/en/settings#available-settings), filtered so it can tighten policy but not loosen it.
 
-The exception is a small set of cross-source keys, honored when any admin source sets them; the user-writable HKCU tier is excluded:
+The only exception is the following keys, which are honored when any admin source above the user-writable HKCU tier sets them, regardless of which source provides the rest of the policy:
 
 * `sandbox.network.allowManagedDomainsOnly` and `sandbox.filesystem.allowManagedReadPathsOnly`: when locked, the corresponding allowlists are unioned across sources
 * [`allowAllClaudeAiMcps`](/en/settings#available-settings): allow-only override for the claude.ai MCP server allowlist
 * `sandbox.bwrapPath` and `sandbox.socatPath`: filesystem paths to the [sandbox](/en/sandboxing) helper binaries
 
-`allowManagedPermissionRulesOnly` and `disableBypassPermissionsMode` are not cross-source, so only the winning source's value applies.
+Every other key, including `allowManagedPermissionRulesOnly` and `disableBypassPermissionsMode`, comes from the highest-priority source only. See [Settings precedence](/en/settings#settings-precedence) for the same rule on the settings page.
 
 Gateway policies apply to every Claude Code invocation on the machine, including non-interactive `claude -p` runs and sessions spawned by the Agent SDK. If the gateway is unreachable at startup, signed-in sessions exit with an error rather than running without their policy.
 

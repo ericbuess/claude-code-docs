@@ -206,7 +206,13 @@ The `hooks` option is a dictionary in Python or an object in TypeScript, where:
 
 Use matchers to filter when your callbacks fire. The `matcher` field matches against a different value depending on the hook event type. For example, tool-based hooks match against the tool name, while `Notification` hooks match against the notification type. See the [Claude Code hooks reference](/en/hooks#matcher-patterns) for the full list of matcher values for each event type.
 
-SDK matchers follow the same rules as [matchers in settings files](/en/hooks#matcher-patterns): a matcher containing only letters, digits, `_`, spaces, `,`, and `|` is compared as an exact string, with alternatives separated by `|` or `,` and optional surrounding whitespace, so `Write|Edit` and `Write, Edit` each match exactly those two tools. A matcher of `*`, an empty string, or omitting the matcher entirely matches every occurrence of the event; a matcher containing any other character is evaluated as a regular expression, so `^mcp__` matches every MCP tool. A matcher like `mcp__memory` contains only letters and underscores, so it is compared as an exact string and matches no tool; use `mcp__memory__.*` to match every tool from that server.
+SDK matchers follow the same rules as [matchers in settings files](/en/hooks#matcher-patterns). A matcher containing only letters, digits, `_`, `-`, spaces, `,`, and `|` is compared as an exact string, with alternatives separated by `|` or `,` and optional surrounding whitespace, so `Write|Edit` and `Write, Edit` each match exactly those two tools and `code-reviewer` matches only that agent type. A matcher of `*`, an empty string, or omitting the matcher entirely matches every occurrence of the event.
+
+A matcher containing any other character is evaluated as an unanchored regular expression, so `^mcp__` matches every MCP tool and `Edit.*` matches both `Edit` and `NotebookEdit`. Wrap a regular expression in `^` and `$` when you need a whole-string match.
+
+A matcher like `mcp__memory` or `mcp__brave-search` contains only exact-match characters, so it is compared as an exact string and matches no tool; use `mcp__memory__.*` to match every tool from that server.
+
+Hyphens in the exact-match set require a Claude Code runtime of v2.1.195 or later. On earlier versions a hyphenated name like `code-reviewer` is evaluated as an unanchored regular expression and must be anchored as `^code-reviewer$` to match exactly.
 
 | Option    | Type             | Default     | Description                                                                                                                                                                                                                                                                                                                                                                        |
 | --------- | ---------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -746,7 +752,7 @@ This example forwards every notification to a Slack channel. It requires a [Slac
 * Verify the hook event name is correct and case-sensitive (`PreToolUse`, not `preToolUse`)
 * Check that your matcher pattern matches the tool name exactly
 * Ensure the hook is under the correct event type in `options.hooks`
-* For non-tool hooks like `Stop` and `SubagentStop`, matchers match against different fields (see [matcher patterns](/en/hooks#matcher-patterns))
+* For non-tool hooks that support matchers, like `Notification` and `SubagentStop`, matchers match against different fields, and `Stop` ignores matchers entirely (see [matcher patterns](/en/hooks#matcher-patterns))
 * Hooks may not fire when the agent hits the [`max_turns`](/en/agent-sdk/python#claudeagentoptions) limit because the session ends before hooks can execute
 
 ### Matcher not filtering as expected

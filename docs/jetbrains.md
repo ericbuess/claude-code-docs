@@ -191,7 +191,7 @@ If clicking the Claude icon shows "command not found":
 
 ## Security considerations
 
-When Claude Code runs in a JetBrains IDE with auto-edit permissions enabled, it may be able to modify IDE configuration files that can be automatically executed by your IDE. This may increase the risk of running Claude Code in auto-edit mode and allow bypassing Claude Code's permission prompts for bash execution.
+When Claude Code runs in a JetBrains IDE in [`acceptEdits` permission mode](/en/permission-modes#auto-approve-file-edits-with-acceptedits-mode), it may be able to modify IDE configuration files that can be automatically executed by your IDE. This may increase the risk of running Claude Code in `acceptEdits` mode and allow bypassing Claude Code's permission prompts for bash execution.
 
 When running in JetBrains IDEs, consider:
 

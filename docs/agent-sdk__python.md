@@ -786,6 +786,7 @@ class ClaudeAgentOptions:
     fork_session: bool = False
     agents: dict[str, AgentDefinition] | None = None
     setting_sources: list[SettingSource] | None = None
+    skills: list[str] | Literal["all"] | None = None
     sandbox: SandboxSettings | None = None
     plugins: list[SdkPluginConfig] = field(default_factory=list)
     max_thinking_tokens: int | None = None  # Deprecated: use thinking instead
@@ -858,7 +859,7 @@ options = ClaudeAgentOptions(
 * `API_TIMEOUT_MS`: per-request timeout on the Anthropic client, in milliseconds. Default `600000`. Applies to the main loop and all subagents.
 * `CLAUDE_CODE_MAX_RETRIES`: maximum API retries. Default `10`, capped at `15`. Each retry gets its own `API_TIMEOUT_MS` window, so worst-case wall time is roughly `API_TIMEOUT_MS × (CLAUDE_CODE_MAX_RETRIES + 1)` plus backoff. For unattended runs that need to wait through longer outages, set `CLAUDE_CODE_RETRY_WATCHDOG=1` to retry capacity errors indefinitely.
 * `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS`: stall watchdog for subagents launched with `run_in_background`. Default `600000`. Resets on each stream event; on stall it aborts the subagent, marks the task failed, and surfaces the error to the parent with any partial result. Does not apply to synchronous subagents.
-* `CLAUDE_ENABLE_STREAM_WATCHDOG=1` with `CLAUDE_STREAM_IDLE_TIMEOUT_MS`: aborts the request when headers have arrived but the response body stops streaming. When `CLAUDE_ENABLE_STREAM_WATCHDOG` is unset, the default is server-controlled on the direct Anthropic API and off on other providers. `CLAUDE_STREAM_IDLE_TIMEOUT_MS` defaults to `300000` and is clamped to that minimum. The aborted request goes through the normal retry path.
+* `CLAUDE_ENABLE_STREAM_WATCHDOG` with `CLAUDE_STREAM_IDLE_TIMEOUT_MS`: aborts the request when headers have arrived but the response body stops streaming. The watchdog is on by default for all providers; set `CLAUDE_ENABLE_STREAM_WATCHDOG=0` to disable it. `CLAUDE_STREAM_IDLE_TIMEOUT_MS` defaults to `300000` and is clamped to that minimum. The aborted request goes through the normal retry path.
 
 ### `OutputFormat`
 
@@ -1086,7 +1087,7 @@ EffortLevel = Literal[
     "low",  # Minimal thinking, fastest responses
     "medium",  # Moderate thinking
     "high",  # Deep reasoning
-    "xhigh",  # Extended reasoning (Opus 4.8 and Opus 4.7; falls back to "high" on other models)
+    "xhigh",  # Extended reasoning; falls back to "high" on models that don't support it
     "max",  # Maximum effort
 ]
 ```
@@ -2417,13 +2418,16 @@ Asks the user clarifying questions during execution. See [Handle approvals and u
 
 **Tool name:** `Monitor`
 
-Runs a background script and delivers each stdout line to Claude as an event so it can react without polling. Monitor follows the same permission rules as Bash. See the [Monitor tool reference](/en/tools-reference#monitor-tool) for behavior and provider availability.
+Runs a background source and delivers each event to Claude so it can react without polling: `command` runs a script and emits one event per stdout line, and `ws` opens a WebSocket and emits one event per text frame. Provide exactly one of `command` or `ws`.
+
+When Monitor runs a command, it follows the same permission rules as Bash; a WebSocket watch prompts for approval separately. {/* min-version: 2.1.195 */}The `ws` source requires Claude Code v2.1.195 or later. See the [Monitor tool reference](/en/tools-reference#monitor-tool) for behavior and provider availability.
 
 **Input:**
 
 ```python theme={null}
 {
-    "command": str,  # Shell script; each stdout line is an event, exit ends the watch
+    "command": str | None,  # Shell script; each stdout line is an event, exit ends the watch
+    "ws": dict | None,  # WebSocket source: {"url": str, "protocols": list[str] | None}; each text frame is an event
     "description": str,  # Short description shown in notifications
     "timeout_ms": int | None,  # Kill after this deadline (default 300000, max 3600000)
     "persistent": bool | None,  # Run for the lifetime of the session; stop with TaskStop

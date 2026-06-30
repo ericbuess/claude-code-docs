@@ -253,8 +253,9 @@ To run commands in the background, you can either:
 
 * Output is written to a file and Claude can retrieve it using the Read tool
 * Background tasks have unique IDs for tracking and output retrieval
-* Background tasks are automatically cleaned up when Claude Code exits
+* Background tasks are automatically cleaned up when Claude Code exits. Backgrounding the session instead of exiting it hands them to the background session, where they keep running. See [background a running session](/en/agent-view#from-inside-a-session)
 * Background tasks are automatically terminated if output exceeds 5GB, with a note in stderr explaining why
+* {/* min-version: 2.1.193 */}As of v2.1.193, on macOS and Linux, running background tasks are terminated when the operating system signals memory pressure, provided the session has been idle for at least 30 minutes with no turn or subagent running. Set [`CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP`](/en/env-vars) to `1` to turn this off
 
 To disable all background task functionality, set the `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` environment variable to `1`. See [Environment variables](/en/env-vars) for details.
 
@@ -283,6 +284,7 @@ Shell mode:
 * Supports the same `Ctrl+B` backgrounding for long-running commands
 * Doesn't require Claude to interpret or approve the command
 * Supports history-based autocomplete: type a partial command and press `Tab` to complete from previous `!` commands in the current project
+* {/* min-version: 2.1.193 */}Supports live file path autocomplete as of v2.1.193 on all platforms: type a token containing a forward slash, such as `./src/` or `~/`, to see a dropdown of matching files and directories, then press `Tab` to accept. Use forward slashes on Windows too; the dropdown is triggered by `/`, not `\`
 * Exit with `Escape`, `Backspace`, or `Ctrl+U` on an empty prompt
 * Pasting text that starts with `!` into an empty prompt enters shell mode automatically, matching typed `!` behavior
 

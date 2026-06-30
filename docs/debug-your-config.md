@@ -16,17 +16,17 @@ The `/context` command shows everything occupying the context window for the cur
 
 For detail on a specific category, follow up with the dedicated command:
 
-| Command          | Shows                                                                                                        |
-| :--------------- | :----------------------------------------------------------------------------------------------------------- |
-| `/memory`        | Which `CLAUDE.md` and rules files loaded, plus auto-memory entries                                           |
-| `/skills`        | Available skills from project, user, and plugin sources                                                      |
-| `/agents`        | Configured subagents and their settings                                                                      |
-| `/hooks`         | Active hook configurations                                                                                   |
-| `/mcp`           | Connected MCP servers and their status                                                                       |
-| `/permissions`   | Resolved allow and deny rules currently in effect                                                            |
-| `/doctor`        | Configuration diagnostics: invalid keys, schema errors, installation health                                  |
-| `/debug [issue]` | Enables debug logging for the session and prompts Claude to diagnose using the log output and settings paths |
-| `/status`        | Active settings sources, including whether managed settings are in effect                                    |
+| Command          | Shows                                                                                                                                                                                                                                    |
+| :--------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/memory`        | Which `CLAUDE.md` and rules files loaded, plus auto-memory entries                                                                                                                                                                       |
+| `/skills`        | Available skills from project, user, and plugin sources                                                                                                                                                                                  |
+| `/agents`        | Configured subagents and their settings                                                                                                                                                                                                  |
+| `/hooks`         | Active hook configurations                                                                                                                                                                                                               |
+| `/mcp`           | Connected MCP servers and their status                                                                                                                                                                                                   |
+| `/permissions`   | Resolved allow and deny rules currently in effect                                                                                                                                                                                        |
+| `/doctor`        | Configuration diagnostics: invalid keys, schema errors, installation health. {/* min-version: 2.1.196 */}As of v2.1.196, also reports duplicate [subagent](/en/sub-agents) names defined in the same scope and marks which one is active |
+| `/debug [issue]` | Enables debug logging for the session and prompts Claude to diagnose using the log output and settings paths                                                                                                                             |
+| `/status`        | Active settings sources, including whether managed settings are in effect                                                                                                                                                                |
 
 If a memory file is missing from `/memory`, check its location against [how CLAUDE.md files load](/en/memory#how-claude-md-files-load). Subdirectory `CLAUDE.md` files load on demand when Claude reads a file in that directory with the Read tool, not at session start.
 

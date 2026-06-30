@@ -492,6 +492,12 @@ If you receive an error "on-demand throughput isn't supported":
 
 Claude Code uses the Bedrock [Invoke API](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_InvokeModelWithResponseStream.html) and does not support the Converse API.
 
+### Zero token counts in /context
+
+The `/context` command counts tokens for each tool group by sending the tool schemas to the Bedrock count-tokens API. {/* min-version: 2.1.196 */}On Claude Code versions before v2.1.196, Bedrock rejected that request because the schemas carried fields its count-tokens API doesn't accept, so every tool group showed 0 tokens. Other rows in the breakdown, such as messages and memory files, aren't affected.
+
+Update to v2.1.196 or later.
+
 ### Mantle endpoint errors
 
 If `/status` does not show `Amazon Bedrock (Mantle)` after you set `CLAUDE_CODE_USE_MANTLE`, the variable is not reaching the process. Confirm it is exported in the shell where you launched `claude`, or set it in the `env` block of your [settings file](/en/settings).

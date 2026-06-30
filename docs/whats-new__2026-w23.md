@@ -73,7 +73,9 @@
   <p className="digest-feature-try">Add a floor to your managed settings so older clients refuse to start:</p>
 
   ```json managed-settings.json theme={null}
-  "requiredMinimumVersion": "2.1.163"
+  {
+    "requiredMinimumVersion": "2.1.163"
+  }
   ```
 
   <a className="digest-feature-link" href="/docs/en/admin-setup#decide-what-to-enforce">Decide what to enforce</a>

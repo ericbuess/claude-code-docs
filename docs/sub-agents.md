@@ -179,7 +179,9 @@ Directories added with `--add-dir` are also scanned: a `.claude/agents/` folder 
 
 **User subagents** (`~/.claude/agents/`) are personal subagents available in all your projects.
 
-Claude Code scans `.claude/agents/` and `~/.claude/agents/` recursively, so you can organize definitions into subfolders such as `agents/review/` or `agents/research/`. The subdirectory path doesn't affect how a subagent is identified or invoked, because identity comes only from the `name` frontmatter field. Keep `name` values unique across the whole tree: if two files within one scope declare the same name, Claude Code keeps one and discards the other without warning.
+Claude Code scans `.claude/agents/` and `~/.claude/agents/` recursively, so you can organize definitions into subfolders such as `agents/review/` or `agents/research/`. The subdirectory path doesn't affect how a subagent is identified or invoked, because identity comes only from the `name` frontmatter field.
+
+Keep `name` values unique across the whole tree: if two files within one scope declare the same name, Claude Code loads only one of them. {/* min-version: 2.1.196 */}As of v2.1.196, running `/doctor` reports same-scope duplicate agent names and shows which definition is active.
 
 Plugin `agents/` directories are also scanned recursively. Unlike project and user scopes, a subfolder inside a plugin's `agents/` directory becomes part of the [scoped identifier](#invoke-subagents-explicitly): a file at `agents/review/security.md` in plugin `my-plugin` registers as `my-plugin:review:security`.
 
@@ -293,10 +295,12 @@ The `model` field controls which [AI model](/en/model-config) the subagent uses:
 
 When Claude invokes a subagent, it can also pass a `model` parameter for that specific invocation. Claude Code resolves the subagent's model in this order:
 
-1. The [`CLAUDE_CODE_SUBAGENT_MODEL`](/en/model-config#environment-variables) environment variable, if set
+1. The [`CLAUDE_CODE_SUBAGENT_MODEL`](/en/model-config#environment-variables) environment variable, when set to a model alias or model ID
 2. The per-invocation `model` parameter
 3. The subagent definition's `model` frontmatter
 4. The main conversation's model
+
+{/* min-version: 2.1.196 */}As of v2.1.196, setting `CLAUDE_CODE_SUBAGENT_MODEL` to `inherit` is the same as leaving it unset: resolution continues with the per-invocation `model` parameter, then the frontmatter. In earlier versions, `inherit` forced subagents onto the main conversation's model and ignored both of those sources.
 
 The environment variable, per-invocation parameter, and frontmatter values are checked against your organization's [`availableModels`](/en/model-config#restrict-model-selection) allowlist. A value that resolves to an excluded model is not used and the subagent runs on the inherited model instead.
 
@@ -618,7 +622,9 @@ Configure hooks in `settings.json` that respond to subagent lifecycle events in 
 | `SubagentStart` | Agent type name | When a subagent begins execution |
 | `SubagentStop`  | Agent type name | When a subagent completes        |
 
-Both events support matchers to target specific agent types by name. This example runs a setup script only when the `db-agent` subagent starts, and a cleanup script when any subagent stops:
+Both events support matchers to target specific agent types by name. The matcher value is the agent's frontmatter `name` for project-level and user-level subagents, or the plugin-scoped identifier such as `my-plugin:db-agent` for [plugin subagents](/en/plugins). A scoped name contains a colon, so it is evaluated as an [unanchored regular expression](/en/hooks#matcher-patterns); anchor it with `^` and `$`, as in `^my-plugin:db-agent$`, to match only that agent.
+
+This example runs a setup script only when the `db-agent` subagent starts, and a cleanup script when any subagent stops:
 
 ```json theme={null}
 {
@@ -641,6 +647,8 @@ Both events support matchers to target specific agent types by name. This exampl
   }
 }
 ```
+
+A hyphenated matcher like `db-agent` matches exactly on Claude Code v2.1.195 or later. On earlier versions it is evaluated as an unanchored regular expression and also fires for any agent type that contains it, such as `prod-db-agent`; anchor it as `^db-agent$` on those versions.
 
 See [Hooks](/en/hooks) for the complete hook configuration format.
 
@@ -784,7 +792,9 @@ For a quick question about something already in your conversation, use [`/btw`](
 
 {/* min-version: 2.1.172 */}As of Claude Code v2.1.172, a subagent can spawn its own subagents. Use this when a delegated task itself splits into parallel subtasks, such as a reviewer subagent that dispatches a verifier per finding, so the intermediate output never reaches your main conversation. Only the top-level subagent's summary returns to you.
 
-A nested subagent is configured the same way as a top-level one and resolves from the same [scopes](#choose-the-subagent-scope). The subagent panel below the prompt input shows the full tree: each row displays a `(+N)` count of descendants, and opening a row shows that subagent's direct children with a path back to `main`. The Running tab in [`/agents`](#use-the-%2Fagents-command) lists running subagents as a flat list.
+A nested subagent is configured the same way as a top-level one and resolves from the same [scopes](#choose-the-subagent-scope).
+
+The subagent panel below the prompt input shows the full tree: each row displays a `(+N)` count of descendants, and {/* min-version: 2.1.193 */}as of v2.1.193, opening a row shows that subagent's siblings and direct children with a path back to `main`. The Running tab in [`/agents`](#use-the-%2Fagents-command) lists running subagents as a flat list.
 
 Depth is counted as the number of subagent levels below the main conversation, regardless of whether each level runs in the [foreground or background](#run-subagents-in-foreground-or-background). A subagent at depth five doesn't receive the Agent tool and can't spawn further. The limit is fixed and not configurable.
 

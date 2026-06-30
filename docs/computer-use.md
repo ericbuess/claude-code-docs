@@ -100,7 +100,7 @@ Understanding the flow helps you anticipate what Claude will do and how to inter
 
 ### One session at a time
 
-Computer use holds a machine-wide lock while active. If another Claude Code session is already using your computer, new attempts fail with a message telling you which session holds the lock. Finish or exit that session first.
+Computer use holds a machine-wide lock from the first computer use action until the session that took it exits. {/* min-version: 2.1.195 */}As of v2.1.195, finishing the task doesn't release the lock; only exiting the session does. If another Claude Code session is already using your computer, new attempts fail with a message telling you which session holds the lock. Exit that session first.
 
 ### Apps are hidden while Claude works
 
@@ -116,7 +116,7 @@ There is no setting to change the target size. If on-screen text or controls are
 
 ### Stop at any time
 
-When Claude acquires the lock, a macOS notification appears: "Claude is using your computer · press Esc to stop." Press `Esc` anywhere to abort the current action immediately, or press `Ctrl+C` in the terminal. Either way, Claude releases the lock, unhides your apps, and returns control to you.
+When Claude acquires the lock, a macOS notification appears: "Claude is using your computer · press Esc to stop." Press `Esc` anywhere to abort the current action immediately, or press `Ctrl+C` in the terminal. Either way, Claude stops, unhides your apps, and returns control to you. The session keeps the [computer use lock](#one-session-at-a-time) until it exits.
 
 A second notification appears when Claude is done.
 
@@ -189,7 +189,7 @@ The CLI and Desktop surfaces share the same computer use engine, with a few diff
 
 ### "Computer use is in use by another Claude session"
 
-Another Claude Code session holds the lock. Finish the task in that session or exit it. If the other session crashed, the lock is released automatically when Claude detects the process is no longer running.
+Another Claude Code session holds the lock, which it keeps until it exits. Exit that session. If the other session crashed, the lock is released automatically when Claude detects the process is no longer running.
 
 ### macOS permissions prompt keeps reappearing
 

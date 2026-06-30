@@ -44,7 +44,12 @@ The `/loop` [bundled skill](/en/commands) is the quickest way to run a prompt on
 | Prompt only               | `/loop check the deploy`    | Your prompt runs at an [interval Claude chooses](#let-claude-choose-the-interval) each iteration              |
 | Interval only, or nothing | `/loop`                     | The [built-in maintenance prompt](#run-the-built-in-maintenance-prompt) runs, or your `loop.md` if one exists |
 
-You can also pass another command as the prompt, for example `/loop 20m /review-pr 1234`, to re-run a saved skill or command each iteration.
+You can also pass a skill as the prompt, for example `/loop 20m /review-pr 1234`, to re-run that skill each iteration. {/* min-version: 2.1.196 */}As of v2.1.196, a scheduled fire only runs skills that Claude is [allowed to invoke on its own](/en/skills#control-who-invokes-a-skill). The following reach Claude as plain text instead of executing:
+
+* built-in commands such as `/permissions`, `/model`, or `/clear`
+* skills marked [`disable-model-invocation: true`](/en/skills#frontmatter-reference)
+* skills withheld from Claude by a [`skillOverrides`](/en/skills#override-skill-visibility-from-settings) setting or a `Skill` [deny rule](/en/skills#restrict-claude’s-skill-access)
+* [MCP prompts](/en/mcp#use-mcp-prompts-as-commands) such as `/mcp__github__list_prs`; skills an MCP server exposes still run
 
 ### Run on a fixed interval
 
@@ -208,7 +213,7 @@ Set `CLAUDE_CODE_DISABLE_CRON=1` in your environment to disable the scheduler en
 
 Session-scoped scheduling has inherent constraints:
 
-* Tasks only fire while Claude Code is running and idle. Closing the terminal or letting the session exit stops them firing.
+* Tasks only fire while Claude Code is running and idle. Closing the terminal or letting the session exit stops them firing. [Backgrounding the session](/en/agent-view#from-inside-a-session) carries `/loop` tasks over to a background session, which keeps running without a terminal.
 * No catch-up for missed fires. If a task's scheduled time passes while Claude is busy on a long-running request, it fires once when Claude becomes idle, not once per missed interval.
 * Starting a fresh conversation clears all session-scoped tasks. Resuming with `claude --resume` or `claude --continue` restores tasks that have not expired: recurring tasks within seven days of creation, and one-shot tasks whose scheduled time has not yet passed. Background Bash and monitor tasks are never restored on resume.
 

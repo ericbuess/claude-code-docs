@@ -33,7 +33,7 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
   <Tab title="CLI">
     **During a session**: press `Shift+Tab` to cycle `default` → `acceptEdits` → `plan`. The current mode appears in the status bar. Not every mode is in the default cycle:
 
-    * `auto`: appears when your account meets the [auto mode requirements](#eliminate-prompts-with-auto-mode); cycling to auto shows an opt-in prompt until you accept it, or select **No, don't ask again** to remove auto from the cycle
+    * `auto`: appears when your account meets the [auto mode requirements](#eliminate-prompts-with-auto-mode); cycling to it switches modes without a confirmation prompt
     * `bypassPermissions`: appears after you start with `--permission-mode bypassPermissions`, `--dangerously-skip-permissions`, or `--allow-dangerously-skip-permissions`; the `--allow-` variant adds the mode to the cycle without activating it
     * `dontAsk`: never appears in the cycle; set it with `--permission-mode dontAsk`
 
@@ -223,6 +223,23 @@ The classifier trusts your working directory and your repo's configured remotes.
 * `git commit --amend` when the commit at HEAD was not created in this session
 * `terraform destroy`, `pulumi destroy`, `cdk destroy`, or `terragrunt destroy`, and applying a plan that destroys resources
 
+Claude Code v2.1.195 and later block more categories by default. Several depend on [environment](/en/auto-mode-config#define-trusted-infrastructure) entries, such as sensitive remote targets and protected IaC scopes, that you can narrow to concrete names.
+
+* Writing to a secret manager, or changing DNS records or TLS certificates
+* Merging a pull request no human has approved, approving Claude's own pull request, or disabling CI checks
+* Posting a comment that is itself a command to automation, such as `atlantis apply` or a bot's `/deploy` or `/merge`
+* Toggling, ramping, or deleting a production feature flag
+* Applying infrastructure changes to a protected IaC scope, or draining and removing cluster nodes
+* Writes to a shared compute cluster that reach beyond the resource you named, such as a label selector or `--all` that catches other users' jobs
+* Creating Kubernetes resources that run on every node or intercept cluster traffic, such as DaemonSets and admission webhooks
+* Interactive shells or port-forwards into a sensitive remote target
+* Opening a tunnel or reverse shell that makes a local service reachable from the public internet
+* Printing a live credential or token into the transcript or a file
+* Accessing a PII or regulated-data location, or copying data out of one
+* Routing a package install around your internal package registry to a public registry
+* Running a command with a flag that disarms a safety guard, like `--insecure`
+* [Claude in Chrome](/en/chrome) browser actions that could send page content, cookies, or credentials off-origin
+
 **Allowed by default**:
 
 * Local file operations in your working directory
@@ -230,6 +247,14 @@ The classifier trusts your working directory and your repo's configured remotes.
 * Reading `.env` and sending credentials to their matching API
 * Read-only HTTP requests
 * Pushing to the branch you started on or one Claude created
+
+Claude Code v2.1.195 and later also allow these by default:
+
+* Deleting the exact jobs Claude created earlier in the same session
+* Reading, reviewing, or writing security-related code, configs, and threat models as part of your task
+* Messages between agents working together in the same multi-agent session
+* Sending data to the trusted domains, buckets, and services you list in [`environment`](/en/auto-mode-config#define-trusted-infrastructure). This covers data flow only, not destructive or credential operations on the same infrastructure
+* [Claude in Chrome](/en/chrome) navigation to a trusted internal domain, localhost, or a URL you named
 
 Sandbox network access requests are routed through the classifier rather than allowed by default. Run `claude auto-mode defaults` to see the full rule lists. If routine actions get blocked, an administrator can add trusted repos, buckets, and services via the `autoMode.environment` setting: see [Configure auto mode](/en/auto-mode-config).
 
