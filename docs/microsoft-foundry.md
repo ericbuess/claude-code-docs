@@ -159,7 +159,7 @@ Without `ANTHROPIC_DEFAULT_OPUS_MODEL`, the `opus` alias on Foundry resolves to 
 
 ```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-8'
-export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
+export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-5'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
 ```
 
