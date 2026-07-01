@@ -259,7 +259,7 @@ Prefix or mention parts of the prompt to control how the session starts:
 | :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `<agent-name> <prompt>`           | If the first word matches a custom [subagent](/en/sub-agents) name, that subagent runs as the session's main agent with the configuration from its frontmatter |
 | `@<agent-name>`                   | Mention a custom subagent anywhere in the prompt to run it as the main agent                                                                                   |
-| `@<repo>`                         | Mention a repository under the directory you opened agent view from to run the session there                                                                   |
+| `@<repo>`                         | Mention a repository to run the session there. See [Dispatch to a specific directory](#dispatch-to-a-specific-directory) for which repositories are listed     |
 | `/<command>`                      | Suggest [skills](/en/skills) and [commands](/en/commands) to dispatch as the prompt                                                                            |
 | `! <command>`                     | Run a shell command as a background job instead of starting a Claude session. The job appears as a row you can attach to, watch, and detach from               |
 | `#<number>` or a pull request URL | If a session is already working on that PR, select it instead of dispatching                                                                                   |
@@ -273,10 +273,10 @@ When the same `@name` matches both a subagent and a sibling repository, the suba
 
 #### Dispatch to a specific directory
 
-A new session runs in the directory you opened agent view from. To target a different directory:
+A new session runs in the directory you opened agent view from. To target a different directory, use any of these:
 
 * Open `claude agents` in that directory.
-* Open `claude agents` in a parent directory that holds several repositories and mention one with `@<repo>` in the prompt to run the session there.
+* Open `claude agents` in a parent directory and mention a child repository with `@<repo>` in the prompt. Typing `@` lists git repositories one level below the launch directory, plus any directory that already has a session in the list. A directory whose name contains a space isn't listed.
 * From the shell, `cd` into the directory and run `claude --bg "<prompt>"`.
 
 When agent view is grouped by directory, the highlighted row's directory becomes the dispatch target, so you can scroll to a group and dispatch into it without retyping the path.

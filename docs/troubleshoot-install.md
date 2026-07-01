@@ -24,6 +24,7 @@ Match the error message or symptom you're seeing to a fix:
 | `irm is not recognized` or `&& is not valid`                                                | [Use the right command for your shell](#wrong-install-command-on-windows)                                               |
 | `Cask 'claude-code' is unavailable: No Cask with this name exists`                          | [Update Homebrew](#homebrew-cask-unavailable-or-outdated)                                                               |
 | `'bash' is not recognized as the name of a cmdlet`                                          | [Use the Windows installer command](#wrong-install-command-on-windows)                                                  |
+| `A parameter cannot be found that matches parameter name 'fsSL'`                            | [Use the Windows installer command](#wrong-install-command-on-windows)                                                  |
 | `Claude Code on Windows requires either Git for Windows (for bash) or PowerShell`           | [Install a shell](#claude-code-on-windows-requires-either-git-for-windows-for-bash-or-powershell)                       |
 | `Claude Code does not support 32-bit Windows`                                               | [Open Windows PowerShell, not the x86 entry](#claude-code-does-not-support-32-bit-windows)                              |
 | `The process cannot access the file ... because it is being used by another process`        | [Clear the downloads folder and retry](#the-process-cannot-access-the-file-during-windows-install)                      |
@@ -459,7 +460,7 @@ The installer couldn't reach the download server. This typically means `download
 
 ### Wrong install command on Windows
 
-If you see `'irm' is not recognized`, `The token '&&' is not valid`, or `'bash' is not recognized as the name of a cmdlet`, you copied the install command for a different shell or operating system.
+If you see `'irm' is not recognized`, `The token '&&' is not valid`, `A parameter cannot be found that matches parameter name 'fsSL'`, or `'bash' is not recognized as the name of a cmdlet`, you copied the install command for a different shell or operating system.
 
 * **`irm` not recognized**: you're in CMD, not PowerShell. You have two options:
 
@@ -476,6 +477,11 @@ If you see `'irm' is not recognized`, `The token '&&' is not valid`, or `'bash' 
   ```
 
 * **`&&` not valid**: you're in PowerShell but ran the CMD installer command. Use the PowerShell installer:
+  ```powershell theme={null}
+  irm https://claude.ai/install.ps1 | iex
+  ```
+
+* **`A parameter cannot be found that matches parameter name 'fsSL'`**: you ran the macOS/Linux `curl -fsSL ... | bash` installer in Windows PowerShell, where `curl` is an alias for `Invoke-WebRequest` and rejects the `-fsSL` flags. Use the PowerShell installer instead:
   ```powershell theme={null}
   irm https://claude.ai/install.ps1 | iex
   ```

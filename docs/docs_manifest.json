@@ -195,14 +195,14 @@
     "agent-teams.md": {
       "original_url": "https://code.claude.com/docs/en/agent-teams",
       "original_md_url": "https://code.claude.com/docs/en/agent-teams.md",
-      "hash": "0d75ccc86c3d84fb9f37836a4cc1862c07419ee135b59475de58e92299a2aca0",
-      "last_updated": "2026-06-30T07:11:00.636254"
+      "hash": "81a452e0d3ebd991a95ab27e71257e4c308824493eb488776230e705e94b587b",
+      "last_updated": "2026-07-01T04:28:40.802776"
     },
     "agent-view.md": {
       "original_url": "https://code.claude.com/docs/en/agent-view",
       "original_md_url": "https://code.claude.com/docs/en/agent-view.md",
-      "hash": "0decdd5716048156f6de630ac5deafbd5e9de3f1787221358814b181bf4e14ad",
-      "last_updated": "2026-06-30T07:11:02.104048"
+      "hash": "9354d237f4945b1f5bc678a141c86cd79cf8e564c2072bfa164c315a1f576f05",
+      "last_updated": "2026-07-01T04:28:41.477890"
     },
     "agents.md": {
       "original_url": "https://code.claude.com/docs/en/agents",
@@ -436,8 +436,8 @@
     "env-vars.md": {
       "original_url": "https://code.claude.com/docs/en/env-vars",
       "original_md_url": "https://code.claude.com/docs/en/env-vars.md",
-      "hash": "1976aad7cc5332b530dc3efd3e202beb6f16b15ecef7f5dc2c44fc42d0d9fd0f",
-      "last_updated": "2026-06-30T18:33:05.166408"
+      "hash": "43a5624252cfe11b352d90a0d7c92a476dcf0c9de29e23231d98d4365da64eeb",
+      "last_updated": "2026-07-01T04:29:19.525597"
     },
     "errors.md": {
       "original_url": "https://code.claude.com/docs/en/errors",
@@ -790,8 +790,8 @@
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
       "original_md_url": "https://code.claude.com/docs/en/skills.md",
-      "hash": "7aaca90961b7e45b0402599a017ee9afcbbf1c1851d1d26cead3f05b2883970e",
-      "last_updated": "2026-06-30T07:12:25.925742"
+      "hash": "100e947d5b77ee7b0510488c9f4d908e351d7c464a0db24958a02ff533b9ff25",
+      "last_updated": "2026-07-01T04:30:21.111487"
     },
     "slack.md": {
       "original_url": "https://code.claude.com/docs/en/slack",
@@ -832,8 +832,8 @@
     "troubleshoot-install.md": {
       "original_url": "https://code.claude.com/docs/en/troubleshoot-install",
       "original_md_url": "https://code.claude.com/docs/en/troubleshoot-install.md",
-      "hash": "ee682a782a42b200bad6359ddb2128fdc5dbb44846f7982d88e251282ffc56ce",
-      "last_updated": "2026-06-30T18:34:28.042701"
+      "hash": "db554c3ad58316192b180227b12e01c18f41b499af37b0cf98a6beb9f3634e2e",
+      "last_updated": "2026-07-01T04:30:31.934862"
     },
     "troubleshooting.md": {
       "original_url": "https://code.claude.com/docs/en/troubleshooting",
@@ -981,8 +981,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-07-01T00:28:56.395821",
-    "fetch_duration_seconds": 159.228438,
+    "last_fetch_completed": "2026-07-01T04:31:03.981846",
+    "fetch_duration_seconds": 171.980713,
     "total_pages_discovered": 163,
     "pages_fetched_successfully": 164,
     "pages_failed": 0,
@@ -992,7 +992,7 @@
     "total_files": 163,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-07-01T00:28:56.395847",
+  "last_updated": "2026-07-01T04:31:03.981871",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
