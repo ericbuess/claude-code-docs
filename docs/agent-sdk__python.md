@@ -658,9 +658,8 @@ async def custom_permission_handler(
 
 
 async def main():
-    options = ClaudeAgentOptions(
-        can_use_tool=custom_permission_handler, allowed_tools=["Read", "Write", "Edit"]
-    )
+    # Don't also list the gated tools in allowed_tools: allow rules approve calls before can_use_tool runs
+    options = ClaudeAgentOptions(can_use_tool=custom_permission_handler)
 
     async with ClaudeSDKClient(options=options) as client:
         await client.query("Update the system config file")
@@ -825,7 +824,7 @@ class ClaudeAgentOptions:
 | `max_buffer_size`             | `int \| None`                                                                         | `None`                             | Maximum bytes when buffering CLI stdout                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `debug_stderr`                | `Any`                                                                                 | `sys.stderr`                       | *Deprecated* - File-like object for debug output. Use `stderr` callback instead                                                                                                                                                                                                                                                                                                                                                            |
 | `stderr`                      | `Callable[[str], None] \| None`                                                       | `None`                             | Callback function for stderr output from CLI                                                                                                                                                                                                                                                                                                                                                                                               |
-| `can_use_tool`                | [`CanUseTool`](#canusetool) ` \| None`                                                | `None`                             | Tool permission callback function. See [Permission types](#canusetool) for details                                                                                                                                                                                                                                                                                                                                                         |
+| `can_use_tool`                | [`CanUseTool`](#canusetool) ` \| None`                                                | `None`                             | Tool permission callback, invoked only when the [permission flow](/en/agent-sdk/permissions#how-permissions-are-evaluated) falls through to a prompt. Not invoked for calls auto-approved by `allowed_tools`, allow rules, or `permission_mode`. See [`CanUseTool`](#canusetool) for details                                                                                                                                               |
 | `hooks`                       | `dict[HookEvent, list[HookMatcher]] \| None`                                          | `None`                             | Hook configurations for intercepting events                                                                                                                                                                                                                                                                                                                                                                                                |
 | `user`                        | `str \| None`                                                                         | `None`                             | User identifier                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `include_partial_messages`    | `bool`                                                                                | `False`                            | Include partial message streaming events. When enabled, [`StreamEvent`](#streamevent) messages are yielded                                                                                                                                                                                                                                                                                                                                 |
@@ -1109,6 +1108,8 @@ The callback receives:
 * `context`: A `ToolPermissionContext` with additional information
 
 Returns a `PermissionResult` (either `PermissionResultAllow` or `PermissionResultDeny`).
+
+The callback is the SDK replacement for the interactive permission prompt: it's invoked only when the [permission evaluation flow](/en/agent-sdk/permissions#how-permissions-are-evaluated) resolves to a prompt. Tool calls already approved by an `allowed_tools` entry, a settings allow rule, or the permission mode, such as `acceptEdits` or `bypassPermissions`, never invoke it. To gate every tool call, use a [`PreToolUse` hook](/en/agent-sdk/hooks) instead.
 
 ### `ToolPermissionContext`
 
