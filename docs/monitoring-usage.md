@@ -566,7 +566,7 @@ Logged after each API request that returns text content from the model. Only the
 * `event.sequence`: monotonically increasing counter for ordering events within a session
 * `response_length`: Length of the response text in characters
 * `response`: Response text, truncated at 60 KB. Redacted to `<REDACTED>` by default. Set `OTEL_LOG_ASSISTANT_RESPONSES=1` to include it. When `OTEL_LOG_ASSISTANT_RESPONSES` is unset, `OTEL_LOG_USER_PROMPTS` controls it instead, so set `OTEL_LOG_ASSISTANT_RESPONSES=0` to keep responses redacted while prompt logging is on
-* `model`: Model identifier (for example, "claude-sonnet-4-6")
+* `model`: Model identifier (for example, "claude-sonnet-5")
 * `request_id`: Anthropic API request ID from the response's `request-id` header. Present only when the API returns one
 * `query_source`: Subsystem that issued the request, such as `"repl_main_thread"`, `"compact"`, or a subagent name
 

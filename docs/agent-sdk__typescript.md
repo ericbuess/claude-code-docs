@@ -2810,14 +2810,28 @@ Information about an available model.
 ```typescript theme={null}
 type ModelInfo = {
   value: string;
+  resolvedModel?: string;
   displayName: string;
   description: string;
   supportsEffort?: boolean;
   supportedEffortLevels?: ("low" | "medium" | "high" | "xhigh" | "max")[];
   supportsAdaptiveThinking?: boolean;
   supportsFastMode?: boolean;
+  supportsAutoMode?: boolean;
 };
 ```
+
+| Field                      | Type                                                               | Description                                                                                                                                                                                                                                                                                                           |
+| :------------------------- | :----------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `value`                    | `string`                                                           | Model identifier to pass in API calls                                                                                                                                                                                                                                                                                 |
+| `resolvedModel`            | `string \| undefined`                                              | Canonical wire model ID that this entry's `value` resolves to. An alias entry such as `sonnet` resolves to an explicit model ID such as `claude-sonnet-5`, so a host can match a stored explicit model ID against the alias entry that covers it. {/* min-version: 2.1.197 */}Requires Claude Code v2.1.197 or later. |
+| `displayName`              | `string`                                                           | Human-readable display name                                                                                                                                                                                                                                                                                           |
+| `description`              | `string`                                                           | Description of the model's capabilities                                                                                                                                                                                                                                                                               |
+| `supportsEffort`           | `boolean \| undefined`                                             | Whether this model supports effort levels                                                                                                                                                                                                                                                                             |
+| `supportedEffortLevels`    | `("low" \| "medium" \| "high" \| "xhigh" \| "max")[] \| undefined` | Effort levels this model accepts                                                                                                                                                                                                                                                                                      |
+| `supportsAdaptiveThinking` | `boolean \| undefined`                                             | Whether this model supports adaptive thinking, where Claude decides when and how much to think                                                                                                                                                                                                                        |
+| `supportsFastMode`         | `boolean \| undefined`                                             | Whether this model supports fast mode                                                                                                                                                                                                                                                                                 |
+| `supportsAutoMode`         | `boolean \| undefined`                                             | Whether this model supports auto mode                                                                                                                                                                                                                                                                                 |
 
 ### `AgentInfo`
 
