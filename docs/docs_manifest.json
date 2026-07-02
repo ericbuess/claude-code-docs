@@ -225,8 +225,8 @@
     "artifacts.md": {
       "original_url": "https://code.claude.com/docs/en/artifacts",
       "original_md_url": "https://code.claude.com/docs/en/artifacts.md",
-      "hash": "7936991f2f736dae71eddcbbf002aeea292b14b9e1c6e79d2d3c27f09556c1c0",
-      "last_updated": "2026-06-26T21:26:34.098085"
+      "hash": "a74bbb121d5db8022cd6fbe3739b22160f34eeee8544736ba864745807a46518",
+      "last_updated": "2026-07-02T00:26:54.881879"
     },
     "authentication.md": {
       "original_url": "https://code.claude.com/docs/en/authentication",
@@ -981,8 +981,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-07-01T21:31:58.753762",
-    "fetch_duration_seconds": 172.575732,
+    "last_fetch_completed": "2026-07-02T00:28:59.424710",
+    "fetch_duration_seconds": 161.525463,
     "total_pages_discovered": 163,
     "pages_fetched_successfully": 164,
     "pages_failed": 0,
@@ -992,7 +992,7 @@
     "total_files": 163,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-07-01T21:31:58.753784",
+  "last_updated": "2026-07-02T00:28:59.424743",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

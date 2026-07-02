@@ -9,7 +9,7 @@
 {/* plan-availability: feature=artifacts plans=team,enterprise providers=anthropic */}
 
 <Note>
-  Artifacts are in beta. They require a Team or Enterprise plan and a session signed in with [`/login`](/en/setup#authenticate). See [Availability](#availability) for the full set of requirements.
+  Artifacts require a Team or Enterprise plan and a session signed in with [`/login`](/en/setup#authenticate). See [Availability](#availability) for the full set of requirements.
 </Note>
 
 An artifact is a live, interactive web page that Claude Code publishes from your session to a private URL on claude.ai. You open it in a browser, and it updates in place as the session continues. Share it from the page header when you want a teammate to see it too. For example, use an artifact to walk a reviewer through a pull request with annotated diffs, build a dashboard from session data, or keep an investigation timeline that fills in as Claude works.
