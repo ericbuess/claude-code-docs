@@ -4,15 +4,15 @@
 
 # Share session output as artifacts
 
-> Artifacts turn Claude Code's work into live, interactive pages at a private URL you can share inside your organization.
+> Artifacts turn Claude Code's work into live, interactive pages at a private URL on claude.ai.
 
-{/* plan-availability: feature=artifacts plans=team,enterprise providers=anthropic */}
+{/* plan-availability: feature=artifacts plans=pro,max,team,enterprise providers=anthropic */}
 
 <Note>
-  Artifacts require a Team or Enterprise plan and a session signed in with [`/login`](/en/setup#authenticate). See [Availability](#availability) for the full set of requirements.
+  Artifacts are available on Pro, Max, Team, and Enterprise plans and require a session signed in with [`/login`](/en/setup#authenticate). See [Availability](#availability) for the full set of requirements.
 </Note>
 
-An artifact is a live, interactive web page that Claude Code publishes from your session to a private URL on claude.ai. You open it in a browser, and it updates in place as the session continues. Share it from the page header when you want a teammate to see it too. For example, use an artifact to walk a reviewer through a pull request with annotated diffs, build a dashboard from session data, or keep an investigation timeline that fills in as Claude works.
+An artifact is a live, interactive web page that Claude Code publishes from your session to a private URL on claude.ai. You open it in a browser, and it updates in place as the session continues. On Team and Enterprise plans, share it from the page header when you want a teammate to see it too. For example, use an artifact to walk a reviewer through a pull request with annotated diffs, build a dashboard from session data, or keep an investigation timeline that fills in as Claude works.
 
 <Frame>
   <img src="https://mintcdn.com/claude-code/kaHIYYMIYMYPxQg9/images/artifacts-viewer.png?fit=max&auto=format&n=kaHIYYMIYMYPxQg9&q=85&s=dbfd671cdb0d15f49f808b9e89778fe1" alt="An artifact open in a browser at claude.ai/code/artifact. The viewer header shows the artifact title acme-funnel-fix, a Share button, and the author avatar. The Share menu is open with the Always share latest version toggle, a version picker reading Sharing version 2, an Everyone at Acme audience selector, and a Copy link button. Below the header, the artifact page shows two mobile mockups side by side, a funnel chart, and a row of metric cards." width="2511" height="1890" data-path="images/artifacts-viewer.png" />
@@ -74,7 +74,7 @@ Update https://claude.ai/code/artifact/5fbea6f3-... with today's numbers.
 
 ## Share an artifact
 
-A new artifact is visible only to you. Open it in your browser and use the **Share** control in the page header to grant access to specific people in your organization, or to everyone in it. The header names you as the artifact's author, so anyone you share it with can see who published the page. It also links to your gallery at [claude.ai/code/artifacts](https://claude.ai/code/artifacts), which lists every artifact you have created.
+A new artifact is visible only to you. On Pro and Max plans, artifacts stay private to you. On Team and Enterprise plans, open the artifact in your browser and use the **Share** control in the page header to grant access to specific people in your organization, or to everyone in it. The header names you as the artifact's author, so anyone you share it with can see who published the page. It also links to your gallery at [claude.ai/code/artifacts](https://claude.ai/code/artifacts), which lists every artifact you have created.
 
 Sharing stops at your organization. Viewers must sign in to claude.ai as a member of the same organization that published the artifact, and there is no option to make an artifact viewable outside it. To send the underlying content to someone outside your organization, ask Claude for the HTML file and share that file directly.
 
@@ -160,13 +160,13 @@ Generating an artifact uses output tokens like any other response, and a styled 
 
 Artifacts require every condition below. When one is not met, Claude writes a local HTML file or says it cannot publish instead.
 
-| Requirement         | Available when                                                                                                                                                                                                                                    |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Plan                | Team or Enterprise. On Team plans, artifacts are on by default. On Enterprise plans, an Owner [enables them](#manage-artifacts-for-your-organization) in claude.ai admin settings.                                                                |
-| Authentication      | Signed in to claude.ai with `/login`. Sessions using an API key, [gateway token](/en/llm-gateway), or cloud-provider credential cannot publish.                                                                                                   |
-| Model provider      | Anthropic API. Not available on [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud Vertex AI](/en/google-vertex-ai), or [Microsoft Foundry](/en/microsoft-foundry).                                                                              |
-| Organization policy | Customer-managed encryption keys (CMEK), HIPAA, and [Zero Data Retention](/en/zero-data-retention) are not enabled for the organization.                                                                                                          |
-| Surface             | Claude Code CLI, or the Claude desktop app version 1.13576.0 or later. Off by default in [Agent SDK](/en/agent-sdk/overview), GitHub Action, and MCP-server contexts, and when [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/en/env-vars) is set. |
+| Requirement         | Available when                                                                                                                                                                                                                                                                     |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Plan                | Pro, Max, Team, or Enterprise. On Pro and Max plans, artifacts are private to you, and no admin management applies. On Team plans, artifacts are on by default. On Enterprise plans, an Owner [enables them](#manage-artifacts-for-your-organization) in claude.ai admin settings. |
+| Authentication      | Signed in to claude.ai with `/login`. Sessions using an API key, [gateway token](/en/llm-gateway), or cloud-provider credential cannot publish.                                                                                                                                    |
+| Model provider      | Anthropic API. Not available on [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud Vertex AI](/en/google-vertex-ai), or [Microsoft Foundry](/en/microsoft-foundry).                                                                                                               |
+| Organization policy | Customer-managed encryption keys (CMEK), HIPAA, and [Zero Data Retention](/en/zero-data-retention) are not enabled for the organization.                                                                                                                                           |
+| Surface             | Claude Code CLI, or the Claude desktop app version 1.13576.0 or later. Off by default in [Agent SDK](/en/agent-sdk/overview), GitHub Action, and MCP-server contexts, and when [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/en/env-vars) is set.                                  |
 
 ## Disable artifacts
 

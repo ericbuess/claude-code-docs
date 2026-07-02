@@ -44,7 +44,7 @@ These require signing in with a claude.ai account and are not reachable with an 
 * [Remote Control](/en/remote-control)
 * [Chrome extension](/en/chrome)
 * [Computer use](/en/computer-use): Pro and Max plans
-* [Artifacts](/en/artifacts): Team and Enterprise plans
+* [Artifacts](/en/artifacts): Pro, Max, Team, and Enterprise plans
 * [Voice dictation](/en/voice-dictation)
 
 Desktop is the partial exception: Enterprise deployments can route Desktop to Vertex AI or a gateway provider via [managed settings](https://support.claude.com/en/articles/12622667-enterprise-configuration), and the [Cowork on 3P research preview](https://claude.com/docs/cowork/3p/overview) runs the Code tab on Bedrock, Vertex AI, Foundry, or a self-hosted LLM gateway. For per-plan availability of these features, see [Availability by subscription plan](#availability-by-subscription-plan).
@@ -272,7 +272,7 @@ If you authenticate through Bedrock, Vertex AI, Foundry, or an Anthropic Console
 | [Computer use](/en/computer-use)                                                        | ✓   | ✓   | ✗             | ✗                                 |
 | Dispatch ([Desktop](/en/desktop#sessions-from-dispatch))                                | ✓   | ✓   | ✗             | ✗                                 |
 | [Code Review](/en/code-review)                                                          | ✗   | ✗   | ✓             | ✓                                 |
-| [Artifacts](/en/artifacts)                                                              | ✗   | ✗   | ✓             | Admin-enabled                     |
+| [Artifacts](/en/artifacts)                                                              | ✓   | ✓   | ✓             | Admin-enabled                     |
 | [Analytics dashboard, API, and contribution metrics](/en/analytics)                     | ✗   | ✗   | ✓             | ✓                                 |
 | [Server-managed settings](/en/server-managed-settings)                                  | ✗   | ✗   | ✓             | ✓                                 |
 | [SSO](https://support.claude.com/en/articles/9266767-what-is-the-team-plan)             | ✗   | ✗   | ✓             | ✓                                 |

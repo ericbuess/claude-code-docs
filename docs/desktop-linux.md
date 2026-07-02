@@ -46,6 +46,8 @@ Install from Anthropic's apt repository so that updates arrive through your syst
 
   <Step title="Launch and sign in">
     Launch **Claude** from your application launcher, or run `claude-desktop` from a terminal, and sign in with your Anthropic account.
+
+    The Linux app signs in the same way as on macOS and Windows: with a claude.ai subscription, or through your organization's SSO. Desktop doesn't accept a Claude Console API key directly; use the [CLI](/en/quickstart) for API-key authentication. For enterprise deployments that route Desktop to Google Cloud's Agent Platform or an LLM gateway, see the [enterprise configuration guide](https://support.claude.com/en/articles/12622667-enterprise-configuration) and [network configuration](/en/network-config).
   </Step>
 </Steps>
 
