@@ -239,16 +239,27 @@ Claude Code parses the PowerShell AST and checks each command in a compound comm
 
 Read and Edit rules both follow the [gitignore](https://git-scm.com/docs/gitignore) specification with four distinct pattern types:
 
-| Pattern            | Meaning                            | Example                          | Matches                        |
-| ------------------ | ---------------------------------- | -------------------------------- | ------------------------------ |
-| `//path`           | Absolute path from filesystem root | `Read(//Users/alice/secrets/**)` | `/Users/alice/secrets/**`      |
-| `~/path`           | Path from home directory           | `Read(~/Documents/*.pdf)`        | `/Users/alice/Documents/*.pdf` |
-| `/path`            | Path relative to project root      | `Edit(/src/**/*.ts)`             | `<project root>/src/**/*.ts`   |
-| `path` or `./path` | Path relative to current directory | `Read(*.env)`                    | `<cwd>/*.env`                  |
+| Pattern            | Meaning                              | Example                          | Matches                                          |
+| ------------------ | ------------------------------------ | -------------------------------- | ------------------------------------------------ |
+| `//path`           | Absolute path from filesystem root   | `Read(//Users/alice/secrets/**)` | `/Users/alice/secrets/**`                        |
+| `~/path`           | Path from home directory             | `Read(~/Documents/*.pdf)`        | `/Users/alice/Documents/*.pdf`                   |
+| `/path`            | Path relative to the settings source | `Edit(/src/**/*.ts)`             | `<project root>/src/**/*.ts` in project settings |
+| `path` or `./path` | Path relative to current directory   | `Read(*.env)`                    | `<cwd>/*.env`                                    |
 
 <Warning>
-  A pattern like `/Users/alice/file` isn't an absolute path. It's relative to the project root. Use `//Users/alice/file` for absolute paths.
+  A pattern like `/Users/alice/file` isn't an absolute path. The single leading slash anchors at the settings source, not the filesystem root. Use `//Users/alice/file` for absolute paths.
 </Warning>
+
+A `/path` pattern anchors at the directory associated with the settings file that defines it, so the same rule matches different locations depending on where you put it:
+
+| Rule defined in                                            | `/path` resolves to        |
+| :--------------------------------------------------------- | :------------------------- |
+| Project or local settings, such as `.claude/settings.json` | `<project root>/path`      |
+| User settings at `~/.claude/settings.json`                 | `~/.claude/path`           |
+| A file passed with `--settings <file>`                     | `<directory of file>/path` |
+| CLI flags, `/permissions`, or session rules                | `<original cwd>/path`      |
+
+A deny rule such as `Read(/secrets/**)` in user settings blocks `~/.claude/secrets/**`, not a `secrets` directory in your project. To write a rule in user settings that applies inside every project, use a `//` absolute path or a `~/` home-relative path instead.
 
 On Windows, paths are normalized to POSIX form before matching. `C:\Users\alice` becomes `/c/Users/alice`, so use `//c/**/.env` to match `.env` files anywhere on that drive. To match across all drives, use `//**/.env`.
 

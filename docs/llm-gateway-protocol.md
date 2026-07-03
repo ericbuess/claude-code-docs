@@ -90,7 +90,15 @@ The exception is a non-Anthropic upstream such as Bedrock or Agent Platform, whe
 
 ## System prompt attribution block
 
-Claude Code prepends a short attribution block to the system prompt containing the client version and a fingerprint derived from the conversation. The `api.anthropic.com` endpoint strips the block before processing, so it doesn't affect first-party prompt caching; any other upstream receives it as part of the prompt. Anthropic and the cloud providers' Claude endpoints read it for attribution, so to omit it set [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/en/env-vars) rather than stripping it in the gateway.
+Claude Code prepends a short attribution block to the system prompt containing the client version and a fingerprint derived from the conversation. The `api.anthropic.com` endpoint strips the block before processing when it arrives unchanged as the first system block, so it doesn't affect first-party prompt caching. Any other upstream receives it as part of the prompt.
+
+The strip is positional, so it only works when the gateway forwards the `system` array unchanged. To keep the block out of the prompt without losing other system content:
+
+* Forward the `system` array exactly as received, keeping the block first: prepending another system block, reordering the array, or converting it to a single string defeats the strip, and the block then reaches the model and the prompt cache key.
+* Keep the block in its own array entry: the endpoint treats a merged block that starts with the attribution header as attribution in its entirety and drops everything merged into it, including the rest of the system prompt.
+* If your gateway must reshape system content, set [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/en/env-vars) so Claude Code omits the block. Anthropic and the cloud providers' Claude endpoints read the block for attribution, so omit it at the client rather than stripping or moving it in the gateway.
+
+Requests that reach the endpoint unmodified are unaffected.
 
 {/* min-version: 2.1.181 */}From Claude Code v2.1.181, the block is stable for the lifetime of a conversation when requests route through a custom base URL, so a gateway-side prompt cache keyed on the full request body works without disabling it. Before v2.1.181 the block included a per-request token; on those versions, set `CLAUDE_CODE_ATTRIBUTION_HEADER=0` if your gateway implements such a cache.
 
