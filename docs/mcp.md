@@ -969,6 +969,45 @@ The annotation applies independently of `MAX_MCP_OUTPUT_TOKENS` for text content
   If you frequently encounter output warnings with specific MCP servers you don't control, consider increasing the `MAX_MCP_OUTPUT_TOKENS` limit. You can also ask the server author to add the `anthropic/maxResultSizeChars` annotation or to paginate their responses. The annotation has no effect on tools that return image content; for those, raising `MAX_MCP_OUTPUT_TOKENS` is the only option.
 </Warning>
 
+## Tool input schemas with a root-level combinator
+
+Some MCP servers declare a tool's input schema as a JSON Schema union, with `anyOf`, `oneOf`, or `allOf` at the top level of the schema. The Claude API doesn't accept those keywords at the schema root. It does accept combinators nested inside `properties`, which Claude Code sends unchanged.
+
+As of Claude Code v2.1.195, tools with a root-level combinator stay available. Before sending the tool to the API, Claude Code flattens the schema into a single object and prepends a sentence to the tool's description that tells Claude which parameter groups belong together:
+
+* `allOf`: properties from every branch are merged, and each branch's `required` list still applies
+* `anyOf` and `oneOf`: properties from every branch are merged, and each branch's `required` list is described in the tool description instead of enforced by the schema
+
+Your server receives whichever arguments Claude chose, so keep validating the combination server-side.
+
+When Claude Code can't produce a schema the API accepts, or on a deployment that doesn't receive the remote configuration that enables the rewrite, such as an offline machine, it skips that one tool, records the reason in the server's log, and leaves the server's other tools available. Versions earlier than v2.1.195 skip every tool whose input schema has a root-level `anyOf`, `oneOf`, or `allOf`.
+
+## Require approval for a specific tool
+
+If you're building an MCP server, you can mark a tool as requiring explicit approval on every call by setting `_meta["anthropic/requiresUserInteraction"]` to `true` in the tool's `tools/list` response entry. The value must be the JSON boolean `true`; any other value is ignored.
+
+Claude Code shows that tool's permission prompt on every call, even in `acceptEdits`, `auto`, and `bypassPermissions` [permission modes](/en/permissions#permission-modes), and doesn't offer a "don't ask again" option for it. [Allow rules](/en/permissions#permission-rule-syntax) that match the tool don't skip the prompt either. In `dontAsk` mode, which never prompts, Claude Code denies the call instead.
+
+The prompt has to reach a person. In non-interactive mode with [`--permission-prompt-tool`](/en/cli-reference#cli-flags), an `allow` result from the prompt tool for a flagged tool is converted to a deny with the message `MCP tool requires user interaction; not supported via --permission-prompt-tool`. The Agent SDK's [`canUseTool` callback](/en/agent-sdk/permissions) does receive these calls and can approve them, because the SDK host is expected to show them to a user.
+
+Use this for tools whose permission prompt is itself the point, such as a consent or access-grant step where auto-approval would mean no human ever agreed. Other tools from the same server keep their normal permission behavior.
+
+The following `tools/list` entry marks one tool as always requiring approval.
+
+```json theme={null}
+{
+  "name": "grant_access",
+  "description": "Requests access to a protected resource",
+  "_meta": {
+    "anthropic/requiresUserInteraction": true
+  }
+}
+```
+
+The `anthropic/requiresUserInteraction` annotation requires Claude Code v2.1.199 or later. Earlier versions ignore it and apply the standard permission flow.
+
+When a session is connected to [Remote Control](/en/remote-control) or an SDK host, Claude Code marks the permission request as requiring user interaction, so the client shows the tool's permission prompt for you to answer instead of a one-tap approve action.
+
 ## Respond to MCP elicitation requests
 
 MCP servers can request structured input from you mid-task using elicitation. When a server needs information it can't get on its own, Claude Code displays an interactive dialog and passes your response back to the server. No configuration is required on your side: elicitation dialogs appear automatically when a server requests them.

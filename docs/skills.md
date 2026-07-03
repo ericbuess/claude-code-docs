@@ -407,6 +407,10 @@ When you run `/fix-issue 123`, Claude receives "Fix GitHub issue 123 following o
 
 If you invoke a skill with arguments but the skill doesn't include `$ARGUMENTS`, Claude Code appends `ARGUMENTS: <your input>` to the end of the skill content so Claude still sees what you typed.
 
+You can also stack several skills at the start of one message. {/* min-version: 2.1.199 */}As of v2.1.199, typing `/code-review /fix-issue 123` loads both skills and passes the trailing text `123` as `$ARGUMENTS` to each of them. In earlier versions, only the first skill loaded and received `/fix-issue 123` as literal argument text.
+
+Claude Code expands the first skill plus up to five more stacked after it. Expansion stops at the first token that isn't an inline user-invocable skill, so a skill that runs as a [forked subagent](#run-skills-in-a-subagent) or one whose arguments may themselves start with a slash command, such as `/loop`, also ends the run there; that token and everything after it become the argument text for every expanded skill.
+
 To access individual arguments by position, use `$ARGUMENTS[N]` or the shorter `$N`:
 
 ```yaml theme={null}
@@ -575,6 +579,8 @@ Each key is a skill name and each value is one of four states:
 | `"name-only"`           | Name only            | Yes         |
 | `"user-invocable-only"` | Hidden               | Yes         |
 | `"off"`                 | Hidden               | Hidden      |
+
+As of v2.1.199, `"off"` also hides the skill from the command lists advertised to [Remote Control](/en/remote-control) clients and to [Agent SDK](/en/agent-sdk/slash-commands) callers, not only the terminal `/` menu. Invoking a hidden skill by its full name still returns the `skillOverrides` error instead of running it.
 
 A skill that is absent from `skillOverrides` is treated as `"on"`. The example below collapses one skill to its name and turns another off entirely:
 

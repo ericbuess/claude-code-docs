@@ -81,7 +81,9 @@ The lead's terminal lists teammates in the agent panel below the prompt input. F
 * **Enter**: open the selected teammate's transcript and message it directly
 * **Escape**: interrupt the selected teammate's current turn
 
-{/* min-version: 2.1.181 */}As of v2.1.181, an idle teammate's row hides after 30 seconds and reappears on its next turn. The teammate stays running and addressable while hidden.
+{/* min-version: 2.1.199 */}As of v2.1.199, an idle teammate's row stays in the panel while any teammate or subagent is still working, so you can select it to review its transcript or send it more work. Once every agent in the panel is idle, idle rows hide after 30 seconds and reappear on the teammate's next turn; the teammate stays running and addressable while hidden. In v2.1.181 through v2.1.198, an idle row hid 30 seconds after its own turn ended, even while other teammates were still working; idle rows are not hidden on versions before v2.1.181.
+
+When more than three teammates are idle at once, the rows beyond the first three collapse into a single row that counts the collapsed teammates, such as `2 idle agents` when five are idle. Select it and press Enter to expand the collapsed rows, or press Esc to collapse them again. Working teammates, failed teammates, and the teammate you're viewing always keep their own rows.
 
 If you want each teammate in its own split pane, see [Choose a display mode](#choose-a-display-mode).
 
@@ -155,6 +157,10 @@ Each teammate is a full, independent Claude Code session. You can message any te
 
 * **In-process mode**: use the up and down arrow keys in the agent panel to select a teammate, then press Enter to view its session and type to send it a message. Press `x` on a selected teammate to stop it. Press Ctrl+T to toggle the task list.
 * **Split-pane mode**: click into a teammate's pane to interact with their session directly. Each teammate has a full view of their own terminal.
+
+While you're viewing an in-process teammate, plain text and [skills](/en/skills) go to that teammate, but built-in commands still run in the lead's session.
+
+A teammate's model and fast mode are fixed when it spawns, so `/model` and `/fast` only change the lead's settings. {/* min-version: 2.1.199 */}As of v2.1.199, typing either command while viewing a teammate shows a notice that the change applies to the lead; earlier versions applied it to the lead with no indication. `/effort` still applies to the viewed teammate's later turns, because teammates follow the lead's [effort level](/en/model-config#adjust-effort-level).
 
 ### Assign and claim tasks
 
@@ -259,7 +265,7 @@ Each teammate has its own context window. When spawned, a teammate loads the sam
 **How teammates share information:**
 
 * **Automatic message delivery**: when teammates send messages, they're delivered automatically to recipients. The lead doesn't need to poll for updates.
-* **Idle notifications**: when a teammate finishes and stops, they automatically notify the lead.
+* **Idle notifications**: when a teammate finishes and stops, it automatically notifies the lead. {/* min-version: 2.1.198 */}As of v2.1.198, a teammate whose turn ends on an API error notifies the lead that it failed and includes the error text, instead of appearing to finish normally.
 * **Shared task list**: all agents can see task status and claim available work.
 * **Teammate messaging**: send a message to one specific teammate by name. To reach everyone, send one message per recipient.
 
@@ -366,7 +372,7 @@ Check in on teammates' progress, redirect approaches that aren't working, and sy
 If teammates aren't appearing after you ask Claude to spawn them:
 
 * In in-process mode, teammates appear in the agent panel below the prompt input. Use the up and down arrow keys to select one, then press Enter to view it.
-* A teammate row that disappeared after sitting idle has been hidden, not stopped. Idle rows hide after 30 seconds and reappear on the teammate's next turn. Send the teammate a message by name to bring it back.
+* A teammate row that disappeared after sitting idle has been hidden, not stopped. Idle rows hide 30 seconds after the whole panel goes idle and reappear on the teammate's next turn. When more than three teammates are idle, their surplus rows collapse into a single `N idle agents` row that Enter expands. Send the teammate a message by name to bring a hidden row back.
 * Check that the task you gave Claude was complex enough to warrant a team. Claude decides whether to spawn teammates based on the task.
 * If you explicitly requested split panes, ensure tmux is installed and available in your PATH:
   ```bash theme={null}
@@ -384,6 +390,8 @@ Teammates may stop after encountering errors instead of recovering. Check their 
 
 * Give them additional instructions directly
 * Spawn a replacement teammate to continue the work
+
+{/* min-version: 2.1.198 */}As of v2.1.198, a message from the lead or another teammate wakes an in-process teammate that is waiting to retry a failed API request, so it retries immediately instead of waiting for the full retry delay.
 
 ### Lead shuts down before work is done
 
@@ -407,6 +415,7 @@ Agent teams are experimental. Current limitations to be aware of:
 * **Shutdown can be slow**: teammates finish their current request or tool call before shutting down, which can take time.
 * **One team per session**: a session has exactly one team, scoped to that session. You can't create additional named teams or share a team across sessions.
 * **No nested teams**: teammates cannot spawn their own teammates. Only the lead can manage the team.
+* **No background subagents from in-process teammates**: an in-process teammate's own subagents run in the foreground. Asking for a background one, whether with `run_in_background` or a subagent definition that sets `background: true`, returns an error, because a teammate's background work can't outlive the lead's process. Subagents launched from the main conversation follow the [background default](/en/sub-agents#run-subagents-in-foreground-or-background).
 * **Lead is fixed**: the main session is the lead for its lifetime. You can't promote a teammate to lead or transfer leadership.
 * **Permissions set at spawn**: all teammates start with the lead's permission mode. You can change individual teammate modes after spawning, but you can't set per-teammate modes at spawn time.
 * **Split panes require tmux or iTerm2**: the default in-process mode works in any terminal. Split-pane mode isn't supported in VS Code's integrated terminal, Windows Terminal, or Ghostty.

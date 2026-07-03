@@ -34,6 +34,8 @@ claude --worktree
 
 You can also ask Claude to "work in a worktree" during a session, and it will create one with the [`EnterWorktree`](/en/tools-reference) tool. Once in a worktree, Claude can switch directly to another one under `.claude/worktrees/` by calling `EnterWorktree` with the target path. The previous worktree stays on disk untouched.
 
+{/* min-version: 2.1.198 */}As of v2.1.198, entering or exiting a worktree also relocates the session transcript to that directory's project storage, the same way [`/cd`](/en/commands) does, so `/desktop` and `--resume` find the session there afterward. Worktrees created by a [`WorktreeCreate` hook](#non-git-version-control) are excluded and keep the transcript at the launch directory.
+
 Before using `--worktree` interactively in a directory for the first time, accept the workspace trust dialog by running `claude` once in that directory. If trust has not yet been accepted, `--worktree` exits with an error and prompts you to run `claude` in the directory first. Non-interactive runs with `-p` skip the [trust check](/en/security), so `claude -p --worktree` proceeds without it.
 
 <Tip>

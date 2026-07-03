@@ -28,7 +28,7 @@ remembering exact version numbers:
 
 | Model alias      | Behavior                                                                                                                                                                                                                                                                                                                           |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`default`**    | Special value that clears any model override and reverts to the recommended model for your account type. Not itself a model alias                                                                                                                                                                                                  |
+| **`default`**    | Special value that clears any model override and reverts to the recommended model for your account type, or to the [organization default model](#organization-default-model) when an admin has set one. Not itself a model alias                                                                                                   |
 | **`best`**       | Uses Fable 5 where your organization has access to it, otherwise the latest Opus model                                                                                                                                                                                                                                             |
 | **`fable`**      | Uses Claude Fable 5 for your hardest and longest-running tasks                                                                                                                                                                                                                                                                     |
 | **`sonnet`**     | Uses the latest Sonnet model for daily coding tasks                                                                                                                                                                                                                                                                                |
@@ -77,7 +77,7 @@ As of v2.1.153, `/model` saves your choice as the default for new sessions by wr
 * `Enter`: switch model and save as your default
 * `s`: switch model for this session only
 
-Typing `/model <name>` directly behaves like `Enter`. Project and managed settings still take precedence and reapply on the next launch.
+Typing `/model <name>` directly behaves like `Enter`. Project and managed settings still take precedence and reapply on the next launch. {/* min-version: 2.1.196 */}An [organization default model](#organization-default-model) that your admin has configured to override user selection also reapplies on the next launch.
 
 In v2.1.144 through v2.1.152, `/model` applied to the current session only and `d` in the picker saved a default.
 
@@ -121,12 +121,12 @@ When `availableModels` is set, the allowlist applies everywhere a user can speci
 * **Main session model**: `/model`, the `--model` flag, the `ANTHROPIC_MODEL` environment variable, the `model` setting, and the model restored when [resuming a session](#setting-your-model)
 * **Alias resolution**: {/* min-version: 2.1.176 */}the `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`, and `ANTHROPIC_DEFAULT_FABLE_MODEL` environment variables cannot redirect an allowed alias to a model outside the list
 * **Fast mode**: {/* min-version: 2.1.176 */}`/fast` refuses to toggle when it would implicitly switch to an Opus model outside the list, with the message "is not in your organization's allowed models"
-* **Subagent models**: the `model` field in [subagent](/en/sub-agents#choose-a-model) frontmatter, the Agent tool's `model` parameter, the model picker in `/agents`, and `CLAUDE_CODE_SUBAGENT_MODEL`
+* **Subagent models**: the `model` field in [subagent](/en/sub-agents#choose-a-model) frontmatter, the Agent tool's `model` parameter, `CLAUDE_CODE_SUBAGENT_MODEL`, and, on v2.1.197 and earlier, the model picker in the `/agents` wizard {/* max-version: 2.1.197 */}
 * **Skill and command models**: the `model` frontmatter in [skills and commands](/en/skills)
 * **Advisor model**: the configured [`advisorModel`](/en/advisor) setting and the `--advisor` flag
 * **Background agent model**: the model selected in the [dispatch picker](/en/agent-view)
 
-Switching to a blocked model with `/model` is rejected with an error, while a blocked `--model` flag, `ANTHROPIC_MODEL`, or `model` setting value is replaced at startup with a warning naming both the requested and substituted models, and the session starts on the default model. A blocked subagent, skill, or command override falls back to the inherited or default model rather than failing the request; a blocked `advisorModel` setting disables the advisor for the session, while a blocked `--advisor` flag value exits with an error at launch. Excluded models are hidden from the `/model` picker.
+Switching to a blocked model with `/model` is rejected with an error, while a blocked `--model` flag, `ANTHROPIC_MODEL`, or `model` setting value is replaced at startup with a warning naming both the requested and substituted models, and the session starts on the default model. A blocked subagent, skill, or command override falls back to the inherited or default model rather than failing the request; a blocked `advisorModel` setting disables the advisor for the session, while a blocked `--advisor` flag value exits with an error at launch. Excluded models are hidden from the `/model` picker. {/* min-version: 2.1.199 */}As of v2.1.199, a full model ID in the list that has no built-in picker row, such as an older version that the list pins, appears in the `/model` picker as its own labeled row. On earlier versions such an ID is selectable only by typing `/model <id>`.
 
 Automatic model changes are checked the same way: elements of a [fallback model chain](#fallback-model-chains) outside the allowlist are dropped, a plan-mode upgrade such as [`opusplan`](#opusplan-model-setting) to an excluded model is skipped so planning continues on the session's model, and an [automatic model fallback](#automatic-model-fallback) whose target is excluded does not run, so the flagged request ends with a refusal instead. Enabling [fast mode](/en/fast-mode) is refused when the model the session would run on afterward is outside the allowlist.
 
@@ -169,7 +169,7 @@ Set `enforceAvailableModels: true` alongside a non-empty `availableModels` in ma
 }
 ```
 
-When the default model for the user's account type is not in the allowlist, the Default option instead resolves to the first `availableModels` entry that names an allowed, available model, and the `/model` picker's Default row shows that model. This applies everywhere the default is reached: session startup, selecting Default in `/model`, the `"default"` keyword in [fallback model chains](#fallback-model-chains), and the fallback used when an excluded selection is dropped.
+The Default option resolves to the account-type default, or to the [organization default model](#organization-default-model) when an admin has set one. When that model is not in the allowlist, the Default option instead resolves to the first `availableModels` entry that names an allowed, available model, and the `/model` picker's Default row shows that model. This applies everywhere the default is reached: session startup, selecting Default in `/model`, the `"default"` keyword in [fallback model chains](#fallback-model-chains), and the fallback used when an excluded selection is dropped.
 
 `enforceAvailableModels` has no effect when `availableModels` is unset or empty: with `availableModels: []`, the Default model for the account type remains usable, so the setting cannot lock users out of every model. When `availableModels` is non-empty but no entry resolves to an allowed and available model, enforcement is skipped and Default resolves to the account-type default, with a warning visible only under `--debug`. Keep at least one guaranteed-available entry in the list to avoid this.
 
@@ -221,7 +221,54 @@ The Claude Console has no model restriction control. Organizations without a Cla
 
 A restricted model is hidden from the `/model` picker. Selecting it by name with `--model`, the `ANTHROPIC_MODEL` environment variable, or the `model` setting shows the notice `Model "<name>" is restricted by your organization's settings. Using <model> instead.` and the session starts on an allowed model. Typing `/model <name>` for a restricted model is rejected with `Model '<name>' is restricted by your organization's settings. Run /model to choose a different model.` and the session keeps its current model.
 
+Restrictions apply org-wide or per role:
+
+* Disabling a model at the organization level removes it for every member.
+* Role-level access grants different models to different custom roles, and a member who holds several roles can use any model that one of their roles grants.
+* Haiku models are always available and can't be disabled, so every member keeps at least one usable model.
+* An access change takes effect on new requests within about a minute; the `/model` picker reflects it the next time a session starts.
+
 Both restrictions apply together: a model is selectable only when it is permitted by `availableModels` and not restricted by the organization. Organization restrictions are delivered to sessions on the Anthropic API and [LLM gateway](/en/llm-gateway) deployments. Sessions on Bedrock, Vertex AI, Foundry, and Claude Platform on AWS do not receive them, so use `availableModels` on those providers instead.
+
+## Organization default model
+
+{/* plan-availability: feature=org-default-model plans=enterprise */}
+
+Organization admins on Claude Enterprise plans can set a default model for Claude Code members from the claude.ai admin console, for the whole organization or per custom role. When one is set, the Default option resolves to that model instead of the [account-type default](#default-model-setting). Requires Claude Code v2.1.196 or later.
+
+The Default row in the `/model` picker shows the organization default's name with the label Org default. The label reads Org default whether the admin set the default for the whole organization or for your role. A role default covers members of that custom role and takes precedence over the organization-wide default; when several of your roles set different defaults, the most capable model applies.
+
+The organization default is a starting point, not a restriction, and any other model selection takes precedence over it:
+
+* the `--model` flag and the `ANTHROPIC_MODEL` environment variable
+* a `model` value in [managed settings](/en/settings#settings-files) or supplied through `--settings`
+* a `model` value in your user, project, or local settings, including a model you save with `/model`
+
+Admins can also configure the organization default to override user selection. With override on, it takes precedence over the `model` value in user, project, and local settings, so a model you save with `/model` applies for the current session and the organization default returns on the next launch. When your selection differs, `/model` shows `Your organization's default (<model>) applies on restart`. The `--model` flag, `ANTHROPIC_MODEL`, managed settings, and `--settings` still take precedence even with override on. Override is available to a limited set of organizations; ask your Anthropic account team about availability.
+
+To limit which models members can select, use [organization model restrictions](#organization-model-restrictions) or [`availableModels`](#restrict-model-selection) instead.
+
+Claude Code reads the organization default once at startup, so a default the admin changes mid-session takes effect on the next launch.
+
+When the organization default doesn't override user selection, the first interactive launch after the admin changes it clears the `model` key from your user settings once, so the new default applies. It changes nothing else in the file, and a model you save with `/model` after that launch is kept.
+
+The organization default passes through the same restriction checks as any other Default model before it is adopted:
+
+* [`availableModels`](#restrict-model-selection) on its own never constrains the Default option, so an organization default outside the allowlist still applies. When [`enforceAvailableModels`](#enforce-the-allowlist-for-the-default-model) is also set, an organization default outside the allowlist is remapped to the first allowlist entry, like any other Default
+* an organization default that [organization model restrictions](#organization-model-restrictions) deny for your account is replaced by the newest allowed model in its family, or a lower-cost family when every version of it is restricted
+* an organization default that isn't available to your account at all, such as Fable 5 under [zero data retention](/en/zero-data-retention), is skipped, and the Default option resolves to the account-type default
+
+As of v2.1.199, when the organization default is a different model family from your account type's usual default, the `/model` picker keeps a separate row for that usual family, so you can still switch to it for a session. In v2.1.196 through v2.1.198 that row is missing from the picker.
+
+The organization default is delivered to sessions authenticated with the Anthropic API. Sessions on [LLM gateway](/en/llm-gateway) deployments, Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and Claude Platform on AWS don't receive it. To set a default on those deployments, use the `model` key in [managed settings](/en/settings#settings-files) instead.
+
+## Organization effort limits
+
+{/* plan-availability: feature=org-effort-limits plans=enterprise */}
+
+Organization admins on Claude Enterprise plans can set a maximum [effort level](#adjust-effort-level) per model for each custom role, alongside role-level [organization model restrictions](#organization-model-restrictions). Levels above the cap aren't offered in the `/effort` picker, and naming a higher level with `--effort` or `/effort` runs at the cap instead. In interactive sessions and plain-text `--print` runs, a warning names the requested and applied levels; with `json` or `stream-json` output or in background agents, the clamp applies silently. Caps are per model, so switching models can change which levels are available. When several of your roles grant the same model, the least restrictive cap applies. Requires Claude Code v2.1.195 or later.
+
+Effort limits are delivered together with [organization model restrictions](#organization-model-restrictions) and follow the same provider availability: sessions on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and Claude Platform on AWS don't receive them.
 
 ## Special model behavior
 
@@ -236,7 +283,9 @@ The behavior of `default` depends on your account type:
 
 Enterprise pay-as-you-go means an Enterprise organization billed by usage rather than by subscription seat.
 
-When managed settings [enforce the allowlist for the Default model](#enforce-the-allowlist-for-the-default-model) and the account-type default is not in `availableModels`, `default` resolves to the enforced Default instead of the account-type default above.
+When an admin has set an [organization default model](#organization-default-model), `default` resolves to that model instead of the account-type default above. Requires Claude Code v2.1.196 or later.
+
+When managed settings [enforce the allowlist for the Default model](#enforce-the-allowlist-for-the-default-model) and the account-type default is not in `availableModels`, `default` resolves to the enforced Default instead of the account-type default above. When both apply, the organization default replaces the account-type default first and enforcement then applies to it: an allowlisted organization default is kept, while one outside the list resolves to the enforced Default.
 
 Fable 5 is not the default model on any account type. Sessions use Fable 5 only after you choose it, with `/model fable`, a `model` setting, or the `best` alias where Fable 5 is available. Choosing it with `/model` saves it as the selected model in your user settings, so later sessions start on Fable 5 until you change models.
 
@@ -336,7 +385,7 @@ The available effort levels depend on the model. Models not listed here do not s
 | Sonnet 5, Opus 4.8, and Opus 4.7 | `low`, `medium`, `high`, `xhigh`, `max` |
 | Opus 4.6 and Sonnet 4.6          | `low`, `medium`, `high`, `max`          |
 
-If you set a level the active model does not support, Claude Code falls back to the highest supported level at or below the one you set. For example, `xhigh` runs as `high` on Opus 4.6.
+If you set a level the active model does not support, Claude Code falls back to the highest supported level at or below the one you set. For example, `xhigh` runs as `high` on Opus 4.6. Your organization can also cap which levels are available for a model; see [Organization effort limits](#organization-effort-limits).
 
 The default effort is `high` on Fable 5, Sonnet 5, Opus 4.8, Opus 4.6, and Sonnet 4.6, and `xhigh` on Opus 4.7.
 

@@ -72,13 +72,14 @@ The flag takes precedence over the `advisorModel` setting for that session. It e
 
 The advisor must be at least as capable as the main model. The accepted advisors for each main model are:
 
-| Main model                                      | Accepted advisors                                | Notes                                                                                                   |
-| ----------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
-| Haiku 4.5                                       | Fable, Opus, Sonnet                              | Haiku can call the advisor but cannot act as one                                                        |
-| Sonnet 4.6                                      | Fable, Opus, Sonnet                              |                                                                                                         |
-| Sonnet 5                                        | Fable, Opus, Sonnet 5                            | A Sonnet 4.6 advisor is rejected                                                                        |
-| Opus 4.6 or later                               | Fable, Opus at or above the main model's version | An Opus 4.7 main with an Opus 4.6 advisor is rejected. An Opus 4.6 main also accepts a Sonnet 5 advisor |
-| Fable 5 ({/* min-version: 2.1.170 */}v2.1.170+) | Fable                                            | An Opus or Sonnet advisor is rejected                                                                   |
+| Main model                                      | Accepted advisors         | Notes                                                                                                                                                             |
+| ----------------------------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Haiku 4.5                                       | Fable, Opus, Sonnet       | Haiku can call the advisor but cannot act as one                                                                                                                  |
+| Sonnet 4.6                                      | Fable, Opus, Sonnet       |                                                                                                                                                                   |
+| Sonnet 5                                        | Fable, Opus, Sonnet 5     | A Sonnet 4.6 advisor is rejected                                                                                                                                  |
+| Opus 4.6                                        | Fable, Opus, Sonnet 5     | Sonnet 5 and Opus 4.6 are ranked as equally capable, so an Opus 4.6 main accepts a Sonnet 5 advisor                                                               |
+| Opus 4.7 or later                               | Fable, Opus 4.7, Opus 4.8 | Opus 4.7 and Opus 4.8 are ranked as equally capable, so either accepts the other as an advisor. An Opus 4.7 main with an Opus 4.6 or Sonnet 5 advisor is rejected |
+| Fable 5 ({/* min-version: 2.1.170 */}v2.1.170+) | Fable                     | An Opus or Sonnet advisor is rejected                                                                                                                             |
 
 Fable 5 requires Claude Code v2.1.170 or later and Fable 5 access, whether it acts as the main model or the advisor.
 
@@ -148,7 +149,7 @@ To stop using the advisor and clear your saved `advisorModel`, run `/advisor off
 /advisor off
 ```
 
-To disable the advisor tool entirely, including the `/advisor` command and the `--advisor` flag, set `CLAUDE_CODE_DISABLE_ADVISOR_TOOL=1`. See [Environment variables](/en/env-vars).
+To disable the advisor tool entirely, set `CLAUDE_CODE_DISABLE_ADVISOR_TOOL=1`. The `/advisor` command becomes unavailable and any configured `advisorModel` is ignored. The `--advisor` flag is accepted but has no effect; existing scripts that pass it continue to work without errors. See [Environment variables](/en/env-vars).
 
 ## Compare with related features
 

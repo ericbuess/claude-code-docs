@@ -1070,7 +1070,7 @@ Per-model breakdowns of commits can only be approximated by joining against the 
 
 Claude Code retries failed API requests internally and emits a single `claude_code.api_error` event only after it gives up, so the event itself is the terminal signal for that request. Intermediate retry attempts are not logged as separate events.
 
-The `attempt` attribute on the event records how many attempts were made in total. `CLAUDE_CODE_MAX_RETRIES` defaults to 10 and is capped at 15. When the request exhausts all retries on a transient error, `attempt` equals one more than that effective limit: 11 by default, and never more than 16. A lower value indicates a non-retryable error such as a `400` response.
+The `attempt` attribute on the event records the total number of attempts. `CLAUDE_CODE_MAX_RETRIES` defaults to 10 and is capped at 15; {/* min-version: 2.1.199 */}as of v2.1.199, `CLAUDE_CODE_RETRY_WATCHDOG` raises the default and removes the cap. When the request exhausts all retries on a transient error, `attempt` equals one more than that effective limit: 11 by default, and never more than 16 unless the watchdog is set. A lower value indicates a non-retryable error such as a `400` response.
 
 To distinguish a session that recovered from one that stalled, group events by `session.id` and check whether a later `api_request` event exists after the error.
 

@@ -87,6 +87,8 @@ From inside a session, run `/branch` with an optional name:
 /branch try-streaming-approach
 ```
 
+If you omit the name, Claude Code names the new branch after the first prompt in the conversation. As of v2.1.198 this also applies after [compaction](/en/how-claude-code-works#when-context-fills-up); earlier versions fell back to the literal name `Branched conversation` instead of looking past the compaction summary to the original first prompt.
+
 From the command line, combine `--continue` or `--resume` with `--fork-session`:
 
 ```bash theme={null}

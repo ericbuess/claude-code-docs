@@ -12,7 +12,7 @@ For installation, authentication, and connectivity problems, see [Troubleshoot i
 
 ## See what loaded into context
 
-The `/context` command shows everything occupying the context window for the current session, broken down by category: system prompt, memory files, skills, MCP tools, and conversation messages. Run it first to confirm whether your `CLAUDE.md`, rules, or skill descriptions are present at all.
+The `/context` command shows everything occupying the context window for the current session, broken down by category: system prompt, memory files, skills, custom subagents with the source each loaded from, MCP tools, and conversation messages. Run it first to confirm whether your `CLAUDE.md`, rules, or skill descriptions are present at all.
 
 For detail on a specific category, follow up with the dedicated command:
 
@@ -20,7 +20,6 @@ For detail on a specific category, follow up with the dedicated command:
 | :--------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/memory`        | Which `CLAUDE.md` and rules files loaded, plus auto-memory entries                                                                                                                                                                       |
 | `/skills`        | Available skills from project, user, and plugin sources                                                                                                                                                                                  |
-| `/agents`        | Configured subagents and their settings                                                                                                                                                                                                  |
 | `/hooks`         | Active hook configurations                                                                                                                                                                                                               |
 | `/mcp`           | Connected MCP servers and their status                                                                                                                                                                                                   |
 | `/permissions`   | Resolved allow and deny rules currently in effect                                                                                                                                                                                        |
