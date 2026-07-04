@@ -14,13 +14,13 @@ This page walks through the deployment decisions in order. Each row links to the
   SSO, SCIM provisioning, and seat assignment are configured at the Claude account level. See the [Claude Enterprise Administrator Guide](https://claude.com/resources/tutorials/claude-enterprise-administrator-guide) and [seat assignment](https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan) for those steps.
 </Note>
 
-| Decision                                                                | What you're choosing                                | Reference                                                                                                                                |
-| :---------------------------------------------------------------------- | :-------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
-| [Choose your API provider](#choose-your-api-provider)                   | Where Claude Code authenticates and how it's billed | [Authentication](/en/authentication), [Bedrock](/en/amazon-bedrock), [Vertex AI](/en/google-vertex-ai), [Foundry](/en/microsoft-foundry) |
-| [Decide how settings reach devices](#decide-how-settings-reach-devices) | How managed policy reaches developer machines       | [Server-managed settings](/en/server-managed-settings), [Settings files](/en/settings#settings-files)                                    |
-| [Decide what to enforce](#decide-what-to-enforce)                       | Which tools, commands, and integrations are allowed | [Permissions](/en/permissions), [Sandboxing](/en/sandboxing)                                                                             |
-| [Set up usage visibility](#set-up-usage-visibility)                     | How you track spend and adoption                    | [Analytics](/en/analytics), [Monitoring](/en/monitoring-usage), [Costs](/en/costs)                                                       |
-| [Review data handling](#review-data-handling)                           | Data retention and compliance posture               | [Data usage](/en/data-usage), [Security](/en/security)                                                                                   |
+| Decision                                                                | What you're choosing                                | Reference                                                                                                                                                                     |
+| :---------------------------------------------------------------------- | :-------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Choose your API provider](#choose-your-api-provider)                   | Where Claude Code authenticates and how it's billed | [Authentication](/en/authentication), [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud's Agent Platform](/en/google-vertex-ai), [Microsoft Foundry](/en/microsoft-foundry) |
+| [Decide how settings reach devices](#decide-how-settings-reach-devices) | How managed policy reaches developer machines       | [Server-managed settings](/en/server-managed-settings), [Settings files](/en/settings#settings-files)                                                                         |
+| [Decide what to enforce](#decide-what-to-enforce)                       | Which tools, commands, and integrations are allowed | [Permissions](/en/permissions), [Sandboxing](/en/sandboxing)                                                                                                                  |
+| [Set up usage visibility](#set-up-usage-visibility)                     | How you track spend and adoption                    | [Analytics](/en/analytics), [Monitoring](/en/monitoring-usage), [Costs](/en/costs)                                                                                            |
+| [Review data handling](#review-data-handling)                           | Data retention and compliance posture               | [Data usage](/en/data-usage), [Security](/en/security)                                                                                                                        |
 
 ## Choose your API provider
 
@@ -31,10 +31,10 @@ Claude Code connects to Claude through one of several API providers. Your choice
 | Claude for Teams / Enterprise | You want Claude Code and claude.ai under one per-seat subscription with no infrastructure to run. This is the default recommendation. |
 | Claude Console                | You're API-first or want pay-as-you-go billing                                                                                        |
 | Amazon Bedrock                | You want to inherit existing AWS compliance controls and billing                                                                      |
-| Google Vertex AI              | You want to inherit existing GCP compliance controls and billing                                                                      |
+| Google Cloud's Agent Platform | You want to inherit existing GCP compliance controls and billing                                                                      |
 | Microsoft Foundry             | You want to inherit existing Azure compliance controls and billing                                                                    |
 
-Some Claude Code features require a claude.ai account. [Claude Code on the web](/en/claude-code-on-the-web), [Routines](/en/routines), [Code Review](/en/code-review), [Remote Control](/en/remote-control), and the [Chrome extension](/en/chrome) aren't available through Console API keys or cloud-provider credentials alone. If you deploy through Bedrock, Vertex, or Foundry, plan whether developers also need Claude for Teams or Enterprise seats. Each feature page lists its plan requirements.
+Some Claude Code features require a claude.ai account. [Claude Code on the web](/en/claude-code-on-the-web), [Routines](/en/routines), [Code Review](/en/code-review), [Remote Control](/en/remote-control), and the [Chrome extension](/en/chrome) aren't available through Console API keys or cloud-provider credentials alone. If you deploy through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, plan whether developers also need Claude for Teams or Enterprise seats. Each feature page lists its plan requirements.
 
 For the full provider comparison covering authentication, regions, and feature parity, see the [enterprise deployment overview](/en/third-party-integrations). Each provider's auth setup is in [Authentication](/en/authentication).
 
@@ -53,7 +53,7 @@ Managed settings define policy that takes precedence over local developer config
 
 A configured [`policyHelper`](/en/settings#compute-managed-settings-with-a-policy-helper) preempts all four sources: its output becomes the only managed configuration for the run. See [Settings precedence](/en/settings#settings-precedence).
 
-Server-managed settings reach devices at authentication time and refresh hourly during active sessions, with no endpoint infrastructure. Delivery through the claude.ai admin console requires a Claude for Teams or Enterprise plan. Deployments on Bedrock, Vertex AI, or Foundry can get the same remote delivery by running a [Claude apps gateway](/en/claude-apps-gateway), or use one of the file-based or OS-level mechanisms instead.
+Server-managed settings reach devices at authentication time and refresh hourly during active sessions, with no endpoint infrastructure. Delivery through the claude.ai admin console requires a Claude for Teams or Enterprise plan. Deployments on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry can get the same remote delivery by running a [Claude apps gateway](/en/claude-apps-gateway), or use one of the file-based or OS-level mechanisms instead.
 
 If your organization mixes providers, configure [server-managed settings](/en/server-managed-settings) for claude.ai users plus a [file-based or plist/registry fallback](/en/settings#settings-files) so other users still receive managed policy.
 
@@ -139,5 +139,5 @@ With provider and delivery mechanism chosen, move on to detailed configuration:
 * [Server-managed settings](/en/server-managed-settings): deliver managed policy from the Claude admin console
 * [Settings reference](/en/settings): every setting key, file location, and precedence rule
 * [Monorepos and large repos](/en/large-codebases): per-directory configuration patterns for organizations deploying into a monorepo
-* [Amazon Bedrock](/en/amazon-bedrock), [Google Vertex AI](/en/google-vertex-ai), [Microsoft Foundry](/en/microsoft-foundry): provider-specific deployment
+* [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud's Agent Platform](/en/google-vertex-ai), [Microsoft Foundry](/en/microsoft-foundry): provider-specific deployment
 * [Claude Enterprise Administrator Guide](https://claude.com/resources/tutorials/claude-enterprise-administrator-guide): SSO, SCIM, seat management, and rollout playbook

@@ -17,7 +17,7 @@ With the extension, you can review and edit Claude's plans before accepting them
 Before installing, make sure you have:
 
 * VS Code 1.98.0 or higher
-* An Anthropic account: any paid Claude subscription (Pro, Max, Team, or Enterprise) or a Claude Console account works, and no API key is required. You'll [sign in](/en/authentication#log-in-to-claude-code) with this account when you first open the extension. If you access Claude through a third-party provider like Amazon Bedrock or Google Vertex AI, see [Use third-party providers](#use-third-party-providers) for setup instructions.
+* An Anthropic account: any paid Claude subscription (Pro, Max, Team, or Enterprise) or a Claude Console account works, and no API key is required. You'll [sign in](/en/authentication#log-in-to-claude-code) with this account when you first open the extension. If you access Claude through a third-party provider like Amazon Bedrock or Google Cloud's Agent Platform, see [Use third-party providers](#use-third-party-providers) for setup instructions.
 
 <Tip>
   The extension bundles its own copy of the CLI (command-line interface) for the chat panel. To run `claude` in VS Code's integrated terminal, you also need the [standalone CLI install](/en/setup). See [VS Code extension vs. Claude Code CLI](#vs-code-extension-vs-claude-code-cli) for details.
@@ -420,7 +420,7 @@ Each worktree maintains independent file state while sharing git history. This p
 
 ## Use third-party providers
 
-By default, Claude Code connects directly to Anthropic's API. If your organization uses Amazon Bedrock, Google Vertex AI, or Microsoft Foundry to access Claude, configure the extension to use your provider instead:
+By default, Claude Code connects directly to Anthropic's API. If your organization uses Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry to access Claude, configure the extension to use your provider instead:
 
 <Steps>
   <Step title="Disable login prompt">
@@ -433,7 +433,7 @@ By default, Claude Code connects directly to Anthropic's API. If your organizati
     Follow the setup guide for your provider:
 
     * [Claude Code on Amazon Bedrock](/en/amazon-bedrock)
-    * [Claude Code on Google Vertex AI](/en/google-vertex-ai)
+    * [Claude Code on Google Cloud's Agent Platform](/en/google-vertex-ai)
     * [Claude Code on Microsoft Foundry](/en/microsoft-foundry)
 
     These guides cover configuring your provider in `~/.claude/settings.json`, which ensures your settings are shared between the VS Code extension and the CLI.

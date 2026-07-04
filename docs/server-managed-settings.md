@@ -227,12 +227,12 @@ Server-managed settings require a direct connection to `api.anthropic.com`, and 
 Server-managed settings are not available when using third-party model providers:
 
 * Amazon Bedrock
-* Google Vertex AI
+* Google Cloud's Agent Platform
 * Microsoft Foundry
 * [Claude Platform on AWS](/en/claude-platform-on-aws)
 * Custom API endpoints via `ANTHROPIC_BASE_URL` or third-party [LLM gateways](/en/llm-gateway)
 
-For Bedrock, Vertex AI, and Foundry deployments, a self-hosted [Claude apps gateway](/en/claude-apps-gateway) provides the equivalent remote managed-settings delivery: gateway-signed-in clients fetch managed settings from the gateway instead of `api.anthropic.com`. The failure semantics differ at startup: a gateway client that can't reach the gateway exits with an error instead of falling back to cached settings, while the hourly background refresh is fail-open on both channels.
+For Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry deployments, a self-hosted [Claude apps gateway](/en/claude-apps-gateway) provides the equivalent remote managed-settings delivery: gateway-signed-in clients fetch managed settings from the gateway instead of `api.anthropic.com`. The failure semantics differ at startup: a gateway client that can't reach the gateway exits with an error instead of falling back to cached settings, while the hourly background refresh is fail-open on both channels.
 
 ## Audit logging
 

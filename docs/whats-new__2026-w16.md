@@ -123,7 +123,7 @@
     <div><code>/fewer-permission-prompts</code> scans your transcripts for common read-only Bash and MCP calls and proposes an allowlist for <code>.claude/settings.json</code></div>
     <div>Claude can now discover and run built-in commands like <code>/init</code>, <code>/review</code>, and <code>/security-review</code> via the Skill tool</div>
     <div><code>PreCompact</code> hooks can block compaction by exiting with code 2 or returning <code>{"{"}"decision":"block"{"}"}</code></div>
-    <div><code>ENABLE\_PROMPT\_CACHING\_1H</code> opts API key, Bedrock, Vertex, and Foundry users into 1-hour prompt cache TTL</div>
+    <div><code>ENABLE\_PROMPT\_CACHING\_1H</code> opts API key, Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry users into 1-hour prompt cache TTL</div>
     <div><code>sandbox.network.deniedDomains</code> setting carves specific domains out of a broader <code>allowedDomains</code> wildcard</div>
     <div><code>/undo</code> is now an alias for <code>/rewind</code>, and <code>/proactive</code> is an alias for <code>/loop</code></div>
     <div>Hardened Bash permissions: deny rules now match through <code>env</code>/<code>sudo</code>/<code>watch</code> wrappers, and <code>Bash(find:\*)</code> allow rules no longer auto-approve <code>-exec</code> or <code>-delete</code></div>

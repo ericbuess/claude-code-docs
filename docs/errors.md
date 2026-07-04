@@ -97,7 +97,7 @@ When you see one of the errors on this page, those retries have already been exh
 
 ## Server errors
 
-These errors come from the inference provider rather than your account or request. On the Anthropic API that means Anthropic infrastructure. On Bedrock, Vertex AI, Foundry, or a custom gateway it means that provider's infrastructure.
+These errors come from the inference provider rather than your account or request. On the Anthropic API that means Anthropic infrastructure. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a custom gateway it means that provider's infrastructure.
 
 ### API Error: 500 Internal server error
 
@@ -107,7 +107,7 @@ Claude Code shows the status code and the API's error message for any 5xx respon
 API Error: 500 Internal server error. This is a server-side issue, usually temporary — try again in a moment. If it persists, check https://status.claude.com.
 ```
 
-The trailing sentence names where to check service health and varies by provider. Bedrock, Vertex AI, and Foundry configurations name that provider's service status. A custom `ANTHROPIC_BASE_URL` names the gateway host.
+The trailing sentence names where to check service health and varies by provider. Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry configurations name that provider's service status. A custom `ANTHROPIC_BASE_URL` names the gateway host.
 
 This indicates an unexpected failure inside the API. It is not caused by your prompt, settings, or account.
 
@@ -302,13 +302,13 @@ Claude Code tells these apart from your plan limit by the absence of the unified
 
 ### Request rejected (429)
 
-You have hit the rate limit configured for your API key, Amazon Bedrock project, or Google Vertex AI project.
+You have hit the rate limit configured for your API key, Amazon Bedrock project, or Google Cloud project.
 
 ```text theme={null}
 API Error: Request rejected (429) · this may be a temporary capacity issue. If it persists, check https://status.claude.com.
 ```
 
-The trailing sentence names where to check service health and varies by provider. Bedrock, Vertex AI, and Foundry configurations name that provider's service status instead of the Anthropic status page. A custom `ANTHROPIC_BASE_URL` names the gateway host.
+The trailing sentence names where to check service health and varies by provider. Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry configurations name that provider's service status instead of the Anthropic status page. A custom `ANTHROPIC_BASE_URL` names the gateway host.
 
 **What to do:**
 
@@ -464,7 +464,7 @@ The session isn't talking to the Anthropic API directly, so there is no claude.a
 Remote Control is only available when using Claude via api.anthropic.com.
 ```
 
-This appears on Amazon Bedrock, Google Vertex AI, and Microsoft Foundry. {/* min-version: 2.1.196 */}As of v2.1.196 it also appears when [`ANTHROPIC_BASE_URL`](/en/env-vars) points at a host other than `api.anthropic.com`, such as an [LLM gateway](/en/llm-gateway) or proxy, even when you sign in with claude.ai.
+This appears on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. {/* min-version: 2.1.196 */}As of v2.1.196 it also appears when [`ANTHROPIC_BASE_URL`](/en/env-vars) points at a host other than `api.anthropic.com`, such as an [LLM gateway](/en/llm-gateway) or proxy, even when you sign in with claude.ai.
 
 **What to do:**
 
@@ -524,7 +524,7 @@ Without `awsAuthRefresh` configured, the same 401 shows the generic `Please run 
 
 Claude Code can't tell which cause you hit. Amazon Bedrock reports an expired security token as a 403, but a 403 is also how it reports an authorization denial, such as an `AccessDeniedException` from a missing IAM permission or a model that isn't enabled for your account.
 
-A 401 from Amazon Bedrock also lands here rather than under [AWS credentials expired or invalid](#aws-credentials-expired-or-invalid), because Bedrock doesn't report an expired token as a 401. A 401 from that endpoint typically comes from something else in the request path, such as a corporate proxy.
+A 401 from Amazon Bedrock also lands here rather than under [AWS credentials expired or invalid](#aws-credentials-expired-or-invalid), because Amazon Bedrock doesn't report an expired token as a 401. A 401 from that endpoint typically comes from something else in the request path, such as a corporate proxy.
 
 A credential refresh fixes an expired token and can't fix the other causes, so the message offers both:
 
@@ -768,7 +768,7 @@ There's an issue with the selected model (claude-...). It may not exist or you m
 * **Agent SDK**: the error text omits the hint because the model is set programmatically. Set [`model` on `Options`](/en/agent-sdk/typescript#options) in TypeScript or [`ClaudeAgentOptions(model=...)`](/en/agent-sdk/python#claudeagentoptions) in Python, and handle the structured `model_not_found` error to surface your own retry or model picker.
 * Use an alias such as `sonnet` or `opus` instead of a full versioned ID. Aliases resolve to a maintained default so they don't go stale. See [Model configuration](/en/model-config).
 * If the wrong model keeps coming back in the CLI, a stale ID is set somewhere. Check in [priority order](/en/model-config#setting-your-model): the `--model` flag, the `ANTHROPIC_MODEL` environment variable, then the `model` field in `.claude/settings.local.json`, your project's `.claude/settings.json`, and `~/.claude/settings.json`. Remove the stale value and Claude Code falls back to your account default.
-* For Vertex AI deployments, see [Vertex AI troubleshooting](/en/google-vertex-ai#troubleshooting).
+* For Google Cloud's Agent Platform deployments, see [Google Cloud's Agent Platform troubleshooting](/en/google-vertex-ai#troubleshooting).
 
 ### Model is not a recognized model id
 
@@ -839,7 +839,7 @@ The configured extended thinking budget exceeds the maximum response length, so 
 API Error: 400 ... max_tokens must be greater than thinking.budget_tokens
 ```
 
-Claude Code adjusts these values automatically on the Anthropic API. You typically see this error on Amazon Bedrock or Google Vertex AI when [`MAX_THINKING_TOKENS`](/en/env-vars) is set higher than the provider's output limit, or when plan mode raises the thinking budget.
+Claude Code adjusts these values automatically on the Anthropic API. You typically see this error on Amazon Bedrock or Google Cloud's Agent Platform when [`MAX_THINKING_TOKENS`](/en/env-vars) is set higher than the provider's output limit, or when plan mode raises the thinking budget.
 
 **What to do:**
 
@@ -939,7 +939,7 @@ Ignoring 2 permissions.allow entries from .claude/settings.local.json: this work
 If Claude's answers seem less capable than you expect but no error is shown, the cause is usually conversation state rather than the model itself. Claude Code doesn't silently change model versions. It can switch to a fallback model in three specific cases:
 
 * A configured [`--fallback-model`](/en/cli-reference#cli-flags) takes over after an availability error, for that turn only, with a notice in the transcript
-* A Bedrock or Vertex AI startup check finds your default model unavailable
+* An Amazon Bedrock or Google Cloud's Agent Platform startup check finds your default model unavailable
 * [Automatic model fallback](/en/model-config#automatic-model-fallback) on Fable 5 moves the session to the default Opus model and shows a notice in the transcript
 
 The Model selection check below catches the second and third cases; the first appears as a transcript notice rather than a `/model` change. [Model configuration](/en/model-config) explains when each fallback applies.
@@ -965,7 +965,7 @@ For errors from components this page doesn't cover, see the relevant guide:
 
 If an error is not listed here or the suggested fix does not help:
 
-* Run `/feedback` inside Claude Code to send the transcript and a description to Anthropic. The command also offers to open a prefilled GitHub issue. On Bedrock, Vertex AI, Foundry, and other third-party providers, `/feedback` saves a local archive you can send to your Anthropic account representative instead.
+* Run `/feedback` inside Claude Code to send the transcript and a description to Anthropic. The command also offers to open a prefilled GitHub issue. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and other third-party providers, `/feedback` saves a local archive you can send to your Anthropic account representative instead.
 * Run `/doctor` to check for local configuration problems
 * Check [status.claude.com](https://status.claude.com) for active incidents
 * Search [existing issues](https://github.com/anthropics/claude-code/issues) on GitHub

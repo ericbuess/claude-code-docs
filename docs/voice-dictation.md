@@ -18,7 +18,7 @@ Dictation also works in [agent view](/en/agent-view#peek-and-reply). Hold or tap
 
 Voice dictation streams your recorded audio to Anthropic's servers for transcription. Audio is not processed locally. It needs all of the following:
 
-* **A Claude.ai account**: the speech-to-text service is only available when you authenticate with one, and is not available when Claude Code is configured to use an Anthropic API key directly, Amazon Bedrock, Google Vertex AI, or Microsoft Foundry.
+* **A Claude.ai account**: the speech-to-text service is only available when you authenticate with one, and is not available when Claude Code is configured to use an Anthropic API key directly, Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry.
 * **An organization without HIPAA compliance enabled**: `/voice` shows `Voice mode is disabled by your organization's policy` when this restriction applies.
 * **A local microphone**: voice dictation does not work in remote environments such as [Claude Code on the web](/en/claude-code-on-the-web) or SSH sessions.
 * **WSLg, if you run Claude Code in WSL**: WSLg is included with WSL2 when installed from the Microsoft Store on Windows 10 or 11. If WSLg is not available, for example on WSL1, run Claude Code in native Windows instead.

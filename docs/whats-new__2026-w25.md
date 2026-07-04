@@ -82,7 +82,7 @@
     <div>API connection drops mid-thinking now retry automatically instead of showing "Connection closed while thinking"</div>
     <div>With <code>CLAUDE\_CODE\_EXPERIMENTAL\_AGENT\_TEAMS=1</code> set, every session has one implicit team, so you spawn teammates directly with the Agent tool's <code>name</code> parameter</div>
     <div>Skills in nested <code>.claude/skills</code> directories load when working on files there; on a name clash the nested skill appears as `<dir>:<name>` so both stay available</div>
-    <div>Fixed prompt caching not reading on a custom <code>ANTHROPIC\_BASE\_URL</code> and on Foundry</div>
+    <div>Fixed prompt caching not reading on a custom <code>ANTHROPIC\_BASE\_URL</code> and on Microsoft Foundry</div>
     <div>Fixed Write and Edit producing zero-byte or truncated files on network drives and cloud-synced folders</div>
   </div>
 </div>

@@ -103,9 +103,9 @@
     <div><code>--dangerously-skip-permissions</code> now bypasses prompts for writes to <code>.claude/</code>, <code>.git/</code>, <code>.vscode/</code>, shell config files, and other previously protected paths, while catastrophic removal commands still prompt as a safety net</div>
     <div>The <code>/model</code> picker can list models from your gateway's <code>/v1/models</code> endpoint when <code>ANTHROPIC\_BASE\_URL</code> points at an Anthropic-compatible gateway; opt in with <code>CLAUDE\_CODE\_ENABLE\_GATEWAY\_MODEL\_DISCOVERY=1</code> since v2.1.129</div>
     <div>MCP servers that hit a transient error during startup now auto-retry up to 3 times instead of staying disconnected</div>
-    <div><code>ANTHROPIC\_BEDROCK\_SERVICE\_TIER</code> selects a Bedrock service tier: <code>default</code>, <code>flex</code>, or <code>priority</code></div>
+    <div><code>ANTHROPIC\_BEDROCK\_SERVICE\_TIER</code> selects an Amazon Bedrock service tier: <code>default</code>, <code>flex</code>, or <code>priority</code></div>
     <div><code>/terminal-setup</code> enables iTerm2's clipboard access setting so <code>/copy</code> works, including from tmux</div>
-    <div>Vertex AI now supports X.509 certificate-based Workload Identity Federation (mTLS ADC)</div>
+    <div>Google Cloud's Agent Platform now supports X.509 certificate-based Workload Identity Federation (mTLS ADC)</div>
     <div>Significant memory leak fixes: image-heavy sessions, <code>/usage</code> on large transcript histories, and long-running tools without progress events</div>
   </div>
 </div>

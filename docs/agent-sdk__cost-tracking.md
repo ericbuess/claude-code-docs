@@ -270,11 +270,11 @@ Track these separately from `input_tokens` to understand caching savings. In Typ
 
 ### Extend the prompt cache TTL to one hour
 
-Cache entries written by the SDK use a 5-minute TTL by default when you authenticate with an API key or run on Amazon Bedrock, Google Cloud Vertex AI, or Microsoft Foundry. If your workload runs many short sessions against the same system prompt and context with gaps longer than 5 minutes between them, the cache expires between sessions and each new session pays full input price.
+Cache entries written by the SDK use a 5-minute TTL by default when you authenticate with an API key or run on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. If your workload runs many short sessions against the same system prompt and context with gaps longer than 5 minutes between them, the cache expires between sessions and each new session pays full input price.
 
 To request a 1-hour TTL on cache writes, set the [`ENABLE_PROMPT_CACHING_1H`](/en/env-vars) environment variable. You can export it in your shell or container environment, or pass it through `options.env`.
 
-The following example enables 1-hour TTL for an agent running on Bedrock:
+The following example enables 1-hour TTL for an agent running on Amazon Bedrock:
 
 <CodeGroup>
   ```python Python theme={null}

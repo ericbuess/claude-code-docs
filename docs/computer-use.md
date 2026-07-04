@@ -202,7 +202,7 @@ The server only appears on eligible setups. Check that:
 * You're on macOS. Computer use in the CLI is not available on Linux or Windows. On Windows, use [computer use in Desktop](/en/desktop#let-claude-use-your-computer) instead.
 * You're running Claude Code v2.1.85 or later. Run `claude --version` to check.
 * You're on a Pro or Max plan. Run `/status` to confirm your subscription.
-* You're authenticated through claude.ai. Computer use is not available with third-party providers like Amazon Bedrock, Google Cloud Vertex AI, or Microsoft Foundry. If you access Claude exclusively through a third-party provider, you need a separate claude.ai account to use this feature.
+* You're authenticated through claude.ai. Computer use is not available with third-party providers like Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. If you access Claude exclusively through a third-party provider, you need a separate claude.ai account to use this feature.
 * You're in an interactive session. Computer use is not available in non-interactive mode with the `-p` flag.
 
 ## See also

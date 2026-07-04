@@ -32,7 +32,7 @@ Before using Remote Control, confirm that your environment meets these condition
 
 * **Subscription**: available on Pro, Max, Team, and Enterprise plans. API keys are not supported. On Team and Enterprise, an Owner must first enable the Remote Control toggle in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code).
 * **Authentication**: run `claude` and use `/login` to sign in through claude.ai if you haven't already.
-* **API endpoint**: not available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry. {/* min-version: 2.1.196 */}As of v2.1.196, Remote Control is also disabled when [`ANTHROPIC_BASE_URL`](/en/env-vars) points at a host other than `api.anthropic.com`, such as an [LLM gateway](/en/llm-gateway) or proxy. Unset the variable to use Remote Control.
+* **API endpoint**: not available on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. {/* min-version: 2.1.196 */}As of v2.1.196, Remote Control is also disabled when [`ANTHROPIC_BASE_URL`](/en/env-vars) points at a host other than `api.anthropic.com`, such as an [LLM gateway](/en/llm-gateway) or proxy. Unset the variable to use Remote Control.
 * **Workspace trust**: run `claude` in your project directory at least once to accept the workspace trust dialog.
 
 ## Start a Remote Control session
@@ -286,7 +286,7 @@ Claude Code could not reach the feature-flag service to check whether Remote Con
 
 ### "Remote Control is only available when using Claude via api.anthropic.com"
 
-The session isn't talking to the Anthropic API directly, so there is no claude.ai backend to pair with. This happens on Amazon Bedrock, Google Vertex AI, and Microsoft Foundry. {/* min-version: 2.1.196 */}As of v2.1.196 it also happens when [`ANTHROPIC_BASE_URL`](/en/env-vars) points at a host other than `api.anthropic.com`, such as an [LLM gateway](/en/llm-gateway) or proxy, even if you sign in with claude.ai. Unset `ANTHROPIC_BASE_URL` and restart the session to use Remote Control.
+The session isn't talking to the Anthropic API directly, so there is no claude.ai backend to pair with. This happens on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. {/* min-version: 2.1.196 */}As of v2.1.196 it also happens when [`ANTHROPIC_BASE_URL`](/en/env-vars) points at a host other than `api.anthropic.com`, such as an [LLM gateway](/en/llm-gateway) or proxy, even if you sign in with claude.ai. Unset `ANTHROPIC_BASE_URL` and restart the session to use Remote Control.
 
 ### "Remote Control is disabled by your organization's policy"
 

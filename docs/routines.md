@@ -370,7 +370,7 @@ One-off runs do not count against the daily routine cap. They draw down your reg
 
 The CLI hides `/schedule` when one of its requirements isn't met, so the command menu shows `No commands match "/schedule"` while you type, and submitting it returns `Unknown command: /schedule`. The cause is usually one of the following:
 
-* You are authenticated with a Console API key or a cloud provider such as Bedrock, Vertex, or Foundry. `/schedule` requires a claude.ai subscription login. If `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` is set in your shell, or `apiKeyHelper` is set in `settings.json`, remove it first, since these take precedence over a claude.ai login
+* You are authenticated with a Console API key or a cloud provider such as Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. `/schedule` requires a claude.ai subscription login. If `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` is set in your shell, or `apiKeyHelper` is set in `settings.json`, remove it first, since these take precedence over a claude.ai login
 * `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, or `DISABLE_GROWTHBOOK` is set in your shell environment or in the `env` block of a [`settings.json` file](/en/settings#available-settings). These disable feature-flag fetching, which `/schedule` depends on
 * You are inside a Claude Code on the web session. Manage routines from the [web UI](https://claude.ai/code/routines) instead
 * {/* min-version: 2.1.81 */}Your CLI is older than v2.1.81. Run `claude update`

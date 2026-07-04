@@ -17,7 +17,7 @@ We give you the choice to allow your data to be used to improve future Claude mo
 
 ### Development Partner Program
 
-If you explicitly opt in to methods to provide us with materials to train on, such as via the [Development Partner Program](https://support.claude.com/en/articles/11174108-about-the-development-partner-program), we may use those materials provided to train our models. An organization admin can expressly opt-in to the Development Partner Program for their organization. Note that this program is available only for Anthropic first-party API, and not for Bedrock or Vertex users.
+If you explicitly opt in to methods to provide us with materials to train on, such as via the [Development Partner Program](https://support.claude.com/en/articles/11174108-about-the-development-partner-program), we may use those materials provided to train our models. An organization admin can expressly opt-in to the Development Partner Program for their organization. Note that this program is available only for Anthropic first-party API, and not for Amazon Bedrock or Google Cloud's Agent Platform users.
 
 ### Feedback using the `/feedback` command
 
@@ -29,7 +29,7 @@ When you see the "How is Claude doing this session?" prompt in Claude Code, resp
 
 After the rating prompt, you may see a separate follow-up asking "Can Anthropic look at your session transcript to help us improve Claude Code?". This is an optional second step distinct from the rating:
 
-* **Yes**: uploads your conversation transcript, any subagent transcripts, and the raw session log file from disk to Anthropic. Known API key and token patterns are redacted before upload. Source code, file contents, and other conversation content are uploaded as-is. Shared transcripts are retained for up to 6 months. On Bedrock, Vertex AI, Foundry, and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, Yes writes the same payload to a local archive under `~/.claude/feedback-bundles/` instead of uploading; nothing leaves your machine until you forward that file.
+* **Yes**: uploads your conversation transcript, any subagent transcripts, and the raw session log file from disk to Anthropic. Known API key and token patterns are redacted before upload. Source code, file contents, and other conversation content are uploaded as-is. Shared transcripts are retained for up to 6 months. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, Yes writes the same payload to a local archive under `~/.claude/feedback-bundles/` instead of uploading; nothing leaves your machine until you forward that file.
 * **No**: declines without sending anything
 * **Don't ask again**: declines and stops this follow-up from appearing in future sessions
 
@@ -73,12 +73,12 @@ Claude Code runs locally. To interact with the LLM, Claude Code sends data over 
 
 Encryption at rest depends on your model provider:
 
-| Provider               | Encryption at rest                                                                                                                    |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Anthropic API          | Infrastructure-level disk encryption (AES-256). Enable [Zero Data Retention](/en/zero-data-retention) for no server-side persistence. |
-| Amazon Bedrock         | AES-256 with AWS-managed keys. Customer-managed keys available via AWS KMS.                                                           |
-| Google Cloud Vertex AI | Google-managed encryption keys. CMEK available.                                                                                       |
-| Microsoft Foundry      | Requests route to Anthropic infrastructure with AES-256 disk encryption.                                                              |
+| Provider                      | Encryption at rest                                                                                                                    |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Anthropic API                 | Infrastructure-level disk encryption (AES-256). Enable [Zero Data Retention](/en/zero-data-retention) for no server-side persistence. |
+| Amazon Bedrock                | AES-256 with AWS-managed keys. Customer-managed keys available via AWS KMS.                                                           |
+| Google Cloud's Agent Platform | Google-managed encryption keys. CMEK available.                                                                                       |
+| Microsoft Foundry             | Requests route to Anthropic infrastructure with AES-256 disk encryption.                                                              |
 
 Claude Code is built on Anthropic's APIs. For details on API security controls, including API logging procedures, see the compliance artifacts in the [Anthropic Trust Center](https://trust.anthropic.com).
 
@@ -101,13 +101,13 @@ Claude Code connects from users' machines to Sentry for operational error loggin
 
 When you run the `/feedback` command, a copy of your conversation history including code is sent to Anthropic. Before submitting, you choose how much history to include: the current session only, which is the default, or also other sessions from the same project over the last 24 hours or 7 days. The data is encrypted in transit via TLS and stored in Google Cloud Storage, which encrypts stored data at rest by default. Optionally, a GitHub issue is created in the public repository. To opt out, set the `DISABLE_FEEDBACK_COMMAND` environment variable to `1`.
 
-When you use a third-party provider such as Bedrock or Vertex, or have no Anthropic credentials configured, `/feedback` writes the report to a local archive under `~/.claude/feedback-bundles/` instead of sending it to Anthropic. Known API key and token patterns are redacted before the archive is written. Nothing leaves your machine until you send that file to your Anthropic account representative or attach it to a support request.
+When you use a third-party provider such as Amazon Bedrock or Google Cloud's Agent Platform, or have no Anthropic credentials configured, `/feedback` writes the report to a local archive under `~/.claude/feedback-bundles/` instead of sending it to Anthropic. Known API key and token patterns are redacted before the archive is written. Nothing leaves your machine until you send that file to your Anthropic account representative or attach it to a support request.
 
 ## Default behaviors by API provider
 
-By default, error reporting, telemetry, and bug reporting are disabled when using Bedrock, Vertex, Foundry, or Claude Platform on AWS. Session quality surveys and the WebFetch domain safety check are exceptions and run regardless of provider. On a signed-in [Claude apps gateway](/en/claude-apps-gateway) session, usage analytics, error reporting, and survey ratings to Anthropic are disabled by the gateway credential itself, with no setting to re-enable them. You can opt out of all non-essential traffic, including surveys, at once by setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. This variable does not affect the WebFetch check, which has its own opt-out. Here are the full default behaviors:
+By default, error reporting, telemetry, and bug reporting are disabled when using Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or Claude Platform on AWS. Session quality surveys and the WebFetch domain safety check are exceptions and run regardless of provider. On a signed-in [Claude apps gateway](/en/claude-apps-gateway) session, usage analytics, error reporting, and survey ratings to Anthropic are disabled by the gateway credential itself, with no setting to re-enable them. You can opt out of all non-essential traffic, including surveys, at once by setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. This variable does not affect the WebFetch check, which has its own opt-out. Here are the full default behaviors:
 
-| Service                              | Claude API                                                                             | Vertex API                                                                             | Bedrock API                                                                            | Foundry API                                                                            | Claude Platform on AWS                                                                 |
+| Service                              | Claude API                                                                             | Google Cloud's Agent Platform API                                                      | Amazon Bedrock API                                                                     | Microsoft Foundry API                                                                  | Claude Platform on AWS                                                                 |
 | ------------------------------------ | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | **Anthropic (Metrics)**              | Default on.<br />`DISABLE_TELEMETRY=1` to disable.                                     | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1.                                  | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1.                                 | Default off.<br />`CLAUDE_CODE_USE_FOUNDRY` must be 1.                                 | Default off.<br />`CLAUDE_CODE_USE_ANTHROPIC_AWS` must be 1.                           |
 | **Sentry (Errors)**                  | Default on.<br />`DISABLE_ERROR_REPORTING=1` to disable.                               | Default off.<br />`CLAUDE_CODE_USE_VERTEX` must be 1.                                  | Default off.<br />`CLAUDE_CODE_USE_BEDROCK` must be 1.                                 | Default off.<br />`CLAUDE_CODE_USE_FOUNDRY` must be 1.                                 | Default off.<br />`CLAUDE_CODE_USE_ANTHROPIC_AWS` must be 1.                           |
@@ -117,7 +117,7 @@ By default, error reporting, telemetry, and bug reporting are disabled when usin
 
 All environment variables can be checked into `settings.json` (see [settings reference](/en/settings)).
 
-As of v2.1.126, when a host platform sets `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, metrics default to on for Vertex, Bedrock, and Foundry, and follow the standard `DISABLE_TELEMETRY` opt-out. Sentry error reporting and `/feedback` reports remain off by default on those providers.
+As of v2.1.126, when a host platform sets `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, metrics default to on for Google Cloud's Agent Platform, Amazon Bedrock, and Microsoft Foundry, and follow the standard `DISABLE_TELEMETRY` opt-out. Sentry error reporting and `/feedback` reports remain off by default on those providers.
 
 ### WebFetch domain safety check
 

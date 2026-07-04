@@ -4,7 +4,7 @@
 
 # Feature availability
 
-> Compare which Claude Code features are available across Anthropic subscription plans, the Anthropic Console, Amazon Bedrock, Claude Platform on AWS, Google Vertex AI, and Microsoft Foundry.
+> Compare which Claude Code features are available across Anthropic subscription plans, the Anthropic Console, Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Microsoft Foundry.
 
 The Claude Code CLI and everything that runs locally work identically on every provider. For setup instructions per provider, see the [Enterprise deployment overview](/en/third-party-integrations). To skip straight to what is missing on your provider, see the [summary by provider](#summary-by-provider) tabs.
 
@@ -16,9 +16,9 @@ How you authenticate determines which features Claude Code can reach. For a sing
 
 * **Claude subscription**: you sign in with a claude.ai account on the Pro, Max, Team, or Enterprise plan
 * **Anthropic Console**: you authenticate with an Anthropic API key
-* **Amazon Bedrock**: you use Claude models from the Bedrock model catalog and set `CLAUDE_CODE_USE_BEDROCK`. The [Mantle endpoint](/en/amazon-bedrock#use-the-mantle-endpoint) (`CLAUDE_CODE_USE_MANTLE`) is covered by this column
+* **Amazon Bedrock**: you use Claude models from the Amazon Bedrock model catalog and set `CLAUDE_CODE_USE_BEDROCK`. The [Mantle endpoint](/en/amazon-bedrock#use-the-mantle-endpoint) (`CLAUDE_CODE_USE_MANTLE`) is covered by this column
 * **Claude Platform on AWS**: you bought Claude through AWS Marketplace but call the Anthropic API, and set `CLAUDE_CODE_USE_ANTHROPIC_AWS`
-* **Google Vertex AI**: Google-operated; you set `CLAUDE_CODE_USE_VERTEX`
+* **Google Cloud's Agent Platform**: Google-operated; you set `CLAUDE_CODE_USE_VERTEX`
 * **Microsoft Foundry**: Anthropic-operated on Azure; you set `CLAUDE_CODE_USE_FOUNDRY`
 
 ### Features available on every provider
@@ -47,7 +47,7 @@ These require signing in with a claude.ai account and are not reachable with an 
 * [Artifacts](/en/artifacts): Pro, Max, Team, and Enterprise plans
 * [Voice dictation](/en/voice-dictation)
 
-Desktop is the partial exception: Enterprise deployments can route Desktop to Vertex AI or a gateway provider via [managed settings](https://support.claude.com/en/articles/12622667-enterprise-configuration), and the [Cowork on 3P research preview](https://claude.com/docs/cowork/3p/overview) runs the Code tab on Bedrock, Vertex AI, Foundry, or a self-hosted LLM gateway. For per-plan availability of these features, see [Availability by subscription plan](#availability-by-subscription-plan).
+Desktop is the partial exception: Enterprise deployments can route Desktop to Google Cloud's Agent Platform or a gateway provider via [managed settings](https://support.claude.com/en/articles/12622667-enterprise-configuration), and the [Cowork on 3P research preview](https://claude.com/docs/cowork/3p/overview) runs the Code tab on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a self-hosted LLM gateway. For per-plan availability of these features, see [Availability by subscription plan](#availability-by-subscription-plan).
 
 ### CLI capabilities that vary by provider
 
@@ -61,7 +61,7 @@ These features work in the local CLI but depend on a server-side capability that
       <th>Anthropic Console</th>
       <th>Amazon Bedrock</th>
       <th>Claude Platform on AWS</th>
-      <th>Google Vertex AI</th>
+      <th>Google Cloud's Agent Platform</th>
       <th>Microsoft Foundry</th>
     </tr>
   </thead>
@@ -151,7 +151,7 @@ Organization-level controls and usage visibility.
       <th>Anthropic Console</th>
       <th>Amazon Bedrock</th>
       <th>Claude Platform on AWS</th>
-      <th>Google Vertex AI</th>
+      <th>Google Cloud's Agent Platform</th>
       <th>Microsoft Foundry</th>
     </tr>
   </thead>
@@ -189,9 +189,9 @@ Organization-level controls and usage visibility.
   </tbody>
 </table>
 
-<span id="fn1" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>1</sup> On Vertex AI, web search is available for Claude 4 models and later.<br />
+<span id="fn1" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>1</sup> On Google Cloud's Agent Platform, web search is available for Claude 4 models and later.<br />
 <span id="fn2" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>2</sup> Requires `CLAUDE_CODE_ENABLE_AUTO_MODE`. See [Auto mode configuration](/en/auto-mode-config).<br />
-<span id="fn3" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>3</sup> Explicit intervals such as `/loop every 2 hours` work on every provider. On Bedrock, Vertex AI, and Foundry, `/loop` cannot pick its own interval or supply the default maintenance prompt, so a prompt with no interval runs every 10 minutes, and `/loop` with no arguments shows the usage message. See [Scheduled tasks](/en/scheduled-tasks).<br />
+<span id="fn3" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>3</sup> Explicit intervals such as `/loop every 2 hours` work on every provider. On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, `/loop` cannot pick its own interval or supply the default maintenance prompt, so a prompt with no interval runs every 10 minutes, and `/loop` with no arguments shows the usage message. See [Scheduled tasks](/en/scheduled-tasks).<br />
 <span id="fn4" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>4</sup> Subject to your agreement with the cloud provider.<br />
 <span id="fn5" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>5</sup> Dashboard and API only. [Contribution metrics](/en/analytics#enable-contribution-metrics) requires a claude.ai Team or Enterprise organization.
 
@@ -201,7 +201,7 @@ Organization-level controls and usage visibility.
 
 ### Summary by provider
 
-Each tab lists what is unavailable or partially supported on that provider, with alternatives where one exists. Everything not listed works the same as on a Claude subscription. On Bedrock, Vertex AI, Foundry, and Claude Platform on AWS, error reporting and telemetry to Anthropic are off by default. See [default behaviors by API provider](/en/data-usage#default-behaviors-by-api-provider) for what traffic still reaches Anthropic and how to opt out.
+Each tab lists what is unavailable or partially supported on that provider, with alternatives where one exists. Everything not listed works the same as on a Claude subscription. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and Claude Platform on AWS, error reporting and telemetry to Anthropic are off by default. See [default behaviors by API provider](/en/data-usage#default-behaviors-by-api-provider) for what traffic still reaches Anthropic and how to opt out.
 
 <Tabs>
   <Tab title="Amazon Bedrock">
@@ -220,12 +220,12 @@ Each tab lists what is unavailable or partially supported on that provider, with
   <Tab title="Claude Platform on AWS">
     **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](/en/fast-mode), [Advisor](/en/advisor), [Channels](/en/channels), the [analytics dashboard](/en/analytics), and [server-managed settings](/en/server-managed-settings).
 
-    **Available** where Bedrock is not: [web search](/en/tools-reference#websearch-tool-behavior), [auto mode](/en/auto-mode-config) without an opt-in flag, and [`/loop` self-pacing](/en/scheduled-tasks).
+    **Available** where Amazon Bedrock is not: [web search](/en/tools-reference#websearch-tool-behavior), [auto mode](/en/auto-mode-config) without an opt-in flag, and [`/loop` self-pacing](/en/scheduled-tasks).
 
     **Alternatives:** for scheduling, use [`/loop`](/en/scheduled-tasks) instead of `/schedule`. For cloud sessions, use [GitHub Actions](/en/github-actions) or [GitLab CI/CD](/en/gitlab-ci-cd).
   </Tab>
 
-  <Tab title="Google Vertex AI">
+  <Tab title="Google Cloud's Agent Platform">
     **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](/en/fast-mode), [Advisor](/en/advisor), [Channels](/en/channels), the [analytics dashboard](/en/analytics), and [server-managed settings](/en/server-managed-settings).
 
     **Partial support:**
@@ -261,7 +261,7 @@ Each tab lists what is unavailable or partially supported on that provider, with
 
 ## Availability by subscription plan
 
-If you authenticate through Bedrock, Vertex AI, Foundry, or an Anthropic Console API key, this section does not apply to you. When you sign in with a claude.ai account, your plan determines which of the features below are available.
+If you authenticate through Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or an Anthropic Console API key, this section does not apply to you. When you sign in with a claude.ai account, your plan determines which of the features below are available.
 
 | Feature                                                                                 | Pro | Max | Team          | Enterprise                        |
 | :-------------------------------------------------------------------------------------- | :-- | :-- | :------------ | :-------------------------------- |
@@ -287,10 +287,10 @@ For pricing and the full plan comparison, see [Team plans](https://support.claud
 
 ## Model availability
 
-For which Claude models and context-window sizes are available per provider and region, see [Model configuration](/en/model-config) and the [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview). Vision, PDF input, and extended thinking are model capabilities rather than Claude Code features and work on every provider that offers the model. [Prompt caching](/en/prompt-caching) works the same way on most providers; on Bedrock, support varies by model.
+For which Claude models and context-window sizes are available per provider and region, see [Model configuration](/en/model-config) and the [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview). Vision, PDF input, and extended thinking are model capabilities rather than Claude Code features and work on every provider that offers the model. [Prompt caching](/en/prompt-caching) works the same way on most providers; on Amazon Bedrock, support varies by model.
 
 ## Related resources
 
 * [Enterprise deployment overview](/en/third-party-integrations): compare authentication, billing, and regions across providers
-* Provider setup guides: [Amazon Bedrock](/en/amazon-bedrock), [Claude Platform on AWS](/en/claude-platform-on-aws), [Google Vertex AI](/en/google-vertex-ai), [Microsoft Foundry](/en/microsoft-foundry)
+* Provider setup guides: [Amazon Bedrock](/en/amazon-bedrock), [Claude Platform on AWS](/en/claude-platform-on-aws), [Google Cloud's Agent Platform](/en/google-vertex-ai), [Microsoft Foundry](/en/microsoft-foundry)
 * [Platforms and integrations](/en/platforms): where Claude Code runs, including the CLI, Desktop, IDE extensions, web, mobile, and CI/CD

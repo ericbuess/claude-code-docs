@@ -36,7 +36,7 @@ Before using Claude Code with Chrome, you need:
 * A direct Anthropic plan (Pro, Max, Team, or Enterprise)
 
 <Note>
-  Chrome integration is not available through third-party providers like Amazon Bedrock, Google Cloud Vertex AI, or Microsoft Foundry. If you access Claude exclusively through a third-party provider, you need a separate claude.ai account to use this feature.
+  Chrome integration is not available through third-party providers like Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. If you access Claude exclusively through a third-party provider, you need a separate claude.ai account to use this feature.
 </Note>
 
 ## Get started in the CLI

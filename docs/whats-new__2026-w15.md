@@ -102,9 +102,9 @@
 
   <div className="digest-wins-grid">
     <div>Focus view: press <code>Ctrl+O</code> in flicker-free mode to collapse the view to your last prompt, a one-line tool summary with diffstats, and Claude's final response</div>
-    <div>Guided <a href="/docs/en/amazon-bedrock">Bedrock</a> and <a href="/docs/en/google-vertex-ai">Vertex AI</a> setup wizards on the login screen: pick "3rd-party platform" for step-by-step auth, region, credential check, and model pinning</div>
+    <div>Guided <a href="/docs/en/amazon-bedrock">Amazon Bedrock</a> and <a href="/docs/en/google-vertex-ai">Google Cloud's Agent Platform</a> setup wizards on the login screen: pick "3rd-party platform" for step-by-step auth, region, credential check, and model pinning</div>
     <div><code>/agents</code> gets a tabbed layout: a Running tab shows live subagents with a <code>● N running</code> count, plus Run agent and View running instance actions in the Library tab</div>
-    <div>Default effort level is now <code>high</code> for API-key, Bedrock, Vertex, Foundry, Team, and Enterprise users (control with <code>/effort</code>)</div>
+    <div>Default effort level is now <code>high</code> for API-key, Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, Team, and Enterprise users (control with <code>/effort</code>)</div>
     <div><code>/cost</code> shows a per-model and cache-hit breakdown for subscription users</div>
     <div><code>/release-notes</code> is now an interactive version picker</div>
     <div>Status line: new <code>refreshInterval</code> setting re-runs the command every N seconds, and <code>workspace.git\_worktree</code> in the JSON input</div>

@@ -681,7 +681,7 @@ Teleport checks these requirements before resuming a session. If any requirement
 
 #### `--teleport` is unavailable
 
-Teleport requires claude.ai subscription authentication. If you're authenticated via API key, Bedrock, Vertex AI, or Microsoft Foundry, run `/login` to sign in with your claude.ai account instead. If you're already signed in via claude.ai and `--teleport` is still unavailable, your organization may have disabled cloud sessions.
+Teleport requires claude.ai subscription authentication. If you're authenticated via API key, Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, run `/login` to sign in with your claude.ai account instead. If you're already signed in via claude.ai and `--teleport` is still unavailable, your organization may have disabled cloud sessions.
 
 ## Work with sessions
 
