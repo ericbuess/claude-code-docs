@@ -18,16 +18,16 @@ For repositories on github.com, see [Claude Code on the web](/en/claude-code-on-
 
 The table below shows which Claude Code features support GHES and any differences from github.com behavior.
 
-| Feature                | GHES support    | Notes                                                                                                                           |
-| :--------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| Claude Code on the web | ✅ Supported     | An Owner connects the GHES instance once; developers use `claude --remote` or [claude.ai/code](https://claude.ai/code) as usual |
-| Code Review            | ✅ Supported     | Same automated PR reviews as github.com                                                                                         |
-| Claude Security        | ✅ Supported     | Available in public beta for Enterprise plans at [claude.ai/security](https://claude.ai/security)                               |
-| Teleport sessions      | ✅ Supported     | Move sessions between web and terminal with `--teleport`                                                                        |
-| Plugin marketplaces    | ✅ Supported     | Use full git URLs instead of `owner/repo` shorthand                                                                             |
-| Contribution metrics   | ✅ Supported     | Delivered via webhooks to the [analytics dashboard](/en/analytics)                                                              |
-| GitHub Actions         | ✅ Supported     | Requires manual workflow setup; `/install-github-app` is github.com only                                                        |
-| GitHub MCP server      | ❌ Not supported | The GitHub MCP server does not work with GHES instances                                                                         |
+| Feature                | GHES support    | Notes                                                                                                                          |
+| :--------------------- | :-------------- | :----------------------------------------------------------------------------------------------------------------------------- |
+| Claude Code on the web | ✅ Supported     | An Owner connects the GHES instance once; developers use `claude --cloud` or [claude.ai/code](https://claude.ai/code) as usual |
+| Code Review            | ✅ Supported     | Same automated PR reviews as github.com                                                                                        |
+| Claude Security        | ✅ Supported     | Available in public beta for Enterprise plans at [claude.ai/security](https://claude.ai/security)                              |
+| Teleport sessions      | ✅ Supported     | Move sessions between web and terminal with `--teleport`                                                                       |
+| Plugin marketplaces    | ✅ Supported     | Use full git URLs instead of `owner/repo` shorthand                                                                            |
+| Contribution metrics   | ✅ Supported     | Delivered via webhooks to the [analytics dashboard](/en/analytics)                                                             |
+| GitHub Actions         | ✅ Supported     | Requires manual workflow setup; `/install-github-app` is github.com only                                                       |
+| GitHub MCP server      | ❌ Not supported | The GitHub MCP server does not work with GHES instances                                                                        |
 
 ## Admin setup
 
@@ -95,7 +95,7 @@ cd api-service
 Then start a web session. Claude detects the GHES host from your git remote and routes the session through your organization's configured instance:
 
 ```bash theme={null}
-claude --remote "Add retry logic to the payment webhook handler"
+claude --cloud "Add retry logic to the payment webhook handler"
 ```
 
 The session runs on Anthropic infrastructure, clones your repository from GHES, and pushes changes back to a branch. Monitor progress with `/tasks` or at [claude.ai/code](https://claude.ai/code). See [Claude Code on the web](/en/claude-code-on-the-web) for the full cloud session workflow including diff review, auto-fix, and routines.
@@ -167,7 +167,7 @@ A few features behave differently on GHES than on github.com. The [feature table
 
 ### Web session fails to clone repository
 
-If `claude --remote` fails with a clone error, verify that an Owner has completed setup for your GHES instance and that the GitHub App is installed on the repository you're working in. Ask the Owner who connected the instance to confirm that the hostname registered in Claude settings matches the hostname in your git remote.
+If `claude --cloud` fails with a clone error, verify that an Owner has completed setup for your GHES instance and that the GitHub App is installed on the repository you're working in. Ask the Owner who connected the instance to confirm that the hostname registered in Claude settings matches the hostname in your git remote.
 
 ### Marketplace add fails with a policy error
 

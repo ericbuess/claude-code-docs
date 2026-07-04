@@ -1146,7 +1146,7 @@ type SDKSystemMessage = {
 
 ### `SDKPartialAssistantMessage`
 
-Streaming partial message (only when `includePartialMessages` is true).
+Streaming partial message (only when `includePartialMessages` is true). The `parent_tool_use_id` field is always `null`: stream events are emitted for the main session only. For subagent attribution, use complete messages, which carry `parent_tool_use_id`, or enable [`forwardSubagentText`](#options) to receive subagent text and thinking as complete messages.
 
 ```typescript theme={null}
 type SDKPartialAssistantMessage = {

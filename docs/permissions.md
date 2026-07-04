@@ -40,14 +40,14 @@ Deny rules behave differently depending on whether they name a tool or scope a p
 
 Claude Code supports several permission modes that control how it approves tool calls. See [Permission modes](/en/permission-modes) for when to use each one. Set the `defaultMode` in your [settings files](/en/settings#settings-files):
 
-| Mode                | Description                                                                                                                                                            |
-| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `default`           | Standard behavior: prompts for permission on first use of each tool                                                                                                    |
-| `acceptEdits`       | Automatically accepts file edits and common filesystem commands such as `mkdir`, `touch`, `mv`, and `cp` for paths in the working directory or `additionalDirectories` |
-| `plan`              | Plan Mode: Claude reads files and runs read-only shell commands to explore but doesn't edit your source files                                                          |
-| `auto`              | Auto-approves tool calls with background safety checks that verify actions align with your request. Currently a research preview                                       |
-| `dontAsk`           | Auto-denies tools unless pre-approved via `/permissions` or `permissions.allow` rules                                                                                  |
-| `bypassPermissions` | Skips permission prompts, except those forced by explicit `ask` rules. Root and home directory removals such as `rm -rf /` also still prompt as a circuit breaker      |
+| Mode                | Description                                                                                                                                                                                                                                                                  |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`           | Standard behavior: prompts for permission on first use of each tool. {/* min-version: 2.1.200 */}Labeled Manual in the CLI and the VS Code and JetBrains extensions, and Claude Code accepts `manual` as an alias. The label and alias require Claude Code v2.1.200 or later |
+| `acceptEdits`       | Automatically accepts file edits and common filesystem commands such as `mkdir`, `touch`, `mv`, and `cp` for paths in the working directory or `additionalDirectories`                                                                                                       |
+| `plan`              | Plan Mode: Claude reads files and runs read-only shell commands to explore but doesn't edit your source files                                                                                                                                                                |
+| `auto`              | Auto-approves tool calls with background safety checks that verify actions align with your request. Currently a research preview                                                                                                                                             |
+| `dontAsk`           | Auto-denies tools unless pre-approved via `/permissions` or `permissions.allow` rules                                                                                                                                                                                        |
+| `bypassPermissions` | Skips permission prompts, except those forced by explicit `ask` rules. Root and home directory removals such as `rm -rf /` also still prompt as a circuit breaker                                                                                                            |
 
 <Warning>
   `bypassPermissions` mode skips permission prompts, including for writes to `.git`, `.config/git`, `.claude`, `.vscode`, `.idea`, `.husky`, `.cargo`, `.devcontainer`, `.yarn`, and `.mvn`. Explicit `ask` rules still force a prompt, and removals targeting the filesystem root or home directory, such as `rm -rf /` and `rm -rf ~`, still prompt as a circuit breaker against model error. Only use this mode in isolated environments like containers or VMs where Claude Code can't cause damage.
@@ -450,6 +450,28 @@ If a tool is denied at any level, no other level can allow it. For example, a ma
 The same holds across settings scopes: if user settings allow a permission and project settings deny it, the deny rule blocks it. The reverse is also true: a user-level deny blocks a project-level allow, because deny rules from any scope are evaluated before allow rules.
 
 Embedding hosts can supply additional managed policy via the SDK `managedSettings` option when [`parentSettingsBehavior`](/en/settings#settings-precedence) is set to `"merge"`; embedder values can tighten policy but not loosen it.
+
+## Project allow rules and workspace trust
+
+`permissions.allow` rules and `permissions.additionalDirectories` entries in a project's `.claude/settings.json` grant capability, so Claude Code applies them only after you accept the [workspace trust dialog](/en/security#additional-safeguards) for that workspace. Until then, Claude Code reads the rules but doesn't apply them. The trust dialog lists the allow rules and additional directories the folder would grant so you can review them before accepting. `deny` and `ask` rules aren't affected, since they only restrict.
+
+Claude Code saves trust per workspace, keyed on the git repository root or, outside a repository, the directory you started Claude Code from. When you start in your home directory, trust is held for the current session only and isn't written to disk; see the [additional safeguards](/en/security#additional-safeguards) note. Trusting a parent directory doesn't apply a nested project's allow rules.
+
+`.claude/settings.local.json` is your own file, so the workspace trust check usually doesn't apply to it. When a repository could have supplied the file, such as when it is committed to git or `.claude` is a symlink, its allow rules and additional directories go through the trust check like project settings.
+
+Allow rules and additional directories in `.claude/settings.local.json` also apply without workspace trust in two cases:
+
+* The directory you started Claude Code from isn't inside a git repository.
+* The session runs in your own configuration home: your home directory or any directory whose `.claude` subdirectory you've set as [`CLAUDE_CONFIG_DIR`](/en/env-vars).
+
+In both cases the file is one you created rather than one a repository could have supplied, and a repository-committed `.claude/settings.local.json` still requires workspace trust. Versions 2.1.196 through 2.1.199 treated the file as repository-supplied in those workspaces, ignored its allow rules, and printed a [`this workspace has not been trusted`](/en/errors#workspace-has-not-been-trusted) warning to stderr. The two exceptions above match v2.1.195 and earlier and were restored in v2.1.200.
+
+Also as of v2.1.200, a workspace whose allow rules or additional directories still aren't applied, but that never showed the trust dialog because a parent directory was already trusted, shows the dialog the next time you start Claude Code there interactively. The dialog offers two choices:
+
+* **Yes, I trust this folder**: saves trust for that workspace and applies the rules in the same session.
+* **No, continue without these permissions**: keeps working with those rules ignored. The dialog appears again in the next session.
+
+In [non-interactive mode](/en/headless) with `-p`, no dialog appears and the rules stay ignored.
 
 ## Example configurations
 

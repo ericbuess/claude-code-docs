@@ -6,7 +6,7 @@
 
 > Control whether Claude asks before editing files or running commands. Cycle modes with Shift+Tab in the CLI or use the mode selector in VS Code, Desktop, and claude.ai.
 
-When Claude wants to edit a file, run a shell command, or make a network request, it pauses and asks you to approve the action. Permission modes control how often that pause happens. The mode you pick shapes the flow of a session: default mode has you review each action as it comes, while looser modes let Claude work in longer uninterrupted stretches and report back when done. Pick more oversight for sensitive work, or fewer interruptions when you trust the direction.
+When Claude wants to edit a file, run a shell command, or make a network request, it pauses and asks you to approve the action. Permission modes control how often that pause happens. The mode you pick shapes the flow of a session: Manual mode has you review each action as it comes, while looser modes let Claude work in longer uninterrupted stretches and report back when done. Pick more oversight for sensitive work, or fewer interruptions when you trust the direction.
 
 ## Available modes
 
@@ -14,12 +14,14 @@ Each mode makes a different tradeoff between convenience and oversight. The tabl
 
 | Mode                                                                | What runs without asking                                                               | Best for                                |
 | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------- | :-------------------------------------- |
-| `default`                                                           | Reads only                                                                             | Getting started, sensitive work         |
+| `default`                                                           | Reads only. Labeled **Manual** in the CLI and IDE extensions                           | Getting started, sensitive work         |
 | [`acceptEdits`](#auto-approve-file-edits-with-acceptedits-mode)     | Reads, file edits, and common filesystem commands (`mkdir`, `touch`, `mv`, `cp`, etc.) | Iterating on code you're reviewing      |
 | [`plan`](#analyze-before-you-edit-with-plan-mode)                   | Reads only                                                                             | Exploring a codebase before changing it |
 | [`auto`](#eliminate-prompts-with-auto-mode)                         | Everything, with background safety checks                                              | Long tasks, reducing prompt fatigue     |
 | [`dontAsk`](#allow-only-pre-approved-tools-with-dontask-mode)       | Only pre-approved tools                                                                | Locked-down CI and scripts              |
 | [`bypassPermissions`](#skip-all-checks-with-bypasspermissions-mode) | Everything                                                                             | Isolated containers and VMs only        |
+
+The mode that reviews every action is named **Manual** in the CLI, in `claude --help`, and in the VS Code and JetBrains extensions. Its config value is `default`, which is what hooks and SDK integrations use. The CLI accepts `manual` as an alias wherever you type the value, for example `claude --permission-mode manual` or `"defaultMode": "manual"`. The Manual label and the `manual` alias require Claude Code v2.1.200 or later.
 
 In every mode except `bypassPermissions`, writes to [protected paths](#protected-paths) are never auto-approved, guarding repository state and Claude's own configuration against accidental corruption.
 
@@ -67,7 +69,7 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
 
     | UI label           | Mode                |
     | :----------------- | :------------------ |
-    | Ask before edits   | `default`           |
+    | Manual             | `default`           |
     | Edit automatically | `acceptEdits`       |
     | Plan mode          | `plan`              |
     | Auto mode          | `auto`              |
@@ -110,7 +112,9 @@ In addition to file edits, `acceptEdits` mode auto-approves common filesystem Ba
 
 When the [PowerShell tool](/en/tools-reference#powershell-tool) is enabled, `acceptEdits` mode also auto-approves `Set-Content`, `Add-Content`, `Clear-Content`, and `Remove-Item` on in-scope paths, along with their common aliases. The same scope and protected-path rules apply.
 
-Use `acceptEdits` when you want to review changes in your editor or via `git diff` after the fact rather than approving each edit inline. Press `Shift+Tab` once from default mode to enter it, or start with it directly:
+Use `acceptEdits` when you want to review changes in your editor or via `git diff` after the fact rather than approving each edit inline.
+
+Press `Shift+Tab` once from Manual mode to enter it, or start with it directly:
 
 ```bash theme={null}
 claude --permission-mode acceptEdits
@@ -118,7 +122,7 @@ claude --permission-mode acceptEdits
 
 ## Analyze before you edit with plan mode
 
-Plan mode tells Claude to research and propose changes without making them. Claude reads files, runs shell commands to explore, and writes a plan, but does not edit your source. Permission prompts still apply the same as default mode.
+Plan mode tells Claude to research and propose changes without making them. Claude reads files, runs shell commands to explore, and writes a plan, but does not edit your source. Permission prompts still apply as they do in Manual mode.
 
 Enter plan mode by pressing `Shift+Tab` or prefixing a single prompt with `/plan`. You can also start in plan mode from the CLI:
 
@@ -207,7 +211,7 @@ If you connect through an [LLM gateway](/en/llm-gateway) configured with `ANTHRO
 
 ### What the classifier blocks by default
 
-The classifier trusts your working directory and your repo's configured remotes. Everything else is treated as external until you [configure trusted infrastructure](/en/auto-mode-config).
+The classifier trusts your working directory and the remotes that were configured for it when the session started. {/* min-version: 2.1.200 */}A remote added or repointed during the session with `git remote add` or `git remote set-url` isn't trusted, and everything else is treated as external until you [configure trusted infrastructure](/en/auto-mode-config). Before v2.1.200, remotes added mid-session were also trusted.
 
 **Blocked by default**:
 
@@ -245,8 +249,17 @@ Claude Code v2.1.195 and later block more categories by default. Several depend 
 Claude Code v2.1.198 and later also block these by default:
 
 * Deleting files in `/tmp`, `$TMPDIR`, or another shared scratch or cache directory by wildcard, glob, or age filter rather than by a specific named path
-* Including sensitive details in content sent, uploaded, published, or written to other people or shared systems, when your own message didn't authorize those details for that recipient
+* Including sensitive details in content sent, uploaded, published, or written to other people or shared systems, when your own message didn't authorize those details for that recipient. {/* min-version: 2.1.200 */}PR and issue bodies, commit messages, and comments count as this kind of outbound content when the repository is outside the trust boundary or public, including your organization's own public repositories; internal file paths, code names, live API response data such as emails or account identifiers, and infrastructure identifiers count as sensitive details. The PR, issue, and commit-message scoping requires Claude Code v2.1.200 or later
 * Sending keystrokes to Claude Code's own tmux pane to drive its own interface, which the classifier treats as Claude changing its own permissions or oversight
+
+Claude Code v2.1.200 and later also block these by default:
+
+* Commenting out, deleting, or force-passing a test or assertion that guards security behavior, such as auth, access control, input validation, or sandboxing
+* Deleting or tearing down a stateful resource Claude didn't create in the session, when no more specific deletion rule applies and you didn't name that resource
+* Repointing an API base URL, proxy endpoint, webhook receiver, or registry mirror at a third-party host that doesn't fit the task, including in example files like `.env.example`
+* Changing where pushes go with `git remote set-url` or `git remote add`, unless you named the new remote
+* Pushing secrets to a repository known to be public, or pushing other sensitive or confidential material there that isn't part of that repository's own work. When a repository's visibility isn't established, the classifier doesn't block on that alone; it judges the content against the other rules instead
+* Opening a pull request against a different repository or organization, forking with `gh repo fork`, or pushing to a third-party repository, unless you named that external target
 
 **Allowed by default**:
 

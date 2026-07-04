@@ -212,7 +212,9 @@ A subagent's context window starts fresh, with no parent conversation, but isn't
   The parent receives the subagent's final message verbatim as the Agent tool result, but may summarize it in its own response. To preserve subagent output verbatim in the user-facing response, include an instruction to do so in the prompt or `systemPrompt` option you pass to the main `query()` call.
 </Note>
 
-{/* min-version: 2.1.199 */}As of Claude Code v2.1.199, an API error that ends the subagent early, such as a rate limit, is never delivered as its result. If the subagent already produced output, the Agent tool returns that partial output with a note that the subagent didn't finish; otherwise the tool result is an error message, `Agent terminated early due to an API error`, followed by the error detail. See [API errors in subagents](/en/sub-agents#api-errors-in-subagents) for the foreground and background behavior.
+{/* min-version: 2.1.199 */}An API error that ends the subagent early, such as a rate limit, is never delivered as its result. If a rate limit, overload, or server error cuts off a foreground subagent that already produced text output, the Agent tool returns that partial output with a note that the subagent didn't finish. {/* min-version: 2.1.200 */}A subagent that produced nothing, or whose only output was tool calls with no text, fails with an error message, `Agent terminated early due to an API error`, followed by the error detail. See [API errors in subagents](/en/sub-agents#api-errors-in-subagents) for the foreground and background behavior.
+
+This partial-output handling requires Claude Code v2.1.199 or later. In v2.1.199, a rate limit, overload, or server error left the tool-calls-only shape with an empty partial result containing only the cutoff note.
 
 ## Invoke subagents
 

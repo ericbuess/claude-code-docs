@@ -198,7 +198,7 @@ The following example renames the service and attaches deployment metadata. Thes
 
 The CLI attaches [identity attributes](/en/monitoring-usage#standard-attributes) to every event based on the credential it uses to call Anthropic. When you build an application that serves many end users from one deployment, these attributes identify your service's credential, not the end user on whose behalf the agent acted.
 
-To make tool calls and MCP activity attributable to your application's end users, inject end-user identity as resource attributes on each `query()` call. Percent-encode values before interpolating them, since `OTEL_RESOURCE_ATTRIBUTES` [reserves commas, spaces, and equals signs](/en/monitoring-usage#multi-team-organization-support). The following example attaches the requesting user and tenant to every span and event from one request:
+To make tool calls and MCP activity attributable to your application's end users, inject end-user identity as resource attributes on each `query()` call. Percent-encode values before interpolating them, since `OTEL_RESOURCE_ATTRIBUTES` [reserves commas, spaces, and equals signs](/en/monitoring-usage#multi-team-organization-support). The following example attaches the requesting user and tenant to every span and event from one request. It assumes a `request` object from your web framework carrying the user and tenant IDs:
 
 <CodeGroup>
   ```python Python theme={null}
@@ -223,7 +223,7 @@ To make tool calls and MCP activity attributable to your application's end users
   ```
 </CodeGroup>
 
-With end-user identity attached, the `tool_decision`, `tool_result`, `mcp_server_connection`, and `permission_mode_changed` events become a per-user audit trail you can forward to a Security Information and Event Management (SIEM) platform. See [Audit security events](/en/monitoring-usage#audit-security-events) in the Monitoring reference for the full list of security-relevant events and the attributes each one carries.
+With end-user identity attached, the `tool_decision`, `tool_result`, `mcp_server_connection`, and `permission_mode_changed` events, which export as log records named with a `claude_code.` prefix, become a per-user audit trail you can forward to a Security Information and Event Management (SIEM) platform. See [Audit security events](/en/monitoring-usage#audit-security-events) in the Monitoring reference for the full list of security-relevant events and the attributes each one carries.
 
 ## Control sensitive data in exports
 

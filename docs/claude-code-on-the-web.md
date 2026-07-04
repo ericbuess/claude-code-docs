@@ -4,7 +4,7 @@
 
 # Use Claude Code on the web
 
-> Configure cloud environments, setup scripts, network access, and Docker in Anthropic's sandbox. Move sessions between web and terminal with `--remote` and `--teleport`.
+> Configure cloud environments, setup scripts, network access, and Docker in Anthropic's sandbox. Move sessions between web and terminal with `--cloud` and `--teleport`.
 
 <Note>
   Claude Code on the web is in research preview for Pro, Max, and Team users, and for Enterprise users with premium seats or Chat + Claude Code seats.
@@ -22,7 +22,7 @@ This page covers:
 * [The cloud environment](#the-cloud-environment): what config carries over, what tools are installed, and how to configure environments
 * [Setup scripts](#setup-scripts) and dependency management
 * [Network access](#network-access): levels, proxies, and the default allowlist
-* [Move tasks between web and terminal](#move-tasks-between-web-and-terminal) with `--remote` and `--teleport`
+* [Move tasks between web and terminal](#move-tasks-between-web-and-terminal) with `--cloud` and `--teleport`
 * [Work with sessions](#work-with-sessions): reviewing, sharing, archiving, deleting
 * [Auto-fix pull requests](#auto-fix-pull-requests): respond automatically to CI failures and review comments
 * [Security and isolation](#security-and-isolation): how sessions are isolated
@@ -163,12 +163,12 @@ Tasks requiring significantly more memory, such as large build jobs or memory-in
 
 Environments control [network access](#network-access), environment variables, and the [setup script](#setup-scripts) that runs before a session starts. See [Installed tools](#installed-tools) for what's available without any configuration. You can manage environments from the web interface or the terminal:
 
-| Action                         | How                                                                                                                                                                                                                      |
-| :----------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Add an environment             | Select the current environment to open the selector, then select **Add environment**. The dialog includes name, network access level, environment variables, and setup script.                                           |
-| Edit an environment            | Select the cloud icon showing the current environment's name to open the selector, hover over an environment, and click the settings icon that appears on the right.                                                     |
-| Archive an environment         | Open the environment for editing and select **Archive**. Archived environments are hidden from the selector but existing sessions keep running.                                                                          |
-| Set the default for `--remote` | Run `/remote-env` in your terminal. If you have a single environment, this command shows your current configuration. `/remote-env` only selects the default; add, edit, and archive environments from the web interface. |
+| Action                                             | How                                                                                                                                                                                                                      |
+| :------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Add an environment                                 | Select the current environment to open the selector, then select **Add environment**. The dialog includes name, network access level, environment variables, and setup script.                                           |
+| Edit an environment                                | Select the cloud icon showing the current environment's name to open the selector, hover over an environment, and click the settings icon that appears on the right.                                                     |
+| Archive an environment                             | Open the environment for editing and select **Archive**. Archived environments are hidden from the selector but existing sessions keep running.                                                                          |
+| Set the default environment for CLI cloud sessions | Run `/remote-env` in your terminal. If you have a single environment, this command shows your current configuration. `/remote-env` only selects the default; add, edit, and archive environments from the web interface. |
 
 Environment variables use `.env` format with one `KEY=value` pair per line. Don't wrap values in quotes, since quotes are stored as part of the value. This example defines three variables:
 
@@ -589,23 +589,23 @@ When using **Trusted** network access, the following domains are allowed by defa
 These workflows require the [Claude Code CLI](/en/quickstart) signed in to the same claude.ai account. You can start new cloud sessions from your terminal, or pull cloud sessions into your terminal to continue locally. Cloud sessions persist even if you close your laptop, and you can monitor them from anywhere including the Claude mobile app.
 
 <Note>
-  From the CLI, session handoff is one-way: you can pull cloud sessions into your terminal with `--teleport`, but you can't push an existing terminal session to the web. The `--remote` flag creates a new cloud session for your current repository. The [Desktop app](/en/desktop#continue-in-another-surface) provides a Continue in menu that can send a local session to the web.
+  From the CLI, session handoff is one-way: you can pull cloud sessions into your terminal with `--teleport`, but you can't push an existing terminal session to the web. The `--cloud` flag creates a new cloud session for your current repository. The [Desktop app](/en/desktop#continue-in-another-surface) provides a Continue in menu that can send a local session to the web.
 </Note>
 
 ### From terminal to web
 
-Start a cloud session from the command line with the `--remote` flag:
+Start a cloud session from the command line with the `--cloud` flag:
 
 ```bash theme={null}
-claude --remote "Fix the authentication bug in src/auth/login.ts"
+claude --cloud "Fix the authentication bug in src/auth/login.ts"
 ```
 
-This creates a new cloud session on claude.ai. The session clones your current directory's GitHub remote at your current branch, so push first if you have local commits, since the VM clones from GitHub rather than your machine. `--remote` works with a single repository at a time. The task runs in the cloud while you continue working locally.
+This creates a new cloud session on claude.ai. The session clones your current directory's GitHub remote at your current branch, so push first if you have local commits, since the VM clones from GitHub rather than your machine. `--cloud` works with a single repository at a time. The task runs in the cloud while you continue working locally. The older `--remote` spelling still works as a deprecated alias for `--cloud`.
 
 {/* min-version: 2.1.195 */}As of v2.1.195, the CLI shows a live checklist of setup steps, such as cloning the repository and running your [setup script](#setup-scripts), while the cloud container starts. Messages you type while the container is provisioning are queued and sent once the session is ready.
 
 <Note>
-  `--remote` creates cloud sessions. `--remote-control` is unrelated: it exposes a local CLI session for monitoring from the web. See [Remote Control](/en/remote-control).
+  `--cloud` creates cloud sessions. `--remote-control` is unrelated: it exposes a local CLI session for monitoring from the web. See [Remote Control](/en/remote-control).
 </Note>
 
 Use `/tasks` in the Claude Code CLI to check progress, or open the session on claude.ai or the Claude mobile app to interact directly. From there you can steer Claude, provide feedback, or answer questions just like any other conversation.
@@ -621,31 +621,31 @@ claude --permission-mode plan
 In plan mode, Claude reads files, runs commands to explore, and proposes a plan without editing source code. Once you're satisfied, save the plan to the repo, commit, and push so the cloud VM can clone it. Then start a cloud session for autonomous execution:
 
 ```bash theme={null}
-claude --remote "Execute the migration plan in docs/migration-plan.md"
+claude --cloud "Execute the migration plan in docs/migration-plan.md"
 ```
 
 This pattern gives you control over the strategy while letting Claude execute autonomously in the cloud.
 
 **Plan in the cloud with ultraplan**: to draft and review the plan itself in a web session, use [ultraplan](/en/ultraplan). Claude generates the plan on Claude Code on the web while you keep working, then you comment on sections in your browser and choose to execute remotely or send the plan back to your terminal.
 
-**Run tasks in parallel**: each `--remote` command creates its own cloud session that runs independently. You can start multiple tasks and they'll all run simultaneously in separate sessions:
+**Run tasks in parallel**: each `--cloud` command creates its own cloud session that runs independently. You can start multiple tasks and they'll all run simultaneously in separate sessions:
 
 ```bash theme={null}
-claude --remote "Fix the flaky test in auth.spec.ts"
-claude --remote "Update the API documentation"
-claude --remote "Refactor the logger to use structured output"
+claude --cloud "Fix the flaky test in auth.spec.ts"
+claude --cloud "Update the API documentation"
+claude --cloud "Refactor the logger to use structured output"
 ```
 
 Monitor all sessions with `/tasks` in the Claude Code CLI. When a session completes, you can create a PR from the web interface or [teleport](#from-web-to-terminal) the session to your terminal to continue working.
 
 #### Send local repositories without GitHub
 
-When you run `claude --remote` from a repository that isn't connected to GitHub, Claude Code bundles your local repository and uploads it directly to the cloud session. The bundle includes your full repository history across all branches, plus any uncommitted changes to tracked files.
+When you run `claude --cloud` from a repository that isn't connected to GitHub, Claude Code bundles your local repository and uploads it directly to the cloud session. The bundle includes your full repository history across all branches, plus any uncommitted changes to tracked files.
 
 This fallback activates automatically when GitHub access isn't available. To force it even when GitHub is connected, set `CCR_FORCE_BUNDLE=1`:
 
 ```bash theme={null}
-CCR_FORCE_BUNDLE=1 claude --remote "Run the test suite and fix any failures"
+CCR_FORCE_BUNDLE=1 claude --cloud "Run the test suite and fix any failures"
 ```
 
 Bundled repositories must meet these limits:

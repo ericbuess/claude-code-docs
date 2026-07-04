@@ -152,7 +152,9 @@ Without mouse mode, wheel events go to tmux instead of Claude Code. Keyboard scr
 
 Fullscreen rendering is incompatible with iTerm2's tmux integration mode, which is the mode you enter with `tmux -CC`. In integration mode, iTerm2 renders each tmux pane as a native split rather than letting tmux draw to the terminal. The alternate screen buffer and mouse tracking don't work correctly there: the mouse wheel does nothing, and double-click can corrupt the terminal state. Don't enable fullscreen rendering in `tmux -CC` sessions. Regular tmux inside iTerm2, without `-CC`, works fine.
 
-tmux doesn't support synchronized output, so you may see more flicker during redraws than when running Claude Code directly in your terminal. If the flicker is noticeable, especially over SSH, run Claude Code in its own terminal tab outside tmux.
+Not every tmux version applies synchronized output from applications, so you may see more flicker during redraws under tmux than when running Claude Code directly in your terminal. If the flicker is noticeable, especially over SSH, upgrade to the newest tmux or run Claude Code in its own terminal tab outside tmux. Check your tmux version with `tmux -V`.
+
+{/* min-version: 2.1.200 */}Claude Code turns on synchronized output automatically when it detects tmux 3.4 or later from the `TERM_PROGRAM_VERSION` variable, and falls back to querying the terminal directly for synchronized output support when the version can't be determined. Whether redraws actually become atomic depends on your tmux version honoring synchronized output; if you still see flicker under tmux 3.4 or later, upgrade to the newest tmux. This detection requires Claude Code v2.1.200 or later.
 
 ## Keep native text selection
 
