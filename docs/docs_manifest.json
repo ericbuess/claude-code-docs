@@ -406,8 +406,8 @@
     "desktop-linux.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-linux",
       "original_md_url": "https://code.claude.com/docs/en/desktop-linux.md",
-      "hash": "a3bbbd9211e5c40edf780cafd3f2eabc32cceb747cc02fd6595060963f23e6fd",
-      "last_updated": "2026-07-02T19:08:14.285333"
+      "hash": "686132e59cf116bcdb9ed5b2cf5df20128bada3c2adc9b0a980517bc0b3b96d3",
+      "last_updated": "2026-07-06T19:31:26.182012"
     },
     "desktop-quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-quickstart",
@@ -784,8 +784,8 @@
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
       "original_md_url": "https://code.claude.com/docs/en/setup.md",
-      "hash": "d1bf46079eb333010aad1ece02a402e643ceeeabfdeaca08a58a9ea30d606943",
-      "last_updated": "2026-07-04T06:09:58.781867"
+      "hash": "5eae7c9c4d8d878db74629125cf749a0430eec439da1ccce9c305ef4c1cbdc1b",
+      "last_updated": "2026-07-06T19:32:33.013490"
     },
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
@@ -981,8 +981,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-07-06T17:35:20.366390",
-    "fetch_duration_seconds": 161.351056,
+    "last_fetch_completed": "2026-07-06T19:33:03.434322",
+    "fetch_duration_seconds": 174.922646,
     "total_pages_discovered": 163,
     "pages_fetched_successfully": 164,
     "pages_failed": 0,
@@ -992,7 +992,7 @@
     "total_files": 163,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-07-06T17:35:20.366424",
+  "last_updated": "2026-07-06T19:33:03.434350",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
