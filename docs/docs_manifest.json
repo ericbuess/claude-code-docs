@@ -484,8 +484,8 @@
     "github-enterprise-server.md": {
       "original_url": "https://code.claude.com/docs/en/github-enterprise-server",
       "original_md_url": "https://code.claude.com/docs/en/github-enterprise-server.md",
-      "hash": "bef08b60b066c929349644197a8d4f8786b6314c6e07087051b19b9c4703e141",
-      "last_updated": "2026-07-04T01:48:50.593580"
+      "hash": "0dd975d28f4433bd64124919b43062244f0fecf8e6413479304acf6bd1d8ba7e",
+      "last_updated": "2026-07-06T17:33:53.850583"
     },
     "gitlab-ci-cd.md": {
       "original_url": "https://code.claude.com/docs/en/gitlab-ci-cd",
@@ -981,8 +981,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-07-06T12:36:47.364088",
-    "fetch_duration_seconds": 177.655881,
+    "last_fetch_completed": "2026-07-06T17:35:20.366390",
+    "fetch_duration_seconds": 161.351056,
     "total_pages_discovered": 163,
     "pages_fetched_successfully": 164,
     "pages_failed": 0,
@@ -992,7 +992,7 @@
     "total_files": 163,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-07-06T12:36:47.364121",
+  "last_updated": "2026-07-06T17:35:20.366424",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
