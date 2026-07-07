@@ -100,14 +100,14 @@ Permission modes provide global control over how Claude uses tools. You can set 
 
 The SDK supports these permission modes:
 
-| Mode                     | Description                  | Tool behavior                                                                                                                                 |
-| :----------------------- | :--------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-| `default`                | Standard permission behavior | No auto-approvals; unmatched tools trigger your `canUseTool` callback                                                                         |
-| `dontAsk`                | Deny instead of prompting    | Anything not pre-approved by `allowed_tools` or rules is denied; `canUseTool` is never called                                                 |
-| `acceptEdits`            | Auto-accept file edits       | File edits and [filesystem operations](#accept-edits-mode-acceptedits) (`mkdir`, `rm`, `mv`, etc.) are automatically approved                 |
-| `bypassPermissions`      | Bypass permission checks     | Tools run without permission prompts, unless an explicit [`ask` rule](#how-permissions-are-evaluated) matches (use with caution)              |
-| `plan`                   | Planning mode                | Claude explores and plans without editing your source files; file edits are never auto-approved and prompt through your `canUseTool` callback |
-| `auto` (TypeScript only) | Model-classified approvals   | A model classifier approves or denies each tool call. See [Auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode) for availability |
+| Mode                | Description                  | Tool behavior                                                                                                                                 |
+| :------------------ | :--------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`           | Standard permission behavior | No auto-approvals; unmatched tools trigger your `canUseTool` callback                                                                         |
+| `dontAsk`           | Deny instead of prompting    | Anything not pre-approved by `allowed_tools` or rules is denied; `canUseTool` is never called                                                 |
+| `acceptEdits`       | Auto-accept file edits       | File edits and [filesystem operations](#accept-edits-mode-acceptedits) (`mkdir`, `rm`, `mv`, etc.) are automatically approved                 |
+| `bypassPermissions` | Bypass permission checks     | Tools run without permission prompts, unless an explicit [`ask` rule](#how-permissions-are-evaluated) matches (use with caution)              |
+| `plan`              | Planning mode                | Claude explores and plans without editing your source files; file edits are never auto-approved and prompt through your `canUseTool` callback |
+| `auto`              | Model-classified approvals   | A model classifier approves or denies each tool call. See [Auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode) for availability |
 
 <Warning>
   **Subagent inheritance:** When the parent uses `bypassPermissions`, `acceptEdits`, or `auto`, all subagents inherit that mode and it cannot be overridden per subagent. Subagents may have different system prompts and less constrained behavior than your main agent, so inheriting `bypassPermissions` grants them full, autonomous system access. An explicit [`ask` rule](#how-permissions-are-evaluated) still forces a prompt.

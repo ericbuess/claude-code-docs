@@ -200,11 +200,12 @@ An MCP server can also push messages directly into your session so Claude can re
 <Tip>
   Tips:
 
-  * Use the `--scope` flag to specify where the configuration is stored:
+  * Use the `-s` or `--scope` flag to specify where the configuration is stored:
     * `local` (default): available only to you in the current project. Older versions called this scope `project`
     * `project`: shared with everyone in the project via the `.mcp.json` file
     * `user`: available to you across all projects. Older versions called this scope `global`
-  * Set environment variables with `--env` flags (for example, `--env KEY=value`)
+  * Set environment variables with `-e` or `--env` flags (for example, `-e KEY=value`)
+  * The `--transport` and `--header` flags also accept `-t` and `-H` short forms
   * Configure MCP server startup timeout using the `MCP_TIMEOUT` environment variable (for example, `MCP_TIMEOUT=10000 claude` sets a 10-second timeout)
   * Set a per-server tool execution timeout by adding a `timeout` field in milliseconds to that server's `.mcp.json` entry, for example `"timeout": 600000` for ten minutes. This overrides the `MCP_TOOL_TIMEOUT` environment variable for that server only
   * Claude Code displays a warning when MCP tool output exceeds 10,000 tokens. To increase this limit, set the `MAX_MCP_OUTPUT_TOKENS` environment variable (for example, `MAX_MCP_OUTPUT_TOKENS=50000`)
@@ -284,7 +285,9 @@ Tools from a plugin-bundled MCP server include both the plugin name and the serv
 mcp__plugin_my-plugin_database-tools__query
 ```
 
-Use this full name when referencing the tool in [permission rules](/en/permissions), a skill's `allowed-tools` list, or a [subagent's `tools` field](/en/sub-agents#available-tools).
+Use this full name when referencing the tool in [permission rules](/en/permissions), a skill's `allowed-tools` list, a [subagent's `tools` field](/en/sub-agents#available-tools), or a [hook matcher](/en/hooks#match-mcp-tools). A hook matcher written against the bare server key, such as `mcp__database-tools__.*`, never fires for a plugin-bundled server.
+
+The server itself registers under the scoped name `plugin:<plugin-name>:<server-name>`, such as `plugin:my-plugin:database-tools`. Use that name where a configured server name is expected, such as an [`mcp_tool` hook's `server` field](/en/hooks#mcp-tool-hook-fields).
 
 **Benefits of plugin MCP servers**:
 

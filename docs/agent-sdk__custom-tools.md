@@ -19,7 +19,7 @@ This guide covers how to define tools with input schemas and handlers, bundle th
 | Pre-approve a tool                           | Add to your allowed tools. See [Configure allowed tools](#configure-allowed-tools).                                                                                                                           |
 | Remove a built-in tool from Claude's context | Pass a `tools` array listing only the built-ins you want. See [Configure allowed tools](#configure-allowed-tools).                                                                                            |
 | Let Claude call tools in parallel            | Set `readOnlyHint: true` on tools with no side effects. See [Add tool annotations](#add-tool-annotations).                                                                                                    |
-| Handle errors without stopping the loop      | Return `isError: true` instead of throwing. See [Handle errors](#handle-errors).                                                                                                                              |
+| Control the error message Claude reads       | Return `isError: true` to compose the message instead of surfacing the raw exception. See [Handle errors](#handle-errors).                                                                                    |
 | Return images or files                       | Use `image` or `resource` blocks in the content array. See [Return images and resources](#return-images-and-resources).                                                                                       |
 | Return a machine-readable JSON result        | Set `structuredContent` on the result. See [Return structured data](#return-structured-data).                                                                                                                 |
 | Scale to many tools                          | Use [tool search](/en/agent-sdk/tool-search) to load tools on demand.                                                                                                                                         |
@@ -336,14 +336,16 @@ To remove a built-in entirely, omit it from `tools` or list its bare name in `di
 
 ## Handle errors
 
-How your handler reports errors determines whether the agent loop continues or stops:
+A handler error doesn't stop the agent loop. The SDK's in-process MCP server catches uncaught exceptions and returns them as error results, so how you report an error determines what Claude reads, not whether the query fails:
 
-| What happens                                                                             | Result                                                                                                           |
-| :--------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| Handler throws an uncaught exception                                                     | Agent loop stops. Claude never sees the error, and the `query` call fails.                                       |
-| Handler catches the error and returns `isError: true` (TS) / `"is_error": True` (Python) | Agent loop continues. Claude sees the error as data and can retry, try a different tool, or explain the failure. |
+| What happens                                                                             | Result                                                                                                                                    |
+| :--------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| Handler throws an uncaught exception                                                     | The MCP server converts it to an error result carrying the raw exception message. Claude sees that message, and the agent loop continues. |
+| Handler catches the error and returns `isError: true` (TS) / `"is_error": True` (Python) | Claude sees the message you compose. You can add context the raw exception lacks, such as which request failed or what to try instead.    |
 
-The example below catches two kinds of failures inside the handler instead of letting them throw. A non-200 HTTP status is caught from the response and returned as an error result. A network error or invalid JSON is caught by the surrounding `try/except` (Python) or `try/catch` (TypeScript) and also returned as an error result. In both cases the handler returns normally and the agent loop continues.
+In both cases Claude can retry, try a different tool, or explain the failure. Catch errors yourself when the raw exception message isn't enough for Claude to act on.
+
+The example below catches two kinds of failures inside the handler and composes the error message Claude reads. A non-200 HTTP status is caught from the response and returned as an error result. A network error or invalid JSON is caught by the surrounding `try/except` (Python) or `try/catch` (TypeScript) and also returned as an error result. In both cases Claude receives a message that describes the failure instead of a bare exception string.
 
 <CodeGroup>
   ```python Python theme={null}
@@ -377,8 +379,8 @@ The example below catches two kinds of failures inside the handler instead of le
               data = response.json()
               return {"content": [{"type": "text", "text": json.dumps(data, indent=2)}]}
       except Exception as e:
-          # Catching here keeps the agent loop alive. An uncaught exception
-          # would end the whole query() call.
+          # Composes the message Claude reads. An uncaught exception would
+          # reach Claude as the raw str(e) with no context.
           return {
               "content": [{"type": "text", "text": f"Failed to fetch data: {str(e)}"}],
               "is_error": True,
@@ -420,8 +422,8 @@ The example below catches two kinds of failures inside the handler instead of le
           ]
         };
       } catch (error) {
-        // Catching here keeps the agent loop alive. An uncaught throw
-        // would end the whole query() call.
+        // Composes the message Claude reads. An uncaught throw would
+        // reach Claude as the raw error message with no context.
         return {
           content: [
             {
@@ -439,7 +441,7 @@ The example below catches two kinds of failures inside the handler instead of le
 
 ## Return images and resources
 
-The `content` array in a tool result accepts `text`, `image`, `audio`, `resource`, and `resource_link` blocks. You can mix them in the same response. Audio blocks are saved to disk and Claude receives a text block with the saved file path. Resource link blocks are converted to a text block containing the link's name, URI, and description.
+The `content` array in a tool result accepts `text`, `image`, `audio`, `resource`, and `resource_link` blocks. You can mix them in the same response. In TypeScript, audio blocks are saved to disk and Claude receives a text block with the saved file path; in Python, the SDK drops audio blocks from the tool result and logs a warning. Resource link blocks are converted to a text block containing the link's name, URI, and description.
 
 ### Images
 
@@ -508,13 +510,13 @@ An image block carries the image bytes inline, encoded as base64. There is no UR
 
 A resource block embeds a piece of content identified by a URI. The URI is a label for Claude to reference; the actual content rides in the block's `text` or `blob` field. Use this when your tool produces something that makes sense to address by name later, such as a generated file or a record from an external system.
 
-| Field               | Type         | Notes                                                       |
-| :------------------ | :----------- | :---------------------------------------------------------- |
-| `type`              | `"resource"` |                                                             |
-| `resource.uri`      | `string`     | Identifier for the content. Any URI scheme                  |
-| `resource.text`     | `string`     | The content, if it's text. Provide this or `blob`, not both |
-| `resource.blob`     | `string`     | The content base64-encoded, if it's binary                  |
-| `resource.mimeType` | `string`     | Optional                                                    |
+| Field               | Type         | Notes                                                                                                                                      |
+| :------------------ | :----------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`              | `"resource"` |                                                                                                                                            |
+| `resource.uri`      | `string`     | Identifier for the content. Any URI scheme                                                                                                 |
+| `resource.text`     | `string`     | The content, if it's text. Provide this or `blob`, not both                                                                                |
+| `resource.blob`     | `string`     | The content base64-encoded, if it's binary. TypeScript only: the Python SDK drops binary resources from the tool result and logs a warning |
+| `resource.mimeType` | `string`     | Optional                                                                                                                                   |
 
 This example shows a resource block returned from inside a tool handler. The URI `file:///tmp/report.md` is a label that Claude can reference later; the SDK does not read from that path.
 

@@ -151,6 +151,8 @@ Plugin hooks respond to the same lifecycle events as [user-defined hooks](/en/ho
 * `prompt`: evaluate a prompt with an LLM (uses `$ARGUMENTS` placeholder for context)
 * `agent`: run an agentic verifier with tools for complex verification tasks
 
+Hooks that target the plugin's own [bundled MCP server](#mcp-servers) must use its scoped names. Tool matchers and `if` fields take the scoped tool name `mcp__plugin_<plugin-name>_<server-name>__<tool>`, and an `mcp_tool` hook's `server` field takes `plugin:<plugin-name>:<server-name>`. A matcher written against the bare server key never fires. See [Match MCP tools](/en/hooks#match-mcp-tools) and [Plugin-provided MCP servers](/en/mcp#plugin-provided-mcp-servers).
+
 ### MCP servers
 
 Plugins can bundle Model Context Protocol (MCP) servers to connect Claude Code with external tools and services.
