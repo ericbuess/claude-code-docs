@@ -68,6 +68,7 @@ Match the message you see in your terminal to a section below.
 | `API Error: 400 due to tool use concurrency issues`                                           | [Request errors](#tool-use-or-thinking-block-mismatch)                                                                        |
 | `Claude Code is unable to respond to this request, which appears to violate our Usage Policy` | [Request errors](#usage-policy-refusal)                                                                                       |
 | `Installation was killed before it could finish (exit code 137)`                              | [Installation errors](#installation-was-killed-before-it-could-finish)                                                        |
+| `The connection dropped while downloading the update`                                         | [Installation errors](#the-connection-dropped-while-downloading-the-update)                                                   |
 | `--bg and --print conflict`                                                                   | [Command-line errors](#command-line-errors)                                                                                   |
 | `Ignoring N permissions.allow entries from ... this workspace has not been trusted`           | [Configuration warnings](#workspace-has-not-been-trusted)                                                                     |
 | Responses seem lower quality than usual                                                       | [Response quality](#responses-seem-lower-quality-than-usual)                                                                  |
@@ -881,7 +882,7 @@ The check evaluates the full conversation, not only your latest prompt, so sendi
 
 ## Installation errors
 
-These errors come from the [install script](/en/setup#install-claude-code) before Claude Code has started. For `command not found`, PATH, permission, and TLS problems during setup, see [Troubleshoot installation and login](/en/troubleshoot-install).
+These errors appear while installing or updating Claude Code, from the [install script](/en/setup#install-claude-code), `claude install`, or `claude update`. For `command not found`, PATH, permission, and TLS problems during setup, see [Troubleshoot installation and login](/en/troubleshoot-install).
 
 ### Installation was killed before it could finish
 
@@ -898,6 +899,25 @@ For any other fatal signal, and for exit code 137 on macOS, the script prints `I
 
 * Stop other processes to free memory, then rerun the installer
 * Add swap space or move to a larger instance. See [Install killed on low-memory Linux servers](/en/troubleshoot-install#install-killed-on-low-memory-linux-servers) for the swap-file commands.
+
+### The connection dropped while downloading the update
+
+The connection to the download server closed while `claude install`, `claude update`, or the [automatic updater](/en/setup#auto-updates) was fetching the Claude Code binary, and the retries didn't recover. Claude Code retries the download when the connection drops, the transfer stalls, or the downloaded file fails its checksum, up to three attempts in total. A completed HTTP error, such as a 404, isn't retried because the server already answered. {/* min-version: 2.1.202 */}Before v2.1.202, a single dropped connection failed the download immediately with the bare error `aborted` instead of retrying.
+
+```text theme={null}
+The connection dropped while downloading the update (attempt 3/3: aborted). Check your network — proxies sometimes cut off large downloads.
+```
+
+The text in parentheses names which attempt failed and the underlying network error. `claude update` precedes the message with `Error: Failed to install native update` on stderr.
+
+The usual cause is a proxy or gateway that closes a long transfer before it finishes. The Claude Code binary is a large download, so a proxy connection limit that never affects normal API traffic can still interrupt it.
+
+**What to do:**
+
+* Run `claude update` again. On an otherwise healthy network, the download usually succeeds on the next run.
+* If your network requires a proxy, set `HTTPS_PROXY` before running the installer or `claude update`. See [Check network connectivity](/en/troubleshoot-install#check-network-connectivity).
+* If a corporate proxy keeps closing the transfer, ask your network team to allow the full download from `downloads.claude.ai`. See [Network access requirements](/en/network-config#network-access-requirements).
+* Run `claude doctor` from your shell for installation diagnostics
 
 ## Command-line errors
 
@@ -954,6 +974,8 @@ Check these first:
 When a response goes wrong, rewinding usually works better than replying with corrections. Press Esc twice or run `/rewind` to step back to before the bad turn, then rephrase the prompt with more specifics. Correcting in-thread keeps the wrong attempt in context, which can anchor later answers to it. See [Checkpointing](/en/checkpointing).
 
 If quality still seems off after checking the above, run `/feedback` and describe what you expected versus what you got. Feedback submitted this way includes the conversation transcript, which is the fastest way for Anthropic to diagnose a real regression. See [Report an error](#report-an-error) if `/feedback` is unavailable in your environment.
+
+{/* min-version: 2.1.201 */}If Sonnet 5 refuses a request and cites a suspected prompt injection on Claude Code v2.1.200 or earlier, run `claude update` to pick up the v2.1.201 fix.
 
 ## Report an error
 
