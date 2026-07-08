@@ -134,6 +134,8 @@ Ultracode is a Claude Code setting that combines `xhigh` [reasoning effort](/en/
 /effort ultracode
 ```
 
+To start a session with ultracode already on, launch with `claude --effort ultracode`. Requires Claude Code v2.1.203 or later.
+
 With ultracode on, Claude decides when a task warrants a workflow. A single request can turn into several workflows in a row: one to understand the code, one to make the change, and one to verify it. This applies to every task in the session, so each request uses more tokens and takes longer than at lower effort levels.
 
 Ultracode lasts for the current session and resets when you start a new one. Drop back with `/effort high` when you return to routine work. It's available on models that support `xhigh` [effort](/en/model-config#adjust-effort-level); on other models the `/effort` menu doesn't offer it.
@@ -301,6 +303,13 @@ Resume works within the same Claude Code session. If you exit Claude Code while 
 A workflow spawns many agents, so a single run can use meaningfully more tokens than working through the same task in conversation. Runs count toward your plan's usage and rate limits like any other session.
 
 To gauge the spend before committing to a large task, run the workflow on a small slice first: one directory instead of the whole repo, or a narrow question instead of a broad one. The `/workflows` view shows each agent's token usage as the run progresses, and you can stop the run there at any time without losing completed work. The runtime's [agent caps](#behavior-and-limits) limit how many agents a single run can spawn, which bounds the cost of a runaway script. To keep every run smaller by default, [set a size guideline](#set-a-size-guideline) in `/config`.
+
+Claude Code also flags a run that grows unusually large. When a workflow schedules more than 25 agents, or its projected token total passes 1.5 million, its progress line in the task panel below the input box shows a `Large workflow` warning. The warning points you to [`/workflows`](#watch-the-run), where you can stop the run. Requires Claude Code v2.1.203 or later.
+
+The warning is advisory: it doesn't pause or limit the run. Two settings change when you see it:
+
+* If you [set a size guideline](#set-a-size-guideline), the guideline's agent count replaces the 25-agent threshold.
+* Sessions with [ultracode](#let-claude-decide-with-ultracode) on don't show the warning, because turning ultracode on already opts you in to large runs.
 
 Every agent in a workflow uses your session's model unless the script routes a stage to a different one. To control the model cost:
 

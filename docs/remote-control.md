@@ -143,7 +143,7 @@ If you don't have the Claude app yet, use the `/mobile` command inside Claude Co
 
 ### Enable Remote Control for all sessions
 
-Remote Control only activates when you explicitly run `claude remote-control`, `claude --remote-control`, or `/remote-control`, unless auto-connect is turned on. To enable it automatically for every interactive session, run `/config` inside Claude Code and set **Enable Remote Control for all sessions** to `true`. Set it to `false` to never auto-connect, or leave it unset to follow your organization's default. In the Desktop app, you can also toggle this from **Settings → Claude Code → Enable remote control by default**.
+Remote Control only activates when you explicitly run `claude remote-control`, `claude --remote-control`, or `/remote-control`, unless auto-connect is turned on. To enable it automatically for every interactive session, run `/config` inside Claude Code and set **Enable Remote Control for all sessions** to `true`. Set it to `false` to never auto-connect, or leave it unset to follow your organization's default. In the Desktop app, you can also toggle this from **Settings → Claude Code → Enable remote control by default**. {/* min-version: 2.1.203 */}In the [VS Code extension](/en/vs-code#use-the-prompt-box), the same toggle appears as **Enable Remote Control for all sessions** in the command menu's Settings section; requires Claude Code v2.1.203 or later.
 
 With this setting on, each interactive Claude Code process registers one remote session. If you run multiple instances, each one gets its own environment and session. To run multiple concurrent sessions from a single process, use [server mode](#start-a-remote-control-session) instead.
 
