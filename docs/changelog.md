@@ -8,6 +8,10 @@
 
 # Changelog
 
+## 2.1.204
+
+- Fixed hook events not streaming during SessionStart hooks in headless sessions, which could cause remote workers to be idle-reaped mid-hook
+
 ## 2.1.203
 
 - Added a warning when your login is about to expire, so you can re-authenticate before background sessions are interrupted
