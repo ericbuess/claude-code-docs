@@ -77,7 +77,7 @@ As of v2.1.153, `/model` saves your choice as the default for new sessions by wr
 * `Enter`: switch model and save as your default
 * `s`: switch model for this session only
 
-Typing `/model <name>` directly behaves like `Enter`. Project and managed settings still take precedence and reapply on the next launch. {/* min-version: 2.1.196 */}An [organization default model](#organization-default-model) that your admin has configured to override user selection also reapplies on the next launch.
+Typing `/model <name>` directly behaves like `Enter`. {/* min-version: 2.1.205 */}A model set with `/model` in [non-interactive mode](/en/headless), with the `-p` flag, applies to the current session only and isn't saved as your default. Project and managed settings still take precedence and reapply on the next launch. {/* min-version: 2.1.196 */}An [organization default model](#organization-default-model) that your admin has configured to override user selection also reapplies on the next launch.
 
 In v2.1.144 through v2.1.152, `/model` applied to the current session only and `d` in the picker saved a default.
 
@@ -137,9 +137,26 @@ When `availableModels` is set, the allowlist applies everywhere a user can speci
 * **Advisor model**: the configured [`advisorModel`](/en/advisor) setting and the `--advisor` flag
 * **Background agent model**: the model selected in the [dispatch picker](/en/agent-view)
 
-Switching to a blocked model with `/model` is rejected with an error, while a blocked `--model` flag, `ANTHROPIC_MODEL`, or `model` setting value is replaced at startup with a warning naming both the requested and substituted models, and the session starts on the default model. A blocked subagent, skill, or command override falls back to the inherited or default model rather than failing the request; a blocked `advisorModel` setting disables the advisor for the session, while a blocked `--advisor` flag value exits with an error at launch. Excluded models are hidden from the `/model` picker. {/* min-version: 2.1.199 */}As of v2.1.199, a full model ID in the list that has no built-in picker row, such as an older version that the list pins, appears in the `/model` picker as its own labeled row. On earlier versions such an ID is selectable only by typing `/model <id>`.
+On the Anthropic API and [Claude Platform on AWS](/en/claude-platform-on-aws), a model family alias, `opus`, `sonnet`, `haiku`, or `fable`, resolves to the newest version of its family that the allowlist permits. When the allowlist pins specific versions, for example `["sonnet", "claude-opus-4-6"]`, both `/model opus` and `--model opus` select Claude Opus 4.6, the newest permitted Opus, and show a notice naming both the requested and substituted models. Before v2.1.205, an alias whose newest released version was outside the list was rejected or replaced like any other blocked selection, even when the list permitted an older version.
 
-Automatic model changes are checked the same way: elements of a [fallback model chain](#fallback-model-chains) outside the allowlist are dropped, a plan-mode upgrade such as [`opusplan`](#opusplan-model-setting) to an excluded model is skipped so planning continues on the session's model, and an [automatic model fallback](#automatic-model-fallback) whose target is excluded does not run, so the flagged request ends with a refusal instead. Enabling [fast mode](/en/fast-mode) is refused when the model the session would run on afterward is outside the allowlist.
+Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and [Mantle](/en/amazon-bedrock#use-the-mantle-endpoint) use provider-specific deployment IDs rather than Anthropic model IDs, so a blocked alias there follows the rejection and replacement behavior below.
+
+Claude Code handles any other blocked selection according to where the model was set:
+
+* **`/model`**: the switch is rejected with an error
+* **`--model` flag, `ANTHROPIC_MODEL`, or the `model` setting**: the value is replaced at startup with a warning naming both the requested and substituted models, and the session starts on the default model
+* **Subagent, skill, or command override**: the override falls back to the inherited or default model rather than failing the request
+* **`advisorModel` setting**: the advisor is disabled for the session
+* **`--advisor` flag**: Claude Code exits with an error at launch
+
+Excluded models are hidden from the `/model` picker. {/* min-version: 2.1.199 */}A full model ID in the list that has no built-in picker row, such as an older version that the list pins, appears in the `/model` picker as its own labeled row. Before v2.1.199, such an ID was selectable only by typing `/model <id>`.
+
+Model changes that Claude Code makes on your behalf are checked the same way:
+
+* **[Fallback model chains](#fallback-model-chains)**: elements outside the allowlist are dropped
+* **Plan-mode upgrades**: on the Anthropic API and Claude Platform on AWS, an upgrade such as [`opusplan`](#opusplan-model-setting) to an excluded model uses the newest permitted version of the upgrade family. On providers with provider-specific model IDs, and when no version is permitted, the upgrade is skipped and planning continues on the session's model
+* **[Automatic model fallback](#automatic-model-fallback)**: a fallback whose target is excluded does not run, so the flagged request ends with a refusal instead
+* **[Fast mode](/en/fast-mode)**: enabling fast mode is refused when the model the session would run on afterward is outside the allowlist
 
 ```json theme={null}
 {
@@ -232,6 +249,8 @@ The Claude Console has no model restriction control. Organizations without a Cla
 
 A restricted model is hidden from the `/model` picker. Selecting it by name with `--model`, the `ANTHROPIC_MODEL` environment variable, or the `model` setting shows the notice `Model "<name>" is restricted by your organization's settings. Using <model> instead.` and the session starts on an allowed model. Typing `/model <name>` for a restricted model is rejected with `Model '<name>' is restricted by your organization's settings. Run /model to choose a different model.` and the session keeps its current model.
 
+A [model family alias](#restrict-model-selection) such as `opus` resolves to the newest version of its family that the organization permits, with the same substitution notice. `/model <alias>` is rejected only when every version of its family is restricted; an alias set with `--model`, `ANTHROPIC_MODEL`, or the `model` setting is still replaced at startup in that case. Before v2.1.205, a family alias was substituted or rejected based on its newest released version alone, even when an older version was allowed.
+
 Restrictions apply org-wide or per role:
 
 * Disabling a model at the organization level removes it for every member.
@@ -311,7 +330,9 @@ This pairs Opus's reasoning for planning with Sonnet's efficiency for execution.
 
 The plan-mode Opus phase uses the same context window as the `opus` model setting. On subscription tiers where Opus is [automatically upgraded to 1M context](#extended-context), `opusplan` receives the upgrade in plan mode as well. To force 1M context for both phases when you are not on an auto-upgrade tier, set the model to `opusplan[1m]`.
 
-When [`availableModels`](#restrict-model-selection) excludes Opus, `opusplan` stays on Sonnet in plan mode instead of switching. Similarly, a Haiku session that would normally upgrade to Sonnet in plan mode stays on Haiku when Sonnet is excluded.
+When [`availableModels`](#restrict-model-selection) excludes the newest Opus but permits an older version, for example `["sonnet", "claude-opus-4-6"]`, `opusplan` uses the newest permitted Opus for planning and stays on Sonnet only when every Opus is excluded. A Haiku session that would normally upgrade to Sonnet in plan mode likewise uses the newest permitted Sonnet, and stays on Haiku only when every Sonnet is excluded. Before v2.1.205, plan mode stayed on the session's model whenever the newest version of the upgrade family was excluded, even when the allowlist permitted an older one.
+
+The substitution of an older permitted version applies on the Anthropic API and [Claude Platform on AWS](/en/claude-platform-on-aws). On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and Mantle, whose deployments use provider-specific model IDs, plan mode stays on the session's model whenever the upgrade model is excluded.
 
 For a hybrid approach where Claude decides mid-task when to consult a second model rather than switching at the plan boundary, see the [advisor tool](/en/advisor).
 
@@ -400,9 +421,9 @@ If you set a level the active model does not support, Claude Code falls back to 
 
 The default effort is `high` on Fable 5, Sonnet 5, Opus 4.8, Opus 4.6, and Sonnet 4.6, and `xhigh` on Opus 4.7.
 
-When you first run Fable 5, Opus 4.8, or Opus 4.7, Claude Code applies that model's default effort even if you previously set a different level for another model: `high` on Fable 5 and Opus 4.8, and `xhigh` on Opus 4.7. Run `/effort` again to choose a different level after switching.
+When you first run Fable 5, Opus 4.8, or Opus 4.7, Claude Code applies that model's default effort even if you previously set a different level for another model: `high` on Fable 5 and Opus 4.8, and `xhigh` on Opus 4.7. Run `/effort` again to choose a different level after switching. That default is held across sessions until you make an explicit effort choice, such as running `/effort` in an interactive session or launching with `--effort`.
 
-`low`, `medium`, `high`, and `xhigh` persist across sessions. `max` provides the deepest reasoning with no constraint on token spending and applies to the current session only, except when set through the `CLAUDE_CODE_EFFORT_LEVEL` environment variable.
+`low`, `medium`, `high`, and `xhigh` persist across sessions when you set them in an interactive session. {/* min-version: 2.1.205 */}A level set with `/effort` in [non-interactive mode](/en/headless), with the `-p` flag, applies to the current session only and isn't saved as your default. A non-interactive `/effort` also can't release the model-default hold above: on Fable 5, Opus 4.8, and Opus 4.7 it reports `Not applied` and the session stays at the model's default effort, so pass `--effort` at launch instead. `max` provides the deepest reasoning with no constraint on token spending and applies to the current session only, except when set through the `CLAUDE_CODE_EFFORT_LEVEL` environment variable.
 
 The `/effort` menu also offers `ultracode`. Ultracode is a Claude Code setting rather than a model effort level: it sends `xhigh` to the model and additionally has Claude orchestrate [dynamic workflows](/en/workflows) for substantive tasks. It applies to the current session only.
 

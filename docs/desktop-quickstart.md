@@ -85,7 +85,7 @@ With the Code tab open, choose a project and give Claude something to do.
   </Step>
 
   <Step title="Review and accept changes">
-    By default, the Code tab starts in [Ask permissions mode](/en/desktop#choose-a-permission-mode), where Claude proposes changes and waits for your approval before applying them. You'll see:
+    By default, the Code tab starts in [Manual mode](/en/desktop#choose-a-permission-mode), where Claude proposes changes and waits for your approval before applying them. You'll see:
 
     1. A [diff view](/en/desktop#review-changes-with-diff-view) showing exactly what will change in each file
     2. Accept/Reject buttons to approve or decline each change
@@ -107,7 +107,11 @@ You've made your first edit. For the full reference on everything Desktop can do
 
 **Review changes before committing.** After Claude edits files, a `+12 -1` indicator appears. Click it to open the [diff view](/en/desktop#review-changes-with-diff-view), review modifications file by file, and comment on specific lines. Claude reads your comments and revises. Click **Review code** to have Claude evaluate the diffs itself and leave inline suggestions.
 
-**Adjust how much control you have.** Your [permission mode](/en/desktop#choose-a-permission-mode) controls the balance. Ask permissions (default) requires approval before every edit. Auto accept edits auto-accepts file edits for faster iteration. Plan mode lets Claude map out an approach without touching any files, which is useful before a large refactor.
+**Adjust how much control you have.** Your [permission mode](/en/desktop#choose-a-permission-mode) sets how much Claude can do without asking for approval:
+
+* **Manual**: the default. Claude asks before editing files or running commands.
+* **Accept edits**: Claude auto-accepts file edits for faster iteration.
+* **Plan**: Claude proposes an approach without editing any files, which is useful before a large refactor.
 
 **Add plugins for more capabilities.** Click the **+** button next to the prompt box and select **Plugins** to browse and install [plugins](/en/desktop#install-plugins) that add skills, agents, MCP servers, and more.
 

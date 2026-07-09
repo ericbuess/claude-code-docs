@@ -16,16 +16,16 @@ The `/context` command shows everything occupying the context window for the cur
 
 For detail on a specific category, follow up with the dedicated command:
 
-| Command          | Shows                                                                                                                                                                                                                                    |
-| :--------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/memory`        | Which `CLAUDE.md` and rules files loaded, plus auto-memory entries                                                                                                                                                                       |
-| `/skills`        | Available skills from project, user, and plugin sources                                                                                                                                                                                  |
-| `/hooks`         | Active hook configurations                                                                                                                                                                                                               |
-| `/mcp`           | Connected MCP servers and their status                                                                                                                                                                                                   |
-| `/permissions`   | Resolved allow and deny rules currently in effect                                                                                                                                                                                        |
-| `/doctor`        | Configuration diagnostics: invalid keys, schema errors, installation health. {/* min-version: 2.1.196 */}As of v2.1.196, also reports duplicate [subagent](/en/sub-agents) names defined in the same scope and marks which one is active |
-| `/debug [issue]` | Enables debug logging for the session and prompts Claude to diagnose using the log output and settings paths                                                                                                                             |
-| `/status`        | Active settings sources, including whether managed settings are in effect                                                                                                                                                                |
+| Command          | Shows                                                                                                                                                                    |
+| :--------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/memory`        | Which `CLAUDE.md` and rules files loaded, plus auto-memory entries                                                                                                       |
+| `/skills`        | Available skills from project, user, and plugin sources                                                                                                                  |
+| `/hooks`         | Active hook configurations                                                                                                                                               |
+| `/mcp`           | Connected MCP servers and their status                                                                                                                                   |
+| `/permissions`   | Resolved allow and deny rules currently in effect                                                                                                                        |
+| `/doctor`        | Setup checkup: installation health, invalid settings files, unused extensions, and duplicate [subagent](/en/sub-agents) names in the same directory, with proposed fixes |
+| `/debug [issue]` | Enables debug logging for the session and prompts Claude to diagnose using the log output and settings paths                                                             |
+| `/status`        | Active settings sources, including whether managed settings are in effect                                                                                                |
 
 If a memory file is missing from `/memory`, check its location against [how CLAUDE.md files load](/en/memory#how-claude-md-files-load). Subdirectory `CLAUDE.md` files load on demand when Claude reads a file in that directory with the Read tool, not at session start.
 
@@ -41,7 +41,9 @@ Adherence drops when an instruction is vague enough to interpret multiple ways, 
 
 Settings merge across managed, user, project, and local scopes. Managed settings always win when present. Among the rest, the closer scope overrides the broader one in the order local, then project, then user. Some settings can also be set by command-line flags or [environment variables](/en/env-vars), which act as another override layer. When a setting doesn't seem to apply, the value you set is usually being overridden by another scope or an environment variable.
 
-Run `/doctor` to validate your configuration files and surface invalid keys or schema errors. When `/doctor` reports issues, press `f` to send the diagnostic report to Claude and have it walk through fixes with you.
+Run `/doctor` to check your configuration and installation. It reports what it finds, including invalid settings files, duplicate installations, and unused extensions, then proposes fixes it applies only after you confirm. Before v2.1.205, `/doctor` opened a read-only diagnostics screen and pressing `f` sent the report to Claude to fix.
+
+From the terminal, `claude doctor` prints read-only installation and settings diagnostics without starting a session.
 
 Run `/status` to see which settings sources are active, including whether managed settings are in effect. To understand which scope wins for a given key, see [How scopes interact](/en/settings#how-scopes-interact).
 
@@ -59,7 +61,11 @@ For configuration locations and scope rules, see [MCP](/en/mcp).
 
 Run `/hooks` to list every hook registered for the current session, grouped by event. If a hook you defined doesn't appear, it isn't being read: hooks go under the `"hooks"` key in a settings file, not in a standalone file.
 
-If the hook appears but doesn't fire, the matcher is the usual cause. The `matcher` field is a single string that uses `|` to match multiple tool names, for example `"Edit|Write"`. {/* min-version: 2.1.191 */}On Claude Code v2.1.191 or later, `,` also works as a separator, so `"Edit,Write"` is equivalent. On earlier versions a comma falls through to regex evaluation and the matcher never matches, so use `|` if you aren't on v2.1.191 yet. A misspelled tool name fails silently for the same reason. An array value is a schema error: Claude Code shows a settings error notice, `/doctor` reports the validation failure, and the hook entry is dropped so it won't appear in `/hooks`.
+If the hook appears but doesn't fire, the matcher is the usual cause. Check it for these mistakes:
+
+* The `matcher` field is a single string that uses `|` to match multiple tool names, for example `"Edit|Write"`. {/* min-version: 2.1.191 */}A `,` separator is equivalent, so `"Edit,Write"` matches the same tools. Before v2.1.191, a comma fell through to regex evaluation and the matcher never matched, so use `|` if you aren't on v2.1.191 yet.
+* A misspelled tool name produces a matcher that matches nothing, so the hook fails silently.
+* An array value is a schema error: Claude Code shows a settings error notice and rejects the whole user, project, or local settings file, `claude doctor` reports the validation failure, and no hook from that file appears in `/hooks`. In [managed settings](/en/settings#settings-files), only the invalid entry is stripped and the file's other hooks still apply.
 
 Edits to `settings.json` take effect in the running session after a brief file-stability delay. You don't need to restart. If `/hooks` still shows the old definition a few seconds after saving, run `/hooks` again to refresh the view.
 

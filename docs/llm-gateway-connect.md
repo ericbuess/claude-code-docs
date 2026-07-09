@@ -255,7 +255,7 @@ The [Agent SDK](/en/agent-sdk/overview) has no gateway-specific options; it pass
 
 [Remote Control](/en/remote-control) and [voice dictation](/en/voice-dictation) both rely on a claude.ai identity: Remote Control to pair a live session with your account, and voice dictation to reach the claude.ai transcription endpoint. They are unavailable while `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or an `apiKeyHelper` is active. {/* min-version: 2.1.196 */}As of v2.1.196, Remote Control is also disabled while `ANTHROPIC_BASE_URL` points at a non-Anthropic host, so signing in with claude.ai isn't enough on its own.
 
-To restore either feature, log in with claude.ai and unset the gateway variables it checks. `/doctor` names the credential variable to unset.
+To restore either feature, log in with claude.ai and unset the gateway variables that feature checks. The Remote Control section of `claude doctor` names the credential variable to unset.
 
 * Voice dictation: unset the gateway credential
 * Remote Control: unset the gateway credential and `ANTHROPIC_BASE_URL`

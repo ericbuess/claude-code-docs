@@ -289,7 +289,7 @@ echo "{\"Authorization\": \"Bearer $(get-token.sh)\", \"X-API-Key\": \"$(get-api
 
 If the helper fails or prints output that doesn't meet these requirements, Claude Code reports the error in:
 
-* `/doctor` output
+* `/status` output
 * The debug log, when running with [`--debug`](/en/cli-reference#cli-flags) or after running `/debug` in the session
 * stderr, in non-interactive sessions started with `-p`
 
