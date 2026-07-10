@@ -29,7 +29,7 @@ Match the message you see in your terminal to a section below.
 | `Auto mode could not evaluate this action and is blocking it for safety`                      | [Server errors](#auto-mode-cannot-determine-the-safety-of-an-action)                                                          |
 | `Auto mode classifier transcript exceeded context window`                                     | [Server errors](#auto-mode-cannot-determine-the-safety-of-an-action)                                                          |
 | `Agent terminated early due to an API error`                                                  | [Server errors](#agent-terminated-early-due-to-an-api-error)                                                                  |
-| `You've hit your session limit` / `You've hit your weekly limit`                              | [Usage limits](#you%E2%80%99ve-hit-your-session-limit)                                                                        |
+| `You've hit your session limit` / `You've hit your weekly limit`                              | [Usage limits](#youve-hit-your-session-limit)                                                                                 |
 | `Usage credits required for 1M context`                                                       | [Usage limits](#usage-credits-required-for-1m-context)                                                                        |
 | `Server is temporarily limiting requests`                                                     | [Usage limits](#server-is-temporarily-limiting-requests)                                                                      |
 | `Request rejected (429)`                                                                      | [Usage limits](#request-rejected-429)                                                                                         |
@@ -40,7 +40,7 @@ Match the message you see in your terminal to a section below.
 | `This organization has been disabled`                                                         | [Authentication](#this-organization-has-been-disabled)                                                                        |
 | `Your organization has disabled API key authentication`                                       | [Authentication](#your-organization-has-disabled-api-key-authentication)                                                      |
 | `Your organization has disabled Claude subscription access`                                   | [Authentication](#your-organization-has-disabled-claude-subscription-access)                                                  |
-| `Routines are disabled by your organization's policy`                                         | [Authentication](#routines-are-disabled-by-your-organization%E2%80%99s-policy)                                                |
+| `Routines are disabled by your organization's policy`                                         | [Authentication](#routines-are-disabled-by-your-organizations-policy)                                                         |
 | `Remote Control is only available when using Claude via api.anthropic.com`                    | [Authentication](#remote-control-requires-the-anthropic-api)                                                                  |
 | `OAuth token revoked` / `OAuth token has expired`                                             | [Authentication](#oauth-token-revoked-or-expired)                                                                             |
 | `does not meet scope requirement user:profile`                                                | [Authentication](#oauth-scope-requirement)                                                                                    |
@@ -51,7 +51,7 @@ Match the message you see in your terminal to a section below.
 | `SSL certificate verification failed`                                                         | [Network](#ssl-certificate-errors)                                                                                            |
 | `SSL certificate error (...)` during login or startup                                         | [Network](#ssl-certificate-errors)                                                                                            |
 | `403` with `x-deny-reason: host_not_allowed` in a cloud or routine session                    | [Network](#host-not-allowed-in-a-cloud-session)                                                                               |
-| `Couldn't reconnect to your Remote Control session`                                           | [Network](#couldn%E2%80%99t-reconnect-to-your-remote-control-session)                                                         |
+| `Couldn't reconnect to your Remote Control session`                                           | [Network](#couldnt-reconnect-to-your-remote-control-session)                                                                  |
 | `Prompt is too long`                                                                          | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Error during compaction: Conversation too long`                                              | [Request errors](#error-during-compaction-conversation-too-long)                                                              |
 | `Request too large`                                                                           | [Request errors](#request-too-large)                                                                                          |
@@ -59,10 +59,10 @@ Match the message you see in your terminal to a section below.
 | `Unable to resize image`                                                                      | [Request errors](#unable-to-resize-image)                                                                                     |
 | `PDF too large` / `PDF is password protected`                                                 | [Request errors](#pdf-errors)                                                                                                 |
 | `Extra inputs are not permitted`                                                              | [Request errors](#extra-inputs-are-not-permitted)                                                                             |
-| `There's an issue with the selected model`                                                    | [Request errors](#there%E2%80%99s-an-issue-with-the-selected-model)                                                           |
+| `There's an issue with the selected model`                                                    | [Request errors](#theres-an-issue-with-the-selected-model)                                                                    |
 | `Model ... is not a recognized model id`                                                      | [Request errors](#model-is-not-a-recognized-model-id)                                                                         |
 | `Claude Opus is not available with the Claude Pro plan`                                       | [Request errors](#claude-opus-is-not-available-with-the-claude-pro-plan)                                                      |
-| `Model ... is restricted by your organization's settings`                                     | [Request errors](#model-is-restricted-by-your-organization%E2%80%99s-settings)                                                |
+| `Model ... is restricted by your organization's settings`                                     | [Request errors](#model-is-restricted-by-your-organizations-settings)                                                         |
 | `thinking.type.enabled is not supported for this model`                                       | [Request errors](#thinking-type-enabled-is-not-supported-for-this-model)                                                      |
 | `max_tokens must be greater than thinking.budget_tokens`                                      | [Request errors](#thinking-budget-exceeds-output-limit)                                                                       |
 | `API Error: 400 due to tool use concurrency issues`                                           | [Request errors](#tool-use-or-thinking-block-mismatch)                                                                        |
@@ -251,7 +251,9 @@ When a rate limit, overload, or server error interrupts a foreground subagent th
 
 These errors mean a quota tied to your account or plan has been reached. They are distinct from [server errors](#server-errors), which affect everyone.
 
-### You've hit your session limit
+<h3 id="youve-hit-your-session-limit">
+  You've hit your session limit
+</h3>
 
 Subscription plans include a rolling usage allowance. When it runs out you see one of these messages:
 
@@ -288,7 +290,7 @@ This is an entitlement check, not a quota exhaustion. It fires even when your se
 
 * Run `/model` and select the variant without the `[1m]` suffix to fall back to the standard context window
 * Run `/usage-credits` to turn on metered billing for the 1M variant on Pro and Max, or to request it from your admin on Team and Enterprise
-* If the error persists after `/model`, a 1M model ID may be set elsewhere. See [There's an issue with the selected model](#there%E2%80%99s-an-issue-with-the-selected-model) for the configuration locations to check in priority order.
+* If the error persists after `/model`, a 1M model ID may be set elsewhere. See [There's an issue with the selected model](#theres-an-issue-with-the-selected-model) for the configuration locations to check in priority order.
 * To remove 1M variants from the model picker entirely, set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/en/env-vars)
 
 ### Server is temporarily limiting requests
@@ -447,7 +449,9 @@ The Agent SDK and `-p` non-interactive mode surface this as the `oauth_org_not_a
 * Authenticate with a Console API key instead of your subscription. See [Claude Console authentication](/en/authentication#claude-console-authentication) for setup.
 * If you are the admin and do not see an option to enable access, contact [Anthropic support](https://support.claude.com)
 
-### Routines are disabled by your organization's policy
+<h3 id="routines-are-disabled-by-your-organizations-policy">
+  Routines are disabled by your organization's policy
+</h3>
 
 An Owner in your Team or Enterprise organization has turned off routines at the organization level. The error appears when you try to create or run a routine, including from `/schedule` and the [Routines](/en/routines) UI on claude.ai/code.
 
@@ -623,7 +627,9 @@ This is not a client-side network problem. Cloud sessions and [routines](/en/rou
 
 See [Network access](/en/claude-code-on-the-web#network-access) for access levels and the default allowlist. Local CLI sessions are not affected by this policy.
 
-### Couldn't reconnect to your Remote Control session
+<h3 id="couldnt-reconnect-to-your-remote-control-session">
+  Couldn't reconnect to your Remote Control session
+</h3>
 
 ```text theme={null}
 Couldn't reconnect to your Remote Control session. Retry, or start a fresh session without --resume.
@@ -759,7 +765,9 @@ Claude Code sends beta-only fields such as `context_management`, `effort`, and t
 * Configure your gateway to forward the `anthropic-beta` header. See [feature pass-through](/en/llm-gateway-protocol#feature-pass-through) for what gateways must forward.
 * As a fallback, set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](/en/env-vars) before launching. This disables features that require the beta header so requests succeed through a gateway that cannot forward it.
 
-### There's an issue with the selected model
+<h3 id="theres-an-issue-with-the-selected-model">
+  There's an issue with the selected model
+</h3>
 
 The configured model name was not recognized or your account lacks access to it. As of v2.1.160 the trailing hint, shown here in its interactive form, varies by surface.
 
@@ -778,7 +786,7 @@ There's an issue with the selected model (claude-...). It may not exist or you m
 
 ### Model is not a recognized model id
 
-The model string you passed to a model switch isn't a model alias, a model ID this Claude Code version knows, or an ID that starts with `claude-`. The usual causes are a typo in the ID, a display name such as `Sonnet 5` where the ID `claude-sonnet-5` is expected, or an alias that only newer Claude Code versions recognize. Claude Code rejects the switch immediately. Before v2.1.200, Claude Code saved the string and failed on the next request with [There's an issue with the selected model](#there%E2%80%99s-an-issue-with-the-selected-model).
+The model string you passed to a model switch isn't a model alias, a model ID this Claude Code version knows, or an ID that starts with `claude-`. The usual causes are a typo in the ID, a display name such as `Sonnet 5` where the ID `claude-sonnet-5` is expected, or an alias that only newer Claude Code versions recognize. Claude Code rejects the switch immediately. Before v2.1.200, Claude Code saved the string and failed on the next request with [There's an issue with the selected model](#theres-an-issue-with-the-selected-model).
 
 ```text theme={null}
 Model "claud-sonnet-5" is not a recognized model id. Did you mean 'claude-sonnet-5'?
@@ -792,7 +800,7 @@ Claude Code produces this error locally at the moment the switch is requested, b
 
 * Run `/model` with no argument to open the picker and choose from the models available to your account, then pass the alias or ID shown there
 * If you used an alias that a newer Claude Code version supports, run `claude update`. A full ID that starts with `claude-` passes this check even when the model is newer than your Claude Code version, so upgrading isn't needed for those.
-* A model saved before v2.1.200 isn't repaired by this check. If a stale value keeps coming back, remove it from the locations listed under [There's an issue with the selected model](#there%E2%80%99s-an-issue-with-the-selected-model).
+* A model saved before v2.1.200 isn't repaired by this check. If a stale value keeps coming back, remove it from the locations listed under [There's an issue with the selected model](#theres-an-issue-with-the-selected-model).
 * The check runs only on the Anthropic API. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, [Claude Platform on AWS](/en/claude-platform-on-aws), and behind an [LLM gateway](/en/llm-gateway) or a custom `ANTHROPIC_BASE_URL`, your provider or gateway defines the model names, so Claude Code accepts any string and passes it through.
 
 ### Claude Opus is not available with the Claude Pro plan
@@ -809,7 +817,9 @@ Claude Opus is not available with the Claude Pro plan · Select a different mode
 * If you upgraded your plan recently and still see this, run `/logout` then `/login`. The stored token reflects your plan at the time you signed in, so upgrading on the web does not take effect in an existing session until you re-authenticate.
 * See [claude.com/pricing](https://claude.com/pricing) for which models each plan includes
 
-### Model is restricted by your organization's settings
+<h3 id="model-is-restricted-by-your-organizations-settings">
+  Model is restricted by your organization's settings
+</h3>
 
 Your organization admin has disabled this model in the claude.ai admin console, or it is excluded by an [`availableModels`](/en/model-config#restrict-model-selection) allowlist in managed settings. When the restricted model was set with `--model`, `ANTHROPIC_MODEL`, or the `model` setting, Claude Code substitutes an allowed model and continues. Typing `/model <name>` for a restricted model is rejected with `Run /model to choose a different model.` and the session keeps its current model.
 
