@@ -8,6 +8,22 @@
 
 The weekly dev digest highlights the features most likely to change how you work. Each entry includes runnable code, a short demo, and a link to the full docs. For every bug fix and minor improvement, see the [changelog](/en/changelog).
 
+<Update label="Week 28" description="July 6–10, 2026" tags={["v2.1.202–v2.1.206"]}>
+  **In-app browser on Desktop**: Claude Code on desktop gets a built-in browser, so Claude can pull up docs, designs, or any other site and interact with pages the same way it does with your local dev server previews.
+
+  Also this week: **`/doctor`** is a full setup checkup that diagnoses issues and can fix them, with `/checkup` as its alias; **auto mode** blocks transcript tampering and asks before `rm -rf` on unresolved variables; and **agent view rows** show a colored state word and a classifier-written headline.
+
+  [Read the Week 28 digest →](/en/whats-new/2026-w28)
+</Update>
+
+<Update label="Week 27" description="June 29 – July 3, 2026" tags={["v2.1.195–v2.1.201"]}>
+  **Claude Sonnet 5**: the new default model for Pro, Team Standard, and Enterprise subscription seats, with top-tier coding and tool use at Sonnet pricing, a native 1M-token context window, and adaptive thinking on by default.
+
+  Also this week: **Claude in Chrome** is generally available on all direct Anthropic plans; **subagents run in the background by default** so Claude keeps working while they run; **Claude Desktop on Linux** lands in beta on Ubuntu and Debian; and **`/radio`** tunes into Claude FM lo-fi radio.
+
+  [Read the Week 27 digest →](/en/whats-new/2026-w27)
+</Update>
+
 <Update label="Week 26" description="June 22–26, 2026" tags={["v2.1.185–v2.1.193"]}>
   **`claude mcp login`**: authenticate a configured MCP server from your shell instead of the interactive `/mcp` menu, and clear its stored credentials later with `claude mcp logout`.
 
