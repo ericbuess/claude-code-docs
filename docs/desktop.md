@@ -84,7 +84,7 @@ The `dontAsk` permission mode is available only in the [CLI](/en/permission-mode
 
 <span id="auto-mode-availability" />
 
-Auto mode is a research preview available to all users on the Anthropic API and requires Claude Opus 4.6 or later, or Sonnet 4.6 or later. In Enterprise deployments that route Desktop to Google Cloud's Agent Platform, auto mode is off until you [set `CLAUDE_CODE_ENABLE_AUTO_MODE`](/en/permission-modes#enable-auto-mode-on-bedrock-agent-platform-or-foundry), and only Claude Sonnet 5, Opus 4.7, and Opus 4.8 are supported there.
+Auto mode is available to all users on the Anthropic API and requires Claude Opus 4.6 or later, or Sonnet 4.6 or later. In Enterprise deployments that route Desktop to Google Cloud's Agent Platform, auto mode is off until you [set `CLAUDE_CODE_ENABLE_AUTO_MODE`](/en/permission-modes#enable-auto-mode-on-bedrock-agent-platform-or-foundry), and only Claude Sonnet 5, Opus 4.7, and Opus 4.8 are supported there.
 
 <Tip title="Best practice">
   Start complex tasks in Plan so Claude maps out an approach before making changes. Once you approve the plan, switch to Accept edits or Manual to execute it. See [explore first, then plan, then code](/en/best-practices#explore-first-then-plan-then-code) for more on this workflow.
