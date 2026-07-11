@@ -12,11 +12,11 @@ Claude Code supports fine-grained permissions so that you can specify exactly wh
 
 Claude Code uses a tiered permission system to balance power and safety:
 
-| Tool type         | Example          | Approval required | "Yes, don't ask again" behavior               |
-| :---------------- | :--------------- | :---------------- | :-------------------------------------------- |
-| Read-only         | File reads, Grep | No                | N/A                                           |
-| Bash commands     | Shell execution  | Yes               | Permanently per project directory and command |
-| File modification | Edit/write files | Yes               | Until session end                             |
+| Tool type         | Example          | Approval required                                                                   | "Yes, don't ask again" behavior               |
+| :---------------- | :--------------- | :---------------------------------------------------------------------------------- | :-------------------------------------------- |
+| Read-only         | File reads, Grep | No, within the [working directory and additional directories](#working-directories) | N/A                                           |
+| Bash commands     | Shell execution  | Yes, except a built-in set of [read-only commands](#read-only-commands)             | Permanently per project directory and command |
+| File modification | Edit/write files | Yes                                                                                 | Until session end                             |
 
 ## Manage permissions
 
