@@ -216,7 +216,7 @@ Certain settings that could pose security risks require explicit user approval b
 When these settings are present, users see a security dialog explaining what is being configured. Users must approve to proceed. If a user rejects the settings, Claude Code exits.
 
 <Note>
-  In non-interactive mode with the `-p` flag, Claude Code skips security dialogs and applies settings without user approval.
+  A non-interactive run, such as `claude -p` or an Agent SDK session, can't show the dialog. When the delivered settings would require approval, Claude Code applies them for that run only: it doesn't record them as approved or write them to the [local cache](#fetch-and-caching-behavior), and the next interactive session shows the dialog. Until a user approves in an interactive session, each non-interactive run fetches the settings again at startup. Before v2.1.207, a non-interactive run saved the settings as approved, so later interactive sessions never showed the dialog for them.
 </Note>
 
 ## Platform availability

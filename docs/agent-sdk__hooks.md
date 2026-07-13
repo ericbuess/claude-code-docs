@@ -833,7 +833,7 @@ A `UserPromptSubmit` hook that spawns subagents can create infinite loops if tho
 
 ### systemMessage not appearing in output
 
-The `systemMessage` field shows a message to the user, not the model. By default the SDK doesn't surface hook output in the message stream, so the message may not appear unless you set `includeHookEvents` (`include_hook_events` in Python). To pass context to the model instead, return [`additionalContext`](/en/hooks#add-context-for-claude).
+The `systemMessage` field shows a message to the user, not the model. By default the SDK surfaces hook output in the message stream only for `SessionStart` and `Setup` hooks, so a message from any other hook event doesn't appear unless you set `includeHookEvents` (`include_hook_events` in Python). To pass context to the model instead, return [`additionalContext`](/en/hooks#add-context-for-claude).
 
 If you need to surface hook decisions to your application reliably, log them separately or use a dedicated output channel.
 

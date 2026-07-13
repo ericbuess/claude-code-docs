@@ -208,7 +208,9 @@ Your callback returns one of two response types:
 | **Allow** | `PermissionResultAllow(updated_input=...)` | `{ behavior: "allow", updatedInput }` |
 | **Deny**  | `PermissionResultDeny(message=...)`        | `{ behavior: "deny", message }`       |
 
-When allowing, pass the tool input (original or modified). When denying, provide a message explaining why. Claude sees this message and may adjust its approach.
+When allowing, the tool runs with the input Claude requested unless you return a modified input, `updatedInput` in TypeScript or `updated_input` in Python. {/* min-version: 2.1.207 */}Before v2.1.207, Claude Code rejected an allow result that omitted `updatedInput` and denied the tool call with a validation error.
+
+When denying, provide a message explaining why. Claude sees this message and may adjust its approach.
 
 <CodeGroup>
   ```python Python theme={null}

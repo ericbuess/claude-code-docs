@@ -185,6 +185,8 @@ Set the gateway variables for the [VS Code extension](/en/vs-code) in `claudeCod
 
 The desktop app reads gateway routing from an [administrator-distributed configuration](https://claude.com/docs/third-party/claude-desktop/gateway), not from `ANTHROPIC_BASE_URL` or `settings.json`. If your organization has distributed it, the desktop app routes through the gateway with no setup on your part; if not, use the terminal CLI or VS Code extension for gateway sessions. Administrators distribute the configuration as described in the [organization rollout](/en/llm-gateway-rollout#distribute-through-managed-settings).
 
+With the gateway configuration active, the desktop app runs sessions on your local machine only: the environment picker doesn't offer SSH sessions or Anthropic-hosted cloud environments, and [Remote Control](/en/remote-control) is unavailable. To use Claude Code on a remote host through the gateway, run the CLI on that host with [`ANTHROPIC_BASE_URL` and the gateway credential](#set-the-base-url-and-credential) set there.
+
 If the desktop app shows `Gateway was unreachable`, the app couldn't reach the configured base URL at startup; check the URL and network path with the [curl test above](#verify-the-connection).
 
 ### GitHub Actions

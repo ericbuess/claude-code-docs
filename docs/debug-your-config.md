@@ -16,16 +16,16 @@ The `/context` command shows everything occupying the context window for the cur
 
 For detail on a specific category, follow up with the dedicated command:
 
-| Command          | Shows                                                                                                                                                                    |
-| :--------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/memory`        | Which `CLAUDE.md` and rules files loaded, plus auto-memory entries                                                                                                       |
-| `/skills`        | Available skills from project, user, and plugin sources                                                                                                                  |
-| `/hooks`         | Active hook configurations                                                                                                                                               |
-| `/mcp`           | Connected MCP servers and their status                                                                                                                                   |
-| `/permissions`   | Resolved allow and deny rules currently in effect                                                                                                                        |
-| `/doctor`        | Setup checkup: installation health, invalid settings files, unused extensions, and duplicate [subagent](/en/sub-agents) names in the same directory, with proposed fixes |
-| `/debug [issue]` | Enables debug logging for the session and prompts Claude to diagnose using the log output and settings paths                                                             |
-| `/status`        | Active settings sources, including whether managed settings are in effect                                                                                                |
+| Command          | Shows                                                                                                                                                                                                                                        |
+| :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/memory`        | Which `CLAUDE.md` and rules files loaded, plus auto-memory entries                                                                                                                                                                           |
+| `/skills`        | Available skills from project, user, and plugin sources                                                                                                                                                                                      |
+| `/hooks`         | Active hook configurations                                                                                                                                                                                                                   |
+| `/mcp`           | Connected MCP servers and their status                                                                                                                                                                                                       |
+| `/permissions`   | Resolved allow and deny rules currently in effect                                                                                                                                                                                            |
+| `/doctor`        | Setup checkup: installation health, invalid settings files, unused extensions, duplicate [subagent](/en/sub-agents) names in the same directory, and checked-in `CLAUDE.md` content Claude can derive from the codebase, with proposed fixes |
+| `/debug [issue]` | Enables debug logging for the session and prompts Claude to diagnose using the log output and settings paths                                                                                                                                 |
+| `/status`        | Active settings sources, including whether managed settings are in effect                                                                                                                                                                    |
 
 If a memory file is missing from `/memory`, check its location against [how CLAUDE.md files load](/en/memory#how-claude-md-files-load). Subdirectory `CLAUDE.md` files load on demand when Claude reads a file in that directory with the Read tool, not at session start.
 
@@ -41,7 +41,7 @@ Adherence drops when an instruction is vague enough to interpret multiple ways, 
 
 Settings merge across managed, user, project, and local scopes. Managed settings always win when present. Among the rest, the closer scope overrides the broader one in the order local, then project, then user. Some settings can also be set by command-line flags or [environment variables](/en/env-vars), which act as another override layer. When a setting doesn't seem to apply, the value you set is usually being overridden by another scope or an environment variable.
 
-Run `/doctor` to check your configuration and installation. It reports what it finds, including invalid settings files, duplicate installations, and unused extensions, then proposes fixes it applies only after you confirm. Before v2.1.205, `/doctor` opened a read-only diagnostics screen and pressing `f` sent the report to Claude to fix.
+Run `/doctor` to check your configuration and installation. It reports what it finds, including invalid settings files, duplicate installations, unused extensions, and {/* min-version: 2.1.206 */}checked-in `CLAUDE.md` content Claude can derive from the codebase, then proposes fixes it applies only after you confirm. The `CLAUDE.md` trim check requires Claude Code v2.1.206 or later. Before v2.1.205, `/doctor` opened a read-only diagnostics screen and pressing `f` sent the report to Claude to fix.
 
 From the terminal, `claude doctor` prints read-only installation and settings diagnostics without starting a session.
 

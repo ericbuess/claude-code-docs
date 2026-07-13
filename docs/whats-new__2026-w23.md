@@ -25,7 +25,7 @@
   export CLAUDE_CODE_ENABLE_AUTO_MODE=1
   ```
 
-  <a className="digest-feature-link" href="/docs/en/permission-modes#enable-auto-mode-on-bedrock-agent-platform-or-foundry">Enable auto mode on third-party providers</a>
+  <a className="digest-feature-link" href="/docs/en/permission-modes#enable-auto-mode-on-bedrock-agent-platform-or-foundry">Auto mode on third-party providers</a>
 </div>
 
 <div className="digest-feature">

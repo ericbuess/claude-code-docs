@@ -14,14 +14,14 @@ Each mode makes a different tradeoff between convenience and oversight. The tabl
 
 | Mode                                                                | What runs without asking                                                               | Best for                                |
 | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------- | :-------------------------------------- |
-| `default`                                                           | Reads only. Labeled **Manual** in the CLI and IDE extensions                           | Getting started, sensitive work         |
+| `default`                                                           | Reads only                                                                             | Getting started, sensitive work         |
 | [`acceptEdits`](#auto-approve-file-edits-with-acceptedits-mode)     | Reads, file edits, and common filesystem commands (`mkdir`, `touch`, `mv`, `cp`, etc.) | Iterating on code you're reviewing      |
 | [`plan`](#analyze-before-you-edit-with-plan-mode)                   | Reads only                                                                             | Exploring a codebase before changing it |
 | [`auto`](#eliminate-prompts-with-auto-mode)                         | Everything, with background safety checks                                              | Long tasks, reducing prompt fatigue     |
 | [`dontAsk`](#allow-only-pre-approved-tools-with-dontask-mode)       | Only pre-approved tools                                                                | Locked-down CI and scripts              |
 | [`bypassPermissions`](#skip-all-checks-with-bypasspermissions-mode) | Everything                                                                             | Isolated containers and VMs only        |
 
-The mode that reviews every action is named **Manual** in the CLI, in `claude --help`, and in the VS Code and JetBrains extensions. Its config value is `default`, which is what hooks and SDK integrations use. The CLI accepts `manual` as an alias wherever you type the value, for example `claude --permission-mode manual` or `"defaultMode": "manual"`. The Manual label and the `manual` alias require Claude Code v2.1.200 or later.
+The mode that reviews every action is named **Manual** in the CLI, in `claude --help`, in the VS Code and JetBrains extensions, and in the desktop app. Its config value is `default`, which is what hooks and SDK integrations use. The CLI accepts `manual` as an alias wherever you type the value, for example `claude --permission-mode manual` or `"defaultMode": "manual"`. The Manual label and the `manual` alias require Claude Code v2.1.200 or later. The desktop app's label doesn't depend on your CLI version.
 
 In every mode except `bypassPermissions`, writes to [protected paths](#protected-paths) are never auto-approved, guarding repository state and Claude's own configuration against accidental corruption.
 
@@ -91,7 +91,26 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
   </Tab>
 
   <Tab title="Desktop">
-    Use the mode selector next to the send button. Auto and Bypass permissions appear only after you enable them in Desktop settings. See the [Desktop guide](/en/desktop#choose-a-permission-mode).
+    **During a session**: use the mode selector next to the send button. Not every mode appears in the selector:
+
+    * **Auto**: appears when your account meets the [auto mode requirements](#eliminate-prompts-with-auto-mode)
+    * **Bypass permissions**: requires the **Allow bypass permissions mode** toggle in Desktop settings on Pro and Max plans; on Team and Enterprise plans, organization policy controls it instead
+
+    For desktop-specific details, see [Choose a permission mode](/en/desktop#choose-a-permission-mode) in the Desktop guide.
+
+    **As a default**: set `defaultMode` in [settings](/en/settings#settings-files). The desktop app reads the same settings files as the CLI and applies the mode to new local sessions.
+
+    A mode you pick in the mode selector is remembered per folder and takes precedence over `defaultMode` for that folder. Plan is the exception: picking it applies to the current session only.
+
+    This example sets Plan mode as the default for new local sessions:
+
+    ```json theme={null}
+    {
+      "permissions": {
+        "defaultMode": "plan"
+      }
+    }
+    ```
   </Tab>
 
   <Tab title="Web and mobile">
@@ -179,35 +198,25 @@ Auto mode also nudges Claude to keep working without stopping for clarifying que
 Auto mode is available only when your account meets all of these requirements:
 
 * **Plan**: All plans.
-* **Owner**: on Team and Enterprise, an Owner must enable it in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code) before users can turn it on. Administrators can also lock it off by setting `permissions.disableAutoMode` to `"disable"` in [managed settings](/en/permissions#managed-settings).
+* **Owner**: on Team and Enterprise, an Owner must enable it in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code) before users can turn it on. Administrators can also turn auto mode off by setting `permissions.disableAutoMode` to `"disable"` in [managed settings](/en/permissions#managed-settings). For the desktop app's Code tab, `disableAutoMode` is the organization-level control, and the admin settings toggle doesn't apply.
 * **Model**: on the Anthropic API, Claude Opus 4.6 or later, or Sonnet 4.6 or later. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, only Claude Sonnet 5, Opus 4.7, and Opus 4.8. Older models, including Sonnet 4.5, Opus 4.5, Haiku, and claude-3 models, are not supported on any provider.
-* **Provider**: available by default on the Anthropic API. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in Claude apps gateway sessions, auto mode is off until you [set `CLAUDE_CODE_ENABLE_AUTO_MODE`](#enable-auto-mode-on-bedrock-agent-platform-or-foundry).
+* **Provider**: available by default on the Anthropic API, Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in Claude apps gateway sessions. {/* min-version: 2.1.207 */}In v2.1.158 through v2.1.206, auto mode was off on all of these providers except the Anthropic API until you set `CLAUDE_CODE_ENABLE_AUTO_MODE=1`; v2.1.207 removed the requirement.
 
 If Claude Code reports auto mode as unavailable, one of these requirements is unmet; this is not a transient outage. A separate message that names a model and says auto mode "cannot determine the safety" of an action is a transient classifier outage; see the [error reference](/en/errors#auto-mode-cannot-determine-the-safety-of-an-action).
 
 If you set `defaultMode: "auto"` in [settings](/en/settings#available-settings) and the session starts in `default` mode with no error, the setting is likely in `.claude/settings.json` or `.claude/settings.local.json`. Claude Code v2.1.142 and later ignore `auto` from those files so a repository cannot grant itself auto mode. Move it to `~/.claude/settings.json`.
 
-### Enable auto mode on Bedrock, Agent Platform, or Foundry
+<h3 id="enable-auto-mode-on-bedrock-agent-platform-or-foundry">
+  Auto mode on Bedrock, Agent Platform, or Foundry
+</h3>
 
-On [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud's Agent Platform](/en/google-vertex-ai), [Microsoft Foundry](/en/microsoft-foundry), and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, auto mode does not appear in the `Shift+Tab` cycle until `CLAUDE_CODE_ENABLE_AUTO_MODE` is set to `1`. The variable works in Claude Code v2.1.158 and later. Only Claude Sonnet 5, Opus 4.7, and Opus 4.8 are supported on these providers.
+On [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud's Agent Platform](/en/google-vertex-ai), [Microsoft Foundry](/en/microsoft-foundry), and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, auto mode appears in the `Shift+Tab` cycle by default. Appearing in the cycle doesn't change the mode a session starts in: sessions still start in your [`defaultMode`](/en/settings#available-settings), which is Manual unless you change it. Only Claude Sonnet 5, Opus 4.7, and Opus 4.8 are supported on these providers.
 
-To enable it for one developer, add the variable to the `env` block in `~/.claude/settings.json`:
+To make auto mode the default starting mode, set `"permissions": {"defaultMode": "auto"}` in user or managed settings.
 
-```json theme={null}
-{
-  "env": {
-    "CLAUDE_CODE_ENABLE_AUTO_MODE": "1"
-  }
-}
-```
+To prevent developers from using auto mode, set `disableAutoMode` to `"disable"` in [managed settings](/en/permissions#managed-settings). This removes `auto` from the `Shift+Tab` cycle and rejects `--permission-mode auto` at startup.
 
-To enable it for your organization, add the same `env` block to [managed settings](/en/settings#settings-files).
-
-Once the variable is set, auto mode appears in the `Shift+Tab` cycle for every session. To make it the default starting mode, also set `"permissions": {"defaultMode": "auto"}` in user or managed settings. On these providers, Claude Code ignores `defaultMode: "auto"` unless `CLAUDE_CODE_ENABLE_AUTO_MODE` is also set.
-
-To prevent developers from enabling auto mode, set `disableAutoMode` to `"disable"` in managed settings. This overrides the enable variable.
-
-If you connect through an [LLM gateway](/en/llm-gateway) configured with `ANTHROPIC_BASE_URL`, auto mode may already be reachable without the enable variable, because the gateway routes requests through the Anthropic API. This does not apply to a signed-in [Claude apps gateway](/en/claude-apps-gateway) session, which is its own provider class and requires the enable variable. The `disableAutoMode` setting applies the same way in either configuration.
+In v2.1.158 through v2.1.206, auto mode was off on these providers until you set `CLAUDE_CODE_ENABLE_AUTO_MODE=1`, and Claude Code ignored `defaultMode: "auto"` on these providers unless the variable was also set. The variable is still accepted for compatibility and has no effect from v2.1.207 onward.
 
 ### What the classifier blocks by default
 

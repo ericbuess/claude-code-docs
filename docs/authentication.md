@@ -134,6 +134,8 @@ When the login you created with `/login` is within five days of expiring, Claude
 
 Run `/login` to renew. The warning is informational and never blocks a request: authentication keeps working until the login actually expires. The login lifetime itself is unchanged; the advance warning is what v2.1.203 adds.
 
+{/* min-version: 2.1.206 */}Once the stored login expires and can't be refreshed, each request fails with [`Login expired · Please run /login`](/en/errors#login-expired) until you sign in again. Before v2.1.206, an expired login surfaced as a model error instead.
+
 The warning appears only when a claude.ai or Claude Console login is the active credential, and not when a cloud provider, `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper` supplies the credential.
 
 Renewing early matters most for sessions that run unattended. A [background session in agent view](/en/agent-view) or a [Remote Control](/en/remote-control) session that outlives the login stops making progress once the credential expires and can't recover until you sign in again.

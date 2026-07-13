@@ -35,7 +35,20 @@ In the [VS Code extension](/en/vs-code#check-account-and-usage), the same breakd
 
 ### Set a spend limit on Pro and Max
 
-On Pro and Max plans, you can set a monthly spend limit on usage credits with the `/usage-credits` command. If you reach that limit while you still have usage credits available, Claude Code prompts you to raise or remove the limit so you can continue without leaving the CLI. Changing the limit requires billing access on the account.
+On Pro and Max plans, the `/usage-credits` command opens a dialog in the CLI where you manage [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans). From the dialog you can:
+
+* Turn on usage credits for your account
+* Buy more usage credits, either a listed bundle or a custom amount
+* Set, change, or remove your monthly spend limit
+* Configure auto-reload, which buys more usage credits automatically when your balance falls below a threshold you set
+
+On Claude Code versions before v2.1.207 and on accounts where the in-CLI dialog isn't available, `/usage-credits` opens the usage-credits billing page in your browser instead. On Team and Enterprise plans, members with billing access get the same browser page, and members without billing access send a request from the CLI asking their admin to turn on usage credits or raise the limit.
+
+Changing the monthly spend limit requires billing access on the account. If you reach the limit while you still have usage credits available, Claude Code prompts you to raise or remove it so you can continue without leaving the CLI.
+
+Amounts you type into the dialog, such as a custom purchase amount, the monthly spend limit, or the auto-reload threshold and target, must be digits, optionally followed by a period and one or two decimal digits, for example `20` or `20.50`. Any other input, including commas, shows an inline error and isn't saved. Versions before v2.1.207 don't show the dialog and open the billing page instead.
+
+Claude Code asks you to type `yes` before applying an amount above \$1,000, or above 1,000 units of a non-US-dollar billing currency. A purchase whose post-tax total crosses that threshold requires the same confirmation, even when the amount you typed is below it.
 
 ## Manage costs for your organization
 

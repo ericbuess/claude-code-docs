@@ -130,17 +130,17 @@ Actions available in the `Autocomplete` context:
 
 Actions available in the `Confirmation` context:
 
-| Action                      | Default   | Description                   |
-| :-------------------------- | :-------- | :---------------------------- |
-| `confirm:yes`               | Y, Enter  | Confirm action                |
-| `confirm:no`                | N, Escape | Decline action                |
-| `confirm:previous`          | Up        | Previous option               |
-| `confirm:next`              | Down      | Next option                   |
-| `confirm:nextField`         | Tab       | Next field                    |
-| `confirm:previousField`     | (unbound) | Previous field                |
-| `confirm:toggle`            | Space     | Toggle selection              |
-| `confirm:cycleMode`         | Shift+Tab | Cycle permission modes        |
-| `confirm:toggleExplanation` | Ctrl+E    | Toggle permission explanation |
+| Action                      | Default   | Description                                                                                                                        |
+| :-------------------------- | :-------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `confirm:yes`               | Y, Enter  | Confirm action                                                                                                                     |
+| `confirm:no`                | N, Escape | Decline action                                                                                                                     |
+| `confirm:previous`          | Up        | Previous option                                                                                                                    |
+| `confirm:next`              | Down      | Next option                                                                                                                        |
+| `confirm:nextField`         | Tab       | Next field                                                                                                                         |
+| `confirm:previousField`     | (unbound) | Previous field                                                                                                                     |
+| `confirm:toggle`            | Space     | Toggle selection                                                                                                                   |
+| `confirm:cycleMode`         | Shift+Tab | Cycle permission modes                                                                                                             |
+| `confirm:toggleExplanation` | Ctrl+E    | Toggle a model-generated [explanation of the command](/en/permissions#permission-system) on Bash and PowerShell permission prompts |
 
 ### Permission actions
 
@@ -244,15 +244,15 @@ Actions available in the `MessageSelector` context:
 
 Actions available in the `DiffDialog` context:
 
-| Action                | Default            | Description                                                           |
-| :-------------------- | :----------------- | :-------------------------------------------------------------------- |
-| `diff:dismiss`        | Escape             | Close diff viewer                                                     |
-| `diff:previousSource` | Left               | Previous diff source                                                  |
-| `diff:nextSource`     | Right              | Next diff source                                                      |
-| `diff:previousFile`   | Up, K              | Previous file in the file list; scroll up one line in the detail view |
-| `diff:nextFile`       | Down, J            | Next file in the file list; scroll down one line in the detail view   |
-| `diff:viewDetails`    | Enter              | View diff details                                                     |
-| `diff:back`           | (context-specific) | Go back in diff viewer                                                |
+| Action                | Default   | Description                                                                                                                                         |
+| :-------------------- | :-------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `diff:dismiss`        | Escape    | Close diff viewer; from the detail view, returns to the file list instead                                                                           |
+| `diff:previousSource` | Left      | Previous diff source                                                                                                                                |
+| `diff:nextSource`     | Right     | Next diff source                                                                                                                                    |
+| `diff:previousFile`   | Up, K     | Previous file in the file list; scroll up one line in the detail view                                                                               |
+| `diff:nextFile`       | Down, J   | Next file in the file list; scroll down one line in the detail view                                                                                 |
+| `diff:viewDetails`    | Enter     | View diff details                                                                                                                                   |
+| `diff:back`           | (unbound) | Go back in diff viewer. Escape performs the back action via `diff:dismiss`. The previous default of Left in the detail view was removed in v2.1.203 |
 
 The diff detail view also binds pager-style keys to the standard [scroll actions](#scroll-actions). These bindings are part of the `DiffDialog` context and apply only in the detail view; the `Scroll` context defaults listed under [Scroll actions](#scroll-actions) are unchanged.
 
