@@ -7,7 +7,7 @@
 > Start a plan from your CLI, draft it on Claude Code on the web, then execute it remotely or back in your terminal
 
 <Note>
-  Ultraplan is in research preview and requires Claude Code v2.1.91 or later. Behavior and capabilities may change based on feedback.
+  Ultraplan is in research preview. Behavior and capabilities may change based on feedback.
 </Note>
 
 Ultraplan hands a planning task from your local CLI to a [Claude Code on the web](/en/claude-code-on-the-web) session running in [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode). Claude drafts the plan in the cloud while you keep working in your terminal. When the plan is ready, you open it in your browser to comment on specific sections, ask for revisions, and choose where to execute it.

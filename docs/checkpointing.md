@@ -10,14 +10,14 @@ Claude Code automatically tracks Claude's file edits as you work, allowing you t
 
 ## How checkpoints work
 
-As you work with Claude, checkpointing automatically captures the state of your code before each edit. This safety net lets you pursue ambitious, wide-scale tasks knowing you can always return to a prior code state.
+As you work with Claude, checkpointing automatically captures the state of your code before each user prompt. This safety net lets you pursue ambitious, wide-scale tasks knowing you can always return to a prior code state.
 
 ### Automatic tracking
 
 Claude Code tracks all changes made by its file editing tools:
 
 * Every user prompt creates a new checkpoint
-* Checkpoints persist across sessions, so you can access them in resumed conversations
+* Checkpoints are saved with the conversation, so a resumed session can still `/rewind` to them
 * Automatically cleaned up along with sessions after 30 days (configurable)
 
 ### Rewind and summarize

@@ -76,7 +76,7 @@ Learn more: [Channels](/en/channels)
 
 ### Checkpoint
 
-A restore point created at each prompt you send. Claude Code snapshots files before every edit so a checkpoint can revert them. Press `Esc` twice or run `/rewind` to restore code, conversation, or both to an earlier point, or to summarize part of the conversation from a selected message. Checkpoints are local to the session, separate from git, and don't track changes made through the Bash tool.
+A restore point created at each prompt you send. Claude Code snapshots files before every edit so a checkpoint can revert them. Press `Esc` twice or run `/rewind` to restore code, conversation, or both to an earlier point, or to summarize part of the conversation from a selected message. Checkpoints are saved with the conversation, so a resumed session can still `/rewind` to them. They're separate from git and don't track changes made through the Bash tool.
 
 Learn more: [Checkpointing](/en/checkpointing)
 
@@ -172,7 +172,7 @@ Learn more: [Scale with MCP Tool Search](/en/mcp#scale-with-mcp-tool-search)
 
 ### Non-interactive mode
 
-A mode that executes a single prompt and exits without a conversational session, invoked with `-p` or `--print`. Used for CI, scripts, and piping. The [Agent SDK](/en/agent-sdk/overview) is the Python and TypeScript equivalent. Formerly called headless mode.
+A mode that executes a single prompt and exits without an interactive prompt, invoked with `-p` or `--print`. Used for CI, scripts, and piping. The run is still saved as a resumable session unless you pass `--no-session-persistence`. The [Agent SDK](/en/agent-sdk/overview) is the Python and TypeScript equivalent. Formerly called headless mode.
 
 Learn more: [Run Claude Code programmatically](/en/headless)
 

@@ -21,10 +21,6 @@ When you start a Remote Control session on your machine, Claude keeps running lo
 
 Unlike [Claude Code on the web](/en/claude-code-on-the-web), which runs on cloud infrastructure, Remote Control sessions run directly on your machine and interact with your local filesystem. The web and mobile interfaces are just a window into that local session.
 
-<Note>
-  Remote Control requires Claude Code v2.1.51 or later. Check your version with `claude --version`.
-</Note>
-
 This page covers setup, how to start and connect to sessions, and how Remote Control compares to Claude Code on the web.
 
 ## Requirements
@@ -100,7 +96,7 @@ You can start a Remote Control session from the CLI or the VS Code extension. Th
   </Tab>
 
   <Tab title="VS Code">
-    In the [Claude Code VS Code extension](/en/vs-code), type `/remote-control` or `/rc` in the prompt box, or open the command menu with `/` and select it. Requires Claude Code v2.1.79 or later.
+    In the [Claude Code VS Code extension](/en/vs-code), type `/remote-control` or `/rc` in the prompt box, or open the command menu with `/` and select it.
 
     ```text theme={null}
     /remote-control

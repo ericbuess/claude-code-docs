@@ -302,7 +302,7 @@ Suppose you need to work with images in your codebase, and you want Claude's hel
     You can use any of these methods:
 
     1. Drag and drop an image into the Claude Code window
-    2. Copy an image and paste it into the CLI with ctrl+v (Do not use cmd+v)
+    2. Copy an image and paste it into the CLI with Ctrl+V. On macOS, Cmd+V also works in iTerm2.
     3. Provide an image path to Claude. E.g., "Analyze this image: /path/to/your/image.png"
   </Step>
 

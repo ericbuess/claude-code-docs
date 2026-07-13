@@ -188,10 +188,6 @@ The tool is inactive until you install a [code intelligence plugin](/en/discover
 
 ## Monitor tool
 
-<Note>
-  The Monitor tool requires Claude Code v2.1.98 or later.
-</Note>
-
 The Monitor tool lets Claude watch something in the background and react when it changes, without pausing the conversation. Ask Claude to:
 
 * Tail a log file and flag errors as they appear

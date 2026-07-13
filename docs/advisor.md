@@ -6,10 +6,8 @@
 
 > Pair your main model with a stronger advisor model that Claude consults at key moments during a task.
 
-{/* plan-availability: feature=advisor providers=anthropic */}
-
 <Note>
-  The advisor tool is experimental and requires Claude Code v2.1.98 or later with the Anthropic API. It is not available on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. Behavior, pricing, and availability may change.
+  The advisor tool is experimental and requires the Anthropic API. It is not available on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. Behavior, pricing, and availability may change.
 </Note>
 
 The advisor tool lets Claude consult a second, typically stronger model at key moments during a task, such as before committing to an approach, when stuck on a recurring error, or before declaring a task complete. The advisor receives the full conversation, including every tool call and result, and returns guidance that Claude applies before continuing.
@@ -137,7 +135,6 @@ The advisor model's own read of the conversation is not cached. Each advisor cal
 
 The advisor tool requires all of the following:
 
-* **Claude Code v2.1.98 or later**: run `claude update` to upgrade.
 * **Anthropic API only**: the advisor is a server-executed tool. It is not available on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. Through an [LLM gateway](/en/llm-gateway) configured with `ANTHROPIC_BASE_URL`, availability depends on whether the gateway forwards the request intact to the Anthropic API.
 * **Supported main model**: Opus 4.6 or later, Sonnet 4.6 or later, or Haiku 4.5. {/* min-version: 2.1.170 */}Fable 5 also qualifies on Claude Code v2.1.170 or later.
 
