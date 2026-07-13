@@ -8,9 +8,15 @@
 
 ## Installation
 
+Install the package into a virtual environment. On recent Debian, Ubuntu, and Homebrew Python installs, running `pip install` against system Python fails with `error: externally-managed-environment`.
+
 ```bash theme={null}
+python3 -m venv .venv
+source .venv/bin/activate
 pip install claude-agent-sdk
 ```
+
+For uv, Windows PowerShell, and API key setup, see [Get started in the Agent SDK overview](/en/agent-sdk/overview#get-started).
 
 ## Choosing between `query()` and `ClaudeSDKClient`
 

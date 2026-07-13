@@ -193,6 +193,29 @@ To keep wheel scrolling but turn off click, drag, and hover handling, set `CLAUD
 
 With clicks disabled, Claude Code still captures the mouse, so the wheel and touchpad scroll the conversation but left clicks do nothing inside Claude Code. You still need to hold your terminal's key for native click-and-drag selection. Right-click and middle-click paste continue to work on terminals that support them.
 
+## Troubleshooting
+
+### Stale or misplaced text on screen
+
+Fullscreen rendering sends only the cells that changed between frames. Some terminals, most commonly Windows Terminal and other ConPTY-backed hosts, coalesce these positioned writes incorrectly and leave fragments of earlier output on screen until you resize the window.
+
+Set [`CLAUDE_CODE_ALT_SCREEN_FULL_REPAINT=1`](/en/env-vars) to repaint every cell on every frame instead of sending incremental updates.
+
+On Windows PowerShell:
+
+```powershell theme={null}
+$env:CLAUDE_CODE_ALT_SCREEN_FULL_REPAINT = "1"
+claude
+```
+
+On macOS or Linux:
+
+```bash theme={null}
+CLAUDE_CODE_ALT_SCREEN_FULL_REPAINT=1 claude
+```
+
+On Windows, Claude Code already enables full repaint automatically for background sessions and [agent view](/en/agent-view), so you only need to set the variable for an interactive fullscreen session you launched directly.
+
 ## Research preview
 
 Fullscreen rendering is a research preview feature. It has been tested on common terminal emulators, but you may encounter rendering issues on less common terminals or unusual configurations.

@@ -159,7 +159,7 @@ Organization-level controls and usage visibility.
   <tbody>
     <tr>
       <td>[Analytics dashboard and API](/en/analytics)</td>
-      <td>✓ (Team and Enterprise)</td>
+      <td>✓ (dashboard: Team and Enterprise; API: Enterprise)</td>
       <td>✓ <sup><a href="#fn5">5</a></sup></td>
       <td>✗</td>
       <td>✗</td>
@@ -273,7 +273,8 @@ If you authenticate through Amazon Bedrock, Google Cloud's Agent Platform, Micro
 | Dispatch ([Desktop](/en/desktop#sessions-from-dispatch))                                | ✓   | ✓   | ✗             | ✗                                 |
 | [Code Review](/en/code-review)                                                          | ✗   | ✗   | ✓             | ✓                                 |
 | [Artifacts](/en/artifacts)                                                              | ✓   | ✓   | ✓             | Admin-enabled                     |
-| [Analytics dashboard, API, and contribution metrics](/en/analytics)                     | ✗   | ✗   | ✓             | ✓                                 |
+| [Analytics dashboard and contribution metrics](/en/analytics)                           | ✗   | ✗   | ✓             | ✓                                 |
+| [Enterprise Analytics API](/en/analytics#access-data-programmatically)                  | ✗   | ✗   | ✗             | ✓                                 |
 | [Server-managed settings](/en/server-managed-settings)                                  | ✗   | ✗   | ✓             | ✓                                 |
 | [SSO](https://support.claude.com/en/articles/9266767-what-is-the-team-plan)             | ✗   | ✗   | ✓             | ✓                                 |
 | SCIM                                                                                    | ✗   | ✗   | ✗             | ✓                                 |

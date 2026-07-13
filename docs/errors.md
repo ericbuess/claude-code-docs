@@ -263,11 +263,12 @@ You've hit your weekly limit · resets Mon 12:00am
 You've hit your Opus limit · resets 3:45pm
 ```
 
-Claude Code blocks further requests until the reset time shown in the message.
+Claude Code blocks further requests until the reset time shown in the message. The session and weekly limits are shared across all models, so switching models doesn't restore access. The Opus limit applies only to Opus requests, so switching to another model with `/model` keeps you working.
 
 **What to do:**
 
 * Wait for the reset time shown in the error
+* For the Opus limit, run `/model` and switch to another model to keep working
 * Run `/usage` to see your plan limits and when they reset
 * Run `/usage-credits` to buy additional usage on Pro and Max, or to request it from your admin on Team and Enterprise. See [usage credits for paid plans](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) for how this is billed.
 * To upgrade your plan for higher base limits, see [claude.com/pricing](https://claude.com/pricing)
