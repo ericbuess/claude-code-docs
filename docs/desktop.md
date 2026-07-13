@@ -42,7 +42,7 @@ For [scheduled recurring work](/en/desktop-scheduled-tasks), [keyboard shortcuts
 
 Before you send your first message, configure four things in the prompt area:
 
-* **Environment**: choose where Claude runs. Select **Local** for your machine, **Remote** for Anthropic-hosted cloud sessions, or an [**SSH connection**](#ssh-sessions) for a remote machine you manage. See [environment configuration](#environment-configuration).
+* **Environment**: choose where Claude runs. Select **Local** for your machine, **Remote** for Anthropic-hosted cloud sessions, an [**SSH connection**](#ssh-sessions) for a remote machine you manage, or on Windows a [**WSL distribution**](/en/desktop-wsl). See [environment configuration](#environment-configuration).
 * **Project folder**: select the folder or repository Claude works in. For cloud sessions, you can add [multiple repositories](#run-long-running-tasks-remotely).
 * **Model**: pick a [model](/en/model-config#available-models) from the dropdown next to the send button. You can change this during the session.
 * **Permission mode**: choose how much autonomy Claude has from the [mode selector](#choose-a-permission-mode). You can change this during the session.
@@ -63,7 +63,7 @@ The **+** button next to the prompt box gives you access to file attachments, [s
 
 The prompt box supports two ways to bring in external context:
 
-* **@mention files**: type `@` followed by a filename to add a file to the conversation context. Claude can then read and reference that file. @mention is not available in cloud sessions.
+* **@mention files**: type `@` followed by a filename to add a file to the conversation context. Claude can then read and reference that file. @mention is not available in cloud or WSL sessions.
 * **Attach files**: attach images, PDFs, and other files to your prompt using the attachment button, or drag and drop files directly into the prompt. This is useful for sharing screenshots of bugs, design mockups, or reference documents.
 
 ### Choose a permission mode
@@ -331,7 +331,7 @@ The desktop app sends an OS notification when a Code session finishes a task and
 
 A side chat lets you ask Claude a question that uses your session's context but doesn't add anything back to the main conversation. Use it when you want to understand a piece of code, check an assumption, or explore an idea without steering the session off course.
 
-Press **Cmd+;** on macOS or **Ctrl+;** on Windows to open a side chat, or type `/btw` in the prompt box. The side chat can read everything in the main thread up to that point. When you're done, close the side chat and continue the main session where you left off. Side chats are available in local and SSH sessions.
+Press **Cmd+;** on macOS or **Ctrl+;** on Windows to open a side chat, or type `/btw` in the prompt box. The side chat can read everything in the main thread up to that point. When you're done, close the side chat and continue the main session where you left off. Side chats are available in local, SSH, and WSL sessions.
 
 ### Watch background tasks
 
@@ -374,7 +374,7 @@ Connect external services, add reusable workflows, customize Claude's behavior, 
 
 ### Connect external tools
 
-For local and [SSH](#ssh-sessions) sessions, click the **+** button next to the prompt box and select **Connectors** to add integrations like Google Calendar, Slack, GitHub, Linear, Notion, and more. You can add connectors before or during a session. The **+** button is not available in cloud sessions, but [routines](/en/routines) configure connectors at routine creation time.
+For local and [SSH](#ssh-sessions) sessions, click the **+** button next to the prompt box and select **Connectors** to add integrations like Google Calendar, Slack, GitHub, Linear, Notion, and more. You can add connectors before or during a session. The **+** button is not available in cloud or WSL sessions, but [routines](/en/routines) configure connectors at routine creation time.
 
 To manage or disconnect connectors, go to Settings → Connectors in the desktop app, or select **Manage connectors** from the Connectors menu in the prompt box.
 
@@ -392,7 +392,7 @@ Connectors are [MCP servers](/en/mcp) with a graphical setup flow. Use them for 
 
 For local and [SSH](#ssh-sessions) sessions, click the **+** button next to the prompt box and select **Plugins** to see your installed plugins and their skills. To add a plugin, select **Add plugin** from the submenu to open the plugin browser, which shows available plugins from your configured [marketplaces](/en/plugin-marketplaces) including the official Anthropic marketplace. Select **Manage plugins** to enable, disable, or uninstall plugins.
 
-Plugins can be scoped to your user account, a specific project, or local-only. If your organization manages plugins centrally, those plugins are available in desktop sessions the same way they are in the CLI. Plugins are not available for cloud sessions. For the full plugin reference including creating your own plugins, see [plugins](/en/plugins).
+Plugins can be scoped to your user account, a specific project, or local-only. If your organization manages plugins centrally, those plugins are available in desktop sessions the same way they are in the CLI. Plugins are not available for cloud or WSL sessions. For the full plugin reference including creating your own plugins, see [plugins](/en/plugins).
 
 ### Configure preview servers
 
@@ -544,6 +544,7 @@ The environment you pick when [starting a session](#start-a-session) determines 
 * **Local**: runs on your machine with direct access to your files
 * **Remote**: runs on Anthropic's cloud infrastructure. Sessions continue even if you close the app.
 * **SSH**: runs on a remote machine you connect to over SSH, such as your own servers, cloud VMs, or dev containers
+* **WSL** (Windows): runs inside a [WSL 2 distribution](/en/desktop-wsl) on your machine, using its Linux toolchain and native paths
 
 ### Local sessions
 
