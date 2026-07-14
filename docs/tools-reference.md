@@ -83,7 +83,7 @@ All of these accept the same rule format, `ToolName(specifier)`. The specifier d
 
 Tools not listed here, such as `ExitPlanMode` or `ShareOnboardingGuide`, accept only the bare tool name with no specifier.
 
-An `Edit(...)` allow rule also grants read access to the same path, so you don't need a matching `Read(...)` rule.
+An `Edit(...)` allow rule also grants read access to the same path, so you don't need a matching `Read(...)` rule. {/* min-version: 2.1.208 */}A `Read(...)` deny rule also blocks the Edit tool on the same path, including creating a new file there, because editing requires reading the result back. The `Read` deny check on edits requires Claude Code v2.1.208 or later.
 
 Hook `matcher` fields use bare tool names, not the parenthesized rule format. See [matcher patterns](/en/hooks#matcher-patterns) for the matching rules. For the field names each tool passes to `tool_input` in hooks, see the [PreToolUse input reference](/en/hooks#pretooluse-input).
 
@@ -101,6 +101,8 @@ Which tools a named subagent can use depends on the `tools` and `disallowedTools
 * **`tools` only**: the subagent gets only the listed tools.
 * **`disallowedTools` only**: the subagent gets every parent tool except the listed ones.
 * **Both set**: `disallowedTools` takes precedence. A tool listed in both is removed.
+
+When a subagent's `tools` list resolves to no tools at all, for example because every entry is misspelled or names a tool that isn't available to subagents, the Agent tool returns an error listing those entries instead of launching the subagent. {/* min-version: 2.1.208 */}Before v2.1.208, the subagent launched with no tools and could return an empty or confusing result.
 
 Launching the subagent doesn't itself prompt for permission. Claude Code checks the subagent's own tool calls against your permission rules as it runs.
 
@@ -134,13 +136,15 @@ For long-running processes such as dev servers or watch builds, Claude can set `
 
 The Edit tool performs exact string replacement. It takes an `old_string` and a `new_string` and replaces the first with the second. It doesn't use regex or fuzzy matching.
 
-Three checks must pass for an edit to apply:
+Three checks must pass for an edit to apply. {/* min-version: 2.1.208 */}Before any of them, a path matched by a [`Read` deny rule](/en/permissions#tool-specific-permission-rules) is refused, including creating a new file there. The refusal requires Claude Code v2.1.208 or later.
 
-* **Read-before-edit**: Claude must have read the file in the current conversation, and the file must not have changed on disk since that read. This check runs first, before any string matching.
+* **Read-before-edit**: Claude reads the file in the current conversation before editing it, and a read cut short with a [`PARTIAL view` notice](#read-tool-behavior) doesn't count. Claude Opus 4.6, Claude Haiku 4.5, and older models always require the read. Newer models can edit an unread file when reading it wouldn't need a permission prompt and the Read tool is available.
 * **Match**: `old_string` must appear in the file exactly as written. A single character of whitespace or indentation difference is enough to miss.
 * **Uniqueness**: `old_string` must appear exactly once. When it appears more than once, Claude either supplies a longer string with enough surrounding context to pin down one occurrence, or sets `replace_all: true` to replace them all.
 
-Viewing a file with Bash also satisfies the read-before-edit requirement when the command is `cat`, `head`, `tail`, `sed -n 'X,Yp'`, `grep`, `egrep`, or `fgrep` on a single file with no pipes or redirects. Piped output and other Bash commands don't count, and Claude must use Read before editing in those cases.
+A file that changed on disk after Claude last read it can still be edited when `old_string` matches the current content exactly and unambiguously and Claude Code can read the file without prompting. Matching against the file's current content keeps this safe, and the result notes that the file carries other changes so Claude re-reads it before edits that depend on surrounding content. In any other case, such as a stale `old_string` or one that matches more than once without `replace_all`, Claude reads the file again before editing. {/* min-version: 2.1.208 */}The relaxed handling of unread and changed files requires Claude Code v2.1.208 or later; before that, Claude Code refused any edit to a file it hadn't read in the conversation or that changed on disk after the read.
+
+Viewing a file with Bash also satisfies the read-before-edit requirement when the command is `cat`, `head`, `tail`, `sed -n 'X,Yp'`, `grep`, `egrep`, or `fgrep` on a single file with no pipes or redirects. Piped output and other Bash commands don't count toward the read-before-edit check.
 
 This affects edit eligibility only, not permissions. [Read and Edit deny rules](/en/permissions#tool-specific-permission-rules) also apply to file commands Claude Code recognizes in Bash, such as `cat`, `head`, `tail`, `sed`, and `grep`, but not to arbitrary subprocesses that read or write files indirectly, like a Python or Node script that opens files itself. The set of commands recognized for deny rules is not the same as the read-before-edit list above: for example, `egrep` and `fgrep` count for read-before-edit but are not checked against Read deny rules. For OS-level enforcement that covers every process, [enable the sandbox](/en/sandboxing).
 
@@ -156,17 +160,21 @@ Results are sorted by modification time and capped at 100 files. If the cap is h
 
 Glob doesn't respect `.gitignore` by default, so it finds gitignored files alongside tracked ones. This differs from [Grep](#grep-tool-behavior), which skips gitignored files. To make Glob respect `.gitignore`, set `CLAUDE_CODE_GLOB_NO_IGNORE=false` before launching Claude Code.
 
+A `pattern` or `path` value that contains a null byte returns an error asking Claude to remove it. {/* min-version: 2.1.208 */}
+
 ## Grep tool behavior
 
 The Grep tool searches file contents for patterns. Where [Glob](#glob-tool-behavior) finds files by name, Grep finds lines inside them.
 
 Grep is built on [ripgrep](https://github.com/BurntSushi/ripgrep) and uses ripgrep's regex syntax, not POSIX grep. Patterns that include regex metacharacters need escaping. For example, finding `interface{}` in Go code takes the pattern `interface\{\}`.
 
+A pattern, glob, or file type that ripgrep rejects returns an error that includes ripgrep's diagnostic, so Claude can correct the input and search again. {/* min-version: 2.1.208 */}Before v2.1.208, Claude Code reported a rejected input as `No files found` instead of an error, even when the searched-for text existed in the target files.
+
 Three output modes control what comes back:
 
 * `files_with_matches`: file paths only, no line content. This is the default.
 * `content`: matching lines with file and line number.
-* `count`: match count per file.
+* `count`: match count per file, followed by a total across all matching files. {/* min-version: 2.1.208 */}The total covers every match even when the tool's `head_limit` or `offset` parameters truncate the listed per-file entries. Before v2.1.208, the total only summed the listed entries.
 
 Claude can scope results by file with the `glob` parameter, such as `**/*.tsx`, or by language with the `type` parameter, such as `py` or `rust`. By default, patterns match within a single line. Claude can set `multiline: true` to match across line boundaries.
 
@@ -294,6 +302,10 @@ The PowerShell tool has the following known limitations during the preview:
 The Read tool takes a file path and returns the contents with line numbers. Claude is instructed to always pass absolute paths.
 
 By default, Read returns the file from the start. When a whole-file read exceeds the token limit, Read returns the first page with a `PARTIAL view` notice that tells Claude how much of the file it received and how to read more with `offset` and `limit`. A read that passes an explicit `offset` or `limit` and still exceeds the token limit returns an error.
+
+A read with an explicit `limit` stops as soon as the selected lines exceed what the token limit could ever fit and returns an error without loading the rest of the range. The error tells Claude to use a smaller `limit`, or to search for specific content with [Grep](#grep-tool-behavior) instead when a single line is that large. {/* min-version: 2.1.208 */}Before v2.1.208, Claude Code loaded the whole range into memory before rejecting it, so a file with an extremely long single line could exhaust memory.
+
+Reading an empty file returns a notice that the file exists but its contents are empty, and an `offset` past the last line returns a notice giving the file's line count. {/* min-version: 2.1.208 */}Before v2.1.208, reading an empty file returned the past-the-end notice instead.
 
 Read handles several file types beyond plain text:
 

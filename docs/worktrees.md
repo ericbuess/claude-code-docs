@@ -50,7 +50,11 @@ If Claude Code can't enter the worktree directory at startup, for example becaus
 
 ### Choose the base branch
 
-Worktrees branch from your repository's default branch, `origin/HEAD`, so they start from a clean tree matching the remote. If no remote is configured or the fetch fails, the worktree falls back to your current local `HEAD`. To always branch from local `HEAD` instead, set `worktree.baseRef` to `"head"` in [settings](/en/settings#worktree-settings). Setting `baseRef` to `"head"` makes new worktrees carry your unpushed commits and feature-branch state, which is useful when isolating subagents that need to operate on in-progress work. The setting accepts only `"fresh"` or `"head"`, not arbitrary git refs:
+Worktrees branch from your repository's default branch, `origin/HEAD`, so they start from a clean tree matching the remote. When nothing has fetched the repository in the last 24 hours, Claude Code refreshes `origin/HEAD` with a fetch of the default branch, capped at five seconds, and uses the locally cached ref if the fetch fails. If no remote is configured, or `origin/HEAD` isn't cached locally and can't be fetched, the worktree falls back to your current local `HEAD`.
+
+The refresh requires Claude Code v2.1.208 or later; before that, a fresh worktree used whatever `origin/HEAD` was already cached locally.
+
+To always branch from local `HEAD` instead, set `worktree.baseRef` to `"head"` in [settings](/en/settings#worktree-settings). Setting `baseRef` to `"head"` makes new worktrees carry your unpushed commits and feature-branch state, which is useful when isolating subagents that need to operate on in-progress work. The setting accepts only `"fresh"` or `"head"`, not arbitrary git refs:
 
 ```json theme={null}
 {
@@ -67,6 +71,18 @@ claude --worktree "#1234"
 ```
 
 For full control over how worktrees are created, configure a [`WorktreeCreate` hook](/en/hooks#worktreecreate), which replaces the default `git worktree` logic entirely.
+
+### Reuse a worktree name
+
+Reusing a worktree name whose directory already exists resumes that worktree.
+
+A resumed worktree resets to the [current base](#choose-the-base-branch) instead of resuming at its old tip when all of the following hold:
+
+* It has no uncommitted changes or untracked files.
+* It is still on the branch Claude Code created for it.
+* It never committed, or its pull request was merged and its remote branch deleted.
+
+Before v2.1.208, a reused name always resumed the old worktree at its old tip.
 
 ## Copy gitignored files into worktrees
 

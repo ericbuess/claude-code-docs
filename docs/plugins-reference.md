@@ -289,10 +289,6 @@ Plugins can declare background monitors that Claude Code starts automatically wh
 
 Plugin monitors use the same mechanism as the [Monitor tool](/en/tools-reference#monitor-tool) and share its availability constraints. They run only in interactive CLI sessions, run unsandboxed at the same trust level as [hooks](#hooks), and are skipped on hosts where the Monitor tool is unavailable.
 
-<Note>
-  Plugin monitors require Claude Code v2.1.105 or later.
-</Note>
-
 **Location**: `monitors/monitors.json` in the plugin root, or inline in `plugin.json`
 
 **Format**: JSON array of monitor entries

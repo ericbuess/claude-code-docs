@@ -174,7 +174,9 @@ When Claude writes a workflow for a task you'll repeat, you can save that run's 
 Run `/workflows`, select the run you want to keep, and press `s`. In the save dialog, Tab toggles between the two save locations:
 
 * `.claude/workflows/` in your project: shared with everyone who clones the repo
-* `~/.claude/workflows/` in your home directory: available in every project, visible only to you
+* `~/.claude/workflows/` in your home directory: available in every project, visible only to you. If you set [`CLAUDE_CONFIG_DIR`](/en/env-vars), this location is the `workflows/` directory under that path.
+
+{/* min-version: 2.1.208 */}The save dialog shows the resolved path for the personal location. Before v2.1.208, it showed `~/.claude/workflows/` even when `CLAUDE_CONFIG_DIR` was set; the file was still saved under the configured directory.
 
 Press Enter to save. The workflow runs as `/<name>` in future sessions from either location.
 
@@ -294,7 +296,7 @@ Once a run starts, you manage it from the `/workflows` view, or by expanding its
 
 ### Resume after a pause
 
-If you stop a run, you can resume it: agents that already completed return their cached results, and the rest run live. Resume a paused run from `/workflows` by selecting it and pressing `p`, or ask Claude to relaunch the workflow with the same script.
+If you stop a run, you can resume it: agents that already completed return their cached results, and the rest run live. An agent that was still running when you stopped isn't saved and starts over on resume, so a workflow that fans work out across many small agents preserves more progress than one long agent. Resume a paused run from `/workflows` by selecting it and pressing `p`, or ask Claude to relaunch the workflow with the same script.
 
 Resume works within the same Claude Code session. If you exit Claude Code while a workflow is running, the next session starts the workflow fresh.
 
@@ -311,7 +313,7 @@ The warning is advisory: it doesn't pause or limit the run. Two settings change 
 * If you [set a size guideline](#set-a-size-guideline), the guideline's agent count replaces the 25-agent threshold.
 * Sessions with [ultracode](#let-claude-decide-with-ultracode) on don't show the warning, because turning ultracode on already opts you in to large runs.
 
-Every agent in a workflow uses your session's model unless the script routes a stage to a different one. To control the model cost:
+Every agent in a workflow uses your session's model unless the script routes a stage to a different one or the [`CLAUDE_CODE_SUBAGENT_MODEL`](/en/model-config#environment-variables) environment variable is set, which overrides both. To control the model cost:
 
 * Check `/model` before a large run if you usually switch to a smaller model for routine work
 * Ask Claude to use a smaller model for stages that don't need the strongest one when you describe the task

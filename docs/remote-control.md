@@ -124,6 +124,8 @@ Once a Remote Control session is active, you have a few ways to connect from ano
 * **Scan the QR code** shown alongside the session URL to open it directly in the Claude app. With `claude remote-control`, press spacebar to toggle the QR code display.
 * **Open [claude.ai/code](https://claude.ai/code) or the Claude app** and find the session by name in the session list. In the Claude mobile app, tap **Code** in the navigation to reach the session list. Remote Control sessions show a computer icon with a green status dot when online.
 
+When you connect, the device shows any subagents and workflows the session already has running in the background. {/* min-version: 2.1.208 */}Before v2.1.208, a device connecting to a session hosted in an interactive terminal didn't show subagents and workflows that were already running until one of them started or stopped.
+
 The remote session title is chosen in this order:
 
 1. The name you passed to `--name`, `--remote-control`, or `/remote-control`
