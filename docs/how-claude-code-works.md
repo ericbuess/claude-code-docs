@@ -86,7 +86,7 @@ Claude Code runs in three environments, each with different tradeoffs for where 
 | ------------------ | --------------------------------------- | ---------------------------------------------------------- |
 | **Local**          | Your machine                            | Default. Full access to your files, tools, and environment |
 | **Cloud**          | Anthropic-managed VMs                   | Offload tasks, work on repos you don't have locally        |
-| **Remote Control** | Your machine, controlled from a browser | Use the web UI while keeping everything local              |
+| **Remote Control** | Your machine, controlled from a browser | Use the web UI while execution and your files stay local   |
 
 ### Interfaces
 
