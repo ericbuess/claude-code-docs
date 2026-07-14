@@ -287,6 +287,7 @@ Claude Code v2.1.205 and later also block these by default:
 * Reading `.env` and sending credentials to their matching API
 * Read-only HTTP requests
 * Pushing to the branch you started on or one Claude created
+* {/* min-version: 2.1.203 */}Routine pushes to the repository default branch. Before v2.1.203, any direct push to the default branch was blocked
 
 Claude Code v2.1.195 and later also allow these by default:
 
@@ -304,6 +305,8 @@ Sandbox network access requests are routed through the classifier rather than al
 * Changing your permission mode or rules drops all cached verdicts
 
 Run `claude auto-mode defaults` to see the full rule lists. If routine actions get blocked, an administrator can add trusted repos, buckets, and services via the `autoMode.environment` setting: see [Configure auto mode](/en/auto-mode-config).
+
+Pushing to your working branch, making a routine push to the repository default branch, and creating a pull request that matches your request all run without a prompt. The classifier blocks a push only when it carries risk, such as a force push or content that routes around a review you set up. To require a human checkpoint before these actions while staying in auto mode, add `permissions.ask` rules: see [Common boundaries](/en/auto-mode-config#common-boundaries).
 
 ### Boundaries you state in conversation
 
@@ -325,7 +328,7 @@ Repeated blocks usually mean the classifier is missing context about your infras
   <Accordion title="How the classifier evaluates actions">
     Each action goes through a fixed decision order. The first matching step wins:
 
-    1. Actions matching your [allow or deny rules](/en/permissions#manage-permissions) resolve immediately, except writes to [protected paths](#protected-paths), which route to the classifier even when an allow rule matches
+    1. Actions matching your [allow, ask, or deny rules](/en/permissions#manage-permissions) resolve immediately, except writes to [protected paths](#protected-paths), which route to the classifier even when an allow rule matches. Content-scoped ask rules fall back to a permission prompt
     2. Read-only actions and file edits in your working directory are auto-approved, except writes to [protected paths](#protected-paths)
     3. Everything else goes to the classifier. {/* min-version: 2.1.199 */}As of v2.1.199, an MCP tool marked with [`_meta["anthropic/requiresUserInteraction"]`](/en/mcp#require-approval-for-a-specific-tool) skips the classifier and prompts you directly, so a consent step is never auto-approved on the tool author's behalf
     4. If the classifier blocks, Claude receives the reason and tries an alternative

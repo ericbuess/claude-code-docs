@@ -200,3 +200,27 @@ When running in JetBrains IDEs, consider:
 * Being aware of which files Claude Code has access to modify
 
 For Claude Code installation or login problems outside the IDE, see [Troubleshoot installation and login](/en/troubleshoot-install).
+
+### The built-in IDE MCP server
+
+When the plugin is active, it runs a local MCP server that the CLI connects to automatically. This is how the CLI opens diffs in the IDE's native diff viewer, reads your current selection for `@`-mentions, and pulls inspection diagnostics into the conversation.
+
+The server is named `ide` and is hidden from `/mcp` because there's nothing to configure. If your organization uses a [`PreToolUse` hook](/en/hooks#pretooluse) to allowlist MCP tools, though, you'll need to know it exists.
+
+**Selection and open-file context.** While connected, the CLI includes your current editor selection and the path of the active file as context on each prompt you send. The transcript shows a `⧉ Selected N lines from <file>` line when this happens. To exclude a sensitive file such as `.env`, add a [`Read` deny rule](/en/permissions#read-and-edit) for its path. A matching deny rule prevents both the selected text and the open-file notice for that file from reaching Claude.
+
+**Transport and authentication.** The server listens on an OS-assigned ephemeral port, and the port is not configurable. The transport is unencrypted `ws://`; on loopback, any process that could capture the traffic can also read the token from the lock file, so TLS would not add protection against a local attacker. Each IDE start generates a fresh random auth token, writes it to a lock file at `~/.claude/ide/<port>.lock`, and the CLI must present it as the `X-Claude-Code-Ide-Authorization` header to connect. If `CLAUDE_CONFIG_DIR` is set, the lock file is written to `$CLAUDE_CONFIG_DIR/ide/` instead.
+
+**Tools exposed to the model.** The server hosts several tools, but only one is visible to the model. The rest are internal RPC the CLI uses for its own UI, such as opening diffs and reading selections, and are filtered out before the tool list reaches Claude.
+
+| Tool name (as seen by hooks) | What it does                                                                                                          | Read-only |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------- |
+| `mcp__ide__getDiagnostics`   | Returns the IDE's inspection diagnostics, the errors and warnings shown in the editor. Optionally scoped to one file. | Yes       |
+
+The JetBrains plugin does not expose a code-execution tool to the model.
+
+**Listening interface.** Which network interface the server binds to is controlled by **Accept connections from all network interfaces** under **Settings → Tools → Claude Code \[Beta] → Networking (Advanced)**. With the setting disabled, the server listens on `127.0.0.1` only and is not reachable from other hosts. With it enabled, the port is reachable from your local network. The setting exists for cases where the CLI cannot reach the IDE over loopback, such as WSL2 with default NAT networking or a remote-IDE setup; see [WSL configuration](#wsl-configuration) for that scenario.
+
+<Warning>
+  Enabling **Accept connections from all network interfaces** makes the IDE MCP port reachable from your local network. Connections still require the auth token from the lock file, but because the transport is unencrypted `ws://`, both the session traffic and that token cross the network in cleartext when the setting is on. Only turn it on when loopback genuinely cannot work. For WSL2, prefer [mirrored networking](#switch-wsl2-to-mirrored-networking) so the Windows loopback interface is shared with the Linux VM and the socket can stay on loopback.
+</Warning>

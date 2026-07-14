@@ -98,7 +98,7 @@ First, create a Claude resource in Azure:
 
 1. Navigate to the [Microsoft Foundry portal](https://ai.azure.com/)
 2. Create a new resource, noting your resource name
-3. Create deployments for the Claude models:
+3. Create deployments for the Claude models, noting the deployment name you give each; you'll set these names as the model variables in step 4:
    * Claude Opus
    * Claude Sonnet
    * Claude Haiku
@@ -112,7 +112,7 @@ Claude Code supports three authentication methods for Microsoft Foundry. Choose 
 1. Navigate to your resource in the Microsoft Foundry portal
 2. Go to the **Endpoints and keys** section
 3. Copy **API Key**
-4. Set the environment variable:
+4. Set the environment variable, replacing `your-azure-api-key` with the key you copied:
 
 ```bash theme={null}
 export ANTHROPIC_FOUNDRY_API_KEY=your-azure-api-key
@@ -195,6 +195,8 @@ claude
 
 Claude Code reads `CLAUDE_CODE_USE_FOUNDRY` and the other Microsoft Foundry variables from the environment and connects to your Azure resource on the first prompt. Unlike Amazon Bedrock and Google Cloud's Agent Platform, Microsoft Foundry has no interactive setup wizard, so the environment variables in steps 3 and 4 are the only configuration path.
 
+To verify your setup, run `/status` inside Claude Code. The API provider line shows `Microsoft Foundry`, along with the resource name or base URL you configured.
+
 ## Azure RBAC configuration
 
 The `Azure AI User` and `Cognitive Services User` default roles include all required permissions for invoking Claude models.
@@ -220,6 +222,10 @@ For details, see [Microsoft Foundry RBAC documentation](https://learn.microsoft.
 If you receive an error "Failed to get token from azureADTokenProvider: ChainedTokenCredential authentication failed":
 
 * Configure Entra ID on the environment, or set `ANTHROPIC_FOUNDRY_API_KEY`.
+
+If requests fail with repeated connection errors on the first prompt:
+
+* Check that `ANTHROPIC_FOUNDRY_RESOURCE` is set to your actual resource name rather than a placeholder. Claude Code builds the endpoint URL from this value, so an incorrect name points at a host that doesn't exist.
 
 ## Additional resources
 

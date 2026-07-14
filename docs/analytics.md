@@ -190,7 +190,7 @@ The Leaderboard helps you find team members with high Claude Code adoption who c
 
 #### Access data programmatically
 
-On the Enterprise plan, the [Claude Enterprise Analytics API](https://support.claude.com/en/articles/13703965-claude-enterprise-analytics-api-reference-guide) returns per-user engagement, usage, and cost reports for your organization across Claude surfaces, including Claude Code. A Primary Owner creates a key with the `read:analytics` scope at [claude.ai/analytics/api-keys](https://claude.ai/analytics/api-keys). The API is not available on the Teams plan.
+On the Enterprise plan, the [Claude Enterprise Analytics API](https://platform.claude.com/docs/en/api/admin/analytics) returns per-user engagement, usage, and cost reports for your organization across Claude surfaces, including Claude Code. A Primary Owner creates a key with the `read:analytics` scope at [claude.ai/analytics/api-keys](https://claude.ai/analytics/api-keys). The API is not available on the Teams plan.
 
 To query contribution data through GitHub instead, search for PRs labeled with `claude-code-assisted`.
 

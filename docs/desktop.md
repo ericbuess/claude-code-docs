@@ -271,7 +271,7 @@ Computer use is off by default. If you ask Claude to do something that needs it 
 
 <Steps>
   <Step title="Update the desktop app">
-    Make sure you have the latest version of Claude Desktop. Download or update at [claude.com/download](https://claude.com/download), then restart the app.
+    Make sure you have the latest version of Claude Desktop. On macOS and Windows, download or update at [claude.com/download](https://claude.com/download); on Linux, update through your package manager ([instructions](/en/desktop-linux)). Then restart the app.
   </Step>
 
   <Step title="Turn on the toggle">
@@ -360,7 +360,7 @@ The **Continue in** menu, accessible from the VS Code icon in the bottom right o
 
 ### Sessions from Dispatch
 
-[Dispatch](https://support.claude.com/en/articles/13947068) is a persistent conversation with Claude that lives in the [Cowork](https://claude.com/product/cowork#dispatch-and-computer-use) tab. You message Dispatch a task, and it decides how to handle it.
+[Dispatch](https://support.claude.com/en/articles/13947068) is a persistent conversation with Claude that lives in the [Cowork](https://claude.com/product/cowork) tab. You message Dispatch a task, and it decides how to handle it.
 
 A task can end up as a Code session in two ways: you ask for one directly, such as "open a Claude Code session and fix the login bug", or Dispatch decides the task is development work and spawns one on its own. Tasks that typically route to Code include fixing bugs, updating dependencies, running tests, or opening pull requests. Research, document editing, and spreadsheet work stay in Cowork.
 
@@ -666,9 +666,52 @@ IT teams can manage the desktop app through MDM on macOS or group policy on Wind
 * **macOS**: configure via `com.anthropic.claudefordesktop` preference domain using tools like Jamf or Kandji
 * **Windows**: configure via registry at `SOFTWARE\Policies\Claude`
 
+### Network access requirements
+
+Desktop loads its application code and user content from Anthropic CDN hosts.
+
+```text theme={null}
+anthropic.com
+*.anthropic.com
+claude.ai
+*.claude.ai
+claude.com
+*.claude.com
+claude.app
+*.claude.app
+*.claudeusercontent.com
+*.claudemcpcontent.com
+```
+
+Traffic is HTTPS on port 443 unless you configure a custom port for [OTLP](/en/monitoring-usage), an LLM gateway, or an MCP server.
+
+For proxy servers, custom certificate authorities, mTLS, and the domains the standalone CLI needs, see [network configuration](/en/network-config).
+
+To reduce the number of firewall wildcards, allow these Anthropic hosts instead. Certain subdomains are dynamically generated and must remain wildcards.
+
+```text theme={null}
+anthropic.com
+api.anthropic.com
+a-api.anthropic.com
+a-cdn.anthropic.com
+s-cdn.anthropic.com
+assets-proxy.anthropic.com
+claude.ai
+a.claude.ai
+a-cdn.claude.ai
+assets.claude.ai
+downloads.claude.ai
+*.livepreview.claude.ai
+claude.com
+platform.claude.com
+*.livepreview.claude.app
+*.claudeusercontent.com
+*.claudemcpcontent.com
+```
+
 ### Authentication and SSO
 
-Enterprise organizations can require SSO for all users. See [authentication](/en/authentication) for plan-level details and [Setting up SSO](https://support.claude.com/en/articles/13132885-setting-up-single-sign-on-sso) for SAML and OIDC configuration.
+Enterprise organizations can require SSO for all users. See [authentication](/en/authentication) for plan-level details and [Setting up SSO](https://support.claude.com/en/articles/13132885-setting-up-single-sign-on-sso) for SAML configuration; OIDC setup is covered in the [Claude Enterprise Administrator Guide](https://claude.com/resources/tutorials/claude-enterprise-administrator-guide).
 
 ### Data handling
 
@@ -679,9 +722,9 @@ Claude Code processes your code locally in local sessions or on Anthropic's clou
 Desktop can be distributed through enterprise deployment tools:
 
 * **macOS**: distribute via MDM such as Jamf or Kandji using the `.dmg` installer
-* **Windows**: deploy via MSIX package or `.exe` installer. See [Deploy Claude Desktop for Windows](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows) for enterprise deployment options including silent installation
+* **Windows**: deploy via the MSIX package. See [Deploy Claude Desktop for Windows](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows) for enterprise deployment options including silent installation
 
-For network configuration such as proxy settings, firewall allowlisting, and LLM gateways, see [network configuration](/en/network-config).
+For the domains to allowlist in your firewall, see [network access requirements](#network-access-requirements) above. For proxy settings, custom certificate authorities, and LLM gateways, see [network configuration](/en/network-config).
 
 For the full enterprise configuration reference, see the [enterprise configuration guide](https://support.claude.com/en/articles/12622667-enterprise-configuration).
 
@@ -732,27 +775,27 @@ Desktop and CLI read the same configuration files, so your setup carries over:
 
 This table compares core capabilities between the CLI and Desktop. For a full list of CLI flags, see the [CLI reference](/en/cli-reference).
 
-| Feature                                               | CLI                                                              | Desktop                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ----------------------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Permission modes                                      | All modes including `dontAsk`                                    | Manual, Accept edits, Plan, and Auto. Bypass permissions appears in the mode selector once enabled: through the Settings toggle on Pro and Max plans, or through organization policy on Team and Enterprise plans                                                                                                                                                                                                                                         |
-| `--dangerously-skip-permissions`                      | CLI flag                                                         | Bypass permissions mode. On Pro and Max plans, enable it in Settings → Claude Code → "Allow bypass permissions mode"; on Team and Enterprise plans, organization policy controls it                                                                                                                                                                                                                                                                       |
-| [Third-party providers](/en/third-party-integrations) | Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry | Anthropic's API by default. Enterprise deployments can configure Google Cloud's Agent Platform and gateway providers. See the [enterprise configuration guide](https://support.claude.com/en/articles/12622667-enterprise-configuration). To run the Code tab on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a self-hosted LLM gateway, see [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview). |
-| [MCP servers](/en/mcp)                                | Configure in settings files                                      | Connectors UI for local and SSH sessions, or settings files                                                                                                                                                                                                                                                                                                                                                                                               |
-| [Plugins](/en/plugins)                                | `/plugin` command                                                | Plugin manager UI                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| @mention files                                        | Text-based                                                       | With autocomplete; local and SSH sessions only                                                                                                                                                                                                                                                                                                                                                                                                            |
-| File attachments                                      | Not available                                                    | Images, PDFs                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| Session isolation                                     | [`--worktree`](/en/cli-reference) flag                           | Automatic worktrees                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| Multiple sessions                                     | Separate terminals                                               | Sidebar tabs                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| Recurring tasks                                       | Cron jobs, CI pipelines                                          | [Scheduled tasks](/en/desktop-scheduled-tasks)                                                                                                                                                                                                                                                                                                                                                                                                            |
-| Computer use                                          | [Enable via `/mcp`](/en/computer-use) on macOS                   | [App and screen control](#let-claude-use-your-computer) on macOS and Windows                                                                                                                                                                                                                                                                                                                                                                              |
-| Dispatch integration                                  | Not available                                                    | [Dispatch sessions](#sessions-from-dispatch) in the sidebar                                                                                                                                                                                                                                                                                                                                                                                               |
-| Scripting and automation                              | [`--print`](/en/cli-reference), [Agent SDK](/en/headless)        | Not available                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Feature                                               | CLI                                                              | Desktop                                                                                                                                                                                                                                     |
+| ----------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Permission modes                                      | All modes including `dontAsk`                                    | Manual, Accept edits, Plan, and Auto. Bypass permissions appears in the mode selector once enabled: through the Settings toggle on Pro and Max plans, or through organization policy on Team and Enterprise plans                           |
+| `--dangerously-skip-permissions`                      | CLI flag                                                         | Bypass permissions mode. On Pro and Max plans, enable it in Settings → Claude Code → "Allow bypass permissions mode"; on Team and Enterprise plans, organization policy controls it                                                         |
+| [Third-party providers](/en/third-party-integrations) | Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry | Anthropic's API by default. To run the Code tab on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a self-hosted LLM gateway, see [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview). |
+| [MCP servers](/en/mcp)                                | Configure in settings files                                      | Connectors UI for local and SSH sessions, or settings files                                                                                                                                                                                 |
+| [Plugins](/en/plugins)                                | `/plugin` command                                                | Plugin manager UI                                                                                                                                                                                                                           |
+| @mention files                                        | Text-based                                                       | With autocomplete; local and SSH sessions only                                                                                                                                                                                              |
+| File attachments                                      | Not available                                                    | Images, PDFs                                                                                                                                                                                                                                |
+| Session isolation                                     | [`--worktree`](/en/cli-reference) flag                           | Automatic worktrees                                                                                                                                                                                                                         |
+| Multiple sessions                                     | Separate terminals                                               | Sidebar tabs                                                                                                                                                                                                                                |
+| Recurring tasks                                       | Cron jobs, CI pipelines                                          | [Scheduled tasks](/en/desktop-scheduled-tasks)                                                                                                                                                                                              |
+| Computer use                                          | [Enable via `/mcp`](/en/computer-use) on macOS                   | [App and screen control](#let-claude-use-your-computer) on macOS and Windows                                                                                                                                                                |
+| Dispatch integration                                  | Not available                                                    | [Dispatch sessions](#sessions-from-dispatch) in the sidebar                                                                                                                                                                                 |
+| Scripting and automation                              | [`--print`](/en/cli-reference), [Agent SDK](/en/headless)        | Not available                                                                                                                                                                                                                               |
 
 ### What's not available in Desktop
 
 The following features are only available in the CLI or VS Code extension, except where noted:
 
-* **Third-party providers**: Desktop connects to Anthropic's API by default. Enterprise deployments can configure Google Cloud's Agent Platform and gateway providers via [managed settings](https://support.claude.com/en/articles/12622667-enterprise-configuration). For Amazon Bedrock or Microsoft Foundry in the CLI, see the [quickstart](/en/quickstart). As an exception to the section above, [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview) runs the Code tab on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a self-hosted LLM gateway.
+* **Third-party providers**: Desktop connects to Anthropic's API by default. Enterprise deployments can configure Google Cloud's Agent Platform and gateway providers via [managed settings](https://claude.com/docs/third-party/claude-desktop/configuration). For Amazon Bedrock or Microsoft Foundry in the CLI, see the [quickstart](/en/quickstart). As an exception to the section above, [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview) runs the Code tab on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a self-hosted LLM gateway.
 * **Linux (beta)**: Computer Use isn't yet available in the Linux desktop app. See [Claude Desktop on Linux](/en/desktop-linux).
 * **Inline code suggestions**: Desktop does not provide autocomplete-style suggestions. It works through conversational prompts and explicit code changes.
 * **Agent teams**: parallel Claude Code sessions that message each other are available in the [CLI](/en/agent-teams), not in Desktop. For multi-agent work inside one session, use [dynamic workflows](/en/workflows), which run in Desktop.
@@ -786,7 +829,8 @@ If the app opens but shows a blank or unresponsive screen:
 
 1. Restart the app.
 2. Check for pending updates. On macOS and Windows the app auto-updates on launch; on Linux, update through apt as described in [Claude Desktop on Linux](/en/desktop-linux).
-3. On Windows, check Event Viewer for crash logs under **Windows Logs → Application**.
+3. On a managed network, confirm your firewall allows the CDN hosts in [network access requirements](#network-access-requirements).
+4. On Windows, check Event Viewer for crash logs under **Windows Logs → Application**.
 
 ### "Failed to load session"
 

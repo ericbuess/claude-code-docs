@@ -51,6 +51,8 @@ Run `/goal` followed by the condition you want satisfied. If a goal is already a
 
 Setting a goal starts a turn immediately, with the condition itself as the directive. You don't need to send a separate prompt. While the goal is active, a `◎ /goal active` indicator shows how long the goal has been running.
 
+A goal doesn't change permissions. In the default permission mode, Claude still asks before tool calls that your settings don't already allow, such as the test command above. To let goal turns run unattended, pair `/goal` with [auto mode](/en/auto-mode-config).
+
 After each turn, the evaluator returns a short reason explaining why the condition is or isn't met. The most recent reason appears in the status view and in the transcript so you can see what Claude is working toward next.
 
 <Note>
@@ -87,6 +89,8 @@ If a goal is active, the status shows:
 * The current token spend
 * The evaluator's most recent reason
 
+The turn count and the most recent reason appear after the first evaluation has run.
+
 If no goal is active but one was achieved earlier in the session, the status shows the achieved condition along with its duration, turn count, and token spend.
 
 ### Clear a goal
@@ -96,6 +100,8 @@ Run `/goal clear` to remove an active goal before its condition is met.
 ```text theme={null}
 /goal clear
 ```
+
+Claude prints `Goal cleared:` followed by the condition to confirm, or `No goal set` if nothing was active.
 
 `stop`, `off`, `reset`, `none`, and `cancel` are accepted as aliases for `clear`. Running `/clear` to start a new conversation also removes any active goal.
 
@@ -110,6 +116,8 @@ A goal that was still active when a session ended is restored when you resume th
 ```bash theme={null}
 claude -p "/goal CHANGELOG.md has an entry for every PR merged this week"
 ```
+
+With the default text output, nothing prints until the condition is met, so a goal that runs many turns can look stuck. Add `--output-format stream-json --verbose` to emit each message as the loop runs.
 
 Interrupt the process with Ctrl+C to stop a non-interactive goal before the condition is met.
 

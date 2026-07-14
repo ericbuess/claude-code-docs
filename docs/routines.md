@@ -118,6 +118,8 @@ Routines belong to your individual claude.ai account. They are not shared with t
 
 Run `/schedule` in any session to create a scheduled routine conversationally. You can also pass a description directly, for a recurring routine like `/schedule daily PR review at 9am` or a one-off like `/schedule clean up feature flag in one week`. Claude walks through the same information the web form collects, then saves the routine to your account.
 
+A successful start looks like a conversation: Claude asks follow-up questions about the schedule, repositories, and prompt before saving. If Claude instead replies that you need to authenticate or that it can't connect to your remote claude.ai account, no routine was created; see [Troubleshooting](#troubleshooting).
+
 `/schedule` in the CLI creates scheduled routines only. To add an API or GitHub trigger, edit the routine on the web at [claude.ai/code/routines](https://claude.ai/code/routines).
 
 The CLI also supports managing existing routines. Run `/schedule list` to see all routines, `/schedule update` to change one, or `/schedule run` to trigger it immediately.
@@ -137,6 +139,10 @@ For a custom interval such as every two hours or the first of each month, pick t
 #### Schedule a one-off run
 
 A one-off schedule fires the routine a single time at a specific timestamp. Use it to remind yourself later in the week, to open a cleanup PR after a rollout finishes, or to kick off a follow-up task when an upstream change lands. After the routine fires, it auto-disables and the web UI marks it as **Ran**. To run it again, edit the routine and set a new one-off time.
+
+<Note>
+  One-off scheduling from the CLI is rolling out gradually and may not be available on your account yet. If `/schedule` only offers recurring schedules, create the one-off run from the web at [claude.ai/code/routines](https://claude.ai/code/routines) instead.
+</Note>
 
 Create a one-off run from the CLI by describing the time in natural language. Claude resolves the phrase against the current time and confirms the absolute timestamp before saving.
 
@@ -182,7 +188,7 @@ Each routine has its own token, scoped to triggering that routine only. To rotat
 
 Send a POST request to the `/fire` endpoint with the bearer token in the `Authorization` header. The request body accepts an optional `text` field for run-specific context such as an alert body or a failing log, passed to the routine alongside its saved prompt. The value is freeform text and is not parsed: if you send JSON or another structured payload, the routine receives it as a literal string.
 
-The example below triggers a routine from a shell:
+The example below triggers a routine from a shell. The routine ID and token shown are placeholders: replace them with the URL and token you copied when [adding the API trigger](#add-an-api-trigger), or the request fails with a `401` authentication error:
 
 ```bash theme={null}
 curl -X POST https://api.anthropic.com/v1/claude_code/routines/trig_01ABCDEFGHJKLMNOPQRSTUVW/fire \
@@ -366,15 +372,19 @@ One-off runs do not count against the daily routine cap. They draw down your reg
 
 ## Troubleshooting
 
-### `/schedule` shows "No commands match" or "Unknown command"
+### `/schedule` returns "Unknown command"
 
-The CLI hides `/schedule` when one of its requirements isn't met, so the command menu shows `No commands match "/schedule"` while you type, and submitting it returns `Unknown command: /schedule`. The cause is usually one of the following:
+The CLI hides `/schedule` when one of its requirements isn't met: the command menu shows `No commands match "/schedule"` while you type, and submitting it returns `Unknown command: /schedule`. The cause is usually one of the following:
 
 * You are authenticated with a Console API key or a cloud provider such as Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. `/schedule` requires a claude.ai subscription login. If `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` is set in your shell, or `apiKeyHelper` is set in `settings.json`, remove it first, since these take precedence over a claude.ai login
 * `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, or `DISABLE_GROWTHBOOK` is set in your shell environment or in the `env` block of a [`settings.json` file](/en/settings#available-settings). These disable feature-flag fetching, which `/schedule` depends on
 * You are inside a Claude Code on the web session. Manage routines from the [web UI](https://claude.ai/code/routines) instead
 
 You can always create and manage routines at [claude.ai/code/routines](https://claude.ai/code/routines) regardless of how the CLI is configured.
+
+### `/schedule` asks you to authenticate
+
+If `/schedule` runs but Claude responds that you need to authenticate with a claude.ai account first, the CLI has no stored claude.ai login. API accounts aren't supported for routines. Run `/login`, sign in with your claude.ai account, then run `/schedule` again.
 
 ### "Routines are disabled by your organization's policy"
 
