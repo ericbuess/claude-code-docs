@@ -243,8 +243,8 @@
     "auto-mode-config.md": {
       "original_url": "https://code.claude.com/docs/en/auto-mode-config",
       "original_md_url": "https://code.claude.com/docs/en/auto-mode-config.md",
-      "hash": "02d28d01f7071a5b3960da2b0f78f7777abebc5383c7f20407ecfe7e1f912b0a",
-      "last_updated": "2026-07-13T21:42:43.610892"
+      "hash": "04cb6a525ede8f29db48f032f046c45ccd1208336897ad032c717634f9711607",
+      "last_updated": "2026-07-14T05:19:47.324927"
     },
     "best-practices.md": {
       "original_url": "https://code.claude.com/docs/en/best-practices",
@@ -1005,8 +1005,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-07-14T01:20:12.663598",
-    "fetch_duration_seconds": 194.08864,
+    "last_fetch_completed": "2026-07-14T05:21:43.729545",
+    "fetch_duration_seconds": 156.512757,
     "total_pages_discovered": 167,
     "pages_fetched_successfully": 168,
     "pages_failed": 0,
@@ -1016,7 +1016,7 @@
     "total_files": 167,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-07-14T01:20:12.663618",
+  "last_updated": "2026-07-14T05:21:43.729575",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
