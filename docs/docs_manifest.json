@@ -796,8 +796,8 @@
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
       "original_md_url": "https://code.claude.com/docs/en/setup.md",
-      "hash": "842039a7be374086b54ec52588c894427e72c2d354cd49f3a40ea41a516710f9",
-      "last_updated": "2026-07-13T21:44:10.692441"
+      "hash": "5881b32a9835cf94f5b47d4a33fa796db46904f3d22840fbe13f4e17c55524b9",
+      "last_updated": "2026-07-14T16:09:12.383560"
     },
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
@@ -1005,8 +1005,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-07-14T13:05:10.846958",
-    "fetch_duration_seconds": 176.17994,
+    "last_fetch_completed": "2026-07-14T16:09:52.432158",
+    "fetch_duration_seconds": 180.684552,
     "total_pages_discovered": 167,
     "pages_fetched_successfully": 168,
     "pages_failed": 0,
@@ -1016,7 +1016,7 @@
     "total_files": 167,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-07-14T13:05:10.846990",
+  "last_updated": "2026-07-14T16:09:52.432183",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
