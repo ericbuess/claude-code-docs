@@ -108,7 +108,7 @@ If you have Google Cloud credentials and want to start using Claude Code through
   </Step>
 </Steps>
 
-After you've signed in, run `/setup-vertex` any time to reopen the wizard and change your credentials, project, region, or model pins.
+After you've signed in, run `/setup-vertex` any time to reopen the wizard and change your credentials, project, region, or model pins. The model pin step starts from your currently pinned models. The wizard writes to `~/.claude/settings.json`, or to `$CLAUDE_CONFIG_DIR/settings.json` when [`CLAUDE_CONFIG_DIR`](/en/env-vars#variables) is set.
 
 ## Region configuration
 

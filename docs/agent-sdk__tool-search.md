@@ -39,6 +39,8 @@ Tool search is on by default. It is disabled by default on Google Cloud's Agent 
 | `auto:N` | Same as `auto` with a custom percentage. `auto:5` activates when tool definitions exceed 5% of the context window. Lower values activate sooner.                                                                                                                         |
 | `false`  | Tool search is off. All tool definitions are loaded into context on every turn.                                                                                                                                                                                          |
 
+Setting [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`](/en/env-vars) keeps tool search off, and `ENABLE_TOOL_SEARCH` can't override it. The variable strips the beta header that `defer_loading` tool definitions and `tool_reference` content blocks require.
+
 Tool search applies to all registered tools, whether they come from remote MCP servers or [custom SDK MCP servers](/en/agent-sdk/custom-tools). When using `auto`, the threshold is based on the combined size of all tool definitions across all servers.
 
 Set the value in the `env` option on `query()`. This example connects to a remote MCP server that exposes many tools, pre-approves all of them with a wildcard, and uses `auto:5` so tool search activates when their definitions exceed 5% of the context window:

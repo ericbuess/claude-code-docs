@@ -107,7 +107,7 @@ If you have AWS credentials and want to start using Claude Code through Amazon B
   </Step>
 </Steps>
 
-After you've signed in, run `/setup-bedrock` any time to reopen the wizard and change your credentials, region, or model pins.
+After you've signed in, run `/setup-bedrock` any time to reopen the wizard and change your credentials, region, or model pins. The model pin step starts from your currently pinned models. The wizard writes to `~/.claude/settings.json`, or to `$CLAUDE_CONFIG_DIR/settings.json` when [`CLAUDE_CONFIG_DIR`](/en/env-vars#variables) is set.
 
 ## Set up manually
 
@@ -144,8 +144,10 @@ export AWS_SESSION_TOKEN=your-session-token
 
 **Option C: Environment variables (SSO profile)**
 
+Replace `your-profile-name` with the name of your AWS profile before running these commands.
+
 ```bash theme={null}
-aws sso login --profile=<your-profile-name>
+aws sso login --profile=your-profile-name
 
 export AWS_PROFILE=your-profile-name
 ```

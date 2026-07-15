@@ -119,7 +119,7 @@ Claude Code reads this setting only from admin-controlled policy tiers: server-m
 
 ## Policy-based control with allowlists and denylists
 
-Allowlists and denylists filter which configured servers are allowed to load. They aren't a registry: a server still has to be added by a user, a plugin, or `managed-mcp.json` before the allowlist or denylist applies to it. To deploy servers to users, use [`managed-mcp.json`](#exclusive-control-with-managed-mcp-json).
+Allowlists and denylists filter which configured servers are allowed to load. They aren't a registry: a server still has to be added by a user, a plugin, or `managed-mcp.json` before the allowlist or denylist applies to it. To deploy servers to users, use [`managed-mcp.json`](#exclusive-control-with-managed-mcp-json). Both lists also filter servers passed with the [`--mcp-config` CLI flag](/en/cli-reference#cli-flags); `--strict-mcp-config` limits which configuration files load and doesn't bypass either list.
 
 To make the allowlist authoritative, set `allowedMcpServers` and `allowManagedMcpServersOnly: true` together in a [managed settings source](/en/admin-setup#decide-how-settings-reach-devices), such as server-managed settings or a deployed `managed-settings.json` file. [Restrict the allowlist to managed settings only](#restrict-the-allowlist-to-managed-settings-only) shows the configuration. Without `allowManagedMcpServersOnly`, allowlists from every settings source merge, including a user's own `~/.claude/settings.json`, so a user can broaden what your allowlist permits. Denylists merge from every source regardless.
 
@@ -143,6 +143,8 @@ Leaving `allowedMcpServers` unset is different from setting it to an empty array
 | :------------------ | :------------------ | :----------------- | :---------------------------- |
 | `allowedMcpServers` | All servers allowed | No servers allowed | Only matching servers allowed |
 | `deniedMcpServers`  | No servers blocked  | No servers blocked | Matching servers blocked      |
+
+See [Invalid entries in managed settings](/en/settings#invalid-entries-in-managed-settings) for what happens when an entry fails schema validation.
 
 <Warning>
   A `serverName` entry, in either list, is not a security control. The name is the label a user assigns when running `claude mcp add` or editing a config file, not the underlying server, so a user can call any server `github`. For claude.ai connectors the name is the display name returned by claude.ai, which can change. To enforce which servers actually run, add `serverCommand` or `serverUrl` entries.

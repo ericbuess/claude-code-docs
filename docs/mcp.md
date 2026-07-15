@@ -215,7 +215,7 @@ An MCP server can also push messages directly into your session so Claude can re
   * The `--transport` and `--header` flags also accept `-t` and `-H` short forms
   * Configure MCP server startup timeout using the `MCP_TIMEOUT` environment variable (for example, `MCP_TIMEOUT=10000 claude` sets a 10-second timeout)
   * Set a per-server tool execution timeout by adding a `timeout` field in milliseconds to that server's `.mcp.json` entry, for example `"timeout": 600000` for ten minutes. This overrides the `MCP_TOOL_TIMEOUT` environment variable for that server only
-  * Claude Code displays a warning when MCP tool output exceeds 10,000 tokens. To increase this limit, set the `MAX_MCP_OUTPUT_TOKENS` environment variable (for example, `MAX_MCP_OUTPUT_TOKENS=50000`)
+  * Claude Code displays a warning when MCP tool output exceeds 10,000 tokens and limits output to 25,000 tokens by default. To raise the limit, set the `MAX_MCP_OUTPUT_TOKENS` environment variable (for example, `MAX_MCP_OUTPUT_TOKENS=50000`); the warning threshold is fixed. See [MCP output limits and warnings](#mcp-output-limits-and-warnings)
   * Use `/mcp` to authenticate with remote servers that require OAuth 2.0 authentication
 </Tip>
 
@@ -1109,6 +1109,8 @@ Claude Code truncates tool descriptions and server instructions at 2KB each. Kee
 ### Configure tool search
 
 Tool search is enabled by default: MCP tools are deferred and discovered on demand. Claude Code disables it by default on Google Cloud's Agent Platform. It is also disabled when `ANTHROPIC_BASE_URL` points to a non-first-party host, since most proxies don't forward `tool_reference` blocks. Set `ENABLE_TOOL_SEARCH` explicitly to override either fallback.
+
+Setting [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`](/en/env-vars) keeps tool search off, and `ENABLE_TOOL_SEARCH` can't override it. The variable strips the beta header that `defer_loading` tool definitions and `tool_reference` content blocks require.
 
 Tool search requires a model that supports `tool_reference` blocks. Haiku models don't support it. On Google Cloud's Agent Platform, tool search is supported for Claude Sonnet 4.5 and later and Claude Opus 4.5 and later.
 

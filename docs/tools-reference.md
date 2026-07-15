@@ -130,7 +130,7 @@ Two limits bound each command:
 * **Timeout**: two minutes by default. Claude can request up to 10 minutes per command with the `timeout` parameter. Override the default and ceiling with [`BASH_DEFAULT_TIMEOUT_MS` and `BASH_MAX_TIMEOUT_MS`](/en/env-vars).
 * **Output length**: 30,000 characters by default. When a command produces more than that, Claude Code saves the full output to a file in the session directory and gives Claude the file path plus a short preview from the start. Claude reads or searches that file when it needs the rest. Raise the limit with [`BASH_MAX_OUTPUT_LENGTH`](/en/env-vars), up to a hard ceiling of 150,000 characters.
 
-For long-running processes such as dev servers or watch builds, Claude can set `run_in_background: true` to start the command as a background task and continue working while it runs. List and stop background tasks with `/tasks`.
+For long-running processes such as dev servers or watch builds, Claude can set `run_in_background: true` to start the command as a background task and continue working while it runs. List and stop background tasks with `/tasks`. In non-interactive mode with the `-p` flag, [background tasks end shortly after the run's final result](/en/headless#background-tasks-at-exit).
 
 ## Edit tool behavior
 

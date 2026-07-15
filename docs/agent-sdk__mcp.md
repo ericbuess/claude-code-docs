@@ -781,6 +781,10 @@ MCP server connections time out after 30 seconds by default. If your server take
 * Pre-warming the server before starting your agent
 * Checking server logs for slow initialization causes
 
+### Tool output exceeds maximum allowed tokens
+
+The SDK applies the same MCP output limit as Claude Code. When a tool result is larger than 25,000 tokens, the full output is saved to a file and the tool result is replaced with an error message that names the file path, so the agent can read the output back in portions. Raise the limit with the [`MAX_MCP_OUTPUT_TOKENS`](/en/env-vars) environment variable. See [MCP output limits and warnings](/en/mcp#mcp-output-limits-and-warnings) for the full behavior, including how a server can declare a higher per-tool limit.
+
 ## Related resources
 
 * **[Custom tools guide](/en/agent-sdk/custom-tools)**: Build your own MCP server that runs in-process with your SDK application

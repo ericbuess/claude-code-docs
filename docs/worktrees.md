@@ -38,6 +38,8 @@ Entering a path outside the repository's `.claude/worktrees/` directory asks for
 
 {/* min-version: 2.1.198 */}As of v2.1.198, entering or exiting a worktree also relocates the session transcript to that directory's project storage, the same way [`/cd`](/en/commands) does, so `/desktop` and `--resume` find the session there afterward. Worktrees created by a [`WorktreeCreate` hook](#non-git-version-control) are excluded and keep the transcript at the launch directory.
 
+Worktrees work with [sandboxing](/en/sandboxing#filesystem-isolation) enabled: the sandbox allows writes to the main repository's shared `.git` directory so commands such as `git commit` can update refs and the index from inside a linked worktree.
+
 Before using `--worktree` interactively in a directory for the first time, accept the workspace trust dialog by running `claude` once in that directory. If trust has not yet been accepted, `--worktree` exits with an error and prompts you to run `claude` in the directory first. Non-interactive runs with `-p` skip the [trust check](/en/security), so `claude -p --worktree` proceeds without it.
 
 If Claude Code can't enter the worktree directory at startup, for example because a [`WorktreeCreate` hook](/en/hooks#worktreecreate) printed something other than the directory it created, or because the directory was deleted after it was set up, Claude Code prints an error naming the path and exits with code 1. Before v2.1.205, this crashed the session, and with `-p` it stalled for about 30 seconds before exiting with code 0.
@@ -54,7 +56,7 @@ Worktrees branch from your repository's default branch, `origin/HEAD`, so they s
 
 The refresh requires Claude Code v2.1.208 or later; before that, a fresh worktree used whatever `origin/HEAD` was already cached locally.
 
-To always branch from local `HEAD` instead, set `worktree.baseRef` to `"head"` in [settings](/en/settings#worktree-settings). Setting `baseRef` to `"head"` makes new worktrees carry your unpushed commits and feature-branch state, which is useful when isolating subagents that need to operate on in-progress work. The setting accepts only `"fresh"` or `"head"`, not arbitrary git refs:
+To always branch from local `HEAD` instead, set `worktree.baseRef` to `"head"` in [settings](/en/settings#worktree-settings). Setting `baseRef` to `"head"` makes new worktrees carry your unpushed commits and feature-branch state, which is useful when isolating subagents that need to operate on in-progress work. When the session runs inside a linked worktree, `"head"` resolves to that worktree's `HEAD`, not the main checkout's. The setting accepts only `"fresh"` or `"head"`, not arbitrary git refs:
 
 ```json theme={null}
 {

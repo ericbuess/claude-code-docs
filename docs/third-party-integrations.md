@@ -200,6 +200,8 @@ Select a deployment option to view setup instructions:
 * [Google Cloud's Agent Platform](/en/google-vertex-ai)
 * [Microsoft Foundry](/en/microsoft-foundry)
 
+For Amazon Bedrock and Google Vertex AI, you can also run `claude` and select **3rd-party platform** at the login prompt to launch an interactive setup wizard.
+
 ## Configure proxies and gateways
 
 Most organizations can use a cloud provider directly without additional configuration. However, you may need to configure a corporate proxy or LLM gateway if your organization has specific network or management requirements. These are different configurations that can be used together:

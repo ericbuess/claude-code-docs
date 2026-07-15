@@ -27,6 +27,8 @@ Claude Code never installs a plugin automatically. The user always confirms.
 
 ## Emit the hint
 
+Hint prompts only fire for plugins listed in the official Anthropic marketplace. See [Get your plugin into the official marketplace](#get-your-plugin-into-the-official-marketplace) before you ship the integration.
+
 Gate emission on an environment variable so the marker is unlikely to appear when a human runs your CLI directly, then write the tag to stderr on its own line. Choose which variable to check:
 
 * `CLAUDECODE`: set on every Claude Code version, so it reaches the most sessions. It is also set in tmux sessions and stdio MCP server subprocesses that Claude Code starts. IDE extensions also set it in their integrated terminals, where a human may be running your CLI directly.

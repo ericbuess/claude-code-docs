@@ -621,7 +621,7 @@ When running with `--agent` or inside a subagent, two additional fields are incl
 | `agent_id`   | Unique identifier for the subagent. Present only when the hook fires inside a subagent call. Use this to distinguish subagent hook calls from main-thread calls.                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `agent_type` | Agent name (for example, `"Explore"` or `"security-reviewer"`). Present when the session uses `--agent` or the hook fires inside a subagent. For subagents, the subagent's type takes precedence over the session's `--agent` value. For [custom subagents](/en/sub-agents), this is the `name` field from the agent's frontmatter, not the filename. For subagents shipped by a [plugin](/en/plugins), this is the plugin-scoped identifier such as `my-plugin:reviewer`, not the bare frontmatter name. See [SubagentStart](#subagentstart) for how to write a matcher against a plugin-scoped name. |
 
-Only [`SessionStart`](#sessionstart) hooks can receive a `model` field, and it is not guaranteed to be present. There is no `$CLAUDE_MODEL` environment variable. A hook process inherits the parent environment, so it can read `$ANTHROPIC_MODEL` if you set it in your shell, but that value doesn't change when you switch models with `/model` during a session.
+Only [`SessionStart`](#sessionstart) hooks can receive a `model` field, and it is not guaranteed to be present. There is no `$CLAUDE_MODEL` environment variable. A hook process inherits the parent environment, so it can read `$ANTHROPIC_MODEL` if you set it in your shell, but that value doesn't change when you switch models with `/model` during a session. One set of variables is not inherited: Claude Code [removes `OTEL_*` exporter variables from every subprocess it spawns](/en/monitoring-usage#administrator-configuration), including hooks.
 
 For example, a `PreToolUse` hook for a Bash command receives this on stdin:
 
@@ -1366,12 +1366,12 @@ In addition to the [common input fields](#common-input-fields), PreToolUse hooks
 
 Executes shell commands.
 
-| Field               | Type    | Example            | Description                                   |
-| :------------------ | :------ | :----------------- | :-------------------------------------------- |
-| `command`           | string  | `"npm test"`       | The shell command to execute                  |
-| `description`       | string  | `"Run test suite"` | Optional description of what the command does |
-| `timeout`           | number  | `120000`           | Optional timeout in milliseconds              |
-| `run_in_background` | boolean | `false`            | Whether to run the command in background      |
+| Field               | Type    | Example            | Description                                                                                                                                          |
+| :------------------ | :------ | :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `command`           | string  | `"npm test"`       | The shell command to execute                                                                                                                         |
+| `description`       | string  | `"Run test suite"` | Optional description of what the command does                                                                                                        |
+| `timeout`           | number  | `120000`           | Optional timeout in milliseconds. Values above the [maximum](/en/tools-reference#bash-tool-behavior) are reduced to the maximum rather than rejected |
+| `run_in_background` | boolean | `false`            | Whether to run the command in background                                                                                                             |
 
 ##### Write
 

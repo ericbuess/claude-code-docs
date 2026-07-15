@@ -545,7 +545,7 @@ Changes [settings](/en/settings) on a running session without restarting the que
 
 Only some keys take effect mid-session:
 
-* **Applied on the next turn**: `model`, `effortLevel`, `ultracode`, `permissions`, `hooks`, `skillOverrides`, `fastMode`, `awaySummaryEnabled`, `agent`. Switching `agent` also applies that agent's model override, hooks, and system prompt on the next turn.
+* **Applied on the next turn**: `model`, `effortLevel`, `ultracode`, `permissions`, `hooks`, `skillOverrides`, `fastMode`, `agent`. Switching `agent` also applies that agent's model override, hooks, and system prompt on the next turn.
 * **No effect mid-session**: the system prompt options. These are resolved once at startup, so the running session keeps the original value even though the call succeeds. To change them, start a new session.
 
 `effortLevel` accepts an [effort level](/en/model-config#adjust-effort-level) name. It also accepts `"ultracode"`, which runs the session at `xhigh` effort and turns on [ultracode](/en/workflows#let-claude-decide-with-ultracode). The `Settings` type declares `effortLevel` without that value, so pass the equivalent `{ ultracode: true }` in TypeScript. {/* min-version: 2.1.203 */}The `ultracode` value requires Claude Code v2.1.203 or later and is accepted only by `applyFlagSettings()`, not by the `effortLevel` key in a settings file.
@@ -1862,7 +1862,7 @@ Asks the user clarifying questions during execution. See [Handle approvals and u
 ```typescript theme={null}
 type BashInput = {
   command: string;
-  timeout?: number;
+  timeout?: number; // milliseconds, max 600000; higher values are clamped to the max
   description?: string;
   run_in_background?: boolean;
   dangerouslyDisableSandbox?: boolean;
@@ -3616,7 +3616,7 @@ type SandboxFilesystemConfig = {
 
 ### Permissions Fallback for Unsandboxed Commands
 
-When `allowUnsandboxedCommands` is enabled, the model can request to run commands outside the sandbox by setting `dangerouslyDisableSandbox: true` in the tool input. These requests fall back to the existing permissions system, meaning your `canUseTool` handler is invoked, allowing you to implement custom authorization logic.
+When `allowUnsandboxedCommands` is enabled, the model can request to run commands outside the sandbox by setting `dangerouslyDisableSandbox: true` in the tool input. These requests fall back to the existing permissions system, meaning your `canUseTool` handler is invoked, allowing you to implement custom authorization logic. In the example below, `isCommandAuthorized` stands in for an authorization check you define.
 
 <Note>
   **`excludedCommands` vs `allowUnsandboxedCommands`:**

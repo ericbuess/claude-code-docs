@@ -59,6 +59,8 @@ Before using Claude Code with Chrome, you need:
     Go to code.claude.com/docs, click on the search box,
     type "hooks", and tell me what results appear
     ```
+
+    The first browser action asks for permission to use the `claude-in-chrome` skill. Approve it and Claude opens a new tab and starts the task.
   </Step>
 </Steps>
 
@@ -91,7 +93,7 @@ As of v2.1.199, an otherwise read-only call that sets a state-changing input fla
 
 ## Example workflows
 
-These examples show common ways to combine browser actions with coding tasks. Run `/mcp` and select `claude-in-chrome` to see the full list of available browser tools.
+These examples show common ways to combine browser actions with coding tasks. Run `/mcp`, select `claude-in-chrome`, then select **View tools** to see the full list of available browser tools.
 
 ### Test a local web application
 
