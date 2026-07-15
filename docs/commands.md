@@ -12,6 +12,8 @@ Type `/` to see every command available to you, or type `/` followed by letters 
 
 A command is only recognized at the start of your message. Text that follows the command name becomes its arguments. {/* min-version: 2.1.199 */}As of v2.1.199, [skills](/en/skills#pass-arguments-to-skills) are the exception: a skill invocation followed by more skills, such as `/skill-a /skill-b do XYZ`, loads every skill named at the start and passes the trailing text to each as arguments. Up to six skills can be chained.
 
+If you send a command while Claude is responding, it queues and runs after the current turn finishes. Some commands, such as `/status`, `/tasks`, and `/usage`, run immediately without interrupting the response.
+
 ## Commands across a typical workflow
 
 Most commands are useful at a specific point in a session, from setting up a project to shipping a change.

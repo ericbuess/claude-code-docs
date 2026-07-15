@@ -79,6 +79,10 @@ See [Settings files](/en/settings#settings-files) for where each file lives and 
 
 Where the same behavior has both an environment variable and a settings field, the environment variable takes precedence. For example, `ANTHROPIC_MODEL` overrides the `model` setting, and `CLAUDE_CODE_AUTO_CONNECT_IDE` overrides `autoConnectIde`. The settings field applies when the environment variable is not set.
 
+When the same variable is set in both your shell and a settings file `env` block, the settings file value applies. Claude Code writes each `env` entry into the process environment at startup, replacing the value inherited from the shell. A few variables are special-cased; the [`env` setting](/en/settings#available-settings) lists the exceptions.
+
+Between settings files, `env` values follow [settings precedence](/en/settings#settings-precedence), so a managed settings entry overrides the same variable in user or project settings.
+
 How an environment variable interacts with CLI flags and in-session commands varies per feature: `--model` and `/model` override `ANTHROPIC_MODEL`, while `CLAUDE_CODE_EFFORT_LEVEL` overrides `/effort`. When a variable interacts with another configuration source, its row in the [Variables](#variables) list states the precedence or links to the page that documents it.
 
 Claude Code reads environment variables at startup, so changes take effect the next time you launch `claude`.
