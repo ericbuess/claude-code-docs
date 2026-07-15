@@ -51,7 +51,7 @@ The sections below cover the configuration in order:
 * [Set the credential variable](#set-the-credential-variable) and [set the base URL](#set-the-base-url-and-credential): the two variables every gateway connection needs
 * [Verify the connection](#verify-the-connection): confirm it works before persisting anything
 * [Configure each surface](#configure-each-surface): if you are using a surface besides the Claude Code CLI, such as VS Code, see how to configure it with your gateway credentials
-* [Additional configuration](#additional-configuration): variables some gateways need beyond the base URL and credential, such as a custom header, a credential helper, model discovery, or a provider-format base URL. Set these only if your administrator named them
+* [Additional configuration](#additional-configuration): variables some gateways need beyond the base URL and credential, such as a custom header, a credential helper, model discovery, a provider-format base URL, or turning off traffic outside the gateway path. Set these only if your administrator named them or your network restricts egress
 
 ### Set the credential variable
 
@@ -264,7 +264,7 @@ To restore either feature, log in with claude.ai and unset the gateway variables
 
 ## Additional configuration
 
-These settings cover cases beyond the base URL and credential. Set them only if your administrator's instructions or the [troubleshooting table](#troubleshoot-gateway-errors) call for one.
+These settings cover cases beyond the base URL and credential. Set them only if your administrator's instructions, your network's egress rules, or the [troubleshooting table](#troubleshoot-gateway-errors) call for one.
 
 ### Send additional headers
 
@@ -350,6 +350,34 @@ The helper is any shell command that prints the current credential to stdout. Cl
 Claude Code caches the helper's output for five minutes by default and re-runs it when a request returns HTTP 401. To change the cache lifetime, set `CLAUDE_CODE_API_KEY_HELPER_TTL_MS` in milliseconds, for example `CLAUDE_CODE_API_KEY_HELPER_TTL_MS=900000` for 15 minutes.
 
 The helper's value is sent in both the `Authorization` and `x-api-key` headers, so it works whichever header your gateway reads.
+
+### Turn off traffic outside the gateway path
+
+The gateway carries model requests, but Claude Code also sends nonessential background traffic outside the gateway path, to Anthropic and to third-party services such as GitHub: version checks, telemetry, error reports, release notes, and similar requests. On a network that only allows egress to the gateway, these requests fail and can appear as blocked connections in your egress monitoring.
+
+To turn that traffic off, set `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1` alongside the gateway variables, in the same shell exports or settings-file `env` block:
+
+<Tabs>
+  <Tab title="Bash or Zsh">
+    ```bash theme={null}
+    export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+    ```
+  </Tab>
+
+  <Tab title="PowerShell">
+    ```powershell theme={null}
+    $env:CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1"
+    ```
+  </Tab>
+</Tabs>
+
+Setting the variable has these effects and limits:
+
+* It disables auto-updates, so plan for another update path, such as your package manager or managed distribution.
+* It suppresses the [fast mode](/en/fast-mode) availability check. Unless a previous check already enabled fast mode on the machine, `/fast` reports that fast mode is unavailable.
+* It turns off [gateway model discovery](#add-gateway-models-to-the-model-picker), even though discovery queries the gateway itself. Previously discovered models stay available from the local cache, but the list isn't refreshed.
+* The WebFetch tool's [domain safety check](/en/data-usage#webfetch-domain-safety-check) isn't affected and still calls `api.anthropic.com`. Turn it off separately with `skipWebFetchPreflight: true` in [settings](/en/settings) if your network blocks that host.
+* For each telemetry stream and the variable that controls it, see [telemetry services](/en/data-usage#telemetry-services).
 
 ### Route to a cloud provider through a gateway
 
