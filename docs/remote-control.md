@@ -222,10 +222,6 @@ When Remote Control is active, Claude can send push notifications to your phone.
 
 Claude decides when to push. It typically sends one when a long-running task finishes or when it needs a decision from you to continue. You can also request a push in your prompt, for example `notify me when the tests finish`. Beyond the two on/off toggles below, there is no per-event configuration.
 
-<Note>
-  Mobile push notifications require Claude Code v2.1.110 or later.
-</Note>
-
 To set up mobile push notifications:
 
 <Steps>

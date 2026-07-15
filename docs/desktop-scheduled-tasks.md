@@ -81,6 +81,8 @@ Each task has its own permission mode, which you set when creating or editing th
 
 To avoid stalls, click **Run now** after creating a task, watch for permission prompts, and select "always allow" for each one. Future runs of that task auto-approve the same tools without prompting. You can review and revoke these approvals from the task's detail page.
 
+Connector tools [your organization set to `ask`](/en/mcp#organization-controls-on-connector-tools) and MCP tools marked [`requiresUserInteraction`](/en/mcp#require-approval-for-a-specific-tool) prompt on every call and don't offer an always-allow option. Runs that call these tools stall each time.
+
 ## Manage scheduled tasks
 
 Click a task in the **Routines** list to open its detail page. From here you can:

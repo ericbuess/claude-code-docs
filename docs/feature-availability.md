@@ -128,7 +128,7 @@ These features work in the local CLI but depend on a server-side capability that
       <td>✓</td>
       <td>✓</td>
       <td>See note <sup><a href="#fn3">3</a></sup></td>
-      <td>✓</td>
+      <td>See note <sup><a href="#fn3">3</a></sup></td>
       <td>See note <sup><a href="#fn3">3</a></sup></td>
       <td>See note <sup><a href="#fn3">3</a></sup></td>
     </tr>
@@ -197,7 +197,7 @@ Organization-level controls and usage visibility.
 
 <span id="fn1" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>1</sup> On Google Cloud's Agent Platform, web search is available for Claude 4 models and later.<br />
 <span id="fn2" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>2</sup> On these providers, auto mode supports only Claude Sonnet 5, Opus 4.7, and Opus 4.8. See [Auto mode configuration](/en/auto-mode-config). {/* min-version: 2.1.207 */}In v2.1.158 through v2.1.206, auto mode on these providers also required setting `CLAUDE_CODE_ENABLE_AUTO_MODE=1`; v2.1.207 removed the requirement.<br />
-<span id="fn3" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>3</sup> Explicit intervals such as `/loop every 2 hours` work on every provider. On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, `/loop` cannot pick its own interval or supply the default maintenance prompt, so a prompt with no interval runs every 10 minutes, and `/loop` with no arguments shows the usage message. See [Scheduled tasks](/en/scheduled-tasks).<br />
+<span id="fn3" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>3</sup> Explicit intervals such as `/loop every 2 hours` work on every provider. On Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Microsoft Foundry, `/loop` cannot pick its own interval or supply the default maintenance prompt, so a prompt with no interval runs every 10 minutes, and `/loop` with no arguments shows the usage message. See [Scheduled tasks](/en/scheduled-tasks).<br />
 <span id="fn4" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>4</sup> Subject to your agreement with the cloud provider.<br />
 <span id="fn5" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>5</sup> Dashboard and API only. [Contribution metrics](/en/analytics#enable-contribution-metrics) requires a claude.ai Team or Enterprise organization.
 
@@ -226,9 +226,13 @@ Each tab lists what is unavailable or partially supported on that provider, with
   <Tab title="Claude Platform on AWS">
     **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](/en/fast-mode), [Advisor](/en/advisor), [Channels](/en/channels), the [analytics dashboard](/en/analytics), [server-managed settings](/en/server-managed-settings), and the [`/design-sync` and `/radio` commands](/en/commands#all-commands).
 
-    **Available where Amazon Bedrock is not:** [web search](/en/tools-reference#websearch-tool-behavior) and [`/loop` self-pacing](/en/scheduled-tasks).
+    **Available where Amazon Bedrock is not:** [web search](/en/tools-reference#websearch-tool-behavior).
 
-    **Alternatives:** for scheduling, use [`/loop`](/en/scheduled-tasks) instead of `/schedule`. For cloud sessions, use [GitHub Actions](/en/github-actions) or [GitLab CI/CD](/en/gitlab-ci-cd).
+    **Partial support:**
+
+    * [`/loop`](/en/scheduled-tasks): explicit intervals only
+
+    **Alternatives:** for scheduling, use [`/loop`](/en/scheduled-tasks) with an explicit interval instead of `/schedule`. For cloud sessions, use [GitHub Actions](/en/github-actions) or [GitLab CI/CD](/en/gitlab-ci-cd).
   </Tab>
 
   <Tab title="Google Cloud's Agent Platform">
