@@ -85,6 +85,8 @@ sequenceDiagram
 
 ### Implementation Example
 
+These examples read an image named `diagram.png` from the working directory. Create one there first, or change the filename to point at your own image.
+
 <CodeGroup>
   ```typescript TypeScript theme={null}
   import { query, type SDKUserMessage } from "@anthropic-ai/claude-agent-sdk";
@@ -208,6 +210,8 @@ sequenceDiagram
   ```
 </CodeGroup>
 
+When you run the example, the TypeScript version prints each response as it completes. The Python version's `receive_response()` loop ends at the first result message, so it prints the security analysis; to read both responses, use one `query()` and `receive_response()` pair per message as shown in the [Python reference's example of continuing a conversation](/en/agent-sdk/python#example-continuing-a-conversation).
+
 <Note>
   In the TypeScript SDK, if your message generator throws, for example when a file it reads is missing, the stream ends with an error that reads `Claude Code process aborted by user` instead of the original error, so check the code inside your generator first when you see that message. The error may also be preceded by a long minified line of bundled SDK source, so read to the end of the output for the error text.
 
@@ -249,7 +253,7 @@ If a query ends with an error result, such as `error_max_turns`, a single messag
   for await (const message of query({
     prompt: "Explain the authentication flow",
     options: {
-      maxTurns: 1,
+      maxTurns: 5,
       allowedTools: ["Read", "Grep"]
     }
   })) {
@@ -263,7 +267,7 @@ If a query ends with an error result, such as `error_max_turns`, a single messag
     prompt: "Now explain the authorization process",
     options: {
       continue: true,
-      maxTurns: 1
+      maxTurns: 5
     }
   })) {
     if (message.type === "result" && message.subtype === "success") {
@@ -281,7 +285,7 @@ If a query ends with an error result, such as `error_max_turns`, a single messag
       # Simple one-shot query using query() function
       async for message in query(
           prompt="Explain the authentication flow",
-          options=ClaudeAgentOptions(max_turns=1, allowed_tools=["Read", "Grep"]),
+          options=ClaudeAgentOptions(max_turns=5, allowed_tools=["Read", "Grep"]),
       ):
           if isinstance(message, ResultMessage):
               print(message.result)
@@ -289,7 +293,7 @@ If a query ends with an error result, such as `error_max_turns`, a single messag
       # Continue conversation with session management
       async for message in query(
           prompt="Now explain the authorization process",
-          options=ClaudeAgentOptions(continue_conversation=True, max_turns=1),
+          options=ClaudeAgentOptions(continue_conversation=True, max_turns=5),
       ):
           if isinstance(message, ResultMessage):
               print(message.result)
@@ -298,3 +302,5 @@ If a query ends with an error result, such as `error_max_turns`, a single messag
   asyncio.run(single_message_example())
   ```
 </CodeGroup>
+
+When you run the example, each query prints its final result text: first the authentication explanation, then the authorization explanation.

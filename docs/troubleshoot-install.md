@@ -625,6 +625,7 @@ This can happen on glibc-based systems that have musl cross-compilation packages
    ```bash theme={null}
    apk add libgcc libstdc++ ripgrep
    ```
+   On Alpine, `ripgrep` is in the community repository. If `apk` reports that the package is missing, see [Alpine Linux setup](/en/setup#alpine-linux-and-musl-based-distributions).
 
 ### `Illegal instruction`
 

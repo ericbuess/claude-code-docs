@@ -6,7 +6,7 @@
 
 > Configure Claude Code with global and project-level settings, and environment variables.
 
-Claude Code offers a variety of settings to configure its behavior to meet your needs. You can configure Claude Code by running the `/config` command, which opens a tabbed Settings interface where you can view status information and modify configuration options. {/* min-version: 2.1.181 */}From v2.1.181, you can change a single option without opening the interface by passing `key=value` to `/config`, for example `/config verbose=true`.
+Claude Code offers a variety of settings to configure its behavior to meet your needs. You can configure Claude Code by running the `/config` command in an interactive session, which opens a tabbed Settings interface where you can view status information and modify configuration options. {/* min-version: 2.1.181 */}From v2.1.181, you can change a single option without opening the interface by passing `key=value` to `/config`, for example `/config verbose=true`.
 
 ## Configuration scopes
 
@@ -130,6 +130,11 @@ Code through hierarchical settings:
   Claude Code automatically creates timestamped backups of configuration files and retains the five most recent backups to prevent data loss.
 </Note>
 
+The following example works in any of the settings file locations above. Where you save the file determines where it applies:
+
+* To apply it to all of your projects, save it as `~/.claude/settings.json`. This file lives in your home directory rather than in any project, so Claude Code reads it in every session regardless of which project you open.
+* To share it with collaborators on one project, save it as `.claude/settings.json` in that project. Claude Code reads this file from the directory the session runs in, so it applies only to that project, and checking it into source control gives every collaborator the same settings.
+
 ```JSON Example settings.json theme={null}
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
@@ -161,6 +166,10 @@ Code through hierarchical settings:
 The `$schema` line in the example above points to the [official JSON schema](https://json.schemastore.org/claude-code-settings.json) for Claude Code settings. Adding it to your `settings.json` enables autocomplete and inline validation in VS Code, Cursor, and any other editor that supports JSON schema validation.
 
 The published schema is updated periodically and may not include settings added in the most recent CLI releases, so a validation warning on a recently documented field does not necessarily mean your configuration is invalid.
+
+<Tip>
+  After you edit a settings file, run `/status` inside Claude Code to confirm it was loaded. The `Setting sources` line lists each settings source loaded for the current session; a source appears once it loads with at least one setting, so a file with broken JSON doesn't appear even if it contains settings. See [Verify active settings](#verify-active-settings).
+</Tip>
 
 ### When edits take effect
 
@@ -331,7 +340,7 @@ This tolerance applies only to managed settings. User, project, and local settin
 
 ### Global config settings
 
-These settings are stored in `~/.claude.json` rather than `settings.json`. Adding them to `settings.json` will trigger a schema validation error.
+These settings are stored in `~/.claude.json` rather than `settings.json`. If you add these keys to `settings.json`, Claude Code silently ignores them at startup, so double-check the table below for which file each key belongs in.
 
 <Note>
   Versions before v2.1.119 also store a number of `/config` preference keys here instead of in `settings.json`, including `theme`, `verbose`, `editorMode`, `autoCompactEnabled`, and `preferredNotifChannel`.
@@ -688,7 +697,11 @@ Run `/status` inside Claude Code to see which settings sources are active. Insid
 
 The `Setting sources` line confirms which sources are being read. It does not show which layer supplied each individual key. The **Config** tab in the same dialog is an editor for a fixed set of toggles such as theme and verbose output, not a view of your `settings.json` contents.
 
-If a settings file contains errors, such as invalid JSON or a value that fails validation, `/status` lists the affected files. Run `claude doctor` to see the details for each error.
+If a user, project, or local settings file contains errors, such as invalid JSON or a value that fails validation, an interactive session shows a **Settings Error** dialog at startup. The dialog lets you fix the file with Claude's help, exit, or continue without the broken settings.
+
+After you continue, `/status` lists the affected files. Run `claude doctor` to see the details for each error.
+
+Managed settings entries that fail validation follow the more tolerant flow described in [Invalid entries in managed settings](#invalid-entries-in-managed-settings): the file isn't rejected as a whole, and the remaining valid policies stay enforced.
 
 ### Key points about the configuration system
 

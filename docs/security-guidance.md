@@ -28,7 +28,7 @@ In a Claude Code session, install from the [official Anthropic marketplace](/en/
 /plugin install security-guidance@claude-plugins-official
 ```
 
-The install prompts for a scope. Choose user scope to write the plugin to your user settings, so it loads in every new local session you start on this machine. If Claude Code reports that the marketplace is not found, run `/plugin marketplace add anthropics/claude-plugins-official` first, then retry the install.
+The install prompts for a scope. Choose user scope to write the plugin to your user settings, so it loads in every new local session you start on this machine. If Claude Code reports `Marketplace "claude-plugins-official" not found`, add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`. If it reports that the plugin is not found in the marketplace, your local copy is outdated: refresh it with `/plugin marketplace update claude-plugins-official`. Then retry the install.
 
 Then activate it in the current session with `/reload-plugins`, which applies pending plugin changes without a restart:
 

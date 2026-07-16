@@ -29,7 +29,7 @@ In most terminals you can also press Shift+Enter, but support varies by terminal
 | VS Code, Cursor, Devin Desktop, Alacritty, Zed                          | Run `/terminal-setup` once                  |
 | gnome-terminal, JetBrains IDEs such as PyCharm and Android Studio       | Not available; use Ctrl+J or `\` then Enter |
 
-For VS Code, Cursor, Devin Desktop, Alacritty, and Zed, `/terminal-setup` writes Shift+Enter and other keybindings into the terminal's configuration file. Existing bindings are left in place; if you see a message such as `VSCode terminal Shift+Enter key binding already configured`, no change was made. Run `/terminal-setup` directly in the host terminal rather than inside tmux or screen, since it needs to write to the host terminal's configuration.
+For VS Code, Cursor, Devin Desktop, Alacritty, and Zed, `/terminal-setup` writes Shift+Enter and other keybindings into the terminal's configuration file. On the first run you see a confirmation such as `Installed VSCode terminal Shift+Enter key binding`. Existing bindings are left in place; if you see a message such as `VSCode terminal Shift+Enter key binding already configured`, no change was made. Run `/terminal-setup` directly in the host terminal rather than inside tmux or screen, since it needs to write to the host terminal's configuration.
 
 In VS Code, Cursor, and Devin Desktop, `/terminal-setup` also updates two editor settings: it sets `terminal.integrated.gpuAcceleration` to `"off"` to prevent garbled text in the integrated terminal, and it sets `terminal.integrated.mouseWheelScrollSensitivity` for smoother scrolling in [fullscreen mode](/en/fullscreen). To undo the GPU acceleration change, set it back to `"auto"` and reload the editor window.
 
@@ -67,7 +67,13 @@ For Ghostty, Kitty, and other terminals, look for an Option-as-Alt or Option-as-
 
 When Claude finishes a task or pauses for a permission prompt, it fires a notification event. Surfacing this as a terminal bell or desktop notification lets you switch to other work while a long task runs.
 
-By default Claude Code sends a desktop notification only in Ghostty, Kitty, and iTerm2. In other terminals, set [`preferredNotifChannel`](/en/settings#available-settings) to `"terminal_bell"` to ring the terminal bell instead, or configure a [Notification hook](#play-a-sound-with-a-notification-hook) for a custom sound or command.
+By default Claude Code sends a desktop notification only in Ghostty, Kitty, and iTerm2. In other terminals, set [`preferredNotifChannel`](/en/settings#available-settings) to `"terminal_bell"` to ring the terminal bell instead, or configure a [Notification hook](#play-a-sound-with-a-notification-hook) for a custom sound or command. The following settings entry turns on the terminal bell:
+
+```json ~/.claude/settings.json theme={null}
+{
+  "preferredNotifChannel": "terminal_bell"
+}
+```
 
 The desktop notification reaches your local machine over SSH, so a remote session can still alert you. Ghostty and Kitty forward it to your OS notification center without further setup. iTerm2 requires you to enable forwarding:
 
@@ -151,7 +157,7 @@ The following example defines a theme that keeps the dark preset but recolors th
 }
 ```
 
-Claude Code watches `~/.claude/themes/` and reloads when a file changes, so edits made in your editor apply to a running session without a restart.
+Claude Code watches `~/.claude/themes/` and reloads when a file is added or changed, so edits made in your editor apply to a running session without a restart. If the `~/.claude/themes/` folder itself didn't exist when Claude Code started, restart once after creating your first theme file. After that, changes apply without a restart.
 
 The reference below covers the tokens you can set in `overrides`. The interactive editor in `/theme` shows the same tokens with a live preview, plus a few single-purpose accents such as onboarding screen colors that are omitted here.
 
@@ -228,14 +234,13 @@ The reference below covers the tokens you can set in `overrides`. The interactiv
 
   Apply only in [fullscreen rendering mode](/en/fullscreen), where messages have a background fill.
 
-  | Token                        | Controls                                                           |
-  | :--------------------------- | :----------------------------------------------------------------- |
-  | `userMessageBackground`      | Background behind your messages in the transcript                  |
-  | `userMessageBackgroundHover` | Background behind a message while hovered or expanded              |
-  | `messageActionsBackground`   | Background behind the selected message when the action bar is open |
-  | `bashMessageBackgroundColor` | Background behind `!` shell command entries in the transcript      |
-  | `memoryBackgroundColor`      | Background behind `#` memory entries in the transcript             |
-  | `selectionBg`                | Background of text selected with the mouse                         |
+  | Token                        | Controls                                                      |
+  | :--------------------------- | :------------------------------------------------------------ |
+  | `userMessageBackground`      | Background behind your messages in the transcript             |
+  | `userMessageBackgroundHover` | Background behind a message while hovered or expanded         |
+  | `bashMessageBackgroundColor` | Background behind `!` shell command entries in the transcript |
+  | `memoryBackgroundColor`      | Background behind `#` memory entries in the transcript        |
+  | `selectionBg`                | Background of text selected with the mouse                    |
 
   #### Usage meter and speaker labels
 
@@ -292,7 +297,7 @@ Run `/tui fullscreen` to switch and save the preference. Your conversation relau
 
 ## Paste large content
 
-When you paste more than 10,000 characters into the prompt, Claude Code collapses the input to a `[Pasted text]` placeholder so the input box stays usable. The full content is still sent to Claude when you submit.
+When you paste more than 800 characters or more than two lines into the prompt, Claude Code collapses the input to a placeholder such as `[Pasted text #1 +120 lines]` so the input box stays usable. The full content is still sent to Claude when you submit.
 
 The VS Code integrated terminal can drop characters from very large pastes before they reach Claude Code, so prefer file-based workflows there. For very large inputs such as entire files or long logs, write the content to a file and ask Claude to read it instead of pasting. This keeps the conversation transcript readable and lets Claude reference the file by path in later turns.
 

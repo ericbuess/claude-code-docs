@@ -200,6 +200,8 @@ The official marketplace has plugins for TypeScript, Python, Go, Rust, and other
 /plugin install typescript-lsp@claude-plugins-official
 ```
 
+If Claude Code reports `Marketplace "claude-plugins-official" not found`, add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`. If it reports that the plugin is not found in the marketplace, your local copy is outdated: refresh it with `/plugin marketplace update claude-plugins-official`. Then retry the install.
+
 To enable a plugin for everyone in the repository rather than installing it yourself, add it to the [`enabledPlugins` project setting](/en/settings#plugin-settings).
 
 Code intelligence plugins require the language's language server binary on each developer's machine. See [which binary each language requires](/en/discover-plugins#code-intelligence). Installing from the official marketplace requires network access to GitHub, where the marketplace is hosted. On a restricted network, [add the marketplace from an internal Git host or local path](/en/discover-plugins#add-from-other-git-hosts) instead.

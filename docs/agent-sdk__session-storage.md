@@ -16,12 +16,12 @@ Common reasons to use a session store:
 
 ## The `SessionStore` interface
 
-A `SessionStore` is an object with two required methods, `append` and `load`, and three optional methods. The SDK calls `append` to write transcript entries during a query and `load` to read them back for resume.
+A `SessionStore` is an object with two required methods, `append` and `load`, and four optional methods. The SDK calls `append` to write transcript entries during a query and `load` to read them back for resume.
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
   // Exported from @anthropic-ai/claude-agent-sdk as
-  // SessionStore, SessionKey, SessionStoreEntry.
+  // SessionStore, SessionKey, SessionStoreEntry, SessionSummaryEntry.
 
   type SessionKey = {
     projectKey: string;
@@ -38,17 +38,24 @@ A `SessionStore` is an object with two required methods, `append` and `load`, an
     listSessions?(
       projectKey: string,
     ): Promise<Array<{ sessionId: string; mtime: number }>>;
+    listSessionSummaries?(projectKey: string): Promise<SessionSummaryEntry[]>;
     delete?(key: SessionKey): Promise<void>;
     listSubkeys?(key: {
       projectKey: string;
       sessionId: string;
     }): Promise<string[]>;
   };
+
+  type SessionSummaryEntry = {
+    sessionId: string;
+    mtime: number;
+    data: Record<string, unknown>;
+  };
   ```
 
   ```python Python theme={null}
   # Exported from claude_agent_sdk as
-  # SessionStore, SessionKey, SessionStoreEntry.
+  # SessionStore, SessionKey, SessionStoreEntry, SessionSummaryEntry.
 
   class SessionKey(TypedDict):
       project_key: str
@@ -66,20 +73,33 @@ A `SessionStore` is an object with two required methods, `append` and `load`, an
       async def list_sessions(
           self, project_key: str
       ) -> list[SessionStoreListEntry]: ...
+      async def list_session_summaries(
+          self, project_key: str
+      ) -> list[SessionSummaryEntry]: ...
       async def delete(self, key: SessionKey) -> None: ...
       async def list_subkeys(self, key: SessionListSubkeysKey) -> list[str]: ...
+
+  class SessionSummaryEntry(TypedDict):
+      session_id: str
+      mtime: int
+      data: dict[str, Any]
   ```
 </CodeGroup>
 
 `SessionKey` addresses one transcript. `projectKey` is a stable, filesystem-safe encoding of the working directory, `sessionId` is the session UUID, and `subpath` is set when the entry belongs to a subagent transcript or sidecar file rather than the main conversation. Treat `subpath` as an opaque key suffix; it follows the on-disk layout, for example `subagents/agent-<id>`. When `subpath` is undefined the key refers to the main transcript.
 
-| Method         | Required | Called when                                                                                                                                                                                   |
-| :------------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `append`       | Yes      | After each batch of transcript entries is written locally. Entries are JSON-safe objects, one per line in the local JSONL.                                                                    |
-| `load`         | Yes      | Once before the subprocess spawns, when `resume` is set. Return `null` if the session is unknown.                                                                                             |
-| `listSessions` | No       | By `listSessions({ sessionStore })` and by `query()`/`startup()` with `continue: true`. If undefined, those calls throw.                                                                      |
-| `delete`       | No       | By `deleteSession({ sessionStore })`. Deleting the main key (no `subpath`) must cascade to all subkeys for that session. If undefined, deletion is a no-op, which suits append-only backends. |
-| `listSubkeys`  | No       | During resume, to discover subagent transcripts. If undefined, only the main transcript is restored.                                                                                          |
+| Method                 | Required | Called when                                                                                                                                                                                                                                                                                               |
+| :--------------------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `append`               | Yes      | After each batch of transcript entries is written locally. Entries are JSON-safe objects, one per line in the local JSONL.                                                                                                                                                                                |
+| `load`                 | Yes      | Before the subprocess spawns when `resume` is set, and once per session when listing falls back from `listSessionSummaries`. Return `null` if the session is unknown.                                                                                                                                     |
+| `listSessions`         | No       | By `listSessions({ sessionStore })` and by `query()`/`startup()` with `continue: true`. If undefined, `continue: true` throws, and `listSessions({ sessionStore })` throws unless `listSessionSummaries` is implemented.                                                                                  |
+| `listSessionSummaries` | No       | By `listSessions({ sessionStore })` to read metadata for all sessions in one call. Maintain the summaries inside `append`. If undefined, listing falls back to `listSessions` plus a per-session `load`.                                                                                                  |
+| `delete`               | No       | By `deleteSession({ sessionStore })`. Deleting the main key (no `subpath`) must cascade to all subkeys for that session and also remove the session's summary entry, so a deleted session stops appearing in `listSessionSummaries`. If undefined, deletion is a no-op, which suits append-only backends. |
+| `listSubkeys`          | No       | During resume, to discover subagent transcripts. If undefined, only the main transcript is restored.                                                                                                                                                                                                      |
+
+In a `SessionSummaryEntry`, `mtime` is the sidecar's storage write time and must share a clock source with the `mtime` values `listSessions` returns. `data` is opaque SDK-owned state; persist it verbatim without interpreting it.
+
+Build the entries by calling the exported `foldSessionSummary` helper, `fold_session_summary` in Python, on each batch inside `append`. Skip batches whose key has a `subpath`; subagent transcripts must not contribute to the main session's summary. The fold never sets `mtime`: stamp it at persist time, through the `options.mtime` argument in TypeScript or by overwriting the field on the returned entry in Python. Concurrent `append` calls for the same session can race on the sidecar, so serialize the read-fold-write with a transaction, a compare-and-swap, or a per-session lock; the fold itself is pure.
 
 ## Quick start
 
@@ -150,7 +170,7 @@ The second query prints a summary of the files from the first query, which shows
 
 ## Write your own adapter
 
-Implement `append` and `load` against your backend. Add `listSessions`, `delete`, and `listSubkeys` if you want `listSessions()`, `deleteSession()`, and subagent resume to work against the store.
+Implement `append` and `load` against your backend. Add `listSessions`, `listSessionSummaries`, `delete`, and `listSubkeys` if you want `listSessions()`, one-call metadata reads, `deleteSession()`, and subagent resume to work against the store.
 
 Entries passed to `append` are typed as `SessionStoreEntry` (a `{ type: string; ... }` object). Treat them as opaque JSON-safe values: persist them in order and return them from `load` in the same order. `load` must return entries that are deep-equal to what was appended; byte-equal serialization is not required, so backends like Postgres `jsonb` that reorder object keys are fine.
 
@@ -215,7 +235,9 @@ async def test_my_store_conformance():
 
 ### Dual-write architecture
 
-The store is a mirror, not a replacement. The Claude Code subprocess always writes to local disk first; the SDK then forwards each batch to `append()`. If you want the local copy to be ephemeral, point `CLAUDE_CONFIG_DIR` at a temp directory in `options.env`. Because the mirror depends on local writes, `sessionStore` cannot be combined with `persistSession: false`; the SDK throws if you set both. It also throws if combined with `enableFileCheckpointing`, since file-history backup blobs are written directly to local disk and are not mirrored to the store.
+The store is a mirror, not a replacement. The Claude Code subprocess always writes to local disk first; the SDK then forwards each batch to `append()`. If you want the local copy to be ephemeral, point `CLAUDE_CONFIG_DIR` at a temp directory in `options.env`.
+
+Because the mirror depends on local writes, the TypeScript SDK throws if you combine `sessionStore` with `persistSession: false`. Both SDKs also throw if you combine the store with file checkpointing, `enableFileCheckpointing` in TypeScript or `enable_file_checkpointing` in Python, since file-history backup blobs are written directly to local disk and are not mirrored to the store.
 
 ### Mirror writes are best-effort
 
@@ -239,7 +261,7 @@ The SDK never deletes from your store on its own. Retention is the adapter's res
 
 ## Supported on
 
-The following SDK functions accept a `sessionStore` option and operate against the store instead of the local filesystem when it is provided:
+The following TypeScript SDK functions accept a `sessionStore` option and operate against the store instead of the local filesystem when it is provided:
 
 * [`query()`](/en/agent-sdk/typescript#query)
 * [`startup()`](/en/agent-sdk/typescript#startup)
@@ -252,6 +274,8 @@ The following SDK functions accept a `sessionStore` option and operate against t
 * [`forkSession()`](/en/agent-sdk/typescript)
 * [`listSubagents()`](/en/agent-sdk/typescript)
 * [`getSubagentMessages()`](/en/agent-sdk/typescript)
+
+In the Python SDK, set `session_store` in [`ClaudeAgentOptions`](/en/agent-sdk/python#claudeagentoptions) to run `query()` against a store. The remaining operations each have a store-backed Python function that takes the store as an argument: `list_sessions_from_store()`, `get_session_info_from_store()`, `get_session_messages_from_store()`, `list_subagents_from_store()`, `get_subagent_messages_from_store()`, `rename_session_via_store()`, `tag_session_via_store()`, `delete_session_via_store()`, and `fork_session_via_store()`. `startup()` has no Python equivalent. The standalone functions documented in the [Python SDK reference](/en/agent-sdk/python#functions), such as `list_sessions()`, read local session files.
 
 ## Related resources
 

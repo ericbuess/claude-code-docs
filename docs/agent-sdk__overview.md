@@ -6,7 +6,7 @@
 
 > Build production AI agents with Claude Code as a library
 
-Build AI agents that autonomously read files, run commands, search the web, edit code, and more. The Agent SDK gives you the same tools, agent loop, and context management that power Claude Code, programmable in Python and TypeScript. For the thinking behind agent harness design, see [A harness for every task: dynamic workflows in Claude Code](https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code) on the blog.
+Build AI agents that autonomously read files, run commands, search the web, edit code, and more. The Agent SDK gives you the same tools, agent loop, and context management that power Claude Code, programmable in Python and TypeScript. For other languages, [run the CLI programmatically](/en/headless) with the `-p` flag and `--output-format json`. For the thinking behind agent harness design, see [A harness for every task: dynamic workflows in Claude Code](https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code) on the blog.
 
 <CodeGroup>
   ```python Python theme={null}
@@ -186,6 +186,8 @@ Everything that makes Claude Code powerful is available in the SDK:
     | **WebFetch**                                                                | Fetch and parse web page content                                    |
     | **[AskUserQuestion](/en/agent-sdk/user-input#handle-clarifying-questions)** | Ask the user clarifying questions with multiple choice options      |
 
+    For the full list, including scheduling and worktree tools, see the [tools reference](/en/tools-reference).
+
     This example creates an agent that searches your codebase for TODO comments:
 
     <CodeGroup>
@@ -244,6 +246,7 @@ Everything that makes Claude Code powerful is available in the SDK:
           async for message in query(
               prompt="Refactor utils.py to improve readability",
               options=ClaudeAgentOptions(
+                  allowed_tools=["Read", "Edit"],
                   permission_mode="acceptEdits",
                   hooks={
                       "PostToolUse": [
@@ -272,6 +275,7 @@ Everything that makes Claude Code powerful is available in the SDK:
       for await (const message of query({
         prompt: "Refactor utils.py to improve readability",
         options: {
+          allowedTools: ["Read", "Edit"],
           permissionMode: "acceptEdits",
           hooks: {
             PostToolUse: [{ matcher: "Edit|Write", hooks: [logFileChange] }]
@@ -397,7 +401,7 @@ Everything that makes Claude Code powerful is available in the SDK:
       For interactive approval prompts and the `AskUserQuestion` tool, see [Handle approvals and user input](/en/agent-sdk/user-input).
     </Note>
 
-    This example creates a read-only agent that can analyze but not modify code. `allowed_tools` pre-approves `Read`, `Glob`, and `Grep`.
+    This example creates a read-only agent that can analyze but not modify code. `allowed_tools` pre-approves `Read`, `Glob`, and `Grep` so they run without prompting. Tools not listed are still available but fall through to the permission mode; to block tools entirely, use `disallowed_tools`.
 
     <CodeGroup>
       ```python Python theme={null}

@@ -81,7 +81,7 @@ To put built-in tools, MCP servers, and hooks all behind one OS boundary, run th
 
 The [`@anthropic-ai/sandbox-runtime`](https://github.com/anthropic-experimental/sandbox-runtime) package wraps an entire process in the same Seatbelt or bubblewrap isolation that the built-in Bash sandbox uses. Running Claude Code through it constrains every tool, hook, and MCP server in the session, not only Bash. The runtime is a beta research preview, and its configuration format may change as the package evolves.
 
-The runtime denies all write and network access by default, so configure it before launching Claude Code through it. In `~/.srt-settings.json`, or a file you pass with `--settings`, allow write access to at least your project directory and Claude Code's configuration paths `~/.claude` and `~/.claude.json`. Allow the network domains your session needs, including `api.anthropic.com` or your configured provider's endpoint. See the package [README](https://github.com/anthropic-experimental/sandbox-runtime) for the full configuration schema.
+The runtime denies all write and network access by default, so configure it before launching Claude Code through it. In `~/.srt-settings.json`, or a file you pass with `--settings`, allow write access to at least your project directory, Claude Code's configuration paths `~/.claude` and `~/.claude.json`, and `/tmp`, where Claude Code writes runtime files. Allow the network domains your session needs, including `api.anthropic.com` or your configured provider's endpoint. See the package [README](https://github.com/anthropic-experimental/sandbox-runtime) for the full configuration schema.
 
 Once the settings file is in place, launch Claude Code with `npx` and pass `claude` as the command to wrap:
 

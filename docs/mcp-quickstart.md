@@ -44,7 +44,7 @@ The steps are the same for any server: add it, check the connection status, then
     * `claude-code-docs`: a name you make up. Calling the same server `docs` would work identically. Claude Code uses whatever name you pick to label the server's tools in Claude's output and to refer to the server in commands like `claude mcp remove`.
     * `https://code.claude.com/docs/mcp`: the URL where the server is hosted.
 
-    The command prints a confirmation like `Added HTTP MCP server claude-code-docs with URL: https://code.claude.com/docs/mcp to local config`. The `local config` part means the server is registered to you, in this project: if you start Claude Code in a different project, this server isn't active there. To register a server once for all your projects, add it at user scope, covered in [Change server scope](#change-server-scope).
+    The command prints a confirmation like `Added HTTP MCP server claude-code-docs with URL: https://code.claude.com/docs/mcp to local config`, followed by a `File modified:` line showing the configuration file it wrote. The `local config` part means the server is registered to you, in this project: if you start Claude Code in a different project, this server isn't active there. To register a server once for all your projects, add it at user scope, covered in [Change server scope](#change-server-scope).
   </Step>
 
   <Step title="Check the connection status">
@@ -56,14 +56,16 @@ The steps are the same for any server: add it, check the connection status, then
 
     The server appears with a status indicator:
 
-    | Status                             | Meaning                                                                                                                                                                       |
-    | :--------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | `✓ Connected`                      | Ready to use. This is what you should see for `claude-code-docs`                                                                                                              |
-    | `! Connected · tools fetch failed` | The server connected but couldn't list its tools. Run `claude mcp get <name>` for the error detail                                                                            |
-    | `! Needs authentication`           | The server is reachable but needs a browser sign-in, or a token passed with `--header`. See [Connect a server that requires sign-in](#connect-a-server-that-requires-sign-in) |
-    | `✗ Failed to connect`              | Server didn't respond. See [Troubleshooting](#troubleshooting)                                                                                                                |
-    | `✗ Connection error`               | The connection attempt threw an error. See [Troubleshooting](#troubleshooting)                                                                                                |
-    | `⏸ Pending approval`               | A project-scoped server you haven't approved yet. See [Edit .mcp.json directly](#edit-mcp-json-directly)                                                                      |
+    | Status                                           | Meaning                                                                                                                                                                       |
+    | :----------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `✔ Connected`                                    | Ready to use. This is what you should see for `claude-code-docs`                                                                                                              |
+    | `! Connected · tools fetch failed`               | The server connected but couldn't list its tools. Run `claude mcp get <name>` for the error detail                                                                            |
+    | `! Needs authentication`                         | The server is reachable but needs a browser sign-in, or a token passed with `--header`. See [Connect a server that requires sign-in](#connect-a-server-that-requires-sign-in) |
+    | `✘ Failed to connect`                            | Server didn't respond. See [Troubleshooting](#troubleshooting)                                                                                                                |
+    | `✘ Connection error`                             | The connection attempt threw an error. See [Troubleshooting](#troubleshooting)                                                                                                |
+    | ``⏸ Pending approval (run `claude` to approve)`` | A project-scoped server you haven't approved yet. See [Edit .mcp.json directly](#edit-mcp-json-directly)                                                                      |
+
+    Some legacy Windows consoles, such as the default console on Windows 10, don't support these Unicode glyphs and show `√` and `×` in place of `✔` and `✘`.
   </Step>
 
   <Step title="Use the server">
@@ -90,6 +92,8 @@ The steps are the same for any server: add it, check the connection status, then
     ```bash theme={null}
     claude mcp remove claude-code-docs
     ```
+
+    The command confirms with `Removed MCP server "claude-code-docs" from local config` and a `File modified:` line showing the file it updated.
 
     <Note>
       Each connected server takes some space in [Claude's context window](/en/how-claude-code-works#the-context-window) because its tool names and server instructions load into every session. Removing servers you no longer use keeps that space free.
@@ -175,6 +179,8 @@ The [Playwright MCP server](https://github.com/microsoft/playwright-mcp) is a go
     * Everything after the `--` separator is the command Claude Code runs to start the server.
     * `-y` tells `npx` to install the package without prompting.
 
+    The command prints a confirmation like `Added stdio MCP server playwright with command: npx -y @playwright/mcp@latest to local config`, followed by a `File modified:` line showing the configuration file it wrote.
+
     Playwright drives whichever Chrome is already installed on your machine. To use a different browser, append `--browser` with the browser name, for example `--browser firefox`, after `@playwright/mcp@latest`.
   </Step>
 
@@ -185,7 +191,7 @@ The [Playwright MCP server](https://github.com/microsoft/playwright-mcp) is a go
     claude mcp list
     ```
 
-    The first check can show `✗ Failed to connect` while `npx` downloads the package, so wait a moment and run it again.
+    The first check can show `✘ Failed to connect` while `npx` downloads the package, so wait a moment and run it again. Once the download finishes, the status changes to `✔ Connected`. If it still shows `✘ Failed to connect` after a couple of retries, see [Troubleshooting](#troubleshooting).
   </Step>
 
   <Step title="Use the browser">
