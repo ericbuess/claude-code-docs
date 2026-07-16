@@ -91,11 +91,13 @@ Replace the values with the ones your gateway team gave you:
   </Tab>
 </Tabs>
 
-Shell exports apply only to that terminal session and programs started from it; an editor launched from the dock or Start menu won't see them. To make them persist across new terminals, add the same lines to your shell profile, such as `~/.zshrc`, `~/.bashrc`, or your PowerShell `$PROFILE`, or use a settings file instead.
+Shell exports apply only to that terminal session and programs started from it. An editor launched from the dock or Start menu won't see them. To make the values persist across new terminals, add the same lines to your shell profile, such as `~/.zshrc`, `~/.bashrc`, or your PowerShell `$PROFILE`.
+
+If you export the gateway only in your shell, it doesn't reliably reach background agents hosted by the [supervisor](/en/agent-view#how-background-sessions-are-hosted); see [how each background session sources its gateway](/en/agent-view#the-supervisor-process). Use a settings file for any gateway that background agents must always route through.
 
 #### Set in a settings file
 
-To make the configuration apply everywhere Claude Code runs without depending on your shell, set the variables in the `env` block of a [settings file](/en/settings). Settings files have different scopes:
+To make the configuration apply everywhere Claude Code runs, including [background agents](/en/agent-view#how-background-sessions-are-hosted), set the variables in the `env` block of a [settings file](/en/settings) instead of relying on your shell. Settings files have different scopes:
 
 * `~/.claude/settings.json` applies to all your projects. On Windows the path is `%USERPROFILE%\.claude\settings.json`
 * `.claude/settings.local.json` applies to one project. Claude Code adds it to your gitignore when it creates the file; if you create it yourself, add it to your gitignore manually first so you don't accidentally commit your credential

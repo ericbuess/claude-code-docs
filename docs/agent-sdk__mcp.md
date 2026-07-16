@@ -331,6 +331,8 @@ For the streamable HTTP transport, use `"type": "http"` instead. In `.mcp.json` 
 
 Define custom tools directly in your application code instead of running a separate server process. See the [custom tools guide](/en/agent-sdk/custom-tools) for implementation details.
 
+{/* min-version: 2.1.210 */}An SDK MCP server registered by an [`initialize` control request](/en/agent-sdk/typescript#sdkcontrolinitializeresponse) begins connecting as soon as Claude Code processes the request.
+
 ## MCP tool search
 
 When you have many MCP tools configured, tool definitions can consume a significant portion of your context window. Tool search solves this by withholding tool definitions from context and loading only the ones Claude needs for each turn.

@@ -167,7 +167,11 @@ Claude's content searches respect `.gitignore` by default, so paths already list
 
 For paths that are checked in, such as a vendored SDK or committed generated code, add `Read` deny rules in `permissions.deny` to block Claude from opening those files even when a search lists them.
 
-To apply these exclusions for everyone working in the repository, commit them to `.claude/settings.json`. To keep them personal, use `.claude/settings.local.json` instead. Like other project settings on this page, these files load only from your starting directory. Place them at the repository root if you start Claude there, or in each package's `.claude/` if you start from subdirectories. To enforce the same deny rules in every session regardless of starting directory, set them in [managed settings](/en/settings#settings-files), which user and project settings cannot override.
+The deny rules can cover everyone working in the repository, only you, or every session on the machine, depending on which settings file you put them in:
+
+* **Everyone working in the repository**: commit the rules to `.claude/settings.json`. Like other project settings on this page, that file loads only from your starting directory, so place it at the repository root if you start Claude there, or in each package's `.claude/` if you start from subdirectories.
+* **Yourself only**: use `.claude/settings.local.json` at the repository root, which loads in every CLI session inside the repository regardless of starting directory. Relative patterns like the example's `Read(./vendor/**)` still [anchor at the directory you start Claude Code from](/en/permissions#read-and-edit), so if you start sessions from subdirectories, write the rules in this file as `//`-absolute paths, such as `Read(//absolute/path/to/repo/vendor/**)`. {/* min-version: 2.1.211 */}Before v2.1.211, `.claude/settings.local.json` also loaded only from the starting directory.
+* **Everyone, enforced in every session**: set the rules in [managed settings](/en/settings#settings-files), which user and project settings cannot override.
 
 The example below blocks build artifacts and a vendored SDK:
 

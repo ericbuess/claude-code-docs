@@ -86,7 +86,9 @@ Match the message you see in your terminal to a section below.
 | `headersHelper for MCP server '<name>' references ${user_config.*}`                                | [Plugin errors](#plugin-command-references-user-config)                                                                       |
 | `would be spawned with zero tools — refusing`                                                      | [Tool errors](#agent-would-be-spawned-with-zero-tools)                                                                        |
 | `File is covered by a Read deny rule in your permission settings`                                  | [Tool errors](#file-is-covered-by-a-read-deny-rule)                                                                           |
+| `Error: this write left the memory index at MEMORY.md at ..., over its ... read limit`             | [Tool errors](#memory-index-is-over-its-read-limit)                                                                           |
 | `Can't open MCP settings in a background session`                                                  | [Background session errors](#commands-refused-in-a-background-session)                                                        |
+| `This session has no saved transcript`                                                             | [Background session errors](#this-session-has-no-saved-transcript)                                                            |
 | `CLAUDE_CODE_PROCESS_WRAPPER: launcher ...`                                                        | [Background session errors](#claude_code_process_wrapper-launcher-errors)                                                     |
 | `Ignoring N permissions.allow entries from ... this workspace has not been trusted`                | [Configuration warnings](#workspace-has-not-been-trusted)                                                                     |
 | Responses seem lower quality than usual                                                            | [Response quality](#responses-seem-lower-quality-than-usual)                                                                  |
@@ -553,6 +555,8 @@ Failed to authenticate: OAuth session expired and could not be refreshed
 This is not the same state as [OAuth token revoked or expired](#oauth-token-revoked-or-expired). Those messages report a 401 the API returned. Claude Code itself produces `Login expired` for a login it already failed to renew, so it sends no request.
 
 Sessions authenticated with an API key, [`CLAUDE_CODE_OAUTH_TOKEN`](/en/env-vars), or a third-party provider don't use the saved login and never see this message.
+
+{/* min-version: 2.1.210 */}You can check for this state before a request fails: [`/status`](/en/commands) shows a `Login` row reading `Expired — log in again`, plus the organization and email it has saved for the expired login. The row appears only when the saved login is your active credential and can no longer be refreshed. Sessions authenticated another way don't show the row, even if an expired login remains saved. Before v2.1.210, `/status` gave no indication in this state that a login had ever existed, because the cleared credential left it nothing to report.
 
 **What to do:**
 
@@ -1173,7 +1177,7 @@ headersHelper for MCP server 'internal-api' references ${user_config.*}. The sub
 
 ## Tool errors
 
-These errors come from Claude's built-in tools refusing an input. Claude corrects most tool errors on its own; the two below need a change from you, because they come from a subagent definition or a permission rule you control.
+These errors come from Claude's built-in tools. Claude corrects most tool errors on its own; the first two below need a change from you, because they come from a subagent definition or a permission rule you control.
 
 ### Agent would be spawned with zero tools
 
@@ -1202,6 +1206,25 @@ File is covered by a Read deny rule in your permission settings and cannot be ed
 * If Claude should be able to edit the file, remove or narrow the `Read` deny rule in `/permissions` or in [settings](/en/settings#permission-settings)
 * If the file must stay untouched, keep the rule and add an `Edit` deny rule for the same path so the Write and NotebookEdit tools are blocked too
 
+### Memory index is over its read limit
+
+Claude wrote to the [auto memory](/en/memory#auto-memory) index `MEMORY.md` and left it over one of its read limits: 200 lines or 25KB. The write succeeded, but only the first 200 lines or 25KB, whichever comes first, load at the start of a session, so everything past the limit is dropped each time the index is read. Before v2.1.210, an over-limit index was silently truncated on the next load with no write-time signal.
+
+```text theme={null}
+Error: this write left the memory index at MEMORY.md at 214 lines, over its 200-line read limit. The write succeeded, but everything past the limit is silently dropped each time the index is loaded — entries at the end are already invisible to readers. Rewrite it to under 140 lines now: keep one line per entry, move detail into topic files, and merge or drop stale entries.
+```
+
+{/* min-version: 2.1.211 */}Only the content that loads counts toward the limits. YAML frontmatter and block-level HTML comments are stripped before the index is loaded, so they're excluded from the measurement. Before v2.1.211, Claude Code measured the raw file, and frontmatter or comments could trigger this error even when the loaded content fit.
+
+Claude Code delivers the error to Claude after the write rather than printing it as a banner in your terminal, so you may notice it only in the transcript.
+
+When Claude's write brings the file near a limit without crossing it, Claude Code returns a milder reminder to compact the index instead of this error.
+
+**What to do:**
+
+* Let Claude rewrite `MEMORY.md`, or ask it to: keep one line per entry, move detail into topic files, and merge or drop stale entries
+* To trim the index yourself, see [Audit and edit your memory](/en/memory#audit-and-edit-your-memory)
+
 ## Background session errors
 
 [Background sessions](/en/agent-view) run without an interactive terminal of their own, so commands that need one behave differently there. These messages appear in the transcript of a background session, in agent view or after attaching.
@@ -1221,6 +1244,21 @@ Can't open MCP settings in a background session — use `/mcp enable|disable|rec
 
 * Use the form the message names, such as `/mcp reconnect <server>`, `/mcp enable`, or `/mcp disable`
 * For sign-in and authorization flows, run the command from a regular `claude` session in a terminal
+
+### This session has no saved transcript
+
+You opened a stopped [background session](/en/agent-view) that was backgrounded from another conversation with `←` or `/background` and stopped before its first response finished. Until that first response finishes, the conversation still lives only in the session it was backgrounded from, so Claude Code refuses to start the stopped session rather than begin a blank conversation under the same session ID. The message ends with the `claude respawn` command for this session:
+
+```text theme={null}
+This session has no saved transcript — it was stopped before its first response finished. If it was backgrounded from another conversation, that one is still intact; `claude respawn <id>` starts this one fresh.
+```
+
+{/* min-version: 2.1.211 */}Before v2.1.211, opening the stopped session silently started that blank conversation and could re-run the session's original prompt.
+
+**What to do:**
+
+* The conversation you backgrounded from is intact: resume it with [`claude --resume`](/en/sessions) or keep working in it
+* To start the stopped session fresh anyway, run `claude respawn <id>` with the ID from the message
 
 ### CLAUDE\_CODE\_PROCESS\_WRAPPER launcher errors
 

@@ -29,6 +29,8 @@ Total duration (wall): 6h 33m 10.2s
 Total code changes:    0 lines added, 0 lines removed
 ```
 
+These totals reset when `/clear` starts a new session, so the next session's total cost starts at \$0. Before v2.1.211, they kept accumulating across `/clear` for the lifetime of the Claude Code process.
+
 On a Pro, Max, Team, or Enterprise plan, `/usage` also shows a breakdown of what counts against your plan limits. It attributes recent usage to skills, subagents, plugins, and individual MCP servers, with each shown as a percentage of the total. Press `d` or `w` to switch between the last 24 hours and the last 7 days. The figures are approximate and computed from local session history on this machine, so usage from other devices or claude.ai is not included.
 
 When the request for your plan limits fails, most often because the usage endpoint is rate limited, `/usage` shows the last usage bars it loaded on this machine within the past 60 minutes, along with a `Showing last-known usage` note stating how long ago that data was fetched. Press `r` to retry; a successful retry replaces the last-known bars with fresh data. Without a snapshot from the past 60 minutes, `/usage` reports that the usage endpoint is rate limited and offers the same retry shortcut. Before v2.1.208, a rate-limited request in a session that hadn't loaded usage yet always showed the error with no bars.
@@ -44,7 +46,9 @@ On Pro and Max plans, the `/usage-credits` command opens a dialog in the CLI whe
 * Set, change, or remove your monthly spend limit
 * Configure auto-reload, which buys more usage credits automatically when your balance falls below a threshold you set
 
-On Claude Code versions before v2.1.207 and on accounts where the in-CLI dialog isn't available, `/usage-credits` opens the usage-credits billing page in your browser instead. On Team and Enterprise plans, members with billing access get the same browser page, and members without billing access send a request from the CLI asking their admin to turn on usage credits or raise the limit.
+On Claude Code versions before v2.1.207 and on accounts where the in-CLI dialog isn't available, `/usage-credits` opens the usage-credits billing page in your browser instead. On Team and Enterprise plans, members with billing access get the same browser page, and members without billing access request usage credits from their admin through the CLI.
+
+Because that request notifies your organization's admins, the CLI asks for confirmation before sending it. Select **Send request** to ask your admin to turn on usage credits or raise the limit, or cancel to send nothing; canceling reports `No request sent to your admin.` The confirmation appears only in interactive sessions, so in non-interactive mode with the `-p` flag and from [Remote Control](/en/remote-control), `/usage-credits` doesn't send a request and instead tells you to run the command in an interactive session. Before v2.1.211, Claude Code sent the request as soon as you ran the command, without a confirmation step.
 
 Changing the monthly spend limit requires billing access on the account. If you reach the limit while you still have usage credits available, Claude Code prompts you to raise or remove it so you can continue without leaving the CLI.
 

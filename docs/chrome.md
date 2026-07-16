@@ -24,6 +24,7 @@ With Chrome connected, you can chain browser actions with coding tasks in a sing
 * **Authenticated web apps**: interact with Google Docs, Gmail, Notion, or any app you're logged into without API connectors
 * **Data extraction**: pull structured information from web pages and save it locally
 * **Task automation**: automate repetitive browser tasks like data entry, form filling, or multi-site workflows
+* **File uploads**: attach files from your machine to upload fields on web pages
 * **Session recording**: record browser interactions as GIFs to document or share what happened
 
 ## Prerequisites
@@ -71,6 +72,8 @@ For VS Code, see [browser automation in VS Code](/en/vs-code#automate-browser-ta
 ### Enable Chrome by default
 
 To avoid passing `--chrome` each session, run `/chrome` and select "Enabled by default".
+
+Claude Code starts normally when Chrome isn't running. Before v2.1.211, startup could hang when Chrome integration was enabled but Chrome wasn't running.
 
 In the [VS Code extension](/en/vs-code#automate-browser-tasks-with-chrome), Chrome is available whenever the Chrome extension is installed. No additional flag is needed.
 
@@ -130,6 +133,23 @@ name, email, and phone fields.
 
 Claude reads your local file, navigates the web interface, and enters the data for each record.
 
+### Upload files to web pages
+
+Claude can attach files from your machine to upload fields on a page. Claude Code reads the file and sends its contents to the browser, so uploads work in both local and remote sessions. Requires Claude Code v2.1.211 or later.
+
+This example attaches a log file to a form:
+
+```text theme={null}
+Open the bug tracker at bugs.example.com, create a new issue,
+and attach logs/session.log to it
+```
+
+Three restrictions apply to uploads:
+
+* **Permissions**: Claude can upload a file only when the session is allowed to read it, so [permission rules](/en/settings#permission-settings) that deny `Read` access to a file also block uploading it.
+* **Size**: a single upload can include up to 10 MB of files in total.
+* **Hard links**: Claude refuses files that have multiple hard links, which is common inside package-manager stores like `node_modules`. Copy the file and upload the copy.
+
 ### Draft content in Google Docs
 
 Use Claude to write directly in your documents without API setup:
@@ -174,6 +194,16 @@ an item to the cart through to the confirmation page.
 ```
 
 Claude records the interaction sequence and saves it as a GIF file.
+
+### Save screenshots to disk
+
+Ask Claude to keep a screenshot as a file:
+
+```text theme={null}
+Take a screenshot of the checkout page and save it to disk
+```
+
+Claude saves the image to disk and reports the file path. Before v2.1.211, the screenshot tool's `save_to_disk` option didn't write a file.
 
 ## Troubleshooting
 
@@ -223,6 +253,7 @@ On Windows, you may encounter:
 
 * **Named pipe conflicts (EADDRINUSE)**: if another process is using the same named pipe, restart Claude Code. Close any other Claude Code sessions that might be using Chrome.
 * **Native messaging host errors**: if the native messaging host crashes on startup, try reinstalling Claude Code to regenerate the host configuration.
+* **Setup pages fail to open**: {/* min-version: 2.1.211 */}update Claude Code. Before v2.1.211, the browser tab prompting you to connect the extension could fail to open on Windows.
 
 ### Common error messages
 

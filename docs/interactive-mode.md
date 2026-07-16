@@ -27,7 +27,7 @@
 | `Ctrl+C`                                                  | Interrupt, or clear input                                                                                                                                  | Interrupts a running operation. If nothing is running, the first press clears the prompt input and a second press exits Claude Code                                                                                                                                                                                                |
 | `Ctrl+X Ctrl+K`                                           | Stop all running [background subagents](/en/sub-agents#run-subagents-in-foreground-or-background) in this session. Press twice within 3 seconds to confirm | Subagent control                                                                                                                                                                                                                                                                                                                   |
 | `Ctrl+D`                                                  | Exit Claude Code session                                                                                                                                   | EOF signal                                                                                                                                                                                                                                                                                                                         |
-| `Ctrl+G` or `Ctrl+X Ctrl+E`                               | Open in default text editor                                                                                                                                | Edit your prompt or custom response in your default text editor. `Ctrl+X Ctrl+E` is the readline-native binding. Turn on Show last response in external editor in `/config` to prepend Claude's previous reply as `#`-commented context above your prompt; the comment block is stripped when you save                             |
+| `Ctrl+G` or `Ctrl+X Ctrl+E`                               | Open in default text editor                                                                                                                                | Edit your prompt or custom response in your default text editor. `Ctrl+X Ctrl+E` is the readline-native binding. Turn on **Show last response in external editor** in `/config` to prepend Claude's previous reply as `#`-commented context above your prompt; Claude Code strips the comment block when you save                  |
 | `Ctrl+L`                                                  | Redraw screen                                                                                                                                              | Forces a full terminal redraw. Input and conversation history are kept. Use this to recover if the display becomes garbled or partially blank                                                                                                                                                                                      |
 | `Ctrl+O`                                                  | Toggle transcript viewer                                                                                                                                   | Shows detailed tool usage and execution, with a timestamp and the model used on each assistant message. Also expands MCP calls, which collapse to a single line like "Called slack 3 times" by default                                                                                                                             |
 | `Ctrl+R`                                                  | Reverse search command history                                                                                                                             | Search through previous commands interactively                                                                                                                                                                                                                                                                                     |
@@ -79,11 +79,12 @@
 
 ### Quick commands
 
-| Shortcut     | Description       | Notes                                                                                |
-| :----------- | :---------------- | :----------------------------------------------------------------------------------- |
-| `/` at start | Command or skill  | See [commands](#commands) and [skills](/en/skills)                                   |
-| `!` at start | Shell mode        | Run a command directly, add its output to the session, and have Claude respond to it |
-| `@`          | File path mention | Trigger file path autocomplete                                                       |
+| Shortcut           | Description                    | Notes                                                                                                                                                                                                                                       |
+| :----------------- | :----------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/` at start       | Command or skill               | See [commands](#commands) and [skills](/en/skills)                                                                                                                                                                                          |
+| `!` at start       | Shell mode                     | Run a command directly, add its output to the session, and have Claude respond to it                                                                                                                                                        |
+| `@`                | File path mention              | Trigger file path autocomplete                                                                                                                                                                                                              |
+| `?` on empty input | Toggle the shortcut help panel | Typing `?` when the input already contains text inserts the character. {/* min-version: 2.1.211 */}Before v2.1.211, an edit that left a lone `?` in the input, such as backspacing from `?x`, also toggled the panel and discarded the edit |
 
 ### Transcript viewer
 
@@ -177,24 +178,26 @@ Claude Code reads this setting from your user settings file, the `--settings` fl
 
 ### Editing (NORMAL mode)
 
-| Command        | Action                  |
-| :------------- | :---------------------- |
-| `x`            | Delete character        |
-| `dd`           | Delete line             |
-| `D`            | Delete to end of line   |
-| `dw`/`de`/`db` | Delete word/to end/back |
-| `cc`           | Change line             |
-| `C`            | Change to end of line   |
-| `cw`/`ce`/`cb` | Change word/to end/back |
-| `yy`/`Y`       | Yank (copy) line        |
-| `yw`/`ye`/`yb` | Yank word/to end/back   |
-| `p`            | Paste after cursor      |
-| `P`            | Paste before cursor     |
-| `>>`           | Indent line             |
-| `<<`           | Dedent line             |
-| `J`            | Join lines              |
-| `u`            | Undo                    |
-| `.`            | Repeat last change      |
+| Command        | Action                                                                                                                                                |
+| :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `x`            | Delete character                                                                                                                                      |
+| `dd`           | Delete line                                                                                                                                           |
+| `D`            | Delete to end of line                                                                                                                                 |
+| `dw`/`de`/`db` | Delete word/to end/back                                                                                                                               |
+| `cc`           | Change line                                                                                                                                           |
+| `C`            | Change to end of line                                                                                                                                 |
+| `cw`/`ce`/`cb` | Change word/to end/back                                                                                                                               |
+| `s`            | Substitute character: delete the character under the cursor and enter INSERT mode. {/* min-version: 2.1.211 */}Requires Claude Code v2.1.211 or later |
+| `S`            | Substitute line: clear the line and enter INSERT mode. {/* min-version: 2.1.211 */}Requires Claude Code v2.1.211 or later                             |
+| `yy`/`Y`       | Yank (copy) line                                                                                                                                      |
+| `yw`/`ye`/`yb` | Yank word/to end/back                                                                                                                                 |
+| `p`            | Paste after cursor                                                                                                                                    |
+| `P`            | Paste before cursor                                                                                                                                   |
+| `>>`           | Indent line                                                                                                                                           |
+| `<<`           | Dedent line                                                                                                                                           |
+| `J`            | Join lines                                                                                                                                            |
+| `u`            | Undo                                                                                                                                                  |
+| `.`            | Repeat last change                                                                                                                                    |
 
 ### Text objects (NORMAL mode)
 

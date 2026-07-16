@@ -201,7 +201,7 @@ Auto mode is available only when your account meets all of these requirements:
 
 * **Plan**: All plans.
 * **Owner**: on Team and Enterprise, an Owner must enable it in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code) before users can turn it on. Administrators can also turn auto mode off by setting `permissions.disableAutoMode` to `"disable"` in [managed settings](/en/permissions#managed-settings). For the desktop app's Code tab, `disableAutoMode` is the organization-level control, and the admin settings toggle doesn't apply.
-* **Model**: on the Anthropic API, Claude Opus 4.6 or later, or Sonnet 4.6 or later. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, only Claude Sonnet 5, Opus 4.7, and Opus 4.8. Older models, including Sonnet 4.5, Opus 4.5, Haiku, and claude-3 models, are not supported on any provider.
+* **Model**: on the Anthropic API, Claude Opus 4.6 or later, Sonnet 4.6 or later, or [Fable 5](/en/model-config#work-with-fable-5). On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, only Claude Sonnet 5, Opus 4.7, Opus 4.8, and Fable 5. Older models, including Sonnet 4.5, Opus 4.5, Haiku, and claude-3 models, are not supported on any provider.
 * **Provider**: available by default on the Anthropic API, Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in Claude apps gateway sessions. {/* min-version: 2.1.207 */}In v2.1.158 through v2.1.206, auto mode was off on all of these providers except the Anthropic API until you set `CLAUDE_CODE_ENABLE_AUTO_MODE=1`; v2.1.207 removed the requirement.
 
 If Claude Code reports auto mode as unavailable, one of these requirements is unmet; this is not a transient outage. A separate message that names a model and says auto mode "cannot determine the safety" of an action is a transient classifier outage; see the [error reference](/en/errors#auto-mode-cannot-determine-the-safety-of-an-action).
@@ -212,9 +212,11 @@ If you set `defaultMode: "auto"` in [settings](/en/settings#available-settings) 
   Auto mode on Bedrock, Agent Platform, or Foundry
 </h3>
 
-On [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud's Agent Platform](/en/google-vertex-ai), [Microsoft Foundry](/en/microsoft-foundry), and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, auto mode appears in the `Shift+Tab` cycle by default. Appearing in the cycle doesn't change the mode a session starts in: sessions still start in your [`defaultMode`](/en/settings#available-settings), which is Manual unless you change it. Only Claude Sonnet 5, Opus 4.7, and Opus 4.8 are supported on these providers.
+On [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud's Agent Platform](/en/google-vertex-ai), [Microsoft Foundry](/en/microsoft-foundry), and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, auto mode appears in the `Shift+Tab` cycle by default. Appearing in the cycle doesn't change the mode a session starts in: sessions still start in your [`defaultMode`](/en/settings#available-settings), which is Manual unless you change it. Only Claude Sonnet 5, Opus 4.7, Opus 4.8, and Fable 5 are supported on these providers.
 
 To make auto mode the default starting mode, set `"permissions": {"defaultMode": "auto"}` in user or managed settings.
+
+{/* min-version: 2.1.210 */}The [`/doctor`](/en/commands#all-commands) checkup proposes this user-settings default on these providers the same way it does on the Anthropic API.
 
 To prevent developers from using auto mode, set `disableAutoMode` to `"disable"` in [managed settings](/en/permissions#managed-settings). This removes `auto` from the `Shift+Tab` cycle and rejects `--permission-mode auto` at startup.
 
@@ -234,7 +236,7 @@ The classifier trusts your working directory and the remotes that were configure
 * Modifying shared infrastructure
 * Irreversibly destroying files that existed before the session
 * Force push
-* {/* min-version: 2.1.203 */}Pushing to the repository's default branch when the push carries sensitive content such as secrets or personal or entrusted data, carries changes concealed or misdescribed relative to what you asked for, carries content ported in or first read from outside the repository, or routes around a pull request, review, or check you asked for. A plain push to the default branch isn't blocked on its own, and clearing a flagged push requires naming the flagged content or the bypassed review, not only the push. The classifier is one layer: [`permissions.deny` rules](/en/permissions#manage-permissions) apply in every mode and can block pushes to the default branch outright, and the remote's own branch protection still applies. Before v2.1.203, any direct push to the default branch was blocked
+* {/* min-version: 2.1.211 */}Committing or pushing a change that would send secrets or sensitive data outside the repository when it runs, or widen what a deploy exposes. This covers a CI workflow or deploy configuration that hands a secret to a destination that doesn't already receive it, a script or setup step that reads a secret store and sends the data out, and a config change that widens what a deploy publishes, such as a registry, visibility, artifact, or sourcemap setting. The check applies on any branch, applies even when the repository is public, and fires when the change lands, whether or not that landing triggers the pipeline; clearing it requires naming the execution effect, not only the commit or push. Before v2.1.211, this check was scoped to the default branch instead: a push there was blocked when it carried sensitive content, changes concealed or misdescribed relative to what you asked for, content ported in from outside the repository, or routed around a review you asked for, and before v2.1.203 any direct push to the default branch was blocked
 * {/* min-version: 2.1.182 */}`git reset --hard`, `git checkout -- .`, `git restore .`, `git clean -fd`, `git stash drop`, or `git stash clear`, which the classifier presumes would discard uncommitted changes
 * `git commit --amend` when the commit at HEAD was not created in this session
 * {/* min-version: 2.1.198 */}From v2.1.198, `git commit --amend` when the commit at HEAD has already been pushed. A message-only reword is not blocked: `--amend -m` with nothing newly staged, on a commit that Claude created during this session
@@ -288,8 +290,7 @@ Claude Code v2.1.205 and later also block these by default:
 * Installing dependencies declared in your lock files or manifests
 * Reading `.env` and sending credentials to their matching API
 * Read-only HTTP requests
-* Pushing to the branch you started on or one Claude created
-* {/* min-version: 2.1.203 */}Routine pushes to the repository default branch. Before v2.1.203, any direct push to the default branch was blocked
+* {/* min-version: 2.1.211 */}Pushing to any branch of the repository you're working in, including the default branch. A non-default branch whose name marks it as a deploy or publication target, such as `production` or `gh-pages`, isn't covered: the classifier judges a push there on its own terms. The push's content is still checked against the other rules, [`permissions.deny` rules](/en/permissions#manage-permissions) can still block pushes to specific branches outright in every mode, and the remote's own branch protection still applies. Before v2.1.211, only pushes to the branch you started on, branches Claude created, and routine pushes to the default branch were allowed by default, and before v2.1.203 any direct push to the default branch was blocked
 
 Claude Code v2.1.195 and later also allow these by default:
 
@@ -308,7 +309,7 @@ Sandbox network access requests are routed through the classifier rather than al
 
 Run `claude auto-mode defaults` to see the full rule lists. If routine actions get blocked, an administrator can add trusted repos, buckets, and services via the `autoMode.environment` setting: see [Configure auto mode](/en/auto-mode-config).
 
-Pushing to your working branch, making a routine push to the repository default branch, and creating a pull request that matches your request all run without a prompt. The classifier blocks a push only when it carries risk, such as a force push or content that routes around a review you set up. To require a human checkpoint before these actions while staying in auto mode, add `permissions.ask` rules: see [Common boundaries](/en/auto-mode-config#common-boundaries).
+{/* min-version: 2.1.211 */}Pushing to any branch of the repository you're working in and creating a pull request that matches your request run without a prompt, with the two exceptions the lists above cover: the classifier judges a push to a deploy-named branch such as `production` or `gh-pages` on its own terms, and still blocks a push whose content carries risk. To require a human checkpoint before these actions while staying in auto mode, add `permissions.ask` rules: see [Common boundaries](/en/auto-mode-config#common-boundaries).
 
 ### Boundaries you state in conversation
 
@@ -358,7 +359,13 @@ Repeated blocks usually mean the classifier is missing context about your infras
   </Accordion>
 
   <Accordion title="Cost and latency">
-    The classifier runs on a server-configured model that is independent of your `/model` selection, so switching models does not change classifier availability. Classifier calls count toward your token usage. Each check sends a portion of the transcript plus the pending action, adding a round-trip before execution. Reads and working-directory edits outside protected paths skip the classifier, so the overhead comes mainly from shell commands and network operations. {/* min-version: 2.1.198 */}As of v2.1.198, a sandbox network verdict for a host and port is reused instead of re-classified on every connection, so repeated connections to the same host don't each add a check. [What the classifier blocks by default](#what-the-classifier-blocks-by-default) describes how long an allow and a deny last.
+    {/* min-version: 2.1.210 */}The classifier runs on Claude Sonnet 5 by default rather than on your `/model` selection. A classifier model that Anthropic configures server-side takes precedence over that default. When your session's model is Claude Sonnet 4.6, or when [`availableModels`](/en/model-config#restrict-model-selection) excludes Sonnet 5, the classifier runs on the session's model instead, or on an Opus model when the session runs on [Fable 5](/en/model-config#work-with-fable-5); on providers other than the Anthropic API, that Opus fallback is the provider's default Opus model.
+
+    The session's first auto-mode request validates the Sonnet 5 default: if the request succeeds, Sonnet 5 stays the session's classifier model, and if it fails because the model isn't available, the session uses the fallback instead. After that validation settles, the classifier's model doesn't change for the session.
+
+    Classifier calls count toward your token usage. Each check sends a portion of the transcript plus the pending action, adding a round-trip before execution. Reads and working-directory edits outside protected paths skip the classifier, so the overhead comes mainly from shell commands and network operations.
+
+    {/* min-version: 2.1.198 */}The classifier reuses a sandbox network verdict for a host and port, so repeated connections to the same host don't each add a check. [What the classifier blocks by default](#what-the-classifier-blocks-by-default) describes how long an allow and a deny last.
   </Accordion>
 </AccordionGroup>
 
