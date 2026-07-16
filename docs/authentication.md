@@ -26,7 +26,7 @@ You can authenticate with any of these account types:
 * **Cloud providers**: if your organization uses [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud's Agent Platform](/en/google-vertex-ai), or [Microsoft Foundry](/en/microsoft-foundry), set the required environment variables before running `claude`, or select **3rd-party platform** at the login prompt, which launches an interactive setup wizard for Bedrock and Vertex AI. No browser login is needed.
 * **Cloud gateway**: if your organization runs a self-hosted [Claude apps gateway](/en/claude-apps-gateway), sign in with corporate SSO through `/login`. The gateway-issued token is the session's only credential.
 
-Admins can restrict interactive login with the [`forceLoginMethod` and `forceLoginOrgUUID`](/en/settings#available-settings) managed settings. When either is set, sessions authenticated by `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper` are blocked at startup; cloud provider sessions aren't affected.
+Admins can restrict which login methods and organizations are accepted; see [Restrict login to your organization](#restrict-login-to-your-organization).
 
 To log out and re-authenticate, type `/logout` at the Claude Code prompt. Logging out also resets your first-launch setup state, so the next time you run `claude` it walks you through login and setup again.
 
@@ -114,6 +114,14 @@ For teams using Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foun
     Users can [install Claude Code](/en/setup#install-claude-code).
   </Step>
 </Steps>
+
+### Restrict login to your organization
+
+To require that developer sessions authenticate into a specific Anthropic organization, set [`forceLoginMethod` and `forceLoginOrgUUID`](/en/settings#available-settings) in [managed settings](/en/settings#settings-files). Set `forceLoginOrgUUID` to your organization ID, shown in [claude.ai admin settings](https://claude.ai/admin-settings/organization) for Claude for Teams or Enterprise organizations, or at [platform.claude.com/settings/organization](https://platform.claude.com/settings/organization) for Console organizations. With both keys set, Claude Code restricts login to the listed organization and exits at startup if the active credential belongs to a different one.
+
+Deploy the keys through your device management tooling. [Server-managed settings](/en/server-managed-settings) reach only accounts that are already authenticated into your organization, so they can't redirect a developer's first login. If your organization distributes server-managed settings as well, set the keys in both places: managed-settings sources [don't merge](/en/server-managed-settings#settings-precedence), and cached server-managed settings replace the device-managed file entirely.
+
+The keys also block sessions authenticated by `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper`, since organization membership can't be verified for an environment credential. Cloud provider sessions such as Amazon Bedrock authenticate against your cloud provider and aren't blocked; restrict those through your cloud IAM policies. See [`forceLoginOrgUUID`](/en/settings#available-settings) in the settings reference for the full behavior. Before v2.1.146, the pin applied only to the login flow and didn't block API-key credentials.
 
 ## Credential management
 

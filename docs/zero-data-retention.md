@@ -29,6 +29,10 @@ ZDR covers Claude Code inference on Claude for Enterprise.
   ZDR is enabled on a per-organization basis. Each new organization requires ZDR to be enabled separately by your Anthropic account team. ZDR does not automatically apply to new organizations created under the same account. Contact your account team to enable ZDR for any new organizations.
 </Warning>
 
+### Route Claude Code traffic to your ZDR organization
+
+ZDR applies to requests that authenticate into a ZDR-enabled organization. If a developer signs in to Claude Code with a personal account or with an API key from a different organization, those sessions are not covered. To restrict login to your ZDR organization, deploy the `forceLoginMethod` and `forceLoginOrgUUID` managed settings; see [Restrict login to your organization](/en/authentication#restrict-login-to-your-organization).
+
 ### What ZDR covers
 
 ZDR covers model inference calls made through Claude Code on Claude for Enterprise. When you use Claude Code in your terminal, the prompts you send and the responses Claude generates are not retained by Anthropic. This applies to every model available to ZDR organizations. Some models require data retention and are not available under ZDR; see [Model availability under ZDR](#model-availability-under-zdr).
