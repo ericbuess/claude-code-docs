@@ -260,7 +260,7 @@ Claude Code skips mobile push notifications while you are typing in or focused o
   * Text-output commands: `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/usage-credits` (runs the text form instead of opening the in-CLI dialog), `/recap`, `/reload-plugins`
   * `/model`, `/effort`, `/fast`, `/color`, and `/rename`: pass the value as an argument, for example `/model sonnet` or `/effort high`. From mobile and web, `/model` and `/effort` take the argument in place of the terminal picker or slider.
   * {/* min-version: 2.1.166 */}`/mcp`, from v2.1.166: returns a text summary of server status instead of opening the picker, and accepts the `reconnect`, `enable`, and `disable` [subcommands](/en/commands#all-commands). Unlike the local CLI, `/mcp reconnect` without a server name reconnects every server that has failed or needs authentication.
-  * {/* min-version: 2.1.181 */}`/config`, from v2.1.181: pass `key=value` to set a setting, or run it with no argument to list the keys you can set.
+  * {/* min-version: 2.1.181 */}`/config`, from v2.1.181: from the mobile app, pass `key=value` to set a setting, or run it with no argument to list the keys you can set. On the web, `/config` opens the Claude Code section of your settings instead, and ignores text after the command.
 
 ## Troubleshooting
 

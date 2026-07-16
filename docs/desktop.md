@@ -802,7 +802,9 @@ The following features are only available in the CLI or VS Code extension, excep
 * **Linux (beta)**: Computer Use isn't yet available in the Linux desktop app. See [Claude Desktop on Linux](/en/desktop-linux).
 * **Inline code suggestions**: Desktop does not provide autocomplete-style suggestions. It works through conversational prompts and explicit code changes.
 * **Agent teams**: parallel Claude Code sessions that message each other are available in the [CLI](/en/agent-teams), not in Desktop. For multi-agent work inside one session, use [dynamic workflows](/en/workflows), which run in Desktop.
-* **Terminal-dialog commands**: built-in commands that open an interactive panel in the terminal, such as `/permissions` and `/config`, are not available in the Code tab and reply with `isn't available in this environment`. `/config` sets a setting when you pass `key=value`, for example `/config theme=dark`; only its picker form is unavailable. Edit [settings files](/en/settings) directly to manage permission rules and configuration, or run the command from the standalone CLI.
+* **Terminal-dialog commands**: built-in commands that open an interactive panel in the terminal behave differently in the Code tab. Edit [settings files](/en/settings) directly to manage permission rules and configuration, or run the commands from the standalone CLI.
+  * Commands with no argument form, such as `/permissions`, reply with `isn't available in this environment`.
+  * `/config` opens Settings → Claude Code. Text after the command is ignored, so `/config theme=dark` doesn't set the theme.
 
 ## Troubleshooting
 

@@ -200,7 +200,10 @@ The following example keeps the defaults in all four lists and adds organization
 ```
 
 <Danger>
-  Setting any of `environment`, `allow`, `soft_deny`, or `hard_deny` without `"$defaults"` replaces the entire default list for that section. A `soft_deny` array without `"$defaults"` discards every built-in soft block rule, including force push, `curl | bash`, production deploys, and auto-mode bypass. A `hard_deny` array without `"$defaults"` discards the built-in data exfiltration rule.
+  Setting any of `environment`, `allow`, `soft_deny`, or `hard_deny` without `"$defaults"` replaces the entire default list for that section. If you set an array without `"$defaults"`, you discard the built-in rules for that section:
+
+  * `soft_deny`: every built-in soft block rule, including force push, `curl | bash`, production deploys, and auto-mode bypass
+  * `hard_deny`: the built-in data exfiltration rule
 </Danger>
 
 Each section is evaluated independently, so setting `environment` alone leaves the default `allow`, `soft_deny`, and `hard_deny` lists intact.
