@@ -804,7 +804,7 @@ type PermissionMode =
   | "bypassPermissions" // Bypass permission checks; explicit ask rules still prompt
   | "plan" // Planning mode - explore without editing
   | "dontAsk" // Don't prompt for permissions, deny if not pre-approved
-  | "auto"; // Use a model classifier to approve or deny each tool call
+  | "auto"; // Model classifier approves or denies permission prompts
 ```
 
 ### `CanUseTool`
@@ -1838,7 +1838,7 @@ type AgentInput = {
   run_in_background?: boolean;
   name?: string;
   mode?: "acceptEdits" | "auto" | "bypassPermissions" | "default" | "dontAsk" | "plan";
-  isolation?: "worktree";
+  isolation?: "worktree" | "remote";
 };
 ```
 

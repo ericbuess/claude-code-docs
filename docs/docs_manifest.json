@@ -105,8 +105,8 @@
     "agent-sdk__python.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/python",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/python.md",
-      "hash": "9568fd1064d950713dbbfeb211ef947c3af20faee3555e1702c26f126a52891d",
-      "last_updated": "2026-07-16T21:53:52.039576"
+      "hash": "6504777a50ab5419dd8078ee4f3e346715a8e70d7623c828908eb907da38fef5",
+      "last_updated": "2026-07-17T16:06:25.800302"
     },
     "agent-sdk__quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/quickstart",
@@ -159,8 +159,8 @@
     "agent-sdk__structured-outputs.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/structured-outputs",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/structured-outputs.md",
-      "hash": "51b6676f6fd487aa1ef074b78c153c3caafa439443e893314ff15c63eeaea576",
-      "last_updated": "2026-07-17T01:27:00.285500"
+      "hash": "5c2feff4d988b9d341290f13469d301970be2be9457fe29f08715701e76ca589",
+      "last_updated": "2026-07-17T16:06:35.357220"
     },
     "agent-sdk__subagents.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/subagents",
@@ -183,8 +183,8 @@
     "agent-sdk__typescript.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/typescript",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/typescript.md",
-      "hash": "a7ef5bc0748a3e47dc849a7f3d22a835145c658a3b3b09638bec5254940981a2",
-      "last_updated": "2026-07-16T16:08:36.148047"
+      "hash": "da4df5f0d89fa847f1806adc7c7c5352eef99519af152063c13f6575babff3df",
+      "last_updated": "2026-07-17T16:06:40.115479"
     },
     "agent-sdk__typescript-v2-preview.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/typescript-v2-preview",
@@ -628,8 +628,8 @@
     "memory.md": {
       "original_url": "https://code.claude.com/docs/en/memory",
       "original_md_url": "https://code.claude.com/docs/en/memory.md",
-      "hash": "e9ac9966b2f3a0ec8d011a2d70465908502f3d480625febb69d39803922d7099",
-      "last_updated": "2026-07-16T21:55:19.682276"
+      "hash": "9a6b9bc5f0e7e848c9311736f6d318bb51415caf3c71d2df2b38ccbbc77995fd",
+      "last_updated": "2026-07-17T16:07:51.437224"
     },
     "microsoft-foundry.md": {
       "original_url": "https://code.claude.com/docs/en/microsoft-foundry",
@@ -658,8 +658,8 @@
     "output-styles.md": {
       "original_url": "https://code.claude.com/docs/en/output-styles",
       "original_md_url": "https://code.claude.com/docs/en/output-styles.md",
-      "hash": "553ad5da3d4aeb768cd5594b8c18b82745eff97164e34cf99b9e712f04b84b21",
-      "last_updated": "2026-07-10T13:54:37.192485"
+      "hash": "54d1fb85f0e20fa083e9cc76b29b37b674dd6c447499c1a62645ebae47155953",
+      "last_updated": "2026-07-17T16:07:56.358764"
     },
     "overview.md": {
       "original_url": "https://code.claude.com/docs/en/overview",
@@ -826,8 +826,8 @@
     "sub-agents.md": {
       "original_url": "https://code.claude.com/docs/en/sub-agents",
       "original_md_url": "https://code.claude.com/docs/en/sub-agents.md",
-      "hash": "aa5278a1fbb4135227ace020f2dbb78926f116c52c06a226e4aad13830ce2ada",
-      "last_updated": "2026-07-16T16:10:27.243409"
+      "hash": "ba4f7c43370ed237dd8d90049d38efc693ff794e3ed9193447d2b0022143b8a0",
+      "last_updated": "2026-07-17T16:08:24.250915"
     },
     "terminal-config.md": {
       "original_url": "https://code.claude.com/docs/en/terminal-config",
@@ -1011,8 +1011,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-07-17T13:01:49.011625",
-    "fetch_duration_seconds": 153.353767,
+    "last_fetch_completed": "2026-07-17T16:08:54.317415",
+    "fetch_duration_seconds": 165.886719,
     "total_pages_discovered": 168,
     "pages_fetched_successfully": 169,
     "pages_failed": 0,
@@ -1022,7 +1022,7 @@
     "total_files": 168,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-07-17T13:01:49.011654",
+  "last_updated": "2026-07-17T16:08:54.317441",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

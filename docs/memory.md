@@ -383,6 +383,8 @@ This limit applies only to `MEMORY.md`. CLAUDE.md files are loaded in full regar
 
 Topic files like `debugging.md` or `patterns.md` are not loaded at startup. Claude reads them on demand using its standard file tools when it needs the information.
 
+The main conversation's auto memory isn't loaded into [subagents](/en/sub-agents#what-loads-at-startup); the exception is a [fork](/en/sub-agents#fork-the-current-conversation), which inherits the parent conversation and system prompt. A subagent's own auto memory, enabled with the subagent `memory` field, is a separate directory.
+
 Claude reads and writes memory files during your session. When you see "Writing memory" or "Recalled memory" in the Claude Code interface, Claude is actively updating or reading from `~/.claude/projects/<project>/memory/`.
 
 ### Audit and edit your memory
