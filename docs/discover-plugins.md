@@ -36,6 +36,8 @@ To install a plugin from the official marketplace, use `/plugin install <name>@c
 /plugin install github@claude-plugins-official
 ```
 
+`/plugin` opens an interactive panel in the terminal CLI. If Claude replies that `/plugin` isn't available in this environment, use the [plugin browser](/en/desktop#install-plugins) in the Claude desktop app, or declare the plugin under [`enabledPlugins`](/en/settings#enabledplugins) in `.claude/settings.json` for cloud sessions.
+
 If Claude Code reports `Marketplace "claude-plugins-official" not found`, add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`. If it reports that the plugin is not found in the marketplace, your local copy is outdated: refresh it with `/plugin marketplace update claude-plugins-official`. Then retry the install.
 
 <Note>

@@ -62,7 +62,9 @@ This walkthrough covers the core agent view loop: dispatch a task, watch its row
   </Step>
 
   <Step title="Bring an existing session in">
-    This step needs a running session. If you followed the earlier steps you don't have one open in this terminal, so open a regular `claude` session in another terminal and send it a message first. To move a session you already have open into agent view, run `/bg` inside it, or press `←` on an empty prompt to background it and open agent view in one step. The session keeps running and appears as a row alongside the ones you dispatched.
+    This step needs a running session. If you followed the earlier steps you don't have one open in this terminal, so open a regular `claude` session in another terminal and send it a message first.
+
+    To move a session you already have open into agent view, run `/bg` inside it, or press `←` on an empty prompt to background it and open agent view in one step. In a fresh session with no messages yet, `/bg` asks you to send a message first, while `←` works right away. The session keeps running and appears as a row alongside the ones you dispatched.
   </Step>
 </Steps>
 
@@ -190,7 +192,7 @@ Most of the time the peek panel is enough and you don't need to open the full tr
 
 Before v2.1.207, every peek opened with the status sentence and a bare timestamp, and a blocked session's question appeared below them prefixed with the same timestamp a second time.
 
-Type a reply in the peek panel and press `Enter` to send it to that session. When the session is asking a multiple-choice question, the peek panel shows the options and you can press a number key to pick one. For other blocked sessions, press `Tab` to fill the input with a suggested reply you can edit before sending. Prefix a reply with `!` to send a Bash command instead.
+Type a reply in the peek panel and press `Enter` to send it to that session. When the session asks a question with predefined choices, the peek panel shows them as a numbered list and you can press a number key to pick one. A permission prompt shows as text describing what the session wants to run, without numbered options. Type a reply to answer it, or attach to answer with the standard prompt. For other blocked sessions, press `Tab` to fill the input with a suggested reply you can edit before sending. Prefix a reply with `!` to send a Bash command instead.
 
 A reply that can't be delivered, because the background service is unreachable or the send fails, is saved and sent to the session as its next prompt when its process starts again, and the error message says the reply was saved. A reply prefixed with `!` isn't saved, because the saved text would reach the session as a plain prompt rather than run as a Bash command.
 
@@ -381,11 +383,13 @@ claude --bg "investigate the flaky SettingsChangeDetector test"
 
 The prompt is the positional argument, not a `-p` value. {/* min-version: 2.1.198 */}As of v2.1.198, combining `--bg` with `-p` or `--print` is rejected with an error before any session is created, because `--print` never starts the interactive session that `claude agents` attaches to.
 
-To run a specific subagent as the session's main agent, combine `--bg` with `--agent`:
+To run a specific [subagent](/en/sub-agents) you have defined, such as a `code-reviewer`, as the session's main agent, combine `--bg` with `--agent`:
 
 ```bash theme={null}
 claude --agent code-reviewer --bg "address review comments on PR 1234"
 ```
+
+If the name doesn't match any of your subagents, Claude Code prints a stderr warning, `warning: no agent named '<name>' — spawning with default template`, and runs the session with the default agent.
 
 Pass `--name` to set the session's display name in agent view instead of the auto-generated one:
 
@@ -534,6 +538,8 @@ The following example opens agent view with a settings override and one extra di
 ```bash theme={null}
 claude agents --settings ./ci-settings.json --add-dir ../shared-lib
 ```
+
+`--settings` accepts a file path or an inline JSON string. A file path must point to an existing file; Claude Code exits with a `Settings file not found` error if it doesn't.
 
 ## Manage sessions from the shell
 

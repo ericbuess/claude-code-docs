@@ -192,6 +192,12 @@ Enterprise organizations may need an Owner to enable Claude Code on the web. Con
 
 If you typed it inside Claude Code and the command menu shows `No commands match "/web-setup"`, or submitting it returns `Unknown command: /web-setup`, the command is hidden because a requirement isn't met. The cause is usually that you're authenticated with an API key or third-party provider instead of a claude.ai subscription. Run `/login` to sign in with your claude.ai account.
 
+On Team and Enterprise plans, the command is also hidden when any of the following apply:
+
+* an administrator has disabled Claude Code on the web for your organization
+* an administrator has disabled the [Quick web setup toggle](/en/claude-code-on-the-web#github-authentication-options)
+* your Enterprise organization has [Zero Data Retention](/en/zero-data-retention) enabled, which makes Claude Code on the web unavailable
+
 ### "Could not create a cloud environment" or "No cloud environment available" when using `--cloud` or ultraplan
 
 Remote-session features create a default cloud environment automatically if you don't have one. If you see "Could not create a cloud environment", automatic creation failed. {/* max-version: 2.1.100 */}If you see "No cloud environment available", your CLI predates automatic creation. In either case, run `/web-setup` in the Claude Code CLI to create one manually, or visit [claude.ai/code](https://claude.ai/code) and follow the **Create your environment** step above.

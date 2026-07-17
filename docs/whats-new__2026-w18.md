@@ -71,7 +71,7 @@
   https://github.com/your-org/your-repo/pull/1234
   ```
 
-  <p className="digest-feature-try">To skip the picker, pass the PR number on the command line instead:</p>
+  <p className="digest-feature-try">To open the picker already filtered to the PR, pass the PR number on the command line:</p>
 
   ```bash theme={null}
   claude --from-pr 1234

@@ -206,7 +206,7 @@ Combining `cd` with an output redirect in one compound command also prompts when
 
   * Options before URL: `curl -X GET http://github.com/...`
   * Different protocol: `curl https://github.com/...`
-  * Redirects: `curl -L http://bit.ly/xyz`, which redirects to GitHub
+  * Redirects: `curl -L http://short.example.com/xyz`, which redirects to GitHub
   * Variables: `URL=http://github.com && curl $URL`
   * Extra spaces: `curl  http://github.com`
 

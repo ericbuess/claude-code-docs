@@ -38,7 +38,7 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
     Not every mode is in the default cycle:
 
     * `auto`: appears when your account meets the [auto mode requirements](#eliminate-prompts-with-auto-mode); cycling to it switches modes without a confirmation prompt
-    * `bypassPermissions`: appears after you start with `--permission-mode bypassPermissions`, `--dangerously-skip-permissions`, or `--allow-dangerously-skip-permissions`; the `--allow-` variant adds the mode to the cycle without activating it
+    * `bypassPermissions`: appears after you start with `--permission-mode bypassPermissions`, `--dangerously-skip-permissions`, `--allow-dangerously-skip-permissions`, or `permissions.defaultMode: "bypassPermissions"` in [settings](/en/settings#permission-settings); the `--allow-` variant adds the mode to the cycle without activating it
     * `dontAsk`: never appears in the cycle; set it with `--permission-mode dontAsk`
 
     Enabled optional modes slot in after `plan`, with `bypassPermissions` first and `auto` last. If you have both enabled, you will cycle through `bypassPermissions` on the way to `auto`.
@@ -49,7 +49,7 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
     claude --permission-mode plan
     ```
 
-    **As a default**: set `defaultMode` in [settings](/en/settings#settings-files).
+    **As a default**: set `defaultMode` in a [settings file](/en/settings#settings-files) such as `~/.claude/settings.json`:
 
     ```json theme={null}
     {
@@ -157,17 +157,16 @@ Press `Shift+Tab` again to leave plan mode without approving a plan.
 
 ### Review and approve a plan
 
-When the plan is ready, Claude presents it and asks how to proceed. From that prompt you can:
+When the plan is ready, Claude presents it and asks how to proceed. From that prompt you can choose:
 
-* Approve and start in auto mode
-* Approve and accept edits
-* Approve and review each edit manually
-* Keep planning with feedback
-* Refine with [Ultraplan](/en/ultraplan) for browser-based review
+* **Yes, and use auto mode**: approve and start in [auto mode](#eliminate-prompts-with-auto-mode). When auto mode is unavailable, this option reads **Yes, auto-accept edits**. Sessions started with bypass permissions enabled show **Yes, and bypass permissions** instead.
+* **Yes, manually approve edits**: approve and review each edit individually.
+* **No, refine with Ultraplan on Claude Code on the web**: send the plan to [Ultraplan](/en/ultraplan) for browser-based review.
+* **No, keep planning**: stay in plan mode and tell Claude what to change.
 
 Approving a plan exits plan mode and switches the session to the permission mode each approve option describes, so Claude starts editing. To plan again, cycle back to plan mode with `Shift+Tab`, or prefix your next prompt with `/plan`.
 
-Press `Ctrl+G` to open the proposed plan in your default text editor and edit it directly before Claude proceeds. When [`showClearContextOnPlanAccept`](/en/settings#available-settings) is enabled, each approve option also offers to clear the planning context first.
+Press `Ctrl+G` to open the proposed plan in your default text editor and edit it directly before Claude proceeds. When [`showClearContextOnPlanAccept`](/en/settings#available-settings) is enabled, the list gains a first option that approves the plan and clears the planning context.
 
 Accepting a plan also names the session from the plan content automatically, unless you've already set a name with `--name` or `/rename`.
 
@@ -201,8 +200,8 @@ Auto mode is available only when your account meets all of these requirements:
 
 * **Plan**: All plans.
 * **Owner**: on Team and Enterprise, an Owner must enable it in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code) before users can turn it on. Administrators can also turn auto mode off by setting `permissions.disableAutoMode` to `"disable"` in [managed settings](/en/permissions#managed-settings). For the desktop app's Code tab, `disableAutoMode` is the organization-level control, and the admin settings toggle doesn't apply.
-* **Model**: on the Anthropic API, Claude Opus 4.6 or later, Sonnet 4.6 or later, or [Fable 5](/en/model-config#work-with-fable-5). On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, only Claude Sonnet 5, Opus 4.7, Opus 4.8, and Fable 5. Older models, including Sonnet 4.5, Opus 4.5, Haiku, and claude-3 models, are not supported on any provider.
-* **Provider**: available by default on the Anthropic API, Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in Claude apps gateway sessions. {/* min-version: 2.1.207 */}In v2.1.158 through v2.1.206, auto mode was off on all of these providers except the Anthropic API until you set `CLAUDE_CODE_ENABLE_AUTO_MODE=1`; v2.1.207 removed the requirement.
+* **Model**: on the Anthropic API and [Claude Platform on AWS](/en/claude-platform-on-aws), Claude Opus 4.6 or later, Sonnet 4.6 or later, or [Fable 5](/en/model-config#work-with-fable-5). On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in [Claude apps gateway](/en/claude-apps-gateway) sessions, only Claude Sonnet 5, Opus 4.7, Opus 4.8, and Fable 5. Older models, including Sonnet 4.5, Opus 4.5, Haiku, and claude-3 models, are not supported on any provider.
+* **Provider**: available by default on the Anthropic API, Claude Platform on AWS, Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in Claude apps gateway sessions. {/* min-version: 2.1.207 */}In v2.1.158 through v2.1.206, auto mode was off on all of these providers except the Anthropic API and Claude Platform on AWS until you set `CLAUDE_CODE_ENABLE_AUTO_MODE=1`; v2.1.207 removed the requirement.
 
 If Claude Code reports auto mode as unavailable, one of these requirements is unmet; this is not a transient outage. A separate message that names a model and says auto mode "cannot determine the safety" of an action is a transient classifier outage; see the [error reference](/en/errors#auto-mode-cannot-determine-the-safety-of-an-action).
 
@@ -307,7 +306,7 @@ Sandbox network access requests are routed through the classifier rather than al
 * In [non-interactive mode](/en/headless) and Agent SDK sessions there is no turn boundary, so a deny is reused for the rest of the run
 * Changing your permission mode or rules drops all cached verdicts
 
-Run `claude auto-mode defaults` to see the full rule lists. If routine actions get blocked, an administrator can add trusted repos, buckets, and services via the `autoMode.environment` setting: see [Configure auto mode](/en/auto-mode-config).
+Run `claude auto-mode defaults` to print the full rule lists as JSON. If routine actions get blocked, an administrator can add trusted repos, buckets, and services via the `autoMode.environment` setting: see [Configure auto mode](/en/auto-mode-config).
 
 {/* min-version: 2.1.211 */}Pushing to any branch of the repository you're working in and creating a pull request that matches your request run without a prompt, with the two exceptions the lists above cover: the classifier judges a push to a deploy-named branch such as `production` or `gh-pages` on its own terms, and still blocks a push whose content carries risk. To require a human checkpoint before these actions while staying in auto mode, add `permissions.ask` rules: see [Common boundaries](/en/auto-mode-config#common-boundaries).
 
@@ -395,13 +394,15 @@ Removals targeting the filesystem root or home directory, such as `rm -rf /` and
   Only use this mode in isolated environments like containers, VMs, or dev containers without internet access, where Claude Code cannot damage your host system.
 </Warning>
 
-You cannot enter `bypassPermissions` from a session that was started without one of the enabling flags; restart with one to enable it:
+You can't enter `bypassPermissions` from a session that was started without it enabled. Enable it at launch with `permissions.defaultMode: "bypassPermissions"` in [settings](/en/settings#permission-settings) or with an enabling flag:
 
 ```bash theme={null}
 claude --permission-mode bypassPermissions
 ```
 
 The `--dangerously-skip-permissions` flag is equivalent.
+
+The first time you start an interactive session with this mode enabled, Claude Code shows a warning dialog asking you to accept responsibility for actions taken without permission checks. Claude Code saves your acceptance to user settings, so the dialog appears only once. If you decline, Claude Code exits. In [non-interactive mode](/en/headless) no dialog is shown, and a [background session](/en/agent-view) started with `--bg` is refused until you've accepted the dialog in an interactive session.
 
 On Linux and macOS, Claude Code refuses to start in this mode when running as root or under `sudo`:
 

@@ -19,13 +19,15 @@
 
   <p className="digest-feature-lede">Auto mode is now available on the Pro plan and supports Sonnet 4.6 alongside Opus. It replaces permission prompts with background safety checks: routine actions run without interrupting you, and destructive or suspicious ones are blocked and surfaced.</p>
 
-  <p className="digest-feature-try">Update Claude Code, then cycle modes with Shift+Tab; auto mode appears once your account meets the requirements:</p>
+  <p className="digest-feature-try">Update Claude Code, then cycle modes with Shift+Tab; auto mode appears in the cycle once your account meets the requirements:</p>
 
   ```bash terminal theme={null}
   claude update
   ```
 
-  <a className="digest-feature-link" href="/docs/en/permission-modes#eliminate-prompts-with-auto-mode">Auto mode</a>
+  <p className="digest-feature-try">The command prints <code>Successfully updated</code> with the new version number, or <code>Claude Code is up to date</code> if no update is needed. Once auto mode is active, the prompt footer shows <code>auto mode on</code>.</p>
+
+  <a className="digest-feature-link" href="/docs/en/permission-modes#eliminate-prompts-with-auto-mode">Auto mode requirements</a>
 </div>
 
 <div className="digest-wins">
@@ -33,7 +35,7 @@
 
   <div className="digest-wins-grid">
     <div><a href="/docs/en/costs#track-your-costs"><code>/usage</code></a> now shows a per-category breakdown of what's driving your plan limits, attributing recent usage to skills, subagents, plugins, and individual MCP servers</div>
-    <div>"Extra usage" is renamed to "usage credits" across the CLI, and <code>/extra-usage</code> is now <code>/usage-credits</code>. The old name still works.</div>
+    <div>"Extra usage" is renamed to "usage credits" across the CLI, and <code>/extra-usage</code> is now <code>/usage-credits</code>. The old name still works. The command requires signing in with your claude.ai subscription through <code>/login</code> and isn't available with API key authentication.</div>
     <div>New <a href="/docs/en/code-review"><code>/code-review</code></a> command reports correctness bugs at a chosen effort level such as <code>/code-review high</code>, and <code>--comment</code> posts findings as inline GitHub PR comments. <code>/simplify</code> remains as a separate cleanup-only review.</div>
     <div>Background sessions now appear in <code>/resume</code> alongside interactive ones, marked with <code>bg</code>, and sessions pinned with <code>Ctrl+T</code> in <code>claude agents</code> stay alive when idle</div>
     <div><code>claude agents --json</code> lists live sessions as JSON for scripting, such as status bars and session pickers</div>

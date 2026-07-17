@@ -14,15 +14,27 @@ The [desktop app](/en/desktop#work-in-parallel-with-sessions), [Claude Code on t
 
 Sessions are saved continuously to [local transcript files](#export-and-locate-session-data) as you work, so you can return to one after exiting or running `/clear`. Use these entry points:
 
-| Command                     | What it does                                                       |
-| :-------------------------- | :----------------------------------------------------------------- |
-| `claude --continue`         | Resumes the most recent session in the current directory           |
-| `claude --resume`           | Opens the [session picker](#use-the-session-picker)                |
-| `claude --resume <name>`    | Resumes the named session directly                                 |
-| `claude --from-pr <number>` | Resumes the session linked to that pull request                    |
-| `/resume`                   | Switches to a different conversation from inside an active session |
+| Command                     | What it does                                                              |
+| :-------------------------- | :------------------------------------------------------------------------ |
+| `claude --continue`         | Resumes the most recent session in the current directory                  |
+| `claude --resume`           | Opens the [session picker](#use-the-session-picker)                       |
+| `claude --resume <name>`    | Resumes the named session directly                                        |
+| `claude --from-pr <number>` | Opens the session picker filtered to sessions linked to that pull request |
+| `/resume`                   | Switches to a different conversation from inside an active session        |
 
 Sessions created with [`claude -p`](/en/headless) or the [Agent SDK](/en/agent-sdk/overview) do not appear in the session picker, but you can still resume one by passing its session ID to `claude --resume <session-id>`. Run this from the directory the session was started in: session ID lookup is scoped to the current project directory and its git worktrees, so a session created elsewhere reports `No conversation found with session ID: <session-id>`.
+
+### What a resumed session restores
+
+A resumed session restores the conversation along with the state saved in it:
+
+* Conversation history: the full history, including tool calls and results.
+* Model: the session continues on the model it was using. The model isn't restored when it has been retired or isn't allowed by `availableModels`, when a `--model` flag or `ANTHROPIC_MODEL`-family environment variable picks one at launch, or on providers that use provider-specific deployment IDs, such as [Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry](/en/third-party-integrations); see [model configuration](/en/model-config#setting-your-model) for the resolution order.
+* Permission mode: the mode the session was in. `plan` and `bypassPermissions` are never restored; [bypassing permissions](/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) must be enabled again at launch, with one of its launch flags or `permissions.defaultMode: "bypassPermissions"` in [settings](/en/settings#permission-settings). `auto` is restored only when your account still meets the [auto mode requirements](/en/permission-modes#eliminate-prompts-with-auto-mode). Pass `--permission-mode` to override the restored mode.
+* Active goal: a [goal](/en/goal#resume-with-an-active-goal) that was still active when the session ended carries over; its turn count, timer, and token-spend baseline reset.
+* Scheduled tasks: [tasks that haven't expired](/en/scheduled-tasks#limitations) are restored. Background Bash and monitor tasks aren't.
+
+Not every configuration flag from the original launch is restored. If the session depended on `--mcp-config`, `--settings`, `--plugin-dir`, `--fallback-model`, or directories added with `--add-dir`, pass them again when you resume; directories added mid-session with `/add-dir` aren't restored either, though the session picker still uses them to locate the session. The standard settings files, such as `settings.json` and `settings.local.json`, are re-read at launch, so configuration that lives in them doesn't need to be passed again.
 
 ### Where the session picker looks
 

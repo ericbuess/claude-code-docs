@@ -274,6 +274,8 @@ Invoke the handler with your operating system's URL opener.
     ```bash theme={null}
     xdg-open "vscode://anthropic.claude-code/open"
     ```
+
+    The `xdg-open` command comes from the `xdg-utils` package. If the shell reports it isn't found, see [xdg-open is not found on Linux](/en/deep-links#xdg-open-is-not-found-on-linux).
   </Tab>
 
   <Tab title="Windows">

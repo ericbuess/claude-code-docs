@@ -127,7 +127,7 @@ claude -p "Extract the main function names from auth.py" \
 If the value isn't a valid JSON Schema, `claude` exits with `Error: --json-schema is not a valid JSON Schema` followed by the validator's diagnostic. Claude Code accepts schemas that use the `format` keyword, such as `"format": "email"`, but treats `format` as an annotation and doesn't enforce it. Before v2.1.205, Claude Code silently ignored an invalid schema and returned unstructured text, and treated any schema containing `format` as invalid.
 
 <Tip>
-  Use a tool like [jq](https://jqlang.github.io/jq/) to parse the response and extract specific fields:
+  Use a tool like [jq](https://jqlang.org/) to parse the response and extract specific fields:
 
   ```bash theme={null}
   # Extract the text result
@@ -155,7 +155,7 @@ Messages from [subagents](/en/sub-agents) appear in the stream as `assistant` an
 
 By default, Claude Code emits only subagent `tool_use` and `tool_result` blocks. {/* min-version: 2.1.211 */}Pass [`--forward-subagent-text`](/en/cli-reference#cli-flags) or set [`CLAUDE_CODE_FORWARD_SUBAGENT_TEXT`](/en/env-vars) to also emit subagent text and thinking blocks, so you can reconstruct each subagent's transcript. This requires Claude Code v2.1.211 or later.
 
-The following example uses [jq](https://jqlang.github.io/jq/) to filter for text deltas and display just the streaming text. The `-r` flag outputs raw strings (no quotes) and `-j` joins without newlines so tokens stream continuously:
+The following example uses [jq](https://jqlang.org/) to filter for text deltas and display just the streaming text. The `-r` flag outputs raw strings (no quotes) and `-j` joins without newlines so tokens stream continuously:
 
 ```bash theme={null}
 claude -p "Write a poem" --output-format stream-json --verbose --include-partial-messages | \

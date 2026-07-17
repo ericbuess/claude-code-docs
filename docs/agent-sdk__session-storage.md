@@ -112,13 +112,20 @@ The SDK ships an `InMemorySessionStore` for development and testing. The example
   const store = new InMemorySessionStore();
 
   let sessionId: string | undefined;
-  for await (const message of query({
-    prompt: "List the TypeScript files under src/",
-    options: { sessionStore: store },
-  })) {
-    if (message.type === "result") {
-      sessionId = message.session_id;
+  try {
+    for await (const message of query({
+      prompt: "List the TypeScript files under src/",
+      options: { sessionStore: store },
+    })) {
+      if (message.type === "result") {
+        sessionId = message.session_id;
+      }
     }
+  } catch (error) {
+    // A single-shot query() throws after yielding an error result. If the
+    // failure was an error result, sessionId was already captured by the loop
+    // above; connection or process failures yield no result message.
+    console.error(`Session ended with an error: ${error}`);
   }
 
   // Resume from the store. The agent has full context from the first call.
@@ -146,12 +153,18 @@ The SDK ships an `InMemorySessionStore` for development and testing. The example
 
   async def main():
       session_id = None
-      async for message in query(
-          prompt="List the Python files under src/",
-          options=ClaudeAgentOptions(session_store=store),
-      ):
-          if isinstance(message, ResultMessage):
-              session_id = message.session_id
+      try:
+          async for message in query(
+              prompt="List the Python files under src/",
+              options=ClaudeAgentOptions(session_store=store),
+          ):
+              if isinstance(message, ResultMessage):
+                  session_id = message.session_id
+      except Exception as error:
+          # A single-shot query() raises after yielding an error result. If the
+          # failure was an error result, session_id was already captured by the
+          # loop above; connection or process failures yield no result message.
+          print(f"Session ended with an error: {error}")
 
       # Resume from the store. The agent has full context from the first call.
       async for message in query(
@@ -228,7 +241,7 @@ from claude_agent_sdk.testing import run_session_store_conformance
 
 @pytest.mark.asyncio
 async def test_my_store_conformance():
-    await run_session_store_conformance(MyRedisStore)
+    await run_session_store_conformance(MyRedisStore)  # Your adapter class
 ```
 
 ## Behavior notes

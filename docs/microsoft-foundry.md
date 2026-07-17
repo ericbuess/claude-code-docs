@@ -99,9 +99,12 @@ First, create a Claude resource in Azure:
 1. Navigate to the [Microsoft Foundry portal](https://ai.azure.com/)
 2. Create a new resource, noting your resource name
 3. Create deployments for the Claude models, noting the deployment name you give each; you'll set these names as the model variables in step 4:
+
    * Claude Opus
    * Claude Sonnet
    * Claude Haiku
+
+   When you configure a deployment, you also choose its [hosting option](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options), which determines whether inference runs on Azure or on Anthropic infrastructure.
 
 ### 2. Configure Azure credentials
 

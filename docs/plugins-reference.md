@@ -920,10 +920,11 @@ claude plugin install <plugin> [options]
 
 **Options:**
 
-| Option                | Description                                       | Default |
-| :-------------------- | :------------------------------------------------ | :------ |
-| `-s, --scope <scope>` | Installation scope: `user`, `project`, or `local` | `user`  |
-| `-h, --help`          | Display help for command                          |         |
+| Option                 | Description                                                                                                                 | Default |
+| :--------------------- | :-------------------------------------------------------------------------------------------------------------------------- | :------ |
+| `-s, --scope <scope>`  | Installation scope: `user`, `project`, or `local`                                                                           | `user`  |
+| `--config <key=value>` | Set a [`userConfig`](#user-configuration) option declared in the plugin's manifest. Repeat the flag to set multiple options |         |
+| `-h, --help`           | Display help for command                                                                                                    |         |
 
 Scope determines which settings file the installed plugin is added to. For example, `--scope project` writes to `enabledPlugins` in .claude/settings.json, making the plugin available to everyone who clones the project repository.
 
@@ -1005,29 +1006,30 @@ claude plugin enable <plugin> [options]
 
 **Options:**
 
-| Option                | Description                                    | Default |
-| :-------------------- | :--------------------------------------------- | :------ |
-| `-s, --scope <scope>` | Scope to enable: `user`, `project`, or `local` | `user`  |
-| `-h, --help`          | Display help for command                       |         |
+| Option                | Description                                                                                                               | Default     |
+| :-------------------- | :------------------------------------------------------------------------------------------------------------------------ | :---------- |
+| `-s, --scope <scope>` | Scope to enable: `user`, `project`, or `local`. When omitted, Claude Code detects the scope where the plugin is installed | Auto-detect |
+| `-h, --help`          | Display help for command                                                                                                  |             |
 
 ### plugin disable
 
 Disable a plugin without uninstalling it. Fails when another enabled plugin [depends on](/en/plugin-dependencies#enable-or-disable-a-plugin-with-dependencies) the target. The error message includes a chained command that disables every dependent first.
 
 ```bash theme={null}
-claude plugin disable <plugin> [options]
+claude plugin disable [plugin] [options]
 ```
 
 **Arguments:**
 
-* `<plugin>`: Plugin name or `plugin-name@marketplace-name`
+* `[plugin]`: Plugin name or `plugin-name@marketplace-name`. Optional when using `--all`
 
 **Options:**
 
-| Option                | Description                                     | Default |
-| :-------------------- | :---------------------------------------------- | :------ |
-| `-s, --scope <scope>` | Scope to disable: `user`, `project`, or `local` | `user`  |
-| `-h, --help`          | Display help for command                        |         |
+| Option                | Description                                                                                                                | Default     |
+| :-------------------- | :------------------------------------------------------------------------------------------------------------------------- | :---------- |
+| `-a, --all`           | Disable all enabled plugins. Can't be combined with `--scope`                                                              |             |
+| `-s, --scope <scope>` | Scope to disable: `user`, `project`, or `local`. When omitted, Claude Code detects the scope where the plugin is installed | Auto-detect |
+| `-h, --help`          | Display help for command                                                                                                   |             |
 
 ### plugin update
 
@@ -1066,7 +1068,12 @@ claude plugin list [options]
 | `--available` | Include available plugins from marketplaces. Requires `--json` |         |
 | `-h, --help`  | Display help for command                                       |         |
 
-Within an interactive session, `/plugin list` prints the same listing inline. The interactive form accepts `--enabled` or `--disabled` to show only plugins in that state, and `ls` as a shorthand for `list`.
+Within an interactive session, `/plugin list` prints a similar listing inline, but it covers marketplace-installed plugins only:
+
+* Plugins loaded from skills directories appear in the `/plugin` interface and in `claude plugin list`, but not in the inline `/plugin list` output.
+* Plugins loaded for the session with `--plugin-dir` or `--plugin-url` appear in the `/plugin` interface, and in `claude plugin list` only when the same flag precedes the subcommand, as in `claude --plugin-dir <dir> plugin list`. They have no installed record, so a bare `claude plugin list` doesn't show them.
+
+The interactive form accepts `--enabled` or `--disabled` to show only plugins in that state, and `ls` as a shorthand for `list`.
 
 ### plugin details
 
@@ -1101,7 +1108,7 @@ dependency-guard 1.2.0
 Component inventory
   Skills (2)  scan-dependencies, review-changes
   Agents (0)
-  Hooks (1)  (harness-only — no model context cost)
+  Hooks (1)  SessionStart  (harness-only — no model context cost)
   MCP servers (0)
   LSP servers (0)
 
@@ -1121,20 +1128,26 @@ The always-on total is computed via the `count_tokens` API for your active model
 
 ### plugin tag
 
-Create a release git tag for the plugin in the current directory. Run from inside the plugin's folder. See [Tag plugin releases](/en/plugin-dependencies#tag-plugin-releases-for-version-resolution).
+Create a release git tag for a plugin. By default the command tags the plugin in the current directory; pass a path to tag a plugin elsewhere. See [Tag plugin releases](/en/plugin-dependencies#tag-plugin-releases-for-version-resolution).
 
 ```bash theme={null}
-claude plugin tag [options]
+claude plugin tag [path] [options]
 ```
+
+**Arguments:**
+
+* `[path]`: Path to the plugin directory. Defaults to the current directory.
 
 **Options:**
 
-| Option        | Description                                                                | Default |
-| :------------ | :------------------------------------------------------------------------- | :------ |
-| `--push`      | Push the tag to the remote after creating it                               |         |
-| `--dry-run`   | Print what would be tagged without creating the tag                        |         |
-| `-f, --force` | Create the tag even if the working tree is dirty or the tag already exists |         |
-| `-h, --help`  | Display help for command                                                   |         |
+| Option                | Description                                                                | Default  |
+| :-------------------- | :------------------------------------------------------------------------- | :------- |
+| `--push`              | Push the tag to the remote after creating it                               |          |
+| `--dry-run`           | Print what would be tagged without creating the tag                        |          |
+| `-f, --force`         | Create the tag even if the working tree is dirty or the tag already exists |          |
+| `-m, --message <msg>` | Tag annotation message. Use `%s` as a placeholder for the version          |          |
+| `--remote <name>`     | Remote to push to with `--push`                                            | `origin` |
+| `-h, --help`          | Display help for command                                                   |          |
 
 ***
 
@@ -1167,8 +1180,8 @@ This shows:
 **Manifest validation errors**:
 
 * `Invalid JSON syntax: Unexpected token } in JSON at position 142`: check for missing commas, extra commas, or unquoted strings
-* `Plugin has an invalid manifest file at .claude-plugin/plugin.json. Validation errors: name: Required`: a required field is missing
-* `Plugin has a corrupt manifest file at .claude-plugin/plugin.json. JSON parse error: ...`: JSON syntax error
+* `Plugin <name> has an invalid manifest file at .claude-plugin/plugin.json. Validation errors: name: Invalid input: expected string, received undefined`: a required field is missing
+* `Plugin <name> has a corrupt manifest file at .claude-plugin/plugin.json. JSON parse error: ...`: JSON syntax error
 
 **Plugin loading errors**:
 

@@ -30,7 +30,7 @@ You can set the advisor model in three ways:
 * **`advisorModel` setting**: configure a persistent default in your [settings file](/en/settings)
 * **`--advisor` flag**: set the advisor for a single session at launch
 
-If any of these sets an advisor model, the advisor is enabled for sessions whose main model [supports it](#choose-an-advisor-model). To stop using it, see [Turn the advisor off](#turn-the-advisor-off).
+If any of these sets an advisor model, the advisor is enabled for sessions whose main model [supports it](#choose-an-advisor-model), and an `Advisor Tool (experimental) is on and may use more tokens · /advisor` notification appears after the session starts. To stop using it, see [Turn the advisor off](#turn-the-advisor-off).
 
 <Note>
   {/* min-version: 2.1.210 */}Claude Code doesn't offer Fable 5 as the advisor. For organizations with [Fable 5 access](/en/model-config#work-with-fable-5), the `/advisor` picker lists it as a dimmed, unselectable row labeled `Fable 5 (temporarily unavailable)`, and Claude Code rejects `/advisor fable` and `--advisor fable`. Fable 5 as the main model isn't affected.
@@ -46,7 +46,9 @@ Run `/advisor` without arguments to open a picker listing the available advisor 
 /advisor opus
 ```
 
-Your selection is saved to `advisorModel` in your user settings and persists across sessions. If your organization's [`availableModels`](/en/model-config#restrict-model-selection) allowlist excludes the saved advisor model, the advisor is not invoked until you pick an allowed model with `/advisor`. If your current main model does not support the advisor, the selection is still saved and activates when you switch to a [compatible main model](#choose-an-advisor-model) with [`/model`](/en/model-config#setting-your-model).
+The command confirms with `Advisor set to` followed by the advisor model name. Your selection is saved to `advisorModel` in your user settings and persists across sessions.
+
+If your organization's [`availableModels`](/en/model-config#restrict-model-selection) allowlist excludes the saved advisor model, the advisor is not invoked until you pick an allowed model with `/advisor`. If your current main model does not support the advisor, the selection is still saved and activates when you switch to a [compatible main model](#choose-an-advisor-model) with [`/model`](/en/model-config#setting-your-model).
 
 ### Set `advisorModel` in settings
 
@@ -66,7 +68,7 @@ To set the advisor for a single session without changing your saved setting, lau
 claude --advisor opus
 ```
 
-The flag takes precedence over the `advisorModel` setting for that session. It exits with an error if the session's main model does not support the advisor, or if the requested advisor model is excluded by your organization's [`availableModels`](/en/model-config#restrict-model-selection) allowlist.
+The flag takes precedence over the `advisorModel` setting for that session, and isn't listed in `claude --help`. It exits with an error if the session's main model does not support the advisor, or if the requested advisor model is excluded by your organization's [`availableModels`](/en/model-config#restrict-model-selection) allowlist.
 
 ## Choose an advisor model
 

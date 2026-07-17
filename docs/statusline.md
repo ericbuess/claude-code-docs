@@ -86,7 +86,7 @@ These examples use Bash scripts, which work on macOS and Linux. On Windows, see 
 
 <Steps>
   <Step title="Create a script that reads JSON and prints output">
-    Claude Code sends JSON data to your script via stdin. This script uses [`jq`](https://jqlang.github.io/jq/), a command-line JSON parser you may need to install, to extract the model name, directory, and context percentage, then prints a formatted line.
+    Claude Code sends JSON data to your script via stdin. This script uses [`jq`](https://jqlang.org/), a command-line JSON parser you may need to install, to extract the model name, directory, and context percentage, then prints a formatted line.
 
     Save this to `~/.claude/statusline.sh` (where `~` is your home directory, such as `/Users/username` on macOS or `/home/username` on Linux):
 
@@ -332,7 +332,7 @@ These examples show common status line patterns. To use any example:
 2. Make it executable: `chmod +x ~/.claude/statusline.sh`
 3. Add the path to your [settings](#manually-configure-a-status-line)
 
-The Bash examples use [`jq`](https://jqlang.github.io/jq/) to parse JSON. Python and Node.js have built-in JSON parsing.
+The Bash examples use [`jq`](https://jqlang.org/) to parse JSON. Python and Node.js have built-in JSON parsing.
 
 ### Context window usage
 

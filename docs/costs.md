@@ -24,9 +24,11 @@ The Session block at the top of `/usage` shows detailed token usage statistics f
 
 ```text theme={null}
 Total cost:            $0.55
-Total duration (API):  6m 19.7s
-Total duration (wall): 6h 33m 10.2s
+Total duration (API):  6m 20s
+Total duration (wall): 6h 33m 10s
 Total code changes:    0 lines added, 0 lines removed
+Usage by model:
+   claude-sonnet-4-6:  1.2k input, 5.3k output, 940.0k cache read, 50.0k cache write ($0.55)
 ```
 
 These totals reset when `/clear` starts a new session, so the next session's total cost starts at \$0. Before v2.1.211, they kept accumulating across `/clear` for the lifetime of the Claude Code process.
@@ -39,7 +41,7 @@ In the [VS Code extension](/en/vs-code#check-account-and-usage), the same breakd
 
 ### Set a spend limit on Pro and Max
 
-On Pro and Max plans, the `/usage-credits` command opens a dialog in the CLI where you manage [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans). From the dialog you can:
+On Pro and Max plans, the `/usage-credits` command opens a dialog in the CLI where you manage [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans). The command requires signing in with your claude.ai subscription through `/login` and isn't available with API key authentication. From the dialog you can:
 
 * Turn on usage credits for your account
 * Buy more usage credits, either a listed bundle or a custom amount
@@ -157,7 +159,7 @@ The following strategies help you keep context small and reduce per-message cost
 Use `/usage` to check your current token usage, or [configure your status line](/en/statusline#context-window-usage) to display it continuously.
 
 * **Clear between tasks**: Use `/clear` to start fresh when switching to unrelated work. Stale context wastes tokens on every subsequent message. Use `/rename` before clearing so you can easily find the session later, then `/resume` to return to it.
-* **Add custom compaction instructions**: `/compact Focus on code samples and API usage` tells Claude what to preserve during summarization.
+* **Add custom compaction instructions**: `/compact Focus on code samples and API usage` tells Claude what to preserve during summarization. In a fresh session, `/compact` prints `Not enough messages to compact.` because there's no conversation history to summarize yet.
 
 You can also customize compaction behavior in your CLAUDE.md file at the root of your project:
 
@@ -232,6 +234,8 @@ For example, this PreToolUse hook filters test output to show only failures:
   </Tab>
 </Tabs>
 
+To verify the setup, run `/hooks` and check that the hook appears under PreToolUse. You can also start Claude Code with `claude --debug` and run a test command such as `npm test`. The debug log shows `modified tool input keys: [command]` when the hook rewrites the command.
+
 ### Move instructions from CLAUDE.md to skills
 
 Your [CLAUDE.md](/en/memory) file is loaded into context at session start. If it contains detailed instructions for specific workflows (like PR reviews or database migrations), those tokens are present even when you're doing unrelated work. [Skills](/en/skills) load on-demand only when invoked, so moving specialized instructions into skills keeps your base context smaller. Aim to keep CLAUDE.md under 200 lines by including only essentials.
@@ -256,7 +260,7 @@ Vague requests like "improve this codebase" trigger broad scanning. Specific req
 
 For longer or more complex work, these habits help avoid wasted tokens from going down the wrong path:
 
-* **Use plan mode for complex tasks**: Press Shift+Tab to enter [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode) before implementation. Claude explores the codebase and proposes an approach for your approval, preventing expensive re-work when the initial direction is wrong.
+* **Use plan mode for complex tasks**: Press Shift+Tab to cycle to [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode) before implementation. Claude explores the codebase and proposes an approach for your approval, preventing expensive re-work when the initial direction is wrong.
 * **Course-correct early**: If Claude starts heading the wrong direction, press Escape to stop immediately. Use `/rewind` or double-tap Escape to restore conversation and code to a previous checkpoint.
 * **Give verification targets**: Include test cases, paste screenshots, or define expected output in your prompt. When Claude can verify its own work, it catches issues before you need to request fixes.
 * **Test incrementally**: Write one file, test it, then continue. This catches issues early when they're cheap to fix.
