@@ -902,7 +902,7 @@ Keep these constraints in mind when designing hooks:
 
 ### Hooks and permission modes
 
-`PreToolUse` hooks fire before any permission-mode check. A hook that returns `permissionDecision: "deny"` blocks the tool even in `bypassPermissions` mode or with `--dangerously-skip-permissions`. This lets you enforce policy that users can't bypass by changing their permission mode.
+`PreToolUse` hooks fire before any permission-mode check, in every [permission mode](/en/permission-modes), including `dontAsk`. A hook that returns `permissionDecision: "deny"` blocks the tool even in `bypassPermissions` mode or with `--dangerously-skip-permissions`. This lets you enforce policy that users can't bypass by changing their permission mode.
 
 The reverse is not true: a hook returning `"allow"` doesn't bypass deny rules from settings, and it can't suppress the prompt for connector tools [your organization set to `ask`](/en/mcp#organization-controls-on-connector-tools) or MCP tools marked [`requiresUserInteraction`](/en/mcp#require-approval-for-a-specific-tool). Hooks can tighten restrictions but not loosen them past what permission rules allow.
 

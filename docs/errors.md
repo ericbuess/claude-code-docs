@@ -429,7 +429,7 @@ Running `/login` doesn't help here: the helper's output [takes precedence](/en/a
 * Run the command configured in `apiKeyHelper` directly in your shell to reproduce the failure
 * If the command reports an expired session, re-authenticate with your credential provider, for example by signing in to your SSO or secrets vault again
 * Fix the command so it prints the key to stdout and exits with code 0. See [rotate credentials with apiKeyHelper](/en/llm-gateway-connect#rotate-credentials-with-apikeyhelper) for a working setup.
-* Run `/status` to confirm `apiKeyHelper` is the active credential source. Each time the command fails, its exit code and error output appear in a `Cloud authentication` panel in the terminal.
+* Run `/status` to confirm `apiKeyHelper` is the active credential source. Each time the command fails, its exit code and error output appear in an `Authentication` panel in the terminal. {/* min-version: 2.1.212 */}Before v2.1.212, the panel was titled Cloud authentication.
 
 ### This organization has been disabled
 

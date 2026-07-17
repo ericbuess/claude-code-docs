@@ -33,7 +33,7 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
 
 <Tabs>
   <Tab title="CLI">
-    **During a session**: press `Shift+Tab` to cycle `default` → `acceptEdits` → `plan`. The current mode appears in the status bar. {/* min-version: 2.1.203 */}Manual mode, `default` in that cycle, shows a gray `⏸ manual mode on` badge. Before v2.1.203, the status bar showed no badge in Manual mode.
+    **During a session**: press `Shift+Tab` to cycle `default` → `acceptEdits` → `plan`. The status bar shows the active mode as `⏸ plan mode on`, `⏵⏵ accept edits on`, `⏵⏵ auto mode on`, `⏵⏵ don't ask on`, or `⏵⏵ bypass permissions on`. {/* min-version: 2.1.203 */}Manual mode, `default` in that cycle, shows a gray `⏸ manual mode on` badge. Before v2.1.203, the status bar showed no badge in Manual mode.
 
     Not every mode is in the default cycle:
 
@@ -119,7 +119,7 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
     * **Cloud sessions** on [Claude Code on the web](/en/claude-code-on-the-web): Accept edits, Plan, and Auto. Accept edits corresponds to `default` mode: the cloud environment pre-approves file edits regardless of mode, so the dropdown shows Accept edits instead of Manual. Cloud sessions still honor `defaultMode: "acceptEdits"` from settings. Auto mode appears only when your organization allows it and the selected model supports it. Bypass permissions isn't available.
     * **[Remote Control](/en/remote-control) sessions** on your local machine: Manual, Accept edits, and Plan. You can't select Auto or Bypass permissions from the app. {/* min-version: 2.1.202 */}The dropdown shows the mode the local session is in, including a mode set from the terminal, and updates when the mode changes in the app or in the terminal. The one exception is Bypass permissions: the session never reports that mode to claude.ai, so switching into it from the terminal doesn't change what the dropdown shows. Before v2.1.202, sessions connected with `/remote-control` or `claude --remote-control` didn't report their mode at all, so claude.ai and the mobile app could show a mode the session wasn't in. The mismatch affected only the label: Claude Code generated permission prompts from the session's actual mode, and they still appeared in the app for approval.
 
-    For Remote Control, you can also set the starting mode when launching the host:
+    For Remote Control, the host must be signed in with your claude.ai account; API keys are not supported. You can also set the starting mode when launching the host:
 
     ```bash theme={null}
     claude remote-control --permission-mode acceptEdits

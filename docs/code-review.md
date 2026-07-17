@@ -20,7 +20,7 @@ This page covers:
 
 * [How reviews work](#how-reviews-work)
 * [Setup](#set-up-code-review)
-* [Triggering reviews manually](#manually-trigger-reviews) with `@claude review` and `@claude review once`
+* [Triggering reviews manually](#manually-trigger-reviews) with `@claude review` and `@claude review always`
 * [Customizing reviews](#customize-reviews) with `CLAUDE.md` and `REVIEW.md`
 * [Pricing](#pricing)
 * [Troubleshooting](#troubleshooting) failed runs and missing comments
@@ -32,7 +32,7 @@ This page covers:
 
 ## How reviews work
 
-Once an Owner [enables Code Review](#set-up-code-review) for your organization, reviews trigger when a PR opens, on every push, or when manually requested, depending on the repository's configured behavior. Commenting `@claude review` [starts reviews on a PR](#manually-trigger-reviews) in any mode.
+Once an Owner [enables Code Review](#set-up-code-review) for your organization, reviews trigger when a PR opens, on every push, or when manually requested, depending on the repository's configured behavior. Commenting `@claude review` [starts a review on a PR](#manually-trigger-reviews) in any mode.
 
 When a review runs, multiple agents analyze the diff and surrounding code in parallel on Anthropic infrastructure. Each agent looks for a different class of issue, then a verification step checks candidates against actual code behavior to filter out false positives. The results are deduplicated, ranked by severity, and posted as inline comments on the specific lines where issues were found, with a summary in the review body. If no issues are found, Code Review updates the GitHub check run to show that no issues were detected. Claude may also post a short confirmation comment on the PR.
 
@@ -54,7 +54,7 @@ Findings include a collapsible extended reasoning section you can expand to unde
 
 Each review comment from Claude arrives with 👍 and 👎 already attached so both buttons appear in the GitHub UI for one-click rating. Click 👍 if the finding was useful or 👎 if it was wrong or noisy. Anthropic collects reaction counts after the PR merges and uses them to tune the reviewer. Reactions do not trigger a re-review or change anything on the PR.
 
-Replying to an inline comment does not prompt Claude to respond or update the PR. To act on a finding, fix the code and push. If the PR is subscribed to push-triggered reviews, the next run resolves the thread when the issue is fixed. To request a fresh review without pushing, comment `@claude review once` as a [top-level PR comment](#manually-trigger-reviews).
+Replying to an inline comment does not prompt Claude to respond or update the PR. To act on a finding, fix the code and push. If the PR is subscribed to push-triggered reviews, the next run resolves the thread when the issue is fixed. To request a fresh review without pushing, comment `@claude review` as a [top-level PR comment](#manually-trigger-reviews).
 
 ### Check run output
 
@@ -112,7 +112,7 @@ An Owner enables Code Review once for the organization and selects which reposit
 
     * **Once after PR creation**: review runs once when a PR is opened or marked ready for review
     * **After every push**: review runs on every push to the PR branch, catching new issues as the PR evolves and auto-resolving threads when you fix flagged issues
-    * **Manual**: reviews start only when someone [comments `@claude review` or `@claude review once` on a PR](#manually-trigger-reviews); `@claude review` also subscribes the PR to reviews on subsequent pushes
+    * **Manual**: reviews start only when someone [comments `@claude review` on a PR](#manually-trigger-reviews); `@claude review always` starts a review and subscribes the PR to reviews on subsequent pushes
 
     Reviewing on every push runs the most reviews and costs the most. Manual mode is useful for high-traffic repos where you want to opt specific PRs into review, or to only start reviewing your PRs once they're ready.
   </Step>
@@ -124,19 +124,24 @@ To verify setup, open a test PR. If you chose an automatic trigger, a check run 
 
 ## Manually trigger reviews
 
-Two comment commands start a review on demand. Both work regardless of the repository's configured trigger, so you can use them to opt specific PRs into review in Manual mode or to get an immediate re-review in other modes.
+Comment commands start a review on demand. They work regardless of the repository's configured trigger, so you can use them to opt specific PRs into review in Manual mode or to get an immediate re-review in other modes.
 
-| Command               | What it does                                                                  |
-| :-------------------- | :---------------------------------------------------------------------------- |
-| `@claude review`      | Starts a review and subscribes the PR to push-triggered reviews going forward |
-| `@claude review once` | Starts a single review without subscribing the PR to future pushes            |
+| Command                 | What it does                                                                  |
+| :---------------------- | :---------------------------------------------------------------------------- |
+| `@claude review`        | Starts a single review without subscribing the PR to future pushes            |
+| `@claude review always` | Starts a review and subscribes the PR to push-triggered reviews going forward |
+| `@claude review once`   | Same as `@claude review`: starts a single review without subscribing          |
 
-Use `@claude review once` when you want feedback on the current state of a PR but don't want every subsequent push to incur a review. This is useful for long-running PRs with frequent pushes, or when you want a one-off second opinion without changing the PR's review behavior.
+Use `@claude review always` when you want every subsequent push to the PR to start a fresh review, such as on a high-priority PR in a repository set to Manual mode. Because the bare command doesn't subscribe the PR, you can request a one-off second opinion without changing whether later pushes trigger reviews.
 
-For either command to trigger a review:
+<Note>
+  Before a July 2026 update, `@claude review` subscribed the PR to push-triggered reviews. If you relied on that behavior, comment `@claude review always` instead. `@claude review once` still works and behaves the same as the bare command.
+</Note>
+
+For any of these commands to trigger a review:
 
 * Post it as a top-level PR comment, not an inline comment on a diff line
-* Put the command at the start of the comment, with `once` on the same line if you're using the one-shot form
+* Put the command at the start of the comment, with `once` or `always` on the same line as the rest of the command
 * You must have owner, member, or collaborator access to the repository
 * The PR must be open
 
@@ -245,7 +250,7 @@ The review trigger you choose affects total cost:
 * **After every push**: runs on each push, multiplying cost by the number of pushes
 * **Manual**: no reviews until someone comments `@claude review` on a PR
 
-In any mode, commenting `@claude review` [opts the PR into push-triggered reviews](#manually-trigger-reviews), so additional cost accrues per push after that comment. To run a single review without subscribing to future pushes, comment `@claude review once` instead.
+In Once after PR creation or Manual mode, commenting `@claude review always` [opts the PR into push-triggered reviews](#manually-trigger-reviews), so additional cost accrues per push after that comment. In After every push mode, pushes already trigger reviews, so the subscription doesn't change per-push cost. Commenting `@claude review` runs a single review without subscribing to future pushes.
 
 Costs appear on your Anthropic bill regardless of whether your organization uses Amazon Bedrock or Google Cloud's Agent Platform for other Claude Code features. To set a monthly spend cap for Code Review, go to [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) and configure the limit for the Claude Code Review service.
 
@@ -259,7 +264,7 @@ Review runs are best-effort. A failed run never blocks your PR, but it also does
 
 When the review infrastructure hits an internal error or exceeds its time limit, the check run completes with a title of **Code review encountered an error** or **Code review timed out**. The conclusion is still neutral, so nothing blocks your merge, but no findings are posted.
 
-To run the review again, comment `@claude review once` on the PR. This starts a fresh review without subscribing the PR to future pushes. If the PR is already subscribed to push-triggered reviews, pushing a new commit also starts a new review.
+To run the review again, comment `@claude review` on the PR. This starts a fresh review without subscribing the PR to future pushes. If the PR is already subscribed to push-triggered reviews, pushing a new commit also starts a new review.
 
 The **Re-run** button in GitHub's Checks tab does not retrigger Code Review. Use the comment command or a new push instead.
 
