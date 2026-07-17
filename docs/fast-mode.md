@@ -113,6 +113,30 @@ Where you enable fast mode depends on which product your organization uses:
 
 Another option to disable fast mode entirely is to set `CLAUDE_CODE_DISABLE_FAST_MODE=1`. See [Environment variables](/en/env-vars).
 
+### Use fast mode behind proxies and LLM gateways
+
+Before offering fast mode, Claude Code checks your organization's fast mode availability with a request directly to `api.anthropic.com`. The check doesn't follow [`ANTHROPIC_BASE_URL`](/en/llm-gateway-connect#set-the-base-url-and-credential), so on a network that routes Claude traffic through an [LLM gateway](/en/llm-gateway) and blocks direct egress to `api.anthropic.com`, the check fails even though inference requests work. The check does use a configured [HTTP proxy](/en/network-config#proxy-configuration), so a network block fails the check only where `api.anthropic.com` is unreachable even through the proxy.
+
+When the check fails, `/fast` reports "Fast mode unavailable due to network connectivity issues", and requests run at standard speed, even when your organization has fast mode enabled. A check that succeeded in the past keeps working from its cached result, so a blocked check mostly affects new installations.
+
+The same connectivity message appears on an open network when the check reaches `api.anthropic.com` but presents a credential Anthropic rejects. A session whose resolved key is a gateway-issued credential, held in [`ANTHROPIC_API_KEY`](/en/llm-gateway-connect#set-the-base-url-and-credential) or produced by an [`apiKeyHelper`](/en/settings#available-settings), sends the check with that key, and the rejected request is reported as a connectivity failure.
+
+To restore fast mode, allowlist direct egress to `api.anthropic.com` where a network block is the cause, or set whichever variable matches how the check fails:
+
+* `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS=1` treats a failed check as available and still honors a "disabled by your organization" response. Use it when your network refuses the connection, or when Anthropic rejects a gateway credential; allowlisting doesn't help the credential case, since nothing is blocked.
+* `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK=1` skips the check entirely. Use it when your network intercepts the request rather than refusing it.
+
+Two gateway configurations report "Fast mode has been disabled by your organization" rather than the connectivity message, even when your organization has fast mode enabled:
+
+* A session that authenticates with [`ANTHROPIC_AUTH_TOKEN`](/en/llm-gateway-connect#set-the-base-url-and-credential) alone skips the check: without a claude.ai login or an Anthropic API key, and without a cached successful check, Claude Code treats fast mode as disabled by your organization without sending the request.
+* A proxy that intercepts the check and answers with its own page, for example a TLS-inspecting proxy returning an HTTP 200 block page, is read as a response saying your organization has fast mode disabled.
+
+In both cases, set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK=1` to restore fast mode. `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS` doesn't apply to either case, since it only bypasses failed checks and both of these produce a disabled response instead. Allowlisting direct egress doesn't help the bearer-token case, which never sends the request.
+
+The variables affect only the client-side check. When your organization has fast mode disabled, the API rejects fast mode requests whether or not they're set.
+
+Setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` also suppresses the availability check. Without a previously cached successful check, `/fast` reports "Fast mode is currently unavailable"; both skip variables restore fast mode in that configuration too.
+
 ### Require per-session opt-in
 
 By default, fast mode a user turns on in an interactive session persists across sessions: it stays on in future sessions. To change this, set `fastModePerSessionOptIn` to `true` in any [settings file](/en/settings#settings-files), which causes each session to start with fast mode off and requires users to explicitly enable it with `/fast`. Owners on [Team](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) or [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) plans can deploy it organization-wide through [server-managed settings](/en/server-managed-settings).
