@@ -16,7 +16,7 @@ With the extension, you can review and edit Claude's plans before accepting them
 
 Before installing, make sure you have:
 
-* VS Code 1.98.0 or higher
+* VS Code 1.94.0 or higher
 * An Anthropic account: any paid Claude subscription (Pro, Max, Team, or Enterprise) or a Claude Console account works, and no API key is required. You'll [sign in](/en/authentication#log-in-to-claude-code) with this account when you first open the extension. If you access Claude through a third-party provider like Amazon Bedrock or Google Cloud's Agent Platform, see [Use third-party providers](#use-third-party-providers) for setup instructions.
 
 <Tip>
@@ -391,6 +391,8 @@ claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
   --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
+Replace `YOUR_GITHUB_PAT` with your personal access token. The `claude mcp add` command saves the configuration without validating credentials, so a placeholder value is accepted here but the server fails to connect later. To verify the connection, type `/mcp` in the chat panel and check that the server shows `connected`. A server with bad credentials shows `failed`.
+
 Once configured, ask Claude to use the tools (e.g., "Review PR #456").
 
 To manage MCP servers without leaving VS Code, type `/mcp` in the chat panel. The MCP management dialog lets you enable or disable servers, reconnect to a server, and manage OAuth authentication. See the [MCP documentation](/en/mcp) for available servers.
@@ -482,7 +484,7 @@ The server is named `ide` and is hidden from `/mcp` because there's nothing to c
 
 ### Extension won't install
 
-* Ensure you have a compatible version of VS Code (1.98.0 or later)
+* Ensure you have a compatible version of VS Code (1.94.0 or later)
 * Check that VS Code has permission to install extensions
 * Try installing directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code)
 
@@ -491,7 +493,7 @@ The server is named `ide` and is hidden from `/mcp` because there's nothing to c
 The Spark icon appears in the **Editor Toolbar** (top-right of editor) when you have a file open. If you don't see it:
 
 1. **Open a file**: The icon requires a file to be open. Having just a folder open isn't enough.
-2. **Check VS Code version**: Requires 1.98.0 or higher (Help → About)
+2. **Check VS Code version**: Requires 1.94.0 or higher (Help → About)
 3. **Restart VS Code**: Run "Developer: Reload Window" from the Command Palette
 4. **Disable conflicting extensions**: Temporarily disable other AI extensions (Cline, Continue, etc.)
 5. **Check workspace trust**: The extension doesn't work in Restricted Mode

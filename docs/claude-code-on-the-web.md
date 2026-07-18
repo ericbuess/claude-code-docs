@@ -760,7 +760,7 @@ For Max and Pro accounts, the two visibility options are **Private** and **Publi
 
 Check your session for sensitive content before sharing. Sessions may contain code and credentials from private GitHub repositories. Repository access verification is not enabled by default.
 
-To require recipients to have repository access, or to hide your name from shared sessions, go to Settings > Claude Code > Sharing settings.
+To require recipients to have repository access, or to hide your name from shared sessions, go to [**Settings > Claude Code > Sharing settings**](https://claude.ai/settings/claude-code).
 
 ### Archive sessions
 
