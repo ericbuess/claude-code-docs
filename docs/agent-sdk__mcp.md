@@ -144,6 +144,16 @@ Create a `.mcp.json` file at your project root. The file is picked up when the `
 }
 ```
 
+## Connection timing
+
+Servers you pass in `options.mcpServers` start connecting as soon as the query starts. Connection is non-blocking by default: the first turn begins without waiting, and each server's tools become available once its connection completes. {/* min-version: 2.1.142 */}Before Claude Code v2.1.142, startup blocked on the connection batch for up to 5 seconds.
+
+To restore a bounded startup wait for every server, set the [`MCP_CONNECTION_NONBLOCKING`](/en/env-vars) environment variable to `0`. The wait is capped at 5 seconds by [`MCP_CONNECT_TIMEOUT_MS`](/en/env-vars), and servers still pending at that deadline keep connecting in the background.
+
+To make one server's tools available before the first turn, set `alwaysLoad: true` on its config. Startup then waits for that server to connect, capped at the same 5-second startup deadline, while other servers keep connecting in the background. The `alwaysLoad` field requires Claude Code v2.1.121 or later. See [Exempt a server from deferral](/en/mcp#exempt-a-server-from-deferral) for the `alwaysLoad` field's effect on tool search.
+
+The `system` message with subtype `init` reports each server's status at the moment it's emitted. A server that's still connecting has status `pending`. Check for status `failed` or `needs-auth` when you want to detect servers that won't be usable, rather than treating every status other than `connected` as a failure; see [Error handling](#error-handling) for the full status check.
+
 ## Allow MCP tools
 
 MCP tools require explicit permission before Claude can use them. Without permission, Claude will see that tools are available but won't be able to call them.
@@ -727,7 +737,7 @@ export DATABASE_URL=postgresql://user:password@localhost:5432/mydb
 
 MCP servers can fail to connect for various reasons: the server process might not be installed, credentials might be invalid, or a remote server might be unreachable.
 
-The SDK emits a `system` message with subtype `init` at the start of each query. This message includes the connection status for each MCP server. The `status` field can be `"pending"`, `"connected"`, `"failed"`, `"needs-auth"`, or `"disabled"`. Servers connect in the background, so healthy servers often still report `"pending"` when the init message is emitted. Check for `"failed"` to detect servers that could not connect, and don't treat `"pending"` as a failure:
+The SDK emits a `system` message with subtype `init` at the start of each query. This message includes the connection status for each MCP server. The `status` field can be `"pending"`, `"connected"`, `"failed"`, `"needs-auth"`, or `"disabled"`. Because connection is [non-blocking by default](#connection-timing), healthy servers often still report `"pending"` when the init message is emitted. Check for `"failed"` or `"needs-auth"` to detect servers that won't be usable, and don't treat `"pending"` as a failure:
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
@@ -744,10 +754,12 @@ The SDK emits a `system` message with subtype `init` at the start of each query.
       }
     })) {
       if (message.type === "system" && message.subtype === "init") {
-        const failedServers = message.mcp_servers.filter((s) => s.status === "failed");
+        const unavailableServers = message.mcp_servers.filter(
+          (s) => s.status === "failed" || s.status === "needs-auth"
+        );
 
-        if (failedServers.length > 0) {
-          console.warn("Failed to connect:", failedServers);
+        if (unavailableServers.length > 0) {
+          console.warn("Unavailable MCP servers:", unavailableServers);
         }
       }
 
@@ -776,14 +788,14 @@ The SDK emits a `system` message with subtype `init` at the start of each query.
       try:
           async for message in query(prompt="Process data", options=options):
               if isinstance(message, SystemMessage) and message.subtype == "init":
-                  failed_servers = [
+                  unavailable_servers = [
                       s
                       for s in message.data.get("mcp_servers", [])
-                      if s.get("status") == "failed"
+                      if s.get("status") in ("failed", "needs-auth")
                   ]
 
-                  if failed_servers:
-                      print(f"Failed to connect: {failed_servers}")
+                  if unavailable_servers:
+                      print(f"Unavailable MCP servers: {unavailable_servers}")
 
               if (
                   isinstance(message, ResultMessage)

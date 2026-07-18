@@ -223,7 +223,7 @@ The `--agents` flag accepts JSON with the same [frontmatter](#supported-frontmat
 
 **Managed subagents** are deployed by organization administrators. Place markdown files in `.claude/agents/` inside the [managed settings directory](/en/settings#settings-files), using the same frontmatter format as project and user subagents. Managed definitions take precedence over project and user subagents with the same name.
 
-**Plugin subagents** come from [plugins](/en/plugins) you've installed. They load alongside your custom subagents and appear in the @-mention typeahead under their scoped name. See the [plugin components reference](/en/plugins-reference#agents) for details on creating plugin subagents.
+**Plugin subagents** come from [plugins](/en/plugins) you've installed. They load automatically alongside your custom subagents and appear in the @-mention typeahead under their scoped name. See the [plugin components reference](/en/plugins-reference#agents) for details on creating plugin subagents.
 
 <Note>
   For security reasons, plugin subagents don't support the `hooks`, `mcpServers`, or `permissionMode` frontmatter fields. These fields are ignored when loading agents from a plugin. If you need them, copy the agent file into `.claude/agents/` or `~/.claude/agents/`. You can also add rules to [`permissions.allow`](/en/settings#permission-settings) in `settings.json` or `settings.local.json`, but these rules apply to the entire session, not only the plugin subagent.
@@ -698,7 +698,7 @@ Your full message still goes to Claude, which writes the subagent's task prompt 
 
 Subagents provided by an enabled [plugin](/en/plugins) appear in the typeahead under their scoped name, such as `my-plugin:code-reviewer` or `my-plugin:review:security` when the plugin [organizes agents into subfolders](#choose-the-subagent-scope). Named background subagents currently running in the session also appear in the typeahead, showing their status next to the name.
 
-You can also type the mention manually without using the picker: `@agent-<name>` for local subagents, or `@agent-` followed by the scoped name for plugin subagents, for example `@agent-my-plugin:code-reviewer`.
+You can also type the mention manually without using the picker: `@agent-<name>` for local subagents, or `@agent-` followed by the scoped name for plugin subagents, for example `@agent-my-plugin:code-reviewer`. While you type this form the typeahead shows file matches rather than agents. The agent mention still resolves when you submit.
 
 **Run the whole session as a subagent.** Pass [`--agent <name>`](/en/cli-reference) to start a session where the main thread itself takes on that subagent's system prompt, tool restrictions, and model:
 
@@ -754,7 +754,7 @@ You can also steer this yourself:
 
 To disable all background task functionality, set the `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` environment variable to `1`. See [Environment variables](/en/env-vars).
 
-When [`CLAUDE_CODE_FORK_SUBAGENT`](#fork-the-current-conversation) is set to `1`, every subagent spawn runs in the background and the frontmatter `background` field has no effect, because fork mode removes the `run_in_background` parameter from the `Agent` tool. `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` takes precedence over fork mode and keeps subagent spawns in the foreground.
+When [`CLAUDE_CODE_FORK_SUBAGENT`](#fork-the-current-conversation) is set to `1`, every subagent runs in the background and the frontmatter `background` field has no effect, because fork mode removes the `run_in_background` parameter from the `Agent` tool. `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` takes precedence over fork mode and keeps subagents in the foreground.
 
 ### API errors in subagents
 
@@ -847,6 +847,18 @@ To prevent a specific subagent from spawning others, omit `Agent` from its [`too
 
 A [fork](#fork-the-current-conversation) still can't spawn another fork. It can spawn other subagent types, and those count toward the depth limit.
 
+### Session subagent limit
+
+By default, Claude can spawn at most 200 subagents per session. To raise the limit, set [`CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`](/en/env-vars) to any positive whole number; there is no upper bound, but the limit can't be turned off. Requires Claude Code v2.1.212 or later.
+
+Every subagent Claude spawns with the Agent tool counts toward the limit: nested subagents, [forks](#fork-the-current-conversation), and background subagents, including subagents that a [workflow](/en/workflows)'s agents spawn with the Agent tool. Agents a workflow script spawns with `agent()` don't count; workflows have their own per-run limit. A finished subagent still counts.
+
+When Claude reaches the limit, the Agent tool fails with `Subagent spawn limit reached`, and the error tells Claude to complete the remaining work directly with its own tools.
+
+Run [`/clear`](/en/commands#all-commands) to reset the count and start a new conversation with the full budget. If work that can still spawn subagents survives the clear, such as a running workflow, the count carries over instead.
+
+This limit is separate from the [depth limit](#spawn-nested-subagents), which caps how deeply subagents nest.
+
 ### Manage subagent context
 
 #### What loads at startup
@@ -898,7 +910,7 @@ A completed subagent that receives a `SendMessage` auto-resumes in the backgroun
 
 Resuming starts a new run of the agent under the same ID, so a subagent that had already failed or completed shows as running again in the task list and in the Agent SDK's task events. Before v2.1.205, it kept showing its earlier failed or completed status while the resumed run was working.
 
-{/* min-version: 2.1.199 */}As of v2.1.199, `SendMessage` checks that a name still refers to the same agent it reached earlier in the conversation. If a newer agent has taken the name, such as a re-spawned background agent that reused it, Claude Code refuses the send rather than delivering it to the wrong agent, and the error reports which agent the name now reaches so Claude can retarget. To reach the earlier agent while it's still running, Claude addresses it by the agent ID from its spawn result. The check is scoped to the current conversation and resets on `/clear`.
+{/* min-version: 2.1.199 */}As of v2.1.199, `SendMessage` checks that a name still refers to the same agent it reached earlier in the conversation. If a newer agent has taken the name, such as a re-spawned background agent that reused it, Claude Code refuses the send rather than delivering it to the wrong agent, and the error reports which agent the name now reaches so Claude can retarget. To reach the earlier agent while it's still running, Claude addresses it by the agent ID it received when it spawned that agent. The check is scoped to the current conversation and resets on `/clear`.
 
 {/* min-version: 2.1.198 */}As of v2.1.198, a subagent treats messages from the agent that launched it as normal task direction, including mid-task course corrections, and acts on them within its own permission settings. Two limits still hold regardless of who sent the message: no message from any agent counts as your approval for a pending permission prompt, and no agent message can change a subagent's permission settings, `CLAUDE.md`, or configuration. Only the permission system or your own messages can grant approval.
 

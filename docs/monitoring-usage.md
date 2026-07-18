@@ -92,6 +92,8 @@ Claude Code doesn't pass `OTEL_*` environment variables to the subprocesses it s
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Metrics temporality preference (default: `delta`). Set to `cumulative` if your backend expects cumulative temporality                                                                                                                                                                                                             | `delta`, `cumulative`                                                                                                           |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Interval for refreshing dynamic headers (default: 1740000ms / 29 minutes)                                                                                                                                                                                                                                                         | `900000`                                                                                                                        |
 
+For the `http/protobuf` and `http/json` protocols, Claude Code sends each export request with a `Content-Length` header. {/* min-version: 2.1.212 */}Before v2.1.212, Claude Code versions from v2.1.191 onward sent these requests with chunked transfer encoding; Azure Monitor and other endpoints that require a declared length rejected them with `411 Length Required` or `400` errors.
+
 ### mTLS authentication
 
 How you configure client certificates for the OTLP exporter depends on the OTLP protocol in use for that signal, set via `OTEL_EXPORTER_OTLP_PROTOCOL` or the per-signal override. The same configuration applies to metrics, logs, and traces.
@@ -140,6 +142,8 @@ When tracing is active and Claude Code is connected directly to the Anthropic AP
 By default, the `traceparent` header on model and HTTP MCP requests is sent only when `ANTHROPIC_BASE_URL` is unset or points at the Anthropic API, since some proxies reject unrecognized headers. The subprocess `TRACEPARENT` variable is controlled by the same switch for consistency. If you run Claude Code through a custom `ANTHROPIC_BASE_URL` proxy and want trace context propagated, set `CLAUDE_CODE_PROPAGATE_TRACEPARENT=1`.
 
 In Agent SDK and non-interactive sessions started with `-p`, Claude Code also reads `TRACEPARENT` and `TRACESTATE` from its own environment when starting each interaction span. This lets an embedding process pass its active W3C trace context into the subprocess so Claude Code's spans appear as children of the caller's distributed trace. Interactive sessions ignore inbound `TRACEPARENT` to avoid accidentally inheriting ambient values from CI or container environments.
+
+The inbound trace context also applies to [events](#events). In Agent SDK and `-p` sessions with `TRACEPARENT` set, each OTLP event log record carries `trace_id` and `span_id` values that join it to your application's trace, even when the traces exporter isn't configured, so your logging backend can correlate events with the rest of the trace. A record emitted inside an active Claude Code span carries that span's ids; a record emitted outside one carries the inbound `TRACEPARENT` ids directly. {/* min-version: 2.1.212 */}Before v2.1.212, event records emitted outside an active span didn't carry `trace_id` or `span_id`.
 
 #### Span hierarchy
 

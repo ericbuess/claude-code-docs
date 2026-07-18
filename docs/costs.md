@@ -276,4 +276,11 @@ These background processes consume a small amount of tokens (typically under \$0
 
 ## Understanding changes in Claude Code behavior
 
-Claude Code regularly receives updates that may change how features work, including cost reporting. Run `claude --version` to check your current version. For specific billing questions, contact Anthropic support through your [Console account](https://platform.claude.com/login).
+Claude Code regularly receives updates that may change how features work, including cost reporting. Run `claude --version` to check your current version.
+
+For billing questions about your specific account, contact Anthropic support through the in-product messenger:
+
+* **Subscription plans** (Pro, Max, Team, Enterprise): sign in at [claude.ai](https://claude.ai), click your initials in the lower left, and select **Get help**
+* **Console (API) billing**: sign in at [platform.claude.com](https://platform.claude.com), click your initials, and select **Get help**
+
+See [How to get support](https://support.claude.com/en/articles/9015913-how-to-get-support) for the full flow, including who can reach a human agent on each plan.

@@ -171,7 +171,7 @@ There's no required format for CLAUDE.md files, but keep it short and human-read
 - Prefer running single tests, and not the whole test suite, for performance
 ```
 
-CLAUDE.md is loaded every session, so only include things that apply broadly. For domain knowledge or workflows that are only relevant sometimes, use [skills](/en/skills) instead. Claude loads them on demand without bloating every conversation.
+Run `/context` to confirm Claude loaded the file. CLAUDE.md is loaded every session, so only include things that apply broadly. For domain knowledge or workflows that are only relevant sometimes, use [skills](/en/skills) instead. Claude loads them on demand without bloating every conversation.
 
 Keep it concise. For each line, ask: *"Would removing this cause Claude to make mistakes?"* If not, cut it. Bloated CLAUDE.md files cause Claude to ignore your actual instructions!
 
@@ -357,7 +357,7 @@ Using Claude Code this way is an effective onboarding workflow, improving ramp-u
   For larger features, have Claude interview you first. Start with a minimal prompt and ask Claude to interview you using the `AskUserQuestion` tool.
 </Tip>
 
-Claude asks about things you might not have considered yet, including technical implementation, UI/UX, edge cases, and tradeoffs.
+Claude asks about things you might not have considered yet, including technical implementation, UI/UX, edge cases, and tradeoffs. Replace `[brief description]` with your feature before sending the prompt.
 
 ```text theme={null}
 I want to build [brief description]. Interview me in detail using the AskUserQuestion tool.
@@ -478,6 +478,8 @@ claude -p "List all API endpoints" --output-format json
 # Streaming for real-time processing
 claude -p "Analyze this log file" --output-format stream-json --verbose
 ```
+
+The first command prints plain text. The `json` format returns a single JSON object with a `result` field. The `stream-json` format prints one JSON object per line, starting with an init event.
 
 ### Run multiple Claude sessions
 

@@ -90,6 +90,7 @@ Match the message you see in your terminal to a section below.
 | `Can't open MCP settings in a background session`                                                  | [Background session errors](#commands-refused-in-a-background-session)                                                        |
 | `This session has no saved transcript`                                                             | [Background session errors](#this-session-has-no-saved-transcript)                                                            |
 | `CLAUDE_CODE_PROCESS_WRAPPER: launcher ...`                                                        | [Background session errors](#claude_code_process_wrapper-launcher-errors)                                                     |
+| `EUNKNOWN: unknown error, uv_spawn`                                                                | [Background session errors](#eunknown-when-starting-a-background-session)                                                     |
 | `Ignoring N permissions.allow entries from ... this workspace has not been trusted`                | [Configuration warnings](#workspace-has-not-been-trusted)                                                                     |
 | Responses seem lower quality than usual                                                            | [Response quality](#responses-seem-lower-quality-than-usual)                                                                  |
 
@@ -429,7 +430,7 @@ Running `/login` doesn't help here: the helper's output [takes precedence](/en/a
 * Run the command configured in `apiKeyHelper` directly in your shell to reproduce the failure
 * If the command reports an expired session, re-authenticate with your credential provider, for example by signing in to your SSO or secrets vault again
 * Fix the command so it prints the key to stdout and exits with code 0. See [rotate credentials with apiKeyHelper](/en/llm-gateway-connect#rotate-credentials-with-apikeyhelper) for a working setup.
-* Run `/status` to confirm `apiKeyHelper` is the active credential source. Each time the command fails, its exit code and error output appear in an `Authentication` panel in the terminal. {/* min-version: 2.1.212 */}Before v2.1.212, the panel was titled Cloud authentication.
+* Run `/status` to confirm `apiKeyHelper` is the active credential source. Each time the command fails, its exit code and error output appear in an `Authentication` panel in the terminal. {/* min-version: 2.1.212 */}Before v2.1.212, the panel was titled `Cloud authentication`.
 
 ### This organization has been disabled
 
@@ -782,16 +783,19 @@ This can happen when the window is already full at the moment auto-compact trigg
 
 ### Request too large
 
-The raw request body exceeded the API's byte limit before tokenization, usually because of a large pasted file or attachment.
+The raw request body exceeded the API's 32MB limit before tokenization, usually because of a large pasted file or attachment.
 
 ```text theme={null}
-Request too large (max 30 MB). Double press esc to go back and remove or shrink the attached content.
+Request too large (max 32MB). Accumulated images and attachments in the conversation pushed the request over the limit. Run /compact, or double press esc to go back and remove attachments.
 ```
 
 This is a size limit on the HTTP request, separate from the [context window limit](#prompt-is-too-long).
 
+{/* min-version: 2.1.212 */}When Claude Code sends requests directly to the Claude API, it keeps the total size of images and attachments in each request below this limit by dropping the oldest ones, so conversations that accumulate many images don't hit it. Before v2.1.212, that cap was higher than the request limit, so a conversation with enough accumulated images failed on every turn with `Request too large (max 32MB). Double press esc to go back and try with a smaller file.`
+
 **What to do:**
 
+* Run `/compact` to summarize the conversation, which drops accumulated images and attachments
 * Press Esc twice and step back past the turn that added the oversized content
 * Reference large files by path instead of pasting their contents, so Claude can read them in chunks
 * For images, see [Image was too large](#image-was-too-large) below
@@ -1227,7 +1231,7 @@ When Claude's write brings the file near a limit without crossing it, Claude Cod
 
 ## Background session errors
 
-[Background sessions](/en/agent-view) run without an interactive terminal of their own, so commands that need one behave differently there. These messages appear in the transcript of a background session, in agent view or after attaching.
+[Background sessions](/en/agent-view) run without an interactive terminal of their own, so commands that need one behave differently there. These messages appear in the transcript of a background session, in the terminal that attaches to one, or in the session or shell you dispatch from; where a message is specific to one surface, its entry says so.
 
 ### Commands refused in a background session
 
@@ -1247,18 +1251,18 @@ Can't open MCP settings in a background session — use `/mcp enable|disable|rec
 
 ### This session has no saved transcript
 
-You opened a stopped [background session](/en/agent-view) that was backgrounded from another conversation with `←` or `/background` and stopped before its first response finished. Until that first response finishes, the conversation still lives only in the session it was backgrounded from, so Claude Code refuses to start the stopped session rather than begin a blank conversation under the same session ID. The message ends with the `claude respawn` command for this session:
+You attached to a stopped [background session](/en/agent-view) that was backgrounded from another conversation with `←` or `/background` and stopped before its first response finished. Until that first response finishes, the conversation still lives only in the session it was backgrounded from, so `claude attach` refuses to start the stopped session rather than begin a blank conversation under the same session ID. The message ends with the `claude respawn` command for this session:
 
 ```text theme={null}
 This session has no saved transcript — it was stopped before its first response finished. If it was backgrounded from another conversation, that one is still intact; `claude respawn <id>` starts this one fresh.
 ```
 
-{/* min-version: 2.1.211 */}Before v2.1.211, opening the stopped session silently started that blank conversation and could re-run the session's original prompt.
+{/* min-version: 2.1.212 */}Opening the same session's row in [agent view](/en/agent-view) shows `Press enter again to restart this session fresh` below the list instead, and a second `Enter` on the row restarts the session with an empty conversation. Before v2.1.212, opening the row showed the refusal message with no way to restart from agent view. {/* min-version: 2.1.211 */}Before v2.1.211, opening the stopped session silently started that blank conversation and could re-run the session's original prompt.
 
 **What to do:**
 
 * The conversation you backgrounded from is intact: resume it with [`claude --resume`](/en/sessions) or keep working in it
-* To start the stopped session fresh anyway, run `claude respawn <id>` with the ID from the message
+* To start the stopped session fresh anyway, run `claude respawn <id>` with the ID from the message, or press `Enter` twice on its row in agent view
 
 ### CLAUDE\_CODE\_PROCESS\_WRAPPER launcher errors
 
@@ -1275,6 +1279,26 @@ A launcher that starts but exits without replacing itself with Claude Code fails
 * Set the variable to the absolute path of an executable that ends by calling `exec "$@"`. See [the launcher contract](/en/corporate-launcher#the-launcher-contract) for the full contract
 * Check `/status`, which shows the resolved launch command in its Self-exec entry and warns when the running background service doesn't match it, or run `claude daemon status` from a shell
 * After fixing the value in the `env` block of [settings](/en/corporate-launcher#set-up-the-launcher), restart the background service with `claude daemon stop --any` so the next dispatch starts a wrapped one
+
+### EUNKNOWN when starting a background session
+
+Windows refused to start a program with an error code that has no standard name, so the failure surfaces as `EUNKNOWN`. The usual trigger is a software restriction policy, such as Group Policy or AppLocker, blocking the program being started. The error appears when you start a [background session](/en/agent-view) with `/background` or `claude --bg`:
+
+```text theme={null}
+Couldn't reach the background service (spawn background service: EUNKNOWN: unknown error, uv_spawn) — run 'claude daemon status'
+```
+
+On some accounts the message says `daemon` in place of `background service`.
+
+{/* min-version: 2.1.212 */}Claude Code starts the background service through PowerShell so the service survives closing the terminal, using PowerShell 7 when it's installed and Windows PowerShell 5.1 otherwise. When neither PowerShell can run, Claude Code starts the service directly instead, so a policy that blocks only PowerShell doesn't cause this error. If you see it, the policy is blocking the Claude Code executable itself.
+
+Before v2.1.212, Claude Code used only Windows PowerShell 5.1 to start the service, so any machine where Group Policy blocked PowerShell 5.1 failed with `Couldn't start the session — EUNKNOWN: unknown error, uv_spawn`, even with PowerShell 7 installed.
+
+**What to do:**
+
+* If the message reads `Couldn't start the session`, upgrade to v2.1.212 or later. On earlier versions you can also run `claude daemon run` in a separate terminal first, then start the background session again. That command runs the background service in the terminal's foreground, so the service lasts only as long as that terminal stays open.
+* If the error appears on v2.1.212 or later, ask your Windows administrator to allow the Claude Code executable in the restriction policy
+* If the background service stops when you close the terminal, Claude Code started it without PowerShell. Install PowerShell 7, or ask your administrator to unblock PowerShell, so the service can outlive the terminal.
 
 ## Configuration warnings
 

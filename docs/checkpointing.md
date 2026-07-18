@@ -58,7 +58,7 @@ The restore options revert state: they undo code changes, conversation history, 
 In both cases the original messages are preserved in the session transcript, so Claude can reference the details if needed. To guide what the summary focuses on, highlight a **Summarize** option with the arrow keys and type instructions inline where the row reads **add context (optional)**, then press `Enter` to summarize; selecting the option by its number key summarizes immediately without instructions. This is similar to `/compact`, but targeted: instead of summarizing the entire conversation, you choose which side of the selected message to compress.
 
 <Note>
-  Summarize keeps you in the same session and compresses context. If you want to branch off and try a different approach while preserving the original session intact, use [fork](/en/sessions#branch-a-session) instead (`claude --continue --fork-session`).
+  Summarize keeps you in the same session and compresses context. If you want to branch off and try a different approach while preserving the original session intact, use [`/branch`](/en/sessions#branch-a-session) or `claude --continue --fork-session` instead.
 </Note>
 
 ## Common use cases

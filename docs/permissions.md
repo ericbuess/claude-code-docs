@@ -484,7 +484,7 @@ If a tool is denied at any level, no other level can allow it. For example, a ma
 
 The same holds across settings scopes: if user settings allow a permission and project settings deny it, the deny rule blocks it. The reverse is also true: a user-level deny blocks a project-level allow, because deny rules from any scope are evaluated before allow rules.
 
-Embedding hosts can supply additional managed policy via the SDK `managedSettings` option when [`parentSettingsBehavior`](/en/settings#settings-precedence) is set to `"merge"`; embedder values can tighten policy but not loosen it.
+Embedding hosts can supply additional managed policy via the SDK `managedSettings` option, including permission allow rules unless the admin sets the `allowManaged*Only` locks; [Deliver policy to Claude Desktop sessions](/en/claude-apps-gateway#deliver-policy-to-claude-desktop-sessions) covers when embedder policy applies at all.
 
 ## Project allow rules and workspace trust
 

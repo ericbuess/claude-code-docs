@@ -124,7 +124,7 @@ Even in auto-allow mode, the following still apply:
 * Explicit [deny rules](/en/permissions) are always respected
 * `rm` or `rmdir` commands that target `/`, your home directory, or other critical system paths still trigger a permission prompt
 * Content-scoped [ask rules](/en/permissions) like `Bash(git push *)` still force a prompt even for sandboxed commands
-* A bare `Bash` ask rule, or the equivalent `Bash(*)` form, is skipped for commands that run sandboxed; it still applies to commands that fall back to the regular permission flow
+* A bare `Bash` ask rule, or the equivalent `Bash(*)` form, is skipped for commands that run sandboxed; it still applies to commands that fall back to the regular permission flow. {/* min-version: 2.1.212 */}In [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode), the rule isn't skipped: it prompts for sandboxed commands too, including read-only ones. Before v2.1.212, the skip applied in plan mode as well
 
 **Regular permissions mode**: All Bash commands go through the regular permission flow, even when sandboxed. This provides more control but requires more approvals.
 
@@ -137,7 +137,9 @@ Some commands cannot run inside the sandbox at all, such as tools that are incom
 You can disable this escape hatch by setting `"allowUnsandboxedCommands": false` in your [sandbox settings](/en/settings#sandbox-settings). When disabled, which the `/sandbox` Overrides tab shows as **Strict sandbox mode**, the `dangerouslyDisableSandbox` parameter is completely ignored and all commands must run sandboxed or be explicitly listed in `excludedCommands`.
 
 <Info>
-  Auto-allow mode works independently of your permission mode setting. Even if you're not in "accept edits" mode, sandboxed Bash commands will run automatically when auto-allow is enabled. This means Bash commands that modify files within the sandbox boundaries will execute without prompting, even when file edit tools would normally require approval.
+  Auto-allow mode works independently of your permission mode setting, with one exception: [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode). Even if you're not in "accept edits" mode, sandboxed Bash commands run automatically when auto-allow is enabled. This means Bash commands that modify files within the sandbox boundaries execute without prompting, even when file edit tools would normally require approval.
+
+  In plan mode, Bash commands that modify files still prompt for approval even with auto-allow enabled.
 </Info>
 
 ## Configure sandboxing

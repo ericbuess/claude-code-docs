@@ -42,7 +42,7 @@ Proxy and firewall requirements in [Network configuration](/en/network-config) a
 
 ## Decide how settings reach devices
 
-Managed settings define policy that takes precedence over local developer configuration. Claude Code checks the four sources below in priority order and applies the first one that returns a non-empty configuration, with one exception: a small set of [cross-source lock keys](/en/settings#settings-precedence), such as the sandbox allowlist locks, is honored when any admin-controlled source sets them.
+Managed settings define policy that takes precedence over local developer configuration. Claude Code checks the four sources below in priority order and applies the first one that returns a non-empty configuration. A small set of [cross-source lock keys](/en/settings#settings-precedence), such as the sandbox allowlist locks, is honored when any admin-controlled source sets them; when a [`policyHelper`](/en/settings#compute-managed-settings-with-a-policy-helper) is configured, its output is the only source these checks read.
 
 | Mechanism               | Delivery                                                                                                                                                                                              | Priority | Platforms      |
 | :---------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------- | :------------- |

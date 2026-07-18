@@ -84,7 +84,7 @@ The following example puts these steps together. It registers a `PreToolUse` hoo
       )
 
       async with ClaudeSDKClient(options=options) as client:
-          await client.query("Update the database configuration")
+          await client.query("Create a .env file with the standard local development database configuration")
           async for message in client.receive_response():
               # Filter for assistant and result messages
               if isinstance(message, (AssistantMessage, ResultMessage)):
@@ -123,7 +123,7 @@ The following example puts these steps together. It registers a `PreToolUse` hoo
   };
 
   for await (const message of query({
-    prompt: "Update the database configuration",
+    prompt: "Create a .env file with the standard local development database configuration",
     options: {
       hooks: {
         // Register the hook for PreToolUse events
@@ -140,37 +140,48 @@ The following example puts these steps together. It registers a `PreToolUse` hoo
   ```
 </CodeGroup>
 
+When you run either script, Claude attempts to create the `.env` file, the hook denies the tool call, and Claude's final response explains that it can't create `.env` files.
+
 ## Available hooks
 
 The SDK provides hooks for different stages of agent execution. Some hooks are available in both SDKs, while others are TypeScript-only.
 
-| Hook Event                                             | Python SDK | TypeScript SDK | What triggers it                                                                      | Example use case                                                            |
-| ------------------------------------------------------ | ---------- | -------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `PreToolUse`                                           | Yes        | Yes            | Tool call request (can block or modify)                                               | Block dangerous shell commands                                              |
-| `PostToolUse`                                          | Yes        | Yes            | Tool execution result                                                                 | Log all file changes to audit trail                                         |
-| `PostToolUseFailure`                                   | Yes        | Yes            | Tool execution failure                                                                | Handle or log tool errors                                                   |
-| `PostToolBatch`                                        | No         | Yes            | A full batch of tool calls resolves, once per batch before the next model call        | Inject conventions once for the whole batch                                 |
-| `UserPromptSubmit`                                     | Yes        | Yes            | User prompt submission                                                                | Inject additional context into prompts                                      |
-| [`UserPromptExpansion`](/en/hooks#userpromptexpansion) | No         | Yes            | A user-typed command expands into a prompt before it reaches Claude                   | Block a command from direct invocation or add context when a skill is typed |
-| `MessageDisplay`                                       | No         | Yes            | An assistant message with text completes, once per message with the full message text | Redact or reformat the displayed text without changing the transcript       |
-| `Stop`                                                 | Yes        | Yes            | Agent execution stop                                                                  | Save session state before exit                                              |
-| `SubagentStart`                                        | Yes        | Yes            | Subagent initialization                                                               | Track parallel task spawning                                                |
-| `SubagentStop`                                         | Yes        | Yes            | Subagent completion                                                                   | Aggregate results from parallel tasks                                       |
-| `PreCompact`                                           | Yes        | Yes            | Conversation compaction request                                                       | Archive full transcript before summarizing                                  |
-| `PermissionRequest`                                    | Yes        | Yes            | Permission dialog would be displayed                                                  | Custom permission handling                                                  |
-| `SessionStart`                                         | No         | Yes            | Session initialization                                                                | Initialize logging and telemetry                                            |
-| `SessionEnd`                                           | No         | Yes            | Session termination                                                                   | Clean up temporary resources                                                |
-| `Notification`                                         | Yes        | Yes            | Agent status messages                                                                 | Send agent status updates to Slack or PagerDuty                             |
-| `Setup`                                                | No         | Yes            | Session setup/maintenance                                                             | Run initialization tasks                                                    |
-| `TeammateIdle`                                         | No         | Yes            | Teammate becomes idle                                                                 | Reassign work or notify                                                     |
-| `TaskCompleted`                                        | No         | Yes            | Background task completes                                                             | Aggregate results from parallel tasks                                       |
-| `ConfigChange`                                         | No         | Yes            | Configuration file changes                                                            | Reload settings dynamically                                                 |
-| `WorktreeCreate`                                       | No         | Yes            | Git worktree created                                                                  | Track isolated workspaces                                                   |
-| `WorktreeRemove`                                       | No         | Yes            | Git worktree removed                                                                  | Clean up workspace resources                                                |
+| Hook Event                                             | Python SDK | TypeScript SDK | What triggers it                                                                                                                        | Example use case                                                            |
+| ------------------------------------------------------ | ---------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `PreToolUse`                                           | Yes        | Yes            | Tool call request (can block or modify)                                                                                                 | Block dangerous shell commands                                              |
+| `PostToolUse`                                          | Yes        | Yes            | Tool execution result                                                                                                                   | Log all file changes to audit trail                                         |
+| `PostToolUseFailure`                                   | Yes        | Yes            | Tool execution failure                                                                                                                  | Handle or log tool errors                                                   |
+| `PostToolBatch`                                        | No         | Yes            | A full batch of tool calls resolves, once per batch before the next model call                                                          | Inject conventions once for the whole batch                                 |
+| `UserPromptSubmit`                                     | Yes        | Yes            | User prompt submission                                                                                                                  | Inject additional context into prompts                                      |
+| [`UserPromptExpansion`](/en/hooks#userpromptexpansion) | No         | Yes            | A user-typed command, or an MCP prompt, expands into a prompt before it reaches Claude. Doesn't fire when Claude invokes a skill itself | Block a command from direct invocation or add context when a skill is typed |
+| `MessageDisplay`                                       | No         | Yes            | An assistant message with text completes, once per message with the full message text                                                   | Redact or reformat the displayed text without changing the transcript       |
+| `Stop`                                                 | Yes        | Yes            | Agent execution stop                                                                                                                    | Save session state before exit                                              |
+| `StopFailure`                                          | No         | Yes            | The turn ends with an API error instead of a normal stop                                                                                | Log failures or send alerts                                                 |
+| `SubagentStart`                                        | Yes        | Yes            | Subagent initialization                                                                                                                 | Track parallel task spawning                                                |
+| `SubagentStop`                                         | Yes        | Yes            | Subagent completion                                                                                                                     | Aggregate results from parallel tasks                                       |
+| `PreCompact`                                           | Yes        | Yes            | Conversation compaction request                                                                                                         | Archive full transcript before summarizing                                  |
+| `PostCompact`                                          | No         | Yes            | Conversation compaction completes                                                                                                       | Log the generated summary                                                   |
+| `PermissionRequest`                                    | Yes        | Yes            | Permission dialog would be displayed                                                                                                    | Custom permission handling                                                  |
+| `PermissionDenied`                                     | No         | Yes            | The auto mode classifier denies a tool call                                                                                             | Log classifier denials or tell the model it may retry                       |
+| `SessionStart`                                         | No         | Yes            | Session initialization                                                                                                                  | Initialize logging and telemetry                                            |
+| `SessionEnd`                                           | No         | Yes            | Session termination                                                                                                                     | Clean up temporary resources                                                |
+| `Notification`                                         | Yes        | Yes            | Agent status messages                                                                                                                   | Send agent status updates to Slack or PagerDuty                             |
+| `Setup`                                                | No         | Yes            | Session setup/maintenance                                                                                                               | Run initialization tasks                                                    |
+| `TeammateIdle`                                         | No         | Yes            | Teammate becomes idle                                                                                                                   | Reassign work or notify                                                     |
+| `TaskCreated`                                          | No         | Yes            | A task is created via the `TaskCreate` tool                                                                                             | Enforce task naming conventions                                             |
+| `TaskCompleted`                                        | No         | Yes            | Background task completes                                                                                                               | Aggregate results from parallel tasks                                       |
+| `Elicitation`                                          | No         | Yes            | An MCP server requests user input mid-task                                                                                              | Respond to MCP input requests programmatically                              |
+| `ElicitationResult`                                    | No         | Yes            | A user responds to an MCP elicitation                                                                                                   | Modify or block the response before it returns to the server                |
+| `ConfigChange`                                         | No         | Yes            | Configuration file changes                                                                                                              | Reload settings dynamically                                                 |
+| `InstructionsLoaded`                                   | No         | Yes            | A `CLAUDE.md` or rules file is loaded into context                                                                                      | Audit which instruction files load                                          |
+| `WorktreeCreate`                                       | No         | Yes            | Git worktree created                                                                                                                    | Track isolated workspaces                                                   |
+| `WorktreeRemove`                                       | No         | Yes            | Git worktree removed                                                                                                                    | Clean up workspace resources                                                |
+| `CwdChanged`                                           | No         | Yes            | The working directory changes during a session                                                                                          | Reload environment variables per directory                                  |
+| `FileChanged`                                          | No         | Yes            | A watched file is modified, created, or deleted                                                                                         | Reload configuration when project files change                              |
 
 ## Configure hooks
 
-To configure a hook, pass it in the `hooks` field of your agent options (`ClaudeAgentOptions` in Python, the `options` object in TypeScript):
+To configure a hook, pass it in the `hooks` field of your agent options (`ClaudeAgentOptions` in Python, the `options` object in TypeScript). This snippet assumes you have already defined a hook callback, like `protect_env_files` in Python or `protectEnvFiles` in TypeScript from the example above:
 
 <CodeGroup>
   ```python Python theme={null}
@@ -215,11 +226,13 @@ A matcher like `mcp__memory` or `mcp__brave-search` contains only exact-match ch
 
 Hyphens in the exact-match set require a Claude Code runtime of v2.1.195 or later. On earlier versions a hyphenated name like `code-reviewer` is evaluated as an unanchored regular expression and must be anchored as `^code-reviewer$` to match exactly.
 
+`StopFailure` and `FileChanged` use a narrower exact-match set of letters, digits, `_`, and `|` only. A hyphen, space, or comma in a matcher for those two events keeps it on the regular-expression path, and only `|` separates alternatives, so write `rate_limit|overloaded`, not `rate_limit, overloaded`. `FileChanged` additionally uses its matcher to build the watch list of literal filenames; see [FileChanged in the hooks reference](/en/hooks#filechanged).
+
 | Option    | Type             | Default     | Description                                                                                                                                                                                                                                                                                                                                                                        |
 | --------- | ---------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `matcher` | `string`         | `undefined` | Pattern matched against the event's filter field, following the comparison rules above. For tool hooks, this is the tool name. Built-in tools include `Bash`, `Read`, `Write`, `Edit`, `Glob`, `Grep`, `WebFetch`, `Agent`, and others (see [Tool Input Types](/en/agent-sdk/typescript#tool-input-types) for the full list). MCP tools use the pattern `mcp__<server>__<action>`. |
 | `hooks`   | `HookCallback[]` | -           | Required. Array of callback functions to execute when the pattern matches                                                                                                                                                                                                                                                                                                          |
-| `timeout` | `number`         | `60`        | Timeout in seconds                                                                                                                                                                                                                                                                                                                                                                 |
+| `timeout` | `number`         | `undefined` | Timeout in seconds. When omitted, the per-event default applies: 10 minutes for most events, 30 seconds for `UserPromptSubmit`. A few events run with shorter limits, such as 10 seconds for `MessageDisplay`                                                                                                                                                                      |
 
 Use the `matcher` pattern to target specific tools whenever possible. A matcher with `'Bash'` only runs for Bash commands, while omitting the pattern runs your callbacks for every occurrence of the event.
 
@@ -258,7 +271,7 @@ Return `{}` to allow the operation without changes. SDK callback hooks use the s
 
 #### Asynchronous output
 
-By default, the agent waits for your hook to return before proceeding. If your hook performs a side effect, such as logging or sending a webhook, and doesn't need to influence the agent's behavior, you can return an async output instead. This tells the agent to continue immediately without waiting for the hook to finish:
+By default, the agent waits for your hook to return before proceeding. If your hook performs a side effect, such as logging or sending a webhook, and doesn't need to influence the agent's behavior, you can return an async output instead. This tells the agent to continue immediately without waiting for the hook to finish. In this snippet, `send_to_logging_service` in Python and `sendToLoggingService` in TypeScript stand in for any logging function you define:
 
 <CodeGroup>
   ```python Python theme={null}
@@ -287,6 +300,8 @@ By default, the agent waits for your hook to return before proceeding. If your h
 </Note>
 
 ## Examples
+
+Several examples in this section show only the callback function. To run one, register the callback under the matching event in the `hooks` field of your options, as shown in [Configure hooks](#configure-hooks).
 
 ### Modify tool input
 
@@ -469,7 +484,7 @@ The example below registers three independent checks for every tool call:
 
 Use multi-tool matchers to share one callback across related tools. This example registers three matchers with different scopes:
 
-* A pipe-separated exact list (`Write|Edit|Delete`) triggers `file_security_hook` only for file modification tools.
+* A pipe-separated exact list (`Write|Edit|NotebookEdit`) triggers `file_security_hook` only for file modification tools.
 * A regex (`^mcp__`) triggers `mcp_audit_hook` for any MCP tool whose name starts with `mcp__`.
 * An omitted matcher triggers `global_logger` for every tool call regardless of name.
 
@@ -479,7 +494,7 @@ Use multi-tool matchers to share one callback across related tools. This example
       hooks={
           "PreToolUse": [
               # Match file modification tools
-              HookMatcher(matcher="Write|Edit|Delete", hooks=[file_security_hook]),
+              HookMatcher(matcher="Write|Edit|NotebookEdit", hooks=[file_security_hook]),
               # Match all MCP tools
               HookMatcher(matcher="^mcp__", hooks=[mcp_audit_hook]),
               # Match everything (no matcher)
@@ -494,7 +509,7 @@ Use multi-tool matchers to share one callback across related tools. This example
     hooks: {
       PreToolUse: [
         // Match file modification tools
-        { matcher: "Write|Edit|Delete", hooks: [fileSecurityHook] },
+        { matcher: "Write|Edit|NotebookEdit", hooks: [fileSecurityHook] },
 
         // Match all MCP tools
         { matcher: "^mcp__", hooks: [mcpAuditHook] },

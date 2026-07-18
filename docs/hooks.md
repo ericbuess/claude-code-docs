@@ -758,6 +758,8 @@ To stop Claude entirely regardless of event type:
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
 
+For `PreToolUse` and `PostToolUse` hooks, the stop applies even when the tool call fails or completes while Claude is still streaming a response.
+
 #### Emit terminal notifications
 
 The `terminalSequence` field requires Claude Code v2.1.141 or later.

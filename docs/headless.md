@@ -64,6 +64,8 @@ If Claude starts a [background Bash task](/en/tools-reference#bash-tool-behavior
 
 Background [subagents](/en/sub-agents) and workflows are exempt from the five-second grace because their result is part of the final output, so `claude -p` waits for them to complete. From v2.1.182, that wait is capped at ten minutes by default so a stuck background agent cannot hold the process open indefinitely. Adjust the cap with [`CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS`](/en/env-vars), or set it to `0` to wait without a limit.
 
+If you stop a `claude -p` run with SIGTERM, for example from `kill`, a process supervisor, or an SDK host closing the session, Claude Code aborts the in-progress turn, terminates the process tree of any running Bash command, runs [`SessionEnd` hooks](/en/hooks#sessionend), and exits with code 143.
+
 ## Examples
 
 These examples highlight common CLI patterns. For CI and other scripted calls, add [`--bare`](#start-faster-with-bare-mode) so they don't pick up whatever happens to be configured locally.

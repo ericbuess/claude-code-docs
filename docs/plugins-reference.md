@@ -967,6 +967,10 @@ claude plugin uninstall <plugin> [options]
 
 By default, uninstalling from the last remaining scope also deletes the plugin's `${CLAUDE_PLUGIN_DATA}` directory. Use `--keep-data` to preserve it, for example when reinstalling after testing a new version.
 
+<Note>
+  When installed plugins from different marketplaces share a name, the `plugin-name@marketplace-name` form uninstalls only the plugin from the named marketplace. Before v2.1.212, the qualified form could match and uninstall the same-named plugin from a different marketplace.
+</Note>
+
 ### plugin prune
 
 Remove auto-installed plugin dependencies that are no longer required by any installed plugin. Dependencies that Claude Code pulled in to satisfy another plugin's [`dependencies`](/en/plugin-dependencies) field are removed; plugins you installed directly are never touched.

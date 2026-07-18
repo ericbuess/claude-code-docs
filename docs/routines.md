@@ -116,7 +116,7 @@ Routines belong to your individual claude.ai account. They are not shared with t
 
 ### Create from the CLI
 
-Run `/schedule` in any session to create a scheduled routine conversationally. You can also pass a description directly, for a recurring routine like `/schedule daily PR review at 9am` or a one-off like `/schedule clean up feature flag in one week`. Claude walks through the same information the web form collects, then saves the routine to your account.
+Run `/schedule` in any session to create a scheduled routine conversationally. You can also pass a description directly, for a recurring routine like `/schedule daily PR review at 9am` or a one-off like `/schedule clean up feature flag in one week`. Claude walks through the same information the web form collects, then saves the routine to your account. The command is also available under the alias `/routines`.
 
 A successful start looks like a conversation: Claude asks follow-up questions about the schedule, repositories, and prompt before saving. If Claude instead replies that you need to authenticate or that it can't connect to your remote claude.ai account, no routine was created; see [Troubleshooting](#troubleshooting).
 

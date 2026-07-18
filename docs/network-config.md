@@ -100,6 +100,17 @@ export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 
 Claude Code reads the certificate and key files at startup and re-reads them each time it applies settings, including when settings change during a session. To rotate the certificate and key, replace the files at the same paths.
 
+In [cloud sessions](/en/claude-code-on-the-web), the hosting environment manages the connection to the API, so Claude Code ignores the following variables when they come from a settings file `env` block:
+
+* `CLAUDE_CODE_CLIENT_CERT`
+* `CLAUDE_CODE_CLIENT_KEY`
+* `CLAUDE_CODE_CLIENT_KEY_PASSPHRASE`
+* `NODE_EXTRA_CA_CERTS`
+* `NODE_TLS_REJECT_UNAUTHORIZED`
+* `CLAUDE_CODE_OAUTH_SCOPES`
+
+Claude Code notes each ignored key in the session's debug log.
+
 ## Apply network settings to background agents
 
 [Background agents](/en/agent-view) don't run inside the terminal that dispatched them. A per-user supervisor process starts on demand, outlives your shell, and hosts every `claude agents`, `--bg`, and `/background` session. See [How background sessions are hosted](/en/agent-view#how-background-sessions-are-hosted). This changes how the configuration on this page reaches those sessions.

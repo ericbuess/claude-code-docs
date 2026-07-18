@@ -180,7 +180,7 @@ For CI pipelines, scripts, or other environments where interactive browser login
 claude setup-token
 ```
 
-The command walks you through OAuth authorization and prints a token to the terminal. It does not save the token anywhere; copy it and set it as the `CLAUDE_CODE_OAUTH_TOKEN` environment variable wherever you want to authenticate:
+The command opens the same browser authorization flow as `/login`, and the token prints to the terminal after you approve access in the browser. It does not save the token anywhere; copy it and set it as the `CLAUDE_CODE_OAUTH_TOKEN` environment variable wherever you want to authenticate:
 
 ```bash theme={null}
 export CLAUDE_CODE_OAUTH_TOKEN=your-token
