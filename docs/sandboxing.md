@@ -139,7 +139,7 @@ You can disable this escape hatch by setting `"allowUnsandboxedCommands": false`
 <Info>
   Auto-allow mode works independently of your permission mode setting, with one exception: [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode). Even if you're not in "accept edits" mode, sandboxed Bash commands run automatically when auto-allow is enabled. This means Bash commands that modify files within the sandbox boundaries execute without prompting, even when file edit tools would normally require approval.
 
-  In plan mode, Bash commands that modify files still prompt for approval even with auto-allow enabled.
+  {/* min-version: 2.1.212 */}In plan mode, only [read-only commands](/en/permissions#read-only-commands) run without prompting; any other Bash command prompts for approval even with auto-allow enabled. Before v2.1.212, auto-allow ran sandboxed commands without a prompt in plan mode too.
 </Info>
 
 ## Configure sandboxing

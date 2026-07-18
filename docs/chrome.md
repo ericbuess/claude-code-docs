@@ -195,7 +195,7 @@ Record a GIF showing how to complete the checkout flow, from adding
 an item to the cart through to the confirmation page.
 ```
 
-Claude records the interaction sequence and saves it as a GIF file.
+Claude records the interaction sequence and saves it as a GIF file. The recording captures everything visible in the browser, including account details on logged-in pages, so review it before sharing it outside your team.
 
 ### Save screenshots to disk
 

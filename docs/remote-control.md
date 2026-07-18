@@ -116,6 +116,15 @@ In an interactive terminal session, a `/rc active` indicator sits in the footer 
 
 If the connection fails, a notification appears with the failure reason and the indicator disappears from the footer. Run `/remote-control` again to retry.
 
+### Session URL reminders
+
+While Remote Control is connected, Claude Code reminds you of the session URL at the moments when switching to your phone or browser helps most, so you don't have to dig the link out of `/remote-control`. {/* min-version: 2.1.208 */}Requires Claude Code v2.1.208 or later. A reminder appears above the prompt box at either of these moments:
+
+* **Long turn**: when a turn runs longer than a server-tuned threshold, a **Still working** notification with a **Check in from your phone** link appears, so you can follow the turn from your phone or browser instead of waiting at the terminal. Claude Code removes it when the turn ends.
+* **Repeated permission prompts**: after you answer several [permission prompts](/en/permissions) in a session, an **Approve tool calls from your phone** notification shows the session URL. Claude Code removes it when your next turn starts.
+
+You only see the reminders in sessions where you turned on Remote Control yourself, and Claude Code shows each one a few times in total across sessions rather than at every opportunity. You can't configure or turn them off; each clears on its own.
+
 ### Connect from another device
 
 Once a Remote Control session is active, you have a few ways to connect from another device:
@@ -124,7 +133,7 @@ Once a Remote Control session is active, you have a few ways to connect from ano
 * **Scan the QR code** shown alongside the session URL to open it directly in the Claude app. With `claude remote-control`, press spacebar to toggle the QR code display.
 * **Open [claude.ai/code](https://claude.ai/code) or the Claude app** and find the session by name in the session list. In the Claude mobile app, tap **Code** in the navigation to reach the session list. Remote Control sessions show a computer icon with a green status dot when online.
 
-When you connect, the device shows any subagents and workflows the session already has running in the background. {/* min-version: 2.1.208 */}Before v2.1.208, a device connecting to a session hosted in an interactive terminal didn't show subagents and workflows that were already running until one of them started or stopped.
+When you connect, the device shows any subagents and workflows the session already has running in the background. {/* min-version: 2.1.208 */}Before v2.1.208, a device connecting to a session hosted in an interactive terminal didn't show subagents and workflows that were already running until one of them started or stopped. {/* min-version: 2.1.212 */}Before v2.1.212, a device that joined mid-run didn't show a running workflow's agents until the next agent update.
 
 The remote session title is chosen in this order:
 

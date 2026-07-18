@@ -7,7 +7,7 @@
 > Run a deep, multi-agent code review in the cloud with /code-review ultra to find and verify bugs before you merge.
 
 <Note>
-  Ultrareview is a research preview feature. The feature, pricing, and availability may change based on feedback. The command is now invoked as `/code-review ultra`, and `/ultrareview` remains as an alias.
+  Ultrareview is a research preview feature. The feature, pricing, and availability may change based on feedback. The command is `/code-review ultra`. When ultrareview is available to your account, `/ultrareview` is an alias.
 </Note>
 
 Ultrareview is a deep code review that runs on Claude Code on the web infrastructure. When you run `/code-review ultra`, Claude Code launches a fleet of reviewer agents in a remote sandbox to find bugs in your branch or pull request.
@@ -18,7 +18,7 @@ Compared to a local `/code-review` or `/review`, ultrareview offers:
 * **Broader coverage**: a larger fleet of reviewer agents explores the change in parallel, which surfaces issues that a local review can miss
 * **No local resource use**: the review runs entirely in a remote sandbox, so your terminal stays free for other work while it runs
 
-Ultrareview requires authentication with a Claude.ai account because it runs on Claude Code on the web infrastructure. If you are signed in with an API key only, run `/login` and authenticate with Claude.ai first. Ultrareview is not available when using Claude Code with Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, and it is not available to organizations that have enabled Zero Data Retention.
+Ultrareview requires authentication with a claude.ai account because it runs on Claude Code on the web infrastructure. If you are signed in with an API key only, run `/login` and authenticate with claude.ai first. Ultrareview is not available when using Claude Code with Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, and it is not available to organizations that have enabled Zero Data Retention. When ultrareview is not available, `/code-review ultra` runs a local review in your session instead.
 
 ## Run ultrareview from the CLI
 
@@ -28,13 +28,15 @@ Start a review from any git repository in the Claude Code CLI.
 /code-review ultra
 ```
 
-Without arguments, ultrareview reviews the diff between your current branch and the default branch, including any uncommitted and staged changes in your working tree. Claude Code bundles the repository state and uploads it to a remote sandbox for the review.
+Without arguments, ultrareview reviews the diff between your current branch and the default branch, including any uncommitted and staged changes in your working tree. Claude Code bundles the repository state and uploads it to a remote sandbox for the review. To compare against a different base, such as on a repository whose integration branch is `develop` or `trunk`, pass the branch name instead: `/code-review ultra develop`. {/* min-version: 2.1.212 */}A base branch that exists only on `origin` is fetched, and a name with a typo gets a closest-branch suggestion. Both behaviors require Claude Code v2.1.212 or later.
 
 To review a GitHub pull request instead, pass the PR number.
 
 ```text theme={null}
 /code-review ultra 1234
 ```
+
+The command also accepts `#1234`, `PR 1234`, and pasted PR URLs. A pasted URL must point to the repository in your current directory. Before v2.1.212, the command accepted only the bare number and rejected other forms with a not-a-branch error.
 
 In PR mode, the remote sandbox clones the pull request directly from the host rather than bundling your local working tree. PR mode works with repositories on `github.com` and on [GitHub Enterprise Server](/en/github-enterprise-server) instances that an Owner has connected to Claude Code.
 
@@ -56,9 +58,18 @@ Ultrareview is a premium feature that bills against usage credits rather than yo
 | Max                 | 3 free runs        | billed as [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 | Team and Enterprise | none               | billed as [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 
-Pro and Max subscribers receive three free ultrareview runs to try the feature. These three runs are a one-time allotment per account and do not refresh. After you use all three, or after the free run period ends, each review is billed to usage credits and typically costs \$5 to \$20 depending on the size of the change. A run counts once the cloud session starts, so a review that you stop early or that fails to complete still uses a free run. For a paid review, usage credits are billed only for the portion that ran.
+* **Free runs**: the three Pro and Max runs are a one-time allotment per account and don't refresh.
+* **Cost per review**: after you use the free runs, or after the free-run period ends, typically \$5 to \$25 in usage credits depending on the size of the change, matching the estimate the launch dialog shows before each run.
+* **When a run counts**: once the cloud session starts. A review you stop early or that fails to complete still uses a free run; a paid review bills only for the portion that ran.
 
-Because ultrareview always bills as usage credits outside the free runs, your account or organization must have usage credits turned on before you can launch a paid review. If usage credits are not turned on, Claude Code blocks the launch and links you to the billing settings where you can turn them on. You can also run `/usage-credits` to check or change your current setting.
+Because ultrareview always bills as usage credits outside the free runs, your account or organization must have usage credits turned on before you can launch a paid review. If usage credits aren't turned on, Claude Code blocks the launch, and how you turn them on depends on your billing access:
+
+* If you can manage billing for your account, Claude Code links you to the billing settings where you can turn on usage credits.
+* On Team and Enterprise plans, members without billing access send a request from the CLI asking their admin to turn on usage credits.
+
+You can also run `/usage-credits` to check or change your usage-credits setting.
+
+Claude Code asks you to confirm usage-credits billing once per conversation. When you start a new conversation, for example with `/clear`, Claude Code shows the billing confirmation again for the next paid review. Before v2.1.212, a confirmation from an earlier conversation carried over, so a paid review after `/clear` launched without showing the billing confirmation.
 
 ## Track a running review
 
@@ -77,6 +88,8 @@ claude ultrareview origin/main
 ```
 
 Without arguments, the subcommand reviews the diff between your current branch and the default branch. Pass a PR number to review a pull request, or pass a base branch to review the diff against that branch instead. Invoking the subcommand counts as consent for the billing and terms prompt that the interactive command shows.
+
+If the base branch you pass exists on `origin` but not in your local clone, Claude Code fetches it and continues. If the name matches no branch, the error message suggests the closest branch name. Before v2.1.212, both cases failed with a not-a-branch error.
 
 Progress messages and the live session URL go to stderr so stdout stays parseable. Use these flags to control the output and timeout:
 
@@ -99,7 +112,7 @@ All three commands review code, but they target different stages of your workflo
 | Runs     | locally in your session         | locally in your session                      | remotely in a cloud sandbox                                     |
 | Depth    | scales with the effort argument | a single-pass review at the session's effort | multi-agent fleet with independent verification                 |
 | Duration | seconds to a few minutes        | seconds to a few minutes                     | roughly 5 to 10 minutes                                         |
-| Cost     | counts toward normal usage      | counts toward normal usage                   | free runs, then roughly \$5 to \$20 per review as usage credits |
+| Cost     | counts toward normal usage      | counts toward normal usage                   | free runs, then roughly \$5 to \$25 per review as usage credits |
 | Best for | quick feedback while iterating  | reviewing a teammate's PR before approving   | pre-merge confidence on substantial changes                     |
 
 Use `/code-review` for fast feedback as you work. Use `/review <pr>` to look over a pull request the same way you would before approving it. Use `/code-review ultra` before merging a substantial change when you want a deeper pass that catches issues a local review might miss.

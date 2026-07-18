@@ -147,7 +147,7 @@ claude --permission-mode acceptEdits
 
 Plan mode tells Claude to research and propose changes without making them. Claude reads files, runs shell commands to explore, and writes a plan, but does not edit your source. Permission prompts apply as they do in Manual mode unless [auto mode](/en/auto-mode-config) is available and `useAutoModeDuringPlan` is on, which is the default. With auto mode active, the classifier approves read-only commands such as searches and file reads without prompting. Edits stay blocked either way until you approve the plan.
 
-Shell commands that modify files, such as `touch` and `rm`, prompt for approval in plan mode, including when auto mode is active during planning and when the sandbox's [auto-allow mode](/en/sandboxing#sandbox-modes) is enabled.
+Shell commands outside the [built-in read-only set](/en/permissions#read-only-commands), including file-modifying ones such as `touch` and `rm`, prompt for approval in plan mode, including when auto mode is active during planning and when the sandbox's [auto-allow mode](/en/sandboxing#sandbox-modes) is enabled.
 
 Enter plan mode by pressing `Shift+Tab` or prefixing a single prompt with `/plan`. You can also start in plan mode from the CLI:
 
