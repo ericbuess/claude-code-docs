@@ -2458,9 +2458,10 @@ Documentation of input/output schemas for all built-in Claude Code tools. While 
     "prompt": str,  # The task for the agent to perform
     "subagent_type": str | None,  # The type of specialized agent to use
     "model": "sonnet" | "opus" | "haiku" | "fable" | None,  # Model override for this agent
-    "run_in_background": bool | None,  # Launch the agent in the background
+    "run_in_background": bool | None,  # Agents run in the background by default; set to False to run synchronously
     "name": str | None,  # Name for the spawned agent
-    "mode": "acceptEdits" | "auto" | "bypassPermissions" | "default" | "dontAsk" | "plan" | None,  # Permission mode for the agent
+    "team_name": str | None,  # Deprecated; ignored
+    "mode": "acceptEdits" | "auto" | "bypassPermissions" | "default" | "dontAsk" | "plan" | None,  # Deprecated; ignored. Subagents inherit the parent session's permission mode; agent-definition frontmatter may override it
     "isolation": "worktree" | "remote" | None,  # Isolation mode for the agent's changes
 }
 ```
@@ -2481,7 +2482,8 @@ Launches a new agent to handle complex, multi-step tasks autonomously.
             "citations": list | None,
         }
     ],
-    "resolvedModel": str | None,  # Model the subagent actually ran on
+    "resolvedModel": str | None,  # Model the subagent started on
+    "modelsUsed": list[str] | None,  # Models used in order, with consecutive repeats collapsed
     "totalToolUseCount": int,  # Number of tool calls the agent made
     "totalDurationMs": int,  # Execution duration in milliseconds
     "totalTokens": int,  # Total tokens used
@@ -2521,7 +2523,8 @@ Launches a new agent to handle complex, multi-step tasks autonomously.
     "isAsync": bool | None,  # True on background launches
     "agentId": str,  # ID of the launched agent
     "description": str,  # The task description
-    "resolvedModel": str | None,  # Model the subagent runs on
+    "resolvedModel": str | None,  # Model in use at the backgrounding transition
+    "modelsUsed": list[str] | None,  # Models used before backgrounding, in order, with consecutive repeats collapsed
     "prompt": str,  # The prompt the agent runs
     "outputFile": str,  # File path where the agent's output is written
     "canReadOutputFile": bool | None,  # Whether the output file can be read directly
@@ -2543,7 +2546,7 @@ Launches a new agent to handle complex, multi-step tasks autonomously.
 
 Returns the result from the subagent. The output is discriminated on the `status` field: `"completed"` for finished tasks, `"async_launched"` for background tasks, and `"remote_launched"` for tasks Claude Code dispatched to a remote cloud session, where `sessionUrl` links to that session and `taskId` identifies it. Worktree-isolated runs include `worktreePath` and `worktreeBranch` on the `completed` variant.
 
-The `resolvedModel` field on the `completed` and `async_launched` variants names the model the subagent actually ran on, which can differ from the requested `model` input when [`availableModels`](/en/model-config#restrict-model-selection) or another override applies. {/* min-version: 2.1.174 */}This field requires Claude Code v2.1.174 or later.
+On the `completed` variant, `resolvedModel` names the model the subagent started on, which can differ from the requested `model` input when [`availableModels`](/en/model-config#restrict-model-selection) or another override applies. {/* min-version: 2.1.174 */}This field requires Claude Code v2.1.174 or later. On the `async_launched` variant, `resolvedModel` names the model in use when the agent moved to the background, so a swap that happened before backgrounding is reflected there. The `modelsUsed` field on both variants lists the models used in order, with consecutive repeats collapsed; it's set only when the model was swapped mid-run. {/* min-version: 2.1.212 */}`modelsUsed` and the backgrounding-time `resolvedModel` behavior require Claude Code v2.1.212 or later.
 
 ### AskUserQuestion
 
@@ -2563,6 +2566,7 @@ Asks the user clarifying questions during execution. See [Handle approvals and u
                 {
                     "label": str,  # Display text for this option (1-5 words)
                     "description": str,  # Explanation of what this option means
+                    "preview": str | None,  # Preview content rendered when the option is focused
                 }
             ],
             "multiSelect": bool,  # Set to true to allow multiple selections
@@ -2572,6 +2576,11 @@ Asks the user clarifying questions during execution. See [Handle approvals and u
     # User answers populated by the permission system. Multi-select
     # answers are a comma-joined string of the selected labels; a
     # list of labels is accepted on input and coerced to that form
+    "annotations": dict[str, dict] | None,
+    # Per-question annotations from the user, keyed by question text.
+    # Each value can carry "preview" (the selected option's preview
+    # content) and "notes" (free-text notes on the selection)
+    "metadata": dict | None,  # Analytics metadata, such as {"source": "remember"}; not displayed to the user
 }
 ```
 
@@ -2583,12 +2592,17 @@ Asks the user clarifying questions during execution. See [Handle approvals and u
         {
             "question": str,
             "header": str,
-            "options": [{"label": str, "description": str}],
+            "options": [{"label": str, "description": str, "preview": str | None}],
             "multiSelect": bool,
         }
     ],
     "answers": dict[str, str],  # Maps question text to answer string
     # Multi-select answers are comma-separated
+    "response": str | None,
+    # Freeform reply typed instead of answering the questions; when set,
+    # Claude receives "The user responded: ..." in place of the answer list
+    "annotations": dict[str, dict] | None,  # Per-question "preview" and "notes" from the user's selections
+    "afkTimeoutMs": int | None,  # Set when the dialog auto-resolved after this many milliseconds of user inactivity; absent when the user answered
 }
 ```
 

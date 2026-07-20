@@ -1191,13 +1191,15 @@ For organizations requiring Daily/Weekly/Monthly Active User (DAU/WAU/MAU) metri
 
 All metrics and events are exported with the following resource attributes:
 
-* `service.name`: `claude-code`
-* `service.version`: Current Claude Code version
+* `service.name`: `claude-code` for terminal sessions, `claude-code-desktop` for sessions started from the Code tab in the [Claude Desktop app](/en/desktop)
+* `service.version`: Current Claude Code version, or the Desktop app version for Code tab sessions
 * `os.type`: Operating system type (for example, `linux`, `darwin`, `windows`)
 * `os.version`: Operating system version string
 * `host.arch`: Host architecture (for example, `amd64`, `arm64`)
 * `wsl.version`: WSL version number (only present when running on Windows Subsystem for Linux)
 * Meter Name: `com.anthropic.claude_code`
+
+If your collector pipelines or dashboards filter on `service.name = claude-code`, add `claude-code-desktop` to the filter to also capture telemetry from Code tab sessions.
 
 ## ROI measurement resources
 
