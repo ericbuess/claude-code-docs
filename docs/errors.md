@@ -836,12 +836,12 @@ Claude Code normally resizes large images automatically. These errors mean the n
 
 ### PDF errors
 
-The PDF you attached couldn't be processed.
+The PDF you attached couldn't be processed. The messages are shown here in their non-interactive form; in an interactive session they instead prompt you to double press esc and try again.
 
 ```text theme={null}
-PDF too large (max 100 pages, 32 MB). Try splitting it or extracting text first.
-PDF is password protected. Try removing protection or extracting text first.
-The PDF file was not valid. Try converting to a different format first.
+PDF too large (max 100 pages, 20MB). Try reading the file a different way (e.g., extract text with pdftotext).
+PDF is password protected. Try using a CLI tool to extract or convert the PDF.
+The PDF file was not valid. Try converting it to text first (e.g., pdftotext).
 ```
 
 **What to do:**

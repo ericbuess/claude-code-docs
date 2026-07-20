@@ -15,10 +15,10 @@ The plugin is the in-session companion to [Code Review](/en/code-review), which 
 ## Prerequisites
 
 * Claude Code CLI version 2.1.144 or later
-* Python 3.8 or later on your `PATH`. The plugin tries `python3`, `python`, and `py -3` in that order
+* Python 3.7 or later on your `PATH`. The agentic commit review needs Python 3.10 or later, as do all model-backed reviews when Claude Code uses a third-party provider such as Amazon Bedrock or Google Cloud's Agent Platform. The plugin prefers the versioned interpreters `python3.13` through `python3.10`, then falls back to `python3`, `python`, and `py -3`
 * A git repository for the directory you work in. The end-of-turn and commit reviews diff against git state and skip silently outside a repository. The per-edit pattern check works anywhere
 
-On first run the plugin creates a virtual environment under `~/.claude/security/` and installs the Claude Agent SDK into it, which requires `pip` and network access. If that install fails, the commit review falls back to a single-shot review instead of the agentic one. On Windows the virtual environment step is skipped, so the agentic commit review runs only if `claude-agent-sdk` is already importable and otherwise falls back the same way.
+On first run the plugin creates a virtual environment under `~/.claude/security/` and installs the Claude Agent SDK into it, which requires `pip` and network access. If that install fails, or the available Python is older than 3.10, the commit review on first-party authentication falls back to a single-shot review instead of the agentic one; on a third-party provider such as Amazon Bedrock or Google Cloud's Agent Platform the model-backed reviews need the SDK themselves, so they skip. The plugin shows a one-time notice when an older Python is the cause.
 
 ## Install the plugin
 
@@ -232,7 +232,7 @@ The plugin writes runtime diagnostics to `~/.claude/security/log.txt`. Check the
 Common reasons a review layer skips without a message in the conversation:
 
 * The directory is not a git repository: the end-of-turn and commit reviews require git state and skip outside a repository
-* The session has no Anthropic authentication: the model-backed reviews skip and only the per-edit pattern check runs
+* The session has no Anthropic authentication and no third-party provider configured: the model-backed reviews skip and only the per-edit pattern check runs
 * A `security-patterns.yaml` file is present but PyYAML is not importable: the file is ignored. Use `security-patterns.json` instead
 
 ## Related resources
