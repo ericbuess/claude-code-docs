@@ -107,7 +107,7 @@ API routes are in src/routes/. Each route file exports an Express router.
 Database queries use Knex in src/db/. Never write raw SQL strings in route handlers.
 ```
 
-When you start Claude from `packages/api/`, it loads both `packages/api/CLAUDE.md` and the root `CLAUDE.md`. Claude sees the local instructions alongside the repository-wide rules, with no instructions from `packages/web/` in context. The same holds for any subdirectory in a non-monorepo tree.
+When you start Claude from `packages/api/`, it loads both `packages/api/CLAUDE.md` and the root `CLAUDE.md`. Claude sees the local instructions alongside the repository-wide rules, with no instructions from `packages/web/` in context. The same holds for any subdirectory in a non-monorepo tree. To confirm which files loaded, run `/context` and check the list under **Memory files**.
 
 A few ways to keep the files current as the codebase and models change:
 
@@ -134,23 +134,22 @@ When you start Claude from the repository root, each subdirectory's CLAUDE.md lo
 
 Use this for directories you never work in, such as other teams' packages, legacy code, or vendored subtrees. The exclusion list is static, not a per-task switch. To focus on one package today and another tomorrow, [start Claude from that package's directory](#choose-where-to-start-claude) instead of editing exclusions.
 
-If you only want these exclusions for yourself, put the setting in `.claude/settings.local.json`. Claude Code gitignores that file when it creates it; since you're creating it by hand here, add it to your gitignore. Patterns use glob syntax matched against absolute file paths, so start relative-style patterns with `**/` to match anywhere in the tree. The example below excludes packages owned by other teams:
+If you only want these exclusions for yourself, put the setting in `.claude/settings.local.json`. Claude Code gitignores that file when it creates it; since you're creating it by hand here, add it to your gitignore. Patterns use glob syntax matched against absolute file paths, so start relative-style patterns with `**/` to match anywhere in the tree. The example below excludes a package owned by another team:
 
 ```json .claude/settings.local.json theme={null}
 {
   "claudeMdExcludes": [
-    "**/packages/admin-dashboard/**",
-    "**/packages/legacy-*/**"
+    "**/packages/web/**"
   ]
 }
 ```
 
-This skips every CLAUDE.md and rules file under those packages. The root CLAUDE.md and the packages you do work in still load normally.
+This skips every CLAUDE.md and rules file under that package. The root CLAUDE.md and the packages you do work in still load normally.
 
 These patterns cover other common cases:
 
 * `"**/packages/*/CLAUDE.md"`: excludes every package's CLAUDE.md while keeping the root
-* `"**/packages/web/**"`: excludes everything under the web package, including rules
+* `"**/packages/legacy-*/**"`: excludes every package whose name matches the glob, including rules
 * `"/home/user/monorepo/legacy/CLAUDE.md"`: excludes one specific file by absolute path
 
 Managed policy CLAUDE.md files cannot be excluded, so organization-wide instructions always apply. You can set `claudeMdExcludes` at any [settings scope](/en/settings#configuration-scopes): user, project, local, or managed. Arrays merge across scopes, so a team can set project-level defaults while individuals add local overrides.
@@ -194,7 +193,7 @@ Deny rules cover Claude's built-in file tools and recognized Bash file commands,
 
 In a large codebase, finding where a symbol is defined or used can cost many file reads and grep calls. [Code intelligence plugins](/en/discover-plugins#code-intelligence) connect Claude to a language server so it can jump to definitions, find references, and surface type errors directly instead of scanning the tree.
 
-The official marketplace has plugins for TypeScript, Python, Go, Rust, and other common languages. The example below installs the TypeScript plugin:
+The official marketplace has plugins for TypeScript, Python, Go, Rust, and other common languages. Run the command below inside a Claude Code session to install the TypeScript plugin:
 
 ```shell theme={null}
 /plugin install typescript-lsp@claude-plugins-official
@@ -216,7 +215,11 @@ These settings control what's on disk in worktrees and which directories Claude 
 
 The `--worktree` flag starts a session in a new git worktree so changes stay isolated from your main checkout. By default it checks out the entire repository. In a large repository, the `worktree.sparsePaths` setting uses git sparse-checkout to write only the listed directories plus root-level files to disk, so worktrees start faster and use less space.
 
-If everyone working in this directory needs the same paths, commit the setting to `.claude/settings.json`. To add paths for yourself, use `.claude/settings.local.json`: the lists merge across scopes, so a local file can add paths to the committed list but not remove them. The example below shows the committed file:
+If everyone working in this directory needs the same paths, commit the setting to `.claude/settings.json`. To add paths for yourself, use `.claude/settings.local.json`: the lists merge across scopes, so a local file can add paths to the committed list but not remove them.
+
+The JSON examples on this page show one setting at a time. If your `.claude/settings.json` already contains other keys, such as the `permissions.deny` rules above, add the `worktree` key alongside them rather than replacing the file. [Put it together](#put-it-together) shows the combined result.
+
+The example below shows the committed file:
 
 ```json .claude/settings.json theme={null}
 {
@@ -271,7 +274,7 @@ When you start Claude from `packages/api/`, it can read and write files within t
 
 The `additionalDirectories` setting in `.claude/settings.json` gives Claude access to directories outside the working directory. The example below grants access to two sibling packages:
 
-```json .claude/settings.json theme={null}
+```json packages/api/.claude/settings.json theme={null}
 {
   "permissions": {
     "additionalDirectories": [

@@ -123,19 +123,19 @@ function tool<Schema extends AnyZodRawShape>(
   description: string,
   inputSchema: Schema,
   handler: (args: InferShape<Schema>, extra: unknown) => Promise<CallToolResult>,
-  extras?: { annotations?: ToolAnnotations }
+  extras?: { annotations?: ToolAnnotations; searchHint?: string; alwaysLoad?: boolean }
 ): SdkMcpToolDefinition<Schema>;
 ```
 
 #### Parameters
 
-| Parameter     | Type                                                              | Description                                                                     |
-| :------------ | :---------------------------------------------------------------- | :------------------------------------------------------------------------------ |
-| `name`        | `string`                                                          | The name of the tool                                                            |
-| `description` | `string`                                                          | A description of what the tool does                                             |
-| `inputSchema` | `Schema extends AnyZodRawShape`                                   | Zod schema defining the tool's input parameters (supports both Zod 3 and Zod 4) |
-| `handler`     | `(args, extra) => Promise<`[`CallToolResult`](#calltoolresult)`>` | Async function that executes the tool logic                                     |
-| `extras`      | `{ annotations?: `[`ToolAnnotations`](#toolannotations)` }`       | Optional MCP tool annotations providing behavioral hints to clients             |
+| Parameter     | Type                                                                                                   | Description                                                                                                                                                                                                                                                                                                   |
+| :------------ | :----------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`        | `string`                                                                                               | The name of the tool                                                                                                                                                                                                                                                                                          |
+| `description` | `string`                                                                                               | A description of what the tool does                                                                                                                                                                                                                                                                           |
+| `inputSchema` | `Schema extends AnyZodRawShape`                                                                        | Zod schema defining the tool's input parameters (supports both Zod 3 and Zod 4)                                                                                                                                                                                                                               |
+| `handler`     | `(args, extra) => Promise<`[`CallToolResult`](#calltoolresult)`>`                                      | Async function that executes the tool logic                                                                                                                                                                                                                                                                   |
+| `extras`      | `{ annotations?: `[`ToolAnnotations`](#toolannotations)`; searchHint?: string; alwaysLoad?: boolean }` | Optional extras. `annotations` provides MCP behavioral hints to clients. `searchHint` is a one-line capability phrase shown in the deferred-tool list when [tool search](/en/agent-sdk/tool-search) is active. `alwaysLoad: true` keeps this tool's full schema in the initial prompt instead of deferring it |
 
 #### `ToolAnnotations`
 
@@ -172,17 +172,21 @@ Creates an MCP server instance that runs in the same process as your application
 function createSdkMcpServer(options: {
   name: string;
   version?: string;
+  instructions?: string;
   tools?: Array<SdkMcpToolDefinition<any>>;
+  alwaysLoad?: boolean;
 }): McpSdkServerConfigWithInstance;
 ```
 
 #### Parameters
 
-| Parameter         | Type                          | Description                                              |
-| :---------------- | :---------------------------- | :------------------------------------------------------- |
-| `options.name`    | `string`                      | The name of the MCP server                               |
-| `options.version` | `string`                      | Optional version string                                  |
-| `options.tools`   | `Array<SdkMcpToolDefinition>` | Array of tool definitions created with [`tool()`](#tool) |
+| Parameter              | Type                          | Description                                                                                                                                                                                          |
+| :--------------------- | :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `options.name`         | `string`                      | The name of the MCP server                                                                                                                                                                           |
+| `options.version`      | `string`                      | Optional version string                                                                                                                                                                              |
+| `options.instructions` | `string`                      | Optional server instructions, returned from `initialize` and surfaced to the model as an MCP instructions block                                                                                      |
+| `options.tools`        | `Array<SdkMcpToolDefinition>` | Array of tool definitions created with [`tool()`](#tool)                                                                                                                                             |
+| `options.alwaysLoad`   | `boolean`                     | When `true`, every tool from this server stays in the initial prompt and is never deferred behind [tool search](/en/agent-sdk/tool-search). Combines with per-tool `alwaysLoad` in [`tool()`](#tool) |
 
 ### `listSessions()`
 

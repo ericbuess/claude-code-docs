@@ -30,7 +30,7 @@ Before using Remote Control, confirm that your environment meets these condition
 * **Subscription**: available on Pro, Max, Team, and Enterprise plans. API keys are not supported. On Team and Enterprise, an Owner must first enable the Remote Control toggle in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code).
 * **Authentication**: run `claude` and use `/login` to sign in through claude.ai if you haven't already. Without an eligible login, `claude remote-control` exits with an error, while `claude --remote-control` still starts an interactive session and shows a Remote Control failure notification shortly after launch.
 * **API endpoint**: not available on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. {/* min-version: 2.1.196 */}As of v2.1.196, Remote Control is also disabled when [`ANTHROPIC_BASE_URL`](/en/env-vars) points at a host other than `api.anthropic.com`, such as an [LLM gateway](/en/llm-gateway) or proxy. Unset the variable to use Remote Control.
-* **Workspace trust**: run `claude` in your project directory at least once to accept the workspace trust dialog.
+* **Workspace trust**: run `claude` in your project directory at least once to accept the workspace trust dialog. The startup trust dialog never saves trust for your home directory, so start Remote Control from a project directory.
 
 ## Start a Remote Control session
 
@@ -123,7 +123,7 @@ While Remote Control is connected, Claude Code reminds you of the session URL at
 * **Long turn**: when a turn runs longer than a server-tuned threshold, a **Still working** notification with a **Check in from your phone** link appears, so you can follow the turn from your phone or browser instead of waiting at the terminal. Claude Code removes it when the turn ends.
 * **Repeated permission prompts**: after you answer several [permission prompts](/en/permissions) in a session, an **Approve tool calls from your phone** notification shows the session URL. Claude Code removes it when your next turn starts.
 
-You only see the reminders in sessions where you turned on Remote Control yourself, and Claude Code shows each one a few times in total across sessions rather than at every opportunity. You can't configure or turn them off; each clears on its own.
+The reminders can appear in any connected session, including ones where Remote Control [connects automatically](#enable-remote-control-for-all-sessions). They don't appear every time these conditions occur, and each one appears only a few times in total across sessions. You can't configure or turn them off; each clears on its own.
 
 ### Connect from another device
 

@@ -6,7 +6,7 @@
 
 > Build production AI agents with Claude Code as a library
 
-Build AI agents that autonomously read files, run commands, search the web, edit code, and more. The Agent SDK gives you the same tools, agent loop, and context management that power Claude Code, programmable in Python and TypeScript. For other languages, [run the CLI programmatically](/en/headless) with the `-p` flag and `--output-format json`. For the thinking behind agent harness design, see [A harness for every task: dynamic workflows in Claude Code](https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code) on the blog.
+Build AI agents that autonomously read files, run commands, search the web, edit code, and more. The Agent SDK gives you the same tools, agent loop, and context management that power Claude Code, programmable in Python and TypeScript. For other languages, [run the CLI programmatically](/en/headless) with the `-p` flag and `--output-format json`. For the thinking behind agent harness design, see [A harness for every task: dynamic workflows in Claude Code](https://claude.com/blog/a-harness-for-every-task-dynamic-workflows-in-claude-code) on the blog. To run the example below, install the SDK first by following the steps in [Get started](#get-started).
 
 <CodeGroup>
   ```python Python theme={null}
@@ -56,8 +56,13 @@ The Agent SDK includes built-in tools for reading files, running commands, and e
     <Tabs>
       <Tab title="TypeScript">
         ```bash theme={null}
+        npm init -y
+        npm pkg set type=module
         npm install @anthropic-ai/claude-agent-sdk
+        npm install --save-dev tsx
         ```
+
+        Setting `"type": "module"` in `package.json` lets your agent script use top-level `await`, and [tsx](https://tsx.is) runs TypeScript files directly. In an existing CommonJS project, skip the first two commands and name your script `agent.mts` instead of `agent.ts`.
       </Tab>
 
       <Tab title="Python (uv)">
@@ -95,7 +100,7 @@ The Agent SDK includes built-in tools for reading files, running commands, and e
     </Tabs>
 
     <Note>
-      The TypeScript SDK bundles a native Claude Code binary for your platform as an optional dependency, so you don't need to install Claude Code separately.
+      Both the TypeScript and Python SDKs bundle a native Claude Code binary for your platform, so you don't need to install Claude Code separately.
     </Note>
   </Step>
 
@@ -160,6 +165,34 @@ The Agent SDK includes built-in tools for reading files, running commands, and e
       }
       ```
     </CodeGroup>
+
+    Save the example as `agent.py` or `agent.ts`, then run it. The agent prints a short summary of the files in the directory.
+
+    <Tabs>
+      <Tab title="TypeScript">
+        ```bash theme={null}
+        npx tsx agent.ts
+        ```
+
+        If you named your script `agent.mts` for a CommonJS project, run `npx tsx agent.mts` instead.
+      </Tab>
+
+      <Tab title="Python (uv)">
+        ```bash theme={null}
+        uv run agent.py
+        ```
+      </Tab>
+
+      <Tab title="Python (pip)">
+        With the virtual environment activated, on macOS or Linux:
+
+        ```bash theme={null}
+        python3 agent.py
+        ```
+
+        On Windows, run `python agent.py`.
+      </Tab>
+    </Tabs>
   </Step>
 </Steps>
 
@@ -244,7 +277,7 @@ Everything that makes Claude Code powerful is available in the SDK:
 
       async def main():
           async for message in query(
-              prompt="Refactor utils.py to improve readability",
+              prompt="Create a file named hello.py that prints a greeting",
               options=ClaudeAgentOptions(
                   allowed_tools=["Read", "Edit"],
                   permission_mode="acceptEdits",
@@ -273,7 +306,7 @@ Everything that makes Claude Code powerful is available in the SDK:
       };
 
       for await (const message of query({
-        prompt: "Refactor utils.py to improve readability",
+        prompt: "Create a file named hello.ts that prints a greeting",
         options: {
           allowedTools: ["Read", "Edit"],
           permissionMode: "acceptEdits",
@@ -286,6 +319,8 @@ Everything that makes Claude Code powerful is available in the SDK:
       }
       ```
     </CodeGroup>
+
+    After the agent finishes, run `cat audit.log` to see the recorded file changes.
 
     [Learn more about hooks →](/en/agent-sdk/hooks)
   </Tab>
@@ -365,7 +400,8 @@ Everything that makes Claude Code powerful is available in the SDK:
               options=ClaudeAgentOptions(
                   mcp_servers={
                       "playwright": {"command": "npx", "args": ["@playwright/mcp@latest"]}
-                  }
+                  },
+                  allowed_tools=["mcp__playwright__*"],
               ),
           ):
               if hasattr(message, "result"):
@@ -383,7 +419,8 @@ Everything that makes Claude Code powerful is available in the SDK:
         options: {
           mcpServers: {
             playwright: { command: "npx", args: ["@playwright/mcp@latest"] }
-          }
+          },
+          allowedTools: ["mcp__playwright__*"]
         }
       })) {
         if ("result" in message) console.log(message.result);
@@ -536,7 +573,7 @@ The Claude Platform offers multiple ways to build with Claude. Here's how the Ag
   <Tab title="Agent SDK vs Client SDK">
     The [Anthropic Client SDK](https://platform.claude.com/docs/en/api/client-sdks) gives you direct API access: you send prompts and implement tool execution yourself. The **Agent SDK** gives you Claude with built-in tool execution.
 
-    With the Client SDK, you implement a tool loop. With the Agent SDK, Claude handles it:
+    With the Client SDK, you implement a tool loop. With the Agent SDK, Claude handles it. This simplified pseudocode shows the difference:
 
     <CodeGroup>
       ```python Python theme={null}

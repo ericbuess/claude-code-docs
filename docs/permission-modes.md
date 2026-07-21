@@ -25,7 +25,13 @@ The mode that reviews every action is named **Manual** in the CLI, in `claude --
 
 In every mode except `bypassPermissions`, writes to [protected paths](#protected-paths) are never auto-approved, guarding repository state and Claude's own configuration against accidental corruption.
 
-Modes set the baseline. Layer [permission rules](/en/permissions#manage-permissions) on top to pre-approve or block specific tools. Deny rules, explicit ask rules, the [org `ask` setting on connector tools](/en/mcp#organization-controls-on-connector-tools), and the [`requiresUserInteraction`](/en/mcp#require-approval-for-a-specific-tool) marker apply in every mode, including `bypassPermissions`. Allow rules have no effect in that mode because everything else is already approved.
+Modes set the baseline. Layer [permission rules](/en/permissions#manage-permissions) on top to pre-approve or block specific tools. These controls apply in every mode, including `bypassPermissions`:
+
+* deny rules and explicit ask rules, which apply to every tool but can't block [`EndConversation`](/en/tools-reference#endconversation-tool-behavior) while any other tool remains
+* the [org `ask` setting on connector tools](/en/mcp#organization-controls-on-connector-tools)
+* the [`requiresUserInteraction`](/en/mcp#require-approval-for-a-specific-tool) marker
+
+Allow rules have no effect in `bypassPermissions` because everything else is already approved.
 
 ## Switch permission modes
 

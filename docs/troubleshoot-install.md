@@ -33,6 +33,7 @@ Match the error message or symptom you're seeing to a fix:
 | `cannot execute binary file: Exec format error` in WSL                                                | [WSL1 native-binary regression](#exec-format-error-on-wsl1)                                                                                   |
 | PowerShell installer completes but `claude` is not found or shows an old version                      | [Add the install directory to your PATH](#verify-your-path), then open a new terminal                                                         |
 | `dyld: cannot load`, `dyld: Symbol not found`, or `Abort trap` on macOS                               | [Binary incompatibility](#dyld-cannot-load-on-macos)                                                                                          |
+| `claude update` hangs after `Checking for updates`, or `claude doctor` hangs with no output           | [Move the directory at a shell config path](#claude-update-or-claude-doctor-hangs)                                                            |
 | `Invoke-Expression: Missing argument in parameter list`                                               | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                                         |
 | `App unavailable in region`                                                                           | Claude Code is not available in your country. See [supported countries](https://www.anthropic.com/supported-countries).                       |
 | `unable to get local issuer certificate`                                                              | [Configure corporate CA certificates](#tls-or-ssl-connection-errors)                                                                          |
@@ -575,6 +576,18 @@ When installing Claude Code in a Docker container, installing as root into `/` c
    ```bash theme={null}
    docker build --memory=4g .
    ```
+
+### `claude update` or `claude doctor` hangs
+
+`claude update` and `claude doctor` scan your shell configuration files for an outdated `claude` alias: `~/.zshrc`, `~/.bashrc`, and `~/.config/fish/config.fish`, plus on macOS the first of `~/.bash_profile`, `~/.bash_login`, or `~/.profile` that exists. If you set `ZDOTDIR`, the Zsh file is `$ZDOTDIR/.zshrc` instead. {/* min-version: 2.1.214 */}When one of those paths is a directory, Claude Code skips it and both commands complete normally. Before v2.1.214, a directory at one of those paths made both commands hang and left the System diagnostics section of `/status` blank. `claude doctor` hung with no output; `claude update` hung right after printing `Checking for updates`.
+
+If you hit the hang on an earlier version, find the directory. In this command's output, a line starting with `d` marks that path as a directory. A `No such file or directory` line means nothing exists at that path and isn't the cause:
+
+```bash theme={null}
+ls -ld ~/.zshrc ~/.bashrc ~/.bash_profile ~/.bash_login ~/.profile ~/.config/fish/config.fish
+```
+
+Move the directory aside, or update to v2.1.214 or later. Since `claude update` hangs on the affected versions, update by rerunning the [install script](/en/setup#install-claude-code) instead.
 
 ### Claude Desktop overrides the `claude` command on Windows
 

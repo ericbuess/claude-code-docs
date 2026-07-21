@@ -135,8 +135,8 @@ Plugin hooks respond to the same lifecycle events as [user-defined hooks](/en/ho
 | `ConfigChange`        | When a configuration file changes during a session                                                                                                     |
 | `CwdChanged`          | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
 | `FileChanged`         | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
-| `WorktreeCreate`      | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
-| `WorktreeRemove`      | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `WorktreeCreate`      | When a worktree is being created via `--worktree`, `isolation: "worktree"`, or for a background session. Replaces default git behavior                 |
+| `WorktreeRemove`      | When a worktree is being removed at session exit, when a subagent finishes, or when you delete a background session                                    |
 | `PreCompact`          | Before context compaction                                                                                                                              |
 | `PostCompact`         | After context compaction completes                                                                                                                     |
 | `Elicitation`         | When an MCP server requests user input during a tool call                                                                                              |
@@ -688,7 +688,7 @@ In hook commands, use [exec form](/en/hooks#exec-form-and-shell-form) with `args
 }
 ```
 
-`${CLAUDE_PLUGIN_ROOT}` changes when the plugin updates. The previous version's directory remains on disk for about seven days after an update before cleanup, but treat it as ephemeral and don't write state there.
+`${CLAUDE_PLUGIN_ROOT}` changes when the plugin updates. The previous version's directory remains on disk for about two weeks after an update before cleanup, but treat it as ephemeral and don't write state there.
 
 When a plugin updates mid-session, hook commands, monitors, MCP servers, and LSP servers keep using the previous version's path. Run `/reload-plugins` to switch hooks, MCP servers, and LSP servers to the new path; monitors require a session restart.
 
@@ -750,7 +750,7 @@ Plugins are specified in one of two ways:
 
 For security and verification purposes, Claude Code copies *marketplace* plugins to the user's local **plugin cache** (`~/.claude/plugins/cache`) rather than using them in-place. Understanding this behavior is important when developing plugins that reference external files.
 
-Each installed version is a separate directory in the cache. When you update or uninstall a plugin, the previous version directory is marked as orphaned and removed automatically 7 days later. The grace period lets concurrent Claude Code sessions that already loaded the old version keep running without errors.
+Each installed version is a separate directory in the cache. When you update or uninstall a plugin, the previous version directory is marked as orphaned and removed automatically 14 days later. The grace period lets concurrent Claude Code sessions that already loaded the old version keep running without errors.
 
 Claude's Glob and Grep tools skip orphaned version directories during searches, so file results don't include outdated plugin code.
 

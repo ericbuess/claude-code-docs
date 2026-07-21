@@ -271,6 +271,8 @@ The reference below covers the tokens you can set in `overrides`. The interactiv
 
 ## Switch to fullscreen rendering
 
+In [screen reader mode](/en/accessibility), this section doesn't apply. Claude Code always renders as plain scrolling text except in attached [background sessions](/en/agent-view), and if you run `/tui fullscreen` in any other session, Claude Code prints an explanation instead of switching.
+
 If the display flickers or the scroll position jumps while Claude is working, switch to [fullscreen rendering mode](/en/fullscreen). It draws to a separate screen the terminal reserves for full-screen apps instead of appending to your normal scrollback, which keeps memory usage flat and adds mouse support for scrolling and selection. In this mode you scroll with the mouse or PageUp inside Claude Code rather than with your terminal's native scrollback; see the [fullscreen page](/en/fullscreen#search-and-review-the-conversation) for how to search and copy.
 
 If flicker is the only problem and your terminal supports synchronized output but isn't auto-detected, such as Emacs `eat`, set [`CLAUDE_CODE_FORCE_SYNC_OUTPUT=1`](/en/env-vars) to stop the flicker without changing renderers.

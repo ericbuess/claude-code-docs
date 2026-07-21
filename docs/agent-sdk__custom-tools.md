@@ -176,11 +176,13 @@ These snippets reuse the `weatherServer` from the [example above](#weather-tool-
   ```
 </CodeGroup>
 
+Combine this snippet with the tool and server definitions from the [weather tool example](#weather-tool-example) in one file, then run it with `python weather.py` for Python or `npx tsx weather.ts` for TypeScript. Claude calls `get_temperature` and the script prints a one-line answer with the current temperature in San Francisco.
+
 ### Add more tools
 
 A server holds as many tools as you list in its `tools` array. With more than one tool on a server, you can list each one in `allowedTools` individually or use the wildcard `mcp__weather__*` to cover every tool the server exposes.
 
-The example below adds a second tool, `get_precipitation_chance`, to the `weatherServer` from the [weather tool example](#weather-tool-example) and rebuilds it with both tools in the array.
+The example below defines a second tool, `get_precipitation_chance`, and replaces the `weatherServer` definition from the [weather tool example](#weather-tool-example) with one that lists both tools in the array.
 
 <CodeGroup>
   ```python Python theme={null}
@@ -263,7 +265,7 @@ The example below adds a second tool, `get_precipitation_chance`, to the `weathe
   ```
 </CodeGroup>
 
-Every tool in this array consumes context window space on every turn. If you're defining dozens of tools, see [tool search](/en/agent-sdk/tool-search) to load them on demand instead.
+[Tool search](/en/agent-sdk/tool-search) is on by default and defers SDK MCP tools: Claude sees each tool's name in a compact list and loads its full schema on demand. With tool search disabled, every tool in this array consumes context window space on every turn. In TypeScript, pass `alwaysLoad: true` in the `extras` argument of [`tool()`](/en/agent-sdk/typescript#tool) or in the options of [`createSdkMcpServer()`](/en/agent-sdk/typescript#createsdkmcpserver) to keep a tool's full schema in the initial prompt.
 
 ### Add tool annotations
 
@@ -355,6 +357,7 @@ The example below catches two kinds of failures inside the handler and composes 
   import json
   import httpx
   from typing import Any
+  from claude_agent_sdk import tool
 
   from claude_agent_sdk import tool
 
@@ -465,6 +468,7 @@ An image block carries the image bytes inline, encoded as base64. There is no UR
   ```python Python theme={null}
   import base64
   import httpx
+  from claude_agent_sdk import tool
 
   from claude_agent_sdk import tool
 
@@ -761,6 +765,8 @@ It demonstrates two patterns:
 </CodeGroup>
 
 Once the server is defined, pass it to `query` the same way as the weather example. This example sends three different prompts in a loop to show the same tool handling different unit types. For each response, it inspects `AssistantMessage` objects (which contain the tool calls Claude made during that turn) and prints each `ToolUseBlock` before printing the final `ResultMessage` text. This lets you see when Claude is using the tool versus answering from its own knowledge.
+
+Because [tool search](/en/agent-sdk/tool-search) is on by default, the output may also include a `ToolSearch` call as Claude loads the deferred tool schema.
 
 <CodeGroup>
   ```python Python theme={null}

@@ -30,6 +30,8 @@ Start a review from any git repository in the Claude Code CLI.
 
 Without arguments, ultrareview reviews the diff between your current branch and the default branch, including any uncommitted and staged changes in your working tree. Claude Code bundles the repository state and uploads it to a remote sandbox for the review. To compare against a different base, such as on a repository whose integration branch is `develop` or `trunk`, pass the branch name instead: `/code-review ultra develop`. {/* min-version: 2.1.212 */}A base branch that exists only on `origin` is fetched, and a name with a typo gets a closest-branch suggestion. Both behaviors require Claude Code v2.1.212 or later.
 
+If your branch shares no merge base with the base branch, for example when the two histories are unrelated, Claude Code offers to review every tracked file in the repository instead. The whole-repository fallback requires a full clone and applies the same size limits as a branch review. Before v2.1.214, `/code-review ultra` refused to run without a merge base.
+
 To review a GitHub pull request instead, pass the PR number.
 
 ```text theme={null}
@@ -87,7 +89,7 @@ claude ultrareview 1234
 claude ultrareview origin/main
 ```
 
-Without arguments, the subcommand reviews the diff between your current branch and the default branch. Pass a PR number to review a pull request, or pass a base branch to review the diff against that branch instead. Invoking the subcommand counts as consent for the billing and terms prompt that the interactive command shows.
+Without arguments, the subcommand reviews the diff between your current branch and the default branch, with the same [whole-repository fallback](#run-ultrareview-from-the-cli) as `/code-review ultra` when no merge base exists. Pass a PR number to review a pull request, or pass a base branch to review the diff against that branch instead. Invoking the subcommand counts as consent for the whole-repository fallback and for the billing and terms prompt that the interactive command shows, so the run starts without waiting for input.
 
 If the base branch you pass exists on `origin` but not in your local clone, Claude Code fetches it and continues. If the name matches no branch, the error message suggests the closest branch name. Before v2.1.212, both cases failed with a not-a-branch error.
 

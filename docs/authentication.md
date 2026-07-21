@@ -119,10 +119,11 @@ For teams using Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foun
 
 To require that developer sessions authenticate into a specific Anthropic organization, set [`forceLoginMethod` and `forceLoginOrgUUID`](/en/settings#available-settings) in [managed settings](/en/settings#settings-files). Set `forceLoginOrgUUID` to your organization ID, shown in [claude.ai admin settings](https://claude.ai/admin-settings/organization) for Claude for Teams or Enterprise organizations, or at [platform.claude.com/settings/organization](https://platform.claude.com/settings/organization) for Console organizations. With both keys set, Claude Code restricts login to the listed organization and exits at startup if the active credential belongs to a different one.
 
-Developers can log in from several paths: the terminal `/login` flow, the [VS Code extension](/en/vs-code), the Agent SDK, `claude setup-token`, and `/install-github-app`. On Claude Code v2.1.212 or later, every path enforces `forceLoginMethod`; before v2.1.212, only terminal logins enforced either key. The paths differ on `forceLoginOrgUUID`:
+Developers can log in from several paths: the terminal `/login` flow, the [VS Code extension](/en/vs-code), the Agent SDK, `claude setup-token`, `/install-github-app`, and [gateway](/en/claude-apps-gateway) sign-in for organizations that route through a cloud gateway. On Claude Code v2.1.212 or later, every path enforces `forceLoginMethod`; before v2.1.212, only terminal logins enforced either key. The paths differ on `forceLoginOrgUUID`:
 
 * **Terminal, VS Code extension, and Agent SDK logins**: enforce both keys
 * **`claude setup-token` and `/install-github-app`**: enforce only `forceLoginMethod`, so they can mint a token in a different organization
+* **[Gateway](/en/claude-apps-gateway) sign-in**: selected by `forceLoginMethod: "gateway"` rather than restricted by it, and doesn't authenticate against an Anthropic organization, so `forceLoginOrgUUID` doesn't apply; use your gateway identity provider to restrict access
 
 Deploy the keys through your device management tooling. [Server-managed settings](/en/server-managed-settings) reach only accounts that are already authenticated into your organization, so they can't redirect a developer's first login. If your organization distributes server-managed settings as well, set the keys in both places: managed-settings sources [don't merge](/en/server-managed-settings#settings-precedence), and cached server-managed settings replace the device-managed file entirely.
 

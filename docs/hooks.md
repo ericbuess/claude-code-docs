@@ -20,7 +20,7 @@ Events fall into three cadences:
 
 * once per session: `SessionStart` and `SessionEnd`
 * once per turn: `UserPromptSubmit`, `Stop`, and `StopFailure`
-* on every tool call inside the agentic loop: `PreToolUse` and `PostToolUse`
+* on every tool call inside the agentic loop: `PreToolUse` and `PostToolUse`, except [`EndConversation`](/en/tools-reference#endconversation-tool-behavior) calls, which skip both
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
@@ -55,8 +55,8 @@ The table below summarizes when each event fires. The [Hook events](#hook-events
 | `ConfigChange`        | When a configuration file changes during a session                                                                                                     |
 | `CwdChanged`          | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
 | `FileChanged`         | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
-| `WorktreeCreate`      | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
-| `WorktreeRemove`      | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `WorktreeCreate`      | When a worktree is being created via `--worktree`, `isolation: "worktree"`, or for a background session. Replaces default git behavior                 |
+| `WorktreeRemove`      | When a worktree is being removed at session exit, when a subagent finishes, or when you delete a background session                                    |
 | `PreCompact`          | Before context compaction                                                                                                                              |
 | `PostCompact`         | After context compaction completes                                                                                                                     |
 | `Elicitation`         | When an MCP server requests user input during a tool call                                                                                              |
@@ -211,7 +211,7 @@ Each event type matches on a different field:
 | Event                                                                                                                                             | What the matcher filters                                     | Example matcher values                                                                                                                                                              |
 | :------------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                                        | tool name                                                    | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                                                                                    |
-| `SessionStart`                                                                                                                                    | how the session started                                      | `startup`, `resume`, `clear`, `compact`                                                                                                                                             |
+| `SessionStart`                                                                                                                                    | how the session started                                      | `startup`, `resume`, `clear`, `compact`, `fork`                                                                                                                                     |
 | `Setup`                                                                                                                                           | which CLI flag triggered setup                               | `init`, `maintenance`                                                                                                                                                               |
 | `SessionEnd`                                                                                                                                      | why the session ended                                        | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                                                                            |
 | `Notification`                                                                                                                                    | notification type                                            | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`, `agent_needs_input`, `agent_completed`                    |
@@ -330,6 +330,8 @@ These fields apply to all hook types:
 | `once`          | no       | If `true`, runs once per session then is removed. Only honored for hooks declared in [skill frontmatter](#hooks-in-skills-and-agents); ignored in settings files and agent frontmatter                                                                                                                                                                                                                                                                                                                                                          |
 
 The `if` field holds exactly one permission rule. There is no `&&`, `||`, or list syntax for combining rules; to apply multiple conditions, define a separate hook handler for each.
+
+In an `if` condition for a file tool, a single-segment directory pattern like `"Edit(src/**)"` matches only the `src` directory in the working directory and the files under it. To match a directory named `src` at any depth, write `"Edit(**/src/**)"`. {/* min-version: 2.1.214 */}Before v2.1.214, `"Edit(src/**)"` matched a directory named `src` at any depth under the working directory.
 
 <span id="bash-if-matching" />For Bash patterns, whether your hook command runs depends on the shape of the pattern and the Bash command Claude is invoking. Leading `VAR=value` assignments are stripped before matching.
 
@@ -652,6 +654,8 @@ The exit code from your hook command tells Claude Code whether the action should
 
 **Exit 2** means a blocking error. Claude Code ignores stdout and any JSON in it. Instead, stderr text is fed back to Claude as an error message. The effect depends on the event: `PreToolUse` blocks the tool call, `UserPromptSubmit` rejects the prompt, and so on. See [exit code 2 behavior](#exit-code-2-behavior-per-event) for the full list.
 
+A hook that exits 2 while printing JSON that fails [JSON output](#json-output) schema validation still blocks: Claude Code uses stderr as the blocking reason and records the validation failure in the debug log. {/* min-version: 2.1.214 */}Before v2.1.214, Claude Code treated that combination as a non-blocking error and the action proceeded.
+
 **Any other exit code** is a non-blocking error for most hook events. The transcript shows a `<hook name> hook error` notice followed by the first line of stderr, so you can identify the cause without `--debug`. Execution continues and the full stderr is written to the debug log.
 
 For example, a hook command script that blocks dangerous Bash commands:
@@ -828,7 +832,7 @@ For instructions that never change, prefer [CLAUDE.md](/en/memory). It loads wit
 
 Write the text as factual statements rather than imperative system instructions. Phrasing such as "The deployment target is production" or "This repo uses `bun test`" reads as project information. Text framed as out-of-band system commands can trigger Claude's prompt-injection defenses, which causes Claude to surface the text to you instead of treating it as context.
 
-Once injected, the text is saved in the session transcript. For mid-session events like `PostToolUse` or `UserPromptSubmit`, resuming with `--continue` or `--resume` replays the saved text rather than re-running the hook for past turns, so values like timestamps or commit SHAs become stale on resume. `SessionStart` hooks run again on resume with `source` set to `"resume"`, so they can refresh their context.
+Claude Code saves the injected text in the session transcript. For mid-session events like `PostToolUse` or `UserPromptSubmit`, when you resume with `--continue` or `--resume`, Claude Code replays the saved text rather than re-running the hook for past turns, so values like timestamps or commit SHAs become stale. `SessionStart` hooks run again on resume with `source` set to `"resume"`, or `"fork"` if you added `--fork-session`, so they can refresh their context.
 
 #### Decision control
 
@@ -918,12 +922,15 @@ SessionStart runs on every session, so keep these hooks fast. Only `type: "comma
 
 The matcher value corresponds to how the session was initiated:
 
-| Matcher   | When it fires                          |
-| :-------- | :------------------------------------- |
-| `startup` | New session                            |
-| `resume`  | `--resume`, `--continue`, or `/resume` |
-| `clear`   | `/clear`                               |
-| `compact` | Auto or manual compaction              |
+| Matcher   | When it fires                                                                                                                          |
+| :-------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| `startup` | New session                                                                                                                            |
+| `resume`  | `--resume`, `--continue`, or `/resume`                                                                                                 |
+| `clear`   | `/clear`                                                                                                                               |
+| `compact` | Auto or manual compaction                                                                                                              |
+| `fork`    | A new session forked from an existing one: `--fork-session` with `--resume` or `--continue`, the `/fork` background copy, or `/branch` |
+
+Before v2.1.214, forked sessions reported source `"resume"`.
 
 #### SessionStart input
 
@@ -931,7 +938,7 @@ In addition to the [common input fields](#common-input-fields), SessionStart hoo
 
 | Field           | Description                                                                                                                                                                                                   |
 | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `source`        | How the session started: `"startup"` for new sessions, `"resume"` for resumed sessions, `"clear"` after `/clear`, or `"compact"` after compaction                                                             |
+| `source`        | How the session started: `"startup"` for new sessions, `"resume"` for resumed sessions, `"clear"` after `/clear`, `"compact"` after compaction, or `"fork"` for a new session forked from an existing one     |
 | `model`         | The active model identifier. It can be omitted, for example after `/clear` or when a session is restored through conversation recovery, so check for the field before reading it                              |
 | `agent_type`    | The agent name, present when you start Claude Code with `claude --agent <name>`                                                                                                                               |
 | `session_title` | The current session title if one is already set, for example via `--name` or `/rename`. A hook that emits `sessionTitle` can check `session_title` first to avoid overwriting a title the user set explicitly |
@@ -955,7 +962,7 @@ Any text your hook script prints to stdout is added as context for Claude. In ad
 | :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `additionalContext`  | String added to Claude's context at the start of the conversation, before the first prompt. See [Add context for Claude](#add-context-for-claude) for how the text is delivered and what to put in it                                                                                                                                |
 | `initialUserMessage` | String used as the first user message of the session. Applies in [non-interactive mode](/en/headless) with the `-p` flag, where it becomes the first turn even if no prompt is provided. If a prompt is provided, it follows as the next turn. Unlike `additionalContext`, which attaches to an existing turn, this creates the turn |
-| `sessionTitle`       | Sets the session title, with the same effect as `/rename`. Use to name sessions automatically from the launch folder, git branch, or worktree name. Applies only when `source` is `"startup"` or `"resume"`; ignored on `"clear"` and `"compact"`                                                                                    |
+| `sessionTitle`       | Sets the session title, with the same effect as `/rename`. Use to name sessions automatically from the launch folder, git branch, or worktree name. Applies when `source` is `"startup"`, `"resume"`, or `"fork"`; ignored on `"clear"` and `"compact"`                                                                              |
 | `watchPaths`         | Array of absolute paths to watch for [FileChanged](#filechanged) events during this session                                                                                                                                                                                                                                          |
 | `reloadSkills`       | Boolean. When `true`, Claude Code re-scans the [skill](/en/skills) and command directories after the SessionStart hooks complete, so skills the hook installed are available in the same session, starting with the first prompt                                                                                                     |
 
@@ -1362,6 +1369,8 @@ Runs after Claude creates tool parameters and before processing the tool call. M
 
 <Warning>
   PreToolUse runs only when Claude calls a tool. Files you [reference with `@` in your prompt](/en/common-workflows#reference-files-and-directories) are added without any tool call: Claude Code inserts their contents while building the prompt, so no PreToolUse hook fires for them, including hooks matching `Read`. To block specific paths from `@` references, use a [`Read` deny rule](/en/permissions#read-and-edit) instead.
+
+  PreToolUse also doesn't fire for [`EndConversation`](/en/tools-reference#endconversation-tool-behavior).
 </Warning>
 
 Use [PreToolUse decision control](#pretooluse-decision-control) to allow, deny, ask, or defer the tool call.
@@ -1594,7 +1603,9 @@ Matches on tool name, same values as PreToolUse.
 
 #### PermissionRequest input
 
-PermissionRequest hooks receive `tool_name` and `tool_input` fields like PreToolUse hooks, but without `tool_use_id`. An optional `permission_suggestions` array contains the "always allow" options the user would normally see in the permission dialog. The difference is when the hook fires: PermissionRequest hooks run when a permission dialog is about to be shown to the user, while PreToolUse hooks run before tool execution regardless of permission status.
+PermissionRequest hooks receive `tool_name` and `tool_input` fields like PreToolUse hooks, but without `tool_use_id`. An optional `permission_suggestions` array contains the "always allow" options the user would normally see in the permission dialog.
+
+The difference from PreToolUse is when the hook fires: PermissionRequest hooks run when a permission dialog is about to be shown to the user, while PreToolUse hooks run before tool execution regardless of permission status. Neither event fires for [`EndConversation`](/en/tools-reference#endconversation-tool-behavior).
 
 ```json theme={null}
 {
@@ -2462,7 +2473,7 @@ FileChanged hooks have no decision control. They can't block the file change fro
 
 ### WorktreeCreate
 
-Runs when a worktree is being created, either from `claude --worktree` or from a [subagent using `isolation: "worktree"`](/en/sub-agents#choose-the-subagent-scope). By default Claude Code creates the isolated working copy with `git worktree`. Configuring a WorktreeCreate hook replaces that default git behavior, letting you use a different version control system like SVN, Perforce, or Mercurial.
+Runs when a worktree is being created, whether from `claude --worktree`, from a [subagent using `isolation: "worktree"`](/en/sub-agents#choose-the-subagent-scope), or for a [background session](/en/agent-view#how-file-edits-are-isolated) that Claude Code isolates in its own worktree. By default Claude Code creates the isolated working copy with `git worktree`. Configuring a WorktreeCreate hook replaces that default git behavior, letting you use a different version control system like SVN, Perforce, or Mercurial.
 
 Because the hook replaces the default behavior entirely, [`.worktreeinclude`](/en/worktrees#copy-gitignored-files-into-worktrees) is not processed. If you need to copy local configuration files like `.env` into the new worktree, do it inside your hook script.
 
@@ -2512,13 +2523,21 @@ WorktreeCreate hooks don't use the standard allow/block decision model. Instead,
 
 If the hook fails or produces no path, worktree creation fails with an error.
 
-Claude Code resolves a relative path against the directory the hook ran in. If the resulting path isn't a directory Claude Code can enter, the session prints an error naming the path and exits with code 1. Before v2.1.205, a relative path or a path that didn't exist on disk crashed the session at startup, and with `-p` it stalled for about 30 seconds before exiting with code 0.
+Claude Code resolves a relative path against the directory the hook ran in, collapsing any `.` or `..` segments in it. If the resulting path isn't a directory Claude Code can enter, the session prints an error naming the path and exits with code 1. Before v2.1.205, a relative path or a path that didn't exist on disk crashed the session at startup, and with `-p` it stalled for about 30 seconds before exiting with code 0.
+
+Claude Code refuses an absolute path that contains `.` or `..` segments, and any path that passes through a symlink below the repository root, because a symlink committed to the repository could redirect the worktree outside it. The error names the rejected component. Return a normalized path that doesn't pass through a symlink inside the repository. Before v2.1.216, worktree creation followed the hook's path without this screening.
 
 ### WorktreeRemove
 
-Runs when a worktree is being removed, either when you exit a `--worktree` session and choose to remove it, or when a subagent with `isolation: "worktree"` finishes. This is the cleanup counterpart to [WorktreeCreate](#worktreecreate).
+Runs when a worktree is being removed. This is the cleanup counterpart to [WorktreeCreate](#worktreecreate). The event fires when:
+
+* you exit a `--worktree` session and choose to remove it
+* a subagent with `isolation: "worktree"` finishes
+* you delete a [background session](/en/agent-view#organize-the-list) whose worktree the hook created
 
 For git-based worktrees, Claude Code handles cleanup automatically with `git worktree remove`. If you configured a WorktreeCreate hook for a non-git version control system, pair it with a WorktreeRemove hook to handle cleanup. Without one, the worktree directory is left on disk.
+
+For a background-session delete, Claude Code verifies the stored worktree path before running the hook and refuses a path that is a symlink or passes through one below the repository root. The hook runs for a worktree that still contains files only when you confirm the delete in [agent view](/en/agent-view#organize-the-list); for such a worktree, [`claude rm`](/en/agent-view#manage-sessions-from-the-shell) keeps the session and worktree instead. Before v2.1.216, the hook ran on the stored path without these checks.
 
 Claude Code passes the path returned by WorktreeCreate as `worktree_path` in the hook input. This example reads that path and removes the directory:
 
@@ -3114,11 +3133,12 @@ The example below shows a `settings.json` hook that runs a project script with t
 
 Hook execution details, including which hooks matched, their exit codes, and full stdout and stderr, are written to the debug log file. Start Claude Code with `claude --debug-file <path>` to write the log to a known location, or run `claude --debug` and read the log at `~/.claude/debug/<session-id>.txt`. The `--debug` flag doesn't print to the terminal.
 
+For example, a `PostToolUse` hook on `Write` whose command prints `hook-ran` produces entries like:
+
 ```text theme={null}
-[DEBUG] Executing hooks for PostToolUse:Write
-[DEBUG] Found 1 hook commands to execute
-[DEBUG] Executing hook command: <Your command> with timeout 600000ms
-[DEBUG] Hook command completed with status 0: <Your stdout>
+2026-07-19T02:03:24.382Z [DEBUG] Hook output does not start with {, treating as plain text
+2026-07-19T02:03:24.382Z [DEBUG] Hook PostToolUse:Write (PostToolUse) success:
+hook-ran
 ```
 
 For more granular hook matching details, set `CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose` to see additional log lines such as hook matcher counts and query matching.
