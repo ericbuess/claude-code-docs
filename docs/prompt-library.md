@@ -998,7 +998,7 @@ export const PromptLibrary = ({text = {}, labels = {}, tagLabels = {}, phaseLabe
 
 This is a library of prompts to copy into Claude Code. Use it to explore ways of working you haven't tried, or when you're not sure where to start.
 
-The prompts are collected from various Anthropic guides, including [Common workflows](/en/common-workflows), [Best practices](/en/best-practices), and [How Anthropic teams use Claude Code](https://claude.com/blog/how-anthropic-teams-use-claude-code). They're starting points rather than scripts. Open **Why this works** under any prompt to see the pattern behind it so you can write your own.
+The prompts are collected from various Anthropic guides, including [Common workflows](/docs/en/common-workflows), [Best practices](/docs/en/best-practices), and [How Anthropic teams use Claude Code](https://claude.com/blog/how-anthropic-teams-use-claude-code). They're starting points rather than scripts. Open **Why this works** under any prompt to see the pattern behind it so you can write your own.
 
 export const labels = {
   startHere: "Start here",
@@ -1029,10 +1029,10 @@ export const labels = {
   },
   needsLabel: "Needs",
   needs: {
-    tracker: "your issue tracker added as a [claude.ai connector](/en/mcp#use-mcp-servers-from-claude-ai) or [MCP server](/en/mcp).",
-    gh: "the [gh CLI](https://cli.github.com) authenticated, or GitHub added as a [claude.ai connector](/en/mcp#use-mcp-servers-from-claude-ai).",
-    browser: "a way for Claude to render and screenshot the result. The [Desktop app](/en/desktop#preview-your-app) has this built in. In the terminal, install the [Chrome extension](/en/chrome) or a Playwright [MCP](/en/mcp) server.",
-    db: "your data warehouse or log store added as a [claude.ai connector](/en/mcp#use-mcp-servers-from-claude-ai) or [MCP server](/en/mcp)."
+    tracker: "your issue tracker added as a [claude.ai connector](/docs/en/mcp#use-mcp-servers-from-claude-ai) or [MCP server](/docs/en/mcp).",
+    gh: "the [gh CLI](https://cli.github.com) authenticated, or GitHub added as a [claude.ai connector](/docs/en/mcp#use-mcp-servers-from-claude-ai).",
+    browser: "a way for Claude to render and screenshot the result. The [Desktop app](/docs/en/desktop#preview-your-app) has this built in. In the terminal, install the [Chrome extension](/docs/en/chrome) or a Playwright [MCP](/docs/en/mcp) server.",
+    db: "your data warehouse or log store added as a [claude.ai connector](/docs/en/mcp#use-mcp-servers-from-claude-ai) or [MCP server](/docs/en/mcp)."
   }
 };
 
@@ -1127,7 +1127,7 @@ export const text = {
   },
   "plan-a-multi-file": {
     title: "Plan a multi-file change before touching code",
-    teaches: "Adding \"don't edit yet\" separates exploration from changes, so you see the approach before any code moves. To make plan-first the default on every prompt, press Shift+Tab for [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode)."
+    teaches: "Adding \"don't edit yet\" separates exploration from changes, so you see the approach before any code moves. To make plan-first the default on every prompt, press Shift+Tab for [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode)."
   },
   "draft-a-spec-by": {
     title: "Draft a spec by interview",
@@ -1136,7 +1136,7 @@ export const text = {
   },
   "turn-a-meeting-into": {
     title: "Turn a meeting into tickets",
-    teaches: "Skip the transcription step. Claude pulls action items from the unstructured input and writes them straight into your tracker via [MCP](/en/mcp), so you review the tickets, not the transcript.",
+    teaches: "Skip the transcription step. Claude pulls action items from the unstructured input and writes them straight into your tracker via [MCP](/docs/en/mcp), so you review the tickets, not the transcript.",
     next: "Save this as a `/tickets` skill"
   },
   "map-edge-cases-before": {
@@ -1230,7 +1230,7 @@ export const text = {
   },
   "run-a-security-review": {
     title: "Run a security review with a subagent",
-    teaches: "A [subagent](/en/sub-agents) runs the audit in its own context window and reports back a summary, so a long security review doesn't fill up your main session. The built-in general-purpose subagent handles this without extra setup.",
+    teaches: "A [subagent](/docs/en/sub-agents) runs the audit in its own context window and reports back a summary, so a long security review doesn't fill up your main session. The built-in general-purpose subagent handles this without extra setup.",
     next: "Set up a dedicated security-review subagent your whole team can use"
   },
   "review-content-before-sending": {
@@ -1249,7 +1249,7 @@ export const text = {
   },
   "turn-a-correction-into": {
     title: "Turn a correction into a rule",
-    teaches: "A correction in chat isn't shared with your team. A rule in the project's [CLAUDE.md](/en/memory) is shared once you commit it, and Claude reads it at the start of every session.",
+    teaches: "A correction in chat isn't shared with your team. A rule in the project's [CLAUDE.md](/docs/en/memory) is shared once you commit it, and Claude reads it at the start of every session.",
     next: "Open `/memory` to review what Claude wrote"
   },
   "resolve-merge-conflicts": {
@@ -1311,19 +1311,19 @@ export const text = {
   },
   "turn-a-recurring-task": {
     title: "Turn a recurring task into a skill",
-    teaches: "Name the steps once; reuse them as a command. Claude writes a [skill](/en/skills) anyone on your team can run."
+    teaches: "Name the steps once; reuse them as a command. Claude writes a [skill](/docs/en/skills) anyone on your team can run."
   },
   "add-a-hook-for": {
     title: "Add a hook for repeat behavior",
-    teaches: "Hooks make a behavior automatic instead of something you have to remember to ask for. Describe the trigger and action and Claude writes the [hook](/en/hooks) configuration."
+    teaches: "Hooks make a behavior automatic instead of something you have to remember to ask for. Describe the trigger and action and Claude writes the [hook](/docs/en/hooks) configuration."
   },
   "connect-a-tool-with": {
     title: "Connect a tool with MCP",
-    teaches: "Connect the source once instead of pasting data every session. After [MCP](/en/mcp) setup, Claude reads from the tool directly when you ask about it."
+    teaches: "Connect the source once instead of pasting data every session. After [MCP](/docs/en/mcp) setup, Claude reads from the tool directly when you ask about it."
   },
   "capture-what-to-remember": {
     title: "Capture what to remember for next time",
-    teaches: "Ask before you forget. Claude knows what it had to figure out this session and proposes [CLAUDE.md](/en/memory) entries so the next session starts with that context."
+    teaches: "Ask before you forget. Claude knows what it had to figure out this session and proposes [CLAUDE.md](/docs/en/memory) entries so the next session starts with that context."
   }
 };
 
@@ -1363,20 +1363,20 @@ get the bundle size under 200KB and show me what you removed
 why is the build failing? @build.log
 ```
 
-**Say how you want the answer.** Name the format, length, or audience so the explanation fits how you'll use it. To make a format the default for every response, set an [output style](/en/output-styles).
+**Say how you want the answer.** Name the format, length, or audience so the explanation fits how you'll use it. To make a format the default for every response, set an [output style](/docs/en/output-styles).
 
 ```text theme={null}
 explain how the payment retry logic works as an HTML page with a diagram, then open it in my browser
 ```
 
-For more on each pattern, see [best practices](/en/best-practices).
+For more on each pattern, see [best practices](/docs/en/best-practices).
 
 ## Where these come from
 
 These prompts are based on patterns from published Anthropic resources. Each card links to its source:
 
-* [Common workflows](/en/common-workflows): step-by-step guides for the core tasks
-* [Best practices](/en/best-practices): prompting patterns and project setup
+* [Common workflows](/docs/en/common-workflows): step-by-step guides for the core tasks
+* [Best practices](/docs/en/best-practices): prompting patterns and project setup
 * [How Anthropic teams use Claude Code](https://claude.com/blog/how-anthropic-teams-use-claude-code): real workflows from engineering, product, design, and data teams, with deep dives on [legal](https://claude.com/blog/how-anthropic-uses-claude-legal), [marketing](https://claude.com/blog/how-anthropic-uses-claude-marketing), and [cybersecurity](https://claude.com/blog/how-anthropic-uses-claude-cybersecurity)
 * [Scaling agentic coding guide](https://resources.anthropic.com/hubfs/Scaling%20agentic%20coding%20across%20your%20organization.pdf): the enterprise adoption guide
 
@@ -1384,6 +1384,6 @@ For video walkthroughs of these patterns, see the free [Claude Code in Action](h
 
 ## Related resources
 
-The prompts on this page are starting points. Once one works for your project, the next step is making it repeatable: save it as a [skill](/en/skills) so anyone on your team can run it as a `/command`, and record the conventions Claude learned in [CLAUDE.md](/en/memory) so every session starts with that context instead of Claude relearning it. For larger or riskier changes, [plan mode](/en/permission-modes#analyze-before-you-edit-with-plan-mode) shows you the file list before any edits happen.
+The prompts on this page are starting points. Once one works for your project, the next step is making it repeatable: save it as a [skill](/docs/en/skills) so anyone on your team can run it as a `/command`, and record the conventions Claude learned in [CLAUDE.md](/docs/en/memory) so every session starts with that context instead of Claude relearning it. For larger or riskier changes, [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) shows you the file list before any edits happen.
 
-If you're introducing Claude Code across a team, see [administration](/en/admin-setup) for managed settings and policy, and [costs and usage](/en/costs) for how this work is billed on your plan.
+If you're introducing Claude Code across a team, see [administration](/docs/en/admin-setup) for managed settings and policy, and [costs and usage](/docs/en/costs) for how this work is billed on your plan.

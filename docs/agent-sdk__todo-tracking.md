@@ -34,13 +34,13 @@ It may skip todos for very short or single-step requests.
 
 ## Examples
 
-Before running these examples, install the Claude Agent SDK by following the [quickstart](/en/agent-sdk/quickstart).
+Before running these examples, install the Claude Agent SDK by following the [quickstart](/docs/en/agent-sdk/quickstart).
 
 Each example runs until the agent finishes and yields its final result message. If a session reaches its turn limit first, that result message has the `error_max_turns` subtype. Check `subtype` to detect that ending.
 
 These examples use single-shot `query()` calls. After yielding an `error_max_turns` result, `query()` raises an error that includes `Reached maximum number of turns`. Each example wraps its loop in a try block to exit cleanly when that happens.
 
-See [Handle the result](/en/agent-sdk/agent-loop#handle-the-result) for the result subtypes.
+See [Handle the result](/docs/en/agent-sdk/agent-loop#handle-the-result) for the result subtypes.
 
 ### Monitoring Todo Changes
 
@@ -324,7 +324,7 @@ The streamed `tool_use` input is the raw shape the model emitted. Claude Code re
 
 ## Related Documentation
 
-* [TypeScript SDK Reference](/en/agent-sdk/typescript)
-* [Python SDK Reference](/en/agent-sdk/python)
-* [Streaming vs Single Mode](/en/agent-sdk/streaming-vs-single-mode)
-* [Custom Tools](/en/agent-sdk/custom-tools)
+* [TypeScript SDK Reference](/docs/en/agent-sdk/typescript)
+* [Python SDK Reference](/docs/en/agent-sdk/python)
+* [Streaming vs Single Mode](/docs/en/agent-sdk/streaming-vs-single-mode)
+* [Custom Tools](/docs/en/agent-sdk/custom-tools)

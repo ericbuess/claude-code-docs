@@ -13,7 +13,7 @@ This page covers self-hosting on your own infrastructure: understand [the subpro
 If you do not need infrastructure control, custom isolation, or your own data plane, consider [Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) instead: a hosted REST API where Anthropic runs the agent and the sandbox, so your application sends events and streams back results with no hosting infrastructure to operate.
 
 <Info>
-  For security hardening beyond basic sandboxing, including network controls, credential management, and isolation options, see [Secure Deployment](/en/agent-sdk/secure-deployment).
+  For security hardening beyond basic sandboxing, including network controls, credential management, and isolation options, see [Secure Deployment](/docs/en/agent-sdk/secure-deployment).
 </Info>
 
 ## The subprocess model
@@ -44,9 +44,9 @@ Three kinds of agent state live on the container's filesystem by default. None o
 | `CLAUDE.md` memory files    | `~/.claude/CLAUDE.md` for the user tier and the session's working directory for the project tier |
 | Working-directory artifacts | The session's working directory                                                                  |
 
-To persist transcripts across hosts, configure a [`SessionStore` adapter](/en/agent-sdk/session-storage). Memory files and other working-directory artifacts need their own storage strategy, such as a mounted volume or an object-store sync.
+To persist transcripts across hosts, configure a [`SessionStore` adapter](/docs/en/agent-sdk/session-storage). Memory files and other working-directory artifacts need their own storage strategy, such as a mounted volume or an object-store sync.
 
-For how sessions, resumption, and forking work at the API level, see [Sessions](/en/agent-sdk/sessions).
+For how sessions, resumption, and forking work at the API level, see [Sessions](/docs/en/agent-sdk/sessions).
 
 ## Choose a session pattern
 
@@ -75,11 +75,11 @@ Run persistent container instances, often hosting multiple SDK processes per con
 
 Example workloads include an email agent that triages and responds to incoming mail, a site builder that hosts a per-user editable site through container ports, and a chat bot that handles continuous traffic from a platform like Slack.
 
-The container exposes an HTTP or WebSocket endpoint and maps each active session to a long-lived query and the subprocess behind it. In TypeScript, use [`streamInput()`](/en/agent-sdk/typescript#query-object) to add turns to an active session and [`startup()`](/en/agent-sdk/typescript#startup) to pre-warm subprocesses ahead of incoming traffic. In Python, use [`ClaudeSDKClient`](/en/agent-sdk/python#claudesdkclient) to hold a session open across turns. Size the container so it can hold the maximum number of concurrent sessions in memory.
+The container exposes an HTTP or WebSocket endpoint and maps each active session to a long-lived query and the subprocess behind it. In TypeScript, use [`streamInput()`](/docs/en/agent-sdk/typescript#query-object) to add turns to an active session and [`startup()`](/docs/en/agent-sdk/typescript#startup) to pre-warm subprocesses ahead of incoming traffic. In Python, use [`ClaudeSDKClient`](/docs/en/agent-sdk/python#claudesdkclient) to hold a session open across turns. Size the container so it can hold the maximum number of concurrent sessions in memory.
 
 ### Hybrid sessions
 
-Ephemeral containers that hydrate from a [`SessionStore`](/en/agent-sdk/session-storage) on startup and persist updates back. Best for sessions that span many interactions but sit idle between them. The container spins down during idle periods and spins back up when the user returns.
+Ephemeral containers that hydrate from a [`SessionStore`](/docs/en/agent-sdk/session-storage) on startup and persist updates back. Best for sessions that span many interactions but sit idle between them. The container spins down during idle periods and spins back up when the user returns.
 
 Example workloads include a personal project manager with intermittent check-ins, deep research that pauses and resumes over hours, and a customer support agent that loads ticket history across interactions.
 
@@ -127,7 +127,7 @@ The pattern hinges on resuming a session by ID with a shared store attached:
   ```
 </CodeGroup>
 
-See [Session storage](/en/agent-sdk/session-storage) for the full `SessionStore` interface and reference adapters.
+See [Session storage](/docs/en/agent-sdk/session-storage) for the full `SessionStore` interface and reference adapters.
 
 ### Multi-agent container
 
@@ -158,7 +158,7 @@ Providers to evaluate:
 * [Fly Machines](https://fly.io/docs/machines/)
 * [Vercel Sandbox](https://vercel.com/docs/functions/sandbox)
 
-For self-hosted options such as Docker, gVisor, and Firecracker, and detailed isolation configuration, see [Isolation Technologies](/en/agent-sdk/secure-deployment#isolation-technologies).
+For self-hosted options such as Docker, gVisor, and Firecracker, and detailed isolation configuration, see [Isolation Technologies](/docs/en/agent-sdk/secure-deployment#isolation-technologies).
 
 ### Runtime dependencies
 
@@ -175,7 +175,7 @@ The bundled binary is pinned to the SDK package version, so updating the SDK is 
 
 ### Network
 
-The SDK needs outbound HTTPS to `api.anthropic.com`, or to your provider's regional endpoint when running on Amazon Bedrock or Google Cloud's Agent Platform. If your agents use [MCP servers](/en/agent-sdk/mcp) or external tools, they need outbound access to those endpoints as well. For production, route outbound traffic through an egress proxy that enforces domain allowlists, injects credentials, and logs requests. See [Secure Deployment](/en/agent-sdk/secure-deployment) for the full pattern.
+The SDK needs outbound HTTPS to `api.anthropic.com`, or to your provider's regional endpoint when running on Amazon Bedrock or Google Cloud's Agent Platform. If your agents use [MCP servers](/docs/en/agent-sdk/mcp) or external tools, they need outbound access to those endpoints as well. For production, route outbound traffic through an egress proxy that enforces domain allowlists, injects credentials, and logs requests. See [Secure Deployment](/docs/en/agent-sdk/secure-deployment) for the full pattern.
 
 For inbound traffic, expose an HTTP or WebSocket port on the container. Your application handles client requests on that port and calls the SDK internally; the subprocess itself does not listen on the network.
 
@@ -185,7 +185,7 @@ Work through these decisions before shipping a self-hosted agent.
 
 ### Session and state persistence
 
-Default local disk is lost on restart, scale-down, or a move to a different node. For any session a user expects to resume, mirror the transcript to durable storage with a [`SessionStore` adapter](/en/agent-sdk/session-storage). See [Reference implementations](/en/agent-sdk/session-storage#reference-implementations) for S3, Redis, and Postgres adapters and a conformance suite for your own.
+Default local disk is lost on restart, scale-down, or a move to a different node. For any session a user expects to resume, mirror the transcript to durable storage with a [`SessionStore` adapter](/docs/en/agent-sdk/session-storage). See [Reference implementations](/docs/en/agent-sdk/session-storage#reference-implementations) for S3, Redis, and Postgres adapters and a conformance suite for your own.
 
 Three things to know about how `SessionStore` behaves:
 
@@ -209,13 +209,13 @@ OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 OTEL_EXPORTER_OTLP_ENDPOINT=http://collector.example.com:4318
 ```
 
-Prompt text and tool inputs are not included in exports by default. See [Control sensitive data in exports](/en/agent-sdk/observability#control-sensitive-data-in-exports) for the opt-in flags, and [Observability](/en/agent-sdk/observability) for the full signal catalog.
+Prompt text and tool inputs are not included in exports by default. See [Control sensitive data in exports](/docs/en/agent-sdk/observability#control-sensitive-data-in-exports) for the opt-in flags, and [Observability](/docs/en/agent-sdk/observability) for the full signal catalog.
 
 ### Auth and secrets
 
 Three auth concerns matter at hosting time:
 
-* **Anthropic API**: the subprocess reads `ANTHROPIC_API_KEY` from its environment. Supply it from your secret manager, or set `ANTHROPIC_BASE_URL` to route model calls through a proxy that injects the key outside the container. See [Credential management](/en/agent-sdk/secure-deployment#credential-management) for the proxy pattern and the [SDK overview](/en/agent-sdk/overview#get-started) for supported authentication methods.
+* **Anthropic API**: the subprocess reads `ANTHROPIC_API_KEY` from its environment. Supply it from your secret manager, or set `ANTHROPIC_BASE_URL` to route model calls through a proxy that injects the key outside the container. See [Credential management](/docs/en/agent-sdk/secure-deployment#credential-management) for the proxy pattern and the [SDK overview](/docs/en/agent-sdk/overview#get-started) for supported authentication methods.
 * **Inbound**: put authentication at a gateway in front of the agent container. The agent should receive pre-authenticated requests and should not be the component that validates user tokens.
 * **Outbound tools**: keep tool credentials out of the agent environment. Route outbound calls through a proxy that injects API keys after the request leaves the container. The agent makes the call; the proxy adds the credential.
 
@@ -233,11 +233,11 @@ Measure the per-session ceiling by running a representative session to your targ
 
 Horizontal-scale routing depends on your pattern. For long-running sessions, where containers hold many sessions, run a pool of containers behind a load balancer and pin each session to one container using consistent hashing on `sessionId`. A pinned session keeps hitting the same container, and therefore the same running subprocess, until it is evicted or the container restarts.
 
-Large fanouts of concurrent [subagents](/en/agent-sdk/subagents) from a single session can hit API rate limits. Break the work into smaller batches rather than issuing one wide dispatch.
+Large fanouts of concurrent [subagents](/docs/en/agent-sdk/subagents) from a single session can hit API rate limits. Break the work into smaller batches rather than issuing one wide dispatch.
 
 ### Cost
 
-Anthropic token cost typically dominates container infrastructure cost by an order of magnitude or more. A minimally provisioned container runs roughly \$0.05 per hour, while a single long agent session can spend dollars in tokens. See [Cost tracking](/en/agent-sdk/cost-tracking) for per-session token accounting.
+Anthropic token cost typically dominates container infrastructure cost by an order of magnitude or more. A minimally provisioned container runs roughly \$0.05 per hour, while a single long agent session can spend dollars in tokens. See [Cost tracking](/docs/en/agent-sdk/cost-tracking) for per-session token accounting.
 
 ### Multi-tenant isolation
 
@@ -246,7 +246,7 @@ Default SDK behavior reads settings and `CLAUDE.md` memory files from the filesy
 To isolate tenants inside a shared container:
 
 * Pass `settingSources: []` in TypeScript or `setting_sources=[]` in Python so no filesystem settings load.
-* Set `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1` in `env`. [Auto memory](/en/memory#auto-memory) at `~/.claude/projects/<project>/memory/` loads into the system prompt regardless of `settingSources`. See [What settingSources does not control](/en/agent-sdk/claude-code-features#what-settingsources-does-not-control) for the other inputs that load unconditionally.
+* Set `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1` in `env`. [Auto memory](/docs/en/memory#auto-memory) at `~/.claude/projects/<project>/memory/` loads into the system prompt regardless of `settingSources`. See [What settingSources does not control](/docs/en/agent-sdk/claude-code-features#what-settingsources-does-not-control) for the other inputs that load unconditionally.
 * Point `CLAUDE_CONFIG_DIR` at a per-tenant directory so tenants do not share the `~/.claude.json` global config.
 * Use a per-tenant working directory. Pass `cwd` explicitly on every `query()` call.
 * Apply per-tenant egress rules at your proxy, such as distinct outbound IPs, credentials, or domain allowlists, so a compromised tenant cannot exfiltrate data via another tenant's outbound policy.
@@ -305,7 +305,7 @@ The example below applies the four SDK-level options together. Construct `tenant
   ```
 </CodeGroup>
 
-For per-tenant network controls, see [Secure Deployment](/en/agent-sdk/secure-deployment).
+For per-tenant network controls, see [Secure Deployment](/docs/en/agent-sdk/secure-deployment).
 
 ## Known limitations
 
@@ -316,12 +316,12 @@ Plan around these in your deployment design.
 | No top-level session timeout                        | A session does not time out on its own. Set `maxTurns` in `Options` to bound how many tool-use round trips the agent takes before stopping.                                                                                                                                                  |
 | Memory growth over long sessions                    | Cap session length or recycle subprocesses periodically. See [Scaling and concurrency](#scaling-and-concurrency).                                                                                                                                                                            |
 | Large parallel-subagent fanouts can hit rate limits | Break work into smaller batches rather than issuing one wide dispatch.                                                                                                                                                                                                                       |
-| No per-subagent wall-clock deadline                 | Cap each [subagent](/en/agent-sdk/subagents) with `maxTurns` in its `AgentDefinition`. For background subagents only, `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS` sets a stall watchdog that fires when a `run_in_background` subagent stops producing output; it is not a total-runtime deadline. |
+| No per-subagent wall-clock deadline                 | Cap each [subagent](/docs/en/agent-sdk/subagents) with `maxTurns` in its `AgentDefinition`. For background subagents only, `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS` sets a stall watchdog that fires when a `run_in_background` subagent stops producing output; it is not a total-runtime deadline. |
 
 ## Next steps
 
 * [Hosting cookbook](https://github.com/anthropics/claude-cookbooks/blob/main/claude_agent_sdk/07_Hosting_the_agent.ipynb): notebook walkthrough with [deployable code](https://github.com/anthropics/claude-cookbooks/tree/main/claude_agent_sdk/hosting) for Docker, Modal, and Kubernetes.
-* [Session storage](/en/agent-sdk/session-storage): persist transcripts across hosts with a `SessionStore` adapter.
-* [Observability](/en/agent-sdk/observability): export OTEL traces, metrics, and logs to your collector.
-* [Secure deployment](/en/agent-sdk/secure-deployment): network controls, credential management, and isolation hardening.
-* [Cost tracking](/en/agent-sdk/cost-tracking): per-session token and cost accounting.
+* [Session storage](/docs/en/agent-sdk/session-storage): persist transcripts across hosts with a `SessionStore` adapter.
+* [Observability](/docs/en/agent-sdk/observability): export OTEL traces, metrics, and logs to your collector.
+* [Secure deployment](/docs/en/agent-sdk/secure-deployment): network controls, credential management, and isolation hardening.
+* [Cost tracking](/docs/en/agent-sdk/cost-tracking): per-session token and cost accounting.

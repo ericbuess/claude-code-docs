@@ -7,7 +7,7 @@
 > Publish a live, shareable page from your session with Artifacts, match tool parameters in deny and ask rules, and set any setting from the prompt with /config.
 
 <div className="digest-meta">
-  <span>Releases <a href="/docs/en/changelog#2-1-178">v2.1.178 → v2.1.183</a></span>
+  <span>Releases <a href="/docs/docs/en/changelog#2-1-178">v2.1.178 → v2.1.183</a></span>
   <span>3 features · June 15–19</span>
 </div>
 
@@ -28,7 +28,7 @@
   > Make an artifact that walks through this PR with the diff annotated inline.
   ```
 
-  <a className="digest-feature-link" href="/docs/en/artifacts#create-an-artifact">Create an artifact</a>
+  <a className="digest-feature-link" href="/docs/docs/en/artifacts#create-an-artifact">Create an artifact</a>
 </div>
 
 <div className="digest-feature">
@@ -49,7 +49,7 @@
   }
   ```
 
-  <a className="digest-feature-link" href="/docs/en/permissions#match-by-input-parameter">Match by input parameter</a>
+  <a className="digest-feature-link" href="/docs/docs/en/permissions#match-by-input-parameter">Match by input parameter</a>
 </div>
 
 <div className="digest-feature">
@@ -66,7 +66,7 @@
   > /config thinking=false
   ```
 
-  <a className="digest-feature-link" href="/docs/en/commands#all-commands">Commands reference</a>
+  <a className="digest-feature-link" href="/docs/docs/en/commands#all-commands">Commands reference</a>
 </div>
 
 <div className="digest-wins">
@@ -87,4 +87,4 @@
   </div>
 </div>
 
-[Full changelog for v2.1.178–v2.1.183 →](/en/changelog#2-1-178)
+[Full changelog for v2.1.178–v2.1.183 →](/docs/en/changelog#2-1-178)

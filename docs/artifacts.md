@@ -7,7 +7,7 @@
 > Artifacts turn Claude Code's work into live, interactive pages on claude.ai that you can keep private, share with your organization, or publish to a public link.
 
 <Note>
-  Artifacts are available on Pro, Max, Team, and Enterprise plans and require a session signed in with [`/login`](/en/setup#authenticate). See [Availability](#availability) for the full set of requirements.
+  Artifacts are available on Pro, Max, Team, and Enterprise plans and require a session signed in with [`/login`](/docs/en/setup#authenticate). See [Availability](#availability) for the full set of requirements.
 </Note>
 
 An artifact is a live, interactive web page that Claude Code publishes from your session to a private URL on claude.ai. You open it in a browser, and it updates in place as the session continues. Share it from the page header when you want someone else to see it too. For example, use an artifact to walk a reviewer through a pull request with annotated diffs, build a dashboard from session data, or keep an investigation timeline that fills in as Claude works.
@@ -18,7 +18,7 @@ An artifact is a live, interactive web page that Claude Code publishes from your
 
 ## When to use an artifact
 
-Use an artifact when terminal text is the wrong medium for what Claude produced: output that is easier to look at and interact with than to read line by line. Claude builds the page from anything your session can reach, including your codebase and data it pulls through your [connected tools](/en/mcp), so the page can show things that would take paragraphs to describe. For example, ask Claude to:
+Use an artifact when terminal text is the wrong medium for what Claude produced: output that is easier to look at and interact with than to read line by line. Claude builds the page from anything your session can reach, including your codebase and data it pulls through your [connected tools](/docs/en/mcp), so the page can show things that would take paragraphs to describe. For example, ask Claude to:
 
 * Walk a reviewer through a pull request with annotated diffs
 * Render a dashboard from data the session already pulled
@@ -90,7 +90,7 @@ An editor publishes new versions the same way you [update the artifact from anot
 
 {/* plan-availability: feature=artifact-mcp plans=pro,max,team,enterprise providers=anthropic */}
 
-An artifact can call [MCP connectors](/en/mcp#use-mcp-servers-from-claude-ai) each time someone views it, so the page shows current data rather than a snapshot from the session that built it. Connector calls from artifacts are available on Pro, Max, Team, and Enterprise plans and require Claude Code v2.1.209 or later. On earlier versions, Claude publishes the page with whatever data the session gathered while building it.
+An artifact can call [MCP connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) each time someone views it, so the page shows current data rather than a snapshot from the session that built it. Connector calls from artifacts are available on Pro, Max, Team, and Enterprise plans and require Claude Code v2.1.209 or later. On earlier versions, Claude publishes the page with whatever data the session gathered while building it.
 
 To create a connector-backed page, name the connector and the data you want in your prompt:
 
@@ -168,7 +168,7 @@ Turn this migration plan into a checklist artifact. Check items off as you compl
 
 ## Improve the visual design
 
-{/* min-version: 2.1.182 */}Claude applies a built-in design skill when it builds an artifact, so pages get a deliberate palette, typography, and layout without extra prompting. Requires Claude Code v2.1.182 or later. That skill also looks for an existing design system in your project before choosing its own. Design tokens are the named color, typography, and spacing values your design system reuses. To keep artifacts consistent with your product's branding, record them where Claude can find them, such as the project's [CLAUDE.md](/en/memory) or a theme file in your repository:
+{/* min-version: 2.1.182 */}Claude applies a built-in design skill when it builds an artifact, so pages get a deliberate palette, typography, and layout without extra prompting. Requires Claude Code v2.1.182 or later. That skill also looks for an existing design system in your project before choosing its own. Design tokens are the named color, typography, and spacing values your design system reuses. To keep artifacts consistent with your product's branding, record them where Claude can find them, such as the project's [CLAUDE.md](/docs/en/memory) or a theme file in your repository:
 
 ```markdown theme={null}
 ## Design system
@@ -205,10 +205,10 @@ Artifacts require every condition below. When one is not met, Claude writes a lo
 | Requirement         | Available when                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Plan                | Pro, Max, Team, or Enterprise. On Pro and Max plans, artifacts are private to you until you share them, and no admin management applies. On Team plans, artifacts are on by default. On Enterprise plans, an Owner [enables them](#manage-artifacts-for-your-organization) in claude.ai admin settings.                                                                                                                                       |
-| Authentication      | The session is backed by a claude.ai account: sign in with `/login` in the CLI or desktop app. Claude Tag sessions are signed in through the agent's identity, so no step is needed there. Sessions using an API key, [gateway token](/en/llm-gateway), or cloud-provider credential cannot publish.                                                                                                                                          |
-| Model provider      | Anthropic API. Not available on [Amazon Bedrock](/en/amazon-bedrock), [Google Cloud's Agent Platform](/en/google-vertex-ai), or [Microsoft Foundry](/en/microsoft-foundry).                                                                                                                                                                                                                                                                   |
-| Organization policy | Customer-managed encryption keys (CMEK), HIPAA, and [Zero Data Retention](/en/zero-data-retention) are not enabled for the organization.                                                                                                                                                                                                                                                                                                      |
-| Surface             | Claude Code CLI version 2.1.183 or later, or the Claude desktop app version 1.13576.0 or later. [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions can also publish artifacts when both Claude Tag and artifacts are enabled for the organization. Off by default in [Agent SDK](/en/agent-sdk/overview), GitHub Action, and MCP-server contexts, and when [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/en/env-vars) is set. |
+| Authentication      | The session is backed by a claude.ai account: sign in with `/login` in the CLI or desktop app. Claude Tag sessions are signed in through the agent's identity, so no step is needed there. Sessions using an API key, [gateway token](/docs/en/llm-gateway), or cloud-provider credential cannot publish.                                                                                                                                          |
+| Model provider      | Anthropic API. Not available on [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or [Microsoft Foundry](/docs/en/microsoft-foundry).                                                                                                                                                                                                                                                                   |
+| Organization policy | Customer-managed encryption keys (CMEK), HIPAA, and [Zero Data Retention](/docs/en/zero-data-retention) are not enabled for the organization.                                                                                                                                                                                                                                                                                                      |
+| Surface             | Claude Code CLI version 2.1.183 or later, or the Claude desktop app version 1.13576.0 or later. [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions can also publish artifacts when both Claude Tag and artifacts are enabled for the organization. Off by default in [Agent SDK](/docs/en/agent-sdk/overview), GitHub Action, and MCP-server contexts, and when [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars) is set. |
 
 ## Disable artifacts
 
@@ -216,9 +216,9 @@ To turn artifacts off for your own sessions regardless of your organization's se
 
 | Method                               | Setting                              |
 | :----------------------------------- | :----------------------------------- |
-| [Settings file](/en/settings)        | `"disableArtifact": true`            |
-| [Environment variable](/en/env-vars) | `CLAUDE_CODE_DISABLE_ARTIFACT=1`     |
-| [Permission rule](/en/permissions)   | Add `Artifact` to `permissions.deny` |
+| [Settings file](/docs/en/settings)        | `"disableArtifact": true`            |
+| [Environment variable](/docs/en/env-vars) | `CLAUDE_CODE_DISABLE_ARTIFACT=1`     |
+| [Permission rule](/docs/en/permissions)   | Add `Artifact` to `permissions.deny` |
 
 ## Manage artifacts for your organization
 
@@ -246,7 +246,7 @@ Publishing, sharing, and deleting an artifact each appear in your organization's
 
 ### Allowlist the viewer domain
 
-The viewer on claude.ai loads each artifact from a sandboxed `*.claudeusercontent.com` origin. If your organization restricts outbound network access, add that domain to your allowlist alongside `claude.ai`. See [Network access requirements](/en/network-config#network-access-requirements) for the full list.
+The viewer on claude.ai loads each artifact from a sandboxed `*.claudeusercontent.com` origin. If your organization restricts outbound network access, add that domain to your allowlist alongside `claude.ai`. See [Network access requirements](/docs/en/network-config#network-access-requirements) for the full list.
 
 ### List and delete artifacts with the Compliance API
 
@@ -262,6 +262,6 @@ For the request and response schemas, see the [Compliance API reference](https:/
 
 ## Related resources
 
-* Browse [prompting patterns and workflows](/en/prompt-library) that pair with artifacts
-* Turn an artifact prompt you reuse into a [skill](/en/skills) so you can invoke it as a command
-* [Connect MCP servers](/en/mcp) so Claude can pull data into an artifact while it builds the page
+* Browse [prompting patterns and workflows](/docs/en/prompt-library) that pair with artifacts
+* Turn an artifact prompt you reuse into a [skill](/docs/en/skills) so you can invoke it as a command
+* [Connect MCP servers](/docs/en/mcp) so Claude can pull data into an artifact while it builds the page

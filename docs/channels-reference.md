@@ -7,7 +7,7 @@
 > Build an MCP server that pushes webhooks, alerts, and chat messages into a Claude Code session. Reference for the channel contract: capability declaration, notification events, reply tools, sender gating, and permission relay.
 
 <Note>
-  Channels are in [research preview](/en/channels#research-preview). Team and Enterprise organizations must [explicitly enable them](/en/channels#enterprise-controls).
+  Channels are in [research preview](/docs/en/channels#research-preview). Team and Enterprise organizations must [explicitly enable them](/docs/en/channels#enterprise-controls).
 </Note>
 
 A channel is an MCP server that pushes events into a Claude Code session so Claude can react to things happening outside the terminal.
@@ -25,7 +25,7 @@ This page covers:
 * [Gate inbound messages](#gate-inbound-messages): sender checks to prevent prompt injection
 * [Relay permission prompts](#relay-permission-prompts): forward tool approval prompts to remote channels
 
-To use an existing channel instead of building one, see [Channels](/en/channels). Telegram, Discord, iMessage, and fakechat are included in the research preview.
+To use an existing channel instead of building one, see [Channels](/docs/en/channels). Telegram, Discord, iMessage, and fakechat are included in the research preview.
 
 ## Overview
 
@@ -48,7 +48,7 @@ Your server needs to:
 
 The [Server options](#server-options) and [Notification format](#notification-format) sections cover each of these in detail. See [Example: build a webhook receiver](#example-build-a-webhook-receiver) for a full walkthrough.
 
-During the research preview, custom channels aren't on the [approved allowlist](/en/channels#supported-channels). Use `--dangerously-load-development-channels` to test locally. See [Test during the research preview](#test-during-the-research-preview) for details.
+During the research preview, custom channels aren't on the [approved allowlist](/docs/en/channels#supported-channels). Use `--dangerously-load-development-channels` to test locally. See [Test during the research preview](#test-during-the-research-preview) for details.
 
 ## Example: build a webhook receiver
 
@@ -144,7 +144,7 @@ This example uses [Bun](https://bun.sh) as the runtime for its built-in HTTP ser
 
     A dim notice below the startup banner confirms the channel is registered: `Channels (experimental) messages from server:webhook inject directly in this session · restart without --dangerously-load-development-channels to stop`.
 
-    If you see "blocked by org policy," your organization admin needs to [enable channels](/en/channels#enterprise-controls) first.
+    If you see "blocked by org policy," your organization admin needs to [enable channels](/docs/en/channels#enterprise-controls) first.
 
     In a separate terminal, simulate a webhook by sending an HTTP POST with a message to your server. This example sends a CI failure alert to port 8788 (or whichever port you configured):
 
@@ -171,7 +171,7 @@ The [fakechat server](https://github.com/anthropics/claude-plugins-official/tree
 
 ## Test during the research preview
 
-During the research preview, every channel must be on the [approved allowlist](/en/channels#research-preview) to register. The development flag bypasses the allowlist for specific entries after a confirmation prompt. This example shows both entry types:
+During the research preview, every channel must be on the [approved allowlist](/docs/en/channels#research-preview) to register. The development flag bypasses the allowlist for specific entries after a confirmation prompt. This example shows both entry types:
 
 ```bash theme={null}
 # Testing a plugin you're developing
@@ -752,15 +752,15 @@ The three channel-specific pieces in this file:
 
 ## Package as a plugin
 
-To make your channel installable and shareable, wrap it in a [plugin](/en/plugins) and publish it to a [marketplace](/en/plugin-marketplaces). Users install it with `/plugin install`, then enable it per session with `--channels plugin:<name>@<marketplace>`.
+To make your channel installable and shareable, wrap it in a [plugin](/docs/en/plugins) and publish it to a [marketplace](/docs/en/plugin-marketplaces). Users install it with `/plugin install`, then enable it per session with `--channels plugin:<name>@<marketplace>`.
 
-A channel published to your own marketplace still needs `--dangerously-load-development-channels` to run, since it isn't on the [approved allowlist](/en/channels#supported-channels). The default allowlist is the channel plugins in `claude-plugins-official`, which Anthropic curates at its discretion. The [in-app submission forms](/en/plugins#submit-your-plugin-to-the-community-marketplace) add plugins to the community marketplace, which is not on the channel allowlist.
+A channel published to your own marketplace still needs `--dangerously-load-development-channels` to run, since it isn't on the [approved allowlist](/docs/en/channels#supported-channels). The default allowlist is the channel plugins in `claude-plugins-official`, which Anthropic curates at its discretion. The [in-app submission forms](/docs/en/plugins#submit-your-plugin-to-the-community-marketplace) add plugins to the community marketplace, which is not on the channel allowlist.
 
-If you are working with an Anthropic partner contact, reach out to them to coordinate an official-marketplace listing. On Team and Enterprise plans, an admin can instead include your plugin in the organization's own [`allowedChannelPlugins`](/en/channels#restrict-which-channel-plugins-can-run) list, which replaces the default Anthropic allowlist.
+If you are working with an Anthropic partner contact, reach out to them to coordinate an official-marketplace listing. On Team and Enterprise plans, an admin can instead include your plugin in the organization's own [`allowedChannelPlugins`](/docs/en/channels#restrict-which-channel-plugins-can-run) list, which replaces the default Anthropic allowlist.
 
 ## See also
 
-* [Channels](/en/channels) to install and use Telegram, Discord, iMessage, or the fakechat demo, and to enable channels for a Team or Enterprise org
+* [Channels](/docs/en/channels) to install and use Telegram, Discord, iMessage, or the fakechat demo, and to enable channels for a Team or Enterprise org
 * [Working channel implementations](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins) for complete server code with pairing flows, reply tools, and file attachments
-* [MCP](/en/mcp) for the underlying protocol that channel servers implement
-* [Plugins](/en/plugins) to package your channel so users can install it with `/plugin install`
+* [MCP](/docs/en/mcp) for the underlying protocol that channel servers implement
+* [Plugins](/docs/en/plugins) to package your channel so users can install it with `/plugin install`

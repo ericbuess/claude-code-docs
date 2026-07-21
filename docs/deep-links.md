@@ -160,11 +160,11 @@ Claude Code registers the `claude-cli://` handler with your operating system on 
 
 The handler launches Claude Code in a detected terminal emulator. On macOS, Claude Code remembers the terminal from your most recent interactive session and reuses it, supporting iTerm2, Ghostty, kitty, Alacritty, WezTerm, and Terminal.app. On Linux it honors the `$TERMINAL` environment variable, then `x-terminal-emulator`, then a list of common emulators. On Windows it prefers Windows Terminal, then PowerShell, then `cmd.exe`.
 
-To prevent registration entirely, set [`disableDeepLinkRegistration`](/en/settings) to `"disable"` in `settings.json`. To enforce this across an organization so users cannot re-enable it, set it in [managed settings](/en/server-managed-settings) instead.
+To prevent registration entirely, set [`disableDeepLinkRegistration`](/docs/en/settings) to `"disable"` in `settings.json`. To enforce this across an organization so users cannot re-enable it, set it in [managed settings](/docs/en/server-managed-settings) instead.
 
 ## Open a VS Code tab instead of a terminal
 
-The VS Code extension registers its own handler at `vscode://anthropic.claude-code/open`, which opens a Claude Code editor tab rather than a terminal window. See [Launch a VS Code tab from other tools](/en/vs-code#launch-a-vs-code-tab-from-other-tools) for that URL's parameters.
+The VS Code extension registers its own handler at `vscode://anthropic.claude-code/open`, which opens a Claude Code editor tab rather than a terminal window. See [Launch a VS Code tab from other tools](/docs/en/vs-code#launch-a-vs-code-tab-from-other-tools) for that URL's parameters.
 
 ## Troubleshooting
 
@@ -192,5 +192,5 @@ On macOS, start `claude` in your preferred terminal once and the next deep link 
 
 These pages cover related ways to launch or extend Claude Code sessions:
 
-* [Skills](/en/skills): store a long runbook prompt as a `/skill` in the repo so the deep link's `q` parameter only has to name it
-* [Non-interactive mode](/en/headless): run Claude from a script and capture the output without opening a terminal
+* [Skills](/docs/en/skills): store a long runbook prompt as a `/skill` in the repo so the deep link's `q` parameter only has to name it
+* [Non-interactive mode](/docs/en/headless): run Claude from a script and capture the output without opening a terminal

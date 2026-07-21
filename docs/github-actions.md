@@ -6,10 +6,10 @@
 
 > Learn about integrating Claude Code into your development workflow with Claude Code GitHub Actions
 
-Claude Code GitHub Actions brings AI-powered automation to your GitHub workflow. With a simple `@claude` mention in any PR or issue, Claude can analyze your code, create pull requests, implement features, and fix bugs - all while following your project's standards. For automatic reviews posted on every PR without a trigger, see [GitHub Code Review](/en/code-review).
+Claude Code GitHub Actions brings AI-powered automation to your GitHub workflow. With a simple `@claude` mention in any PR or issue, Claude can analyze your code, create pull requests, implement features, and fix bugs - all while following your project's standards. For automatic reviews posted on every PR without a trigger, see [GitHub Code Review](/docs/en/code-review).
 
 <Note>
-  Claude Code GitHub Actions is built on top of the [Claude Agent SDK](/en/agent-sdk/overview), which enables programmatic integration of Claude Code into your applications. You can use the SDK to build custom automation workflows beyond GitHub Actions.
+  Claude Code GitHub Actions is built on top of the [Claude Agent SDK](/docs/en/agent-sdk/overview), which enables programmatic integration of Claude Code into your applications. You can use the SDK to build custom automation workflows beyond GitHub Actions.
 </Note>
 
 ## Why use Claude Code GitHub Actions?
@@ -155,7 +155,7 @@ jobs:
 
 ### Using skills
 
-The `prompt` input accepts a [skill](/en/skills) invocation as well as plain text:
+The `prompt` input accepts a [skill](/docs/en/skills) invocation as well as plain text:
 
 * For a skill in your repository's `.claude/skills/` directory, run `actions/checkout` before the action step and pass `/skill-name`.
 * For a skill packaged in a plugin, install the plugin with the `plugin_marketplaces` and `plugins` inputs and pass the namespaced `/plugin-name:skill-name`.
@@ -271,7 +271,7 @@ The Claude Code Action v1 simplifies configuration with unified parameters:
 Key features:
 
 * **Unified prompt interface** - Use `prompt` for all instructions
-* **Skills** - Invoke installed [skills](/en/skills) directly from the prompt
+* **Skills** - Invoke installed [skills](/docs/en/skills) directly from the prompt
 * **CLI passthrough** - Any Claude Code CLI argument via `claude_args`
 * **Flexible triggers** - Works with any GitHub event
 
@@ -630,7 +630,7 @@ The Claude Code Action v1 uses a simplified configuration:
 
 | Parameter             | Description                                                        | Required |
 | --------------------- | ------------------------------------------------------------------ | -------- |
-| `prompt`              | Instructions for Claude (plain text or a [skill](/en/skills) name) | No\*     |
+| `prompt`              | Instructions for Claude (plain text or a [skill](/docs/en/skills) name) | No\*     |
 | `claude_args`         | CLI arguments passed to Claude Code                                | No       |
 | `plugin_marketplaces` | Newline-separated list of plugin marketplace Git URLs              | No       |
 | `plugins`             | Newline-separated list of plugin names to install before execution | No       |
@@ -673,7 +673,7 @@ See the [Claude Code Action documentation](https://github.com/anthropics/claude-
 
 You can configure Claude's behavior in two ways:
 
-1. **CLAUDE.md**: Define coding standards, review criteria, and project-specific rules in a `CLAUDE.md` file at the root of your repository. Claude will follow these guidelines when creating PRs and responding to requests. Check out our [Memory documentation](/en/memory) for more details.
+1. **CLAUDE.md**: Define coding standards, review criteria, and project-specific rules in a `CLAUDE.md` file at the root of your repository. Claude will follow these guidelines when creating PRs and responding to requests. Check out our [Memory documentation](/docs/en/memory) for more details.
 2. **Custom prompts**: Use the `prompt` parameter in the workflow file to provide workflow-specific instructions. This allows you to customize Claude's behavior for different workflows or tasks.
 
 Claude will follow these guidelines when creating PRs and responding to requests.

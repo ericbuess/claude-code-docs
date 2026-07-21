@@ -7,7 +7,7 @@
 > Claude Sonnet 5 becomes the default model, Claude in Chrome reaches general availability, subagents run in the background by default, Claude Desktop arrives on Linux in beta, and /radio tunes into Claude FM.
 
 <div className="digest-meta">
-  <span>Releases <a href="/docs/en/changelog#2-1-195">v2.1.195 → v2.1.201</a></span>
+  <span>Releases <a href="/docs/docs/en/changelog#2-1-195">v2.1.195 → v2.1.201</a></span>
   <span>5 features · June 29 – July 3</span>
 </div>
 
@@ -25,7 +25,7 @@
   > /model claude-sonnet-5
   ```
 
-  <a className="digest-feature-link" href="/docs/en/model-config#available-models">Model configuration</a>
+  <a className="digest-feature-link" href="/docs/docs/en/model-config#available-models">Model configuration</a>
 </div>
 
 <div className="digest-feature">
@@ -36,7 +36,7 @@
 
   <p className="digest-feature-lede">The Chrome integration is out of preview for everyone on a direct Anthropic plan. Claude Code drives your browser through the Claude in Chrome extension: it opens tabs, clicks through pages, fills forms, reads console logs, and shares your login state, so it can test the app it builds without you switching contexts.</p>
 
-  <a className="digest-feature-link" href="/docs/en/chrome">Use Claude Code with Chrome</a>
+  <a className="digest-feature-link" href="/docs/docs/en/chrome">Use Claude Code with Chrome</a>
 </div>
 
 <div className="digest-feature">
@@ -47,7 +47,7 @@
 
   <p className="digest-feature-lede">Claude now keeps working while subagents run and picks up their results when they finish, instead of pausing the conversation to wait. Claude still runs a subagent in the foreground when it needs the result before continuing, and background subagents surface every permission prompt in your main session. Pin a subagent's behavior with the <code>background</code> frontmatter field.</p>
 
-  <a className="digest-feature-link" href="/docs/en/sub-agents#run-subagents-in-foreground-or-background">Run subagents in foreground or background</a>
+  <a className="digest-feature-link" href="/docs/docs/en/sub-agents#run-subagents-in-foreground-or-background">Run subagents in foreground or background</a>
 </div>
 
 <div className="digest-feature">
@@ -58,7 +58,7 @@
 
   <p className="digest-feature-lede">The Claude desktop app is now available on Ubuntu 22.04+ and Debian 12+ in beta, on x86\_64 and arm64. You get the same Chat, Cowork, and Claude Code experience as macOS and Windows: parallel sessions, visual diff review, an integrated terminal and editor, and live app preview. Installs from Anthropic's apt repository, so updates arrive through regular package updates.</p>
 
-  <a className="digest-feature-link" href="/docs/en/desktop-linux">Claude Desktop on Linux</a>
+  <a className="digest-feature-link" href="/docs/docs/en/desktop-linux">Claude Desktop on Linux</a>
 </div>
 
 <div className="digest-feature">
@@ -79,15 +79,15 @@
   > /radio
   ```
 
-  <a className="digest-feature-link" href="/docs/en/commands#all-commands">All commands</a>
+  <a className="digest-feature-link" href="/docs/docs/en/commands#all-commands">All commands</a>
 </div>
 
 <div className="digest-wins">
   <p className="digest-wins-title">Other wins</p>
 
   <div className="digest-wins-grid">
-    <div><a href="/docs/en/artifacts">Artifacts</a> are now generally available and included on Pro and Max plans, joining Team and Enterprise</div>
-    <div>Admins can set an <a href="/docs/en/model-config#organization-default-model">organization default model</a> in the org console; it shows as "Org default" in <code>/model</code> when you haven't picked a model yourself</div>
+    <div><a href="/docs/docs/en/artifacts">Artifacts</a> are now generally available and included on Pro and Max plans, joining Team and Enterprise</div>
+    <div>Admins can set an <a href="/docs/docs/en/model-config#organization-default-model">organization default model</a> in the org console; it shows as "Org default" in <code>/model</code> when you haven't picked a model yourself</div>
     <div>Stacked skill invocations like <code>/skill-a /skill-b do XYZ</code> now load all leading skills (up to 5), not only the first</div>
     <div><code>AskUserQuestion</code> dialogs no longer auto-continue by default; opt into an idle timeout via <code>/config</code></div>
     <div>The "default" permission mode is now named "Manual" across the CLI, `--help`, VS Code, and JetBrains; `--permission-mode manual` is accepted alongside `default`</div>
@@ -100,4 +100,4 @@
   </div>
 </div>
 
-[Full changelog for v2.1.195–v2.1.201 →](/en/changelog#2-1-195)
+[Full changelog for v2.1.195–v2.1.201 →](/docs/en/changelog#2-1-195)

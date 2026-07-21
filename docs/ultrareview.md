@@ -40,7 +40,7 @@ To review a GitHub pull request instead, pass the PR number.
 
 The command also accepts `#1234`, `PR 1234`, and pasted PR URLs. A pasted URL must point to the repository in your current directory. Before v2.1.212, the command accepted only the bare number and rejected other forms with a not-a-branch error.
 
-In PR mode, the remote sandbox clones the pull request directly from the host rather than bundling your local working tree. PR mode works with repositories on `github.com` and on [GitHub Enterprise Server](/en/github-enterprise-server) instances that an Owner has connected to Claude Code.
+In PR mode, the remote sandbox clones the pull request directly from the host rather than bundling your local working tree. PR mode works with repositories on `github.com` and on [GitHub Enterprise Server](/docs/en/github-enterprise-server) instances that an Owner has connected to Claude Code.
 
 <Tip>
   If your repository is too large to bundle, Claude Code prompts you to use PR mode instead. Push your branch and open a draft PR, then run `/code-review ultra <PR-number>`.
@@ -102,7 +102,7 @@ Progress messages and the live session URL go to stderr so stdout stays parseabl
 
 Running `claude ultrareview` requires the same authentication and usage credit configuration as `/code-review ultra`. The subcommand exits with code 0 when the review completes with or without findings, code 1 when the review fails to launch, the cloud session errors, or the timeout elapses, and code 130 when interrupted with Ctrl-C. The remote review keeps running if you interrupt the subcommand; follow the session URL printed to stderr to watch it in the browser.
 
-For automatic reviews on GitHub pull requests, [Code Review](/en/code-review) integrates with your repository directly and posts findings as inline PR comments without a CLI step.
+For automatic reviews on GitHub pull requests, [Code Review](/docs/en/code-review) integrates with your repository directly and posts findings as inline PR comments without a CLI step.
 
 ## How ultrareview compares to /code-review and /review
 
@@ -121,6 +121,6 @@ Use `/code-review` for fast feedback as you work. Use `/review <pr>` to look ove
 
 ## Related resources
 
-* [Claude Code on the web](/en/claude-code-on-the-web): learn how cloud sessions and cloud sandboxes work
-* [Plan complex changes with ultraplan](/en/ultraplan): the planning counterpart to ultrareview for upfront design work
-* [Manage costs effectively](/en/costs): track usage and set spending limits
+* [Claude Code on the web](/docs/en/claude-code-on-the-web): learn how cloud sessions and cloud sandboxes work
+* [Plan complex changes with ultraplan](/docs/en/ultraplan): the planning counterpart to ultrareview for upfront design work
+* [Manage costs effectively](/docs/en/costs): track usage and set spending limits

@@ -16,7 +16,7 @@ Use agent view when you have several independent tasks Claude can work on withou
 
 When you want to work more directly in any agent's session, attach to the row to enter the full conversation.
 
-To compare agent view with subagents, agent teams, and worktrees, see [Run agents in parallel](/en/agents).
+To compare agent view with subagents, agent teams, and worktrees, see [Run agents in parallel](/docs/en/agents).
 
 <Note>
   Agent view is in research preview and requires Claude Code v2.1.139 or later. Check your version with `claude --version`. The interface and keyboard shortcuts may change as the feature evolves.
@@ -62,15 +62,15 @@ This walkthrough covers the core agent view loop: dispatch a task, watch its row
 
 You can use `claude agents` as your primary entry point instead of `claude`: dispatch every task from agent view, attach when you want the full conversation, and press `←` to return to the table.
 
-{/* min-version: 2.1.205 */}Inside a regular `claude` session, the prompt footer's `←` hint counts the background agents that are waiting on you, such as `← 2 agents`, and returns to `← for agents` when none need input. Counts above 99 show as `99+`. The count refreshes about every ten seconds while the terminal is focused and immediately when focus returns. It briefly changes color when it moves and when an agent completes, {/* min-version: 2.1.212 */}and when a background session finishes while none need your input it briefly shows the number completed, such as `← 2 done`. Both flashes are off when the [`prefersReducedMotion` setting](/en/settings#available-settings) is on, and the hint is hidden in [screen reader mode](/en/accessibility).
+{/* min-version: 2.1.205 */}Inside a regular `claude` session, the prompt footer's `←` hint counts the background agents that are waiting on you, such as `← 2 agents`, and returns to `← for agents` when none need input. Counts above 99 show as `99+`. The count refreshes about every ten seconds while the terminal is focused and immediately when focus returns. It briefly changes color when it moves and when an agent completes, {/* min-version: 2.1.212 */}and when a background session finishes while none need your input it briefly shows the number completed, such as `← 2 done`. Both flashes are off when the [`prefersReducedMotion` setting](/docs/en/settings#available-settings) is on, and the hint is hidden in [screen reader mode](/docs/en/accessibility).
 
-{/* min-version: 2.1.210 */}The count appears on every provider, including [Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry](/en/third-party-integrations).
+{/* min-version: 2.1.210 */}The count appears on every provider, including [Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry](/docs/en/third-party-integrations).
 
 ## Monitor sessions with agent view
 
 Run `claude agents` to open agent view. It takes over the full terminal and lists every session grouped by state, with pinned sessions and the ones that need you at the top. Each row shows the session's name, current activity, and its age, counted from when the session was created; a finished session's age freezes at how long the run took.
 
-The name is tinted with the color set by [`/color`](/en/commands) in that session, {/* min-version: 2.1.199 */}including when you [background a session](#from-inside-a-session) with `←` or `/background`.
+The name is tinted with the color set by [`/color`](/docs/en/commands) in that session, {/* min-version: 2.1.199 */}including when you [background a session](#from-inside-a-session) with `←` or `/background`.
 
 By default the list shows every background session you've started, across all your projects. A session working in one repository and another in a different worktree both appear here, regardless of which directory you opened agent view from. To narrow the list to one project, pass `--cwd`:
 
@@ -80,7 +80,7 @@ claude agents --cwd ~/projects/my-app
 
 This shows only sessions started under that directory. A session that has [moved into a worktree](#how-file-edits-are-isolated) under `~/projects/my-app/.claude/worktrees/` still counts as belonging to `~/projects/my-app`.
 
-Interactive sessions you have open in other terminals don't appear until you [background them](#from-inside-a-session). [Subagents](/en/sub-agents) and [teammates](/en/agent-teams) a session spawns aren't listed as separate rows.
+Interactive sessions you have open in other terminals don't appear until you [background them](#from-inside-a-session). [Subagents](/docs/en/sub-agents) and [teammates](/docs/en/agent-teams) a session spawns aren't listed as separate rows.
 
 ```text theme={null}
 Pinned
@@ -109,7 +109,7 @@ Each row starts with an icon whose color and animation show the session's state:
 | State       | Icon shows as | What it means                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | :---------- | :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Working     | Animated      | Claude is actively running tools or generating a response                                                                                                                                                                                                                                                                                                                                                                      |
-| Needs input | Yellow        | Claude is waiting on something only you can provide: an answer to a question, a permission decision, {/* min-version: 2.1.212 */}a [sandbox](/en/sandboxing) prompt to allow a network host, an MCP server's [request for input](/en/mcp#respond-to-mcp-elicitation-requests), a managed-settings prompt, or {/* min-version: 2.1.216 */}an MCP authentication or settings request held by a session with no terminal attached |
+| Needs input | Yellow        | Claude is waiting on something only you can provide: an answer to a question, a permission decision, {/* min-version: 2.1.212 */}a [sandbox](/docs/en/sandboxing) prompt to allow a network host, an MCP server's [request for input](/docs/en/mcp#respond-to-mcp-elicitation-requests), a managed-settings prompt, or {/* min-version: 2.1.216 */}an MCP authentication or settings request held by a session with no terminal attached |
 | Idle        | Dimmed        | The session has nothing to do and is ready for your next prompt                                                                                                                                                                                                                                                                                                                                                                |
 | Completed   | Green         | The task finished successfully                                                                                                                                                                                                                                                                                                                                                                                                 |
 | Failed      | Red           | The task ended with an error                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -121,13 +121,13 @@ Separately, the icon's shape shows whether the underlying process is running:
 | :------------------ | :---------------------------------------------------------------------------------------------------------------- |
 | `✻` or animated `✽` | The session process is alive and replies immediately                                                              |
 | `∙`                 | The process has exited. You can still peek, reply, or attach, and Claude restarts from where it left off          |
-| `✢`                 | A [`/loop`](/en/scheduled-tasks) session sleeping between iterations. The row shows its run count and a countdown |
+| `✢`                 | A [`/loop`](/docs/en/scheduled-tasks) session sleeping between iterations. The row shows its run count and a countdown |
 
 The `#N` label that can appear at the right edge of a row is a [pull request the session is linked to](#pull-request-status), not part of the state icon.
 
 The terminal tab title shows the awaiting-input count while agent view is open: `2 awaiting input · claude agents` when sessions need input, or `claude agents` when none do.
 
-While agent view is open, Claude Code also sends a notification through your configured [terminal notification channel](/en/terminal-config#get-a-terminal-bell-or-notification) when a local background session starts needing your input, finishes, or fails. Sessions that run on a schedule, such as [`/loop`](/en/scheduled-tasks) sessions, notify only when they need your input. Notifications use the same [`preferredNotifChannel` setting](/en/settings#available-settings) as the rest of Claude Code and fire the [`Notification` hook](/en/hooks#notification) with the `agent_needs_input` or `agent_completed` type.
+While agent view is open, Claude Code also sends a notification through your configured [terminal notification channel](/docs/en/terminal-config#get-a-terminal-bell-or-notification) when a local background session starts needing your input, finishes, or fails. Sessions that run on a schedule, such as [`/loop`](/docs/en/scheduled-tasks) sessions, notify only when they need your input. Notifications use the same [`preferredNotifChannel` setting](/docs/en/settings#available-settings) as the rest of Claude Code and fire the [`Notification` hook](/docs/en/hooks#notification) with the `agent_needs_input` or `agent_completed` type.
 
 Background sessions don't need any terminal open to keep working. A separate [supervisor process](#the-supervisor-process) runs them, so you can close agent view, close your shell, or start a new interactive session and your dispatched work keeps going.
 
@@ -137,13 +137,13 @@ A session that was mid-response when the machine slept can come back unresponsiv
 
 ### Row summaries
 
-The one-line summary in each row is generated by a [Haiku-class model](/en/model-config) so the row can tell you what the session is doing, what it needs, or what it produced without opening the transcript. While a session is actively working, the row text updates at most once every 15 seconds from the session's own recent output without sending a model request, and the model writes a fresh summary when each turn ends.
+The one-line summary in each row is generated by a [Haiku-class model](/docs/en/model-config) so the row can tell you what the session is doing, what it needs, or what it produced without opening the transcript. While a session is actively working, the row text updates at most once every 15 seconds from the session's own recent output without sending a model request, and the model writes a fresh summary when each turn ends.
 
 A working row shows what the session says it's doing, and a blocked row shows the question it's asking. During a long turn, the model also rewrites the summary every few minutes so a busy row doesn't keep showing an outdated one. {/* min-version: 2.1.206 */}The summary text fills the row's remaining width; open the [peek panel](#peek-and-reply) to read a sentence the terminal edge clips.
 
 When the list is [grouped by directory](#organize-the-list), the summary opens with the session's state as a colored word, such as `Needs input · double jump or wall climb?`. In the default state grouping, the group header already names the state, so the row shows only the summary.
 
-The end-of-turn summary and each mid-turn rewrite are one short Haiku-class request through your normal provider, billed and handled under the same [data usage terms](/en/data-usage) as the session itself. The 15-second updates between model rewrites reuse the session's own output and don't send a request. On third-party providers such as Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and custom gateways, the request falls back to the session's main model when no Haiku model is configured. Set [`ANTHROPIC_DEFAULT_HAIKU_MODEL`](/en/model-config#environment-variables) to choose the model for these summaries on those providers.
+The end-of-turn summary and each mid-turn rewrite are one short Haiku-class request through your normal provider, billed and handled under the same [data usage terms](/docs/en/data-usage) as the session itself. The 15-second updates between model rewrites reuse the session's own output and don't send a request. On third-party providers such as Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and custom gateways, the request falls back to the session's main model when no Haiku model is configured. Set [`ANTHROPIC_DEFAULT_HAIKU_MODEL`](/docs/en/model-config#environment-variables) to choose the model for these summaries on those providers.
 
 ### Pull request status
 
@@ -180,7 +180,7 @@ Type a reply in the peek panel and press `Enter` to send it to that session. Whe
 
 A reply that can't be delivered, because the background service is unreachable or the send fails, is saved and sent to the session as its next prompt when its process starts again, and the error message says the reply was saved. A reply prefixed with `!` isn't saved, because the saved text would reach the session as a plain prompt rather than run as a Bash command.
 
-With [voice dictation](/en/voice-dictation) enabled, hold or tap your push-to-talk key while the reply input is focused to dictate a reply instead of typing it. The same works in the dispatch input at the bottom of agent view.
+With [voice dictation](/docs/en/voice-dictation) enabled, hold or tap your push-to-talk key while the reply input is focused to dictate a reply instead of typing it. The same works in the dispatch input at the bottom of agent view.
 
 Use `↑` and `↓` to peek at adjacent sessions without closing the panel, or `→` to attach.
 
@@ -188,12 +188,12 @@ Use `↑` and `↓` to peek at adjacent sessions without closing the panel, or `
 
 Press `Enter` or `→` on a selected row to attach. Agent view is replaced by the full interactive session. When you attach, Claude posts a short recap of what happened while you were away.
 
-While attached, the session behaves like any other Claude Code session: [commands](/en/commands), keyboard shortcuts, and features all work, with the exceptions below.
+While attached, the session behaves like any other Claude Code session: [commands](/docs/en/commands), keyboard shortcuts, and features all work, with the exceptions below.
 
-While you're attached, `/install-github-app` and the [`/mcp`](/en/mcp) settings list work normally, since a human at the terminal can complete their dialogs. When nobody is attached, these commands can't open their dialogs, so the session appears under `Needs input` in agent view with a row such as `open this session to manage MCP servers`, and the transcript reply says the same. Attach and run the command again to continue; the needs-input row clears when you attach. `/mcp reconnect <server>`, `/mcp enable`, and `/mcp disable` work without attaching either way.
+While you're attached, `/install-github-app` and the [`/mcp`](/docs/en/mcp) settings list work normally, since a human at the terminal can complete their dialogs. When nobody is attached, these commands can't open their dialogs, so the session appears under `Needs input` in agent view with a row such as `open this session to manage MCP servers`, and the transcript reply says the same. Attach and run the command again to continue; the needs-input row clears when you attach. `/mcp reconnect <server>`, `/mcp enable`, and `/mcp disable` work without attaching either way.
 {/* max-version: 2.1.215 */}From v2.1.208 through v2.1.215, Claude Code refused these commands in a background session: v2.1.214 and v2.1.215 told you to attach and run the command again, and v2.1.208 through v2.1.212 refused them even with a terminal attached, directing you to a regular `claude` session instead. Before v2.1.208, the dialogs opened inside the background session.
 
-Attached sessions always render in [fullscreen mode](/en/fullscreen), regardless of your `tui` setting, because a background session has no terminal scrollback to append to. Scroll with `PgUp`, `PgDn`, or the mouse wheel, and press `Ctrl+O` for transcript mode. Your terminal's native scroll and tmux copy mode show only the current viewport, the same as when you run any fullscreen application.
+Attached sessions always render in [fullscreen mode](/docs/en/fullscreen), regardless of your `tui` setting, because a background session has no terminal scrollback to append to. Scroll with `PgUp`, `PgDn`, or the mouse wheel, and press `Ctrl+O` for transcript mode. Your terminal's native scroll and tmux copy mode show only the current viewport, the same as when you run any fullscreen application.
 
 Press `←` on an empty prompt, or run `/exit`, to detach and return to agent view, whether you opened the session from agent view or with `claude attach <id>` from your shell.
 
@@ -205,13 +205,13 @@ Detaching never stops a background session: `←`, `Ctrl+Z`, `/exit`, and double
 
 In a session running in the foreground, one you started in the terminal rather than attached to from agent view, pressing `←` on an empty prompt backgrounds it and opens agent view with that row selected, so you can switch sessions without leaving the terminal. The same single press detaches an attached session.
 
-[Claude's task list](/en/interactive-mode#task-list) moves to the background session with the conversation, so the checklist is intact when you return to that row.
+[Claude's task list](/docs/en/interactive-mode#task-list) moves to the background session with the conversation, so the checklist is intact when you return to that row.
 
 The row you pressed `←` from also keeps a bold, undimmed name after you move the selection with the arrow keys or the mouse, so you can tell which session you came from.
 
 If a tool is running when you press `←`, Claude Code waits up to about ten seconds for it to finish before backgrounding, and the response continues in the background session. Press `←` again to background immediately instead of waiting. When in-flight work can't carry over to the background session, the `Background this session?` dialog appears first, the same as with [`/background`](#from-inside-a-session).
 
-The ten-second limit doesn't apply while [subagents](/en/sub-agents) are running. Claude Code keeps waiting so their work carries over, and shows a `Still backgrounding after the current tool` notice while it waits; press `←` again to background without waiting, which restarts the subagents from the beginning.
+The ten-second limit doesn't apply while [subagents](/docs/en/sub-agents) are running. Claude Code keeps waiting so their work carries over, and shows a `Still backgrounding after the current tool` notice while it waits; press `←` again to background without waiting, which restarts the subagents from the beginning.
 
 Pressing `←` creates the session's row even when the conversation has no messages yet, so `→` still returns to it.
 
@@ -246,7 +246,7 @@ The picker opens only for a bare `/resume`. A targeted, scoped, or restricted re
 
 * `/resume` names an id or a search term
 * the view is scoped with `--cwd`
-* the view was started with [`--safe-mode`](/en/cli-reference#cli-flags)
+* the view was started with [`--safe-mode`](/docs/en/cli-reference#cli-flags)
 * the view was opened with a flag such as `--permission-mode` or `--settings`
 
 Completed sessions that don't fit on screen fold into a `… N more` row. Failures and sessions with an open pull request always stay visible. The `Completed` group fills the vertical space left after the live groups, and on a short terminal the header compacts to a single summary line so sessions that are working or need input stay visible.
@@ -294,7 +294,7 @@ You can dispatch new background sessions from agent view, send or copy an existi
 
 Type a prompt in the input at the bottom of agent view and press `Enter` to start a new background session. The session is named automatically from the prompt; rename it later with `Ctrl+R`.
 
-The automatic name is a short label written by a [Haiku-class model](/en/model-config). {/* min-version: 2.1.207 */}A name the session gets later also appears on its row, including the name Claude derives when you [accept a plan](/en/permission-modes#review-and-approve-a-plan) in that session.
+The automatic name is a short label written by a [Haiku-class model](/docs/en/model-config). {/* min-version: 2.1.207 */}A name the session gets later also appears on its row, including the name Claude derives when you [accept a plan](/docs/en/permission-modes#review-and-approve-a-plan) in that session.
 
 Paste an image into the prompt to include a screenshot or diagram with the task.
 
@@ -304,10 +304,10 @@ Prefix or mention parts of the prompt to control how the session starts:
 
 | Input                             | Effect                                                                                                                                                         |
 | :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `<agent-name> <prompt>`           | If the first word matches a custom [subagent](/en/sub-agents) name, that subagent runs as the session's main agent with the configuration from its frontmatter |
+| `<agent-name> <prompt>`           | If the first word matches a custom [subagent](/docs/en/sub-agents) name, that subagent runs as the session's main agent with the configuration from its frontmatter |
 | `@<agent-name>`                   | Mention a custom subagent anywhere in the prompt to run it as the main agent                                                                                   |
 | `@<repo>`                         | Mention a repository to run the session there. See [Dispatch to a specific directory](#dispatch-to-a-specific-directory) for which repositories are listed     |
-| `/<command>`                      | Suggest [skills](/en/skills) and [commands](/en/commands) to dispatch as the prompt                                                                            |
+| `/<command>`                      | Suggest [skills](/docs/en/skills) and [commands](/docs/en/commands) to dispatch as the prompt                                                                            |
 | `! <command>`                     | Run a shell command as a background job instead of starting a Claude session. The job appears as a row you can attach to, watch, and detach from               |
 | `#<number>` or a pull request URL | If a session is already working on that PR, select it instead of dispatching                                                                                   |
 | `Shift+Enter`                     | Dispatch and immediately attach to the new session                                                                                                             |
@@ -322,7 +322,7 @@ A small set of commands run in agent view itself instead of dispatching:
 
 Skills, your own commands, and prompt-expanding built-ins such as `/init` are sent to a new background session as their first prompt. Other built-in commands show an `attach to a session to run it` hint instead. {/* min-version: 2.1.203 */}Everything you typed stays in the input next to the hint so you can edit it.
 
-Packaging a recurring task as a [skill](/en/skills) lets you start the same workflow from agent view repeatedly without retyping the prompt.
+Packaging a recurring task as a [skill](/docs/en/skills) lets you start the same workflow from agent view repeatedly without retyping the prompt.
 
 When the same `@name` matches both a subagent and a sibling repository, the subagent takes precedence. The bare first-word match also applies, so a prompt that happens to begin with one of your subagent names dispatches that subagent rather than treating the word as plain text. Use the `@` form when you want to be explicit, or start the prompt with a different word to avoid the match.
 
@@ -334,7 +334,7 @@ A new session runs in the directory you opened agent view from. To target a diff
 * Open `claude agents` in a parent directory and mention a child repository with `@<repo>` in the prompt. Typing `@` lists these targets:
 
   * Git repositories one level below the launch directory
-  * The registered [git worktrees](/en/worktrees) of the repository you launched from that live inside its directory tree, such as the ones Claude creates under `.claude/worktrees/`, labeled with their checked-out branch. Worktrees added outside the repository, such as with `git worktree add ../feature`, aren't listed
+  * The registered [git worktrees](/docs/en/worktrees) of the repository you launched from that live inside its directory tree, such as the ones Claude creates under `.claude/worktrees/`, labeled with their checked-out branch. Worktrees added outside the repository, such as with `git worktree add ../feature`, aren't listed
   * Any directory that already has a session in the list
 
   A directory whose name contains a space isn't listed.
@@ -350,23 +350,23 @@ Two commands move work from the session you're in to the background: `/backgroun
 
 Run `/background` or its alias `/bg` to move the current conversation into a background session. Pass a prompt such as `/bg run the test suite and fix any failures` to give one more instruction first. If Claude is responding when you run `/bg`, the response continues in the background session.
 
-Exiting a session that still has background work running, such as subagents, background shell commands, workflows, or [monitors](/en/tools-reference#monitor-tool), shows a `Background work is running` dialog instead of quitting immediately. {/* min-version: 2.1.198 */}Choose `Move to background and exit` to background the session the same way `/background` does and return to your shell. The option isn't shown when agent view is [turned off](#turn-off-agent-view).
+Exiting a session that still has background work running, such as subagents, background shell commands, workflows, or [monitors](/docs/en/tools-reference#monitor-tool), shows a `Background work is running` dialog instead of quitting immediately. {/* min-version: 2.1.198 */}Choose `Move to background and exit` to background the session the same way `/background` does and return to your shell. The option isn't shown when agent view is [turned off](#turn-off-agent-view).
 
 #### Copy the session with /fork
 
-Run `/fork` to copy the current conversation into a new background session while the original keeps running. The copy starts with everything in the conversation up to that point, plus the working directory, model, permission mode, effort level, and any directories or "don't ask again" permission grants you added during the session, and appears as its own row in agent view. From that moment the two sessions are independent: what the copy does never reaches the original conversation. Requires Claude Code v2.1.212 or later; on v2.1.161 through v2.1.211, `/fork` starts a [forked subagent](/en/sub-agents#fork-the-current-conversation) instead, which is now `/subtask`. When [agent view is turned off](#turn-off-agent-view), `/fork` keeps the forked-subagent behavior and `/subtask` isn't available.
+Run `/fork` to copy the current conversation into a new background session while the original keeps running. The copy starts with everything in the conversation up to that point, plus the working directory, model, permission mode, effort level, and any directories or "don't ask again" permission grants you added during the session, and appears as its own row in agent view. From that moment the two sessions are independent: what the copy does never reaches the original conversation. Requires Claude Code v2.1.212 or later; on v2.1.161 through v2.1.211, `/fork` starts a [forked subagent](/docs/en/sub-agents#fork-the-current-conversation) instead, which is now `/subtask`. When [agent view is turned off](#turn-off-agent-view), `/fork` keeps the forked-subagent behavior and `/subtask` isn't available.
 
 Pass a prompt such as `/fork open a draft pull request with the work so far` and the copy starts working on it immediately. Without a prompt the copy waits for its first instruction: select its row in `claude agents` and press `Space` to send one, or run `claude attach <id>`. {/* min-version: 2.1.212 */}The selected row shows `space to send it a prompt` while it waits.
 
-Like any dispatched session, the copy [moves into its own worktree before editing files](#how-file-edits-are-isolated). When the current session is itself running inside a linked [worktree](/en/worktrees) that has a main working tree to return to, the copy runs in that main working tree, so the two sessions don't edit the same checkout. In a bare-repository layout there is no main working tree, so the copy stays where it is and the `/fork` confirmation says it edits the same checkout.
+Like any dispatched session, the copy [moves into its own worktree before editing files](#how-file-edits-are-isolated). When the current session is itself running inside a linked [worktree](/docs/en/worktrees) that has a main working tree to return to, the copy runs in that main working tree, so the two sessions don't edit the same checkout. In a bare-repository layout there is no main working tree, so the copy stays where it is and the `/fork` confirmation says it edits the same checkout.
 
-Sessions started with launch flags the copy wouldn't inherit, such as a replaced system prompt or a `--tools` allowlist, can't be forked; Claude Code says so instead of making a partial copy. A session dispatched from agent view forks normally: the copy is launched with the same [agent definition](/en/sub-agents) and appended instructions as the session it came from.
+Sessions started with launch flags the copy wouldn't inherit, such as a replaced system prompt or a `--tools` allowlist, can't be forked; Claude Code says so instead of making a partial copy. A session dispatched from agent view forks normally: the copy is launched with the same [agent definition](/docs/en/sub-agents) and appended instructions as the session it came from.
 
 #### What carries over when you background
 
-Backgrounding starts a fresh process that resumes from the saved conversation, and in-flight work moves to it: running background shell commands, backgrounded subagents, dynamic workflows, and scheduled tasks you created with [`/loop`](/en/scheduled-tasks) all carry over and keep running there. A subagent moves together with everything it started, so it carries over only when all of that work can move too. To stop in-flight work instead of carrying it over, set the [`CLAUDE_DISABLE_ADOPT=1`](/en/env-vars#variables) environment variable; Claude Code then asks you to confirm before backgrounding.
+Backgrounding starts a fresh process that resumes from the saved conversation, and in-flight work moves to it: running background shell commands, backgrounded subagents, dynamic workflows, and scheduled tasks you created with [`/loop`](/docs/en/scheduled-tasks) all carry over and keep running there. A subagent moves together with everything it started, so it carries over only when all of that work can move too. To stop in-flight work instead of carrying it over, set the [`CLAUDE_DISABLE_ADOPT=1`](/docs/en/env-vars#variables) environment variable; Claude Code then asks you to confirm before backgrounding.
 
-Work that can't carry over, such as a running [monitor](/en/tools-reference#monitor-tool), is stopped, and a backgrounded subagent that owns a monitor is stopped along with it. When any such work is running, Claude Code shows a `Background this session?` dialog so you can confirm before it's stopped.
+Work that can't carry over, such as a running [monitor](/docs/en/tools-reference#monitor-tool), is stopped, and a backgrounded subagent that owns a monitor is stopped along with it. When any such work is running, Claude Code shows a `Background this session?` dialog so you can confirm before it's stopped.
 
 Once in the background, the session can start new subagents, monitors, and background commands, and those keep running across later detach and reattach.
 
@@ -379,7 +379,7 @@ Configuration flags from the original launch carry through to the backgrounded s
 * `--fallback-model`
 * `--allow-dangerously-skip-permissions`
 
-Directories you added during the session with [`/add-dir`](/en/permissions#additional-directories-grant-file-access-not-configuration) also carry through. Carrying `--allow-dangerously-skip-permissions` keeps `bypassPermissions` reachable in the backgrounded session, but it doesn't grant anything new: the mode still requires the one-time interactive acceptance described in [Permission mode, model, and effort](#permission-mode-model-and-effort).
+Directories you added during the session with [`/add-dir`](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) also carry through. Carrying `--allow-dangerously-skip-permissions` keeps `bypassPermissions` reachable in the backgrounded session, but it doesn't grant anything new: the mode still requires the one-time interactive acceptance described in [Permission mode, model, and effort](#permission-mode-model-and-effort).
 
 ### From your shell
 
@@ -391,7 +391,7 @@ claude --bg "investigate the flaky SettingsChangeDetector test"
 
 The prompt is the positional argument, not a `-p` value. {/* min-version: 2.1.198 */}Claude Code rejects `--bg` combined with `-p` or `--print` before any session is created, because `--print` never starts the interactive session that `claude agents` attaches to.
 
-To run a specific [subagent](/en/sub-agents) you have defined, such as a `code-reviewer`, as the session's main agent, combine `--bg` with `--agent`:
+To run a specific [subagent](/docs/en/sub-agents) you have defined, such as a `code-reviewer`, as the session's main agent, combine `--bg` with `--agent`:
 
 ```bash theme={null}
 claude --agent code-reviewer --bg "address review comments on PR 1234"
@@ -431,15 +431,15 @@ To see the output, attach to the row, press `Space` to peek without attaching, o
 
 ### How file edits are isolated
 
-Every background session, whether started from agent view, `/bg`, or `claude --bg`, starts in your working directory. Before editing files, Claude moves the session into an isolated [git worktree](/en/worktrees) under `.claude/worktrees/`, so parallel sessions can read the same checkout but each writes to its own.
+Every background session, whether started from agent view, `/bg`, or `claude --bg`, starts in your working directory. Before editing files, Claude moves the session into an isolated [git worktree](/docs/en/worktrees) under `.claude/worktrees/`, so parallel sessions can read the same checkout but each writes to its own.
 
 Claude skips the worktree when:
 
 * The session is already inside a linked git worktree, whether Claude created it under `.claude/worktrees/` or you created it with `git worktree add` somewhere else
-* The working directory isn't a git repository and no [`WorktreeCreate` hook](/en/hooks#worktreecreate) is configured
+* The working directory isn't a git repository and no [`WorktreeCreate` hook](/docs/en/hooks#worktreecreate) is configured
 * The write is outside the working directory
 
-To turn off worktree isolation for a repository where git worktrees are impractical, set [`worktree.bgIsolation`](/en/settings#worktree-settings) to `"none"`. Background sessions then edit your working copy directly without moving into a worktree first. Add the setting to the project's `.claude/settings.json`:
+To turn off worktree isolation for a repository where git worktrees are impractical, set [`worktree.bgIsolation`](/docs/en/settings#worktree-settings) to `"none"`. Background sessions then edit your working copy directly without moving into a worktree first. Add the setting to the project's `.claude/settings.json`:
 
 ```json theme={null}
 {
@@ -449,7 +449,7 @@ To turn off worktree isolation for a repository where git worktrees are impracti
 }
 ```
 
-Outside a git repository, sessions write to the working directory directly and aren't isolated from each other, so avoid dispatching parallel sessions that edit the same files. If you use a different version control system, configure a [`WorktreeCreate` hook](/en/worktrees#non-git-version-control) and Claude isolates edits the same way it does for git.
+Outside a git repository, sessions write to the working directory directly and aren't isolated from each other, so avoid dispatching parallel sessions that edit the same files. If you use a different version control system, configure a [`WorktreeCreate` hook](/docs/en/worktrees#non-git-version-control) and Claude isolates edits the same way it does for git.
 
 When the hook fails in a directory that isn't a git repository, the session skips isolation for that directory and edits the working directory in place. Inside a git repository, writes stay blocked until the session isolates.
 
@@ -462,7 +462,7 @@ Deleting a session removes or keeps the worktree Claude created for it, dependin
 
 To find a session's worktree path, peek the session or attach and check its working directory.
 
-A [subagent](/en/sub-agents) the background session spawns inherits the session's working directory, so its file edits land in the session's worktree rather than your working copy. To give a subagent its own separate worktree instead, set [`isolation: worktree`](/en/sub-agents#supported-frontmatter-fields) in its frontmatter or pass `isolation: "worktree"` when spawning it.
+A [subagent](/docs/en/sub-agents) the background session spawns inherits the session's working directory, so its file edits land in the session's worktree rather than your working copy. To give a subagent its own separate worktree instead, set [`isolation: worktree`](/docs/en/sub-agents#supported-frontmatter-fields) in its frontmatter or pass `isolation: "worktree"` when spawning it.
 
 A background session that isolated its code changes in a worktree also commits, pushes its own branch, and opens a draft pull request without stopping to ask. The [`#N` label](#pull-request-status) appears on its row when the pull request opens. It never pushes to `main` or `master`, never force-pushes or merges, and it skips the pull request when you told it not to open one or the repository has no remote.
 
@@ -470,7 +470,7 @@ A session editing a checkout it didn't isolate itself still asks before committi
 
 ### Set the model
 
-The model name shown in the agent view header is the dispatch default. New sessions you start from the input use this model, which comes from the [`model` setting](/en/settings#available-settings) in your user settings. Set it by selecting a model in the [`/model` picker](/en/model-config), or edit the setting directly.
+The model name shown in the agent view header is the dispatch default. New sessions you start from the input use this model, which comes from the [`model` setting](/docs/en/settings#available-settings) in your user settings. Set it by selecting a model in the [`/model` picker](/docs/en/model-config), or edit the setting directly.
 
 To override the dispatch default for the whole agent view session, pass `--model` when opening agent view. See [Permission mode, model, and effort](#permission-mode-model-and-effort).
 
@@ -487,21 +487,21 @@ Each background session can run on a different model. To override it for one ses
 
 * From the shell, pass `--model` with `claude --bg`.
 * Attach to a running session and run `/model` to switch: a pick from the picker, or a typed `/model <name>`, saves as your default for new sessions unless you press `s` in the picker for a session-only switch. A session-only switch persists if the session is respawned.
-* Dispatch a [subagent](/en/sub-agents) whose frontmatter sets a `model` field.
+* Dispatch a [subagent](/docs/en/sub-agents) whose frontmatter sets a `model` field.
 
 ### Permission mode, model, and effort
 
-A background session reads its [settings](/en/settings) from the directory it runs in, the same as if you had started `claude` there. This includes [`env` values](/en/settings#available-settings) in project settings, so an `ANTHROPIC_MODEL` or provider variable set there applies to background sessions in that directory.
+A background session reads its [settings](/docs/en/settings) from the directory it runs in, the same as if you had started `claude` there. This includes [`env` values](/docs/en/settings#available-settings) in project settings, so an `ANTHROPIC_MODEL` or provider variable set there applies to background sessions in that directory.
 
-Cloud provider selection, such as `CLAUDE_CODE_USE_BEDROCK` or `CLAUDE_CODE_USE_VERTEX`, and `ANTHROPIC_DEFAULT_*_MODEL` aliases follow the shell that dispatched the session. {/* min-version: 2.1.206 */}If you export a [`CLAUDE_CODE_EXTRA_BODY`](/en/env-vars) request-body override in that shell, it reaches the session the same way. A gateway `ANTHROPIC_BASE_URL` exported in that shell can reach the session too; see [the supervisor process](#the-supervisor-process) for the conditions and for how background sessions source provider settings and credentials.
+Cloud provider selection, such as `CLAUDE_CODE_USE_BEDROCK` or `CLAUDE_CODE_USE_VERTEX`, and `ANTHROPIC_DEFAULT_*_MODEL` aliases follow the shell that dispatched the session. {/* min-version: 2.1.206 */}If you export a [`CLAUDE_CODE_EXTRA_BODY`](/docs/en/env-vars) request-body override in that shell, it reaches the session the same way. A gateway `ANTHROPIC_BASE_URL` exported in that shell can reach the session too; see [the supervisor process](#the-supervisor-process) for the conditions and for how background sessions source provider settings and credentials.
 
-The [permission mode](/en/permissions) depends on how you started the session. Backgrounding an existing session with `/bg` or `←` keeps the current permission mode, so a session you switched to `acceptEdits` or `auto` stays in that mode after detaching. Dispatching from the agent view input or running `claude --bg` from your shell uses the `defaultMode` from that directory's settings, or the `permissionMode` from the dispatched [subagent's frontmatter](/en/sub-agents#supported-frontmatter-fields).
+The [permission mode](/docs/en/permissions) depends on how you started the session. Backgrounding an existing session with `/bg` or `←` keeps the current permission mode, so a session you switched to `acceptEdits` or `auto` stays in that mode after detaching. Dispatching from the agent view input or running `claude --bg` from your shell uses the `defaultMode` from that directory's settings, or the `permissionMode` from the dispatched [subagent's frontmatter](/docs/en/sub-agents#supported-frontmatter-fields).
 
 The permission mode, model, and effort you chose for a background session, along with the [configuration flags it carries](#what-carries-over-when-you-background), all persist when the supervisor later [stops and restarts](#the-supervisor-process) its process. A session you launched with `claude --bg --dangerously-skip-permissions` or `claude --bg --permission-mode bypassPermissions` stays in `bypassPermissions` after that restart instead of falling back to the directory's `defaultMode`, and a model or effort you changed mid-session with `/model` or `/effort` is kept.
 
-An effort the session took from the [`effortLevel` setting](/en/settings#available-settings) rather than from `--effort` or `/effort` isn't fixed at dispatch: each process started for the session reads the setting again, so editing `effortLevel` in `settings.json` reaches sessions you background with `←` or `/bg` and their later restarts.
+An effort the session took from the [`effortLevel` setting](/docs/en/settings#available-settings) rather than from `--effort` or `/effort` isn't fixed at dispatch: each process started for the session reads the setting again, so editing `effortLevel` in `settings.json` reaches sessions you background with `←` or `/bg` and their later restarts.
 
-A name you set with [`/rename`](/en/commands) or `Ctrl+R` also persists across that restart, so [`claude --resume <name>`](/en/sessions#name-your-sessions) still resolves the session.
+A name you set with [`/rename`](/docs/en/commands) or `Ctrl+R` also persists across that restart, so [`claude --resume <name>`](/docs/en/sessions#name-your-sessions) still resolves the session.
 
 To set defaults for every session you dispatch from agent view, pass any of `--permission-mode`, `--model`, `--effort`, or `--agent` when opening it:
 
@@ -509,11 +509,11 @@ To set defaults for every session you dispatch from agent view, pass any of `--p
 claude agents --permission-mode plan --model opus --effort high
 ```
 
-`--effort` here accepts the same values as the [top-level `--effort` flag](/en/cli-reference#cli-flags), including `ultracode`.
+`--effort` here accepts the same values as the [top-level `--effort` flag](/docs/en/cli-reference#cli-flags), including `ultracode`.
 
-`--agent` sets the [subagent](/en/sub-agents) used when a dispatch prompt doesn't name one, either with `@name` or as the first word. It defaults to the [`agent` setting](/en/settings#available-settings) if one is set, otherwise the built-in catch-all `claude` agent. Naming a subagent in the dispatch input overrides both.
+`--agent` sets the [subagent](/docs/en/sub-agents) used when a dispatch prompt doesn't name one, either with `@name` or as the first word. It defaults to the [`agent` setting](/docs/en/settings#available-settings) if one is set, otherwise the built-in catch-all `claude` agent. Naming a subagent in the dispatch input overrides both.
 
-`claude agents` also accepts `--dangerously-skip-permissions` as shorthand for `--permission-mode bypassPermissions`, and `--allow-dangerously-skip-permissions` to make `bypassPermissions` available in each dispatched session's `Shift+Tab` cycle without starting in that mode. Both match the [top-level CLI flags](/en/cli-reference).
+`claude agents` also accepts `--dangerously-skip-permissions` as shorthand for `--permission-mode bypassPermissions`, and `--allow-dangerously-skip-permissions` to make `bypassPermissions` available in each dispatched session's `Shift+Tab` cycle without starting in that mode. Both match the [top-level CLI flags](/docs/en/cli-reference).
 
 The active defaults appear in the footer below the dispatch input.
 
@@ -525,10 +525,10 @@ Agent view accepts the same configuration flags as `claude` for loading settings
 
 | Flag                                                                                             | Effect                                                                         |
 | :----------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
-| [`--settings <file-or-json>`](/en/settings)                                                      | Override settings for agent view and dispatched sessions                       |
-| [`--add-dir <path>`](/en/permissions#additional-directories-grant-file-access-not-configuration) | Grant file access to an additional directory                                   |
-| [`--plugin-dir <path>`](/en/plugins)                                                             | Load a plugin from a local directory                                           |
-| [`--mcp-config <file-or-json>`](/en/mcp)                                                         | Load MCP servers from a config file or JSON string                             |
+| [`--settings <file-or-json>`](/docs/en/settings)                                                      | Override settings for agent view and dispatched sessions                       |
+| [`--add-dir <path>`](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) | Grant file access to an additional directory                                   |
+| [`--plugin-dir <path>`](/docs/en/plugins)                                                             | Load a plugin from a local directory                                           |
+| [`--mcp-config <file-or-json>`](/docs/en/mcp)                                                         | Load MCP servers from a config file or JSON string                             |
 | `--strict-mcp-config`                                                                            | Use only the MCP servers from `--mcp-config`, ignoring other MCP configuration |
 
 Repeat `--add-dir`, `--plugin-dir`, or `--mcp-config` once per value. The space-separated form, such as `--add-dir a b c`, isn't supported with `claude agents`.
@@ -572,7 +572,7 @@ Each entry describes one session:
 | `state`                    | Background sessions        | One of `working`, `blocked`, `done`, `failed`, or `stopped`                                                                                                                                                                                   |
 | `pid`, `status`            | While the process is alive | Process ID and current status                                                                                                                                                                                                                 |
 | `waitingFor`               | When `status` is `waiting` | What the session is blocked on: {/* min-version: 2.1.212 */}`permission prompt` for an approval, `input needed` for a question from Claude or an MCP server's input request, `sandbox request`, `worker request`, or `dialog open`            |
-| `sessionId`, `name`        | When set                   | `sessionId` is the full session UUID, usable with [`claude --resume`](/en/sessions). An interactive session you never named carries a default `name` built from its working directory's name plus a two-character suffix, such as `my-app-3f` |
+| `sessionId`, `name`        | When set                   | `sessionId` is the full session UUID, usable with [`claude --resume`](/docs/en/sessions). An interactive session you never named carries a default `name` built from its working directory's name plus a two-character suffix, such as `my-app-3f` |
 
 ## How background sessions are hosted
 
@@ -590,7 +590,7 @@ The supervisor and its sessions authenticate with the same stored credentials as
 
 The dispatching shell's `PATH` is applied to the worker the same way, so shell commands the session runs find the same tools your terminal does.
 
-A background session doesn't inherit gateway endpoint variables such as `ANTHROPIC_BASE_URL` or the equivalent Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry base URL variables from the shell that started the supervisor. Without a gateway exported in the shell you dispatch from, the session uses your stored credentials and any `env` values in the project directory's [settings](/en/settings). To point every session in a project at an [LLM gateway](/en/llm-gateway), set `ANTHROPIC_BASE_URL` in that project's `.claude/settings.json` `env` block.
+A background session doesn't inherit gateway endpoint variables such as `ANTHROPIC_BASE_URL` or the equivalent Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry base URL variables from the shell that started the supervisor. Without a gateway exported in the shell you dispatch from, the session uses your stored credentials and any `env` values in the project directory's [settings](/docs/en/settings). To point every session in a project at an [LLM gateway](/docs/en/llm-gateway), set `ANTHROPIC_BASE_URL` in that project's `.claude/settings.json` `env` block.
 
 {/* min-version: 2.1.203 */}If you export a gateway `ANTHROPIC_BASE_URL` in the shell you dispatch from, it reaches that session's worker, along with `ANTHROPIC_CUSTOM_HEADERS` and the credential exported alongside them, when both conditions hold:
 
@@ -615,11 +615,11 @@ Background work the session itself started at the top level is handed off when i
 
 * A background shell command that finished in the meantime is reported as completed with its output
 * A dynamic workflow resumes from where it left off
-* {/* min-version: 2.1.198 */}A [background subagent](/en/sub-agents#run-subagents-in-foreground-or-background) resumes from its own transcript
+* {/* min-version: 2.1.198 */}A [background subagent](/docs/en/sub-agents#run-subagents-in-foreground-or-background) resumes from its own transcript
 
-Work whose state lives only inside the process itself stops with it instead of being handed off. That's shell commands a subagent started, which the resumed subagent can start again, and running [monitors](/en/tools-reference#monitor-tool), whose event stream can't be moved to another process.
+Work whose state lives only inside the process itself stops with it instead of being handed off. That's shell commands a subagent started, which the resumed subagent can start again, and running [monitors](/docs/en/tools-reference#monitor-tool), whose event stream can't be moved to another process.
 
-Deleting the session stops everything it handed off. To stop all of the session's background work with the process instead of handing it off, set the [`CLAUDE_CODE_DISABLE_BG_EXIT_HANDOFF`](/en/env-vars#variables) environment variable to `1`.
+Deleting the session stops everything it handed off. To stop all of the session's background work with the process instead of handing it off, set the [`CLAUDE_CODE_DISABLE_BG_EXIT_HANDOFF`](/docs/en/env-vars#variables) environment variable to `1`.
 
 A restarted process finds the conversation of a session that [moved into a worktree](#how-file-edits-are-isolated) mid-task: when the transcript isn't where the session started, Claude Code also looks under the repository's registered worktrees. {/* min-version: 2.1.212 */}When neither the session's own directory nor those worktrees has the transcript, Claude Code scans all your saved session transcripts as a last resort and resumes from the one that matches the session.
 
@@ -629,7 +629,7 @@ An empty row left over from pressing `←` that was never given a prompt is remo
 
 When the host runs low on memory, the supervisor stops idle non-pinned sessions first and stops idle pinned ones only if that freed nothing.
 
-The supervisor watches the installed Claude Code binary on disk and restarts into the new version after the regular [auto-updater](/en/setup#auto-updates) replaces it. This is a local file watch, not a network check. Background sessions are detached processes, so they keep running through the restart and the new supervisor reconnects to them. An idle pinned session is also restarted in place onto the new version so it picks up the update without you reattaching.
+The supervisor watches the installed Claude Code binary on disk and restarts into the new version after the regular [auto-updater](/docs/en/setup#auto-updates) replaces it. This is a local file watch, not a network check. Background sessions are detached processes, so they keep running through the restart and the new supervisor reconnects to them. An idle pinned session is also restarted in place onto the new version so it picks up the update without you reattaching.
 
 Once the new supervisor takes over, it also restarts the remaining idle sessions onto the new version, a few at a time in the background, after a short delay that lets terminals attached across the restart reconnect first. A session that is working, waiting on your input, or has a terminal attached isn't interrupted; it moves to the new version the next time its process restarts.
 
@@ -641,7 +641,7 @@ Running `claude attach` while the supervisor is restarting a session, whether fo
 
 ### Where state is stored
 
-Session state is stored under your Claude Code config directory. If you set [`CLAUDE_CONFIG_DIR`](/en/env-vars), the supervisor uses that directory instead of `~/.claude` and runs as a separate instance with its own sessions.
+Session state is stored under your Claude Code config directory. If you set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars), the supervisor uses that directory instead of `~/.claude` and runs as a separate instance with its own sessions.
 
 | Path                             | Contents                                                                                                    |
 | :------------------------------- | :---------------------------------------------------------------------------------------------------------- |
@@ -662,7 +662,7 @@ On Windows, `claude daemon status` surfaces the underlying file error when the d
 
 ### Turn off agent view
 
-To turn off background agents and agent view entirely, set the `disableAgentView` [setting](/en/settings) to `true` or set the `CLAUDE_CODE_DISABLE_AGENT_VIEW` environment variable. Administrators can enforce this through [managed settings](/en/permissions#managed-settings).
+To turn off background agents and agent view entirely, set the `disableAgentView` [setting](/docs/en/settings) to `true` or set the `CLAUDE_CODE_DISABLE_AGENT_VIEW` environment variable. Administrators can enforce this through [managed settings](/docs/en/permissions#managed-settings).
 
 ## Troubleshooting
 
@@ -678,7 +678,7 @@ Before you dispatch your first session, agent view shows the empty section heade
 
 ### Backgrounding shows a `Background this session?` dialog
 
-If pressing `←` to background the current session shows a `Background this session?` dialog, the session has in-flight work that can't move to the background session, such as a running [monitor](/en/tools-reference#monitor-tool), and Claude Code won't silently stop it. The dialog names the work that will be stopped and, separately, counts the tasks that carry over. Run `/tasks` to see everything that's running, then confirm to background anyway or choose `Stay` to let the work finish first. See [What carries over when you background](#what-carries-over-when-you-background) for which task kinds carry over and which are stopped.
+If pressing `←` to background the current session shows a `Background this session?` dialog, the session has in-flight work that can't move to the background session, such as a running [monitor](/docs/en/tools-reference#monitor-tool), and Claude Code won't silently stop it. The dialog names the work that will be stopped and, separately, counts the tasks that carry over. Run `/tasks` to see everything that's running, then confirm to background anyway or choose `Stay` to let the work finish first. See [What carries over when you background](#what-carries-over-when-you-background) for which task kinds carry over and which are stopped.
 
 ### Prompt rejected as too short
 
@@ -700,7 +700,7 @@ A stopped session that was [backgrounded from another conversation](#from-inside
 
 In agent view, opening that row shows `Press enter again to restart this session fresh` below the list. Press `Enter` on the same row again to restart the session with an empty conversation, or run `claude respawn <id>` from the shell.
 
-The original conversation is intact; resume it with `claude --resume` or keep working in it. See the [error reference](/en/errors#this-session-has-no-saved-transcript) for details.
+The original conversation is intact; resume it with `claude --resume` or keep working in it. See the [error reference](/docs/en/errors#this-session-has-no-saved-transcript) for details.
 
 ### A session fails before starting with a `possibly low memory` note
 
@@ -734,7 +734,7 @@ claude daemon stop --any --keep-workers
 
 The next `claude agents` or `claude --bg` starts a fresh supervisor that reads your stored credentials. If you authenticate with an environment variable such as `ANTHROPIC_API_KEY` rather than `/login`, run that next command from a shell where the variable is set.
 
-See the [error reference](/en/errors#could-not-resolve-authentication-method) for the full list of causes and fixes.
+See the [error reference](/docs/en/errors#could-not-resolve-authentication-method) for the full list of causes and fixes.
 
 ### Background sessions can't read Desktop, Documents, or Downloads on macOS
 
@@ -758,7 +758,7 @@ Deleting a session in agent view removes the worktree Claude created for it, and
 
 `claude rm` keeps a worktree that has uncommitted changes, and its session row, and prints the kept path.
 
-List leftover entries with `git worktree list` in the project directory and remove each with `git worktree remove <path>`. See [Clean up worktrees](/en/worktrees#clean-up-worktrees).
+List leftover entries with `git worktree list` in the project directory and remove each with `git worktree remove <path>`. See [Clean up worktrees](/docs/en/worktrees#clean-up-worktrees).
 
 ## Limitations
 
@@ -772,9 +772,9 @@ Agent view is in research preview with the following limitations:
 
 For other ways to run Claude in parallel, see:
 
-* [Run agents in parallel](/en/agents): compare agent view with subagents, agent teams, and worktrees
-* [Agent teams](/en/agent-teams): coordinate multiple sessions that message each other
-* [Claude Code on the web](/en/claude-code-on-the-web): run sessions in a managed cloud environment instead of locally
+* [Run agents in parallel](/docs/en/agents): compare agent view with subagents, agent teams, and worktrees
+* [Agent teams](/docs/en/agent-teams): coordinate multiple sessions that message each other
+* [Claude Code on the web](/docs/en/claude-code-on-the-web): run sessions in a managed cloud environment instead of locally
 
 ## Version history
 

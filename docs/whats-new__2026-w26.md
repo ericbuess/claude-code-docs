@@ -7,7 +7,7 @@
 > Authenticate MCP servers from your shell with claude mcp login, get a response to shell mode command output with the ! prefix, and resume a conversation from before /clear with /rewind.
 
 <div className="digest-meta">
-  <span>Releases <a href="/docs/en/changelog#2-1-185">v2.1.185 → v2.1.193</a></span>
+  <span>Releases <a href="/docs/docs/en/changelog#2-1-185">v2.1.185 → v2.1.193</a></span>
   <span>2 features · June 22–26</span>
 </div>
 
@@ -25,7 +25,7 @@
   claude mcp login sentry
   ```
 
-  <a className="digest-feature-link" href="/docs/en/mcp#authenticate-from-the-command-line">Authenticate from the command line</a>
+  <a className="digest-feature-link" href="/docs/docs/en/mcp#authenticate-from-the-command-line">Authenticate from the command line</a>
 </div>
 
 <div className="digest-feature">
@@ -42,7 +42,7 @@
   > ! npm test
   ```
 
-  <a className="digest-feature-link" href="/docs/en/interactive-mode#shell-mode-with-prefix">Shell mode with the ! prefix</a>
+  <a className="digest-feature-link" href="/docs/docs/en/interactive-mode#shell-mode-with-prefix">Shell mode with the ! prefix</a>
 </div>
 
 <div className="digest-wins">
@@ -63,4 +63,4 @@
   </div>
 </div>
 
-[Full changelog for v2.1.185–v2.1.193 →](/en/changelog#2-1-185)
+[Full changelog for v2.1.185–v2.1.193 →](/docs/en/changelog#2-1-185)

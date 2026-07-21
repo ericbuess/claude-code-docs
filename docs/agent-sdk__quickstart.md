@@ -120,7 +120,7 @@ Use the Agent SDK to build an AI agent that reads your code, finds bugs, and fix
     * **Google Cloud's Agent Platform**: set `CLAUDE_CODE_USE_VERTEX=1` environment variable and configure Google Cloud credentials
     * **Microsoft Foundry**: set `CLAUDE_CODE_USE_FOUNDRY=1` environment variable and configure Azure credentials
 
-    See the setup guides for [Amazon Bedrock](/en/amazon-bedrock), [Claude Platform on AWS](/en/claude-platform-on-aws), [Google Cloud's Agent Platform](/en/google-vertex-ai), or [Microsoft Foundry](/en/microsoft-foundry) for details.
+    See the setup guides for [Amazon Bedrock](/docs/en/amazon-bedrock), [Claude Platform on AWS](/docs/en/claude-platform-on-aws), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or [Microsoft Foundry](/docs/en/microsoft-foundry) for details.
 
     <Note>
       Unless previously approved, Anthropic does not allow third party developers to offer claude.ai login or rate limits for their products, including agents built on the Claude Agent SDK. Please use the API key authentication methods described in this document instead.
@@ -211,18 +211,18 @@ Create `agent.py` if you're using the Python SDK, or `agent.ts` for TypeScript. 
 
 This code has three main parts:
 
-1. **`query`**: the main entry point that creates the agentic loop. It returns an async iterator, so you use `async for` to stream messages as Claude works. See the full API in the [Python](/en/agent-sdk/python#query) or [TypeScript](/en/agent-sdk/typescript#query) SDK reference.
+1. **`query`**: the main entry point that creates the agentic loop. It returns an async iterator, so you use `async for` to stream messages as Claude works. See the full API in the [Python](/docs/en/agent-sdk/python#query) or [TypeScript](/docs/en/agent-sdk/typescript#query) SDK reference.
 
 2. **`prompt`**: what you want Claude to do. Claude figures out which tools to use based on the task.
 
-3. **`options`**: configuration for the agent. This example uses `allowedTools` to pre-approve `Read`, `Edit`, and `Glob`, and `permissionMode: "acceptEdits"` to auto-approve file changes. Other options include `systemPrompt`, `mcpServers`, and more. See all options for [Python](/en/agent-sdk/python#claudeagentoptions) or [TypeScript](/en/agent-sdk/typescript#options).
+3. **`options`**: configuration for the agent. This example uses `allowedTools` to pre-approve `Read`, `Edit`, and `Glob`, and `permissionMode: "acceptEdits"` to auto-approve file changes. Other options include `systemPrompt`, `mcpServers`, and more. See all options for [Python](/docs/en/agent-sdk/python#claudeagentoptions) or [TypeScript](/docs/en/agent-sdk/typescript#options).
 
 The `async for` loop keeps running as Claude thinks, calls tools, observes results, and decides what to do next. Each iteration yields a message: Claude's reasoning, a tool call, a tool result, or the final outcome. The SDK handles the orchestration (tool execution, context management, retries) so you just consume the stream. The loop ends when Claude finishes the task or hits an error.
 
 The message handling inside the loop filters for human-readable output. Without filtering, you'd see raw message objects including system initialization and internal state, which is useful for debugging but noisy otherwise.
 
 <Note>
-  This example uses streaming to show progress in real-time. If you don't need live output (e.g., for background jobs or CI pipelines), you can collect all messages at once. See [Streaming vs. single-turn mode](/en/agent-sdk/streaming-vs-single-mode) for details.
+  This example uses streaming to show progress in real-time. If you don't need live output (e.g., for background jobs or CI pipelines), you can collect all messages at once. See [Streaming vs. single-turn mode](/docs/en/agent-sdk/streaming-vs-single-mode) for details.
 </Note>
 
 ### Run your agent
@@ -262,7 +262,7 @@ As it works, the agent prints its reasoning and each tool it calls, ending with 
 This is what makes the Agent SDK different: Claude executes tools directly instead of asking you to implement them.
 
 <Note>
-  If you see "API key not found", make sure you've set the `ANTHROPIC_API_KEY` environment variable in the shell where you run your agent. The SDK doesn't load `.env` files automatically. See the [full troubleshooting guide](/en/troubleshooting) for more help.
+  If you see "API key not found", make sure you've set the `ANTHROPIC_API_KEY` environment variable in the shell where you run your agent. The SDK doesn't load `.env` files automatically. See the [full troubleshooting guide](/docs/en/troubleshooting) for more help.
 </Note>
 
 ### Try other prompts
@@ -355,20 +355,20 @@ With `Bash` enabled, try: `"Write unit tests for utils.py, run them, and fix any
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- |
 | `acceptEdits`       | Auto-approves file edits and common filesystem commands, asks for other actions                                                                                                                                                                                                                                                                                                      | Trusted development workflows             |
 | `plan`              | Runs read-only tools; file edits are never auto-approved and reach your `canUseTool` callback                                                                                                                                                                                                                                                                                        | Scoping a task before approving execution |
-| `dontAsk`           | Denies anything not in `allowedTools`; connector tools [your organization set to `ask`](/en/mcp#organization-controls-on-connector-tools) and tools that require user interaction are denied even if you've listed them                                                                                                                                                              | Locked-down headless agents               |
+| `dontAsk`           | Denies anything not in `allowedTools`; connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) and tools that require user interaction are denied even if you've listed them                                                                                                                                                              | Locked-down headless agents               |
 | `auto`              | A model classifier approves or denies permission prompts                                                                                                                                                                                                                                                                                                                             | Autonomous agents with safety guardrails  |
-| `bypassPermissions` | Runs every tool without prompting, except tools matched by an explicit [`ask` rule](/en/agent-sdk/permissions#how-permissions-are-evaluated), connector tools [your organization set to `ask`](/en/mcp#organization-controls-on-connector-tools), and tools that require user interaction. In the TypeScript SDK, also requires `allowDangerouslySkipPermissions: true` in `options` | Sandboxed CI, fully trusted environments  |
+| `bypassPermissions` | Runs every tool without prompting, except tools matched by an explicit [`ask` rule](/docs/en/agent-sdk/permissions#how-permissions-are-evaluated), connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), and tools that require user interaction. In the TypeScript SDK, also requires `allowDangerouslySkipPermissions: true` in `options` | Sandboxed CI, fully trusted environments  |
 | `default`           | Requires a `canUseTool` callback to handle approval                                                                                                                                                                                                                                                                                                                                  | Custom approval flows                     |
 
-The example above uses `acceptEdits` mode, which auto-approves file operations so the agent can run without interactive prompts. If you want to prompt users for approval, use `default` mode and provide a [`canUseTool` callback](/en/agent-sdk/user-input) that collects user input. For more control, see [Permissions](/en/agent-sdk/permissions).
+The example above uses `acceptEdits` mode, which auto-approves file operations so the agent can run without interactive prompts. If you want to prompt users for approval, use `default` mode and provide a [`canUseTool` callback](/docs/en/agent-sdk/user-input) that collects user input. For more control, see [Permissions](/docs/en/agent-sdk/permissions).
 
 ## Next steps
 
 Now that you've created your first agent, learn how to extend its capabilities and tailor it to your use case:
 
-* **[Permissions](/en/agent-sdk/permissions)**: control what your agent can do and when it needs approval
-* **[Hooks](/en/agent-sdk/hooks)**: run custom code before or after tool calls
-* **[Sessions](/en/agent-sdk/sessions)**: build multi-turn agents that maintain context
-* **[MCP servers](/en/agent-sdk/mcp)**: connect to databases, browsers, APIs, and other external systems
-* **[Hosting](/en/agent-sdk/hosting)**: deploy agents to Docker, cloud, and CI/CD
+* **[Permissions](/docs/en/agent-sdk/permissions)**: control what your agent can do and when it needs approval
+* **[Hooks](/docs/en/agent-sdk/hooks)**: run custom code before or after tool calls
+* **[Sessions](/docs/en/agent-sdk/sessions)**: build multi-turn agents that maintain context
+* **[MCP servers](/docs/en/agent-sdk/mcp)**: connect to databases, browsers, APIs, and other external systems
+* **[Hosting](/docs/en/agent-sdk/hosting)**: deploy agents to Docker, cloud, and CI/CD
 * **[Example agents](https://github.com/anthropics/claude-agent-sdk-demos)**: see complete examples: email assistant, research agent, and more

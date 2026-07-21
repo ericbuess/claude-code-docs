@@ -9,7 +9,7 @@
 By default, the Agent SDK yields complete `AssistantMessage` objects after Claude finishes generating each response. To receive incremental updates as text and tool calls are generated, enable partial message streaming by setting `include_partial_messages` (Python) or `includePartialMessages` (TypeScript) to `true` in your options.
 
 <Tip>
-  This page covers output streaming (receiving tokens in real-time). For input modes (how you send messages), see [Send messages to agents](/en/agent-sdk/streaming-vs-single-mode). You can also [stream responses using the Agent SDK via the CLI](/en/headless).
+  This page covers output streaming (receiving tokens in real-time). For input modes (how you send messages), see [Send messages to agents](/docs/en/agent-sdk/streaming-vs-single-mode). You can also [stream responses using the Agent SDK via the CLI](/docs/en/headless).
 </Tip>
 
 ## Enable streaming output
@@ -102,7 +102,7 @@ Both contain raw Claude API events, not accumulated text. You need to extract an
   ```
 </CodeGroup>
 
-The `parent_tool_use_id` field is always `None` in Python and `null` in TypeScript. Stream events are emitted for the main session only; token-level deltas from subagents aren't forwarded. To attribute output to a subagent, use complete messages, which carry `parent_tool_use_id`. See [Detect subagent invocation](/en/agent-sdk/subagents#detect-subagent-invocation).
+The `parent_tool_use_id` field is always `None` in Python and `null` in TypeScript. Stream events are emitted for the main session only; token-level deltas from subagents aren't forwarded. To attribute output to a subagent, use complete messages, which carry `parent_tool_use_id`. See [Detect subagent invocation](/docs/en/agent-sdk/subagents#detect-subagent-invocation).
 
 The `event` field contains the raw streaming event from the [Claude API](https://platform.claude.com/docs/en/build-with-claude/streaming#event-types). Common event types include:
 
@@ -385,12 +385,12 @@ This example combines text and tool streaming into a cohesive UI. It tracks whet
 
 ## Known limitations
 
-* **Structured output**: the JSON result appears only in the final `ResultMessage.structured_output`, not as streaming deltas. See [structured outputs](/en/agent-sdk/structured-outputs) for details.
+* **Structured output**: the JSON result appears only in the final `ResultMessage.structured_output`, not as streaming deltas. See [structured outputs](/docs/en/agent-sdk/structured-outputs) for details.
 
 ## Next steps
 
 Now that you can stream text and tool calls in real-time, explore these related topics:
 
-* [Interactive vs one-shot queries](/en/agent-sdk/streaming-vs-single-mode): choose between input modes for your use case
-* [Structured outputs](/en/agent-sdk/structured-outputs): get typed JSON responses from the agent
-* [Permissions](/en/agent-sdk/permissions): control which tools the agent can use
+* [Interactive vs one-shot queries](/docs/en/agent-sdk/streaming-vs-single-mode): choose between input modes for your use case
+* [Structured outputs](/docs/en/agent-sdk/structured-outputs): get typed JSON responses from the agent
+* [Permissions](/docs/en/agent-sdk/permissions): control which tools the agent can use

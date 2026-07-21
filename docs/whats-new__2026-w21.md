@@ -7,7 +7,7 @@
 > Use auto mode on the Pro plan and with Sonnet 4.6, see which skills, subagents, and MCP servers drive your plan limits in /usage, and review diffs with the new /code-review command.
 
 <div className="digest-meta">
-  <span>Releases <a href="/docs/en/changelog#2-1-143">v2.1.143 → v2.1.149</a></span>
+  <span>Releases <a href="/docs/docs/en/changelog#2-1-143">v2.1.143 → v2.1.149</a></span>
   <span>1 feature · May 18–22</span>
 </div>
 
@@ -27,16 +27,16 @@
 
   <p className="digest-feature-try">The command prints <code>Successfully updated</code> with the new version number, or <code>Claude Code is up to date</code> if no update is needed. Once auto mode is active, the prompt footer shows <code>auto mode on</code>.</p>
 
-  <a className="digest-feature-link" href="/docs/en/permission-modes#eliminate-prompts-with-auto-mode">Auto mode requirements</a>
+  <a className="digest-feature-link" href="/docs/docs/en/permission-modes#eliminate-prompts-with-auto-mode">Auto mode requirements</a>
 </div>
 
 <div className="digest-wins">
   <p className="digest-wins-title">Other wins</p>
 
   <div className="digest-wins-grid">
-    <div><a href="/docs/en/costs#track-your-costs"><code>/usage</code></a> now shows a per-category breakdown of what's driving your plan limits, attributing recent usage to skills, subagents, plugins, and individual MCP servers</div>
+    <div><a href="/docs/docs/en/costs#track-your-costs"><code>/usage</code></a> now shows a per-category breakdown of what's driving your plan limits, attributing recent usage to skills, subagents, plugins, and individual MCP servers</div>
     <div>"Extra usage" is renamed to "usage credits" across the CLI, and <code>/extra-usage</code> is now <code>/usage-credits</code>. The old name still works. The command requires signing in with your claude.ai subscription through <code>/login</code> and isn't available with API key authentication.</div>
-    <div>New <a href="/docs/en/code-review"><code>/code-review</code></a> command reports correctness bugs at a chosen effort level such as <code>/code-review high</code>, and <code>--comment</code> posts findings as inline GitHub PR comments. <code>/simplify</code> remains as a separate cleanup-only review.</div>
+    <div>New <a href="/docs/docs/en/code-review"><code>/code-review</code></a> command reports correctness bugs at a chosen effort level such as <code>/code-review high</code>, and <code>--comment</code> posts findings as inline GitHub PR comments. <code>/simplify</code> remains as a separate cleanup-only review.</div>
     <div>Background sessions now appear in <code>/resume</code> alongside interactive ones, marked with <code>bg</code>, and sessions pinned with <code>Ctrl+T</code> in <code>claude agents</code> stay alive when idle</div>
     <div><code>claude agents --json</code> lists live sessions as JSON for scripting, such as status bars and session pickers</div>
     <div>The PowerShell tool is now enabled by default on Windows for Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry users; opt out with <code>CLAUDE\_CODE\_USE\_POWERSHELL\_TOOL=0</code></div>
@@ -49,4 +49,4 @@
   </div>
 </div>
 
-[Full changelog for v2.1.143–v2.1.149 →](/en/changelog#2-1-143)
+[Full changelog for v2.1.143–v2.1.149 →](/docs/en/changelog#2-1-143)

@@ -11,7 +11,7 @@ The [Model Context Protocol (MCP)](https://modelcontextprotocol.io/docs/getting-
 MCP servers can run as local processes, connect over HTTP, or execute directly within your SDK application.
 
 <Note>
-  This page covers MCP configuration for the Agent SDK. To add MCP servers to the Claude Code CLI so they load in every project, see [MCP installation scopes](/en/mcp#mcp-installation-scopes).
+  This page covers MCP configuration for the Agent SDK. To add MCP servers to the Claude Code CLI so they load in every project, see [MCP installation scopes](/docs/en/mcp#mcp-installation-scopes).
 </Note>
 
 ## Quickstart
@@ -148,9 +148,9 @@ Create a `.mcp.json` file at your project root. The file is picked up when the `
 
 Servers you pass in `options.mcpServers` start connecting as soon as the query starts. Connection is non-blocking by default: the first turn begins without waiting, and each server's tools become available once its connection completes. {/* min-version: 2.1.142 */}Before Claude Code v2.1.142, startup blocked on the connection batch for up to 5 seconds.
 
-To restore a bounded startup wait for every server, set the [`MCP_CONNECTION_NONBLOCKING`](/en/env-vars) environment variable to `0`. The wait is capped at 5 seconds by [`MCP_CONNECT_TIMEOUT_MS`](/en/env-vars), and servers still pending at that deadline keep connecting in the background.
+To restore a bounded startup wait for every server, set the [`MCP_CONNECTION_NONBLOCKING`](/docs/en/env-vars) environment variable to `0`. The wait is capped at 5 seconds by [`MCP_CONNECT_TIMEOUT_MS`](/docs/en/env-vars), and servers still pending at that deadline keep connecting in the background.
 
-To make one server's tools available before the first turn, set `alwaysLoad: true` on its config. Startup then waits for that server to connect, capped at the same 5-second startup deadline, while other servers keep connecting in the background. The `alwaysLoad` field requires Claude Code v2.1.121 or later. See [Exempt a server from deferral](/en/mcp#exempt-a-server-from-deferral) for the `alwaysLoad` field's effect on tool search.
+To make one server's tools available before the first turn, set `alwaysLoad: true` on its config. Startup then waits for that server to connect, capped at the same 5-second startup deadline, while other servers keep connecting in the background. The `alwaysLoad` field requires Claude Code v2.1.121 or later. See [Exempt a server from deferral](/docs/en/mcp#exempt-a-server-from-deferral) for the `alwaysLoad` field's effect on tool search.
 
 The `system` message with subtype `init` reports each server's status at the moment it's emitted. A server that's still connecting has status `pending`. Check for status `failed` or `needs-auth` when you want to detect servers that won't be usable, rather than treating every status other than `connected` as a failure; see [Error handling](#error-handling) for the full status check.
 
@@ -199,14 +199,14 @@ Use `allowedTools` to auto-approve specific MCP tools so Claude can use them wit
 Wildcards (`*`) let you allow all tools from a server without listing each one individually.
 
 <Note>
-  **Prefer `allowedTools` over permission modes for MCP access.** `permissionMode: "acceptEdits"` does not auto-approve MCP tools (only file edits and filesystem Bash commands). `permissionMode: "bypassPermissions"` does auto-approve MCP tools but also disables most other safety prompts, which is broader than necessary; see [How permissions are evaluated](/en/agent-sdk/permissions#how-permissions-are-evaluated) for the prompts that remain. A wildcard in `allowedTools` grants exactly the MCP server you want and nothing more. See [Permission modes](/en/agent-sdk/permissions#permission-modes) for a full comparison.
+  **Prefer `allowedTools` over permission modes for MCP access.** `permissionMode: "acceptEdits"` does not auto-approve MCP tools (only file edits and filesystem Bash commands). `permissionMode: "bypassPermissions"` does auto-approve MCP tools but also disables most other safety prompts, which is broader than necessary; see [How permissions are evaluated](/docs/en/agent-sdk/permissions#how-permissions-are-evaluated) for the prompts that remain. A wildcard in `allowedTools` grants exactly the MCP server you want and nothing more. See [Permission modes](/docs/en/agent-sdk/permissions#permission-modes) for a full comparison.
 </Note>
 
 ### Discover available tools
 
 To see what tools an MCP server provides, check the server's documentation or inspect the `tools` array in the `system` init message. MCP tool names start with `mcp__`.
 
-MCP servers connect in the background by default, so the init message arrives before they finish: the `tools` array lists only built-in tools and `mcp_servers` shows a `pending` status for each server. Set the [`MCP_CONNECTION_NONBLOCKING`](/en/env-vars) environment variable to `0` to wait up to 5 seconds for servers to connect before the init message is sent; servers that connect in time list their `mcp__` tools there, and slower ones keep connecting in the background:
+MCP servers connect in the background by default, so the init message arrives before they finish: the `tools` array lists only built-in tools and `mcp_servers` shows a `pending` status for each server. Set the [`MCP_CONNECTION_NONBLOCKING`](/docs/en/env-vars) environment variable to `0` to wait up to 5 seconds for servers to connect before the init message is sent; servers that connect in time list their `mcp__` tools there, and slower ones keep connecting in the background:
 
 ```bash theme={null}
 export MCP_CONNECTION_NONBLOCKING=0
@@ -376,15 +376,15 @@ For the streamable HTTP transport, use `"type": "http"` instead. In `.mcp.json` 
 
 ### SDK MCP servers
 
-Define custom tools directly in your application code instead of running a separate server process. See the [custom tools guide](/en/agent-sdk/custom-tools) for implementation details.
+Define custom tools directly in your application code instead of running a separate server process. See the [custom tools guide](/docs/en/agent-sdk/custom-tools) for implementation details.
 
-{/* min-version: 2.1.210 */}An SDK MCP server registered by an [`initialize` control request](/en/agent-sdk/typescript#sdkcontrolinitializeresponse) begins connecting as soon as Claude Code processes the request.
+{/* min-version: 2.1.210 */}An SDK MCP server registered by an [`initialize` control request](/docs/en/agent-sdk/typescript#sdkcontrolinitializeresponse) begins connecting as soon as Claude Code processes the request.
 
 ## MCP tool search
 
 When you have many MCP tools configured, tool definitions can consume a significant portion of your context window. Tool search solves this by withholding tool definitions from context and loading only the ones Claude needs for each turn.
 
-Tool search is enabled by default. See [Tool search](/en/agent-sdk/tool-search) for configuration options, best practices, and using tool search with custom SDK tools.
+Tool search is enabled by default. See [Tool search](/docs/en/agent-sdk/tool-search) for configuration options, best practices, and using tool search with custom SDK tools.
 
 ## Authentication
 
@@ -510,7 +510,7 @@ For a complete working example of a remote server authenticated with headers, se
 
 ### OAuth2 authentication
 
-The [MCP specification supports OAuth 2.1](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) for authorization. The SDK doesn't open a browser or run an interactive OAuth flow. When a configured server returns an authorization challenge and no stored token is available, the agent run continues without that server's tools, and the server reports status `needs-auth`. Because servers connect in the background by default, the `mcp_servers` array of the [system init message](/en/agent-sdk/typescript#sdksystemmessage) may still show `pending` for that server. To confirm whether a server needs credentials, poll `mcpServerStatus()` in the TypeScript SDK or [`get_mcp_status()`](/en/agent-sdk/python#methods) in Python, or set `MCP_CONNECTION_NONBLOCKING=0` to wait for connections before the init message.
+The [MCP specification supports OAuth 2.1](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) for authorization. The SDK doesn't open a browser or run an interactive OAuth flow. When a configured server returns an authorization challenge and no stored token is available, the agent run continues without that server's tools, and the server reports status `needs-auth`. Because servers connect in the background by default, the `mcp_servers` array of the [system init message](/docs/en/agent-sdk/typescript#sdksystemmessage) may still show `pending` for that server. To confirm whether a server needs credentials, poll `mcpServerStatus()` in the TypeScript SDK or [`get_mcp_status()`](/docs/en/agent-sdk/python#methods) in Python, or set `MCP_CONNECTION_NONBLOCKING=0` to wait for connections before the init message.
 
 To supply credentials, complete the OAuth flow in your own application and pass the resulting access token in the server's `headers`:
 
@@ -839,7 +839,7 @@ Check the `init` message to see which servers failed to connect:
   ```
 </CodeGroup>
 
-A `"pending"` status means the server is still connecting, not that it failed. To get updated statuses later in the session, call the query's `mcpServerStatus()` method in the TypeScript SDK, or [`ClaudeSDKClient.get_mcp_status()`](/en/agent-sdk/python#methods) in Python.
+A `"pending"` status means the server is still connecting, not that it failed. To get updated statuses later in the session, call the query's `mcpServerStatus()` method in the TypeScript SDK, or [`ClaudeSDKClient.get_mcp_status()`](/docs/en/agent-sdk/python#methods) in Python.
 
 Common causes:
 
@@ -876,7 +876,7 @@ If Claude sees tools but doesn't use them, check that you've granted permission 
 
 ### Connection timeouts
 
-MCP server connections time out after 30 seconds by default. If your server takes longer to start, the connection fails. Raise the limit with the [`MCP_TIMEOUT`](/en/env-vars) environment variable, in milliseconds. For servers that need more startup time, also consider:
+MCP server connections time out after 30 seconds by default. If your server takes longer to start, the connection fails. Raise the limit with the [`MCP_TIMEOUT`](/docs/en/env-vars) environment variable, in milliseconds. For servers that need more startup time, also consider:
 
 * Using a lighter-weight server if available
 * Pre-warming the server before starting your agent
@@ -884,13 +884,13 @@ MCP server connections time out after 30 seconds by default. If your server take
 
 ### Tool output exceeds maximum allowed tokens
 
-The SDK applies the same MCP output limit as Claude Code. When a tool result is larger than 25,000 tokens, the full output is saved to a file and the tool result is replaced with an error message that names the file path, so the agent can read the output back in portions. Raise the limit with the [`MAX_MCP_OUTPUT_TOKENS`](/en/env-vars) environment variable. See [MCP output limits and warnings](/en/mcp#mcp-output-limits-and-warnings) for the full behavior, including how a server can declare a higher per-tool limit.
+The SDK applies the same MCP output limit as Claude Code. When a tool result is larger than 25,000 tokens, the full output is saved to a file and the tool result is replaced with an error message that names the file path, so the agent can read the output back in portions. Raise the limit with the [`MAX_MCP_OUTPUT_TOKENS`](/docs/en/env-vars) environment variable. See [MCP output limits and warnings](/docs/en/mcp#mcp-output-limits-and-warnings) for the full behavior, including how a server can declare a higher per-tool limit.
 
 ## Related resources
 
-* **[Custom tools guide](/en/agent-sdk/custom-tools)**: Build your own MCP server that runs in-process with your SDK application
-* **[Permissions](/en/agent-sdk/permissions)**: Control which MCP tools your agent can use with `allowedTools` and `disallowedTools`
-* **[MCP output limits and warnings](/en/mcp#mcp-output-limits-and-warnings)**: How the SDK handles tool results that exceed `MAX_MCP_OUTPUT_TOKENS`, including the persist-to-disk fallback and the `anthropic/maxResultSizeChars` per-tool annotation
-* **[TypeScript SDK reference](/en/agent-sdk/typescript)**: Full API reference including MCP configuration options
-* **[Python SDK reference](/en/agent-sdk/python)**: Full API reference including MCP configuration options
+* **[Custom tools guide](/docs/en/agent-sdk/custom-tools)**: Build your own MCP server that runs in-process with your SDK application
+* **[Permissions](/docs/en/agent-sdk/permissions)**: Control which MCP tools your agent can use with `allowedTools` and `disallowedTools`
+* **[MCP output limits and warnings](/docs/en/mcp#mcp-output-limits-and-warnings)**: How the SDK handles tool results that exceed `MAX_MCP_OUTPUT_TOKENS`, including the persist-to-disk fallback and the `anthropic/maxResultSizeChars` per-tool annotation
+* **[TypeScript SDK reference](/docs/en/agent-sdk/typescript)**: Full API reference including MCP configuration options
+* **[Python SDK reference](/docs/en/agent-sdk/python)**: Full API reference including MCP configuration options
 * **[MCP server directory](https://github.com/modelcontextprotocol/servers)**: Browse available MCP servers for databases, APIs, and more

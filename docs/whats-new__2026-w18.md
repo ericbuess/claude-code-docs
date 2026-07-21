@@ -7,7 +7,7 @@
 > Claude Code on Windows runs without Git Bash, claude auth login accepts a pasted OAuth code when the browser callback can't reach localhost, claude project purge cleans up local state per project, and pasting a PR URL into /resume finds the session that created it.
 
 <div className="digest-meta">
-  <span>Releases <a href="/docs/en/changelog#2-1-120">v2.1.120 → v2.1.126</a></span>
+  <span>Releases <a href="/docs/docs/en/changelog#2-1-120">v2.1.120 → v2.1.126</a></span>
   <span>4 features · April 27 – May 1</span>
 </div>
 
@@ -25,7 +25,7 @@
   claude auth login
   ```
 
-  <a className="digest-feature-link" href="/docs/en/cli-reference#cli-commands">CLI reference</a>
+  <a className="digest-feature-link" href="/docs/docs/en/cli-reference#cli-commands">CLI reference</a>
 </div>
 
 <div className="digest-feature">
@@ -48,7 +48,7 @@
   claude project purge
   ```
 
-  <a className="digest-feature-link" href="/docs/en/cli-reference">CLI reference</a>
+  <a className="digest-feature-link" href="/docs/docs/en/cli-reference">CLI reference</a>
 </div>
 
 <div className="digest-feature">
@@ -77,7 +77,7 @@
   claude --from-pr 1234
   ```
 
-  <a className="digest-feature-link" href="/docs/en/sessions#use-the-session-picker">Sessions: use the session picker</a>
+  <a className="digest-feature-link" href="/docs/docs/en/sessions#use-the-session-picker">Sessions: use the session picker</a>
 </div>
 
 <div className="digest-feature">
@@ -88,7 +88,7 @@
 
   <p className="digest-feature-lede">Git for Windows is no longer required. When Bash is absent, Claude Code uses PowerShell as the shell tool, and when the PowerShell tool is enabled it is treated as the primary shell. PowerShell 7 installed via the Microsoft Store, MSI without PATH, or a <code>.NET</code> global tool is now detected automatically.</p>
 
-  <a className="digest-feature-link" href="/docs/en/setup">Setup guide</a>
+  <a className="digest-feature-link" href="/docs/docs/en/setup">Setup guide</a>
 </div>
 
 <div className="digest-wins">
@@ -99,7 +99,7 @@
     <div>New <code>claude plugin prune</code> removes orphaned auto-installed plugin dependencies, and <code>plugin uninstall --prune</code> cascades</div>
     <div><code>/skills</code> now has a type-to-filter search box so you can find a skill in a long list without scrolling</div>
     <div><code>PostToolUse</code> hooks can replace tool output for any tool via <code>hookSpecificOutput.updatedToolOutput</code>, not only MCP tools</div>
-    <div>New <a href="/docs/en/ultrareview"><code>claude ultrareview</code></a> subcommand runs <code>/ultrareview</code> non-interactively from CI or scripts: prints findings to stdout (<code>--json</code> for raw output) and exits 0 on completion or 1 on failure</div>
+    <div>New <a href="/docs/docs/en/ultrareview"><code>claude ultrareview</code></a> subcommand runs <code>/ultrareview</code> non-interactively from CI or scripts: prints findings to stdout (<code>--json</code> for raw output) and exits 0 on completion or 1 on failure</div>
     <div><code>--dangerously-skip-permissions</code> now bypasses prompts for writes to <code>.claude/</code>, <code>.git/</code>, <code>.vscode/</code>, shell config files, and other previously protected paths, while catastrophic removal commands still prompt as a safety net</div>
     <div>The <code>/model</code> picker can list models from your gateway's <code>/v1/models</code> endpoint when <code>ANTHROPIC\_BASE\_URL</code> points at an Anthropic-compatible gateway; opt in with <code>CLAUDE\_CODE\_ENABLE\_GATEWAY\_MODEL\_DISCOVERY=1</code> since v2.1.129</div>
     <div>MCP servers that hit a transient error during startup now auto-retry up to 3 times instead of staying disconnected</div>
@@ -110,4 +110,4 @@
   </div>
 </div>
 
-[Full changelog for v2.1.120–v2.1.126 →](/en/changelog#2-1-120)
+[Full changelog for v2.1.120–v2.1.126 →](/docs/en/changelog#2-1-120)

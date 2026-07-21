@@ -7,7 +7,7 @@
 > Manage every Claude Code session from one screen with agent view, keep Claude working toward a goal until a condition holds, and run fast mode on Opus 4.7 by default.
 
 <div className="digest-meta">
-  <span>Releases <a href="/docs/en/changelog#2-1-139">v2.1.139 → v2.1.142</a></span>
+  <span>Releases <a href="/docs/docs/en/changelog#2-1-139">v2.1.139 → v2.1.142</a></span>
   <span>3 features · May 11–15</span>
 </div>
 
@@ -29,7 +29,7 @@
   claude agents
   ```
 
-  <a className="digest-feature-link" href="/docs/en/agent-view">Agent view</a>
+  <a className="digest-feature-link" href="/docs/docs/en/agent-view">Agent view</a>
 </div>
 
 <div className="digest-feature">
@@ -50,7 +50,7 @@
   > /goal all tests in test/auth pass and the lint step is clean
   ```
 
-  <a className="digest-feature-link" href="/docs/en/goal">Goals</a>
+  <a className="digest-feature-link" href="/docs/docs/en/goal">Goals</a>
 </div>
 
 <div className="digest-feature">
@@ -71,7 +71,7 @@
   > /fast
   ```
 
-  <a className="digest-feature-link" href="/docs/en/fast-mode#understand-the-cost-tradeoff">Fast mode on Opus 4.7</a>
+  <a className="digest-feature-link" href="/docs/docs/en/fast-mode#understand-the-cost-tradeoff">Fast mode on Opus 4.7</a>
 </div>
 
 <div className="digest-wins">
@@ -92,4 +92,4 @@
   </div>
 </div>
 
-[Full changelog for v2.1.139–v2.1.142 →](/en/changelog#2-1-139)
+[Full changelog for v2.1.139–v2.1.142 →](/docs/en/changelog#2-1-139)

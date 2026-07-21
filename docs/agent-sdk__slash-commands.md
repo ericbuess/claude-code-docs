@@ -119,7 +119,7 @@ Send slash commands by including them in your prompt string, just like regular t
 
   After yielding that final result message, the SDK raises an error, because the CLI process exits with a non-zero code.
 
-  Wrap the loop in a `try`/`catch` in TypeScript or `try`/`except` in Python if your command might hit the limit, as shown in [Single Message Input](/en/agent-sdk/streaming-vs-single-mode#single-message-input), or set `maxTurns` high enough for the work to complete. In Python, catch `Exception`: the SDK surfaces error results as a plain `Exception`.
+  Wrap the loop in a `try`/`catch` in TypeScript or `try`/`except` in Python if your command might hit the limit, as shown in [Single Message Input](/docs/en/agent-sdk/streaming-vs-single-mode#single-message-input), or set `maxTurns` high enough for the work to complete. In Python, catch `Exception`: the SDK surfaces error results as a plain `Exception`.
 </Note>
 
 ## Common Slash Commands
@@ -204,14 +204,14 @@ The `/compact` command reduces the size of your conversation history by summariz
 </CodeGroup>
 
 <Note>
-  A `compact_boundary` message only arrives when compaction ran. With nothing to summarize, `/compact` reports the reason instead of raising: the run still ends with a `success` result, no `compact_boundary` message is emitted, and the result text carries the message, for example `Not enough messages to compact.` after a single short exchange. A fresh one-shot `query()` call starts with empty context, so use this pattern in a session with prior turns, for example in [streaming input mode](/en/agent-sdk/streaming-vs-single-mode) or when resuming a session.
+  A `compact_boundary` message only arrives when compaction ran. With nothing to summarize, `/compact` reports the reason instead of raising: the run still ends with a `success` result, no `compact_boundary` message is emitted, and the result text carries the message, for example `Not enough messages to compact.` after a single short exchange. A fresh one-shot `query()` call starts with empty context, so use this pattern in a session with prior turns, for example in [streaming input mode](/docs/en/agent-sdk/streaming-vs-single-mode) or when resuming a session.
 </Note>
 
 ### `/clear` - Reset conversation context
 
-The `/clear` command resets the conversation to an empty context, so subsequent prompts start with no prior conversation history. The previous conversation remains on disk and can be returned to by passing its session ID to the [`resume` option](/en/agent-sdk/sessions#resume-by-id).
+The `/clear` command resets the conversation to an empty context, so subsequent prompts start with no prior conversation history. The previous conversation remains on disk and can be returned to by passing its session ID to the [`resume` option](/docs/en/agent-sdk/sessions#resume-by-id).
 
-This is useful in [streaming input mode](/en/agent-sdk/streaming-vs-single-mode), where you send multiple prompts over a single connection. For one-shot `query()` calls, each call already starts with empty context, so sending `/clear` has no practical effect; start a new `query()` instead.
+This is useful in [streaming input mode](/docs/en/agent-sdk/streaming-vs-single-mode), where you send multiple prompts over a single connection. For one-shot `query()` calls, each call already starts with empty context, so sending `/clear` has no practical effect; start a new `query()` instead.
 
 <Note>
   `/clear` in the SDK requires Claude Code v2.1.117 or later. In earlier versions it is omitted from `slash_commands`.
@@ -222,7 +222,7 @@ This is useful in [streaming input mode](/en/agent-sdk/streaming-vs-single-mode)
 In addition to using built-in slash commands, you can create your own custom commands that are available through the SDK. Custom commands are defined as markdown files in specific directories, similar to how subagents are configured.
 
 <Note>
-  The `.claude/commands/` directory is the legacy format. The recommended format is `.claude/skills/<name>/SKILL.md`, which supports the same slash-command invocation (`/name`) plus autonomous invocation by Claude. See [Skills](/en/agent-sdk/skills) for the current format. The CLI continues to support both formats, and the examples below remain accurate for `.claude/commands/`.
+  The `.claude/commands/` directory is the legacy format. The recommended format is `.claude/skills/<name>/SKILL.md`, which supports the same slash-command invocation (`/name`) plus autonomous invocation by Claude. See [Skills](/docs/en/agent-sdk/skills) for the current format. The CLI continues to support both formats, and the examples below remain accurate for `.claude/commands/`.
 </Note>
 
 ### File Locations
@@ -568,8 +568,8 @@ Use these commands through the SDK:
 
 ## See Also
 
-* [Slash Commands](/en/skills) - Complete slash command documentation
-* [Subagents in the SDK](/en/agent-sdk/subagents) - Similar filesystem-based configuration for subagents
-* [TypeScript SDK reference](/en/agent-sdk/typescript) - Complete API documentation
-* [SDK overview](/en/agent-sdk/overview) - General SDK concepts
-* [CLI reference](/en/cli-reference) - Command-line interface
+* [Slash Commands](/docs/en/skills) - Complete slash command documentation
+* [Subagents in the SDK](/docs/en/agent-sdk/subagents) - Similar filesystem-based configuration for subagents
+* [TypeScript SDK reference](/docs/en/agent-sdk/typescript) - Complete API documentation
+* [SDK overview](/docs/en/agent-sdk/overview) - General SDK concepts
+* [CLI reference](/docs/en/cli-reference) - Command-line interface

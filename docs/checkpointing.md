@@ -19,7 +19,7 @@ Claude Code tracks all changes made by its file editing tools:
 * Every user prompt creates a new checkpoint
 * Claude Code keeps file snapshots for the 100 most recent checkpoints in a session. Discarding an older checkpoint deletes the snapshot files that no remaining checkpoint references, except each file's first snapshot, which the VS Code extension uses as the baseline for its session diffs. {/* min-version: 2.1.208 */}Before v2.1.208, those superseded snapshot files stayed on disk until the session was cleaned up.
 * Checkpoints are saved with the conversation, so a resumed session can still `/rewind` to them
-* Automatically cleaned up along with sessions after 30 days, configurable via [`cleanupPeriodDays`](/en/settings#available-settings)
+* Automatically cleaned up along with sessions after 30 days, configurable via [`cleanupPeriodDays`](/docs/en/settings#available-settings)
 
 ### Rewind and summarize
 
@@ -58,7 +58,7 @@ The restore options revert state: they undo code changes, conversation history, 
 In both cases the original messages are preserved in the session transcript, so Claude can reference the details if needed. To guide what the summary focuses on, highlight a **Summarize** option with the arrow keys and type instructions inline where the row reads **add context (optional)**, then press `Enter` to summarize; selecting the option by its number key summarizes immediately without instructions. This is similar to `/compact`, but targeted: instead of summarizing the entire conversation, you choose which side of the selected message to compress.
 
 <Note>
-  Summarize keeps you in the same session and compresses context. If you want to branch off and try a different approach while preserving the original session intact, use [`/branch`](/en/sessions#branch-a-session) or `claude --continue --fork-session` instead.
+  Summarize keeps you in the same session and compresses context. If you want to branch off and try a different approach while preserving the original session intact, use [`/branch`](/docs/en/sessions#branch-a-session) or `claude --continue --fork-session` instead.
 </Note>
 
 ## Common use cases
@@ -98,6 +98,6 @@ Checkpoints are designed for quick, session-level recovery. For permanent versio
 
 ## See also
 
-* [Interactive mode](/en/interactive-mode) - Keyboard shortcuts and session controls
-* [Commands](/en/commands) - Accessing checkpoints using `/rewind`
-* [CLI reference](/en/cli-reference) - Command-line options
+* [Interactive mode](/docs/en/interactive-mode) - Keyboard shortcuts and session controls
+* [Commands](/docs/en/commands) - Accessing checkpoints using `/rewind`
+* [CLI reference](/docs/en/cli-reference) - Command-line options

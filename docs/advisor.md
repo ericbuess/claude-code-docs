@@ -20,20 +20,20 @@ This page covers how to enable the advisor, which model pairings are accepted, w
 
 The advisor fits long, multi-step tasks where most turns are routine but plan quality determines the outcome. Examples include large refactors, debugging sessions where an error keeps recurring, and tasks you want independently checked before Claude declares them done.
 
-It adds less value on short tasks where there is little to plan, or on work where every turn needs the strongest model. For those, [switch the main model](/en/model-config#setting-your-model) instead, or see [how the advisor compares with opusplan and subagents](#compare-with-related-features) for other ways to get a second opinion.
+It adds less value on short tasks where there is little to plan, or on work where every turn needs the strongest model. For those, [switch the main model](/docs/en/model-config#setting-your-model) instead, or see [how the advisor compares with opusplan and subagents](#compare-with-related-features) for other ways to get a second opinion.
 
 ## Enable the advisor
 
 You can set the advisor model in three ways:
 
 * **`/advisor` command**: set or change the advisor mid-session and save it as your default
-* **`advisorModel` setting**: configure a persistent default in your [settings file](/en/settings)
+* **`advisorModel` setting**: configure a persistent default in your [settings file](/docs/en/settings)
 * **`--advisor` flag**: set the advisor for a single session at launch
 
 If any of these sets an advisor model, the advisor is enabled for sessions whose main model [supports it](#choose-an-advisor-model), and an `Advisor Tool (experimental) is on and may use more tokens · /advisor` notification appears after the session starts. To stop using it, see [Turn the advisor off](#turn-the-advisor-off).
 
 <Note>
-  {/* min-version: 2.1.210 */}Claude Code doesn't offer Fable 5 as the advisor. For organizations with [Fable 5 access](/en/model-config#work-with-fable-5), the `/advisor` picker lists it as a dimmed, unselectable row labeled `Fable 5 (temporarily unavailable)`, and Claude Code rejects `/advisor fable` and `--advisor fable`. Fable 5 as the main model isn't affected.
+  {/* min-version: 2.1.210 */}Claude Code doesn't offer Fable 5 as the advisor. For organizations with [Fable 5 access](/docs/en/model-config#work-with-fable-5), the `/advisor` picker lists it as a dimmed, unselectable row labeled `Fable 5 (temporarily unavailable)`, and Claude Code rejects `/advisor fable` and `--advisor fable`. Fable 5 as the main model isn't affected.
 
   A remotely configured rollout controls when Fable 5 returns as an advisor option.
 </Note>
@@ -48,7 +48,7 @@ Run `/advisor` without arguments to open a picker listing the available advisor 
 
 The command confirms with `Advisor set to` followed by the advisor model name. Your selection is saved to `advisorModel` in your user settings and persists across sessions.
 
-If your organization's [`availableModels`](/en/model-config#restrict-model-selection) allowlist excludes the saved advisor model, the advisor is not invoked until you pick an allowed model with `/advisor`. If your current main model does not support the advisor, the selection is still saved and activates when you switch to a [compatible main model](#choose-an-advisor-model) with [`/model`](/en/model-config#setting-your-model).
+If your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist excludes the saved advisor model, the advisor is not invoked until you pick an allowed model with `/advisor`. If your current main model does not support the advisor, the selection is still saved and activates when you switch to a [compatible main model](#choose-an-advisor-model) with [`/model`](/docs/en/model-config#setting-your-model).
 
 ### Set `advisorModel` in settings
 
@@ -68,7 +68,7 @@ To set the advisor for a single session without changing your saved setting, lau
 claude --advisor opus
 ```
 
-The flag takes precedence over the `advisorModel` setting for that session, and isn't listed in `claude --help`. It exits with an error if the session's main model does not support the advisor, or if the requested advisor model is excluded by your organization's [`availableModels`](/en/model-config#restrict-model-selection) allowlist.
+The flag takes precedence over the `advisorModel` setting for that session, and isn't listed in `claude --help`. It exits with an error if the session's main model does not support the advisor, or if the requested advisor model is excluded by your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist.
 
 ## Choose an advisor model
 
@@ -125,13 +125,13 @@ The advisor always receives the full conversation, and Claude controls the timin
 
 Each advisor call sends the conversation to the advisor model, so it consumes tokens at the advisor model's rates in addition to your main model's usage. With API billing, advisor tokens are charged at the advisor model's input and output rates. On subscription plans, advisor usage counts toward your plan's usage limits.
 
-Claude calls the advisor at decision points rather than on every turn, so pairing a faster main model with a stronger advisor typically costs less than running the stronger model throughout. Advisor usage counts toward the session totals shown by [`/usage`](/en/costs#track-your-costs).
+Claude calls the advisor at decision points rather than on every turn, so pairing a faster main model with a stronger advisor typically costs less than running the stronger model throughout. Advisor usage counts toward the session totals shown by [`/usage`](/docs/en/costs#track-your-costs).
 
 For how advisor tokens are reported in API responses, see [Usage and billing](https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool#usage-and-billing) in the Claude API documentation.
 
 ## Impact on prompt caching
 
-Enabling or disabling the advisor mid-session does not invalidate your main model's [prompt cache](/en/prompt-caching). Unlike [changing model or effort level](/en/prompt-caching#actions-that-invalidate-the-cache), toggling `/advisor` keeps the cached prefix intact, and the advisor's returned guidance is cached as part of the transcript on later turns.
+Enabling or disabling the advisor mid-session does not invalidate your main model's [prompt cache](/docs/en/prompt-caching). Unlike [changing model or effort level](/docs/en/prompt-caching#actions-that-invalidate-the-cache), toggling `/advisor` keeps the cached prefix intact, and the advisor's returned guidance is cached as part of the transcript on later turns.
 
 The advisor model's own read of the conversation is not cached. Each advisor call processes the full transcript anew, with no reuse between calls.
 
@@ -139,7 +139,7 @@ The advisor model's own read of the conversation is not cached. Each advisor cal
 
 The advisor tool requires all of the following:
 
-* **Anthropic API only**: the advisor is a server-executed tool. It is not available on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry. Through an [LLM gateway](/en/llm-gateway) configured with `ANTHROPIC_BASE_URL`, availability depends on whether the gateway forwards the request intact to the Anthropic API.
+* **Anthropic API only**: the advisor is a server-executed tool. It is not available on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry. Through an [LLM gateway](/docs/en/llm-gateway) configured with `ANTHROPIC_BASE_URL`, availability depends on whether the gateway forwards the request intact to the Anthropic API.
 * **Supported main model**: Opus 4.6 or later, Sonnet 4.6 or later, or Haiku 4.5. {/* min-version: 2.1.170 */}Fable 5 also qualifies on Claude Code v2.1.170 or later, but a Fable 5 main [accepts only a Fable advisor](#choose-an-advisor-model) and Fable [isn't offered as the advisor](#enable-the-advisor), so a Fable 5 session runs without one until the rollout returns it as an option.
 
 ## Turn the advisor off
@@ -150,7 +150,7 @@ To stop using the advisor and clear your saved `advisorModel`, run `/advisor off
 /advisor off
 ```
 
-To disable the advisor tool entirely, set `CLAUDE_CODE_DISABLE_ADVISOR_TOOL=1`. The `/advisor` command becomes unavailable and any configured `advisorModel` is ignored. The `--advisor` flag is accepted but has no effect; existing scripts that pass it continue to work without errors. See [Environment variables](/en/env-vars).
+To disable the advisor tool entirely, set `CLAUDE_CODE_DISABLE_ADVISOR_TOOL=1`. The `/advisor` command becomes unavailable and any configured `advisorModel` is ignored. The `--advisor` flag is accepted but has no effect; existing scripts that pass it continue to work without errors. See [Environment variables](/docs/en/env-vars).
 
 ## Compare with related features
 
@@ -159,13 +159,13 @@ The advisor is one of several ways to combine model strengths. Pick based on whe
 | Approach                                                    | When the stronger model runs                                                                                                           | How it starts                                |
 | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
 | Advisor tool                                                | At decision points mid-task                                                                                                            | Claude calls it when it needs guidance       |
-| [`opusplan`](/en/model-config#opusplan-model-setting)       | During plan mode when [allowed by `availableModels`](/en/model-config#restrict-model-selection), then switches to Sonnet for execution | You enter plan mode                          |
-| [Subagents](/en/sub-agents#choose-a-model) with `model` set | For the entire delegated subtask                                                                                                       | Claude delegates, or you invoke the subagent |
-| [`/model`](/en/model-config#setting-your-model)             | For all subsequent turns                                                                                                               | You switch models                            |
+| [`opusplan`](/docs/en/model-config#opusplan-model-setting)       | During plan mode when [allowed by `availableModels`](/docs/en/model-config#restrict-model-selection), then switches to Sonnet for execution | You enter plan mode                          |
+| [Subagents](/docs/en/sub-agents#choose-a-model) with `model` set | For the entire delegated subtask                                                                                                       | Claude delegates, or you invoke the subagent |
+| [`/model`](/docs/en/model-config#setting-your-model)             | For all subsequent turns                                                                                                               | You switch models                            |
 
 ## See also
 
-* [Model configuration](/en/model-config): switch models, set effort levels, and use `opusplan`
-* [Manage costs effectively](/en/costs): track token usage across models
+* [Model configuration](/docs/en/model-config): switch models, set effort levels, and use `opusplan`
+* [Manage costs effectively](/docs/en/costs): track token usage across models
 * [Advisor tool in the Claude API](https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool): understand the underlying server tool, or use it directly from the Messages API
 * [The advisor strategy](https://claude.com/blog/the-advisor-strategy): why pairing a fast main model with a stronger advisor works

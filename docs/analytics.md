@@ -24,7 +24,7 @@ The Team and Enterprise dashboard includes:
 * **Leaderboard**: top contributors ranked by Claude Code usage
 * **Data export**: download contribution data as CSV for custom reporting
 
-For per-user token counts and cost estimates, configure [OpenTelemetry export](/en/monitoring-usage), or export the [spend report](https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans) from your organization's analytics settings, which lists token usage and estimated usage-credit spend per user and per model.
+For per-user token counts and cost estimates, configure [OpenTelemetry export](/docs/en/monitoring-usage), or export the [spend report](https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans) from your organization's analytics settings, which lists token usage and estimated usage-credit spend per user and per model.
 
 ### Enable contribution metrics
 
@@ -37,7 +37,7 @@ Usage and adoption data is available for all Claude for Teams and Claude for Ent
 You need the Owner role to configure analytics settings. A GitHub admin must install the GitHub app.
 
 <Warning>
-  Contribution metrics are not available for organizations with [Zero Data Retention](/en/zero-data-retention) enabled. The analytics dashboard will show usage metrics only.
+  Contribution metrics are not available for organizations with [Zero Data Retention](/docs/en/zero-data-retention) enabled. The analytics dashboard will show usage metrics only.
 </Warning>
 
 <Steps>
@@ -223,6 +223,6 @@ The team insights table shows per-user metrics:
 
 ## Related resources
 
-* [Monitoring with OpenTelemetry](/en/monitoring-usage): export real-time metrics and events to your observability stack
-* [Manage costs effectively](/en/costs): set spend limits and optimize token usage
-* [Permissions](/en/permissions): configure roles and permissions
+* [Monitoring with OpenTelemetry](/docs/en/monitoring-usage): export real-time metrics and events to your observability stack
+* [Manage costs effectively](/docs/en/costs): set spend limits and optimize token usage
+* [Permissions](/docs/en/permissions): configure roles and permissions

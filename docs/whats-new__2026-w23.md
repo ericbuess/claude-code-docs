@@ -7,7 +7,7 @@
 > Run auto mode on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, prompt before writing files that can run code in acceptEdits mode, list installed plugins with /plugin list, and require an approved version range for managed deployments.
 
 <div className="digest-meta">
-  <span>Releases <a href="/docs/en/changelog#2-1-158">v2.1.158 → v2.1.165</a></span>
+  <span>Releases <a href="/docs/docs/en/changelog#2-1-158">v2.1.158 → v2.1.165</a></span>
   <span>4 features · June 1–5</span>
 </div>
 
@@ -25,7 +25,7 @@
   export CLAUDE_CODE_ENABLE_AUTO_MODE=1
   ```
 
-  <a className="digest-feature-link" href="/docs/en/permission-modes#enable-auto-mode-on-bedrock-agent-platform-or-foundry">Auto mode on third-party providers</a>
+  <a className="digest-feature-link" href="/docs/docs/en/permission-modes#enable-auto-mode-on-bedrock-agent-platform-or-foundry">Auto mode on third-party providers</a>
 </div>
 
 <div className="digest-feature">
@@ -42,7 +42,7 @@
   claude --permission-mode acceptEdits
   ```
 
-  <a className="digest-feature-link" href="/docs/en/permission-modes#protected-paths">Protected paths</a>
+  <a className="digest-feature-link" href="/docs/docs/en/permission-modes#protected-paths">Protected paths</a>
 </div>
 
 <div className="digest-feature">
@@ -59,7 +59,7 @@
   > /plugin list --enabled
   ```
 
-  <a className="digest-feature-link" href="/docs/en/plugins-reference#plugin-list">Plugin commands</a>
+  <a className="digest-feature-link" href="/docs/docs/en/plugins-reference#plugin-list">Plugin commands</a>
 </div>
 
 <div className="digest-feature">
@@ -78,15 +78,15 @@
   }
   ```
 
-  <a className="digest-feature-link" href="/docs/en/admin-setup#decide-what-to-enforce">Decide what to enforce</a>
+  <a className="digest-feature-link" href="/docs/docs/en/admin-setup#decide-what-to-enforce">Decide what to enforce</a>
 </div>
 
 <div className="digest-wins">
   <p className="digest-wins-title">Other wins</p>
 
   <div className="digest-wins-grid">
-    <div>The trigger keyword for <a href="/docs/en/workflows">dynamic workflows</a> changed from <code>workflow</code> to <code>ultracode</code>; asking for a workflow in your own words still works, and the keyword is highlighted in violet in the prompt</div>
-    <div><a href="/docs/en/hooks">Stop and SubagentStop hooks</a> can return <code>hookSpecificOutput.additionalContext</code> to give Claude feedback and keep the turn going instead of being treated as an error</div>
+    <div>The trigger keyword for <a href="/docs/docs/en/workflows">dynamic workflows</a> changed from <code>workflow</code> to <code>ultracode</code>; asking for a workflow in your own words still works, and the keyword is highlighted in violet in the prompt</div>
+    <div><a href="/docs/docs/en/hooks">Stop and SubagentStop hooks</a> can return <code>hookSpecificOutput.additionalContext</code> to give Claude feedback and keep the turn going instead of being treated as an error</div>
     <div><code>claude mcp</code> list, get, and add no longer print secrets: environment-variable references are not expanded, and credential headers and URL secrets are redacted</div>
     <div>A failed Bash command in a parallel tool batch no longer cancels the others; each tool returns its own result independently</div>
     <div>Editing a file no longer needs a separate Read first when you viewed it with a single-file <code>grep</code>, <code>egrep</code>, or <code>fgrep</code></div>
@@ -99,4 +99,4 @@
   </div>
 </div>
 
-[Full changelog for v2.1.158–v2.1.165 →](/en/changelog#2-1-158)
+[Full changelog for v2.1.158–v2.1.165 →](/docs/en/changelog#2-1-158)

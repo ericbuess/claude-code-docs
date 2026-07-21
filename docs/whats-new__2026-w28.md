@@ -7,7 +7,7 @@
 > Browse external sites from the Desktop app's built-in browser, run a full setup checkup with /doctor, and pick up auto mode transcript protections and agent view upgrades.
 
 <div className="digest-meta">
-  <span>Releases <a href="/docs/en/changelog#2-1-202">v2.1.202 → v2.1.206</a></span>
+  <span>Releases <a href="/docs/docs/en/changelog#2-1-202">v2.1.202 → v2.1.206</a></span>
   <span>2 features · July 6–10</span>
 </div>
 
@@ -23,7 +23,7 @@
     <video autoPlay muted loop playsInline className="w-full" src="https://mintcdn.com/claude-code/x358isu_VzLnyTEN/images/whats-new/desktop-browser.mp4?fit=max&auto=format&n=x358isu_VzLnyTEN&q=85&s=8033e85a1cb0a37870a79e702c18f4e4" data-path="images/whats-new/desktop-browser.mp4" />
   </Frame>
 
-  <a className="digest-feature-link" href="/docs/en/desktop#browse-external-sites">Browse external sites</a>
+  <a className="digest-feature-link" href="/docs/docs/en/desktop#browse-external-sites">Browse external sites</a>
 </div>
 
 <div className="digest-feature">
@@ -40,7 +40,7 @@
   > /doctor
   ```
 
-  <a className="digest-feature-link" href="/docs/en/commands#all-commands">All commands</a>
+  <a className="digest-feature-link" href="/docs/docs/en/commands#all-commands">All commands</a>
 </div>
 
 <div className="digest-wins">
@@ -60,4 +60,4 @@
   </div>
 </div>
 
-[Full changelog for v2.1.202–v2.1.206 →](/en/changelog#2-1-202)
+[Full changelog for v2.1.202–v2.1.206 →](/docs/en/changelog#2-1-202)

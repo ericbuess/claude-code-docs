@@ -6,19 +6,19 @@
 
 > Use the Agent SDK to run Claude Code programmatically from the CLI, Python, or TypeScript.
 
-The [Agent SDK](/en/agent-sdk/overview) gives you the same tools, agent loop, and context management that power Claude Code. It's available as a CLI for scripts and CI/CD, or as [Python](/en/agent-sdk/python) and [TypeScript](/en/agent-sdk/typescript) packages for full programmatic control.
+The [Agent SDK](/docs/en/agent-sdk/overview) gives you the same tools, agent loop, and context management that power Claude Code. It's available as a CLI for scripts and CI/CD, or as [Python](/docs/en/agent-sdk/python) and [TypeScript](/docs/en/agent-sdk/typescript) packages for full programmatic control.
 
-To run Claude Code in non-interactive mode, pass `-p` with your prompt and any [CLI options](/en/cli-reference):
+To run Claude Code in non-interactive mode, pass `-p` with your prompt and any [CLI options](/docs/en/cli-reference):
 
 ```bash theme={null}
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
-This page covers using the Agent SDK via the CLI (`claude -p`). For the Python and TypeScript SDK packages with structured outputs, tool approval callbacks, and native message objects, see the [full Agent SDK documentation](/en/agent-sdk/overview).
+This page covers using the Agent SDK via the CLI (`claude -p`). For the Python and TypeScript SDK packages with structured outputs, tool approval callbacks, and native message objects, see the [full Agent SDK documentation](/docs/en/agent-sdk/overview).
 
 ## Basic usage
 
-Add the `-p` (or `--print`) flag to any `claude` command to run it non-interactively. All [CLI options](/en/cli-reference) work with `-p`, including:
+Add the `-p` (or `--print`) flag to any `claude` command to run it non-interactively. All [CLI options](/docs/en/cli-reference) work with `-p`, including:
 
 * `--continue` for [continuing conversations](#continue-conversations)
 * `--allowedTools` for [auto-approving tools](#auto-approve-tools)
@@ -32,7 +32,7 @@ claude -p "What does the auth module do?"
 
 ### Start faster with bare mode
 
-Add `--bare` to reduce startup time by skipping auto-discovery of hooks, skills, plugins, MCP servers, auto memory, and CLAUDE.md. Without it, `claude -p` loads the same [context](/en/how-claude-code-works#the-context-window) an interactive session would, including anything configured in the working directory or `~/.claude`.
+Add `--bare` to reduce startup time by skipping auto-discovery of hooks, skills, plugins, MCP servers, auto memory, and CLAUDE.md. Without it, `claude -p` loads the same [context](/docs/en/how-claude-code-works#the-context-window) an interactive session would, including anything configured in the working directory or `~/.claude`.
 
 Bare mode is useful for CI and scripts where you need the same result on every machine. A hook in a teammate's `~/.claude` or an MCP server in the project's `.mcp.json` won't run, because bare mode never reads them. Only flags you pass explicitly take effect.
 
@@ -60,11 +60,11 @@ Bare mode skips OAuth and keychain reads. Anthropic authentication must come fro
 
 ### Background tasks at exit
 
-If Claude starts a [background Bash task](/en/tools-reference#bash-tool-behavior) during a `claude -p` run, for example a dev server or a watch build, that shell is terminated about five seconds after Claude has returned its final result and stdin has closed. The grace period lets a task that finishes right after the result still deliver its output. Before v2.1.163, a never-exiting background process would hold the `claude -p` invocation open indefinitely.
+If Claude starts a [background Bash task](/docs/en/tools-reference#bash-tool-behavior) during a `claude -p` run, for example a dev server or a watch build, that shell is terminated about five seconds after Claude has returned its final result and stdin has closed. The grace period lets a task that finishes right after the result still deliver its output. Before v2.1.163, a never-exiting background process would hold the `claude -p` invocation open indefinitely.
 
-Background [subagents](/en/sub-agents) and workflows are exempt from the five-second grace because their result is part of the final output, so `claude -p` waits for them to complete. From v2.1.182, that wait is capped at ten minutes by default so a stuck background agent cannot hold the process open indefinitely. Adjust the cap with [`CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS`](/en/env-vars), or set it to `0` to wait without a limit.
+Background [subagents](/docs/en/sub-agents) and workflows are exempt from the five-second grace because their result is part of the final output, so `claude -p` waits for them to complete. From v2.1.182, that wait is capped at ten minutes by default so a stuck background agent cannot hold the process open indefinitely. Adjust the cap with [`CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS`](/docs/en/env-vars), or set it to `0` to wait without a limit.
 
-If you stop a `claude -p` run with SIGTERM, for example from `kill`, a process supervisor, or an SDK host closing the session, Claude Code aborts the in-progress turn, terminates the process tree of any running Bash command, runs [`SessionEnd` hooks](/en/hooks#sessionend), and exits with code 143.
+If you stop a `claude -p` run with SIGTERM, for example from `kill`, a process supervisor, or an SDK host closing the session, Claude Code aborts the in-progress turn, terminates the process tree of any running Bash command, runs [`SessionEnd` hooks](/docs/en/hooks#sessionend), and exits with code 143.
 
 ## Examples
 
@@ -80,7 +80,7 @@ This example pipes a build log into Claude and writes the explanation to a file:
 cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
 ```
 
-With `--output-format json`, the response payload includes `total_cost_usd` and a per-model cost breakdown, so scripted callers can track spend per invocation without consulting the [usage dashboard](/en/costs).
+With `--output-format json`, the response payload includes `total_cost_usd` and a per-model cost breakdown, so scripted callers can track spend per invocation without consulting the [usage dashboard](/docs/en/costs).
 
 <Note>
   As of Claude Code v2.1.128, piped stdin is capped at 10MB. If you exceed the cap, Claude Code exits with a clear error and a non-zero status. To work with larger inputs, write the content to a file and reference the file path in your prompt instead of piping it.
@@ -153,9 +153,9 @@ claude -p "Explain recursion" --output-format stream-json --verbose --include-pa
 
 The last line of the stream is a `result` message with the final response text, cost, and session metadata. {/* min-version: 2.1.208 */}Before v2.1.208, piping a large response could truncate the final line and omit the `result` message.
 
-Messages from [subagents](/en/sub-agents) appear in the stream as `assistant` and `user` messages whose `parent_tool_use_id` field is the ID of the tool call that spawned the subagent. Messages from the main conversation carry `null` in that field.
+Messages from [subagents](/docs/en/sub-agents) appear in the stream as `assistant` and `user` messages whose `parent_tool_use_id` field is the ID of the tool call that spawned the subagent. Messages from the main conversation carry `null` in that field.
 
-By default, Claude Code emits only subagent `tool_use` and `tool_result` blocks. {/* min-version: 2.1.211 */}Pass [`--forward-subagent-text`](/en/cli-reference#cli-flags) or set [`CLAUDE_CODE_FORWARD_SUBAGENT_TEXT`](/en/env-vars) to also emit subagent text and thinking blocks, so you can reconstruct each subagent's transcript. This requires Claude Code v2.1.211 or later.
+By default, Claude Code emits only subagent `tool_use` and `tool_result` blocks. {/* min-version: 2.1.211 */}Pass [`--forward-subagent-text`](/docs/en/cli-reference#cli-flags) or set [`CLAUDE_CODE_FORWARD_SUBAGENT_TEXT`](/docs/en/env-vars) to also emit subagent text and thinking blocks, so you can reconstruct each subagent's transcript. This requires Claude Code v2.1.211 or later.
 
 The following example uses [jq](https://jqlang.org/) to filter for text deltas and display just the streaming text. The `-r` flag outputs raw strings (no quotes) and `-j` joins without newlines so tokens stream continuously:
 
@@ -180,10 +180,10 @@ When an API request fails with a retryable error, Claude Code emits a `system/ap
 
 The `system/init` event reports session metadata including the model, tools, MCP servers, and loaded plugins. It is the first event in the stream unless startup events precede it:
 
-* `plugin_install` events, when [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/en/env-vars) is set.
-* {/* min-version: 2.1.204 */}[`hook_started`, `hook_progress`, and `hook_response` events](/en/agent-sdk/typescript#sdkhookstartedmessage), while a configured [`SessionStart`](/en/hooks#sessionstart) or [`Setup`](/en/hooks#setup) hook runs. These stream as the hook produces them. Claude Code v2.1.169 through v2.1.203 delivered them in one batch after the hook completed, still ahead of `system/init`; v2.1.204 restored live delivery.
+* `plugin_install` events, when [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/docs/en/env-vars) is set.
+* {/* min-version: 2.1.204 */}[`hook_started`, `hook_progress`, and `hook_response` events](/docs/en/agent-sdk/typescript#sdkhookstartedmessage), while a configured [`SessionStart`](/docs/en/hooks#sessionstart) or [`Setup`](/docs/en/hooks#setup) hook runs. These stream as the hook produces them. Claude Code v2.1.169 through v2.1.203 delivered them in one batch after the hook completed, still ahead of `system/init`; v2.1.204 restored live delivery.
 
-The event also carries an optional `capabilities` array of strings naming the protocol behaviors this Claude Code version implements, such as `interrupt_receipt_v1`. Check it to feature-detect instead of comparing version strings, and ignore values you don't recognize. The field requires Claude Code v2.1.205 or later and is absent from earlier versions. See [`SDKSystemMessage`](/en/agent-sdk/typescript#sdksystemmessage) for the capability list.
+The event also carries an optional `capabilities` array of strings naming the protocol behaviors this Claude Code version implements, such as `interrupt_receipt_v1`. Check it to feature-detect instead of comparing version strings, and ignore values you don't recognize. The field requires Claude Code v2.1.205 or later and is absent from earlier versions. See [`SDKSystemMessage`](/docs/en/agent-sdk/typescript#sdksystemmessage) for the capability list.
 
 Use the plugin fields to fail CI when a plugin did not load:
 
@@ -192,7 +192,7 @@ Use the plugin fields to fail CI when a plugin did not load:
 | `plugins`       | array | plugins that loaded successfully, each with `name` and `path`                                                                                                                                                                                                                                |
 | `plugin_errors` | array | plugin load-time errors, each with `plugin`, `type`, and `message`. Includes unsatisfied dependency versions and `--plugin-dir` load failures such as a missing path or invalid archive. Affected plugins are demoted and absent from `plugins`. The key is omitted when there are no errors |
 
-When [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/en/env-vars) is set, Claude Code emits `system/plugin_install` events while marketplace plugins install before the first turn. Use these to surface install progress in your own UI.
+When [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/docs/en/env-vars) is set, Claude Code emits `system/plugin_install` events while marketplace plugins install before the first turn. Use these to surface install progress in your own UI.
 
 | Field        | Type                                                     | Description                                                                                                    |
 | ------------ | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
@@ -204,7 +204,7 @@ When [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/en/env-vars) is set, Claude Code emits
 | `uuid`       | string                                                   | unique event identifier                                                                                        |
 | `session_id` | string                                                   | session the event belongs to                                                                                   |
 
-For programmatic streaming with callbacks and message objects, see [Stream responses in real-time](/en/agent-sdk/streaming-output) in the Agent SDK documentation.
+For programmatic streaming with callbacks and message objects, see [Stream responses in real-time](/docs/en/agent-sdk/streaming-output) in the Agent SDK documentation.
 
 ### Auto-approve tools
 
@@ -215,7 +215,7 @@ claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
 ```
 
-To set a baseline for the whole session instead of listing individual tools, pass a [permission mode](/en/permission-modes). `dontAsk` denies anything not in your `permissions.allow` rules or the [read-only command set](/en/permissions#read-only-commands), which is useful for locked-down CI runs. `AskUserQuestion`, connector tools [your organization set to `ask`](/en/mcp#organization-controls-on-connector-tools), and MCP tools marked [`requiresUserInteraction`](/en/mcp#require-approval-for-a-specific-tool) are denied even when an allow rule matches.
+To set a baseline for the whole session instead of listing individual tools, pass a [permission mode](/docs/en/permission-modes). `dontAsk` denies anything not in your `permissions.allow` rules or the [read-only command set](/docs/en/permissions#read-only-commands), which is useful for locked-down CI runs. `AskUserQuestion`, connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), and MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool) are denied even when an allow rule matches.
 
 `acceptEdits` lets Claude write files without prompting and also auto-approves common filesystem commands such as `mkdir`, `touch`, `mv`, and `cp`. Other shell commands and network requests still need an `--allowedTools` entry or a `permissions.allow` rule, otherwise the run aborts when one is attempted:
 
@@ -232,10 +232,10 @@ claude -p "Look at my staged changes and create an appropriate commit" \
   --allowedTools "Bash(git diff *),Bash(git log *),Bash(git status *),Bash(git commit *)"
 ```
 
-The `--allowedTools` flag uses [permission rule syntax](/en/settings#permission-rule-syntax). The trailing ` *` enables prefix matching, so `Bash(git diff *)` allows any command starting with `git diff`. The space before `*` is important: without it, `Bash(git diff*)` would also match `git diff-index`.
+The `--allowedTools` flag uses [permission rule syntax](/docs/en/settings#permission-rule-syntax). The trailing ` *` enables prefix matching, so `Bash(git diff *)` allows any command starting with `git diff`. The space before `*` is important: without it, `Bash(git diff*)` would also match `git diff-index`.
 
 <Note>
-  User-invoked [skills](/en/skills) and custom commands work in `-p` mode: include `/skill-name` in the prompt string and Claude Code expands it before running. Built-in commands that only run in the terminal interface, such as `/login`, aren't available in `-p` mode. {/* min-version: 2.1.205 */}`/model`, `/effort`, `/fast`, `/color`, and `/rename` accept the value as an argument, for example `/model sonnet`, and `/mcp` with no argument prints a text summary of server status; these forms require Claude Code v2.1.205 or later and follow each command's [availability notes](/en/commands#all-commands). {/* min-version: 2.1.181 */}To change a setting from a `-p` invocation, pass `key=value` to `/config`, for example `/config thinking=false`.
+  User-invoked [skills](/docs/en/skills) and custom commands work in `-p` mode: include `/skill-name` in the prompt string and Claude Code expands it before running. Built-in commands that only run in the terminal interface, such as `/login`, aren't available in `-p` mode. {/* min-version: 2.1.205 */}`/model`, `/effort`, `/fast`, `/color`, and `/rename` accept the value as an argument, for example `/model sonnet`, and `/mcp` with no argument prints a text summary of server status; these forms require Claude Code v2.1.205 or later and follow each command's [availability notes](/docs/en/commands#all-commands). {/* min-version: 2.1.181 */}To change a setting from a `-p` invocation, pass `key=value` to `/config`, for example `/config thinking=false`.
 </Note>
 
 ### Customize the system prompt
@@ -248,7 +248,7 @@ gh pr diff "$1" | claude -p \
   --output-format json
 ```
 
-See [system prompt flags](/en/cli-reference#system-prompt-flags) for more options including `--system-prompt` to fully replace the default prompt.
+See [system prompt flags](/docs/en/cli-reference#system-prompt-flags) for more options including `--system-prompt` to fully replace the default prompt.
 
 ### Continue conversations
 
@@ -270,11 +270,11 @@ session_id=$(claude -p "Start a review" --output-format json | jq -r '.session_i
 claude -p "Continue that review" --resume "$session_id"
 ```
 
-Run both commands from the same directory: session ID lookup is scoped to the current project directory and its git worktrees. See [Resume a session](/en/sessions#resume-a-session) for the full scope rules.
+Run both commands from the same directory: session ID lookup is scoped to the current project directory and its git worktrees. See [Resume a session](/docs/en/sessions#resume-a-session) for the full scope rules.
 
 ## Next steps
 
-* [Agent SDK quickstart](/en/agent-sdk/quickstart): build your first agent with Python or TypeScript
-* [CLI reference](/en/cli-reference): all CLI flags and options
-* [GitHub Actions](/en/github-actions): use the Agent SDK in GitHub workflows
-* [GitLab CI/CD](/en/gitlab-ci-cd): use the Agent SDK in GitLab pipelines
+* [Agent SDK quickstart](/docs/en/agent-sdk/quickstart): build your first agent with Python or TypeScript
+* [CLI reference](/docs/en/cli-reference): all CLI flags and options
+* [GitHub Actions](/docs/en/github-actions): use the Agent SDK in GitHub workflows
+* [GitLab CI/CD](/docs/en/gitlab-ci-cd): use the Agent SDK in GitLab pipelines

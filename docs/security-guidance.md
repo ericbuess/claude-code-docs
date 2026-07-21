@@ -10,7 +10,7 @@ The security guidance plugin makes Claude review its own code changes for common
 
 Once installed, the plugin runs automatically. There is nothing to invoke and no separate command to remember.
 
-The plugin is the in-session companion to [Code Review](/en/code-review), which runs on pull requests. This plugin reduces what reaches the PR. Code Review catches what does. For how the plugin layers with on-demand review and CI scanning, see [How this fits with other security tools](#how-this-fits-with-other-security-tools).
+The plugin is the in-session companion to [Code Review](/docs/en/code-review), which runs on pull requests. This plugin reduces what reaches the PR. Code Review catches what does. For how the plugin layers with on-demand review and CI scanning, see [How this fits with other security tools](#how-this-fits-with-other-security-tools).
 
 ## Prerequisites
 
@@ -22,7 +22,7 @@ On first run the plugin creates a virtual environment under `~/.claude/security/
 
 ## Install the plugin
 
-In a terminal Claude Code session, install from the [official Anthropic marketplace](/en/discover-plugins#official-anthropic-marketplace):
+In a terminal Claude Code session, install from the [official Anthropic marketplace](/docs/en/discover-plugins#official-anthropic-marketplace):
 
 ```text theme={null}
 /plugin install security-guidance@claude-plugins-official
@@ -30,7 +30,7 @@ In a terminal Claude Code session, install from the [official Anthropic marketpl
 
 `/plugin` opens an interactive panel and is available only in the terminal CLI. If Claude replies that `/plugin` isn't available in this environment, install another way:
 
-* **Claude desktop app, local or SSH session**: open the [plugin browser](/en/desktop#install-plugins) by clicking the **+** button next to the prompt, then **Plugins**, then **Add plugin**
+* **Claude desktop app, local or SSH session**: open the [plugin browser](/docs/en/desktop#install-plugins) by clicking the **+** button next to the prompt, then **Plugins**, then **Add plugin**
 * **Claude Code on the web or a desktop cloud session**: declare the plugin in `.claude/settings.json` as shown under [Enable in cloud sessions](#enable-in-cloud-sessions-and-shared-repositories)
 
 The terminal install prompts for a scope. Choose user scope to write the plugin to your user settings, so it loads in every new local session you start on this machine. If Claude Code reports `Marketplace "claude-plugins-official" not found`, add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`. If it reports that the plugin is not found in the marketplace, your local copy is outdated: refresh it with `/plugin marketplace update claude-plugins-official`. Then retry the install.
@@ -43,7 +43,7 @@ Then activate it in the current session with `/reload-plugins`, which applies pe
 
 ### Enable in cloud sessions and shared repositories
 
-User-scoped plugins do not carry into [Claude Code on the web](/en/claude-code-on-the-web), because those sessions run on Anthropic infrastructure rather than your machine. To enable the plugin there, or to turn it on for everyone who clones a repository, declare it in the project's checked-in settings:
+User-scoped plugins do not carry into [Claude Code on the web](/docs/en/claude-code-on-the-web), because those sessions run on Anthropic infrastructure rather than your machine. To enable the plugin there, or to turn it on for everyone who clones a repository, declare it in the project's checked-in settings:
 
 ```json .claude/settings.json theme={null}
 {
@@ -53,7 +53,7 @@ User-scoped plugins do not carry into [Claude Code on the web](/en/claude-code-o
 }
 ```
 
-Administrators can enable the plugin organization-wide by setting [`enabledPlugins`](/en/settings#plugin-settings) in [managed settings](/en/admin-setup).
+Administrators can enable the plugin organization-wide by setting [`enabledPlugins`](/docs/en/settings#plugin-settings) in [managed settings](/docs/en/admin-setup).
 
 ## What the plugin checks
 
@@ -124,7 +124,7 @@ The following example is for a web service with role-gated admin routes and a cu
 - Use `crypto.timingSafeEqual` for token comparison instead of `===`.
 ```
 
-These rules are guidance for the reviewer, not deterministic guardrails. The plugin surfaces violations as findings for Claude to fix, but it does not block writes or guarantee every violation is caught. The guidance is additive only: a rule that says to ignore a vulnerability class does not suppress those findings. For hard enforcement, pair the plugin with a [hook that blocks the edit](/en/hooks-guide#block-edits-to-protected-files) or a CI check.
+These rules are guidance for the reviewer, not deterministic guardrails. The plugin surfaces violations as findings for Claude to fix, but it does not block writes or guarantee every violation is caught. The guidance is additive only: a rule that says to ignore a vulnerability class does not suppress those findings. For hard enforcement, pair the plugin with a [hook that blocks the edit](/docs/en/hooks-guide#block-edits-to-protected-files) or a CI check.
 
 ### Add custom per-edit patterns
 
@@ -166,7 +166,7 @@ The plugin loads all locations that exist and concatenates them, with a combined
 
 ## Usage cost
 
-The [per-edit pattern check](#on-each-file-edit) makes no model call and adds no cost. The [end-of-turn](#at-the-end-of-each-turn) and [commit](#on-each-commit-or-push-claude-makes) reviews each spend additional model usage that counts toward your [usage](/en/costs) like any other Claude request. The commit review is agentic and may take several model turns per commit, capped at 20 reviews per rolling hour. Expect roughly one review call per turn that changes files and one deeper review per commit, both subject to the caps above.
+The [per-edit pattern check](#on-each-file-edit) makes no model call and adds no cost. The [end-of-turn](#at-the-end-of-each-turn) and [commit](#on-each-commit-or-push-claude-makes) reviews each spend additional model usage that counts toward your [usage](/docs/en/costs) like any other Claude request. The commit review is agentic and may take several model turns per commit, capped at 20 reviews per rolling hour. Expect roughly one review call per turn that changes files and one deeper review per commit, both subject to the caps above.
 
 Both model-backed reviews use Claude Opus 4.7 by default. Set `SECURITY_REVIEW_MODEL` to choose a different model for the end-of-turn review and `SG_AGENTIC_MODEL` for the commit review.
 
@@ -196,11 +196,11 @@ To remove it from your user scope:
 /plugin uninstall security-guidance@claude-plugins-official
 ```
 
-If the plugin was enabled through a project's `.claude/settings.json`, disabling it from `/plugin` writes an override to your `.claude/settings.local.json` rather than editing the checked-in file, so the plugin stays off for you while teammates are unaffected. {/* min-version: 2.1.203 */}The same dialog also offers to uninstall the plugin for everyone by removing it from the shared `.claude/settings.json`; that option requires Claude Code v2.1.203 or later. If it was enabled through [managed settings](/en/admin-setup), only an administrator can disable it.
+If the plugin was enabled through a project's `.claude/settings.json`, disabling it from `/plugin` writes an override to your `.claude/settings.local.json` rather than editing the checked-in file, so the plugin stays off for you while teammates are unaffected. {/* min-version: 2.1.203 */}The same dialog also offers to uninstall the plugin for everyone by removing it from the shared `.claude/settings.json`; that option requires Claude Code v2.1.203 or later. If it was enabled through [managed settings](/docs/en/admin-setup), only an administrator can disable it.
 
 ## How the plugin integrates with Claude Code
 
-The plugin is built entirely on [hooks](/en/hooks), the mechanism for running your own code at specific points in Claude's loop. It registers:
+The plugin is built entirely on [hooks](/docs/en/hooks), the mechanism for running your own code at specific points in Claude's loop. It registers:
 
 | Hook event                                                       | Purpose                                                                     |
 | :--------------------------------------------------------------- | :-------------------------------------------------------------------------- |
@@ -219,8 +219,8 @@ The plugin is one layer in a defense-in-depth approach. It catches issues earlie
 | Stage           | Tool                                                      | What it covers                                                                                   |
 | :-------------- | :-------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
 | In session      | Security guidance plugin                                  | Common vulnerabilities in code Claude writes, fixed in the same session                          |
-| On demand       | [`/security-review`](/en/commands#all-commands)           | One-time security pass on the current branch, run when you ask                                   |
-| On pull request | [Code Review](/en/code-review), Team and Enterprise plans | Multi-agent correctness and security review with full codebase context                           |
+| On demand       | [`/security-review`](/docs/en/commands#all-commands)           | One-time security pass on the current branch, run when you ask                                   |
+| On pull request | [Code Review](/docs/en/code-review), Team and Enterprise plans | Multi-agent correctness and security review with full codebase context                           |
 | In CI           | Your existing static analysis and dependency scanners     | Language-specific rules, supply-chain checks, and policy enforcement the plugin does not attempt |
 
 Each later stage catches what earlier ones miss. The plugin's value is reducing the volume that reaches them, not eliminating the need for them.
@@ -239,6 +239,6 @@ Common reasons a review layer skips without a message in the conversation:
 
 To go deeper on the pieces this page touches:
 
-* [Code Review](/en/code-review): set up the PR-time multi-agent review
-* [Automate actions with hooks](/en/hooks-guide): build your own checks at the same lifecycle points
-* [Discover and install plugins](/en/discover-plugins#official-anthropic-marketplace): browse other official plugins
+* [Code Review](/docs/en/code-review): set up the PR-time multi-agent review
+* [Automate actions with hooks](/docs/en/hooks-guide): build your own checks at the same lifecycle points
+* [Discover and install plugins](/docs/en/discover-plugins#official-anthropic-marketplace): browse other official plugins

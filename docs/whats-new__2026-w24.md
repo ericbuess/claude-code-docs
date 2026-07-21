@@ -7,7 +7,7 @@
 > Move a session to a new directory with /cd, let subagents spawn their own subagents, and troubleshoot a broken configuration with safe mode.
 
 <div className="digest-meta">
-  <span>Releases <a href="/docs/en/changelog#2-1-166">v2.1.166 → v2.1.176</a></span>
+  <span>Releases <a href="/docs/docs/en/changelog#2-1-166">v2.1.166 → v2.1.176</a></span>
   <span>3 features · June 8–12</span>
 </div>
 
@@ -25,7 +25,7 @@
   > /cd ../other-project
   ```
 
-  <a className="digest-feature-link" href="/docs/en/commands#all-commands">Commands reference</a>
+  <a className="digest-feature-link" href="/docs/docs/en/commands#all-commands">Commands reference</a>
 </div>
 
 <div className="digest-feature">
@@ -42,7 +42,7 @@
   > /agents
   ```
 
-  <a className="digest-feature-link" href="/docs/en/sub-agents#spawn-nested-subagents">Spawn nested subagents</a>
+  <a className="digest-feature-link" href="/docs/docs/en/sub-agents#spawn-nested-subagents">Spawn nested subagents</a>
 </div>
 
 <div className="digest-feature">
@@ -59,14 +59,14 @@
   claude --safe-mode
   ```
 
-  <a className="digest-feature-link" href="/docs/en/debug-your-config#test-against-a-clean-configuration">Test against a clean configuration</a>
+  <a className="digest-feature-link" href="/docs/docs/en/debug-your-config#test-against-a-clean-configuration">Test against a clean configuration</a>
 </div>
 
 <div className="digest-wins">
   <p className="digest-wins-title">Other wins</p>
 
   <div className="digest-wins-grid">
-    <div><a href="/docs/en/model-config#fallback-model-chains"><code>fallbackModel</code></a> configures up to three fallback models tried in order when the primary is overloaded or unavailable, and `--fallback-model` now applies to interactive sessions too</div>
+    <div><a href="/docs/docs/en/model-config#fallback-model-chains"><code>fallbackModel</code></a> configures up to three fallback models tried in order when the primary is overloaded or unavailable, and `--fallback-model` now applies to interactive sessions too</div>
     <div>Session titles are now generated in the language of your conversation; pin a specific one with the <code>language</code> setting</div>
     <div>`claude agents --json` adds `--all` to include completed sessions plus new <code>id</code> and <code>state</code> fields, and no longer omits blocked or newly dispatched sessions</div>
     <div>Browsing a marketplace's plugins in <code>/plugin</code> now has a search bar</div>
@@ -81,4 +81,4 @@
   </div>
 </div>
 
-[Full changelog for v2.1.166–v2.1.176 →](/en/changelog#2-1-166)
+[Full changelog for v2.1.166–v2.1.176 →](/docs/en/changelog#2-1-166)
