@@ -42,9 +42,9 @@ The `/loop` [bundled skill](/docs/en/commands) is the quickest way to run a prom
 
 You can also pass a skill as the prompt, for example `/loop 20m /review-pr 1234`, to re-run that skill each iteration. {/* min-version: 2.1.196 */}As of v2.1.196, a scheduled fire only runs skills that Claude is [allowed to invoke on its own](/docs/en/skills#control-who-invokes-a-skill). The following reach Claude as plain text instead of executing:
 
-* built-in commands such as `/permissions`, `/model`, or `/clear`
-* skills marked [`disable-model-invocation: true`](/docs/en/skills#frontmatter-reference)
-* skills withheld from Claude by a [`skillOverrides`](/docs/en/skills#override-skill-visibility-from-settings) setting or a `Skill` [deny rule](/docs/en/skills#restrict-claude’s-skill-access)
+* Built-in commands such as `/permissions`, `/model`, or `/clear`
+* Skills marked [`disable-model-invocation: true`](/docs/en/skills#frontmatter-reference), including the bundled `/verify` and `/code-review` skills.
+* Skills withheld from Claude by a [`skillOverrides`](/docs/en/skills#override-skill-visibility-from-settings) setting or a `Skill` [deny rule](/docs/en/skills#restrict-claude’s-skill-access)
 * [MCP prompts](/docs/en/mcp#use-mcp-prompts-as-commands) such as `/mcp__github__list_prs`
 
 ### Run on a fixed interval
@@ -214,6 +214,7 @@ Session-scoped scheduling has inherent constraints:
 * Tasks only fire while Claude Code is running and idle. Closing the terminal or letting the session exit stops them firing. [Backgrounding the session](/docs/en/agent-view#from-inside-a-session) carries `/loop` tasks over to a background session, which keeps running without a terminal.
 * No catch-up for missed fires. If a task's scheduled time passes while Claude is busy on a long-running request, it fires once when Claude becomes idle, not once per missed interval.
 * Starting a fresh conversation clears all session-scoped tasks. Resuming with `claude --resume` or `claude --continue` restores tasks that have not expired: recurring tasks within seven days of creation, and one-shot tasks whose scheduled time has not yet passed. Background Bash and monitor tasks are never restored on resume.
+* {/* min-version: 2.1.216 */}Claude Code stores the scheduled task list in the project's `.claude` directory, and scheduling a task fails with an error when that directory, or the task file inside it, is a symlink. Before v2.1.216, Claude Code wrote the file through the link.
 
 For cron-driven automation that needs to run unattended:
 

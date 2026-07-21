@@ -1490,8 +1490,9 @@ Restored the code, but skipped 2 files: the tracked path is (or became) a link o
 
 **What to do:**
 
-* Run Claude Code with `--debug` and repeat the restore. The debug log names each skipped path.
-* If a skipped file is a link you created on purpose, such as a config file managed by a dotfile manager or a file hard-linked by tools like pnpm, restore its contents from [version control](/docs/en/checkpointing#not-a-replacement-for-version-control) instead
+* Identify which files were skipped so you can handle each one with the steps below. The message gives only a count, so list your project's links to find them: `find . -type l` for symlinks and `find . -type f -links +1` for hard-linked files.
+  * If debug logging is on, the log at `~/.claude/debug/<session-id>.txt` names each skipped path as the restore runs. Turn it on with `/debug` before your next restore to skip the search.
+* If a skipped file is a link you created on purpose, such as a config file managed by a dotfile manager or a file hard-linked by tools like pnpm, the rewind left its contents alone. To undo the session's changes to it, ask Claude to reverse the edit or edit the file yourself
 * If you didn't create the link, inspect the path before trusting its contents: something replaced the file after the checkpoint
 
 ## Configuration warnings

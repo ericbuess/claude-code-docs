@@ -146,9 +146,9 @@ Claude has two safety mechanisms: checkpoints let you undo file changes, and per
 
 ### Undo changes with checkpoints
 
-**Every file edit is reversible.** Before Claude edits any file, it snapshots the current contents. If something goes wrong, press `Esc` twice to rewind to a previous state, or ask Claude to undo.
+**File edits are reversible.** Before Claude edits a file, it snapshots the current contents. If something goes wrong, press `Esc` twice to rewind to a previous state, or ask Claude to undo.
 
-Checkpoints are separate from git and remain available when you resume a conversation. They only cover file changes. Actions that affect remote systems (databases, APIs, deployments) can't be checkpointed, which is why Claude asks before running commands with external side effects.
+Checkpoints are separate from git and remain available when you resume a conversation. They only cover file changes, and a restore [skips symlinked and hard-linked files](/docs/en/checkpointing#symlinked-and-hard-linked-paths-not-restored). Actions that affect remote systems (databases, APIs, deployments) can't be checkpointed, which is why Claude asks before running commands with external side effects.
 
 ### Control what Claude can do
 

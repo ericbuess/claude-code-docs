@@ -30,6 +30,7 @@ A resumed session restores the conversation along with the state saved in it:
 
 * Conversation history: the full history, including tool calls and results.
 * Model: the session continues on the model it was using. The model isn't restored when it has been retired or isn't allowed by `availableModels`, when a `--model` flag or `ANTHROPIC_MODEL`-family environment variable picks one at launch, or on providers that use provider-specific deployment IDs, such as [Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry](/docs/en/third-party-integrations); see [model configuration](/docs/en/model-config#setting-your-model) for the resolution order.
+* Agent: a session started with [`--agent`](/docs/en/sub-agents#invoke-subagents-explicitly) or the `agent` setting continues as that agent, keeping its system prompt, tool restrictions, and model. Pass `--agent` when resuming to pick a different one. {/* min-version: 2.1.216 */}If the agent no longer exists in the session's original directory or the one you resume from, the session resumes with the default tools and system prompt and shows a [warning naming the agent](/docs/en/errors#session-agent-no-longer-available).
 * Permission mode: the mode the session was in. `plan` and `bypassPermissions` are never restored; [bypassing permissions](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) must be enabled again at launch, with one of its launch flags or `permissions.defaultMode: "bypassPermissions"` in [settings](/docs/en/settings#permission-settings). `auto` is restored only when your account still meets the [auto mode requirements](/docs/en/permission-modes#eliminate-prompts-with-auto-mode). Pass `--permission-mode` to override the restored mode.
 * Active goal: a [goal](/docs/en/goal#resume-with-an-active-goal) that was still active when the session ended carries over; its turn count, timer, and token-spend baseline reset.
 * Scheduled tasks: [tasks that haven't expired](/docs/en/scheduled-tasks#limitations) are restored. Background Bash and monitor tasks aren't.
@@ -38,7 +39,12 @@ Not every configuration flag from the original launch is restored. If the sessio
 
 ### Where the session picker looks
 
-Sessions are stored per project directory. By default the session picker shows interactive sessions from the current worktree, plus sessions started elsewhere that added the current directory with `/add-dir`. Use `Ctrl+W` to widen to all worktrees of the repository or `Ctrl+A` to widen to every project on this machine.
+Claude Code stores sessions per project directory. By default the session picker shows:
+
+* Sessions from the current worktree, including [background sessions](/docs/en/agent-view), which are marked `bg` in the list
+* Sessions started elsewhere that added the current directory with `/add-dir`
+
+Use `Ctrl+W` to widen to all worktrees of the repository or `Ctrl+A` to widen to every project on this machine.
 
 {/* min-version: 2.1.211 */}Sessions whose first prompt was a [`/loop`](/docs/en/scheduled-tasks#run-a-prompt-repeatedly-with-%2Floop) command don't appear in the picker; running `/loop` later in a conversation doesn't hide the session. Before v2.1.211, a `/loop` run early in a conversation hid the session from the picker permanently.
 
@@ -92,6 +98,8 @@ Run `/resume` inside a session, or `claude --resume` with no arguments, to open 
 Each row shows the session name if you set one, otherwise the AI-generated session title, conversation summary, or first prompt, along with time since last activity, git branch, and file size. Widen to all projects with `Ctrl+A` to also see each session's project path.
 
 Sessions created with `/branch` or `--fork-session` get their own session IDs and appear as separate rows. When the picker finds more than one entry for the same session, it groups them under a single row. Press `→` to expand a group.
+
+If Claude Code can't load the session you select from the `claude --resume` picker, it prints [`Failed to resume the conversation`](/docs/en/errors#failed-to-resume-the-conversation) with a command to retry, then exits with code 1. From the `/resume` picker inside a session, Claude Code reports the failure and your current conversation keeps running.
 
 ## Branch a session
 

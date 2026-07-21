@@ -88,6 +88,16 @@ These file modifications cannot be undone through rewind. Only direct file edits
 
 Checkpointing only tracks files that have been edited within the current session. Manual changes you make to files outside of Claude Code and edits from other concurrent sessions are normally not captured, unless they happen to modify the same files as the current session.
 
+### Symlinked and hard-linked paths not restored
+
+Checkpointing doesn't rewind symlinked or hard-linked files. When you pick **Restore code** or **Restore code and conversation** from the `/rewind` menu, Claude Code skips any tracked path that is a symlink or hard link and shows a `Restored the code, but skipped N files` warning. The skipped files keep their current contents. To undo the session's changes to one of them, ask Claude to reverse the edit or edit the file yourself. Config files a dotfile manager symlinks into your project and files pnpm hard-links into place both fall into this category.
+
+To see which paths a restore skips, turn on debug logging with `/debug` before you restore: the debug log at `~/.claude/debug/<session-id>.txt` names each skipped path. For every skip reason and the recovery steps, see [the skipped-files entry in the error reference](/docs/en/errors#restored-the-code-but-skipped-files).
+
+<Note>
+  Before v2.1.216, `/rewind` wrote and deleted through links at tracked paths without a warning.
+</Note>
+
 ### Not a replacement for version control
 
 Checkpoints are designed for quick, session-level recovery. For permanent version history and collaboration:

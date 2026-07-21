@@ -130,7 +130,7 @@ Even in auto-allow mode, the following still apply:
 
 In both modes, the sandbox enforces the same filesystem and network restrictions. The difference is only in whether sandboxed commands are auto-approved or require explicit permission.
 
-The session temp directory is writable inside the sandbox by default, alongside the working directory. Claude Code sets `$TMPDIR` to this directory for sandboxed commands, so tools that write temporary files work without extra configuration. Unsandboxed commands inherit your shell's `$TMPDIR` unchanged, which means sandboxed and unsandboxed commands resolve `$TMPDIR` to different directories. To pass temporary files between the two, write them under the working directory instead.
+The session temp directory is writable inside the sandbox by default, alongside the working directory. Claude Code sets `$TMPDIR` to this directory for sandboxed commands, so tools that write temporary files work without extra configuration. Unsandboxed commands inherit your shell's `$TMPDIR` unchanged, which means sandboxed and unsandboxed commands resolve `$TMPDIR` to different directories unless you [disable filesystem isolation](#disable-filesystem-isolation). To pass temporary files between the two, write them under the working directory instead.
 
 Some commands cannot run inside the sandbox at all, such as tools that are incompatible with it or that need a host you have not allowed. Rather than failing the task or requiring you to turn sandboxing off, Claude Code includes an escape hatch: when a command fails because of sandbox restrictions, Claude analyzes the failure and may retry the command with the `dangerouslyDisableSandbox` parameter. The retried command runs outside the sandbox, so it goes through the regular permission flow: in default mode you get a confirmation prompt; in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) the classifier evaluates the underlying command instead of prompting you. To be prompted on every unsandboxed retry even in auto mode, add an [ask rule](/docs/en/permissions#match-by-input-parameter) for `Bash(dangerouslyDisableSandbox:true)`.
 
@@ -196,11 +196,53 @@ The example below blocks reading from the entire home directory while still allo
 
 The `.` in `allowRead` resolves to the project root because this configuration lives in project settings. If you placed the same configuration in `~/.claude/settings.json`, `.` would resolve to `~/.claude` instead, and project files would remain blocked by the `denyRead` rule.
 
+### Disable filesystem isolation
+
+Set `sandbox.filesystem.disabled` to `true` to skip filesystem isolation while keeping network isolation. The example below turns off filesystem isolation while keeping an allowlist of network domains:
+
+```json theme={null}
+{
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "disabled": true
+    },
+    "network": {
+      "allowedDomains": ["github.com", "*.npmjs.org"]
+    }
+  }
+}
+```
+
+The sandbox has two independent layers: [filesystem isolation](#filesystem-isolation) controls which paths sandboxed commands can read and write, and [network isolation](#network-isolation) controls which domains they can reach. With the filesystem layer off, sandboxed commands get unrestricted read and write access to the host filesystem, while their network egress stays confined to your allowed domains. Turn the layer off when you sandbox to control where commands connect rather than what they write.
+
+The setting is off by default and applies on the platforms where the sandbox runs: macOS, Linux, and WSL2. Requires Claude Code v2.1.216 or later.
+
+<Warning>
+  With filesystem isolation off and commands auto-allowed, a sandboxed command can write files that later commands run or read, such as shell startup files, executables on `$PATH`, or `~/.claude/settings.json`, and use them to widen its own access on the next run. Set `filesystem.disabled` to `true` only for workloads you trust not to escalate their own access. Locking network domains with [`allowManagedDomainsOnly`](#keep-developers-from-widening-the-policy) narrows the risk but doesn't remove it, since that lock applies only to commands running inside the sandbox.
+</Warning>
+
+#### Which settings can disable it
+
+Because turning filesystem isolation off widens what sandboxed commands can do, Claude Code honors `filesystem.disabled` from these settings sources only:
+
+* User settings, managed settings, and the `--settings` CLI flag can set it. Project settings in `.claude/settings.json` and `.claude/settings.local.json` can't, so a checked-out project can't switch filesystem isolation off.
+* When managed settings configure `sandbox.filesystem` at all, or list any `sandbox.credentials.files` entry, only managed settings can set the key. This keeps administrator-deployed filesystem restrictions in force; to relax such a deployment, set `"disabled": true` in managed settings.
+* When [`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`](/docs/en/env-vars) is set, Claude Code ignores `filesystem.disabled` from every source, including managed settings, and keeps filesystem isolation on.
+
+#### What changes when isolation is off
+
+Turning the filesystem layer off also lifts its read protections and stops overriding `$TMPDIR`, while sandboxed commands stay auto-allowed:
+
+* The read protections from `filesystem.denyRead` and [`credentials.files`](#protect-credentials) don't apply to sandboxed commands, because the filesystem layer enforces both. `credentials.envVars` deny and mask entries still apply, since environment variable scrubbing is independent of the filesystem layer.
+* Sandboxed commands inherit your shell's `$TMPDIR` instead of the session temp directory, since every temp directory is writable.
+* [`autoAllowBashIfSandboxed`](/docs/en/settings#sandbox-settings) still defaults to `true`, so sandboxed commands keep running without prompts. Set it to `false` to keep prompting for sandboxed commands.
+
 ### Protect credentials
 
 The `sandbox.credentials` setting declares credential files and environment variables to protect from sandboxed commands. Each entry names a file path or an environment variable and a `mode`. The dedicated `credentials` block keeps credential rules grouped together and separate from general filesystem rules. Requires Claude Code v2.1.187 or later.
 
-For entries with `"mode": "deny"`, file paths are denied for reads inside the sandbox, the same restriction that `filesystem.denyRead` applies, and environment variables are unset before each sandboxed command runs.
+For entries with `"mode": "deny"`, file paths are denied for reads inside the sandbox, the same restriction that `filesystem.denyRead` applies, and environment variables are unset before each sandboxed command runs. The file protection is part of the filesystem layer, so it doesn't apply if you [disable filesystem isolation](#disable-filesystem-isolation); the environment variable protection still does.
 
 The example below blocks reads of the AWS credentials file and the SSH directory and removes `GITHUB_TOKEN` and `NPM_TOKEN` from the environment of sandboxed commands:
 
@@ -272,7 +314,7 @@ The sandboxed Bash tool restricts file system access to specific directories:
 * **Git worktrees**: when the working directory is a [linked git worktree](/docs/en/worktrees), the sandbox also allows writes to the main repository's shared `.git` directory so commands such as `git commit` can update refs and the index. Writes to `hooks/` and `config` inside that directory remain denied.
 * **Configurable**: define custom allowed and denied paths through settings
 
-You can grant write access to additional paths using `sandbox.filesystem.allowWrite` in your settings. These restrictions are enforced at the OS level, so they apply to all subprocess commands, including tools like `kubectl`, `terraform`, and `npm`, not just Claude's file tools.
+You can grant write access to additional paths using `sandbox.filesystem.allowWrite` in your settings. These restrictions are enforced at the OS level, so they apply to all subprocess commands, including tools like `kubectl`, `terraform`, and `npm`, not just Claude's file tools. To skip filesystem isolation entirely while keeping network isolation, set [`sandbox.filesystem.disabled`](#disable-filesystem-isolation).
 
 ### Network isolation
 
@@ -314,16 +356,17 @@ The two layers also differ in how they are enforced. Claude Code evaluates permi
 
 Filesystem and network restrictions are configured through both sandbox settings and permission rules:
 
-| Setting or rule                                                  | What it does                                                                                      |
-| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
-| `sandbox.filesystem.allowWrite`                                  | Grants subprocess write access to paths outside the working directory                             |
-| `sandbox.filesystem.denyWrite` and `sandbox.filesystem.denyRead` | Block subprocess access to specific paths                                                         |
-| `sandbox.filesystem.allowRead`                                   | Re-allows reading specific paths within a `denyRead` region                                       |
-| `Edit` allow rules                                               | Grant write access to specific paths, the same way `sandbox.filesystem.allowWrite` does           |
-| `Read` and `Edit` deny rules                                     | Block access to specific files or directories                                                     |
-| `WebFetch` allow and deny rules                                  | Control domain access                                                                             |
-| Sandbox `allowedDomains`                                         | Controls which domains Bash commands can reach                                                    |
-| Sandbox `deniedDomains`                                          | Blocks specific domains even when a broader `allowedDomains` wildcard would otherwise permit them |
+| Setting or rule                                                  | What it does                                                                                                                                |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `sandbox.filesystem.allowWrite`                                  | Grants subprocess write access to paths outside the working directory                                                                       |
+| `sandbox.filesystem.denyWrite` and `sandbox.filesystem.denyRead` | Block subprocess access to specific paths                                                                                                   |
+| `sandbox.filesystem.allowRead`                                   | Re-allows reading specific paths within a `denyRead` region                                                                                 |
+| [`sandbox.filesystem.disabled`](#disable-filesystem-isolation)   | {/* min-version: 2.1.216 */}Turns the filesystem layer off entirely while keeping network isolation; requires Claude Code v2.1.216 or later |
+| `Edit` allow rules                                               | Grant write access to specific paths, the same way `sandbox.filesystem.allowWrite` does                                                     |
+| `Read` and `Edit` deny rules                                     | Block access to specific files or directories                                                                                               |
+| `WebFetch` allow and deny rules                                  | Control domain access                                                                                                                       |
+| Sandbox `allowedDomains`                                         | Controls which domains Bash commands can reach                                                                                              |
+| Sandbox `deniedDomains`                                          | Blocks specific domains even when a broader `allowedDomains` wildcard would otherwise permit them                                           |
 
 Paths from both `sandbox.filesystem` settings and permission rules are merged together into the final sandbox configuration.
 
@@ -375,6 +418,8 @@ The sandbox does not run on native Windows, so if your fleet includes Windows ho
 For boolean keys such as `enabled` and `failIfUnavailable`, Claude Code uses the managed value and ignores anything a developer sets locally. For array keys such as `excludedCommands` and `allowRead`, Claude Code merges entries from every scope, so a developer can append entries that widen the policy.
 
 Set `allowManagedReadPathsOnly` to `true` in managed settings so that only `allowRead` entries from managed settings are honored. User, project, and local `allowRead` entries are ignored. This prevents developers from widening read access beyond the organization-approved paths. To lock network domains to the managed values the same way, set [`allowManagedDomainsOnly`](/docs/en/settings#sandbox-settings).
+
+When managed settings configure `sandbox.filesystem` or list any `sandbox.credentials.files` entry, only managed settings can set [`filesystem.disabled`](#disable-filesystem-isolation), so developers can't switch off administrator-deployed filesystem restrictions.
 
 `excludedCommands` has no equivalent managed-only lockdown, so a developer can always append entries that run additional commands outside the sandbox. Keep the managed list narrow.
 
@@ -429,7 +474,7 @@ Sandboxing reduces risk but is not a complete isolation boundary. Review the lim
 * **Filesystem permission escalation**: overly broad filesystem write permissions can enable privilege escalation attacks. Allowing writes to directories containing executables in `$PATH`, system configuration directories, or user shell configuration files such as `.bashrc` or `.zshrc` can lead to code execution in different security contexts when other users or system processes access these files.
 * **Linux sandbox strength**: the Linux implementation provides strong filesystem and network isolation but includes an `enableWeakerNestedSandbox` mode that enables it to work inside Docker environments without privileged namespaces, or on Linux hosts where unprivileged user namespaces are disabled by sysctl. This option considerably weakens security and should only be used when additional isolation is otherwise enforced.
 * **Apple Events on macOS**: the macOS sandbox blocks Apple Events by default. The `allowAppleEvents` setting lifts this restriction so tools such as `open` and `osascript` work, but it removes code-execution isolation: sandboxed commands can launch other applications unsandboxed with no user prompt, and can send AppleScript commands to running applications, subject to the per-app macOS automation-consent prompt (TCC). It is only honored from user, managed, or CLI settings. Project settings cannot enable it.
-* **Settings files protected**: the sandbox automatically denies write access to Claude Code's `settings.json` files at every scope and to the managed settings directory, so a sandboxed command cannot modify its own policy. {/* min-version: 2.1.210 */}In v2.1.210 and later, the deny rules resolve symlinks: when a symlink appears at a protected settings file path after startup, the sandbox adds its target to the deny list for the next command, so a linked settings file can't be edited through the link.
+* **Settings files protected**: the sandbox automatically denies write access to Claude Code's `settings.json` files at every scope and to the managed settings directory, so a sandboxed command can't modify its own policy unless you [disable filesystem isolation](#disable-filesystem-isolation), which turns these deny rules off. {/* min-version: 2.1.210 */}The deny rules resolve symlinks: when a symlink appears at a protected settings file path after startup, the sandbox adds its target to the deny list for the next command, so a linked settings file can't be edited through the link. Before v2.1.210, the deny rules didn't resolve symlinks.
 
 ### Platform and tool compatibility
 
@@ -447,7 +492,7 @@ The sandbox isolates Bash subprocesses. Other tools operate under different boun
 * **Subagents**: [subagents](/docs/en/sub-agents) run in the same process as the parent session and use the same sandbox configuration. Bash commands inside a subagent are sandboxed when sandboxing is enabled in the parent session.
 
 <Warning>
-  Effective sandboxing requires both filesystem and network isolation. Without network isolation, a compromised agent could exfiltrate sensitive files like SSH keys. Without filesystem isolation, a compromised agent could backdoor system resources to gain network access. When you widen the defaults, check that an `allowWrite` path, a broad `allowedDomains` entry, or an `excludedCommands` exception does not undo a restriction on the other side.
+  Effective sandboxing requires both filesystem and network isolation. Without network isolation, a compromised agent could exfiltrate sensitive files like SSH keys. Without filesystem isolation, whether from a permissive policy or from [disabling the filesystem layer](#disable-filesystem-isolation), a compromised agent could backdoor system resources to gain network access. When you widen the defaults, check that an `allowWrite` path, a broad `allowedDomains` entry, or an `excludedCommands` exception does not undo a restriction on the other side.
 </Warning>
 
 ## See also
