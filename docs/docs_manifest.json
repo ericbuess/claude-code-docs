@@ -286,8 +286,8 @@
     "chrome.md": {
       "original_url": "https://code.claude.com/docs/en/chrome",
       "original_md_url": "https://code.claude.com/docs/en/chrome.md",
-      "hash": "8dc6461269855d7c01b35a9424a2fd24e0ce473a380cb101b026557bd8c4f639",
-      "last_updated": "2026-07-21T05:39:59.286165"
+      "hash": "5a950a736c9b5b79672a8f447173e0dffccbf0a08427ec34a3633200b31586d9",
+      "last_updated": "2026-07-21T16:13:45.320906"
     },
     "claude-apps-gateway.md": {
       "original_url": "https://code.claude.com/docs/en/claude-apps-gateway",
@@ -1023,8 +1023,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-07-21T13:14:26.972857",
-    "fetch_duration_seconds": 173.820882,
+    "last_fetch_completed": "2026-07-21T16:17:07.658155",
+    "fetch_duration_seconds": 248.744492,
     "total_pages_discovered": 170,
     "pages_fetched_successfully": 171,
     "pages_failed": 0,
@@ -1034,7 +1034,7 @@
     "total_files": 170,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-07-21T13:14:26.972888",
+  "last_updated": "2026-07-21T16:17:07.658187",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

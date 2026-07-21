@@ -36,6 +36,8 @@ Before using Claude Code with Chrome, you need:
 * [Claude Code](/docs/en/quickstart#step-1-install-claude-code)
 * A direct Anthropic plan (Pro, Max, Team, or Enterprise)
 
+Chrome integration also requires signing in with `/login`. If you authenticate with an API key or a long-lived token from [`claude setup-token`](/docs/en/authentication#generate-a-long-lived-token), Claude Code keeps Chrome integration off, even when you pass `--chrome`, because the browser extension can't authenticate with those credentials. Before v2.1.216, these sessions could enable Chrome integration, but every attempt to connect to the browser extension failed with a 403 error.
+
 <Note>
   Chrome integration is not available through third-party providers like Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. If you access Claude exclusively through a third-party provider, you need a separate claude.ai account to use this feature.
 </Note>
@@ -70,6 +72,18 @@ Before using Claude Code with Chrome, you need:
 Run `/chrome` at any time to check the connection status, manage permissions, reconnect the extension, or choose which connected browser to use. The integration is working when the status panel shows "Status: Enabled" and "Extension: Installed". If more than one browser is connected when a browser action starts, Claude prompts you to pick one.
 
 For VS Code, see [browser automation in VS Code](/docs/en/vs-code#automate-browser-tasks-with-chrome).
+
+### Install the extension when Claude asks
+
+When Claude needs your browser for a task in an interactive session and Claude Code doesn't detect the extension, Claude Code shows an install prompt titled "Claude wants to use your browser", at most once per session. The prompt requires Claude Code v2.1.206 or later. On Windows, the **Install extension** choice requires v2.1.211 or later; before v2.1.211, choosing it couldn't open the install page.
+
+The prompt offers three choices:
+
+* **Install extension**: opens the extension install page in your browser and starts a guided setup. Claude Code waits for the install, connects the extension, and enables browser tools in the same session. When the connection is ready, select "Continue with browser tools" and Claude resumes the task in your browser. You can leave setup at any point by selecting "Continue without browser tools" and finish later with `/chrome`.
+* **Not now**: continues the task without browser tools. The prompt can appear again in a later session.
+* **Don't ask again**: stops the prompt in all future sessions. You can still set up the integration anytime with `/chrome`.
+
+If your organization blocks the `claude-in-chrome` MCP server with the [`deniedMcpServers` managed setting](/docs/en/managed-mcp#policy-based-control-with-allowlists-and-denylists), Claude Code doesn't show the install prompt.
 
 ### Enable Chrome by default
 
