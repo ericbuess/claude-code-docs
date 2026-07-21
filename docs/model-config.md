@@ -172,7 +172,7 @@ Excluded models are hidden from the `/model` picker. {/* min-version: 2.1.199 */
 
 Model changes that Claude Code makes on your behalf are checked the same way:
 
-* **[Fallback model chains](#fallback-model-chains)**: elements outside the allowlist are dropped
+* **[Fallback model chains](#fallback-model-chains)**: entries outside the allowlist are dropped
 * **Plan-mode upgrades**: on the Anthropic API and Claude Platform on AWS, an upgrade such as [`opusplan`](#opusplan-model-setting) to an excluded model uses the newest permitted version of the upgrade family. On providers with provider-specific model IDs, and when no version is permitted, the upgrade is skipped and planning continues on the session's model
 * **[Automatic model fallback](#automatic-model-fallback)**: a fallback whose target is excluded does not run, so the flagged request ends with a refusal instead
 * **[Auto mode classifier](/docs/en/permission-modes#eliminate-prompts-with-auto-mode)**: {/* min-version: 2.1.210 */}the classifier's Claude Sonnet 5 default applies only when the allowlist permits Sonnet 5. When it's excluded, the classifier runs on the session's model, which the allowlist already governs, or on an Opus model when the session runs on [Fable 5](#work-with-fable-5). On providers other than the Anthropic API, that Opus fallback runs on the provider's default Opus model without consulting the allowlist. Requires Claude Code v2.1.210 or later
@@ -378,14 +378,14 @@ To persist a chain across sessions, set `fallbackModel` in [settings](/docs/en/s
 }
 ```
 
-The `--fallback-model` flag takes precedence over the `fallbackModel` setting. Each element accepts a model name or alias, and `"default"` expands to the default model.
+The `--fallback-model` flag takes precedence over the `fallbackModel` setting. Each entry accepts a model name or alias, and `"default"` expands to the default model.
 
 Claude Code doesn't confirm the chain at startup and `/status` doesn't display it. The notice shown when a switch happens is the first visible sign that a fallback is configured.
 
-Two cases cause an element to be skipped:
+When a request fails over, Claude Code tries each entry in order until one accepts it. An entry that can't be reached either, such as a retired model pinned in settings, fails over to the next one the same way. Two kinds of entry are removed before that walk starts:
 
-* **Unavailable model**: a model that can't be reached, such as a retired model pinned in settings, is skipped and Claude Code continues to the next element.
-* **Outside the allowlist**: an element not permitted by [`availableModels`](#restrict-model-selection) is dropped when the chain is read and never tried.
+* **Outside the allowlist**: any entry not permitted by [`availableModels`](#restrict-model-selection) is dropped when Claude Code reads the chain.
+* **Smaller context window during compaction**: {/* min-version: 2.1.178 */}the chain also covers [compaction](/docs/en/context-window#what-survives-compaction), but Claude Code won't fall back to a model with a smaller context window than the primary's, since summarizing there would cut off part of the conversation first. If every fallback is smaller, compaction shows the original error and you can retry.
 
 ### Automatic model fallback
 

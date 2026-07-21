@@ -30,6 +30,7 @@ In the Code tab, each conversation is a **session**: it has its own chat history
 
 * [Review and comment on diffs](#review-changes-with-diff-view), then [watch the resulting PR through CI](#monitor-pull-request-status)
 * [Preview your running app](#preview-your-app) in the Browser pane while Claude verifies its own changes, and [open external sites](#browse-external-sites) alongside it
+* Watch Claude [run and test your iOS app](/docs/en/desktop-ios-simulator) in the iOS Simulator pane
 * [Arrange panes](#arrange-your-workspace) for the chat, diff, browser, terminal, and file editor side by side
 * Ask a [side question](#ask-a-side-question-without-derailing-the-session) that uses the session's context without derailing it
 * [Connect external tools](#connect-external-tools) like GitHub, Slack, and Linear
@@ -175,7 +176,7 @@ Use the **Auto-fix** and **Auto-merge** toggles in the CI status bar to enable e
 
 ## Arrange your workspace
 
-The Code tab is built around panes you can arrange in any layout: chat, diff, browser, terminal, file, plan, tasks, and subagent. Drag a pane by its header to reposition it, or drag a pane edge to resize it. Press **Cmd+\\** on macOS or **Ctrl+\\** on Windows to close the focused pane. Open additional panes from the **Views** menu in the session toolbar.
+The Code tab is built around panes you can arrange in any layout: chat, diff, browser, terminal, file, plan, tasks, and subagent, along with the [iOS Simulator](/docs/en/desktop-ios-simulator) on macOS. Drag a pane by its header to reposition it, or drag a pane edge to resize it. Press **Cmd+\\** on macOS or **Ctrl+\\** on Windows to close the focused pane. Open additional panes from the **Views** menu in the session toolbar.
 
 <Note>
   The pane layout, terminal, file editor, and view modes in this section require Claude Desktop v1.2581.0 or later. Open **Claude → Check for Updates** on macOS or **Help → Check for Updates** on Windows to update.
@@ -244,7 +245,7 @@ Click the usage ring next to the model picker to see your current context window
 
 ## Let Claude use your computer
 
-Computer use lets Claude open your apps, control your screen, and work directly on your machine the way you would. Ask Claude to test a native app in a mobile simulator, interact with a desktop tool that has no CLI, or automate something that only works through a GUI.
+Computer use lets Claude open your apps, control your screen, and work directly on your machine the way you would. Ask Claude to interact with a desktop tool that has no CLI, or automate something that only works through a GUI. For running and testing iOS apps, Desktop opens the dedicated [iOS Simulator pane](/docs/en/desktop-ios-simulator) instead of controlling your screen; the pane works without enabling computer use.
 
 <Note>
   Computer use is a research preview on macOS and Windows that requires a Pro or Max plan. It is not available on Team or Enterprise plans. The Claude Desktop app must be running.
@@ -263,9 +264,10 @@ Claude has several ways to interact with an app or service, and computer use is 
 * If you have a [connector](#connect-external-tools) for a service, Claude uses the connector.
 * If the task is a shell command, Claude uses Bash.
 * If the task is browser work and you have [Claude in Chrome](/docs/en/chrome) set up, Claude uses that.
+* If the task is running or testing an iOS app, Claude uses the [iOS Simulator pane](/docs/en/desktop-ios-simulator), which doesn't use screen control.
 * If none of those apply, Claude uses computer use.
 
-The [per-app access tiers](#app-permissions) reinforce this: browsers are capped at view-only, and terminals and IDEs at click-only, steering Claude toward the dedicated tool even when computer use is active. Screen control is reserved for things nothing else can reach, like native apps, hardware control panels, mobile simulators, or proprietary tools without an API.
+The [per-app access tiers](#app-permissions) reinforce this: browsers are capped at view-only, and terminals and IDEs at click-only, steering Claude toward the dedicated tool even when computer use is active. Screen control is reserved for things nothing else can reach, like native apps, hardware control panels, or proprietary tools without an API.
 
 ### Enable computer use
 
@@ -457,6 +459,7 @@ Each entry in the `configurations` array accepts the following fields:
 | `autoPort`          | boolean   | How to handle port conflicts. See below                                                                                                                                                                                                                                  |
 | `program`           | string    | A script to run with `node`. See [when to use `program` vs `runtimeExecutable`](#when-to-use-program-vs-runtimeexecutable)                                                                                                                                               |
 | `args`              | string\[] | Arguments passed to `program`. Only used when `program` is set                                                                                                                                                                                                           |
+| `url`               | string    | The address the preview opens instead of `http://localhost:<port>`. See [open the preview at a specific URL](#open-the-preview-at-a-specific-url)                                                                                                                        |
 
 <a id="when-to-use-program-vs-runtimeexecutable" />
 
@@ -465,6 +468,47 @@ Each entry in the `configurations` array accepts the following fields:
 Use `runtimeExecutable` with `runtimeArgs` to start a dev server through a package manager. For example, `"runtimeExecutable": "npm"` with `"runtimeArgs": ["run", "dev"]` runs `npm run dev`.
 
 Use `program` when you have a standalone script you want to run with `node` directly. For example, `"program": "server.js"` runs `node server.js`. Pass additional flags with `args`.
+
+<a id="open-the-preview-at-a-specific-url" />
+
+##### Open the preview at a specific URL
+
+By default, the preview opens `http://localhost:<port>`. Set `url` when your server needs a different address. Common cases are servers that require local HTTPS, apps that use `*.localhost` subdomains, and apps that sign you in through a redirect.
+
+```json theme={null}
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "my-app",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 8443,
+      "url": "https://localhost:8443"
+    }
+  ]
+}
+```
+
+Localhost addresses open directly, exactly like the default port address. This includes `localhost`, any `*.localhost` subdomain, `127.0.0.1`, and `::1`. For security, a localhost `url` must be just your server's origin — no path or query, and the port must match the entry's port. To show a specific page, ask Claude to navigate there after the preview opens. A localhost `url` with a path, query, or mismatched port is reported as a configuration error that names the url and shows the fix.
+
+Any other address asks for your permission the first time it opens, the same way browsing to a new site in the preview does. External addresses may include paths. Choose **Always allow** to skip the prompt for that site in the future. Organization policies that restrict external sites in the preview still apply.
+
+To preview a server you already run yourself, set `url` without a command. Claude attaches the preview to your running server instead of starting one:
+
+```json theme={null}
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "my-app",
+      "url": "https://app.localhost:3000"
+    }
+  ]
+}
+```
+
+The `url` must be `http` or `https`, and must not contain a username or password.
 
 #### Port conflicts
 
@@ -647,6 +691,7 @@ Managed settings override project and user settings and apply to Claude Code ses
 | `disableAutoMode`                          | set to `"disable"` to prevent users from enabling [Auto](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) mode. Removes Auto from the mode selector. Also accepted under `permissions`.                                                                                                                                                                                                                                                           |
 | `autoMode`                                 | customize what the auto mode classifier trusts and blocks across your organization. See [Configure auto mode](/docs/en/auto-mode-config).                                                                                                                                                                                                                                                                                                                    |
 | `browserExternalPageTools`                 | set to `"disabled"` to prevent Claude from using tools to read or act on external pages in the [Browser pane](#browse-external-sites). Users can still navigate to external sites themselves, and local dev server previews are unaffected.                                                                                                                                                                                                             |
+| `disableMobileSimulatorTools`              | set to `true` to block Claude's tools for controlling and capturing devices in the [iOS Simulator pane](/docs/en/desktop-ios-simulator#turn-off-simulator-access). The pane stays usable for the user's own taps; only Claude's access is removed.                                                                                                                                                                                                           |
 | `disableBrowserExternalNavigation`         | set to `true` to turn off external browsing in the [Browser pane](#browse-external-sites) entirely. Neither users nor Claude can navigate to external sites, and localhost dev server previews are unaffected. The value must be the JSON boolean `true`; the string `"true"` is ignored.                                                                                                                                                               |
 | `sshConfigs`                               | pre-configure [SSH connections](#pre-configure-ssh-connections-for-your-team) that appear in the environment dropdown. Users cannot edit or delete managed connections.                                                                                                                                                                                                                                                                                 |
 | `sshHostAllowlist`                         | restrict [SSH sessions](#restrict-which-ssh-hosts-users-can-connect-to) to hosts whose resolved hostname matches one of these patterns. An empty array disables SSH sessions. Read from managed settings only.                                                                                                                                                                                                                                          |
@@ -780,21 +825,22 @@ Desktop and CLI read the same configuration files, so your setup carries over:
 
 This table compares core capabilities between the CLI and Desktop. For a full list of CLI flags, see the [CLI reference](/docs/en/cli-reference).
 
-| Feature                                               | CLI                                                              | Desktop                                                                                                                                                                                                                                                                                                                                           |
-| ----------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Permission modes                                      | All modes including `dontAsk`                                    | Manual, Accept edits, Plan, and Auto. Bypass permissions appears in the mode selector once enabled: through the Settings toggle on Pro and Max plans, or through organization policy on Team and Enterprise plans                                                                                                                                 |
-| `--dangerously-skip-permissions`                      | CLI flag                                                         | Bypass permissions mode. On Pro and Max plans, enable it in Settings → Claude Code → "Allow bypass permissions mode"; on Team and Enterprise plans, organization policy controls it                                                                                                                                                               |
-| [Third-party providers](/docs/en/third-party-integrations) | Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry | Anthropic's API by default. For gateway routing, see [connect the desktop app to a gateway](/docs/en/llm-gateway-connect#desktop-app). To run the Code tab on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a self-hosted LLM gateway, see [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview). |
-| [MCP servers](/docs/en/mcp)                                | Configure in settings files                                      | Connectors UI for local and SSH sessions, or settings files                                                                                                                                                                                                                                                                                       |
-| [Plugins](/docs/en/plugins)                                | `/plugin` command                                                | Plugin manager UI                                                                                                                                                                                                                                                                                                                                 |
-| @mention files                                        | Text-based                                                       | With autocomplete; local and SSH sessions only                                                                                                                                                                                                                                                                                                    |
-| File attachments                                      | Not available                                                    | Images, PDFs                                                                                                                                                                                                                                                                                                                                      |
-| Session isolation                                     | [`--worktree`](/docs/en/cli-reference) flag                           | Automatic worktrees                                                                                                                                                                                                                                                                                                                               |
-| Multiple sessions                                     | Separate terminals                                               | Sidebar tabs                                                                                                                                                                                                                                                                                                                                      |
-| Recurring tasks                                       | Cron jobs, CI pipelines                                          | [Scheduled tasks](/docs/en/desktop-scheduled-tasks)                                                                                                                                                                                                                                                                                                    |
-| Computer use                                          | [Enable via `/mcp`](/docs/en/computer-use) on macOS                   | [App and screen control](#let-claude-use-your-computer) on macOS and Windows                                                                                                                                                                                                                                                                      |
-| Dispatch integration                                  | Not available                                                    | [Dispatch sessions](#sessions-from-dispatch) in the sidebar                                                                                                                                                                                                                                                                                       |
-| Scripting and automation                              | [`--print`](/docs/en/cli-reference), [Agent SDK](/docs/en/headless)        | Not available                                                                                                                                                                                                                                                                                                                                     |
+| Feature                                               | CLI                                                                            | Desktop                                                                                                                                                                                                                                                                                                                                           |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Permission modes                                      | All modes including `dontAsk`                                                  | Manual, Accept edits, Plan, and Auto. Bypass permissions appears in the mode selector once enabled: through the Settings toggle on Pro and Max plans, or through organization policy on Team and Enterprise plans                                                                                                                                 |
+| `--dangerously-skip-permissions`                      | CLI flag                                                                       | Bypass permissions mode. On Pro and Max plans, enable it in Settings → Claude Code → "Allow bypass permissions mode"; on Team and Enterprise plans, organization policy controls it                                                                                                                                                               |
+| [Third-party providers](/docs/en/third-party-integrations) | Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry               | Anthropic's API by default. For gateway routing, see [connect the desktop app to a gateway](/docs/en/llm-gateway-connect#desktop-app). To run the Code tab on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a self-hosted LLM gateway, see [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview). |
+| [MCP servers](/docs/en/mcp)                                | Configure in settings files                                                    | Connectors UI for local and SSH sessions, or settings files                                                                                                                                                                                                                                                                                       |
+| [Plugins](/docs/en/plugins)                                | `/plugin` command                                                              | Plugin manager UI                                                                                                                                                                                                                                                                                                                                 |
+| @mention files                                        | Text-based                                                                     | With autocomplete; local and SSH sessions only                                                                                                                                                                                                                                                                                                    |
+| File attachments                                      | Not available                                                                  | Images, PDFs                                                                                                                                                                                                                                                                                                                                      |
+| Session isolation                                     | [`--worktree`](/docs/en/cli-reference) flag                                         | Automatic worktrees                                                                                                                                                                                                                                                                                                                               |
+| Multiple sessions                                     | Separate terminals                                                             | Sidebar tabs                                                                                                                                                                                                                                                                                                                                      |
+| Recurring tasks                                       | Cron jobs, CI pipelines                                                        | [Scheduled tasks](/docs/en/desktop-scheduled-tasks)                                                                                                                                                                                                                                                                                                    |
+| Computer use                                          | [Enable via `/mcp`](/docs/en/computer-use) on macOS                                 | [App and screen control](#let-claude-use-your-computer) on macOS and Windows                                                                                                                                                                                                                                                                      |
+| iOS simulator                                         | Drive the simulator via [computer use](/docs/en/computer-use#test-a-simulator-flow) | [iOS Simulator pane](/docs/en/desktop-ios-simulator) opens automatically                                                                                                                                                                                                                                                                               |
+| Dispatch integration                                  | Not available                                                                  | [Dispatch sessions](#sessions-from-dispatch) in the sidebar                                                                                                                                                                                                                                                                                       |
+| Scripting and automation                              | [`--print`](/docs/en/cli-reference), [Agent SDK](/docs/en/headless)                      | Not available                                                                                                                                                                                                                                                                                                                                     |
 
 ### What's not available in Desktop
 
