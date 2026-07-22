@@ -119,9 +119,17 @@ From the command line, combine `--continue` or `--resume` with `--fork-session`:
 claude --continue --fork-session
 ```
 
-The original session is unchanged and remains available in the session picker. The `/branch` confirmation prints two session IDs: the new branch you are now in and the original. To return to the original, pass its ID to `/resume`, use the session picker, or run `/resume <original-name>`. Permissions you approved with "allow for this session" do not carry over to the new branch. If you resume the same session in two terminals without forking, messages from both interleave into one transcript.
+The `/branch` confirmation prints two session IDs: the new branch you are now in and the original. The original is unchanged on disk and remains in the session picker; return to it with `/resume <original-name>` or by passing its ID to `/resume`.
 
-For checkpoint-based rewind within a single session, see [Checkpointing](/docs/en/checkpointing).
+`/branch` copies the transcript and switches the running Claude Code process to write to it. That distinction determines what the branch inherits:
+
+| State                                                                                                                                                                    | After `/branch`                                                                                     |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| Conversation history                                                                                                                                                     | Copied into the branch up to the point you ran `/branch`                                            |
+| "Allow for this session" permission grants                                                                                                                               | Not carried over; you re-approve in the branch                                                      |
+| In-flight [background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) and [background Bash commands](/docs/en/interactive-mode#background-bash-commands) | Keep running. Their output appears in the new branch you switched into, not in the original session |
+
+If you resume the same session in two terminals without forking, messages from both interleave into one transcript. For checkpoint-based rewind within a single session, see [Checkpointing](/docs/en/checkpointing).
 
 ## Manage context within a session
 
