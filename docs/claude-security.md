@@ -115,14 +115,6 @@ git apply CLAUDE-SECURITY-<timestamp>/patches/F1.patch
 
 When the patched code has no tests, the patch's note says so, so you know its review ran without a test pass. Apply each patch in its own pull request so it can be reviewed and tested on its own.
 
-<h2 id="scan-repositories-you-dont-trust">
-  Scan repositories you don't trust
-</h2>
-
-The plugin is built for scanning code you control, where the question is which bugs are in the code rather than whether the code is trying something. A scan runs in your session, under your permissions, and adds no isolation of its own: the repository's committed `.claude/` settings, hooks, and `CLAUDE.md` apply exactly as they would in any other session. The scan treats everything the repository says, in code, comments, and findings text, as data under review rather than instructions, but that isn't a defense against a hostile repository.
-
-To scan a repository you don't fully trust, such as a third-party dependency or an unfamiliar codebase, sandbox the whole session first. [sandbox-runtime](https://github.com/anthropic-experimental/sandbox-runtime) enforces filesystem and network restrictions at the operating-system level; its README covers how to run Claude Code inside it.
-
 ## How the plugin fits with other security tools
 
 The Claude Security plugin is the on-demand deep-scan layer in a defense-in-depth stack, alongside the [security guidance plugin](/docs/en/security-guidance), [`/security-review`](/docs/en/commands#all-commands), [Code Review](/docs/en/code-review), the managed [Claude Security](https://claude.com/product/claude-security) product, and your existing scanners:

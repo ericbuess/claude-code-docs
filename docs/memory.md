@@ -237,6 +237,10 @@ paths:
 ---
 ```
 
+Each brace group multiplies the number of expanded patterns: `src/*.{ts,tsx}` expands to two patterns, and `{a,b}/{c,d}/*.{ts,tsx}` to eight. To keep expansion bounded, a rule's whole `paths` list shares one budget of 1,000 expanded patterns and 4 MiB, and patterns without braces don't count against it.
+
+Claude Code uses any pattern that would exceed the budget unexpanded, and its literal braces match no files. {/* min-version: 2.1.217 */}Before v2.1.217, a `paths` value with many brace groups stalled or crashed the CLI at startup.
+
 Glob syntax treats `[` as the start of a bracket expression such as `[abc]`. A pattern with a `[` that can't be read as a bracket expression, such as `photos [2024/**`, is invalid: it matches nothing, and the rule's other patterns keep working. To match a literal `[` in a file name, escape it as `photos \[2024/**`. {/* min-version: 2.1.207 */}Before v2.1.207, one invalid pattern made the Read tool fail for every file the rule was evaluated against, instead of matching nothing.
 
 #### Share rules across projects with symlinks

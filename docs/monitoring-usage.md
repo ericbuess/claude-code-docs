@@ -68,9 +68,26 @@ Example managed settings configuration:
 
 Claude Code doesn't pass `OTEL_*` environment variables to the subprocesses it spawns, including the Bash tool, hooks, MCP servers, and language servers. An OpenTelemetry-instrumented application that you run through the Bash tool doesn't inherit Claude Code's exporter endpoint or headers, so set those variables directly in the command if that application needs to export its own telemetry.
 
+### Managed endpoints govern signal-specific endpoints
+
+A generic `OTEL_EXPORTER_OTLP_ENDPOINT` set in managed settings governs every signal's endpoint. If a lower-precedence source, such as user settings or a shell export, sets a signal-specific endpoint like `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`, Claude Code removes that variable at startup and logs a warning, visible with `claude --debug`. Users can't point one signal's OTLP traffic at a different endpoint, so you don't need to set the signal-specific endpoint variables in managed settings to prevent it.
+
+This applies only on machines where an administrator deploys managed settings with telemetry configured, and it changes where telemetry is delivered, not what Claude Code collects.
+
+A managed `OTEL_EXPORTER_OTLP_HEADERS`, `OTEL_EXPORTER_OTLP_CLIENT_KEY`, or `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE` variable also governs the endpoint variables, since those credentials would otherwise accompany telemetry to a collector the managed settings didn't choose.
+
+Two cases keep the normal per-key precedence:
+
+* Signal-specific variables set in the managed settings file itself still apply, so you can route one signal to a different collector by setting them there, as the [SIEM example](#send-events-to-a-siem) does.
+* The exporter selectors (`OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER`, and the beta `OTEL_TRACES_EXPORTER`) and the protocol variables follow per-key precedence, so a lower-precedence source can still change how a signal is exported. To make those authoritative too, set the signal-specific keys in managed settings directly.
+
+{/* min-version: 2.1.217 */}Before v2.1.217, every variable followed per-key settings precedence independently, so a signal-specific endpoint set in user settings or the shell redirected that signal away from the managed collector.
+
 ## Configuration details
 
 ### Common configuration variables
+
+These variables configure exporters, endpoints, and export behavior for all deployments. A signal-specific variable overrides its generic counterpart, except that a generic endpoint or credential variable set in [managed settings](#administrator-configuration) governs all signals' endpoints and can't be overridden from lower-precedence sources.
 
 | Environment Variable                                | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Example Values                                                                                                                                                 |
 | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -126,7 +143,7 @@ These variables help control the cardinality of metrics, which affects storage r
 
 Distributed tracing exports spans that link each user prompt to the API requests and tool executions it triggers, so you can view a full request as a single trace in your tracing backend.
 
-Tracing is off by default. To enable it, set both `CLAUDE_CODE_ENABLE_TELEMETRY=1` and `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`, then set `OTEL_TRACES_EXPORTER` to choose where spans are sent. Traces reuse the [common OTLP configuration](#common-configuration-variables) for endpoint, protocol, headers, and [mTLS](#mtls-authentication).
+Tracing is off by default. To enable it, set both `CLAUDE_CODE_ENABLE_TELEMETRY=1` and `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`, then set `OTEL_TRACES_EXPORTER` to choose where spans are sent. Traces reuse the [common OTLP configuration](#common-configuration-variables) for endpoint, protocol, headers, and [mTLS](#mtls-authentication). A generic endpoint or credential variable set in [managed settings](#managed-endpoints-govern-signal-specific-endpoints) governs the traces endpoint too, so the `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` override in the table below applies only when managed settings don't set one.
 
 | Environment Variable                  | Description                                                                       | Example Values                       |
 | ------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------ |

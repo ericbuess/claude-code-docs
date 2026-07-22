@@ -87,6 +87,7 @@
 | `/` at start       | Command or skill               | See [commands](#commands) and [skills](/docs/en/skills)                                                                                                                                                                                          |
 | `!` at start       | Shell mode                     | Run a command directly, add its output to the session, and have Claude respond to it                                                                                                                                                        |
 | `@`                | File path mention              | Trigger file path autocomplete                                                                                                                                                                                                              |
+| `:`                | Emoji shortcode                | Type a full `:name:` to insert the emoji, or two or more characters for suggestions. See [Emoji shortcodes](#emoji-shortcodes). {/* min-version: 2.1.217 */}Requires Claude Code v2.1.217 or later                                          |
 | `?` on empty input | Toggle the shortcut help panel | Typing `?` when the input already contains text inserts the character. {/* min-version: 2.1.211 */}Before v2.1.211, an edit that left a lone `?` in the input, such as backspacing from `?x`, also toggled the panel and discarded the edit |
 
 ### Transcript viewer
@@ -342,6 +343,17 @@ To disable prompt suggestions entirely, set the environment variable or toggle t
 export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 ```
 
+## Emoji shortcodes
+
+Type a `:` followed by an emoji shortcode in the prompt input to insert the emoji. {/* min-version: 2.1.217 */}Requires Claude Code v2.1.217 or later.
+
+* Type a complete shortcode such as `:heart:` and Claude Code replaces it with ❤️ as soon as you type the closing `:`
+* Type `:` plus at least two characters of a name, such as `:hea`, to open a suggestion popup, then press `Tab` or `Enter` to insert the highlighted emoji
+
+The shortcode must start the input or follow a space, so a `:` inside a word or URL doesn't open suggestions.
+
+To turn the feature off, set [`emojiCompletionEnabled`](/docs/en/settings#available-settings) to `false` in `settings.json`. This disables both the suggestion popup and the inline replacement.
+
 ## Side questions with /btw
 
 Use `/btw` to ask a quick question about your current work without adding to the conversation history. This is useful when you want a fast answer but don't want to clutter the main context or derail Claude from a long-running task.
@@ -401,6 +413,8 @@ When working on a branch with an open pull request, Claude Code displays a click
 * Gray: draft
 
 The badge disappears once the pull request merges or closes. `Cmd+click` (macOS) or `Ctrl+click` (Windows/Linux) the link to open the pull request in your browser. The status refreshes every 60 seconds, and immediately after a `gh pr` or `git push` command runs in the session.
+
+Claude Code renders the badge as a hyperlink even when it can't detect hyperlink support in your terminal, which commonly happens over SSH or in tmux. Set [`FORCE_HYPERLINK=0`](/docs/en/env-vars) to render the badge as plain text. Before v2.1.217, the badge was a hyperlink only when detection succeeded.
 
 <Note>
   PR status requires the `gh` CLI to be installed and authenticated (`gh auth login`).
