@@ -216,12 +216,13 @@ If you build your own hooks, the [plugin's source](https://github.com/anthropics
 
 The plugin is one layer in a defense-in-depth approach. It catches issues earliest, while code is still in the editor, but it is not a guarantee and does not replace later checks. A typical stack:
 
-| Stage           | Tool                                                      | What it covers                                                                                   |
-| :-------------- | :-------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
-| In session      | Security guidance plugin                                  | Common vulnerabilities in code Claude writes, fixed in the same session                          |
-| On demand       | [`/security-review`](/docs/en/commands#all-commands)           | One-time security pass on the current branch, run when you ask                                   |
-| On pull request | [Code Review](/docs/en/code-review), Team and Enterprise plans | Multi-agent correctness and security review with full codebase context                           |
-| In CI           | Your existing static analysis and dependency scanners     | Language-specific rules, supply-chain checks, and policy enforcement the plugin does not attempt |
+| Stage                  | Tool                                                      | What it covers                                                                                           |
+| :--------------------- | :-------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| In session             | Security guidance plugin                                  | Common vulnerabilities in code Claude writes, fixed in the same session                                  |
+| On demand, single pass | [`/security-review`](/docs/en/commands#all-commands)           | One-time security pass on the current branch, run when you ask                                           |
+| On demand, deep scan   | [Claude Security plugin](/docs/en/claude-security)             | Multi-agent vulnerability scan of a repository or diff, with independently reviewed findings and patches |
+| On pull request        | [Code Review](/docs/en/code-review), Team and Enterprise plans | Multi-agent correctness and security review with full codebase context                                   |
+| In CI                  | Your existing static analysis and dependency scanners     | Language-specific rules, supply-chain checks, and policy enforcement the plugin does not attempt         |
 
 Each later stage catches what earlier ones miss. The plugin's value is reducing the volume that reaches them, not eliminating the need for them.
 
