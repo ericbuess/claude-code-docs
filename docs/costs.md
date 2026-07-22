@@ -39,26 +39,19 @@ When the request for your plan limits fails, most often because the usage endpoi
 
 In the [VS Code extension](/docs/en/vs-code#check-account-and-usage), the same breakdown appears in the Account & usage dialog with a Day and Week toggle. Requires Claude Code v2.1.174 or later.
 
-### Set a spend limit on Pro and Max
+### Add usage credits to your subscription
 
-On Pro and Max plans, the `/usage-credits` command opens a dialog in the CLI where you manage [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans). The command requires signing in with your claude.ai subscription through `/login` and isn't available with API key authentication. From the dialog you can:
+[Usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) let you keep working past your plan's usage limit. To manage them, run `/usage-credits` after signing in with your claude.ai subscription through `/login`; the command isn't available with API key authentication. What it opens depends on your role:
 
-* Turn on usage credits for your account
-* Buy more usage credits, either a listed bundle or a custom amount
-* Set, change, or remove your monthly spend limit
-* Configure auto-reload, which buys more usage credits automatically when your balance falls below a threshold you set
+| Your role                                        | What `/usage-credits` does                                                                                                                                                     |
+| :----------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pro or Max subscriber                            | Opens your billing settings in the browser                                                                                                                                     |
+| Team or Enterprise member with billing access    | Opens your organization's usage settings in the browser                                                                                                                        |
+| Team or Enterprise member without billing access | {/* min-version: 2.1.211 */}Asks you to confirm, then sends a request to your organization's admins. Before v2.1.211, Claude Code sent the request without a confirmation step |
 
-On Claude Code versions before v2.1.207 and on accounts where the in-CLI dialog isn't available, `/usage-credits` opens the usage-credits billing page in your browser instead. On Team and Enterprise plans, members with billing access get the same browser page, and members without billing access request usage credits from their admin through the CLI.
+For Team and Enterprise members without billing access, the confirmation appears only in interactive sessions: in non-interactive mode with the `-p` flag and from [Remote Control](/docs/en/remote-control), the command sends no request and tells you to run it in an interactive session instead.
 
-Because that request notifies your organization's admins, the CLI asks for confirmation before sending it. Select **Send request** to ask your admin to turn on usage credits or raise the limit, or cancel to send nothing; canceling reports `No request sent to your admin.` The confirmation appears only in interactive sessions, so in non-interactive mode with the `-p` flag and from [Remote Control](/docs/en/remote-control), `/usage-credits` doesn't send a request and instead tells you to run the command in an interactive session. Before v2.1.211, Claude Code sent the request as soon as you ran the command, without a confirmation step.
-
-Changing the monthly spend limit requires billing access on the account. If you reach the limit while you still have usage credits available, Claude Code prompts you to raise or remove it so you can continue without leaving the CLI.
-
-Amounts you type into the dialog, such as a custom purchase amount, the monthly spend limit, or the auto-reload threshold and target, must be digits, optionally followed by a period and one or two decimal digits, for example `20` or `20.50`. Any other input, including commas, shows an inline error and isn't saved. Versions before v2.1.207 don't show the dialog and open the billing page instead.
-
-Claude Code asks you to type `yes` to confirm every purchase and every auto-reload change, whatever the amount, and the purchase confirmation shows the post-tax total you are approving. Changing the monthly spend limit asks for the same typed confirmation only above \$1,000, or above 1,000 units of a non-US-dollar billing currency. Before v2.1.208, purchases and auto-reload changes used that threshold too, so smaller amounts went through the standard dialog flow without the extra typed `yes` step.
-
-Amount fields open prefilled with a suggested value, and the first digit you type replaces the suggestion instead of appending to it. The screen that turns on usage credits opens with Cancel selected, so turning them on takes a deliberate selection rather than a stray Enter. Both require Claude Code v2.1.208 or later.
+On Pro and Max plans, when you reach your spend limit with usage credits still available, Claude Code prompts you to raise or remove the limit without leaving the CLI. If the server rejects the change, see [Could not update your spend limit](/docs/en/errors#could-not-update-your-spend-limit).
 
 ## Manage costs for your organization
 
