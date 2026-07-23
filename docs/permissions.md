@@ -199,11 +199,20 @@ Exec wrappers such as `watch`, `setsid`, `ionice`, and `flock` always prompt and
 
 Claude Code recognizes a built-in set of Bash commands as read-only and runs them without a permission prompt in every mode. These include `ls`, `cat`, `echo`, `pwd`, `head`, `tail`, `grep`, `find`, `wc`, `which`, `diff`, `stat`, `du`, `cd`, and read-only forms of `git`. The set is not configurable; to require a prompt for one of these commands, add an `ask` or `deny` rule for it.
 
-Unquoted glob patterns are permitted for commands whose every flag is read-only, so `ls *.ts` and `wc -l src/*.py` run without a prompt. Commands with write-capable or exec-capable flags, such as `find`, `sort`, `sed`, and `git`, still prompt when an unquoted glob is present because the glob could expand to a flag like `-delete`.
+Unquoted glob patterns are permitted for commands whose every flag is read-only, so `ls *.ts` and `wc -l src/*.py` run without a prompt.
 
-A `cd` into a path inside your working directory or an [additional directory](#working-directories) is also read-only. A compound command like `cd packages/api && ls` runs without a prompt when each part qualifies on its own. Combining `cd` with `git` in one compound command prompts when the `cd` changes into a different directory, since running `git` in a new directory can execute that directory's hooks. A `cd` whose target resolves to the current working directory is a no-op and doesn't trigger this prompt.
+Commands from this set still prompt in these cases:
 
-Combining `cd` with an output redirect in one compound command also prompts when Claude Code can't determine which directory the redirect target resolves against after the `cd` runs. A command whose only redirect target is `/dev/null`, such as `cd app; grep -r pattern . 2>/dev/null`, doesn't trigger this prompt, because `/dev/null` doesn't depend on the working directory. {/* min-version: 2.1.207 */}Before v2.1.207, a compound command containing `cd` prompted for any output redirect, including one whose only target was `/dev/null`.
+* **Unquoted globs for commands with write-capable flags**: commands with write-capable or exec-capable flags, such as `find`, `sort`, `sed`, and `git`, prompt when an unquoted glob is present, because the glob could expand to a flag like `-delete`.
+* **`docker` pointed at another daemon**: read-only forms of `docker` prompt when the command carries a flag that selects a different daemon, such as `-H`, `--context`, or Podman's `--url` and `--connection`.
+* **`file` with path-opening flags**: `file` prompts when it passes `-m`/`--magic-file` or `-f`/`--files-from`, because those flags make `file` open the paths named in the flag's value.
+* **Network paths on Windows**: a command whose arguments include a network (UNC) path, such as `\\server\share\file`, prompts because accessing a network path can send your Windows credentials to the host it names. The same check applies to [PowerShell tool](/docs/en/tools-reference#powershell-tool) commands.
+* **Commands the analysis can't parse**: when Claude Code can't fully parse a command, it asks for approval instead of treating the command as read-only. Commands longer than 10,000 characters always prompt because they exceed what the analysis parses.
+
+A `cd` into a path inside your working directory or an [additional directory](#working-directories) is also read-only, and a compound command like `cd packages/api && ls` runs without a prompt when each part qualifies on its own. Two combinations prompt even when each part is read-only:
+
+* **`cd` with `git`**: prompts when the `cd` changes into a different directory, since running `git` in a new directory can execute that directory's hooks. A `cd` whose target resolves to the current working directory is a no-op and doesn't trigger the prompt.
+* **`cd` with an output redirect**: prompts when Claude Code can't determine which directory the redirect target resolves against after the `cd` runs. A command whose only redirect target is `/dev/null`, such as `cd app; grep -r pattern . 2>/dev/null`, doesn't prompt, because `/dev/null` doesn't depend on the working directory.
 
 <Warning>
   Bash permission patterns that try to constrain command arguments are fragile. For example, `Bash(curl http://github.com/ *)` intends to restrict curl to GitHub URLs, but won't match variations like:
@@ -263,7 +272,7 @@ Permission deny rule (.claude/settings.json): Write(docs/**) is not matched by f
   Read and Edit deny rules apply to Claude's built-in file tools and to file commands Claude Code recognizes in Bash, such as `cat`, `head`, `tail`, and `sed`. They don't apply to arbitrary subprocesses that read or write files indirectly, like a Python or Node script that opens files itself. For OS-level enforcement that blocks all processes from accessing a path, [enable the sandbox](/docs/en/sandboxing).
 </Warning>
 
-Read and Edit rules both follow the [gitignore](https://git-scm.com/docs/gitignore) specification with four distinct pattern types:
+Read and Edit rules both use [gitignore](https://git-scm.com/docs/gitignore) pattern syntax with four distinct pattern types; for single-segment directory patterns, the matching depth also depends on the rule type, described later in this section:
 
 | Pattern            | Meaning                              | Example                          | Matches                                          |
 | ------------------ | ------------------------------------ | -------------------------------- | ------------------------------------------------ |
@@ -297,14 +306,40 @@ Examples:
 * `Edit(/docs/**)`: edits in `<project>/docs/`, not `/docs/` or `<project>/.claude/docs/`
 * `Read(~/.zshrc)`: reads your home directory's `.zshrc`
 * `Edit(//tmp/scratch.txt)`: edits the absolute path `/tmp/scratch.txt`
-* `Read(src/**)`: reads from `<current-directory>/src/`
+* `Read(src/**)`: as an allow rule, reads from `<current-directory>/src/` only; as a deny or ask rule, matches a `src` directory at any depth under the current directory
 
-A rule only matches files under its anchor, so the anchor determines how far a deny rule reaches. Bare filenames follow gitignore semantics and match at any depth, so `Read(.env)` and `Read(**/.env)` are equivalent:
+A rule only matches files under its anchor; within that bound, matching depth depends on the pattern shape and, for single-segment directory patterns, the rule type, described below. Bare filenames follow gitignore semantics and match at any depth, so `Read(.env)` and `Read(**/.env)` are equivalent:
 
 | Deny rule                       | Blocks                                       | Does not block                                       |
 | ------------------------------- | -------------------------------------------- | ---------------------------------------------------- |
 | `Read(.env)` or `Read(**/.env)` | any `.env` at or under the current directory | `.env` in a parent directory or another project      |
 | `Read(//**/.env)`               | any `.env` anywhere on the filesystem        | nothing; the rule is anchored at the filesystem root |
+
+A relative pattern with a single directory segment, such as `src/**`, matches at different depths depending on the rule type:
+
+* **Allow rules**: `Edit(src/**)` matches only `<cwd>/src` and the files under it. To allow a directory name at any depth, write `Edit(**/src/**)`.
+* **Deny and ask rules**: `Read(secrets/**)` matches a directory named `secrets` at any depth under the current directory, so the rule also applies to nested copies.
+
+Every other pattern shape matches at the same depth in every rule type: `Edit(/src/**)` and `Edit(src/components/**)` match only at their anchored location, while `Edit(**/src/**)` matches at any depth.
+
+The following example shows each pattern shape against a project with a top-level `src/` directory and a nested copy under `vendor/`:
+
+```text theme={null}
+<current-directory>/
+├── src/
+│   └── app.ts
+└── vendor/
+    └── pkg/
+        └── src/
+            └── lib.js
+```
+
+| Rule                                 | Matches `src/app.ts` | Matches `vendor/pkg/src/lib.js` |
+| :----------------------------------- | :------------------- | :------------------------------ |
+| `Edit(src/**)` as an allow rule      | Yes                  | No                              |
+| `Edit(src/**)` as a deny or ask rule | Yes                  | Yes                             |
+| `Edit(/src/**)` in any rule type     | Yes                  | No                              |
+| `Edit(**/src/**)` in any rule type   | Yes                  | Yes                             |
 
 <Note>
   In gitignore patterns, `*` matches within a single path segment and can appear at any position in the pattern, while `**` matches across directories. To allow all file access, use only the tool name without parentheses: `Read`, `Edit`, or `Write`.

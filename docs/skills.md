@@ -245,6 +245,8 @@ Your skill instructions here...
 
 All fields are optional. Only `description` is recommended so Claude knows when to use the skill.
 
+{/* min-version: 2.1.218 */}Boolean fields accept `yes`, `no`, `on`, `off`, `1`, and `0` in any letter case, in addition to `true` and `false`. Before v2.1.218, Claude Code recognized only `true` and `false`.
+
 | Field                      | Required    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | :------------------------- | :---------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`                     | No          | Display name shown in skill listings. Defaults to the directory name. See [How a skill gets its command name](#how-a-skill-gets-its-command-name) for how the field interacts with the name you type to invoke the skill.                                                                                                                                                                                                                                |
@@ -260,6 +262,7 @@ All fields are optional. Only `description` is recommended so Claude knows when 
 | `effort`                   | No          | [Effort level](/docs/en/model-config#adjust-effort-level) when this skill is active. Overrides the session effort level. Default: inherits from session. Options: `low`, `medium`, `high`, `xhigh`, `max`; available levels depend on the model.                                                                                                                                                                                                              |
 | `context`                  | No          | Set to `fork` to run in a forked subagent context. See [Run skills in a subagent](#run-skills-in-a-subagent).                                                                                                                                                                                                                                                                                                                                            |
 | `agent`                    | No          | Which subagent type to use when `context: fork` is set.                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `background`               | No          | Only applies with `context: fork`. Set to `false` to wait for the forked subagent's result in the turn that invoked the skill, instead of [running it in the background](#run-skills-in-a-subagent). Default: `true`. {/* min-version: 2.1.218 */}Requires Claude Code v2.1.218 or later.                                                                                                                                                                |
 | `hooks`                    | No          | Hooks scoped to this skill's lifecycle. See [Hooks in skills and agents](/docs/en/hooks#hooks-in-skills-and-agents) for configuration format.                                                                                                                                                                                                                                                                                                                 |
 | `paths`                    | No          | Glob patterns that limit when this skill is activated. Accepts a comma-separated string or a YAML list. When set, Claude loads the skill automatically only when working with files matching the patterns. Uses the same format as [path-specific rules](/docs/en/memory#path-specific-rules).                                                                                                                                                                |
 | `shell`                    | No          | Shell to use for `` !`command` `` and ` ```! ` blocks in this skill. Accepts `bash` (default) or `powershell`. Setting `powershell` runs inline shell commands via PowerShell when the [PowerShell tool](/en/tools-reference#powershell-tool) is enabled: it's on by default on Windows without Git Bash, and `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` enables it elsewhere.                                                                                  |
@@ -450,9 +453,9 @@ When you run `/fix-issue 123`, Claude receives "Fix GitHub issue 123 following o
 
 If you invoke a skill with arguments but the skill doesn't include `$ARGUMENTS`, Claude Code appends `ARGUMENTS: <your input>` to the end of the skill content so Claude still sees what you typed.
 
-You can also stack several skills at the start of one message. {/* min-version: 2.1.199 */}As of v2.1.199, typing `/code-review /fix-issue 123` loads both skills and passes the trailing text `123` as `$ARGUMENTS` to each of them. In earlier versions, only the first skill loaded and received `/fix-issue 123` as literal argument text.
+You can also stack several skills at the start of one message. {/* min-version: 2.1.199 */}Typing `/write-tests /fix-issue 123` loads both skills and passes the trailing text `123` as `$ARGUMENTS` to each of them. Before v2.1.199, only the first skill loaded and received `/fix-issue 123` as literal argument text.
 
-Claude Code expands the first skill plus up to five more stacked after it. Expansion stops at the first token that isn't an inline user-invocable skill, so a skill that runs as a [forked subagent](#run-skills-in-a-subagent) or one whose arguments may themselves start with a slash command, such as `/loop`, also ends the run there; that token and everything after it become the argument text for every expanded skill.
+Claude Code expands the first skill plus up to five more stacked after it. Expansion stops at the first token that isn't an inline user-invocable skill, so a skill that runs as a [forked subagent](#run-skills-in-a-subagent), such as [`/code-review`](/docs/en/code-review#review-a-diff-locally), or one whose arguments may themselves start with a slash command, such as `/loop`, also ends the run there. That token and everything after it become the argument text for every expanded skill. {/* min-version: 2.1.218 */}`/code-review` runs as a forked subagent from v2.1.218; on earlier versions it ran inline and stacked.
 
 To access individual arguments by position, use `$ARGUMENTS[N]` or the shorter `$N`:
 
@@ -537,6 +540,19 @@ To disable this behavior for skills and custom commands from user, project, plug
 
 Add `context: fork` to your frontmatter when you want a skill to run in isolation. The skill content becomes the prompt that drives the subagent. It won't have access to your conversation history.
 
+The forked subagent runs in the [background](/docs/en/sub-agents#run-subagents-in-foreground-or-background): you keep working while it runs, and its result arrives in your conversation when it completes. Set `background: false` in the frontmatter to instead wait for the result in the turn that invoked the skill. {/* min-version: 2.1.218 */}Before v2.1.218, forked skills always blocked the turn until they finished.
+
+Claude Code also waits for the result, even when the skill doesn't set `background: false`, in these cases:
+
+* In non-interactive mode, with the `-p` flag or the Agent SDK
+* When you set [`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`](/docs/en/env-vars) to `1`, which also turns off all other background task features
+* When you invoke a forked skill while an earlier invocation of the same skill is still running
+* When a [scheduled task](/docs/en/scheduled-tasks) fires with the skill as its prompt
+
+{/* min-version: 2.1.218 */}A backgrounded fork also runs with the [narrower tool set that applies to background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background): the skill's subagent is a regular agent type, so the exemption for subagents that fork the conversation doesn't cover it. If your skill's steps depend on a tool outside that set, set `background: false` to keep the full tool set.
+
+A forked skill that runs in the background applies its edits outside your session's [checkpoints](/docs/en/checkpointing), so `/rewind` doesn't undo them; use git to revert them.
+
 <Warning>
   `context: fork` only makes sense for skills with explicit instructions. If your skill contains guidelines like "use these API conventions" without a task, the subagent receives the guidelines but no actionable prompt, and returns without meaningful output.
 </Warning>
@@ -574,7 +590,7 @@ When this skill runs:
 1. A new isolated context is created
 2. The subagent receives the skill content as its prompt ("Research \$ARGUMENTS thoroughly...")
 3. The `agent` field determines the execution environment (model, tools, and permissions)
-4. Results are summarized and returned to your main conversation
+4. The subagent summarizes its results and returns them to your main conversation when it finishes
 
 The `agent` field specifies which subagent configuration to use. Options include built-in agents (`Explore`, `Plan`, `general-purpose`) or any custom subagent from `.claude/agents/`. If omitted, uses `general-purpose`.
 

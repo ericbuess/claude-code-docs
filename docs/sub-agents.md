@@ -753,7 +753,7 @@ Subagents can run in the foreground or the background:
 * **Foreground subagents** block the main conversation until complete. Permission prompts are passed through to you as they come up.
 * **Background subagents** run concurrently while you continue working. {/* min-version: 2.1.186 */}As of v2.1.186, when a background subagent reaches a tool call that needs permission, the prompt surfaces in your main session and names the subagent that is asking. Approve to let the subagent continue, or press Esc to deny that one tool call without stopping the subagent. Before v2.1.186, background subagents auto-denied any tool call that would have prompted.
 
-{/* min-version: 2.1.198 */}As of v2.1.198, subagents run in the background by default. Claude runs a subagent in the foreground when it needs the result before continuing. Background subagents run with a [smaller built-in tool set](#available-tools) than foreground subagents, and they surface every permission prompt in your main session.
+{/* min-version: 2.1.198 */}As of v2.1.198, subagents run in the background by default. Claude runs a subagent in the foreground when it needs the result before continuing. Background subagents run with a [smaller built-in tool set](#available-tools) than foreground subagents, except for conversation forks, and they surface every permission prompt in your main session.
 
 {/* min-version: 2.1.211 */}A background subagent's results reach Claude as a completion notification in a later turn. Claude waits for that notification before reporting the subagent's results, and if you ask about progress first, it reports that the subagent is still running. Before v2.1.211, Claude sometimes reported results for a background subagent that hadn't finished.
 

@@ -79,6 +79,8 @@ Claude Code includes `/deep-research` as a built-in workflow:
 | :-------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/deep-research <question>` | Fans out web searches on a question across several angles, fetches and cross-checks the sources it finds, votes on each claim, and returns a cited report with claims that didn't survive cross-checking filtered out. Requires the [WebSearch tool](/docs/en/tools-reference#websearch-tool-behavior) to be available |
 
+{/* min-version: 2.1.218 */}`/deep-research` runs only when you invoke it. Before v2.1.218, Claude could also start it on its own.
+
 [Workflows you save](#save-the-workflow-for-reuse) yourself become commands the same way and appear in `/` autocomplete alongside the bundled ones.
 
 ### Watch the run

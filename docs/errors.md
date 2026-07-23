@@ -133,7 +133,7 @@ When you see one of the errors on this page, those retries have already been exh
 
 ## Server errors
 
-These errors come from the inference provider rather than your account or request. On the Anthropic API that means Anthropic infrastructure. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a custom gateway it means that provider's infrastructure.
+Most of these errors come from the inference provider's infrastructure: Anthropic's on the Anthropic API, and that provider's on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a custom gateway. [Auto mode cannot determine the safety of an action](#auto-mode-cannot-determine-the-safety-of-an-action) and [Agent terminated early due to an API error](#agent-terminated-early-due-to-an-api-error) also cover causes on your side, such as an Amazon Bedrock account that can't invoke the classifier model or a subagent that hit a usage limit.
 
 ### API Error: 500 Internal server error
 
@@ -210,21 +210,23 @@ API Error: Response stalled mid-stream. The response above may be incomplete.
 
 ### Auto mode cannot determine the safety of an action
 
-The model that [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) uses to classify actions couldn't produce a decision, so auto mode didn't approve the action automatically. The message you see depends on why the classifier failed.
+The model that [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) uses to classify actions couldn't produce a decision, so auto mode didn't approve the action automatically. The message you see depends on how the classifier failed.
 
 Reads, searches, and edits inside your working directory skip the classifier, so they keep working in all of these cases.
 
-When the classifier model is overloaded:
+When the classifier model is unavailable:
 
 ```text theme={null}
 <model> is temporarily unavailable, so auto mode cannot determine the safety of <tool> right now. Wait briefly and then try this action again.
 ```
 
+More than one failure produces this same message, so the message alone doesn't tell you the cause. When the classifier model is overloaded or rate-limited, the failure is transient and retrying works. On [Amazon Bedrock](/docs/en/amazon-bedrock), including the [Mantle endpoint](/docs/en/amazon-bedrock#use-the-mantle-endpoint), the same message also appears when your AWS account can't invoke the model named in the message, and that failure repeats on every retry until the model is granted.
+
 **What to do:**
 
-* Retry after a few seconds; Claude sees the same message and usually retries on its own
+* Retry after a few seconds; Claude sees the same message and usually retries on its own. A transient failure is unrelated to [auto mode eligibility](/docs/en/permission-modes#eliminate-prompts-with-auto-mode); you don't need to change settings
 * If retries keep failing, continue with read-only tasks and come back to the blocked action later
-* This is transient and unrelated to [auto mode eligibility](/docs/en/permission-modes#eliminate-prompts-with-auto-mode); you don't need to change settings
+* On Amazon Bedrock, if the message returns on every retry, check that your account can invoke the model it names: for standard Amazon Bedrock models, confirm your [IAM policy](/docs/en/amazon-bedrock#iam-configuration) allows invoking it; for Mantle model IDs, [contact your AWS account team](/docs/en/amazon-bedrock#mantle-endpoint-errors)
 
 {/* min-version: 2.1.216 */}When a classifier request fails because your OAuth token expired or was rotated by another session, Claude Code refreshes the token and retries the request once, so a routine token expiry doesn't surface as this message. Before v2.1.216, an expired or rotated token failed each classifier request, and auto mode denied every checked action with this message until the token was refreshed.
 
@@ -281,7 +283,7 @@ When a rate limit, overload, or server error interrupts a foreground subagent th
 
 ## Usage limits
 
-These errors mean a quota tied to your account or plan has been reached. They are distinct from [server errors](#server-errors), which affect everyone.
+Most errors in this section mean a quota tied to your account or plan has been reached. Two work differently: [`Server is temporarily limiting requests`](#server-is-temporarily-limiting-requests) is a server-side throttle unrelated to your plan quota, and [`Usage credits required for 1M context`](#usage-credits-required-for-1m-context) is an entitlement check rather than an exhausted quota.
 
 <h3 id="youve-hit-your-session-limit">
   You've hit your session limit
@@ -1391,7 +1393,7 @@ The refusal appears in the Bash tool result rather than as a banner in your term
 
 Commands that open an interactive dialog can't do so while no terminal is attached to a background session. `/install-github-app`, the `/mcp` settings list, and the authentication actions in the MCP server menu respond with a message, and the session appears under **Needs input** in [agent view](/docs/en/agent-view) so you can find it, attach, and run the command again. While a terminal is attached, these commands work normally.
 
-{/* max-version: 2.1.215 */}Before v2.1.216, Claude Code refused these commands outright: in v2.1.214 and v2.1.215 the message told you to attach and run the command again, and from v2.1.208 through v2.1.212 Claude Code refused them even while a terminal was attached, with a message naming a form that works there, such as `Can't open MCP settings in a background session`. Before v2.1.208, they opened their dialog inside the background session. In v2.1.208 only, Claude Code also refused the `/model` picker in a background session, and `/upgrade` printed the upgrade URL instead of opening a browser.
+{/* max-version: 2.1.215 */}Before v2.1.216, the session didn't appear under **Needs input** after one of these refusals. In v2.1.213 through v2.1.215, the commands still worked while a terminal was attached, and the refusal message told you to attach and run the command again. From v2.1.208 through v2.1.212, Claude Code refused them even while a terminal was attached, with a message such as `Can't open MCP settings in a background session`; on those versions, run the command from a regular `claude` session instead, or upgrade. Before v2.1.208, they opened their dialog inside the background session. In v2.1.208 only, Claude Code also refused the `/model` picker in a background session, and `/upgrade` printed the upgrade URL instead of opening a browser.
 
 The wording names the command. The `/mcp` settings list reports:
 
