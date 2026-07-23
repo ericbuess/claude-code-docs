@@ -134,6 +134,8 @@ The plugin doesn't replace your existing source-code security tools. Run it alon
 
 **The `/claude-security` menu opens with a Python warning.** The plugin needs `python3` 3.9.6 or later on your `PATH`. When it can't find `python3` at all, the menu warns that Claude Security won't work until one is installed; when the first `python3` on your `PATH` is older, the warning names the version it found. Install Python 3, or put a newer `python3` first on your `PATH`, then start a new session.
 
+**You may see "Fable 5's safeguards flagged this message" when using Fable 5.** Due to Fable 5's cybersecurity safety classifiers, certain model activities will be blocked and automatically downgraded to Opus.  This is expected, and the scan should still complete successfully.
+
 ## Related resources
 
 To go deeper on the pieces this page touches:
