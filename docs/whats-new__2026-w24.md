@@ -42,7 +42,7 @@
   > /agents
   ```
 
-  <a className="digest-feature-link" href="/docs/docs/en/sub-agents#spawn-nested-subagents">Spawn nested subagents</a>
+  <a className="digest-feature-link" href="/docs/docs/en/sub-agents#let-subagents-spawn-their-own-subagents">Spawn nested subagents</a>
 </div>
 
 <div className="digest-feature">

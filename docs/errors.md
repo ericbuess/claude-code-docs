@@ -1314,7 +1314,15 @@ These errors come from Claude's built-in tools. Claude corrects most tool errors
 
 ### Agent would be spawned with zero tools
 
-Nothing in a [subagent's `tools` list](/docs/en/sub-agents#supported-frontmatter-fields) resolved to a tool, so Claude Code refuses to launch the subagent rather than start one that can't act. The message groups the entries by why they didn't resolve: not a recognized tool, a tool that isn't available to subagents, or recognized but matching no tool in the current session. Omitting the `tools` field never triggers this refusal. An MCP server pattern such as `mcp__github__*` isn't exempt: when no connected tool comes from that server, the launch is refused with the pattern in the matched-nothing group. Before v2.1.208, the subagent launched with no tools and returned an empty or confusing result.
+Every entry in the subagent's [`tools` list](/docs/en/sub-agents#supported-frontmatter-fields) failed to match a usable tool, so Claude Code refused to launch the subagent: with no tools, it couldn't act. The message groups your entries by what went wrong:
+
+* **Unrecognized**: the entry matches no tool name, usually a typo such as `Grpe` for `Grep`.
+* **Not available to subagents**: the entry names a real tool that [subagents can't use](/docs/en/sub-agents#available-tools). Background subagents keep a smaller built-in tool set, so an entry that only a foreground subagent can use lands here when the subagent would run in the background, which is the default. If you list `Agent`, the message reports it under the next group instead.
+* **Matched no tools in this session**: the entry is valid but no tool in the current session matches it right now, such as `mcp__github__*` with no GitHub MCP server connected, or `Agent` while [nested spawning](/docs/en/sub-agents#let-subagents-spawn-their-own-subagents) is off.
+
+Omitting the `tools` field never triggers this refusal. If you leave the `tools` list empty, or `disallowedTools` removes every entry in it, Claude Code also skips the refusal and launches the subagent without tools.
+
+Before v2.1.208, the subagent launched with no tools and could return an empty or confusing result.
 
 ```text theme={null}
 Agent 'code-reviewer' would be spawned with zero tools — refusing. Its tools list resolved to nothing: unrecognized [Grpe]. Fix the agent's tools frontmatter or pass a different subagent_type.
@@ -1324,7 +1332,9 @@ Agent 'code-reviewer' would be spawned with zero tools — refusing. Its tools l
 
 * Correct each entry the error names against the [tools available to subagents](/docs/en/sub-agents#available-tools)
 * Remove entries for tools the session doesn't have, such as MCP tools from a server that isn't connected
-* To give the subagent every [subagent-available](/docs/en/sub-agents#available-tools) tool the parent has, delete the `tools` field instead of listing tools
+* For a tool that [background subagents drop](/docs/en/sub-agents#available-tools), such as `LSP` or `TaskCreate`, remove the entry or ask Claude to run the subagent in the foreground
+* Delete the `tools` field instead of listing tools to give the subagent every [tool available to subagents](/docs/en/sub-agents#available-tools)
+* For a `tools` list that contains only `Agent`, allow [nested spawning](/docs/en/sub-agents#let-subagents-spawn-their-own-subagents) or give the agent at least one other tool: `Agent` isn't available inside a subagent by default, so a list with nothing else in it resolves to no tools
 
 ### File is covered by a Read deny rule
 

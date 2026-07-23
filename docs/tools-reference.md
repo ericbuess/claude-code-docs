@@ -102,12 +102,14 @@ The same Agent tool also launches [forked subagents](/docs/en/sub-agents#fork-th
 
 Which tools a named subagent can use depends on the `tools` and `disallowedTools` fields in the [subagent definition](/docs/en/sub-agents):
 
-* **Neither field set**: the subagent inherits every tool available to the parent.
+* **Neither field set**: the subagent inherits every [tool available to subagents](/docs/en/sub-agents#available-tools).
 * **`tools` only**: the subagent gets only the listed tools.
 * **`disallowedTools` only**: the subagent gets every parent tool except the listed ones.
 * **Both set**: `disallowedTools` takes precedence. A tool listed in both is removed.
 
-When a subagent's `tools` list resolves to no tools at all, for example because every entry is misspelled or names a tool that isn't available to subagents, the Agent tool returns an error listing those entries instead of launching the subagent. {/* min-version: 2.1.208 */}Before v2.1.208, the subagent launched with no tools and could return an empty or confusing result.
+In every case, the resolved set is limited to the [tools available to subagents](/docs/en/sub-agents#available-tools): a tool that isn't available to subagents is never granted, even when listed in `tools`.
+
+If every entry in a subagent's `tools` list fails to match a usable tool, the Agent tool usually returns an error naming the entries instead of launching the subagent; see [Agent would be spawned with zero tools](/docs/en/errors#agent-would-be-spawned-with-zero-tools) for the message and how to fix each entry.
 
 Launching the subagent doesn't itself prompt for permission. Claude Code checks the subagent's own tool calls against your permission rules as it runs.
 

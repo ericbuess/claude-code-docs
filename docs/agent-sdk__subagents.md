@@ -167,7 +167,7 @@ This example creates two subagents: a code reviewer with read-only access and a 
 | :---------------- | :---------------------------------------------------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `description`     | `string`                                                    | Yes      | Natural language description of when to use this agent                                                                                                                                                                           |
 | `prompt`          | `string`                                                    | Yes      | The agent's system prompt defining its role and behavior                                                                                                                                                                         |
-| `tools`           | `string[]`                                                  | No       | Array of allowed tool names. If omitted, inherits all tools                                                                                                                                                                      |
+| `tools`           | `string[]`                                                  | No       | Array of allowed tool names. If omitted, inherits every [tool available to subagents](/docs/en/sub-agents#available-tools)                                                                                                            |
 | `disallowedTools` | `string[]`                                                  | No       | Array of tool names to remove from the agent's tool set. MCP server-level patterns are also accepted: `mcp__server` or `mcp__server__*` removes every tool from that server, and `mcp__*` removes every MCP tool from any server |
 | `model`           | `string`                                                    | No       | Model override for this agent. Accepts an alias such as `'fable'`, `'opus'`, `'sonnet'`, `'haiku'`, `'inherit'`, or a full model ID. Defaults to main model if omitted                                                           |
 | `skills`          | `string[]`                                                  | No       | List of skill names to preload into the agent's context at startup. Unlisted skills remain invocable through the Skill tool                                                                                                      |
@@ -187,7 +187,7 @@ Two subagent behaviors changed in Claude Code v2.1.198:
 * A subagent inherits the main session's extended thinking configuration. On earlier versions, extended thinking is disabled inside subagents regardless of the main session's setting.
 
 <Note>
-  {/* min-version: 2.1.172 */}As of Claude Code v2.1.172, subagents can spawn their own subagents. A subagent five levels below the main agent can't spawn further subagents, regardless of whether it runs in the foreground or background. To prevent a subagent from spawning others, omit `Agent` from its `tools` array or add it to `disallowedTools`. See [nested subagents](/docs/en/sub-agents#spawn-nested-subagents) for the full depth rules.
+  {/* min-version: 2.1.217 */}By default, subagents can't spawn subagents of their own. To let them, set [`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`](/docs/en/env-vars) to the number of subagent layers you want below your main conversation, `2` or higher; see [nested subagents](/docs/en/sub-agents#let-subagents-spawn-their-own-subagents). From Claude Code v2.1.172 through v2.1.216, subagents could nest by default, up to five layers.
 </Note>
 
 ### Filesystem-based definition (alternative)
@@ -208,7 +208,7 @@ A subagent's context window starts fresh, with no parent conversation, but isn't
 | :------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------- |
 | Its own system prompt (`AgentDefinition.prompt`) and the Agent tool's prompt                                                          | The parent's conversation history or tool results                  |
 | Project CLAUDE.md (loaded via [`settingSources`](/docs/en/agent-sdk/claude-code-features#control-filesystem-settings-with-settingsources)) | Preloaded skill content, unless listed in `AgentDefinition.skills` |
-| Tool definitions (inherited from parent, or the subset in `tools`)                                                                    | The parent's system prompt                                         |
+| Tool definitions (inherited from parent or the subset in `tools`, [filtered for background runs](/docs/en/sub-agents#available-tools))     | The parent's system prompt                                         |
 
 <Note>
   The parent receives the subagent's final message as the Agent tool result, but may summarize it in its own response. To preserve subagent output verbatim in the user-facing response, include an instruction to do so in the prompt or `systemPrompt` option you pass to the main `query()` call.
@@ -559,10 +559,12 @@ Subagent transcripts persist independently of the main conversation:
 
 ## Tool restrictions
 
-Subagents can have restricted tool access via the `tools` field:
+Use the `tools` field to limit what a subagent can do:
 
-* **Omit the field**: agent inherits all available tools (default)
-* **Specify tools**: agent can only use listed tools
+* **Omit `tools`**: the subagent gets every [tool available to subagents](/docs/en/sub-agents#available-tools)
+* **List tools**: the subagent gets only those. A code reviewer that should never edit files, for example, gets `["Read", "Grep", "Glob"]`
+
+A tool you leave out isn't in the subagent's session at all: Claude works without it, with no permission prompt or error.
 
 This example creates a read-only analysis agent that can examine code but can't modify files or run commands.
 
@@ -620,12 +622,12 @@ This example creates a read-only analysis agent that can examine code but can't 
 
 ### Common tool combinations
 
-| Use case           | Tools                                   | Description                                         |
-| :----------------- | :-------------------------------------- | :-------------------------------------------------- |
-| Read-only analysis | `Read`, `Grep`, `Glob`                  | Can examine code but not modify or execute          |
-| Test execution     | `Bash`, `Read`, `Grep`                  | Can run commands and analyze output                 |
-| Code modification  | `Read`, `Edit`, `Write`, `Grep`, `Glob` | Full read/write access without command execution    |
-| Full access        | All tools                               | Inherits all tools from parent (omit `tools` field) |
+| Use case           | Tools                                   | Description                                                        |
+| :----------------- | :-------------------------------------- | :----------------------------------------------------------------- |
+| Read-only analysis | `Read`, `Grep`, `Glob`                  | Can examine code but not modify or execute                         |
+| Test execution     | `Bash`, `Read`, `Grep`                  | Can run commands and analyze output                                |
+| Code modification  | `Read`, `Edit`, `Write`, `Grep`, `Glob` | Full read/write access without command execution                   |
+| Full access        | All tools                               | Inherits the tools available to subagents (omit the `tools` field) |
 
 ## Scale up with dynamic workflows
 
