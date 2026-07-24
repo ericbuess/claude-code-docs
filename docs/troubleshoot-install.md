@@ -12,35 +12,37 @@ If installation fails or you can't sign in, find your error below. For runtime i
 
 Match the error message or symptom you're seeing to a fix:
 
-| What you see                                                                                          | Solution                                                                                                                                      |
-| :---------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-| `command not found: claude` or `'claude' is not recognized`                                           | [Fix your PATH](#command-not-found-claude-after-installation)                                                                                 |
-| `syntax error near unexpected token '<'`                                                              | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                                         |
-| `curl: (22) The requested URL returned error: 403`                                                    | [Install script returned 403](#install-script-returns-html-instead-of-a-shell-script)                                                         |
-| `curl: (23)` or `curl: (56) Failure writing output to destination`                                    | [Check connectivity or use an alternative installer](#curl-56-failure-writing-output-to-destination)                                          |
-| `Killed` during install on Linux, or `Installation was killed before it could finish (exit code 137)` | [Free memory or add swap space](#install-killed-on-low-memory-linux-servers)                                                                  |
-| `TLS connect error` or `SSL/TLS secure channel`                                                       | [Update CA certificates](#tls-or-ssl-connection-errors)                                                                                       |
-| `Failed to fetch version` or can't reach download server                                              | [Check network and proxy settings](#check-network-connectivity)                                                                               |
-| `irm is not recognized` or `&& is not valid`                                                          | [Use the right command for your shell](#wrong-install-command-on-windows)                                                                     |
-| `Cask 'claude-code' is unavailable: No Cask with this name exists`                                    | [Update Homebrew](#homebrew-cask-unavailable-or-outdated)                                                                                     |
-| `'bash' is not recognized as the name of a cmdlet`                                                    | [Use the Windows installer command](#wrong-install-command-on-windows)                                                                        |
-| `A parameter cannot be found that matches parameter name 'fsSL'`                                      | [Use the Windows installer command](#wrong-install-command-on-windows)                                                                        |
-| `Claude Code on Windows requires either Git for Windows (for bash) or PowerShell`                     | [Install a shell](#claude-code-on-windows-requires-either-git-for-windows-for-bash-or-powershell)                                             |
-| `Claude Code does not support 32-bit Windows`                                                         | [Open Windows PowerShell, not the x86 entry](#claude-code-does-not-support-32-bit-windows)                                                    |
-| `The process cannot access the file ... because it is being used by another process`                  | [Clear the downloads folder and retry](#the-process-cannot-access-the-file-during-windows-install)                                            |
-| `Error loading shared library`                                                                        | [Wrong binary variant for your system](#linux-musl-or-glibc-binary-mismatch)                                                                  |
-| `Illegal instruction`                                                                                 | [Architecture or CPU instruction set mismatch](#illegal-instruction)                                                                          |
-| `cannot execute binary file: Exec format error` in WSL                                                | [WSL1 native-binary regression](#exec-format-error-on-wsl1)                                                                                   |
-| PowerShell installer completes but `claude` is not found or shows an old version                      | [Add the install directory to your PATH](#verify-your-path), then open a new terminal                                                         |
-| `dyld: cannot load`, `dyld: Symbol not found`, or `Abort trap` on macOS                               | [Binary incompatibility](#dyld-cannot-load-on-macos)                                                                                          |
-| `claude update` hangs after `Checking for updates`, or `claude doctor` hangs with no output           | [Move the directory at a shell config path](#claude-update-or-claude-doctor-hangs)                                                            |
-| `Invoke-Expression: Missing argument in parameter list`                                               | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                                         |
-| `App unavailable in region`                                                                           | Claude Code is not available in your country. See [supported countries](https://www.anthropic.com/supported-countries).                       |
-| `unable to get local issuer certificate`                                                              | [Configure corporate CA certificates](#tls-or-ssl-connection-errors)                                                                          |
-| `OAuth error` or `403 Forbidden`                                                                      | [Fix authentication](#login-and-authentication)                                                                                               |
-| `Could not load the default credentials` or `Could not load credentials from any providers`           | [Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry credentials](#bedrock-agent-platform-or-foundry-credentials-not-loading) |
-| `ChainedTokenCredential authentication failed` or `CredentialUnavailableError`                        | [Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry credentials](#bedrock-agent-platform-or-foundry-credentials-not-loading) |
-| `API Error: 500`, `529 Overloaded`, `429`, or other 4xx and 5xx errors not listed above               | See the [Error reference](/docs/en/errors)                                                                                                         |
+| What you see                                                                                               | Solution                                                                                                                                      |
+| :--------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| `command not found: claude` or `'claude' is not recognized`                                                | [Fix your PATH](#command-not-found-claude-after-installation)                                                                                 |
+| `syntax error near unexpected token '<'`                                                                   | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                                         |
+| `curl: (22) The requested URL returned error: 403`                                                         | [Install script returned 403](#install-script-returns-html-instead-of-a-shell-script)                                                         |
+| `curl: (23)` or `curl: (56) Failure writing output to destination`                                         | [Check connectivity or use an alternative installer](#curl-56-failure-writing-output-to-destination)                                          |
+| `Killed` during install on Linux, or `Installation was killed before it could finish (exit code 137)`      | [Free memory or add swap space](#install-killed-on-low-memory-linux-servers)                                                                  |
+| `TLS connect error` or `SSL/TLS secure channel`                                                            | [Update CA certificates](#tls-or-ssl-connection-errors)                                                                                       |
+| `Failed to fetch version` or can't reach download server                                                   | [Check network and proxy settings](#check-network-connectivity)                                                                               |
+| `irm is not recognized` or `&& is not valid`                                                               | [Use the right command for your shell](#wrong-install-command-on-windows)                                                                     |
+| `Cask 'claude-code' is unavailable: No Cask with this name exists`                                         | [Update Homebrew](#homebrew-cask-unavailable-or-outdated)                                                                                     |
+| `'bash' is not recognized as the name of a cmdlet`                                                         | [Use the Windows installer command](#wrong-install-command-on-windows)                                                                        |
+| `A parameter cannot be found that matches parameter name 'fsSL'`                                           | [Use the Windows installer command](#wrong-install-command-on-windows)                                                                        |
+| `Claude Code on Windows requires either Git for Windows (for bash) or PowerShell`                          | [Install a shell](#claude-code-on-windows-requires-either-git-for-windows-for-bash-or-powershell)                                             |
+| `Claude Code does not support 32-bit Windows`                                                              | [Open Windows PowerShell, not the x86 entry](#claude-code-does-not-support-32-bit-windows)                                                    |
+| `The process cannot access the file ... because it is being used by another process`                       | [Clear the downloads folder and retry](#the-process-cannot-access-the-file-during-windows-install)                                            |
+| `Error loading shared library`                                                                             | [Wrong binary variant for your system](#linux-musl-or-glibc-binary-mismatch)                                                                  |
+| `Illegal instruction`                                                                                      | [Architecture or CPU instruction set mismatch](#illegal-instruction)                                                                          |
+| `cannot execute binary file: Exec format error` in WSL                                                     | [WSL1 native-binary regression](#exec-format-error-on-wsl1)                                                                                   |
+| PowerShell installer completes but `claude` is not found or shows an old version                           | [Add the install directory to your PATH](#verify-your-path), then open a new terminal                                                         |
+| `dyld: cannot load`, `dyld: Symbol not found`, or `Abort trap` on macOS                                    | [Binary incompatibility](#dyld-cannot-load-on-macos)                                                                                          |
+| `claude update` hangs after `Checking for updates`, or `claude doctor` hangs with no output                | [Move the directory at a shell config path](#claude-update-or-claude-doctor-hangs)                                                            |
+| `Invoke-Expression` or `iex` parse errors quoting HTML tags or CSS, or `ParserError` with `ParseException` | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                                         |
+| `running scripts is disabled on this system` or `PSSecurityException`                                      | [Allow the npm shims to run](#running-scripts-is-disabled-on-this-system)                                                                     |
+| `Error: claude native binary not installed`                                                                | [Complete the npm install](#native-binary-not-found-after-npm-install)                                                                        |
+| `App unavailable in region`                                                                                | Claude Code is not available in your country. See [supported countries](https://www.anthropic.com/supported-countries).                       |
+| `unable to get local issuer certificate`                                                                   | [Configure corporate CA certificates](#tls-or-ssl-connection-errors)                                                                          |
+| `OAuth error` or `403 Forbidden`                                                                           | [Fix authentication](#login-and-authentication)                                                                                               |
+| `Could not load the default credentials` or `Could not load credentials from any providers`                | [Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry credentials](#bedrock-agent-platform-or-foundry-credentials-not-loading) |
+| `ChainedTokenCredential authentication failed` or `CredentialUnavailableError`                             | [Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry credentials](#bedrock-agent-platform-or-foundry-credentials-not-loading) |
+| `API Error: 500`, `529 Overloaded`, `429`, or other 4xx and 5xx errors not listed above                    | See the [Error reference](/docs/en/errors)                                                                                                         |
 
 If your issue isn't listed, work through the diagnostic checks below to narrow down the cause.
 
@@ -311,11 +313,16 @@ bash: line 1: syntax error near unexpected token `<'
 bash: line 1: `<!DOCTYPE html>'
 ```
 
-On PowerShell, the same problem appears as:
+On PowerShell, the same problem appears as parse errors pointing into the returned page, with `iex` trying to run HTML and CSS as PowerShell:
 
 ```text theme={null}
-Invoke-Expression: Missing argument in parameter list.
+iex : At line:1 char:2310
++ ... igin="anonymous"/><script type="text/javascript">!function(o,c){var n ...
+Missing argument in parameter list.
+...
 ```
+
+The wording varies with the PowerShell version and system language: you may see `Missing expression after unary operator '--'` or a `ParserError` with `ParseException` instead. HTML tags or CSS in the quoted text identify this failure. If you download with `-OutFile install.ps1` instead, the saved file is the same web page, so that doesn't help either.
 
 Depending on how the request was routed, you may instead see a 403 with no HTML body:
 
@@ -510,6 +517,29 @@ If you see `'irm' is not recognized`, `The token '&&' is not valid`, `A paramete
   ```powershell theme={null}
   irm https://claude.ai/install.ps1 | iex
   ```
+
+<h3 id="running-scripts-is-disabled-on-this-system">
+  `running scripts is disabled on this system`
+</h3>
+
+Installing or running Claude Code through npm on Windows can fail with a `SecurityError`:
+
+```text theme={null}
+npm : File C:\Program Files\nodejs\npm.ps1 cannot be loaded because running scripts is disabled on this system. For more information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+...
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+```
+
+The same error names `claude.ps1` when you run `claude` after an npm install. PowerShell's execution policy is blocking the `.ps1` launcher scripts that npm creates for its commands. The policy applies to script files, so it doesn't affect the PowerShell installer `irm https://claude.ai/install.ps1 | iex`, which runs the downloaded text directly.
+
+**Solutions:**
+
+1. **Allow locally created scripts for your user**, then retry:
+   ```powershell theme={null}
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   ```
+2. **Call the `.cmd` launcher instead**: `npm.cmd` and `claude.cmd` do the same job, and the policy doesn't cover them.
+3. **Use the [PowerShell installer](/docs/en/setup#install-claude-code)** instead of npm. It installs a binary rather than a `.ps1` script.
 
 ### `The process cannot access the file` during Windows install
 
@@ -758,13 +788,31 @@ curl -fsSL https://claude.ai/install.sh | bash
 
 ### Native binary not found after npm install
 
-The `@anthropic-ai/claude-code` npm package pulls in the native binary through a per-platform optional dependency such as `@anthropic-ai/claude-code-darwin-arm64`. If running `claude` after install prints `Could not find native binary package "@anthropic-ai/claude-code-<platform>"`, check the following causes:
+The `@anthropic-ai/claude-code` npm package downloads the native binary as a per-platform optional dependency, such as `@anthropic-ai/claude-code-darwin-arm64`. npm then runs the package's postinstall script, which copies that binary into place as the `claude` command; until it runs, `claude` is a placeholder script. {/* min-version: 2.1.113 */}If either the download or the postinstall step is skipped, the placeholder stays in place, and running `claude` on macOS and Linux prints:
 
-* **Optional dependencies are disabled.** Remove `--omit=optional` from your npm install command, `--no-optional` from pnpm, or `--ignore-optional` from yarn, and check that `.npmrc` does not set `optional=false`. Then reinstall. The native binary is delivered only as an optional dependency, so there is no JavaScript fallback if it is skipped.
+```text theme={null}
+Error: claude native binary not installed.
+
+Either postinstall did not run (--ignore-scripts, some pnpm configs)
+or the platform-native optional dependency was not downloaded
+(--omit=optional).
+
+Run the postinstall manually (adjust path for local vs global install):
+  node node_modules/@anthropic-ai/claude-code/install.cjs
+
+Or reinstall without --ignore-scripts / --omit=optional.
+```
+
+On Windows, `bin/claude.exe` is that same shell-script placeholder rather than a real executable, so PowerShell and CMD report that they can't run the file instead of printing this message.
+
+Check the following causes:
+
+* **Optional dependencies are disabled.** Remove `--omit=optional` from your npm install command, `--no-optional` from pnpm, or `--ignore-optional` from yarn, and check that `.npmrc` does not set `optional=false`. Then reinstall. The native binary is delivered only as an optional dependency, so there is no JavaScript fallback if it is skipped, and running `install.cjs` again can't place a binary that was never downloaded.
+* **Install scripts are disabled.** `--ignore-scripts` and some pnpm configurations skip the postinstall step but still download the platform package. Run `node node_modules/@anthropic-ai/claude-code/install.cjs` as the message suggests, or reinstall without the flag. If postinstall can't run in your environment at all, `node node_modules/@anthropic-ai/claude-code/cli-wrapper.cjs` finds the downloaded package and launches it, at the cost of an extra Node process on each start. If the wrapper prints `Could not find native binary package` instead, the platform package was never downloaded, so fix the optional-dependencies cause above first.
 * **Unsupported platform.** Prebuilt binaries are published for `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64`, and `win32-arm64`. Claude Code does not ship a binary for other platforms; see the [system requirements](/docs/en/setup#system-requirements). {/* min-version: 2.1.205 */}On FreeBSD, the installer reports the platform as unsupported. Before v2.1.205, it treated FreeBSD as Linux and downloaded a binary that couldn't run.
 * **Corporate npm mirror is missing the platform packages.** Ensure your registry mirrors all eight `@anthropic-ai/claude-code-*` platform packages in addition to the meta package.
 
-Installing with `--ignore-scripts` does not trigger this error. The postinstall step that links the binary into place is skipped, so Claude Code falls back to a wrapper that locates and spawns the platform binary on each launch. This works but starts more slowly; reinstall with scripts enabled for direct execution.
+Before v2.1.113, the npm package shipped Claude Code as JavaScript that ran directly in Node rather than as a native binary, so there was no download or postinstall step to skip and this error didn't exist.
 
 ## Login and authentication
 

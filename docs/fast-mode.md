@@ -45,7 +45,9 @@ When you enable fast mode:
 
 When you disable fast mode with `/fast` again, you remain on Opus. The model does not revert to your previous model. To switch to a different model, use `/model`.
 
-Switching to a model that doesn't support fast mode turns fast mode off. {/* min-version: 2.1.208 */}Switching back to a supported Opus model turns it on again when your saved fast mode preference is on, the same preference a new session starts from by default. With [per-session opt-in](#require-per-session-opt-in) configured, switching back doesn't turn fast mode on again; run `/fast` to re-enable it. Fast mode never turns on for a session whose saved preference is off, and the `↯` icon and `Fast mode ON` confirmation appear whenever it activates. Before v2.1.208, fast mode stayed off after you switched back until you ran `/fast` again.
+Switching to a model that doesn't support fast mode turns fast mode off. {/* min-version: 2.1.208 */}Switching back to a supported Opus model turns it on again when your saved fast mode preference is on, the same preference a new session starts from by default; a model switch never turns fast mode on for a session whose saved preference is off. With [per-session opt-in](#require-per-session-opt-in) configured, switching back doesn't turn fast mode on again; run `/fast` to re-enable it. Before v2.1.208, fast mode stayed off after you switched back until you ran `/fast` again.
+
+{/* min-version: 2.1.218 */}Whenever a model switch turns fast mode on or off, Claude Code shows a `Fast mode ON` or `Fast mode OFF` confirmation, and the `↯` icon appears while fast mode is on. This holds whether you switch with `/model`, with [`/config model=<model>`](/docs/en/settings), or from a device connected through [Remote Control](/docs/en/remote-control); before v2.1.218, switches through `/config` or Remote Control changed fast mode without the confirmation.
 
 Opus 4.8 is the fast mode default in Claude Code v2.1.154 and later. On v2.1.142 through v2.1.153, fast mode defaults to Opus 4.7.
 
