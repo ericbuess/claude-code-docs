@@ -197,8 +197,6 @@ Manage shared environments from the **Cloud environments** page in [admin settin
 
 Values in a shared environment reach every member's sessions in that environment. Like personal environments, shared environments have no dedicated secrets store, so don't include secrets.
 
-Organizations in the self-hosted runners program also manage their runner pools from the same page.
-
 ## Setup scripts
 
 A setup script is a Bash script that runs when a new cloud session starts, before Claude Code launches. Use setup scripts to install dependencies, configure tools, or fetch anything the session needs that isn't pre-installed.
