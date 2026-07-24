@@ -12,16 +12,16 @@
 
 Fast mode is a high-speed configuration for Claude Opus, making the model up to 2.5x faster at a higher cost per token. Toggle it on with `/fast` when you need speed for interactive work like rapid iteration or live debugging, and toggle it off when cost matters more than latency.
 
-Fast mode is not a different model. It uses Claude Opus with a different API configuration that prioritizes speed over cost efficiency. You get identical quality and capabilities with faster responses. Fast mode is supported on Opus 4.8 and Opus 4.7. It is not available on Sonnet, Haiku, or other models.
+Fast mode is not a different model. It uses Claude Opus with a different API configuration that prioritizes speed over cost efficiency. You get identical quality and capabilities with faster responses. Fast mode is supported on Opus 5, Opus 4.8, and Opus 4.7. It is not available on Sonnet, Haiku, or other models.
 
 <Warning>
-  Fast mode for Opus 4.7 is deprecated as of June 25, 2026, and will be removed on July 24, 2026. After removal, fast mode requests on Opus 4.7 return an error and do not fall back to standard Opus 4.7. Migrate to Opus 4.8 to keep the speedup.
+  Fast mode for Opus 4.7 is deprecated as of June 25, 2026, and will be removed on July 24, 2026. After removal, fast mode requests on Opus 4.7 return an error and do not fall back to standard Opus 4.7. Migrate to Opus 5 or Opus 4.8 to keep the speedup.
 </Warning>
 
 What to know:
 
 * Use `/fast` to toggle on fast mode in the Claude Code CLI. Fast mode is not supported in the VS Code extension.
-* Fast mode pricing per MTok input/output is \$10/\$50 on Opus 4.8 and \$30/\$150 on Opus 4.7.
+* Fast mode pricing per MTok input/output is \$10/\$50 on Opus 5 and Opus 4.8, and \$30/\$150 on Opus 4.7.
 * Available to all Claude Code users on subscription plans (Pro/Max/Team/Enterprise) and Claude Console.
 * For Claude Code users on subscription plans (Pro/Max/Team/Enterprise), fast mode is available via usage credits only and not included in the subscription rate limits.
 
@@ -49,7 +49,7 @@ Switching to a model that doesn't support fast mode turns fast mode off. {/* min
 
 {/* min-version: 2.1.218 */}Whenever a model switch turns fast mode on or off, Claude Code shows a `Fast mode ON` or `Fast mode OFF` confirmation, and the `↯` icon appears while fast mode is on. This holds whether you switch with `/model`, with [`/config model=<model>`](/docs/en/settings), or from a device connected through [Remote Control](/docs/en/remote-control); before v2.1.218, switches through `/config` or Remote Control changed fast mode without the confirmation.
 
-Opus 4.8 is the fast mode default in Claude Code v2.1.154 and later. On v2.1.142 through v2.1.153, fast mode defaults to Opus 4.7.
+Opus 5 is the fast mode default in Claude Code v2.1.219 and later. Before v2.1.219, fast mode defaulted to Opus 4.8 on v2.1.154 through v2.1.218, and to Opus 4.7 on v2.1.142 through v2.1.153.
 
 ## Understand the cost tradeoff
 
@@ -57,6 +57,7 @@ Fast mode has higher per-token pricing than standard Opus, with the multiplier v
 
 | Model    | Input (MTok) | Output (MTok) |
 | -------- | ------------ | ------------- |
+| Opus 5   | \$10         | \$50          |
 | Opus 4.8 | \$10         | \$50          |
 | Opus 4.7 | \$30         | \$150         |
 
@@ -153,7 +154,7 @@ This is useful for controlling costs in organizations where users run multiple c
 
 ## Handle rate limits
 
-Fast mode has separate rate limits from standard Opus. Fast mode on Opus 4.8 and Opus 4.7 shares the same rate limit pool: usage on either of them draws from the same limits. When you hit the fast mode rate limit or run out of usage credits:
+Fast mode has separate rate limits from standard Opus. All supported Opus models share one fast mode rate limit pool: usage on any of them draws from the same limits. When you hit the fast mode rate limit or run out of usage credits:
 
 1. Fast mode automatically falls back to standard speed
 2. The `↯` icon turns gray to indicate cooldown
