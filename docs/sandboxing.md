@@ -122,7 +122,7 @@ Claude Code offers two sandbox modes:
 Even in auto-allow mode, the following still apply:
 
 * Explicit [deny rules](/docs/en/permissions) are always respected
-* `rm` or `rmdir` commands that target `/`, your home directory, or other critical system paths still trigger a permission prompt
+* `rm` or `rmdir` commands that target `/`, your home directory, or other critical system paths still trigger a permission prompt{/* min-version: 2.1.218 */}, or a classifier check in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode); the classifier routing requires Claude Code v2.1.218 or later
 * Content-scoped [ask rules](/docs/en/permissions) like `Bash(git push *)` still force a prompt even for sandboxed commands
 * A bare `Bash` ask rule, or the equivalent `Bash(*)` form, is skipped for commands that run sandboxed; it still applies to commands that fall back to the regular permission flow. {/* min-version: 2.1.212 */}In [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), the rule isn't skipped: it prompts for sandboxed commands too, including read-only ones. Before v2.1.212, the skip applied in plan mode as well
 
@@ -139,7 +139,7 @@ You can disable this escape hatch by setting `"allowUnsandboxedCommands": false`
 <Info>
   Auto-allow mode works independently of your permission mode setting, with one exception: [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode). Even if you're not in "accept edits" mode, sandboxed Bash commands run automatically when auto-allow is enabled. This means Bash commands that modify files within the sandbox boundaries execute without prompting, even when file edit tools would normally require approval.
 
-  {/* min-version: 2.1.212 */}In plan mode, only [read-only commands](/docs/en/permissions#read-only-commands) run without prompting; any other Bash command prompts for approval even with auto-allow enabled. Before v2.1.212, auto-allow ran sandboxed commands without a prompt in plan mode too.
+  {/* min-version: 2.1.212 */}In plan mode, auto-allow doesn't widen approvals. Bash commands outside the [built-in read-only set](/docs/en/permissions#read-only-commands) prompt for approval even with auto-allow enabled{/* min-version: 2.1.218 */}, or go to the classifier when [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) is available and `useAutoModeDuringPlan` is on; in v2.1.212 through v2.1.217 they always prompted. Before v2.1.212, auto-allow ran sandboxed commands without a prompt in plan mode too.
 </Info>
 
 ## Configure sandboxing
