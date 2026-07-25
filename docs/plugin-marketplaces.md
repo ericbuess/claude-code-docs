@@ -171,10 +171,11 @@ Each plugin entry needs at minimum a `name` and a `source` that tells Claude Cod
 
 ### Owner fields
 
-| Field   | Type   | Required | Description                      |
-| :------ | :----- | :------- | :------------------------------- |
-| `name`  | string | Yes      | Name of the maintainer or team   |
-| `email` | string | No       | Contact email for the maintainer |
+| Field   | Type   | Required | Description                                  |
+| :------ | :----- | :------- | :------------------------------------------- |
+| `name`  | string | Yes      | Name of the maintainer or team               |
+| `email` | string | No       | Contact email for the maintainer             |
+| `url`   | string | No       | Website, GitHub profile, or organization URL |
 
 ### Optional fields
 
@@ -209,7 +210,7 @@ Each plugin entry in the `plugins` array describes a plugin and where to find it
 | `displayName`    | string  | {/* min-version: 2.1.143 */}Human-readable name shown in UI surfaces. Falls back to `name` when omitted. May contain spaces and any casing. Not used for namespacing or lookup. Requires Claude Code v2.1.143 or later.                                                                                                                        |
 | `description`    | string  | Brief plugin description                                                                                                                                                                                                                                                                                                                       |
 | `version`        | string  | Plugin version. If set (here or in `plugin.json`), the plugin is pinned to this string and users only receive updates when it changes. Omit to fall back to the git commit SHA. See [Version resolution](#version-resolution-and-release-channels).                                                                                            |
-| `author`         | object  | Plugin author information (`name` required, `email` optional)                                                                                                                                                                                                                                                                                  |
+| `author`         | object  | Plugin author information (`name` required; `email` and `url` optional)                                                                                                                                                                                                                                                                        |
 | `homepage`       | string  | Plugin homepage or documentation URL                                                                                                                                                                                                                                                                                                           |
 | `repository`     | string  | Source code repository URL                                                                                                                                                                                                                                                                                                                     |
 | `license`        | string  | SPDX license identifier (for example, MIT, Apache-2.0)                                                                                                                                                                                                                                                                                         |
