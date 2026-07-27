@@ -505,6 +505,48 @@ If a developer declines, Claude Code exits rather than applying the policy. Push
 
 The `cli` key was named `settings` in earlier releases. That spelling is still accepted as an alias, but new deployments should use `cli`.
 
+#### Claude Desktop overlay
+
+If your organization also deploys [Claude Desktop](/docs/en/desktop), the same gateway serves both clients. Point `bootstrapUrl`, in Claude Desktop's [managed configuration](https://claude.com/docs/third-party/claude-desktop/configuration), at `<listen.public_url>/user/bootstrap`. Claude Desktop derives the OAuth issuer from that URL, runs the same device-code sign-in against this gateway, and fetches its configuration from the response.
+
+<Note>
+  Requires Claude Code v2.1.203 or later on the gateway server, and an explicit opt-in: `/user/bootstrap` returns 404 unless the policy matching the user carries a `desktop` key. An empty `desktop: {}` opts a policy in, and a `desktop` key on the `match: {}` base layer opts in every policy that inherits it. The audit log records each request as `desktop_bootstrap.serve` or `desktop_bootstrap.denied`.
+</Note>
+
+The gateway derives much of the response from the matched policy's `cli` block and from top-level gateway config:
+
+* The model list, from `availableModels`
+* Disabled tools, from bare tool-name `permissions.deny` entries
+* The egress allowlist, from `sandbox.network.allowedDomains`
+* An OTLP endpoint that points at the gateway itself, which fans out to your destinations, included when [`telemetry`](#telemetry) forwarding is configured
+
+The gateway omits keys with no Claude Desktop equivalent, such as `hooks` and scoped permission rules like `Bash(npm *)`, from the bootstrap response.
+
+The optional `desktop` block alongside `cli` holds the Claude Desktop feature gates that have no CLI equivalent:
+
+```yaml theme={null}
+managed:
+  policies:
+    - match: { groups: [eng-contractors] }
+      cli:
+        availableModels: [claude-sonnet-4-6]
+      desktop:
+        isLocalDevMcpEnabled: false
+        disableAutoUpdates: true
+        banner: { text: "Contractor build: internal use only" }
+```
+
+| Key                                                                | Effect                                                                                                             |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `modelDiscoveryEnabled`                                            | Whether Claude Desktop fetches `/v1/models` for its picker. Set `false` to rely solely on the policy's model list. |
+| `coworkTabEnabled`, `isClaudeCodeForDesktopEnabled`                | Show or hide individual tabs                                                                                       |
+| `isDesktopExtensionEnabled`, `isDesktopExtensionSignatureRequired` | Desktop extension loading and signature checks                                                                     |
+| `isLocalDevMcpEnabled`                                             | Allow locally defined MCP servers                                                                                  |
+| `disableAutoUpdates`, `autoUpdaterEnforcementHours`                | Auto-update policy                                                                                                 |
+| `banner`                                                           | Persistent banner at the top of the app: `enabled`, `text`, `backgroundColor`, `textColor`, `linkUrl`              |
+
+Every key is optional; Claude Desktop applies its own default for any key you omit. The gateway rejects unknown keys at boot. If you don't deploy Claude Desktop, leave `desktop` out of your policies entirely; `/user/bootstrap` then returns 404 for every user.
+
 #### Precedence with other managed sources
 
 If a device also has a local `managed-settings.json` or MDM-delivered policy, the managed sources don't merge. The highest-priority source provides all policy settings, ranked in this order with highest priority first:
@@ -515,7 +557,7 @@ If a device also has a local `managed-settings.json` or MDM-delivered policy, th
 4. The `managed-settings.json` file
 5. The HKCU registry, on Windows only
 
-Embedding hosts can supply policy through the SDK `managedSettings` option. Whether it applies depends on the machine's managed configuration:
+Embedding hosts such as [Claude Desktop](/docs/en/desktop) can supply policy through the SDK `managedSettings` option. Whether it applies depends on the machine's managed configuration:
 
 * On machines with an admin-deployed managed source, it is ignored unless the highest-priority source opts in with [`parentSettingsBehavior: "merge"`](/docs/en/settings#available-settings).
 * It is never merged while a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) is configured.
@@ -760,6 +802,8 @@ Deploy the `managed-settings.json` file to each device, typically via your MDM p
 | Windows       | `C:\Program Files\ClaudeCode\managed-settings.json`, or Group Policy via the HKLM registry                                    |
 
 A registry policy on Windows or a managed-preferences plist on macOS replaces the `managed-settings.json` file rather than merging with it, apart from the [exception keys and cross-source checks above](#precedence-with-other-managed-sources). All three keys in this snippet follow the highest-priority-source rule, so fleets that deliver policy through Group Policy or configuration profiles must put all three in that mechanism instead.
+
+For Claude Desktop, set the `bootstrapUrl` key in Claude Desktop's own [managed configuration](https://claude.com/docs/third-party/claude-desktop/configuration) to `<listen.public_url>/user/bootstrap`. The sign-in flow and per-group policy then match the CLI's once a policy opts in server-side with a `desktop` key; without the opt-in, `/user/bootstrap` returns 404. See [Claude Desktop overlay](#claude-desktop-overlay) for the server-side half.
 
 `forceLoginGatewayUrl`, and the `"gateway"` value of `forceLoginMethod`, are honored only from the admin-controlled managed tier. A developer setting them in their own `~/.claude/settings.json` has no effect.
 
