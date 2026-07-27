@@ -1647,22 +1647,24 @@ class ResultMessage:
     usage: dict[str, Any] | None = None
     result: str | None = None
     structured_output: Any = None
-    model_usage: dict[str, Any] | None = None
+    model_usage: dict[str, ModelUsage] | None = None
     permission_denials: list[Any] | None = None
     deferred_tool_use: DeferredToolUse | None = None
     errors: list[str] | None = None
     api_error_status: int | None = None
     uuid: str | None = None
+    terminal_reason: str | None = None
 ```
 
 The `subtype` field determines which other fields are populated. It is one of `"success"`, `"error_during_execution"`, `"error_max_turns"`, `"error_max_budget_usd"`, or `"error_max_structured_output_retries"`. The Python dataclass flattens all variants into one shape, so fields that don't apply to the returned subtype are `None`.
 
-Several fields carry diagnostic detail when the conversation ends on an error:
+Several fields carry diagnostic detail about how the conversation ended:
 
 * `is_error`: `True` when the conversation ended in an error state. Always `True` on the `error_*` subtypes. On `subtype="success"` it is `True` when the final model request failed, meaning the agent loop completed but the last API call returned an error.
 * `api_error_status`: the HTTP status code of the terminating API error. `None` when the turn ended without one. Populated only on `subtype="success"`.
 * `result`: text of the final assistant message on `subtype="success"`, or `None` on the `error_*` subtypes. When `subtype="success"` and `is_error=True`, this holds the API error string if one is available but can be empty, so check `api_error_status` and the preceding `AssistantMessage` content for detail.
 * `errors`: loop-level error strings such as the max-turns message. Populated only on the `error_*` subtypes.
+* `terminal_reason`: why the query loop terminated, such as `"completed"`, `"max_turns"`, or `"aborted_streaming"`. A value of `"aborted_streaming"` or `"aborted_tools"` means the turn was cancelled by an interrupt. `None` when the CLI didn't report a terminal reason, such as with an older CLI version. See [`SDKResultMessage`](/docs/en/agent-sdk/typescript#sdkresultmessage) for the full list of values.
 
 The `usage` dict contains the following keys when present:
 
@@ -1673,18 +1675,20 @@ The `usage` dict contains the following keys when present:
 | `cache_creation_input_tokens` | `int` | Tokens used to create new cache entries.                                                                                                                                                      |
 | `cache_read_input_tokens`     | `int` | Tokens read from existing cache entries.                                                                                                                                                      |
 
-The `model_usage` dict maps model names to per-model usage. The inner dict keys use camelCase because the value is passed through unmodified from the underlying CLI process, matching the TypeScript [`ModelUsage`](/docs/en/agent-sdk/typescript#modelusage) type:
+The `model_usage` dict maps model names to per-model usage. Each value is a `ModelUsage` TypedDict whose keys use camelCase, because the value is passed through unmodified from the underlying CLI process. Import via `from claude_agent_sdk.types import ModelUsage`. The keys are:
 
-| Key                        | Type    | Description                                                                                                                              |
-| -------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `inputTokens`              | `int`   | Input tokens for this model.                                                                                                             |
-| `outputTokens`             | `int`   | Output tokens for this model.                                                                                                            |
-| `cacheReadInputTokens`     | `int`   | Cache read tokens for this model.                                                                                                        |
-| `cacheCreationInputTokens` | `int`   | Cache creation tokens for this model.                                                                                                    |
-| `webSearchRequests`        | `int`   | Web search requests made by this model.                                                                                                  |
-| `costUSD`                  | `float` | Estimated cost in USD for this model, computed client-side. See [Track cost and usage](/docs/en/agent-sdk/cost-tracking) for billing caveats. |
-| `contextWindow`            | `int`   | Context window size for this model.                                                                                                      |
-| `maxOutputTokens`          | `int`   | Maximum output token limit for this model.                                                                                               |
+| Key                        | Type    | Description                                                                                                                                                              |
+| -------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `inputTokens`              | `int`   | Input tokens for this model.                                                                                                                                             |
+| `outputTokens`             | `int`   | Output tokens for this model.                                                                                                                                            |
+| `cacheReadInputTokens`     | `int`   | Cache read tokens for this model.                                                                                                                                        |
+| `cacheCreationInputTokens` | `int`   | Cache creation tokens for this model.                                                                                                                                    |
+| `webSearchRequests`        | `int`   | Web search requests made by this model.                                                                                                                                  |
+| `costUSD`                  | `float` | Estimated cost in USD for this model, computed client-side. See [Track cost and usage](/docs/en/agent-sdk/cost-tracking) for billing caveats.                                 |
+| `contextWindow`            | `int`   | Context window size for this model.                                                                                                                                      |
+| `maxOutputTokens`          | `int`   | Maximum output token limit for this model.                                                                                                                               |
+| `canonicalModel`           | `str`   | Canonical model ID used for the pricing lookup. May differ from the raw model string the entry is keyed by, such as a provider-specific ID or alias. Not always present. |
+| `provider`                 | `str`   | API provider that served this model, such as `firstParty`, `bedrock`, `vertex`, `foundry`, `anthropicAws`, `mantle`, or `gateway`. Not always present.                   |
 
 ### `StreamEvent`
 

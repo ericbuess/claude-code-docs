@@ -298,7 +298,9 @@ Claude Code could not reach the feature-flag service to check whether Remote Con
 
 ### "Remote Control is only available when using Claude via api.anthropic.com"
 
-The session isn't talking to the Anthropic API directly, so there is no claude.ai backend to pair with. This happens on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. {/* min-version: 2.1.196 */}As of v2.1.196 it also happens when [`ANTHROPIC_BASE_URL`](/docs/en/env-vars) points at a host other than `api.anthropic.com`, such as an [LLM gateway](/docs/en/llm-gateway) or proxy, even if you sign in with claude.ai. Unset `ANTHROPIC_BASE_URL` and restart the session to use Remote Control.
+The session isn't talking to the Anthropic API directly, so there is no claude.ai backend to pair with. This happens on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. {/* min-version: 2.1.196 */}It also happens when [`ANTHROPIC_BASE_URL`](/docs/en/env-vars) points at a host other than `api.anthropic.com`, such as an [LLM gateway](/docs/en/llm-gateway) or proxy, even if you sign in with claude.ai. Before v2.1.196, Claude Code didn't show this message for a custom `ANTHROPIC_BASE_URL`. See the [error reference](/docs/en/errors#remote-control-requires-the-anthropic-api) for the full cause list.
+
+{/* min-version: 2.1.219 */}The message names what routed the session away from the Anthropic API, such as `CLAUDE_CODE_USE_BEDROCK` or a custom `ANTHROPIC_BASE_URL`. If you have an eligible claude.ai login, unset the named variable, remove it from the `env` key in [settings](/docs/en/settings) if you set it there, and restart the session. Before v2.1.219, the message was only the sentence in this section's header, so on older versions check your environment yourself for provider variables such as `CLAUDE_CODE_USE_BEDROCK` and `CLAUDE_CODE_USE_VERTEX`, and for `ANTHROPIC_BASE_URL`.
 
 ### "Remote Control is disabled by your organization's policy"
 

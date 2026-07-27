@@ -180,7 +180,7 @@ Claude Code writes the selection to your system clipboard, and the path it uses 
 * **Linux**: `wl-copy` on Wayland, or `xclip` or `xsel` on X11, whichever is installed. Claude Code writes both the clipboard and the PRIMARY selection, so middle-click paste works.
 * **Windows and WSL**: PowerShell `Set-Clipboard`
 
-Inside tmux it also writes to the tmux paste buffer. Over SSH it falls back to OSC 52 escape sequences. Claude Code prints a toast after each copy telling you which path it used.
+Inside tmux it also writes to the tmux paste buffer. Over SSH it falls back to OSC 52 escape sequences. {/* min-version: 2.1.219 */}Inside GNU screen, Claude Code copies long selections to the clipboard too. Before v2.1.219, if you copied a selection longer than roughly 570 characters, GNU screen printed base64 text into the window instead. Claude Code prints a toast after each copy telling you which path it used.
 
 Some terminals block OSC 52 by default. iTerm2 blocks it until you turn on Settings → General → Selection → Applications in terminal may access clipboard; running [`/terminal-setup`](/docs/en/terminal-config) in iTerm2 enables this for you.
 
