@@ -238,7 +238,7 @@ The team config holds runtime state such as session IDs and tmux pane IDs, so do
 
 To define reusable teammate roles, use [subagent definitions](#use-subagent-definitions-for-teammates) instead.
 
-The team config contains a `members` array with each member's name and agent ID. The lead's entry always carries the agent type `team-lead`; a teammate's entry includes an agent type only when the teammate was spawned from a [subagent definition](#use-subagent-definitions-for-teammates). Teammates can read this file to discover other team members.
+The team config contains a `members` array with each member's name and agent ID. The lead's entry always carries the agent type `team-lead`. A teammate's entry carries whatever agent type the lead named when spawning it, whether a [built-in type](/docs/en/sub-agents#built-in-subagents) or a [subagent definition](#use-subagent-definitions-for-teammates), and omits the field when the lead named none. Teammates can read this file to discover other team members.
 
 There is no project-level equivalent of the team config. A file like `.claude/teams/teams.json` in your project directory is not recognized as configuration; Claude treats it as an ordinary file.
 

@@ -134,8 +134,13 @@ To control tool access for Skills in SDK applications, use `allowedTools` to pre
       allowed_tools=["Read", "Grep", "Glob"],
   )
 
-  async for message in query(prompt="Analyze the codebase structure", options=options):
-      print(message)
+
+  async def main():
+      async for message in query(prompt="Analyze the codebase structure", options=options):
+          print(message)
+
+
+  asyncio.run(main())
   ```
 
   ```typescript TypeScript theme={null}
@@ -164,8 +169,13 @@ To see which Skills are available in your SDK application, simply ask Claude:
       skills="all",
   )
 
-  async for message in query(prompt="What Skills are available?", options=options):
-      print(message)
+
+  async def main():
+      async for message in query(prompt="What Skills are available?", options=options):
+          print(message)
+
+
+  asyncio.run(main())
   ```
 
   ```typescript TypeScript theme={null}
@@ -196,8 +206,13 @@ Test Skills by asking questions that match their descriptions:
       allowed_tools=["Read", "Bash"],
   )
 
-  async for message in query(prompt="Extract text from invoice.pdf", options=options):
-      print(message)
+
+  async def main():
+      async for message in query(prompt="Extract text from invoice.pdf", options=options):
+          print(message)
+
+
+  asyncio.run(main())
   ```
 
   ```typescript TypeScript theme={null}

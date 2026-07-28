@@ -37,6 +37,18 @@ A resumed session restores the conversation along with the state saved in it:
 
 Not every configuration flag from the original launch is restored. If the session depended on `--mcp-config`, `--settings`, `--plugin-dir`, `--fallback-model`, or directories added with `--add-dir`, pass them again when you resume; directories added mid-session with `/add-dir` aren't restored either, though the session picker still uses them to locate the session. The standard settings files, such as `settings.json` and `settings.local.json`, are re-read at launch, so configuration that lives in them doesn't need to be passed again.
 
+### Resume from a summary
+
+On a Pro or Max plan, when you resume a session that has been inactive for more than about an hour and is over 100,000 tokens, Claude Code restores the conversation and then opens a dialog before you send your first message. The session's [prompt cache](/docs/en/prompt-caching#cache-lifetime) has expired by then, so the next request processes the full history once no matter which of the dialog's options you pick.
+
+The dialog offers three ways to continue the session. They differ in how much of the conversation each one carries forward into later requests, which is a tradeoff between keeping every detail and sending fewer tokens per request:
+
+* **Resume from summary**: runs [`/compact`](/docs/en/context-window#what-survives-compaction) immediately. Claude Code sends one summarization request over the full history, then replaces the history with the summary, your most recent exchanges, and up to five recently read files. Later requests carry the summary instead of the full history.
+* **Resume full session as-is**: loads the conversation unchanged. After you send your first message, Claude Code reprocesses and re-caches the full history, then re-reads it from the cache on later requests while the cache stays warm.
+* **Don't ask me again**: resumes the full session and stops showing the dialog on all future resumes.
+
+Resuming as-is keeps every detail of the conversation available, at a per-request cost that scales with the conversation's size. Resuming from the summary costs less on each later request because it carries the summary instead of the full history, but whatever the summary leaves out is no longer in Claude's context. See [why usage climbs in a long session](/docs/en/costs#why-usage-climbs-in-a-long-session) for where that per-request cost comes from.
+
 ### Where the session picker looks
 
 Claude Code stores sessions per project directory. By default the session picker shows:

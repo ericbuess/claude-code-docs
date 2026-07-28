@@ -28,7 +28,9 @@ Think of it like adding an app store: adding the store gives you access to brows
 
 ## Official Anthropic marketplace
 
-The official Anthropic marketplace (`claude-plugins-official`) is automatically available when you start Claude Code. Run `/plugin` and go to the **Discover** tab to browse what's available, or view the catalog at [claude.com/plugins](https://claude.com/plugins).
+Claude Code adds the official Anthropic marketplace (`claude-plugins-official`) automatically when you start it. If Claude Code can't add it, for example because your network blocks the download, add it yourself with `/plugin marketplace add anthropics/claude-plugins-official`.
+
+To browse what's available, run `/plugin` and go to the **Discover** tab, or view the catalog at [claude.com/plugins](https://claude.com/plugins).
 
 To install a plugin from the official marketplace, use `/plugin install <name>@claude-plugins-official`. For example, to install the GitHub integration:
 
@@ -76,8 +78,10 @@ You can also [create your own LSP plugin](/docs/en/plugins-reference#lsp-servers
 
 Once a code intelligence plugin is installed and its language server binary is available, Claude gains two capabilities:
 
-* **Automatic diagnostics**: after every file edit Claude makes, the language server analyzes the changes and reports errors and warnings back automatically. Claude sees type errors, missing imports, and syntax issues without needing to run a compiler or linter. If Claude introduces an error, it notices and fixes the issue in the same turn. This requires no configuration beyond installing the plugin. You can see diagnostics inline by pressing **Ctrl+O** when the "diagnostics found" indicator appears.
+* **Automatic diagnostics**: after every file edit Claude makes, the language server reports errors and warnings back, so Claude sees type errors, missing imports, and syntax issues without running a compiler or linter. If Claude introduces an error, it notices and fixes it in the same turn.
 * **Code navigation**: Claude can use the language server to jump to definitions, find references, get type info on hover, list symbols, find implementations, and trace call hierarchies. These operations give Claude more precise navigation than grep-based search, though availability may vary by language and environment.
+
+You don't need to configure diagnostics beyond installing the plugin. To read them yourself, press **Ctrl+O** when Claude Code shows an indicator such as **Found 3 new diagnostic issues in 2 files**.
 
 If you run into issues, see [Code intelligence troubleshooting](#code-intelligence-issues).
 
@@ -160,6 +164,8 @@ Anthropic also maintains a [demo plugins marketplace](https://github.com/anthrop
     * {/* min-version: 2.1.143 */}A **Context cost** estimate so you can see how many tokens the plugin will add to your [context window](/docs/en/features-overview#understand-context-costs) every turn (Claude Code v2.1.143 and later)
     * {/* min-version: 2.1.144 */}The plugin's **Last updated** date (v2.1.144 and later)
     * {/* min-version: 2.1.145 */}A **Will install** section listing the plugin's commands, agents, skills, hooks, and MCP and LSP servers, so you can review exactly what it adds before installing (v2.1.145 and later)
+
+    Not every plugin provides the data behind these fields. For plugins from local or custom marketplaces, you may not see the **Context cost** and **Last updated** rows, and the **Will install** section may show **Components will be discovered at installation** instead.
 
     Choose an installation scope:
 
@@ -270,7 +276,7 @@ Add a remote `marketplace.json` file via URL:
 
 ## Install plugins
 
-Once you've added marketplaces, you can install plugins directly:
+Once you've added marketplaces, you can install a plugin by name:
 
 ```shell theme={null}
 /plugin install plugin-name@marketplace-name
@@ -321,7 +327,10 @@ The first session on a version that counts language server activity also resets 
 
 When you install a plugin that declares dependencies, the install output lists which dependencies were auto-installed alongside it.
 
-You can also manage plugins with direct commands.
+You can also manage plugins with direct commands:
+
+* When you run `/plugin disable`, `/plugin enable`, or `/plugin uninstall`, Claude Code opens the plugin panel to apply the change and leaves it open. Press **Esc** to close the panel before typing another command.
+* For scripting, use the `claude plugin` shell commands instead, which don't open the panel.
 
 List installed plugins without opening the menu:
 
@@ -368,7 +377,7 @@ When you install, enable, or disable plugins during a session, run `/reload-plug
 /reload-plugins
 ```
 
-Claude Code reloads all active plugins and shows counts for plugins, skills, agents, hooks, plugin MCP servers, and plugin LSP servers.
+Claude Code reloads all active plugins and shows counts for plugins, skills, agents, hooks, plugin MCP servers, and plugin LSP servers. The skills count covers only each plugin's `commands/` directory, not its `skills/` directory, so the summary can report `0 skills` even when the plugin's skills reloaded.
 
 Reloading has a token cost on the next request: newly loaded components announce themselves in content appended to the conversation, while the existing history still reads from the prompt cache. A plugin that provides MCP servers costs more when its tools aren't deferred by [tool search](/docs/en/mcp#scale-with-mcp-tool-search): the change invalidates the cache and the next request re-reads the entire conversation. {/* min-version: 2.1.163 */}In that case `/reload-plugins` shows a warning and does not apply the reload; pass `--force` to apply anyway. See [enabling or disabling a plugin](/docs/en/prompt-caching#enabling-or-disabling-a-plugin) for details.
 

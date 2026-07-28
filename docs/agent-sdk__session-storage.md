@@ -232,17 +232,25 @@ for await (const message of query({
 
 Both SDKs ship a conformance suite that asserts the behavioral contract `append`, `load`, and the optional methods must satisfy. Tests for optional methods skip automatically when those methods are not implemented.
 
-In TypeScript, copy [`shared/conformance.ts`](https://github.com/anthropics/claude-agent-sdk-typescript/blob/main/examples/session-stores/shared/conformance.ts) from the example directory into your test suite. In Python, the suite ships in the package:
+In TypeScript, copy [`shared/conformance.ts`](https://github.com/anthropics/claude-agent-sdk-typescript/blob/main/examples/session-stores/shared/conformance.ts) from the example directory into your test suite. In Python, the suite ships in the package. To run it with pytest, which isn't an SDK dependency, install pytest first:
+
+```bash theme={null}
+pip install pytest
+```
+
+Then pass your adapter to the suite in a test file as a zero-argument factory, which `run_session_store_conformance` calls once per contract to build a fresh store:
 
 ```python Python theme={null}
 import pytest
 from claude_agent_sdk.testing import run_session_store_conformance
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_my_store_conformance():
-    await run_session_store_conformance(MyRedisStore)  # Your adapter class
+    await run_session_store_conformance(MyRedisStore)
 ```
+
+Passing the `MyRedisStore` class itself, as this example does, works when the constructor takes no arguments. For an adapter that takes a pre-configured client, pass a lambda that constructs the store instead. Because the contracts reuse the same session keys, each store the factory returns must start with empty storage, so have the lambda provision isolated backing storage per call, such as a fresh in-memory fake, a unique key prefix, or a new test database.
 
 ## Behavior notes
 

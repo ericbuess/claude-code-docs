@@ -102,7 +102,10 @@ The strip is positional, so it only works when the gateway forwards the `system`
 
 Requests that reach the endpoint unmodified are unaffected.
 
-{/* min-version: 2.1.181 */}From Claude Code v2.1.181, the block is stable for the lifetime of a conversation when requests route through a custom base URL, so a gateway-side prompt cache keyed on the full request body works without disabling it. Before v2.1.181 the block included a per-request token; on those versions, set `CLAUDE_CODE_ATTRIBUTION_HEADER=0` if your gateway implements such a cache.
+{/* min-version: 2.1.181 */}From Claude Code v2.1.181, the block is stable for the lifetime of a conversation when requests route through a custom base URL, so a gateway-side prompt cache keyed on the full request body works without disabling it, and any provider your gateway forwards to receives a stable prompt prefix. Before v2.1.181 the block included a per-request token that changed the start of the system prompt on every request. On those versions, set `CLAUDE_CODE_ATTRIBUTION_HEADER=0` when your gateway does either of these:
+
+* Implements a prompt cache keyed on the request body.
+* Forwards requests to a third-party provider such as Amazon Bedrock, Microsoft Foundry, or Google Cloud's Agent Platform, in the Anthropic Messages format or the provider's own, where the changing prefix reduces prompt-cache reuse on that provider.
 
 ## Feature pass-through
 
