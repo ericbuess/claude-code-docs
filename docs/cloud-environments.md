@@ -12,7 +12,11 @@
 
 Each [cloud session](/docs/en/claude-code-on-the-web) runs in a cloud environment. You can configure an environment to allow or deny [network access](#access-levels), set environment variables for the session, and run a [setup script](#setup-scripts) before Claude starts working.
 
-The same environments apply wherever you start a cloud session: [Claude Code on the web](/docs/en/claude-code-on-the-web), the terminal with [`claude --cloud`](/docs/en/claude-code-on-the-web#from-terminal-to-web), [Claude Tag](https://claude.com/docs/claude-tag/overview), [routines](/docs/en/routines), the [Claude mobile app](/docs/en/mobile), and the [Desktop app](/docs/en/desktop). [Remote Control](/docs/en/remote-control) sessions are the exception: they connect the web and mobile interfaces to a session on your own machine, which uses your machine's network and files, not a cloud environment.
+The same environments apply wherever you start a cloud session: [Claude Code on the web](/docs/en/claude-code-on-the-web), the terminal with [`claude --cloud`](/docs/en/claude-code-on-the-web#from-terminal-to-web), [Claude Tag](https://claude.com/docs/claude-tag/overview), [routines](/docs/en/routines), the [Claude mobile app](/docs/en/mobile), and the [Desktop app](/docs/en/desktop).
+
+<Info>
+  [Remote Control](/docs/en/remote-control) sessions connect the web and mobile interfaces to a session on your own machine, which uses your machine's network and files, not a cloud environment. Claude Tag channel sessions use [shared environments](#organization-shared-environments) only.
+</Info>
 
 ## The Default environment
 
@@ -89,6 +93,11 @@ Owners and admins on Team and Enterprise plans can create cloud environments tha
 Create, edit, and archive shared environments from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings). Each shared environment has a name, a [network access level](#access-levels), [environment variables](#set-environment-variables) in `.env` format, and a [setup script](#setup-scripts). Owners and admins choose the organization's [default environment](#the-default-environment) separately, at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
 
 Values in a shared environment reach every member's sessions in that environment. Like personal environments, shared environments have no dedicated secrets store, so don't include secrets.
+
+In [Claude Tag](https://claude.com/docs/claude-tag/overview) channels, Claude works as your organization's shared identity, not as any member, so channel sessions use shared environments only. You can set the environment a channel uses in two ways:
+
+* Set a shared environment as the organization's [default environment](#the-default-environment) at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
+* [Pin one to a channel](https://claude.com/docs/claude-tag/admins/troubleshooting#channel-sessions-use-the-wrong-environment-or-can%E2%80%99t-find-one) in the Claude Tag admin settings.
 
 Shared environments add to members' selectors rather than replacing them.
 

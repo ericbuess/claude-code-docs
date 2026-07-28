@@ -107,6 +107,8 @@ To load CLAUDE.md, set `settingSources` to include the level your CLAUDE.md live
   ```
 </CodeGroup>
 
+When you run either example, the SDK streams messages as Claude works: a system init message, assistant messages, user messages carrying tool results, and a final result message with the session outcome.
+
 CLAUDE.md is persistent across all sessions in a project, shared with your team through git, and discovered automatically without code changes. It is not loaded if you pass an empty `settingSources` array.
 
 ### Output styles for persistent configurations
@@ -328,6 +330,8 @@ You can provide a custom string as `systemPrompt` to replace the default entirel
   asyncio.run(main())
   ```
 </CodeGroup>
+
+In Python, load a large custom prompt from a file with `system_prompt={"type": "file", "path": "..."}` instead of passing it as a string. The Python SDK passes a string prompt as one command-line argument to the CLI subprocess, so a prompt that exceeds the OS argument-length limit fails at process spawn before any API request is sent. On Linux the error is `Argument list too long`. See [`SystemPromptFile`](/docs/en/agent-sdk/python#systempromptfile) for the platform thresholds and the Windows behavior.
 
 ## Compare the four approaches
 

@@ -424,7 +424,7 @@ Configuration object for the `query()` function.
 | `extraArgs`                       | `Record<string, string \| null>`                                                                         | `{}`                                        | Additional arguments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `fallbackModel`                   | `string`                                                                                                 | `undefined`                                 | Model to use if primary fails                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `forkSession`                     | `boolean`                                                                                                | `false`                                     | When resuming with `resume`, fork to a new session ID instead of continuing the original session                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `forwardSubagentText`             | `boolean`                                                                                                | `false`                                     | Forward subagent text and thinking blocks as assistant and user messages with `parent_tool_use_id` set, so consumers can render a nested transcript. By default only `tool_use` and `tool_result` blocks from subagents are emitted                                                                                                                                                                                                                                                                                                                                                                  |
+| `forwardSubagentText`             | `boolean`                                                                                                | `false`                                     | Forward subagent text and thinking blocks as assistant and user messages with `parent_tool_use_id` set, so consumers can render a nested transcript. By default only `tool_use` and `tool_result` blocks from subagents are emitted. {/* min-version: 2.1.219 */}Messages from subagents at every nesting depth are forwarded on Claude Code v2.1.219 and later; before v2.1.219, only messages from depth-1 subagents appeared                                                                                                                                                                      |
 | `hooks`                           | `Partial<Record<`[`HookEvent`](#hookevent)`, `[`HookCallbackMatcher`](#hookcallbackmatcher)`[]>>`        | `{}`                                        | Hook callbacks for events                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `includeHookEvents`               | `boolean`                                                                                                | `false`                                     | Include hook lifecycle events for every hook event in the message stream as [`SDKHookStartedMessage`](#sdkhookstartedmessage), [`SDKHookProgressMessage`](#sdkhookprogressmessage), and [`SDKHookResponseMessage`](#sdkhookresponsemessage). Lifecycle events for `SessionStart` and `Setup` hooks are always included and don't need this option                                                                                                                                                                                                                                                    |
 | `includePartialMessages`          | `boolean`                                                                                                | `false`                                     | Include partial message events                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -526,12 +526,12 @@ interface Query extends AsyncGenerator<SDKMessage, void> {
 | `interrupt()`                          | Interrupts the query. Only available in streaming input mode. {/* min-version: 2.1.205 */}When the CLI advertises the `interrupt_receipt_v1` capability in [`SDKSystemMessage.capabilities`](#sdksystemmessage), resolves with an [`SDKControlInterruptResponse`](#sdkcontrolinterruptresponse) listing the queued messages that survive the interrupt. Resolves `undefined` on CLIs before v2.1.205                                                                         |
 | `rewindFiles(userMessageId, options?)` | Restores files to their state at the specified user message. Pass `{ dryRun: true }` to preview changes. Requires `enableFileCheckpointing: true`. See [File checkpointing](/docs/en/agent-sdk/file-checkpointing)                                                                                                                                                                                                                                                                |
 | `setPermissionMode()`                  | Changes the permission mode (only available in streaming input mode)                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `setModel()`                           | Changes the model (only available in streaming input mode)                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `setModel()`                           | Changes the model (only available in streaming input mode). Passing `undefined` or the string `"default"` resets to the session default model                                                                                                                                                                                                                                                                                                                                |
 | `setMaxThinkingTokens()`               | *Deprecated:* Use the `thinking` option instead. Changes the maximum thinking tokens. Passing `null` resets thinking to the session default: a mid-session override is cleared, and thinking stays off for sessions that have it disabled                                                                                                                                                                                                                                    |
 | `applyFlagSettings(settings)`          | Merges settings into the session's flag settings layer at runtime (only available in streaming input mode). See [`applyFlagSettings()`](#applyflagsettings)                                                                                                                                                                                                                                                                                                                  |
 | `initializationResult()`               | Returns the full initialization result including supported commands, models, account info, and output style configuration                                                                                                                                                                                                                                                                                                                                                    |
 | `reinitialize()`                       | {/* min-version: 2.1.195 */}Re-sends the `initialize` control request to the running CLI and returns a fresh result instead of the cached first-connect result. Use it after a transport gap, such as reattaching to a session after a disconnect, so pending permission requests reach your `canUseTool` callback again. Make the callback idempotent per request ID, because a request whose response was lost is dispatched again. Requires Claude Code v2.1.195 or later |
-| `supportedCommands()`                  | Returns available slash commands                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `supportedCommands()`                  | Returns available slash commands. {/* min-version: agent-sdk@0.3.216 */}From Agent SDK v0.3.216 the list reflects mid-session command changes; see [`SDKCommandsChangedMessage`](#sdkcommandschangedmessage)                                                                                                                                                                                                                                                                 |
 | `supportedModels()`                    | Returns available models with display info                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `supportedAgents()`                    | Returns available subagents as [`AgentInfo`](#agentinfo)`[]`                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `mcpServerStatus()`                    | Returns status of connected MCP servers                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -610,8 +610,11 @@ type SDKControlInitializeResponse = {
   models: ModelInfo[];
   account: AccountInfo;
   fast_mode_state?: "off" | "cooldown" | "on";
+  fast_mode_disabled_reason?: FastModeDisabledReason;
 };
 ```
+
+{/* min-version: 2.1.219 */}The response always reports `fast_mode_state`, and when something blocks [fast mode](/docs/en/fast-mode), `fast_mode_disabled_reason` carries the reason code alongside it, so you can explain the blocked state instead of re-deriving availability. Both behaviors require Claude Code v2.1.219 or later. Before v2.1.219, the response omitted `fast_mode_state` when fast mode wasn't available and never carried a reason. For the reason codes and their meanings, see [`fast_mode_disabled_reason`](#sdkresultmessage) on the result message.
 
 When a client sends `initialize` to a session that is already running, the control-response wrapper also carries an optional `pending_permission_requests` array. The field is on the response wrapper itself, not in the `SDKControlInitializeResponse` payload above. Each entry is a complete `control_request` message with the same `{ type: "control_request", request_id, request }` shape the session streams for permission requests while running.
 
@@ -624,6 +627,7 @@ The interrupt receipt: the value [`interrupt()`](#query-object) resolves with on
 ```typescript theme={null}
 type SDKControlInterruptResponse = {
   still_queued: string[];
+  cancelled?: string[];
 };
 ```
 
@@ -634,6 +638,10 @@ Interpret the list with these caveats:
 * Only messages that were enqueued with a UUID appear. An empty array doesn't mean nothing else will run.
 * Only main-thread messages are listed. Messages addressed to a subagent are out of scope.
 * The list can include UUIDs your client never sent, such as [scheduled task](/docs/en/scheduled-tasks) triggers. Ignore UUIDs you don't recognize instead of treating them as an error.
+
+{/* min-version: 2.1.219 */}A client that drives the CLI's control protocol directly, rather than through `interrupt()`, can set `cancel_queued: true` on the `interrupt` control request. Claude Code v2.1.219 and later advertises support with the `interrupt_cancel_queued_v1` capability in [`SDKSystemMessage.capabilities`](#sdksystemmessage); older CLIs ignore the field and leave queued messages to run as usual. Such an interrupt also cancels every message that would otherwise be listed under `still_queued`: the receipt lists them under `cancelled` instead, `still_queued` is empty, and none of them run.
+
+The `cancelled` list carries the same caveats as `still_queued`. The `interrupt()` method never sends `cancel_queued`, so receipts it resolves with don't carry `cancelled`.
 
 The receipt is a snapshot taken at the moment the interrupt is processed, and on a clean interrupt it arrives before the interrupted turn's [`SDKResultMessage`](#sdkresultmessage). Read the receipt rather than inspecting the queue after that result: the loop starts the next queued turn immediately, so the queue you inspect after the result has already changed.
 
@@ -1036,6 +1044,7 @@ type SDKAssistantMessage = {
   message: BetaMessage; // From Anthropic SDK
   parent_tool_use_id: string | null;
   error?: SDKAssistantMessageError;
+  aborted?: true;
   timestamp?: string;
 };
 ```
@@ -1043,6 +1052,8 @@ type SDKAssistantMessage = {
 The `message` field is a [`BetaMessage`](https://platform.claude.com/docs/en/api/messages/create) from the Anthropic SDK. It includes fields like `id`, `content`, `model`, `stop_reason`, and `usage`.
 
 `SDKAssistantMessageError` is one of: `'authentication_failed'`, `'oauth_org_not_allowed'`, `'billing_error'`, `'rate_limit'`, `'overloaded'`, `'invalid_request'`, `'model_not_found'`, `'server_error'`, `'max_output_tokens'`, or `'unknown'`. `'model_not_found'` means the selected model doesn't exist or isn't available to your account or deployment. `'overloaded'` means the API returned a 529 because the server is at capacity, as opposed to `'rate_limit'`, which is a 429 against your quota.
+
+`aborted` is `true` when an interrupt or abort truncated the assistant message before the stream completed: the message has no `stop_reason` and the content may end mid-word. The field is absent on normally completed messages. It requires Agent SDK v0.3.214 or later.
 
 `timestamp` is the ISO 8601 time when the message's content finished generating on the process that produced it. The value comes from that machine's clock, so use it for display only and don't order messages by it. One API turn can produce several assistant messages that share a `message.id`, each with its own `timestamp`. When the field is absent, fall back to the time you received the message.
 
@@ -1110,6 +1121,8 @@ type SDKResultMessage =
       stop_reason: string | null;
       ttft_ms?: number;
       ttft_stream_ms?: number;
+      user_message_uuid?: string;
+      request_sent_wall_ms?: number;
       total_cost_usd: number;
       usage: NonNullableUsage;
       modelUsage: { [modelName: string]: ModelUsage };
@@ -1118,6 +1131,7 @@ type SDKResultMessage =
       deferred_tool_use?: { id: string; name: string; input: Record<string, unknown> };
       terminal_reason?: TerminalReason;
       fast_mode_state?: FastModeState;
+      fast_mode_disabled_reason?: FastModeDisabledReason;
       origin?: SDKMessageOrigin;
     }
   | {
@@ -1141,6 +1155,7 @@ type SDKResultMessage =
       errors: string[];
       terminal_reason?: TerminalReason;
       fast_mode_state?: FastModeState;
+      fast_mode_disabled_reason?: FastModeDisabledReason;
       origin?: SDKMessageOrigin;
     };
 ```
@@ -1150,8 +1165,28 @@ Several fields on the result carry diagnostic detail beyond `subtype`:
 * `api_error_status`: the HTTP status code of the API error that terminated the conversation. Absent or `null` when the turn ended without an API error.
 * `ttft_ms`: time to first token in milliseconds, measured when the first complete assistant message arrives. Present on the success arm only.
 * `ttft_stream_ms`: time in milliseconds until the first `message_start` stream event, when the response stream opens. Lower than `ttft_ms`; the gap between the two is time spent streaming the first message. Present on the success arm only.
+* {/* min-version: 2.1.216 */}`user_message_uuid`: the `uuid` of the [`SDKUserMessage`](#sdkusermessage) that started this turn, echoed back so you can match the result to the message you sent. Requires Claude Code v2.1.216 or later. Present on the success arm only, together with `request_sent_wall_ms`; absent on API-error results, subagent calls, and synthetic turns such as scheduled ones.
+* `request_sent_wall_ms`: epoch milliseconds at which Claude Code dispatched the API request, for joins against server-side timestamps. Present only together with `user_message_uuid`.
 * `terminal_reason`: why the loop ended. One of `"completed"`, `"max_turns"`, `"tool_deferred"`, `"aborted_streaming"`, `"aborted_tools"`, `"hook_stopped"`, `"stop_hook_prevented"`, `"background_requested"`, `"blocking_limit"`, `"rapid_refill_breaker"`, `"prompt_too_long"`, `"image_error"`, `"model_error"`, `"api_error"`, `"malformed_tool_use_exhausted"`, `"budget_exhausted"`, `"structured_output_retry_exhausted"`, `"tool_deferred_unavailable"`, or `"turn_setup_failed"`.
 * `fast_mode_state`: one of `"on"`, `"off"`, or `"cooldown"`.
+* `fast_mode_disabled_reason`: {/* min-version: 2.1.219 */}why [fast mode](/docs/en/fast-mode) isn't available right now. Absent when nothing blocks fast mode, though a request may still run at standard speed. During the cooldown after a fast mode rate limit, Claude Code reports `fast_mode_state: "cooldown"` with no reason code and re-enables fast mode when the cooldown expires. Requires Claude Code v2.1.219 or later.
+
+Use the reason code to explain why fast mode is off in your own UI instead of re-deriving availability. Each code names the check that blocked fast mode:
+
+| Reason code            | Meaning                                                                                                                                                     |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `free`                 | The account doesn't have the paid subscription or usage credits fast mode requires                                                                          |
+| `preference`           | The organization has disabled fast mode                                                                                                                     |
+| `extra_usage_disabled` | Usage credits are turned off for the account                                                                                                                |
+| `network_error`        | The [availability check](/docs/en/fast-mode#use-fast-mode-behind-proxies-and-llm-gateways) couldn't reach `api.anthropic.com`                                    |
+| `unknown`              | Claude Code couldn't determine availability                                                                                                                 |
+| `not_first_party`      | The session uses a provider other than the Anthropic API                                                                                                    |
+| `disabled_by_env`      | [`CLAUDE_CODE_DISABLE_FAST_MODE`](/docs/en/env-vars) is set                                                                                                      |
+| `model_not_allowed`    | The fast mode Opus model isn't in the organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist                               |
+| `sdk_opt_in_required`  | The session hasn't opted in to fast mode: pass `fastMode: true` in the [`settings`](#options) option or through [`applyFlagSettings()`](#applyflagsettings) |
+| `pending`              | The availability check hasn't completed yet                                                                                                                 |
+
+The same pair of fields appears on [`SDKSystemMessage`](#sdksystemmessage) and on the [`SDKControlInitializeResponse`](#sdkcontrolinitializeresponse), so you can read the fast mode state before the first turn.
 
 The `origin` field forwards the [`SDKMessageOrigin`](#sdkmessageorigin) of the user message that triggered this result. When a background task finishes and the SDK injects a synthetic follow-up turn, the resulting `SDKResultMessage` carries `origin: { kind: "task-notification" }`. Check this field to distinguish results that answer your prompt from results emitted for background-task follow-ups, so you can route or suppress the latter. The field is absent for results emitted before any user turn, such as startup errors.
 
@@ -1183,17 +1218,20 @@ type SDKSystemMessage = {
   output_style: string;
   skills: string[];
   plugins: { name: string; path: string }[];
+  fast_mode_state?: FastModeState;
+  fast_mode_disabled_reason?: FastModeDisabledReason;
   capabilities?: string[];
 };
 ```
 
-{/* min-version: 2.1.205 */}
+`fast_mode_state` reports the session's [fast mode](/docs/en/fast-mode) state. {/* min-version: 2.1.219 */}When something blocks fast mode, `fast_mode_disabled_reason` names the check that blocked it; the field requires Claude Code v2.1.219 or later. For the reason codes and their meanings, see [`fast_mode_disabled_reason`](#sdkresultmessage) on the result message.
 
 The `capabilities` array names the protocol behaviors this CLI implements, so you can feature-detect instead of comparing `claude_code_version` strings. It is an open set: ignore values you don't recognize, and check for the specific capability whose behavior you rely on. The field requires Claude Code v2.1.205 or later and is absent on earlier CLIs.
 
-| Capability             | Meaning                                                                                                                                                                     |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `interrupt_receipt_v1` | [`interrupt()`](#query-object) resolves with an [`SDKControlInterruptResponse`](#sdkcontrolinterruptresponse) receipt naming the queued messages that survive the interrupt |
+| Capability                   | Meaning                                                                                                                                                                                                                                                                                                                            |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `interrupt_receipt_v1`       | [`interrupt()`](#query-object) resolves with an [`SDKControlInterruptResponse`](#sdkcontrolinterruptresponse) receipt naming the queued messages that survive the interrupt                                                                                                                                                        |
+| `interrupt_cancel_queued_v1` | {/* min-version: 2.1.219 */}The `interrupt` control request honors `cancel_queued: true`, cancelling the queued messages that would otherwise survive the interrupt and listing them on the receipt's `cancelled` field. See [`SDKControlInterruptResponse`](#sdkcontrolinterruptresponse). Requires Claude Code v2.1.219 or later |
 
 ### `SDKPartialAssistantMessage`
 
@@ -1328,22 +1366,35 @@ type SDKMessageOrigin =
       kind: "peer";
       from: string;
       name?: string;
+      fromSession?: string;
       senderTaskId?: string;
       body?: string;
+      verifiedPeerPid?: number;
     }
   | { kind: "task-notification" }
   | { kind: "coordinator" }
   | { kind: "auto-continuation" };
 ```
 
-| `kind`              | Meaning                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `human`             | Direct input from the end user. If your application forwards what the user typed as a user message, set its `origin` to `{ kind: "human" }` explicitly: {/* min-version: 2.1.210 */}Claude Code treats a user message with no `origin` as unattributed, and checks that require a human-typed prompt, such as the [`ultracode` workflow keyword](/docs/en/workflows#ask-for-a-workflow-in-your-prompt), don't accept it. Before v2.1.210, Claude Code treated an absent `origin` on a user message as human input.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `channel`           | Message arriving on a [channel](/docs/en/channels). `server` is the source MCP server name.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `peer`              | Message from another agent. For an in-process [teammate](/docs/en/agent-teams) sending to `main` via `SendMessage`, `from` is the teammate's name and `senderTaskId` is its task ID. For a cross-session peer such as another local Claude Code process, `from` is the sender address and `senderTaskId` is absent. {/* min-version: 2.1.205 */}`name` and `body` require Claude Code v2.1.205 or later. `name` is the sender's display name, normalized by Claude Code: it strips Unicode control, format, surrogate, and line or paragraph separator code points, then trims the result and caps it at 64 code points with an ellipsis. `body` is the decoded message body with the peer envelope stripped, byte-exact with what the model sees. For a teammate message `body` is always present; for a cross-session peer it is present only when the turn is exactly one peer envelope formed by Claude Code. Render `name` and `body` instead of re-parsing the message text. |
-| `task-notification` | Synthetic turn injected after a background task finished. See [`SDKTaskNotificationMessage`](#sdktasknotificationmessage).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `coordinator`       | Message from a team coordinator in an [agent team](/docs/en/agent-teams).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| `auto-continuation` | Synthetic turn injected when the session continues without fresh user input, such as a command result that triggers a follow-up prompt.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `kind`              | Meaning                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `human`             | Direct input from the end user. If your application forwards what the user typed as a user message, set its `origin` to `{ kind: "human" }` explicitly: {/* min-version: 2.1.210 */}Claude Code treats a user message with no `origin` as unattributed, and checks that require a human-typed prompt, such as the [`ultracode` workflow keyword](/docs/en/workflows#ask-for-a-workflow-in-your-prompt), don't accept it. Before v2.1.210, Claude Code treated an absent `origin` on a user message as human input. |
+| `channel`           | Message arriving on a [channel](/docs/en/channels). `server` is the source MCP server name.                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `peer`              | Message from another agent: an in-process [teammate](/docs/en/agent-teams) or a cross-session peer such as another local Claude Code process. See [Peer origin fields](#peer-origin-fields) for the per-field semantics and the trust model.                                                                                                                                                                                                                                                                       |
+| `task-notification` | Synthetic turn injected after a background task finished. See [`SDKTaskNotificationMessage`](#sdktasknotificationmessage).                                                                                                                                                                                                                                                                                                                                                                                    |
+| `coordinator`       | Message from a team coordinator in an [agent team](/docs/en/agent-teams).                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `auto-continuation` | Synthetic turn injected when the session continues without fresh user input, such as a command result that triggers a follow-up prompt.                                                                                                                                                                                                                                                                                                                                                                       |
+
+### Peer origin fields
+
+A `peer` origin identifies which agent sent the message: an in-process [teammate](/docs/en/agent-teams) sending to `main` with `SendMessage`, or a cross-session peer such as another local Claude Code process. The two kinds of sender fill the fields differently:
+
+* `from`: the teammate's name, or the sender address for a cross-session peer. The value is sender-authored; `verifiedPeerPid` is the verified identity.
+* `senderTaskId`: the teammate's task ID. Absent for a cross-session peer.
+* {/* min-version: 2.1.205 */}`name`: the sender's display name, normalized by Claude Code: it strips Unicode control, format, surrogate, and line or paragraph separator code points, then trims the result and caps it at 64 code points with an ellipsis. Requires Claude Code v2.1.205 or later.
+* {/* min-version: 2.1.205 */}`body`: the decoded message body with the peer envelope stripped, byte-exact with what the model sees. Always present for a teammate message; for a cross-session peer, present only when the turn is exactly one peer envelope formed by Claude Code. Render `name` and `body` instead of re-parsing the message text. Requires Claude Code v2.1.205 or later.
+* {/* min-version: 2.1.216 */}`fromSession`: the sender's host-openable session ID, set by the sender's host so your UI can link back to the sending session. Like `from`, it is sender-asserted: use it as a navigation target only, and don't treat it as proof of the sender's identity. Requires Claude Code v2.1.216 or later.
+* {/* min-version: 2.1.216 */}`verifiedPeerPid`: the process ID of the process that connected to this session's cross-session messaging socket, verified by the kernel and read from the connection itself, never from the payload. Use it, not `from`, to identify the sender: `from` is forgeable by any same-user process. The field is absent when Claude Code can't verify it, such as on Windows or non-socket ingress, so an absent value means the sender is unverified. For relayed traffic it identifies the relay rather than the message's author, and process IDs are recyclable, so treat it as provenance rather than an authentication token. Requires Claude Code v2.1.216 or later.
 
 ## Hook Types
 
@@ -1373,6 +1424,7 @@ type HookEvent =
   | "TeammateIdle"
   | "TaskCompleted"
   | "ConfigChange"
+  | "DirectoryAdded"
   | "WorktreeCreate"
   | "WorktreeRemove"
   | "MessageDisplay";
@@ -1425,6 +1477,7 @@ type HookInput =
   | TeammateIdleHookInput
   | TaskCompletedHookInput
   | ConfigChangeHookInput
+  | DirectoryAddedHookInput
   | WorktreeCreateHookInput
   | WorktreeRemoveHookInput
   | MessageDisplayHookInput;
@@ -1530,7 +1583,7 @@ type UserPromptSubmitHookInput = BaseHookInput & {
 ```typescript theme={null}
 type SessionStartHookInput = BaseHookInput & {
   hook_event_name: "SessionStart";
-  source: "startup" | "resume" | "clear" | "compact";
+  source: "startup" | "resume" | "clear" | "compact" | "fork";
   agent_type?: string;
   model?: string;
 };
@@ -1670,6 +1723,18 @@ type ConfigChangeHookInput = BaseHookInput & {
   file_path?: string;
 };
 ```
+
+#### `DirectoryAddedHookInput`
+
+```typescript theme={null}
+type DirectoryAddedHookInput = BaseHookInput & {
+  hook_event_name: "DirectoryAdded";
+  directory: string;
+  source: "slash_command" | "register_repo_root";
+};
+```
+
+`directory` is the absolute path of the directory that was added. `source` is `"slash_command"` when `/add-dir` added it and `"register_repo_root"` when the SDK control request did.
 
 #### `WorktreeCreateHookInput`
 
@@ -2894,7 +2959,7 @@ type SdkBeta = "context-1m-2025-08-07";
 ```
 
 <Warning>
-  The `context-1m-2025-08-07` beta is retired as of April 30, 2026. Passing this value with Claude Sonnet 4.5 or Sonnet 4 has no effect, and requests that exceed the standard 200k-token context window return an error. To use a 1M-token context window, migrate to [Claude Sonnet 5, Claude Sonnet 4.6, Claude Opus 4.6, Claude Opus 4.7, or Claude Opus 4.8](https://platform.claude.com/docs/en/about-claude/models/overview), which include 1M context at standard pricing with no beta header required.
+  The `context-1m-2025-08-07` beta is retired as of April 30, 2026. Passing this value with Claude Sonnet 4.5 or Sonnet 4 has no effect, and requests that exceed the standard 200k-token context window return an error. To use a 1M-token context window, migrate to [Claude Opus 5, Claude Sonnet 5, Claude Sonnet 4.6, Claude Opus 4.6, Claude Opus 4.7, or Claude Opus 4.8](https://platform.claude.com/docs/en/about-claude/models/overview), which include 1M context at standard pricing with no beta header required.
 </Warning>
 
 ### `SlashCommand`
@@ -3028,8 +3093,14 @@ type ModelUsage = {
   costUSD: number;
   contextWindow: number;
   maxOutputTokens: number;
+  canonicalModel?: string;
+  provider?: string;
 };
 ```
+
+{/* min-version: 2.1.218 */}The `canonicalModel` and `provider` fields require Claude Code v2.1.218 or later. `canonicalModel` is the canonical model ID that the pricing lookup uses; it can differ from the raw model string that keys the entry, for example when that string is a provider-specific ID or an alias.
+
+`provider` names the API backend that served the model, such as `firstParty`, `bedrock`, `vertex`, `foundry`, `anthropicAws`, `mantle`, or `gateway`.
 
 ### `ConfigScope`
 
@@ -3173,8 +3244,11 @@ type RewindFilesResult = {
   filesChanged?: string[];
   insertions?: number;
   deletions?: number;
+  skippedLinks?: number;
 };
 ```
+
+{/* min-version: 2.1.216 */}`skippedLinks` counts the tracked paths the rewind refused to restore or delete for link safety: a symlink, hard link, or other non-regular file at the tracked path, a parent directory that no longer resolves to where it pointed when the checkpoint was taken, or a backup that couldn't be read safely. The field requires Claude Code v2.1.216 or later. A preview call with `rewindFiles(userMessageId, { dryRun: true })` never sets it.
 
 ### `SDKStatusMessage`
 
@@ -3298,10 +3372,30 @@ type SDKToolProgressMessage = {
   parent_tool_use_id: string | null;
   elapsed_time_seconds: number;
   task_id?: string;
+  heartbeat?: boolean;
+  subagent_type?: string;
+  subagent_retry?: {
+    agent_id: string;
+    attempt: number;
+    max_retries: number;
+    retry_delay_ms: number;
+    error_status: number | null;
+    error_category: string;
+  };
   uuid: UUID;
   session_id: string;
 };
 ```
+
+While a tool call runs in the main conversation, Claude Code emits a `tool_progress` message every 30 seconds with `heartbeat: true`. Each heartbeat carries the tool name and elapsed seconds, so you can distinguish a long-running call from a stalled session. Claude Code doesn't emit heartbeats for the Agent tool, whose subagents stream their own progress, or for tool calls inside a subagent. The `heartbeat` field requires Agent SDK v0.3.214 or later.
+
+On `tool_progress` messages for the Agent tool, `subagent_type` names the running subagent type, such as `general-purpose`. `subagent_retry` is present while that subagent waits out an API error backoff, such as a rate limit or overload, with one message per retry attempt. Both fields require Agent SDK v0.3.214 or later.
+
+To render a retry indicator from `subagent_retry`:
+
+* Track the indicator by `parent_tool_use_id`, which is unique per subagent. `tool_use_id` is shared by parallel subagents from one assistant turn, so tracking by it would let one subagent's update clear another's indicator.
+* Clear the indicator when a later `tool_progress` for the same `parent_tool_use_id` arrives without the field, or when the tool's result message arrives. `attempt` can exceed `max_retries` under persistent retry, so don't derive clearing from the counters.
+* Treat `error_category` as a closed set of tokens for choosing your own message text, not as display text: `rate_limit`, `overloaded`, `authentication_failed`, `server_error`, or `unknown`.
 
 ### `SDKAuthStatusMessage`
 
@@ -3476,7 +3570,7 @@ type SDKLocalCommandOutputMessage = {
 
 ### `SDKCommandsChangedMessage`
 
-Emitted when the set of available commands changes mid-session, such as when skills are discovered as the agent enters a subdirectory. The `commands` array is the full updated list, so replace any cached command list with this payload. Calling `supportedCommands()` again is not equivalent: that method returns the snapshot captured at initialization and does not reflect mid-session changes.
+Emitted when the set of available commands changes mid-session, such as when Claude Code discovers skills as the agent enters a subdirectory. The `commands` array is the full updated list, so replace any cached command list with this payload. {/* min-version: agent-sdk@0.3.216 */}Calling [`supportedCommands()`](#query-object) after this message returns the same updated list, because the method tracks the latest push; this requires Agent SDK v0.3.216 or later. In earlier SDK versions, `supportedCommands()` returns the snapshot captured at initialization and never reflects mid-session changes.
 
 ```typescript theme={null}
 type SDKCommandsChangedMessage = {
@@ -3603,6 +3697,7 @@ Network-specific configuration for sandbox mode. These settings apply to sandbox
 type SandboxNetworkConfig = {
   allowedDomains?: string[];
   deniedDomains?: string[];
+  strictAllowlist?: boolean;
   allowManagedDomainsOnly?: boolean;
   allowLocalBinding?: boolean;
   allowUnixSockets?: string[];
@@ -3612,16 +3707,17 @@ type SandboxNetworkConfig = {
 };
 ```
 
-| Property                  | Type       | Default     | Description                                                                                                                                                                                                                                                    |
-| :------------------------ | :--------- | :---------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `allowedDomains`          | `string[]` | `[]`        | Domain names that sandboxed processes can access                                                                                                                                                                                                               |
-| `deniedDomains`           | `string[]` | `[]`        | Domain names that sandboxed processes cannot access. Takes precedence over `allowedDomains`                                                                                                                                                                    |
-| `allowManagedDomainsOnly` | `boolean`  | `false`     | Managed-settings only. When set in [managed settings](/docs/en/permissions#managed-settings), only `allowedDomains` entries from managed settings are honored and entries from user, project, or local settings are ignored. Has no effect when set via SDK options |
-| `allowLocalBinding`       | `boolean`  | `false`     | Allow processes to bind to local ports (e.g., for dev servers)                                                                                                                                                                                                 |
-| `allowUnixSockets`        | `string[]` | `[]`        | Unix socket paths that processes can access (e.g., Docker socket)                                                                                                                                                                                              |
-| `allowAllUnixSockets`     | `boolean`  | `false`     | Allow access to all Unix sockets                                                                                                                                                                                                                               |
-| `httpProxyPort`           | `number`   | `undefined` | HTTP proxy port for network requests                                                                                                                                                                                                                           |
-| `socksProxyPort`          | `number`   | `undefined` | SOCKS proxy port for network requests                                                                                                                                                                                                                          |
+| Property                  | Type       | Default     | Description                                                                                                                                                                                                                                                                                                                                       |
+| :------------------------ | :--------- | :---------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `allowedDomains`          | `string[]` | `[]`        | Domain names that sandboxed processes can access                                                                                                                                                                                                                                                                                                  |
+| `deniedDomains`           | `string[]` | `[]`        | Domain names that sandboxed processes cannot access. Takes precedence over `allowedDomains`                                                                                                                                                                                                                                                       |
+| `strictAllowlist`         | `boolean`  | `false`     | {/* min-version: 2.1.219 */}Deny sandboxed commands access to hosts not in `allowedDomains` instead of prompting. Enforced for sandboxed commands only; in-process tools such as WebFetch aren't gated by it. Only honored from user, managed, or CLI `--settings` settings; project settings are ignored. Requires Claude Code v2.1.219 or later |
+| `allowManagedDomainsOnly` | `boolean`  | `false`     | Managed-settings only. When set in [managed settings](/docs/en/permissions#managed-settings), only `allowedDomains` entries from managed settings are honored and entries from user, project, or local settings are ignored. Has no effect when set via SDK options                                                                                    |
+| `allowLocalBinding`       | `boolean`  | `false`     | Allow processes to bind to local ports (e.g., for dev servers)                                                                                                                                                                                                                                                                                    |
+| `allowUnixSockets`        | `string[]` | `[]`        | Unix socket paths that processes can access (e.g., Docker socket)                                                                                                                                                                                                                                                                                 |
+| `allowAllUnixSockets`     | `boolean`  | `false`     | Allow access to all Unix sockets                                                                                                                                                                                                                                                                                                                  |
+| `httpProxyPort`           | `number`   | `undefined` | HTTP proxy port for network requests                                                                                                                                                                                                                                                                                                              |
+| `socksProxyPort`          | `number`   | `undefined` | SOCKS proxy port for network requests                                                                                                                                                                                                                                                                                                             |
 
 <Note>
   The built-in sandbox proxy enforces `allowedDomains` based on the requested hostname and does not terminate or inspect TLS traffic, so techniques such as [domain fronting](https://en.wikipedia.org/wiki/Domain_fronting) can potentially bypass it. See [Sandboxing security limitations](/docs/en/sandboxing#security-limitations) for details and [Secure deployment](/docs/en/agent-sdk/secure-deployment#traffic-forwarding) for configuring a TLS-terminating proxy.

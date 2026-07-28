@@ -400,6 +400,8 @@ Use in SDK:
   ```
 </CodeGroup>
 
+If the prompt passes fewer arguments than the placeholders reference, unmatched indexed placeholders such as `$1` stay in the command text verbatim. For the full substitution behavior, including named arguments, see [available string substitutions](/docs/en/skills#available-string-substitutions).
+
 #### Bash Command Execution
 
 Custom commands can execute bash commands and include their output:

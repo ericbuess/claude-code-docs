@@ -624,8 +624,9 @@ async def interruptible_task():
         # Drain the interrupted task's messages (including its ResultMessage)
         async for message in client.receive_response():
             if isinstance(message, ResultMessage):
-                print(f"Interrupted task finished with subtype={message.subtype!r}")
-                # subtype is "error_during_execution" for interrupted tasks
+                print(f"Interrupted task: terminal_reason={message.terminal_reason!r}")
+                # terminal_reason is "aborted_streaming" or "aborted_tools"
+                # for interrupted turns
 
         # Send a new command
         await client.query("Just say hello instead")
@@ -640,7 +641,7 @@ asyncio.run(interruptible_task())
 ```
 
 <Note>
-  **Buffer behavior after interrupt:** `interrupt()` sends a stop signal but does not clear the message buffer. Messages already produced by the interrupted task, including its `ResultMessage` (with `subtype="error_during_execution"`), remain in the stream. You must drain them with `receive_response()` before reading the response to a new query. If you send a new query immediately after `interrupt()` and call `receive_response()` only once, you'll receive the interrupted task's messages, not the new query's response.
+  **Buffer behavior after interrupt:** `interrupt()` sends a stop signal but does not clear the message buffer. Messages already produced by the interrupted task, including its `ResultMessage`, remain in the stream. You must drain them with `receive_response()` before reading the response to a new query. If you send a new query immediately after `interrupt()` and call `receive_response()` only once, you'll receive the interrupted task's messages, not the new query's response.
 </Note>
 
 #### Example - Advanced permission control
@@ -1407,7 +1408,7 @@ SdkBeta = Literal["context-1m-2025-08-07"]
 Use with the `betas` field in `ClaudeAgentOptions` to enable beta features.
 
 <Warning>
-  The `context-1m-2025-08-07` beta is retired as of April 30, 2026. Passing this header with Claude Sonnet 4.5 or Sonnet 4 has no effect, and requests that exceed the standard 200k-token context window return an error. To use a 1M-token context window, migrate to [Claude Sonnet 5, Claude Sonnet 4.6, Claude Opus 4.6, Claude Opus 4.7, or Claude Opus 4.8](https://platform.claude.com/docs/en/about-claude/models/overview), which include 1M context at standard pricing with no beta header required.
+  The `context-1m-2025-08-07` beta is retired as of April 30, 2026. Passing this header with Claude Sonnet 4.5 or Sonnet 4 has no effect, and requests that exceed the standard 200k-token context window return an error. To use a 1M-token context window, migrate to [Claude Opus 5, Claude Sonnet 5, Claude Sonnet 4.6, Claude Opus 4.6, Claude Opus 4.7, or Claude Opus 4.8](https://platform.claude.com/docs/en/about-claude/models/overview), which include 1M context at standard pricing with no beta header required.
 </Warning>
 
 ### `McpSdkServerConfig`
@@ -1665,7 +1666,7 @@ Several fields carry diagnostic detail about how the conversation ended:
 * `api_error_status`: the HTTP status code of the terminating API error. `None` when the turn ended without one. Populated only on `subtype="success"`.
 * `result`: text of the final assistant message on `subtype="success"`, or `None` on the `error_*` subtypes. When `subtype="success"` and `is_error=True`, this holds the API error string if one is available but can be empty, so check `api_error_status` and the preceding `AssistantMessage` content for detail.
 * `errors`: loop-level error strings such as the max-turns message. Populated only on the `error_*` subtypes.
-* `terminal_reason`: why the query loop terminated, such as `"completed"`, `"max_turns"`, or `"aborted_streaming"`. A value of `"aborted_streaming"` or `"aborted_tools"` means the turn was cancelled by an interrupt. `None` when the CLI didn't report a terminal reason, such as with an older CLI version. See [`SDKResultMessage`](/docs/en/agent-sdk/typescript#sdkresultmessage) for the full list of values.
+* `terminal_reason`: why the query loop ended, such as `"completed"`, `"max_turns"`, `"api_error"`, `"aborted_streaming"`, or `"aborted_tools"`. A value of `"aborted_streaming"` or `"aborted_tools"` means the turn was aborted before completing. Common causes are [`interrupt()`](#claudesdkclient) and a permission callback returning [`PermissionResultDeny`](#permissionresultdeny) with `interrupt=True`. `None` on CLI versions that predate the field, on results that bypassed the query loop such as local slash commands, or on synthesized error results emitted when the session fails fatally. Mirrors the TypeScript SDK's [`SDKResultMessage.terminal_reason`](/docs/en/agent-sdk/typescript#sdkresultmessage), which lists the full set of values.
 
 The `usage` dict contains the following keys when present:
 
@@ -2042,7 +2043,8 @@ class HookMatcher:
         default_factory=list
     )  # List of callbacks to execute
     timeout: float | None = (
-        None  # Timeout in seconds. When omitted, the per-event default applies
+        None  # Timeout in seconds. When omitted, the per-event default applies:
+        # 600 for most events, 30 for UserPromptSubmit
     )
 ```
 

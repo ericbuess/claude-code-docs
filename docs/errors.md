@@ -88,6 +88,7 @@ Match the message you see in your terminal to a section below.
 | `Error: Workspace not trusted` when starting Remote Control                                                               | [Command-line errors](#workspace-not-trusted-when-starting-remote-control)                                                    |
 | `Could not import <server>: <reason>`                                                                                     | [Command-line errors](#could-not-import-a-server-from-claude-desktop)                                                         |
 | `Error: MCP tool <name> (passed via --permission-prompt-tool) not found`                                                  | [Command-line errors](#mcp-permission-prompt-tool-not-found)                                                                  |
+| ``Shell command failed for pattern "!`git ... origin/HEAD...`"``                                                          | [Command-line errors](#security-review-fails-without-origin-head)                                                             |
 | `Input must be provided either through stdin or as a prompt argument when using --print`                                  | [Command-line errors](#input-must-be-provided-when-using-print)                                                               |
 | `Diff is too large for ultrareview` / `PR #<N> is too large for ultrareview`                                              | [Command-line errors](#diff-is-too-large-for-ultrareview)                                                                     |
 | `Failed to resume the conversation`                                                                                       | [Command-line errors](#failed-to-resume-the-conversation)                                                                     |
@@ -112,23 +113,33 @@ Match the message you see in your terminal to a section below.
 
 ## Automatic retries
 
-Claude Code retries transient failures before showing you an error. Server errors, overloaded responses, request timeouts, temporary 429 throttles, and dropped connections are all retried up to 10 times with exponential backoff. {/* min-version: 2.1.198 */}As of v2.1.198, this covers connections that drop in the middle of a response before any visible output has streamed: Claude Code re-issues the request with the same backoff and the turn continues instead of stopping with a connection error. {/* min-version: 2.1.199 */}As of v2.1.199, temporary 429 throttles that don't carry your plan's quota headers are also retried when you're signed in with a claude.ai subscription; earlier versions retried them only for API key and Enterprise sign-ins.
+Claude Code retries transient failures up to 10 times with exponential backoff before showing you an error. It doesn't always retry a failure that arrives partway through Claude's response. When you see one of the errors on this page, Claude Code has already exhausted those retries, unless the failure is one it doesn't retry.
 
-Some failure classes aren't retried, because a retry can't succeed:
+Claude Code retries these failures:
 
-* {/* min-version: 2.1.199 */}As of v2.1.199, a TLS certificate validation failure, such as a TLS-inspecting proxy, a missing `NODE_EXTRA_CA_CERTS` bundle, or an expired certificate, fails on the first attempt so the fix appears immediately instead of after the full retry budget. See [SSL certificate errors](#ssl-certificate-errors). Transient TLS conditions such as a handshake timeout still retry.
-* {/* min-version: 2.1.199 */}As of v2.1.199, a server error that arrives after Claude has already streamed visible output keeps the partial response and appends an [incomplete-response notice](#the-response-above-may-be-incomplete) instead of retrying, since re-running the request could execute the same tools twice. Earlier versions discarded the partial output and reported the turn as an error.
-* {/* min-version: 2.1.208 */}An [Amazon Bedrock streaming response with an unexpected content-type](#bedrock-streaming-response-has-an-unexpected-content-type) fails on the first attempt, because the gateway or proxy rewriting the response would rewrite the retry the same way. Requires Claude Code v2.1.208 or later.
+* Server errors, overloaded responses, and request timeouts.
+* Dropped connections. {/* min-version: 2.1.198 */}This covers a connection that drops in the middle of a request, before any part of Claude's response has completed: Claude Code re-issues the request with the same backoff, and the turn continues. Before v2.1.198, Claude Code stopped the turn with a connection error when the connection dropped mid-response, before any visible output had streamed.
+* Temporary 429 throttles. {/* min-version: 2.1.199 */}When you're signed in with a claude.ai subscription, this includes 429 throttles that don't carry your plan's quota headers. Before v2.1.199, Claude Code retried those throttles only for API key and Enterprise sign-ins.
+
+Claude Code doesn't retry these failures:
+
+* {/* min-version: 2.1.199 */}A TLS certificate validation failure, such as a TLS-inspecting proxy, a missing `NODE_EXTRA_CA_CERTS` bundle, or an expired certificate. Claude Code reports the error on the first attempt, so you can fix the certificate setup right away; see [SSL certificate errors](#ssl-certificate-errors). Claude Code still retries transient TLS conditions such as a handshake timeout. Before v2.1.199, Claude Code retried certificate failures through the full retry budget before showing the error.
+* {/* min-version: 2.1.199 */}A server error, dropped connection, or stalled stream that arrives partway through a response, once Claude has completed a block of text or a tool call in that response: Claude Code could execute the same tool calls twice if it re-ran the request, so it keeps the completed output and ends the turn with an [incomplete-response notice](#the-response-above-may-be-incomplete). Before v2.1.199, Claude Code discarded the partial output and reported the whole turn as an error when a server error arrived mid-stream.
+* {/* min-version: 2.1.208 */}An [Amazon Bedrock streaming response with an unexpected content-type](#bedrock-streaming-response-has-an-unexpected-content-type), because the gateway or proxy rewriting the response would rewrite the retry the same way. Requires Claude Code v2.1.208 or later.
+
+### What you see while Claude Code retries or waits
 
 While retrying, the spinner shows a `Retrying in Ns · attempt x/y` countdown after an error label. The label names the specific reason from the first attempt for failures you can act on right away: the network is down, a TLS handshake failed, or you hit a rate limit. For other errors it reads `API error` at first. {/* min-version: 2.1.198 */}As of v2.1.198 it switches to the specific reason from the third attempt, or on the final attempt when `CLAUDE_CODE_MAX_RETRIES` allows fewer than three; earlier versions switch only on the final attempt.
 
 {/* min-version: 2.1.198 */}As of v2.1.198, the usual spinner tip is suppressed during retries. Once the error reason is revealed, if the failure is a 529 overload the line below the countdown also names where to check service status: `status.claude.com` on the Anthropic API, or the provider or gateway host named in the message on other configurations.
 
-{/* min-version: 2.1.185 */}If no data arrives on the response stream for 20 seconds while a request is still pending, the spinner shows `Waiting for API response · will retry in … · check your network` before any retry has started. The request has not failed yet: the countdown runs to the point where Claude Code aborts the stalled connection and retries, so the banner clears on its own once data resumes or the retry succeeds. As of v2.1.185 the threshold is 20 seconds; earlier versions show the banner after 10 seconds with different wording. If it reappears on every attempt, treat it as a [network issue](#unable-to-connect-to-api).
+{/* min-version: 2.1.185 */}If no data arrives on the response stream for 20 seconds while a request is still pending, the spinner shows `Waiting for API response · will retry in … · check your network` before any retry has started. The request has not failed yet: the countdown runs to the point where Claude Code aborts the stalled connection, after which the turn either retries or ends with an error such as [The response above may be incomplete](#the-response-above-may-be-incomplete). The banner clears on its own once data resumes or a retry succeeds; if it reappears on every attempt, treat it as a [network issue](#unable-to-connect-to-api). As of v2.1.185 the threshold is 20 seconds; earlier versions show the banner after 10 seconds with different wording.
 
 {/* min-version: 2.1.214 */}While Claude is consulting the [advisor](/docs/en/advisor), the banner appears after 90 seconds without data instead of 20, because a long advisor review can send nothing for well over 20 seconds. Before v2.1.214, the 20-second threshold applied during advisor calls too, so the banner appeared during advisor reviews even when nothing was wrong.
 
-When you see one of the errors on this page, those retries have already been exhausted, unless it belongs to a class that isn't retried, such as a certificate-validation failure. You can tune the behavior with these environment variables:
+### Tune retry behavior
+
+You can tune retry behavior with these environment variables:
 
 | Variable                                     | Default | Effect                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | :------------------------------------------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -195,7 +206,7 @@ This can happen during periods of high load or when the model is generating a ve
 
 ### The response above may be incomplete
 
-A streaming response failed after Claude had already produced visible output. Re-sending the request could run the same tool calls twice, so Claude Code keeps what already streamed and appends this notice instead of discarding the turn. Which variant you see names the cause:
+A streaming request failed after Claude had started producing a response. Re-sending the request could run the same tool calls twice, so Claude Code keeps the output Claude completed and appends this notice instead of discarding the turn. Which variant you see names the cause:
 
 ```text theme={null}
 API Error: Server error mid-response. The response above may be incomplete.
@@ -207,11 +218,15 @@ API Error: Response stalled mid-stream. The response above may be incomplete.
 * `Connection closed mid-response`: the connection dropped.
 * `Response stalled mid-stream`: the stream stopped sending data.
 
+Claude Code never shows this notice for a failure that happens before Claude starts producing a response: at that point it either retries the failure or ends the turn with a different error. See [Automatic retries](#automatic-retries).
+
 **What to do:**
 
-* Read the response that streamed. Nothing has been lost, but the final sentences or tool calls may be missing.
-* Reply with `continue` to have Claude pick up where it stopped
-* If the same error appears before any visible output, Claude Code retries the request instead of finalizing it. See [Automatic retries](#automatic-retries).
+* In an interactive session, read the response that remains on screen: Claude Code keeps every block Claude completed before the error, but discards an interrupted final block when the turn ends, so the final sentences or tool calls may be missing. Reply with `continue` to have Claude pick up from its last completed block.
+* In [non-interactive mode](/docs/en/headless) (`-p`):
+  * {/* min-version: 2.1.219 */}With the default text output, Claude Code prints the last completed block of text it still holds from earlier in the turn, followed by this message. When it holds none, Claude Code prints this message alone, for example because Claude completed only tool calls before the error, or because Claude Code compacted the conversation mid-turn and cleared that text. Before v2.1.219, Claude Code printed only this message in `-p` text output and dropped the response it had already produced.
+  * With `--output-format json` or `stream-json`, Claude Code reports this message in the `result` field.
+  * To continue the turn, resume the session and send `continue` as described in [Continue conversations](/docs/en/headless#continue-conversations).
 
 ### Auto mode cannot determine the safety of an action
 
@@ -721,7 +736,9 @@ If `curl` succeeds but Claude Code still fails, the cause is usually something b
 
 ### Socket is closed
 
-The connection carrying a streaming response was closed while the response was still arriving, and the failure surfaced with the text `Socket is closed`. This happens almost exclusively on Windows behind a corporate proxy, when the proxy drops an established tunnel mid-response. Claude Code treats this as a dropped connection and [retries it automatically](#automatic-retries), so the turn continues. Before v2.1.214, the retry didn't cover this failure, and the turn stopped with an error containing `Socket is closed`.
+`Socket is closed` means the connection carrying a streaming response was closed while the response was still arriving. The most common cause is a corporate proxy on Windows dropping an established tunnel mid-response.
+
+When nothing in the interrupted response had completed yet, Claude Code treats this as a dropped connection and [retries it automatically](#automatic-retries), so the turn continues. Once Claude has completed a block of text or a tool call in the response, Claude Code keeps that output and ends the turn with an [incomplete-response notice](#the-response-above-may-be-incomplete) instead. Before v2.1.214, Claude Code didn't retry this failure, and the turn stopped with an error containing `Socket is closed`.
 
 **What to do:**
 
@@ -1161,7 +1178,7 @@ The usual cause is a proxy or gateway that closes a long transfer before it fini
 
 ## Command-line errors
 
-These errors come from the `claude` command line and its subcommands. Claude Code prints them before running your prompt or sending any API request.
+These errors come from the `claude` command line, its subcommands, and commands such as `/security-review` that gather context by running shell commands before their prompt runs.
 
 ### Conflict between --bg and --print
 
@@ -1257,6 +1274,27 @@ The list after `Available MCP tools:` names the MCP tools that were connected wh
 * Check that the server starts and stays connected: run `claude mcp list` in the same directory and confirm the server is listed as connected
 * Confirm the tool name matches the `mcp__<server>__<tool>` name the server exposes
 * If the server needs longer than 30 seconds to start, raise [`MCP_TIMEOUT`](/docs/en/env-vars)
+
+<h3 id="security-review-fails-without-origin-head">
+  /security-review fails without origin/HEAD
+</h3>
+
+[`/security-review`](/docs/en/commands#all-commands) builds its review context by diffing your branch against `origin/HEAD`, the local ref that records which branch is the default on your `origin` remote. When that ref doesn't exist, the git commands that gather the diff fail and the review stops before it starts.
+
+```text theme={null}
+Error: Shell command failed for pattern "!`git diff --name-only origin/HEAD...`": [stderr]
+fatal: ambiguous argument 'origin/HEAD...': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+```
+
+The quoted command varies between runs: the review starts several `git` commands against `origin/HEAD` at once and reports whichever fails first, so you may see `git log` or a different `git diff` in its place. Git creates the ref only when the remote's default branch is both advertised by the remote and covered by your fetch refspec. A full `git clone` of a remote with commits meets both conditions. Single-branch and CI checkouts fetch too narrow a refspec, a server-side HEAD left pointing at a branch nobody pushed advertises no default, and a repository with no `origin` remote, or one you never fetched, provides neither.
+
+**What to do:**
+
+* Create the ref by naming your remote's default branch: `git remote set-head origin <default-branch>`. This works whenever the local tracking ref `origin/<default-branch>` exists. If it doesn't, as in single-branch clones, fetch the branch first: `git remote set-branches --add origin <branch> && git fetch origin`, then rerun the set-head command. Rerun `/security-review`.
+* If you'd rather not name the branch, run `git fetch origin && git remote set-head origin --auto`, which asks the remote which branch is its default. It fails with `error: Cannot determine remote HEAD` when the remote advertises no default branch, because it is empty or its HEAD points at a branch nobody pushed; name the branch explicitly instead. It fails with `error: Not a valid ref` when your clone doesn't fetch that branch; widen the refspec as above first.
+* If the repository has no remote, add one with `git remote add origin <url>` and fetch before creating the ref. If the remote is empty, push your branch first with `git push -u origin HEAD` and name that branch in the set-head command; `origin/HEAD` then points at the branch you just pushed, so `/security-review` sees an empty diff until the branch diverges from it.
 
 <h3 id="input-must-be-provided-when-using-print">
   Input must be provided when using --print

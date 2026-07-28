@@ -138,6 +138,7 @@ If you discover a security vulnerability in Claude Code:
 ## Related resources
 
 * [Security guidance plugin](/docs/en/security-guidance): have Claude review and fix vulnerabilities in its own code changes during the session
+* [`/security-review`](/docs/en/commands#all-commands): run an on-demand security pass over the changes on your current branch
 * [Sandbox environments](/docs/en/sandbox-environments): compare isolation approaches and choose one for your threat model
 * [Sandboxing](/docs/en/sandboxing): filesystem and network isolation for Bash commands
 * [Permissions](/docs/en/permissions): configure permissions and access controls

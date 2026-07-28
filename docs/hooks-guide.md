@@ -206,6 +206,8 @@ This hook uses the `PostToolUse` event with an `Edit|Write` matcher, so it runs 
 }
 ```
 
+To test the hook, ask Claude to add a line with single-quoted strings to a JavaScript file, then open the file: with Prettier's default settings, the hook rewrites them to double quotes.
+
 On Claude Code v2.1.191 or later you can also write the matcher as `Edit,Write`, since `|` and `,` are interchangeable list separators for tool-name matchers on those versions.
 
 <Note>
@@ -271,6 +273,10 @@ This example uses a separate script file that the hook calls. The script checks 
     }
     ```
   </Step>
+
+  <Step title="Test the hook">
+    Ask Claude to add a comment to your `.env` file. Claude Code blocks the edit before it runs and passes the script's `Blocked:` message to Claude as feedback.
+  </Step>
 </Steps>
 
 ### Re-inject context after compaction
@@ -324,6 +330,8 @@ This example appends each change to an audit log. Add this to `~/.claude/setting
 ```
 
 The matcher filters by configuration type: `user_settings`, `project_settings`, `local_settings`, `policy_settings`, or `skills`. To block a change from taking effect, exit with code 2 or return `{"decision": "block"}`. See the [ConfigChange reference](/docs/en/hooks#configchange) for the full input schema.
+
+To confirm the hook records changes, edit a settings file in another editor while a session is running, then open `~/claude-config-audit.log`: the hook appends one JSON line per change with the timestamp, source, and file path.
 
 ### Reload environment when directory or files change
 

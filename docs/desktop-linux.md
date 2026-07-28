@@ -25,10 +25,10 @@ Install from Anthropic's apt repository so that updates arrive through your syst
 
 <Steps>
   <Step title="Add Anthropic's apt repository">
-    This step downloads the signing key with `curl`, which fresh Debian and Ubuntu installations may not include. If the download command fails with `sudo: curl: command not found`, install curl first:
+    This step downloads the signing key with `curl` and verifies it with `gpg`, which fresh Debian and Ubuntu installations may not include. If either command reports `command not found`, install both first:
 
     ```bash theme={null}
-    sudo apt install curl
+    sudo apt install curl gnupg
     ```
 
     Download Anthropic's signing key:
@@ -36,6 +36,14 @@ Install from Anthropic's apt repository so that updates arrive through your syst
     ```bash theme={null}
     sudo curl -fsSLo /usr/share/keyrings/claude-desktop-archive-keyring.asc https://downloads.claude.ai/claude-desktop/key.asc
     ```
+
+    If this download fails, `apt update` later fails with `NO_PUBKEY BAA929FF1A7ECACE`. Confirm the key downloaded and belongs to Anthropic before continuing:
+
+    ```bash theme={null}
+    gpg --show-keys /usr/share/keyrings/claude-desktop-archive-keyring.asc
+    ```
+
+    The fingerprint gpg prints should be `31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE`. If gpg reports that the file can't be opened or contains no valid OpenPGP data, the download failed or returned the wrong content: confirm your network can reach `downloads.claude.ai`, then rerun the download command.
 
     Register the repository:
 
@@ -56,16 +64,6 @@ Install from Anthropic's apt repository so that updates arrive through your syst
     The Linux app signs in the same way as on macOS and Windows: with a claude.ai subscription, or through your organization's SSO. Desktop doesn't accept a Claude Console API key directly; use the [CLI](/docs/en/quickstart) for API-key authentication. For enterprise deployments that route Desktop to Google Cloud's Agent Platform or an LLM gateway, see [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview) and [network configuration](/docs/en/network-config).
   </Step>
 </Steps>
-
-<Accordion title="Verify the signing key">
-  You can confirm the downloaded signing key belongs to Anthropic:
-
-  ```bash theme={null}
-  gpg --show-keys /usr/share/keyrings/claude-desktop-archive-keyring.asc
-  ```
-
-  The fingerprint should be `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE`.
-</Accordion>
 
 ### Install from a downloaded file
 

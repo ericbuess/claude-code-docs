@@ -58,16 +58,36 @@ Create a container for each user task and destroy it when the task completes. Be
 
 Example workloads include bug investigation and fix, invoice and receipt extraction, document translation, and media transformation.
 
-The container runs a one-shot entrypoint that calls the SDK and exits. The example below shows a minimal TypeScript version. Save it as `entrypoint.mts` or set `"type": "module"` in `package.json` so top-level `await` is available.
+The container runs a one-shot entrypoint that calls the SDK and exits. In TypeScript, save the file as `entrypoint.mts` or set `"type": "module"` in `package.json` so top-level `await` is available.
 
-```typescript theme={null}
-import { query } from "@anthropic-ai/claude-agent-sdk";
+<CodeGroup>
+  ```typescript TypeScript theme={null}
+  import { query } from "@anthropic-ai/claude-agent-sdk";
 
-const prompt = process.env.TASK_PROMPT!;
-for await (const message of query({ prompt, options: { maxTurns: 20 } })) {
-  console.log(message);
-}
-```
+  const prompt = process.env.TASK_PROMPT!;
+  for await (const message of query({ prompt, options: { maxTurns: 20 } })) {
+    console.log(message);
+  }
+  ```
+
+  ```python Python theme={null}
+  import asyncio
+  import os
+
+  from claude_agent_sdk import ClaudeAgentOptions, query
+
+
+  async def main():
+      async for message in query(
+          prompt=os.environ["TASK_PROMPT"],
+          options=ClaudeAgentOptions(max_turns=20),
+      ):
+          print(message)
+
+
+  asyncio.run(main())
+  ```
+</CodeGroup>
 
 ### Long-running sessions
 

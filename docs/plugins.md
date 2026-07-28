@@ -271,6 +271,8 @@ LSP (Language Server Protocol) plugins give Claude real-time code intelligence. 
 
 Users installing your plugin must have the language server binary installed on their machine.
 
+To confirm the server starts, launch Claude Code with the plugin enabled and check the `/plugin` Errors tab: a language server that fails to start appears there, for example with `Executable not found in $PATH` when the binary isn't installed. An entry with an invalid configuration is skipped instead; run `claude --debug` to see why.
+
 For complete LSP configuration options, see [LSP servers](/docs/en/plugins-reference#lsp-servers).
 
 ### Add background monitors to your plugin
@@ -329,7 +331,7 @@ As you make changes to your plugin, run `/reload-plugins` to pick up the updates
 
 * Try your skills with `/plugin-name:skill-name`
 * Check that agents appear in `/context` under Custom Agents, or @-mention one by its scoped name
-* Verify hooks work as expected
+* Trigger the event each hook matches, such as asking Claude to edit a file for a `PostToolUse` hook, and confirm its effect. Claude Code records which hooks matched, their exit codes, and their output in the [debug log](/docs/en/hooks#debug-hooks)
 
 <Tip>
   You can load multiple plugins at once by specifying the flag multiple times:
@@ -467,7 +469,7 @@ If you already have skills or hooks in your `.claude/` directory, you can conver
     claude --plugin-dir ./my-plugin
     ```
 
-    Test each component: run your commands, check that agents appear in `/context`, and verify hooks trigger correctly.
+    Test each component: run your commands, check that agents appear in `/context`, and trigger the event each hook matches to confirm its effect. Claude Code records which hooks matched and how they exited in the [debug log](/docs/en/hooks#debug-hooks).
   </Step>
 </Steps>
 

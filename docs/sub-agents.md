@@ -573,6 +573,14 @@ fi
 exit 0
 ```
 
+On macOS and Linux, make the script executable, or the hook fails instead of blocking anything:
+
+```bash theme={null}
+chmod +x ./scripts/validate-readonly-query.sh
+```
+
+To test the rule, ask the subagent to run an `UPDATE` statement: the script exits with code 2, Claude Code blocks the command, and the subagent sees the `Blocked: Only SELECT queries are allowed` message.
+
 See [Hook input](/docs/en/hooks#pretooluse-input) for the complete input schema and [exit codes](/docs/en/hooks#exit-code-output) for how exit codes affect behavior. On Windows, write hook scripts in PowerShell and add `shell: powershell` to the hook entry as shown in [running hooks in PowerShell](/docs/en/hooks#windows-powershell-tool).
 
 #### Disable specific subagents
@@ -1226,6 +1234,8 @@ chmod +x ./scripts/validate-readonly-query.sh
 On Windows, write the validation script in PowerShell and add `shell: powershell` to the hook entry. See [running hooks in PowerShell](/docs/en/hooks#windows-powershell-tool).
 
 The hook receives JSON via stdin with the Bash command in `tool_input.command`. Exit code 2 blocks the operation and feeds the error message back to Claude. See [Hooks](/docs/en/hooks#exit-code-output) for details on exit codes and [Hook input](/docs/en/hooks#pretooluse-input) for the complete input schema.
+
+The system prompt tells the subagent to refuse write requests, so the hook is a backstop: if the subagent attempts a write anyway, Claude Code blocks the command and the subagent sees the `Blocked: Write operations not allowed. Use SELECT queries only.` message.
 
 ## Next steps
 

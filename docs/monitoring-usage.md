@@ -371,7 +371,7 @@ Each custom key becomes a label on every metric series, so high-cardinality valu
 
 ### Example configurations
 
-Set these environment variables before running `claude`. Each scenario below shows a complete configuration, and each variable is described under [Common configuration variables](#common-configuration-variables).
+Set these environment variables before running `claude`. Each scenario below shows a complete configuration, and each variable is described under [Common configuration variables](#common-configuration-variables). To confirm a configuration took effect, check your backend for the `claude_code.session.count` metric after starting a session; the [Quick start](#quick-start) covers logs-only verification and what to check when nothing arrives.
 
 For console debugging with a 1-second export interval:
 
@@ -1224,6 +1224,8 @@ Point `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT` at your SIEM's OTLP receiver, or at an 
   }
 }
 ```
+
+To confirm events arrive, submit a prompt in a session running under this configuration and check your SIEM for the `claude_code.user_prompt` event. If nothing arrives, run `claude --debug` and check the debug log for OTel export errors.
 
 ## Backend considerations
 

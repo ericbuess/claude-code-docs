@@ -352,6 +352,8 @@ Otherwise, this can happen due to network issues, regional routing, or a tempora
    winget install Anthropic.ClaudeCode
    ```
 
+   Then run `claude --version` to confirm: the command prints a version number such as `2.1.211 (Claude Code)`. If the shell reports `claude` isn't found, open a new terminal window and retry: the session you installed from keeps its old `PATH`.
+
 2. **Retry after a few minutes**: the issue is often temporary. Wait and try the original command again.
 
 ### `command not found: claude` after installation
@@ -398,6 +400,8 @@ The `curl ... | bash` command downloads the script and pipes it to Bash for exec
    ```powershell theme={null}
    winget install Anthropic.ClaudeCode
    ```
+
+   Then run `claude --version` to confirm: the command prints a version number such as `2.1.211 (Claude Code)`. If the shell reports `claude` isn't found, open a new terminal window and retry: the session you installed from keeps its old `PATH`.
 
 ### Homebrew cask unavailable or outdated
 
@@ -484,6 +488,8 @@ The installer couldn't reach the download server. This typically means `download
    ```powershell theme={null}
    winget install Anthropic.ClaudeCode
    ```
+
+   Then run `claude --version` to confirm: the command prints a version number such as `2.1.211 (Claude Code)`. If the shell reports `claude` isn't found, open a new terminal window and retry: the session you installed from keeps its old `PATH`.
 
 ### Wrong install command on Windows
 

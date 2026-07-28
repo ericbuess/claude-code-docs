@@ -4,11 +4,14 @@
 
 # Claude Code in Slack
 
-> Delegate coding tasks directly from your Slack workspace
+> Delegate coding tasks directly from your Slack workspace. Anthropic is retiring this earlier version for Team and Enterprise workspaces in favor of Claude Tag; it remains the setup path on Pro and Max plans.
 
-<Note>
-  Claude Code in Slack is being replaced by [Claude Tag](https://claude.com/product/tag) for Team and Enterprise workspaces. Claude Tag runs @Claude as your organization's shared identity with admin-configured access, under the same Slack app, so there is nothing to reinstall and existing setups continue to work during the transition. To switch a workspace, see [Migrate from the earlier Claude in Slack](https://claude.com/docs/claude-tag/admins/migrate-from-earlier).
-</Note>
+<Warning>
+  This page documents the earlier Claude Code in Slack, which runs each session under an individual user's account.
+
+  * **Team and Enterprise plans:** Anthropic is retiring this version in favor of [Claude Tag](https://claude.com/docs/claude-tag/overview), which runs @Claude as your organization's shared identity with admin-configured access. Your existing Slack app and @Claude handle stay, and your Anthropic account team can tell you the cutover date. Set up Claude Tag for a new workspace; to move one that already uses this version, see [Migrate from the earlier Claude in Slack](https://claude.com/docs/claude-tag/admins/migrate-from-earlier).
+  * **Pro and Max plans:** Claude Tag isn't available on individual plans, so this page remains the setup path.
+</Warning>
 
 Claude Code in Slack brings the power of Claude Code directly into your Slack workspace. When you mention `@Claude` with a coding task, Claude automatically detects the intent and creates a Claude Code session on the web, allowing you to delegate development work without leaving your team conversations.
 
@@ -192,6 +195,17 @@ This error means your Claude account has no cloud environment yet, not that an a
 1. Verify your Claude account is connected in the Claude App Home
 2. Check that you have Claude Code on the web access enabled
 3. Ensure you have at least one GitHub repository connected to Claude Code
+
+### Sessions from a Claude Tag channel fail to start
+
+This entry applies to workspaces using [Claude Tag](https://claude.com/docs/claude-tag/overview), where Claude works in channels as your organization's shared identity, not as any member's account. If you created the channel's cloud environment at [claude.ai/code](https://claude.ai/code), it belongs to your personal account, and Claude can't start channel sessions in a personal environment. Claude Code fails the session immediately, and retrying doesn't help.
+
+If you're an Owner or admin, recreate the environment as an [organization-shared environment](/docs/en/cloud-environments#organization-shared-environments) from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings). You can apply it in two ways:
+
+* Set it as the organization default at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
+* [Set it on the channel](https://claude.com/docs/claude-tag/admins/troubleshooting#channel-sessions-use-the-wrong-environment-or-can%E2%80%99t-find-one) in the Claude Tag admin settings.
+
+If you're not an Owner or admin, send this entry to one.
 
 ### Repository not showing
 
