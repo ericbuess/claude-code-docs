@@ -262,7 +262,7 @@ Claude Code skips mobile push notifications while you are typing in or focused o
 ## Limitations
 
 * **One remote session per interactive process**: outside of server mode, each Claude Code instance supports one remote session at a time. Use [server mode](#start-a-remote-control-session) to run multiple concurrent sessions from a single process.
-* **Local process must keep running**: Remote Control runs as a local process. If you close the terminal, quit VS Code, or otherwise stop the `claude` process, the session ends.
+* **Local process must keep running**: Remote Control runs as a local process. If you close the terminal, quit VS Code, or otherwise stop the `claude` process, the session ends. To keep a session running on a remote machine after you disconnect from SSH, start it inside `tmux` or `screen`.
 * **Extended network outage**: if your machine is awake but unable to reach the network for more than roughly 10 minutes, the session times out and the process exits. Run `claude remote-control` again to start a new session.
 * **Ultraplan disconnects Remote Control**: starting an [ultraplan](/docs/en/ultraplan) session disconnects any active Remote Control session because both features occupy the claude.ai/code interface and only one can be connected at a time.
 * **Some commands are local-only**: commands that only run in the terminal interface, such as `/plugin` or `/resume`, work only from the local CLI, whether or not you pass an argument. The following work from mobile and web:
@@ -295,6 +295,10 @@ The Remote Control rollout has not reached your account, or your cached entitlem
 ### "Couldn't verify Remote Control eligibility"
 
 Claude Code could not reach the feature-flag service to check whether Remote Control is enabled for your account, typically because you are offline or a proxy is blocking the request. Retry once you have network access, or run `claude doctor` for details. The related message "Couldn't verify your organization's Remote Control policy" has the same cause and the same fix. Both messages were added in v2.1.178.
+
+### "Remote Control requires feature-flag evaluation"
+
+The full message names the environment variable that caused it: `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, or `DISABLE_GROWTHBOOK`. These privacy opt-outs disable feature-flag evaluation, which Remote Control needs to check its rollout gate. Unset the named variable, or start the session in a shell without it. Before v2.1.154, this case surfaced as "Remote Control is not yet enabled for your account" instead of naming the variable.
 
 ### "Remote Control is only available when using Claude via api.anthropic.com"
 
@@ -355,7 +359,7 @@ Claude Code offers several ways to work when you're not at your terminal. They d
 
 ## Related resources
 
-* [Claude Code on the web](/docs/en/claude-code-on-the-web): run sessions in Anthropic-managed cloud environments instead of on your machine
+* [Claude Code on the web](/docs/en/claude-code-on-the-web): run sessions on Anthropic-managed infrastructure instead of your machine, configured through [cloud environments](/docs/en/cloud-environments)
 * [Ultraplan](/docs/en/ultraplan): launch a cloud planning session from your terminal and review the plan in your browser
 * [Channels](/docs/en/channels): forward Telegram, Discord, or iMessage into a session so Claude reacts to messages while you're away
 * [Dispatch](/docs/en/desktop#sessions-from-dispatch): message a task from your phone and it can spawn a Desktop session to handle it

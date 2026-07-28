@@ -290,7 +290,7 @@ Learn more: [Create custom subagents](/docs/en/sub-agents)
 
 ### Surface
 
-Any place you access Claude Code: the CLI, VS Code, JetBrains, Desktop, or claude.ai. All surfaces share the same engine. Sessions on your machine read your local CLAUDE.md, settings, and skills; [cloud sessions](/docs/en/claude-code-on-the-web#what’s-available-in-cloud-sessions) start from a fresh clone of your repository and don't read `~/.claude/` on your machine. Slack and the Chrome extension are integrations that connect to a surface rather than surfaces themselves.
+Any place you access Claude Code: the CLI, VS Code, JetBrains, Desktop, or claude.ai. All surfaces share the same engine. Sessions on your machine read your local CLAUDE.md, settings, and skills; [cloud sessions](/docs/en/cloud-environments#what-carries-over-from-your-setup) start from a fresh clone of your repository and don't read `~/.claude/` on your machine. Slack and the Chrome extension are integrations that connect to a surface rather than surfaces themselves.
 
 Learn more: [Platforms and integrations](/docs/en/platforms)
 

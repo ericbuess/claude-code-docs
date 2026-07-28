@@ -102,10 +102,10 @@ When using [Claude Code on the web](/docs/en/claude-code-on-the-web), additional
 * **Network access controls**: Network access is limited by default and can be configured to be disabled or allow only specific domains
 * **Credential protection**: Authentication is handled through a secure proxy that uses a scoped credential inside the sandbox, which is then translated to your actual GitHub authentication token
 * **Branch restrictions**: Git push operations are restricted to the current working branch
-* **Audit logging**: All operations in cloud environments are logged for compliance and audit purposes
-* **Automatic cleanup**: Cloud environments are automatically terminated after session completion
+* **Audit logging**: All operations in cloud sessions are logged for compliance and audit purposes
+* **Automatic cleanup**: Session VMs are reclaimed after a period of inactivity
 
-For more details on cloud execution, see [Claude Code on the web](/docs/en/claude-code-on-the-web).
+For more details on cloud execution, see [Claude Code on the web](/docs/en/claude-code-on-the-web); to configure network access for cloud sessions, see [Configure cloud environments](/docs/en/cloud-environments#network-access).
 
 [Remote Control](/docs/en/remote-control) sessions work differently: the web interface connects to a Claude Code process running on your local machine. All code execution and file access stays local, and session traffic travels through the Anthropic API over TLS; while connected, the session transcript is stored on Anthropic servers to sync the conversation across devices, as described in [Connection and security](/docs/en/remote-control#connection-and-security). No cloud VMs or sandboxing are involved. The connection uses multiple short-lived, narrowly scoped credentials, each limited to a specific purpose and expiring independently, to limit the blast radius of any single compromised credential.
 

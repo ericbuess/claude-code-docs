@@ -95,7 +95,7 @@ In Enterprise deployments that route Desktop to Google Cloud's Agent Platform, a
   Start complex tasks in Plan so Claude maps out an approach before making changes. Once you approve the plan, switch to Accept edits or Manual to execute it. See [explore first, then plan, then code](/docs/en/best-practices#explore-first-then-plan-then-code) for more on this workflow.
 </Tip>
 
-Cloud sessions support Accept edits, Plan, and Auto. Accept edits corresponds to `default` mode: cloud sessions pre-approve file edits, so the selector shows Accept edits instead of Manual. Bypass permissions is not available because the cloud environment is already sandboxed.
+Cloud sessions support Accept edits, Plan, and Auto. Accept edits corresponds to `default` mode: cloud sessions pre-approve file edits, so the selector shows Accept edits instead of Manual. Bypass permissions is not available because cloud sessions already run in a sandboxed VM.
 
 Enterprise admins can restrict which permission modes are available. See [enterprise configuration](#enterprise-configuration) for details.
 
@@ -404,7 +404,7 @@ Personal skills in `~/.claude/skills/` apply to local sessions; an [SSH](#ssh-se
 
 For local and [SSH](#ssh-sessions) sessions, click the **+** button next to the prompt box and select **Plugins** to see your installed plugins and their skills. To add a plugin, select **Add plugin** from the submenu to open the plugin browser, which shows available plugins from your configured [marketplaces](/docs/en/plugin-marketplaces) including the official Anthropic marketplace. Select **Manage plugins** to enable, disable, or uninstall plugins.
 
-Plugins can be scoped to your user account, a specific project, or local-only. If your organization manages plugins centrally, those plugins are available in desktop sessions the same way they are in the CLI. The plugin browser is not available in cloud sessions, and plugins you install from the desktop app aren't available for cloud sessions; to use a plugin in a cloud session, declare it in the repository's `.claude/settings.json` under [`enabledPlugins`](/docs/en/settings#enabledplugins) so it [installs at session start](/docs/en/claude-code-on-the-web#what’s-available-in-cloud-sessions). Plugins aren't available in WSL sessions. For the full plugin reference including creating your own plugins, see [plugins](/docs/en/plugins).
+Plugins can be scoped to your user account, a specific project, or local-only. If your organization manages plugins centrally, those plugins are available in desktop sessions the same way they are in the CLI. The plugin browser is not available in cloud sessions, and plugins you install from the desktop app aren't available for cloud sessions; to use a plugin in a cloud session, declare it in the repository's `.claude/settings.json` under [`enabledPlugins`](/docs/en/settings#enabledplugins) so it [installs at session start](/docs/en/cloud-environments#what-carries-over-from-your-setup). Plugins aren't available in WSL sessions. For the full plugin reference including creating your own plugins, see [plugins](/docs/en/plugins).
 
 ### Configure preview servers
 
@@ -612,7 +612,7 @@ To set environment variables for local sessions and dev servers on any platform,
 
 Cloud sessions continue in the background even if you close the app. Usage counts toward your [subscription plan limits](/docs/en/costs) with no separate compute charges.
 
-You can create custom cloud environments with different network access levels and environment variables. Select the environment dropdown when starting a cloud session and choose **Add environment**. See [the cloud environment](/docs/en/claude-code-on-the-web#the-cloud-environment) for details on configuring network access and environment variables.
+You can create custom cloud environments with different network access levels and environment variables. Select the environment dropdown when starting a cloud session and choose **Add cloud environment**. See [Configure cloud environments](/docs/en/cloud-environments) for details on configuring network access and environment variables.
 
 ### SSH sessions
 

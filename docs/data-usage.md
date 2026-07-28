@@ -84,7 +84,7 @@ Claude Code is built on Anthropic's APIs. For details on API security controls, 
 
 ### Cloud execution: Data flow and dependencies
 
-When using [Claude Code on the web](/docs/en/claude-code-on-the-web), sessions run in Anthropic-managed virtual machines instead of locally. In cloud environments:
+When using [Claude Code on the web](/docs/en/claude-code-on-the-web), sessions run in Anthropic-managed virtual machines instead of locally. In cloud sessions:
 
 * **Code and data storage:** Your repository is cloned to an isolated VM. Code and session data are subject to the retention and usage policies for your account type (see Data retention section above)
 * **Credentials:** GitHub authentication is handled through a secure proxy; your GitHub credentials never enter the sandbox
