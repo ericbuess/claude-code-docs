@@ -490,7 +490,7 @@ claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 
 Authenticate with your Sentry account:
 
-```text theme={null}
+```text wrap theme={null}
 /mcp
 ```
 
@@ -498,15 +498,15 @@ Follow the sign-in steps in your browser. Once you're signed in, the `sentry` se
 
 Then debug production issues:
 
-```text theme={null}
+```text wrap theme={null}
 What are the most common errors in the last 24 hours?
 ```
 
-```text theme={null}
+```text wrap theme={null}
 Show me the stack trace for error ID abc123
 ```
 
-```text theme={null}
+```text wrap theme={null}
 Which deployment introduced these new errors?
 ```
 
@@ -523,15 +523,15 @@ Replace `YOUR_GITHUB_PAT` with your personal access token. The `claude mcp add` 
 
 Then work with GitHub:
 
-```text theme={null}
+```text wrap theme={null}
 Review PR #456 and suggest improvements
 ```
 
-```text theme={null}
+```text wrap theme={null}
 Create a new issue for the bug we just found
 ```
 
-```text theme={null}
+```text wrap theme={null}
 Show me all open PRs assigned to me
 ```
 
@@ -548,15 +548,15 @@ To confirm the server starts, run `/mcp` and check that `db` shows `connected`.
 
 Then query your database naturally:
 
-```text theme={null}
+```text wrap theme={null}
 What's our total revenue this month?
 ```
 
-```text theme={null}
+```text wrap theme={null}
 Show me the schema for the orders table
 ```
 
-```text theme={null}
+```text wrap theme={null}
 Find customers who haven't made a purchase in 90 days
 ```
 
@@ -590,7 +590,7 @@ If you configured `headers.Authorization` for the server and the server rejects 
   <Step title="Use the /mcp command within Claude Code">
     In Claude Code, use the command:
 
-    ```text theme={null}
+    ```text wrap theme={null}
     /mcp
     ```
 
@@ -901,7 +901,7 @@ If you've logged into Claude Code with a [claude.ai](https://claude.ai) account,
   <Step title="View and manage servers in Claude Code">
     In Claude Code, use the command:
 
-    ```text theme={null}
+    ```text wrap theme={null}
     /mcp
     ```
 
@@ -1125,11 +1125,11 @@ MCP servers can expose resources that you can reference using @ mentions, simila
   <Step title="Reference a specific resource">
     Use the format `@server:protocol://resource/path` to reference a resource:
 
-    ```text theme={null}
+    ```text wrap theme={null}
     Can you analyze @github:issue://123 and suggest a fix?
     ```
 
-    ```text theme={null}
+    ```text wrap theme={null}
     Please review the API documentation at @docs:file://api/authentication
     ```
   </Step>
@@ -1137,7 +1137,7 @@ MCP servers can expose resources that you can reference using @ mentions, simila
   <Step title="Multiple resource references">
     You can reference multiple resources in a single prompt:
 
-    ```text theme={null}
+    ```text wrap theme={null}
     Compare @postgres:schema://users with @docs:file://database/user-model
     ```
   </Step>
@@ -1250,7 +1250,7 @@ MCP servers can expose prompts that become available as commands in Claude Code.
   </Step>
 
   <Step title="Execute a prompt without arguments">
-    ```text theme={null}
+    ```text wrap theme={null}
     /mcp__github__list_prs
     ```
   </Step>
@@ -1258,11 +1258,11 @@ MCP servers can expose prompts that become available as commands in Claude Code.
   <Step title="Execute a prompt with arguments">
     Many prompts accept arguments. Pass them space-separated after the command:
 
-    ```text theme={null}
+    ```text wrap theme={null}
     /mcp__github__pr_review 456
     ```
 
-    ```text theme={null}
+    ```text wrap theme={null}
     /mcp__jira__create_issue "Bug in login flow" high
     ```
   </Step>

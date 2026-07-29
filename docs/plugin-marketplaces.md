@@ -259,6 +259,16 @@ The git-based source types below are `github`, `url`, and `git-subdir`. When bot
 
 On most git hosts, including GitHub, GitLab, and Bitbucket, this means installation succeeds even if the branch or tag named by `ref` has since been deleted upstream, as long as the commit is still reachable from the repository. Some servers, such as AWS CodeCommit, don't support fetching commits by SHA. On those servers the `ref` must still exist and the pinned commit must be reachable from it.
 
+<Note>
+  If you distribute this marketplace through [Organization settings > Plugins](https://claude.ai/admin-settings/plugins) on a Team or Enterprise plan, different source rules apply:
+
+  * The marketplace repository must be private or internal. Organization sync reads it through the Claude GitHub App or your organization's GitHub Enterprise App.
+  * Plugin sources of type `github`, `url`, and `git-subdir` are supported. `npm` sources are not.
+  * A plugin source can be private in two cases: a github.com source that shares the marketplace repository's owner, or a source on your organization's GitHub Enterprise host with the GHE App installed on the repository. Organization sync fetches every other source without credentials, so github.com repositories under a different owner and repositories on other hosts, such as GitLab or Bitbucket, must be public.
+
+  To include private plugins, place the plugin folders inside the marketplace repository and reference them with a [relative path](#relative-paths). Organization sync packages each plugin during distribution, so users never need access to a separate source repository. See [Manage plugins for your organization](https://support.claude.com/en/articles/13837433) for the admin workflow.
+</Note>
+
 ### Relative paths
 
 For plugins in the same repository, use a path starting with `./`:
@@ -536,9 +546,15 @@ Any git hosting service works, such as GitLab, Bitbucket, and self-hosted server
 
 ### Private repositories
 
-Claude Code supports installing plugins from private repositories. For manual installation and updates, Claude Code uses your existing git credential helpers, so HTTPS access via `gh auth login`, macOS Keychain, or `git-credential-store` works the same as in your terminal. SSH access works as long as the host is already in your `known_hosts` file and the key is loaded in `ssh-agent`, since Claude Code suppresses interactive SSH prompts for the host fingerprint and key passphrase. GitHub `owner/repo` shorthand sources clone over SSH by default; set [`CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1`](/docs/en/env-vars#variables) to clone them over HTTPS instead.
+Claude Code supports installing plugins from private repositories. If you distribute your marketplace through [Organization settings > Plugins](https://claude.ai/admin-settings/plugins) instead, your git credentials aren't involved: organization sync reads the marketplace repository through the Claude GitHub App or your organization's GitHub Enterprise App, and a plugin source it can't authenticate to must be public. The note under [Plugin sources](#plugin-sources) has the full rules.
 
-Background auto-updates work differently. By default, the background refresh disables git credential helpers for its `git pull`, so the pull can't authenticate to private repositories over HTTPS even when a helper is configured. SSH remotes aren't affected: a key loaded in `ssh-agent` authenticates background pulls the same way as manual operations. When the background pull fails, Claude Code falls back to re-cloning the marketplace from scratch. The re-clone does use your stored git credentials, but it can [time out on large repositories](#git-operations-time-out), so private-marketplace auto-updates may fail intermittently.
+#### Commands you run
+
+When you run `/plugin marketplace add`, `/plugin install`, `/plugin update`, or `/plugin marketplace update`, Claude Code uses your existing git credential helpers, so HTTPS access via `gh auth login`, macOS Keychain, or `git-credential-store` works the same as in your terminal. SSH access works as long as the host is already in your `known_hosts` file and the key is loaded in `ssh-agent`, since Claude Code suppresses interactive SSH prompts for the host fingerprint and key passphrase. GitHub `owner/repo` shorthand sources clone over SSH by default; set [`CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1`](/docs/en/env-vars#variables) to clone them over HTTPS instead.
+
+#### Background auto-updates
+
+By default, the background refresh disables git credential helpers for its `git pull`, so the pull can't authenticate to private repositories over HTTPS even when a helper is configured. SSH remotes aren't affected: a key loaded in `ssh-agent` authenticates background pulls the same way as the commands you run. When the background pull fails, Claude Code falls back to re-cloning the marketplace from scratch. The re-clone does use your stored git credentials, but it can [time out on large repositories](#git-operations-time-out), so private-marketplace auto-updates may fail intermittently.
 
 Two settings make private marketplaces behave predictably:
 
@@ -656,21 +672,36 @@ For organizations requiring strict control over plugin sources, administrators c
 
 When `strictKnownMarketplaces` is configured in managed settings, the restriction behavior depends on the value:
 
-| Value               | Behavior                                                         |
-| ------------------- | ---------------------------------------------------------------- |
-| Undefined (default) | No restrictions. Users can add any marketplace                   |
-| Empty array `[]`    | Complete lockdown. Users can't add any new marketplaces          |
-| List of sources     | Users can only add marketplaces that match the allowlist exactly |
+| Value               | Behavior                                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------ |
+| Undefined (default) | No restrictions. Users can add any marketplace                                                   |
+| Empty array `[]`    | Complete lockdown. Blocks every marketplace source, including the official Anthropic marketplace |
+| List of sources     | Users can only add marketplaces that match the allowlist exactly                                 |
 
 #### Common configurations
 
-Disable all marketplace additions:
+Disable all marketplace additions, including the official Anthropic marketplace:
 
 ```json theme={null}
 {
   "strictKnownMarketplaces": []
 }
 ```
+
+Allow only the official Anthropic marketplace. Matching is exact, so this entry doesn't cover `ref` or `path` variants of the same repository:
+
+```json theme={null}
+{
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    }
+  ]
+}
+```
+
+With this entry, the official marketplace registers itself automatically the first time you start Claude Code interactively, so you don't need to pair it with `extraKnownMarketplaces`. In a non-interactive environment that runs before that first interactive launch, add it explicitly with `claude plugin marketplace add anthropics/claude-plugins-official` or include it in `extraKnownMarketplaces`.
 
 Allow specific marketplaces only:
 
@@ -732,7 +763,7 @@ Restrictions are checked before any network or filesystem operation. The check r
 
 The allowlist uses exact matching for most source types. For a marketplace to be allowed, all specified fields must match exactly:
 
-* For GitHub sources: `repo` is required, and `ref` or `path` must also match if specified in the allowlist
+* For GitHub sources: `repo` is required, and `ref` and `path` must each match exactly or be absent from both the marketplace source and the allowlist entry
 * For URL sources: the full URL must match exactly
 * For `hostPattern` sources: the marketplace host is matched against the regex pattern
 * For `pathPattern` sources: the marketplace's filesystem path is matched against the regex pattern

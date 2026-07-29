@@ -25,8 +25,8 @@
 
   <p className="digest-feature-try">Run the command, or just include the keyword in any prompt:</p>
 
-  ```text Claude Code theme={null}
-  > /ultraplan migrate the auth service from sessions to JWTs
+  ```text title="Claude Code" wrap theme={null}
+  /ultraplan migrate the auth service from sessions to JWTs
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/ultraplan">Ultraplan guide</a>
@@ -46,14 +46,14 @@
 
   <p className="digest-feature-try">Ask Claude to watch something while you keep working:</p>
 
-  ```text Claude Code theme={null}
-  > Tail server.log in the background and tell me the moment a 5xx shows up
+  ```text title="Claude Code" wrap theme={null}
+  Tail server.log in the background and tell me the moment a 5xx shows up
   ```
 
   <p className="digest-feature-try">This pairs with <code>/loop</code>, which now self-paces: omit the interval and Claude schedules the next tick based on the task, or reaches for the Monitor tool to skip polling altogether.</p>
 
-  ```text Claude Code theme={null}
-  > /loop check CI on my PR
+  ```text title="Claude Code" wrap theme={null}
+  /loop check CI on my PR
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/tools-reference#monitor-tool">Monitor tool reference</a>
@@ -73,8 +73,8 @@
 
   <p className="digest-feature-try">Run it from the PR's branch:</p>
 
-  ```text Claude Code theme={null}
-  > /autofix-pr
+  ```text title="Claude Code" wrap theme={null}
+  /autofix-pr
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/claude-code-on-the-web#auto-fix-pull-requests">Auto-fix pull requests</a>
@@ -90,8 +90,8 @@
 
   <p className="digest-feature-try">Run it from a project you've spent real time in:</p>
 
-  ```text Claude Code theme={null}
-  > /team-onboarding
+  ```text title="Claude Code" wrap theme={null}
+  /team-onboarding
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/commands">Commands reference</a>

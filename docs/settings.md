@@ -921,7 +921,7 @@ Use `source: 'settings'` to declare a small set of plugins inline without settin
 **Allowlist behavior**:
 
 * `undefined` (default): no restrictions, so users can add any marketplace
-* Empty array `[]`: complete lockdown, so users can't add any new marketplaces
+* Empty array `[]`: complete lockdown that blocks every marketplace source, including the official Anthropic marketplace, so users can't add any new marketplaces
 * List of sources: users can only add marketplaces that match exactly
 
 **All supported source types**:
@@ -1045,13 +1045,28 @@ Example: allow specific marketplaces only:
 }
 ```
 
-Example: disable all marketplace additions:
+Example: disable all marketplace additions, including the official Anthropic marketplace:
 
 ```json theme={null}
 {
   "strictKnownMarketplaces": []
 }
 ```
+
+Example: allow only the official Anthropic marketplace. Matching is exact, so this entry doesn't cover `ref` or `path` variants of the same repository:
+
+```json theme={null}
+{
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    }
+  ]
+}
+```
+
+With this entry, the official marketplace registers itself automatically the first time you start Claude Code interactively, so you don't need to pair it with `extraKnownMarketplaces`. In a non-interactive environment that runs before that first interactive launch, add it explicitly with `claude plugin marketplace add anthropics/claude-plugins-official` or include it in `extraKnownMarketplaces`.
 
 Example: allow all marketplaces from an internal git server:
 

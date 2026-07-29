@@ -24,8 +24,8 @@
 
   <p className="digest-feature-try">Ask Claude for a page, then approve the publish prompt:</p>
 
-  ```text Claude Code theme={null}
-  > Make an artifact that walks through this PR with the diff annotated inline.
+  ```text title="Claude Code" wrap theme={null}
+  Make an artifact that walks through this PR with the diff annotated inline.
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/artifacts#create-an-artifact">Create an artifact</a>
@@ -62,8 +62,8 @@
 
   <p className="digest-feature-try">Set the <code>thinking</code> setting from the prompt:</p>
 
-  ```text Claude Code theme={null}
-  > /config thinking=false
+  ```text title="Claude Code" wrap theme={null}
+  /config thinking=false
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/commands#all-commands">Commands reference</a>

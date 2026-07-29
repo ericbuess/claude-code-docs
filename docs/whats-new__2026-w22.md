@@ -25,8 +25,8 @@
 
   <p className="digest-feature-try">Switch to Opus 4.8 by name, or pick it from the model picker:</p>
 
-  ```text Claude Code theme={null}
-  > /model claude-opus-4-8
+  ```text title="Claude Code" wrap theme={null}
+  /model claude-opus-4-8
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/model-config#available-models">Model configuration</a>
@@ -46,8 +46,8 @@
 
   <p className="digest-feature-try">Describe the task and ask for a workflow:</p>
 
-  ```text Claude Code theme={null}
-  > create a workflow that migrates every internal fetch() call to the new HttpClient wrapper
+  ```text title="Claude Code" wrap theme={null}
+  create a workflow that migrates every internal fetch() call to the new HttpClient wrapper
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/workflows">Dynamic workflows</a>
@@ -67,14 +67,14 @@
 
   <p className="digest-feature-try">Install it from the official Anthropic marketplace:</p>
 
-  ```text Claude Code theme={null}
-  > /plugin install security-guidance@claude-plugins-official
+  ```text title="Claude Code" wrap theme={null}
+  /plugin install security-guidance@claude-plugins-official
   ```
 
   <p className="digest-feature-try">Then activate it in the current session:</p>
 
-  ```text Claude Code theme={null}
-  > /reload-plugins
+  ```text title="Claude Code" wrap theme={null}
+  /reload-plugins
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/security-guidance">Security guidance plugin</a>
@@ -90,8 +90,8 @@
 
   <p className="digest-feature-try">Toggle fast mode, now on Opus 4.8:</p>
 
-  ```text Claude Code theme={null}
-  > /fast
+  ```text title="Claude Code" wrap theme={null}
+  /fast
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/fast-mode#understand-the-cost-tradeoff">Fast mode pricing</a>

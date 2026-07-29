@@ -31,6 +31,8 @@ If you use Claude Code over SSH, set the environment variable or setting on the 
 When the mode is on, the first thing Claude Code prints is a confirmation line naming the method that turned it on: `[Screen Reader Mode: on via flag]`, `[Screen Reader Mode: on via env]`, or `[Screen Reader Mode: on via settings]`. The method-naming format requires Claude Code v2.1.206 or later. When Claude Code relaunches itself, for example to finish installing an update, the new process inherits the mode through the `CLAUDE_AX_SCREEN_READER` environment variable, so its confirmation line reads `[Screen Reader Mode: on via env]` regardless of which method you used.
 {/* max-version: 2.1.205 */}Earlier versions print `[Accessible screen reader mode: on]`.
 
+After printing the confirmation line, Claude Code holds the rest of the interface back for three seconds so your screen reader can finish speaking the line, then renders the first prompt. Press any key to end the hold early. To change the hold's length, set the `CLAUDE_AX_STARTUP_QUIET_MS` environment variable to a number of milliseconds. The default is `3000`; set it to `0` to skip the hold. Claude Code caps the hold at `600000` milliseconds, 10 minutes. Requires Claude Code v2.1.217 or later.
+
 ## Turn off screen reader mode
 
 Reverse whichever method turned the mode on: start without the flag, unset the environment variable, or set `axScreenReader` to `false`. Setting `CLAUDE_AX_SCREEN_READER=0` keeps the mode off even when the setting is `true`.
@@ -61,6 +63,8 @@ Each message in the transcript starts with a label your screen reader announces,
 | `Cost:`                | The session cost summary when Claude Code exits, if your account [shows costs](/docs/en/costs) |
 
 The terminal cursor follows the input caret, so a screen reader's read-current-line command answers "where am I" with the prompt you're editing.
+
+{/* min-version: 2.1.219 */}As you type at the end of the input line, Claude Code writes only the characters you type, so your screen reader echoes only those characters. Requires Claude Code v2.1.219 or later; earlier versions rewrite the whole input line on every keystroke, so the screen reader re-reads it as you type.
 
 {/* min-version: 2.1.218 */}When you delete a word or a line in the input, Claude Code announces the deleted text. Requires Claude Code v2.1.218 or later. The announcement covers:
 

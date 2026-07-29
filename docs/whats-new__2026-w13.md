@@ -50,8 +50,8 @@
 
   <p className="digest-feature-try">Enable it in Settings, grant the OS permissions, then ask Claude to verify a change end to end:</p>
 
-  ```text Claude Code theme={null}
-  > Open the iOS simulator, tap through the onboarding flow, and screenshot each step
+  ```text title="Claude Code" wrap theme={null}
+  Open the iOS simulator, tap through the onboarding flow, and screenshot each step
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/desktop#let-claude-use-your-computer">Computer use guide</a>

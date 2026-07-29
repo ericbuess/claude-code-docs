@@ -25,8 +25,8 @@
 
   <p className="digest-feature-try">Requires macOS and a Pro or Max plan; otherwise, <code>computer-use</code> won't appear in <code>/mcp</code>. Run <code>/mcp</code>, find <code>computer-use</code>, and toggle it on. Then ask Claude to verify a change end to end:</p>
 
-  ```text Claude Code theme={null}
-  > Open the iOS simulator, tap through onboarding, and screenshot each step
+  ```text title="Claude Code" wrap theme={null}
+  Open the iOS simulator, tap through onboarding, and screenshot each step
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/computer-use">Computer use guide</a>
@@ -46,8 +46,8 @@
 
   <p className="digest-feature-try">Run it:</p>
 
-  ```text Claude Code theme={null}
-  > /powerup
+  ```text title="Claude Code" wrap theme={null}
+  /powerup
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/commands">Commands reference</a>
