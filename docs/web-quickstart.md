@@ -88,7 +88,7 @@ If you already use the GitHub CLI (`gh`), you can set up Claude Code on the web 
   </Step>
 
   <Step title="Sign in to Claude">
-    In the Claude Code CLI, run `/login` to sign in with your claude.ai account. Skip this step if you're already signed in.
+    In the Claude Code CLI, run `/login` to sign in with your claude.ai account. Skip this step if you're already signed in with a claude.ai account. Authenticating with an API key doesn't count. To check, run `/status` and confirm the **Login method** row shows a claude.ai account.
   </Step>
 
   <Step title="Run /web-setup">
@@ -98,7 +98,7 @@ If you already use the GitHub CLI (`gh`), you can set up Claude Code on the web 
     /web-setup
     ```
 
-    This syncs your `gh` token to your Claude account. If you don't have a cloud environment yet, `/web-setup` creates one with Trusted network access and no setup script. You can [edit the environment or add variables](/docs/en/cloud-environments#configure-your-environment) afterward. Once `/web-setup` completes, you can start cloud sessions from your terminal with [`--cloud`](/docs/en/claude-code-on-the-web#from-terminal-to-web) or set up recurring tasks with [`/schedule`](/docs/en/routines).
+    This syncs your `gh` token to your Claude account. On success, Claude Code prints `Connected as <your-github-username>` and opens [claude.ai/code](https://claude.ai/code) in your browser. If you don't have a cloud environment yet, `/web-setup` creates one with Trusted network access and no setup script. You can [edit the environment or add variables](/docs/en/cloud-environments#configure-your-environment) afterward. Once `/web-setup` completes, you can start cloud sessions from your terminal with [`--cloud`](/docs/en/claude-code-on-the-web#from-terminal-to-web) or set up recurring tasks with [`/schedule`](/docs/en/routines).
   </Step>
 </Steps>
 
@@ -179,11 +179,15 @@ Cloud sessions require a connected GitHub account. Connect via the browser flow 
 
 Enterprise organizations may need an Owner to enable Claude Code on the web. Contact your Anthropic account team.
 
+### `/web-setup` says "Not signed in to Claude"
+
+If `/web-setup` responds with "Not signed in to Claude. Run /login first.", the CLI doesn't have a valid claude.ai sign-in. This can also happen when a previous sign-in has expired. Run `/login`, sign in with your claude.ai account, then run `/web-setup` again.
+
 ### `/web-setup` shows "No commands match" or "Unknown command"
 
 `/web-setup` runs inside the Claude Code CLI, not your shell. Launch `claude` first, then type `/web-setup` at the prompt.
 
-If you typed it inside Claude Code and the command menu shows `No commands match "/web-setup"`, or submitting it returns `Unknown command: /web-setup`, the command is hidden because a requirement isn't met. The cause is usually that you're authenticated with an API key or third-party provider instead of a claude.ai subscription. Run `/login` to sign in with your claude.ai account.
+If you typed it inside Claude Code and the command menu shows `No commands match "/web-setup"`, or submitting it returns `Unknown command: /web-setup`, the command is hidden because a requirement isn't met. The cause is usually that you're authenticated with an API key or third-party provider instead of a claude.ai subscription. Run `/login` to sign in with your claude.ai account. Team and Enterprise Owners can also [disable `/web-setup`](/docs/en/claude-code-on-the-web#github-authentication-options) for their organization, which hides the command. In that case, use the browser flow above instead.
 
 On Team and Enterprise plans, the command is also hidden when any of the following apply:
 

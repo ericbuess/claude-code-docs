@@ -16,7 +16,7 @@ source .venv/bin/activate
 pip install claude-agent-sdk
 ```
 
-For uv, Windows PowerShell, and API key setup, see [Get started in the Agent SDK overview](/docs/en/agent-sdk/overview#get-started).
+For uv, Windows PowerShell, and API key setup, see [Setup in the Agent SDK quickstart](/docs/en/agent-sdk/quickstart#setup).
 
 ## Choosing between `query()` and `ClaudeSDKClient`
 
@@ -887,7 +887,7 @@ options = ClaudeAgentOptions(
 * `API_TIMEOUT_MS`: per-request timeout on the Anthropic client, in milliseconds. Default `600000`. Applies to the main loop and all subagents.
 * `CLAUDE_CODE_MAX_RETRIES`: maximum API retries. Default `10`, capped at `15`. Each retry gets its own `API_TIMEOUT_MS` window, so worst-case wall time is roughly `API_TIMEOUT_MS × (CLAUDE_CODE_MAX_RETRIES + 1)` plus backoff. For unattended runs that need to wait through longer outages, set `CLAUDE_CODE_RETRY_WATCHDOG=1`: it retries capacity errors indefinitely, and {/* min-version: 2.1.199 */}as of Claude Code v2.1.199 raises the default for other transient errors to `300` and removes the cap on this variable.
 * `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS`: stall watchdog for subagents launched with `run_in_background`. Default `600000`. Resets on each stream event; on stall it aborts the subagent, marks the task failed, and surfaces the error to the parent with any partial result. Does not apply to synchronous subagents.
-* `CLAUDE_ENABLE_STREAM_WATCHDOG` with `CLAUDE_STREAM_IDLE_TIMEOUT_MS`: aborts the request when headers have arrived but the response body stops streaming. The watchdog is on by default for all providers; set `CLAUDE_ENABLE_STREAM_WATCHDOG=0` to disable it. `CLAUDE_STREAM_IDLE_TIMEOUT_MS` defaults to `300000` and is clamped to that minimum. The aborted request goes through the normal retry path.
+* `CLAUDE_ENABLE_STREAM_WATCHDOG` with `CLAUDE_STREAM_IDLE_TIMEOUT_MS`: aborts the request when headers have arrived but the response body stops streaming. The watchdog is on by default for all providers; set `CLAUDE_ENABLE_STREAM_WATCHDOG=0` to disable it. `CLAUDE_STREAM_IDLE_TIMEOUT_MS` defaults to `300000` and is clamped to that minimum. After the abort, Claude Code retries the request at most once, and only before Claude has started a block of text or a tool call in the response; once Claude has completed a block of text or a tool call, Claude Code keeps the completed output, appends an [incomplete-response notice](/docs/en/errors#the-response-above-may-be-incomplete) instead of retrying, and still runs any completed tool call.
 
 ### `OutputFormat`
 
@@ -948,11 +948,11 @@ Controls which filesystem-based configuration sources the SDK loads settings fro
 SettingSource = Literal["user", "project", "local"]
 ```
 
-| Value       | Description                                     | Location                      |
-| :---------- | :---------------------------------------------- | :---------------------------- |
-| `"user"`    | Global user settings                            | `~/.claude/settings.json`     |
-| `"project"` | Shared project settings (version controlled)    | `.claude/settings.json`       |
-| `"local"`   | Local project settings (not version controlled) | `.claude/settings.local.json` |
+| Value       | Description                                                               | Location                      |
+| :---------- | :------------------------------------------------------------------------ | :---------------------------- |
+| `"user"`    | Global user settings                                                      | `~/.claude/settings.json`     |
+| `"project"` | Shared project settings (version controlled)                              | `.claude/settings.json`       |
+| `"local"`   | Local project settings, gitignored when Claude Code saves a setting to it | `.claude/settings.local.json` |
 
 #### Default behavior
 
@@ -1918,6 +1918,8 @@ Base exception class for all SDK errors.
 class ClaudeSDKError(Exception):
     """Base error for Claude SDK."""
 ```
+
+When a single-shot `query()` ends with an error result, for example a turn-limit error, the SDK raises a plain `Exception` after yielding the final result message, not a `ClaudeSDKError` subclass.
 
 ### `CLINotFoundError`
 
@@ -3415,6 +3417,9 @@ async def main():
         print(f"Process failed with exit code: {e.exit_code}")
     except CLIJSONDecodeError as e:
         print(f"Failed to parse response: {e}")
+    # A single-shot query() raises a plain Exception after yielding an error result
+    except Exception as e:
+        print(f"Query ended with an error result: {e}")
 
 
 asyncio.run(main())
@@ -3557,11 +3562,12 @@ class SandboxSettings(TypedDict, total=False):
 ```python theme={null}
 import asyncio
 
-from claude_agent_sdk import query, ClaudeAgentOptions, SandboxSettings
+from claude_agent_sdk import query, ClaudeAgentOptions
 
-sandbox_settings: SandboxSettings = {
+sandbox_settings = {
     "enabled": True,
     "autoAllowBashIfSandboxed": True,
+    "failIfUnavailable": True,
     "network": {"allowLocalBinding": True},
 }
 

@@ -149,7 +149,7 @@ You can tune retry behavior with these environment variables:
 
 ## Server errors
 
-Most of these errors come from the inference provider's infrastructure: Anthropic's on the Anthropic API, and that provider's on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a custom gateway. [Auto mode cannot determine the safety of an action](#auto-mode-cannot-determine-the-safety-of-an-action) and [Agent terminated early due to an API error](#agent-terminated-early-due-to-an-api-error) also cover causes on your side, such as an Amazon Bedrock account that can't invoke the classifier model or a subagent that hit a usage limit.
+Most of these errors come from the inference provider: Anthropic's service on the Anthropic API, and the service behind that provider's endpoint on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a custom gateway. [Auto mode cannot determine the safety of an action](#auto-mode-cannot-determine-the-safety-of-an-action) and [Agent terminated early due to an API error](#agent-terminated-early-due-to-an-api-error) also cover causes on your side, such as an Amazon Bedrock account that can't invoke the classifier model or a subagent that hit a usage limit.
 
 ### API Error: 500 Internal server error
 
@@ -447,7 +447,7 @@ Could not resolve authentication method. Expected one of apiKey, authToken, cred
 
 * Upgrade to v2.1.174 or later if this appears in a background or cloud session and your credentials are already configured
 * Confirm `ANTHROPIC_API_KEY`, `CLAUDE_CODE_OAUTH_TOKEN`, or your cloud provider credentials are set in the environment that launches the worker, not only in your interactive shell
-* For the Agent SDK, see [authentication setup](/docs/en/agent-sdk/overview#get-started)
+* For the Agent SDK, see [authentication setup in the quickstart](/docs/en/agent-sdk/quickstart#setup)
 * Run `/status` in an interactive session in the same environment to confirm which credential source resolves
 
 ### Invalid API key

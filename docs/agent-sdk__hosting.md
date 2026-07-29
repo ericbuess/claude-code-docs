@@ -235,7 +235,7 @@ Prompt text and tool inputs are not included in exports by default. See [Control
 
 Three auth concerns matter at hosting time:
 
-* **Anthropic API**: the subprocess reads `ANTHROPIC_API_KEY` from its environment. Supply it from your secret manager, or set `ANTHROPIC_BASE_URL` to route model calls through a proxy that injects the key outside the container. See [Credential management](/docs/en/agent-sdk/secure-deployment#credential-management) for the proxy pattern and the [SDK overview](/docs/en/agent-sdk/overview#get-started) for supported authentication methods.
+* **Anthropic API**: the subprocess reads `ANTHROPIC_API_KEY` from its environment. Supply it from your secret manager, or set `ANTHROPIC_BASE_URL` to route model calls through a proxy that injects the key outside the container. See [Credential management](/docs/en/agent-sdk/secure-deployment#credential-management) for the proxy pattern and [Setup in the SDK quickstart](/docs/en/agent-sdk/quickstart#setup) for supported authentication methods.
 * **Inbound**: put authentication at a gateway in front of the agent container. The agent should receive pre-authenticated requests and should not be the component that validates user tokens.
 * **Outbound tools**: keep tool credentials out of the agent environment. Route outbound calls through a proxy that injects API keys after the request leaves the container. The agent makes the call; the proxy adds the credential.
 

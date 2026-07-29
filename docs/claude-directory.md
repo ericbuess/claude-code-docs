@@ -102,7 +102,7 @@ config/secrets.json`,
         icon: 'folder',
         color: 'var(--ce-accent)',
         oneLiner: 'Project-level configuration, rules, and extensions',
-        description: 'Everything Claude Code reads that is specific to this project. If you use git, commit most files here so your team shares them; a few, like settings.local.json, are automatically gitignored. Each file badge shows which.',
+        description: 'Everything Claude Code reads that is specific to this project. If you use git, commit most files here so your team shares them; a few, like settings.local.json, are gitignored when Claude Code saves settings to them. Each file badge shows which.',
         children: [{
           id: 'settings-json',
           label: 'settings.json',
@@ -146,8 +146,8 @@ config/secrets.json`,
           badge: 'gitignored',
           oneLiner: 'Your personal settings overrides for this project',
           when: 'Highest of the user-editable settings files; CLI flags and managed settings still take precedence',
-          description: 'Personal settings that take precedence over the project defaults. Same JSON format as settings.json, but not committed. Use this when you need different permissions or defaults than the team config.',
-          tips: [<>Same schema as settings.json. Array settings like <C>permissions.allow</C> combine across scopes; scalar settings like <C>model</C> use the local value</>, <>Claude Code adds this file to <C>~/.config/git/ignore</C> the first time it writes one. If you use a custom <C>core.excludesFile</C>, add the pattern there too. To share the ignore rule with your team, also add it to the project <C>.gitignore</C></>],
+          description: 'Personal settings that take precedence over the project defaults. Same JSON format as settings.json, gitignored when Claude Code saves a setting to it. Use this when you need different permissions or defaults than the team config.',
+          tips: [<>Same schema as settings.json. Array settings like <C>permissions.allow</C> combine across scopes; scalar settings like <C>model</C> use the local value</>, <>When Claude Code saves a setting to this file in a repository that doesn't already ignore it, it adds <C>**/.claude/settings.local.json</C> to your global git excludes file: <C>core.excludesFile</C> from your global git config when it's set to an absolute or <C>~</C>-prefixed path, otherwise <C>$XDG_CONFIG_HOME/git/ignore</C>, or <C>~/.config/git/ignore</C>. To share the ignore rule with your team, also add it to the project <C>.gitignore</C></>],
           exampleIntro: 'This example adds Docker permissions on top of whatever the team settings.json allows.',
           example: `{
   "permissions": {
@@ -1492,7 +1492,7 @@ Click a filename to open that node in the explorer above.
 | [`CLAUDE.md`](#ce-claude-md)                        | Project and global | ✓      | Instructions loaded every session                                                                             | [Memory](/docs/en/memory)                                            |
 | [`rules/*.md`](#ce-rules)                           | Project and global | ✓      | Topic-scoped instructions, optionally path-gated                                                              | [Rules](/docs/en/memory#organize-rules-with-claude/rules/)           |
 | [`settings.json`](#ce-settings-json)                | Project and global | ✓      | Permissions, hooks, env vars, model defaults                                                                  | [Settings](/docs/en/settings)                                        |
-| [`settings.local.json`](#ce-settings-local-json)    | Project only       |        | Your personal overrides, gitignored when Claude Code creates it                                               | [Settings scopes](/docs/en/settings#settings-files)                  |
+| [`settings.local.json`](#ce-settings-local-json)    | Project only       |        | Your personal overrides, gitignored when Claude Code saves a setting to it                                    | [Settings scopes](/docs/en/settings#settings-files)                  |
 | [`.mcp.json`](#ce-mcp-json)                         | Project only       | ✓      | Team-shared MCP servers                                                                                       | [MCP scopes](/docs/en/mcp#mcp-installation-scopes)                   |
 | [`.worktreeinclude`](#ce-worktreeinclude)           | Project only       | ✓      | Gitignored files to copy into new worktrees                                                                   | [Worktrees](/docs/en/worktrees#copy-gitignored-files-into-worktrees) |
 | [`skills/<name>/SKILL.md`](#ce-skills)              | Project and global | ✓      | Reusable prompts invoked with `/name` or auto-invoked                                                         | [Skills](/docs/en/skills)                                            |

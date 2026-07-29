@@ -309,6 +309,12 @@ The [`/code-review` command](/docs/en/commands) reviews a diff in your terminal 
   </Step>
 </Steps>
 
+{/* min-version: 2.1.218 */}When the host application requests it, Claude reports the review's findings through the [`ReportFindings` tool](/docs/en/tools-reference) instead of as text in its reply. Claude Code renders the report as a findings list, one entry per finding. Each entry shows the file location, a one-sentence summary, and a category tag such as `correctness` when the finding carries one. A host request applies at every effort level and requires Claude Code v2.1.218 or later.
+
+{/* min-version: 2.1.218 */}In a terminal session, `/code-review` runs the review as a fork and reports the findings as text in the reply, and Claude reports as text in any `-p` run with text or JSON output, even when the host application requests the findings list. {/* max-version: 2.1.217 */}On v2.1.216 and v2.1.217, a terminal review at `medium` or higher effort reported the findings list instead.
+
+When Claude fixes reported findings later in the session, it reports them again, and Claude Code marks each finding in the new list as fixed, skipped, or no change needed.
+
 ### What the review reads and edits
 
 The review follows your `CLAUDE.md` like any Claude Code session, but it doesn't read [`REVIEW.md`](#review-md). {/* min-version: 2.1.218 */}A background review applies its `--fix` edits outside your session's [checkpoints](/docs/en/checkpointing#subagent-edits-not-restored), so `/rewind` doesn't undo them; use git to revert them. When the review [runs in the foreground](#run-in-the-foreground), it edits your working tree during your own turn, so `/rewind` restores its edits as usual.

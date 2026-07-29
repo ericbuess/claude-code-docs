@@ -25,8 +25,8 @@
 
   <p className="digest-feature-try">Name the connector and the data you want in your prompt:</p>
 
-  ```text Claude Code theme={null}
-  > Build a dashboard artifact of open pull requests that pulls the live list through my GitHub connector when the page loads.
+  ```text title="Claude Code" wrap theme={null}
+  Build a dashboard artifact of open pull requests that pulls the live list through my GitHub connector when the page loads.
   ```
 
   <a className="digest-feature-link" href="/docs/docs/en/artifacts#pull-live-data-with-mcp-connectors">Pull live data with MCP connectors</a>

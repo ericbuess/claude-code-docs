@@ -134,7 +134,7 @@ When you start Claude from the repository root, each subdirectory's CLAUDE.md lo
 
 Use this for directories you never work in, such as other teams' packages, legacy code, or vendored subtrees. The exclusion list is static, not a per-task switch. To focus on one package today and another tomorrow, [start Claude from that package's directory](#choose-where-to-start-claude) instead of editing exclusions.
 
-If you only want these exclusions for yourself, put the setting in `.claude/settings.local.json`. Claude Code gitignores that file when it creates it; since you're creating it by hand here, add it to your gitignore. Patterns use glob syntax matched against absolute file paths, so start relative-style patterns with `**/` to match anywhere in the tree. The example below excludes a package owned by another team:
+If you only want these exclusions for yourself, put the setting in `.claude/settings.local.json`. Claude Code adds that file to your global gitignore when it saves a setting there. Since you are creating it by hand here, add it to your gitignore yourself. Patterns use glob syntax matched against absolute file paths, so start relative-style patterns with `**/` to match anywhere in the tree. The example below excludes a package owned by another team:
 
 ```json .claude/settings.local.json theme={null}
 {
@@ -366,7 +366,7 @@ With skills spread across many directories, the list Claude chooses from can gro
 Which skills are in scope depends on where you start Claude:
 
 * **From a subdirectory such as `packages/api/`**: skills from that directory, every parent up to the repository root, and the user and enterprise levels
-* **From the repository root**: skills from every subdirectory Claude touches during the session, which can accumulate into the hundreds
+* **From the repository root**: root skills, plus skills from every subdirectory Claude touches during the session, which can accumulate into the hundreds
 * **After adding a sibling with [`--add-dir`](#grant-access-across-packages-or-repositories)**: that sibling's skills load too. The `additionalDirectories` setting grants file access only and does not load skills
 
 Names always load, but [descriptions are shortened when there are many](/docs/en/skills#skill-descriptions-are-cut-short), which can strip the keywords Claude uses to decide whether a skill applies. Keep descriptions short and lead with words a request would contain, like "writing or modifying tests in `packages/api/`".

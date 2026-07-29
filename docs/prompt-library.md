@@ -1335,37 +1335,37 @@ The prompts above share a few patterns. Recognizing them helps you adapt any pro
 
 **Describe the outcome, not the steps.** Say what you want and let Claude find the files. The prompt below works without naming a single file path.
 
-```text theme={null}
+```text wrap theme={null}
 add rate limiting to the public API and make sure existing tests still pass
 ```
 
 **Give it a way to check its own work.** Ask for run, test, compare, or verify in the same prompt so Claude iterates instead of stopping after one attempt.
 
-```text theme={null}
+```text wrap theme={null}
 write the migration, run it against the dev database, and confirm the schema matches
 ```
 
 **Point at a reference.** Name an existing file, test, or pattern to match so the new code is consistent with what you already have.
 
-```text theme={null}
+```text wrap theme={null}
 add a settings page that follows the same layout as the profile page
 ```
 
 **State the measurable target.** When the goal is performance or coverage, give the metric and threshold so completion is unambiguous.
 
-```text theme={null}
+```text wrap theme={null}
 get the bundle size under 200KB and show me what you removed
 ```
 
 **Give it the artifact.** Paste errors, logs, screenshots, and plan output directly in the prompt, or type `@` to reference a file. Claude reads the source instead of your description of it.
 
-```text theme={null}
+```text wrap theme={null}
 why is the build failing? @build.log
 ```
 
 **Say how you want the answer.** Name the format, length, or audience so the explanation fits how you'll use it. To make a format the default for every response, set an [output style](/docs/en/output-styles).
 
-```text theme={null}
+```text wrap theme={null}
 explain how the payment retry logic works as an HTML page with a diagram, then open it in my browser
 ```
 

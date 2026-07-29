@@ -305,6 +305,8 @@ for await (const msg of resumedSession.stream()) {
 
 Sessions can be closed manually or automatically using [`await using`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-2.html#using-declarations-and-explicit-resource-management), a TypeScript 5.2+ feature for automatic resource cleanup. If you're using an older TypeScript version or encounter compatibility issues, use manual cleanup instead.
 
+The examples below show only the cleanup pattern and don't send any messages, so running them produces no output.
+
 **Automatic cleanup (TypeScript 5.2+):**
 
 ```typescript theme={null}

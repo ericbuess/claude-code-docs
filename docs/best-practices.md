@@ -67,7 +67,7 @@ The recommended workflow has four phases:
   <Step title="Explore">
     Enter plan mode. Claude reads files and answers questions without making changes.
 
-    ```txt claude (plan mode) theme={null}
+    ```txt title="claude (plan mode)" wrap theme={null}
     read /src/auth and understand how we handle sessions and login.
     also look at how we manage environment variables for secrets.
     ```
@@ -76,7 +76,7 @@ The recommended workflow has four phases:
   <Step title="Plan">
     Ask Claude to create a detailed implementation plan.
 
-    ```txt claude (plan mode) theme={null}
+    ```txt title="claude (plan mode)" wrap theme={null}
     I want to add Google OAuth. What files need to change?
     What's the session flow? Create a plan.
     ```
@@ -87,7 +87,7 @@ The recommended workflow has four phases:
   <Step title="Implement">
     Switch out of plan mode and let Claude code, verifying against its plan.
 
-    ```txt claude (default mode) theme={null}
+    ```txt title="claude (default mode)" wrap theme={null}
     implement the OAuth flow from your plan. write tests for the
     callback handler, run the test suite and fix any failures.
     ```
@@ -96,7 +96,7 @@ The recommended workflow has four phases:
   <Step title="Commit">
     Ask Claude to commit with a descriptive message and create a PR.
 
-    ```txt claude (default mode) theme={null}
+    ```txt title="claude (default mode)" wrap theme={null}
     commit with a descriptive message and open a PR
     ```
   </Step>
@@ -359,7 +359,7 @@ Using Claude Code this way is an effective onboarding workflow, improving ramp-u
 
 Claude asks about things you might not have considered yet, including technical implementation, UI/UX, edge cases, and tradeoffs. Replace `[brief description]` with your feature before sending the prompt.
 
-```text theme={null}
+```text wrap theme={null}
 I want to build [brief description]. Interview me in detail using the AskUserQuestion tool.
 
 Ask about technical implementation, UI/UX, edge cases, concerns, and tradeoffs. Don't ask obvious questions, dig into the hard parts I might not have considered.
@@ -417,7 +417,7 @@ During long sessions, Claude's context window can fill with irrelevant conversat
 
 Since context is your fundamental constraint, subagents are one of the most powerful tools available. When Claude researches a codebase it reads lots of files, all of which consume your context. Subagents run in separate context windows and report back summaries:
 
-```text theme={null}
+```text wrap theme={null}
 Use subagents to investigate how our authentication system handles token
 refresh, and whether we have any existing OAuth utilities I should reuse.
 ```
@@ -426,7 +426,7 @@ The subagent explores the codebase, reads relevant files, and reports back with 
 
 You can also use subagents for verification after Claude implements something:
 
-```text theme={null}
+```text wrap theme={null}
 use a subagent to review this code for edge cases
 ```
 
@@ -561,7 +561,7 @@ The longer Claude works unattended, the more an independent check matters before
 
 For a correctness check, run the bundled [`/code-review` skill](/docs/en/commands), which reviews the current diff for bugs in a fresh subagent and returns findings to the session. To check the diff against your plan instead, write the review prompt yourself. Name the work to check, the plan to check it against, and what counts as a finding:
 
-```text theme={null}
+```text wrap theme={null}
 Use a subagent to review the rate limiter diff against PLAN.md. Check that
 every requirement is implemented, the listed edge cases have tests, and
 nothing outside the task's scope changed. Report gaps, not style preferences.

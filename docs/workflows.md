@@ -41,7 +41,7 @@ The quickest way to see a workflow in action is to run `/deep-research`, the [bu
   <Step title="Run the workflow">
     Run `/deep-research` with a question you want investigated. It fans out web searches across several angles, fetches and cross-checks the sources it finds, and synthesizes a cited report.
 
-    ```text theme={null}
+    ```text wrap theme={null}
     /deep-research What changed in the Node.js permission model between v20 and v22?
     ```
   </Step>
@@ -53,7 +53,7 @@ The quickest way to see a workflow in action is to run `/deep-research`, the [bu
   <Step title="Watch progress">
     The run starts in the background. Run `/workflows`, use the arrow keys to select the run, and press Enter to open its progress view:
 
-    ```text theme={null}
+    ```text wrap theme={null}
     /workflows
     ```
 
@@ -87,7 +87,7 @@ Claude Code includes `/deep-research` as a built-in workflow:
 
 Workflows run in the background, so the session stays responsive while agents work. Run `/workflows` at any time to list running and completed workflows, then select one to open its progress view.
 
-```text theme={null}
+```text wrap theme={null}
 /workflows
 ```
 
@@ -118,7 +118,7 @@ You can also run a workflow command that already exists: a [bundled workflow](#b
 
 To run a single task as a workflow without changing the session's effort level, include the keyword `ultracode` in your prompt. Asking in your own words, for example "use a workflow" or "run a workflow", also works: Claude treats a direct request as the same opt-in. Before v2.1.160 the literal trigger keyword was `workflow`; natural-language requests work in both versions.
 
-```text theme={null}
+```text wrap theme={null}
 ultracode: audit every API endpoint under src/routes/ for missing auth checks
 ```
 
@@ -147,7 +147,7 @@ The keyword is an opt-in only in a prompt you type yourself: at the interactive 
 
 Ultracode is a Claude Code setting that combines `xhigh` [reasoning effort](/docs/en/model-config#adjust-effort-level) with automatic workflow orchestration. With it on, Claude plans a workflow for each substantive task instead of waiting for you to ask.
 
-```text theme={null}
+```text wrap theme={null}
 /effort ultracode
 ```
 
@@ -220,8 +220,8 @@ A saved workflow can accept input through the `args` parameter. The script reads
 
 The following prompt runs a saved workflow with a list of issue numbers:
 
-```text theme={null}
-> Run /triage-issues on issues 1024, 1025, and 1030
+```text wrap theme={null}
+Run /triage-issues on issues 1024, 1025, and 1030
 ```
 
 Claude passes the list as structured data, so the script can call array and object methods on `args` directly without parsing it first. If `args` is omitted, the global is `undefined` inside the script.
@@ -234,48 +234,48 @@ A workflow fits best when the task is larger than one agent can hold in context,
 
 Fan out one agent per file, then collect and verify the findings.
 
-```text theme={null}
-> use a workflow to audit every route handler under src/routes/ for missing authentication checks, and adversarially verify each finding before reporting it
+```text wrap theme={null}
+use a workflow to audit every route handler under src/routes/ for missing authentication checks, and adversarially verify each finding before reporting it
 ```
 
 ### Keep fixing until a check passes
 
 Run a checker, fix what failed, and repeat until it passes or stops making progress.
 
-```text theme={null}
-> use a workflow to run npx tsc --noEmit and keep fixing the reported errors until the type check passes or two rounds in a row make no progress
+```text wrap theme={null}
+use a workflow to run npx tsc --noEmit and keep fixing the reported errors until the type check passes or two rounds in a row make no progress
 ```
 
 ### Migrate many files in parallel
 
 Discover the files to migrate, transform each one in an isolated copy so edits don't conflict, and verify each result.
 
-```text theme={null}
-> use a workflow to migrate every component under src/components/ from styled-components to Tailwind, working on each file in its own isolated copy
+```text wrap theme={null}
+use a workflow to migrate every component under src/components/ from styled-components to Tailwind, working on each file in its own isolated copy
 ```
 
 ### Review every changed file and write one summary
 
 Run a reviewer per file, then hand all the findings to one agent that ranks and deduplicates them.
 
-```text theme={null}
-> use a workflow to review every file changed in this PR for correctness issues, then merge the per-file findings into one ranked summary
+```text wrap theme={null}
+use a workflow to review every file changed in this PR for correctness issues, then merge the per-file findings into one ranked summary
 ```
 
 ### Research a topic across many sources
 
 Fan out readers across changelogs, issues, and docs, then synthesize. The bundled `/deep-research` workflow does this; you can also describe a narrower version.
 
-```text theme={null}
-> use a workflow to research how our three competitors handle rate limiting: read their public docs and recent changelog entries in parallel, then compare the approaches
+```text wrap theme={null}
+use a workflow to research how our three competitors handle rate limiting: read their public docs and recent changelog entries in parallel, then compare the approaches
 ```
 
 ### Find issues until the list stops growing
 
 Keep searching in rounds and stop when new rounds turn up nothing new.
 
-```text theme={null}
-> use a workflow to find flaky tests in this repo: run the suite repeatedly, record which tests fail intermittently, and stop once two rounds in a row find nothing new
+```text wrap theme={null}
+use a workflow to find flaky tests in this repo: run the suite repeatedly, record which tests fail intermittently, and stop once two rounds in a row find nothing new
 ```
 
 ### What the saved script looks like
@@ -326,7 +326,18 @@ Once a run starts, you manage it from the `/workflows` view, or by expanding its
 
 ### Resume after a pause
 
-If you stop a run, you can resume it: agents that already completed return their cached results, and the rest run live. An agent that was still running when you stopped isn't saved and starts over on resume, so a workflow that fans work out across many small agents preserves more progress than one long agent. Resume a paused run from `/workflows` by selecting it and pressing `p`, or ask Claude to relaunch the workflow with the same script.
+If you stop a run, you can resume it. Agents that already completed usually return their cached results, and the rest run live.
+
+Two rules decide which results survive:
+
+* An agent that was still running when you stopped isn't saved, so it starts over on resume.
+* Replay follows the order agents started. Cached results stop at the first agent that didn't finish, and every agent that started after that one runs again, even if it completed.
+
+The second rule is what makes stopping mid fan-out expensive. Say a script starts four agents, A, B, C, and D, in that order, and you stop the run while B is still going. On resume, A returns from cache. B runs again because it never finished. C and D run again too, because they started after B, even though both completed before you stopped.
+
+A workflow that fans work out across many small agents therefore preserves more progress than one long agent.
+
+Resume a paused run from `/workflows` by selecting it and pressing `p`, or ask Claude to relaunch the workflow with the same script.
 
 Resume works within the same Claude Code session. If you exit Claude Code while a workflow is running, the next session starts the workflow fresh.
 
@@ -334,7 +345,7 @@ Resume works within the same Claude Code session. If you exit Claude Code while 
 
 A workflow spawns many agents, so a single run can use meaningfully more tokens than working through the same task in conversation. Runs count toward your plan's usage and rate limits like any other session.
 
-To gauge the spend before committing to a large task, run the workflow on a small slice first: one directory instead of the whole repo, or a narrow question instead of a broad one. The `/workflows` view shows each agent's token usage as the run progresses, and you can stop the run there at any time without losing completed work. The runtime's [agent caps](#behavior-and-limits) limit how many agents a single run can spawn, which bounds the cost of a runaway script. To keep runs to fewer agents, choose the `small` [size guideline](#set-a-size-guideline).
+To gauge the spend before committing to a large task, run the workflow on a small slice first: one directory instead of the whole repo, or a narrow question instead of a broad one. The `/workflows` view shows each agent's token usage as the run progresses, and you can stop the run there at any time, usually without losing completed work. [Resume after a pause](#resume-after-a-pause) covers what a stopped run keeps. The runtime's [agent caps](#behavior-and-limits) limit how many agents a single run can spawn, which bounds the cost of a runaway script. To keep runs to fewer agents, choose the `small` [size guideline](#set-a-size-guideline).
 
 Claude Code also flags a run that grows unusually large. When a workflow schedules more than 25 agents, or its projected token total passes 1.5 million, its progress line in the task panel below the input box shows a `Large workflow` warning. The warning points you to [`/workflows`](#watch-the-run), where you can stop the run. Requires Claude Code v2.1.203 or later.
 

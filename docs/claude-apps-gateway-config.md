@@ -613,13 +613,14 @@ telemetry:
   Enable logs and traces only on destinations with the access controls and retention policy that data warrants.
 </Warning>
 
-Telemetry is off in the CLI by default. Configuring `telemetry.forward_to` together with `listen.public_url` turns it on. The gateway pushes five env vars to every connected client through `/managed/settings`:
+Telemetry is off in the CLI by default. Configuring `telemetry.forward_to` together with `listen.public_url` turns it on. The gateway pushes six env vars to every connected client through `/managed/settings`:
 
 * `CLAUDE_CODE_ENABLE_TELEMETRY=1`
 * `OTEL_METRICS_EXPORTER=otlp`
 * `OTEL_LOGS_EXPORTER=otlp`
 * `OTEL_TRACES_EXPORTER=otlp`
 * `OTEL_EXPORTER_OTLP_ENDPOINT=<public_url>`
+* `OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf`
 
 The pushed endpoint is built from the public URL, so metrics and logs need no OTEL configuration from developers or policies. The pushed configuration is applied at the managed tier, overriding `OTEL_*` variables a developer sets locally.
 

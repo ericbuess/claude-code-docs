@@ -95,7 +95,7 @@ For security details about cloud execution, see [Security](/docs/en/security#clo
 
 ## Telemetry services
 
-Claude Code sends two kinds of operational telemetry: usage metrics and error reports. You can turn each off individually with the environment variables below, or disable all non-essential traffic at once by setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`.
+Claude Code sends two kinds of operational telemetry: usage metrics and error reports. You can turn each off individually with the environment variables below, or disable all non-essential traffic at once by setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. Setting `DISABLE_TELEMETRY` or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` also disables the feature-flag evaluation that [Remote Control](/docs/en/remote-control#requirements) depends on; `DISABLE_ERROR_REPORTING` doesn't.
 
 **Metrics**: latency, reliability, and usage patterns, sent to Anthropic and to third-party logging infrastructure over TLS. Metrics never include your code, prompts, or file paths. Set `DISABLE_TELEMETRY=1` to opt out.
 

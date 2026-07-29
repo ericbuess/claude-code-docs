@@ -30,6 +30,7 @@ Before using Remote Control, confirm that your environment meets these condition
 * **Subscription**: available on Pro, Max, Team, and Enterprise plans. API keys are not supported. On Team and Enterprise, an Owner must first enable the Remote Control toggle in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code).
 * **Authentication**: run `claude` and use `/login` to sign in through claude.ai if you haven't already. Without an eligible login, `claude remote-control` exits with an error, while `claude --remote-control` still starts an interactive session and shows a Remote Control failure notification shortly after launch.
 * **API endpoint**: not available on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. {/* min-version: 2.1.196 */}As of v2.1.196, Remote Control is also disabled when [`ANTHROPIC_BASE_URL`](/docs/en/env-vars) points at a host other than `api.anthropic.com`, such as an [LLM gateway](/docs/en/llm-gateway) or proxy. Unset the variable to use Remote Control.
+* **Feature-flag evaluation**: [`DISABLE_TELEMETRY`, `DO_NOT_TRACK`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, and `DISABLE_GROWTHBOOK`](/docs/en/env-vars) each disable the feature-flag evaluation that Remote Control availability depends on. Unset the variable wherever it's set, in your shell environment or in the `env` block of a [`settings.json` file](/docs/en/settings#available-settings), to use Remote Control.
 * **Workspace trust**: run `claude` in your project directory at least once to accept the workspace trust dialog. The startup trust dialog never saves trust for your home directory, so start Remote Control from a project directory.
 
 ## Start a Remote Control session
@@ -292,7 +293,7 @@ Your cached account information is stale or incomplete. Run `claude auth login` 
 
 ### "Remote Control is not yet enabled for your account"
 
-The Remote Control rollout has not reached your account, or your cached entitlements are out of date. If you recently changed plans, run `claude auth logout` then `claude auth login` to refresh them. Run `claude doctor` to see which individual eligibility check failed. Environment-variable conflicts, unreachable checks, and organization policy each produce their own message, so this error means the rollout gate itself.
+The Remote Control rollout has not reached your account, or your cached entitlements are out of date. If you recently changed plans, run `claude auth logout` then `claude auth login` to refresh them. Run `claude doctor` to see which individual eligibility check failed. Environment-variable conflicts, unreachable checks, and organization policy each produce their own message, so this error means the rollout gate itself. {/* min-version: 2.1.154 */}Before v2.1.154, a variable that disables feature-flag evaluation, such as `DISABLE_TELEMETRY` or `DO_NOT_TRACK`, also produced this message; the "Remote Control requires feature-flag evaluation" entry below covers that configuration.
 
 ### "Couldn't verify Remote Control eligibility"
 
@@ -300,7 +301,7 @@ Claude Code could not reach the feature-flag service to check whether Remote Con
 
 ### "Remote Control requires feature-flag evaluation"
 
-The full message names the environment variable that caused it: `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, or `DISABLE_GROWTHBOOK`. These privacy opt-outs disable feature-flag evaluation, which Remote Control needs to check its rollout gate. Unset the named variable, or start the session in a shell without it. Before v2.1.154, this case surfaced as "Remote Control is not yet enabled for your account" instead of naming the variable.
+One of these variables is set: [`DISABLE_TELEMETRY`, `DO_NOT_TRACK`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, or `DISABLE_GROWTHBOOK`](/docs/en/env-vars). Each of them disables the feature-flag evaluation that Remote Control availability depends on, and the full message names the variable Claude Code found. Unset that variable wherever it's set, in your shell environment or in the `env` block of a [`settings.json` file](/docs/en/settings#available-settings). On versions before 2.1.154, the same configuration produces "Remote Control is not yet enabled for your account" instead.
 
 ### "Remote Control is only available when using Claude via api.anthropic.com"
 

@@ -822,9 +822,15 @@ Desktop and CLI read the same configuration files, so your setup carries over:
 * **[Settings](/docs/en/settings)** in `~/.claude.json` and `~/.claude/settings.json` are shared. Permission rules, allowed tools, and other settings in `settings.json` apply to Desktop sessions.
 * **Models**: the same [models](/docs/en/model-config#available-models) are available in both. In Desktop, select the model from the dropdown next to the send button. You can change the model mid-session from the same dropdown.
 
-<Note>
-  **MCP servers from the Claude Desktop chat app**: the Desktop app loads MCP servers from `claude_desktop_config.json` into Code tab sessions, alongside servers from `~/.claude.json` and `.mcp.json`. A server defined in `claude_desktop_config.json` is available in both the Desktop chat surface and the Code tab.
+#### MCP servers from the Claude Desktop chat app
 
+The Desktop app loads MCP servers from `claude_desktop_config.json` into local Code tab sessions, alongside servers from `~/.claude.json` and `.mcp.json`. A server you define in `claude_desktop_config.json` is available in both the Desktop chat surface and local Code tab sessions.
+
+If you define the same server name in `claude_desktop_config.json` and in `~/.claude.json` or `.mcp.json`, the Code tab in local sessions connects once and uses the `claude_desktop_config.json` definition.
+
+The app also re-delivers stdio servers from `~/.claude.json` to the embedded CLI in local sessions. When the top level of `~/.claude.json` (user scope) and `.mcp.json` define the same stdio server name, the Code tab uses the `~/.claude.json` definition, departing from the CLI [scope hierarchy](/docs/en/mcp#scope-hierarchy-and-precedence).
+
+<Note>
   The standalone CLI does not read `claude_desktop_config.json`. On macOS and WSL, run `claude mcp add-from-claude-desktop` to copy those servers into `~/.claude.json`. See [Import MCP servers from Claude Desktop](/docs/en/mcp#import-mcp-servers-from-claude-desktop) for the import flow and scope options.
 </Note>
 

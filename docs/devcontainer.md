@@ -57,6 +57,8 @@ When you open the container in VS Code or Codespaces, the feature also adds the 
     ```
 
     Replace the `image` line with your project's base image or remove it if your existing file uses a Dockerfile.
+
+    The Claude Code feature installs Node.js itself when the base image doesn't provide it. If that install fails and the build stops with `Failed to install Node.js and npm`, add `"ghcr.io/devcontainers/features/node:1": {}` to the `features` block above the Claude Code feature and rebuild.
   </Step>
 
   <Step title="Rebuild the container">
@@ -85,21 +87,26 @@ See [Choose your API provider](/docs/en/admin-setup#choose-your-api-provider) to
 
 ## Persist authentication and settings across rebuilds
 
-By default, the container's home directory is discarded on rebuild, so engineers must sign in again each time. Claude Code stores its authentication token, user settings, and session history under [`~/.claude`](/docs/en/claude-directory). Mount a named volume at that path to keep this state across rebuilds.
+By default, the container's home directory is discarded on rebuild, so engineers must sign in again each time. Claude Code stores its authentication token, user settings, and session history under the [`~/.claude`](/docs/en/claude-directory) directory. It stores your OAuth account, personal MCP servers, and per-project trust in [`~/.claude.json`](/docs/en/settings#global-config-settings), a separate file outside that directory, so mounting a volume at `~/.claude` alone doesn't keep you signed in. Mount a named volume at `~/.claude` and set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) to the same path so Claude Code writes `.claude.json` inside the volume.
 
-The following example mounts a volume at the home directory of the `node` user:
+The following example mounts the volume and sets `CLAUDE_CONFIG_DIR` for a container whose `remoteUser` is `node`:
 
 ```json devcontainer.json theme={null}
 "mounts": [
   "source=claude-code-config,target=/home/node/.claude,type=volume"
-]
+],
+"containerEnv": {
+  "CLAUDE_CONFIG_DIR": "/home/node/.claude"
+}
 ```
 
-Replace `/home/node` with the home directory of your container's `remoteUser`. If you mount the volume somewhere other than `~/.claude`, set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) to the mount path so Claude Code reads and writes there.
+Replace `/home/node` with the home directory of your container's `remoteUser`. If you already set `containerEnv`, for example in [Enforce organization policy](#enforce-organization-policy), add `CLAUDE_CONFIG_DIR` to that object rather than adding a second one.
 
 To isolate state per project rather than sharing one volume across all repositories, include the `${devcontainerId}` variable in the source name. The [reference configuration](https://github.com/anthropics/claude-code/blob/main/.devcontainer/devcontainer.json) uses `source=claude-code-config-${devcontainerId}` for this purpose.
 
-In GitHub Codespaces, `~/.claude` persists across stopping and starting a codespace, but is still cleared when you rebuild the container, so the volume mount above applies there too. To carry authentication across codespaces, store `ANTHROPIC_API_KEY` or a `CLAUDE_CODE_OAUTH_TOKEN` from [`claude setup-token`](/docs/en/authentication#generate-a-long-lived-token) as a [Codespaces secret](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces); Codespaces makes secrets available as environment variables inside the container automatically.
+In GitHub Codespaces, `~/.claude` persists when you stop and start a codespace but is cleared when you rebuild the container, so the configuration above applies there too.
+
+To carry authentication across codespaces, store `ANTHROPIC_API_KEY` or a `CLAUDE_CODE_OAUTH_TOKEN` from [`claude setup-token`](/docs/en/authentication#generate-a-long-lived-token) as a [Codespaces secret](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces). Codespaces exposes secrets as environment variables inside the container automatically.
 
 ## Enforce organization policy
 
@@ -122,6 +129,8 @@ To set [environment variables](/docs/en/env-vars) that apply to every Claude Cod
   "DISABLE_AUTOUPDATER": "1"
 }
 ```
+
+`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` also disables the feature-flag evaluation that [Remote Control](/docs/en/remote-control#requirements) depends on, so sessions in the container can't use Remote Control.
 
 The Dev Container Feature always installs the latest Claude Code release. To pin a specific Claude Code version for reproducible builds, install it from your Dockerfile with `npm install -g @anthropic-ai/claude-code@X.Y.Z` instead of using the feature, and set `DISABLE_AUTOUPDATER` as shown above.
 

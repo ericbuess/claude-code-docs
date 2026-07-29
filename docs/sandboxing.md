@@ -46,7 +46,7 @@ On macOS, there is nothing to install: sandboxing uses the built-in Seatbelt fra
   </Step>
 </Steps>
 
-Selecting a mode in the panel writes to your project's local settings at `.claude/settings.local.json`, which apply to the current project and are not checked into git. To enable the sandbox across all of your projects, set [`sandbox.enabled`](/docs/en/settings#sandbox-settings) to `true` in your user settings at `~/.claude/settings.json`. To enforce sandboxing for every developer in an organization, use [managed settings](#enforce-sandboxing-with-managed-settings).
+Selecting a mode in the panel writes to your project's local settings at `.claude/settings.local.json`, which apply to the current project. Claude Code adds that file to your global gitignore when it saves a setting there. To enable the sandbox across all of your projects, set [`sandbox.enabled`](/docs/en/settings#sandbox-settings) to `true` in your user settings at `~/.claude/settings.json`. To enforce sandboxing for every developer in an organization, use [managed settings](#enforce-sandboxing-with-managed-settings).
 
 <Warning>
   By default, if the sandbox cannot start because dependencies are missing or the platform is unsupported, Claude Code shows a warning and runs commands without sandboxing. To make this a hard failure instead, set [`sandbox.failIfUnavailable`](/docs/en/settings#sandbox-settings) to `true`. This is intended for managed deployments that require sandboxing as a security gate.

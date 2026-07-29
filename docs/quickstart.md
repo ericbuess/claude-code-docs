@@ -29,19 +29,19 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
+    ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
+    ```batch theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
@@ -57,7 +57,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
+    ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
 
@@ -69,7 +69,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -99,7 +99,7 @@ claude
 
 For Claude subscription or Console accounts, follow the prompts to complete authentication in your browser. If you've set the `ANTHROPIC_API_KEY` environment variable, Claude Code skips the login prompt and asks you to approve the key instead. To switch accounts later or re-authenticate, type `/login` inside the running session:
 
-```text theme={null}
+```text wrap theme={null}
 /login
 ```
 
@@ -133,35 +133,35 @@ You'll see the Claude Code prompt with the version, current model, and working d
 
 Let's start with understanding your codebase. Try one of these commands:
 
-```text theme={null}
+```text wrap theme={null}
 what does this project do?
 ```
 
 Claude will analyze your files and provide a summary. You can also ask more specific questions:
 
-```text theme={null}
+```text wrap theme={null}
 what technologies does this project use?
 ```
 
-```text theme={null}
+```text wrap theme={null}
 where is the main entry point?
 ```
 
-```text theme={null}
+```text wrap theme={null}
 explain the folder structure
 ```
 
 You can also ask Claude about its own capabilities:
 
-```text theme={null}
+```text wrap theme={null}
 what can Claude Code do?
 ```
 
-```text theme={null}
+```text wrap theme={null}
 how do I create custom skills in Claude Code?
 ```
 
-```text theme={null}
+```text wrap theme={null}
 can Claude Code work with Docker?
 ```
 
@@ -173,7 +173,7 @@ can Claude Code work with Docker?
 
 Now let's make Claude Code do some actual coding. Try a simple task:
 
-```text theme={null}
+```text wrap theme={null}
 add a hello world function to the main file
 ```
 
@@ -192,25 +192,25 @@ Claude Code will:
 
 Claude Code makes Git operations conversational:
 
-```text theme={null}
+```text wrap theme={null}
 what files have I changed?
 ```
 
-```text theme={null}
+```text wrap theme={null}
 commit my changes with a descriptive message
 ```
 
 You can also prompt for more complex Git operations:
 
-```text theme={null}
+```text wrap theme={null}
 create a new branch called feature/quickstart
 ```
 
-```text theme={null}
+```text wrap theme={null}
 show me the last 5 commits
 ```
 
-```text theme={null}
+```text wrap theme={null}
 help me resolve merge conflicts
 ```
 
@@ -220,13 +220,13 @@ Claude is proficient at debugging and feature implementation.
 
 Describe what you want in natural language:
 
-```text theme={null}
+```text wrap theme={null}
 add input validation to the user registration form
 ```
 
 Or fix existing issues:
 
-```text theme={null}
+```text wrap theme={null}
 there's a bug where users can submit empty forms - fix it
 ```
 
@@ -243,25 +243,25 @@ There are a number of ways to work with Claude:
 
 **Refactor code**
 
-```text theme={null}
+```text wrap theme={null}
 refactor the authentication module to use async/await instead of callbacks
 ```
 
 **Write tests**
 
-```text theme={null}
+```text wrap theme={null}
 write unit tests for the calculator functions
 ```
 
 **Update documentation**
 
-```text theme={null}
+```text wrap theme={null}
 update the README with installation instructions
 ```
 
 **Code review**
 
-```text theme={null}
+```text wrap theme={null}
 review my changes and suggest improvements
 ```
 
@@ -307,7 +307,7 @@ For more, see [best practices](/docs/en/best-practices) and [common workflows](/
   <Accordion title="Use step-by-step instructions">
     Break complex tasks into steps:
 
-    ```text theme={null}
+    ```text wrap theme={null}
     1. create a new database table for user profiles
     2. create an API endpoint to get and update user profiles
     3. build a webpage that allows users to see and edit their information
@@ -317,11 +317,11 @@ For more, see [best practices](/docs/en/best-practices) and [common workflows](/
   <Accordion title="Let Claude explore first">
     Before making changes, let Claude understand your code:
 
-    ```text theme={null}
+    ```text wrap theme={null}
     analyze the database schema
     ```
 
-    ```text theme={null}
+    ```text wrap theme={null}
     build a dashboard showing products that are most frequently returned by our UK customers
     ```
   </Accordion>

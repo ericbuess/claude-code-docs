@@ -45,21 +45,21 @@ Suppose you've just joined a new project and need to understand its structure qu
   </Step>
 
   <Step title="Ask for a high-level overview">
-    ```text theme={null}
+    ```text wrap theme={null}
     give me an overview of this codebase
     ```
   </Step>
 
   <Step title="Dive deeper into specific components">
-    ```text theme={null}
+    ```text wrap theme={null}
     explain the main architecture patterns used here
     ```
 
-    ```text theme={null}
+    ```text wrap theme={null}
     what are the key data models?
     ```
 
-    ```text theme={null}
+    ```text wrap theme={null}
     how is authentication handled?
     ```
   </Step>
@@ -79,19 +79,19 @@ Suppose you need to locate code related to a specific feature or functionality.
 
 <Steps>
   <Step title="Ask Claude to find relevant files">
-    ```text theme={null}
+    ```text wrap theme={null}
     find the files that handle user authentication
     ```
   </Step>
 
   <Step title="Get context on how components interact">
-    ```text theme={null}
+    ```text wrap theme={null}
     how do these authentication files work together?
     ```
   </Step>
 
   <Step title="Understand the execution flow">
-    ```text theme={null}
+    ```text wrap theme={null}
     trace the login process from front-end to database
     ```
   </Step>
@@ -113,19 +113,19 @@ Suppose you've encountered an error message and need to find and fix its source.
 
 <Steps>
   <Step title="Share the error with Claude">
-    ```text theme={null}
+    ```text wrap theme={null}
     I'm seeing an error when I run npm test
     ```
   </Step>
 
   <Step title="Ask for fix recommendations">
-    ```text theme={null}
+    ```text wrap theme={null}
     suggest a few ways to fix the @ts-ignore in user.ts
     ```
   </Step>
 
   <Step title="Apply the fix">
-    ```text theme={null}
+    ```text wrap theme={null}
     update user.ts to add the null check you suggested
     ```
   </Step>
@@ -147,25 +147,25 @@ Suppose you need to update old code to use modern patterns and practices.
 
 <Steps>
   <Step title="Identify legacy code for refactoring">
-    ```text theme={null}
+    ```text wrap theme={null}
     find deprecated API usage in our codebase
     ```
   </Step>
 
   <Step title="Get refactoring recommendations">
-    ```text theme={null}
+    ```text wrap theme={null}
     suggest how to refactor utils.js to use modern JavaScript features
     ```
   </Step>
 
   <Step title="Apply the changes safely">
-    ```text theme={null}
+    ```text wrap theme={null}
     refactor utils.js to use ES2024 features while maintaining the same behavior
     ```
   </Step>
 
   <Step title="Verify the refactoring">
-    ```text theme={null}
+    ```text wrap theme={null}
     run tests for the refactored code
     ```
   </Step>
@@ -187,25 +187,25 @@ Suppose you need to add tests for uncovered code.
 
 <Steps>
   <Step title="Identify untested code">
-    ```text theme={null}
+    ```text wrap theme={null}
     find functions in NotificationsService.swift that are not covered by tests
     ```
   </Step>
 
   <Step title="Generate test scaffolding">
-    ```text theme={null}
+    ```text wrap theme={null}
     add tests for the notification service
     ```
   </Step>
 
   <Step title="Add meaningful test cases">
-    ```text theme={null}
+    ```text wrap theme={null}
     add test cases for edge conditions in the notification service
     ```
   </Step>
 
   <Step title="Run and verify tests">
-    ```text theme={null}
+    ```text wrap theme={null}
     run the new tests and fix any failures
     ```
   </Step>
@@ -223,19 +223,19 @@ You can create pull requests by asking Claude directly ("create a pr for my chan
 
 <Steps>
   <Step title="Summarize your changes">
-    ```text theme={null}
+    ```text wrap theme={null}
     summarize the changes I've made to the authentication module
     ```
   </Step>
 
   <Step title="Generate a pull request">
-    ```text theme={null}
+    ```text wrap theme={null}
     create a pr
     ```
   </Step>
 
   <Step title="Review and refine">
-    ```text theme={null}
+    ```text wrap theme={null}
     enhance the PR description with more context about the security improvements
     ```
   </Step>
@@ -253,25 +253,25 @@ Suppose you need to add or update documentation for your code.
 
 <Steps>
   <Step title="Identify undocumented code">
-    ```text theme={null}
+    ```text wrap theme={null}
     find functions without proper JSDoc comments in the auth module
     ```
   </Step>
 
   <Step title="Generate documentation">
-    ```text theme={null}
+    ```text wrap theme={null}
     add JSDoc comments to the undocumented functions in auth.js
     ```
   </Step>
 
   <Step title="Review and enhance">
-    ```text theme={null}
+    ```text wrap theme={null}
     improve the generated documentation with more context and examples
     ```
   </Step>
 
   <Step title="Verify documentation">
-    ```text theme={null}
+    ```text wrap theme={null}
     check if the documentation follows our project standards
     ```
   </Step>
@@ -309,35 +309,35 @@ Suppose you need to work with images in your codebase, and you want Claude's hel
   </Step>
 
   <Step title="Ask Claude to analyze the image">
-    ```text theme={null}
+    ```text wrap theme={null}
     What does this image show?
     ```
 
-    ```text theme={null}
+    ```text wrap theme={null}
     Describe the UI elements in this screenshot
     ```
 
-    ```text theme={null}
+    ```text wrap theme={null}
     Are there any problematic elements in this diagram?
     ```
   </Step>
 
   <Step title="Use images for context">
-    ```text theme={null}
+    ```text wrap theme={null}
     Here's a screenshot of the error. What's causing it?
     ```
 
-    ```text theme={null}
+    ```text wrap theme={null}
     This is our current database schema. How should we modify it for the new feature?
     ```
   </Step>
 
   <Step title="Get code suggestions from visual content">
-    ```text theme={null}
+    ```text wrap theme={null}
     Generate CSS to match this design mockup
     ```
 
-    ```text theme={null}
+    ```text wrap theme={null}
     What HTML structure would recreate this component?
     ```
   </Step>
@@ -361,7 +361,7 @@ Use @ to quickly include files or directories without waiting for Claude to read
 
 <Steps>
   <Step title="Reference a single file">
-    ```text theme={null}
+    ```text wrap theme={null}
     Explain the logic in @src/utils/auth.js
     ```
 
@@ -369,7 +369,7 @@ Use @ to quickly include files or directories without waiting for Claude to read
   </Step>
 
   <Step title="Reference a directory">
-    ```text theme={null}
+    ```text wrap theme={null}
     What's the structure of @src/components?
     ```
 
@@ -377,7 +377,7 @@ Use @ to quickly include files or directories without waiting for Claude to read
   </Step>
 
   <Step title="Reference MCP resources">
-    ```text theme={null}
+    ```text wrap theme={null}
     Show me the data from @github:repos/owner/repo/issues
     ```
 
@@ -422,27 +422,27 @@ Claude has built-in access to its documentation and can answer questions about i
 
 #### Example questions
 
-```text theme={null}
+```text wrap theme={null}
 can Claude Code create pull requests?
 ```
 
-```text theme={null}
+```text wrap theme={null}
 how does Claude Code handle permissions?
 ```
 
-```text theme={null}
+```text wrap theme={null}
 what skills are available?
 ```
 
-```text theme={null}
+```text wrap theme={null}
 how do I use MCP with Claude Code?
 ```
 
-```text theme={null}
+```text wrap theme={null}
 how do I configure Claude Code for Amazon Bedrock?
 ```
 
-```text theme={null}
+```text wrap theme={null}
 what are the limitations of Claude Code?
 ```
 
@@ -494,7 +494,7 @@ You can also press `Shift+Tab` mid-session to cycle to plan mode. The cycle runs
 
 Exploring a large codebase fills your context with file reads. Delegate the exploration so only the findings come back.
 
-```text theme={null}
+```text wrap theme={null}
 use a subagent to investigate how our auth system handles token refresh
 ```
 

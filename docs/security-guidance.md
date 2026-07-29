@@ -156,11 +156,11 @@ The plugin also reads `.claude/security-patterns.yml` and `.claude/security-patt
 
 The plugin looks for `claude-security-guidance.md` and `security-patterns.yaml` in the same locations, independently of how the plugin was enabled:
 
-| Scope         | Path                                        | Notes                                    |
-| :------------ | :------------------------------------------ | :--------------------------------------- |
-| User          | `~/.claude/claude-security-guidance.md`     | Applies to every project on your machine |
-| Project       | `.claude/claude-security-guidance.md`       | Checked in with the repository           |
-| Project local | `.claude/claude-security-guidance.local.md` | Gitignored, for personal overrides       |
+| Scope         | Path                                        | Notes                                               |
+| :------------ | :------------------------------------------ | :-------------------------------------------------- |
+| User          | `~/.claude/claude-security-guidance.md`     | Applies to every project on your machine            |
+| Project       | `.claude/claude-security-guidance.md`       | Checked in with the repository                      |
+| Project local | `.claude/claude-security-guidance.local.md` | For personal overrides; add it to your `.gitignore` |
 
 The plugin loads all locations that exist and concatenates them, with a combined cap of 8 KB for the guidance file. Administrators can distribute organization-wide rules by pushing the user-scope file to `~/.claude/` through device management. The same paths apply to `security-patterns.yaml`.
 

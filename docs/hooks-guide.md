@@ -394,7 +394,7 @@ See the [CwdChanged](/docs/en/hooks#cwdchanged) and [FileChanged](/docs/en/hooks
 
 Skip the approval dialog for tool calls you always allow. This example auto-approves `ExitPlanMode`, the tool Claude calls when it finishes presenting a plan and asks to proceed, so you aren't prompted every time a plan is ready.
 
-Unlike the exit-code examples above, auto-approval requires your hook to write a JSON decision to stdout. A `PermissionRequest` hook fires when Claude Code is about to show a permission dialog, and returning `"behavior": "allow"` answers it on your behalf.
+Unlike the exit-code examples above, auto-approval requires your hook to write a JSON decision to stdout. A `PermissionRequest` hook fires when Claude Code is about to ask you for permission, and returning `"behavior": "allow"` answers the request on your behalf.
 
 The matcher scopes the hook to `ExitPlanMode` only, so no other prompts are affected. Add this to `~/.claude/settings.json`:
 
@@ -453,7 +453,7 @@ Hook events fire at specific lifecycle points in Claude Code. When an event fire
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
-| `PermissionRequest`   | When a permission dialog appears                                                                                                                       |
+| `PermissionRequest`   | When a tool call needs a permission decision                                                                                                           |
 | `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
 | `PostToolUse`         | After a tool call succeeds                                                                                                                             |
 | `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
@@ -775,14 +775,14 @@ The `if` field accepts the same patterns as permission rules: `"Bash(git *)"`, `
 
 Where you add a hook determines its scope:
 
-| Location                                                   | Scope                              | Shareable                                  |
-| :--------------------------------------------------------- | :--------------------------------- | :----------------------------------------- |
-| `~/.claude/settings.json`                                  | All your projects                  | No, local to your machine                  |
-| `.claude/settings.json`                                    | Single project                     | Yes, can be committed to the repo          |
-| `.claude/settings.local.json`                              | Single project                     | No, gitignored when Claude Code creates it |
-| Managed policy settings                                    | Organization-wide                  | Yes, admin-controlled                      |
-| [Plugin](/docs/en/plugins) `hooks/hooks.json`                   | When plugin is enabled             | Yes, bundled with the plugin               |
-| [Skill](/docs/en/skills) or [agent](/docs/en/sub-agents) frontmatter | While the skill or agent is active | Yes, defined in the component file         |
+| Location                                                   | Scope                              | Shareable                                             |
+| :--------------------------------------------------------- | :--------------------------------- | :---------------------------------------------------- |
+| `~/.claude/settings.json`                                  | All your projects                  | No, local to your machine                             |
+| `.claude/settings.json`                                    | Single project                     | Yes, can be committed to the repo                     |
+| `.claude/settings.local.json`                              | Single project                     | No, gitignored when Claude Code saves a setting to it |
+| Managed policy settings                                    | Organization-wide                  | Yes, admin-controlled                                 |
+| [Plugin](/docs/en/plugins) `hooks/hooks.json`                   | When plugin is enabled             | Yes, bundled with the plugin                          |
+| [Skill](/docs/en/skills) or [agent](/docs/en/sub-agents) frontmatter | While the skill or agent is active | Yes, defined in the component file                    |
 
 Run [`/hooks`](/docs/en/hooks#the-%2Fhooks-menu) in Claude Code to browse all configured hooks grouped by event.
 
@@ -904,8 +904,11 @@ Keep these constraints in mind when designing hooks:
   * `command`, `http`, `mcp_tool`: 10 minutes. `UserPromptSubmit` lowers these to 30 seconds, and `MessageDisplay` lowers them to 10 seconds.
   * `prompt`: 30 seconds.
   * `agent`: 60 seconds.
+  * [`SessionEnd`](/docs/en/hooks#sessionend) hooks of any type share a 1.5-second budget. If your settings set a longer per-hook `timeout`, Claude Code raises the budget to match, up to 60 seconds.
 * `PostToolUse` hooks can't undo actions since the tool has already executed.
-* `PermissionRequest` hooks don't fire in [non-interactive mode](/docs/en/headless) with the `-p` flag. Use `PreToolUse` hooks for automated permission decisions.
+* `PermissionRequest` hooks fire when Claude Code is about to ask you for permission.
+  * In [non-interactive mode](/docs/en/headless) with the `-p` flag, that prompt only exists when the Agent SDK's [`canUseTool` callback](/docs/en/agent-sdk/permissions) supplies it. In plain `-p` runs or with `--permission-prompt-tool`, use `PreToolUse` hooks for automated permission decisions instead.
+  * Background subagents can't show a prompt in non-interactive mode. Claude Code still runs the hooks for their tool calls, and if no hook returns a decision, it denies the call. In an interactive session, background subagent prompts surface in your main session and the hooks fire as usual.
 * `Stop` hooks fire whenever Claude finishes responding, not only at task completion. They don't fire on user interrupts. API errors fire [StopFailure](/docs/en/hooks#stopfailure) instead.
 * When multiple `PreToolUse` hooks return [`updatedInput`](/docs/en/hooks#pretooluse) to rewrite a tool's arguments, the last one to finish takes effect. Since hooks run in parallel, the order is non-deterministic. Avoid having more than one hook modify the same tool's input.
 
@@ -922,7 +925,7 @@ The hook is configured but never executes.
 * Run `/hooks` and confirm the hook appears under the correct event
 * Check that the matcher pattern matches the tool name exactly. Matchers are case-sensitive
 * Verify you're triggering the right event type: `PreToolUse` fires before tool execution, `PostToolUse` fires after
-* If using `PermissionRequest` hooks in non-interactive mode with the `-p` flag, switch to `PreToolUse` instead
+* In non-interactive mode with the `-p` flag, `PermissionRequest` hooks fire only when the Agent SDK's `canUseTool` callback supplies the prompt, or for tool calls inside background subagents. In plain `-p` runs or with `--permission-prompt-tool`, use `PreToolUse` hooks instead
 
 ### Hook error in output
 

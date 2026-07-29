@@ -8,6 +8,8 @@
 
 Claude Code supports various enterprise network and security configurations through environment variables. This includes routing traffic through corporate proxy servers, trusting custom Certificate Authorities (CA), and authenticating with mutual Transport Layer Security (mTLS) certificates for enhanced security.
 
+Set these environment variables before you launch Claude Code. Variables exported in your shell are read once at startup, so a running session doesn't pick up later changes to your shell environment.
+
 <Note>
   All environment variables shown on this page can also be configured in [`settings.json`](/docs/en/settings).
 </Note>
@@ -32,6 +34,8 @@ export NO_PROXY="localhost,192.168.1.1,example.com,.example.com"
 # Bypass proxy for all requests
 export NO_PROXY="*"
 ```
+
+Lowercase variants also work, and Claude Code uses the first one that's set in the order `https_proxy`, `HTTPS_PROXY`, `http_proxy`, `HTTP_PROXY`.
 
 <Note>
   Claude Code does not support SOCKS proxies.
@@ -112,6 +116,32 @@ In [cloud sessions](/docs/en/claude-code-on-the-web), the hosting environment ma
 Claude Code notes each ignored key in the session's debug log.
 
 In [Claude Desktop](/docs/en/desktop) sessions where the app manages the provider connection, such as the Code tab on a [third-party provider](/docs/en/third-party-integrations) and Cowork sessions, Claude Code reads these variables and the proxy variables `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` only from [managed settings](/docs/en/settings#settings-files) and `~/.claude/settings.json`: it ignores them in a repository's own settings files, so a checked-out repository can't redirect the TLS or proxy path of a session whose credentials come from the app. In a local, SSH, or WSL Code tab session signed in through claude.ai, the app doesn't manage the connection, and Claude Code reads these variables from every settings scope, like any terminal session; [cloud sessions](/docs/en/claude-code-on-the-web) follow the cloud-session rules above wherever you start them. Before v2.1.217, Claude Code ignored these variables in every settings file when the app managed the connection.
+
+## Verify your configuration
+
+You usually find out about a wrong proxy address or a bad certificate path from a [connection or certificate error](/docs/en/errors#network-and-connection-errors) on a later request, since Claude Code doesn't validate most of these settings when it reads them. The one setting it checks at startup is the proxy URL: when it can't parse the value, such as one missing the `http://` scheme, Claude Code stops launch with an error naming the variable to fix.
+
+To confirm your configuration loaded before you send a request, start Claude Code with debug logging:
+
+```bash theme={null}
+claude --debug
+```
+
+Debug output goes to `~/.claude/debug/<session-id>.txt` rather than the terminal, or to a path you set with `--debug-file <path>`. In the log, look for the lines that confirm each file loaded:
+
+```text theme={null}
+CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (/etc/ssl/certs/corp-ca.pem)
+mTLS: Loaded client certificate from CLAUDE_CODE_CLIENT_CERT
+mTLS: Loaded client key from CLAUDE_CODE_CLIENT_KEY
+```
+
+If Claude Code can't read one of these files, the log shows a `Failed to read` or `Failed to load` line with the reason instead.
+
+You can also run `/status` in an interactive session and check these rows:
+
+* **Proxy**: shows the active proxy URL, and marks a value it can't parse as invalid and ignored.
+* **mTLS client cert** and **mTLS client key**: appear only when the files loaded, so a missing row means the load failed and the debug log has the reason.
+* **Additional CA cert(s)**: shows the `NODE_EXTRA_CA_CERTS` path without checking that the file loaded, so confirm this one in the debug log.
 
 ## Apply network settings to background agents
 
