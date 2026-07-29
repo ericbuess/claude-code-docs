@@ -104,7 +104,7 @@ When the hint passes all checks, Claude Code shows a prompt like the following:
 ─────────────────────────────────────────────────────────────
 ```
 
-The prompt names the command that produced the hint so users can spot a mismatch between the tool and the plugin it recommends. If the user does not respond within 30 seconds, the prompt dismisses as **No**.
+The prompt names the command that produced the hint so users can spot a mismatch between the tool and the plugin it recommends. If the user doesn't respond within 30 seconds, Claude Code dismisses the prompt as **No**.
 
 Prompt frequency is bounded, and some sessions never prompt:
 

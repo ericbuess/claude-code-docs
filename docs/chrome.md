@@ -65,7 +65,7 @@ Chrome integration also requires signing in with `/login`. If you authenticate w
     type "hooks", and tell me what results appear
     ```
 
-    The first browser action asks for permission to use the `claude-in-chrome` skill. Approve it and Claude opens a new tab and starts the task.
+    Before Claude's first browser action, Claude Code asks for permission to use the `claude-in-chrome` skill. Approve it and Claude opens a new tab and starts the task.
   </Step>
 </Steps>
 

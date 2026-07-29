@@ -16,11 +16,11 @@ For comprehensive information about Skills, including benefits, architecture, an
 
 When using the Claude Agent SDK, Skills are:
 
-1. **Defined as filesystem artifacts**: Created as `SKILL.md` files in specific directories (`.claude/skills/`)
-2. **Loaded from filesystem**: Skills are loaded from filesystem locations governed by `settingSources` (TypeScript) or `setting_sources` (Python)
-3. **Automatically discovered**: Once filesystem settings are loaded, Skill metadata is discovered at startup from user and project directories; full content loaded when triggered
+1. **Defined as filesystem artifacts**: you create each Skill as a `SKILL.md` file in its own directory, such as `.claude/skills/<name>/SKILL.md`
+2. **Loaded from filesystem**: the SDK loads Skills from the filesystem locations governed by `settingSources` (TypeScript) or `setting_sources` (Python)
+3. **Automatically discovered**: once filesystem settings load, the SDK discovers Skill metadata at startup from user and project directories, and loads the full content when Claude invokes the Skill
 4. **Model-invoked**: Claude autonomously chooses when to use them based on context
-5. **Filtered via the `skills` option**: Discovered skills are enabled by default. Pass a list of skill names, `"all"`, or `[]` to control which are available in the session
+5. **Filtered via the `skills` option**: discovered skills are enabled by default. Pass a list of skill names, `"all"`, or `[]` to control which are available in the session
 
 Unlike subagents (which can be defined programmatically), Skills must be created as filesystem artifacts. The SDK does not provide a programmatic API for registering Skills.
 
@@ -108,7 +108,7 @@ Skills are loaded from filesystem directories based on your `settingSources`/`se
 
 ## Creating Skills
 
-Skills are defined as directories containing a `SKILL.md` file with YAML frontmatter and Markdown content. The `description` field determines when Claude invokes your Skill.
+Create each Skill as a directory containing a `SKILL.md` file with YAML frontmatter and Markdown content. The `description` field determines when Claude invokes your Skill.
 
 **Example directory structure**:
 

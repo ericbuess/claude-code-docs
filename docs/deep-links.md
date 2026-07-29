@@ -81,8 +81,8 @@ Use `cwd` when everyone who clicks the link has the project at the same absolute
 
 Use `repo` when the link is shared and each person clones to a different location. Claude Code resolves the slug to a local path as follows:
 
-* Each time you run `claude` in a Git repository, that directory's filesystem path is recorded against the repository's GitHub `owner/name` slug.
-* When a deep link arrives, `repo` opens whichever matching path you used most recently. Multiple clones and worktrees are tracked separately, so it picks the one you worked in last.
+* Each time you run `claude` in a Git repository, Claude Code records that directory's path against the repository's GitHub `owner/name` slug.
+* When a deep link arrives, `repo` opens whichever matching path you used most recently. Claude Code tracks multiple clones and worktrees separately, so it picks the one you worked in last.
 * The lookup only finds paths where you have already run Claude Code at least once.
 * The link does not change which branch is checked out. The session opens in whatever state that directory is currently in.
 
@@ -182,7 +182,7 @@ Some Markdown renderers only allow `http` and `https` links and strip other URL 
 
 ### The session opens in my home directory instead of the repo
 
-The `repo` parameter only resolves to clones Claude Code has already seen. Run `claude` inside the clone once so its path is recorded, or switch the link to use `cwd` with an absolute path.
+The `repo` parameter only resolves to clones Claude Code has already seen. Run `claude` inside the clone once so Claude Code records its path, or switch the link to use `cwd` with an absolute path.
 
 ### The link opens the wrong terminal
 

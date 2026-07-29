@@ -78,7 +78,7 @@ By default the list shows every background session you've started, across all yo
 claude agents --cwd ~/projects/my-app
 ```
 
-This shows only sessions started under that directory. A session that has [moved into a worktree](#how-file-edits-are-isolated) under `~/projects/my-app/.claude/worktrees/` still counts as belonging to `~/projects/my-app`.
+This shows only sessions started under that directory. It still lists a session that has [moved into a worktree](#how-file-edits-are-isolated) under `~/projects/my-app/.claude/worktrees/`.
 
 Interactive sessions you have open in other terminals don't appear until you [background them](#from-inside-a-session). [Subagents](/docs/en/sub-agents) and [teammates](/docs/en/agent-teams) a session spawns aren't listed as separate rows.
 
@@ -528,7 +528,7 @@ claude agents --permission-mode plan --model opus --effort high
 
 The active defaults appear in the footer below the dispatch input.
 
-Using `bypassPermissions` with `claude --bg --permission-mode` is refused until you have accepted the bypass disclaimer by running `claude --dangerously-skip-permissions` once interactively, since that mode lets a session you aren't watching act without approval. Passing `--dangerously-skip-permissions` or `--permission-mode bypassPermissions` to `claude agents` shows the same disclaimer when you haven't accepted it before, and accepting applies `bypassPermissions` to the sessions you launch from the view. Passing `--allow-dangerously-skip-permissions` shows the same disclaimer too, and accepting makes `bypassPermissions` available in the `Shift+Tab` cycle of those sessions without starting them in it.
+Claude Code refuses `claude --bg --permission-mode bypassPermissions` until you've accepted the bypass disclaimer by running `claude --dangerously-skip-permissions` once interactively, since that mode lets a session you aren't watching act without approval. Passing `--dangerously-skip-permissions` or `--permission-mode bypassPermissions` to `claude agents` shows the same disclaimer when you haven't accepted it before, and accepting applies `bypassPermissions` to the sessions you launch from the view. Passing `--allow-dangerously-skip-permissions` shows the same disclaimer too, and accepting makes `bypassPermissions` available in the `Shift+Tab` cycle of those sessions without starting them in it.
 
 ### Settings, plugins, and MCP servers
 
@@ -589,7 +589,7 @@ Each entry describes one session:
 
 ## How background sessions are hosted
 
-Every session listed in agent view is considered a background session, whether or not you're currently attached to it. By contrast, a session started by running `claude` directly is tied to that terminal and ends when it closes, unless you [send it to the background](#from-inside-a-session).
+Claude Code treats every session listed in agent view as a background session, whether or not you're currently attached to it. By contrast, a session started by running `claude` directly is tied to that terminal and ends when it closes, unless you [send it to the background](#from-inside-a-session).
 
 ### The supervisor process
 
@@ -614,7 +614,7 @@ When the supervisor's environment carries a different gateway or none, the worke
 
 When the supervisor stops an idle session and you later wake it by attaching, peeking, or replying, your environment's gateway is forwarded again under the same conditions as a fresh dispatch. Waking a session from a shell without the gateway restarts it against your settings and stored credentials instead.
 
-Each background session is its own Claude Code process, managed by the supervisor rather than tied to your terminal. A session that's actively working, waiting for your input, or has a terminal attached keeps its process running. A running background shell command, subagent, dynamic workflow, or monitor counts as active work, so a long-running process such as a dev server keeps the session alive.
+Each background session is its own Claude Code process, managed by the supervisor rather than tied to your terminal. A session that's actively working, waiting for your input, or has a terminal attached keeps its process running. The supervisor counts a running background shell command, subagent, dynamic workflow, or monitor as active work, so a long-running process such as a dev server keeps the session alive.
 
 Once a session finishes and sits unattached for about an hour, the supervisor stops its process to free resources. A session you have [pinned](#organize-the-list) with `Ctrl+T` is exempt and keeps its process running while idle. The transcript and state stay on disk either way, and the next time you attach, peek, or reply to a stopped session, the supervisor starts a fresh process from where it left off. When every session has finished and no terminal is connected, the supervisor itself exits and starts again the next time you need it.
 

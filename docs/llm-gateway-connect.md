@@ -301,7 +301,7 @@ You can also set `ANTHROPIC_CUSTOM_HEADERS` in the `env` block of a settings fil
 
 ### Add gateway models to the model picker
 
-Model discovery queries the gateway for its model list at startup and adds those names to the `/model` picker alongside the built-in entries.
+With model discovery enabled, Claude Code queries the gateway for its model list at startup and adds those names to the `/model` picker alongside the built-in entries.
 
 Enable it if your gateway serves model names that aren't in Claude Code's built-in list and you want to select them from the picker. If the built-in models are what you use, you don't need discovery; your administrator may also have already enabled it through managed settings.
 

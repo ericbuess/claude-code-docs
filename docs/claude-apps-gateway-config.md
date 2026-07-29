@@ -779,7 +779,7 @@ telemetry:
 
 ## Client-side managed settings
 
-Everything above configures the gateway server. Pointing developer machines at it is configured separately, on each device, through Claude Code's [managed settings](/docs/en/settings#settings-files). The gateway can't push the login keys itself, because they're what tell the client where the gateway is.
+Everything above configures the gateway server. You point developer machines at the gateway separately, on each device, through Claude Code's [managed settings](/docs/en/settings#settings-files). The gateway can't push the login keys itself, because they're what tell the client where the gateway is.
 
 For the CLI, set these keys in the per-OS `managed-settings.json`. The two login keys route each developer's `/login` to your gateway:
 

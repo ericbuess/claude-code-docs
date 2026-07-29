@@ -123,7 +123,7 @@ Interrupt the process with Ctrl+C to stop a non-interactive goal before the cond
 
 ## How evaluation works
 
-`/goal` is a wrapper around a session-scoped [prompt-based Stop hook](/docs/en/hooks#prompt-based-hooks). Each time Claude finishes a turn, the condition and the conversation so far are sent to your configured [small fast model](/docs/en/model-config), which defaults to Haiku on the Claude API; on a third-party provider, check your [provider page](/docs/en/third-party-integrations) for the platform's default. The model answers yes or no and gives a short reason.
+`/goal` is a wrapper around a session-scoped [prompt-based Stop hook](/docs/en/hooks#prompt-based-hooks). Each time Claude finishes a turn, Claude Code sends the condition and the conversation so far to your configured [small fast model](/docs/en/model-config), which defaults to Haiku on the Claude API; on a third-party provider, check your [provider page](/docs/en/third-party-integrations) for the platform's default. The model answers yes or no and gives a short reason.
 
 * **No**: Claude keeps working and takes the reason as guidance for the next turn.
 * **Yes**: Claude Code clears the goal and records an achieved entry in the transcript.

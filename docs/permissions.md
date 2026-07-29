@@ -6,7 +6,7 @@
 
 > Control what Claude Code can access and do with fine-grained permission rules, modes, and managed policies.
 
-Claude Code supports fine-grained permissions so that you can specify exactly what the agent is allowed to do and what it can't. Permission settings can be checked into version control and distributed to all developers in your organization, as well as customized by individual developers.
+Claude Code supports fine-grained permissions so that you can specify exactly what the agent is allowed to do and what it can't. You can check permission settings into version control to share them with every developer in your organization, and each developer can customize their own.
 
 ## Permission system
 

@@ -97,7 +97,7 @@ Output style files support these frontmatter fields:
 
 Output styles directly modify Claude Code's system prompt.
 
-* All output styles have their own custom instructions added to the end of the system prompt.
+* Claude Code adds each output style's custom instructions to the end of the system prompt.
 * All output styles trigger reminders for Claude to adhere to the output style instructions during the conversation.
 * Custom output styles leave out Claude Code's built-in software engineering instructions, such as how to scope changes, write comments, and verify work, unless `keep-coding-instructions` is set to `true`.
 
