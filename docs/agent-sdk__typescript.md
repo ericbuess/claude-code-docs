@@ -4303,6 +4303,8 @@ type SDKTaskNotificationMessage = {
 };
 ```
 
+Claude Code prepends a notice to every task notification it sends to the model. The notice states that no human input has occurred, so the model doesn't treat the notification as a user instruction or approval. To detect a task-notification turn, check `origin.kind === "task-notification"` on [`SDKUserMessage`](#sdkusermessage) or [`SDKResultMessage`](#sdkresultmessage) rather than matching on the notice text. Before v2.1.205, Claude Code left the notice off notifications that arrived while the session was idle.
+
 ### `SDKToolUseSummaryMessage`
 
 Summary of tool usage in a conversation.

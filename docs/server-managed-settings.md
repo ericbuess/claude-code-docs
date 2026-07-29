@@ -209,7 +209,7 @@ As of v2.1.139, the `claude auth` subcommands such as `claude auth login` are ex
 Certain settings that could pose security risks require explicit user approval before Claude Code applies them:
 
 * **Shell command settings**: settings that execute shell commands
-* **Custom environment variables**: variables not in the known safe allowlist
+* **Custom environment variables**: delivered `env` variables that require the user's approval, such as proxy and base-URL variables; see [Environment variables and the approval dialog](#environment-variables-and-the-approval-dialog)
 * **Hook configurations**: any hook definition
 * **Managed CLAUDE.md content**: a `claudeMd` value delivered through managed settings
 
@@ -220,6 +220,20 @@ If an interactive session can't show the dialog, Claude Code doesn't apply the d
 <Note>
   A non-interactive run, such as `claude -p` or an Agent SDK session, can't show the dialog. When the delivered settings would require approval, Claude Code applies them for that run only: it doesn't record them as approved or write them to the [local cache](#fetch-and-caching-behavior), and the next interactive session shows the dialog. Until a user approves in an interactive session, each non-interactive run fetches the settings again at startup. Before v2.1.207, a non-interactive run saved the settings as approved, so later interactive sessions never showed the dialog for them.
 </Note>
+
+#### Environment variables and the approval dialog
+
+Claude Code applies some delivered `env` variables without showing the user the approval dialog, including:
+
+* Feature and command toggles
+* Model selection and behavior settings, such as `ANTHROPIC_MODEL`, `DISABLE_PROMPT_CACHING`, and `CLAUDE_CODE_EFFORT_LEVEL`
+* Context window and compaction settings, such as `DISABLE_AUTO_COMPACT`
+* Terminal UI and accessibility options
+* Numeric limits, budgets, and timeouts
+
+Other delivered variables can require the user's approval before they take effect; a non-empty proxy, base-URL, or `OTEL_EXPORTER_OTLP_ENDPOINT` value always does. When a delivered variable needs approval, the dialog names it, so the user sees exactly what the policy is asking to set. Before v2.1.218, Claude Code applied fewer variables without asking the user, so settings such as `DISABLE_AUTO_COMPACT` triggered the dialog at any non-empty value.
+
+Claude Code decides whether four privacy toggles need approval by the delivered value rather than by the variable name: `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `DISABLE_ERROR_REPORTING`, `DISABLE_TELEMETRY`, and `DO_NOT_TRACK`. A truthy value such as `1` or `true` only turns tracking, reporting, or other nonessential traffic off, so Claude Code applies it without asking the user. For any other non-empty value, Claude Code shows the dialog. Before v2.1.218, all of them except `DO_NOT_TRACK` applied without approval at any value, and `DO_NOT_TRACK` triggered the dialog at any non-empty value.
 
 ## Platform availability
 

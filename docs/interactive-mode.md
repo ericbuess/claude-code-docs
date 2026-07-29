@@ -177,7 +177,7 @@ Claude Code reads this setting from your user settings file, the `--settings` fl
 | `/`             | Open reverse history search, same as `Ctrl+R`. {/* min-version: 2.1.191 */}As of v2.1.191, the empty search prompt shows a hint: press `Esc` then `i` then `/` to open the command menu instead |
 
 <Note>
-  In vim normal mode, if the cursor is at the beginning or end of input and can't move further, `j`/`k` and the arrow keys navigate command history instead.
+  In vim NORMAL mode, if the cursor is at the beginning or end of input and can't move further, `j`/`k` and `↑`/`↓` navigate command history instead. {/* min-version: 2.1.219 */}`←` on an empty prompt opens [agent view](/docs/en/agent-view) from NORMAL mode as well as INSERT; before v2.1.219, `←` on an empty prompt did nothing in NORMAL mode.
 </Note>
 
 ### Editing (NORMAL mode)
