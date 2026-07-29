@@ -1090,17 +1090,10 @@ Marketplace sources must match exactly for a user's addition to be allowed. For 
 * The `ref` field must match exactly (or both be undefined)
 * The `path` field must match exactly (or both be undefined)
 
-Examples of sources that don't match:
+For example, Claude Code treats each pair below as two different sources:
 
-```json theme={null}
-// These are DIFFERENT sources:
-{ "source": "github", "repo": "acme-corp/plugins" }
-{ "source": "github", "repo": "acme-corp/plugins", "ref": "main" }
-
-// These are also DIFFERENT:
-{ "source": "github", "repo": "acme-corp/plugins", "path": "marketplace" }
-{ "source": "github", "repo": "acme-corp/plugins" }
-```
+* `{ "source": "github", "repo": "acme-corp/plugins" }` and `{ "source": "github", "repo": "acme-corp/plugins", "ref": "main" }`
+* `{ "source": "github", "repo": "acme-corp/plugins", "path": "marketplace" }` and `{ "source": "github", "repo": "acme-corp/plugins" }`
 
 **Comparison with `extraKnownMarketplaces`**:
 

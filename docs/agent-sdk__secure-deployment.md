@@ -165,8 +165,7 @@ If an agent runs malicious code (perhaps due to prompt injection), that code run
 
 To use gVisor with Docker, install the `runsc` runtime and configure the daemon:
 
-```json theme={null}
-// /etc/docker/daemon.json
+```json /etc/docker/daemon.json theme={null}
 {
   "runtimes": {
     "runsc": {

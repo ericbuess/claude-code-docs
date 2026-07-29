@@ -50,7 +50,7 @@ Create a routine from the web at [claude.ai/code/routines](https://claude.ai/cod
 
 The creation form sets up the routine's prompt, repositories, environment, connectors, and triggers.
 
-Routines run autonomously as full Claude Code cloud sessions: there is no permission-mode picker and no approval prompts during a run. The session can run shell commands, use [skills](/docs/en/skills) committed to the cloned repository, and call any connectors you include. What a routine can reach is determined by the repositories you select and their branch-push setting, the [environment's](/docs/en/cloud-environments) network access and variables, and the connectors you include. Scope each of those to what the routine actually needs.
+Routines run autonomously as full Claude Code cloud sessions: there is no permission-mode picker and no approval prompts during a run. The session can run shell commands, use [skills](/docs/en/skills) committed to the cloned repository, and call any connectors you include. What a routine can reach is determined by the repositories you select, the [environment's](/docs/en/cloud-environments) network access and variables, and the connectors you include. Scope each of those to what the routine actually needs.
 
 Routines belong to your individual claude.ai account. They are not shared with teammates, and they count against your account's daily run allowance. Anything a routine does through your connected GitHub identity or connectors appears as you: commits and pull requests carry your GitHub user, and Slack messages, Linear tickets, or other connector actions use your linked accounts for those services.
 
@@ -101,12 +101,8 @@ Routines belong to your individual claude.ai account. They are not shared with t
     </Tabs>
   </Step>
 
-  <Step title="Review connectors and permissions">
-    The **Connectors** and **Permissions** tabs at the bottom of the form control what the routine can reach.
-
-    Under Connectors, all of your connected [MCP connectors](/docs/en/mcp) are included by default. Remove any the routine doesn't need. Claude can use every tool from an included connector, including writes, without asking for permission during a run.
-
-    Under Permissions, enable **Allow unrestricted branch pushes** for any repository where Claude should be able to push to existing branches instead of only `claude/`-prefixed ones.
+  <Step title="Review connectors">
+    Under **Connectors** at the bottom of the form, all of your connected [MCP connectors](/docs/en/mcp) are included by default. Remove any the routine doesn't need: Claude can use every tool from an included connector, including writes, without asking for permission during a run.
   </Step>
 
   <Step title="Create the routine">
@@ -326,7 +322,11 @@ Routines need GitHub access to clone repositories. When you create a routine fro
 
 Each repository you add is cloned on every run. Claude starts from the repository's default branch unless your prompt specifies otherwise.
 
-By default, Claude can only push to branches prefixed with `claude/`. This prevents routines from accidentally modifying protected or long-lived branches. To remove this restriction for a specific repository, enable **Allow unrestricted branch pushes** for that repository when creating or editing the routine.
+Claude pushes its work to branches prefixed with `claude/`, which are always accepted. When your prompt directs Claude to push to another branch, Claude Code checks the push first and rejects it if any of the following is true:
+
+* The branch is protected on GitHub
+* Someone else has an open pull request from that branch
+* The branch carries commits authored by someone other than you
 
 ### Connectors
 
