@@ -349,7 +349,7 @@ With `Bash` enabled, try: `"Write unit tests for utils.py, run them, and fix any
 | `Read`, `Edit`, `Glob`                 | Analyze and modify code |
 | `Read`, `Edit`, `Bash`, `Glob`, `Grep` | Full automation         |
 
-**Permission modes** control how much human oversight you want: the mode decides what happens when the agent calls a tool that isn't already pre-approved by your allow rules. For the full list of modes, their behavior, and when to use each, see [Permission mode in How the agent loop works](/docs/en/agent-sdk/agent-loop#permission-mode).
+**Permission modes** control how much human oversight you want. The SDK evaluates the active mode together with your allow and deny rules in a fixed order, described in [How permissions are evaluated](/docs/en/agent-sdk/permissions#how-permissions-are-evaluated). For the full list of modes, their behavior, and when to use each, see [Permission mode in How the agent loop works](/docs/en/agent-sdk/agent-loop#permission-mode).
 
 ## Next steps
 
