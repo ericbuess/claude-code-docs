@@ -340,7 +340,9 @@ The desktop app sends an OS notification when a Code session finishes a task and
 
 A side chat lets you ask Claude a question that uses your session's context but doesn't add anything back to the main conversation. Use it when you want to understand a piece of code, check an assumption, or explore an idea without steering the session off course.
 
-Press **Cmd+;** on macOS or **Ctrl+;** on Windows to open a side chat, or type `/btw` in the prompt box. The side chat can read everything in the main thread up to that point. When you're done, close the side chat and continue the main session where you left off. Side chats are available in local, SSH, and WSL sessions.
+Press **Cmd+;** on macOS or **Ctrl+;** on Windows to open a side chat, or type `/btw` in the prompt box. The side chat can read everything in the main thread up to that point. When you're done, close the side chat and continue the main session where you left off.
+
+Side chats are available in local, SSH, and WSL sessions. The desktop app doesn't save side chats to disk, so you can't return to one after you close the app.
 
 ### Watch background tasks
 
