@@ -41,7 +41,7 @@ Match your goal to a row below, then read the detail section that follows.
 
 | You want to                                                                   | Start with                                                                                                                                                                             |
 | :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Reduce permission prompts during everyday work on your own machine            | The [sandboxed Bash tool](/docs/en/sandboxing), enabled with `/sandbox`                                                                                                                     |
+| Reduce permission prompts during everyday work on your own machine            | The [sandboxed Bash tool](/docs/en/sandboxing), configured with `/sandbox`                                                                                                                  |
 | Let Claude work unattended with `--dangerously-skip-permissions` or auto mode | The preconfigured [dev container](/docs/en/devcontainer), any container or VM, or the [sandbox runtime](#sandbox-runtime)                                                                   |
 | Isolate MCP servers and hooks as well as Bash, without Docker                 | The sandbox runtime                                                                                                                                                                    |
 | Work on an untrusted repository                                               | A dedicated virtual machine, or [Claude Code on the web](/docs/en/claude-code-on-the-web) if you have a Claude subscription; GitHub is only required when you launch from the web interface |
@@ -54,7 +54,7 @@ Match your goal to a row below, then read the detail section that follows.
 
 [Permission modes](/docs/en/permission-modes) decide whether a tool call runs and whether you are prompted first. Isolation restricts what a command can access once it runs. The two work together: when a permission mode lets actions run without asking you, an isolation boundary limits what those actions can reach.
 
-When you pass `--dangerously-skip-permissions`, Claude acts without asking you first; you're only prompted for explicit [ask rules](/docs/en/permissions#manage-permissions), connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool), and removals targeting `/` or your home directory. With no prompts to catch mistakes, the isolation boundary you choose is what protects your system. Always run `--dangerously-skip-permissions` sessions inside a container, a VM, or the [sandbox runtime](#sandbox-runtime), so that file tools, MCP servers, and hooks are also inside the boundary.
+When you pass `--dangerously-skip-permissions`, Claude acts without asking you first; you're only prompted for explicit [ask rules](/docs/en/permissions#manage-permissions), connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool), and removals targeting `/` or your home directory. With no prompts to catch mistakes, the isolation boundary you choose is what protects your system. Always run `--dangerously-skip-permissions` sessions inside a container, a VM, or the [sandbox runtime](#sandbox-runtime), so that file tools, MCP servers, and hooks are also inside the boundary. On Linux and macOS, Claude Code refuses to start with this flag when running as root, so run the container, VM, or sandbox runtime as a non-root user.
 
 [Auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) replaces the prompt with a classifier that reviews actions and blocks ones that escalate beyond the request, target unrecognized infrastructure, or appear driven by hostile content Claude read. The classifier is a per-action control, not an isolation boundary, so an isolation boundary still adds defense in depth for unattended runs, and is not required the way it is for `--dangerously-skip-permissions`.
 
@@ -68,7 +68,7 @@ The [sandboxed Bash tool](#sandboxed-bash-tool) on its own constrains only Bash,
 
 The sandboxed Bash tool is built into Claude Code. It uses operating system primitives to restrict the filesystem and network access of every Bash command Claude runs: Seatbelt, the built-in macOS sandbox, and [bubblewrap](https://github.com/containers/bubblewrap) on Linux and WSL2. By default it allows writes to the working directory and prompts the first time a command needs a new network domain.
 
-Enable it with the `/sandbox` command. The [Sandboxing](/docs/en/sandboxing) guide covers the approval modes, the default boundary, and how to widen or narrow it.
+Run the `/sandbox` command to open the sandbox panel and choose a mode. The [Sandboxing](/docs/en/sandboxing) guide covers the approval modes, the default boundary, and how to widen or narrow it.
 
 The per-command sandbox does not cover everything that runs in a session:
 
@@ -79,9 +79,32 @@ To put built-in tools, MCP servers, and hooks all behind one OS boundary, run th
 
 ## Sandbox runtime
 
-The [`@anthropic-ai/sandbox-runtime`](https://github.com/anthropic-experimental/sandbox-runtime) package wraps an entire process in the same Seatbelt or bubblewrap isolation that the built-in Bash sandbox uses. Running Claude Code through it constrains every tool, hook, and MCP server in the session, not only Bash. The runtime is a beta research preview, and its configuration format may change as the package evolves.
+The [`@anthropic-ai/sandbox-runtime`](https://github.com/anthropic-experimental/sandbox-runtime) package wraps an entire process in the same Seatbelt or bubblewrap isolation that the built-in Bash sandbox uses. Running Claude Code through the runtime constrains every tool, hook, and MCP server in the session, not only Bash. The runtime is a beta research preview, and its configuration format may change as the package evolves.
 
-The runtime denies all write and network access by default, so configure it before launching Claude Code through it. In `~/.srt-settings.json`, or a file you pass with `--settings`, allow write access to at least your project directory, Claude Code's configuration paths `~/.claude` and `~/.claude.json`, and `/tmp`, where Claude Code writes runtime files. Allow the network domains your session needs, including `api.anthropic.com` or your configured provider's endpoint. See the package [README](https://github.com/anthropic-experimental/sandbox-runtime) for the full configuration schema.
+This section covers what you configure and what the runtime enforces on its own. For deploying the runtime in Agent SDK applications, see the [secure deployment guide](/docs/en/agent-sdk/secure-deployment#sandbox-runtime).
+
+### Set up and launch the runtime
+
+On Linux and WSL2, the runtime relies on the same `bubblewrap` and `socat` packages as the built-in sandbox, plus `ripgrep`, which Claude Code bundles but the standalone runtime resolves from your PATH. Install `bubblewrap` and `socat` as described in [Set up Linux and WSL2](/docs/en/sandboxing#set-up-linux-and-wsl2), and `ripgrep` from your distribution's package manager. On macOS you need no additional packages. The runtime uses the built-in Seatbelt sandbox there.
+
+By default the runtime denies network access and confines writes to a small set of built-in runtime paths, so configure it before launching Claude Code through it. Put your configuration in `~/.srt-settings.json`, or in a file you pass with `--settings`. The package [README](https://github.com/anthropic-experimental/sandbox-runtime) documents the full configuration schema.
+
+Allow write access to at least:
+
+* Your project directory.
+* Claude Code's configuration paths `~/.claude` and `~/.claude.json`.
+* `/tmp`, where Claude Code writes runtime files.
+
+Allow the network domains your session needs:
+
+* `api.anthropic.com`, or your configured provider's endpoint. On a third-party provider, keep `api.anthropic.com` as well: the WebFetch domain safety check still calls it by default unless you set `skipWebFetchPreflight: true`.
+* `claude.ai` and `platform.claude.com`, which [OAuth sign-in and token refresh](/docs/en/network-config#network-access-requirements) require. Runs authenticated with an API key can drop these two.
+
+On Linux and WSL2, the runtime applies write grants only to paths that already exist. In a fresh environment, create Claude Code's configuration paths before the first launch:
+
+```bash theme={null}
+mkdir -p ~/.claude && echo '{}' > ~/.claude.json
+```
 
 Once the settings file is in place, launch Claude Code with `npx` and pass `claude` as the command to wrap:
 
@@ -90,6 +113,23 @@ npx @anthropic-ai/sandbox-runtime claude
 ```
 
 Claude Code starts inside the sandbox with the filesystem and network boundaries you configured. The same command works for sandboxing standalone MCP servers or other helper processes.
+
+### What the runtime blocks on its own
+
+The runtime blocks the highest-risk writes without any configuration from you:
+
+* `denyWrite` takes precedence over `allowWrite`.
+* At the project root, the runtime denies `.git/hooks`, denies `.git/config` unless you set `filesystem.allowGitConfig: true`, and denies `.mcp.json`, `.claude/commands`, `.claude/agents`, and shell startup files.
+* On macOS, these denies are checked when a write happens, so they also cover nested files and repositories created during the session.
+* On Linux and WSL2, the runtime builds the deny list once at launch. It reliably covers the project root, makes a best-effort shallow scan for nested copies that exist at that point, and does not cover anything the session creates later, such as `git init`, `git clone`, or scaffolding. The README's `mandatoryDenySearchDepth` section describes the scan's exact semantics.
+* Without a valid `~/.srt-settings.json`, the runtime starts anyway, blocks network access, and confines writes to built-in runtime paths such as `/tmp/claude`, `~/.npm/_logs`, and `~/.claude/debug`. Don't take a clean start as proof your settings loaded.
+* When you pass `--settings`, the runtime refuses to start if the file fails to load.
+
+Your write grants still include other paths Claude Code loads configuration from, so deny those with `denyWrite`. A sandboxed session that can write them can persist hooks, permission rules, or MCP servers that run unsandboxed the next time you launch Claude Code.
+
+### After unattended runs
+
+Review the paths you kept writable. On Linux and WSL2, also review anything the session created.
 
 ## Dev containers
 

@@ -147,7 +147,7 @@ The end-of-turn summary and each mid-turn rewrite are one short Haiku-class requ
 
 ### Pull request status
 
-When a session opens a pull request, a `#1234` label appears at the right edge of the row, linked to the pull request. Claude Code emits the link even when it can't detect hyperlink support, for example over SSH or tmux; set [`FORCE_HYPERLINK=0`](/docs/en/env-vars) to render the label as plain text. The label persists when you send a follow-up to the session, so the pull request remains visible while the row reverts to live progress. Background sessions that isolated their changes in a worktree open these pull requests themselves; [How file edits are isolated](#how-file-edits-are-isolated) covers when that happens and what a session never does without asking.
+When a session opens a pull request, a `#1234` label appears at the right edge of the row, linked to the pull request. Claude Code emits the link even when it can't detect hyperlink support, for example over SSH or tmux; set [`FORCE_HYPERLINK=0`](/docs/en/env-vars) to render the label as plain text. The label persists when you send a follow-up to the session, so the pull request remains visible while the row reverts to live progress. Claude opens these pull requests from the session itself when the task calls for one; [How file edits are isolated](#how-file-edits-are-isolated) covers what Claude commits and pushes without asking and when it asks first.
 
 A session that works on an existing pull request is linked to it the same way. Editing, commenting on, closing, or marking a pull request ready with `gh` links the pull request that the command's own output names, so a `gh` command whose captured output names no pull request doesn't create a link; `gh pr merge` is the common case, because it prints its result only to an interactive terminal. Checking a pull request out with `gh pr checkout`, or pushing to a branch that has an open pull request, links it by looking up that branch with `gh pr view` instead.
 
@@ -162,7 +162,7 @@ The pull request number is colored by its status:
 | Purple | Merged                                        |
 | Grey   | Draft or closed                               |
 
-For most tasks this column is where you pick up the result: review and merge the pull request when its number turns green.
+For a task that ends in a pull request, check this label for the result: review and merge the pull request when its number turns green.
 
 ### Peek and reply
 
@@ -494,9 +494,16 @@ To find a session's worktree path, peek the session or attach and check its work
 
 A [subagent](/docs/en/sub-agents) the background session spawns inherits the session's working directory, so its file edits land in the session's worktree rather than your working copy. To give a subagent its own separate worktree instead, set [`isolation: worktree`](/docs/en/sub-agents#supported-frontmatter-fields) in its frontmatter or pass `isolation: "worktree"` when spawning it.
 
-A background session that isolated its code changes in a worktree also commits, pushes its own branch, and opens a draft pull request without stopping to ask. The [`#N` label](#pull-request-status) appears on its row when the pull request opens. It never pushes to `main` or `master`, never force-pushes or merges, and it skips the pull request when you told it not to open one or the repository has no remote.
+When a background session has made code changes in a worktree Claude entered, Claude Code instructs Claude to preserve the work before finishing, so it survives if you delete the session and its worktree:
+
+* **Commit and push**: Claude commits without asking, and pushes the branch when the repository has a remote.
+* **Draft pull request**: Claude opens one when the task calls for it, and the [`#N` label](#pull-request-status) appears on the row.
+* **Never**: pushing to `main` or `master`, force-pushing, and merging.
+* **Your git instructions take precedence**: if the task, `CLAUDE.md`, or [memory](/docs/en/memory) says you handle committing or pushing yourself, Claude leaves git to you.
 
 A session editing a checkout it didn't isolate itself still asks before committing or switching branches. This applies when isolation is set to `"none"`, when the worktree move failed, or when the session started inside a worktree that already existed.
+
+Whatever the task, Claude ends the job with a report saying what it did and where the work is: a path, a branch, a pull request, or the answer itself.
 
 ### Set the model
 

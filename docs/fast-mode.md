@@ -14,7 +14,7 @@ Fast mode is a high-speed configuration for Claude Opus, making the model up to 
 
 Fast mode is not a different model. It uses Claude Opus with a different API configuration that prioritizes speed over cost efficiency. You get identical quality and capabilities with faster responses. Fast mode is supported on Opus 5 and Opus 4.8. It is not available on Sonnet, Haiku, or other models.
 
-Claude Code treats Opus 4.7 as a fast mode model everywhere it decides whether fast mode is on: the `/fast` toggle, model switches in either direction, and session start. The API rejects the resulting fast mode requests rather than serving them at standard speed. Switch to Opus 5 or Opus 4.8 to keep the speedup. Fast mode for Opus 4.7 was deprecated on June 25, 2026, and removed on July 24, 2026.
+Claude Code treats Opus 4.7 like any other model without fast mode support: switching to it turns fast mode off. Fast mode for Opus 4.7 was deprecated on June 25, 2026, and removed on July 24, 2026.
 
 What to know:
 
@@ -47,7 +47,10 @@ When you disable fast mode with `/fast` again, you remain on Opus. The model doe
 
 ### Switch models while fast mode is on
 
-When you switch to a model that doesn't support fast mode, Claude Code turns fast mode off, except on Opus 4.7, where fast mode stays on and the API rejects the requests. Switching back to a supported Opus model turns it on again when your saved fast mode preference is on, the same preference a new session starts from by default; a model switch never turns fast mode on for a session whose saved preference is off. With [per-session opt-in](#require-per-session-opt-in) configured, switching back doesn't turn fast mode on again; run `/fast` to re-enable it. Before v2.1.208, fast mode stayed off after you switched back until you ran `/fast` again.
+Fast mode follows your model switches in both directions:
+
+* **Switch away**: when you switch to a model that doesn't support fast mode, Claude Code turns fast mode off. This includes Opus 4.7; before v2.1.221, fast mode stayed on after a switch to Opus 4.7 and the API rejected the requests.
+* **Switch back**: switching back to a supported Opus model turns fast mode on again when your saved fast mode preference is on, the same preference a new session starts from by default. A model switch never turns fast mode on for a session whose saved preference is off, and with [per-session opt-in](#require-per-session-opt-in) configured, switching back doesn't turn it on either; run `/fast` to re-enable it. Before v2.1.208, fast mode stayed off after you switched back until you ran `/fast` again.
 
 Whenever a model switch turns fast mode on or off, Claude Code shows a `Fast mode ON` or `Fast mode OFF` confirmation, and the `↯` icon appears while fast mode is on. This holds whether you switch with `/model`, with [`/config model=<model>`](/docs/en/settings), or from a device connected through [Remote Control](/docs/en/remote-control); before v2.1.218, switches through `/config model=<model>` or Remote Control changed fast mode without the confirmation.
 
@@ -155,7 +158,7 @@ This is useful for controlling costs in organizations where users run multiple c
 
 ## Handle rate limits
 
-Fast mode has separate rate limits from standard Opus. All supported Opus models share one fast mode rate limit pool: usage on any of them draws from the same limits. When you hit the fast mode rate limit or run out of usage credits:
+Fast mode has separate rate limits from standard Opus. All supported Opus models share one fast mode rate limit pool: usage on any of them draws from the same limits. When you hit the fast mode rate limit:
 
 1. Fast mode automatically falls back to standard speed
 2. The `↯` icon turns gray to indicate cooldown
@@ -163,6 +166,11 @@ Fast mode has separate rate limits from standard Opus. All supported Opus models
 4. When the cooldown expires, fast mode automatically re-enables
 
 To disable fast mode manually instead of waiting for cooldown, run `/fast` again.
+
+If you run out of usage credits mid-session, Claude Code retries each rejected fast mode request at standard speed and pricing, so you keep working, and there is no cooldown. How you see the rejection depends on the session type:
+
+* In an interactive session, Claude Code shows a "Fast mode disabled · usage credits exhausted" notification and turns fast mode off for the rest of the session. Your saved fast mode preference doesn't change; run `/fast` to turn fast mode back on.
+* In [non-interactive mode](/docs/en/headless) with `--output-format stream-json`, and through the Agent SDK, Claude Code emits the same text on the message stream as a `system` message with subtype `notification`, once per turn while you're out of usage credits. Fast mode stays on.
 
 ## Research preview
 

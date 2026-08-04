@@ -125,7 +125,7 @@ Claude Code retries these failures:
 Claude Code doesn't retry these failures:
 
 * A TLS certificate validation failure, such as a TLS-inspecting proxy, a missing `NODE_EXTRA_CA_CERTS` bundle, or an expired certificate. Claude Code reports the error on the first attempt, so you can fix the certificate setup right away; see [SSL certificate errors](#ssl-certificate-errors). Claude Code still retries transient TLS conditions such as a handshake timeout. Before v2.1.199, Claude Code retried certificate failures through the full retry budget before showing the error.
-* A server error, dropped connection, or stalled stream that arrives partway through a response, once Claude has completed a block of text or a tool call in that response: Claude Code could execute the same tool calls twice if it re-ran the request, so it keeps the completed output and ends the turn with an [incomplete-response notice](#the-response-above-may-be-incomplete). Before v2.1.199, Claude Code discarded the partial output and reported the whole turn as an error when a server error arrived mid-stream.
+* A server error, dropped connection, or stalled stream that arrives after Claude has completed a block of text or a tool call in its response. Claude Code could execute the same tool calls twice if it re-ran the request, so it keeps what Claude completed and shows an [incomplete-response notice](#the-response-above-may-be-incomplete). Claude Code still runs any tool calls Claude completed and continues the turn from their results. Before v2.1.199, Claude Code discarded the partial output and reported the whole turn as an error when a server error arrived mid-stream.
 * An [Amazon Bedrock streaming response with an unexpected content-type](#bedrock-streaming-response-has-an-unexpected-content-type), because the gateway or proxy rewriting the response would rewrite the retry the same way. Requires Claude Code v2.1.208 or later.
 
 ### What you see while Claude Code retries or waits
@@ -134,7 +134,7 @@ While retrying, the spinner shows a `Retrying in Ns · attempt x/y` countdown af
 
 As of v2.1.198, the usual spinner tip is suppressed during retries. Once the error reason is revealed, if the failure is a 529 overload the line below the countdown also names where to check service status: `status.claude.com` on the Anthropic API, or the provider or gateway host named in the message on other configurations.
 
-If no data arrives on the response stream for 20 seconds while a request is still pending, the spinner shows `Waiting for API response · will retry in … · check your network` before any retry has started. The request has not failed yet: the countdown runs to the point where Claude Code aborts the stalled connection, after which the turn either retries or ends with an error such as [The response above may be incomplete](#the-response-above-may-be-incomplete). The banner clears on its own once data resumes or a retry succeeds; if it reappears on every attempt, treat it as a [network issue](#unable-to-connect-to-api). As of v2.1.185 the threshold is 20 seconds; earlier versions show the banner after 10 seconds with different wording.
+If no data arrives on the response stream for 20 seconds while a request is still pending, the spinner shows `Waiting for API response · will retry in … · check your network` before any retry has started. The request has not failed yet: the countdown runs to the point where Claude Code aborts the stalled connection, after which it retries the request, ends the turn with an error such as [The response above may be incomplete](#the-response-above-may-be-incomplete), or shows that notice and continues the turn from the results of any tool calls Claude completed. The banner clears on its own once data resumes or a retry succeeds; if it reappears on every attempt, treat it as a [network issue](#unable-to-connect-to-api). As of v2.1.185 the threshold is 20 seconds; earlier versions show the banner after 10 seconds with different wording.
 
 While Claude is consulting the [advisor](/docs/en/advisor), the banner appears after 90 seconds without data instead of 20, because a long advisor review can send nothing for well over 20 seconds. Before v2.1.214, the 20-second threshold applied during advisor calls too, so the banner appeared during advisor reviews even when nothing was wrong.
 
@@ -225,7 +225,7 @@ Claude Code never shows this notice for a failure that happens before Claude sta
 
 * In an interactive session, read the response that remains on screen: Claude Code keeps every block Claude completed before the error, but discards an interrupted final block when the turn ends, so the final sentences or tool calls may be missing. Reply with `continue` to have Claude pick up from its last completed block.
 * In [non-interactive mode](/docs/en/headless) (`-p`):
-  * With the default text output, Claude Code prints the last completed block of text it still holds from earlier in the turn, followed by this message. When it holds none, Claude Code prints this message alone, for example because Claude completed only tool calls before the error, or because Claude Code compacted the conversation mid-turn and cleared that text. Before v2.1.219, Claude Code printed only this message in `-p` text output and dropped the response it had already produced.
+  * With the default text output, Claude Code prints the last completed block of text it still holds from earlier in the turn, followed by this message. When it holds none, Claude Code prints this message alone, for example because Claude Code compacted the conversation mid-turn and cleared that text. Before v2.1.219, Claude Code printed only this message in `-p` text output and dropped the response it had already produced.
   * With `--output-format json` or `stream-json`, Claude Code reports this message in the `result` field.
   * To continue the turn, resume the session and send `continue` as described in [Continue conversations](/docs/en/headless#continue-conversations).
 
@@ -739,7 +739,12 @@ If `curl` succeeds but Claude Code still fails, the cause is usually something b
 
 `Socket is closed` means the connection carrying a streaming response was closed while the response was still arriving. The most common cause is a corporate proxy on Windows dropping an established tunnel mid-response.
 
-When nothing in the interrupted response had completed yet, Claude Code treats this as a dropped connection and [retries it automatically](#automatic-retries), so the turn continues. Once Claude has completed a block of text or a tool call in the response, Claude Code keeps that output and ends the turn with an [incomplete-response notice](#the-response-above-may-be-incomplete) instead. Before v2.1.214, Claude Code didn't retry this failure, and the turn stopped with an error containing `Socket is closed`.
+Claude Code either retries the request or keeps the partial response:
+
+* If Claude hasn't completed any text or tool call yet, Claude Code treats the failure as a dropped connection and [retries the request automatically](#automatic-retries), so the turn continues.
+* If Claude has completed a block of text or a tool call, Claude Code keeps what Claude completed and shows an [incomplete-response notice](#the-response-above-may-be-incomplete). It still runs any tool calls Claude completed and continues the turn from their results.
+
+Before v2.1.214, Claude Code didn't retry this failure, and the turn stopped with an error containing `Socket is closed`.
 
 **What to do:**
 

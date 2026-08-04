@@ -173,7 +173,7 @@ Before loading a server, including one from `managed-mcp.json`, Claude Code runs
 Three matching rules apply inside those checks:
 
 * **Commands match exactly.** Every argument, in order. `["npx", "-y", "server"]` does not match `["npx", "server"]` or `["npx", "-y", "server", "--flag"]`.
-* **`serverCommand` and `serverUrl` values expand before matching.** Both the policy entry and the server's configured value go through the same [`${VAR}` and `${VAR:-default}` expansion](/docs/en/mcp#environment-variable-expansion-in-mcp-json) as `.mcp.json`, so an entry written as `["${HOME}/bin/server"]` matches a server config that uses either the same reference or the expanded path. On Windows, reference an environment variable that is set there, such as `${USERPROFILE}` instead of `${HOME}`. `serverName` values match literally and never expand.
+* **`serverCommand` and `serverUrl` values expand before matching.** Both the policy entry and the server's configured value go through [`${VAR}` and `${VAR:-default}` expansion](/docs/en/mcp#environment-variable-expansion-in-mcp-json), so an entry written as `["${HOME}/bin/server"]` matches a server config that uses either the same reference or the expanded path. On Windows, reference an environment variable that is set there, such as `${USERPROFILE}` instead of `${HOME}`. `serverName` values match literally and never expand. The two sides read different environments; [How policy entries expand](#how-policy-entries-expand) covers which, and how allowlist and denylist entries differ.
 * **URLs support `*` wildcards** anywhere in the pattern, including the scheme. Hostname matching is case-insensitive and ignores a trailing FQDN dot, so `https://Mcp.Example.com/*` matches `https://mcp.example.com/api`. Paths stay case-sensitive.
 
 | Pattern                     | Allows                                                                 |
@@ -184,7 +184,16 @@ Three matching rules apply inside those checks:
 | `http://localhost:*/*`      | Any port on localhost                                                  |
 | `*://mcp.example.com/*`     | Any scheme to a specific domain                                        |
 
-Because `${VAR}` expansion reads Claude Code's own process environment, a `serverCommand` or `serverUrl` policy entry that references a variable expands to whatever value a user sets. Use literal URLs and commands for entries you rely on for enforcement.
+#### How policy entries expand
+
+The server's configured value expands from the live process environment, like the rest of `.mcp.json`. A policy entry expands from a pinned environment instead, so a variable set by a project or user settings file can't change what an allowlist entry means. Because a policy entry still depends on the launching shell's value for any variable it references, use literal URLs and commands for entries you rely on for enforcement.
+
+| Entry list          | Expands from                                                                                                                                                                                        | Expansion that would change a URL entry's scheme, host, or path scope |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `allowedMcpServers` | The environment Claude Code started with, plus `env` values from managed settings                                                                                                                   | Claude Code ignores the entry                                         |
+| `deniedMcpServers`  | The same, and a variable with no startup value and no `:-default` fills from settings files outside the repository, such as user or managed settings, which only ever widens what the entry matches | The entry still matches                                               |
+
+Before v2.1.219, both sides expanded from the same live process environment, which included variables set by settings files.
 
 ### Example configuration
 

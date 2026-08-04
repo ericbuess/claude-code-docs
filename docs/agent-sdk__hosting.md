@@ -184,10 +184,10 @@ For self-hosted options such as Docker, gVisor, and Firecracker, and detailed is
 
 ### Runtime dependencies
 
-The container needs only your SDK's language runtime:
+The container needs your SDK's language runtime:
 
 * Python 3.10+ for the Python SDK, or Node.js 18+ for the TypeScript SDK
-* Both SDK packages bundle a native Claude Code binary for the host platform, so no separate Claude Code or Node.js install is needed for the spawned CLI
+* Both the TypeScript and Python SDKs bundle a native Claude Code binary for most installs, and the spawned CLI needs no separate Node.js install. See the [quickstart's install note](/docs/en/agent-sdk/quickstart) for the installs that need a separate native Claude Code install.
 
 The bundled binary is pinned to the SDK package version, so updating the SDK is how you update the CLI. The SDK follows semver: take patch releases continuously and review the [TypeScript](https://github.com/anthropics/claude-agent-sdk-typescript/blob/main/CHANGELOG.md) or [Python](https://github.com/anthropics/claude-agent-sdk-python/blob/main/CHANGELOG.md) changelog before taking a minor.
 
