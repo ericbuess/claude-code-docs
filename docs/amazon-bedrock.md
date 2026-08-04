@@ -152,7 +152,7 @@ aws sso login --profile=your-profile-name
 export AWS_PROFILE=your-profile-name
 ```
 
-Claude Code requests role credentials from the IAM Identity Center region named by the profile's `sso_region`, which doesn't need to match the region you run Amazon Bedrock in. {/* min-version: 2.1.208 */}In v2.1.207, the Amazon Bedrock region overrode `sso_region`, so a profile whose IAM Identity Center instance is in a different region failed to authenticate with a `Session token not found or invalid` error.
+Claude Code requests role credentials from the IAM Identity Center region named by the profile's `sso_region`, which doesn't need to match the region you run Amazon Bedrock in. In v2.1.207, the Amazon Bedrock region overrode `sso_region`, so a profile whose IAM Identity Center instance is in a different region failed to authenticate with a `Session token not found or invalid` error.
 
 **Option D: AWS Management Console credentials**
 
@@ -217,9 +217,9 @@ These two settings have different trigger conditions:
 }
 ```
 
-{/* min-version: 2.1.181 */}As of Claude Code v2.1.181, the flat output from `aws configure export-credentials --format process` is also accepted, with the same keys at the top level instead of nested under `Credentials`.
+As of Claude Code v2.1.181, the flat output from `aws configure export-credentials --format process` is also accepted, with the same keys at the top level instead of nested under `Credentials`.
 
-`Expiration` is optional. {/* min-version: 2.1.176 */}As of Claude Code v2.1.176, when the command returns a valid ISO 8601 `Expiration`, Claude Code caches the credentials until five minutes before that time. Without it, or on earlier versions, credentials are cached for one hour.
+`Expiration` is optional. As of Claude Code v2.1.176, when the command returns a valid ISO 8601 `Expiration`, Claude Code caches the credentials until five minutes before that time. Without it, or on earlier versions, credentials are cached for one hour.
 
 When you configure `awsCredentialExport` without `awsAuthRefresh`, Claude Code uses the exported credentials directly and doesn't re-resolve the AWS default credential provider chain at startup. Before v2.1.206, startup also re-resolved the default provider chain, which made a live SSO or STS call outside your proxy configuration and could block the first prompt for several minutes on networks with restricted egress.
 
@@ -243,7 +243,7 @@ export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
 
 When enabling Amazon Bedrock for Claude Code, keep the following in mind:
 
-* {/* min-version: 2.1.172 */}As of v2.1.172, you only need to set `AWS_REGION` to override your AWS profile's region or when your profile has no region. Claude Code resolves the region in this order:
+* As of v2.1.172, you only need to set `AWS_REGION` to override your AWS profile's region or when your profile has no region. Claude Code resolves the region in this order:
 
   * `AWS_REGION`
   * `AWS_DEFAULT_REGION`
@@ -289,7 +289,7 @@ Background tasks such as session title generation use the small/fast model, norm
   Opus models have a higher per-token price than Sonnet models, so a deployment that doesn't pin a primary model is billed at the Opus rate once it updates to v2.1.207 or later. To keep Sonnet 4.5 as the primary model, set `ANTHROPIC_MODEL` to its full model ID. A deployment that steers the default with `ANTHROPIC_DEFAULT_SONNET_MODEL` and doesn't set `ANTHROPIC_DEFAULT_OPUS_MODEL` keeps its steered Sonnet model as the default.
 </Warning>
 
-{/* min-version: 2.1.219 */}On v2.1.207 through v2.1.218, the primary model on Amazon Bedrock defaulted to Opus 4.8 and the `opus` alias resolved to Opus 4.8. {/* min-version: 2.1.207 */}Before v2.1.207, the primary model defaulted to Sonnet 4.5, the `opus` alias resolved to Opus 4.6, and background tasks always used the primary model.
+On v2.1.207 through v2.1.218, the primary model on Amazon Bedrock defaulted to Opus 4.8 and the `opus` alias resolved to Opus 4.8. Before v2.1.207, the primary model defaulted to Sonnet 4.5, the `opus` alias resolved to Opus 4.6, and background tasks always used the primary model.
 
 To customize models further, use one of these methods:
 
@@ -329,7 +329,7 @@ This example maps four Opus versions to distinct ARNs so users can switch betwee
 }
 ```
 
-When a user selects one of these versions in `/model`, Claude Code calls Amazon Bedrock with the mapped ARN. {/* min-version: 2.1.200 */}The same mapping applies when you pass the Anthropic model ID directly through `--model` or `ANTHROPIC_MODEL`. Versions without an override fall back to the built-in Amazon Bedrock model ID or any matching inference profile discovered at startup. Before v2.1.200, `--model` and `ANTHROPIC_MODEL` values reached Amazon Bedrock as-is without going through the override map. See [Override model IDs per version](/docs/en/model-config#override-model-ids-per-version) for details on how overrides interact with `availableModels` and other model settings.
+When a user selects one of these versions in `/model`, Claude Code calls Amazon Bedrock with the mapped ARN. The same mapping applies when you pass the Anthropic model ID directly through `--model` or `ANTHROPIC_MODEL`. Versions without an override fall back to the built-in Amazon Bedrock model ID or any matching inference profile discovered at startup. Before v2.1.200, `--model` and `ANTHROPIC_MODEL` values reached Amazon Bedrock as-is without going through the override map. See [Override model IDs per version](/docs/en/model-config#override-model-ids-per-version) for details on how overrides interact with `availableModels` and other model settings.
 
 ## Startup model checks
 
@@ -339,7 +339,7 @@ If you have pinned a model version that is older than the current Claude Code de
 
 If you have not pinned a model and the current default is unavailable in your account, Claude Code falls back for the current session and shows a notice. It tries earlier versions of the default model first and, when the default is an Opus model and no Opus version is available, falls back to the default Sonnet model. The fallback is not persisted. Enable the newer model in your Amazon Bedrock account or [pin a version](#4-pin-model-versions) to make the choice permanent.
 
-{/* min-version: 2.1.211 */}When you start the session on a specific Sonnet or Opus version, with `--model`, `ANTHROPIC_MODEL`, or the [`model` setting](/docs/en/settings), that version acts as the session's pinned default for the matching `sonnet` or `opus` alias. Claude Code skips the availability check for the built-in default your model replaces and starts on the model you configured, with no fallback notice.
+When you start the session on a specific Sonnet or Opus version, with `--model`, `ANTHROPIC_MODEL`, or the [`model` setting](/docs/en/settings), that version acts as the session's pinned default for the matching `sonnet` or `opus` alias. Claude Code skips the availability check for the built-in default your model replaces and starts on the model you configured, with no fallback notice.
 
 Model aliases such as `opus` don't act as pins, and neither does a model ID Claude Code doesn't recognize, such as an application inference profile ARN.
 
@@ -441,7 +441,7 @@ export CLAUDE_CODE_USE_MANTLE=1
 export AWS_REGION=us-east-1
 ```
 
-Claude Code constructs the endpoint URL from the AWS region. {/* min-version: 2.1.172 */}As of v2.1.172, the region is resolved with the same precedence as [Amazon Bedrock above](#3-configure-claude-code); earlier versions use `AWS_REGION` only. To override the URL for a custom endpoint or gateway, set `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`.
+Claude Code constructs the endpoint URL from the AWS region. As of v2.1.172, the region is resolved with the same precedence as [Amazon Bedrock above](#3-configure-claude-code); earlier versions use `AWS_REGION` only. To override the URL for a custom endpoint or gateway, set `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`.
 
 Run `/status` inside Claude Code to confirm. The provider line shows `Amazon Bedrock (Mantle)` when Mantle is active.
 
@@ -529,7 +529,7 @@ To fix it, configure the gateway to pass the `InvokeModelWithResponseStream` res
 
 ### Zero token counts in /context
 
-The `/context` command counts tokens for each tool group by sending the tool schemas to the Amazon Bedrock count-tokens API. {/* min-version: 2.1.196 */}On Claude Code versions before v2.1.196, Amazon Bedrock rejected that request because the schemas carried fields its count-tokens API doesn't accept, so every tool group showed 0 tokens. Other rows in the breakdown, such as messages and memory files, aren't affected.
+The `/context` command counts tokens for each tool group by sending the tool schemas to the Amazon Bedrock count-tokens API. On Claude Code versions before v2.1.196, Amazon Bedrock rejected that request because the schemas carried fields its count-tokens API doesn't accept, so every tool group showed 0 tokens. Other rows in the breakdown, such as messages and memory files, aren't affected.
 
 Update to v2.1.196 or later.
 

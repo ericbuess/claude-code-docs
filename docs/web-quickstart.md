@@ -197,7 +197,7 @@ On Team and Enterprise plans, the command is also hidden when any of the followi
 
 ### "Could not create a cloud environment" or "No cloud environment available" when using `--cloud` or ultraplan
 
-Remote-session features create a default cloud environment automatically if you don't have one. If you see "Could not create a cloud environment", automatic creation failed. {/* max-version: 2.1.100 */}If you see "No cloud environment available", your CLI predates automatic creation. In either case, run `/web-setup` in the Claude Code CLI, or add an environment from the [environment selector](/docs/en/cloud-environments#configure-your-environment) at [claude.ai/code](https://claude.ai/code).
+Remote-session features create a default cloud environment automatically if you don't have one. If you see "Could not create a cloud environment", automatic creation failed. If you see "No cloud environment available", your CLI predates automatic creation. In either case, run `/web-setup` in the Claude Code CLI, or add an environment from the [environment selector](/docs/en/cloud-environments#configure-your-environment) at [claude.ai/code](https://claude.ai/code).
 
 ### Setup script failed
 

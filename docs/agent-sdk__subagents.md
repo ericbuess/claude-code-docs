@@ -187,12 +187,12 @@ Two subagent behaviors changed in Claude Code v2.1.198:
 * A subagent inherits the main session's extended thinking configuration. On earlier versions, extended thinking is disabled inside subagents regardless of the main session's setting.
 
 <Note>
-  {/* min-version: 2.1.219 */}By default, subagents can spawn subagents of their own, up to three layers below the main conversation. {/* min-version: 2.1.217 */}To change the limit, set [`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`](/docs/en/env-vars) to the number of subagent layers you want below your main conversation, or `1` to turn nesting off; see [nested subagents](/docs/en/sub-agents#let-subagents-spawn-their-own-subagents).
+  By default, subagents can spawn subagents of their own, up to three layers below the main conversation. To change the limit, set [`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`](/docs/en/env-vars) to the number of subagent layers you want below your main conversation, or `1` to turn nesting off; see [nested subagents](/docs/en/sub-agents#let-subagents-spawn-their-own-subagents).
 
   Earlier versions used different defaults:
 
   * **v2.1.172 through v2.1.216**: subagents could nest by default, up to five layers deep, and the limit couldn't be changed.
-  * **v2.1.217 through v2.1.218**: the limit defaulted to one, so a subagent couldn't spawn its own unless you raised it; {/* min-version: 2.1.219 */}v2.1.219 raised the default to three.
+  * **v2.1.217 through v2.1.218**: the limit defaulted to one, so a subagent couldn't spawn its own unless you raised it; v2.1.219 raised the default to three.
 </Note>
 
 ### Filesystem-based definition (alternative)
@@ -207,7 +207,7 @@ You can also define subagents as markdown files in `.claude/agents/` directories
 
 A subagent's context window starts fresh, with no parent conversation, but isn't empty. The only content you pass from parent to subagent is the Agent tool's prompt string, so include any file paths, error messages, or decisions the subagent needs directly in that prompt.
 
-{/* min-version: 2.1.206 */}A subagent that has the [`SendMessage`](/docs/en/tools-reference) tool starts with a list of the other named agents running in the session, so it knows which names it can send messages to. Claude Code adds the list to the subagent's first turn automatically. A [fork](/docs/en/sub-agents#fork-the-current-conversation) doesn't get the list because it inherits the parent conversation instead. The list requires Claude Code v2.1.206 or later.
+A subagent that has the [`SendMessage`](/docs/en/tools-reference) tool starts with a list of the other named agents running in the session, so it knows which names it can send messages to. Claude Code adds the list to the subagent's first turn automatically. A [fork](/docs/en/sub-agents#fork-the-current-conversation) doesn't get the list because it inherits the parent conversation instead. The list requires Claude Code v2.1.206 or later.
 
 | The subagent receives                                                                                                                 | The subagent doesn't receive                                       |
 | :------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------- |
@@ -218,7 +218,7 @@ A subagent's context window starts fresh, with no parent conversation, but isn't
 <Note>
   The parent receives the subagent's final message as the Agent tool result, but may summarize it in its own response. To preserve subagent output verbatim in the user-facing response, include an instruction to do so in the prompt or `systemPrompt` option you pass to the main `query()` call.
 
-  {/* min-version: 2.1.210 */}In v2.1.210 and later, Claude Code [scans the final message for instruction-shaped patterns](/docs/en/sub-agents#subagent-output-scanning) before the parent reads it. The scan treats three kinds of pattern differently:
+  In v2.1.210 and later, Claude Code [scans the final message for instruction-shaped patterns](/docs/en/sub-agents#subagent-output-scanning) before the parent reads it. The scan treats three kinds of pattern differently:
 
   * **Control-tag imitation**: Claude Code neutralizes a tag that only the harness emits, such as a `<system-reminder>` block, in place. It inserts a backslash after the opening angle bracket and deletes nothing.
   * **Permission-configuration mentions**: Claude Code keeps references to the permission configuration, such as `.claude/settings.json`, `bypassPermissions`, or `--dangerously-skip-permissions`, as written.
@@ -227,7 +227,7 @@ A subagent's context window starts fresh, with no parent conversation, but isn't
   For a control-tag or permission-configuration match, Claude Code prepends a `[harness: ...]` marker line naming the matched patterns; a turn-marker match doesn't add the marker line. Those are the only modifications the scan makes: it never removes or rewords the subagent's text.
 </Note>
 
-{/* min-version: 2.1.199 */}An API error that ends the subagent early, such as a rate limit, is never delivered as its result. If a rate limit, overload, or server error cuts off a foreground subagent that already produced text output, the Agent tool returns that partial output with a note that the subagent didn't finish. {/* min-version: 2.1.200 */}A subagent that produced nothing, or whose only output was tool calls with no text, fails with an error message, `Agent terminated early due to an API error`, followed by the error detail. See [API errors in subagents](/docs/en/sub-agents#api-errors-in-subagents) for the foreground and background behavior.
+An API error that ends the subagent early, such as a rate limit, is never delivered as its result. If a rate limit, overload, or server error cuts off a foreground subagent that already produced text output, the Agent tool returns that partial output with a note that the subagent didn't finish. A subagent that produced nothing, or whose only output was tool calls with no text, fails with an error message, `Agent terminated early due to an API error`, followed by the error detail. See [API errors in subagents](/docs/en/sub-agents#api-errors-in-subagents) for the foreground and background behavior.
 
 This partial-output handling requires Claude Code v2.1.199 or later. In v2.1.199, a rate limit, overload, or server error left the tool-calls-only shape with an empty partial result containing only the cutoff note.
 

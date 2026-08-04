@@ -16,7 +16,7 @@ The plugin is also distinct from the review tools already in Claude Code: the [s
 
 To run the plugin, you need:
 
-* {/* min-version: 2.1.154 */}Claude Code v2.1.154 or later on a paid plan, for the [dynamic workflows](/docs/en/workflows) the scan uses to orchestrate its agents. On Pro, turn them on from the Dynamic workflows row in `/config`.
+* Claude Code v2.1.154 or later on a paid plan, for the [dynamic workflows](/docs/en/workflows) the scan uses to orchestrate its agents. On Pro, turn them on from the Dynamic workflows row in `/config`.
 * Python 3.9.6 or later available on your `PATH` as `python3`. Check with `python3 --version`. The plugin's tooling uses only the Python standard library, so nothing is installed.
 * Linux, macOS, or Windows.
 * Git, for change scans and for turning findings into patches; those jobs don't support other version control systems. A full scan works in any directory, with or without version control.

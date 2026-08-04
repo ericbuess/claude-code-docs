@@ -152,7 +152,7 @@ See [Invalid entries in managed settings](/docs/en/settings#invalid-entries-in-m
 
 The `serverName` validation differs between the two lists:
 
-* {/* min-version: 2.1.182 */}In `deniedMcpServers`, `serverName` accepts any non-empty string, so you can block [claude.ai connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) by their display name. For example, `{ "serverName": "claude.ai Slack" }` blocks the Slack connector. Prefer a `serverUrl` entry when you need the deny to be robust to renames, or when a connector name collides and gains a ` (N)` suffix.
+* In `deniedMcpServers`, `serverName` accepts any non-empty string, so you can block [claude.ai connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) by their display name. For example, `{ "serverName": "claude.ai Slack" }` blocks the Slack connector. Prefer a `serverUrl` entry when you need the deny to be robust to renames, or when a connector name collides and gains a ` (N)` suffix.
 * In `allowedMcpServers`, `serverName` is limited to letters, numbers, hyphens, and underscores. Use `serverUrl` to allowlist a claude.ai connector.
 
 To turn off all claude.ai connectors, see [`disableClaudeAiConnectors`](/docs/en/mcp#disable-claude-ai-connectors).

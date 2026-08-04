@@ -17,7 +17,7 @@ As you work with Claude, checkpointing automatically captures the state of your 
 Claude Code tracks all changes made by its file editing tools:
 
 * Every user prompt creates a new checkpoint
-* Claude Code keeps file snapshots for the 100 most recent checkpoints in a session. Discarding an older checkpoint deletes the snapshot files that no remaining checkpoint references, except each file's first snapshot, which the VS Code extension uses as the baseline for its session diffs. {/* min-version: 2.1.208 */}Before v2.1.208, those superseded snapshot files stayed on disk until the session was cleaned up.
+* Claude Code keeps file snapshots for the 100 most recent checkpoints in a session. Discarding an older checkpoint deletes the snapshot files that no remaining checkpoint references, except each file's first snapshot, which the VS Code extension uses as the baseline for its session diffs. Before v2.1.208, those superseded snapshot files stayed on disk until the session was cleaned up.
 * Claude Code saves checkpoints with the conversation, so you can still run `/rewind` after you resume a session
 * Claude Code deletes checkpoints along with sessions after 30 days; change the period with [`cleanupPeriodDays`](/docs/en/settings#available-settings)
 
@@ -81,7 +81,7 @@ These file modifications cannot be undone through rewind. Only direct file edits
 
 ### Subagent edits not restored
 
-Except for a [skill with `context: fork`](/docs/en/skills#run-skills-in-a-subagent) that runs in the foreground, edits a [subagent](/docs/en/sub-agents) applies land outside your session's checkpoints, so rewinding doesn't restore them, even though the subagent makes them with Claude's file editing tools. This includes a background [`/code-review --fix`](/docs/en/code-review) run and any forked skill that runs in the background. Use git to revert those edits. The foreground fork edits your working tree during your own turn, so rewinding restores its edits as usual. {/* min-version: 2.1.218 */}A forked skill runs in the background by default; set `background: false` in its frontmatter to run it in the foreground, where the invoking turn waits for the result. Before v2.1.218, forked skills always ran in the foreground.
+Except for a [skill with `context: fork`](/docs/en/skills#run-skills-in-a-subagent) that runs in the foreground, edits a [subagent](/docs/en/sub-agents) applies land outside your session's checkpoints, so rewinding doesn't restore them, even though the subagent makes them with Claude's file editing tools. This includes a background [`/code-review --fix`](/docs/en/code-review) run and any forked skill that runs in the background. Use git to revert those edits. The foreground fork edits your working tree during your own turn, so rewinding restores its edits as usual. A forked skill runs in the background by default; set `background: false` in its frontmatter to run it in the foreground, where the invoking turn waits for the result. Before v2.1.218, forked skills always ran in the foreground.
 
 ### External changes not tracked
 

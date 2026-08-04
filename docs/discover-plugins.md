@@ -155,15 +155,15 @@ Anthropic also maintains a [demo plugins marketplace](https://github.com/anthrop
     * **Marketplaces**: add, remove, or update your added marketplaces
     * **Errors**: view any plugin loading errors
 
-    Go to the **Discover** tab to see plugins from the marketplace you just added. {/* min-version: 2.1.154 */}When your administrator has allowlisted the marketplace via the [`pluginSuggestionMarketplaces`](/docs/en/settings#available-settings) managed setting, plugins marked as relevant to your current working directory are pinned at the top with a **suggested for this directory** label.
+    Go to the **Discover** tab to see plugins from the marketplace you just added. When your administrator has allowlisted the marketplace via the [`pluginSuggestionMarketplaces`](/docs/en/settings#available-settings) managed setting, plugins marked as relevant to your current working directory are pinned at the top with a **suggested for this directory** label.
   </Step>
 
   <Step title="Install a plugin">
     Select a plugin to view its details. The details pane shows what the plugin contains and what it costs:
 
-    * {/* min-version: 2.1.143 */}A **Context cost** estimate so you can see how many tokens the plugin will add to your [context window](/docs/en/features-overview#understand-context-costs) every turn (Claude Code v2.1.143 and later)
-    * {/* min-version: 2.1.144 */}The plugin's **Last updated** date (v2.1.144 and later)
-    * {/* min-version: 2.1.145 */}A **Will install** section listing the plugin's commands, agents, skills, hooks, and MCP and LSP servers, so you can review exactly what it adds before installing (v2.1.145 and later)
+    * A **Context cost** estimate so you can see how many tokens the plugin will add to your [context window](/docs/en/features-overview#understand-context-costs) every turn (Claude Code v2.1.143 and later)
+    * The plugin's **Last updated** date (v2.1.144 and later)
+    * A **Will install** section listing the plugin's commands, agents, skills, hooks, and MCP and LSP servers, so you can review exactly what it adds before installing (v2.1.145 and later)
 
     Not every plugin provides the data behind these fields. For plugins from local or custom marketplaces, you may not see the **Context cost** and **Last updated** rows, and the **Will install** section may show **Components will be discovered at installation** instead.
 
@@ -379,7 +379,7 @@ When you install, enable, or disable plugins during a session, run `/reload-plug
 
 Claude Code reloads all active plugins and shows counts for plugins, skills, agents, hooks, plugin MCP servers, and plugin LSP servers. The skills count covers only each plugin's `commands/` directory, not its `skills/` directory, so the summary can report `0 skills` even when the plugin's skills reloaded.
 
-Reloading has a token cost on the next request: newly loaded components announce themselves in content appended to the conversation, while the existing history still reads from the prompt cache. A plugin that provides MCP servers costs more when its tools aren't deferred by [tool search](/docs/en/mcp#scale-with-mcp-tool-search): the change invalidates the cache and the next request re-reads the entire conversation. {/* min-version: 2.1.163 */}In that case `/reload-plugins` shows a warning and does not apply the reload; pass `--force` to apply anyway. See [enabling or disabling a plugin](/docs/en/prompt-caching#enabling-or-disabling-a-plugin) for details.
+Reloading has a token cost on the next request: newly loaded components announce themselves in content appended to the conversation, while the existing history still reads from the prompt cache. A plugin that provides MCP servers costs more when its tools aren't deferred by [tool search](/docs/en/mcp#scale-with-mcp-tool-search): the change invalidates the cache and the next request re-reads the entire conversation. In that case `/reload-plugins` shows a warning and does not apply the reload; pass `--force` to apply anyway. See [enabling or disabling a plugin](/docs/en/prompt-caching#enabling-or-disabling-a-plugin) for details.
 
 ## Manage marketplaces
 

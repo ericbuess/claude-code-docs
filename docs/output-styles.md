@@ -28,7 +28,7 @@ There are three additional built-in output styles:
 
 Run `/config` and select **Output style** to pick a style from a menu. Your selection is saved to `.claude/settings.local.json` at the [local project level](/docs/en/settings).
 
-<Note>{/* max-version: 2.1.90 */}The standalone `/output-style` command was deprecated in v2.1.73 and removed in v2.1.91. Use `/config` or edit the `outputStyle` setting directly.</Note>
+<Note>The standalone `/output-style` command was deprecated in v2.1.73 and removed in v2.1.91. Use `/config` or edit the `outputStyle` setting directly.</Note>
 
 To set a style without the menu, edit the `outputStyle` field directly in a settings file:
 
@@ -52,7 +52,7 @@ A custom output style is a Markdown file: frontmatter for metadata, then the ins
     * Project: `.claude/output-styles`
     * Managed policy: `.claude/output-styles` inside the [managed settings directory](/docs/en/settings#settings-files)
 
-    Project output styles load from every `.claude/output-styles/` between the working directory and the repository root. {/* min-version: 2.1.178 */}As of v2.1.178, when more than one of these nested directories defines a style with the same name, Claude Code uses the one closest to the working directory.
+    Project output styles load from every `.claude/output-styles/` between the working directory and the repository root. As of v2.1.178, when more than one of these nested directories defines a style with the same name, Claude Code uses the one closest to the working directory.
   </Step>
 
   <Step title="Add frontmatter and instructions">

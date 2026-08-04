@@ -35,7 +35,7 @@ Whichever product provides the gateway, it must:
 * **Return upstream errors unmodified**: Claude Code's automatic recovery matches on error wording, so wrapping errors in the gateway's own envelope breaks it
 * **Exempt the path from request-body WAF inspection**: Claude Code prompts carry source code and XML-style tags that match cross-site-scripting body rules; a WAF in front of the gateway returns `403` on real sessions while short test requests pass
 
-Optionally, serve `GET /v1/models` so Claude Code can populate the model picker from your gateway with [model discovery](/docs/en/llm-gateway-protocol#model-discovery). {/* min-version: 2.1.129 */}
+Optionally, serve `GET /v1/models` so Claude Code can populate the model picker from your gateway with [model discovery](/docs/en/llm-gateway-protocol#model-discovery).&#x20;
 
 ## Rollout steps
 
@@ -189,7 +189,7 @@ Deliver the variables through the `env` block of a [managed settings file](/docs
 
 Add the conditional variables from the table to the same `env` block. A managed `ANTHROPIC_BASE_URL` is enforced and cannot be overridden by a developer's shell export, since Claude Code applies it over the process environment and lower-precedence settings.
 
-Do not include `forceLoginMethod` or `forceLoginOrgUUID` in managed settings alongside a gateway credential. On Claude Code v2.1.146 and later, either key, with any value, blocks `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, and `apiKeyHelper` at startup, so developers see `This machine's managed settings require a first-party login` and cannot proceed. {/* min-version: 2.1.146 */}
+Do not include `forceLoginMethod` or `forceLoginOrgUUID` in managed settings alongside a gateway credential. On Claude Code v2.1.146 and later, either key, with any value, blocks `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, and `apiKeyHelper` at startup, so developers see `This machine's managed settings require a first-party login` and cannot proceed.&#x20;
 
 [Server-managed settings](/docs/en/server-managed-settings#platform-availability) delivery requires a direct connection to `api.anthropic.com`, so it does not reach gateway-routed sessions. Gateway deployments use this file-based managed settings path, which enforces the same keys.
 

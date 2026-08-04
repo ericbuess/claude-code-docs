@@ -64,7 +64,7 @@ Each binding block specifies a **context** where the bindings apply:
 | `Plugin`          | Plugin dialog (browse, discover, manage)                     |
 | `Scroll`          | Conversation scrolling and text selection in fullscreen mode |
 
-{/* max-version: 2.1.204 */}Before v2.1.205, a `Doctor` context and a `doctor:fix` action existed for the `/doctor` diagnostics screen.
+Before v2.1.205, a `Doctor` context and a `doctor:fix` action existed for the `/doctor` diagnostics screen.
 
 ## Available actions
 
@@ -179,9 +179,9 @@ The `historySearch:next`, `historySearch:accept`, `historySearch:cancel`, and `h
 
 Actions available in the `Task` context:
 
-| Action            | Default               | Description                                                                                                                                 |
-| :---------------- | :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
-| `task:background` | Ctrl+B, Ctrl+X Ctrl+B | Background current task. {/* min-version: 2.1.169 */}The Ctrl+X Ctrl+B chord requires v2.1.169 or later and avoids the tmux prefix conflict |
+| Action            | Default               | Description                                                                                                     |
+| :---------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `task:background` | Ctrl+B, Ctrl+X Ctrl+B | Background current task. The Ctrl+X Ctrl+B chord requires v2.1.169 or later and avoids the tmux prefix conflict |
 
 ### Theme actions
 
@@ -223,15 +223,15 @@ Actions available in the `Attachments` context:
 
 Actions available in the `Footer` context:
 
-| Action                  | Default           | Description                                                                                                                                                                                                               |
-| :---------------------- | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `footer:next`           | Right             | Next footer item                                                                                                                                                                                                          |
-| `footer:previous`       | Left              | Previous footer item                                                                                                                                                                                                      |
-| `footer:up`             | Up                | Navigate up in footer (deselects at top)                                                                                                                                                                                  |
-| `footer:down`           | Down              | Navigate down in footer                                                                                                                                                                                                   |
-| `footer:openSelected`   | Enter             | Open selected footer item                                                                                                                                                                                                 |
-| `footer:clearSelection` | Escape            | Clear footer selection                                                                                                                                                                                                    |
-| `footer:dismiss`        | Backspace, Delete | Dismiss the selected [artifact](/docs/en/artifacts) link from the footer; the published artifact itself is unaffected. On other footer rows, these keys have no effect. {/* min-version: 2.1.217 */}Requires v2.1.217 or later |
+| Action                  | Default           | Description                                                                                                                                                                                   |
+| :---------------------- | :---------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `footer:next`           | Right             | Next footer item                                                                                                                                                                              |
+| `footer:previous`       | Left              | Previous footer item                                                                                                                                                                          |
+| `footer:up`             | Up                | Navigate up in footer (deselects at top)                                                                                                                                                      |
+| `footer:down`           | Down              | Navigate down in footer                                                                                                                                                                       |
+| `footer:openSelected`   | Enter             | Open selected footer item                                                                                                                                                                     |
+| `footer:clearSelection` | Escape            | Clear footer selection                                                                                                                                                                        |
+| `footer:dismiss`        | Backspace, Delete | Dismiss the selected [artifact](/docs/en/artifacts) link from the footer; the published artifact itself is unaffected. On other footer rows, these keys have no effect. Requires v2.1.217 or later |
 
 ### Message selector actions
 

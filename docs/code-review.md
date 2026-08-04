@@ -282,7 +282,7 @@ If the check run title says issues were found but you don't see inline review co
 
 ## Review a diff locally
 
-The [`/code-review` command](/docs/en/commands) reviews a diff in your terminal without installing the GitHub App. It reports correctness bugs and {/* min-version: 2.1.151 */}reuse, simplification, and efficiency cleanups.
+The [`/code-review` command](/docs/en/commands) reviews a diff in your terminal without installing the GitHub App. It reports correctness bugs and reuse, simplification, and efficiency cleanups.
 
 <Steps>
   <Step title="Run /code-review">
@@ -301,7 +301,7 @@ The [`/code-review` command](/docs/en/commands) reviews a diff in your terminal 
   </Step>
 
   <Step title="Keep working">
-    {/* min-version: 2.1.218 */}The review runs as a background [subagent](/docs/en/sub-agents) with its own context window, so it doesn't fill your conversation. The findings arrive in your conversation when the review completes.
+    The review runs as a background [subagent](/docs/en/sub-agents) with its own context window, so it doesn't fill your conversation. The findings arrive in your conversation when the review completes.
   </Step>
 
   <Step title="Act on the findings">
@@ -309,15 +309,15 @@ The [`/code-review` command](/docs/en/commands) reviews a diff in your terminal 
   </Step>
 </Steps>
 
-{/* min-version: 2.1.218 */}When the host application requests it, Claude reports the review's findings through the [`ReportFindings` tool](/docs/en/tools-reference) instead of as text in its reply. Claude Code renders the report as a findings list, one entry per finding. Each entry shows the file location, a one-sentence summary, and a category tag such as `correctness` when the finding carries one. A host request applies at every effort level and requires Claude Code v2.1.218 or later.
+When the host application requests it, Claude reports the review's findings through the [`ReportFindings` tool](/docs/en/tools-reference) instead of as text in its reply. Claude Code renders the report as a findings list, one entry per finding. Each entry shows the file location, a one-sentence summary, and a category tag such as `correctness` when the finding carries one. A host request applies at every effort level and requires Claude Code v2.1.218 or later.
 
-{/* min-version: 2.1.218 */}In a terminal session, `/code-review` runs the review as a fork and reports the findings as text in the reply, and Claude reports as text in any `-p` run with text or JSON output, even when the host application requests the findings list. {/* max-version: 2.1.217 */}On v2.1.216 and v2.1.217, a terminal review at `medium` or higher effort reported the findings list instead.
+In a terminal session, `/code-review` runs the review as a fork and reports the findings as text in the reply, and Claude reports as text in any `-p` run with text or JSON output, even when the host application requests the findings list. On v2.1.216 and v2.1.217, a terminal review at `medium` or higher effort reported the findings list instead.
 
 When Claude fixes reported findings later in the session, it reports them again, and Claude Code marks each finding in the new list as fixed, skipped, or no change needed.
 
 ### What the review reads and edits
 
-The review follows your `CLAUDE.md` like any Claude Code session, but it doesn't read [`REVIEW.md`](#review-md). {/* min-version: 2.1.218 */}A background review applies its `--fix` edits outside your session's [checkpoints](/docs/en/checkpointing#subagent-edits-not-restored), so `/rewind` doesn't undo them; use git to revert them. When the review [runs in the foreground](#run-in-the-foreground), it edits your working tree during your own turn, so `/rewind` restores its edits as usual.
+The review follows your `CLAUDE.md` like any Claude Code session, but it doesn't read [`REVIEW.md`](#review-md). A background review applies its `--fix` edits outside your session's [checkpoints](/docs/en/checkpointing#subagent-edits-not-restored), so `/rewind` doesn't undo them; use git to revert them. When the review [runs in the foreground](#run-in-the-foreground), it edits your working tree during your own turn, so `/rewind` restores its edits as usual.
 
 ### Tune effort and arguments
 
@@ -325,12 +325,12 @@ Pass an [effort level](/docs/en/model-config#adjust-effort-level) to trade cover
 
 After the effort level and flags, Claude Code reads the rest of the line in one of two ways:
 
-* **Without `ultra`**: everything left is the review target, even when it starts with another command name. `/code-review /fix-issue 123` reviews with `/fix-issue 123` as target text instead of loading `/fix-issue` as a second [stacked skill](/docs/en/skills#pass-arguments-to-skills). {/* min-version: 2.1.218 */}Before v2.1.218, a command stacked after `/code-review` expanded as its own skill.
+* **Without `ultra`**: everything left is the review target, even when it starts with another command name. `/code-review /fix-issue 123` reviews with `/fix-issue 123` as target text instead of loading `/fix-issue` as a second [stacked skill](/docs/en/skills#pass-arguments-to-skills). Before v2.1.218, a command stacked after `/code-review` expanded as its own skill.
 * **With `ultra`**: Claude Code reads a single word as a base branch or PR number, and turns longer text that doesn't name a branch or PR into [a note attached to the review](/docs/en/ultrareview#pass-a-request-in-plain-words). `/code-review ultra check my auth changes` reviews your current branch, and Claude relates the findings to your note.
 
 ### Run in the foreground
 
-{/* min-version: 2.1.218 */}The review runs in the background by default; before v2.1.218, it ran inside your conversation. It runs in the foreground instead in cases like these:
+The review runs in the background by default; before v2.1.218, it ran inside your conversation. It runs in the foreground instead in cases like these:
 
 * You run `/code-review` again while an earlier review is still in progress
 * You run it in non-interactive mode, with the `-p` flag or the Agent SDK; Claude Code waits for the review and includes the findings in the response, except for `ultra`, which [launches the cloud review without waiting](#escalate-to-ultrareview)
@@ -346,11 +346,11 @@ You can't schedule the review: `/code-review` is marked [`disable-model-invocati
   Ultrareview requires authentication with a claude.ai account and is not available on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, or to organizations with Zero Data Retention enabled. When ultrareview is not available, `/code-review ultra` runs a local review in your session instead.
 </Note>
 
-{/* min-version: 2.1.218 */}To start a cloud review from a script or CI, run `claude -p '/code-review ultra'`. Claude Code launches the review and prints a link for tracking it. Requires Claude Code v2.1.218 or later.
+To start a cloud review from a script or CI, run `claude -p '/code-review ultra'`. Claude Code launches the review and prints a link for tracking it. Requires Claude Code v2.1.218 or later.
 
 When the review would bill [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans), Claude Code stops before launching, because the billing confirmation needs an interactive session. Run the [`claude ultrareview` subcommand](/docs/en/ultrareview#run-ultrareview-non-interactively) instead; by running it, you consent to the charge.
 
-The command was named `/simplify` before v2.1.147, when it applied fixes by default. {/* min-version: 2.1.154 */}From v2.1.154, `/simplify` runs a separate cleanup-only review that applies fixes without hunting for bugs. If you scripted `/simplify` for bug-finding, switch to `/code-review --fix`, which is unchanged.
+The command was named `/simplify` before v2.1.147, when it applied fixes by default. From v2.1.154, `/simplify` runs a separate cleanup-only review that applies fixes without hunting for bugs. If you scripted `/simplify` for bug-finding, switch to `/code-review --fix`, which is unchanged.
 
 ## Related resources
 

@@ -6,8 +6,6 @@
 
 > Dynamic workflows orchestrate many subagents from a script Claude writes and you can rerun. Use them for codebase audits, large migrations, and cross-checked research.
 
-{/* plan-availability: feature=workflows plans=pro,max,team,enterprise providers=all */}
-
 <Note>
   Dynamic workflows require Claude Code v2.1.154 or later and are available on all paid plans, with Anthropic API access, and on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. On Pro, turn them on from the Dynamic workflows row in `/config`.
 </Note>
@@ -65,7 +63,7 @@ The quickest way to see a workflow in action is to run `/deep-research`, the [bu
   <Step title="Read the report">
     When the run finishes, the report lands in your session. It cites the sources each claim came from, with claims that didn't survive cross-checking already filtered out.
 
-    {/* min-version: 2.1.196 */}As of v2.1.196, when the verifier agents can't check a claim, such as after a rate limit or API error, the report lists that claim as unverified instead of counting it as refuted.
+    As of v2.1.196, when the verifier agents can't check a claim, such as after a rate limit or API error, the report lists that claim as unverified instead of counting it as refuted.
   </Step>
 </Steps>
 
@@ -79,7 +77,7 @@ Claude Code includes `/deep-research` as a built-in workflow:
 | :-------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/deep-research <question>` | Fans out web searches on a question across several angles, fetches and cross-checks the sources it finds, votes on each claim, and returns a cited report with claims that didn't survive cross-checking filtered out. Requires the [WebSearch tool](/docs/en/tools-reference#websearch-tool-behavior) to be available |
 
-{/* min-version: 2.1.218 */}`/deep-research` runs only when you invoke it. Before v2.1.218, Claude could also start it on its own.
+`/deep-research` runs only when you invoke it. Before v2.1.218, Claude could also start it on its own.
 
 [Workflows you save](#save-the-workflow-for-reuse) yourself become commands the same way and appear in `/` autocomplete alongside the bundled ones.
 
@@ -99,7 +97,7 @@ The progress view shows each phase with its agent counts, token totals, and elap
 | `Enter` or `→` | Drill into the selected phase, then into an agent to read its prompt, recent tool calls, and result                         |
 | `Esc` or `←`   | Back out one level. In v2.1.203 through v2.1.205, `←` didn't step back out of a phase or agent; use `Esc` on those versions |
 | `j` / `k`      | Scroll within the agent detail when it overflows                                                                            |
-| `f`            | {/* min-version: 2.1.186 */}Filter the agent list in the selected phase by status. Press again to cycle                     |
+| `f`            | Filter the agent list in the selected phase by status. Press again to cycle                                                 |
 | `p`            | Pause or resume the run                                                                                                     |
 | `x`            | Stop the selected agent, or stop the whole workflow when focus is on the run                                                |
 | `r`            | Restart the selected running agent                                                                                          |
@@ -193,18 +191,18 @@ Run `/workflows`, select the run you want to keep, and press `s`. In the save di
 * `.claude/workflows/` in your project: shared with everyone who clones the repo
 * `~/.claude/workflows/` in your home directory: available in every project, visible only to you. If you set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars), this location is the `workflows/` directory under that path.
 
-{/* min-version: 2.1.208 */}The save dialog shows the resolved path for the personal location. Before v2.1.208, it showed `~/.claude/workflows/` even when `CLAUDE_CONFIG_DIR` was set; the file was still saved under the configured directory.
+The save dialog shows the resolved path for the personal location. Before v2.1.208, it showed `~/.claude/workflows/` even when `CLAUDE_CONFIG_DIR` was set; the file was still saved under the configured directory.
 
 Press Enter to save. The workflow runs as `/<name>` in future sessions from either location.
 
-{/* min-version: 2.1.216 */}Claude Code checks the save location for symlinks before writing, and shows an error instead of writing through one. What it checks depends on where you save:
+Claude Code checks the save location for symlinks before writing, and shows an error instead of writing through one. What it checks depends on where you save:
 
 * Project location: Claude Code refuses if `.claude`, `.claude/workflows`, or the target file is a symlink.
 * Personal location: Claude Code refuses only if the target file itself is a symlink, so a `~/.claude` directory managed by a dotfiles tool still works.
 
 Before v2.1.216, Claude Code followed the link, which could place the file outside the location you chose.
 
-{/* min-version: 2.1.178 */}In a monorepo with several `.claude/` directories, you can keep workflows alongside the package they apply to. As of v2.1.178, saving to the project location writes to the closest `.claude/workflows/` directory that already exists between your working directory and the repository root, or to the repository root if none exists yet. Project workflows also load from every `.claude/workflows/` along that path, and when more than one defines the same name Claude Code runs the one closest to the working directory.
+In a monorepo with several `.claude/` directories, you can keep workflows alongside the package they apply to. As of v2.1.178, saving to the project location writes to the closest `.claude/workflows/` directory that already exists between your working directory and the repository root, or to the repository root if none exists yet. Project workflows also load from every `.claude/workflows/` along that path, and when more than one defines the same name Claude Code runs the one closest to the working directory.
 
 If a project workflow and a personal workflow share a name, the project one runs.
 
@@ -376,9 +374,9 @@ Each value maps to an agent count:
 | `medium`       | Fewer than 15 agents                                |
 | `large`        | Fewer than 50 agents                                |
 
-{/* min-version: 2.1.219 */}The default is `medium`. Until you choose a value, the `/config` row shows `medium (default)` and the workflow's `Running in background` line shows `medium size (/config)`. Requires Claude Code v2.1.219 or later; earlier versions default to `unrestricted`.
+The default is `medium`. Until you choose a value, the `/config` row shows `medium (default)` and the workflow's `Running in background` line shows `medium size (/config)`. Requires Claude Code v2.1.219 or later; earlier versions default to `unrestricted`.
 
-To change the guideline, pick a value for the Dynamic workflow size setting in `/config`, or run `/config workflowSizeGuideline=small`. {/* min-version: 2.1.219 */}On v2.1.219 and later, you can also set the [`workflowSizeGuideline` key](/docs/en/settings#available-settings) in any settings file; that value takes precedence over `/config`, and Claude Code hides the `/config` row while a settings file provides one.
+To change the guideline, pick a value for the Dynamic workflow size setting in `/config`, or run `/config workflowSizeGuideline=small`. On v2.1.219 and later, you can also set the [`workflowSizeGuideline` key](/docs/en/settings#available-settings) in any settings file; that value takes precedence over `/config`, and Claude Code hides the `/config` row while a settings file provides one.
 
 Changes take effect on the next prompt. The [runtime agent caps](#behavior-and-limits) still apply regardless of the setting.
 

@@ -65,7 +65,7 @@ The recommended workflow has four phases:
 
 <Steps>
   <Step title="Explore">
-    Enter plan mode. Claude reads files and answers questions without making changes.
+    Enter plan mode by pressing `Shift+Tab` until the status bar shows `⏸ plan mode on`, or start the session with `claude --permission-mode plan`. Claude reads files and answers questions without making changes.
 
     ```txt title="claude (plan mode)" wrap theme={null}
     read /src/auth and understand how we handle sessions and login.
@@ -85,7 +85,7 @@ The recommended workflow has four phases:
   </Step>
 
   <Step title="Implement">
-    Switch out of plan mode and let Claude code, verifying against its plan.
+    Switch out of plan mode by approving the plan or pressing `Shift+Tab`, then let Claude code, verifying against its plan.
 
     ```txt title="claude (default mode)" wrap theme={null}
     implement the OAuth flow from your plan. write tests for the
@@ -234,7 +234,7 @@ Claude is also effective at learning CLI tools it doesn't already know. Try prom
 ### Connect MCP servers
 
 <Tip>
-  Run `claude mcp add` to connect external tools like Notion, Figma, or your database.
+  Run `claude mcp add` with a server name and URL or command to connect external tools like Notion, Figma, or your database. For example: `claude mcp add --transport http notion https://mcp.notion.com/mcp`.
 </Tip>
 
 With [MCP servers](/docs/en/mcp), you can ask Claude to implement features from issue trackers, query databases, analyze monitoring data, integrate designs from Figma, and automate workflows.
@@ -516,7 +516,7 @@ For large migrations or analyses, you can distribute work across many parallel C
 
 <Steps>
   <Step title="Generate a task list">
-    Have Claude list all files that need migrating (e.g., `list all 2,000 Python files that need migrating`)
+    Have Claude write the list of files that need migrating to a file, so the loop in the next step can read it, with a prompt like `list all 2,000 Python files that need migrating and save the list to files.txt`
   </Step>
 
   <Step title="Write a script to loop through the list">

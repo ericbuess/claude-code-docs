@@ -13,7 +13,7 @@ Some organizations require every process on a workstation to start through a man
 A launcher that wraps the `claude` command on your `PATH` can't reach these processes, because they start from the binary's direct path without looking up `claude`.
 
 <Note>
-  `CLAUDE_CODE_PROCESS_WRAPPER` requires Claude Code v2.1.208 or later. Earlier versions ignore the variable and start every process unwrapped. {/* min-version: 2.1.210 */}The equivalent [`processWrapper` setting](/docs/en/settings#available-settings) requires v2.1.210 or later. Earlier versions ignore it as an unknown key, apply no launcher, and report no error.
+  `CLAUDE_CODE_PROCESS_WRAPPER` requires Claude Code v2.1.208 or later. Earlier versions ignore the variable and start every process unwrapped. The equivalent [`processWrapper` setting](/docs/en/settings#available-settings) requires v2.1.210 or later. Earlier versions ignore it as an unknown key, apply no launcher, and report no error.
 
   After deploying either form, use the [Verify step](#set-up-the-launcher) to confirm the running version applies it.
 </Note>
@@ -26,8 +26,8 @@ With `CLAUDE_CODE_PROCESS_WRAPPER` set, Claude Code starts each of the following
 * The terminal host and the Claude Code session inside every agent view row, including the warm standby sessions the service keeps ready.
 * Sessions the service respawns after an update or a crash.
 * The relaunch Claude Code performs of itself to finish installing an update, including agent view's restart-for-update action.
-* {/* min-version: 2.1.210 */}The [Remote Control](/docs/en/remote-control) worker processes the background service manages. Requires Claude Code v2.1.210 or later.
-* {/* min-version: 2.1.210 */}The split-pane teammate sessions that [agent teams](/docs/en/agent-teams) start in tmux or iTerm2. Teammate panes are interactive rather than background processes, but Claude Code starts them from its own binary, so the launcher covers them. Requires Claude Code v2.1.210 or later.
+* The [Remote Control](/docs/en/remote-control) worker processes the background service manages. Requires Claude Code v2.1.210 or later.
+* The split-pane teammate sessions that [agent teams](/docs/en/agent-teams) start in tmux or iTerm2. Teammate panes are interactive rather than background processes, but Claude Code starts them from its own binary, so the launcher covers them. Requires Claude Code v2.1.210 or later.
 
 On Windows, the variable is ignored: the launcher contract depends on `exec`, which Windows doesn't support. A Windows machine with the variable set runs every process unwrapped and keeps working, and the only signal is a warning in the [debug log](/docs/en/troubleshooting). If your launcher policy covers Windows, the variable doesn't satisfy it there: count Windows machines as unwrapped when you plan the rollout.
 

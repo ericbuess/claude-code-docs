@@ -494,7 +494,7 @@ Because these settings arrive over the network, the CLI shows each developer a o
 
 Claude Code applies some delivered `env` variables without showing the developer the approval dialog, such as model selection settings and numeric limits. Other delivered variables can require the developer's approval before they take effect; a non-empty proxy, base-URL, or `OTEL_EXPORTER_OTLP_ENDPOINT` value always does. When a delivered variable needs approval, the dialog names it.
 
-[Environment variables and the approval dialog](/docs/en/server-managed-settings#environment-variables-and-the-approval-dialog) has the details, including four privacy toggles whose delivered value decides whether they need approval. {/* min-version: 2.1.218 */}Before v2.1.218, Claude Code applied fewer variables without asking the developer, so more delivered variables triggered the dialog.
+[Environment variables and the approval dialog](/docs/en/server-managed-settings#environment-variables-and-the-approval-dialog) has the details, including four privacy toggles whose delivered value decides whether they need approval. Before v2.1.218, Claude Code applied fewer variables without asking the developer, so more delivered variables triggered the dialog.
 
 The gateway's [telemetry](#telemetry) configuration pushes `OTEL_EXPORTER_OTLP_ENDPOINT`, so setting `telemetry.forward_to` triggers the dialog on each interactive client. The dialog protects the developer's machine from a compromised or hostile gateway, not the organization from the developer.
 

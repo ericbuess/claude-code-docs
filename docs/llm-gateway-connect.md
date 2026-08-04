@@ -260,7 +260,7 @@ The [Agent SDK](/docs/en/agent-sdk/overview) has no gateway-specific options; it
 
 [Claude Code in Slack](/docs/en/slack) and [Claude Code on the web](/docs/en/claude-code-on-the-web) are Anthropic-hosted products that always use Anthropic's API; they aren't part of a gateway deployment. Gateway variables set in a cloud session's environment configuration are not applied. If your traffic must stay on the gateway, don't enable these surfaces for those users.
 
-[Remote Control](/docs/en/remote-control) and [voice dictation](/docs/en/voice-dictation) both rely on a claude.ai identity: Remote Control to pair a live session with your account, and voice dictation to reach the claude.ai transcription endpoint. They are unavailable while `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or an `apiKeyHelper` is active. {/* min-version: 2.1.196 */}As of v2.1.196, Remote Control is also disabled while `ANTHROPIC_BASE_URL` points at a non-Anthropic host, so signing in with claude.ai isn't enough on its own.
+[Remote Control](/docs/en/remote-control) and [voice dictation](/docs/en/voice-dictation) both rely on a claude.ai identity: Remote Control to pair a live session with your account, and voice dictation to reach the claude.ai transcription endpoint. They are unavailable while `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or an `apiKeyHelper` is active. As of v2.1.196, Remote Control is also disabled while `ANTHROPIC_BASE_URL` points at a non-Anthropic host, so signing in with claude.ai isn't enough on its own.
 
 To restore either feature, log in with claude.ai and unset the gateway variables that feature checks. The Remote Control section of `claude doctor` names the credential variable to unset.
 
@@ -305,7 +305,7 @@ With model discovery enabled, Claude Code queries the gateway for its model list
 
 Enable it if your gateway serves model names that aren't in Claude Code's built-in list and you want to select them from the picker. If the built-in models are what you use, you don't need discovery; your administrator may also have already enabled it through managed settings.
 
-To enable it, set `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` in your shell or in the `env` block of `~/.claude/settings.json`. Discovery requires Claude Code v2.1.129 or later. {/* min-version: 2.1.129 */}
+To enable it, set `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` in your shell or in the `env` block of `~/.claude/settings.json`. Discovery requires Claude Code v2.1.129 or later.&#x20;
 
 Discovered models appear as additional `/model` entries labeled `From gateway`. To confirm discovery ran, start `claude --debug` and look for the `[gatewayDiscovery]` lines in the debug log at `~/.claude/debug/<session-id>.txt`: a success logs how many models were cached, and a `404`, timeout, or redirect is recorded there too. For when discovery runs, what it filters, and the response format gateways serve, see the [model discovery reference](/docs/en/llm-gateway-protocol#model-discovery).
 
@@ -390,7 +390,7 @@ These configurations point Claude Code at a gateway through a provider-specific 
 
 Use one only if your gateway team specifically named Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or the Claude Platform on AWS. If the [verification request](#verify-the-connection) above returned JSON, you can skip this section.
 
-Set the block for the provider your gateway team named. The skip-auth variables tell Claude Code not to sign requests with provider credentials, since the gateway holds those. If the gateway needs its own token, add `ANTHROPIC_AUTH_TOKEN` after the block, except for Microsoft Foundry, which uses `ANTHROPIC_FOUNDRY_API_KEY` as shown. {/* min-version: 2.1.203 */}A Microsoft Foundry gateway that expects a bearer token can use [`ANTHROPIC_FOUNDRY_AUTH_TOKEN`](/docs/en/env-vars) instead; it takes precedence over `ANTHROPIC_FOUNDRY_API_KEY` when both are set. `ANTHROPIC_FOUNDRY_AUTH_TOKEN` requires Claude Code v2.1.203 or later.
+Set the block for the provider your gateway team named. The skip-auth variables tell Claude Code not to sign requests with provider credentials, since the gateway holds those. If the gateway needs its own token, add `ANTHROPIC_AUTH_TOKEN` after the block, except for Microsoft Foundry, which uses `ANTHROPIC_FOUNDRY_API_KEY` as shown. A Microsoft Foundry gateway that expects a bearer token can use [`ANTHROPIC_FOUNDRY_AUTH_TOKEN`](/docs/en/env-vars) instead; it takes precedence over `ANTHROPIC_FOUNDRY_API_KEY` when both are set. `ANTHROPIC_FOUNDRY_AUTH_TOKEN` requires Claude Code v2.1.203 or later.
 
 #### Amazon Bedrock
 
@@ -438,9 +438,9 @@ Set the block for the provider your gateway team named. The skip-auth variables 
 
 #### Microsoft Foundry
 
-Put the gateway's credential in `ANTHROPIC_FOUNDRY_API_KEY`; it is sent to the gateway as the `x-api-key` header. {/* min-version: 2.1.203 */}A gateway that expects a bearer token can take [`ANTHROPIC_FOUNDRY_AUTH_TOKEN`](/docs/en/env-vars) instead. Claude Code sends that value as the `Authorization: Bearer` header, and it takes precedence over `ANTHROPIC_FOUNDRY_API_KEY` when both are set. Requires Claude Code v2.1.203 or later.
+Put the gateway's credential in `ANTHROPIC_FOUNDRY_API_KEY`; it is sent to the gateway as the `x-api-key` header. A gateway that expects a bearer token can take [`ANTHROPIC_FOUNDRY_AUTH_TOKEN`](/docs/en/env-vars) instead. Claude Code sends that value as the `Authorization: Bearer` header, and it takes precedence over `ANTHROPIC_FOUNDRY_API_KEY` when both are set. Requires Claude Code v2.1.203 or later.
 
-For a gateway that injects its own `Authorization` header, set `CLAUDE_CODE_SKIP_FOUNDRY_AUTH=1` and leave both credential variables unset. Claude Code then sends requests without an Azure credential and preserves the `Authorization` header you supply, for example through `ANTHROPIC_CUSTOM_HEADERS`. {/* min-version: 2.1.203 */}Before v2.1.203, `CLAUDE_CODE_SKIP_FOUNDRY_AUTH` without an API key left the Microsoft Foundry client unable to send requests.
+For a gateway that injects its own `Authorization` header, set `CLAUDE_CODE_SKIP_FOUNDRY_AUTH=1` and leave both credential variables unset. Claude Code then sends requests without an Azure credential and preserves the `Authorization` header you supply, for example through `ANTHROPIC_CUSTOM_HEADERS`. Before v2.1.203, `CLAUDE_CODE_SKIP_FOUNDRY_AUTH` without an API key left the Microsoft Foundry client unable to send requests.
 
 <Tabs>
   <Tab title="Bash or Zsh">
