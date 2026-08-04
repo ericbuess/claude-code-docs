@@ -376,8 +376,8 @@
     "common-workflows.md": {
       "original_url": "https://code.claude.com/docs/en/common-workflows",
       "original_md_url": "https://code.claude.com/docs/en/common-workflows.md",
-      "hash": "df01507484f3f783d287ea79f063bf6070b19288dc2443c0df349c8cc2e38240",
-      "last_updated": "2026-07-29T01:26:50.111723"
+      "hash": "3bb676dabc9efe7f1eb032277338e5955df90f013bf8a6db8eb51db8f677c8fa",
+      "last_updated": "2026-08-04T19:17:48.766968"
     },
     "communications-kit.md": {
       "original_url": "https://code.claude.com/docs/en/communications-kit",
@@ -802,8 +802,8 @@
     "security.md": {
       "original_url": "https://code.claude.com/docs/en/security",
       "original_md_url": "https://code.claude.com/docs/en/security.md",
-      "hash": "2993bb5cffd66ce03aa1bc415cbc3a56070c8fbcf5eb82bd983b6e8c3a47cd2a",
-      "last_updated": "2026-07-28T21:57:16.941859"
+      "hash": "71cf3b2b94a3e218a378d9f02a573b54370f2a9c40738fe984c217cd3a50dbd8",
+      "last_updated": "2026-08-04T19:19:14.350983"
     },
     "security-guidance.md": {
       "original_url": "https://code.claude.com/docs/en/security-guidance",
@@ -1047,8 +1047,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-04T16:47:28.939225",
-    "fetch_duration_seconds": 162.253404,
+    "last_fetch_completed": "2026-08-04T19:20:15.949890",
+    "fetch_duration_seconds": 238.586178,
     "total_pages_discovered": 174,
     "pages_fetched_successfully": 175,
     "pages_failed": 0,
@@ -1058,7 +1058,7 @@
     "total_files": 174,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-04T16:47:28.939251",
+  "last_updated": "2026-08-04T19:20:15.949924",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

@@ -145,3 +145,4 @@ If you discover a security vulnerability in Claude Code:
 * [Monitoring usage](/docs/en/monitoring-usage): track and audit Claude Code activity
 * [Development containers](/docs/en/devcontainer): secure, isolated environments
 * [Anthropic Trust Center](https://trust.anthropic.com): security certifications and compliance
+* [CISO's guide to agentic AI](https://claude.com/blog/ciso-guide-to-agentic-ai): a security leader's framework for assessing agentic AI deployments
