@@ -6,7 +6,7 @@
 
 > A decision map for administrators deploying Claude Code, covering API providers, managed settings, policy enforcement, usage monitoring, and data handling.
 
-Claude Code enforces organization policy through managed settings that take precedence over local developer configuration. You deliver those settings from the Claude admin console, your mobile device management (MDM) system, or a file on disk. The settings control which tools, commands, servers, and network destinations Claude can reach.
+Claude Code enforces organization policy through managed settings that take precedence over local developer configuration, apart from the exceptions under [Settings precedence](/docs/en/settings#settings-precedence). You deliver those settings from the Claude admin console, your mobile device management (MDM) system, or a file on disk. The settings control which tools, commands, servers, and network destinations Claude can reach.
 
 This page walks through the deployment decisions in order. Each row links to the section below and to the reference page for that area.
 
@@ -42,7 +42,7 @@ Proxy and firewall requirements in [Network configuration](/docs/en/network-conf
 
 ## Decide how settings reach devices
 
-Managed settings define policy that takes precedence over local developer configuration. Claude Code checks the four sources below in priority order and applies the first one that returns a non-empty configuration. A small set of [cross-source lock keys](/docs/en/settings#settings-precedence), such as the sandbox allowlist locks, is honored when any admin-controlled source sets them; when a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) is configured, its output is the only source these checks read.
+Managed settings define organization policy. Claude Code checks the four sources below in priority order and applies the first one that returns a non-empty configuration. A small set of [cross-source lock keys](/docs/en/settings#settings-precedence), such as the sandbox allowlist locks, is honored when any admin-controlled source sets them; when a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) is configured, its output is the only source these checks read.
 
 | Mechanism               | Delivery                                                                                                                                                                                              | Priority | Platforms      |
 | :---------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------- | :------------- |
@@ -61,7 +61,7 @@ The plist and HKLM registry locations work with any provider and resist tamperin
 
 By default, WSL reads only the Linux file path at `/etc/claude-code`. To extend your Windows registry and `C:\Program Files\ClaudeCode` policy to WSL on the same machine, set [`wslInheritsWindowsSettings: true`](/docs/en/settings#available-settings) in either of those admin-only Windows sources.
 
-Whichever mechanism you choose, managed values take precedence over user and project settings. Array settings such as `permissions.allow` and `permissions.deny` merge entries from all sources, so developers can extend managed lists but not remove from them. For [two exceptions](/docs/en/settings#settings-precedence), `fallbackModel` and `availableModels`, the managed value replaces lower layers rather than merging.
+Whichever mechanism you choose, managed values take precedence over user and project settings, apart from the exceptions under [Settings precedence](/docs/en/settings#settings-precedence). Array settings such as `permissions.allow` and `permissions.deny` merge entries from all sources, so developers can extend managed lists but not remove from them. For [two exceptions](/docs/en/settings#settings-precedence), `fallbackModel` and `availableModels`, the managed value replaces lower layers rather than merging.
 
 See [Server-managed settings](/docs/en/server-managed-settings) and [Settings files and precedence](/docs/en/settings#settings-files).
 

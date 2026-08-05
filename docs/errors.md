@@ -49,10 +49,12 @@ Match the message you see in your terminal to a section below.
 | `Login expired · Please run /login`                                                                | [Authentication](#login-expired)                                                                                              |
 | `Failed to authenticate: OAuth session expired and could not be refreshed`                         | [Authentication](#login-expired)                                                                                              |
 | `does not meet scope requirement user:profile`                                                     | [Authentication](#oauth-scope-requirement)                                                                                    |
+| `claude.ai rejected the session token` / `session token rejected`                                  | [Authentication](#claude-ai-rejected-the-session-token)                                                                       |
 | `AWS credentials expired or invalid`                                                               | [Authentication](#aws-credentials-expired-or-invalid)                                                                         |
 | `AWS authentication failed`                                                                        | [Authentication](#aws-authentication-failed)                                                                                  |
 | `AWS default-chain credential resolve timed out`                                                   | [Authentication](#aws-default-chain-credential-resolve-timed-out)                                                             |
 | `Unable to connect to API`                                                                         | [Network](#unable-to-connect-to-api)                                                                                          |
+| `Unable to connect to Anthropic services` during setup                                             | [Network](#unable-to-connect-to-anthropic-services)                                                                           |
 | `Socket is closed`                                                                                 | [Network](#socket-is-closed)                                                                                                  |
 | `Waiting for API response · will retry in`                                                         | [Automatic retries](#automatic-retries), or [Network](#unable-to-connect-to-api) if it persists                               |
 | `Bedrock streaming response has content-type "..."; expected "application/vnd.amazon.eventstream"` | [Network](#bedrock-streaming-response-has-an-unexpected-content-type)                                                         |
@@ -125,7 +127,7 @@ Claude Code retries these failures:
 Claude Code doesn't retry these failures:
 
 * A TLS certificate validation failure, such as a TLS-inspecting proxy, a missing `NODE_EXTRA_CA_CERTS` bundle, or an expired certificate. Claude Code reports the error on the first attempt, so you can fix the certificate setup right away; see [SSL certificate errors](#ssl-certificate-errors). Claude Code still retries transient TLS conditions such as a handshake timeout. Before v2.1.199, Claude Code retried certificate failures through the full retry budget before showing the error.
-* A server error, dropped connection, or stalled stream that arrives after Claude has completed a block of text or a tool call in its response. Claude Code could execute the same tool calls twice if it re-ran the request, so it keeps what Claude completed and shows an [incomplete-response notice](#the-response-above-may-be-incomplete). Claude Code still runs any tool calls Claude completed and continues the turn from their results. Before v2.1.199, Claude Code discarded the partial output and reported the whole turn as an error when a server error arrived mid-stream.
+* A server error, dropped connection, or stalled stream that arrives after Claude has completed a block of text or a tool call in its response, but before it finishes the response. Claude Code could execute the same tool calls twice if it re-ran the request, so it keeps what Claude completed and shows an [incomplete-response notice](#the-response-above-may-be-incomplete). Claude Code still runs any tool calls Claude completed and continues the turn from their results. Before v2.1.199, Claude Code discarded the partial output and reported the whole turn as an error when a server error arrived mid-stream.
 * An [Amazon Bedrock streaming response with an unexpected content-type](#bedrock-streaming-response-has-an-unexpected-content-type), because the gateway or proxy rewriting the response would rewrite the retry the same way. Requires Claude Code v2.1.208 or later.
 
 ### What you see while Claude Code retries or waits
@@ -134,7 +136,7 @@ While retrying, the spinner shows a `Retrying in Ns · attempt x/y` countdown af
 
 As of v2.1.198, the usual spinner tip is suppressed during retries. Once the error reason is revealed, if the failure is a 529 overload the line below the countdown also names where to check service status: `status.claude.com` on the Anthropic API, or the provider or gateway host named in the message on other configurations.
 
-If no data arrives on the response stream for 20 seconds while a request is still pending, the spinner shows `Waiting for API response · will retry in … · check your network` before any retry has started. The request has not failed yet: the countdown runs to the point where Claude Code aborts the stalled connection, after which it retries the request, ends the turn with an error such as [The response above may be incomplete](#the-response-above-may-be-incomplete), or shows that notice and continues the turn from the results of any tool calls Claude completed. The banner clears on its own once data resumes or a retry succeeds; if it reappears on every attempt, treat it as a [network issue](#unable-to-connect-to-api). As of v2.1.185 the threshold is 20 seconds; earlier versions show the banner after 10 seconds with different wording.
+If no data arrives on the response stream for 20 seconds while a request is still pending, the spinner shows `Waiting for API response · will retry in … · check your network` before any retry has started. The request hasn't failed yet: the countdown runs to the point where Claude Code aborts the stalled connection. After the abort, Claude Code retries the request, ends the turn with an error when the failure isn't retryable or [retries run out](#automatic-retries), shows [The response above may be incomplete](#the-response-above-may-be-incomplete) and continues the turn from the results of any tool calls Claude completed, or ends the turn normally when Claude had already finished the response before the stall. The banner clears on its own once data resumes or a retry succeeds; if it reappears on every attempt, treat it as a [network issue](#unable-to-connect-to-api). Before v2.1.185, the banner appeared after 10 seconds with different wording.
 
 While Claude is consulting the [advisor](/docs/en/advisor), the banner appears after 90 seconds without data instead of 20, because a long advisor review can send nothing for well over 20 seconds. Before v2.1.214, the 20-second threshold applied during advisor calls too, so the banner appeared during advisor reviews even when nothing was wrong.
 
@@ -207,7 +209,7 @@ This can happen during periods of high load or when the model is generating a ve
 
 ### The response above may be incomplete
 
-A streaming request failed after Claude had started producing a response. Re-sending the request could run the same tool calls twice, so Claude Code keeps the output Claude completed and appends this notice instead of discarding the turn. Which variant you see names the cause:
+A streaming request failed while Claude was still producing its response. Re-sending the request could run the same tool calls twice, so Claude Code keeps the output Claude completed and appends this notice instead of discarding the turn. Which variant you see names the cause:
 
 ```text theme={null}
 API Error: Server error mid-response. The response above may be incomplete.
@@ -217,9 +219,12 @@ API Error: Response stalled mid-stream. The response above may be incomplete.
 
 * `Server error mid-response`: a mid-stream overloaded or 5xx server error. This variant requires Claude Code v2.1.199 or later; before then that case discarded the partial output and reported the whole turn as an error.
 * `Connection closed mid-response`: the connection dropped.
-* `Response stalled mid-stream`: the stream stopped sending data.
+* `Response stalled mid-stream`: the stream stopped sending data. Before v2.1.222, this variant could also appear on [gateway](/docs/en/gateways) connections reached through `ANTHROPIC_BASE_URL` or `ANTHROPIC_AWS_BASE_URL` while the server's keep-alive pings were still arriving, because Claude Code counted only parsed response events there; upgrading stops those spurious timeouts on those routes. Gateways reached through a provider base URL such as `ANTHROPIC_BEDROCK_BASE_URL` aren't wrapped by the byte watchdog; see [Streaming idle watchdogs](/docs/en/network-config#streaming-idle-watchdogs).
 
-Claude Code never shows this notice for a failure that happens before Claude starts producing a response: at that point it either retries the failure or ends the turn with a different error. See [Automatic retries](#automatic-retries).
+Claude Code shows this notice only when the failure interrupts a response Claude is still producing:
+
+* Before Claude starts producing a response, Claude Code either retries the failure or ends the turn with a different error. See [Automatic retries](#automatic-retries).
+* When one of these failures arrives after Claude has finished the response, Claude Code keeps the complete response and ends the turn normally, without this notice. Before v2.1.222, Claude Code showed the `Connection closed mid-response` or `Response stalled mid-stream` notice when the connection dropped or stalled after the response finished, and reported the turn as an error even though the response was complete.
 
 **What to do:**
 
@@ -646,6 +651,21 @@ OAuth token does not meet scope requirement: user:profile
 
 * Run `/login` to get a new token with the current scopes. You don't need to log out first.
 
+### claude.ai rejected the session token
+
+A [claude.ai connector](/docs/en/mcp#use-mcp-servers-from-claude-ai) request failed because claude.ai rejected the token from your Claude Code login, usually a login that expired and couldn't be refreshed. The rejected token is your login, not the connector's own authorization in claude.ai, so authorizing the connector again doesn't resolve it. In `/mcp`, the connector shows as `connected · session token rejected` and its detail view reads:
+
+```text theme={null}
+claude.ai rejected the session token. Run /login, then reconnect.
+```
+
+**What to do:**
+
+* Run `/login` to sign in again
+* Reconnect the connector from `/mcp`, or run `/mcp reconnect <server>`. Reconnecting before you sign in again leaves the connector in the same state. The `/mcp` panel's **Reconnect** option reports `your claude.ai session token was rejected`; the typed `/mcp reconnect <server>` form reports a successful reconnect even though the token is still rejected.
+
+Before v2.1.222, Claude Code marked the connector as needing authentication instead, which pointed you at the connector's authorization flow even though completing it didn't resolve the state.
+
 ### AWS credentials expired or invalid
 
 This message requires Claude Code v2.1.198 or later and only appears when [`awsAuthRefresh`](/docs/en/amazon-bedrock#advanced-credential-configuration) is set in your settings file. Your AWS session token expired or was rejected, and the automatic refresh Claude Code already ran didn't produce a credential the API accepts. It appears on a 401 from [Claude Platform on AWS](/docs/en/claude-platform-on-aws) or the [Mantle endpoint](/docs/en/amazon-bedrock#use-the-mantle-endpoint), which is how those providers report an expired security token.
@@ -735,14 +755,34 @@ If `curl` succeeds but Claude Code still fails, the cause is usually something b
 * On macOS, a VPN client that was disconnected or uninstalled can leave a tunnel interface or routing rule behind. Check `ifconfig` for stale `utun` interfaces and remove the VPN's network extension in System Settings.
 * Docker Desktop and similar container runtimes can intercept outbound traffic. Quit them and retry to rule this out.
 
+### Unable to connect to Anthropic services
+
+During first-run setup, Claude Code checks that it can reach `api.anthropic.com` and `platform.claude.com` before showing the sign-in step. When either check fails, Claude Code prints the reason and exits.
+
+```text theme={null}
+Unable to connect to Anthropic services
+Failed to connect to api.anthropic.com: ECONNREFUSED
+Connection to api.anthropic.com timed out after 10 seconds
+A proxy is configured via HTTPS_PROXY. Check that it allows connections to the host above.
+```
+
+Claude Code sends the check through the same [proxy configuration](/docs/en/network-config) as API requests and gives each probe 10 seconds. When the failed probe went through a proxy, the message names the environment variable that configured it, such as `HTTPS_PROXY`. Before v2.1.222, the check used a different proxy transport with no timeout: behind a proxy URL with the `https://` scheme, it could stall on `Checking connectivity...` indefinitely and then fail even though API requests through the same proxy succeed.
+
+**What to do:**
+
+* If the message names a proxy variable, check that its value points at the right proxy and ask your network team to allow HTTPS connections through it to the host in the message. See [Network configuration](/docs/en/network-config).
+* Work through the checks in [Unable to connect to API](#unable-to-connect-to-api). The `curl` test and firewall guidance there apply to this check too.
+* If your network is open and the failure persists, Claude Code may not be [available in your country](https://www.anthropic.com/supported-countries)
+
 ### Socket is closed
 
 `Socket is closed` means the connection carrying a streaming response was closed while the response was still arriving. The most common cause is a corporate proxy on Windows dropping an established tunnel mid-response.
 
-Claude Code either retries the request or keeps the partial response:
+Claude Code either retries the request or keeps the response Claude produced:
 
 * If Claude hasn't completed any text or tool call yet, Claude Code treats the failure as a dropped connection and [retries the request automatically](#automatic-retries), so the turn continues.
-* If Claude has completed a block of text or a tool call, Claude Code keeps what Claude completed and shows an [incomplete-response notice](#the-response-above-may-be-incomplete). It still runs any tool calls Claude completed and continues the turn from their results.
+* If Claude has completed a block of text or a tool call but hasn't finished the response, Claude Code keeps what Claude completed and shows an [incomplete-response notice](#the-response-above-may-be-incomplete). It still runs any tool calls Claude completed and continues the turn from their results.
+* If the socket closes after Claude has finished the response, Claude Code ends the turn normally with the complete response.
 
 Before v2.1.214, Claude Code didn't retry this failure, and the turn stopped with an error containing `Socket is closed`.
 

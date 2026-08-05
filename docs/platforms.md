@@ -29,13 +29,14 @@ You can mix surfaces on the same project. Configuration, project memory, and MCP
 
 Integrations let Claude work with services outside your codebase.
 
-| Integration                          | What it does                                       | Use it for                                                       |
-| :----------------------------------- | :------------------------------------------------- | :--------------------------------------------------------------- |
-| [Chrome](/docs/en/chrome)                 | Controls your browser with your logged-in sessions | Testing web apps, filling forms, automating sites without an API |
-| [GitHub Actions](/docs/en/github-actions) | Runs Claude in your CI pipeline                    | Automated PR reviews, issue triage, scheduled maintenance        |
-| [GitLab CI/CD](/docs/en/gitlab-ci-cd)     | Same as GitHub Actions for GitLab                  | CI-driven automation on GitLab                                   |
-| [Code Review](/docs/en/code-review)       | Reviews every PR automatically                     | Catching bugs before human review                                |
-| [Slack](/docs/en/slack)                   | Responds to `@Claude` mentions in your channels    | Turning bug reports into pull requests from team chat            |
+| Integration                          | What it does                                                                       | Use it for                                                                          |
+| :----------------------------------- | :--------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
+| [Chrome](/docs/en/chrome)                 | Controls your browser with your logged-in sessions                                 | Testing web apps, filling forms, automating sites without an API                    |
+| [GitHub Actions](/docs/en/github-actions) | Runs Claude in your CI pipeline                                                    | Automated PR reviews, issue triage, scheduled maintenance                           |
+| [GitLab CI/CD](/docs/en/gitlab-ci-cd)     | Same as GitHub Actions for GitLab                                                  | CI-driven automation on GitLab                                                      |
+| [Code Review](/docs/en/code-review)       | Reviews every PR automatically                                                     | Catching bugs before human review                                                   |
+| [Slack](/docs/en/slack)                   | Responds to `@Claude` mentions in your channels                                    | Turning bug reports into pull requests from team chat                               |
+| [Claude Tag](/docs/en/claude-tag)         | Runs `@Claude` as your organization's shared identity with admin-configured access | Shared team access on Team and Enterprise plans, instead of per-user Slack sessions |
 
 For integrations not listed here, [MCP servers](/docs/en/mcp) and [connectors](/docs/en/desktop#connect-external-tools) let you connect almost anything: Linear, Notion, Google Drive, or your own internal APIs.
 
@@ -72,6 +73,7 @@ If you're not sure where to start, [install the CLI](/docs/en/quickstart) and ru
 * [GitLab CI/CD](/docs/en/gitlab-ci-cd): the same for GitLab
 * [Code Review](/docs/en/code-review): automatic review on every pull request
 * [Slack](/docs/en/slack): send tasks from team chat, get PRs back
+* [Claude Tag](/docs/en/claude-tag): run `@Claude` as your organization's shared identity on Team and Enterprise plans
 
 ### Remote access
 

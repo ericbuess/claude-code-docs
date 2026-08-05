@@ -56,6 +56,8 @@ The [fast mode](/docs/en/fast-mode) availability check never appears in gateway 
 
 Inference responses must stream. Claude Code consumes server-sent events as they arrive, so a gateway that buffers complete responses before relaying them stalls the client.
 
+Forward keep-alive pings as well. On connections through `ANTHROPIC_BASE_URL` or `ANTHROPIC_AWS_BASE_URL`, Claude Code counts every byte your gateway relays, including SSE `ping` events and comment lines, and aborts a stream that goes silent for 300 seconds by default. The upstream's pings are the only traffic during long thinking pauses, so if your gateway strips or buffers them, Claude Code aborts the stream during those pauses and reports [`Response stalled mid-stream`](/docs/en/errors#the-response-above-may-be-incomplete). Gateways reached through `ANTHROPIC_BEDROCK_BASE_URL`, `ANTHROPIC_VERTEX_BASE_URL`, or `ANTHROPIC_FOUNDRY_BASE_URL` aren't wrapped by this byte-level watchdog, even when they relay the Anthropic Messages format; there, a [5-minute idle timeout](/docs/en/env-vars) aborts a silent stream instead, and on `ANTHROPIC_BEDROCK_BASE_URL` connections you can add the byte watchdog with [`CLAUDE_ENABLE_BYTE_WATCHDOG_BEDROCK`](/docs/en/env-vars).
+
 ### Format mismatch with the upstream
 
 Which format the client speaks determines what your gateway receives. The common failure mode is a mismatch between the format the client sends to your gateway and the format the upstream provider behind it accepts.

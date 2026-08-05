@@ -29,7 +29,7 @@ To complete the rollout, you'll need:
 Whichever product provides the gateway, it must:
 
 * **Accept a supported API format**: one of the formats in the [API formats table](/docs/en/llm-gateway-protocol#api-formats). The rollout steps below assume the Anthropic Messages API at `POST /v1/messages`, which most gateways serve
-* **Stream responses**: pass server-sent events through as they arrive instead of buffering the whole response
+* **Stream responses**: pass server-sent events through as they arrive, including keep-alive pings, instead of buffering the whole response; [streaming](/docs/en/llm-gateway-protocol#streaming) covers what buffering or stripped pings break
 * **Route Claude model names**: map each name developers use to an upstream model. Claude Code sends a model name such as `claude-sonnet-4-6` in each request; in most gateway products the mapping is a model list or routing table in the gateway's own configuration
 * **Forward headers and body unchanged**: pass `anthropic-beta`, `anthropic-version`, and the request body through in both directions; the [feature pass-through table](/docs/en/llm-gateway-protocol#feature-pass-through) maps each to the feature that breaks without it
 * **Return upstream errors unmodified**: Claude Code's automatic recovery matches on error wording, so wrapping errors in the gateway's own envelope breaks it

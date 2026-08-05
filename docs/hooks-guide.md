@@ -247,6 +247,9 @@ This example uses a separate script file that the hook calls. The script checks 
     INPUT=$(cat)
     FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 
+    # Normalize Windows backslash separators so the patterns below match
+    FILE_PATH="${FILE_PATH//\\//}"
+
     PROTECTED_PATTERNS=(".env" "package-lock.json" ".git/")
 
     for pattern in "${PROTECTED_PATTERNS[@]}"; do

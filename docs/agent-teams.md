@@ -140,6 +140,11 @@ each teammate.
 
 Teammates don't inherit the lead's `/model` selection by default. To change the model used when the prompt doesn't specify one, set **Default teammate model** in `/config`. Pick **Default (leader's model)** to have teammates follow the lead's current model.
 
+Claude Code checks each teammate's model, whether requested in your prompt or set through **Default teammate model**, against your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist. When the allowlist blocks a value, Claude Code substitutes another model:
+
+* **Family alias such as `opus`**: On the Anthropic API and Claude Platform on AWS, Claude Code runs the teammate on the newest version of that family the allowlist permits. On providers with provider-specific model IDs, where the [substitution doesn't operate](/docs/en/model-config#restrict-model-selection), a blocked alias falls back like any other blocked value per the next bullet
+* **Any other blocked value, including a family alias on providers where the substitution doesn't operate or whose family has no permitted version**: Claude Code uses the default teammate model. When the blocked value is the **Default teammate model** setting itself, Claude Code uses your provider's default Opus model, or the lead's model when the allowlist blocks that too
+
 Teammates inherit the lead's [effort level](/docs/en/model-config#adjust-effort-level). In split-pane mode this applies from v2.1.186; earlier versions did not pass the lead's session effort to split-pane teammates.
 
 ### Require plan approval for teammates
@@ -262,9 +267,13 @@ The teammate honors that definition's `tools` allowlist and `model`, and the def
 
 Teammates start with the lead's permission settings. If the lead runs with `--dangerously-skip-permissions`, all teammates do too. After spawning, you can change individual teammate modes, but you can't set per-teammate modes at spawn time.
 
-When one agent sends another a message over `SendMessage`, the receiving agent is told it came from another Claude session, not from you. A teammate cannot approve a permission prompt or supply consent on your behalf, and a teammate that was denied an action cannot relay it to another teammate to bypass the check. In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), the classifier treats an approval claim relayed from another agent as untrusted input rather than confirmation from you.
-
 Teammate permission prompts appear in the lead session, so approve them there yourself. [Plan approval](#require-plan-approval-for-teammates) is the designed exception: the lead session grants teammate plan approvals without a separate prompt to you.
+
+#### Messages between agents
+
+When one agent sends another a message over `SendMessage`, Claude Code tells the receiving agent the message came from another Claude session, not from you. A teammate cannot approve a permission prompt or supply consent on your behalf, and a teammate that was denied an action cannot relay it to another teammate to bypass the check.
+
+In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), the classifier treats an approval claim relayed from another agent as untrusted input rather than confirmation from you. The classifier also reviews each message an agent sends before Claude Code delivers it, whether a plain message or a structured protocol message such as a shutdown request or plan approval response. A message the classifier blocks never reaches the recipient.
 
 ### Context and communication
 

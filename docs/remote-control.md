@@ -136,7 +136,7 @@ Once a Remote Control session is active, you have a few ways to connect from ano
 * **Scan the QR code** shown alongside the session URL to open it directly in the Claude app. With `claude remote-control`, press spacebar to toggle the QR code display.
 * **Open [claude.ai/code](https://claude.ai/code) or the Claude app** and find the session by name in the session list. In the Claude mobile app, tap **Code** in the navigation to reach the session list. Remote Control sessions show a computer icon with a green status dot when online.
 
-When you connect, the device shows any subagents and workflows the session already has running in the background. Before v2.1.208, a device connecting to a session hosted in an interactive terminal didn't show subagents and workflows that were already running until one of them started or stopped. Before v2.1.212, a device that joined mid-run didn't show a running workflow's agents until the next agent update.
+When you connect, the device shows any subagents and workflows the session already has running in the background.
 
 The remote session title is chosen in this order:
 
@@ -147,7 +147,7 @@ The remote session title is chosen in this order:
 
 If you didn't set an explicit name, Claude Code updates the title to reflect your prompt once you send one. Claude Code matches auto-generated titles to the language of your conversation, or to the [`language`](/docs/en/settings#available-settings) setting if one is configured; the language matching requires Claude Code v2.1.176 or later.
 
-When you rename a session from claude.ai or the Claude app, Claude Code also updates the local title shown in `claude --resume`. Claude Code applies the same rename to the session name shown on the prompt bar and in `claude agents`. Before v2.1.221, renaming from claude.ai or the Claude app updated only the title, and the CLI kept its previous session name.
+When you rename a session from claude.ai or the Claude app, Claude Code also updates the local title shown in `claude --resume`. Claude Code applies the same rename to the session name shown on the prompt bar, and in the `claude agents` listing when the session [runs in the background](/docs/en/agent-view). Before v2.1.221, renaming from the session list at claude.ai or in the Claude app updated only the title, and the CLI kept its previous session name; `/rename`, which runs in the CLI itself, set the name on any version.
 
 If the environment already has an active session, you'll be asked whether to continue it or start a new one.
 
@@ -155,7 +155,20 @@ If you don't have the Claude app yet, use the `/mobile` command inside Claude Co
 
 ### Enable Remote Control for all sessions
 
-Remote Control only activates when you explicitly run `claude remote-control`, `claude --remote-control`, or `/remote-control`, unless auto-connect is turned on. To enable it automatically for every interactive session, run `/config` inside Claude Code and set **Enable Remote Control for all sessions** to `true`. Set it to `false` to never auto-connect, or to `default` to clear your choice. When the setting is cleared, Remote Control follows your organization's admin default if one is set, and otherwise Claude Code's current default. In the Desktop app, you can also toggle this from **Settings → Claude Code → Enable remote control by default**. In the [VS Code extension](/docs/en/vs-code#use-the-prompt-box), the same toggle appears as **Enable Remote Control for all sessions** in the command menu's Settings section; requires Claude Code v2.1.203 or later.
+Remote Control only activates when you explicitly run `claude remote-control`, `claude --remote-control`, or `/remote-control`, unless auto-connect is turned on. To turn auto-connect on for every interactive session, run `/config` inside Claude Code and set **Enable Remote Control for all sessions**. The toggle takes three values:
+
+* **`true`**: connect automatically when an interactive session starts.
+* **`false`**: turn auto-connect off, though a `true` from [managed settings](/docs/en/settings#settings-files) outranks it, because Claude Code saves the choice to your user settings. A `false` in project or local settings (`.claude/settings.json`, `.claude/settings.local.json`) turns auto-connect off even over a managed `true`.
+* **`default`**: clear your choice and follow your organization's admin default if one is set, otherwise Claude Code's current default.
+
+The same toggle appears outside the CLI:
+
+* **Desktop app**: **Settings > Claude Code > Enable remote control by default**.
+* **VS Code extension**: **Enable Remote Control for all sessions** in the [command menu's](/docs/en/vs-code#use-the-prompt-box) Settings section. Requires Claude Code v2.1.203 or later.
+
+To turn auto-connect on from a settings file instead, set [`remoteControlAtStartup`](/docs/en/settings#available-settings) to `true` in your user `~/.claude/settings.json` or in [managed settings](/docs/en/settings#settings-files). In project or local settings (`.claude/settings.json`, `.claude/settings.local.json`), Claude Code honors a `false` and turns auto-connect off for that repository, but ignores a `true`, so a checked-in file can't turn on Remote Control for everyone who opens the repository.
+
+Auto-connect signs in with your own claude.ai account, so a session it starts appears only in your own account's Claude apps and grants no one else access.
 
 With this setting on, each interactive Claude Code process registers one remote session. If you run multiple instances, each one gets its own remote session. To run multiple concurrent sessions from a single process, use [server mode](#start-a-remote-control-session) instead.
 
