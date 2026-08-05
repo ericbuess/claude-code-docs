@@ -437,6 +437,7 @@ The manifest is optional. If omitted, Claude Code auto-discovers components in [
   "repository": "https://github.com/author/plugin",
   "license": "MIT",
   "keywords": ["keyword1", "keyword2"],
+  "metadata": { "catalogId": "cat-123", "tier": "pro" },
   "skills": "./custom/skills/",
   "commands": ["./custom/commands/special.md"],
   "agents": ["./custom/agents/reviewer.md"],
@@ -480,9 +481,10 @@ If a field is one or two characters off from a recognized one, the warning
 suggests the likely intended name. A plugin with only unrecognized-field
 warnings still passes validation and loads at runtime.
 
-Fields with the wrong type still fail. For example, a `keywords` value that is
-a string instead of an array is a load error, and `claude plugin validate`
-reports it as one.
+How Claude Code handles a recognized field whose value has the wrong type depends on the field:
+
+* **Most fields**: the plugin fails to load. For example, a `keywords` value that is a string instead of an array is a load error, and `claude plugin validate` reports it as one.
+* **`experimental` and `metadata`**: Claude Code ignores a non-object value, and `claude plugin validate` reports a warning.
 
 Pass `--strict` to treat warnings as errors. Use it in CI to catch a misspelled
 field name or a field left over from another tool's manifest before publishing,
@@ -505,6 +507,7 @@ claude plugin validate ./my-plugin --strict
 | `repository`     | string  | Source code URL                                                                                                                                                                                                                                                                                                                                  | `"https://github.com/user/plugin"`                                |
 | `license`        | string  | License identifier                                                                                                                                                                                                                                                                                                                               | `"MIT"`, `"Apache-2.0"`                                           |
 | `keywords`       | array   | Discovery tags                                                                                                                                                                                                                                                                                                                                   | `["deployment", "ci-cd"]`                                         |
+| `metadata`       | object  | Free-form object for your own data, such as entitlement or catalog fields. Claude Code doesn't read it, so the values never affect plugin behavior. Claude Code ignores a non-object value, and `claude plugin validate` reports it as a warning. Before v2.1.222, Claude Code treated the key as an [unrecognized field](#unrecognized-fields). | `{"catalogId": "cat-123"}`                                        |
 | `defaultEnabled` | boolean | Whether the plugin starts in an enabled state when the user has not set one. Defaults to `true`. See [Default enablement](#default-enablement). Requires Claude Code v2.1.154 or later.                                                                                                                                                          | `false`                                                           |
 
 ### Default enablement
@@ -642,10 +645,14 @@ When a plugin has both a default folder and the matching manifest key, Claude Co
 
 For all path fields:
 
-* All paths must be relative to the plugin root and start with `./`
+* All paths must be relative to the plugin root and start with `./`, except that the `skills` field also accepts `"."`
+  * Both `"."` and `"./"` denote the plugin root itself
+  * Before v2.1.221, `"."` failed manifest validation and the plugin didn't load, so use `"./"` to support earlier versions
 * Components from custom paths use the same naming and namespacing rules
 * Multiple paths can be specified as arrays
-* When a skill path points to a directory that contains a `SKILL.md` directly, for example `"skills": ["./"]` pointing to the plugin root, the frontmatter `name` field in `SKILL.md` determines the skill's invocation name. This gives a stable name regardless of the install directory. If `name` is not set in the frontmatter, the directory basename is used as a fallback.
+* A skill path can point to a directory that contains a `SKILL.md` directly, for example `"skills": ["."]` for the plugin root
+  * Claude Code takes the skill's invocation name from the frontmatter `name` field in `SKILL.md`, so the name stays stable whatever the install directory is named
+  * If `name` isn't set in the frontmatter, Claude Code falls back to the directory basename
 
 A plugin that has a `SKILL.md` at its root, no `skills/` subdirectory, and no `skills` manifest field is automatically loaded as a single-skill plugin in Claude Code v2.1.142 and later. You do not need to set `"skills": ["./"]` in `plugin.json` for this layout. The skill's invocation name follows the same rule as above: the frontmatter `name` field, or the directory basename as a fallback.
 
@@ -1194,7 +1201,7 @@ This shows:
 | Skills not appearing                | Wrong directory structure       | Ensure `skills/` or `commands/` is at the plugin root, not inside `.claude-plugin/`                                                                                                                                                    |
 | Hooks not firing                    | Script not executable           | Run `chmod +x script.sh`                                                                                                                                                                                                               |
 | MCP server fails                    | Missing `${CLAUDE_PLUGIN_ROOT}` | Use variable for all plugin paths                                                                                                                                                                                                      |
-| Path errors                         | Absolute paths used             | All paths must be relative and start with `./`                                                                                                                                                                                         |
+| Path errors                         | Absolute paths used             | Make paths relative, starting with `./`; see [Path behavior rules](#path-behavior-rules), which cover the `skills` field's `"."` exception                                                                                             |
 | LSP `Executable not found in $PATH` | Language server not installed   | Install the binary (e.g., `npm install -g typescript-language-server typescript`)                                                                                                                                                      |
 
 ### Example error messages
