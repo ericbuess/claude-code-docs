@@ -1332,6 +1332,20 @@ Reviewing a pull request applies the same limits; that form of the message begin
 * Pass a base branch closer to your work, such as `/code-review ultra develop`, so the review covers only the diff against that branch
 * Split the change into smaller branches and review each one. The files the message names contribute the most changed lines, so start by moving those to their own branch.
 
+### Your checkout has no branches
+
+A checkout can have commits but no branches: if you run `git init` followed by `git fetch <url>` and `git checkout FETCH_HEAD`, you get a detached HEAD with no refs. Claude Code packages your repository as a git bundle to upload it for an [ultrareview](/docs/en/ultrareview), and it can't bundle a repository that has no branches or other refs, so `/code-review ultra` and the `claude ultrareview` subcommand refuse the review before the cloud session starts.
+
+```text theme={null}
+Your checkout has no branches (detached HEAD only), which cloud review can't bundle. Create one first — `git checkout -b <name>` — then rerun /code-review ultra.
+```
+
+Before v2.1.221, Claude Code attempted to review every tracked file in this checkout, and the upload failed.
+
+**What to do:**
+
+* Create a branch at your current commit with `git checkout -b <name>`, then rerun the review
+
 ### Failed to resume the conversation
 
 Claude Code couldn't read or process the saved transcript for the session you selected from the [`claude --resume` picker](/docs/en/sessions#use-the-session-picker), so it ends the process rather than continue in a partially loaded state. The message includes the command to retry:

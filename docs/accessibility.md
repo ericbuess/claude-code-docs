@@ -64,7 +64,7 @@ Each message in the transcript starts with a label your screen reader announces,
 
 The terminal cursor follows the input caret, so a screen reader's read-current-line command answers "where am I" with the prompt you're editing.
 
-As you type at the end of the input line, Claude Code writes only the characters you type, so your screen reader echoes only those characters. Requires Claude Code v2.1.219 or later; earlier versions rewrite the whole input line on every keystroke, so the screen reader re-reads it as you type.
+As you type or press `Backspace` at the end of the input line, Claude Code writes only the characters that change, so your screen reader echoes just those characters. Deletions require Claude Code v2.1.222 or later and typing requires v2.1.219 or later; before those versions, each keystroke rewrote the line, so the screen reader re-read it.
 
 When you delete a word or a line in the input, Claude Code announces the deleted text. Requires Claude Code v2.1.218 or later. The announcement covers:
 

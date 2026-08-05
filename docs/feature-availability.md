@@ -45,7 +45,7 @@ These require signing in with a claude.ai account and are not reachable with an 
 * [Claude Code on the web](/docs/en/claude-code-on-the-web), Claude Code on mobile, and [Claude Code in Slack](/docs/en/slack)
 * [Claude Code Desktop](/docs/en/desktop)
 * [Routines](/docs/en/routines) (`/schedule`)
-* [Ultraplan](/docs/en/ultraplan) and [Ultrareview](/docs/en/ultrareview)
+* [Ultrareview](/docs/en/ultrareview)
 * [Code Review](/docs/en/code-review): Team and Enterprise plans
 * [Remote Control](/docs/en/remote-control)
 * [Chrome extension](/docs/en/chrome)

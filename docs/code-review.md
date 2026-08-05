@@ -309,11 +309,14 @@ The [`/code-review` command](/docs/en/commands) reviews a diff in your terminal 
   </Step>
 </Steps>
 
-When the host application requests it, Claude reports the review's findings through the [`ReportFindings` tool](/docs/en/tools-reference) instead of as text in its reply. Claude Code renders the report as a findings list, one entry per finding. Each entry shows the file location, a one-sentence summary, and a category tag such as `correctness` when the finding carries one. A host request applies at every effort level and requires Claude Code v2.1.218 or later.
+Claude reports the findings as text in the reply in both of these runs, even when a host application requests the findings list described below:
 
-In a terminal session, `/code-review` runs the review as a fork and reports the findings as text in the reply, and Claude reports as text in any `-p` run with text or JSON output, even when the host application requests the findings list. On v2.1.216 and v2.1.217, a terminal review at `medium` or higher effort reported the findings list instead.
+* In a terminal session, where `/code-review` runs the review as a [forked subagent](/docs/en/skills#run-skills-in-a-subagent)
+* In a `-p` run with text or JSON output
 
-When Claude fixes reported findings later in the session, it reports them again, and Claude Code marks each finding in the new list as fixed, skipped, or no change needed.
+In a host application that requests the findings list, such as the [desktop app](/docs/en/desktop), Claude reports the review's findings through the [`ReportFindings` tool](/docs/en/tools-reference) instead. Claude Code renders the report as a findings list, and each entry shows the file location, a one-sentence summary, and a category tag such as `correctness` when the finding carries one. A host request applies at every effort level and requires Claude Code v2.1.218 or later.
+
+When Claude fixes reported findings later in the session, it reports them again, and Claude Code marks each finding in the updated findings list as fixed, skipped, or no change needed.
 
 ### What the review reads and edits
 

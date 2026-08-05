@@ -146,13 +146,20 @@ Create a `.mcp.json` file at your project root. The file is picked up when the `
 
 ## Connection timing
 
-Servers you pass in `options.mcpServers` start connecting as soon as the query starts. Connection is non-blocking by default: the first turn begins without waiting, and each server's tools become available once its connection completes. Before Claude Code v2.1.142, startup blocked on the connection batch for up to 5 seconds.
+Claude Code registers the servers you pass in `options.mcpServers` at startup, waits for them before the first turn as described below, and emits the [init message](#error-handling) after that wait. Servers loaded from [settings files](#from-a-config-file) such as `.mcp.json` don't get the full wait and commonly show `pending` at init. When each `options.mcpServers` server connects, and whether it delays the first turn, depends on its type:
 
-To restore a bounded startup wait for every server, set the [`MCP_CONNECTION_NONBLOCKING`](/docs/en/env-vars) environment variable to `0`. The wait is capped at 5 seconds by [`MCP_CONNECT_TIMEOUT_MS`](/docs/en/env-vars), and servers still pending at that deadline keep connecting in the background.
+| Server type                                                                            | Delays the first turn?                                 | First-turn wait timeout                                                                     |
+| :------------------------------------------------------------------------------------- | :----------------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| stdio server, or HTTP/SSE server without a cached tool list                            | Yes, until it connects                                 | [`MCP_TIMEOUT`](/docs/en/env-vars), 30 seconds by default; the connection fails at that deadline |
+| Remote server with a cached tool list, saved by Claude Code from a previous connection | No; the cached tools are available from the first turn | None; connects on its first tool call, and that deferred connect has its own timeout        |
+| In-process [SDK server](#sdk-mcp-servers)                                              | No; never delays the first turn                        | None                                                                                        |
 
-To make one server's tools available before the first turn, set `alwaysLoad: true` on its config. Startup then waits for that server to connect, capped at the same 5-second startup deadline, while other servers keep connecting in the background. The `alwaysLoad` field requires Claude Code v2.1.121 or later. See [Exempt a server from deferral](/docs/en/mcp#exempt-a-server-from-deferral) for the `alwaysLoad` field's effect on tool search.
+To block startup itself at a separate, earlier phase than the first-turn wait, before the init message is sent:
 
-The `system` message with subtype `init` reports each server's status at the moment it's emitted. A server that's still connecting has status `pending`. Check for status `failed` or `needs-auth` when you want to detect servers that won't be usable, rather than treating every status other than `connected` as a failure; see [Error handling](#error-handling) for the full status check.
+* Set [`MCP_CONNECTION_NONBLOCKING`](/docs/en/env-vars) to `0` to block on the whole connection batch. Claude Code caps that wait at 5 seconds by default. Adjust the cap with the [`MCP_CONNECT_TIMEOUT_MS`](/docs/en/env-vars) environment variable, in milliseconds. Servers still pending at that deadline keep connecting in the background.
+* Set `alwaysLoad: true` on a server's config to make its tools available at their full schemas on the first turn, [exempt from tool search deferral](/docs/en/mcp#exempt-a-server-from-deferral). Claude Code blocks startup on that server's connection, capped at the same deadline, while other servers keep connecting in the background. The `alwaysLoad` field requires Claude Code v2.1.121 or later.
+
+The `system` message with subtype `init` reports each server's status at the moment it's emitted. Check for status `failed` or `needs-auth` when you want to detect servers that won't be usable, rather than treating every status other than `connected` as a failure; see [Error handling](#error-handling) for the full status check.
 
 ## Allow MCP tools
 
@@ -206,13 +213,9 @@ Wildcards (`*`) let you allow all tools from a server without listing each one i
 
 To see what tools an MCP server provides, check the server's documentation or inspect the `tools` array in the `system` init message. MCP tool names start with `mcp__`.
 
-MCP servers connect in the background by default, so the init message arrives before they finish: the `tools` array lists only built-in tools and `mcp_servers` shows a `pending` status for each server. Set the [`MCP_CONNECTION_NONBLOCKING`](/docs/en/env-vars) environment variable to `0` to wait up to 5 seconds for servers to connect before the init message is sent; servers that connect in time list their `mcp__` tools there, and slower ones keep connecting in the background:
+Claude Code emits the init message after the [first-turn connection wait](#connection-timing) for servers passed in `options.mcpServers`, so the `tools` array lists the `mcp__` tools of each such server that connected within the wait. A server with a [cached tool list](#connection-timing) shows `pending` with its `mcp__` tools already listed and a connection made on first use. Any other server that hasn't connected when the message is emitted, including [settings-file servers](#from-a-config-file) that don't get the full wait, shows `pending` or `failed`, with its tools absent.
 
-```bash theme={null}
-export MCP_CONNECTION_NONBLOCKING=0
-```
-
-With that variable set, this filter prints the MCP tool names:
+This filter prints the MCP tool names:
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
@@ -510,7 +513,7 @@ For a complete working example of a remote server authenticated with headers, se
 
 ### OAuth2 authentication
 
-The [MCP specification supports OAuth 2.1](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) for authorization. The SDK doesn't open a browser or run an interactive OAuth flow. When a configured server returns an authorization challenge and no stored token is available, the agent run continues without that server's tools, and the server reports status `needs-auth`. Because servers connect in the background by default, the `mcp_servers` array of the [system init message](/docs/en/agent-sdk/typescript#sdksystemmessage) may still show `pending` for that server. To confirm whether a server needs credentials, poll `mcpServerStatus()` in the TypeScript SDK or [`get_mcp_status()`](/docs/en/agent-sdk/python#methods) in Python, or set `MCP_CONNECTION_NONBLOCKING=0` to wait for connections before the init message.
+The [MCP specification supports OAuth 2.1](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) for authorization. The SDK doesn't open a browser or run an interactive OAuth flow. When a configured server returns an authorization challenge and no stored token is available, the agent run continues without that server's tools, and the server reports status `needs-auth`. The `mcp_servers` array of the [system init message](/docs/en/agent-sdk/typescript#sdksystemmessage) may still show `pending` for that server when it's emitted. To confirm whether a server needs credentials, poll `mcpServerStatus()` in the TypeScript SDK or [`get_mcp_status()`](/docs/en/agent-sdk/python#methods) in Python.
 
 To supply credentials, complete the OAuth flow in your own application and pass the resulting access token in the server's `headers`:
 
@@ -737,7 +740,7 @@ export DATABASE_URL=postgresql://user:password@localhost:5432/mydb
 
 MCP servers can fail to connect for various reasons: the server process might not be installed, credentials might be invalid, or a remote server might be unreachable.
 
-The SDK emits a `system` message with subtype `init` at the start of each query. This message includes the connection status for each MCP server. The `status` field can be `"pending"`, `"connected"`, `"failed"`, `"needs-auth"`, or `"disabled"`. Because connection is [non-blocking by default](#connection-timing), healthy servers often still report `"pending"` when the init message is emitted. Check for `"failed"` or `"needs-auth"` to detect servers that won't be usable, and don't treat `"pending"` as a failure:
+Claude Code emits a `system` message with subtype `init` at the start of each query. This message includes the connection status for each MCP server. The `status` field can be `"pending"`, `"connected"`, `"failed"`, `"needs-auth"`, or `"disabled"`. Claude Code emits the init message after the [first-turn connection wait](#connection-timing) for servers passed in `options.mcpServers`, so such a server that connected within the wait shows `"connected"`. A `"pending"` status means the server hasn't connected yet, which is common for [settings-file servers](#from-a-config-file) that don't get the full wait, or that its tool list was [served from the cache](#connection-timing) with a connection made on first use; the reported status for a deadline-expired server can be `"pending"` or `"failed"` depending on timing. Don't treat `"pending"` as a failure. Check for `"failed"` or `"needs-auth"` to detect servers that won't be usable:
 
 <CodeGroup>
   ```typescript TypeScript theme={null}
@@ -843,7 +846,7 @@ Check the `init` message to see which servers failed to connect:
   ```
 </CodeGroup>
 
-A `"pending"` status means the server is still connecting, not that it failed. To get updated statuses later in the session, call the query's `mcpServerStatus()` method in the TypeScript SDK, or [`ClaudeSDKClient.get_mcp_status()`](/docs/en/agent-sdk/python#methods) in Python.
+A `"pending"` status doesn't mean the server failed; see [Error handling](#error-handling) for the two cases it covers at init. To get updated statuses later in the session, call the query's `mcpServerStatus()` method in the TypeScript SDK, or [`ClaudeSDKClient.get_mcp_status()`](/docs/en/agent-sdk/python#methods) in Python.
 
 Common causes:
 

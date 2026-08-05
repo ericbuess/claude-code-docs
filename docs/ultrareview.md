@@ -78,7 +78,7 @@ Ultrareview checks the diff before any review work runs and tells you when it ca
 
 * **Diff too large**: a branch review can include up to 500 changed files and 8,000 changed lines by default. The exact values can change, and the [refusal](/docs/en/errors#diff-is-too-large-for-ultrareview) names the ones in effect, the size of your diff, and the files with the most changed lines. Claude Code refuses a too-large pull request the same way, naming its file and line counts but not the per-file breakdown
 * **Nothing to review**: when the diff against the base is empty, Claude Code says so and suggests staging or committing local edits, or passing a different base
-* **No merge base**: when your branch shares no history with the base branch, Claude Code offers to review every tracked file in the repository instead; the fallback requires a full clone and applies the same size limits
+* **No merge base**: when your branch shares no history with the base branch, Claude Code falls back to reviewing every tracked file in the repository instead; the fallback requires a full clone and applies the same size limits. On a checkout with no branches or other refs, such as a detached HEAD created by checking out `FETCH_HEAD` after fetching a URL, Claude Code [refuses the review](/docs/en/errors#your-checkout-has-no-branches) and suggests creating a branch first
 
 ## Pricing and free runs
 
@@ -154,5 +154,4 @@ Use `/code-review` for fast feedback as you work. Use `/review <pr>` to look ove
 ## Related resources
 
 * [Claude Code on the web](/docs/en/claude-code-on-the-web): learn how cloud sessions and cloud sandboxes work
-* [Plan complex changes with ultraplan](/docs/en/ultraplan): the planning counterpart to ultrareview for upfront design work
 * [Manage costs effectively](/docs/en/costs): track usage and set spending limits

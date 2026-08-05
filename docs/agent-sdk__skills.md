@@ -96,6 +96,15 @@ To enable only specific Skills, pass their names. Names match the `name` field i
   ```
 </CodeGroup>
 
+In the TypeScript SDK, the list takes exact Skill names only. `query()` throws before starting the Claude Code process when a name can't work as an exact Skill name, for example:
+
+* An empty name
+* A name containing parentheses, commas, or control characters
+* A name padded with whitespace
+* A wildcard form such as a bare `*` or a `:*` suffix
+
+To enable every discovered Skill, pass `skills: "all"` rather than a wildcard.
+
 The `skills` option is a context filter, not a sandbox. Unlisted Skills are hidden from the model and rejected by the Skill tool, but their files remain on disk and are reachable through Read and Bash.
 
 ## Skill Locations

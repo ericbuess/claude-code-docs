@@ -1606,10 +1606,33 @@ Claude Code compacts automatically as you approach the limit, so a full context 
 You can also act before the automatic pass runs:
 
 * **Compact with a focus**: run `/compact` with instructions, like `/compact focus on the auth bug fix`, before starting a long new task. The summary keeps what you choose instead of what the automatic pass guesses is important.
+* **Compact earlier**: run [`/autocompact`](/docs/en/commands#all-commands) with a token count, like `/autocompact 500k`, to set how full the context window gets before the automatic pass runs. See [Set the auto-compact window](#set-the-auto-compact-window) for accepted values and overrides.
 * **Clear between tasks**: run `/clear` when switching to unrelated work. Old conversation crowds out the files you need next and costs tokens on every message.
 * **Delegate large reads**: send research to a [subagent](/docs/en/sub-agents) so the file contents stay in its context window, not yours.
 
 If you need a larger window rather than a smaller conversation, Fable 5, Sonnet 5, Opus 4.6 and later, and Sonnet 4.6 support a 1 million token context window. See [Extended context](/docs/en/model-config#extended-context) for availability by plan and how to select a `[1m]` model variant. Sonnet 5 runs at 1M with no `[1m]` variant to select; see [Sonnet 5 context window](/docs/en/model-config#sonnet-5-context-window) for its auto-compaction thresholds and the LLM gateway exception. Compaction works the same way at the larger limit.
+
+### Set the auto-compact window
+
+The auto-compact window is how full the context window can get before Claude Code compacts the conversation. You can set it in three places:
+
+* **For this session and later ones**: run `/autocompact` with a value, like `/autocompact 500k`. Claude Code saves it to your user settings as [`autoCompactWindow`](/docs/en/settings#available-settings) and applies it to the current session; if a higher-priority [settings scope](/docs/en/settings#settings-precedence) such as managed settings sets the key, the command saves your value but the session keeps that scope's window, and the command says so. Run `/autocompact auto` to return to the window tuned for your model.
+* **For one launch**: pass [`--autocompact`](/docs/en/cli-reference#cli-flags) when starting Claude Code. The flag overrides your saved setting for that launch without changing it, and `claude --autocompact auto` runs the session at the tuned window even if your saved setting has a value. Unlike `/autocompact`, the flag isn't preempted by a higher-priority settings scope such as managed settings.
+* **In scripts and cloud environments**: set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/env-vars). While it's set, it takes precedence over the command, the flag, and the setting, and `/autocompact` reports the override instead of changing the window.
+
+The command and the flag accept a window size from 100K to 1M tokens, in any of these forms:
+
+* A plain token count, such as `200000`
+* A `k` or `M` suffix, such as `500k` or `1M`
+* A bare number from 100 to 1000, meaning thousands, so `200` sets 200,000
+
+The environment variable accepts only the plain token count. Claude Code caps the window at the model's context window.
+
+With no window size set in any of these places, Claude Code compacts when the conversation reaches the model's context limit, except in these sessions, which compact earlier:
+
+* [Cloud sessions](/docs/en/claude-code-on-the-web) compact as the conversation approaches the model's limit
+* Sonnet 4.6 and Opus 4.6 without [extended context](/docs/en/model-config#extended-context) compact at the 200K boundary, and so do Opus 4.8 and Opus 5 when they run with a 200K context window, such as on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry
+* Sonnet 5 compacts at the model's [default threshold](/docs/en/model-config#sonnet-5-context-window)
 
 ## Check your own session
 
