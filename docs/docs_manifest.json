@@ -63,8 +63,8 @@
     "agent-sdk__mcp.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/mcp",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/mcp.md",
-      "hash": "5c08380e70ee05b55214874589a1353136129ec66a05e1829a52b9c14710e2a5",
-      "last_updated": "2026-08-05T01:23:47.117377"
+      "hash": "b2b52d1537653962618f8c0f7dcdd4941558c031a594098320b411227a2699a5",
+      "last_updated": "2026-08-05T05:35:18.315860"
     },
     "agent-sdk__migration-guide.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/migration-guide",
@@ -1047,8 +1047,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-05T01:26:24.427734",
-    "fetch_duration_seconds": 170.438,
+    "last_fetch_completed": "2026-08-05T05:37:46.505856",
+    "fetch_duration_seconds": 158.822203,
     "total_pages_discovered": 174,
     "pages_fetched_successfully": 175,
     "pages_failed": 0,
@@ -1058,7 +1058,7 @@
     "total_files": 174,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-05T01:26:24.427749",
+  "last_updated": "2026-08-05T05:37:46.505886",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

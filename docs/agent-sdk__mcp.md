@@ -146,7 +146,7 @@ Create a `.mcp.json` file at your project root. The file is picked up when the `
 
 ## Connection timing
 
-Claude Code registers the servers you pass in `options.mcpServers` at startup, waits for them before the first turn as described below, and emits the [init message](#error-handling) after that wait. Servers loaded from [settings files](#from-a-config-file) such as `.mcp.json` don't get the full wait and commonly show `pending` at init. When each `options.mcpServers` server connects, and whether it delays the first turn, depends on its type:
+Claude Code registers the servers you pass in `options.mcpServers` at startup and emits the [init message](#error-handling) once the first-turn wait, if any, resolves. Servers loaded from [settings files](#from-a-config-file) such as `.mcp.json` don't get the full wait and commonly show `pending` at init. When each `options.mcpServers` server connects, and whether it delays the first turn, depends on its type:
 
 | Server type                                                                            | Delays the first turn?                                 | First-turn wait timeout                                                                     |
 | :------------------------------------------------------------------------------------- | :----------------------------------------------------- | :------------------------------------------------------------------------------------------ |
@@ -213,7 +213,7 @@ Wildcards (`*`) let you allow all tools from a server without listing each one i
 
 To see what tools an MCP server provides, check the server's documentation or inspect the `tools` array in the `system` init message. MCP tool names start with `mcp__`.
 
-Claude Code emits the init message after the [first-turn connection wait](#connection-timing) for servers passed in `options.mcpServers`, so the `tools` array lists the `mcp__` tools of each such server that connected within the wait. A server with a [cached tool list](#connection-timing) shows `pending` with its `mcp__` tools already listed and a connection made on first use. Any other server that hasn't connected when the message is emitted, including [settings-file servers](#from-a-config-file) that don't get the full wait, shows `pending` or `failed`, with its tools absent.
+Claude Code emits the init message after the [first-turn connection wait](#connection-timing) for servers passed in `options.mcpServers`, so the `tools` array lists the `mcp__` tools of each such server that connected within the wait. A server with a [cached tool list](#connection-timing) shows `pending` with its `mcp__` tools already listed and a connection made on first use. Any other server that hasn't connected when the message is emitted, including [settings-file servers](#from-a-config-file) that don't get the full wait, shows its current status, such as `pending`, `failed`, or `needs-auth`, with its tools absent; see [Error handling](#error-handling) for the full status set.
 
 This filter prints the MCP tool names:
 
