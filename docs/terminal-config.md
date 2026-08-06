@@ -127,10 +127,6 @@ To customize what appears at the bottom of the interface, configure a [custom st
 
 ### Create a custom theme
 
-<Note>
-  Custom themes require Claude Code v2.1.118 or later.
-</Note>
-
 In addition to the built-in presets, `/theme` lists any custom themes you have defined and any themes contributed by installed [plugins](/docs/en/plugins-reference#themes). Select **New custom theme…** at the end of the list to create one interactively: you name the theme, then pick individual color tokens to override. Press `Ctrl+E` while a custom theme is highlighted to edit it.
 
 Each custom theme is a JSON file in `~/.claude/themes/`. The filename without the `.json` extension is the theme's slug, and selecting the theme stores `custom:<slug>` as your theme preference. The file has three optional fields:

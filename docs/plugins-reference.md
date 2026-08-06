@@ -1017,10 +1017,6 @@ claude plugin prune [options]
 
 The command lists orphaned dependencies and asks for confirmation before removing them. To remove a plugin and clean up its dependencies in one step, run `claude plugin uninstall <plugin> --prune`.
 
-<Note>
-  `claude plugin prune` requires Claude Code v2.1.121 or later.
-</Note>
-
 ### plugin enable
 
 Enable a disabled plugin. If the plugin declares [dependencies](/docs/en/plugin-dependencies), Claude Code enables them transitively at the same scope, and the command fails when a dependency is not installed.

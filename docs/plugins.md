@@ -319,7 +319,7 @@ Use the `--plugin-dir` flag to test plugins during development. This loads your 
 claude --plugin-dir ./my-plugin
 ```
 
-The flag also accepts a `.zip` archive of the plugin directory, which requires Claude Code v2.1.128 or later.
+The flag also accepts a `.zip` archive of the plugin directory.
 
 ```bash theme={null}
 claude --plugin-dir ./my-plugin.zip

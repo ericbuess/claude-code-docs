@@ -550,7 +550,12 @@ Every key is optional; Claude Desktop applies its own default for any key you om
 
 #### Precedence with other managed sources
 
-If a device also has a local `managed-settings.json` or MDM-delivered policy, the managed sources don't merge. The highest-priority source provides all policy settings, ranked in this order with highest priority first:
+If a device also has a local `managed-settings.json` or MDM-delivered policy, the managed sources don't merge, with two per-key exceptions while no [policy helper](/docs/en/settings#compute-managed-settings-with-a-policy-helper) is supplying managed settings, since a helper's output replaces the managed sources entirely:
+
+* The `env` block, in Claude Code v2.1.223 or later
+* The [cross-source lock keys](/docs/en/settings#settings-precedence)
+
+Both are covered in the list later in this section. The highest-priority source provides all policy settings, ranked in this order with highest priority first:
 
 1. The [policy helper](/docs/en/settings#compute-managed-settings-with-a-policy-helper)
 2. Gateway-delivered settings
@@ -570,11 +575,11 @@ The following keys are honored when any admin source above the user-writable HKC
 * [`allowAllClaudeAiMcps`](/docs/en/settings#available-settings): allow-only override for the claude.ai MCP server allowlist
 * `sandbox.bwrapPath` and `sandbox.socatPath`: filesystem paths to the [sandbox](/docs/en/sandboxing) helper binaries
 * [`forceRemoteSettingsRefresh`](/docs/en/server-managed-settings): blocks startup until remote managed settings are freshly fetched, so an MDM or file policy that sets it is honored even when a cached remote payload that lacks the key is the highest-priority source
+* `env`: each variable comes from the highest-priority admin source that defines it, and lower admin sources fill in variables the higher sources leave unset. The telemetry unit and credential-paired routing variables follow their own rules; see [Per-key exceptions across managed sources](/docs/en/server-managed-settings#per-key-exceptions-across-managed-sources). Requires Claude Code v2.1.223 or later
 
-Every other key, including `disableBypassPermissionsMode`, comes from the highest-priority source only. Two [parent-settings](/docs/en/claude-apps-gateway#restrict-parent-settings) checks read every admin source:
+Every other key, including `disableBypassPermissionsMode`, comes from the highest-priority source only. One [parent-settings](/docs/en/claude-apps-gateway#restrict-parent-settings) check reads every admin source: when any admin source sets `allowManagedPermissionRulesOnly`, Claude Code drops parent-supplied permission allow rules and `additionalDirectories`. The key's effect on the developer's own rules still follows the highest-priority source.
 
-* When any admin source sets `allowManagedPermissionRulesOnly`, Claude Code drops parent-supplied permission allow rules and `additionalDirectories`. The key's effect on the developer's own rules still follows the highest-priority source.
-* A `forceLoginOrgUUID` or `allowedMcpServers` value in any admin source blocks a parent-supplied one. The value that applies still comes from the highest-priority source.
+A `forceLoginOrgUUID` or `allowedMcpServers` value in the highest-priority admin source blocks a parent-supplied one and is the value Claude Code enforces. A value in a non-winning admin source neither applies nor blocks the parent's. Before v2.1.223, a value in any admin source blocked the parent's.
 
 See [Settings precedence](/docs/en/settings#settings-precedence) for the same rules on the settings page.
 

@@ -42,7 +42,12 @@ Proxy and firewall requirements in [Network configuration](/docs/en/network-conf
 
 ## Decide how settings reach devices
 
-Managed settings define organization policy. Claude Code checks the four sources below in priority order and applies the first one that returns a non-empty configuration. A small set of [cross-source lock keys](/docs/en/settings#settings-precedence), such as the sandbox allowlist locks, is honored when any admin-controlled source sets them; when a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) is configured, its output is the only source these checks read.
+Managed settings define organization policy. Claude Code checks the four sources in the table below in priority order and applies the first one that returns a non-empty configuration, with two exceptions:
+
+* Claude Code honors a small set of [cross-source lock keys](/docs/en/settings#settings-precedence), such as the sandbox allowlist locks, when any admin-controlled source sets them.
+* Claude Code [merges the `env` block per key across the admin-controlled sources](/docs/en/server-managed-settings#per-key-exceptions-across-managed-sources), apart from the telemetry-unit and credential-paired routing exceptions covered there. Only admin-controlled sources contribute to the merge, developer-writable settings can't, and [`CLAUDE_CODE_DISABLE_ADMIN_ENV_UNION=1`](/docs/en/env-vars) restores the winner-only composition. Requires Claude Code v2.1.223 or later.
+
+When a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) is configured, its output is the only managed configuration Claude Code reads: the lock-key checks read it alone, and no per-key `env` merge happens.
 
 | Mechanism               | Delivery                                                                                                                                                                                              | Priority | Platforms      |
 | :---------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------- | :------------- |
