@@ -94,13 +94,9 @@ An Owner enables Code Review once for the organization and selects which reposit
   </Step>
 
   <Step title="Install the Claude GitHub App">
-    Follow the prompts to install the Claude GitHub App to your GitHub organization. The app requests these repository permissions:
+    Follow the prompts to install the Claude GitHub App: pick the GitHub organization that owns the repositories you want reviewed, choose which repositories the app can access, and approve the requested permissions.
 
-    * **Contents**: read and write
-    * **Issues**: read and write
-    * **Pull requests**: read and write
-
-    Code Review uses read access to contents and write access to pull requests. The broader permission set also supports [GitHub Actions](/docs/en/github-actions) if you enable that later.
+    To review a pull request, Claude reads your repository contents through the app's read access, and posts comments and the [check run](#check-run-output) through its write access to pull requests and checks. During installation, you grant a broader permission set shared by other Claude features, such as [GitHub Actions](/docs/en/github-actions); see [GitHub App permissions](/docs/en/github-actions#github-app-permissions) for the full list.
   </Step>
 
   <Step title="Select repositories">

@@ -134,7 +134,17 @@ These features work in the local CLI but depend on a server-side capability that
     </tr>
 
     <tr>
-      <td>[GitHub Actions](/docs/en/github-actions) and [GitLab CI/CD](/docs/en/gitlab-ci-cd)</td>
+      <td>[GitHub Actions](/docs/en/github-actions)</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✗</td>
+      <td>✓</td>
+      <td>✓</td>
+    </tr>
+
+    <tr>
+      <td>[GitLab CI/CD](/docs/en/gitlab-ci-cd)</td>
       <td>✓</td>
       <td>✓</td>
       <td>✓</td>
@@ -224,7 +234,7 @@ Each tab lists what is unavailable or partially supported on that provider, with
   </Tab>
 
   <Tab title="Claude Platform on AWS">
-    **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](/docs/en/fast-mode), [Advisor](/docs/en/advisor), [Channels](/docs/en/channels), the [analytics dashboard](/docs/en/analytics), [server-managed settings](/docs/en/server-managed-settings), and the [`/design-sync` and `/radio` commands](/docs/en/commands#all-commands).
+    **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](/docs/en/fast-mode), [Advisor](/docs/en/advisor), [Channels](/docs/en/channels), [GitHub Actions](/docs/en/github-actions), the [analytics dashboard](/docs/en/analytics), [server-managed settings](/docs/en/server-managed-settings), and the [`/design-sync` and `/radio` commands](/docs/en/commands#all-commands).
 
     **Available where Amazon Bedrock is not:** [web search](/docs/en/tools-reference#websearch-tool-behavior).
 
@@ -232,7 +242,7 @@ Each tab lists what is unavailable or partially supported on that provider, with
 
     * [`/loop`](/docs/en/scheduled-tasks): explicit intervals only
 
-    **Alternatives:** for scheduling, use [`/loop`](/docs/en/scheduled-tasks) with an explicit interval instead of `/schedule`. For cloud sessions, use [GitHub Actions](/docs/en/github-actions) or [GitLab CI/CD](/docs/en/gitlab-ci-cd).
+    **Alternatives:** for scheduling, use [`/loop`](/docs/en/scheduled-tasks) with an explicit interval instead of `/schedule`. For cloud sessions, use [GitLab CI/CD](/docs/en/gitlab-ci-cd).
   </Tab>
 
   <Tab title="Google Cloud's Agent Platform">
@@ -250,7 +260,7 @@ Each tab lists what is unavailable or partially supported on that provider, with
   </Tab>
 
   <Tab title="Microsoft Foundry">
-    **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](/docs/en/fast-mode), [Advisor](/docs/en/advisor), [Channels](/docs/en/channels), [GitHub Actions](/docs/en/github-actions) and [GitLab CI/CD](/docs/en/gitlab-ci-cd), the [analytics dashboard](/docs/en/analytics), [server-managed settings](/docs/en/server-managed-settings), and the [`/design-sync` and `/radio` commands](/docs/en/commands#all-commands).
+    **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](/docs/en/fast-mode), [Advisor](/docs/en/advisor), [Channels](/docs/en/channels), [GitLab CI/CD](/docs/en/gitlab-ci-cd), the [analytics dashboard](/docs/en/analytics), [server-managed settings](/docs/en/server-managed-settings), and the [`/design-sync` and `/radio` commands](/docs/en/commands#all-commands).
 
     **Partial support:**
 
@@ -260,7 +270,7 @@ Each tab lists what is unavailable or partially supported on that provider, with
     * [`/loop`](/docs/en/scheduled-tasks): explicit intervals only
     * [Zero Data Retention](/docs/en/zero-data-retention): subject to your Azure agreement
 
-    **Alternatives:** for scheduling, use [`/loop`](/docs/en/scheduled-tasks) with an explicit interval instead of `/schedule`.
+    **Alternatives:** for scheduling, use [`/loop`](/docs/en/scheduled-tasks) with an explicit interval instead of `/schedule`. For cloud sessions, use [GitHub Actions](/docs/en/github-actions).
   </Tab>
 
   <Tab title="Anthropic Console">

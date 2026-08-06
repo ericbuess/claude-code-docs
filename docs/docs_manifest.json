@@ -267,8 +267,8 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "f701eea5ced88487ebb1af4f2ce005d0500f7a3d2ff2ed316a2b96959ec699ca",
-      "last_updated": "2026-08-05T01:26:24.427564",
+      "hash": "2bf4c94dd6a0286fac093da90239c9fee616a19aa5ad3b2d42f439dfe4785fad",
+      "last_updated": "2026-08-06T01:23:56.827825",
       "source": "claude-code-repository"
     },
     "channels.md": {
@@ -376,8 +376,8 @@
     "code-review.md": {
       "original_url": "https://code.claude.com/docs/en/code-review",
       "original_md_url": "https://code.claude.com/docs/en/code-review.md",
-      "hash": "b03b163f11600d9122c3e94a314308b236d7f5e9a47177f53c3cee6a99abad9a",
-      "last_updated": "2026-08-05T01:24:37.003431"
+      "hash": "37080df3bb2ace86c2799d59422206faf57e7bf01cf3c4d1edfcdfab25c0df47",
+      "last_updated": "2026-08-06T01:22:13.658252"
     },
     "commands.md": {
       "original_url": "https://code.claude.com/docs/en/commands",
@@ -508,8 +508,8 @@
     "feature-availability.md": {
       "original_url": "https://code.claude.com/docs/en/feature-availability",
       "original_md_url": "https://code.claude.com/docs/en/feature-availability.md",
-      "hash": "35cefe668a31718b9bec3f3b9493e860ed098873508a8ed2bfbbca6a6d0e036a",
-      "last_updated": "2026-08-05T01:25:00.045705"
+      "hash": "24377b9392f050515fec4ff850efcbe4202691e5c29017c05b09a81483023c55",
+      "last_updated": "2026-08-06T01:22:33.690849"
     },
     "features-overview.md": {
       "original_url": "https://code.claude.com/docs/en/features-overview",
@@ -532,8 +532,14 @@
     "github-actions.md": {
       "original_url": "https://code.claude.com/docs/en/github-actions",
       "original_md_url": "https://code.claude.com/docs/en/github-actions.md",
-      "hash": "b5b839f60ff45816372ac4cc13336b97c9d7abcf18571cbea7c18a49c6f51fe4",
-      "last_updated": "2026-07-21T05:40:41.862296"
+      "hash": "efed55b8d3a8433a443363b0c745eecc276ed9745d85e0fa5d2f2311edc2919a",
+      "last_updated": "2026-08-06T01:22:36.378748"
+    },
+    "github-actions-cloud-providers.md": {
+      "original_url": "https://code.claude.com/docs/en/github-actions-cloud-providers",
+      "original_md_url": "https://code.claude.com/docs/en/github-actions-cloud-providers.md",
+      "hash": "7a7a329c318f99c2ba31868cd61df3f6430c614cf160711d6cead9d62b417c3b",
+      "last_updated": "2026-08-06T01:22:37.051855"
     },
     "github-enterprise-server.md": {
       "original_url": "https://code.claude.com/docs/en/github-enterprise-server",
@@ -1053,18 +1059,18 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-05T22:06:29.447282",
-    "fetch_duration_seconds": 148.534203,
-    "total_pages_discovered": 175,
-    "pages_fetched_successfully": 176,
+    "last_fetch_completed": "2026-08-06T01:23:56.827869",
+    "fetch_duration_seconds": 167.72878,
+    "total_pages_discovered": 176,
+    "pages_fetched_successfully": 177,
     "pages_failed": 0,
     "failed_pages": [],
     "sitemap_url": "https://code.claude.com/docs/sitemap.xml",
     "base_url": "https://code.claude.com",
-    "total_files": 175,
+    "total_files": 176,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-05T22:06:29.447306",
+  "last_updated": "2026-08-06T01:23:56.827888",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
