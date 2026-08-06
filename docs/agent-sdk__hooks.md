@@ -857,7 +857,7 @@ To run initialization logic as a Python SDK callback instead, use the first mess
 
 ### Subagent permission prompts multiplying
 
-When spawning multiple subagents, each one may request permissions separately. Subagents don't automatically inherit parent agent permissions. To avoid repeated prompts, use `PreToolUse` hooks to auto-approve specific tools, or configure permission rules that apply to subagent sessions.
+When spawning multiple subagents, each one may request permissions separately for its own tool calls. To avoid repeated prompts, use `PreToolUse` hooks to auto-approve specific tools, or configure permission rules, which subagents [inherit from the parent conversation](/docs/en/sub-agents#permission-modes).
 
 ### Recursive hook loops with subagents
 

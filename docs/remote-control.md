@@ -326,12 +326,14 @@ The message names what routed the session away from the Anthropic API, such as `
 
 ### "Remote Control is disabled by your organization's policy"
 
-This error has four distinct causes. Run `/status` first to see which login method and subscription you're using.
+A policy blocks Remote Control. The message's own text tells you which:
 
-* **You're authenticated with an API key or Console account**: Remote Control requires claude.ai OAuth. Run `/login` and choose the claude.ai option. If `ANTHROPIC_API_KEY` is set in your environment, unset it.
-* **An Owner hasn't enabled it for your organization**: Remote Control is off by default on Team and Enterprise plans. An Owner can enable it at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) by turning on the **Remote Control** toggle. This toggle is a server-side organization setting.
-* **The admin toggle is grayed out**: your organization has a data retention or compliance configuration that is incompatible with Remote Control. This cannot be changed from the admin panel. Contact Anthropic support to discuss options.
-* **The error mentions `disableRemoteControl`**: your IT administrator has disabled Remote Control on this device through [managed settings](/docs/en/settings#settings-files), independent of the organization-wide toggle.
+* **The error mentions `disableRemoteControl`**: your IT administrator has disabled Remote Control on this device through [managed settings](/docs/en/settings#settings-files), independent of the organization-wide toggle and of how you're signed in.
+* **Otherwise, an Owner hasn't enabled it for your organization**: this form appears when you're signed in with an eligible claude.ai account but Remote Control is off, the default on Team and Enterprise plans. An Owner can enable it at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) by turning on the **Remote Control** toggle. This toggle is a server-side organization setting.
+
+### "Remote Control isn't available for your organization due to its compliance policy"
+
+Your organization has a data retention or compliance configuration that is incompatible with Remote Control; the parenthetical at the end of the message names it. In this state the admin panel's Remote Control toggle is grayed out, so an Owner can't change it there. Contact Anthropic support to discuss options.
 
 ### "Remote credentials fetch failed"
 

@@ -412,7 +412,7 @@ Use the `mcpServers` field to give a subagent access to [MCP](/docs/en/mcp) serv
   * As a subagent, spawned through the Agent tool or an @-mention
   * As the main session, launched with [`--agent`](#invoke-subagents-explicitly) or the `agent` setting
 
-  When the agent is the main session, inline server definitions connect at startup alongside servers from [`.mcp.json`](/docs/en/mcp) and settings files.
+  When the agent is the main session, inline server definitions connect at startup alongside servers from [`.mcp.json`](/docs/en/mcp) and settings files. In `/mcp`, a remote (HTTP or SSE) server you've used before can show the [`cached` status](/docs/en/mcp#managing-your-servers) instead; Claude Code connects it when Claude first calls one of its tools.
 </Note>
 
 Each entry in the list is either an inline server definition or a string referencing an MCP server already configured in your session:
