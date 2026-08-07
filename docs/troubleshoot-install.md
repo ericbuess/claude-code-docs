@@ -243,15 +243,19 @@ npm uninstall -g @anthropic-ai/claude-code
 
 Remove the legacy local npm install:
 
-```bash theme={null}
-rm -rf ~/.claude/local
-```
+<Tabs>
+  <Tab title="macOS/Linux">
+    ```bash theme={null}
+    rm -rf ~/.claude/local
+    ```
+  </Tab>
 
-On Windows, use PowerShell:
-
-```powershell theme={null}
-Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\local"
-```
+  <Tab title="Windows PowerShell">
+    ```powershell theme={null}
+    Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\local"
+    ```
+  </Tab>
+</Tabs>
 
 Remove a Homebrew install on macOS. If you installed the `claude-code@latest` cask, substitute that name:
 
@@ -289,15 +293,19 @@ If `claude --version` prints a version but `claude` crashes or hangs on startup,
 
 Confirm the binary exists and is executable:
 
-```bash theme={null}
-ls -la "$(command -v claude)"
-```
+<Tabs>
+  <Tab title="macOS/Linux">
+    ```bash theme={null}
+    ls -la "$(command -v claude)"
+    ```
+  </Tab>
 
-On Windows, use PowerShell:
-
-```powershell theme={null}
-Get-Command claude | Select-Object Source
-```
+  <Tab title="Windows PowerShell">
+    ```powershell theme={null}
+    Get-Command claude | Select-Object Source
+    ```
+  </Tab>
+</Tabs>
 
 On Linux, check for missing shared libraries. If `ldd` shows missing libraries, you may need to install system packages. On Alpine Linux and other musl-based distributions, see [Alpine Linux setup](/docs/en/setup#alpine-linux-and-musl-based-distributions).
 
@@ -896,10 +904,21 @@ When `ANTHROPIC_API_KEY` is present and you have approved it, Claude Code uses t
 
 To use your subscription instead, unset the environment variable and remove it from your shell profile:
 
-```bash theme={null}
-unset ANTHROPIC_API_KEY
-claude
-```
+<Tabs>
+  <Tab title="macOS/Linux">
+    ```bash theme={null}
+    unset ANTHROPIC_API_KEY
+    claude
+    ```
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    ```powershell theme={null}
+    Remove-Item Env:ANTHROPIC_API_KEY
+    claude
+    ```
+  </Tab>
+</Tabs>
 
 Check `~/.zshrc`, `~/.bashrc`, or `~/.profile` for `export ANTHROPIC_API_KEY=...` lines and remove them to make the change permanent. On Windows, check your PowerShell profile at `$PROFILE` and your User environment variables for `ANTHROPIC_API_KEY`. Run `/status` inside Claude Code to confirm which authentication method is active.
 

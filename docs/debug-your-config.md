@@ -53,7 +53,7 @@ Run `/mcp` to see every configured server, its connection status, and whether yo
 
 * Project-scoped servers in `.mcp.json` require a one-time approval. If the prompt was dismissed, the server stays disabled until you approve it from `/mcp`.
 * A server that fails to start shows as failed in `/mcp`. Relative file paths in `command` or `args` are a frequent cause, since they resolve against the directory you launched Claude Code from rather than the location of `.mcp.json`.
-* A server that shows as connected but lists zero tools has started successfully but isn't returning a tool list. Select **Reconnect** from `/mcp`. If the count stays at zero, run `claude --debug mcp` to see the server's stderr output.
+* A server that shows as connected but lists zero tools has started successfully but isn't returning a tool list. Select **Reconnect** from `/mcp`. If the count stays at zero, run `claude --debug=mcp` and read the server's stderr in the debug log at `~/.claude/debug/<session-id>.txt`.
 
 For configuration locations and scope rules, see [MCP](/docs/en/mcp).
 
@@ -69,7 +69,7 @@ If the hook appears but doesn't fire, the matcher is the usual cause. Check it f
 
 Edits to `settings.json` take effect in the running session after a brief file-stability delay. You don't need to restart. If `/hooks` still shows the old definition a few seconds after saving, run `/hooks` again to refresh the view.
 
-If `/hooks` shows the hook but it still does not fire, the next step is to watch hook evaluation live. Start a session with `claude --debug hooks` and trigger the tool call. The debug log records each event, which matchers were checked, and the hook's exit code and output. See [Debug hooks](/docs/en/hooks#debug-hooks) for the log format and [hooks troubleshooting](/docs/en/hooks-guide#limitations-and-troubleshooting) for common failure patterns.
+If `/hooks` shows the hook but it still does not fire, the next step is to watch hook evaluation live. Start a session with `claude --debug` and trigger the tool call. The debug log records each event, which matchers were checked, and the hook's exit code and output. See [Debug hooks](/docs/en/hooks#debug-hooks) for the log format and [hooks troubleshooting](/docs/en/hooks-guide#limitations-and-troubleshooting) for common failure patterns.
 
 ## Test against a clean configuration
 
@@ -119,7 +119,7 @@ For full reference on each configuration surface, see the dedicated page:
 
 * **[`.claude` directory reference](/docs/en/claude-directory)**: every config file location and what reads it
 * **[Settings](/docs/en/settings)**: precedence order and the full key list
-* **[Hooks reference](/docs/en/hooks)**: event names, payloads, and `--debug hooks` output format
+* **[Hooks reference](/docs/en/hooks)**: event names, payloads, and `--debug` output format
 * **[MCP](/docs/en/mcp)**: server configuration, approval, and `/mcp` output
 * **[Troubleshoot installation and login](/docs/en/troubleshoot-install)**: `command not found`, PATH, and authentication problems
 * **[Troubleshooting](/docs/en/troubleshooting)**: performance, hangs, and search issues

@@ -1932,16 +1932,15 @@ PostToolUseFailure hooks receive the same `tool_name` and `tool_input` fields as
 }
 ```
 
-| Field          | Description                                                                                                                                                                                                                                                                                |
-| :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `error`        | String describing what went wrong. The format depends on the tool that failed                                                                                                                                                                                                              |
-| `is_interrupt` | Optional boolean. True when the failure reached Claude Code as an abort rather than as an error the tool reported; the shell tools convert mid-run cancellations into ordinary exit-code errors, so an exit-code payload carries `is_interrupt: false` even when the command was cancelled |
-| `duration_ms`  | Optional. Tool execution time in milliseconds. Excludes time spent in permission prompts and PreToolUse hooks                                                                                                                                                                              |
+| Field          | Description                                                                                                                                                                                                                    |
+| :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`        | String describing what went wrong. The format depends on the tool that failed                                                                                                                                                  |
+| `is_interrupt` | Optional boolean. True when the failure reached Claude Code as an abort rather than as an error the tool reported. Cancelling a running tool does not fire this hook; the tool result carries the interruption message instead |
+| `duration_ms`  | Optional. Tool execution time in milliseconds. Excludes time spent in permission prompts and PreToolUse hooks                                                                                                                  |
 
 The `error` string is generally the same text Claude receives as the failed tool's result. Its format varies by tool and failure. Key your hook on `tool_name`, `is_interrupt`, and the `Exit code N` first line; treat the rest of the string as display text, not a stable format.
 
 * For Bash and PowerShell, a command that ran and exited produces a first line `Exit code N`, then any output the command produced as one block with stdout and stderr interleaved
-* The line `[Request interrupted by user for tool use]` appears when the command was cancelled while running
 * A payload may also carry a bare failure message with no exit-code line, when Claude Code could not start the shell process itself
 * Claude Code middle-truncates strings longer than 10,000 characters around a `... [N characters truncated] ...` marker, and can insert lines of its own, such as `Command timed out after 2m 0s`
 

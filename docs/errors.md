@@ -471,7 +471,7 @@ Invalid API key · Fix external API key
 **What to do:**
 
 * Check for typos and confirm the key has not been revoked in the [Console](https://platform.claude.com/settings/keys)
-* Run `env | grep ANTHROPIC` in the same shell. Tools like direnv, dotenv shell plugins, and IDE terminals can load a stale key from a `.env` file in your project without you setting it explicitly.
+* In the same shell, run `env | grep ANTHROPIC`, or in PowerShell `Get-ChildItem Env:ANTHROPIC*`. Tools like direnv, dotenv shell plugins, and IDE terminals can load a stale key from a `.env` file in your project without you setting it explicitly.
 * Unset `ANTHROPIC_API_KEY` and run `/login` to use subscription auth instead
 * If the key comes from an [`apiKeyHelper`](/docs/en/settings#available-settings) script, run the script directly to confirm it prints a valid key on stdout
 * Run `/status` to confirm which credential source Claude Code is actually using
@@ -616,7 +616,7 @@ Please run /login · API Error: 401 Invalid authentication credentials
 
 **What to do:**
 
-* If `/status` shows an `API key` row, an approved [`ANTHROPIC_API_KEY`](/docs/en/authentication#authentication-precedence) is the active credential and takes precedence over your login, so `/login` doesn't replace it. Rotate the key in the Claude Console, or run `unset ANTHROPIC_API_KEY` to fall back to your subscription.
+* If `/status` shows an `API key` row, an approved [`ANTHROPIC_API_KEY`](/docs/en/authentication#authentication-precedence) is the active credential and takes precedence over your login, so `/login` doesn't replace it. Rotate the key in the Claude Console, or fall back to your subscription by running `unset ANTHROPIC_API_KEY`, or in PowerShell `Remove-Item Env:ANTHROPIC_API_KEY`.
 * If `/status` shows only your login, run `/login` once. If the credential was revoked, a fresh login replaces it.
 * If the same message returns for the same login account, the account or organization is no longer active. Check the account and organization that `/status` reports, and ask your organization admin to restore access.
 * If [`ANTHROPIC_BASE_URL`](/docs/en/env-vars) points at an [LLM gateway](/docs/en/llm-gateway), the text after `401` is your gateway's message rather than Anthropic's, and `/login` doesn't change it. Fix the credential your gateway expects instead.
@@ -1345,8 +1345,8 @@ The quoted command varies between runs: the review starts several `git` commands
 
 **What to do:**
 
-* Create the ref by naming your remote's default branch: `git remote set-head origin <default-branch>`. This works whenever the local tracking ref `origin/<default-branch>` exists. If it doesn't, as in single-branch clones, fetch the branch first: `git remote set-branches --add origin <branch> && git fetch origin`, then rerun the set-head command. Rerun `/security-review`.
-* If you'd rather not name the branch, run `git fetch origin && git remote set-head origin --auto`, which asks the remote which branch is its default. It fails with `error: Cannot determine remote HEAD` when the remote advertises no default branch, because it is empty or its HEAD points at a branch nobody pushed; name the branch explicitly instead. It fails with `error: Not a valid ref` when your clone doesn't fetch that branch; widen the refspec as above first.
+* Create the ref by naming your remote's default branch: `git remote set-head origin <default-branch>`. This works whenever the local tracking ref `origin/<default-branch>` exists. If it doesn't, as in single-branch clones, fetch the branch first: run `git remote set-branches --add origin <branch>`, then `git fetch origin`, then rerun the set-head command. Rerun `/security-review`.
+* If you'd rather not name the branch, run `git fetch origin` and then `git remote set-head origin --auto`, which asks the remote which branch is its default. It fails with `error: Cannot determine remote HEAD` when the remote advertises no default branch, because it is empty or its HEAD points at a branch nobody pushed; name the branch explicitly instead. It fails with `error: Not a valid ref` when your clone doesn't fetch that branch; widen the refspec as above first.
 * If the repository has no remote, add one with `git remote add origin <url>` and fetch before creating the ref. If the remote is empty, push your branch first with `git push -u origin HEAD` and name that branch in the set-head command; `origin/HEAD` then points at the branch you just pushed, so `/security-review` sees an empty diff until the branch diverges from it.
 
 <h3 id="input-must-be-provided-when-using-print">
@@ -1684,8 +1684,7 @@ Restored the code, but skipped 2 files: the tracked path is (or became) a link o
 
 **What to do:**
 
-* Identify which files were skipped so you can handle each one with the steps below. The message gives only a count, so list your project's links to find them: `find . -type l` for symlinks and `find . -type f -links +1` for hard-linked files.
-  * If debug logging is on, the log at `~/.claude/debug/<session-id>.txt` names each skipped path as the restore runs. Turn it on with `/debug` before your next restore to skip the search.
+* Identify which files were skipped so you can handle each one with the steps below. The message gives only a count; the debug log at `~/.claude/debug/<session-id>.txt` names each skipped path as the restore runs, so turn on debug logging with `/debug` before your next restore. On macOS or Linux, you can instead find the links directly: `find . -type l` for symlinks and `find . -type f -links +1` for hard-linked files.
 * If a skipped file is a link you created on purpose, such as a config file managed by a dotfile manager or a file hard-linked by tools like pnpm, the rewind left its contents alone. To undo the session's changes to it, ask Claude to reverse the edit or edit the file yourself
 * If you didn't create the link, inspect the path before trusting its contents: something replaced the file after the checkpoint
 
