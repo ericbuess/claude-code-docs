@@ -422,7 +422,9 @@ The resulting `.mcp.json` file follows a standardized format:
 }
 ```
 
-For security reasons, Claude Code prompts for approval before using project-scoped servers from `.mcp.json` files. If you need to reset these approval choices, use the `claude mcp reset-project-choices` command.
+For security reasons, Claude Code prompts for approval in interactive sessions before using project-scoped servers from `.mcp.json` files. To reset those approval choices, run `claude mcp reset-project-choices`.
+
+`claude -p` runs, [Agent SDK](/docs/en/headless) sessions, and [cloud sessions](/docs/en/claude-code-on-the-web) can't show that prompt: Claude Code loads project-scoped servers there without asking. To keep a server out anyway, add it to [`disabledMcpjsonServers`](/docs/en/settings#available-settings), which blocks it in every mode, or exclude project settings entirely with [`--setting-sources`](/docs/en/cli-reference) or the SDK's `settingSources` option.
 
 ### User scope
 

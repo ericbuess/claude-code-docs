@@ -891,19 +891,9 @@ The subagent panel below the prompt input shows the full tree: each row displays
   * **v2.1.217 through v2.1.218**: the limit defaulted to one, so a subagent couldn't spawn its own unless you raised it; v2.1.219 raised the default to three.
 </Note>
 
-### Session subagent limit
-
-Three separate limits control subagent use, each with its own variable: this one caps the total spawned over a session, the [concurrent subagent limit](#concurrent-subagent-limit) stops Claude from spawning more while too many are running, and the [depth limit](#let-subagents-spawn-their-own-subagents) caps how deeply subagents nest.
-
-By default, Claude can spawn at most 200 subagents per session. To raise the limit, set [`CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`](/docs/en/env-vars) to any positive whole number; there is no upper bound, but the limit can't be turned off. Requires Claude Code v2.1.212 or later.
-
-Every subagent Claude spawns with the Agent tool counts toward the limit: nested subagents, [forks](#fork-the-current-conversation), and background subagents, including subagents that a [workflow](/docs/en/workflows)'s agents spawn with the Agent tool. An in-session fork you start yourself with `/subtask` counts too: it spends the same budget, though the limit blocks only subagents Claude spawns with the Agent tool, so your own `/subtask` still starts after Claude reaches the limit. A session you create with `/fork` doesn't count; it runs as a separate background session with its own budget. Before v2.1.212, the in-session fork was named `/fork`. Agents a workflow script spawns with `agent()` don't count; workflows have their own per-run limit. A finished subagent still counts.
-
-When Claude reaches the limit, the Agent tool fails with `Subagent spawn limit reached`, and the error tells Claude to complete the remaining work directly with its own tools.
-
-Run [`/clear`](/docs/en/commands#all-commands) to reset the count and start a new conversation with the full budget. If work that can still spawn subagents survives the clear, such as a running workflow, the count carries over instead.
-
 ### Concurrent subagent limit
+
+Two limits control subagent use, each with its own variable: this one stops Claude from spawning more subagents while too many are running, and the [depth limit](#let-subagents-spawn-their-own-subagents) caps how deeply subagents nest. There's no limit on the total number of subagents Claude can spawn over a session.
 
 By default, when 20 subagents are running in a session, spawning another with the Agent tool fails with `Concurrent subagent limit reached`, and the error tells Claude not to retry. Spawning succeeds again when the running count drops below the limit. To change the limit, set [`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`](/docs/en/env-vars) to any positive whole number. Sessions with [ultracode](/docs/en/model-config#adjust-effort-level) active are exempt: the limit isn't enforced there. Requires Claude Code v2.1.217 or later.
 
@@ -912,7 +902,7 @@ The limit blocks only subagents Claude spawns with the Agent tool, but other run
 * An in-session fork you start with [`/subtask`](#fork-the-current-conversation) takes a slot while it runs and is never blocked by the limit.
 * [Resuming a subagent](#resume-subagents) that already finished takes a fresh slot without checking the limit, so resumes can push the running count past it.
 
-Agents that other features run, such as [workflow](/docs/en/workflows) agents and [agent team](/docs/en/agent-teams) teammates, follow their own limits instead. The [session subagent limit](#session-subagent-limit) separately caps the total Claude spawns over the whole session.
+Agents that other features run, such as [workflow](/docs/en/workflows) agents and [agent team](/docs/en/agent-teams) teammates, follow their own limits instead.
 
 ### Manage subagent context
 

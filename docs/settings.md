@@ -875,6 +875,7 @@ Defines additional marketplaces that should be made available for the repository
 
 * `github`: GitHub repository (uses `repo`)
 * `git`: Any git URL (uses `url`)
+* `url`: Direct URL to a `marketplace.json` file (uses `url`, plus optional `headers` for authenticated access)
 * `directory`: Local filesystem path (uses `path`, for development only)
 * `hostPattern`: regex pattern to match marketplace hosts (uses `hostPattern`)
 * `settings`: inline marketplace declared directly in settings.json without a separate hosted repository (uses `name` and `plugins`)
@@ -966,7 +967,7 @@ Fields: `url` (required), `ref` (optional: branch or tag), `path` (optional: sub
 Fields: `url` (required), `headers` (optional: HTTP headers for authenticated access)
 
 <Note>
-  URL-based marketplaces only download the `marketplace.json` file. They do not download plugin files from the server. Plugins in URL-based marketplaces must use external sources (GitHub, npm, or git URLs) rather than relative paths. For plugins with relative paths, use a Git-based marketplace instead. See [Troubleshooting](/docs/en/plugin-marketplaces#plugins-with-relative-paths-fail-in-url-based-marketplaces) for details.
+  URL-based marketplaces only download the `marketplace.json` file. They do not download plugin files from the server. Plugins in URL-based marketplaces must use external sources (GitHub, npm, git URL, or archive) rather than relative paths. For plugins with relative paths, use a Git-based marketplace instead. See [Troubleshooting](/docs/en/plugin-marketplaces#plugins-with-relative-paths-fail-in-url-based-marketplaces) for details.
 </Note>
 
 4. **NPM packages**:

@@ -101,6 +101,7 @@ Match the message you see in your terminal to a section below.
 | `references ${user_config.*} in a shell-form command`                                              | [Plugin errors](#plugin-command-references-user-config)                                                                       |
 | `Monitor "<name>" from plugin <plugin> references ${user_config.*} in its command`                 | [Plugin errors](#plugin-command-references-user-config)                                                                       |
 | `headersHelper for MCP server '<name>' references ${user_config.*}`                                | [Plugin errors](#plugin-command-references-user-config)                                                                       |
+| `Plugin archive integrity check failed`                                                            | [Plugin errors](#plugin-archive-integrity-check-failed)                                                                       |
 | `would be spawned with zero tools — refusing`                                                      | [Tool errors](#agent-would-be-spawned-with-zero-tools)                                                                        |
 | `File is covered by a Read deny rule in your permission settings`                                  | [Tool errors](#file-is-covered-by-a-read-deny-rule)                                                                           |
 | `Error: this write left the memory index at MEMORY.md at ..., over its ... read limit`             | [Tool errors](#memory-index-is-over-its-read-limit)                                                                           |
@@ -1477,6 +1478,24 @@ headersHelper for MCP server 'internal-api' references ${user_config.*}. The sub
 * For a hook, add an `args` array so it runs in [exec form](/docs/en/hooks#exec-form-and-shell-form), where each `${user_config.KEY}` becomes one argument with no shell in between. Or drop the reference and read the `$CLAUDE_PLUGIN_OPTION_<KEY>` environment variable inside the script
 * For a monitor, drop the reference and have the monitor script read the value from a config file
 * For a `headersHelper`, move `${user_config.KEY}` into the server's `headers` field, which isn't shell-parsed, or read the value inside the helper script
+
+### Plugin archive integrity check failed
+
+The plugin's marketplace entry uses an [`archive` source](/docs/en/plugin-marketplaces#zip-archives) with a `sha256` pin, and the digest of the downloaded file doesn't match the pin. Claude Code refuses the install, so nothing changes in the plugin cache. The mismatch has three possible causes:
+
+* The file at the URL changed after the author computed the pin
+* The author entered the wrong digest in the marketplace entry
+* The URL serves a different file than the author pinned
+
+```text theme={null}
+Plugin archive integrity check failed for https://artifacts.example.com/claude-plugins/my-plugin.zip: expected sha256 6bfa50e3d2e00c052b46abe51fff89346ac803e45771f76dcf6df1ab74cca5e1, got ac52220c0914ef8ca6a602e4a7362f88d30fb021110f72a6d15b68c3fe7df2b7. The archive was not installed. Verify the sha256 in the marketplace entry, or that the URL serves the intended file.
+```
+
+**What to do:**
+
+* If you publish the plugin, recompute the digest of the exact file the URL serves, for example with `shasum -a 256 my-plugin.zip`, or `Get-FileHash -Algorithm SHA256 my-plugin.zip` in PowerShell, and update the `sha256` in the marketplace entry
+* If you install the plugin, run `/plugin marketplace update <name>` to refresh the catalog in case the entry was corrected, then retry the install
+* If the digests still disagree after a refresh, ask the marketplace owner which file they pinned before installing
 
 ## Tool errors
 
