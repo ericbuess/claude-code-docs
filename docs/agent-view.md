@@ -369,7 +369,11 @@ Exiting a session that still has background work running, such as subagents, bac
 
 #### Copy the session with /fork
 
-Run `/fork` to copy the current conversation into a new background session while the original keeps running. The copy starts with everything in the conversation up to that point, plus the model, permission mode, effort level, and any directories or "don't ask again" permission grants you added during the session, and appears as its own row in agent view. See the bullets below for where the copy starts. From that moment the two sessions are independent: what the copy does never reaches the original conversation. Requires Claude Code v2.1.212 or later; on v2.1.161 through v2.1.211, `/fork` starts a [forked subagent](/docs/en/sub-agents#fork-the-current-conversation) instead, which is now `/subtask`. When [agent view is turned off](#turn-off-agent-view), `/fork` keeps the forked-subagent behavior and `/subtask` isn't available.
+Run `/fork` to copy the current conversation into a new background session while the original keeps running. The copy starts with everything in the conversation up to that point; see the bullets below for where the copy runs. It also carries over the model, permission mode, effort level, and any directories or "don't ask again" permission grants you added during the session. The copy appears as its own row in agent view.
+
+After the fork, the two conversations are independent: nothing the copy does enters the original conversation on its own, though in sessions where [cross-session messaging](/docs/en/cross-session-messaging) is enabled, either session's Claude can explicitly message the other.
+
+Copying the session requires Claude Code v2.1.212 or later; on v2.1.161 through v2.1.211, `/fork` starts a [forked subagent](/docs/en/sub-agents#fork-the-current-conversation) instead, which is now `/subtask`. When [agent view is turned off](#turn-off-agent-view), `/fork` keeps the forked-subagent behavior and `/subtask` isn't available.
 
 Pass a prompt such as `/fork open a draft pull request with the work so far` and the copy starts working on it immediately. Without a prompt the copy waits for its first instruction: select its row in `claude agents` and press `Space` to send one, or run `claude attach <id>`. The selected row shows `space to send it a prompt` while it waits.
 

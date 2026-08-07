@@ -32,11 +32,13 @@ Match the error message or symptom you're seeing to a fix:
 | `Illegal instruction`                                                                                      | [Architecture or CPU instruction set mismatch](#illegal-instruction)                                                                          |
 | `cannot execute binary file: Exec format error` in WSL                                                     | [WSL1 native-binary regression](#exec-format-error-on-wsl1)                                                                                   |
 | PowerShell installer completes but `claude` is not found or shows an old version                           | [Add the install directory to your PATH](#verify-your-path), then open a new terminal                                                         |
-| `dyld: cannot load`, `dyld: Symbol not found`, or `Abort trap` on macOS                                    | [Binary incompatibility](#dyld-cannot-load-on-macos)                                                                                          |
+| `dyld: Symbol not found`, `dyld: cannot load`, or `Abort trap` on macOS                                    | [Binary incompatibility](#dyld-cannot-load-on-macos)                                                                                          |
 | `claude update` hangs after `Checking for updates`, or `claude doctor` hangs with no output                | [Move the directory at a shell config path](#claude-update-or-claude-doctor-hangs)                                                            |
 | `Invoke-Expression` or `iex` parse errors quoting HTML tags or CSS, or `ParserError` with `ParseException` | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                                         |
 | `running scripts is disabled on this system` or `PSSecurityException`                                      | [Allow the npm shims to run](#running-scripts-is-disabled-on-this-system)                                                                     |
 | `Error: claude native binary not installed`                                                                | [Complete the npm install](#native-binary-not-found-after-npm-install)                                                                        |
+| `npm error code ENOTEMPTY` during update or reinstall                                                      | [Remove the leftover package directory](#npm-enotempty-during-update-or-reinstall)                                                            |
+| On Windows, the install command prints script text and nothing installs                                    | [Run the complete install command](#wrong-install-command-on-windows)                                                                         |
 | `App unavailable in region`                                                                                | Claude Code is not available in your country. See [supported countries](https://www.anthropic.com/supported-countries).                       |
 | `unable to get local issuer certificate`                                                                   | [Configure corporate CA certificates](#tls-or-ssl-connection-errors)                                                                          |
 | `OAuth error` or `403 Forbidden`                                                                           | [Fix authentication](#login-and-authentication)                                                                                               |
@@ -542,7 +544,7 @@ The installer couldn't reach the download server. This typically means `download
 
 ### Wrong install command on Windows
 
-If you see `'irm' is not recognized`, `The token '&&' is not valid`, `A parameter cannot be found that matches parameter name 'fsSL'`, or `'bash' is not recognized as the name of a cmdlet`, you copied the install command for a different shell or operating system.
+If you see `'irm' is not recognized`, `The token '&&' is not valid`, `A parameter cannot be found that matches parameter name 'fsSL'`, or `'bash' is not recognized as the name of a cmdlet`, you copied the install command for a different shell or operating system. If the command prints the script's text instead of installing anything, you ran only part of it.
 
 * **`irm` not recognized**: you're in CMD, not PowerShell. You have two options:
 
@@ -572,6 +574,20 @@ If you see `'irm' is not recognized`, `The token '&&' is not valid`, `A paramete
   ```powershell theme={null}
   irm https://claude.ai/install.ps1 | iex
   ```
+
+* **The command prints script text instead of installing**: you ran the download half of the command without the part that executes it. `irm https://claude.ai/install.ps1` on its own prints the downloaded script to the terminal. Pipe it to `iex` to run it:
+
+  ```powershell theme={null}
+  irm https://claude.ai/install.ps1 | iex
+  ```
+
+  In CMD, `curl -fsSL https://claude.ai/install.cmd` without `-o` prints the batch script instead of saving it. Run the complete command:
+
+  ```batch theme={null}
+  curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+  ```
+
+Whichever installer you use, confirm it worked: open a new terminal and run `claude --version`, which prints a version number such as `2.1.211 (Claude Code)`.
 
 <h3 id="running-scripts-is-disabled-on-this-system">
   `running scripts is disabled on this system`
@@ -755,19 +771,21 @@ Alternative install methods download the same native binary and won't resolve ei
 
 ### `dyld: cannot load` on macOS
 
-If you see `dyld: cannot load`, `dyld: Symbol not found`, or `Abort trap: 6` during installation, the binary is incompatible with your macOS version or hardware.
+If you see `dyld: Symbol not found`, `dyld: cannot load`, or `Abort trap: 6` during installation, the binary is incompatible with your macOS version or hardware.
 
-```text theme={null}
-dyld: cannot load 'claude-2.1.42-darwin-x64' (load command 0x80000034 is unknown)
-Abort trap: 6
-```
-
-A `Symbol not found` error that references `libicucore` also indicates your macOS version is older than the binary supports:
+A `Symbol not found` error that references `libicucore` means your macOS version is older than the binary supports:
 
 ```text theme={null}
 dyld: Symbol not found: _ubrk_clone
   Referenced from: claude-darwin-x64 (which was built for Mac OS X 13.0)
   Expected in: /usr/lib/libicucore.A.dylib
+```
+
+The loader can instead reject the binary's load commands, which also means your macOS version is too old:
+
+```text theme={null}
+dyld: cannot load 'claude-2.1.42-darwin-x64' (load command 0x80000034 is unknown)
+Abort trap: 6
 ```
 
 **Solutions:**
@@ -863,6 +881,51 @@ Check the following causes:
 * **Install scripts are disabled.** `--ignore-scripts` and some pnpm configurations skip the postinstall step but still download the platform package. Run `node node_modules/@anthropic-ai/claude-code/install.cjs` as the message suggests, or reinstall without the flag. If postinstall can't run in your environment at all, `node node_modules/@anthropic-ai/claude-code/cli-wrapper.cjs` finds the downloaded package and launches it, at the cost of an extra Node process on each start. If the wrapper prints `Could not find native binary package` instead, the platform package was never downloaded, so fix the optional-dependencies cause above first.
 * **Unsupported platform.** Prebuilt binaries are published for `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64`, and `win32-arm64`. Claude Code does not ship a binary for other platforms; see the [system requirements](/docs/en/setup#system-requirements). On FreeBSD, the installer reports the platform as unsupported. Before v2.1.205, it treated FreeBSD as Linux and downloaded a binary that couldn't run.
 * **Corporate npm mirror is missing the platform packages.** Ensure your registry mirrors all eight `@anthropic-ai/claude-code-*` platform packages in addition to the meta package.
+
+<h3 id="npm-enotempty-during-update-or-reinstall">
+  npm `ENOTEMPTY` error during update or reinstall
+</h3>
+
+When you run `npm install -g @anthropic-ai/claude-code` over an existing installation, npm can fail while moving the old package directory aside:
+
+```text theme={null}
+npm error code ENOTEMPTY
+npm error syscall rename
+npm error path /home/you/.nvm/versions/node/v22.13.1/lib/node_modules/@anthropic-ai/claude-code
+npm error dest /home/you/.nvm/versions/node/v22.13.1/lib/node_modules/@anthropic-ai/.claude-code-tVWAnUUt
+npm error errno -39
+npm error ENOTEMPTY: directory not empty, rename '...'
+```
+
+The `npm error path` line names the directory npm couldn't move. Delete that directory and any leftover `.claude-code-*` directories next to it, which earlier interrupted runs can leave behind. The commands below find your global package directory with `npm root -g`; if the directory the `npm error path` line names is not under the directory `npm root -g` prints, for example because you switched Node versions with nvm, delete the directories the error names instead:
+
+<Tabs>
+  <Tab title="macOS/Linux">
+    ```bash theme={null}
+    rm -rf "$(npm root -g)/@anthropic-ai/claude-code"
+    ```
+
+    Then remove any leftover temp directories. If zsh prints `no matches found`, there were none to remove:
+
+    ```bash theme={null}
+    rm -rf "$(npm root -g)/@anthropic-ai/.claude-code-"*
+    ```
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    ```powershell theme={null}
+    Remove-Item -Recurse -Force "$(npm root -g)/@anthropic-ai/claude-code", "$(npm root -g)/@anthropic-ai/.claude-code-*"
+    ```
+  </Tab>
+</Tabs>
+
+Then reinstall:
+
+```bash theme={null}
+npm install -g @anthropic-ai/claude-code
+```
+
+Confirm with `claude --version`, which prints a version number such as `2.1.211 (Claude Code)`.
 
 ## Login and authentication
 

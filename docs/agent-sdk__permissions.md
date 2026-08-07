@@ -110,19 +110,19 @@ Permission modes provide global control over how Claude uses tools. You can set 
 
 The SDK supports these permission modes:
 
-| Mode                | Description                  | Tool behavior                                                                                                                                                                                                                                                                          |
-| :------------------ | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `default`           | Standard permission behavior | No auto-approvals; unmatched tools trigger your `canUseTool` callback                                                                                                                                                                                                                  |
-| `dontAsk`           | Deny instead of prompting    | Anything not pre-approved by `allowed_tools` or rules is denied; connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) and tools that require user interaction are denied even if you've pre-approved them. `canUseTool` is never called  |
-| `acceptEdits`       | Auto-accept file edits       | File edits and [filesystem operations](#accept-edits-mode-acceptedits) (`mkdir`, `rm`, `mv`, etc.) are automatically approved                                                                                                                                                          |
-| `bypassPermissions` | Bypass permission checks     | Tools run without permission prompts, except tools matched by an explicit [`ask` rule](#how-permissions-are-evaluated), connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), and tools that require user interaction (use with caution) |
-| `plan`              | Planning mode                | Claude explores and plans without editing your source files; file edits are never auto-approved and prompt through your `canUseTool` callback                                                                                                                                          |
-| `auto`              | Model-classified approvals   | A model classifier approves or denies permission prompts. See [Auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) for availability                                                                                                                                      |
+| Mode                | Description                  | Tool behavior                                                                                                                                                                                                                                                                                                                                                                                                 |
+| :------------------ | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `default`           | Standard permission behavior | No auto-approvals; unmatched tools trigger your `canUseTool` callback                                                                                                                                                                                                                                                                                                                                         |
+| `dontAsk`           | Deny instead of prompting    | Anything not pre-approved by `allowed_tools` or rules is denied; connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) and tools that require user interaction are denied even if you've pre-approved them. `canUseTool` is never called                                                                                                                         |
+| `acceptEdits`       | Auto-accept file edits       | File edits and [filesystem operations](#accept-edits-mode-acceptedits) (`mkdir`, `rm`, `mv`, etc.) are automatically approved                                                                                                                                                                                                                                                                                 |
+| `bypassPermissions` | Bypass permission checks     | Tools run without permission prompts, except tools matched by an explicit [`ask` rule](#how-permissions-are-evaluated), connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), and tools that require user interaction. The [cross-session messaging safeguards](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) still apply. Use with caution |
+| `plan`              | Planning mode                | Claude explores and plans without editing your source files; file edits are never auto-approved and prompt through your `canUseTool` callback                                                                                                                                                                                                                                                                 |
+| `auto`              | Model-classified approvals   | A model classifier approves or denies permission prompts. See [Auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) for availability                                                                                                                                                                                                                                                             |
 
 <Warning>
   **Subagent inheritance:** Subagents inherit the parent session's permission mode. An [`AgentDefinition`'s `permissionMode`](/docs/en/agent-sdk/typescript#agentdefinition) can override it, except when the parent uses `bypassPermissions`, `acceptEdits`, or `auto`: those modes apply to every subagent and can't be overridden per subagent.
 
-  Subagents may have different system prompts and less constrained behavior than your main agent, so inheriting `bypassPermissions` grants them full, autonomous system access. Explicit [`ask` rules](#how-permissions-are-evaluated), connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), and tools that require user interaction still force a prompt.
+  Subagents may have different system prompts and less constrained behavior than your main agent, so inheriting `bypassPermissions` grants them full, autonomous system access. Explicit [`ask` rules](#how-permissions-are-evaluated), connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), and tools that require user interaction still force a prompt, as does the [`isolatePeerMachines`](/docs/en/settings#available-settings) approval for cross-machine messages.
 </Warning>
 
 ### Set permission mode
@@ -254,12 +254,16 @@ Converts any permission prompt into a denial. Tools pre-approved by `allowed_too
 
 #### Bypass permissions mode (`bypassPermissions`)
 
-Auto-approves all tool uses without prompts. Hooks still execute and can block operations if needed.
+Auto-approves tool uses without prompting, except the cases listed in the warning below. Hooks still execute and can block operations if needed.
 
 <Warning>
   Use with extreme caution. Claude has full system access in this mode. Only use in controlled environments where you trust all possible operations.
 
-  `allowed_tools` does not constrain this mode. Every tool is approved, not just the ones you listed. Deny rules (`disallowed_tools`), explicit `ask` rules, and hooks are evaluated before the mode check and can still block a tool. Connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) and tools that require user interaction still fall through to your `canUseTool` callback.
+  `allowed_tools` does not constrain this mode. Every tool is approved, not just the ones you listed. These controls still apply:
+
+  * Deny rules, explicit `ask` rules, and hooks are evaluated before the mode check and can still block a tool.
+  * Connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) and tools that require user interaction still fall through to your `canUseTool` callback.
+  * The [cross-session messaging safeguards](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) still apply.
 </Warning>
 
 #### Plan mode (`plan`)

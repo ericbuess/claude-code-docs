@@ -96,7 +96,7 @@ See [VS Code security and privacy](/docs/en/vs-code#security-and-privacy) for mo
 
 ## Cloud execution security
 
-When using [Claude Code on the web](/docs/en/claude-code-on-the-web), additional security controls are in place:
+When using [Claude Code on the web](/docs/en/claude-code-on-the-web), additional security controls are in place. Sessions your organization routes to a [self-hosted environment](/docs/en/self-hosted-environments) run on your own infrastructure, where isolation, network egress, and git credentials are your deployment's responsibility. In Anthropic-hosted environments:
 
 * **Isolated virtual machines**: Each cloud session runs in an isolated, Anthropic-managed VM
 * **Network access controls**: Network access is limited by default and can be configured to be disabled or allow only specific domains

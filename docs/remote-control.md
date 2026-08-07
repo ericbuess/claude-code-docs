@@ -180,6 +180,8 @@ All traffic travels through the Anthropic API over TLS, the same transport secur
 
 While Remote Control is connected, the session transcript, including your messages, Claude's responses, and tool activity, is stored on Anthropic servers. The stored transcript keeps the conversation in sync across your devices and lets the session reconnect after a network drop. Execution and filesystem access stay on your machine, and stored transcripts are retained under the [Data usage](/docs/en/data-usage) policy.
 
+With [cross-session messaging](/docs/en/cross-session-messaging), the Remote Control connection also carries messages between your own Claude Code sessions on different machines, and messages arriving from your [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions, traveling through Anthropic servers like the rest of Remote Control traffic. [Message sessions on other machines](/docs/en/cross-session-messaging#message-sessions-on-other-machines) covers the reply-only delivery rules and the `isolatePeerMachines` approval requirement. [Control inbound messages](/docs/en/cross-session-messaging#control-inbound-messages) covers the inbound controls. Cross-session messaging requires Claude Code v2.1.224 or later.
+
 To turn Remote Control off entirely, use the [`disableRemoteControl`](/docs/en/settings#available-settings) setting. Organizations with compliance requirements such as Zero Data Retention can't enable Remote Control.
 
 ## Trusted Devices
@@ -382,6 +384,7 @@ Claude Code offers several ways to work when you're not at your terminal. They d
 ## Related resources
 
 * [Claude Code on the web](/docs/en/claude-code-on-the-web): run sessions in the cloud instead of your machine, configured through [cloud environments](/docs/en/cloud-environments)
+* [Cross-session messaging](/docs/en/cross-session-messaging): let Claude reply to messages from your sessions on other machines or on [Claude Code on the web](/docs/en/claude-code-on-the-web) over the Remote Control connection
 * [Channels](/docs/en/channels): forward Telegram, Discord, or iMessage into a session so Claude reacts to messages while you're away
 * [Dispatch](/docs/en/desktop#sessions-from-dispatch): message a task from your phone and it can spawn a Desktop session to handle it
 * [Authentication](/docs/en/authentication): set up `/login` and manage credentials for claude.ai

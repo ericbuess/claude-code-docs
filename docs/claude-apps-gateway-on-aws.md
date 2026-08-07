@@ -212,9 +212,9 @@ The steps below provision the full deployment with `aws` commands.
   <Step title="Write gateway.yaml">
     The `upstreams` block points at Bedrock with `auth: {}`, so the gateway authenticates via the AWS default credential chain from the task role on ECS or the IRSA role on EKS. See the [configuration reference](/docs/en/claude-apps-gateway-config) for every field.
 
-    Two `listen` fields depend on what fronts the gateway:
+    Two `listen` fields describe what fronts the gateway:
 
-    * `public_url`: required behind a load balancer. The gateway builds the IdP `redirect_uri` and its discovery document only from this value, never from `X-Forwarded-*` headers.
+    * `public_url`: the external `https://` origin, required for any non-loopback bind; see the [`listen` reference](/docs/en/claude-apps-gateway-config#listen). The gateway builds the IdP `redirect_uri` and its discovery document only from this value, never from `X-Forwarded-*` headers.
     * `trusted_proxies`: the front end's source ranges. The gateway honors `X-Forwarded-For` only when the TCP peer is in this list, then walks the chain past trusted hops, so per-IP sign-in rate limits and audit events record developer IPs instead of the load balancer's.
 
     On both tracks the front end is an internal ALB, whether created directly or by the AWS Load Balancer Controller, and an ALB's nodes take addresses from the subnets it is attached to, so set `trusted_proxies` to those subnets' CIDRs. This trusts every host in those subnets as a proxy. Keep the ALB's ingress source, your corporate CIDR, from overlapping them, and don't share the subnets with untrusted workloads that could spoof client IPs via `X-Forwarded-For`.
@@ -504,7 +504,7 @@ Client telemetry is off by default; configuring `telemetry.forward_to` is what t
 
 Point `telemetry.forward_to` at an OpenTelemetry collector, such as the [AWS Distro for OpenTelemetry (ADOT) collector](https://aws-otel.github.io/), and export from there to Amazon CloudWatch, Amazon Managed Service for Prometheus, or any OTLP backend.
 
-Run the collector as its own internal service reachable over `https://`: the gateway accepts plaintext `http://` only for loopback URLs, and even then its [SSRF guard](/docs/en/claude-apps-gateway-deploy#threat-model-summary) blocks loopback connections at send time by default. A sidecar collector on `http://localhost:4318` passes config validation but receives no traffic, with exports failing as `ECONNREFUSED_SSRF` in the gateway logs, unless `CLAUDE_GATEWAY_ALLOW_LOOPBACK=1` is set in the gateway's environment. That variable relaxes the loopback block for every operator-configured URL, not only telemetry, so prefer the internal-service pattern and reserve the sidecar-plus-flag setup for tasks whose network is otherwise locked down.
+Run the collector as its own internal service reachable over `https://`: the gateway accepts plaintext `http://` only for loopback URLs, and even then its [SSRF guard](/docs/en/claude-apps-gateway-deploy#threat-model-summary) blocks loopback connections by default. Unless `CLAUDE_GATEWAY_ALLOW_LOOPBACK=1` is set in the gateway's environment, a sidecar collector on `http://localhost:4318` passes config validation but receives no traffic, with exports failing as `ECONNREFUSED_SSRF` in the gateway logs, and the gateway rejects an IP-literal URL such as `http://127.0.0.1:4318` at boot. That variable relaxes the loopback block for every operator-configured URL, not only telemetry, so prefer the internal-service pattern and reserve the sidecar-plus-flag setup for tasks whose network is otherwise locked down.
 
 ### Gateway logs
 

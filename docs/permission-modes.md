@@ -397,6 +397,11 @@ Explicit [ask rules](/docs/en/permissions#manage-permissions) and connector tool
 
 Removals targeting the filesystem root or home directory, such as `rm -rf /` and `rm -rf ~`, still prompt as a circuit breaker against model error. The circuit breaker also fires when the command contains command substitution with `$(...)` or backticks, or process substitution with `<(...)`, whether the removal sits inside the substitution, as in `echo "$(rm -rf ~)"`, or elsewhere in the same command. The plain form, typed as its own command, has prompted in this mode since the circuit breaker was introduced; before v2.1.208, commands containing those forms didn't prompt.
 
+Two [cross-session messaging](/docs/en/cross-session-messaging) safeguards still apply in this mode, and in plan-mode sessions where bypass permissions are available:
+
+* The [`isolatePeerMachines`](/docs/en/settings#available-settings) approval prompt for messages to your sessions beyond this machine still appears.
+* When no [`crossSessionInbound`](/docs/en/cross-session-messaging#control-inbound-messages) value applies, Claude Code holds an inbound message from another of your sessions for your approval, and delivers without asking only when the sending session identifies itself as also bypassing permission prompts. If you leave the mode while messages are held, Claude Code re-applies the inbound rules and delivers any held message they now accept.
+
 In sessions with bypass permissions available, Claude Code also doesn't enforce [plan mode's](#analyze-before-you-edit-with-plan-mode) blocks. Claude is still instructed to plan without editing, but a file edit or shell command it attempts during planning runs without prompting. Explicit [ask rules](/docs/en/permissions#manage-permissions) and the removal circuit breaker above still prompt.
 
 <Warning>

@@ -72,7 +72,7 @@
     <div>Browsing a marketplace's plugins in <code>/plugin</code> now has a search bar</div>
     <div>New <code>disableBundledSkills</code> setting and <code>CLAUDE\_CODE\_DISABLE\_BUNDLED\_SKILLS</code> hide bundled skills, workflows, and built-in commands from the model</div>
     <div>Deny rules accept a glob in the tool-name position, so <code>"\*"</code> denies all tools, and unknown tool names in deny rules now warn at startup</div>
-    <div>Cross-session messaging is hardened: messages relayed via <code>SendMessage</code> from other sessions no longer carry user authority, and auto mode blocks them</div>
+    <div>Agent messaging is hardened: messages relayed via <code>SendMessage</code> from other agents no longer carry user authority, and auto mode blocks them</div>
     <div>Amazon Bedrock reads the AWS region from <code>\~/.aws</code> config files when <code>AWS\_REGION</code> is unset, and <code>/status</code> shows where the region came from</div>
     <div>New <code>enforceAvailableModels</code> managed setting makes the <code>availableModels</code> allowlist also constrain the Default model</div>
     <div>Claude in Chrome browser tools now load in a single batched call instead of one per tool</div>

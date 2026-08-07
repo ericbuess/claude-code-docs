@@ -86,7 +86,7 @@ Claude Code is built on Anthropic's APIs. For details on API security controls, 
 
 ### Cloud execution: Data flow and dependencies
 
-When using [Claude Code on the web](/docs/en/claude-code-on-the-web), sessions run in Anthropic-managed virtual machines instead of locally. In cloud sessions:
+When using [Claude Code on the web](/docs/en/claude-code-on-the-web), sessions run in Anthropic-managed virtual machines by default instead of locally. Sessions your organization routes to a [self-hosted environment](/docs/en/self-hosted-environments) run on infrastructure you control; for what stays on your machines and what still goes to Anthropic, see [What stays on your infrastructure](/docs/en/self-hosted-environments#what-stays-on-your-infrastructure). In Anthropic-hosted cloud sessions:
 
 * **Code and data storage:** Your repository is cloned to an isolated VM. Code and session data are subject to the retention and usage policies for your account type (see Data retention section above)
 * **Credentials:** GitHub authentication is handled through a secure proxy; your GitHub credentials never enter the sandbox
@@ -132,6 +132,6 @@ When a host platform sets `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, metrics defaul
 
 ### WebFetch domain safety check
 
-Before fetching a URL, the WebFetch tool sends the requested hostname to `api.anthropic.com` to check it against a safety blocklist maintained by Anthropic. Only the hostname is sent, not the full URL, path, or page contents. Results are cached per hostname for five minutes.
+Before fetching a URL, the WebFetch tool sends the requested hostname to `api.anthropic.com` to check it against a safety blocklist maintained by Anthropic. Only the hostname is sent, not the full URL, path, or page contents. Claude Code caches a hostname that passes the check for five minutes, and re-checks a blocked or failed hostname on the next request.
 
 This check runs regardless of which model provider you use and is not affected by `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. If your network blocks `api.anthropic.com`, WebFetch requests fail until you either allowlist the domain or set `skipWebFetchPreflight: true` in [settings](/docs/en/settings). Disabling the check means WebFetch attempts to retrieve any URL without consulting the blocklist, so combine it with [`WebFetch` permission rules](/docs/en/permissions#webfetch) if you need to restrict which domains Claude can reach.
