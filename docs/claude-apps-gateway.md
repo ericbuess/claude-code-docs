@@ -309,8 +309,9 @@ Claude Code filters parent settings against an allowlist of restrictive keys, bu
 Claude Code forwards parent-supplied [`sandbox.credentials`](/docs/en/settings#sandbox-settings) entries in stripped form:
 
 * **`deny` entries**: forwarded with only their `path` or `name` and the mode.
-* **File entries with [`mode: mask`](/docs/en/sandboxing#mask-credential-files)**: forwarded sentinel-only, as a whole-file mask whose `injectHosts` is the empty list, so the proxy never substitutes the real value for a parent-supplied entry on any platform. The `extract`, `onExtractNoMatch`, and `maskDuplicates` fields are dropped too, so a parent-supplied extract pattern can't displace a stricter mask another source sets for the same path.
-* **`envVars` entries with `mode: mask`**: not forwarded. `deny` is the only environment-variable restriction the parent channel can express.
+* **File entries with [`mode: mask`](/docs/en/sandboxing#mask-credential-files)**: forwarded sentinel-only, as a whole-file mask whose `injectHosts` is the empty list, so the proxy never substitutes the real value for a parent-supplied entry on any platform. All structured-masking fields are dropped too, so a parent-supplied extract pattern can't displace a stricter mask another source sets for the same path.
+* **`envVars` entries with `mode: mask`**: not forwarded. `deny` is the only restriction the parent channel can express through `envVars` entries.
+* **[`awsPairs` and `sigv4`](/docs/en/sandboxing#re-sign-aws-requests)**: forwarded restriction-only. From `sigv4`, only `deny` values are kept, and a parent that defines a `sigv4` block at all pins all three request forms, `streaming`, `presigned`, and `sigv4a`, to `deny`. An `awsPairs` pair is never forwarded in a form that can re-sign; a pair that names one of the conventional AWS variables is replaced by an inert entry that keeps the automatic pairing of `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN` suppressed.
 
 #### Deploy the locks
 

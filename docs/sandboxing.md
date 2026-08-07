@@ -300,7 +300,7 @@ With `mask`, the sandboxed command sees a per-session sentinel value instead of 
 
 The proxy substitutes the credential inside request contents, so it has to see them. Set [`network.tlsTerminate`](/docs/en/settings#sandbox-settings) so the proxy terminates TLS itself. Without it, masking fails without exposing anything: the command still sees only the sentinel, but the sentinel reaches the server unchanged and authentication fails. Claude Code reports this misconfiguration at startup.
 
-Substitution covers headers and request bodies. AWS requests carry SigV4 signatures over the request contents, so mask `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` together. The proxy detects a SigV4 request by the access key's sentinel and re-signs it after substituting the real values. Masking the secret alone leaves requests signed with the placeholder, which the proxy can't detect, so they fail at AWS; Claude Code warns about this case at startup, but not when only the access key ID is masked. A detected request the proxy can't re-sign, such as one missing its `x-amz-date` header, fails with a proxy error instead of reaching the server with a broken signature.
+Substitution covers headers and request bodies. Requests that authenticate with a signature derived from the credential, rather than the credential itself, need re-signing at the proxy; [Re-sign AWS requests](#re-sign-aws-requests) covers how that works for AWS.
 
 The example below masks two tokens. `GH_TOKEN` is substituted only on requests to `api.github.com`, while `NPM_TOKEN` has no `injectHosts` and is substituted on requests to every host in `network.allowedDomains`. Each `injectHosts` entry must itself be covered by `network.allowedDomains`.
 
@@ -325,6 +325,56 @@ The example below masks two tokens. `GH_TOKEN` is substituted only on requests t
 Unlike `deny`, masking authorizes the proxy to send your real credential to the listed hosts, so it is honored only from settings you or your administrator control: user settings, managed settings, and the `--settings` CLI flag. `mask` entries, `network.tlsTerminate`, and [`credentials.allowPlaintextInject`](/docs/en/settings#sandbox-settings), which lets the proxy inject credentials into unencrypted requests, are all ignored in a repository's `.claude/settings.json` or `.claude/settings.local.json`.
 
 When the same variable is listed with `deny` in any scope, `deny` takes precedence.
+
+Masking replaces the variable's entire value by default, which suits a bare token. Optional entry fields, which require Claude Code v2.1.224 or later, handle values with structure:
+
+* `extract`: a regular expression Claude Code applies across the value, replacing only the text captured by group 1 of each match, so a tool that parses the value, such as a `DATABASE_URL` connection string, still works inside the sandbox. The pattern must contain at least one capturing group.
+* `onExtractNoMatch` controls what happens when the pattern matches nothing:
+  * `warn`, the default, warns and passes the variable through unmasked
+  * `deny` unsets the variable inside the sandbox
+  * `error` stops sandbox setup until you fix the configuration
+* `decode: "jwt"`: for a variable holding a JSON Web Token (JWT). Claude Code verifies the value is a JWT and replaces it with a structurally valid fake token, so code inside the sandbox that decodes the token keeps working. Add `maskClaims` to list top-level payload claims to mask individually instead of replacing the whole token; the other claims stay readable. When the value doesn't verify as a JWT, or no listed claim matches, Claude Code passes the variable through unmasked with a warning. `decode` can't be combined with `extract`.
+
+See the [`credentials.envVars[]` rows in the settings reference](/docs/en/settings#sandbox-settings) for the full field list.
+
+#### Re-sign AWS requests
+
+AWS requests carry SigV4 signatures over the request contents, so mask `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` together. The proxy detects a SigV4 request by the access key's sentinel and re-signs it after substituting the real values. Masking the secret alone leaves requests signed with the placeholder, which the proxy can't detect, so they fail at AWS; Claude Code warns about this case at startup, but not when only the access key ID is masked. A detected request the proxy can't re-sign, such as one missing its `x-amz-date` header, fails with a proxy error instead of reaching the server with a broken signature.
+
+Claude Code links the conventional `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN` variables into one credential automatically when you mask their whole values. If your AWS credential lives in variables with other names, group them yourself with [`credentials.awsPairs`](/docs/en/settings#sandbox-settings), which requires Claude Code v2.1.224 or later. This example adds the pairing to a configuration that already masks `MY_KEY_ID`, `MY_SECRET_KEY`, and `MY_SESSION_TOKEN` whole-value, as in the [masking configuration above](#mask-environment-variables):
+
+```json theme={null}
+{
+  "sandbox": {
+    "credentials": {
+      "awsPairs": [
+        {
+          "accessKeyIdVar": "MY_KEY_ID",
+          "secretAccessKeyVar": "MY_SECRET_KEY",
+          "sessionTokenVar": "MY_SESSION_TOKEN"
+        }
+      ]
+    }
+  }
+}
+```
+
+Each entry follows these rules:
+
+* `accessKeyIdVar` and `secretAccessKeyVar` name the masked `envVars` entries holding the access key ID and the secret key. The optional `sessionTokenVar` names the entry holding the session token for temporary credentials; when set, the proxy sends the real token as `x-amz-security-token` on re-signed requests.
+* Each named variable must be a `mask` entry that masks its entire value, without `extract` or `decode`.
+* The proxy re-signs requests on the hosts listed in the access key ID entry's `injectHosts`.
+* Naming any of the conventional variables in a pair replaces the automatic pairing.
+
+Like `mask` entries, `awsPairs` is honored only from user settings, managed settings, and the `--settings` CLI flag.
+
+Three AWS request forms carry signatures the proxy can't recompute. When such a request is signed with a masked pair's placeholder, the proxy fails it rather than forward a broken signature; requests signed with unmasked credentials are never affected. The [`credentials.sigv4`](/docs/en/settings#sandbox-settings) setting, which requires Claude Code v2.1.224 or later, relaxes this per form: setting a form's key to `passthrough` forwards the request with its placeholder-derived signature, so the calling tool receives AWS's own rejection response instead of a proxy error. Like `awsPairs`, `sigv4` is honored only from user settings, managed settings, and the `--settings` CLI flag.
+
+| Request form                  | `sigv4` key | Why the proxy can't re-sign it                                                                    |
+| :---------------------------- | :---------- | :------------------------------------------------------------------------------------------------ |
+| aws-chunked streaming uploads | `streaming` | Per-chunk signatures chain off the seed signature, so re-signing would require rewriting the body |
+| Presigned URLs                | `presigned` | The signature lives in the URL itself, with no `Authorization` header                             |
+| SigV4A asymmetric signatures  | `sigv4a`    | There is no shared-key HMAC to recompute                                                          |
 
 #### Mask credential files
 
@@ -363,16 +413,18 @@ To confirm the mask is active, ask Claude to run `cat ~/.config/gh/hosts.yml` in
 
 On Linux and WSL2, the `extract` pattern is what keeps the rest of `hosts.yml` readable. Claude Code applies the regular expression across the whole file and replaces only the text captured by group 1 of each match, so `gh` still parses its config and only the token is a placeholder. Use `extract` for any structured file that tools parse, such as `.netrc`, JSON, or YAML; the pattern must contain at least one capturing group. Without `extract`, Claude Code replaces the entire file content with one sentinel value, which suits a file that holds a single bare secret and nothing else.
 
-Two optional fields refine how `extract` behaves. Both apply only when `mode` is `mask` and `extract` is set. On macOS, Claude Code applies `mask` entries as `deny` before the pattern runs whenever filesystem isolation is on, so these fields, and the no-match outcomes below, take effect there only when [filesystem isolation is off](#disable-filesystem-isolation):
+For a file that holds a JSON Web Token (JWT), set `decode: "jwt"` instead of, or together with, `extract`. `decode` requires Claude Code v2.1.224 or later. Claude Code finds JWT candidates with a built-in pattern, or with your `extract` pattern when set, verifies each candidate is a JWT, and replaces it with a structurally valid fake token, so code that decodes the token inside the sandbox keeps working. Add `maskClaims` to mask only the named top-level payload claims inside each verified token and leave the other claims readable. When no candidate verifies, or no named claim matches, the `onExtractNoMatch` field below governs the outcome, as it does for a pattern that matches nothing.
 
-* `onExtractNoMatch` controls what happens when the regex matches nothing in the file:
+Two optional fields refine how matching behaves. Both apply only when `mode` is `mask` and `extract` or `decode` is set. On macOS, Claude Code applies `mask` entries as `deny` before the pattern runs whenever filesystem isolation is on, so these fields, and the no-match outcomes below, take effect there only when [filesystem isolation is off](#disable-filesystem-isolation):
+
+* `onExtractNoMatch` controls what happens when matching finds nothing to mask in the file:
 
   * `warn`, the default, warns and skips the entry, so sandboxed commands can read the real file unmasked. The default suits credentials that may be legitimately absent; if the secret might be present but the pattern might miss it, use `deny`
   * `deny` makes the file unreadable instead
   * `error` stops sandbox setup until you fix the configuration
 
   Claude Code treats `deny` as `error` whenever the read block wouldn't be enforced: when you [disable filesystem isolation](#disable-filesystem-isolation), and when a `filesystem.allowRead` entry from any settings source re-opens the file's path.
-* `maskDuplicates` also replaces verbatim copies of each captured credential value found outside the regex matches, for a secret repeated where the regex doesn't reach. It matches raw substrings, so a short or common value would be replaced everywhere it appears; reserve it for long, high-entropy secrets. Default: false.
+* `maskDuplicates` also replaces verbatim copies of each masked credential value, an `extract` capture or a `decode`-verified token, found outside the matched spans, for a secret repeated where matching doesn't reach. It matches raw substrings, so a short or common value would be replaced everywhere it appears; reserve it for long, high-entropy secrets. Default: false.
 
 `mask` applies to a single file, so list each credential file individually. Claude Code falls back to `deny` for a `mask` entry it can't mask safely: a directory path, a glob pattern, a file larger than 8 MiB, or a file that isn't UTF-8 text. Write directories as explicit `deny` entries instead; the table under [Which settings can disable it](#which-settings-can-disable-it) covers whether each form pins `filesystem.disabled` and how it behaves with filesystem isolation off.
 
