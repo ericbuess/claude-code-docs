@@ -82,7 +82,7 @@ This example pipes a build log into Claude and writes the explanation to a file:
 cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
 ```
 
-With `--output-format json`, the response payload includes `total_cost_usd` and a per-model cost breakdown, so scripted callers can track spend per invocation without consulting the [usage dashboard](/docs/en/costs).
+With `--output-format json`, the response payload includes `total_cost_usd` and a per-model cost breakdown, so scripted callers can track spend per invocation without consulting the [usage dashboard](/docs/en/costs). Both figures are [client-side estimates](/docs/en/agent-sdk/cost-tracking) and can differ from your actual bill.
 
 <Note>
   Piped stdin is capped at 10MB. If you exceed the cap, Claude Code exits with a clear error and a non-zero status. To work with larger inputs, write the content to a file and reference the file path in your prompt instead of piping it.

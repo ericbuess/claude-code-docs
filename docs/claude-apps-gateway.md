@@ -83,7 +83,7 @@ The gateway server requires the native `claude` binary; download a pinned releas
   </Step>
 
   <Step title="Provision a PostgreSQL database">
-    Any Postgres 14 or later works, including the smallest managed tier. The gateway runs its own schema migrations at boot, so the database user needs `CREATE TABLE` permission. If your security policy prohibits DDL from application roles, pre-create the schema instead; see [`store`](/docs/en/claude-apps-gateway-config#store).
+    Any Postgres 14 or later works, including the smallest managed tier. The gateway runs its own schema migrations at boot, so the database role needs rights to create and alter tables; see [`store`](/docs/en/claude-apps-gateway-config#store).
   </Step>
 
   <Step title="Write gateway.yaml">

@@ -572,7 +572,7 @@ To add these to a two-way chat bridge like the one assembled in [Expose a reply 
   </Step>
 </Steps>
 
-Claude Code also keeps the local terminal dialog open, so you can answer in either place, and the first answer to arrive is applied. A remote reply that doesn't exactly match the expected format fails in one of two ways, and in both cases the dialog stays open:
+A remote reply that doesn't exactly match the expected format fails in one of two ways, and in both cases the local terminal dialog stays open:
 
 * **Different format**: your inbound handler's regex fails to match, so text like `approve it` or `yes` without an ID falls through as a normal message to Claude.
 * **Right format, wrong ID**: your server emits a verdict, but Claude Code finds no open request with that ID and drops it silently.

@@ -273,7 +273,10 @@ Teammate permission prompts appear in the lead session, so approve them there yo
 
 When one agent sends another a message over `SendMessage`, Claude Code tells the receiving agent the message came from another Claude session, not from you. A teammate can't approve a permission prompt or supply consent on your behalf, and a teammate that was denied an action can't relay it to another teammate to bypass the check. The same rules apply to a message that arrives from [one of your other Claude Code sessions](/docs/en/cross-session-messaging#how-a-session-treats-an-incoming-message), outside the team entirely.
 
-In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), the classifier treats an approval claim relayed from another agent as untrusted input rather than confirmation from you. The classifier also reviews each message an agent sends before Claude Code delivers it, whether a plain message or a structured protocol message such as a shutdown request or plan approval response. A message the classifier blocks never reaches the recipient.
+In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), the classifier applies two checks to messages between agents:
+
+* It treats an approval claim relayed from another agent as untrusted input rather than confirmation from you.
+* It reviews each message before Claude Code delivers it, whether a plain message or a structured protocol message such as a shutdown request or plan approval response. A message it blocks never reaches the recipient.
 
 ### Context and communication
 
@@ -346,9 +349,7 @@ There's no hard limit on the number of teammates, but practical constraints appl
 * **Coordination overhead increases**: more teammates means more communication, task coordination, and potential for conflicts
 * **Diminishing returns**: beyond a certain point, additional teammates don't speed up work proportionally
 
-Start with 3-5 teammates for most workflows. This balances parallel work with manageable coordination. The examples in this guide use 3-5 teammates because that range works well across different task types.
-
-Having 5-6 [tasks](/docs/en/agent-teams#architecture) per teammate keeps everyone productive without excessive context switching. If you have 15 independent tasks, 3 teammates is a good starting point.
+Start with 3-5 teammates for most workflows. This balances parallel work with manageable coordination. If you have 15 independent tasks, 3 teammates is a good starting point.
 
 Scale up only when the work genuinely benefits from having teammates work simultaneously. Three focused teammates often outperform five scattered ones.
 
@@ -401,7 +402,7 @@ If teammates aren't appearing after you ask Claude to spawn them:
 
 Teammate permission requests bubble up to the lead, which can create friction. Pre-approve common operations in your [permission settings](/docs/en/permissions) before spawning teammates to reduce interruptions.
 
-### Teammates stopping on errors
+### Agents stopping early
 
 Teammates may stop after encountering errors instead of recovering. Check their output by selecting the teammate in the agent panel and pressing Enter in in-process mode, or by clicking the pane in split mode, then either:
 
@@ -410,9 +411,7 @@ Teammates may stop after encountering errors instead of recovering. Check their 
 
 As of v2.1.198, a message from the lead or another teammate wakes an in-process teammate that is waiting to retry a failed API request, so it retries immediately instead of waiting for the full retry delay.
 
-### Lead shuts down before work is done
-
-The lead may decide the team is finished before all tasks are actually complete. If this happens, tell it to keep going. You can also tell the lead to wait for teammates to finish before proceeding if it starts doing work instead of delegating.
+The lead can stop early too, deciding the team is finished before all tasks are actually complete. If that happens, tell it to keep going.
 
 ### Orphaned tmux sessions
 

@@ -74,6 +74,8 @@ Anyone who uses the environment can read the values, and cloud environments have
 
 Run `/remote-env` in your terminal to choose the default environment for cloud sessions you create from the CLI, such as [`claude --cloud`](/docs/en/claude-code-on-the-web#from-terminal-to-web). The command opens a picker of your existing environments and saves your choice to the `remote.defaultEnvironmentId` key in your [user settings](/docs/en/settings#settings-files), so it applies in every project on your machine until you change it, unless the same key is set at a higher-precedence [settings layer](/docs/en/settings#settings-precedence), such as a repo's project settings.
 
+A [self-hosted environment](/docs/en/self-hosted-environments) ID, which has the form `ccpool_...`, follows a stricter source rule. See [`remote.defaultEnvironmentId`](/docs/en/settings#available-settings) for the settings layers Claude Code honors it from.
+
 `/remote-env` only sets the default: it doesn't start a session, and it can't add or edit environments. Manage them at [claude.ai/code](https://claude.ai/code).
 
 ### Archive an environment
@@ -146,6 +148,7 @@ In Anthropic-hosted environments, all GitHub operations go through a dedicated p
 * **API requests**: requests from the built-in GitHub tools, and from `gh` under the [`proxy-injected` placeholder](#work-with-github-issues-and-pull-requests), go out with your real credentials substituted.
 * **Push protection**: `git push` works only against the session's current working branch; cloning, fetching, and PR operations work normally.
 * **Repository scope**: GitHub API and release-asset requests reach only repositories attached to the session, so a setup script that downloads release assets from an unattached repository gets a 403.
+* **GraphQL restrictions**: the proxy serves only a pinned set of GraphQL operations for pull-request workflows. The proxy rejects everything else on the GraphQL endpoint with a 403 that says `This GraphQL query is not enabled for this session` and names the REST fallback, `gh api repos/{owner}/{repo}/...`. The restriction applies to every request through the proxy regardless of the credentials you supply, so a `GH_TOKEN` you set gets the same 403. Claude can't reach GitHub APIs that exist only in GraphQL, such as Projects v2, through the proxy.
 
 Committed files from public repositories arrive through `raw.githubusercontent.com`, which the [security proxy](#security-proxy) handles instead. That domain is in the default [Trusted list](#default-allowed-domains), so those files stay reachable unless the environment's [access level](#access-levels) excludes it.
 
@@ -160,7 +163,11 @@ Cloud sessions in Anthropic-hosted environments run behind an HTTP/HTTPS network
 
 ## What's available in cloud sessions
 
-Each session gets a fresh virtual machine (VM) running Ubuntu 24.04, regardless of your own operating system, with your repository cloned and common toolchains pre-installed. This section covers those defaults, the built-in GitHub tools, how to [run tests and services](#run-tests-start-services-and-add-packages), and the [resource limits](#resource-limits) each VM gets.
+In Anthropic-hosted environments, each session gets a fresh virtual machine (VM) running Ubuntu 24.04 on x86\_64, regardless of your own operating system and CPU architecture, with your repository cloned and common toolchains pre-installed. When a dependency provides precompiled binaries, such as Ruby gems with native extensions or prebuilt Python wheels, use its x86\_64 Linux build to match the VM. This section covers the Anthropic-hosted defaults, the built-in GitHub tools, how to [run tests and services](#run-tests-start-services-and-add-packages), and the [resource limits](#resource-limits) each VM gets.
+
+<Note>
+  Sessions your organization routes to a [self-hosted environment](/docs/en/self-hosted-environments) run on your own runners instead, with the tools your runner image provides.
+</Note>
 
 ### What carries over from your setup
 
@@ -191,23 +198,25 @@ A dedicated secrets store is not yet available, and the dialog warns against add
 
 Cloud sessions come with common language runtimes, build tools, and databases pre-installed. The table below summarizes what's included by category.
 
-| Category      | Included                                                                           |
-| :------------ | :--------------------------------------------------------------------------------- |
-| **Python**    | Python 3.x with pip, poetry, uv, black, mypy, pytest, ruff                         |
-| **Node.js**   | 20, 21, and 22 via nvm, with npm, yarn, pnpm, bun¹, eslint, prettier, chromedriver |
-| **Ruby**      | 3.1, 3.2, 3.3 with gem, bundler, rbenv                                             |
-| **PHP**       | 8.4 with Composer                                                                  |
-| **Java**      | OpenJDK 21 with Maven and Gradle                                                   |
-| **Go**        | latest stable with module support                                                  |
-| **Rust**      | rustc and cargo                                                                    |
-| **C/C++**     | GCC, Clang, cmake, ninja, conan                                                    |
-| **Docker**    | docker, dockerd, docker compose                                                    |
-| **Databases** | PostgreSQL 16, Redis 7.0                                                           |
-| **Utilities** | git, jq, yq, ripgrep, tmux, vim, nano                                              |
+| Category      | Included                                                                   |
+| :------------ | :------------------------------------------------------------------------- |
+| **Python**    | Python 3.x with pip, poetry, uv, black, mypy, pytest, ruff                 |
+| **Node.js**   | 20, 21, and 22, with npm, yarn, pnpm, bun¹, eslint, prettier, chromedriver |
+| **Ruby**      | 3.1, 3.2, 3.3 with gem, bundler, rbenv                                     |
+| **PHP**       | 8.4 with Composer                                                          |
+| **Java**      | OpenJDK 21 with Maven and Gradle                                           |
+| **Go**        | latest stable with module support                                          |
+| **Rust**      | rustc and cargo                                                            |
+| **C/C++**     | GCC, Clang, cmake, ninja, conan                                            |
+| **Docker**    | docker, dockerd, docker compose                                            |
+| **Databases** | PostgreSQL 16, Redis 7.0                                                   |
+| **Utilities** | git, jq, yq, ripgrep, tmux, vim, nano                                      |
 
 ¹ Bun is installed but has known [proxy compatibility issues](#install-dependencies-with-a-sessionstart-hook) for package fetching.
 
 For exact versions, ask Claude to run `check-tools` in a cloud session. It's a shell command installed on the session VM, not a slash command; you ask Claude because [Claude runs all VM commands for you](#run-tests-start-services-and-add-packages).
+
+Node.js versions are installed at `/opt/node20`, `/opt/node21`, and `/opt/node22`, with 22 on `PATH` by default. To work with a different version, ask Claude to prepend that version's `bin` directory, such as `/opt/node20/bin`, to `PATH`.
 
 Toolchains outside this list, such as the .NET SDK, aren't pre-installed even when their package registries are on the [default allowlist](#default-allowed-domains). Install them with a [setup script](#setup-scripts).
 
@@ -278,7 +287,7 @@ To add packages that aren't pre-installed, use a [setup script](#setup-scripts).
 
 ### Resource limits
 
-Cloud sessions run with approximate resource ceilings that may change over time:
+Cloud sessions in Anthropic-hosted environments run with approximate resource ceilings that may change over time:
 
 * 4 vCPUs
 * 16 GB of RAM

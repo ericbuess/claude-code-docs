@@ -239,12 +239,13 @@ Block-wise visual mode with `Ctrl+V` is not supported.
 
 ## Command history
 
-Claude Code maintains command history for the current session:
+Claude Code keeps a history of the prompts you type, and Up-arrow recall reaches prompts from past sessions of the same project:
 
 * Input history is stored per working directory
-* Input history resets when you run `/clear` to start a new session. The previous session's conversation is preserved and can be resumed.
+* Running `/clear` starts a new session: recall then lists the new session's prompts first, with earlier sessions' prompts after them. The previous session's conversation is preserved and can be resumed.
 * Submitting the same prompt twice in a row records one history entry, so pressing Up steps to the previous distinct prompt
 * Use Up/Down arrows to navigate (see keyboard shortcuts above)
+* When you recall a prompt that included pasted text, Claude Code sends the full pasted content again when you resubmit. If the content has since been [cleaned up](/docs/en/claude-directory#cleaned-up-automatically), Claude Code doesn't send the literal `[Pasted text #N]` string; see [Paste large content](/docs/en/terminal-config#paste-large-content) for what happens to the prompt
 * History expansion with `!` is disabled by default
 
 ### Reverse search with Ctrl+R

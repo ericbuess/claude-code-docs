@@ -78,6 +78,8 @@ Fullscreen rendering handles scrolling inside the app. Use these shortcuts to na
 | `Ctrl+End`      | Jump to the latest message and re-enable auto-follow |
 | Mouse wheel     | Scroll a few lines at a time                         |
 
+You can scroll back to the start of the session even after [compaction](/docs/en/context-window#what-survives-compaction). Claude continues working from the compaction summary, but Claude Code keeps every earlier message in the fullscreen scrollback across repeated compactions.
+
 On keyboards without dedicated `PgUp`, `PgDn`, `Home`, or `End` keys, like MacBook keyboards, hold `Fn` with the arrow keys: `Fn+↑` sends `PgUp`, `Fn+↓` sends `PgDn`, `Fn+←` sends `Home`, and `Fn+→` sends `End`. `Ctrl+Fn+→` doesn't reach Claude Code on macOS, so a MacBook keyboard has no working jump-to-bottom chord by default. Instead, use one of these options:
 
 * Click the [jump-to-bottom button](#auto-follow).

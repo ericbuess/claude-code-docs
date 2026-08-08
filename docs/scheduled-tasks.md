@@ -213,7 +213,7 @@ Session-scoped scheduling has inherent constraints:
 
 * Tasks only fire while Claude Code is running and idle. Closing the terminal or letting the session exit stops them firing. [Backgrounding the session](/docs/en/agent-view#from-inside-a-session) carries `/loop` tasks over to a background session, which keeps running without a terminal.
 * No catch-up for missed fires. If a task's scheduled time passes while Claude is busy on a long-running request, it fires once when Claude becomes idle, not once per missed interval.
-* Starting a fresh conversation clears all session-scoped tasks. Resuming with `claude --resume` or `claude --continue` restores tasks that have not expired: recurring tasks within seven days of creation, and one-shot tasks whose scheduled time has not yet passed. Background Bash and monitor tasks are never restored on resume.
+* Starting a fresh conversation clears all session-scoped tasks. Resuming with `claude --resume` or `claude --continue` restores recurring tasks that have not [expired](#seven-day-expiry) and one-shot tasks whose scheduled time has not yet passed. Background Bash and monitor tasks are never restored on resume.
 * Claude Code stores the scheduled task list in the project's `.claude` directory, and scheduling a task fails with an error when that directory, or the task file inside it, is a symlink. Before v2.1.216, Claude Code wrote the file through the link.
 
 For cron-driven automation that needs to run unattended:

@@ -167,7 +167,7 @@ Claude Code handles any other blocked selection according to where the model was
 * **`/model`**: the switch is rejected with an error
 * **`--model` flag, `ANTHROPIC_MODEL`, or the `model` setting**: the value is replaced at startup with a warning naming both the requested and substituted models, and the session starts on the default model
 * **Subagent or teammate override**: the override falls back to the [subagent's inherited model](/docs/en/sub-agents#choose-a-model) or the [default teammate model](/docs/en/agent-teams#specify-teammates-and-models) rather than failing the request. When the blocked value is the **Default teammate model** setting itself, Claude Code runs the teammate on your provider's default Opus model, or on the lead's model when the allowlist blocks that too. On the Anthropic API and Claude Platform on AWS, a blocked family alias instead follows the substitution above, so the subagent or teammate runs on the newest permitted version of its family; on the providers with provider-specific IDs, the alias falls back like any other blocked value. Before v2.1.222, a blocked family alias fell back like any other blocked value on every provider
-* **Skill or command override**: Claude Code ignores the override, including a blocked family alias, and the skill or command runs on the session model
+* **Skill or command override**: Claude Code ignores the override, including a blocked family alias, and the skill or command runs on the session model. A skill or command that [runs in a subagent](/docs/en/skills#run-skills-in-a-subagent) follows the subagent behavior above instead
 * **`advisorModel` setting**: the advisor is disabled for the session
 * **`--advisor` flag**: Claude Code exits with an error at launch
 

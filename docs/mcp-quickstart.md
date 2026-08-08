@@ -301,6 +301,13 @@ If a server doesn't connect, check its status with `/mcp` inside a session or `c
   <Accordion title="Status shows Failed to connect or Connection error">
     Both statuses mean the server didn't start or the URL didn't respond. They can also appear for HTTP servers that reject the token you configured in `headers.Authorization`; a server that wants a token you haven't configured shows `! Needs authentication` instead, covered in [Connect a server that requires sign-in](#connect-a-server-that-requires-sign-in).
 
+    Your first step depends on which status you see:
+
+    * `Failed to connect`: start with the failure detail on the status itself. `claude mcp list` and `claude mcp get <name>` show the HTTP status or error code and any error text the server returned, which often names the problem directly, such as a missing header or a rejected token. Before v2.1.219, `Failed to connect` showed only the bare status, and you needed the curl and command checks later in this section to find the cause.
+    * `Connection error`: Claude Code appends no detail to this status on any version, so go straight to the curl and command checks later in this section.
+
+    If the detail points to a credential or URL, also check the warnings in the `claude mcp list` output. Claude Code flags config values with hidden leading or trailing whitespace, a common cause of authentication failures after pasting a token.
+
     If an HTTP server returns `404 Not Found`, Claude Code shows `MCP endpoint not found at <origin>. Check the URL in your MCP config.` when you select the server in `/mcp`. The message names the URL's origin, such as `https://mcp.example.com`, without its path, so run `claude mcp get <name>` to see the full URL you configured. Compare its path to the server's documented MCP endpoint path, then run `claude mcp remove <name>` and re-add with the correct URL. Before v2.1.219, the message included the URL's path as well, and before v2.1.191, a `404` showed a generic `Error POSTing to endpoint` message without the URL.
 
     For HTTP servers, confirm the URL is reachable from your machine:
