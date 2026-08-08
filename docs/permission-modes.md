@@ -95,10 +95,12 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
   </Tab>
 
   <Tab title="Desktop">
-    **During a session**: use the mode selector next to the send button. Not every mode appears in the selector:
+    **During a session**: in the Code tab, use the mode selector next to the send button. Not every mode appears in the selector:
 
     * **Auto**: appears when your account meets the [auto mode requirements](#eliminate-prompts-with-auto-mode)
     * **Bypass permissions**: requires the **Allow bypass permissions mode** toggle in Desktop settings on Pro and Max plans; on Team and Enterprise plans, organization policy controls it instead
+
+    The Cowork tab doesn't use these modes. Cowork has its own permission modes, enabled separately, and the Cowork tab shows no mode selector at all until a mode beyond its default is enabled for your account. See the [Cowork docs](https://claude.com/docs/cowork/overview).
 
     For desktop-specific details, see [Choose a permission mode](/docs/en/desktop#choose-a-permission-mode) in the Desktop guide.
 
