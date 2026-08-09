@@ -338,11 +338,16 @@ Suggestions are automatically skipped after the first turn of a conversation and
 
 In print mode they are off by default. Pass [`--prompt-suggestions`](/docs/en/cli-reference#cli-flags) with `-p "<prompt>" --output-format stream-json --verbose` to emit a `prompt_suggestion` message after each turn instead.
 
-To disable prompt suggestions entirely, set the environment variable or toggle the setting in `/config`:
+To disable prompt suggestions entirely, use any of the following:
 
-```bash theme={null}
-export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
-```
+* Turn off **Prompt suggestions** in `/config`
+* Set [`promptSuggestionEnabled`](/docs/en/settings#available-settings) to `false` in your settings file
+* Set the `CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION` environment variable to `false`, which takes precedence over the setting:
+  ```bash theme={null}
+  export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
+  ```
+
+To turn prompt suggestions off across an organization, set `promptSuggestionEnabled` to `false` in [managed settings](/docs/en/settings#settings-files). Also set `CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION` to `false` under the managed [`env`](/docs/en/settings#environment-variables) key so that users can't re-enable them with their own environment variable.
 
 ## Emoji shortcodes
 
