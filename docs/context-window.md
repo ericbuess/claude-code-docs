@@ -1628,11 +1628,13 @@ The command and the flag accept a window size from 100K to 1M tokens, in any of 
 
 The environment variable accepts only the plain token count. Claude Code caps the window at the model's context window.
 
-With no window size set in any of these places, Claude Code compacts when the conversation reaches the model's context limit, except in these sessions, which compact earlier:
+With no window size set in any of these places, Claude Code compacts when the conversation reaches the model's context limit, except in these sessions:
 
 * [Cloud sessions](/docs/en/claude-code-on-the-web) compact as the conversation approaches the model's limit
 * Sonnet 4.6 and Opus 4.6 without [extended context](/docs/en/model-config#extended-context) compact at the 200K boundary, and so do Opus 4.8 and Opus 5 when they run with a 200K context window, such as on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry
-* Sonnet 5 compacts at the model's [default threshold](/docs/en/model-config#sonnet-5-context-window)
+* When you set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/docs/en/env-vars), models with a native 1M window, such as Sonnet 5 and Fable 5, compact at the 200K boundary. Before v2.1.223, Claude Code held only Sonnet 5, Opus 4.8, and Opus 5 sessions to 200K
+* Sonnet 5 compacts at the [threshold for its configuration](/docs/en/model-config#sonnet-5-context-window)
+* Sessions on a model ID Claude Code doesn't recognize, such as an [LLM gateway](/docs/en/llm-gateway) alias, compact at the context window Claude Code assumes for the ID. If the ID doesn't start with `claude-`, set [`CLAUDE_CODE_MAX_CONTEXT_TOKENS`](/docs/en/env-vars) to correct the assumed window while keeping proactive compaction. Set [`CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1`](/docs/en/env-vars) to have Claude Code compact only after the API rejects the conversation with Anthropic's too-long error; that recovery doesn't run when a gateway [rewrites the error](/docs/en/llm-gateway-connect#troubleshoot-gateway-errors)
 
 ## Check your own session
 

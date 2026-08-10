@@ -9,7 +9,7 @@
 <Warning>
   This page documents the earlier Claude Code in Slack, which runs each session under an individual user's account.
 
-  * **Team and Enterprise plans:** Anthropic is retiring this version in favor of [Claude Tag](https://claude.com/docs/claude-tag/overview), which runs @Claude as your organization's shared identity with admin-configured access. Your existing Slack app and @Claude handle stay, and your Anthropic account team can tell you the cutover date. Set up Claude Tag for a new workspace; to move one that already uses this version, see [Migrate from the earlier Claude in Slack](https://claude.com/docs/claude-tag/admins/migrate-from-earlier).
+  * **Team and Enterprise plans:** Anthropic is retiring this version in favor of [Claude Tag](https://claude.com/product/tag), which runs @Claude as your organization's shared identity with admin-configured access. Your existing Slack app and @Claude handle stay, and your Anthropic account team can tell you the cutover date. [Set up Claude Tag](https://claude.com/docs/claude-tag/overview) for a new workspace; to move one that already uses this version, see [Migrate from the earlier Claude in Slack](https://claude.com/docs/claude-tag/admins/migrate-from-earlier).
   * **Pro and Max plans:** Claude Tag isn't available on individual plans, so this page remains the setup path.
 </Warning>
 

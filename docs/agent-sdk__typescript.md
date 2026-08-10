@@ -350,7 +350,7 @@ function tagSession(
 Resolves the effective Claude Code settings for a given directory using the same merge engine as the CLI, without spawning the Claude CLI. Use it to inspect what configuration a `query()` call would see before invoking one.
 
 <Note>
-  This function is alpha and its API may change before stabilization. It reads MDM sources, including macOS plist and Windows HKLM/HKCU, for parity with CLI startup, but does not execute the admin-configured `policyHelper` subprocess. The `permissions.defaultMode` field is returned as-is from all tiers including project settings. The trust filter the CLI applies before honoring escalating permission modes is not applied.
+  This function is alpha and its API may change before stabilization. It reads MDM sources, including macOS plist and Windows HKLM/HKCU, for parity with CLI startup, but does not execute the admin-configured `policyHelper` subprocess. The `permissions.defaultMode` field is returned as-is from all tiers including project settings. In a live session, the CLI [ignores `defaultMode: 'auto'` from project and local settings](/docs/en/permission-modes#eliminate-prompts-with-auto-mode); `resolveSettings()` skips that check, so an `auto` from those tiers appears here even though a session would ignore it.
 </Note>
 
 ```typescript theme={null}
@@ -1443,8 +1443,6 @@ type SDKPluginInstallMessage = {
 ### `SDKPermissionDeniedMessage`
 
 Stream event emitted when the permission system auto-denies a tool call without an interactive prompt. Use it to render the denial in your UI as it happens, rather than only observing the `is_error` tool result that follows. The interactive ask path reaches your application separately through the [`canUseTool`](#canusetool) callback. Denials issued by a `PreToolUse` hook are not reported through this event.
-
-This event requires Claude Code v2.1.136 or later.
 
 ```typescript theme={null}
 type SDKPermissionDeniedMessage = {
