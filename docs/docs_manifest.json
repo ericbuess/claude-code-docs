@@ -988,8 +988,8 @@
     "whats-new.md": {
       "original_url": "https://code.claude.com/docs/en/whats-new",
       "original_md_url": "https://code.claude.com/docs/en/whats-new.md",
-      "hash": "9f66cbe31eb348a6d14df057a1b0bfa8dc0ee89e9e40db163a1be1723d518d34",
-      "last_updated": "2026-07-21T05:41:55.940302"
+      "hash": "598220ee884ac6bd854b235f57e7b9bbd6bf0e41f478523d52d824306c7bb039",
+      "last_updated": "2026-08-10T18:41:57.055938"
     },
     "whats-new__2026-w13.md": {
       "original_url": "https://code.claude.com/docs/en/whats-new/2026-w13",
@@ -1093,6 +1093,18 @@
       "hash": "275e9c88fadfa5cc0cb39665a4a5d89234c970295e0f4d0bc583e15e2ff9bb29",
       "last_updated": "2026-07-29T01:29:07.669751"
     },
+    "whats-new__2026-w30.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w30",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w30.md",
+      "hash": "df099e47a73428b58df52eea4515ce2cc5894b6090a769e0f172808906f33ba1",
+      "last_updated": "2026-08-10T18:42:13.135225"
+    },
+    "whats-new__2026-w32.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w32",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w32.md",
+      "hash": "f7f1e5a97f228bf821404093e534ceaa95b1263fcb486cde6dc3eec851a93eaa",
+      "last_updated": "2026-08-10T18:42:13.721357"
+    },
     "workflows.md": {
       "original_url": "https://code.claude.com/docs/en/workflows",
       "original_md_url": "https://code.claude.com/docs/en/workflows.md",
@@ -1113,18 +1125,18 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-10T15:49:50.113012",
-    "fetch_duration_seconds": 155.246448,
-    "total_pages_discovered": 185,
-    "pages_fetched_successfully": 186,
+    "last_fetch_completed": "2026-08-10T18:42:16.055884",
+    "fetch_duration_seconds": 166.02348,
+    "total_pages_discovered": 187,
+    "pages_fetched_successfully": 188,
     "pages_failed": 0,
     "failed_pages": [],
     "sitemap_url": "https://code.claude.com/docs/sitemap.xml",
     "base_url": "https://code.claude.com",
-    "total_files": 185,
+    "total_files": 187,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-10T15:49:50.113038",
+  "last_updated": "2026-08-10T18:42:16.055919",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
