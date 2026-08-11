@@ -220,7 +220,7 @@ For context management specifically:
 
 Auto-compaction runs automatically when the context window approaches capacity. To trigger it earlier, set [`CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`](/docs/en/env-vars) in your [environment variables](/docs/en/cloud-environments#set-environment-variables). For example, `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=70` compacts at 70% capacity instead of waiting until the window is nearly full.
 
-The percentage moves compaction earlier within the [auto-compact window](/docs/en/context-window#set-the-auto-compact-window). To change the window itself, set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/env-vars), or run [`/autocompact`](/docs/en/commands#all-commands) with a token count in a session where the variable isn't set.
+The percentage moves compaction earlier within the [auto-compact window](/docs/en/model-config#set-the-auto-compact-window). To change the window itself, set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/env-vars), or run [`/autocompact`](/docs/en/commands#all-commands) with a token count in a session where the variable isn't set.
 
 [Subagents](/docs/en/sub-agents) work the same way they do locally. Claude can spawn them with the Task tool to offload research or parallel work into a separate context window, keeping the main conversation lighter. Subagents defined in your repo's `.claude/agents/` are picked up automatically.
 

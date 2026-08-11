@@ -109,7 +109,7 @@ Plugin hooks respond to the same lifecycle events as [user-defined hooks](/docs/
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
 | `PermissionRequest`   | When a tool call needs a permission decision                                                                                                           |
-| `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
+| `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Use JSON `hookSpecificOutput.retry: true` to tell the model it may retry the denied tool call  |
 | `PostToolUse`         | After a tool call succeeds                                                                                                                             |
 | `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
 | `PostToolBatch`       | After a full batch of parallel tool calls resolves, before the next model call                                                                         |
@@ -120,7 +120,7 @@ Plugin hooks respond to the same lifecycle events as [user-defined hooks](/docs/
 | `TaskCreated`         | When a task is being created via `TaskCreate`                                                                                                          |
 | `TaskCompleted`       | When a task is being marked as completed                                                                                                               |
 | `Stop`                | When Claude finishes responding                                                                                                                        |
-| `StopFailure`         | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `StopFailure`         | When the turn ends due to an API error. Decision output and exit code are ignored                                                                      |
 | `TeammateIdle`        | When an [agent team](/docs/en/agent-teams) teammate is about to go idle                                                                                     |
 | `InstructionsLoaded`  | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
 | `ConfigChange`        | When a configuration file changes during a session                                                                                                     |

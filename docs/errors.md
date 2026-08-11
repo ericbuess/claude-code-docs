@@ -2083,7 +2083,7 @@ In a [background session](/docs/en/agent-view) or with `--output-format json` or
   The 200K limit isn't enforced
 </h3>
 
-You set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/docs/en/env-vars), which normally makes [auto-compaction](/docs/en/context-window#set-the-auto-compact-window) hold sessions on 1M-context models to a 200K window, but no compaction threshold caps this session at or below 200K, so the conversation can grow past it.
+You set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/docs/en/env-vars), which normally makes [auto-compaction](/docs/en/model-config#default-auto-compact-thresholds) hold sessions on 1M-context models to a 200K window, but no compaction threshold caps this session at or below 200K, so the conversation can grow past it.
 
 ```text theme={null}
 CLAUDE_CODE_DISABLE_1M_CONTEXT is set, but the 200K limit isn't enforced for <model>, so this session can grow past it. To enforce it, set CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000 (or the autoCompactWindow setting).

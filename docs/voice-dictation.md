@@ -88,7 +88,7 @@ Enable tap mode with `/voice tap`. With the prompt input empty, tap `Space` to s
 
 Claude Code inserts the transcript and submits the prompt automatically when the transcript is at least three words long. Shorter transcripts are inserted but not submitted, so an accidental tap does not send a stray word.
 
-The three-word threshold counts words for languages written without spaces. As of v2.1.195, Japanese, Chinese, and Thai transcripts count individual words, so they auto-submit in tap mode and in hold mode with `autoSubmit`. Earlier versions counted a transcript with no spaces as one word and never submitted it automatically.
+The three-word threshold counts words for languages written without spaces. Japanese, Chinese, and Thai transcripts count individual words, so they auto-submit in tap mode and in hold mode with `autoSubmit`.
 
 The first tap only starts recording when the prompt input is empty, so you can still type spaces normally while composing a message. The second tap stops recording regardless of input contents. Recording also stops automatically after 15 seconds of silence or two minutes total.
 

@@ -291,8 +291,6 @@ claude auto-mode critique
 
 Run `claude auto-mode config` after saving your settings to confirm the effective rules are what you expect, with `"$defaults"` expanded in place. If you've written custom rules, `claude auto-mode critique` reviews them and flags entries that are ambiguous, redundant, or likely to cause false positives.
 
-If you need to remove or rewrite a built-in rule rather than add alongside it, save the output of `claude auto-mode defaults` to a file, edit the lists, and paste the result into your settings file in place of `"$defaults"`.
-
 To discard your customizations and return to the built-in defaults, run the reset subcommand. It requires Claude Code v2.1.212 or later and removes the `autoMode` section from your user settings file:
 
 ```bash theme={null}

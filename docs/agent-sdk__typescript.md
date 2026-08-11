@@ -2195,7 +2195,7 @@ type ToolInputSchemas =
 **Tool name:** `Agent`. The previous name `Task` is still accepted as an alias, and the `tools` array in the [`SDKSystemMessage`](#sdksystemmessage) init message currently lists this tool as `Task` for backward compatibility.
 
 <Note>
-  The `mode` field is deprecated and ignored on Claude Code v2.1.212 or later: subagents [inherit the parent session's permission mode](/docs/en/agent-sdk/permissions#available-modes), and a subagent definition's [`permissionMode`](#agentdefinition) can override it, except when the parent uses `bypassPermissions`, `acceptEdits`, or `auto`.
+  The `mode` field is deprecated and ignored on Claude Code v2.1.212 or later: subagents [inherit the parent session's permission mode](/docs/en/agent-sdk/permissions#available-modes), and a subagent definition's [`permissionMode`](#agentdefinition) can override it, except when the parent uses `bypassPermissions`, `acceptEdits`, or `auto`, and Claude Code ignores a definition's `permissionMode: "bypassPermissions"` when bypass mode is disabled by [`permissions.disableBypassPermissionsMode`](/docs/en/permissions#managed-settings).
 </Note>
 
 ```typescript theme={null}

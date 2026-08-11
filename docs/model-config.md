@@ -4,7 +4,7 @@
 
 # Model configuration
 
-> Learn about the Claude Code model configuration, including model aliases like `opusplan`
+> Configure which model Claude Code uses, effort levels, extended context, and the auto-compact window
 
 ## Available models
 
@@ -77,6 +77,19 @@ To get the most from Fable 5:
 </Note>
 
 On the Anthropic API, the `/model` picker lists Fable 5 only after the server reports it available for your organization. When you type `/model fable`, Claude Code checks availability with the server directly, so the selection can succeed before the picker lists the entry.
+
+#### Fable 5 and usage credits
+
+Depending on your plan and seat tier, Fable 5 usage can bill to [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) instead of drawing on your plan's included limits. When it does, the `/model` picker shows "Requires usage credits" on the Fable 5 row. To manage usage credits, see [Add usage credits to your subscription](/docs/en/costs#add-usage-credits-to-your-subscription).
+
+In interactive sessions, Claude Code shows a consent prompt before a Fable 5 request bills usage credits. Members of Enterprise plans with organization billing don't see the prompt. You can continue on Fable 5 using usage credits or switch to your default model. You can also dismiss the prompt:
+
+* In the `/model` picker, you keep your current model.
+* Mid-session, Claude Code continues the turn on your default model.
+
+After you choose to continue on Fable 5 using usage credits, Claude Code doesn't show the prompt again.
+
+In [non-interactive mode](/docs/en/headless) with the `-p` flag and through the Agent SDK, Claude Code never shows the consent prompt. When a Fable 5 request there would bill to usage credits, Claude Code bills it without asking.
 
 ### Setting your model
 
@@ -569,6 +582,46 @@ Two configurations budget the window at 200K instead and auto-compact at that bo
 
 * **LLM gateway**: when `ANTHROPIC_BASE_URL` points at a [gateway](/docs/en/llm-gateway), Claude Code can't verify 1M support. To use the full window, select Sonnet 5 (1M context) in the model picker, which maps to `sonnet[1m]`.
 * **`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`**: treats Sonnet 5 sessions as having a 200K window, for deployments that need to cap context.
+
+## Context window and auto-compaction
+
+The auto-compact window is how full the context window can get before Claude Code compacts the conversation. For what compaction keeps and drops per mechanism, see [What survives compaction](/docs/en/context-window#what-survives-compaction).
+
+### Set the auto-compact window
+
+You can set the auto-compact window in three places:
+
+* **For this session and later ones**: run `/autocompact` with a value, like `/autocompact 500k`. Claude Code saves it to your user settings as [`autoCompactWindow`](/docs/en/settings#available-settings) and applies it to the current session; if a higher-priority [settings scope](/docs/en/settings#settings-precedence) such as managed settings sets the key, the command saves your value but the session keeps that scope's window, and the command says so. Run `/autocompact auto` to return to the window tuned for your model.
+* **For one launch**: pass [`--autocompact`](/docs/en/cli-reference#cli-flags) when starting Claude Code. The flag overrides your saved setting for that launch without changing it, and `claude --autocompact auto` runs the session at the tuned window even if your saved setting has a value. Unlike `/autocompact`, the flag isn't preempted by a higher-priority settings scope such as managed settings.
+* **In scripts and cloud environments**: set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/env-vars). While it's set, it takes precedence over the command, the flag, and the setting, and `/autocompact` reports the override instead of changing the window.
+
+The command and the flag accept a window size from 100K to 1M tokens, in any of these forms:
+
+* A plain token count, such as `200000`
+* A `k` or `M` suffix, such as `500k` or `1M`
+* A bare number from 100 to 1000, meaning thousands, so `200` sets 200,000
+
+The environment variable accepts only the plain token count. Claude Code caps the window at the model's context window.
+
+### Default auto-compact thresholds
+
+If you don't set an auto-compact window, Claude Code compacts when the conversation reaches the model's context limit, except in these sessions:
+
+* [Cloud sessions](/docs/en/claude-code-on-the-web) compact as the conversation approaches the model's limit
+* Sonnet 4.6 and Opus 4.6 without [extended context](#extended-context) compact at the 200K boundary, and so do Opus 4.8 and Opus 5 when they run with a 200K context window, such as on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry
+* When you set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/docs/en/env-vars), models with a native 1M window, such as Sonnet 5 and Fable 5, compact at the 200K boundary. Before v2.1.223, Claude Code held only Sonnet 5, Opus 4.8, and Opus 5 sessions to 200K
+* Sonnet 5 compacts at the [threshold for its configuration](#sonnet-5-context-window)
+* Sessions on a model ID Claude Code doesn't recognize, such as an [LLM gateway](/docs/en/llm-gateway) alias, compact at the context window Claude Code assumes for the ID; see [Correct the window for a gateway or custom model ID](#correct-the-window-for-a-gateway-or-custom-model-id)
+
+### Correct the window for a gateway or custom model ID
+
+On an [LLM gateway](/docs/en/llm-gateway) or other custom deployment, Claude Code can assume a context window for the model ID that differs from the model's real window, whether or not it resolves the ID to a Claude model. [`CLAUDE_CODE_MAX_CONTEXT_TOKENS`](/docs/en/env-vars) declares the window Claude Code should assume instead. How the variable applies depends on the ID. An unrecognized ID, an unrecognized `[1m]` ID, and an ID that starts with `claude-` or resolves to a Claude model are three separate cases:
+
+* If the ID doesn't start with `claude-` or contain `[1m]`, in any casing, and Claude Code can't resolve it to a Claude model, the variable applies directly and proactive compaction continues at the declared window.
+* If the ID doesn't start with `claude-` but contains `[1m]`, in any casing, and Claude Code can't resolve it to a Claude model, Claude Code assumes a 1M window for it and the variable doesn't apply on its own. To correct the window while keeping proactive compaction, also set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/docs/en/env-vars). With a declared window above 200K, Claude Code then shows a [startup warning](/docs/en/errors#the-200k-limit-isnt-enforced) that the 200K limit isn't enforced. The warning is expected in this configuration.
+* If the ID starts with `claude-` in any casing or resolves to a Claude model, the variable takes effect only when [`DISABLE_COMPACT`](/docs/en/env-vars) is also set, which disables all compaction. For example, Claude Code resolves an ID that contains a Claude model name, such as `anthropic/claude-opus-4-8` or `us.anthropic.claude-…-v1:0`, to that model. This includes IDs that also contain `[1m]`: Claude Code resolves `claude-opus-4-8[1m]` to Opus 4.8 even with `CLAUDE_CODE_DISABLE_1M_CONTEXT` set.
+
+For a model ID Claude Code doesn't recognize, set [`CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1`](/docs/en/env-vars) to have Claude Code compact only after the API rejects the conversation with Anthropic's too-long error; that recovery doesn't run when a gateway [rewrites the error](/docs/en/llm-gateway-connect#troubleshoot-gateway-errors).
 
 ## Checking your current model
 

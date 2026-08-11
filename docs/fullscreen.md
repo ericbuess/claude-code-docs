@@ -24,7 +24,7 @@ Run `/tui fullscreen` inside any Claude Code conversation. The CLI saves the [`t
 
 In [screen reader mode](/docs/en/accessibility), Claude Code always uses the classic renderer except in attached [background sessions](/docs/en/agent-view), which still render fullscreen. If you run `/tui fullscreen` in any other session, Claude Code prints an explanation instead of switching and doesn't change the saved `tui` setting.
 
-The relaunched session keeps the conversation as it appears on screen. If you ran [`/rewind`](/docs/en/checkpointing#rewind-and-summarize) earlier in the session, the relaunch resumes from the rewound point rather than the longer transcript saved on disk. If you rewound to before your first message, the relaunched session starts empty. Before v2.1.207, switching renderers after a rewind restored the conversation the rewind had removed.
+The relaunched session keeps the conversation as it appears on screen. If you ran [`/rewind`](/docs/en/checkpointing#rewind-and-summarize) earlier in the session, the relaunch resumes from the rewound point rather than the longer transcript saved on disk. If you rewound to before your first message, the relaunched session starts empty.
 
 You can also set the `CLAUDE_CODE_NO_FLICKER` environment variable before starting Claude Code:
 
@@ -57,8 +57,8 @@ Fullscreen rendering captures mouse events and handles them inside Claude Code:
 * **Click an option in a select menu** to choose it. This covers permission prompts, `/model`, `/config`, and other dialogs that show a list of options. Hovering shows a pointer on the row under your cursor. Requires Claude Code v2.1.187 or later.
 * **Click an option in a multi-select menu** to toggle it, and click the submit button to confirm your choices. Clicking a free-text row, such as the `Other` row in a multiple-choice question, focuses its input field so you can type an answer. Requires Claude Code v2.1.208 or later.
 * **Click a collapsed tool result** to expand it and see the full output. Click again to collapse. The tool call and its result expand together. Only messages that have more to show are clickable.
-* **Hold `Cmd` on macOS, or `Ctrl` on Linux and Windows, and click a URL or file path** to open it. File paths in tool output, like the ones printed after an Edit or Write, open in your default application. Plain `http://` and `https://` URLs open in your browser. As of v2.1.181, a plain click without holding `Cmd` or `Ctrl` no longer opens links, matching native terminal behavior. Some macOS terminals forward `Cmd`+click to the running app instead of opening the link themselves, and the terminal mouse protocol has no way to encode the `Cmd` key, so Claude Code receives it as a plain click. In Ghostty, and as of v2.1.198 in Warp on macOS, Claude Code detects this and lets a plain click on a link open it, and holding `Cmd` still works. In the VS Code integrated terminal and similar xterm.js-based terminals, Claude Code defers to the terminal's own link handler, which uses the same gesture.
-* **Click and drag** to select text anywhere in the conversation. Double-click selects a word, matching iTerm2's word boundaries so a file path selects as one unit. As of v2.1.198, double-clicking a URL selects the whole URL, including the scheme. Triple-click selects the line.
+* **Hold `Cmd` on macOS, or `Ctrl` on Linux and Windows, and click a URL or file path** to open it. File paths in tool output, like the ones printed after an Edit or Write, open in your default application. Plain `http://` and `https://` URLs open in your browser. A plain click without holding `Cmd` or `Ctrl` doesn't open links, matching native terminal behavior. Some macOS terminals forward `Cmd`+click to the running app instead of opening the link themselves, and the terminal mouse protocol has no way to encode the `Cmd` key, so Claude Code receives it as a plain click. In Ghostty, and in Warp on macOS, Claude Code detects this and lets a plain click on a link open it, and holding `Cmd` still works. In the VS Code integrated terminal and similar xterm.js-based terminals, Claude Code defers to the terminal's own link handler, which uses the same gesture.
+* **Click and drag** to select text anywhere in the conversation. Double-click selects a word, matching iTerm2's word boundaries so a file path selects as one unit. Double-clicking a URL selects the whole URL, including the scheme. Triple-click selects the line.
 * **Scroll with the mouse wheel** to move through the conversation.
 
 Selected text copies to your clipboard automatically on mouse release. To turn this off, toggle Copy on select in `/config`.
@@ -92,11 +92,11 @@ These actions are rebindable. See [Scroll actions](/docs/en/keybindings#scroll-a
 
 Scrolling up pauses auto-follow so new output doesn't pull you back to the bottom. A `Jump to bottom` button floats over the bottom edge of the transcript while you're scrolled up, and shows a count such as `3 new messages` when new output arrives. Click it, press `Ctrl+End`, or scroll to the bottom to resume following.
 
-While auto-follow is paused, the view also stays where you scrolled it when a response finishes streaming. Before v2.1.207, the view could jump above the start of the answer when a long response finished streaming.
+While auto-follow is paused, the view also stays where you scrolled it when a response finishes streaming.
 
-The button's keyboard hint reflects what your keyboard can send. On macOS it suggests clicking, or `Fn+↓` to scroll, because `Ctrl+End` doesn't reach Claude Code from a Mac keyboard. Rebind [`scroll:bottom`](/docs/en/keybindings#scroll-actions) and the button shows your chord on every platform. Before v2.1.206, the button suggested `Ctrl+End` on macOS.
+The button's keyboard hint reflects what your keyboard can send. On macOS it suggests clicking, or `Fn+↓` to scroll, because `Ctrl+End` doesn't reach Claude Code from a Mac keyboard. Rebind [`scroll:bottom`](/docs/en/keybindings#scroll-actions) and the button shows your chord on every platform.
 
-On a terminal too narrow for the full label, the button shortens the hint instead of wrapping onto the transcript row underneath. Before v2.1.206, a long label could wrap over the transcript.
+On a terminal too narrow for the full label, the button shortens the hint instead of wrapping onto the transcript row underneath.
 
 To turn auto-follow off entirely so the view stays where you leave it, open `/config` and set Auto-scroll to off. With auto-scroll disabled, the view never jumps to the bottom on its own. Permission prompts and other dialogs that need a response still scroll into view regardless of this setting.
 
@@ -149,8 +149,6 @@ Your terminal's `Cmd+f` and tmux search don't see the conversation because it li
 
 * **`[`**: writes the full conversation into your terminal's native scrollback buffer, with all tool output expanded. The conversation is now ordinary text in your terminal, so `Cmd+f`, tmux copy mode, and any other native tool can search or select it. Long sessions may pause for a moment while this happens. This lasts until you exit transcript mode with `Esc` or `q`, which returns you to fullscreen rendering. The next `Ctrl+o` starts fresh.
 * **`v`**: writes the conversation to a temporary file and opens it in `$VISUAL` or `$EDITOR`.
-
-Press `Esc` or `q` to return to the prompt.
 
 ## Clear the conversation
 
