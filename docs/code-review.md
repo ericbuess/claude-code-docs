@@ -292,6 +292,7 @@ The [`/code-review` command](/docs/en/commands) reviews a diff in your terminal 
 
     * `--fix`: applies the findings to your working tree after the review
     * `--comment`: posts the findings as inline PR comments
+    * `--post`: on an `ultra` cloud review of a `github.com` pull request, posts the finished findings to the PR as one comment from your GitHub account; see [Post findings to the pull request](/docs/en/ultrareview#post-findings-to-the-pull-request). Requires Claude Code v2.1.227 or later
   </Step>
 
   <Step title="Keep working">
@@ -340,6 +341,8 @@ You can't schedule the review: `/code-review` is marked [`disable-model-invocati
 ### Escalate to ultrareview
 
 `/code-review ultra --fix` runs the deeper [ultrareview](/docs/en/ultrareview) in the cloud, then applies its findings to your working tree when they arrive back in your session. Ultrareview uses its own scope: your current branch against the repository's default branch, plus any uncommitted and staged changes in the working tree. Pass a branch name, such as `/code-review ultra develop`, to compare against a different base.
+
+When the target is a `github.com` pull request, you can have Claude [post the finished findings to the PR](/docs/en/ultrareview#post-findings-to-the-pull-request) as a comment from your GitHub account. Requires Claude Code v2.1.227 or later.
 
 <Note>
   Ultrareview requires authentication with a claude.ai account and is not available on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, or to organizations with Zero Data Retention enabled. When ultrareview is not available, `/code-review ultra` runs a local review in your session instead.

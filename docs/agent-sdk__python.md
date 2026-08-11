@@ -2399,7 +2399,7 @@ Launches a new agent to handle complex, multi-step tasks autonomously.
     "modelsUsed": list[str] | None,  # Models used in order, with consecutive repeats collapsed
     "totalToolUseCount": int,  # Number of tool calls the agent made
     "totalDurationMs": int,  # Execution duration in milliseconds
-    "totalTokens": int,  # Total tokens used
+    "totalTokens": int,  # Token count from the final API request, not the whole run
     "usage": {  # Token usage statistics
         "input_tokens": int,
         "output_tokens": int,

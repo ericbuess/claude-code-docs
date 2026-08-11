@@ -1344,7 +1344,7 @@ type SDKCompactBoundaryMessage = {
 
 ### `SDKInformationalMessage`
 
-Generic text banner emitted by the loop. Carries non-error status lines, hook feedback such as a `UserPromptSubmit` hook's block reason, and command output. Render `content` as plaintext at the given `level`.
+Generic text banner emitted by the loop. Carries non-error status lines, hook feedback such as a `UserPromptSubmit` hook's block reason, and command output. On Claude Code v2.1.227 or later, a hook's [`systemMessage`](/docs/en/hooks#json-output) can arrive as this message, with each line prefixed by the hook's name, such as `PostToolUse:Bash says:`. Whether a hook's `systemMessage` arrives as this message depends on the event. Each [event's section](/docs/en/hooks#hook-events) on the hooks page says how output surfaces. Render `content` as plaintext at the given `level`.
 
 ```typescript theme={null}
 type SDKInformationalMessage = {
@@ -2019,7 +2019,8 @@ type SyncHookJSONOutput = {
    * A terminal escape sequence (e.g. OSC 9 / OSC 777 desktop-notification)
    * for Claude Code to emit on your behalf. Only notification/title OSCs
    * (0, 1, 2, 9, 99, 777) and BEL are permitted; a value containing
-   * anything else is ignored as a whole.
+   * anything else is ignored as a whole. Only the interactive CLI emits
+   * it; the SDK ignores the field.
    */
   terminalSequence?: string;
   reason?: string;
@@ -2668,17 +2669,31 @@ Schedules a one-shot wake-up that fires the given prompt after a delay. This too
 
 ```typescript theme={null}
 type RemoteTriggerInput = {
-  action: "list" | "get" | "create" | "update" | "run";
+  action:
+    | "list"
+    | "get"
+    | "create"
+    | "update"
+    | "run"
+    | "create_webhook_trigger"
+    | "list_runs"
+    | "get_run_log";
   trigger_id?: string;
+  session_id?: string;
+  cursor?: string;
   body?: {
     [k: string]: unknown;
   };
 };
 ```
 
-Manages [Routines](/docs/en/routines), the scheduled and triggered Claude Code runs hosted in the cloud. This tool backs the `/schedule` command. `trigger_id` is required for the `get`, `update`, and `run` actions. `body` is required for `create` and `update`, and optional for `run`.
+Manages [Routines](/docs/en/routines), the scheduled and triggered Claude Code runs hosted in the cloud. This tool backs the `/schedule` command. `trigger_id` is required for the `get`, `update`, `run`, and `list_runs` actions. `body` is required for `create`, `update`, and `create_webhook_trigger`, and optional for `run`.
 
-This tool is available only when the session is authenticated with a claude.ai account on a plan with Routines enabled.
+`create_webhook_trigger` attaches an event source to an existing routine, such as a [GitHub event](/docs/en/routines#add-a-github-trigger) that fires it. The `body` names the source, the events, and the routine to fire. Requires Claude Code v2.1.225 or later.
+
+`list_runs` lists a routine's recent runs, and `get_run_log` reads one run's log. `session_id` names the run to read, from a `list_runs` result, and `cursor` pages through either action's results. Both actions require Claude Code v2.1.227 or later.
+
+This tool is available only when the session is authenticated with a claude.ai account on a plan with Routines enabled, and is absent when your organization's policy disables [Claude Code on the web](/docs/en/claude-code-on-the-web). On Claude Code v2.1.227 or later, the tool is also absent when an Owner has [turned off routines for the organization](/docs/en/routines#routines-are-disabled-by-your-organizations-policy). Before v2.1.227, a session with only the routines toggle turned off still showed the tool, and the server denied its calls.
 
 ### PushNotification
 

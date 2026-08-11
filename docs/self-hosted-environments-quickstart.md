@@ -75,11 +75,9 @@ To set up manually instead:
     (umask 077 && cat > /etc/claude/environment-secret)
     ```
 
-    Create the base directory, replacing `<writable-dir>` here and in the next command with an absolute path that the user running the runner can write to. The runner checks repositories out and creates per-session directories under this path. Without `--base-dir` it uses `/workspace`, which only works if that directory already exists and is writable or the runner runs as root.
+    Choose a base directory, replacing `<writable-dir>` in the runner command below with an absolute path that the runner can write to or create. The runner creates the directory at startup, then checks repositories out and creates per-session directories under it. Without `--base-dir` it uses `/workspace`, which only works if that directory already exists and is writable or you start the runner as root.
 
-    ```bash theme={null}
-    mkdir -p '<writable-dir>'
-    ```
+    If the runner can't create or write to the path, it exits at startup with an error naming the directory instead of registering. See [Troubleshooting](/docs/en/self-hosted-environments-deploy#troubleshooting).
 
     Then start the runner with `--environment-secret-file` and `--base-dir`. The runner registers with your environment and begins polling for work. If the runner exits, restart it by hand. Production deployments run the runner under an orchestrator that restarts exited runners, normally with a fresh filesystem per restart; [Reuse a pre-warmed checkout](/docs/en/self-hosted-environments-deploy#reuse-a-pre-warmed-checkout) covers the supported persistent-disk setup.
 

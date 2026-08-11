@@ -26,7 +26,10 @@ There are three additional built-in output styles:
 
 ## Change your output style
 
-Run `/config` and select **Output style** to pick a style from a menu. Your selection is saved to `.claude/settings.local.json` at the [local project level](/docs/en/settings).
+Pick a style in one of these ways:
+
+* **Terminal**: run `/config` and select **Output style** to pick a style from a menu. Claude Code saves your selection to `.claude/settings.local.json` at the [local project level](/docs/en/settings).
+* **Desktop app**: set the `outputStyle` field in a settings file, for example `.claude/settings.local.json`, the file the terminal menu writes. When you run `/config` there, Claude Code [opens **Settings > Claude Code**](/docs/en/desktop#what’s-not-available-in-desktop) rather than a menu.
 
 <Note>The standalone `/output-style` command was deprecated in v2.1.73 and removed in v2.1.91. Use `/config` or edit the `outputStyle` setting directly.</Note>
 
@@ -76,7 +79,7 @@ A custom output style is a Markdown file: frontmatter for metadata, then the ins
   </Step>
 
   <Step title="Switch to your style">
-    Run `/config` and select your style under **Output style**. It takes effect after `/clear` or the next time you start a session.
+    Run `/config` in the terminal and select your style under **Output style**, or set `outputStyle` in a settings file to the style's name. It takes effect after `/clear` or the next time you start a session.
   </Step>
 </Steps>
 

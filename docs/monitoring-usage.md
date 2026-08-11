@@ -397,6 +397,8 @@ export CLAUDE_CODE_ENABLE_TELEMETRY=1
 export OTEL_METRICS_EXPORTER=prometheus
 ```
 
+On a [self-hosted environment](/docs/en/self-hosted-environments-reference#pass-through-session-child-metrics), the session binds port 9464 only at the runner's default capacity of one. At higher capacity, the runner re-exposes session counters and gauges on its own `/metrics` endpoint instead.
+
 To send metrics to multiple exporters:
 
 ```bash theme={null}
@@ -1081,6 +1083,30 @@ Logged when conversation compaction completes.
 * `post_tokens`: Approximate token count after compaction
 * `error`: Error message when compaction failed
 * `precompute_reuse`: Only set when `trigger` is `"manual"`. Auto-compaction can prepare a summary in the background before the context window fills, and this attribute records whether `/compact` reused that prepared summary. `"hit"` means it was reused; `"miss_custom_instructions"`, `"miss_hook"`, and `"miss_not_ready"` give the reason a fresh summary was computed instead. Requires Claude Code v2.1.153 or later
+
+#### Subagent completed event
+
+Logged when a [subagent](/docs/en/sub-agents) finishes and returns its result to the conversation that started it. Use it to roll up tool use and run time by subagent type; for token or cost rollups, use the [token counter](#token-counter) and [cost counter](#cost-counter) filtered to `query_source` `"subagent"`, since this event's `total_tokens` covers only the final request. The `"subagent"` category also counts requests from agent-based hooks, which emit no subagent event.
+
+**Event Name**: `claude_code.subagent_completed`
+
+**Attributes**:
+
+* All [standard attributes](#standard-attributes)
+* `event.name`: `"subagent_completed"`
+* `event.timestamp`: ISO 8601 timestamp
+* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `agent_type`: The subagent type. Built-in agent names and agents from official-marketplace plugins appear verbatim; other agent names are replaced with `"custom"` unless `OTEL_LOG_TOOL_DETAILS=1` is set
+* `agent.source`: Where the agent definition came from: `built-in`, `plugin`, or the settings source that defined a custom agent, such as `userSettings` or `projectSettings`
+* `is_built_in`: Whether the subagent is a built-in agent type
+* `is_async`: Whether the subagent ran in the [background](/docs/en/sub-agents#run-subagents-in-foreground-or-background)
+* `total_tokens`: The token footprint of the subagent's final API request: that one request's input, cache creation, cache read, and output tokens, roughly the subagent's context size at completion. Not a sum across the run
+* `total_tool_uses`: Number of tool calls the subagent made across the whole run
+* `duration_ms`: Run time in milliseconds
+* `model`: The model the subagent was resolved to run
+* `final_model`: The model that produced the subagent's final response, which differs from `model` after a mid-run switch such as a fallback. Requires Claude Code v2.1.212 or later
+* `model_swapped`: Whether more than one model served the subagent's requests. Requires Claude Code v2.1.212 or later
+* `plugin_id_hash`, `plugin.name`: Present for plugin-provided agents. Official-marketplace plugin names appear verbatim; other plugin names are replaced with `"third-party"` unless `OTEL_LOG_TOOL_DETAILS=1` is set
 
 #### Feedback survey event
 

@@ -259,7 +259,7 @@ Every hook callback receives three arguments:
 
 Your callback returns an object with two categories of fields:
 
-* **Top-level fields** work the same on every event: `systemMessage` shows a message to the user, and `continue` (`continue_` in Python) determines whether the agent keeps running after this hook.
+* **Top-level fields** are accepted on every event: `systemMessage` shows a message to the user, and `continue` (`continue_` in Python) determines whether the agent keeps running after this hook. Some events discard them or deliver them elsewhere. Each [event's section](/docs/en/hooks#hook-events) on the hooks page says where they land.
 * **`hookSpecificOutput`** controls the current operation. The fields inside depend on the hook event type. For `PreToolUse` hooks, this is where you set `permissionDecision` (`"allow"`, `"deny"`, `"ask"`, or `"defer"`), `permissionDecisionReason`, and `updatedInput`. Returning `"defer"` ends the query so you can [resume it later](/docs/en/hooks#defer-a-tool-call-for-later). For `PostToolUse` hooks, you can set `additionalContext` to append information to the tool result. To replace the tool's output before Claude sees it, set `updatedToolOutput`, which works for any tool in both SDKs. The older `updatedMCPToolOutput` field replaces MCP tool output only and is deprecated.
 
 Return `{}` to allow the operation without changes. SDK callback hooks use the same JSON output format as [Claude Code shell command hooks](/docs/en/hooks#json-output), which documents every field and event-specific option. For the SDK type definitions, see the [TypeScript](/docs/en/agent-sdk/typescript#synchookjsonoutput) and [Python](/docs/en/agent-sdk/python#synchookjsonoutput) SDK references.
@@ -867,7 +867,7 @@ A `UserPromptSubmit` hook that spawns subagents can create infinite loops if tho
 
 ### systemMessage not appearing in output
 
-The `systemMessage` field shows a message to the user, not the model. By default the SDK surfaces hook output in the message stream only for `SessionStart` and `Setup` hooks, so a message from any other hook event doesn't appear unless you set `includeHookEvents` (`include_hook_events` in Python). To pass context to the model instead, return [`additionalContext`](/docs/en/hooks#add-context-for-claude).
+The `systemMessage` field shows a message to the user, not the model. On Claude Code v2.1.227 or later, a hook's `systemMessage` can surface in the message stream as an [`SDKInformationalMessage`](/docs/en/agent-sdk/typescript#sdkinformationalmessage). Whether it does depends on the event. Each [event's section](/docs/en/hooks#hook-events) on the hooks page says how output surfaces. Before v2.1.227, the SDK surfaced hook output in the message stream only for `SessionStart` and `Setup` hooks, so a message from any other hook event didn't appear unless you set `includeHookEvents` (`include_hook_events` in Python). To pass context to the model instead, return [`additionalContext`](/docs/en/hooks#add-context-for-claude).
 
 If you need to surface hook decisions to your application reliably, log them separately or use a dedicated output channel.
 

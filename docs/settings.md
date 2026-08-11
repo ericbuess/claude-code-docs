@@ -467,6 +467,11 @@ The older `//path` prefix for absolute paths still works. If you previously used
 
 Claude Code strips a trailing slash from a directory path, so `~/.aws` and `~/.aws/` match the same directory. Before v2.1.224, Claude Code passed the trailing slash through to the sandbox, and a `denyRead` or `denyWrite` entry written with one didn't block its path.
 
+Claude Code also removes a trailing `/**`, so `~/build/**` and `~/build` cover the same directory. For the four `filesystem` lists, whether a wildcard such as `*` works depends on which list the entry is in and on the platform:
+
+* **`allowWrite` and `denyWrite`**: on macOS, wildcards work. On Linux and WSL2, the sandbox mounts concrete paths, so Claude Code skips an entry that contains `*`, `?`, or `[` once the trailing `/**` is removed, and that entry has no effect. Claude Code adds the paths from your `Edit` permission rules to these lists, so the same limit applies to them, and the **Config** tab of `/sandbox` lists the `Edit` rules Claude Code skipped.
+* **`denyRead` and `allowRead`**: wildcards work on every platform. On Linux and WSL2, Claude Code expands a read entry to the concrete paths it matches, which it doesn't do for the write lists.
+
 This syntax differs from [Read and Edit permission rules](/docs/en/permissions#read-and-edit), which use `//path` for absolute and `/path` for project-relative. Sandbox filesystem paths use standard conventions: `/tmp/build` is an absolute path.
 
 **Configuration example:**
