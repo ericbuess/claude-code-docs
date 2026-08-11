@@ -509,61 +509,6 @@ Run tests matching pattern: $ARGUMENTS
 4. Re-run to verify fixes
 ```
 
-Use these commands through the SDK:
-
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  import { query } from "@anthropic-ai/claude-agent-sdk";
-
-  // Run code review
-  try {
-    for await (const message of query({
-      prompt: "/review-pr",
-      options: { maxTurns: 3 }
-    })) {
-      // Process review feedback
-    }
-  } catch (error) {
-    // A single-shot query() throws after yielding an error result,
-    // so the second query below still runs.
-    console.error(`Session ended with an error: ${error}`);
-  }
-
-  // Run specific tests
-  for await (const message of query({
-    prompt: "/test auth",
-    options: { maxTurns: 5 }
-  })) {
-    // Handle test results
-  }
-  ```
-
-  ```python Python theme={null}
-  import asyncio
-  from claude_agent_sdk import query, ClaudeAgentOptions
-
-
-  async def main():
-      # Run code review
-      try:
-          async for message in query(prompt="/review-pr", options=ClaudeAgentOptions(max_turns=3)):
-              # Process review feedback
-              pass
-      except Exception as error:
-          # A single-shot query() raises after yielding an error result,
-          # so the second query below still runs.
-          print(f"Session ended with an error: {error}")
-
-      # Run specific tests
-      async for message in query(prompt="/test auth", options=ClaudeAgentOptions(max_turns=5)):
-          # Handle test results
-          pass
-
-
-  asyncio.run(main())
-  ```
-</CodeGroup>
-
 ## See Also
 
 * [Slash Commands](/docs/en/skills) - Complete slash command documentation

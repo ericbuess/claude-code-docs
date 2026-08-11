@@ -14,8 +14,6 @@ Hooks are callback functions that run your code in response to agent events, lik
 * **Require human approval** for sensitive actions like database writes or API calls
 * **Track session lifecycle** to manage state, clean up resources, or send notifications
 
-This guide covers how hooks work and how to configure them, with examples for common patterns like blocking tools, modifying inputs, and forwarding notifications.
-
 ## How hooks work
 
 <Steps>
