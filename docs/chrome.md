@@ -75,13 +75,13 @@ For VS Code, see [browser automation in VS Code](/docs/en/vs-code#automate-brows
 
 ### Install the extension when Claude asks
 
-When Claude needs your browser for a task in an interactive session and Claude Code doesn't detect the extension, Claude Code shows an install prompt titled "Claude wants to use your browser", at most once per session. The prompt requires Claude Code v2.1.206 or later. On Windows, the **Install extension** choice requires v2.1.211 or later; before v2.1.211, choosing it couldn't open the install page.
+When Claude needs your browser in an interactive session and Claude Code doesn't detect the extension, Claude Code shows an install prompt titled "Claude wants to use your browser". Claude Code asks at most once per session.
 
 The prompt offers three choices:
 
-* **Install extension**: opens the extension install page in your browser and starts a guided setup. Claude Code waits for the install, connects the extension, and enables browser tools in the same session. When the connection is ready, select "Continue with browser tools" and Claude resumes the task in your browser. You can leave setup at any point by selecting "Continue without browser tools" and finish later with `/chrome`.
-* **Not now**: continues the task without browser tools. The prompt can appear again in a later session.
-* **Don't ask again**: stops the prompt in all future sessions. You can still set up the integration anytime with `/chrome`.
+* **Install extension**: opens the extension install page in your browser and starts a guided setup. Claude Code waits for the install, connects the extension, and enables browser tools in the same session. When the connection is ready, select "Continue with browser tools" and Claude resumes the task in your browser. You can leave setup by selecting "Continue without browser tools" and finish later with `/chrome`.
+* **Not now**: continues the task without browser tools. Claude Code can ask again in a later session.
+* **Don't ask again**: stops the prompt in future sessions. You can still set up the integration anytime with `/chrome`.
 
 If your organization blocks the `claude-in-chrome` MCP server with the [`deniedMcpServers` managed setting](/docs/en/managed-mcp#policy-based-control-with-allowlists-and-denylists), Claude Code doesn't show the install prompt.
 
@@ -108,7 +108,7 @@ In [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode)
 * **Read-only calls**: `read_page`, `get_page_text`, `find`, reading console messages or network requests, and taking a screenshot
 * **State-changing calls**: clicks, typing, navigation, tab and window management, and recording a GIF
 
-As of v2.1.199, an otherwise read-only call that sets a state-changing input flag, such as `createIfEmpty` on `tabs_context_mcp`, `clear` on the console and network readers, or `save_to_disk` on a screenshot, also prompts for approval. A `browser_batch` call runs without a prompt only when every action inside it is read-only.
+An otherwise read-only call also prompts for approval when it sets a state-changing input flag, such as `createIfEmpty` on `tabs_context_mcp`, `clear` on the console and network readers, or `save_to_disk` on a screenshot. A `browser_batch` call runs without a prompt only when every action inside it is read-only.
 
 ## Example workflows
 
@@ -235,7 +235,7 @@ If Claude Code can't detect the Chrome extension:
 
 The first time you enable Chrome integration, Claude Code installs a native messaging host configuration file. Chrome reads this file on startup, so if the extension isn't detected on your first attempt, restart Chrome to pick up the new configuration.
 
-As of v2.1.199, Claude Code opens a browser tab prompting you to connect the extension only on that first install. Later sessions that rewrite the configuration file, for example after switching Claude Code builds or config directories, don't reopen it.
+Claude Code opens a browser tab prompting you to connect the extension only on that first install. Claude Code doesn't reopen it when a later session rewrites the configuration file, for example after switching builds or config directories.
 
 If the connection still fails, verify the host configuration file exists at:
 

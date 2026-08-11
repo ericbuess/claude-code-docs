@@ -395,7 +395,7 @@ If you have [computer use](#let-claude-use-your-computer) enabled, Dispatch-spaw
 
 For setup, pairing, and Dispatch settings, see the [Dispatch help article](https://support.claude.com/en/articles/13947068). Dispatch requires a Pro or Max plan and is not available on Team or Enterprise plans.
 
-Dispatch is one of several ways to work with Claude when you're away from your terminal. See [Platforms and integrations](/docs/en/platforms#work-when-you-are-away-from-your-terminal) to compare it with Remote Control, Channels, Slack, and scheduled tasks.
+Dispatch is one of several ways to work with Claude when you're away from your terminal. For a comparison with the other options, see [Platforms and integrations](/docs/en/platforms#work-when-you-are-away-from-your-terminal).
 
 ## Extend Claude Code
 

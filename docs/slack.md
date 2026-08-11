@@ -150,20 +150,13 @@ Slack workspace administrators control whether the Claude app is available in th
 
 ### Channel-based access control
 
-Claude is not automatically added to any channels after installation. Users must explicitly invite Claude to channels where they want to use it:
-
-* **Invite required**: Type `/invite @Claude` in any channel to add Claude to that channel
-* **Channel membership controls access**: Claude can only respond to @mentions in channels where it has been added
-* **Access gating through channels**: Admins can control who uses Claude Code by managing which channels Claude is invited to and who has access to those channels
-* **Private channel support**: Claude works in both public and private channels, giving teams flexibility in controlling visibility
-
-This channel-based model allows teams to restrict Claude Code usage to specific channels, providing an additional layer of access control beyond workspace-level permissions.
+Installing the app doesn't add Claude to any channels. Claude responds to @mentions only in channels where it has been added; invite it with `/invite @Claude`. It works in both public and private channels. Admins can control who uses Claude Code by managing which channels Claude is invited to and who has access to those channels. This adds a layer of access control beyond workspace-level permissions.
 
 ## What's accessible where
 
 **In Slack**: You'll see status updates, completion summaries, and action buttons. The full transcript is preserved and always accessible.
 
-**On the web**: The complete Claude Code session with full conversation history, all code changes, file operations, and the ability to continue the session or create pull requests.
+**On the web**: The complete Claude Code session with full conversation history, all code changes, and file operations. Sessions stay in your Claude Code history at [claude.ai/code](https://claude.ai/code), where you can continue past sessions, reference them, or create pull requests.
 
 For Enterprise and Team accounts, sessions created from Claude in Slack are
 automatically visible to the organization. See [Claude Code on the Web sharing](/docs/en/claude-code-on-the-web#share-sessions)
@@ -224,17 +217,11 @@ If you're not an Owner or admin, send this entry to one.
 2. Ensure you're signed into the correct Claude account in your browser
 3. Check that your Claude plan includes Claude Code access
 
-### Session expiration
-
-1. Sessions remain accessible in your Claude Code history on the web
-2. You can continue or reference past sessions from [claude.ai/code](https://claude.ai/code)
-
 ## Current limitations
 
-* **GitHub only**: Currently supports repositories on GitHub.
-* **One PR at a time**: Each session can create one pull request.
-* **Rate limits apply**: Sessions use your individual Claude plan's rate limits.
-* **Web access required**: Users must have Claude Code on the web access; those without it will only get standard Claude chat responses.
+* **GitHub only**: repositories must be on GitHub.
+* **One PR at a time**: each session can create one pull request.
+* **Web access required**: users need access to Claude Code on the web; without it, Claude replies with standard chat responses.
 
 ## Related resources
 

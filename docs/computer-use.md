@@ -98,7 +98,7 @@ Understanding the flow helps you anticipate what Claude will do and how to inter
 
 ### One session at a time
 
-Computer use holds a machine-wide lock from the first computer use action until the session that took it exits. As of v2.1.195, finishing the task doesn't release the lock; only exiting the session does. If another Claude Code session is already using your computer, new attempts fail with a message telling you which session holds the lock. Exit that session first.
+Only one session at a time can use your computer. Claude Code takes a machine-wide lock when a session performs its first computer use action. Claude Code releases it when that session exits, not when the task finishes. If another session is already using your computer, Claude Code rejects new attempts and tells you which session holds the lock. Exit that session first.
 
 ### Apps are hidden while Claude works
 

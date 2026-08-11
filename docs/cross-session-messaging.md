@@ -140,7 +140,7 @@ When the default holds a message, Claude Code opens an approval dialog in the re
 
 * **Approve** delivers that one message to Claude.
 * **Deny**, or dismissing the dialog, drops it.
-* Left unanswered past the [`dialogExpiry`](/docs/en/settings#available-settings) deadline, the dialog closes and Claude Code drops the message. The deadline defaults to five minutes.
+* When the dialog stays unanswered past the [`dialogExpiry`](/docs/en/settings#available-settings) deadline, Claude Code closes it and drops the message. The deadline defaults to five minutes. While no terminal is attached to a [background session](/docs/en/agent-view), Claude Code leaves the dialog open past the deadline. After you attach, Claude Code closes the dialog and drops the message only if it stays unanswered for a full deadline period.
 * If this session's permission-mode class changes while messages are held, Claude Code re-applies the inbound rules, delivers the messages they now accept, and shows a notice.
 * If a change makes `refuse` apply while messages are held, Claude Code drops every held message and reports a denial to each sender it can reach.
 
@@ -152,7 +152,14 @@ Claude Code holds at most 100 messages, separately from the delivery queue, and 
 
 Claude Code binds an inbox socket for a [`claude -p`](/docs/en/headless) session like an interactive one, so a long-running `-p` worker can receive messages and appears in the listing. When you start a session in [bare mode](/docs/en/headless#start-faster-with-bare-mode), Claude Code doesn't bind the socket, so that session can't receive messages and doesn't appear in the agent list.
 
-A `-p` session can't show the approval dialog. When the [inbound default](#control-inbound-messages) holds a message there, Claude Code delivers it if a later mode or settings change allows it, and otherwise drops it when the [`dialogExpiry`](/docs/en/settings#available-settings) deadline passes and reports the expiry to the sender. Before v2.1.225, a held message stayed held in a `-p` session, with no sender notice and no expiry.
+A `-p` session can't show the approval dialog. When the [inbound default](#control-inbound-messages) holds a message there, Claude Code keeps it for the same [`dialogExpiry`](/docs/en/settings#available-settings) deadline the dialog uses, five minutes by default:
+
+* **Before the deadline**: if a mode or settings change allows the message, Claude Code delivers it.
+* **Past the deadline**: Claude Code drops the message and reports it as expired to a sender it can reach.
+
+Set `dialogExpiry` to `"never"` to keep default-held messages until the session ends. A message held by an explicit `hold` setting doesn't expire; Claude Code delivers it only when an `accept` later applies.
+
+When the session ends with messages still held, Claude Code reports them as expired to each sender it can reach. Before v2.1.225, no deadline applied in a `-p` session: a held message stayed held unless a permission-mode change during the run delivered it, and a session that ended with held messages reported nothing to their senders.
 
 To let a `-p` worker take messages unattended, start it with `crossSessionInbound` set to `accept` in its `--settings` value. An `accept` in your user settings also works but applies to every session you run.
 
@@ -188,7 +195,7 @@ Set [`isolatePeerMachines`](/docs/en/settings#available-settings) to `true` to r
 }
 ```
 
-With this set, Claude Code asks for your approval before Claude's message to a session beyond this machine leaves, even in `bypassPermissions` mode, which skips ordinary permission prompts. A `true` from any settings scope applies, so a checked-in project file can turn the requirement on but not off. Messages between sessions on the same machine don't prompt.
+With this set, Claude Code asks for your approval before Claude's message to a session beyond this machine leaves, even in `bypassPermissions` mode, which skips ordinary permission prompts. A `true` from any settings scope applies, so a checked-in project file can turn the requirement on but not off. Claude Code doesn't prompt for messages between sessions on the same machine.
 
 ### Turn off cross-session messaging
 

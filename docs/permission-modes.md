@@ -71,7 +71,7 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
   <Tab title="VS Code">
     **During a session**: click the mode indicator at the bottom of the prompt box.
 
-    **As a default**: set `claudeCode.initialPermissionMode` in VS Code settings, or use the Claude Code extension settings panel.
+    **As a default**: set `claudeCode.initialPermissionMode` in your VS Code user settings, or use the Claude Code extension settings panel.
 
     The mode indicator shows these labels, mapped to the mode each one applies:
 

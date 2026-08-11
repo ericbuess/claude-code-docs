@@ -30,6 +30,7 @@ Five sections are [required](#required-sections). Every other section is [option
 
 * [`admin`](#admin): Admin API auth and retention for spend limits
 * [`enforcement`](#enforcement): spend-limit fail-open or fail-closed behavior
+* [`pricing`](#pricing): contracted rates and a discount multiplier for the spend meter
 * [`models`](#models) and `auto_include_builtin_models`: admin-curated model list and per-upstream IDs
 * [`managed`](#managed): managed settings policies by IdP group
 * [`telemetry`](#telemetry): OTLP forwarding to your observability stack
@@ -362,16 +363,16 @@ admin:
   blocked_message: request an increase at https://go.example.com/claude-limits
 ```
 
-| Field                     | Required | Description                                                                                                                                                                                                                                           |
-| ------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `write_keys`              | No       | Array of `{id, key}`. An `x-api-key` matching one of these can list, set, and delete spend limits. Key values must be at least 32 characters; `id`s must be unique across `read_keys` and `write_keys`.                                               |
-| `read_keys`               | No       | Array of `{id, key}`. Read-only: every `GET` endpoint, including listing caps, fetching one by ID, and reading [`/effective`](/docs/en/claude-apps-gateway-spend-limits#%2Feffective) and [`/audit`](/docs/en/claude-apps-gateway-spend-limits#%2Faudit).       |
-| `admin_groups`            | No       | IdP group names. A gateway JWT whose `groups` claim includes one of these has full admin access, read and write, and audits as `oidc:<sub>`. Use this for human admins; use API keys for machines.                                                    |
-| `blocked_message`         | No       | Appended verbatim to the `429 billing_error` a blocked developer sees. Write the whole instruction, such as a URL or a Slack channel. Unset, the error is `spend limit reached`.                                                                      |
-| `audit_retention_days`    | No       | Default `365`. Older `admin_audit` rows are swept.                                                                                                                                                                                                    |
-| `spend_retention_months`  | No       | Default `13`. `spend` counter rows older than this are swept. The default keeps a full year plus the current partial month for year-over-year reporting.                                                                                              |
-| `identity_retention_days` | No       | Default `90`. Last-seen TTL for `principal_emails` rows, which hold each developer's email, display name, and groups (PII). Deliberately shorter than spend retention so a deprovisioned identity ages out while its anonymous spend counters remain. |
-| `group_limit_mode`        | No       | `min` (default) or `max`. When a developer is in several groups with caps, `min` enforces the most restrictive and `max` the least. Used by both enforcement and `/effective`.                                                                        |
+| Field                     | Required | Description                                                                                                                                                                                                                                                                            |
+| ------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `write_keys`              | No       | Array of `{id, key}`. An `x-api-key` matching one of these can list, set, and delete spend limits. Key values must be at least 32 characters; `id`s must be unique across `read_keys` and `write_keys`.                                                                                |
+| `read_keys`               | No       | Array of `{id, key}`. Read-only: every `GET` endpoint, including listing caps, fetching one by ID, and reading [`/effective`](/docs/en/claude-apps-gateway-spend-limits#%2Feffective) and [`/audit`](/docs/en/claude-apps-gateway-spend-limits#%2Faudit).                                        |
+| `admin_groups`            | No       | IdP group names. A gateway JWT whose `groups` claim includes one of these has full admin access, read and write, and audits as `oidc:<sub>`. Use this for human admins; use API keys for machines.                                                                                     |
+| `blocked_message`         | No       | Appended verbatim to the `429 billing_error` a blocked developer sees. Write the whole instruction, such as a URL or a Slack channel. When unset, the gateway sends only the default message. See [How enforcement works](/docs/en/claude-apps-gateway-spend-limits#how-enforcement-works). |
+| `audit_retention_days`    | No       | Default `365`. Older `admin_audit` rows are swept.                                                                                                                                                                                                                                     |
+| `spend_retention_months`  | No       | Default `13`. `spend` counter rows older than this are swept. The default keeps a full year plus the current partial month for year-over-year reporting.                                                                                                                               |
+| `identity_retention_days` | No       | Default `90`. Last-seen TTL for `principal_emails` rows, which hold each developer's email, display name, and groups (PII). Deliberately shorter than spend retention so a deprovisioned identity ages out while its anonymous spend counters remain.                                  |
+| `group_limit_mode`        | No       | `min` (default) or `max`. When a developer is in several groups with caps, `min` enforces the most restrictive and `max` the least. Used by both enforcement and `/effective`.                                                                                                         |
 
 ### `enforcement`
 
@@ -380,6 +381,40 @@ The `enforcement` block controls how spend-limit checks behave when the store is
 | Field                  | Required | Description                                                                                                                                                                                                                                                                                                                                                                    |
 | ---------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `fail_closed_on_error` | No       | Default `false`. Spend enforcement fails open on a Postgres outage, so inference stays up. Set `true` to fail closed: over-cap developers are blocked, but so is everyone else if the store is unreachable. Requires an [`admin:`](#admin) block: spend enforcement only runs when `admin` is configured, and the gateway refuses to start if you set this `true` without one. |
+
+### `pricing`
+
+The `pricing` block tells the spend meter what to charge instead of USD list price, so caps and [`/effective`](/docs/en/claude-apps-gateway-spend-limits#%2Feffective) reflect your contracted rates. Amounts stay in USD and remain an estimate, not an invoice. Two prerequisites:
+
+* Claude Code v2.1.227 or later on the gateway server. Earlier versions reject the unknown key at boot.
+* An [`admin:`](#admin) block, because only the spend meter reads `pricing`. The gateway refuses to start with `pricing` set and no `admin`.
+
+```yaml theme={null}
+pricing:
+  multiplier: 0.85
+  overrides:
+    - upstream: bedrock-eu
+      model: claude-sonnet-4-6
+      input: 3.30
+      output: 16.50
+      cache_read: 0.33
+      cache_write: 4.125
+```
+
+| Field        | Required | Description                                                                                                                                                                |
+| ------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `multiplier` | No       | Default `1`. The meter multiplies every metered amount by this, whether list-priced or overridden, so `0.85` bills 85% of the price. Must be greater than 0 and at most 1. |
+| `overrides`  | No       | Rows of `{upstream, model, input, output, cache_read, cache_write}` in USD per million tokens. All four rates are required and must be positive.                           |
+
+How the meter matches an override row:
+
+* A row replaces list price for requests that `upstream`, an [`upstreams[].name`](#upstreams), serves for `model`. That includes the higher [fast mode](/docs/en/fast-mode#understand-the-cost-tradeoff) rate, so fast and standard requests meter at the same four rates.
+* A built-in ID such as `claude-sonnet-4-6`, matched like [`models[].id`](#models), covers every dated form, regional Amazon Bedrock form, or Google Cloud's Agent Platform form the meter prices as that model. Any other string, such as an alias or an inference-profile ARN, matches the ID the client sent or the string sent upstream, case-insensitively.
+* Where rows overlap, the meter picks the most specific row rather than the first row: a row whose `model` is the exact model string sent upstream, then a row matching the exact ID the client sent, then a row naming the built-in model.
+* An unknown upstream name fails boot, and so do two rows for one upstream that name the same model, including two spellings of one built-in model. The gateway warns at boot about a row no requestable model can use.
+* Web-search requests stay at the \$0.01 list price; the multiplier still applies to them.
+
+For per-region rates, give each region its own named upstream and one row per upstream.
 
 ### `models`
 
@@ -733,6 +768,13 @@ store:
 
 # enforcement:
 #   fail_closed_on_error: false
+
+# Meter at contracted rates instead of USD list price. Requires admin:.
+# Rates below are placeholders, not real contract prices.
+# pricing:
+#   multiplier: 0.85
+#   overrides:
+#     - { upstream: anthropic, model: claude-sonnet-4-6, input: 3.30, output: 16.50, cache_read: 0.33, cache_write: 4.125 }
 
 upstreams:
   - provider: anthropic
