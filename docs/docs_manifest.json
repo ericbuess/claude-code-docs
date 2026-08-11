@@ -310,14 +310,14 @@
     "claude-apps-gateway-config.md": {
       "original_url": "https://code.claude.com/docs/en/claude-apps-gateway-config",
       "original_md_url": "https://code.claude.com/docs/en/claude-apps-gateway-config.md",
-      "hash": "08b19b87c21b8c158ecfdc86199b9105ae9b38b629bf817b175c85046ebc9061",
-      "last_updated": "2026-08-08T00:45:33.409693"
+      "hash": "b1cafeb6383758d9a74dcb90786c3aa64176ba38309d4507982218c1420c2284",
+      "last_updated": "2026-08-11T04:10:18.725867"
     },
     "claude-apps-gateway-deploy.md": {
       "original_url": "https://code.claude.com/docs/en/claude-apps-gateway-deploy",
       "original_md_url": "https://code.claude.com/docs/en/claude-apps-gateway-deploy.md",
-      "hash": "65879ec560f31d2ca38e2fc7cd854ae7371e33efea11b5f3bf055824f4928826",
-      "last_updated": "2026-08-08T00:45:34.368869"
+      "hash": "bd1583de6b19543056a6aa7712c98c68980068d2652c672b6e023127da54e4fe",
+      "last_updated": "2026-08-11T04:10:19.487740"
     },
     "claude-apps-gateway-on-aws.md": {
       "original_url": "https://code.claude.com/docs/en/claude-apps-gateway-on-aws",
@@ -334,8 +334,8 @@
     "claude-apps-gateway-spend-limits.md": {
       "original_url": "https://code.claude.com/docs/en/claude-apps-gateway-spend-limits",
       "original_md_url": "https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md",
-      "hash": "0263cbadaa219046b36951e27b1b1b6c4c5e66217614a910e6a75243175b63de",
-      "last_updated": "2026-08-07T21:27:09.363532"
+      "hash": "ecdcab396b4882fcc4d2881a451ba5f15d92de01a5587b19ae57a076e9cf8797",
+      "last_updated": "2026-08-11T04:10:21.719468"
     },
     "claude-code-on-the-web.md": {
       "original_url": "https://code.claude.com/docs/en/claude-code-on-the-web",
@@ -424,8 +424,8 @@
     "costs.md": {
       "original_url": "https://code.claude.com/docs/en/costs",
       "original_md_url": "https://code.claude.com/docs/en/costs.md",
-      "hash": "37beb85c4a849f71a387b5c837fd8c18846e3ff2ae0c0ac5548ddb38e046579d",
-      "last_updated": "2026-08-08T00:45:53.558214"
+      "hash": "6c4ff6151585ac06c51ce7d95fc48f8ec7e18ca45b5725fadb804f55512a49f5",
+      "last_updated": "2026-08-11T04:10:32.239800"
     },
     "cross-session-messaging.md": {
       "original_url": "https://code.claude.com/docs/en/cross-session-messaging",
@@ -460,8 +460,8 @@
     "desktop-ios-simulator.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-ios-simulator",
       "original_md_url": "https://code.claude.com/docs/en/desktop-ios-simulator.md",
-      "hash": "e6032bada9af262bf8512e255cbf03859ed2309a8ba3f41d7787f0f8a67455b6",
-      "last_updated": "2026-08-04T01:20:53.595619"
+      "hash": "882af9bd5bbb430adbbf3f289b57407d09fa9636b57ec9ca63297649a489743b",
+      "last_updated": "2026-08-11T04:10:36.843679"
     },
     "desktop-linux.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-linux",
@@ -514,8 +514,8 @@
     "fast-mode.md": {
       "original_url": "https://code.claude.com/docs/en/fast-mode",
       "original_md_url": "https://code.claude.com/docs/en/fast-mode.md",
-      "hash": "8b834eab43477b848aa87e43f0b4493a46a191dc9f149b0cf410182215c9de32",
-      "last_updated": "2026-08-04T22:03:56.135320"
+      "hash": "b035f1e546e7c03e5a9d2d8bc17b15bdaf584eb6cd7354bcca0d0c5c6267b131",
+      "last_updated": "2026-08-11T04:10:48.191590"
     },
     "feature-availability.md": {
       "original_url": "https://code.claude.com/docs/en/feature-availability",
@@ -652,8 +652,8 @@
     "llm-gateway-protocol.md": {
       "original_url": "https://code.claude.com/docs/en/llm-gateway-protocol",
       "original_md_url": "https://code.claude.com/docs/en/llm-gateway-protocol.md",
-      "hash": "79d6870f52da0be6d91e2b2cea8c08968d90403ef4955774a8f518b316c1156d",
-      "last_updated": "2026-08-07T21:27:55.570093"
+      "hash": "273c52480230569b9fd5da8db1260269e74186a9342fcd31e252345d6b2bb2f4",
+      "last_updated": "2026-08-11T04:11:07.441423"
     },
     "llm-gateway-rollout.md": {
       "original_url": "https://code.claude.com/docs/en/llm-gateway-rollout",
@@ -748,8 +748,8 @@
     "plugin-dependencies.md": {
       "original_url": "https://code.claude.com/docs/en/plugin-dependencies",
       "original_md_url": "https://code.claude.com/docs/en/plugin-dependencies.md",
-      "hash": "d0cfa37f9bacf8149ae8d3c086d6edacac419acc21956b4f10db58349bc315b8",
-      "last_updated": "2026-08-07T18:38:46.165967"
+      "hash": "e4693c8e114280d9ee2ad656916db99c8bc376a1920c15a1dbd8ddb6bc91f630",
+      "last_updated": "2026-08-11T04:11:21.058920"
     },
     "plugin-hints.md": {
       "original_url": "https://code.claude.com/docs/en/plugin-hints",
@@ -1125,8 +1125,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-11T00:52:09.945385",
-    "fetch_duration_seconds": 169.039965,
+    "last_fetch_completed": "2026-08-11T04:12:13.420964",
+    "fetch_duration_seconds": 159.545198,
     "total_pages_discovered": 187,
     "pages_fetched_successfully": 188,
     "pages_failed": 0,
@@ -1136,7 +1136,7 @@
     "total_files": 187,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-11T00:52:09.945403",
+  "last_updated": "2026-08-11T04:12:13.420991",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

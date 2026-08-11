@@ -105,7 +105,7 @@ If the field is missing or does not include the target marketplace, install fail
 
 ## Tag plugin releases for version resolution
 
-Version constraints resolve against git tags on the marketplace repository. For Claude Code to find a dependency's available versions, the upstream plugin's releases must be tagged using a specific naming convention.
+Claude Code resolves version constraints against git tags on the repository that hosts the dependency: the plugin's own repository for `github`, `url`, and `git-subdir` [plugin sources](/docs/en/plugin-marketplaces#plugin-sources), or the marketplace repository for a plugin the marketplace references by a relative path. For Claude Code to find a dependency's available versions, the upstream plugin's releases must be tagged using a specific naming convention.
 
 Tag each release as `{plugin-name}--v{version}`, where `{version}` matches the `version` field in that commit's `plugin.json`. From the plugin directory, run:
 
@@ -124,9 +124,9 @@ Running `git tag secrets-vault--v2.1.0` directly is equivalent if you keep `plug
 
 The plugin name prefix lets one marketplace repository host multiple plugins with independent version lines. The `--v` separator is parsed as a prefix match on the full plugin name, so plugin names that contain hyphens are handled correctly.
 
-When you install a plugin that declares `{ "name": "secrets-vault", "version": "~2.1.0" }`, Claude Code lists the marketplace's tags, filters to those starting with `secrets-vault--v`, and fetches the highest version satisfying `~2.1.0`. If no matching tag exists, the dependent plugin is disabled with an error listing the available versions.
+When you install a plugin that declares `{ "name": "secrets-vault", "version": "~2.1.0" }`, Claude Code lists the tags on the repository that hosts `secrets-vault`, filters to those starting with `secrets-vault--v`, and fetches the highest version satisfying `~2.1.0`. If no tag on the plugin's own repository satisfies the range, the install fails with `Dependency "secrets-vault" has no git tag satisfying ~2.1.0`. For a relative-path plugin with no matching tag, Claude Code installs the marketplace's current copy instead and checks the constraint when the plugin loads.
 
-A marketplace added as a local folder path resolves tags the same way when the folder is a git repository. This requires Claude Code v2.1.196 or later. In two cases Claude Code installs the dependency from the folder's current contents instead:
+For a plugin the marketplace references by a relative path, a marketplace added as a local folder path resolves tags the same way when the folder is a git repository. This requires Claude Code v2.1.196 or later. In two cases Claude Code installs the dependency from the folder's current contents instead:
 
 * Earlier versions don't read tags from a local-folder marketplace, so a constrained dependency loads only if that copy satisfies the range.
 * A local folder that isn't a git repository has no tags, regardless of version.
@@ -134,7 +134,7 @@ A marketplace added as a local folder path resolves tags the same way when the f
 The resolved tag's semver is recorded separately from `plugin.json`'s `version`, so constraint checks use the tag that was actually fetched even if `plugin.json` at that commit has a stale value. The cache directory name for a tag-resolved install includes a 12-character commit-SHA suffix, so if a maintainer force-moves a tag to a different commit, the next install gets a fresh cache directory instead of reusing stale content.
 
 <Note>
-  For dependencies with an `npm` [plugin source](/docs/en/plugin-marketplaces#plugin-sources), the constraint does not control which version is fetched, since tag-based resolution applies only to git-backed sources. The constraint is still checked at load time, and the dependent plugin is disabled with `dependency-version-unsatisfied` if the installed version does not satisfy it.
+  For dependencies with an `npm` or `archive` [plugin source](/docs/en/plugin-marketplaces#plugin-sources), the constraint does not control which version is fetched, since tag-based resolution applies only to git-backed sources. The constraint is still checked at load time, and the dependent plugin is disabled with `dependency-version-unsatisfied` if the installed version does not satisfy it.
 </Note>
 
 ## How constraints interact

@@ -53,6 +53,8 @@ On each `/v1/messages` request, the gateway resolves the developer's caps and pe
 
 `/v1/messages/count_tokens` is exempt. Token counting is free, so it runs regardless of cap state.
 
+A running gateway serves a protocol description at `<public_url>/protocol` that lists the exact usage-limit response headers and the shape of the blocked `429`. Requires v2.1.227 or later.
+
 After each response, a usage meter reads token counts off the response as it streams to the client, prices them at USD list price, and increments Postgres counters for all three period buckets. The meter is a single reader on the stream, so the client's bytes are untouched and a metering failure doesn't break the response.
 
 Spend limits estimate spend from token counts at USD list price; they're a circuit breaker, not an invoice. For authoritative billing, reconcile against your provider's own usage reporting, such as the Anthropic Usage & Cost Admin API, invocation logs on Amazon Bedrock, or Cloud Monitoring on Google Cloud.
