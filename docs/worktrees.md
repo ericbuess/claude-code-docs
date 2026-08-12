@@ -111,7 +111,7 @@ Subagent worktrees use the same [base branch](#choose-the-base-branch) as `--wor
 
 ### Clean up subagent and background-session worktrees
 
-A periodic sweep removes worktrees that Claude created for subagents and [background sessions](/docs/en/agent-view#how-file-edits-are-isolated) once they are older than your [`cleanupPeriodDays`](/docs/en/settings#available-settings) setting. The sweep skips a worktree that still holds work: changed or untracked files, or unpushed commits. It never removes worktrees you create with `--worktree`.
+A periodic sweep removes worktrees that Claude created for subagents and [background sessions](/docs/en/agent-view#how-file-edits-are-isolated) once they are older than your [`cleanupPeriodDays`](/docs/en/settings#available-settings) setting, following the [retention sweep rules](/docs/en/claude-directory#cleaned-up-automatically). The sweep skips a worktree that still holds work: changed or untracked files, or unpushed commits. It never removes worktrees you create with `--worktree`.
 
 While an agent is running, Claude runs `git worktree lock` on its worktree so that concurrent cleanup cannot remove it. The lock is released when the agent finishes.
 

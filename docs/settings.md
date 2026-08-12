@@ -501,7 +501,7 @@ This syntax differs from [Read and Edit permission rules](/docs/en/permissions#r
 **Filesystem and network restrictions** can be configured in two ways that are merged together:
 
 * **`sandbox.filesystem` settings** (shown above): Control paths at the OS-level sandbox boundary, or set `filesystem.disabled` to `true` to turn that layer off entirely. These restrictions apply to all subprocess commands (e.g., `kubectl`, `terraform`, `npm`), not just Claude's file tools.
-* **Permission rules**: Use `Edit` allow/deny rules to control Claude's file tool access, `Read` deny rules to block reads (a `Read` deny rule also blocks the Edit tool on the matching paths), and `WebFetch` allow/deny rules to control network domains. Paths from these rules are also merged into the sandbox configuration.
+* **Permission rules**: Use `Edit` allow/deny rules to control Claude's file tool access, `Read` deny rules to block reads (a `Read` deny rule also blocks the Edit and Write tools on the matching paths), and `WebFetch` allow/deny rules to control network domains. Paths from these rules are also merged into the sandbox configuration.
 
 ### Attribution settings
 
@@ -772,7 +772,7 @@ To prevent Claude Code from accessing files containing sensitive information lik
 }
 ```
 
-This replaces the deprecated `ignorePatterns` configuration. Files matching these patterns are excluded from file discovery and search results, and read operations on these files are denied.
+This replaces the deprecated `ignorePatterns` configuration. Claude Code excludes files matching these patterns from file discovery and search results, denies read operations on them, and blocks the [Edit and Write tools](/docs/en/permissions#read-and-edit) on the matching paths.
 
 ## Subagent configuration
 

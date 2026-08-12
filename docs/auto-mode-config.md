@@ -301,7 +301,9 @@ The command summarizes what it will remove and asks `Reset auto mode configurati
 
 ## Review denials
 
-When auto mode denies a tool call, Claude Code records the denial in `/permissions` under the **Recently denied** tab. Press `r` on a denied action to mark it for retry: when you exit the dialog, Claude Code sends a message telling the model it may retry that tool call and resumes the conversation.
+To review and retry actions the auto mode classifier denied, open `/permissions` and select the **Recently denied** tab, where Claude Code records each denial. Press `r` on a denied action to mark it for retry: when you exit the dialog, Claude Code sends a message telling the model it may retry that tool call and resumes the conversation.
+
+When the classifier produces [no verdict on the action](/docs/en/errors#auto-mode-cannot-determine-the-safety-of-an-action), because a safety check separate from auto mode refused the classifier's own request or its response didn't parse, Claude Code denies the action without recording it under **Recently denied**. The linked error entry covers what Claude is told and how to run the action if you need it.
 
 ### Fix a denial with an allow rule, an environment entry, or a retry
 

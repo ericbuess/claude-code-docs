@@ -6,7 +6,7 @@
 
 > Learn how to enable and configure OpenTelemetry for Claude Code.
 
-Track Claude Code usage, costs, and tool activity across your organization by exporting telemetry data through OpenTelemetry (OTel). Claude Code exports metrics as time series data via the standard metrics protocol, events via the logs/events protocol, and optionally distributed traces via the [traces protocol](#traces-beta). Configure your metrics, logs, and traces backends to match your monitoring requirements.
+Track Claude Code usage, costs, and tool activity across your organization by exporting telemetry data through OpenTelemetry (OTel). Claude Code exports metrics as time series data via the standard metrics protocol, events via the logs/events protocol, and optionally distributed traces via the [traces protocol](#traces-beta).
 
 ## Quick start
 
@@ -27,7 +27,7 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 # 4. Set authentication (if required)
 export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer your-token"
 
-# 5. For debugging: reduce export intervals
+# 5. For debugging: reduce export intervals, and reset them for production use
 export OTEL_METRIC_EXPORT_INTERVAL=10000  # 10 seconds (default: 60000ms)
 export OTEL_LOGS_EXPORT_INTERVAL=5000     # 5 seconds (default: 5000ms)
 
@@ -35,17 +35,13 @@ export OTEL_LOGS_EXPORT_INTERVAL=5000     # 5 seconds (default: 5000ms)
 claude
 ```
 
-<Note>
-  The default export intervals are 60 seconds for metrics and 5 seconds for logs. During setup, you may want to use shorter intervals for debugging purposes. Remember to reset these for production use.
-</Note>
-
 To verify a setup that exports metrics, check your backend for the `claude_code.session.count` metric, which Claude Code emits when a session starts. To verify a logs-only setup, submit a prompt and check for the `claude_code.user_prompt` event. If nothing arrives, run `claude --debug` and check the debug log for OTel export errors.
 
 For full configuration options, see the [OpenTelemetry specification](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/protocol/exporter.md#configuration-options).
 
 ## Administrator configuration
 
-Administrators can configure OpenTelemetry settings for all users through the [managed settings file](/docs/en/settings#settings-files). This allows for centralized control of telemetry settings across an organization. See the [settings precedence](/docs/en/settings#settings-precedence) for more information about how settings are applied.
+Administrators can configure OpenTelemetry settings for all users through the [managed settings file](/docs/en/settings#settings-files). See the [settings precedence](/docs/en/settings#settings-precedence) for more information about how settings are applied.
 
 Example managed settings configuration:
 
@@ -61,10 +57,6 @@ Example managed settings configuration:
   }
 }
 ```
-
-<Note>
-  Managed settings can be distributed via MDM (Mobile Device Management) or other device management solutions. Environment variables defined in the managed settings file have high precedence and can't be overridden by users.
-</Note>
 
 Claude Code doesn't pass `OTEL_*` environment variables to the subprocesses it spawns, including the Bash tool, hooks, MCP servers, and language servers. An OpenTelemetry-instrumented application that you run through the Bash tool doesn't inherit Claude Code's exporter endpoint or headers, so set those variables directly in the command if that application needs to export its own telemetry.
 
@@ -137,7 +129,7 @@ The following environment variables control which attributes are included in met
 | `OTEL_METRICS_INCLUDE_ENTRYPOINT`          | Include app.entrypoint attribute in metrics                                     | `false`       | `true`             |
 | `OTEL_METRICS_INCLUDE_RESOURCE_ATTRIBUTES` | Include keys from `OTEL_RESOURCE_ATTRIBUTES` as attributes on metric datapoints | `true`        | `false`            |
 
-These variables help control the cardinality of metrics, which affects storage requirements and query performance in your metrics backend. Lower cardinality generally means better performance and lower storage costs but less granular data for analysis.
+Lower cardinality generally means better performance and lower storage costs but less granular data for analysis.
 
 ### Traces (beta)
 
@@ -595,10 +587,6 @@ For message-level reconstruction, each event class carries a key that matches a 
 * `message.uuid` on `user_prompt` and `assistant_response`
 * `request_id` on the API events, persisted as `requestId` on the transcript's assistant entries
 * `tool_use_id` on `tool_result` and `tool_decision` events
-
-<Note>
-  `prompt.id` is intentionally excluded from metrics because each prompt generates a unique ID, which would create an ever-growing number of time series. Use it for event-level analysis and audit trails only.
-</Note>
 
 #### User prompt event
 
@@ -1125,6 +1113,36 @@ Logged when a session quality survey is shown or answered. See [Session quality 
 * `survey_type`: Which survey produced the event. `"session"` is the "How is Claude doing?" rating prompt
 * `response`: The user's selection on `responded` events
 * `enabled_via_override`: `true` when [`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`](/docs/en/env-vars) is set. Emitted as a boolean, not a string. Present on `session` survey events. Filter on this attribute to confirm the override is applied across a fleet
+
+#### Retention sweep event
+
+Logged once per run of the retention cleanup sweep, which deletes [session transcripts and other application data](/docs/en/claude-directory#cleaned-up-automatically) older than the [`cleanupPeriodDays`](/docs/en/settings#available-settings) setting. Claude Code runs the sweep in the background at most once per session, and a run that deletes nothing still emits the event. If Claude Code ran the sweep in any session on the same machine in the last 24 hours, it delays this session's sweep by at least 10 minutes, so a session that exits sooner emits nothing. When you run `claude -p` with `--bare`, Claude Code doesn't run the sweep and emits nothing.
+
+Like every OTel event on this page, it goes only to the telemetry backend you configure. Requires Claude Code v2.1.227 or later.
+
+When Claude Code can't safely determine the retention period, it pauses the sweep and emits the event with `result` set to `"skipped"` and a `skip_reason`. When [managed settings](/docs/en/server-managed-settings) set `cleanupPeriodDays`, the managed value pins the retention period and the sweep runs even when a settings file in a lower-priority scope is broken or invalid; a managed settings file that itself can't be read or parsed still pauses the sweep. The deletion counter attributes are present only when `result` is `"complete"`.
+
+**Event Name**: `claude_code.retention_sweep`
+
+**Attributes**:
+
+* All [standard attributes](#standard-attributes)
+* `event.name`: `"retention_sweep"`
+* `event.timestamp`: ISO 8601 timestamp
+* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `result`: `"complete"` when the sweep ran, `"skipped"` when Claude Code paused it
+* `period_days`: The `cleanupPeriodDays` value from merged settings, in days, or `30` when no source sets it. On skipped events, the value the sweep would have used, computed from the settings sources Claude Code could read
+* `used_default`: `"true"` when no readable settings source sets `cleanupPeriodDays`, `"false"` otherwise. On complete events, `"true"` means the 30-day default applied
+* `skip_reason`: Why Claude Code paused the sweep. Present only when `result` is `"skipped"`:
+  * `"user_source_disabled"`: User settings are excluded, for example by the [`--setting-sources`](/docs/en/cli-reference#cli-flags) flag or the SDK's [`settingSources`](/docs/en/agent-sdk/typescript#options) option, and no enabled source provides `cleanupPeriodDays`
+  * `"settings_unknowable"`: A settings file couldn't be read or parsed, so `cleanupPeriodDays` may be set to a value Claude Code can't see
+  * `"settings_invalid_key_set"`: Settings have validation errors and `cleanupPeriodDays` is explicitly set, so falling back to the default could delete files the setting was meant to keep
+* `transcripts_deleted`: Number of session transcripts, the top-level `~/.claude/projects/*/*.jsonl` files, that the sweep deleted
+* `session_files_deleted`: Number of artifacts the session-files sweep deleted: transcripts plus per-session companion files such as sidecars, recordings, and tool results
+* `artifacts_deleted`: Total items the sweep deleted across the data directories it covers, including the session files. Some sweeps count a whole removed directory tree as one item and a few cleanup passes don't contribute to the counter, so treat the value as a floor rather than an exact file count
+* `files_retained_fresh`: Files inspected and left in place because they're still within the retention period. Only per-file sweeps count these, so the value is a floor; a nonzero value is the normal steady state
+* `files_past_cutoff`: Files older than the retention period that the sweep failed to delete, for example because of a permission error or a file held open. A value above zero means files outlived the configured retention period; zero isn't proof that none did, because a failed removal of a whole directory counts toward `error_count` instead
+* `error_count`: Number of errors the sweep encountered while listing or deleting files
 
 ## Interpret metrics and events data
 

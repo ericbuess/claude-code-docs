@@ -56,8 +56,6 @@ When a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy
 | File-based managed      | macOS: `/Library/Application Support/ClaudeCode/managed-settings.json`<br />Linux and WSL: `/etc/claude-code/managed-settings.json`<br />Windows: `C:\Program Files\ClaudeCode\managed-settings.json` | Medium   | All            |
 | Windows user registry   | `HKCU\SOFTWARE\Policies\ClaudeCode`                                                                                                                                                                   | Lowest   | Windows only   |
 
-A configured [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) preempts all four sources: its output becomes the only managed configuration for the run. See [Settings precedence](/docs/en/settings#settings-precedence).
-
 Server-managed settings reach devices at authentication time and refresh hourly during active sessions, with no endpoint infrastructure. Delivery through the claude.ai admin console requires a Claude for Teams or Enterprise plan. Deployments on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry can get the same remote delivery by running a [Claude apps gateway](/docs/en/claude-apps-gateway), or use one of the file-based or OS-level mechanisms instead.
 
 If your organization mixes providers, configure [server-managed settings](/docs/en/server-managed-settings) for claude.ai users plus a [file-based or plist/registry fallback](/docs/en/settings#settings-files) so other users still receive managed policy.

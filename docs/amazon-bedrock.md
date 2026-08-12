@@ -172,9 +172,7 @@ Amazon Bedrock API keys provide a simpler authentication method without needing 
 
 #### Credential caching and resolution timeout
 
-Claude Code resolves the AWS default credential provider chain once and keeps the resolved credentials in memory. It reuses them until five minutes before they expire, or for one hour when they carry no expiration, so an SSO-backed profile requests credentials from IAM Identity Center about once per credential lifetime. A credential error from the API clears the cache, and the retry resolves fresh credentials.
-
-Before v2.1.207, Claude Code resolved the chain on every API request, so an SSO-backed profile requested fresh credentials from IAM Identity Center each time and could be throttled in large deployments.
+Claude Code resolves the AWS default credential provider chain once and keeps the resolved credentials in memory. It reuses them until five minutes before they expire, or for one hour when they carry no expiration, so an SSO-backed profile requests credentials from IAM Identity Center about once per credential lifetime. A credential error from the API clears the cache, and the retry resolves fresh credentials. Requires Claude Code v2.1.207 or later.
 
 The cache covers every credential option above except an Amazon Bedrock API key, which doesn't use the provider chain. To resolve the chain on every request instead, set [`CLAUDE_CODE_SKIP_AWS_CRED_CACHE=1`](/docs/en/env-vars).
 
@@ -204,7 +202,7 @@ These two settings have different trigger conditions:
 
 **`awsAuthRefresh`**: Use this for commands that modify the `.aws` directory, such as updating credentials, SSO cache, or config files. The command's output is displayed to the user, but interactive input isn't supported. This works well for browser-based SSO flows where the CLI displays a URL or code and you complete authentication in the browser.
 
-**`awsCredentialExport`**: Only use this if you can't modify `.aws` and must directly return credentials. This command runs whenever credentials need to be refreshed, not only when credentials are expired. Output is captured silently and not shown to the user. The command must output JSON in this format:
+**`awsCredentialExport`**: Only use this if you can't modify `.aws` and must directly return credentials. Output is captured silently and not shown to the user. The command must output JSON in this format:
 
 ```json theme={null}
 {
@@ -221,7 +219,7 @@ As of Claude Code v2.1.181, the flat output from `aws configure export-credentia
 
 `Expiration` is optional. As of Claude Code v2.1.176, when the command returns a valid ISO 8601 `Expiration`, Claude Code caches the credentials until five minutes before that time. Without it, or on earlier versions, credentials are cached for one hour.
 
-When you configure `awsCredentialExport` without `awsAuthRefresh`, Claude Code uses the exported credentials directly and doesn't re-resolve the AWS default credential provider chain at startup. Before v2.1.206, startup also re-resolved the default provider chain, which made a live SSO or STS call outside your proxy configuration and could block the first prompt for several minutes on networks with restricted egress.
+When you configure `awsCredentialExport` without `awsAuthRefresh`, Claude Code uses the exported credentials directly and doesn't re-resolve the AWS default credential provider chain at startup. Requires Claude Code v2.1.206 or later.
 
 ### 3. Configure Claude Code
 
@@ -351,8 +349,6 @@ If you have not pinned a model and the current default is unavailable in your ac
 When you start the session on a specific Sonnet or Opus version, with `--model`, `ANTHROPIC_MODEL`, or the [`model` setting](/docs/en/settings), that version acts as the session's pinned default for the matching `sonnet` or `opus` alias. Claude Code skips the availability check for the built-in default your model replaces and starts on the model you configured, with no fallback notice.
 
 Model aliases such as `opus` don't act as pins, and neither does a model ID Claude Code doesn't recognize, such as an application inference profile ARN.
-
-<Info>Before v2.1.211, Claude Code checked the default model's availability even when a session model was explicitly configured, and could show a fallback notice for a default the session didn't use.</Info>
 
 ## Cross-region inference profile prefixes
 

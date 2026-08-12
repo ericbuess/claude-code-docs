@@ -260,7 +260,7 @@ The [Agent SDK](/docs/en/agent-sdk/overview) has no gateway-specific options; it
 
 [Claude Code in Slack](/docs/en/slack) and [Claude Code on the web](/docs/en/claude-code-on-the-web) are Anthropic-hosted products that always use Anthropic's API; they aren't part of a gateway deployment. Gateway variables set in a cloud session's environment configuration are not applied. If your traffic must stay on the gateway, don't enable these surfaces for those users.
 
-[Remote Control](/docs/en/remote-control) and [voice dictation](/docs/en/voice-dictation) both rely on a claude.ai identity: Remote Control to pair a live session with your account, and voice dictation to reach the claude.ai transcription endpoint. They are unavailable while `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or an `apiKeyHelper` is active. As of v2.1.196, Remote Control is also disabled while `ANTHROPIC_BASE_URL` points at a non-Anthropic host, so signing in with claude.ai isn't enough on its own.
+[Remote Control](/docs/en/remote-control) and [voice dictation](/docs/en/voice-dictation) both rely on a claude.ai identity: Remote Control to pair a live session with your account, and voice dictation to reach the claude.ai transcription endpoint. They are unavailable while `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or an `apiKeyHelper` is active. Remote Control is also disabled while `ANTHROPIC_BASE_URL` points at a non-Anthropic host, so signing in with claude.ai isn't enough on its own.
 
 To restore either feature, log in with claude.ai and unset the gateway variables that feature checks. The Remote Control section of `claude doctor` names the credential variable to unset.
 
@@ -390,7 +390,7 @@ These configurations point Claude Code at a gateway through a provider-specific 
 
 Use one only if your gateway team specifically named Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or the Claude Platform on AWS. If the [verification request](#verify-the-connection) above returned JSON, you can skip this section.
 
-Set the block for the provider your gateway team named. The skip-auth variables tell Claude Code not to sign requests with provider credentials, since the gateway holds those. If the gateway needs its own token, add `ANTHROPIC_AUTH_TOKEN` after the block, except for Microsoft Foundry, which uses `ANTHROPIC_FOUNDRY_API_KEY` as shown. A Microsoft Foundry gateway that expects a bearer token can use [`ANTHROPIC_FOUNDRY_AUTH_TOKEN`](/docs/en/env-vars) instead; it takes precedence over `ANTHROPIC_FOUNDRY_API_KEY` when both are set. `ANTHROPIC_FOUNDRY_AUTH_TOKEN` requires Claude Code v2.1.203 or later.
+Set the block for the provider your gateway team named. The skip-auth variables tell Claude Code not to sign requests with provider credentials, since the gateway holds those. If the gateway needs its own token, add `ANTHROPIC_AUTH_TOKEN` after the block, except for Microsoft Foundry, which uses `ANTHROPIC_FOUNDRY_API_KEY` as shown.
 
 #### Amazon Bedrock
 
@@ -483,6 +483,18 @@ See [Claude Platform on AWS](/docs/en/claude-platform-on-aws) for the workspace 
     ```
   </Tab>
 </Tabs>
+
+#### Confirm the provider route
+
+Start `claude` from the shell where you set the block and run `/status`. With the Amazon Bedrock block, the **Status** tab shows rows like these:
+
+```text theme={null}
+API provider: Amazon Bedrock
+Bedrock base URL: https://llm-gateway.example.com/bedrock
+AWS auth skipped
+```
+
+The other blocks produce the same rows under their provider's names, for example `Vertex base URL` and `GCP auth skipped` for Google Cloud's Agent Platform; the Microsoft Foundry block shows an auth skipped row only if you set `CLAUDE_CODE_SKIP_FOUNDRY_AUTH`. If you also route through a corporate proxy, a `Proxy` row shows the proxy URL. If the base URL row is missing, the variable didn't reach the session.
 
 ## Troubleshoot gateway errors
 

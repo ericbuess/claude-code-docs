@@ -211,114 +211,7 @@ Most organizations can use a cloud provider directly without additional configur
 * **Corporate proxy**: Routes traffic through an HTTP/HTTPS proxy. Use this if your organization requires all outbound traffic to pass through a proxy server for security monitoring, compliance, or network policy enforcement. Configure with the `HTTPS_PROXY` or `HTTP_PROXY` environment variables. Learn more in [Enterprise network configuration](/docs/en/network-config).
 * **LLM Gateway**: A service that sits between Claude Code and the cloud provider to handle authentication and routing. Use this if you need centralized usage tracking across teams, custom rate limiting or budgets, or centralized authentication management. Configure with the `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL`, `ANTHROPIC_AWS_BASE_URL`, `ANTHROPIC_VERTEX_BASE_URL`, or `ANTHROPIC_FOUNDRY_BASE_URL` environment variables. Learn more in [LLM gateways](/docs/en/llm-gateway).
 
-The following examples show the environment variables to set in your shell or shell profile (`.bashrc`, `.zshrc`). See [Settings](/docs/en/settings) for other configuration methods.
-
-### Amazon Bedrock
-
-<Tabs>
-  <Tab title="Corporate proxy">
-    Route Amazon Bedrock traffic through your corporate proxy by setting the following [environment variables](/docs/en/env-vars):
-
-    ```bash theme={null}
-    # Enable Bedrock
-    export CLAUDE_CODE_USE_BEDROCK=1
-    export AWS_REGION=us-east-1
-
-    # Configure corporate proxy
-    export HTTPS_PROXY='https://proxy.example.com:8080'
-    ```
-  </Tab>
-
-  <Tab title="LLM Gateway">
-    Route Amazon Bedrock traffic through your LLM gateway by setting the following [environment variables](/docs/en/env-vars):
-
-    ```bash theme={null}
-    # Enable Bedrock
-    export CLAUDE_CODE_USE_BEDROCK=1
-
-    # Configure LLM gateway
-    export ANTHROPIC_BEDROCK_BASE_URL='https://your-llm-gateway.com/bedrock'
-    export CLAUDE_CODE_SKIP_BEDROCK_AUTH=1  # If gateway handles AWS auth
-    ```
-  </Tab>
-</Tabs>
-
-### Microsoft Foundry
-
-<Tabs>
-  <Tab title="Corporate proxy">
-    Route Microsoft Foundry traffic through your corporate proxy by setting the following [environment variables](/docs/en/env-vars):
-
-    ```bash theme={null}
-    # Enable Microsoft Foundry
-    export CLAUDE_CODE_USE_FOUNDRY=1
-    export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
-    export ANTHROPIC_FOUNDRY_API_KEY=your-api-key  # Or omit for Entra ID auth
-
-    # Configure corporate proxy
-    export HTTPS_PROXY='https://proxy.example.com:8080'
-    ```
-  </Tab>
-
-  <Tab title="LLM Gateway">
-    Route Microsoft Foundry traffic through your LLM gateway by setting the following [environment variables](/docs/en/env-vars):
-
-    ```bash theme={null}
-    # Enable Microsoft Foundry
-    export CLAUDE_CODE_USE_FOUNDRY=1
-
-    # Configure LLM gateway
-    export ANTHROPIC_FOUNDRY_BASE_URL='https://your-llm-gateway.com'
-    export ANTHROPIC_FOUNDRY_API_KEY=your-gateway-key  # Sent as x-api-key
-    ```
-  </Tab>
-</Tabs>
-
-### Google Cloud's Agent Platform
-
-<Tabs>
-  <Tab title="Corporate proxy">
-    Route Google Cloud's Agent Platform traffic through your corporate proxy by setting the following [environment variables](/docs/en/env-vars):
-
-    ```bash theme={null}
-    # Enable Agent Platform
-    export CLAUDE_CODE_USE_VERTEX=1
-    export CLOUD_ML_REGION=us-east5
-    export ANTHROPIC_VERTEX_PROJECT_ID=your-project-id
-
-    # Configure corporate proxy
-    export HTTPS_PROXY='https://proxy.example.com:8080'
-    ```
-  </Tab>
-
-  <Tab title="LLM Gateway">
-    Route Google Cloud's Agent Platform traffic through your LLM gateway by setting the following [environment variables](/docs/en/env-vars):
-
-    ```bash theme={null}
-    # Enable Agent Platform
-    export CLAUDE_CODE_USE_VERTEX=1
-
-    # Configure LLM gateway
-    export ANTHROPIC_VERTEX_BASE_URL='https://your-llm-gateway.com/vertex'
-    export CLAUDE_CODE_SKIP_VERTEX_AUTH=1  # If gateway handles GCP auth
-    export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
-    export CLOUD_ML_REGION=us-east5
-    ```
-  </Tab>
-</Tabs>
-
-<Tip>
-  Use `/status` in Claude Code to verify your proxy and gateway configuration is applied correctly. For example, with the Bedrock gateway configuration above, the output includes lines like:
-
-  ```
-  API provider: Amazon Bedrock
-  Bedrock base URL: https://your-llm-gateway.com/bedrock
-  AWS region: us-east-1
-  AWS auth skipped
-  ```
-
-  If you configured a corporate proxy, `/status` also shows a `Proxy` line with your proxy URL.
-</Tip>
+For the per-provider environment variables that route Amazon Bedrock, Microsoft Foundry, or Google Cloud's Agent Platform through an LLM gateway, see [route to a cloud provider through a gateway](/docs/en/llm-gateway-connect#route-to-a-cloud-provider-through-a-gateway). Run `/status` in Claude Code to verify which provider, base URL, and proxy a session is using.
 
 ## Best practices for organizations
 
@@ -350,8 +243,6 @@ Security teams can configure managed permissions for what Claude Code is and is 
 ### Leverage MCP for integrations
 
 MCP is a great way to give Claude Code more information, such as connecting to ticket management systems or error logs. We recommend that one central team configures MCP servers and checks a `.mcp.json` configuration into the codebase so that all users benefit. [Learn more](/docs/en/mcp).
-
-At Anthropic, we trust Claude Code to power development across every Anthropic codebase. We hope you enjoy using Claude Code as much as we do.
 
 ## Next steps
 

@@ -100,7 +100,14 @@ The script must leave a working tree at `CLAUDE_RUNNER_CHECKOUT_PATH` checked ou
 
 The runner doesn't pass a git credential to the hook. Instead, mint a per-session clone credential from the session's identity: verify `CLAUDE_CODE_SESSION_ACCESS_TOKEN` with a standard JWT library against the JWKS endpoint under `CLAUDE_RUNNER_API_BASE_URL`, as described in [Verify the token from your service](/docs/en/self-hosted-environments-identity#verify-the-token-from-your-service), then have your credential service issue a short-lived clone credential for the identity in the token's `act` claim. `CLAUDE_RUNNER_CLAUDE_BIN` isn't set in the checkout-hook environment, so the `decode-token` subcommand isn't available here. Falling back to whatever git authentication the host already has, such as an SSH agent, credential helper, or `.netrc`, is also an option.
 
-A non-zero exit fails the session, and the tail of the script's stderr is surfaced to the user. The runner removes the checkout path after the session ends.
+When the hook exits non-zero, or exits 0 without leaving a usable checkout behind, what the runner does depends on the repository:
+
+* **A repository the session pushes results to**: the runner fails the session, and on a non-zero exit surfaces the tail of the script's stderr to the user.
+* **A repository the session only reads from**, such as a repository added to a running session: the runner logs a `[runner:warn]` line with the failure detail, posts a `Skipped` step to the session, removes whatever the hook left at the checkout path, and continues with the remaining repositories. When the runner can't remove the path immediately, it retries the removal at session end. If skipping leaves the session with no repository at all, the runner fails the session anyway.
+
+Before v2.1.228, the runner failed the session on a hook failure for any repository, so a read-only repository the hook couldn't serve failed the session again on every fresh runner the session resumed on.
+
+The runner removes the checkout path after the session ends.
 
 ### post-session
 

@@ -144,6 +144,7 @@ The `/branch` confirmation prints two session IDs: the new branch you are now in
 | Conversation history                                                                                                                                                     | Copied into the branch up to the point you ran `/branch`                                                                                                                                                        |
 | "Allow for this session" permission grants                                                                                                                               | Carried over; the branch runs in the same process, so your existing grants still apply. If you fork into a separate process with `--fork-session`, the new process starts without them and you re-approve there |
 | In-flight [background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) and [background Bash commands](/docs/en/interactive-mode#background-bash-commands) | Keep running. Their output appears in the new branch you switched into, not in the original session                                                                                                             |
+| [Remote Control](/docs/en/remote-control) connection                                                                                                                          | Stays connected. A phone or browser connected to the session follows you into the branch and keeps receiving new messages there                                                                                 |
 
 If you resume the same session in two terminals without forking, messages from both interleave into one transcript. For checkpoint-based rewind within a single session, see [Checkpointing](/docs/en/checkpointing).
 
@@ -178,7 +179,9 @@ claude -p --resume <session-id> --output-format json "summarize what we changed"
 
 ### Where transcripts are stored
 
-By default, transcripts are stored as JSONL at `~/.claude/projects/<project>/<session-id>.jsonl`, where `<project>` is your working directory path with non-alphanumeric characters replaced by `-`. Each line is a JSON object for a message, tool use, or metadata entry. The entry format is internal to Claude Code and changes between versions, so scripts that parse these files directly can break on any release. To build on session data, use `/export` or the [script interfaces](#access-conversations-from-scripts) instead.
+By default, Claude Code stores transcripts as JSONL at `~/.claude/projects/<project>/<session-id>.jsonl`, where `<project>` is your working directory path with non-alphanumeric characters replaced by `-`. For a working directory whose converted name exceeds 200 characters, Claude Code truncates the name to 200 characters and appends a hash of the full path, so the directory name stays within filesystem limits.
+
+Each line is a JSON object for a message, tool use, or metadata entry. The entry format is internal to Claude Code and changes between versions, so scripts that parse these files directly can break on any release. To build on session data, use `/export` or the [script interfaces](#access-conversations-from-scripts) instead.
 
 The location, retention, and write behavior are configurable:
 

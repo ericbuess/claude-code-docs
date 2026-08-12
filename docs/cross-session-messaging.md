@@ -71,7 +71,7 @@ Claude finds a message's target on its own, so you don't need to run anything be
 
 * **Subagents**: agents running inside the current session. [Agent team](/docs/en/agent-teams) teammates aren't listed; Claude messages them through the team's own roster.
 * **Your other local sessions**: Claude Code sessions running on the same machine, including [background sessions](/docs/en/agent-view). A session appears only when it binds an [inbox socket](#the-sessions-inbox-socket).
-* **Your cloud sessions**: your [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions. These appear when this session has cloud access: a claude.ai login on the first-party Anthropic API and an organization policy that allows cloud sessions.
+* **Your cloud sessions**: your [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions, shown while this session is connected to [Remote Control](/docs/en/remote-control).
 * **Your Remote Control sessions on other machines**: shown while this session is connected to [Remote Control](/docs/en/remote-control), and labeled `Remote Control`.
 
 Claude addresses a session beyond this machine by name, the same as a local session. See [Message sessions on other machines](#message-sessions-on-other-machines) for how those messages travel.
@@ -231,7 +231,7 @@ To check a session, type `/list-agents`, also available as `/peers`. The result 
 * **`/list-agents` works but a send didn't arrive**: messaging is on, and something narrower applies:
   * **Deny rules**: a [permission deny rule](#turn-off-cross-session-messaging) removes the `SendMessage` and `ListAgents` tools.
   * **Inbound controls**: the [receiving session's inbound controls](#control-inbound-messages) can hold or drop what you send it.
-  * **Cloud session missing**: a cloud session appears only when this session has [cloud access](#see-which-sessions-claude-can-reach).
+  * **Cloud session missing**: a cloud session appears only while this session is connected to [Remote Control](/docs/en/remote-control).
   * **Other-machine session missing**: a session on another of your machines appears only when it runs with [Remote Control](/docs/en/remote-control) and this session is connected as well.
   * **Starting a conversation**: [Message sessions on other machines](#message-sessions-on-other-machines) covers starting a conversation with a session beyond this machine.
 

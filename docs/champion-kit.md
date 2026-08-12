@@ -8,7 +8,7 @@
 
 This page is for individual engineers who are already using Claude Code and want to help their team adopt it. It covers what to share, how to answer the questions you will get, a thirty-day playbook, and responses to common concerns.
 
-Adoption of a developer tool rarely happens because of a rollout announcement. It happens because someone on the team begins using the tool well, talks about it openly, and makes it easy for others to follow. The work you do as a champion has a disproportionate effect: every example you share shortens the learning curve for the engineers who come after you, and every question you answer in public turns one person's experience into something the whole team can build on. You are acting as a multiplier for your team, not a help desk, and this guide is structured to keep the role sustainable on those terms.
+Adoption of a developer tool rarely happens because of a rollout announcement. It happens because someone on the team begins using the tool well, talks about it openly, and makes it easy for others to follow. The work you do as a champion has a disproportionate effect: every example you share shortens the learning curve for the engineers who come after you, and every question you answer in public turns one person's experience into something the whole team can build on.
 
 ## The champion role
 
@@ -19,8 +19,6 @@ The role consists of three behaviors that reinforce one another.
 | Share what you discover  | Post the prompts, screenshots, and small wins from your own work in the places your team already reads, such as an engineering channel, a standup thread, or a pull-request description. | Examples drawn from your own codebase are more persuasive than any external documentation, because colleagues can see exactly how the tool applies to the problems they share with you. |
 | Be the person people ask | When a colleague asks how you accomplished something, respond with the actual prompt you used so they can apply it directly to their own task.                                           | A concrete, runnable example removes the gap between curiosity and a first successful use, which is where most adoption efforts stall.                                                  |
 | Grow the circle          | Establish a small number of lightweight, recurring habits, such as a dedicated channel or a weekly thread, so that momentum continues even when your attention is elsewhere.             | Adoption that depends on a single person is fragile. Adoption that is carried by shared habits continues to compound on its own.                                                        |
-
-Most of this fits naturally inside the work you are already doing. The difference is a small amount of additional intention about where your discoveries are posted and how your answers travel.
 
 ### What this should cost you
 

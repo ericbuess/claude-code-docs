@@ -118,7 +118,7 @@ Restrict access to trusted personnel, as settings changes apply to all users in 
 
 ### Managed-only settings
 
-Most [settings keys](/docs/en/settings#available-settings) work in any scope. A handful of keys are only read from managed settings and have no effect when placed in user or project settings files. See [managed-only settings](/docs/en/permissions#managed-only-settings) for the full list. Any setting not on that list can still be placed in managed settings and takes the highest precedence, apart from the exceptions listed in the [settings reference's precedence section](/docs/en/settings#settings-precedence).
+Most [settings keys](/docs/en/settings#available-settings) work in any scope. A handful of keys are only read from managed settings and have no effect when placed in user or project settings files. See [managed-only settings](/docs/en/permissions#managed-only-settings) for the full list.
 
 ### Current limitations
 
@@ -225,6 +225,18 @@ Certain settings that could pose security risks require explicit user approval b
 * **Managed CLAUDE.md content**: a `claudeMd` value delivered through managed settings
 
 When these settings are present, users see a security dialog explaining what is being configured. Users must approve to proceed. If a user rejects the settings, Claude Code exits.
+
+#### Approval memory
+
+Claude Code records your approval in your configuration directory, `~/.claude` unless you set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars). What it records depends on the credential the settings fetch uses:
+
+* **A claude.ai login saved by `/login` or `claude auth login`**: one approval per organization, held by the account that approved most recently.
+* **Any other credential**, such as a [Claude apps gateway](/docs/en/claude-apps-gateway), an API key, or `CLAUDE_CODE_OAUTH_TOKEN`: one approval for the delivered settings, kept with the cached copy of the settings in that configuration directory. Claude Code shows the dialog again when the settings that require approval change, and after you run `/logout` or `claude auth logout`, which delete the cached copy.
+
+With a saved claude.ai login:
+
+* If you sign out and back in, or switch to another organization and later return, Claude Code doesn't show the dialog again while those settings are unchanged, unless another account approved them for that organization in the same configuration directory in between.
+* If you sign in to the same organization with a different account, Claude Code shows the dialog again even when the settings are unchanged. That account's approval replaces the previous one, so when you switch back, Claude Code shows the dialog once more.
 
 If an interactive session can't show the dialog, Claude Code doesn't apply the delivered settings and keeps the last-approved settings; the dialog appears in the next session that can show it. Requires Claude Code v2.1.211 or later.
 

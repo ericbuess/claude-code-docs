@@ -317,7 +317,12 @@ When Claude invokes a subagent, it can also pass a `model` parameter for that sp
 
 As of v2.1.196, setting `CLAUDE_CODE_SUBAGENT_MODEL` to `inherit` is the same as leaving it unset: resolution continues with the per-invocation `model` parameter, then the frontmatter. In earlier versions, `inherit` forced subagents onto the main conversation's model and ignored both of those sources.
 
-Claude Code checks the environment variable, per-invocation parameter, and frontmatter values against your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist. When a blocked value is a family alias such as `opus`, Claude Code runs the subagent on the newest version of that family the allowlist permits, following the same [substitution rules and provider scope](/docs/en/model-config#restrict-model-selection) as `/model`. For any other blocked value, on providers where that substitution doesn't operate, or when the allowlist permits no version of the family, Claude Code runs the subagent on the inherited model instead. Before v2.1.222, Claude Code ran the subagent on the inherited model for a blocked family alias as well.
+Claude Code checks the environment variable, per-invocation parameter, and frontmatter values against your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist. For a blocked value, it substitutes another model:
+
+* When the blocked value is a family alias such as `opus`, Claude Code runs the subagent on the newest version of that family the allowlist permits, following the same [substitution rules and provider scope](/docs/en/model-config#restrict-model-selection) as `/model`. Before v2.1.222, Claude Code ran the subagent on the inherited model for a blocked family alias as well.
+* For any other blocked value, on providers where that substitution doesn't operate, or when the allowlist permits no version of the family, Claude Code runs the subagent on the inherited model instead.
+
+In interactive sessions, Claude Code shows a warning naming the requested model and the model the subagent runs on, for either substitution.
 
 A per-invocation `model` parameter also applies when the subagent is [resumed or sent a follow-up message](#resume-subagents), so the subagent stays on that model. Before v2.1.211, resuming dropped the per-invocation value and the subagent reverted to its definition's `model` field or, without one, the main conversation's model.
 
@@ -500,9 +505,9 @@ Implement API endpoints. Follow the conventions and patterns from the preloaded 
 
 The full content of each listed skill is injected into the subagent's context at startup. This field controls which skills are preloaded, not which skills the subagent can access: without it, the subagent can still discover and invoke project, user, and plugin skills through the Skill tool during execution. To prevent a subagent from invoking skills entirely, omit `Skill` from the [`tools`](#available-tools) list or add it to `disallowedTools`.
 
-You can't preload skills that set [`disable-model-invocation: true`](/docs/en/skills#control-who-invokes-a-skill), since preloading draws from the same set of skills Claude can invoke. This includes the bundled `/verify` and `/code-review` skills: only you can run them, so they can't be preloaded either.
+You can't preload skills that set [`disable-model-invocation: true`](/docs/en/skills#control-who-invokes-a-skill), since preloading draws from the same set of skills Claude can invoke. This includes the bundled `/verify` skill: only you can run it, so it can't be preloaded either.
 
-If a listed skill is missing or disabled, Claude Code skips it and logs a warning to the debug log.
+If a listed skill is missing or disabled, for example by your organization's policy, Claude Code skips it and logs a warning to the debug log.
 
 <Note>
   This is the inverse of [running a skill in a subagent](/docs/en/skills#run-skills-in-a-subagent). With `skills` in a subagent, the subagent controls the system prompt and loads skill content. With `context: fork` in a skill, the skill content is injected into the agent you specify. Both use the same underlying system.
@@ -950,7 +955,7 @@ Resumed subagents retain their full conversation history, including all previous
 
 When a subagent completes, Claude receives its agent ID. The built-in Explore and Plan agents are one-shot and return no agent ID, so they can't be resumed; use `general-purpose` or a custom subagent when you need to continue the work.
 
-Claude uses the `SendMessage` tool with the agent's ID or name as the `to` field to resume it. `SendMessage` doesn't require [agent teams](/docs/en/agent-teams) to be enabled; only structured team-protocol messages such as `shutdown_request` and `plan_approval_response` do. Beyond subagents and teammates, in sessions where cross-session messaging is enabled, the same tool can message [your other Claude Code sessions](/docs/en/cross-session-messaging), on this machine or [beyond it](/docs/en/cross-session-messaging#message-sessions-on-other-machines).
+Claude uses the `SendMessage` tool with the agent's ID or name as the `to` field to resume it. `SendMessage` doesn't require [agent teams](/docs/en/agent-teams) to be enabled; only structured team-protocol messages such as `shutdown_request` and `plan_approval_response` do. Beyond subagents and teammates, in sessions where cross-session messaging is enabled, Claude can use the same tool to message [your other Claude Code sessions](/docs/en/cross-session-messaging), on this machine or [beyond it](/docs/en/cross-session-messaging#message-sessions-on-other-machines).
 
 To resume a subagent, ask Claude to continue the previous work:
 
@@ -978,7 +983,7 @@ Subagent transcripts persist independently of the main conversation:
 
 * **Main conversation compaction**: when the main conversation compacts, subagent transcripts are unaffected. They're stored in separate files.
 * **Session persistence**: subagent transcripts persist within their session. You can [resume a subagent](#resume-subagents) after restarting Claude Code by resuming the same session.
-* **Automatic cleanup**: Claude Code deletes subagent transcripts after the `cleanupPeriodDays` retention period, 30 days by default.
+* **Automatic cleanup**: Claude Code deletes subagent transcripts after the `cleanupPeriodDays` retention period, 30 days by default, following the [retention sweep rules](/docs/en/claude-directory#cleaned-up-automatically).
 
 #### Auto-compaction
 

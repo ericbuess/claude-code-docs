@@ -292,7 +292,7 @@ The [`/code-review` command](/docs/en/commands) reviews a diff in your terminal 
 
     * `--fix`: applies the findings to your working tree after the review
     * `--comment`: posts the findings as inline PR comments
-    * `--post`: on an `ultra` cloud review of a `github.com` pull request, posts the finished findings to the PR as one comment from your GitHub account; see [Post findings to the pull request](/docs/en/ultrareview#post-findings-to-the-pull-request). Requires Claude Code v2.1.227 or later
+    * `--post`: on an `ultra` cloud review of a `github.com` pull request, preselects posting the finished findings to the PR in the launch dialog; see [Post findings to the pull request](/docs/en/ultrareview#post-findings-to-the-pull-request). Requires Claude Code v2.1.227 or later
   </Step>
 
   <Step title="Keep working">
@@ -336,7 +336,29 @@ The review runs in the background by default; before v2.1.218, it ran inside you
 * You run it in non-interactive mode, with the `-p` flag or the Agent SDK; Claude Code waits for the review and includes the findings in the response, except for `ultra`, which [launches the cloud review without waiting](#escalate-to-ultrareview)
 * You set [`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`](/docs/en/env-vars) to `1`, which also turns off every other background task feature
 
-You can't schedule the review: `/code-review` is marked [`disable-model-invocation`](/docs/en/skills#frontmatter-reference), so if you set it as a [scheduled task](/docs/en/scheduled-tasks)'s prompt, Claude reads it as plain text instead of running the review.
+### Let Claude start the review
+
+Claude can start `/code-review` on its own. Ask it to review your changes in plain language and it can run the skill without you typing the command, and a [scheduled task](/docs/en/scheduled-tasks) with `/code-review` as its prompt runs the review.
+
+Exceptions include the following sessions, where `/code-review` runs only when you type it yourself and a scheduled `/code-review` reaches Claude as plain text instead of running the review:
+
+* **Cloud providers**: sessions on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry, unless a host platform that embeds Claude Code sets [`CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`](/docs/en/env-vars)
+* **Claude apps gateway**: sessions that connect through the [Claude apps gateway](/docs/en/claude-apps-gateway)
+* **Privacy environment variables**: sessions that opt out of telemetry or feature-flag fetching with [`DISABLE_TELEMETRY`, `DO_NOT_TRACK`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, or `DISABLE_GROWTHBOOK`](/docs/en/env-vars#variables)
+
+A scheduled task never launches the [cloud review](#escalate-to-ultrareview), so schedule `/code-review` without the `ultra` argument.
+
+To stop both Claude and scheduled tasks from starting the review while keeping `/code-review` available for you to type, add a [`skillOverrides`](/docs/en/skills#override-skill-visibility-from-settings) entry to a [settings file](/docs/en/settings#settings-files) such as `~/.claude/settings.json`:
+
+```json theme={null}
+{
+  "skillOverrides": {
+    "code-review": "user-invocable-only"
+  }
+}
+```
+
+From v2.1.215 through v2.1.222, Claude never started `/code-review` on its own in any configuration.
 
 ### Escalate to ultrareview
 

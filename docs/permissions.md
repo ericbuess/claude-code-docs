@@ -258,7 +258,7 @@ Claude Code parses the PowerShell AST and checks each command in a compound comm
 
 `Edit` rules apply to all built-in tools that edit files. Claude makes a best-effort attempt to apply `Read` rules to all built-in tools that read files like Grep and Glob, to `@file` mentions in your prompts, and to the selection and open-file context that a connected [IDE](/docs/en/vs-code#the-built-in-ide-mcp-server) shares with Claude.
 
-A `Read` deny rule also blocks the [Edit tool](/docs/en/errors#file-is-covered-by-a-read-deny-rule) on the same path, including creating a new file there. Write and NotebookEdit aren't covered, so add an `Edit` deny rule for paths no tool may change. Requires Claude Code v2.1.208 or later.
+A `Read` deny rule also blocks the [Edit and Write tools](/docs/en/errors#file-is-covered-by-a-read-deny-rule) on the same path, including creating a new file there. NotebookEdit isn't covered, so add an `Edit` deny rule for paths no tool may change. The check requires Claude Code v2.1.208 or later on edits, and v2.1.228 or later on writes.
 
 Claude Code checks file permissions against `Edit(path)` and `Read(path)` rules only. If you write a path rule for `Write`, `NotebookEdit`, `Glob`, or the legacy `MultiEdit` tool instead, Claude Code accepts the rule but never consults it, and [warns at startup](/docs/en/errors#is-not-matched-by-file-permission-checks), except for a `Glob` rule passed in `--allowedTools`. Use `Edit(docs/**)` in place of `Write(docs/**)`, `NotebookEdit(docs/**)`, or `MultiEdit(docs/**)`, and `Read(docs/**)` in place of `Glob(docs/**)`. Claude Code doesn't warn about a tool-name rule with no path, such as a deny rule for `Write`; it matches that rule at the tool level everywhere. Requires Claude Code v2.1.210 or later.
 

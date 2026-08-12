@@ -331,15 +331,14 @@ Boundaries are not stored as rules. The classifier re-reads them from the transc
 
 ### When auto mode falls back
 
-Each denied action shows a notification and appears in `/permissions` under the Recently denied tab, where you can press `r` to retry it with a manual approval.
+When auto mode can't approve your session's actions, what happens depends on the case:
 
-If the classifier blocks an action 3 times in a row or 20 times total, auto mode pauses and Claude Code resumes prompting. Approving the prompted action resumes auto mode. These thresholds are not configurable. Any allowed action resets the consecutive counter, while the total counter persists for the session and resets only when its own limit triggers a fallback.
-
-In [non-interactive mode](/docs/en/headless) with the `-p` flag, repeated blocks abort the session since there is no user to prompt.
+* **A blocked action**: Claude Code shows a notification and lists the action in `/permissions` under the **Recently denied** tab, where you can press `r` to retry it with a manual approval. When the classifier produces [no verdict on the action](/docs/en/errors#auto-mode-cannot-determine-the-safety-of-an-action), because a safety check separate from auto mode refused the classifier's own request or its response didn't parse, Claude Code denies the action without the notification or the **Recently denied** entry.
+* **Repeated blocks**: if the classifier blocks an action 3 times in a row or 20 times total, auto mode pauses and Claude Code resumes prompting. Approving the prompted action resumes auto mode. These thresholds are not configurable. Any allowed action resets the consecutive counter, while the total counter persists for the session and resets only when its own limit triggers a fallback. Claude Code doesn't count a denial toward either threshold when [a safety check separate from auto mode refuses the classifier's own request](/docs/en/errors#auto-mode-cannot-determine-the-safety-of-an-action); the linked entry covers how Claude Code handles those denials.
+* **Sessions that can't prompt**: a [non-interactive](/docs/en/headless) `-p` run without a [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags) has no prompt to fall back to. When repeated blocks reach a threshold, the action doesn't run and Claude keeps working, in the main conversation and in its subagents alike. The same applies when a safety check separate from auto mode refuses the classifier's request. Claude Code doesn't stop the run in either case.
+* **A mode switch during a check**: if you switch permission modes while a classifier check is pending, Claude Code discards a verdict the new mode wouldn't have requested rather than applying it: you're prompted for approval instead, or the action is auto-denied in [`dontAsk` mode](#allow-only-pre-approved-tools-with-dontask-mode).
 
 Repeated blocks usually mean the classifier is missing context about your infrastructure. Use `/feedback` to report false positives, or have an administrator [configure trusted infrastructure](/docs/en/auto-mode-config).
-
-If you switch permission modes while a classifier check is pending, Claude Code discards a verdict the new mode wouldn't have requested rather than applying it: you're prompted for approval instead, or the action is auto-denied in [`dontAsk` mode](#allow-only-pre-approved-tools-with-dontask-mode).
 
 <AccordionGroup>
   <Accordion title="How the classifier evaluates actions">
@@ -367,7 +366,7 @@ If you switch permission modes while a classifier check is pending, Claude Code 
 
     1. Before a subagent starts, the delegated task description is evaluated, so a dangerous-looking task is blocked at spawn time.
     2. While the subagent runs, each of its actions goes through the classifier with the same rules as the parent session, and any `permissionMode` in the subagent's frontmatter is ignored.
-    3. When the subagent finishes, the classifier reviews its full action history; if that return check flags a concern, a security warning is prepended to the subagent's results.
+    3. When the subagent finishes, the classifier reviews its full action history; if that return check flags a concern, a security warning is prepended to the subagent's results. When a separate API safety check refuses the review request itself, Claude Code still returns the subagent's results, prepended with a warning that the work is unreviewed and should be treated as untrusted.
 
     Step 1 requires Claude Code v2.1.178 or later. Earlier versions applied the classifier at steps 2 and 3, but did not evaluate the task description before the subagent started.
   </Accordion>

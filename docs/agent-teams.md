@@ -230,6 +230,8 @@ See [Choose a display mode](#choose-a-display-mode) for display configuration op
 
 Each agent's mailbox is a JSON file at `~/.claude/teams/{team-name}/inboxes/{agent-name}.json`. Claude Code validates every entry when it reads a mailbox file. Entries that don't match the message format are reported as errors and removed from the file; the valid messages are still delivered. Before v2.1.207, a single malformed mailbox entry caused a repeated error every second and blocked delivery for that mailbox until you deleted the file manually.
 
+Claude Code reports a message as sent only when the write to the recipient's mailbox file succeeds, whether the message is plain text or a structured protocol message such as a plan approval or shutdown request. When the write fails, for example because the disk is full or the mailbox directory isn't writable, the sending agent receives an error and nothing is sent. See [Failed to write to a teammate's inbox](/docs/en/errors#failed-to-write-to-a-teammate-inbox) for the error messages and recovery steps.
+
 Claude Code manages task dependencies automatically: when a teammate completes a task that other tasks depend on, it unblocks the dependent tasks without any action from you.
 
 Teams and tasks are stored locally under a session-derived name. The name is `session-` followed by the first eight characters of the session ID:
@@ -237,7 +239,7 @@ Teams and tasks are stored locally under a session-derived name. The name is `se
 * **Team config**: `~/.claude/teams/{team-name}/config.json`
 * **Task list**: `~/.claude/tasks/{team-name}/`
 
-Claude Code generates both of these automatically at session startup and updates them as teammates join, go idle, or leave. The team config directory is removed when the session ends. The task list directory persists locally and is never uploaded, so resumed sessions keep their tasks. Retention is governed by the same [`cleanupPeriodDays`](/docs/en/settings#available-settings) you already control for session transcripts.
+Claude Code generates both of these automatically at session startup and updates them as teammates join, go idle, or leave. The team config directory is removed when the session ends. The task list directory persists locally and is never uploaded, so resumed sessions keep their tasks. Retention is governed by the same [`cleanupPeriodDays`](/docs/en/settings#available-settings) you already control for session transcripts, following the [retention sweep rules](/docs/en/claude-directory#cleaned-up-automatically).
 
 The team config holds runtime state such as session IDs and tmux pane IDs, so don't edit it by hand or pre-author it: your changes are overwritten on the next state update.
 

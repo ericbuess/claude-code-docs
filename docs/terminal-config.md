@@ -297,9 +297,9 @@ Run `/tui fullscreen` to switch and save the preference. Your conversation relau
 
 When you paste more than 800 characters or more than two lines into the prompt, Claude Code collapses the input to a placeholder such as `[Pasted text #1 +120 lines]` so the input box stays usable. The full content is still sent to Claude when you submit.
 
-Claude Code keeps the collapsed content under `~/.claude/paste-cache/`, so when you recall a prompt from [command history](/docs/en/interactive-mode#command-history) and resubmit it, Claude Code sends the full pasted content again, including in a later session, until the cache file ages past `cleanupPeriodDays`.
+Claude Code keeps the collapsed content under `~/.claude/paste-cache/`, so when you recall a prompt from [command history](/docs/en/interactive-mode#command-history) and resubmit it, Claude Code sends the full pasted content again, including in a later session, until the retention sweep removes the cache file.
 
-Claude Code deletes cache files older than [`cleanupPeriodDays`](/docs/en/settings#available-settings) at startup, so a recalled prompt can reference pasted text that no longer exists. When you submit such a prompt, Claude Code never sends the literal `[Pasted text #N]` string, and shows a notification naming the missing paste:
+Claude Code deletes cache files older than [`cleanupPeriodDays`](/docs/en/settings#available-settings), following the [retention sweep rules](/docs/en/claude-directory#cleaned-up-automatically), so a recalled prompt can reference pasted text that no longer exists. When you submit such a prompt, Claude Code never sends the literal `[Pasted text #N]` string, and shows a notification naming the missing paste:
 
 * In a plain prompt with text remaining, Claude Code removes the placeholder and sends the remaining text.
 * In a [shell mode](/docs/en/interactive-mode#shell-mode-with-prefix) command or a `/` command, where the removal would change what runs, and in any prompt the removal leaves empty, Claude Code cancels the submission and keeps the original text in the input, with the placeholder still in it. Delete the placeholder or edit the command, then resubmit.

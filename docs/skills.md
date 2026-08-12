@@ -22,7 +22,7 @@ Claude Code skills follow the [Agent Skills](https://agentskills.io) open standa
 
 Claude Code includes a set of bundled skills, such as `/doctor`, `/code-review`, `/batch`, `/debug`, `/loop`, and `/claude-api`. Bundled skills are prompt-based: they give Claude detailed instructions and let it orchestrate the work using its tools. Most built-in commands instead execute fixed logic directly.
 
-You invoke a bundled skill the same way as any other skill, by typing `/` followed by the skill name. Claude invokes some bundled skills automatically when relevant; others, including `/verify` and `/code-review`, run only when you invoke them, which keeps you in control of when these longer-running checks spend time and tokens. Before v2.1.215, Claude could also run `/verify` and `/code-review` on its own.
+You invoke a bundled skill the same way as any other skill, by typing `/` followed by the skill name. Claude invokes some bundled skills automatically when relevant; others, including `/verify`, run only when you invoke them, which keeps you in control of when these longer-running checks spend time and tokens. Before v2.1.215, Claude could also run `/verify` on its own.
 
 Bundled skills are available in every session. To turn them off, use the [`disableBundledSkills`](/docs/en/settings#available-settings) setting, which disables every bundled skill except `/doctor`.
 

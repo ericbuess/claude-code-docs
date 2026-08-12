@@ -315,14 +315,7 @@ See `ToolAnnotations` in the [TypeScript](/docs/en/agent-sdk/typescript#toolanno
 
 ## Control tool access
 
-The [weather tool example](#weather-tool-example) registered a server and listed tools in `allowedTools`. This section covers how tool names are constructed and how to scope access when you have multiple tools or want to restrict built-ins.
-
-### Tool name format
-
-When MCP tools are exposed to Claude, their names follow a specific format:
-
-* Pattern: `mcp__{server_name}__{tool_name}`
-* Example: A tool named `get_temperature` in server `weather` becomes `mcp__weather__get_temperature`
+The [weather tool example](#weather-tool-example) registered a server and listed tools in `allowedTools`. This section covers how to scope access when you have multiple tools or want to restrict built-ins. For how tool names are constructed, see [Call a custom tool](#call-a-custom-tool).
 
 ### Configure allowed tools
 
@@ -845,7 +838,7 @@ Because [tool search](/docs/en/agent-sdk/tool-search) is on by default, the outp
 
 ## Next steps
 
-Custom tools wrap async functions in a standard interface. You can mix the patterns on this page in the same server: a single server can hold a database tool, an API gateway tool, and an image renderer alongside each other.
+You can mix the patterns on this page in the same server: a single server can hold a database tool, an API gateway tool, and an image renderer alongside each other.
 
 From here:
 

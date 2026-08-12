@@ -115,9 +115,11 @@ When a required dependency is missing, the Dependencies tab is the only tab show
 
 ### Sandbox modes
 
-Claude Code offers two sandbox modes:
+Claude Code offers two sandbox modes. In both, the sandbox enforces the same filesystem and network restrictions; the difference is only in whether sandboxed commands are auto-approved or require explicit permission.
 
-**Auto-allow mode**: when a command can be sandboxed, Claude Code runs it inside the sandbox and approves it automatically, without asking your permission. Commands that cannot be sandboxed, such as those needing network access to non-allowed hosts, fall back to the regular permission flow, where Claude Code checks your [permission rules](/docs/en/permissions) and gates any command those rules do not already allow, with a prompt in default mode or the classifier in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode).
+#### Auto-allow mode
+
+When a command can be sandboxed, Claude Code runs it inside the sandbox and approves it automatically, without asking your permission. Commands that cannot be sandboxed, such as those needing network access to non-allowed hosts, fall back to the regular permission flow, where Claude Code checks your [permission rules](/docs/en/permissions) and gates any command those rules do not already allow, with a prompt in default mode or the classifier in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode).
 
 Even in auto-allow mode, the following still apply:
 
@@ -126,21 +128,27 @@ Even in auto-allow mode, the following still apply:
 * Content-scoped [ask rules](/docs/en/permissions) like `Bash(git push *)` still force a prompt even for sandboxed commands
 * A bare `Bash` ask rule, or the equivalent `Bash(*)` form, is skipped for commands that run sandboxed; it still applies to commands that fall back to the regular permission flow. In [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), the rule isn't skipped: it prompts for sandboxed commands too, including read-only ones. Before v2.1.212, the skip applied in plan mode as well
 
-**Regular permissions mode**: All Bash commands go through the regular permission flow, even when sandboxed. This provides more control but requires more approvals.
-
-In both modes, the sandbox enforces the same filesystem and network restrictions. The difference is only in whether sandboxed commands are auto-approved or require explicit permission.
-
-The session temp directory is writable inside the sandbox by default, alongside the working directory. Unless you [disable filesystem isolation](#disable-filesystem-isolation), Claude Code sets `$TMPDIR` to this directory for sandboxed commands, so tools that write temporary files work without extra configuration. Unsandboxed commands inherit your shell's `$TMPDIR` unchanged, so while filesystem isolation is on, sandboxed and unsandboxed commands resolve `$TMPDIR` to different directories. To pass temporary files between the two, write them under the working directory instead.
-
-Some commands cannot run inside the sandbox at all, such as tools that are incompatible with it or that need a host you have not allowed. Rather than failing the task or requiring you to turn sandboxing off, Claude Code includes an escape hatch: when a command fails because of sandbox restrictions, Claude analyzes the failure and may retry the command with the `dangerouslyDisableSandbox` parameter. The retried command runs outside the sandbox, so it goes through the regular permission flow: in default mode you get a confirmation prompt; in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) the classifier evaluates the underlying command instead of prompting you. To be prompted on every unsandboxed retry even in auto mode, add an [ask rule](/docs/en/permissions#match-by-input-parameter) for `Bash(dangerouslyDisableSandbox:true)`.
-
-You can disable this escape hatch by setting `"allowUnsandboxedCommands": false` in your [sandbox settings](/docs/en/settings#sandbox-settings). When disabled, which the `/sandbox` Overrides tab shows as **Strict sandbox mode**, the `dangerouslyDisableSandbox` parameter is completely ignored and all commands must run sandboxed or be explicitly listed in `excludedCommands`.
-
 <Info>
   Auto-allow mode works independently of your permission mode setting, with one exception: [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode). Even if you're not in "accept edits" mode, sandboxed Bash commands run automatically when auto-allow is enabled. This means Bash commands that modify files within the sandbox boundaries execute without prompting, even when file edit tools would normally require approval.
 
   In plan mode, auto-allow doesn't widen approvals. Bash commands outside the [built-in read-only set](/docs/en/permissions#read-only-commands) prompt for approval even with auto-allow enabled, or go to the classifier when [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) is available and `useAutoModeDuringPlan` is on; in v2.1.212 through v2.1.217 they always prompted. Before v2.1.212, auto-allow ran sandboxed commands without a prompt in plan mode too.
 </Info>
+
+#### Regular permissions mode
+
+All Bash commands go through the regular permission flow, even when sandboxed. This provides more control but requires more approvals.
+
+#### The unsandboxed retry escape hatch
+
+Some commands can't run inside the sandbox at all, such as tools that are incompatible with it or that need a host you haven't allowed. When a command fails after the sandbox denied it access, Claude Code appends the violation details to the failed command's output, so Claude sees which file path or network host the sandbox blocked. Rather than failing the task or requiring you to turn sandboxing off, Claude Code includes an escape hatch: when a command fails because of sandbox restrictions, Claude analyzes the failure and may retry the command with the `dangerouslyDisableSandbox` parameter.
+
+The retried command runs outside the sandbox, so it goes through the regular permission flow: in default mode you get a confirmation prompt; in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) the classifier evaluates the underlying command instead of prompting you. To be prompted on every unsandboxed retry even in auto mode, add an [ask rule](/docs/en/permissions#match-by-input-parameter) for `Bash(dangerouslyDisableSandbox:true)`.
+
+You can disable this escape hatch by setting `"allowUnsandboxedCommands": false` in your [sandbox settings](/docs/en/settings#sandbox-settings). When disabled, which the `/sandbox` Overrides tab shows as **Strict sandbox mode**, the `dangerouslyDisableSandbox` parameter is completely ignored and all commands must run sandboxed or be explicitly listed in `excludedCommands`.
+
+#### Temporary directories
+
+The session temp directory is writable inside the sandbox by default, alongside the working directory. Unless you [disable filesystem isolation](#disable-filesystem-isolation), Claude Code sets `$TMPDIR` to this directory for sandboxed commands, so tools that write temporary files work without extra configuration. Unsandboxed commands inherit your shell's `$TMPDIR` unchanged, so while filesystem isolation is on, sandboxed and unsandboxed commands resolve `$TMPDIR` to different directories. To pass temporary files between the two, write them under the working directory instead.
 
 ## Configure sandboxing
 
