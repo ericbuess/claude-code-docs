@@ -533,12 +533,14 @@ managed:
 | `env`                                      | CLI           | Environment variables merged into the CLI process. Use for telemetry, auto-update, and model-name overrides.                                                                                             |
 | `hooks`                                    | CLI           | Org-wide [hooks](/docs/en/hooks)                                                                                                                                                                              |
 
-Because these settings arrive over the network, the CLI shows each developer a one-time security approval dialog before applying the settings listed below:
+Because these settings arrive over the network, the CLI shows each developer a security approval dialog before applying the settings listed below:
 
 * `hooks`
 * `env` variables that require the developer's approval, such as proxy and base-URL variables
 * shell-execution settings such as `apiKeyHelper` and `statusLine`
 * managed CLAUDE.md content
+
+[Approval memory](/docs/en/server-managed-settings#approval-memory) covers how long an approval lasts and when the dialog appears again.
 
 Claude Code applies some delivered `env` variables without showing the developer the approval dialog, such as model selection settings and numeric limits. Other delivered variables can require the developer's approval before they take effect; a non-empty proxy, base-URL, or `OTEL_EXPORTER_OTLP_ENDPOINT` value always does. When a delivered variable needs approval, the dialog names it.
 

@@ -498,7 +498,7 @@ The gateway gives you per-developer usage metrics without any per-machine OTEL c
 
 The gateway itself is an authenticated OTLP relay. Set [`telemetry.forward_to`](/docs/en/claude-apps-gateway-config#telemetry) together with `listen.public_url`, and it pushes the OTEL exporter settings to every connected client and forwards their OTLP traffic verbatim to each destination you list. Each destination opts into metrics, logs, and traces independently, and the default is metrics only; see the [`telemetry` reference](/docs/en/claude-apps-gateway-config#telemetry) for the per-signal fields and their sensitivity tradeoffs. The gateway doesn't buffer, aggregate, or store telemetry, so where the data lands is entirely the collector's exporter configuration.
 
-Client telemetry is off by default; configuring `telemetry.forward_to` is what turns it on for connected developers, and each interactive client shows a one-time security approval dialog for the pushed settings, as described in the [configuration reference](/docs/en/claude-apps-gateway-config#telemetry). On AWS, each signal maps to a destination as follows.
+Client telemetry is off by default; configuring `telemetry.forward_to` is what turns it on for connected developers, and each interactive client shows a security approval dialog for the pushed settings, as described in the [configuration reference](/docs/en/claude-apps-gateway-config#telemetry). On AWS, each signal maps to a destination as follows.
 
 ### Client metrics, logs, and traces
 

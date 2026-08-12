@@ -91,7 +91,7 @@ A `SessionStore` is an object with two required methods, `append` and `load`, an
 | Method                 | Required | Called when                                                                                                                                                                                                                                                                                               |
 | :--------------------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `append`               | Yes      | After each batch of transcript entries is written locally. Entries are JSON-safe objects, one per line in the local JSONL.                                                                                                                                                                                |
-| `load`                 | Yes      | Before the subprocess spawns when `resume` is set, and once per session when listing falls back from `listSessionSummaries`. Return `null` if the session is unknown.                                                                                                                                     |
+| `load`                 | Yes      | Before the subprocess spawns when `resume` is set or `continue: true` resolves the newest store session, and once per session when listing falls back from `listSessionSummaries`. Return `null` if the session is unknown.                                                                               |
 | `listSessions`         | No       | By `listSessions({ sessionStore })` and by `query()`/`startup()` with `continue: true`. If undefined, `continue: true` throws, and `listSessions({ sessionStore })` throws unless `listSessionSummaries` is implemented.                                                                                  |
 | `listSessionSummaries` | No       | By `listSessions({ sessionStore })` to read metadata for all sessions in one call. Maintain the summaries inside `append`. If undefined, listing falls back to `listSessions` plus a per-session `load`.                                                                                                  |
 | `delete`               | No       | By `deleteSession({ sessionStore })`. Deleting the main key (no `subpath`) must cascade to all subkeys for that session and also remove the session's summary entry, so a deleted session stops appearing in `listSessionSummaries`. If undefined, deletion is a no-op, which suits append-only backends. |
@@ -100,6 +100,8 @@ A `SessionStore` is an object with two required methods, `append` and `load`, an
 In a `SessionSummaryEntry`, `mtime` is the sidecar's storage write time and must share a clock source with the `mtime` values `listSessions` returns. `data` is opaque SDK-owned state; persist it verbatim without interpreting it.
 
 Build the entries by calling the exported `foldSessionSummary` helper, `fold_session_summary` in Python, on each batch inside `append`. Skip batches whose key has a `subpath`; subagent transcripts must not contribute to the main session's summary. The fold never sets `mtime`: stamp it at persist time, through the `options.mtime` argument in TypeScript or by overwriting the field on the returned entry in Python. Concurrent `append` calls for the same session can race on the sidecar, so serialize the read-fold-write with a transaction, a compare-and-swap, or a per-session lock; the fold itself is pure.
+
+For what the SDK does with the transcript `load` returns, see [Resume from the store](#resume-from-the-store).
 
 ## Quick start
 
@@ -256,13 +258,45 @@ Passing the `MyRedisStore` class itself, as this example does, works when the co
 
 ### Dual-write architecture
 
-The store is a mirror, not a replacement. The Claude Code subprocess always writes to local disk first; the SDK then forwards each batch to `append()`. If you want the local copy to be ephemeral, point `CLAUDE_CONFIG_DIR` at a temp directory in `options.env`.
+The Claude Code subprocess always writes each batch of transcript entries to local disk first, and the SDK then forwards the same batch to your store's `append()`, so the store is a mirror of the local transcript rather than a replacement for it. Which copy outlives the run depends on how the run started:
 
-Because the mirror depends on local writes, the TypeScript SDK throws if you combine `sessionStore` with `persistSession: false`. Both SDKs also throw if you combine the store with file checkpointing, `enableFileCheckpointing` in TypeScript or `enable_file_checkpointing` in Python, since file-history backup blobs are written directly to local disk and are not mirrored to the store.
+* **Fresh session, or a resume when the store has nothing for the session**: the local transcript under your config directory outlives the run, and the store receives a copy.
+* **Run [resumed from the store](#resume-from-the-store)**: the local copy is deleted at run end, so the store holds the only durable copy.
+
+If you don't want a fresh session to leave a transcript on local disk, set `CLAUDE_CONFIG_DIR` to a temp directory in `options.env`. A run resumed from the store already deletes its local copy, so it needs no such setting. In TypeScript, spread `process.env` into `env` as well, since the [`env` option](/docs/en/agent-sdk/typescript#options) replaces the subprocess environment.
+
+If your app signs in through files in the config directory, such as OAuth credentials or an `apiKeyHelper` in your user `settings.json`, copy those files into the temp directory first, or set `ANTHROPIC_API_KEY` in `env` instead. Otherwise the run fails with `Not logged in`.
+
+Two options conflict with the mirror, and the SDK throws at startup if you combine either with a store:
+
+* **`persistSession: false`** in TypeScript: turns off the local writes the mirror is built from. The Python SDK has no equivalent option.
+* **File checkpointing**, `enableFileCheckpointing` in TypeScript or `enable_file_checkpointing` in Python: writes its file backups straight to local disk, and the SDK doesn't mirror them to the store.
+
+### Resume from the store
+
+When you pass `resume`, or `continue: true` in TypeScript or `continue_conversation=True` in Python, together with a store, the SDK asks the store for a transcript before it spawns the subprocess:
+
+* **`resume`**: the SDK asks for the session whose ID you passed.
+* **`continue: true`** or **`continue_conversation=True`**: the SDK asks for the store's newest session.
+
+When the store returns the transcript, the SDK writes it into a temporary config directory, runs the subprocess with `CLAUDE_CONFIG_DIR` pointing there, and deletes the directory when the run ends. The local transcript that run writes is deleted with it, which is why the store holds the only durable copy on this path.
+
+The SDK also seeds the temporary directory with files from your real config directory. What it copies differs by language:
+
+* **TypeScript**: credentials, `.claude.json`, and your user `settings.json`. From `settings.json` it strips the three keys that misbehave under a temporary config directory: `enabledPlugins`, `extraKnownMarketplaces`, and any `CLAUDE_CONFIG_DIR` in the file's `env` block. Auth configured in settings, such as [`apiKeyHelper`](/docs/en/settings#available-settings), works when you resume from the store. Before Agent SDK v0.3.222, the TypeScript SDK copied only credentials and `.claude.json`.
+* **Python**: credentials and `.claude.json` only, so an app that authenticates through `apiKeyHelper` in your user `settings.json` fails with `Not logged in` when resuming from a store. An `apiKeyHelper` in managed or project settings still works, because Claude Code reads those files from locations that `CLAUDE_CONFIG_DIR` doesn't affect.
+
+When the store has nothing for the session, the SDK runs under your real config directory instead, and the outcome depends on which option you passed:
+
+* **`resume`**: both SDKs pass the ID through to the subprocess, which resumes the local transcript exactly as `resume` does without a store.
+* **`continue: true`** in TypeScript: the SDK starts a fresh session.
+* **`continue_conversation=True`** in Python: the SDK continues from the newest local session.
 
 ### Mirror writes are best-effort
 
-If `append()` rejects, the SDK retries the batch up to two more times with a short backoff, for at most three attempts in total. A call that times out isn't retried, since the original call may still land. If the batch still fails, the error is logged, a `{ type: "system", subtype: "mirror_error" }` message is emitted into the iterator, the batch is dropped, and the query continues. The local transcript is already durable on disk, so a store outage doesn't interrupt the agent or lose data locally. Monitor for `mirror_error` if you need to detect store data loss. Because a retried batch can re-deliver entries that already landed, deduplicate by `entry.uuid` in your `append()` implementation.
+If `append()` rejects, the SDK retries the batch up to two more times with a short backoff, for at most three attempts in total. A call that times out isn't retried, since the original call may still land. If the batch still fails, the SDK logs the error, emits a `{ type: "system", subtype: "mirror_error" }` message into the iterator, drops the batch, and continues the query. Because a retried batch can re-deliver entries that already landed, deduplicate by `entry.uuid` in your `append()` implementation.
+
+A store outage doesn't interrupt the agent, since the subprocess writes locally first. Monitor for `mirror_error` if you need to detect store data loss. On a run [resumed from the store](#resume-from-the-store), a dropped batch has no surviving copy once the run ends.
 
 ### `getSessionMessages` returns the post-compaction chain
 
@@ -278,7 +312,9 @@ Subagent transcripts are mirrored under `subpath: "subagents/agent-<id>"`. `list
 
 ### Retention
 
-The SDK never deletes from your store on its own. Retention is the adapter's responsibility: implement TTLs, S3 lifecycle policies, or scheduled cleanup according to your compliance requirements. Local transcripts under `CLAUDE_CONFIG_DIR` are swept independently by the `cleanupPeriodDays` setting, following the [retention sweep rules](/docs/en/claude-directory#cleaned-up-automatically).
+The SDK never deletes from your store on its own. Retention is the adapter's responsibility: implement TTLs, S3 lifecycle policies, or scheduled cleanup according to your compliance requirements.
+
+Local transcripts under `CLAUDE_CONFIG_DIR` are swept independently by the `cleanupPeriodDays` setting, following the [retention sweep rules](/docs/en/claude-directory#cleaned-up-automatically). A run [resumed from the store](#resume-from-the-store) leaves no local transcript, so for those runs your store's retention is the only retention there is.
 
 ## Supported on
 

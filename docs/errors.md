@@ -68,6 +68,7 @@ Match the message you see in your terminal to a section below.
 | `AWS credentials expired or invalid`                                                                                                                                                          | [Authentication](#aws-credentials-expired-or-invalid)                                                                         |
 | `AWS authentication failed`                                                                                                                                                                   | [Authentication](#aws-authentication-failed)                                                                                  |
 | `AWS default-chain credential resolve timed out`                                                                                                                                              | [Authentication](#aws-default-chain-credential-resolve-timed-out)                                                             |
+| `Could not load the default credentials` on Google Cloud's Agent Platform                                                                                                                     | [Automatic retries](#automatic-retries)                                                                                       |
 | `Unable to connect to API`                                                                                                                                                                    | [Network](#unable-to-connect-to-api)                                                                                          |
 | `Connection refused —` / `Can't reach the API server —` / `No internet route —` / `Couldn't connect through your proxy` / `Connection dropped`, each ending with an error code in parentheses | [Network](#unable-to-connect-to-api)                                                                                          |
 | `Unable to connect to Anthropic services` during setup                                                                                                                                        | [Network](#unable-to-connect-to-anthropic-services)                                                                           |
@@ -106,6 +107,8 @@ Match the message you see in your terminal to a section below.
 | `Error: --json-schema is not a valid JSON Schema`                                                                                                                                             | [Command-line errors](#command-line-errors)                                                                                   |
 | `Error: Settings file exceeds the 2MiB limit`                                                                                                                                                 | [Command-line errors](#settings-file-exceeds-the-2mib-limit)                                                                  |
 | `Error: Workspace not trusted` when starting Remote Control                                                                                                                                   | [Command-line errors](#workspace-not-trusted-when-starting-remote-control)                                                    |
+| `` `claude import` is not yet available in this build ``                                                                                                                                      | [Command-line errors](#claude-import-is-not-yet-available-in-this-build)                                                      |
+| `Could not read Claude Code config`                                                                                                                                                           | [Command-line errors](#could-not-read-claude-code-config)                                                                     |
 | `Could not import <server>: <reason>`                                                                                                                                                         | [Command-line errors](#could-not-import-a-server-from-claude-desktop)                                                         |
 | `Error: MCP tool <name> (passed via --permission-prompt-tool) not found`                                                                                                                      | [Command-line errors](#mcp-permission-prompt-tool-not-found)                                                                  |
 | `Shell command failed for pattern "..."`, from `/security-review` or any skill that injects dynamic context                                                                                   | [Command-line errors](#security-review-fails-without-origin-head)                                                             |
@@ -162,6 +165,7 @@ Claude Code retries these failures:
 * A request rejected because the input plus `max_tokens` exceeds the context limit. Re-sending it unchanged would fail the same way, so Claude Code retries with a reduced `max_tokens`, and stops retrying and compacts instead in two cases:
   * When no reduction can fit, for example when the conversation itself nearly fills the context window.
   * When a retry can't shrink `max_tokens` any further. Before v2.1.218, Claude Code could re-send a reduced request that still didn't fit, such as when the extended thinking budget exceeded the remaining context, until the retry budget ran out.
+* An expired or missing Google Cloud credential on [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), which surfaces as an error such as `Could not load the default credentials`. Claude Code discards its cached credentials and retries up to two times, running your [`gcpAuthRefresh`](/docs/en/google-vertex-ai#advanced-credential-configuration) command if you configured one, then reports the error so you can re-authenticate right away. [Google Cloud's Agent Platform troubleshooting](/docs/en/google-vertex-ai#troubleshooting) covers re-authenticating. Before v2.1.228, Claude Code retried a failing credential through the full retry budget before showing the error.
 
 Before v2.1.227, `Connection lost before a response was produced` read `Connection closed while thinking, before producing a response` and `The response stalled before a response was produced` read `Response stalled while thinking, before producing a response`.
 
@@ -1484,6 +1488,38 @@ Error: Workspace not trusted. /Users/you is your home directory, and for securit
 
 * Run `claude` in the directory, accept the [workspace trust dialog](/docs/en/permissions#project-allow-rules-and-workspace-trust), then run `claude remote-control` again
 * In your home directory, change to a project directory and start Remote Control there
+
+### claude import is not yet available in this build
+
+You ran [`claude import`](/docs/en/cli-reference#cli-commands), and Claude Code found the import flow turned off, so the command exits with code 1 instead of starting the import. Before v2.1.222, a build with the import flow off treated `import` as a prompt and started an interactive session instead of printing this message.
+
+```text theme={null}
+`claude import` is not yet available in this build. Run `claude` and use /mcp or edit ~/.claude/settings.json directly.
+```
+
+Claude Code turns `claude import` on through a feature flag it fetches from Anthropic and caches on disk. This message means the cached value is off. The cause is usually one of the following:
+
+* You haven't started a session since installing, so Claude Code hasn't fetched the flag yet. The first `claude import` can print this even when the feature is available to you.
+* You use Claude Code through Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or Claude Platform on AWS. Claude Code doesn't fetch feature flags on these providers, so `claude import` stays unavailable.
+* You set `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, `DISABLE_GROWTHBOOK`, or [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars), which turn off feature-flag fetching, so `claude import` stays unavailable.
+
+**What to do:**
+
+* On a fresh installation, start `claude`, wait for the session to load, exit, and run `claude import` again
+* Where feature-flag fetching stays off, set the configuration up yourself: add MCP servers with [`claude mcp add`](/docs/en/mcp#installing-mcp-servers), and create the [`CLAUDE.md` files](/docs/en/memory#how-claude-md-files-load), [skills and commands](/docs/en/skills#where-skills-live), and [subagents](/docs/en/sub-agents#choose-the-subagent-scope) you want to carry over. The message also names `~/.claude/settings.json`. Of the configuration `claude import` carries, that file holds only the [permission mode](/docs/en/settings#permission-settings); Claude Code doesn't read MCP servers from it.
+
+### Could not read Claude Code config
+
+You ran [`claude import`](/docs/en/cli-reference#cli-commands) while Claude Code couldn't parse `~/.claude.json`, the file where it stores your login and per-project state. The subcommand reads that file to check availability but doesn't show the recovery dialog the interactive session shows, so it exits with code 1. Before v2.1.222, `claude import` with an unreadable config file started an interactive session, whose recovery dialog handled the file.
+
+```text theme={null}
+Could not read Claude Code config — run `claude` with no arguments to recover it.
+```
+
+**What to do:**
+
+* Run `claude` with no arguments. Claude Code detects the invalid file and offers to reset it. Then run `claude import` again.
+* To keep manual edits you've made, fix the JSON syntax in `~/.claude.json` in an editor instead, then rerun `claude import`
 
 ### Could not import a server from Claude Desktop
 
