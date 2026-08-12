@@ -265,7 +265,12 @@ A subagent with `isolation: worktree` runs its Bash and PowerShell commands insi
 
 This working-directory check covers the whole repository containing the directory you launched Claude Code from. When your session runs in a linked [worktree](/docs/en/worktrees) of its own, the check also covers the main checkout that worktree is linked from. Before v2.1.210, the check covered only the launch directory itself. A command whose working directory resolved elsewhere in the same repository, such as the repository root when you launched Claude Code from a monorepo subdirectory, ran there instead of failing.
 
-For Bash commands, Claude Code also checks the command itself and blocks one that redirects git into the main checkout; the redirect vectors and the too-complex-to-check rule are listed under [How Claude Code enforces isolation](/docs/en/worktrees#how-claude-code-enforces-isolation). PowerShell commands get only the working-directory check.
+For Bash commands, Claude Code also checks the command itself in two ways:
+
+* It blocks a command that redirects git into the main checkout.
+* It refuses a command whose shape it can't verify stays inside the worktree. This refusal applies even to a command that runs no git.
+
+The redirect vectors and the shape rules are listed under [How Claude Code enforces isolation](/docs/en/worktrees#how-claude-code-enforces-isolation). PowerShell commands get only the working-directory check.
 
 [Monitor](/docs/en/tools-reference#monitor-tool) commands go through the same working-directory and command-content checks as Bash commands.
 

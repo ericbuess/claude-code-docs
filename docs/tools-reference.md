@@ -173,7 +173,15 @@ A command that exits 1 counts as a valid result for the Bash tool only when Clau
 
 For long-running processes such as dev servers or watch builds, Claude can set `run_in_background: true` to start the command as a background task and continue working while it runs. List and stop background tasks with `/tasks`. In non-interactive mode with the `-p` flag, [background tasks end shortly after the run's final result](/docs/en/headless#background-tasks-at-exit).
 
-When a command reaches its timeout without finishing, Claude Code moves it to the background instead of stopping it, so Claude keeps working while the command runs to completion. Claude Code never auto-backgrounds a command that starts with `sleep`, and setting [`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1`](/docs/en/env-vars#variables) disables auto-backgrounding along with the rest of the background task functionality. The result of a command moved this way states what happened:
+When a command reaches its timeout without finishing, Claude Code moves it to the background instead of stopping it. Claude keeps working while the command runs to completion. Setting [`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1`](/docs/en/env-vars#variables) disables auto-backgrounding along with the rest of the background task functionality.
+
+Claude Code never auto-backgrounds three kinds of command. It stops them at the timeout instead:
+
+* A command that starts with `sleep`.
+* A command that runs `git` anywhere in it.
+* A compound command Claude Code can't fully parse into simple commands.
+
+The result of a command moved to the background states what happened:
 
 * When the timeout triggers the move, the result reports it explicitly: `Command did not complete within its 120s timeout and was moved to the background`, with the seconds matching the timeout that applied, followed by the task ID and the path of the file the output is being written to.
 * A `cd`, `pushd`, `popd`, or `chdir` inside a command that is moved to the background never carries over: the result states `Session cwd remains <dir>; directory changes made by the backgrounded command do not apply to subsequent commands.`, so Claude doesn't act on a directory change that didn't happen.
@@ -368,7 +376,7 @@ Three additional settings control where PowerShell is used:
 
 The same main-session working-directory reset behavior described under the Bash tool section applies to PowerShell commands, including the `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR` environment variable.
 
-As of v2.1.196, exit code 1 from `grep`, `egrep`, `fgrep`, and `git grep` means no matches, and exit code 1 from `git diff` means differences exist, so these results aren't reported to Claude as command failures.
+As of v2.1.196, exit code 1 from `grep`, `rg`, `egrep`, `fgrep`, `findstr`, and `git grep` means no matches. Exit code 1 from `git diff` means differences exist. Neither result is reported to Claude as a command failure. For `robocopy`, exit codes 0 through 7 are informational results, such as files copied or extra files detected. Exit codes of 8 or higher count as failures.
 
 ### Windows encoding and exit codes
 

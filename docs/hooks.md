@@ -825,7 +825,7 @@ Exit code 2 is the way a hook signals "stop, don't do this." The effect depends 
 | `PostToolUseFailure`  | No         | Shows stderr to Claude; the tool already failed                                                                                                                        |
 | `PostToolBatch`       | Yes        | Stops the agentic loop before the next model call                                                                                                                      |
 | `PermissionDenied`    | No         | Exit code and stderr are ignored because the denial already occurred. Use JSON `hookSpecificOutput.retry: true` to tell the model it may retry                         |
-| `Notification`        | No         | Shows stderr to user only                                                                                                                                              |
+| `Notification`        | No         | Exit code and stderr are ignored                                                                                                                                       |
 | `SubagentStart`       | No         | Shows stderr to user only                                                                                                                                              |
 | `SessionStart`        | No         | Shows stderr to user only                                                                                                                                              |
 | `Setup`               | No         | Shows stderr to user only                                                                                                                                              |
@@ -846,11 +846,11 @@ For `SessionStart`, `Setup`, and `SubagentStart`, the exit code 2 stderr renders
 
 ### HTTP response handling
 
-HTTP hooks use HTTP status codes and response bodies instead of exit codes and stdout:
+HTTP hooks use HTTP status codes and response bodies instead of exit codes and stdout. The outcomes below apply to most events; an event with its own failure contract in the [per-event table](#exit-code-2-behavior-per-event), such as `WorktreeCreate`, applies that contract to a failed HTTP hook too:
 
 * **2xx with an empty body**: success, equivalent to exit code 0 with no output
-* **2xx with a plain text body**: success, the text is added as context
-* **2xx with a JSON body**: success, parsed using the same [JSON output](#json-output) schema as command hooks
+* **2xx with a JSON object body**: parsed using the same [JSON output](#json-output) schema as command hooks. A body that fails schema validation is a non-blocking error
+* **2xx with any other body, such as plain text**: non-blocking error, handled the same as a non-2xx status. Claude Code doesn't add the text to Claude's context
 * **Non-2xx status**: non-blocking error, execution continues
 * **Connection failure**: non-blocking error, execution continues
 * **Timeout**: the hook is canceled and renders no decision, and execution continues
@@ -1291,7 +1291,7 @@ There are two ways to add context to the conversation on exit code 0:
 * **Plain text stdout**: any non-JSON text written to stdout is added as context
 * **JSON with `additionalContext`**: use the JSON format below for more control. The `additionalContext` field is added as context
 
-Neither channel produces a visible transcript entry. Plain stdout is injected as a system reminder labeled with the hook's name, and the `additionalContext` value is injected as an unlabeled system reminder; Claude reads both. To confirm delivery, check the [debug log](#debug-hooks).
+Neither channel produces a visible transcript entry. Plain stdout and the `additionalContext` value are each injected as a system reminder that starts with the hook's name; Claude reads both. To confirm delivery, check the [debug log](#debug-hooks).
 
 To block a prompt, return a JSON object with `decision` set to `"block"`:
 
