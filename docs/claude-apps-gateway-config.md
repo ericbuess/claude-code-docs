@@ -460,7 +460,10 @@ A `match: {}` catch-all, conventionally listed last, is treated as a base layer.
 
 `availableModels` is also enforced server-side at `/v1/messages`, so a denied model returns `400` regardless of what the client sends.
 
-When a request's `model` value isn't a string, the gateway rejects the request with a `400` and the message `model must be a string`, so a malformed value never reaches an upstream. Requires a gateway running Claude Code v2.1.221 or later.
+The gateway validates the `model` value itself before it relays a request, so a malformed value never reaches an upstream. It rejects the request with a `400` in two cases:
+
+* When the value is missing or empty, the gateway rejects the request with the message `model is required`. That check requires a gateway running Claude Code v2.1.228 or later.
+* When the value is present but isn't a string, the gateway rejects the request with the message `model must be a string`. Requires a gateway running Claude Code v2.1.221 or later.
 
 | Matcher                                             | Behavior                                                                                                                         |
 | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -585,14 +588,18 @@ managed:
         banner: { text: "Contractor build: internal use only" }
 ```
 
-| Key                                                                | Effect                                                                                                             |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| `modelDiscoveryEnabled`                                            | Whether Claude Desktop fetches `/v1/models` for its picker. Set `false` to rely solely on the policy's model list. |
-| `coworkTabEnabled`, `isClaudeCodeForDesktopEnabled`                | Show or hide individual tabs                                                                                       |
-| `isDesktopExtensionEnabled`, `isDesktopExtensionSignatureRequired` | Desktop extension loading and signature checks                                                                     |
-| `isLocalDevMcpEnabled`                                             | Allow locally defined MCP servers                                                                                  |
-| `disableAutoUpdates`, `autoUpdaterEnforcementHours`                | Auto-update policy                                                                                                 |
-| `banner`                                                           | Persistent banner at the top of the app: `enabled`, `text`, `backgroundColor`, `textColor`, `linkUrl`              |
+| Key                                                                | Effect                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `modelDiscoveryEnabled`                                            | Whether Claude Desktop fetches `/v1/models` for its picker. Set `false` to rely solely on the policy's model list.                                                                                                                           |
+| `coworkTabEnabled`, `isClaudeCodeForDesktopEnabled`                | Show or hide the Cowork and Code tabs. Both show unless set `false`                                                                                                                                                                          |
+| `chatTabEnabled`                                                   | Show or hide the Chat tab. Hidden unless set `true`                                                                                                                                                                                          |
+| `chatAdvancedFileAnalysisEnabled`                                  | Let Claude run code in a local sandbox from the Chat tab to analyze attached files it can't read natively, such as spreadsheets and presentations. Off unless set `true`. Has no effect when the policy's `permissions.deny` disables `Bash` |
+| `isDesktopExtensionEnabled`, `isDesktopExtensionSignatureRequired` | Desktop extension loading and signature checks                                                                                                                                                                                               |
+| `isLocalDevMcpEnabled`                                             | Allow locally defined MCP servers                                                                                                                                                                                                            |
+| `disableAutoUpdates`, `autoUpdaterEnforcementHours`                | Auto-update policy                                                                                                                                                                                                                           |
+| `banner`                                                           | Persistent banner at the top of the app: `enabled`, `text`, `backgroundColor`, `textColor`, `linkUrl`                                                                                                                                        |
+
+`chatTabEnabled` and `chatAdvancedFileAnalysisEnabled` require Claude Code v2.1.227 or later on the gateway server. Earlier releases reject them at boot.
 
 Every key is optional; Claude Desktop applies its own default for any key you omit. The gateway rejects unknown keys at boot. If you don't deploy Claude Desktop, leave `desktop` out of your policies entirely; `/user/bootstrap` then returns 404 for every user.
 

@@ -259,7 +259,10 @@ At the default `--drain-wait-sec 0`, a rolling restart interrupts in-flight turn
 
 Throughout that whole path, the runner keeps heartbeating to the control plane at zero capacity, so the session lease doesn't expire and get requeued to another runner while the `post-session` hook is still writing out uncommitted work. The heartbeat stops just before the runner deregisters.
 
-Set `terminationGracePeriodSeconds` on Kubernetes, `stop_grace_period` on Docker Compose, or your orchestrator's equivalent to at least the total the runner logs, so a container-wide kill never lands while a `post-session` hook is mid-run. If your hosts die at a known wall-clock time and you pass [`--retire-at`](/docs/en/self-hosted-environments-reference#runner-cli-flags), size the margin between the retire time and the kill to cover typical turns plus this same budget, and compute the value at each launch, for example `date +%s` plus the runner's intended lifetime, rather than baking a static value into a restartable manifest. The Kubernetes default of 30 seconds is shorter than the runner's drain path and will kill the pod mid-cleanup. For the flags that control each phase, see the [runner CLI reference](/docs/en/self-hosted-environments-reference#runner-cli-flags).
+Give the runner at least the total it logs at startup before the host stops it. Where you set that depends on how your hosts stop:
+
+* **With a `SIGTERM` grace period**: set `terminationGracePeriodSeconds` on Kubernetes, `stop_grace_period` on Docker Compose, or your orchestrator's equivalent to at least that total. The Kubernetes default of 30 seconds is shorter than the runner's drain path, so Kubernetes stops the pod before the runner finishes draining.
+* **With [`--retire-at`](/docs/en/self-hosted-environments-reference#runner-cli-flags)**: size the margin between the retire time and the host's stop time to cover typical turns, plus the background-task hold that [Runner lifecycle](/docs/en/self-hosted-environments#runner-lifecycle) describes, plus that same total. Compute the retire time at each launch, for example `date +%s` plus the runner's intended lifetime.
 
 ### What reaches a running post-session hook
 
