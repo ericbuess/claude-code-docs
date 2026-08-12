@@ -4,13 +4,13 @@
 
 # Persist sessions to external storage
 
-> Mirror session transcripts to S3, Redis, or your own backend so any host can resume them.
+> Mirror session transcripts to S3, Redis, or your own backend so other hosts can resume your sessions.
 
-By default, the SDK writes session transcripts to JSONL files under `~/.claude/projects/` on the local filesystem. A `SessionStore` adapter lets you mirror those transcripts to your own backend, such as S3, Redis, or a database, so a session created on one host can be resumed on another.
+By default, the SDK writes session transcripts to JSONL files under `~/.claude/projects/` on the local filesystem. A `SessionStore` adapter lets you mirror those transcripts to your own backend, such as S3, Redis, or a database, so a session created on one host can be resumed on another host running from a matching working directory.
 
 Common reasons to use a session store:
 
-* **Multi-host deployments.** Serverless functions, autoscaled workers, and CI runners don't share a filesystem. A shared store lets any replica resume any session.
+* **Multi-host deployments.** Serverless functions, autoscaled workers, and CI runners don't share a filesystem. A shared store lets replicas resume each other's sessions.
 * **Durability.** Local containers are ephemeral. A store backed by S3 or a database survives restarts and redeploys.
 * **Compliance and audit.** Keep transcripts in storage you already govern, with your own retention rules, encryption, and access controls.
 
@@ -86,7 +86,7 @@ A `SessionStore` is an object with two required methods, `append` and `load`, an
   ```
 </CodeGroup>
 
-`SessionKey` addresses one transcript. `projectKey` is a stable, filesystem-safe encoding of the working directory, `sessionId` is the session UUID, and `subpath` is set when the entry belongs to a subagent transcript or sidecar file rather than the main conversation. Treat `subpath` as an opaque key suffix; it follows the on-disk layout, for example `subagents/agent-<id>`. When `subpath` is undefined the key refers to the main transcript.
+`SessionKey` addresses one transcript. `projectKey` is a stable, filesystem-safe encoding of the working directory, `sessionId` is the session UUID, and `subpath` is set when the entry belongs to a subagent transcript or sidecar file rather than the main conversation. Because `projectKey` encodes the working directory, resume or continue from the store from a working directory matching the original run's. Treat `subpath` as an opaque key suffix; it follows the on-disk layout, for example `subagents/agent-<id>`. When `subpath` is undefined the key refers to the main transcript.
 
 | Method                 | Required | Called when                                                                                                                                                                                                                                                                                               |
 | :--------------------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

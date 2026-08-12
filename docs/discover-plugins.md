@@ -397,7 +397,7 @@ When the reload would invalidate the prompt cache, the command warns and skips u
 
 Claude Code reloads all active plugins and shows counts for plugins, skills, agents, hooks, plugin MCP servers, and plugin LSP servers. The skills count covers only each plugin's `commands/` directory, not its `skills/` directory, so the summary can report `0 skills` even when the plugin's skills reloaded.
 
-Reloading has a token cost on the next request: newly loaded components announce themselves in content appended to the conversation, while the existing history still reads from the prompt cache. A plugin that provides MCP servers costs more when its tools aren't deferred by [tool search](/docs/en/mcp#scale-with-mcp-tool-search): the change invalidates the cache and the next request re-reads the entire conversation. In that case `/reload-plugins` shows a warning and does not apply the reload; pass `--force` to apply anyway. See [enabling or disabling a plugin](/docs/en/prompt-caching#enabling-or-disabling-a-plugin) for details.
+Reloading has a token cost on the next request: newly loaded components announce themselves in content appended to the conversation, while the existing history still reads from the prompt cache. A plugin that provides MCP servers costs more when its tools aren't deferred by [tool search](/docs/en/mcp#scale-with-mcp-tool-search): the change invalidates the cache and the next request re-reads the entire conversation. See [enabling or disabling a plugin](/docs/en/prompt-caching#enabling-or-disabling-a-plugin) for details.
 
 ## Manage marketplaces
 
@@ -463,8 +463,6 @@ To keep plugin auto-updates enabled while disabling Claude Code auto-updates, se
 export DISABLE_AUTOUPDATER=1
 export FORCE_AUTOUPDATE_PLUGINS=1
 ```
-
-This is useful when you want to manage Claude Code updates manually but still receive automatic plugin updates.
 
 ## Configure team marketplaces
 

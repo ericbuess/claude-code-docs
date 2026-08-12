@@ -701,7 +701,14 @@ Git for Windows is optional. Claude Code uses the [PowerShell tool](/docs/en/too
 
 **To install Git for Windows instead**, download it from [git-scm.com/downloads/win](https://git-scm.com/downloads/win). During setup, select "Add to PATH." Restart your terminal after installing. Installing it enables the Bash tool, useful when working with Bash-based scripts and tooling.
 
-**If Git is already installed** but Claude Code can't find it, set the path in your [settings.json file](/docs/en/settings):
+**If Git is already installed** but Claude Code can't find it, compare its location against the places Claude Code checks. When `CLAUDE_CODE_GIT_BASH_PATH` isn't set, Claude Code looks for `bash.exe` in this order:
+
+1. The default install locations `C:\Program Files\Git` and `C:\Program Files (x86)\Git`.
+2. The `git` on your `PATH`, using the `bin\bash.exe` from that Git installation.
+
+In step 2, Claude Code skips a `git` that sits in the folder you launched Claude Code from, or below it in a path that contains `node_modules` or a virtual-environment folder such as `.venv` or `env`, for example `C:\dev\env\myproject\Git` when you launched from `C:\dev\env\myproject`. This keeps Claude Code from running an executable that a project placed there. If your Git is in a location like that, point `CLAUDE_CODE_GIT_BASH_PATH` at it.
+
+**To point Claude Code at a specific Git installation**, find it by running `where.exe git` in PowerShell, then set the `bin\bash.exe` path from that installation as `CLAUDE_CODE_GIT_BASH_PATH` in your [settings.json file](/docs/en/settings):
 
 ```json theme={null}
 {
@@ -711,9 +718,7 @@ Git for Windows is optional. Claude Code uses the [PowerShell tool](/docs/en/too
 }
 ```
 
-If your Git is installed somewhere else, find the path by running `where.exe git` in PowerShell and use the `bin\bash.exe` path from that directory.
-
-**If the path is correct and the file exists** but Claude Code still doesn't use it, check the file's name first. Claude Code accepts only a file named `bash.exe`, `sh.exe`, `bash`, or `sh`; with any other name, such as Git for Windows' `git-bash.exe` launcher, it ignores the variable and auto-detects Git Bash as if it were unset, logging a warning visible with `--debug`. A path that doesn't exist gets the same fallback and warning. Before v2.1.219, Claude Code used any existing file as the shell without checking its name, and exited at startup with `Claude Code was unable to find CLAUDE_CODE_GIT_BASH_PATH path` when the path didn't exist.
+**If `CLAUDE_CODE_GIT_BASH_PATH` is set to the correct path and the file exists** but Claude Code still doesn't use it, check the file's name first. Claude Code accepts only a file named `bash.exe`, `sh.exe`, `bash`, or `sh`; with any other name, such as Git for Windows' `git-bash.exe` launcher, it ignores the variable and auto-detects Git Bash as if it were unset, logging a warning visible with `--debug`. A path that doesn't exist gets the same fallback and warning. Before v2.1.219, Claude Code used any existing file as the shell without checking its name, and exited at startup with `Claude Code was unable to find CLAUDE_CODE_GIT_BASH_PATH path` when the path didn't exist.
 
 If the file's name is right, endpoint security software such as AppLocker, Group Policy software restriction policies, or EDR agents may be interfering. Ask your IT team to allowlist `claude.exe` and the processes it spawns, including `cmd.exe` and `bash.exe`, in your endpoint protection policy.
 

@@ -96,10 +96,6 @@ Checkpointing doesn't rewind symlinked or hard-linked files. When you pick **Res
 
 To see which paths a restore skips, turn on debug logging with `/debug` before you restore: the debug log at `~/.claude/debug/<session-id>.txt` names each skipped path. For every skip reason and the recovery steps, see [the skipped-files entry in the error reference](/docs/en/errors#restored-the-code-but-skipped-files).
 
-<Note>
-  Before v2.1.216, `/rewind` wrote and deleted through links at tracked paths without a warning.
-</Note>
-
 ### Not a replacement for version control
 
 Checkpoints are designed for quick, session-level recovery. For permanent version history and collaboration, continue using version control, such as Git, for commits, branches, and long-term history.

@@ -94,7 +94,9 @@ Starting a conversation with a session on another of your machines requires Clau
 
 Same-machine delivery works wherever the feature is enabled. Each session registers itself in files on disk and binds its inbox socket there. When Claude lists or messages your local sessions, Claude Code reads those files to find them, so two sessions can reach each other only when they can see the same files. A container has its own filesystem, so a session inside it and a session on the host can't reach each other. Two sessions inside the same container can still message each other, including on a [self-hosted runner](/docs/en/self-hosted-environments).
 
-A reply needs a [reply address](#what-a-message-looks-like), and almost every message carries one. A message to a session beyond this machine, sent while the sending session isn't connected to Remote Control, still goes through as a direct request to Anthropic servers, but it arrives without a reply address, so the receiver can't answer it. Claude is told as much when it sends.
+While this session is connected to Remote Control, when you message a session on another of your machines, Claude Code shows the message in that session's conversation under this session's Remote Control name. The Claude on that machine can reply to that name. For example, when this session is connected to Remote Control as `laptop-graceful-unicorn` and you message your desktop, you see the message in the desktop session under `laptop-graceful-unicorn`.
+
+If this session isn't connected to Remote Control when Claude sends to a session beyond this machine, the message still goes through, but without a [reply address](#what-a-message-looks-like), so the receiving Claude can't answer it. Claude is told as much when it sends.
 
 To require your approval before any message goes beyond this machine, set [`isolatePeerMachines`](#require-approval-for-cross-machine-messages).
 
@@ -111,7 +113,7 @@ When session A messages session B, Claude Code tells B's Claude that the message
   What a message looks like
 </h3>
 
-When the message arrives, it appears in the conversation with its sender, queued while Claude is mid-turn or starting a new turn right away when the session is idle. Once Claude has read it, Claude Code collapses it to a one-line `Message from` row, which `Ctrl+O` expands.
+When the message arrives, it appears in the conversation under the sender's session name and stays there. Claude Code queues it while Claude is mid-turn, or starts a new turn with it right away when the session is idle.
 
 A message is a piece of text one Claude writes to another. Claude receives it with the sender's name and a reply address, except for a [one-way cross-machine message](#message-sessions-on-other-machines), which carries no reply address. You see the name and the text, and the receiving session gets only that text, never the sender's conversation history or files.
 
@@ -174,11 +176,19 @@ Claude Code binds an inbox socket for each session with cross-session messaging 
 You can find the path in two places:
 
 * `/status` shows it in the `Peer address` row. The path is prefixed with `uds:`.
-* Claude Code exports it to [hooks](/docs/en/hooks) and Bash commands as the [`CLAUDE_CODE_MESSAGING_SOCKET`](/docs/en/env-vars#variables) environment variable. The export happens before any hook runs, including `SessionStart`. Each session exports its own socket, never one inherited from a parent session.
+* Claude Code exports it to [hooks](/docs/en/hooks) and Bash commands as the [`CLAUDE_CODE_MESSAGING_SOCKET`](/docs/en/env-vars#variables) environment variable:
+  * In a session that starts with messaging on, Claude Code exports the variable before any hook runs, including `SessionStart`.
+  * When a session starts before Claude Code has fetched the feature flag that turns messaging on, such as the first session after you install Claude Code or upgrade from a version without messaging, Claude Code binds the inbox and exports the variable as soon as the fetch completes. Hooks and processes that started before that point keep the variable unset, while later hooks and Bash commands see it.
+  * Each session exports its own socket, never one inherited from a parent session.
 
-Claude Code runs messages arriving on the socket through the same [inbound controls](#control-inbound-messages) as any other peer message, with one exception and one prerequisite:
+Alongside the path, Claude Code exports a per-session token as [`CLAUDE_CODE_MESSAGING_TOKEN`](/docs/en/env-vars#variables). A script posting to its own session's socket can send `{"type":"auth","token":"<token>"}` as the first line of its connection. The [own-child rules](#own-child-messages) below say when Claude Code consults the token and how it treats a message it can't verify.
 
-* **Own-child messages**: when no `crossSessionInbound` value applies, Claude Code delivers a message it verifies came from the session's own child processes, such as a hook or Bash command posting back to its own session's socket. On Linux, including inside WSL 2, it can verify even for a child that has already exited, while on macOS it can verify only while the posting process is still running, and in containers where Claude Code runs as process ID 1 it can't verify at all. Whenever it can't verify, it treats the message like any other that asserts no permission class, so a session that bypasses permission prompts holds it for your approval.
+<span id="own-child-messages" />Claude Code runs messages arriving on the socket through the same [inbound controls](#control-inbound-messages) as any other peer message, with one exception and one prerequisite:
+
+* **Own-child messages**: when no `crossSessionInbound` value applies, Claude Code delivers a message it verifies came from the session's own child processes, such as a hook or Bash command posting back to its own session's socket.
+  * On Linux, including inside WSL 2, Claude Code can verify by process evidence even for a child that has already exited. On macOS it can verify that way only while the posting process is still running, and in a container where Claude Code runs as process ID 1 it has no process evidence at all.
+  * Where that process evidence is missing, on macOS after the posting process has exited and in containers where Claude Code runs as process ID 1, Claude Code verifies a child that sent the session's exported [`CLAUDE_CODE_MESSAGING_TOKEN`](/docs/en/env-vars#variables) as its first-line auth frame.
+  * When Claude Code can verify neither way, it treats the message like any other that asserts no permission class, so a session that bypasses permission prompts holds it for your approval.
 * **Sandboxed sessions**: control whether a Bash command can reach the socket from inside the [sandbox](/docs/en/sandboxing) with the sandbox's Unix-socket settings, [`sandbox.network.allowAllUnixSockets` and `sandbox.network.allowUnixSockets`](/docs/en/settings#sandbox-settings).
 
 ## Restrict cross-session messaging

@@ -149,11 +149,18 @@ If you didn't set an explicit name, Claude Code updates the title to reflect you
 
 When you rename a session from claude.ai or the Claude app, Claude Code also updates the local title shown in `claude --resume`. Claude Code applies the same rename to the session name shown on the prompt bar, and in the `claude agents` listing when the session [runs in the background](/docs/en/agent-view). Before v2.1.221, renaming from the session list at claude.ai or in the Claude app updated only the title, and the CLI kept its previous session name; `/rename`, which runs in the CLI itself, set the name on any version.
 
-When Claude Code stops using a session, it archives the session instead of leaving it in the session list. This happens, for example, when [compaction](/docs/en/context-window#what-survives-compaction) rewrites the conversation while Remote Control is disconnected, or when you switch to a different conversation with `/resume`. The session stays available when you [filter for archived sessions](/docs/en/claude-code-on-the-web#archive-sessions).
-
 If the environment already has an active session, you'll be asked whether to continue it or start a new one.
 
 If you don't have the Claude app yet, use the `/mobile` command inside Claude Code to display a download QR code for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) or [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude).
+
+### What connected devices see
+
+A connected device shows the conversation in your terminal as it happens. These cases go beyond ordinary messages:
+
+* **Compaction and `/clear`**: while Claude Code [compacts the conversation](/docs/en/context-window#what-survives-compaction), connected devices show the progress and then where the conversation was compacted. When you run `/clear`, the conversation resets on connected devices too.
+* **Switching conversations with `/resume`**: the connected device doesn't receive the switched-to conversation's title or earlier history, but new messages in both directions go to and from whichever conversation is open in your terminal. To work on the original conversation from the device again, run `/resume` in your terminal and switch back to it.
+* **Messages from your other sessions**: with [cross-session messaging](/docs/en/cross-session-messaging), the same connection carries messages between your own sessions on different machines and from your [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions, through Anthropic servers like the rest of Remote Control traffic. [Message sessions on other machines](/docs/en/cross-session-messaging#message-sessions-on-other-machines) covers the delivery rules and [Control inbound messages](/docs/en/cross-session-messaging#control-inbound-messages) covers the inbound controls. Requires Claude Code v2.1.224 or later.
+* **Reconnecting after a connection failure**: run `/remote-control` to reconnect. If compaction rewrote the conversation or you switched conversations with `/resume` in the meantime, Claude Code archives the server session it was using instead of leaving it in the session list. You can still find it by [filtering for archived sessions](/docs/en/claude-code-on-the-web#archive-sessions). Switching conversations while a device is still connected doesn't archive the session.
 
 ### Enable Remote Control for all sessions
 
@@ -181,10 +188,6 @@ Your local Claude Code session makes outbound HTTPS requests only and never open
 All traffic travels through the Anthropic API over TLS, the same transport security as any Claude Code session. The connection uses multiple short-lived credentials, each scoped to a single purpose and expiring independently.
 
 While Remote Control is connected, the session transcript, including your messages, Claude's responses, and tool activity, is stored on Anthropic servers. The stored transcript keeps the conversation in sync across your devices and lets the session reconnect after a network drop. Execution and filesystem access stay on your machine, and stored transcripts are retained under the [Data usage](/docs/en/data-usage) policy.
-
-Context changes stay in sync too. While Claude Code [compacts the conversation](/docs/en/context-window#what-survives-compaction), connected devices show compaction progress and, once compaction finishes, where the conversation was compacted. When you run `/clear`, the conversation resets on connected devices.
-
-With [cross-session messaging](/docs/en/cross-session-messaging), the Remote Control connection also carries messages between your own Claude Code sessions on different machines, and messages arriving from your [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions. These messages travel through Anthropic servers like the rest of Remote Control traffic. [Message sessions on other machines](/docs/en/cross-session-messaging#message-sessions-on-other-machines) covers the cross-machine delivery rules and the `isolatePeerMachines` approval requirement, and [Control inbound messages](/docs/en/cross-session-messaging#control-inbound-messages) covers the inbound controls. Cross-session messaging requires Claude Code v2.1.224 or later.
 
 To turn Remote Control off entirely, use the [`disableRemoteControl`](/docs/en/settings#available-settings) setting. Organizations with compliance requirements such as Zero Data Retention can't enable Remote Control.
 

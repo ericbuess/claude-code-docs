@@ -186,13 +186,7 @@ Plugins can bundle Model Context Protocol (MCP) servers to connect Claude Code w
   Looking to use LSP plugins? Install them from the official marketplace: search for "lsp" in the `/plugin` Discover tab. This section documents how to create LSP plugins for languages not covered by the official marketplace.
 </Tip>
 
-Plugins can provide [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) (LSP) servers to give Claude real-time code intelligence while working on your codebase.
-
-LSP integration provides:
-
-* **Instant diagnostics**: Claude sees errors and warnings immediately after each edit
-* **Code navigation**: go to definition, find references, and hover information
-* **Language awareness**: type information and documentation for code symbols
+Plugins can provide [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) (LSP) servers to give Claude [real-time code intelligence](/docs/en/discover-plugins#code-intelligence) while working on your codebase.
 
 **Location**: `.lsp.json` in plugin root, or inline in `plugin.json`
 
@@ -322,7 +316,7 @@ To declare monitors inline, set `experimental.monitors` in `plugin.json` to the 
 
 The `command` value supports the [path substitutions](#environment-variables) `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, and `${CLAUDE_PROJECT_DIR}`, plus any `${ENV_VAR}` from the environment. Prefix the command with `cd "${CLAUDE_PLUGIN_ROOT}" && ` if the script needs to run from the plugin's own directory.
 
-A monitor `command` can't reference [`${user_config.*}`](#user-configuration) values. The command runs through a shell, so Claude Code rejects the monitor with an [error](/docs/en/errors#plugin-command-references-user-config) instead of substituting the value. Monitor processes don't receive `CLAUDE_PLUGIN_OPTION_<KEY>` environment variables, so have the monitor script read the value from a config file it owns. Before v2.1.207, monitor commands substituted `${user_config.*}` values.
+A monitor `command` can't reference [`${user_config.*}`](#user-configuration) values. The command runs through a shell, so Claude Code rejects the monitor with an [error](/docs/en/errors#plugin-command-references-user-config) instead of substituting the value. Monitor processes don't receive `CLAUDE_PLUGIN_OPTION_<KEY>` environment variables, so have the monitor script read the value from a config file it owns.
 
 If you disable a plugin mid-session, Claude Code doesn't stop monitors that are already running; they stop when the session ends.
 
@@ -406,7 +400,7 @@ claude plugin disable my-tool@skills-dir
 
 ## Plugin manifest schema
 
-The `.claude-plugin/plugin.json` file defines your plugin's metadata and configuration. This section documents all supported fields and options.
+The `.claude-plugin/plugin.json` file defines your plugin's metadata and configuration.
 
 The manifest is optional. If omitted, Claude Code auto-discovers components in [default locations](#file-locations-reference) and derives the plugin name from the directory name. Use a manifest when you need to provide metadata or custom component paths.
 
@@ -631,7 +625,7 @@ Whether a custom path replaces or extends the plugin's default directory depends
 * **Adds to the default**: `skills`. The default `skills/` directory is always scanned, and directories listed in `skills` are loaded alongside it. Exception: for a [marketplace entry whose `source` resolves to the marketplace root](/docs/en/plugin-marketplaces#advanced-plugin-entries), declaring specific subdirectories replaces the default `skills/` scan
 * **Own merge rules**: [hooks](#hooks), [MCP servers](#mcp-servers), and [LSP servers](#lsp-servers). See each section for how multiple sources combine
 
-When a plugin has both a default folder and the matching manifest key, Claude Code v2.1.140 and later warns about the ignored folder in `claude plugin list` and the `/plugin` detail view. The plugin still loads using the manifest paths. Claude Code doesn't warn when the manifest key points into the default folder, for example `"commands": ["./commands/deploy.md"]`, because that path names the folder explicitly.
+When a plugin has both a default folder and the matching manifest key, Claude Code warns about the ignored folder in `claude plugin list` and the `/plugin` detail view. The plugin still loads using the manifest paths. Claude Code doesn't warn when the manifest key points into the default folder, for example `"commands": ["./commands/deploy.md"]`, because that path names the folder explicitly.
 
 For all path fields:
 

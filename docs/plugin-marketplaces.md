@@ -844,19 +844,10 @@ For complete configuration details including all supported source types and comp
 
 ### Version resolution and release channels
 
-Plugin versions determine cache paths and update detection: if the resolved version matches what a user already has, `/plugin update` and auto-update skip the plugin.
-
-Claude Code resolves a plugin's version from the first of these that is set:
-
-1. `version` in the plugin's `plugin.json`
-2. `version` in the plugin's marketplace entry
-3. The git commit SHA of the plugin's source
-4. For [`archive` sources](#zip-archives), the `sha256` pin in the marketplace entry, or the digest of the downloaded file when you set no pin
-
-For the git-based source types `github`, `url`, `git-subdir`, and relative paths inside a git-hosted marketplace, you can omit `version` entirely. This is the simplest setup for internal or actively-developed plugins.
+Plugin versions determine cache paths and update detection: if the resolved version matches what a user already has, `/plugin update` and auto-update skip the plugin. For git-based sources, if you omit `version`, Claude Code uses the source's resolved commit SHA, so users get an update whenever that commit changes; this is the simplest setup for internal or actively developed plugins. See [Version management](/docs/en/plugins-reference#version-management) for the full resolution order, including `archive` sources.
 
 <Warning>
-  Setting `version` pins the plugin. If you declare `"version": "1.0.0"` in `plugin.json` and push new commits without changing that string, existing users keep the cached copy, because Claude Code sees the same version. Bump the field on every release, or omit it to fall back to the resolved version above.
+  Setting `version` pins the plugin. If you declare `"version": "1.0.0"` in `plugin.json` and push new commits without changing that string, existing users keep the cached copy, because Claude Code sees the same version. Bump the field on every release, or omit it to fall back to the resolved version.
 
   Avoid setting `version` in both `plugin.json` and the marketplace entry. Claude Code always uses the `plugin.json` value without warning, so a stale manifest version can mask a version you set in `marketplace.json`.
 </Warning>
@@ -1213,7 +1204,7 @@ For background auto-updates:
 export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
 ```
 
-With this variable set, Claude Code retains the stale marketplace clone on `git pull` failure and continues using the last-known-good state. For fully offline deployments where the repository will never be reachable, use [`CLAUDE_CODE_PLUGIN_SEED_DIR`](#pre-populate-plugins-for-containers) to pre-populate the plugins directory at build time instead.
+For fully offline deployments where the repository will never be reachable, use [`CLAUDE_CODE_PLUGIN_SEED_DIR`](#pre-populate-plugins-for-containers) to pre-populate the plugins directory at build time instead.
 
 ### Git operations time out
 

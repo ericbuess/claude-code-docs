@@ -159,7 +159,7 @@ To block startup itself at a separate, earlier phase than the first-turn wait, b
 * Set [`MCP_CONNECTION_NONBLOCKING`](/docs/en/env-vars) to `0` to block on the whole connection batch. Claude Code caps that wait at 5 seconds by default. Adjust the cap with the [`MCP_CONNECT_TIMEOUT_MS`](/docs/en/env-vars) environment variable, in milliseconds. Servers still pending at that deadline keep connecting in the background.
 * Set `alwaysLoad: true` on a server's config to make its tools available at their full schemas on the first turn, [exempt from tool search deferral](/docs/en/mcp#exempt-a-server-from-deferral). Claude Code waits at startup for that server's tools, capped at the same deadline, while other servers keep connecting in the background; a remote server with a cached tool list supplies them without connecting, per the table above.
 
-The `system` message with subtype `init` reports each server's status at the moment it's emitted. Check for status `failed` or `needs-auth` when you want to detect servers that won't be usable, rather than treating every status other than `connected` as a failure; see [Error handling](#error-handling) for the full status check.
+The `system` message with subtype `init` reports each server's status at the moment it's emitted; see [Error handling](#error-handling) for reading those statuses.
 
 ## Allow MCP tools
 
@@ -213,7 +213,7 @@ Wildcards (`*`) let you allow all tools from a server without listing each one i
 
 To see what tools an MCP server provides, check the server's documentation or inspect the `tools` array in the `system` init message. MCP tool names start with `mcp__`.
 
-Claude Code emits the init message after the [first-turn connection wait](#connection-timing) for servers passed in `options.mcpServers`, so the `tools` array lists the `mcp__` tools of each such server that connected within the wait. A server with a [cached tool list](#connection-timing) shows `pending` with its `mcp__` tools already listed and a connection made on first use. Any other server that hasn't connected when the message is emitted, including [settings-file servers](#from-a-config-file) that don't get the full wait, shows its current status, such as `pending`, `failed`, or `needs-auth`, with its tools absent; see [Error handling](#error-handling) for the full status set.
+Claude Code emits the init message after the [first-turn connection wait](#connection-timing) for servers passed in `options.mcpServers`, so the `tools` array lists the `mcp__` tools of each server that has connected by then, plus those of servers with a [cached tool list](#connection-timing), which connect on first use. Tools of any other server that hasn't connected are absent; see [Error handling](#error-handling) for reading each server's status.
 
 This filter prints the MCP tool names:
 
@@ -268,56 +268,39 @@ MCP servers communicate with your agent using different transport protocols. Che
 
 ### stdio servers
 
-Local processes that communicate via stdin/stdout. Use this for MCP servers you run on the same machine:
+Local processes that communicate via stdin/stdout. Use this for MCP servers you run on the same machine. For the `.mcp.json` form, use the same fields shown at [From a config file](#from-a-config-file). In code, pass the command and its arguments:
 
-<Tabs>
-  <Tab title="In code">
-    <CodeGroup>
-      ```typescript TypeScript hidelines={1,-1} theme={null}
-      const _ = {
-        options: {
-          mcpServers: {
-            filesystem: {
-              command: "npx",
-              args: ["-y", "@modelcontextprotocol/server-filesystem", "/Users/me/projects"]
-            }
-          },
-          allowedTools: ["mcp__filesystem__read_file", "mcp__filesystem__list_directory"]
+<CodeGroup>
+  ```typescript TypeScript hidelines={1,-1} theme={null}
+  const _ = {
+    options: {
+      mcpServers: {
+        filesystem: {
+          command: "npx",
+          args: ["-y", "@modelcontextprotocol/server-filesystem", "/Users/me/projects"]
         }
-      };
-      ```
-
-      ```python Python theme={null}
-      options = ClaudeAgentOptions(
-          mcp_servers={
-              "filesystem": {
-                  "command": "npx",
-                  "args": [
-                      "-y",
-                      "@modelcontextprotocol/server-filesystem",
-                      "/Users/me/projects",
-                  ],
-              }
-          },
-          allowed_tools=["mcp__filesystem__read_file", "mcp__filesystem__list_directory"],
-      )
-      ```
-    </CodeGroup>
-  </Tab>
-
-  <Tab title=".mcp.json">
-    ```json theme={null}
-    {
-      "mcpServers": {
-        "filesystem": {
-          "command": "npx",
-          "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/me/projects"]
-        }
-      }
+      },
+      allowedTools: ["mcp__filesystem__read_file", "mcp__filesystem__list_directory"]
     }
-    ```
-  </Tab>
-</Tabs>
+  };
+  ```
+
+  ```python Python theme={null}
+  options = ClaudeAgentOptions(
+      mcp_servers={
+          "filesystem": {
+              "command": "npx",
+              "args": [
+                  "-y",
+                  "@modelcontextprotocol/server-filesystem",
+                  "/Users/me/projects",
+              ],
+          }
+      },
+      allowed_tools=["mcp__filesystem__read_file", "mcp__filesystem__list_directory"],
+  )
+  ```
+</CodeGroup>
 
 ### HTTP/SSE servers
 
@@ -883,7 +866,7 @@ If Claude sees tools but doesn't use them, check that you've granted permission 
 
 ### Connection timeouts
 
-MCP server connections time out after 30 seconds by default. If your server takes longer to start, the connection fails. Raise the limit with the [`MCP_TIMEOUT`](/docs/en/env-vars) environment variable, in milliseconds. For servers that need more startup time, also consider:
+MCP server connections time out after 30 seconds by default. Claude Code applies that limit to the connection attempt only; to change how long a running tool call may take, set [`MCP_TOOL_TIMEOUT`](/docs/en/env-vars). If your server takes longer to start, the connection fails. Raise the connection limit with the [`MCP_TIMEOUT`](/docs/en/env-vars) environment variable, in milliseconds. For servers that need more startup time, also consider:
 
 * Using a lighter-weight server if available
 * Pre-warming the server before starting your agent
