@@ -608,7 +608,7 @@ Every key is optional; Claude Desktop applies its own default for any key you om
 If a device also has a local `managed-settings.json` or MDM-delivered policy, the managed sources don't merge, with two per-key exceptions while no [policy helper](/docs/en/settings#compute-managed-settings-with-a-policy-helper) is supplying managed settings, since a helper's output replaces the managed sources entirely:
 
 * The `env` block, in Claude Code v2.1.223 or later
-* The [cross-source lock keys](/docs/en/settings#settings-precedence)
+* The [cross-source lock keys](/docs/en/settings#precedence-within-the-managed-tier)
 
 Both are covered in the list later in this section. The highest-priority source provides all policy settings, ranked in this order with highest priority first:
 

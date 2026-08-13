@@ -949,8 +949,7 @@ The hook is configured but never executes.
 
 * Run `/hooks` and confirm the hook appears under the correct event
 * Check that the matcher pattern matches the tool name exactly. Matchers are case-sensitive
-* Verify you're triggering the right event type: `PreToolUse` fires before tool execution, `PostToolUse` fires after
-* In non-interactive mode with the `-p` flag, `PermissionRequest` hooks fire only when the Agent SDK's `canUseTool` callback supplies the prompt, or for tool calls inside background subagents. In plain `-p` runs or with `--permission-prompt-tool`, use `PreToolUse` hooks instead
+* Verify you're triggering the right event type: `PreToolUse` fires before tool execution, `PostToolUse` fires after. A `PermissionRequest` hook fires when Claude Code is about to ask you for permission; see the [limitations](#limitations) for the non-interactive cases
 
 ### Hook error in output
 

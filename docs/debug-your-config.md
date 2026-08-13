@@ -39,7 +39,7 @@ Adherence drops when an instruction is vague enough to interpret multiple ways, 
 
 ## Check resolved settings
 
-Settings merge across managed, user, project, and local scopes. Managed settings apply first when present, apart from the exceptions under [Settings precedence](/docs/en/settings#settings-precedence). Among the rest, the closer scope overrides the broader one in the order local, then project, then user. Some settings can also be set by command-line flags or [environment variables](/docs/en/env-vars), which act as another override layer. When a setting doesn't seem to apply, the value you set is usually being overridden by another scope or an environment variable.
+Settings merge across managed, user, project, and local scopes. Managed settings apply first when present. Among the rest, the closer scope overrides the broader one in the order local, then project, then user. Some settings can also be set by command-line flags or [environment variables](/docs/en/env-vars), which act as another override layer. When a setting doesn't seem to apply, the value you set is usually being overridden by another scope or an environment variable.
 
 Run `/doctor` to check your configuration and installation. It reports what it finds, including invalid settings files, duplicate installations, unused extensions, and checked-in `CLAUDE.md` content Claude can derive from the codebase, then proposes fixes it applies only after you confirm. The `CLAUDE.md` trim check requires Claude Code v2.1.206 or later. Before v2.1.205, `/doctor` opened a read-only diagnostics screen and pressing `f` sent the report to Claude to fix.
 

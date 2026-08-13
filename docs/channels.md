@@ -218,8 +218,6 @@ Each supported channel is a plugin that requires [Bun](https://bun.sh). For a ha
   </Tab>
 </Tabs>
 
-You can also [build your own channel](/docs/en/channels-reference) for systems that don't have a plugin yet.
-
 ## Quickstart
 
 Fakechat is an officially supported demo channel that runs a chat UI on localhost, with nothing to authenticate and no external service to configure.
@@ -306,15 +304,15 @@ The allowlist also gates [permission relay](/docs/en/channels-reference#relay-pe
 
 Admins control availability through two [managed settings](/docs/en/settings) that users cannot override. The default depends on how you authenticate:
 
-* **claude.ai Team and Enterprise**: channels are blocked until an Owner enables them.
+* **claude.ai Team and Enterprise**: channels are blocked until an Owner [enables them](#enable-channels-for-your-organization).
 * **Anthropic Console with API key authentication**: channels are permitted by default. You only need this setting if your organization deploys managed settings.
 
 In all cases, no channel runs until a user opts it in for the session with `--channels`.
 
-| Setting                 | Purpose                                                                                                                                                                                                                                                     | When not configured                                                                                                                                                                    |
-| :---------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `channelsEnabled`       | Master switch. Must be `true` for any channel to deliver messages. Set via the [claude.ai Admin console](https://claude.ai/admin-settings/claude-code) toggle or directly in managed settings. Blocks all channels including the development flag when off. | claude.ai Team and Enterprise: channels blocked. Console: channels allowed unless your organization deploys managed settings, in which case channels are blocked until this key is set |
-| `allowedChannelPlugins` | Which plugins can register once channels are enabled. Replaces the Anthropic-maintained list when set. Only applies when `channelsEnabled` is `true`.                                                                                                       | Anthropic default list applies                                                                                                                                                         |
+| Setting                 | Purpose                                                                                                                                                                                                              | When not configured                                                                                                                                                                    |
+| :---------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `channelsEnabled`       | Master switch. Must be `true` for any channel to deliver messages. Blocks all channels including the development flag when off. See [Enable channels for your organization](#enable-channels-for-your-organization). | claude.ai Team and Enterprise: channels blocked. Console: channels allowed unless your organization deploys managed settings, in which case channels are blocked until this key is set |
+| `allowedChannelPlugins` | Which plugins can register once channels are enabled. Replaces the Anthropic-maintained list when set.                                                                                                               | Anthropic default list applies                                                                                                                                                         |
 
 Pro and Max users without an organization skip these checks entirely: channels are available and users opt in per session with `--channels`.
 
@@ -339,7 +337,7 @@ By default, any plugin on the Anthropic-maintained allowlist can register as a c
 }
 ```
 
-When `allowedChannelPlugins` is set, it replaces the Anthropic allowlist entirely: only the listed plugins can register. Leave it unset to fall back to the default Anthropic allowlist. If you set an empty array, you block all channel plugins from the allowlist, but `--dangerously-load-development-channels` can still bypass that block for local testing. To block channels entirely including the development flag, leave `channelsEnabled` unset instead.
+If you set an empty array, you block all channel plugins from the allowlist, but `--dangerously-load-development-channels` can still bypass that block for local testing. To block channels entirely including the development flag, leave `channelsEnabled` unset instead.
 
 This setting requires `channelsEnabled: true`. If a user passes a plugin to `--channels` that isn't on your list, Claude Code starts normally but the channel doesn't register, and the startup notice explains that the plugin isn't on the organization's approved list.
 

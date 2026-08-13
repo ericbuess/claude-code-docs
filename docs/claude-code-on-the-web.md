@@ -197,7 +197,7 @@ Teleport checks these requirements before resuming a session. If any requirement
 
 #### `--teleport` is unavailable
 
-Teleport requires claude.ai subscription authentication. If you're authenticated via API key, run `/login` to sign in with your claude.ai account instead. On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, `--teleport` stops with `Cloud sessions aren't available with <provider>` because cloud sessions use the Anthropic API for inference and aren't available through those providers. If you're already signed in via claude.ai and `--teleport` is still unavailable, your organization may have disabled cloud sessions.
+Teleport requires claude.ai subscription authentication. If you're authenticated via API key, run `/login` to sign in with your claude.ai account instead. If the error names your provider instead, cloud sessions aren't available through third-party providers; see the [error table](#output-and-errors). If you're already signed in via claude.ai and `--teleport` is still unavailable, your organization may have disabled cloud sessions.
 
 ## Work with sessions
 
@@ -325,9 +325,7 @@ If a new session fails to start with `Session creation failed` or stalls at prov
 
 `claude --cloud` and `claude --teleport` require sign-in with a claude.ai account. If you authenticate with an API key, or your stored account details are stale, these commands fail with `Unable to get organization UUID` or a message that API key authentication is not sufficient.
 
-Run `/login` to sign in with your claude.ai account, then retry the command.
-
-On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, the commands stop earlier with `Cloud sessions aren't available with <provider>`. Cloud sessions use the Anthropic API for inference and aren't available through those providers.
+Run `/login` to sign in with your claude.ai account, then retry the command. If the error names your provider instead, see the [error table](#output-and-errors): cloud sessions aren't available through third-party providers.
 
 ### Remote Control session expired or access denied
 

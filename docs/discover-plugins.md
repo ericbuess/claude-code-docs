@@ -289,7 +289,7 @@ The command opens that plugin's details, where you choose an [installation scope
 * **Project scope**: install for all collaborators on this repository, which adds the plugin to `.claude/settings.json`
 * **Local scope**: install for yourself in this repository only, not shared with collaborators
 
-To install without an interactive step, use the [`claude plugin install`](/docs/en/plugins-reference#plugin-install) shell command, which installs to user scope unless you pass `--scope`.
+To install without an interactive step, use the [`claude plugin install`](/docs/en/plugins-reference#plugin-install) shell command, which installs to user scope unless you pass `--scope`. For a plugin with a [`command` source](/docs/en/plugin-marketplaces#how-users-accept-the-command), pass `--yes` to accept the command it displays.
 
 You may also see plugins with **managed** scope. These are installed by administrators via [managed settings](/docs/en/settings#settings-files) and can't be modified.
 
@@ -444,6 +444,8 @@ Claude Code can automatically update marketplaces and their installed plugins in
 
 Claude Code checks for marketplace and plugin updates after your session starts, with a random delay of up to ten minutes, so the running session keeps using the versions it loaded at launch. If any plugins were updated, you'll see a notification prompting you to run `/reload-plugins`, or the new versions load on your next launch.
 
+Claude Code updates plugins that have a [`command` source](/docs/en/plugin-marketplaces#command-sources) on a separate cadence from the marketplace auto-update setting and from `DISABLE_AUTOUPDATER`. Instead, it [re-runs the command once per session](/docs/en/plugin-marketplaces#when-claude-code-re-runs-the-command) and installs the output as a new plugin version when its [hash](/docs/en/plugins-reference#version-management) has changed.
+
 Toggle auto-update for individual marketplaces through the UI:
 
 1. Run `/plugin` to open the plugin manager
@@ -455,7 +457,7 @@ Official Anthropic marketplaces have auto-update enabled by default. Third-party
 
 Administrators can also set `"autoUpdate": true` on each [`extraKnownMarketplaces`](/docs/en/settings#extraknownmarketplaces) entry in managed settings to enable auto-update for an organization marketplace without requiring each user to toggle it.
 
-To disable all automatic updates entirely for both Claude Code and all plugins, set the `DISABLE_AUTOUPDATER` environment variable. See [Auto updates](/docs/en/setup#auto-updates) for details.
+To disable automatic updates for Claude Code and for plugins fetched from marketplaces, set the `DISABLE_AUTOUPDATER` environment variable. Plugins with a [`command` source](/docs/en/plugin-marketplaces#command-sources) follow their own once-per-session re-resolve. See [Auto updates](/docs/en/setup#auto-updates) for details.
 
 To keep plugin auto-updates enabled while disabling Claude Code auto-updates, set `FORCE_AUTOUPDATE_PLUGINS=1` along with `DISABLE_AUTOUPDATER`:
 

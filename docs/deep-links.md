@@ -21,7 +21,7 @@ This page covers how to [build a link](#build-a-link), [embed one in a runbook o
 
 ## How it works
 
-The `claude-cli://` prefix is a custom URL scheme that Claude Code registers with your operating system, similar to how `mailto:` links open your email client. The link can live on a web page, in a wiki, in a Slack message, or in any app that renders links. When you click one:
+The `claude-cli://` prefix is a custom URL scheme that Claude Code registers with your operating system, similar to how `mailto:` links open your email client. When you click a deep link:
 
 1. The browser or app hands the URL to your operating system.
 2. The operating system recognizes the `claude-cli://` prefix and starts Claude Code on your machine.
@@ -83,7 +83,6 @@ Use `repo` when the link is shared and each person clones to a different locatio
 
 * Each time you run `claude` in a Git repository, Claude Code records that directory's path against the repository's GitHub `owner/name` slug.
 * When a deep link arrives, `repo` opens whichever matching path you used most recently. Claude Code tracks multiple clones and worktrees separately, so it picks the one you worked in last.
-* The lookup only finds paths where you have already run Claude Code at least once.
 * The link does not change which branch is checked out. The session opens in whatever state that directory is currently in.
 
 The welcome header shows which path it picked so you can confirm the right clone opened.

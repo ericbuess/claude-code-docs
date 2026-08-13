@@ -134,7 +134,7 @@ For a plugin the marketplace references by a relative path, a marketplace added 
 The resolved tag's semver is recorded separately from `plugin.json`'s `version`, so constraint checks use the tag that was actually fetched even if `plugin.json` at that commit has a stale value. The cache directory name for a tag-resolved install includes a 12-character commit-SHA suffix, so if a maintainer force-moves a tag to a different commit, the next install gets a fresh cache directory instead of reusing stale content.
 
 <Note>
-  For dependencies with an `npm` or `archive` [plugin source](/docs/en/plugin-marketplaces#plugin-sources), the constraint does not control which version is fetched, since tag-based resolution applies only to git-backed sources. The constraint is still checked at load time, and the dependent plugin is disabled with `dependency-version-unsatisfied` if the installed version does not satisfy it.
+  For dependencies with an `npm`, `archive`, or `command` [plugin source](/docs/en/plugin-marketplaces#plugin-sources), the constraint does not control which version is fetched, since tag-based resolution applies only to git-backed sources. The constraint is still checked at load time, and the dependent plugin is disabled with `dependency-version-unsatisfied` if the installed version does not satisfy it. For a `command` source, Claude Code checks the version in the dependency's `plugin.json` and ignores the content-hash suffix; a dependency whose `plugin.json` sets no version satisfies no constraint, so set one before you constrain it. Claude Code never installs a dependency with a `command` source itself, so users [install it first](/docs/en/plugin-marketplaces#how-users-accept-the-command).
 </Note>
 
 ## How constraints interact

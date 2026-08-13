@@ -66,8 +66,6 @@ You can use `claude agents` as your primary entry point instead of `claude`: dis
 
 Inside a regular `claude` session, the prompt footer's `←` hint counts the background agents that are waiting on you, such as `← 2 agents`, and returns to `← for agents` when none need input. Counts above 99 show as `99+`. The count refreshes about every ten seconds while the terminal is focused and immediately when focus returns. It briefly changes color when it moves and when an agent completes, and when a background session finishes while none need your input it briefly shows the number completed, such as `← 2 done`. Both flashes are off when the [`prefersReducedMotion` setting](/docs/en/settings#available-settings) is on, and the hint is hidden in [screen reader mode](/docs/en/accessibility).
 
-The count appears on every provider, including [Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry](/docs/en/third-party-integrations).
-
 ## Monitor sessions with agent view
 
 Run `claude agents` to open agent view. It takes over the full terminal and lists every session grouped by state, with pinned sessions and the ones that need you at the top. Each row shows the session's name, current activity, and its age, counted from when the session was created; a finished session's age freezes at how long the run took.
@@ -145,7 +143,7 @@ A working row shows what the session says it's doing, and a blocked row shows th
 
 When the list is [grouped by directory](#organize-the-list), the summary opens with the session's state as a colored word, such as `Needs input · double jump or wall climb?`. In the default state grouping, the group header already names the state, so the row shows only the summary.
 
-The end-of-turn summary and each mid-turn rewrite are one short Haiku-class request through your normal provider, billed and handled under the same [data usage terms](/docs/en/data-usage) as the session itself. The 15-second updates between model rewrites reuse the session's own output and don't send a request. On third-party providers such as Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and custom gateways, the request falls back to the session's main model when no Haiku model is configured. Set [`ANTHROPIC_DEFAULT_HAIKU_MODEL`](/docs/en/model-config#environment-variables) to choose the model for these summaries on those providers.
+The end-of-turn summary and each mid-turn rewrite are one short Haiku-class request through your normal provider, billed and handled under the same [data usage terms](/docs/en/data-usage) as the session itself. The 15-second updates between model rewrites reuse the session's own output and don't send a request. On a third-party provider or gateway with no Haiku-class model configured, the request uses the session's main model instead; set [`ANTHROPIC_DEFAULT_HAIKU_MODEL`](/docs/en/model-config#environment-variables) to choose one.
 
 ### Pull request status
 
@@ -575,13 +573,13 @@ Claude Code refuses `claude --bg --permission-mode bypassPermissions` until you'
 
 Agent view accepts the same configuration flags as `claude` for loading settings, plugins, MCP servers, and additional directories. Agent view applies `--settings` and `--plugin-dir` to itself and passes every configuration flag through to the sessions you dispatch from it, so a plugin or MCP server you load this way is available in those sessions.
 
-| Flag                                                                                             | Effect                                                                         |
-| :----------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
-| [`--settings <file-or-json>`](/docs/en/settings)                                                      | Override settings for agent view and dispatched sessions                       |
-| [`--add-dir <path>`](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) | Grant file access to an additional directory                                   |
-| [`--plugin-dir <path>`](/docs/en/plugins)                                                             | Load a plugin from a local directory                                           |
-| [`--mcp-config <file-or-json>`](/docs/en/mcp)                                                         | Load MCP servers from a config file or JSON string                             |
-| `--strict-mcp-config`                                                                            | Use only the MCP servers from `--mcp-config`, ignoring other MCP configuration |
+| Flag                                                                                             | Effect                                                                                                                                                                                                                                 |
+| :----------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`--settings <file-or-json>`](/docs/en/settings)                                                      | Override settings for agent view and dispatched sessions                                                                                                                                                                               |
+| [`--add-dir <path>`](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) | Grant file access to an additional directory                                                                                                                                                                                           |
+| [`--plugin-dir <path>`](/docs/en/plugins)                                                             | Load a plugin from a local directory                                                                                                                                                                                                   |
+| [`--mcp-config <file-or-json>`](/docs/en/mcp)                                                         | Load MCP servers from a config file or JSON string                                                                                                                                                                                     |
+| `--strict-mcp-config`                                                                            | Use only the MCP servers from `--mcp-config`, ignoring other MCP configuration. See [Exclusive control with managed-mcp.json](/docs/en/managed-mcp#exclusive-control-with-managed-mcp-json) for what the flag does under a managed MCP file |
 
 Repeat `--add-dir`, `--plugin-dir`, or `--mcp-config` once per value. `claude agents` doesn't support the space-separated form, such as `--add-dir a b c`.
 
@@ -646,7 +644,7 @@ The supervisor and its sessions authenticate with the same stored credentials as
 
 The dispatching shell's `PATH` is applied to the worker the same way, so shell commands the session runs find the same tools your terminal does.
 
-A background session doesn't inherit gateway endpoint variables such as `ANTHROPIC_BASE_URL` or the equivalent Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry base URL variables from the shell that started the supervisor. Without a gateway exported in the shell you dispatch from, the session uses your stored credentials and any `env` values in the project directory's [settings](/docs/en/settings). To point every session in a project at an [LLM gateway](/docs/en/llm-gateway), set `ANTHROPIC_BASE_URL` in that project's `.claude/settings.json` `env` block.
+A background session doesn't inherit gateway endpoint variables such as `ANTHROPIC_BASE_URL`, or a provider's equivalent base URL variable, from the shell that started the supervisor. Without a gateway exported in the shell you dispatch from, the session uses your stored credentials and any `env` values in the project directory's [settings](/docs/en/settings). To point every session in a project at an [LLM gateway](/docs/en/llm-gateway), set `ANTHROPIC_BASE_URL` in that project's `.claude/settings.json` `env` block.
 
 If you export a gateway `ANTHROPIC_BASE_URL` in the shell you dispatch from, it reaches that session's worker, along with `ANTHROPIC_CUSTOM_HEADERS` and the credential exported alongside them, when both conditions hold:
 
@@ -715,8 +713,6 @@ To inspect this state without reading the files directly, run `claude daemon sta
 The command also warns when the running supervisor is on a different version than the `claude` you invoked, which happens after an update the supervisor hasn't restarted into yet. The warning shows both versions and tells you to run `claude daemon stop --any` to pick up the new version. When Claude Code is installed as an OS service, the suggested command is `claude daemon stop` without the flag.
 
 Sessions survive that version mismatch intact: an older Claude Code version that updates a session's `state.json` preserves fields it doesn't recognize and keeps the session listed. The session list in `roster.json` follows the same rule, so sessions started by the newer version stay reachable and keep accepting input after the supervisor restarts.
-
-On Windows, `claude daemon status` surfaces the underlying file error when the daemon's pipe-key file is locked or unreadable instead of reporting a generic connection failure.
 
 ### Turn off agent view
 

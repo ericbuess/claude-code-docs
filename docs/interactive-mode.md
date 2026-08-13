@@ -312,18 +312,36 @@ Claude responds to the command output automatically once it lands in the transcr
 
 ## Prompt suggestions
 
-When you first open a session, a grayed-out example command appears in the prompt input to help you get started. Claude Code picks this from your project's git history, so it reflects files you've been working on recently.
+When you first open a session, Claude Code shows a grayed-out example command in the prompt input to help you get started. It picks this from your project's git history, so the example reflects files you've been working on recently.
 
-After Claude responds, suggestions continue to appear based on your conversation history, such as a follow-up step from a multi-part request or a natural continuation of your workflow.
+After Claude responds, Claude Code can suggest your next prompt based on your conversation history, such as a follow-up step from a multi-part request or a natural continuation of your workflow.
 
 * Press `Tab` or `Right arrow` to place the suggestion in the prompt input, then `Enter` to submit
 * Start typing to dismiss it
 
-The suggestion runs as a background request that reuses the parent conversation's prompt cache, so the additional cost is minimal. Claude Code skips suggestion generation when the cache is cold to avoid unnecessary cost.
+Claude Code generates each of these next-prompt suggestions with a background request that reuses the conversation's prompt cache, so the additional cost is minimal.
 
-Suggestions are automatically skipped after the first turn of a conversation and in plan mode.
+### When Claude Code skips suggestions
 
-In print mode they are off by default. Pass [`--prompt-suggestions`](/docs/en/cli-reference#cli-flags) with `-p "<prompt>" --output-format stream-json --verbose` to emit a `prompt_suggestion` message after each turn instead.
+In interactive mode, Claude Code leaves prompt suggestions off by default and hides the **Prompt suggestions** toggle in `/config` when it doesn't evaluate feature flags. That happens in these cases:
+
+* You use Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry as the model provider, unless a host platform that embeds Claude Code sets [`CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`](/docs/en/env-vars) to a true value such as `1`
+* You are signed in to a [Claude apps gateway](/docs/en/claude-apps-gateway)
+* You set [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, or `DISABLE_GROWTHBOOK`](/docs/en/env-vars#features-that-need-feature-flag-fetching) to a value that turns off feature-flag evaluation
+
+Outside those cases, if you start a session before Claude Code has ever fetched feature flags, such as your first session after installing on a slow network, Claude Code can also leave suggestions off and hide the **Prompt suggestions** toggle for that session. It shows them starting with the next session after a fetch succeeds.
+
+Claude Code also skips individual suggestions in several situations, including:
+
+* The prompt cache is cold, to avoid unnecessary cost
+* After the first turn of a conversation, in some sessions
+* The previous response ended in an error
+* While you're in plan mode
+* In an [agent team](/docs/en/agent-teams), in teammates' sessions by default. The lead's session shows suggestions
+
+In print mode, Claude Code doesn't generate suggestions by default. Pass [`--prompt-suggestions`](/docs/en/cli-reference#cli-flags) with `-p "<prompt>" --output-format stream-json --verbose` to have Claude Code emit a `prompt_suggestion` message after each turn that generates one. The generator skips very short conversations and cold prompt caches here too, so a single short `-p` query can emit none.
+
+### Turn prompt suggestions off
 
 To disable prompt suggestions entirely, use any of the following:
 
