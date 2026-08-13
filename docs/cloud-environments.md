@@ -68,6 +68,8 @@ DATABASE_URL=postgres://localhost:5432/myapp
 
 Each session copies the environment's values once, at startup, into ordinary environment variables that any command Claude runs can read. Because running sessions don't re-read the configuration, editing or adding variables affects sessions you start afterward; sessions already running keep the values they started with.
 
+Claude Code on the web also sets some variables itself when it starts a session. For [`CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`](/docs/en/claude-code-on-the-web#manage-context), the value Claude Code on the web sets overrides one you add here, so adding that key here has no effect.
+
 Anyone who uses the environment can read the values, and cloud environments have no dedicated secrets store, so don't add API keys or other credentials. If a session needs a credential anyway, see [What carries over from your setup](#what-carries-over-from-your-setup).
 
 ### Select an environment from the CLI

@@ -777,6 +777,8 @@ class ClaudeAgentOptions:
     include_partial_messages: bool = False
     include_hook_events: bool = False
     fork_session: bool = False
+    resume_session_at: str | None = None
+    resume_drops_turn: str | None = None
     agents: dict[str, AgentDefinition] | None = None
     setting_sources: list[SettingSource] | None = None
     skills: list[str] | Literal["all"] | None = None
@@ -827,6 +829,8 @@ class ClaudeAgentOptions:
 | `include_partial_messages`    | `bool`                                                                                | `False`                            | Include partial message streaming events. When enabled, [`StreamEvent`](#streamevent) messages are yielded                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `include_hook_events`         | `bool`                                                                                | `False`                            | Include hook lifecycle events in the message stream as `HookEventMessage` objects                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `fork_session`                | `bool`                                                                                | `False`                            | When resuming with `resume`, fork to a new session ID instead of continuing the original session                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `resume_session_at`           | `str \| None`                                                                         | `None`                             | When resuming, load the conversation only up to and including the message with this UUID. Use with `resume`, and usually `fork_session`, to branch from an earlier point                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `resume_drops_turn`           | `str \| None`                                                                         | `None`                             | UUID of the user prompt whose turn a `resume_session_at` truncation discards. When set, the CLI refuses the resume if the discarded range holds entries not attributable to that turn. Requires Claude Code v2.1.223 or later; the bundled CLI satisfies this                                                                                                                                                                                                                                                                                                                                        |
 | `agents`                      | `dict[str, AgentDefinition] \| None`                                                  | `None`                             | Programmatically defined subagents                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `plugins`                     | `list[SdkPluginConfig]`                                                               | `[]`                               | Load custom plugins from local paths. See [Plugins](/docs/en/agent-sdk/plugins) for details                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `sandbox`                     | [`SandboxSettings`](#sandboxsettings) ` \| None`                                      | `None`                             | Configure sandbox behavior programmatically. See [Sandbox settings](#sandboxsettings) for details                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -1456,6 +1460,7 @@ Message = (
     | ResultMessage
     | StreamEvent
     | RateLimitEvent
+    | ConversationResetMessage
 )
 ```
 
@@ -1470,14 +1475,16 @@ class UserMessage:
     uuid: str | None = None
     parent_tool_use_id: str | None = None
     tool_use_result: dict[str, Any] | None = None
+    origin: MessageOrigin | None = None
 ```
 
-| Field                | Type                        | Description                                           |
-| :------------------- | :-------------------------- | :---------------------------------------------------- |
-| `content`            | `str \| list[ContentBlock]` | Message content as text or content blocks             |
-| `uuid`               | `str \| None`               | Unique message identifier                             |
-| `parent_tool_use_id` | `str \| None`               | Tool use ID if this message is a tool result response |
-| `tool_use_result`    | `dict[str, Any] \| None`    | Tool result data if applicable                        |
+| Field                | Type                        | Description                                                                                                                                   |
+| :------------------- | :-------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content`            | `str \| list[ContentBlock]` | Message content as text or content blocks                                                                                                     |
+| `uuid`               | `str \| None`               | Unique message identifier                                                                                                                     |
+| `parent_tool_use_id` | `str \| None`               | Tool use ID if this message is a tool result response                                                                                         |
+| `tool_use_result`    | `dict[str, Any] \| None`    | Tool result data if applicable                                                                                                                |
+| `origin`             | `MessageOrigin \| None`     | Provenance of this message, populated on injected turns such as task notifications and peer messages. `None` when the CLI didn't attribute it |
 
 ### `AssistantMessage`
 
@@ -1562,6 +1569,7 @@ class ResultMessage:
     api_error_status: int | None = None
     uuid: str | None = None
     terminal_reason: str | None = None
+    origin: MessageOrigin | None = None
 ```
 
 The `subtype` field determines which other fields are populated. It is one of `"success"`, `"error_during_execution"`, `"error_max_turns"`, `"error_max_budget_usd"`, or `"error_max_structured_output_retries"`. The Python dataclass flattens all variants into one shape, so fields that don't apply to the returned subtype are `None`.
@@ -1573,6 +1581,7 @@ Several fields carry diagnostic detail about how the conversation ended:
 * `result`: text of the final assistant message on `subtype="success"`, or `None` on the `error_*` subtypes. When `subtype="success"` and `is_error=True`, this holds the API error string if one is available but can be empty, so check `api_error_status` and the preceding `AssistantMessage` content for detail.
 * `errors`: loop-level error strings such as the max-turns message. Populated only on the `error_*` subtypes.
 * `terminal_reason`: why the query loop ended, such as `"completed"`, `"max_turns"`, `"api_error"`, `"aborted_streaming"`, or `"aborted_tools"`. A value of `"aborted_streaming"` or `"aborted_tools"` means the turn was aborted before completing. Common causes are [`interrupt()`](#claudesdkclient) and a permission callback returning [`PermissionResultDeny`](#permissionresultdeny) with `interrupt=True`. `None` on CLI versions that predate the field, on results that bypassed the query loop such as local slash commands, or on synthesized error results emitted when the session fails fatally. Mirrors the TypeScript SDK's [`SDKResultMessage.terminal_reason`](/docs/en/agent-sdk/typescript#sdkresultmessage), which lists the full set of values.
+* `origin`: origin of the user message that triggered this turn. In [streaming input mode](/docs/en/agent-sdk/streaming-vs-single-mode), check this to tell the result of your own prompt, where `origin` is `None` or `{"kind": "human"}`, from the result of an injected turn such as a background-task notification.
 
 The `usage` dict covers the main agent loop only and excludes subagent and other nested or auxiliary model calls. In [streaming input mode](/docs/en/agent-sdk/streaming-vs-single-mode), the values are per-turn. Prefer `model_usage` for token and cost accounting. The `usage` dict contains the following keys when present:
 
@@ -1673,6 +1682,24 @@ class RateLimitInfo:
 | `overage_resets_at`       | `int \| None`             | Unix timestamp when the overage window resets                                                         |
 | `overage_disabled_reason` | `str \| None`             | Why overage is unavailable, if status is `"rejected"`                                                 |
 | `raw`                     | `dict[str, Any]`          | Full raw dict from the CLI, including fields not modeled above                                        |
+
+### `ConversationResetMessage`
+
+Emitted when the conversation is replaced without ending the connection, such as after `/clear`. See [Track costs in streaming input mode](/docs/en/agent-sdk/cost-tracking#track-costs-in-streaming-input-mode) for how a reset affects the running totals on later `ResultMessage` objects.
+
+```python theme={null}
+@dataclass
+class ConversationResetMessage:
+    new_conversation_id: str
+    uuid: str
+    session_id: str
+```
+
+| Field                 | Type  | Description                                                                                                                |
+| :-------------------- | :---- | :------------------------------------------------------------------------------------------------------------------------- |
+| `new_conversation_id` | `str` | Opaque identifier for the fresh conversation. Not the `session_id` of subsequent messages; read that from the next message |
+| `uuid`                | `str` | Unique message identifier                                                                                                  |
+| `session_id`          | `str` | ID of the session that was reset. Messages after the reset carry a new `session_id`                                        |
 
 ### `TaskStartedMessage`
 

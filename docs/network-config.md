@@ -102,7 +102,12 @@ export CLAUDE_CODE_CLIENT_KEY=/path/to/client-key.pem
 export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 ```
 
-Claude Code reads the certificate and key files at startup and re-reads them each time it applies settings, including when settings change during a session. To rotate the certificate and key, replace the files at the same paths.
+Claude Code reads the certificate and key files at startup and re-reads them each time it applies settings. It doesn't watch those paths during a session, so it keeps presenting the loaded pair until it applies settings again.
+
+To rotate the certificate and key:
+
+* **Running session**: replace the files at the same paths, then restart Claude Code so it picks up the new pair. A mid-session settings application, such as a remote managed-settings sync or running `/login`, also re-reads the files, but no such event is guaranteed to happen before the old pair expires and you see connection errors, so restart to be certain.
+* **Future sessions**: replace the files before the current pair expires so Claude Code doesn't load an already-expired pair on its next start.
 
 In [cloud sessions](/docs/en/claude-code-on-the-web), the hosting environment manages the connection to the API, so Claude Code ignores the following variables when they come from a settings file `env` block:
 

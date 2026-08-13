@@ -1298,6 +1298,7 @@ type SDKSystemMessage = {
   model: string;
   permissionMode: PermissionMode;
   slash_commands: string[];
+  terminal_slash_commands?: string[];
   output_style: string;
   skills: string[];
   plugins: { name: string; path: string }[];
@@ -1308,6 +1309,8 @@ type SDKSystemMessage = {
 ```
 
 `fast_mode_state` reports the session's [fast mode](/docs/en/fast-mode) state. When something blocks fast mode, `fast_mode_disabled_reason` names the check that blocked it; the field requires Claude Code v2.1.219 or later. For the reason codes and their meanings, see [`fast_mode_disabled_reason`](#sdkresultmessage) on the result message.
+
+`terminal_slash_commands` names the entries in `slash_commands` whose interface is bound to the local terminal, such as `exit`. You can send them like any other entry in `slash_commands`; the field exists so a remote or mobile client can hide them from its command menus. The field is present only when non-empty, and requires Agent SDK v0.3.229 or later.
 
 The `capabilities` array names the protocol behaviors this CLI implements, so you can feature-detect instead of comparing `claude_code_version` strings. It is an open set: ignore values you don't recognize, and check for the specific capability whose behavior you rely on. The field requires Claude Code v2.1.205 or later and is absent on earlier CLIs.
 
