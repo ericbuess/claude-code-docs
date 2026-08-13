@@ -850,8 +850,8 @@
     "self-hosted-environments-configuration.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments-configuration",
       "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments-configuration.md",
-      "hash": "913bf0891a25ed02e9fd037b304b4acb50a59859530feb138486c004bf64ec70",
-      "last_updated": "2026-08-13T00:59:35.422408"
+      "hash": "c6b12f510c2627accc943085c1f90227034a187d197a183838eab9f889bf52e2",
+      "last_updated": "2026-08-13T15:48:42.726408"
     },
     "self-hosted-environments-deploy.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments-deploy",
@@ -874,8 +874,8 @@
     "self-hosted-environments-reference.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments-reference",
       "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments-reference.md",
-      "hash": "6ddfb34196e06d173cc953c107fde3571cd6d246c0a80d565d16df5889763125",
-      "last_updated": "2026-08-13T00:59:38.306328"
+      "hash": "abeacfd00187b2adbbc398c1de12ae7a7c6d3d0e5cfd08f91ce626b0c70f785f",
+      "last_updated": "2026-08-13T15:48:46.187751"
     },
     "self-hosted-environments-testing.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments-testing",
@@ -1125,8 +1125,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-13T12:43:45.563980",
-    "fetch_duration_seconds": 173.540769,
+    "last_fetch_completed": "2026-08-13T15:49:27.958371",
+    "fetch_duration_seconds": 187.735247,
     "total_pages_discovered": 187,
     "pages_fetched_successfully": 188,
     "pages_failed": 0,
@@ -1136,7 +1136,7 @@
     "total_files": 187,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-13T12:43:45.564010",
+  "last_updated": "2026-08-13T15:49:27.958401",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
