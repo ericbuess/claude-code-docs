@@ -21,8 +21,8 @@
     "agent-sdk__agent-loop.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/agent-loop",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/agent-loop.md",
-      "hash": "9e2b66acda68982d950292528c9f37add6112ed9f976e66bbddd9614ef13107d",
-      "last_updated": "2026-08-12T21:32:41.469628"
+      "hash": "ca8ff5096ac85de1325c735187b1b9fbdeae789a1ef8d4bfff8362c7ba947822",
+      "last_updated": "2026-08-13T00:57:41.248560"
     },
     "agent-sdk__claude-code-features.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/claude-code-features",
@@ -105,8 +105,8 @@
     "agent-sdk__plugins.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/plugins",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/plugins.md",
-      "hash": "60bcfbed7d65c7b1a4d2c7a2698ad003cdd3b8ada00c8f6fefd25674942df332",
-      "last_updated": "2026-08-11T00:49:38.010933"
+      "hash": "26994bfcc00f70c3a5065b891902032b679d6752a3ad0d889b6214f9e1ecc20a",
+      "last_updated": "2026-08-13T00:57:53.069464"
     },
     "agent-sdk__python.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/python",
@@ -141,14 +141,14 @@
     "agent-sdk__skills.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/skills",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/skills.md",
-      "hash": "81dd0e86f05cca1d91e758ccf0d5b26b1a72efd5eb6646c9a9f163e60723dcb7",
-      "last_updated": "2026-08-11T00:49:44.337584"
+      "hash": "978ecbb28fbfc4dc7aed5380f99c42a108bd5bff652cf98e59ed4566c625cc3a",
+      "last_updated": "2026-08-13T00:57:58.680215"
     },
     "agent-sdk__slash-commands.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/slash-commands",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/slash-commands.md",
-      "hash": "63394cfc278702ec72b08da7a3456cc4edda4013e3777879545c0c65747b0388",
-      "last_updated": "2026-08-11T00:49:45.275571"
+      "hash": "e5c597afe5e5ef0370896a12d51f01e32f80f23697c1d99b8bd2e7b5a463b810",
+      "last_updated": "2026-08-13T00:57:59.288410"
     },
     "agent-sdk__streaming-output.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/streaming-output",
@@ -195,8 +195,8 @@
     "agent-sdk__typescript.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/typescript",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/typescript.md",
-      "hash": "5922310ea4bfc712321b621329751a576b2966ca21c7ca985a35f4db2dd5106b",
-      "last_updated": "2026-08-12T21:33:08.636977"
+      "hash": "880e70abaa10647efa340f880527d40a9eea867a0456609dc8496e9192a5b2b5",
+      "last_updated": "2026-08-13T00:58:05.795716"
     },
     "agent-sdk__typescript-v2-preview.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/typescript-v2-preview",
@@ -844,20 +844,20 @@
     "self-hosted-environments.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments",
       "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments.md",
-      "hash": "944aeb4e812efa5c9460e0cf378f93971152a562fe465517fac0f19223b05dfd",
-      "last_updated": "2026-08-12T18:47:57.103003"
+      "hash": "05247aff384263a5bb6d059ea5a1d79fb53830c91b94071557245bd47239b99c",
+      "last_updated": "2026-08-13T00:59:34.608358"
     },
     "self-hosted-environments-configuration.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments-configuration",
       "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments-configuration.md",
-      "hash": "fa76c6db350656cbe1aef1ace91145f2c30f1cf410f10501a4047074e93d401a",
-      "last_updated": "2026-08-12T04:41:05.694126"
+      "hash": "913bf0891a25ed02e9fd037b304b4acb50a59859530feb138486c004bf64ec70",
+      "last_updated": "2026-08-13T00:59:35.422408"
     },
     "self-hosted-environments-deploy.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments-deploy",
       "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments-deploy.md",
-      "hash": "4ef2a0fd52f5bea643f600484e5174fc262cb3e0363cd8b7fbe45ff4ed7ed533",
-      "last_updated": "2026-08-12T18:48:01.034707"
+      "hash": "3aabeec72fd1ff3d2c2bc240d3b42c85d149903a91b9a4e29b95d301a2a2fad5",
+      "last_updated": "2026-08-13T00:59:36.287975"
     },
     "self-hosted-environments-identity.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments-identity",
@@ -874,8 +874,8 @@
     "self-hosted-environments-reference.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments-reference",
       "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments-reference.md",
-      "hash": "41b3998dd1c1c0d9d18fa7dc846ce1f6334b002587f1f63764bc6f7045006de0",
-      "last_updated": "2026-08-12T18:48:06.698840"
+      "hash": "6ddfb34196e06d173cc953c107fde3571cd6d246c0a80d565d16df5889763125",
+      "last_updated": "2026-08-13T00:59:38.306328"
     },
     "self-hosted-environments-testing.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments-testing",
@@ -910,8 +910,8 @@
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
       "original_md_url": "https://code.claude.com/docs/en/skills.md",
-      "hash": "47295da4fda6ab7c3e67423af52b0713427a23387052bfb3a88ee53fcd0731c1",
-      "last_updated": "2026-08-12T21:35:04.670657"
+      "hash": "556658106012768aaa3b3724463cdd99b660c3c914e312626fe966c15e3a9990",
+      "last_updated": "2026-08-13T00:59:42.068772"
     },
     "slack.md": {
       "original_url": "https://code.claude.com/docs/en/slack",
@@ -1125,8 +1125,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-12T21:35:38.810414",
-    "fetch_duration_seconds": 182.172448,
+    "last_fetch_completed": "2026-08-13T01:00:16.498281",
+    "fetch_duration_seconds": 158.302674,
     "total_pages_discovered": 187,
     "pages_fetched_successfully": 188,
     "pages_failed": 0,
@@ -1136,7 +1136,7 @@
     "total_files": 187,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-12T21:35:38.810434",
+  "last_updated": "2026-08-13T01:00:16.498304",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

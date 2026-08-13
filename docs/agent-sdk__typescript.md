@@ -4577,7 +4577,7 @@ When `errorCode` is `"credits_required"`, the rejection is from a claude.ai subs
 
 ### `SDKLocalCommandOutputMessage`
 
-Output from a local slash command (for example, `/voice` or `/usage`). Displayed as assistant-style text in the transcript.
+Output from a local command such as `/voice` or `/usage`. Displayed as assistant-style text in the transcript.
 
 ```typescript theme={null}
 type SDKLocalCommandOutputMessage = {
