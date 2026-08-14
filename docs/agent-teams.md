@@ -61,6 +61,10 @@ Agent teams are disabled by default. Enable them by setting the `CLAUDE_CODE_EXP
 }
 ```
 
+Enabling agent teams also changes ordinary delegation. Claude may [name a subagent](/docs/en/sub-agents#subagent-names) on its own, and while agent teams are enabled, a subagent that Claude names launches as a teammate, so teams can form even when you didn't ask for one. For the exact conditions, see [How Claude starts agent teams](#how-claude-starts-agent-teams); to turn the behavior off, see [Claude spawns teammates instead of subagents](#claude-spawns-teammates-instead-of-subagents).
+
+Spawning teammates also requires an interactive session. In [non-interactive mode](/docs/en/headless) with the `-p` flag, including Agent SDK sessions, Claude doesn't spawn teammates, and a subagent that Claude names runs as an ordinary [subagent](/docs/en/sub-agents) even with agent teams enabled.
+
 ## Start your first agent team
 
 After enabling agent teams, describe the task and the teammates you want in natural language. Claude spawns them and coordinates work based on your prompt.
@@ -208,12 +212,13 @@ This section covers the architecture and mechanics behind agent teams. If you wa
 
 ### How Claude starts agent teams
 
-An agent team forms when the first teammate is spawned, with the main session acting as the lead. There are two ways teammates get spawned:
+An agent team forms when the first teammate is spawned, with the main session acting as the lead. Claude spawns a teammate the same way it spawns a [subagent](/docs/en/sub-agents), by calling the [Agent tool](/docs/en/tools-reference), adding a `name` parameter to the call. Claude Code doesn't ask you to confirm before the teammate starts. Claude adds a `name` in situations such as:
 
 * **You request teammates**: give Claude a task that benefits from parallel work and explicitly ask for teammates. Claude spawns them based on your instructions.
-* **Claude proposes teammates**: if Claude determines your task would benefit from parallel work, it may suggest spawning teammates. You confirm before it proceeds.
+* **Claude proposes teammates**: if Claude determines your task would benefit from parallel work, it may suggest a team and spawn teammates.
+* **Claude names a subagent**: Claude may name a subagent on its own so it can [message it later](/docs/en/sub-agents#resume-subagents), whether or not agent teams are enabled. In an interactive session with agent teams enabled, the subagent launches as a teammate unless the call also spawns a [fork](/docs/en/sub-agents#fork-the-current-conversation) or uses [`isolation`](/docs/en/worktrees), so a team can form during ordinary delegation you never framed as team work.
 
-In both cases, you stay in control. Claude won't spawn teammates without your approval.
+If teams form where you expect ordinary subagents, see [Claude spawns teammates instead of subagents](#claude-spawns-teammates-instead-of-subagents).
 
 ### Architecture
 
@@ -285,7 +290,7 @@ Each teammate has its own context window. When spawned, a teammate loads the sam
 **How teammates share information:**
 
 * **Automatic message delivery**: when teammates send messages, they're delivered automatically to recipients. The lead doesn't need to poll for updates.
-* **Idle notifications**: when a teammate finishes and stops, it automatically notifies the lead. As of v2.1.198, a teammate whose turn ends on an API error notifies the lead that it failed and includes the error text, instead of appearing to finish normally.
+* **Idle notifications**: when a teammate finishes and stops, it automatically notifies the lead. The notification doesn't carry the teammate's output; a teammate shares results by messaging the lead or updating the shared task list. As of v2.1.198, a teammate whose turn ends on an API error notifies the lead that it failed and includes the error text, instead of appearing to finish normally.
 * **Shared task list**: all agents can see task status and claim available work.
 * **Teammate messaging**: send a message to one specific teammate by name. To reach everyone, send one message per recipient.
 
@@ -397,6 +402,32 @@ If teammates aren't appearing after you ask Claude to spawn them:
   which tmux
   ```
 * For iTerm2, verify the `it2` CLI is installed and the Python API is enabled in iTerm2 preferences.
+
+### Claude spawns teammates instead of subagents
+
+While agent teams are enabled, a subagent that Claude names in the lead's session launches as a teammate. Claude [can name subagents on its own](#how-claude-starts-agent-teams), so this can happen during delegation you never framed as team work. Subagents and teammates report back differently:
+
+* **Subagents**: Claude receives the subagent's result when it completes.
+* **Teammates**: the [idle notification](#context-and-communication) reports that the teammate stopped, without its output.
+
+An orchestration flow that waits on subagent results can stall. To make named subagents launch as subagents again, turn agent teams off by setting `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` to `0`:
+
+```json settings.json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "0"
+  }
+}
+```
+
+You don't need to start a new session: Claude Code reapplies settings-file `env` values to the running session when you save, and rereads the variable each time Claude spawns a subagent, so the next subagent Claude names launches as a subagent.
+
+Setting the variable to `0` in your user `settings.json` overrides a shell export. Other settings sources can still enable agent teams:
+
+* **Higher-precedence settings files**: project settings, local settings, and a `--settings` payload apply after user settings, so an `env` entry that sets the variable to `1` in any of them wins. See [Settings precedence](/docs/en/settings#settings-precedence).
+* **Managed settings**: [managed settings](/docs/en/server-managed-settings) apply after every other source. If your organization enables agent teams there, ask your administrator to change the managed value.
+
+After the change, Claude may still name subagents, and the name keeps working as a [`SendMessage` address](/docs/en/sub-agents#resume-subagents). Claude receives each subagent's result when it completes.
 
 ### Too many permission prompts
 

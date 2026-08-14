@@ -202,8 +202,6 @@ The location, retention, and write behavior are configurable:
 
 ## See also
 
-These pages cover related session and parallelism mechanics:
-
 * [Worktrees](/docs/en/worktrees): run isolated parallel sessions on separate branches
 * [Checkpointing](/docs/en/checkpointing): rewind code and conversation to an earlier point
 * [Context window](/docs/en/context-window): what fills context and what survives compaction

@@ -972,12 +972,7 @@ Claude Code sends the check through the same [proxy configuration](/docs/en/netw
 
 `Socket is closed` means the connection carrying a streaming response was closed while the response was still arriving. The most common cause is a corporate proxy on Windows dropping an established tunnel mid-response.
 
-Depending on how far the response had progressed, Claude Code retries the request, keeps what Claude produced, or ends the turn:
-
-* If Claude hasn't completed any part of the response yet, including its thinking, Claude Code treats the failure as a dropped connection and [retries the request automatically](#automatic-retries), so the turn continues, even if some text had started streaming.
-* If Claude has finished thinking but hasn't started any text or tool call, Claude Code re-issues the request up to two times in quick succession, then ends the turn with `Connection lost before a response was produced` if the connection keeps dropping at that point. Before v2.1.227, that message read `Connection closed while thinking, before producing a response`.
-* If Claude has completed a block of text or a tool call, or has started one after finishing its thinking, but hasn't finished the response, Claude Code keeps what Claude completed and shows an [incomplete-response notice](#the-response-above-may-be-incomplete). It still runs any tool calls Claude completed and continues the turn from their results.
-* If the socket closes after Claude has finished the response, Claude Code ends the turn normally with the complete response.
+Depending on how far the response had progressed, Claude Code retries the request, keeps what Claude produced, or ends the turn. See [Automatic retries](#automatic-retries).
 
 Before v2.1.214, Claude Code didn't retry this failure, and the turn stopped with an error containing `Socket is closed`.
 

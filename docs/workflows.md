@@ -170,8 +170,8 @@ Whether you see this prompt depends on your [permission mode](/docs/en/permissio
 
 | Permission mode                            | When you're prompted                                                                                                                                    |
 | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Default, accept edits                      | Every run, unless you've selected **Yes, and don't ask again** for that workflow in this project                                                        |
 | Auto                                       | First launch only. Any **Yes** records consent in your user settings, and later launches start without prompting. Skipped entirely when ultracode is on |
+| Manual, accept edits                       | Every run, unless you've selected **Yes, and don't ask again** for that workflow in this project                                                        |
 | Bypass permissions, `claude -p`, Agent SDK | Never. The run starts immediately                                                                                                                       |
 
 In the Desktop app, an approval card shows the workflow name, the phase list, and a token-usage caution, with **Once**, **Always**, and **Deny** actions. The progress view appears in the Background tasks side pane.

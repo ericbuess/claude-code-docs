@@ -301,7 +301,7 @@ This example uses a separate script file that the hook calls. The script checks 
 
 When Claude's context window fills up, compaction summarizes the conversation to free space. This can lose important details. Use a `SessionStart` hook with a `compact` matcher to re-inject critical context after every compaction.
 
-Any text your command writes to stdout is added to Claude's context. This example reminds Claude of project conventions and recent work. Add this to `.claude/settings.json` in your project root:
+Claude Code adds plain text your command writes to stdout to Claude's context. This example reminds Claude of project conventions and recent work. Add this to `.claude/settings.json` in your project root:
 
 ```json theme={null}
 {
@@ -584,12 +584,12 @@ exit 0  # exit 0 = no decision; the normal permission flow applies
 
 The exit code determines what happens next:
 
-* **Exit 0**: the hook reports no objection through its exit code. For a `PreToolUse` hook this doesn't approve the tool call: the normal [permission flow](/docs/en/permissions) still applies. For `UserPromptSubmit`, `UserPromptExpansion`, and `SessionStart` hooks, anything you write to stdout is added to Claude's context.
+* **Exit 0**: the hook reports no objection through its exit code. For a `PreToolUse` hook this doesn't approve the tool call: the normal [permission flow](/docs/en/permissions) still applies. For `UserPromptSubmit`, `UserPromptExpansion`, and `SessionStart` hooks, Claude Code adds stdout it [treats as plain text](/docs/en/hooks#exit-code-0) to Claude's context.
 * **Exit 2**: Claude Code blocks the action. Write a reason to stderr. Where it lands depends on the event: some events feed it to Claude as feedback so it can adjust, others show it to the user, and a few, such as `ConfigChange` and `Elicitation`, surface no message. Some events can't be blocked: for `SessionStart`, `Setup`, and others, exit 2 shows stderr to the user and execution continues. See [exit code 2 behavior per event](/docs/en/hooks#exit-code-2-behavior-per-event) for the full list.
 * **Any other exit code**: for most events, the outcome depends on what your hook printed to stdout:
-  * JSON that passes schema validation: Claude Code ignores the exit code, the JSON alone decides the outcome, and the hook isn't reported as an error. The per-event exceptions, like `WorktreeCreate` failing on any nonzero exit, are listed in the reference's [Exit code output](/docs/en/hooks#exit-code-output) section.
-  * JSON that parses but fails schema validation: a non-blocking error; the notice carries the validation message.
-  * No JSON on stdout: the action proceeds as a non-blocking error. The transcript shows a `<hook name> hook error` notice, then the first line of stderr prefixed with `Failed with non-blocking status code:`. To capture the full stderr, enable [debug logging](/docs/en/hooks#debug-hooks) with `claude --debug` or by running `/debug` mid-session.
+  * A parsed object that passes schema validation: Claude Code ignores the exit code, the JSON alone decides the outcome, and the hook isn't reported as an error. The per-event exceptions, like `WorktreeCreate` failing on any nonzero exit, are listed in the reference's [Exit code output](/docs/en/hooks#exit-code-output) section.
+  * A parsed object that fails schema validation: a non-blocking error; the notice carries the validation message.
+  * Stdout that Claude Code [treats as plain text](/docs/en/hooks#exit-code-0), or empty stdout: the action proceeds as a non-blocking error. The transcript shows a `<hook name> hook error` notice, then the first line of stderr prefixed with `Failed with non-blocking status code:`. To capture the full stderr, enable [debug logging](/docs/en/hooks#debug-hooks) with `claude --debug` or by running `/debug` mid-session.
 
 #### Structured JSON output
 
@@ -800,14 +800,15 @@ The `if` field accepts the same patterns as permission rules: `"Bash(git *)"`, `
 
 Where you add a hook determines its scope:
 
-| Location                                                   | Scope                              | Shareable                                             |
-| :--------------------------------------------------------- | :--------------------------------- | :---------------------------------------------------- |
-| `~/.claude/settings.json`                                  | All your projects                  | No, local to your machine                             |
-| `.claude/settings.json`                                    | Single project                     | Yes, can be committed to the repo                     |
-| `.claude/settings.local.json`                              | Single project                     | No, gitignored when Claude Code saves a setting to it |
-| Managed policy settings                                    | Organization-wide                  | Yes, admin-controlled                                 |
-| [Plugin](/docs/en/plugins) `hooks/hooks.json`                   | When plugin is enabled             | Yes, bundled with the plugin                          |
-| [Skill](/docs/en/skills) or [agent](/docs/en/sub-agents) frontmatter | While the skill or agent is active | Yes, defined in the component file                    |
+| Location                                 | Scope                                                                                                                     | Shareable                                             |
+| :--------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------- |
+| `~/.claude/settings.json`                | All your projects                                                                                                         | No, local to your machine                             |
+| `.claude/settings.json`                  | Single project                                                                                                            | Yes, can be committed to the repo                     |
+| `.claude/settings.local.json`            | Single project                                                                                                            | No, gitignored when Claude Code saves a setting to it |
+| Managed policy settings                  | Organization-wide                                                                                                         | Yes, admin-controlled                                 |
+| [Plugin](/docs/en/plugins) `hooks/hooks.json` | When plugin is enabled                                                                                                    | Yes, bundled with the plugin                          |
+| [Skill](/docs/en/skills) frontmatter          | The rest of the session once the skill is invoked. See [Hooks in skills and agents](/docs/en/hooks#hooks-in-skills-and-agents) | Yes, defined in the skill file                        |
+| [Subagent](/docs/en/sub-agents) frontmatter   | While that subagent is running                                                                                            | Yes, defined in the subagent file                     |
 
 Run [`/hooks`](/docs/en/hooks#the-%2Fhooks-menu) in Claude Code to browse all configured hooks grouped by event.
 
@@ -857,7 +858,7 @@ For full configuration options, see [Prompt-based hooks](/docs/en/hooks#prompt-b
 
 When verification requires inspecting files or running commands, use `type: "agent"` hooks. Unlike prompt hooks, which make a single LLM call, agent hooks spawn a subagent that can read files, search code, and use other tools to verify conditions before returning a decision.
 
-Agent hooks use the same `"ok"` / `"reason"` response format as prompt hooks, but with a longer default timeout of 60 seconds and up to 50 tool-use turns. The `$ARGUMENTS` placeholder in the prompt is replaced with the hook's JSON input. See [prompt and agent hook fields](/docs/en/hooks#prompt-and-agent-hook-fields).
+Agent hooks use the same `"ok"` / `"reason"` response format as prompt hooks, with a longer default timeout of 60 seconds and up to 50 tool-use turns. On `ok: false`, Claude Code handles an agent hook the way it handles a prompt hook with `continueOnBlock: true` on the same event, so on `PreToolUse` and `PostToolUse` the turn continues; agent hooks have no `continueOnBlock` field. See [agent hook configuration](/docs/en/hooks#agent-hook-configuration) for the fields, including the `$ARGUMENTS` placeholder that Claude Code replaces with the hook's JSON input.
 
 This example verifies that tests pass before allowing Claude to stop:
 

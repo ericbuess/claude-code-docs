@@ -160,8 +160,6 @@ Some features can seem similar. For a deeper walkthrough of choosing between the
     **MCP** gives Claude purpose-built tools for an external system, with the connection and authentication handled by the server.
 
     **Skills** give Claude knowledge about how to use those tools effectively, plus workflows you can trigger with `/<name>`. A skill might include your team's database schema and query patterns, or a `/post-to-slack` workflow with your team's message formatting rules.
-
-    Example: An MCP server connects Claude to your database. A skill teaches Claude your data model, common query patterns, and which tables to use for different tasks.
   </Tab>
 
   <Tab title="Hook vs Skill">
