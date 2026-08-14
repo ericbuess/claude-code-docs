@@ -369,12 +369,12 @@ A skills directory tree supports three distinct things:
 
 ### Choose where the plugin loads from
 
-| Skills directory        | Scope    | Loads                                                                            |
-| :---------------------- | :------- | :------------------------------------------------------------------------------- |
-| `~/.claude/skills/`     | personal | In every project, since the location is yours alone                              |
-| `<cwd>/.claude/skills/` | project  | Only after you accept the workspace [trust dialog](/docs/en/settings) for that folder |
+| Skills directory        | Scope    | Loads                                                                                                                   |
+| :---------------------- | :------- | :---------------------------------------------------------------------------------------------------------------------- |
+| `~/.claude/skills/`     | personal | In every project, since the location is yours alone                                                                     |
+| `<cwd>/.claude/skills/` | project  | Only after you accept the workspace [trust dialog](/docs/en/permissions#what-runs-before-you-trust-a-folder) for that folder |
 
-A project-scope plugin is checked into the repository and reaches every collaborator who clones it. Because that content comes from the repository rather than from you, it loads only after the same trust gate that governs `.claude/settings.json`, and components that run code are restricted further:
+A project-scope plugin is checked into the repository and reaches every collaborator who clones it. Because that content comes from the repository rather than from you, it loads only after the same trust gate that governs project allow rules in `.claude/settings.json`, so trusting a parent folder or running with `-p` isn't enough, and components that run code are restricted further:
 
 * MCP servers it declares go through the [same per-server approval](/docs/en/mcp) as a project `.mcp.json`
 * LSP servers start only after you trust the workspace

@@ -99,7 +99,7 @@ The Agent tool spawns a subagent in a separate context window. The subagent work
 
 To cap how many turns a subagent runs, set `maxTurns` in the [subagent definition](/docs/en/sub-agents#supported-frontmatter-fields).
 
-The same Agent tool also launches [forked subagents](/docs/en/sub-agents#fork-the-current-conversation) when fork mode is enabled. A fork inherits the full parent conversation instead of starting fresh, always runs in the background, and still surfaces permission prompts in your terminal. The rest of this section describes named subagents.
+The same Agent tool also launches [forked subagents](/docs/en/sub-agents#fork-the-current-conversation) wherever [fork mode](/docs/en/sub-agents#turn-fork-mode-on-or-off) is on. A fork inherits the full parent conversation instead of starting fresh, runs in the background apart from the [cases that stay in the foreground](/docs/en/sub-agents#run-subagents-in-foreground-or-background), and still surfaces permission prompts in your terminal. The rest of this section describes named subagents.
 
 Which tools a named subagent can use depends on the `tools` and `disallowedTools` fields in the [subagent definition](/docs/en/sub-agents):
 
@@ -114,12 +114,12 @@ If every entry in a subagent's `tools` list fails to match a usable tool, the Ag
 
 Launching the subagent doesn't itself prompt for permission. Claude Code checks the subagent's own tool calls against your permission rules as it runs.
 
-As of v2.1.198, subagents run in the background by default; Claude runs one in the foreground when it needs the result before continuing.
+Where a subagent's permission prompts appear depends on whether it runs in the foreground or the background. Claude Code runs subagents in the background by default. For the cases where one runs in the foreground, see [Run subagents in foreground or background](/docs/en/sub-agents#run-subagents-in-foreground-or-background).
 
 * **Foreground subagents** show the same permission prompts you would see in the main conversation, at the moment each tool call happens.
 * **Background subagents** surface permission prompts in your main session as of v2.1.186. The prompt names which subagent is asking, and pressing Esc denies that one tool call without stopping the subagent. Before v2.1.186, background subagents auto-denied any tool call that would otherwise prompt and continued without that tool.
 
-To limit what a subagent can reach in the first place, narrow its `tools` field, leave Bash off the list, or set deny rules in your settings, as described in [Control subagent capabilities](/docs/en/sub-agents#control-subagent-capabilities). For more on choosing between foreground and background, see [Run subagents in foreground or background](/docs/en/sub-agents#run-subagents-in-foreground-or-background).
+To limit what a subagent can reach in the first place, narrow its `tools` field, leave Bash off the list, or set deny rules in your settings, as described in [Control subagent capabilities](/docs/en/sub-agents#control-subagent-capabilities).
 
 ## AskUserQuestion tool behavior
 

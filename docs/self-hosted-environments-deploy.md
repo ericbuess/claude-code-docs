@@ -111,6 +111,15 @@ If you must configure push credentials at the image level, for example for a rea
 * A `credential.helper` that returns a minimally-scoped token
 * `GIT_SSH_COMMAND` pointing at a narrowly-scoped key
 
+Whichever mechanism you configure must work without a prompt, because the runner's built-in clone and fetch disable the prompts that git, SSH, and Git Credential Manager would otherwise show:
+
+* The runner sets `GIT_TERMINAL_PROMPT=0`, so git doesn't ask for a username or password.
+* The runner runs SSH with `BatchMode=yes`, appended to your `GIT_SSH_COMMAND` if you set one, so SSH doesn't ask for a passphrase or host confirmation.
+* The runner sets `GCM_INTERACTIVE=never`, so Git Credential Manager doesn't open a sign-in dialog.
+* The runner clears `core.askPass`, so if you use an askpass helper, set it through the `GIT_ASKPASS` environment variable instead.
+
+If your git host rejects the credential, or you didn't configure one, the runner retries a few times and then fails repository preparation. The runner doesn't pass these settings into the session's environment.
+
 If checkout directories are owned by a different uid than the runner process, git refuses to operate on them; add `safe.directory`:
 
 ```dockerfile theme={null}

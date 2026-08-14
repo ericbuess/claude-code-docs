@@ -49,18 +49,23 @@ For support with an identity provider not covered above, see [Troubleshooting](#
 
 ## Deployment
 
-The gateway is a single Linux binary. It scales horizontally because replicas are stateless and Postgres is the shared coordination layer. Run it however you run stateless services in your environment. The rest of this section states what the image needs, with short notes for Kubernetes and Cloud Run.
-
-The gateway is designed to run inside your network, because it holds your upstream credential and acts as the single egress point for inference. It can run anywhere your developers and your IdP can reach over HTTPS; treat it like any other service holding a production credential.
+The gateway is a single stateless Linux binary that coordinates through Postgres, so deploy it the way you deploy any other stateless service in your environment. Keep it inside your network, where your developers and IdP can reach it over HTTPS, and treat it like any service holding a production credential.
 
 A few decisions shape the deployment beyond where it runs:
 
-* **Cost**: there is no separate license or per-seat fee for the gateway; it's part of the `claude` binary. You pay for inference through your existing cloud or Anthropic commitment, plus the compute for the container and your telemetry collector.
-* **Bypass**: the gateway doesn't enforce that the only route to a model goes through it. A developer with their own credential can still call the provider directly, so closing that path is a network policy decision, for example blocking egress to `api.anthropic.com` except from the gateway. Blocking that egress also breaks the [WebFetch domain safety check](/docs/en/data-usage#webfetch-domain-safety-check), which calls `api.anthropic.com` from each developer's machine; set `skipWebFetchPreflight: true` in the managed policy to disable it.
-* **Multiple gateways**: each gateway is a separate deployment with its own config. The CLI stores its trust fingerprint and credentials per gateway hostname, so different teams can connect to different gateways without conflict. To serve multiple OIDC issuers, run separate instances.
-* **Serverless**: Cloud Run works; set `min-instances: 1` to avoid cold OIDC discovery. Lambda and Cloud Functions don't, because the gateway is a long-running HTTP server.
+* **Cost**: no separate license or per-seat fee. The gateway is part of the `claude` binary, so you pay for inference through your existing commitment, plus the compute it runs on.
+* **Bypass**: the gateway doesn't enforce that the only route to a model goes through it. A developer with their own credential can still call the provider directly, so closing that path is a network policy decision, for example blocking egress to `api.anthropic.com` except from the gateway. Blocking that egress also breaks the [WebFetch domain safety check](/docs/en/data-usage#webfetch-domain-safety-check), which calls `api.anthropic.com` from each developer's machine. Set `skipWebFetchPreflight: true` in the managed policy to disable it.
+* **Multiple gateways**: each is a separate deployment with its own config, and the CLI stores trust and credentials per gateway hostname, so teams can use different gateways without conflict. To serve multiple OIDC issuers, run separate instances.
+* **Serverless**: Cloud Run works if you set `min-instances: 1` to avoid cold OIDC discovery. Lambda and Cloud Functions don't work, because the gateway is a long-running HTTP server.
 
-Every production topology here puts an L7 proxy, such as an Ingress, Cloud Run's front end, or an ALB, in front of plain-HTTP replicas. Set [`listen.trusted_proxies`](/docs/en/claude-apps-gateway-config#listen) to the proxy's source ranges so the gateway reads client IPs from `X-Forwarded-For`. The gateway honors the header only when the TCP peer is trusted; the [Google Cloud](/docs/en/claude-apps-gateway-on-gcp) and [AWS](/docs/en/claude-apps-gateway-on-aws) worked examples have concrete values per topology. Without trusted proxies, every request appears to come from the proxy's IP, which collapses per-IP rate limits into one shared bucket and records the proxy's IP in audit events.
+Every production topology here puts an L7 proxy, such as an Ingress, Cloud Run's front end, or an ALB, in front of plain-HTTP replicas. Set [`listen.trusted_proxies`](/docs/en/claude-apps-gateway-config#listen) to the proxy's source ranges so the gateway reads client IPs from `X-Forwarded-For`. The gateway honors the header only when the TCP peer is trusted. The [Google Cloud](/docs/en/claude-apps-gateway-on-gcp) and [AWS](/docs/en/claude-apps-gateway-on-aws) worked examples have concrete values per topology. Without trusted proxies, every request appears to come from the proxy's IP, which collapses per-IP rate limits into one shared bucket and records the proxy's IP in audit events.
+
+Give the proxy any idle timeout longer than the gateway's keepalive interval, which depends on the upstream:
+
+* On every upstream except `provider: anthropic`, the gateway writes an SSE `ping` once a stream has been silent for about 15 seconds.
+* On `provider: anthropic`, the gateway passes the response through unchanged, including the Anthropic API's own pings.
+
+A default such as the ALB's 60 seconds is enough to keep a quiet stream open. The [AWS worked example](/docs/en/claude-apps-gateway-on-aws#troubleshooting) raises it to an hour anyway, and its troubleshooting row covers gateways older than v2.1.229, which sent nothing during quiet periods on the upstreams that now get pings.
 
 ### Container image
 
