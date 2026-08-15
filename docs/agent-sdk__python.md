@@ -2846,7 +2846,17 @@ When Monitor runs a command, it follows the same permission rules as Bash; a Web
 **Tool name:** `TodoWrite`
 
 <Note>
-  As of Claude Code v2.1.142, `TodoWrite` is disabled by default. Use `TaskCreate`, `TaskGet`, `TaskUpdate`, and `TaskList` instead. See [Migrate to Task tools](/docs/en/agent-sdk/todo-tracking#migrate-to-task-tools) to update your monitoring code, or set `CLAUDE_CODE_ENABLE_TASKS=0` to revert to `TodoWrite`.
+  On Python Agent SDK 0.2.139 and later, the following tools aren't available on Opus 4.8, Sonnet 5, Fable 5, Mythos 5, or later versions of those families unless you opt in:
+
+  * `TodoWrite`
+  * `TaskCreate`
+  * `TaskGet`
+  * `TaskUpdate`
+  * `TaskList`
+
+  On other models, Claude Code provides the Task tools by default and `TodoWrite` only when you set `CLAUDE_CODE_ENABLE_TASKS=0`.
+
+  See [Model availability](/docs/en/agent-sdk/todo-tracking#model-availability) to opt in and [Migrate to Task tools](/docs/en/agent-sdk/todo-tracking#migrate-to-task-tools) to update your monitoring code.
 </Note>
 
 **Input:**

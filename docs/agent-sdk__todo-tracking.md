@@ -9,8 +9,24 @@
 The Claude Agent SDK includes built-in todo functionality that helps organize complex workflows and keep users informed about task progression.
 
 <Note>
-  As of TypeScript Agent SDK 0.3.142 and Claude Code v2.1.142, sessions use the structured Task tools `TaskCreate`, `TaskUpdate`, `TaskGet`, and `TaskList` instead of `TodoWrite`. The Python SDK gets this change from the Claude Code CLI it launches, not from the Python package version: the switch applies once that CLI — the copy bundled inside the pip package, or one you point to with `cli_path` — is v2.1.142 or later. See [Migrate to Task tools](#migrate-to-task-tools) for how monitoring code changes. The examples on this page set `CLAUDE_CODE_ENABLE_TASKS=0` to keep showing `TodoWrite` for sessions that have not migrated yet.
+  On TypeScript Agent SDK 0.3.233 and later, or Python Agent SDK 0.2.139 and later, the following tools aren't available on Opus 4.8, Sonnet 5, Fable 5, Mythos 5, or later versions of those families unless you opt in:
+
+  * `TodoWrite`
+  * `TaskCreate`
+  * `TaskGet`
+  * `TaskUpdate`
+  * `TaskList`
+
+  On other models, Claude Code provides the Task tools by default and `TodoWrite` only when you set `CLAUDE_CODE_ENABLE_TASKS=0`.
 </Note>
+
+### Model availability
+
+On the [models that don't get the task-tracking tools](/docs/en/tools-reference#task-tool-availability), you see no `tool_use` blocks for them in the message stream unless you opt in. If you point `cli_path` in Python or `pathToClaudeCodeExecutable` in TypeScript at your own Claude Code install, you get whichever tools that install provides. To get the same tools as on other models, do one of the following:
+
+* Name one of the tools in the [`allowedTools`](/docs/en/agent-sdk/permissions#allow-and-deny-rules) option, `allowed_tools` in Python
+* List the tools in the `tools` option, which restricts the session's built-in tools to the ones it names. Include the tools you want alongside the other built-in tools you use
+* Set `CLAUDE_CODE_ENABLE_TODO_TOOLS=1` in the `env` option, as the examples on this page do. In TypeScript, `env` replaces the subprocess environment, so spread `...process.env` to keep inherited variables. In Python, `env` is merged on top of the inherited environment
 
 ### Todo Lifecycle
 
@@ -52,8 +68,9 @@ See [Handle the result](/docs/en/agent-sdk/agent-loop#handle-the-result) for the
     for await (const message of query({
       prompt: "Optimize my React app performance and track progress with todos",
       // Re-enable TodoWrite, which this example monitors. Without it, the SDK uses
-      // Task tools instead and these tool_use blocks never appear.
-      options: { maxTurns: 15, env: { ...process.env, CLAUDE_CODE_ENABLE_TASKS: "0" } }
+      // Task tools instead and these tool_use blocks never appear. ENABLE_TODO_TOOLS
+      // keeps the tools on models where Claude Code otherwise doesn't provide them.
+      options: { maxTurns: 15, env: { ...process.env, CLAUDE_CODE_ENABLE_TASKS: "0", CLAUDE_CODE_ENABLE_TODO_TOOLS: "1" } }
     })) {
       // Todo updates are reflected in the message stream
       if (message.type === "assistant") {
@@ -89,8 +106,9 @@ See [Handle the result](/docs/en/agent-sdk/agent-loop#handle-the-result) for the
           async for message in query(
               prompt="Optimize my React app performance and track progress with todos",
               # Re-enable TodoWrite, which this example monitors. Without it, the SDK uses
-              # Task tools instead and these tool_use blocks never appear.
-              options=ClaudeAgentOptions(max_turns=15, env={"CLAUDE_CODE_ENABLE_TASKS": "0"}),
+              # Task tools instead and these tool_use blocks never appear. ENABLE_TODO_TOOLS
+              # keeps the tools on models where Claude Code otherwise doesn't provide them.
+              options=ClaudeAgentOptions(max_turns=15, env={"CLAUDE_CODE_ENABLE_TASKS": "0", "CLAUDE_CODE_ENABLE_TODO_TOOLS": "1"}),
           ):
               # Todo updates are reflected in the message stream
               if isinstance(message, AssistantMessage):
@@ -149,8 +167,8 @@ See [Handle the result](/docs/en/agent-sdk/agent-loop#handle-the-result) for the
       try {
         for await (const message of query({
           prompt,
-          // Re-enable TodoWrite, which this tracker watches for.
-          options: { maxTurns: 20, env: { ...process.env, CLAUDE_CODE_ENABLE_TASKS: "0" } }
+          // On every model, re-enable TodoWrite, which this tracker watches for.
+          options: { maxTurns: 20, env: { ...process.env, CLAUDE_CODE_ENABLE_TASKS: "0", CLAUDE_CODE_ENABLE_TODO_TOOLS: "1" } }
         })) {
           if (message.type === "assistant") {
             for (const block of message.message.content) {
@@ -215,8 +233,8 @@ See [Handle the result](/docs/en/agent-sdk/agent-loop#handle-the-result) for the
           try:
               async for message in query(
                   prompt=prompt,
-                  # Re-enable TodoWrite, which this tracker watches for.
-                  options=ClaudeAgentOptions(max_turns=20, env={"CLAUDE_CODE_ENABLE_TASKS": "0"}),
+                  # On every model, re-enable TodoWrite, which this tracker watches for.
+                  options=ClaudeAgentOptions(max_turns=20, env={"CLAUDE_CODE_ENABLE_TASKS": "0", "CLAUDE_CODE_ENABLE_TODO_TOOLS": "1"}),
               ):
                   if isinstance(message, AssistantMessage):
                       for block in message.content:
@@ -241,7 +259,7 @@ See [Handle the result](/docs/en/agent-sdk/agent-loop#handle-the-result) for the
 
 ## Migrate to Task tools
 
-The Task tools split the single `TodoWrite` call into `TaskCreate` for each new item and `TaskUpdate` for each status change, with `TaskList` and `TaskGet` available for the model to read back the current list. Your monitoring code still inspects `tool_use` blocks in the assistant stream, but maintains a map keyed by task ID instead of replacing the whole list on every call. The Task tools are the default as of TypeScript Agent SDK 0.3.142 and Claude Code v2.1.142, so no `options.env` change is needed.
+The Task tools split the single `TodoWrite` call into `TaskCreate` for each new item and `TaskUpdate` for each status change, with `TaskList` and `TaskGet` available for the model to read back the current list. Your monitoring code still inspects `tool_use` blocks in the assistant stream, but maintains a map keyed by task ID instead of replacing the whole list on every call.
 
 | With `TodoWrite`                              | With Task tools                                                                                                                                                                                                                                                                                     |
 | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -250,7 +268,9 @@ The Task tools split the single `TodoWrite` call into `TaskCreate` for each new 
 | Item shape: `{ content, status, activeForm }` | `TaskCreate` input: `{ subject, description, activeForm?, metadata? }`. `TaskUpdate` input: `{ taskId, status?, subject?, description?, activeForm?, addBlocks?, addBlockedBy?, owner?, metadata? }`. `status` is `"pending"`, `"in_progress"`, or `"completed"`; set `status: "deleted"` to delete |
 | Render `block.input.todos` directly           | Accumulate items across calls, or read a snapshot from a `TaskList` tool result                                                                                                                                                                                                                     |
 
-The assigned task ID is not in the `TaskCreate` input. It comes back in the matching `tool_result` as `{ task: { id, subject } }`, so capture it from the result block to key your map. The following example shows the minimal change to the [Monitoring Todo Changes](#monitoring-todo-changes) loop. It reads only `tool_use` inputs and skips capturing IDs from `tool_result` blocks. To render a complete list, watch for a `TaskList` tool result in the stream or accumulate `TaskCreate` results and `TaskUpdate` inputs into a map.
+The assigned task ID is not in the `TaskCreate` input. It comes back in the matching `tool_result` as `{ task: { id, subject } }`, so capture it from the result block to key your map.
+
+The following example shows the minimal change to the [Monitoring Todo Changes](#monitoring-todo-changes) loop. It leaves `CLAUDE_CODE_ENABLE_TASKS` unset, because the Task tools are the default, and sets only `CLAUDE_CODE_ENABLE_TODO_TOOLS=1`, the [opt-in](#model-availability) for the models that otherwise don't get the tools. It reads only `tool_use` inputs and skips capturing IDs from `tool_result` blocks. To render a complete list, watch for a `TaskList` tool result in the stream or accumulate `TaskCreate` results and `TaskUpdate` inputs into a map.
 
 The streamed `tool_use` input is the raw shape the model emitted. Claude Code repairs some close-but-incorrect key names before execution, mapping `id` or `task_id` to `taskId` and `active_form` to `activeForm`, but that repair is not reflected in the stream. Read `TaskUpdate` input fields defensively, as the samples below do, rather than assuming the canonical name is always present.
 
@@ -261,7 +281,8 @@ The streamed `tool_use` input is the raw shape the model emitted. Claude Code re
   try {
     for await (const message of query({
       prompt: "Optimize my React app performance and track progress with todos",
-      options: { maxTurns: 15 },
+      // Keeps the Task tools on models where Claude Code otherwise doesn't provide them.
+      options: { maxTurns: 15, env: { ...process.env, CLAUDE_CODE_ENABLE_TODO_TOOLS: "1" } },
     })) {
       if (message.type !== "assistant") continue;
       for (const block of message.message.content) {
@@ -296,7 +317,8 @@ The streamed `tool_use` input is the raw shape the model emitted. Claude Code re
       try:
           async for message in query(
               prompt="Optimize my React app performance and track progress with todos",
-              options=ClaudeAgentOptions(max_turns=15),
+              # Keeps the Task tools on models where Claude Code otherwise doesn't provide them.
+              options=ClaudeAgentOptions(max_turns=15, env={"CLAUDE_CODE_ENABLE_TODO_TOOLS": "1"}),
           ):
               if not isinstance(message, AssistantMessage):
                   continue

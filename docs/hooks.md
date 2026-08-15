@@ -2255,7 +2255,7 @@ SubagentStop hooks use the same decision control format as [Stop hooks](#stop-de
 
 ### TaskCreated
 
-Runs when a task is being created via the `TaskCreate` tool. Use this to enforce naming conventions, require task descriptions, or prevent certain tasks from being created.
+Runs when a task is being created via the `TaskCreate` tool. Use this to enforce naming conventions, require task descriptions, or prevent certain tasks from being created. In a [session without the Task tools](/docs/en/tools-reference#task-tool-availability), this event doesn't fire.
 
 TaskCreated hooks don't support matchers and fire on every occurrence.
 

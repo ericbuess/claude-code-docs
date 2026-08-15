@@ -403,6 +403,8 @@ Once the answer appears, the overlay accepts these keys.
 
 The task list is Claude's to-do checklist: items Claude created to plan multi-step work, with indicators showing what's pending, in progress, or complete. It's separate from the background-task view. To see running shells and subagents, use [`/tasks`](/docs/en/commands) instead.
 
+On [Opus 4.8, Sonnet 5, Fable 5, Mythos 5, and later versions of those families](/docs/en/tools-reference#task-tool-availability), Claude keeps track of multi-step work without a written checklist, and Claude Code doesn't provide the tools that fill this list, so it stays empty. If you'd like the task list on those models anyway, opt in with `CLAUDE_CODE_ENABLE_TODO_TOOLS=1` or one of the other ways under [Task tool availability](/docs/en/tools-reference#task-tool-availability). On earlier models such as Opus 4.7, and after you opt in, the task list works as follows:
+
 * Press `Ctrl+T` to toggle the task list view. The display shows up to five tasks at a time. When Claude hasn't created any checklist items yet, the toggle has no visible effect because there's nothing to display
 * To see all tasks or clear them, ask Claude directly: "show me all tasks" or "clear all tasks"
 * Tasks persist across context compactions, helping Claude stay organized on larger projects

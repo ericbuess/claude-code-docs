@@ -2520,7 +2520,17 @@ type TodoWriteInput = {
 Creates and manages a structured task list for tracking progress.
 
 <Note>
-  As of TypeScript Agent SDK 0.3.142, `TodoWrite` is disabled by default. Use `TaskCreate`, `TaskGet`, `TaskUpdate`, and `TaskList` instead. See [Migrate to Task tools](/docs/en/agent-sdk/todo-tracking#migrate-to-task-tools) to update your monitoring code, or set `CLAUDE_CODE_ENABLE_TASKS=0` to revert to `TodoWrite`.
+  On TypeScript Agent SDK 0.3.233 and later, the following tools aren't available on Opus 4.8, Sonnet 5, Fable 5, Mythos 5, or later versions of those families unless you opt in:
+
+  * `TodoWrite`
+  * `TaskCreate`
+  * `TaskGet`
+  * `TaskUpdate`
+  * `TaskList`
+
+  On other models, Claude Code provides the Task tools by default and `TodoWrite` only when you set `CLAUDE_CODE_ENABLE_TASKS=0`.
+
+  See [Model availability](/docs/en/agent-sdk/todo-tracking#model-availability) to opt in and [Migrate to Task tools](/docs/en/agent-sdk/todo-tracking#migrate-to-task-tools) to update your monitoring code.
 </Note>
 
 ### TaskCreate
@@ -3435,7 +3445,17 @@ type TodoWriteOutput = {
 Returns the previous and updated task lists.
 
 <Note>
-  As of TypeScript Agent SDK 0.3.142, `TodoWrite` is disabled by default. Use `TaskCreate`, `TaskGet`, `TaskUpdate`, and `TaskList` instead. See [Migrate to Task tools](/docs/en/agent-sdk/todo-tracking#migrate-to-task-tools) to update your monitoring code, or set `CLAUDE_CODE_ENABLE_TASKS=0` to revert to `TodoWrite`.
+  On TypeScript Agent SDK 0.3.233 and later, the following tools aren't available on Opus 4.8, Sonnet 5, Fable 5, Mythos 5, or later versions of those families unless you opt in:
+
+  * `TodoWrite`
+  * `TaskCreate`
+  * `TaskGet`
+  * `TaskUpdate`
+  * `TaskList`
+
+  On other models, Claude Code provides the Task tools by default and `TodoWrite` only when you set `CLAUDE_CODE_ENABLE_TASKS=0`.
+
+  See [Model availability](/docs/en/agent-sdk/todo-tracking#model-availability) to opt in and [Migrate to Task tools](/docs/en/agent-sdk/todo-tracking#migrate-to-task-tools) to update your monitoring code.
 </Note>
 
 ### TaskCreate

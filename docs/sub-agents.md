@@ -350,6 +350,8 @@ The second filter applies to subagents running in the background. Apart from `Ag
 
 Teammates in [agent teams](/docs/en/agent-teams) additionally keep the task tools and cron tools: `TaskCreate`, `TaskGet`, `TaskList`, `TaskUpdate`, `CronCreate`, `CronDelete`, and `CronList`.
 
+In a [session without the Task tools](/docs/en/tools-reference#task-tool-availability), Claude Code doesn't provide the task tools to subagents either, even when the subagent runs a different model. An in-process teammate follows your session the same way, while a teammate in its own [split pane](/docs/en/agent-teams#choose-a-display-mode) runs as a separate Claude Code process, so its own model decides.
+
 To restrict tools, use the `tools` field as an allowlist or the `disallowedTools` field as a denylist. This example uses `tools` to allow only Read, Grep, Glob, and Bash. The subagent can't edit files, write files, or use any MCP tools:
 
 ```yaml theme={null}

@@ -39,13 +39,13 @@ Both agent teams and [subagents](/docs/en/sub-agents) let you parallelize work, 
   <img src="https://mintcdn.com/claude-code/nsvRFSDNfpSU5nT7/images/subagents-vs-agent-teams-dark.png?fit=max&auto=format&n=nsvRFSDNfpSU5nT7&q=85&s=d573a037540f2ada6a9ae7d8285b46fd" className="hidden dark:block" alt="Diagram comparing subagent and agent team architectures. Subagents are spawned by the main agent, do work, and report results back. Agent teams coordinate through a shared task list, with teammates communicating directly with each other." width="4245" height="1615" data-path="images/subagents-vs-agent-teams-dark.png" />
 </Frame>
 
-|                   | Subagents                                        | Agent teams                                         |
-| :---------------- | :----------------------------------------------- | :-------------------------------------------------- |
-| **Context**       | Own context window; results return to the caller | Own context window; fully independent               |
-| **Communication** | Report results back to the main agent only       | Teammates message each other directly               |
-| **Coordination**  | Main agent manages all work                      | Shared task list with self-coordination             |
-| **Best for**      | Focused tasks where only the result matters      | Complex work requiring discussion and collaboration |
-| **Token cost**    | Lower: results summarized back to main context   | Higher: each teammate is a separate Claude instance |
+|                   | Subagents                                        | Agent teams                                                                                                                                   |
+| :---------------- | :----------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Context**       | Own context window; results return to the caller | Own context window; fully independent                                                                                                         |
+| **Communication** | Report results back to the main agent only       | Teammates message each other directly                                                                                                         |
+| **Coordination**  | Main agent manages all work                      | Self-coordination through messages, plus a shared task list for [agents that have the Task tools](/docs/en/tools-reference#task-tool-availability) |
+| **Best for**      | Focused tasks where only the result matters      | Complex work requiring discussion and collaboration                                                                                           |
+| **Token cost**    | Lower: results summarized back to main context   | Higher: each teammate is a separate Claude instance                                                                                           |
 
 Use subagents when you need quick, focused workers that report back. Use agent teams when teammates need to share findings, challenge each other, and coordinate on their own.
 
@@ -179,6 +179,8 @@ A teammate's model and fast mode are fixed when it spawns, so `/model` and `/fas
 
 The shared task list coordinates work across the team. The lead creates tasks and teammates work through them. Tasks have three states: pending, in progress, and completed. Tasks can also depend on other tasks: a pending task with unresolved dependencies cannot be claimed until those dependencies are completed.
 
+Agents [without the Task tools](/docs/en/tools-reference#task-tool-availability) coordinate through messages instead of the shared task list.
+
 The lead can assign tasks explicitly, or teammates can self-claim:
 
 * **Lead assigns**: tell the lead which task to give to which teammate
@@ -258,7 +260,7 @@ To use a subagent definition, mention it by name when asking Claude to spawn the
 Spawn a teammate using the security-reviewer agent type to audit the auth module.
 ```
 
-The teammate honors that definition's `tools` allowlist and `model`, and the definition's body is appended to the teammate's system prompt as additional instructions rather than replacing it. Team coordination tools such as `SendMessage` and the task management tools are always available to a teammate even when `tools` restricts other tools.
+The teammate honors that definition's `tools` allowlist and `model`, and the definition's body is appended to the teammate's system prompt as additional instructions rather than replacing it. For an in-process teammate, Claude Code adds `SendMessage` to that allowlist. In a [session that has the Task tools](/docs/en/tools-reference#task-tool-availability), Claude Code adds `TaskCreate`, `TaskGet`, `TaskList`, and `TaskUpdate` to it too.
 
 <Note>
   The `skills` and `mcpServers` frontmatter fields in a subagent definition are not applied when that definition runs as a teammate. Teammates load skills and MCP servers from your project and user settings, the same as a regular session.
