@@ -893,7 +893,7 @@ This example stores one option for a plugin installed from the `acme-tools` mark
 
 Defines additional marketplaces that should be made available for the repository. Typically used in repository-level settings to ensure team members have access to required plugin sources.
 
-When a repository's `.claude/settings.json` includes `extraKnownMarketplaces`, Claude Code adds those marketplaces for a team member after they accept the workspace trust dialog for that repository, with no separate prompt. In a folder they haven't trusted, including a `-p` run there or a repository under a parent folder they trusted earlier, Claude Code ignores the entries without a message. [What runs before you trust a folder](/docs/en/permissions#what-runs-before-you-trust-a-folder) compares this with the other content a repository can supply.
+When a repository's `.claude/settings.json` includes `extraKnownMarketplaces`, Claude Code adds those marketplaces for a team member after they accept the workspace trust dialog for that repository, with no separate prompt. In a folder they haven't trusted, including a `-p` run there, Claude Code ignores the entries without a message. [What runs before you trust a folder](/docs/en/permissions#what-runs-before-you-trust-a-folder) compares this with the other content a repository can supply.
 
 **Example**:
 

@@ -462,23 +462,23 @@ Standard OpenTelemetry exporter variables (`OTEL_METRICS_EXPORTER`, `OTEL_LOGS_E
 
 ## Features that need feature-flag fetching
 
-Claude Code turns some features on through feature flags it fetches from Anthropic. `DISABLE_GROWTHBOOK`, `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, and `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` all turn flag fetching off when set to a value that disables them, and each variable's row says which values do that. A session running with fetching off can't use:
+Claude Code turns some features on through feature flags it fetches from Anthropic. You turn flag fetching off for a session by setting `DISABLE_GROWTHBOOK`, `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. Each variable's row says which values do that. With fetching off, you can't:
 
-* [The auto-mode starting default](/docs/en/permission-modes#which-mode-a-session-starts-in) on Pro, Max, and Team plans; sessions start in Manual instead
-* In the VS Code extension, [reading settings files for the starting mode](/docs/en/permission-modes#switch-permission-modes)
-* [Remote Control](/docs/en/remote-control#requirements)
-* [Cross-session messaging](/docs/en/cross-session-messaging#availability)
-* [`claude import` and the `/import` command](/docs/en/cli-reference#cli-commands)
-* [The `/schedule` command](/docs/en/routines#troubleshooting) for creating routines from the CLI
-* [The advisor tool](/docs/en/advisor#requirements)
-* [`/loop` self-pacing](/docs/en/scheduled-tasks#let-claude-choose-the-interval), so a `/loop` prompt with no interval runs on the fixed 10-minute schedule instead
-* [The built-in `/loop` maintenance prompt](/docs/en/scheduled-tasks#run-the-built-in-maintenance-prompt), so `/loop` with no prompt shows the usage message instead
+* [Start sessions in auto mode by default](/docs/en/permission-modes#which-mode-a-session-starts-in) on Pro, Max, and Team plans; Claude Code starts your sessions in Manual instead
+* Have the VS Code extension [read settings files for the starting mode](/docs/en/permission-modes#switch-permission-modes)
+* Use [Remote Control](/docs/en/remote-control#requirements)
+* Send or receive [cross-session messages](/docs/en/cross-session-messaging#availability)
+* Run [`claude import` or the `/import` command](/docs/en/cli-reference#cli-commands)
+* Create routines from the CLI with [`/schedule`](/docs/en/routines#troubleshooting)
+* Use [the advisor tool](/docs/en/advisor#requirements)
+* Let [Claude choose the `/loop` interval](/docs/en/scheduled-tasks#let-claude-choose-the-interval); Claude Code runs a `/loop` prompt with no interval on the fixed 10-minute schedule instead
+* Run [the built-in `/loop` maintenance prompt](/docs/en/scheduled-tasks#run-the-built-in-maintenance-prompt); Claude Code shows the usage message instead when you run `/loop` with no prompt
 
-In such a session you can still type `/code-review` yourself, but [Claude can't start the review on its own, and a scheduled `/code-review` reaches Claude as plain text](/docs/en/code-review#let-claude-start-the-review) instead of running the review.
+With fetching off, you can still type `/code-review` yourself, but [Claude can't start the review on its own, and a scheduled `/code-review` reaches Claude as plain text](/docs/en/code-review#let-claude-start-the-review) instead of running the review.
 
 ### First session after an install or upgrade
 
-A feature in this list can be missing from your first session after you install Claude Code, or after you upgrade to a version that adds the feature, even with none of these variables set. Claude Code fetches the flags during that session, so a feature that's otherwise available to you is there in your next session. Two features work differently in that first session:
+You can also miss a feature in this list in your first session after you install Claude Code, or after you upgrade to a version that adds the feature, even with none of these variables set. Claude Code fetches the flags during that session, so a feature that's otherwise available to you is there in your next session. Two features behave differently in that first session:
 
 * Claude Code [binds the session's inbox socket](/docs/en/cross-session-messaging#the-sessions-inbox-socket) and exports the messaging variables partway through the session, as soon as the fetch completes, so other sessions can message it before you restart.
 * Claude Code checks the `claude import` flag before it starts a session, so if `claude import` is the first thing you run after installing, it prints [`claude import is not yet available in this build`](/docs/en/errors#claude-import-is-not-yet-available-in-this-build). Start a session, then run it again.
