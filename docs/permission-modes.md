@@ -6,20 +6,22 @@
 
 > Control whether Claude asks before editing files or running commands. Cycle modes with Shift+Tab in the CLI or use the mode selector in VS Code, Desktop, and claude.ai.
 
-When Claude wants to edit a file, run a shell command, or make a network request, it pauses and asks you to approve the action. Permission modes control how often that pause happens. The mode you pick shapes the flow of a session: Manual mode has you review each action as it comes, while looser modes let Claude work in longer uninterrupted stretches and report back when done. Pick more oversight for sensitive work, or fewer interruptions when you trust the direction.
+A permission mode sets which actions Claude can take in a session without asking you first. In Manual mode, Claude Code stops and asks you before most actions that edit files, run shell commands, or reach the network. In [auto mode](#eliminate-prompts-with-auto-mode), a second model, the classifier, reviews actions instead of you; [how the classifier evaluates actions](#how-the-classifier-evaluates-actions) lists which ones it sees.
+
+On Pro, Max, and Team plans, the built-in starting mode is auto mode. [Which mode a session starts in](#which-mode-a-session-starts-in) covers the surfaces and settings that change the starting mode. You can also change a running session's permission mode at any time.
 
 ## Available modes
 
-Each mode makes a different tradeoff between convenience and oversight. The table below shows what Claude can do without a permission prompt in each mode.
+Each mode makes a different tradeoff between convenience and oversight. The table below shows what Claude can do without a permission prompt in each mode. Manual mode appears under its config value, `default`.
 
-| Mode                                                                | What runs without asking                                                                                  | Best for                                |
-| :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------- | :-------------------------------------- |
-| `default`                                                           | Reads only                                                                                                | Getting started, sensitive work         |
-| [`acceptEdits`](#auto-approve-file-edits-with-acceptedits-mode)     | Reads, file edits, and common filesystem commands (`mkdir`, `touch`, `mv`, `cp`, etc.)                    | Iterating on code you're reviewing      |
-| [`plan`](#analyze-before-you-edit-with-plan-mode)                   | Reads, plus classifier-approved commands when [auto mode](#eliminate-prompts-with-auto-mode) is available | Exploring a codebase before changing it |
-| [`auto`](#eliminate-prompts-with-auto-mode)                         | Everything, with background safety checks                                                                 | Long tasks, reducing prompt fatigue     |
-| [`dontAsk`](#allow-only-pre-approved-tools-with-dontask-mode)       | Only pre-approved tools                                                                                   | Locked-down CI and scripts              |
-| [`bypassPermissions`](#skip-all-checks-with-bypasspermissions-mode) | Everything                                                                                                | Isolated containers and VMs only        |
+| Mode                                                                | What runs without asking                                                                                  | Best for                                        |
+| :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------- | :---------------------------------------------- |
+| `default`                                                           | Reads only                                                                                                | Reviewing every action yourself, sensitive work |
+| [`acceptEdits`](#auto-approve-file-edits-with-acceptedits-mode)     | Reads, file edits, and common filesystem commands (`mkdir`, `touch`, `mv`, `cp`, etc.)                    | Iterating on code you're reviewing              |
+| [`plan`](#analyze-before-you-edit-with-plan-mode)                   | Reads, plus classifier-approved commands when [auto mode](#eliminate-prompts-with-auto-mode) is available | Exploring a codebase before changing it         |
+| [`auto`](#eliminate-prompts-with-auto-mode)                         | Everything, with background safety checks                                                                 | Long tasks, reducing prompt fatigue             |
+| [`dontAsk`](#allow-only-pre-approved-tools-with-dontask-mode)       | Only pre-approved tools                                                                                   | Locked-down CI and scripts                      |
+| [`bypassPermissions`](#skip-all-checks-with-bypasspermissions-mode) | Everything                                                                                                | Isolated containers and VMs only                |
 
 The mode that reviews every action is named **Manual** in the CLI, in `claude --help`, in the VS Code and JetBrains extensions, and in the desktop app. Its config value is `default`, which is what hooks and SDK integrations use. The CLI accepts `manual` as an alias wherever you type the value, for example `claude --permission-mode manual` or `"defaultMode": "manual"`. The Manual label and the `manual` alias require Claude Code v2.1.200 or later. The desktop app's label doesn't depend on your CLI version.
 
@@ -33,47 +35,96 @@ Modes set the baseline. Layer [permission rules](/docs/en/permissions#manage-per
 
 Allow rules have no effect in `bypassPermissions` because everything else is already approved.
 
+<h2 id="which-mode-a-session-starts-in">
+  Which mode a session starts in
+</h2>
+
+When you start a new session in a terminal, Claude Code takes the permission mode from the first of these that applies:
+
+1. The `--permission-mode` flag, or `--dangerously-skip-permissions`
+2. `permissions.defaultMode` in a [settings file](/docs/en/settings#settings-files). An `"auto"` value in `.claude/settings.json` or `.claude/settings.local.json` doesn't take effect, and Claude Code then uses the built-in default rather than a `defaultMode` from `~/.claude/settings.json`. The other values apply from any settings file
+3. The built-in default
+
+Conversations the VS Code extension starts follow the extension's own list in [Switch permission modes](#switch-permission-modes). A session you resume keeps the permission mode it was in unless you pass `--permission-mode` or `--dangerously-skip-permissions`; [what a resumed session restores](/docs/en/sessions#what-a-resumed-session-restores) lists the exceptions.
+
+The built-in `auto` default requires Claude Code v2.1.228 or later on macOS, Linux, and WSL, and v2.1.233 or later on native Windows. On earlier versions, the built-in default is Manual.
+
+The built-in default depends on how you run Claude Code, on your plan, and on whether Claude Code could fetch its feature flags. The first row that matches your session applies. The table covers sessions you start in a terminal or through the VS Code extension; for the desktop app and claude.ai, see the Desktop and Web tabs in [Switch permission modes](#switch-permission-modes).
+
+| How you run Claude Code                                                                                                                                                                                                                                     | Built-in starting mode |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------- |
+| Any settings file sets `disableAutoMode` to `"disable"`                                                                                                                                                                                                     | `default`              |
+| [Feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) is off, or this is your [first session after you install Claude Code or upgrade to a version that adds this default](/docs/en/env-vars#first-session-after-an-install-or-upgrade) | `default`              |
+| `claude -p` or the [Agent SDK](/docs/en/agent-sdk/permissions)                                                                                                                                                                                                   | `default`              |
+| Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, [Claude Platform on AWS](/docs/en/claude-platform-on-aws), or a signed-in [Claude apps gateway](/docs/en/claude-apps-gateway) session                                                               | `default`              |
+| A Pro, Max, or Team plan, in a terminal or through the [VS Code extension](/docs/en/vs-code)                                                                                                                                                                     | `auto`                 |
+| An Enterprise plan or a Claude Console API key                                                                                                                                                                                                              | `default`              |
+
+When feature-flag fetching is off, or in that first session after an install or upgrade, the VS Code extension also reads no settings file for the starting mode.
+
+When any of the three steps selects `auto` but auto mode isn't available to the session, Claude Code starts the session in Manual instead. Auto mode is unavailable when a settings file [turns it off](#eliminate-prompts-with-auto-mode) or the model doesn't support it.
+
+The first time the built-in default starts one of your sessions in auto mode, Claude Code shows a notice that links to this page:
+
+* In a terminal, once, at the top of the session
+* In the VS Code extension, as a card on the new-conversation screen that stays until you dismiss it
+
+On Pro, Max, and Team plans, if your `~/.claude/settings.json` sets a different `defaultMode` and no other settings file sets one, your terminal sessions keep starting in that mode, and Claude Code asks once, in the terminal or in the extension, whether to change the setting to auto mode. If you decline, your setting stays as it is.
+
+<h3 id="start-in-a-different-mode">
+  Start in a different permission mode
+</h3>
+
+You can set the starting permission mode for one session, or as a default for every session on a machine, in a project, or in an organization. When more than one settings file sets `permissions.defaultMode`, [settings precedence](/docs/en/settings#settings-precedence) decides, so a project or managed value outranks `~/.claude/settings.json`. To change the permission mode of a session that's already running, see [Switch permission modes](#switch-permission-modes).
+
+| To set the starting permission mode for          | Do this                                                                                                                                                                                                                                                                                                                                                                    |
+| :----------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| One session you're about to start                | Pass the permission mode as a flag, for example `claude --permission-mode default`                                                                                                                                                                                                                                                                                         |
+| Every terminal session you start on this machine | Set `permissions.defaultMode` in `~/.claude/settings.json`. For what the VS Code extension reads, see [Switch permission modes](#switch-permission-modes)                                                                                                                                                                                                                  |
+| Every terminal session you start in one project  | Set `permissions.defaultMode` in the project's `.claude/settings.json`. Sessions you start in a terminal honor every value except `auto`; sessions the VS Code extension starts don't read project settings for the starting mode                                                                                                                                          |
+| Every terminal session in your organization      | Set `permissions.defaultMode` in [managed settings](/docs/en/permissions#managed-settings). Terminal sessions start in that mode and people can still switch to auto mode; for what the VS Code extension reads, see [Switch permission modes](#switch-permission-modes). To remove auto mode so nobody can select it, set `permissions.disableAutoMode` to `"disable"` instead |
+
+This example makes every terminal session on your machine start in Manual mode, whose config value is `default`. Save it in `~/.claude/settings.json`:
+
+```json theme={null}
+{
+  "permissions": {
+    "defaultMode": "default"
+  }
+}
+```
+
+The next session you start shows `⏸ manual mode on` in the status bar.
+
 ## Switch permission modes
 
-You can switch modes mid-session, at startup, or as a persistent default. The mode is set through these controls, not by asking Claude in chat. Select your interface below to see how to change it.
+Each interface has its own control for switching modes during a session and its own way of choosing the permission mode new sessions start in. Asking Claude in chat to change the permission mode doesn't work. Select your interface to see its controls.
 
 <Tabs>
   <Tab title="CLI">
-    **During a session**: press `Shift+Tab` to cycle `default` → `acceptEdits` → `plan`. The status bar shows the active mode as `⏸ plan mode on`, `⏵⏵ accept edits on`, `⏵⏵ auto mode on`, `⏵⏵ don't ask on`, or `⏵⏵ bypass permissions on`. Manual mode, `default` in that cycle, shows a gray `⏸ manual mode on` badge.
+    **During a session**: press `Shift+Tab` to cycle modes. From `auto`, the first press switches to `default`, and the cycle then runs `default` → `acceptEdits` → `plan`. The status bar shows the active mode as a gray `⏸ manual mode on` for `default`, or as `⏵⏵ accept edits on`, `⏸ plan mode on`, `⏵⏵ auto mode on`, `⏵⏵ don't ask on`, or `⏵⏵ bypass permissions on`.
 
     Not every mode is in the default cycle:
 
     * `auto`: appears when your account meets the [auto mode requirements](#eliminate-prompts-with-auto-mode); cycling to it switches modes without a confirmation prompt
-    * `bypassPermissions`: appears after you start with `--permission-mode bypassPermissions`, `--dangerously-skip-permissions`, `--allow-dangerously-skip-permissions`, or `permissions.defaultMode: "bypassPermissions"` in [settings](/docs/en/settings#permission-settings); the `--allow-` variant adds the mode to the cycle without activating it
+    * `bypassPermissions`: appears after you start with `--permission-mode bypassPermissions`, `--dangerously-skip-permissions`, `--allow-dangerously-skip-permissions`, or `permissions.defaultMode: "bypassPermissions"` in [settings](/docs/en/settings#permission-settings); the `--allow-` variant adds the permission mode to the cycle without activating it
     * `dontAsk`: never appears in the cycle; set it with `--permission-mode dontAsk`
 
     Enabled optional modes slot in after `plan`, with `bypassPermissions` first and `auto` last. If you have both enabled, you will cycle through `bypassPermissions` on the way to `auto`.
 
-    **At startup**: pass the mode as a flag.
+    **At startup**: pass the permission mode as a flag.
 
     ```bash theme={null}
     claude --permission-mode plan
     ```
 
-    **As a default**: set `defaultMode` in a [settings file](/docs/en/settings#settings-files) such as `~/.claude/settings.json`:
-
-    ```json theme={null}
-    {
-      "permissions": {
-        "defaultMode": "acceptEdits"
-      }
-    }
-    ```
+    **As a default**: set `permissions.defaultMode` at the scope you want, as described in [Start in a different permission mode](#start-in-a-different-mode).
 
     The same `--permission-mode` flag works with `-p` for [non-interactive runs](/docs/en/headless).
   </Tab>
 
   <Tab title="VS Code">
-    **During a session**: click the mode indicator at the bottom of the prompt box.
-
-    **As a default**: set `claudeCode.initialPermissionMode` in your VS Code user settings, or use the Claude Code extension settings panel.
-
-    The mode indicator shows these labels, mapped to the mode each one applies:
+    **During a session**: click the mode indicator at the bottom of the prompt box. It uses these labels for the modes on this page:
 
     | UI label           | Mode                |
     | :----------------- | :------------------ |
@@ -83,9 +134,18 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
     | Auto               | `auto`              |
     | Bypass permissions | `bypassPermissions` |
 
-    Auto mode appears in the mode indicator when your account meets every requirement listed in the [auto mode section](#eliminate-prompts-with-auto-mode). The `claudeCode.initialPermissionMode` setting does not accept `auto`. To switch a session into auto mode, select **Auto** from the mode indicator.
+    **As a default**: to pin the permission mode conversations start in, set `claudeCode.initialPermissionMode` in your VS Code user settings to `default`, `manual`, `acceptEdits`, `plan`, or `bypassPermissions`, or, for Auto, leave `claudeCode.initialPermissionMode` unset and pick Auto from the mode indicator once. The extension starts each new conversation in the first of these that applies:
 
-    Bypass permissions requires the **Allow dangerously skip permissions** toggle in the extension settings before it appears in the mode indicator.
+    1. `claudeCode.initialPermissionMode`
+    2. The mode you last picked from the mode indicator, if it was Manual, Edit automatically, or Auto. Picking Plan or Bypass permissions applies to that conversation only
+    3. `permissions.defaultMode` from [managed settings](/docs/en/permissions#managed-settings) or `~/.claude/settings.json`, on Pro, Max, and Team plans with [feature-flag fetching](#which-mode-a-session-starts-in) available
+    4. The [built-in default](#which-mode-a-session-starts-in) for your plan, provider, and organization settings
+
+    The extension never reads a project's `.claude/settings.json` or `.claude/settings.local.json` for the starting mode, and in conversations that don't meet item 3's conditions it reads no settings file at all. When `claudeCode.claudeProcessWrapper` is set, items 3 and 4 don't apply either: those conversations start in Manual unless item 1 or item 2 sets a mode.
+
+    Auto mode appears in the mode indicator when your account meets every requirement listed in the [auto mode section](#eliminate-prompts-with-auto-mode). The `claudeCode.initialPermissionMode` setting doesn't accept `auto`. To start conversations in auto mode where it isn't the built-in default, leave `claudeCode.initialPermissionMode` unset and select **Auto** from the mode indicator.
+
+    Bypass permissions requires the **Allow dangerously skip permissions** toggle in the extension settings. Without it, the permission mode doesn't appear in the indicator, and a `bypassPermissions` value from item 1 or item 3 starts the conversation in Manual instead. Auto from any item likewise starts the conversation in Manual when auto mode isn't available.
 
     See the [VS Code guide](/docs/en/vs-code) for extension-specific details.
   </Tab>
@@ -104,7 +164,7 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
 
     For desktop-specific details, see [Choose a permission mode](/docs/en/desktop#choose-a-permission-mode) in the Desktop guide.
 
-    **As a default**: set `defaultMode` in [settings](/docs/en/settings#settings-files). The desktop app reads the same settings files as the CLI and applies the mode to new local sessions.
+    **As a default**: set `defaultMode` in [settings](/docs/en/settings#settings-files). The desktop app reads the same settings files as the CLI and applies the permission mode to new local sessions.
 
     A mode you pick in the mode selector is remembered per folder and takes precedence over `defaultMode` for that folder. Plan is the exception: picking it applies to the current session only.
 
@@ -123,7 +183,7 @@ You can switch modes mid-session, at startup, or as a persistent default. The mo
     Use the mode dropdown next to the prompt box on [claude.ai/code](https://claude.ai/code) or in the mobile app. Permission prompts appear in claude.ai for approval. Which modes appear depends on where the session runs:
 
     * **Cloud sessions** on [Claude Code on the web](/docs/en/claude-code-on-the-web): Accept edits, Plan, and Auto. Accept edits corresponds to `default` mode: cloud sessions pre-approve file edits regardless of mode, so the dropdown shows Accept edits instead of Manual. Cloud sessions still honor `defaultMode: "acceptEdits"` from settings. Auto mode appears only when your organization allows it and the selected model supports it. Bypass permissions isn't available.
-    * **[Remote Control](/docs/en/remote-control) sessions** on your local machine: Manual, Accept edits, and Plan. You can't select Auto or Bypass permissions from the app. The dropdown shows the mode the local session is in, including a mode set from the terminal, and updates when the mode changes in the app or in the terminal. The one exception is Bypass permissions: the session never reports that mode to claude.ai, so switching into it from the terminal doesn't change what the dropdown shows. Before v2.1.202, sessions connected with `/remote-control` or `claude --remote-control` didn't report their mode at all, so claude.ai and the mobile app could show a mode the session wasn't in. The mismatch affected only the label: Claude Code generated permission prompts from the session's actual mode, and they still appeared in the app for approval.
+    * **[Remote Control](/docs/en/remote-control) sessions** on your local machine: Manual, Accept edits, and Plan. You can't select Auto or Bypass permissions from the app. The dropdown shows the permission mode the local session is in, including a mode set from the terminal, and updates when the permission mode changes in the app or in the terminal. The one exception is Bypass permissions: the session never reports that mode to claude.ai, so switching into it from the terminal doesn't change what the dropdown shows. Before v2.1.202, sessions connected with `/remote-control` or `claude --remote-control` didn't report their mode at all, so claude.ai and the mobile app could show a mode the session wasn't in. The mismatch affected only the label: Claude Code generated permission prompts from the session's actual mode, and they still appeared in the app for approval.
 
     For Remote Control, the host must be signed in with your claude.ai account; API keys are not supported. You can also set the starting mode when launching the host:
 
@@ -179,7 +239,7 @@ Accepting a plan also names the session from the plan content automatically, unl
 
 ### Set plan mode as the default
 
-In a session the [VS Code extension](/docs/en/vs-code) started, a settings-file `defaultMode` doesn't set the starting mode. Set `claudeCode.initialPermissionMode` to `plan` in your VS Code user settings instead. Elsewhere, to make plan mode the default for a project, set `defaultMode` in `.claude/settings.json`:
+To make plan mode the default for a project's terminal sessions, set `defaultMode` in `.claude/settings.json`. Conversations the [VS Code extension](/docs/en/vs-code) starts don't read project settings for the starting mode. There, set `claudeCode.initialPermissionMode` to `plan` in your VS Code user settings instead. This example sets the project default:
 
 ```json theme={null}
 {
@@ -193,17 +253,15 @@ In a session the [VS Code extension](/docs/en/vs-code) started, a settings-file 
   Eliminate permission prompts with auto mode
 </h2>
 
-<Note>
-  Starting August 14, 2026, auto mode becomes the default permission mode for new sessions on Pro, Max, and Team plans. You can switch modes at any time. A default you set yourself stays in place unless you accept the one-time switch prompt, and a default your organization manages is unchanged. For details, see [the announcement](https://claude.com/blog/auto-mode-default-in-claude-code) on the blog.
-</Note>
-
 Auto mode lets Claude execute without routine permission prompts. A separate classifier model reviews actions before they run, blocking anything that escalates beyond your request, targets unrecognized infrastructure, or appears driven by hostile content Claude read. Explicit [ask rules](/docs/en/permissions#manage-permissions) still force a prompt.
+
+On Pro, Max, and Team plans, auto mode is the [built-in starting mode](#which-mode-a-session-starts-in).
 
 The classifier also reviews each message Claude sends to another agent with [`SendMessage`](/docs/en/tools-reference), plain or structured, before Claude Code delivers it, both in auto mode and in [plan mode while the classifier reviews commands](#analyze-before-you-edit-with-plan-mode); the send review requires Claude Code v2.1.222 or later.
 
 The classifier also decides removals targeting the filesystem root or home directory, such as `rm -rf /` and `rm -rf ~`, including when the removal sits inside command or process substitution. Before v2.1.218, the plain forms prompted for approval instead, and the substitution forms prompted in v2.1.208 through v2.1.217.
 
-Auto mode also nudges Claude to keep working without stopping for clarifying questions, though Claude still asks when your prompt or a skill explicitly relies on it. For stronger autonomous behavior while keeping permission prompts, set the [Proactive output style](/docs/en/output-styles) instead.
+Auto mode also nudges Claude to keep working without stopping for clarifying questions, though Claude still asks when your prompt or a skill explicitly relies on it. For stronger autonomous behavior in a mode that still prompts you, set the [Proactive output style](/docs/en/output-styles) instead.
 
 <Warning>
   Auto mode reduces permission prompts but does not guarantee safety. Use it for tasks where you trust the general direction, not as a replacement for review on sensitive operations.
@@ -218,19 +276,19 @@ Auto mode is available only when your account meets all of these requirements:
 
 If Claude Code reports auto mode as unavailable, one of these requirements is unmet; this is not a transient outage. A separate message that names a model and says auto mode "cannot determine the safety" of an action means a classifier request failed; that failure is usually transient, but on Amazon Bedrock it can repeat until your account can invoke the named model. See the [error reference](/docs/en/errors#auto-mode-cannot-determine-the-safety-of-an-action) for the causes and what to do.
 
-If you set `defaultMode: "auto"` in [settings](/docs/en/settings#available-settings) and the session starts in `default` mode with no error, the setting is likely in `.claude/settings.json` or `.claude/settings.local.json`. Claude Code v2.1.142 and later ignore `auto` from those files so a repository cannot grant itself auto mode. Move it to `~/.claude/settings.json`. In a session the [VS Code extension](/docs/en/vs-code) started, a settings-file `defaultMode` doesn't set the starting mode: select the mode from the extension's mode indicator instead.
+If you set `defaultMode: "auto"` in [settings](/docs/en/settings#available-settings) and a terminal session starts in Manual mode with no error, the setting is likely in `.claude/settings.json` or `.claude/settings.local.json`. In Claude Code v2.1.142 and later, `auto` doesn't take effect from those files. Move it to `~/.claude/settings.json`. For a conversation the VS Code extension started, check the extension's own list in [Switch permission modes](#switch-permission-modes) instead.
 
 <h3 id="enable-auto-mode-on-bedrock-agent-platform-or-foundry">
   Auto mode on Bedrock, Agent Platform, or Foundry
 </h3>
 
-On [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), [Microsoft Foundry](/docs/en/microsoft-foundry), and signed-in [Claude apps gateway](/docs/en/claude-apps-gateway) sessions, auto mode appears in the `Shift+Tab` cycle by default. Appearing in the cycle doesn't change the mode a session starts in. Except in sessions the [VS Code extension](/docs/en/vs-code) starts, where the extension resolves the starting mode, sessions still start in your [`defaultMode`](/docs/en/settings#available-settings), which is Manual unless you change it. Only Claude Sonnet 5, Opus 4.7 or later, and Fable 5 are supported on these providers.
+On [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), [Microsoft Foundry](/docs/en/microsoft-foundry), and signed-in [Claude apps gateway](/docs/en/claude-apps-gateway) sessions, auto mode appears in the `Shift+Tab` cycle by default. Appearing in the cycle doesn't change the permission mode a session starts in: on these providers, terminal sessions start in your [`defaultMode`](/docs/en/settings#available-settings), which is Manual unless you change it, and conversations in the [VS Code extension](/docs/en/vs-code) start in Manual unless `claudeCode.initialPermissionMode` or a mode you picked in the extension sets one. Only Claude Sonnet 5, Opus 4.7 or later, and Fable 5 are supported on these providers.
 
-To make auto mode the default starting mode, set `"permissions": {"defaultMode": "auto"}` in user or managed settings. In sessions the VS Code extension starts, select **Auto** from the mode indicator instead.
+To make auto mode the default starting mode, set `"permissions": {"defaultMode": "auto"}` in user or managed settings. In sessions the VS Code extension starts, select **Auto** from the mode indicator instead. [Switch permission modes](#switch-permission-modes) covers what outranks that pick.
 
 The [`/doctor`](/docs/en/commands#all-commands) checkup proposes this user-settings default on these providers the same way it does on the Anthropic API.
 
-To prevent developers from using auto mode, set `disableAutoMode` to `"disable"` in [managed settings](/docs/en/permissions#managed-settings). This removes `auto` from the `Shift+Tab` cycle and rejects `--permission-mode auto` at startup.
+To prevent developers from using auto mode, set `disableAutoMode` to `"disable"` in [managed settings](/docs/en/permissions#managed-settings). This removes `auto` from the `Shift+Tab` cycle, and a session started with `--permission-mode auto` starts in Manual instead.
 
 In v2.1.158 through v2.1.206, auto mode was off on these providers until you set `CLAUDE_CODE_ENABLE_AUTO_MODE=1`, and Claude Code ignored `defaultMode: "auto"` on these providers unless the variable was also set. The variable is still accepted for compatibility and has no effect from v2.1.207 onward.
 
@@ -407,7 +465,7 @@ Removals targeting the filesystem root or home directory, such as `rm -rf /` and
 Two [cross-session messaging](/docs/en/cross-session-messaging) safeguards still apply in this mode, and in plan-mode sessions where bypass permissions are available:
 
 * The [`isolatePeerMachines`](/docs/en/settings#available-settings) approval prompt for messages to your sessions beyond this machine still appears.
-* When no [`crossSessionInbound`](/docs/en/cross-session-messaging#control-inbound-messages) value applies, Claude Code holds an inbound message from another of your sessions for your approval, and delivers without asking only when the sending session identifies itself as also bypassing permission prompts. If you leave the mode while messages are held, Claude Code re-applies the inbound rules and delivers any held message they now accept.
+* When no [`crossSessionInbound`](/docs/en/cross-session-messaging#control-inbound-messages) value applies, Claude Code holds an inbound message from another of your sessions for your approval, and delivers without asking only when the sending session identifies itself as also bypassing permission prompts. If you leave the permission mode while messages are held, Claude Code re-applies the inbound rules and delivers any held message they now accept.
 
 In sessions with bypass permissions available, Claude Code also doesn't enforce [plan mode's](#analyze-before-you-edit-with-plan-mode) blocks. Claude is still instructed to plan without editing, but a file edit or shell command it attempts during planning runs without prompting. Explicit [ask rules](/docs/en/permissions#manage-permissions) and the removal circuit breaker above still prompt.
 
@@ -433,7 +491,7 @@ On Linux and macOS, Claude Code refuses to start in this mode when running as ro
 
 The check is skipped automatically inside a recognized sandbox. To run autonomously in a container, use the [dev container](/docs/en/devcontainer) configuration, which runs Claude Code as a non-root user.
 
-[Claude Code on the web](/docs/en/claude-code-on-the-web) does not honor `defaultMode: "bypassPermissions"` or `"dontAsk"` from your settings files, so a repository's checked-in settings cannot start a cloud session in bypass-permissions mode. The setting is ignored silently and the session starts in the mode shown in the mode dropdown instead. See [Switch permission modes](#switch-permission-modes) for which modes cloud sessions offer.
+[Claude Code on the web](/docs/en/claude-code-on-the-web) does not honor `defaultMode: "bypassPermissions"` or `"dontAsk"` from your settings files, so a repository's checked-in settings cannot start a cloud session in bypass-permissions mode. The setting is ignored silently and the session starts in the permission mode shown in the mode dropdown instead. See [Switch permission modes](#switch-permission-modes) for which modes cloud sessions offer.
 
 <Warning>
   `bypassPermissions` offers no protection against prompt injection or unintended actions. For background safety checks with far fewer permission prompts, use [auto mode](#eliminate-prompts-with-auto-mode) instead. Administrators can block this mode by setting `permissions.disableBypassPermissionsMode` to `"disable"` in [managed settings](/docs/en/permissions#managed-settings).

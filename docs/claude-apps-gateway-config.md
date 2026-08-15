@@ -568,13 +568,15 @@ If your organization also deploys [Claude Desktop](/docs/en/desktop), the same g
 The gateway derives much of the response from the matched policy's `cli` block and from top-level gateway config:
 
 * The model list, from `availableModels`
-* Disabled tools, from bare tool-name `permissions.deny` entries
-* The egress allowlist, from `sandbox.network.allowedDomains`
+* Disabled tools, from bare tool-name `permissions.deny` entries. If you set `disabledBuiltinTools` in the policy's `desktop` block, the gateway serves the union of your value and the derived list, so you can disable more tools this way but can't re-enable one you disabled through `permissions.deny`
+* The egress allowlist, from `sandbox.network.allowedDomains`. If you set `coworkEgressAllowedHosts` in the policy's `desktop` block, the gateway uses that value instead of the derived list
 * An OTLP endpoint that points at the gateway itself, which fans out to your destinations, included when [`telemetry`](#telemetry) forwarding is configured
+
+To set `disabledBuiltinTools` or `coworkEgressAllowedHosts` in a policy's `desktop` block, you need Claude Code v2.1.232 or later on the gateway server.
 
 The gateway omits keys with no Claude Desktop equivalent, such as `hooks` and scoped permission rules like `Bash(npm *)`, from the bootstrap response.
 
-The optional `desktop` block alongside `cli` holds the Claude Desktop feature gates that have no CLI equivalent:
+Add the optional `desktop` block alongside `cli` to set Claude Desktop settings directly. Write settings from Claude Desktop's [managed configuration reference](https://claude.com/docs/third-party/claude-desktop/configuration) as flat key names. Leave out keys Claude Desktop reads only from MDM or local files, such as `bootstrapUrl`; the gateway rejects them at boot. Before v2.1.232, the gateway accepted a fixed list of 11 feature-gate keys, such as `chatTabEnabled` and `disableAutoUpdates`, and rejected every other key at boot. Before v2.1.227, the gateway also rejected `chatTabEnabled` and `chatAdvancedFileAnalysisEnabled` at boot.
 
 ```yaml theme={null}
 managed:
@@ -588,20 +590,23 @@ managed:
         banner: { text: "Contractor build: internal use only" }
 ```
 
-| Key                                                                | Effect                                                                                                                                                                                                                                       |
-| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelDiscoveryEnabled`                                            | Whether Claude Desktop fetches `/v1/models` for its picker. Set `false` to rely solely on the policy's model list.                                                                                                                           |
-| `coworkTabEnabled`, `isClaudeCodeForDesktopEnabled`                | Show or hide the Cowork and Code tabs. Both show unless set `false`                                                                                                                                                                          |
-| `chatTabEnabled`                                                   | Show or hide the Chat tab. Hidden unless set `true`                                                                                                                                                                                          |
-| `chatAdvancedFileAnalysisEnabled`                                  | Let Claude run code in a local sandbox from the Chat tab to analyze attached files it can't read natively, such as spreadsheets and presentations. Off unless set `true`. Has no effect when the policy's `permissions.deny` disables `Bash` |
-| `isDesktopExtensionEnabled`, `isDesktopExtensionSignatureRequired` | Desktop extension loading and signature checks                                                                                                                                                                                               |
-| `isLocalDevMcpEnabled`                                             | Allow locally defined MCP servers                                                                                                                                                                                                            |
-| `disableAutoUpdates`, `autoUpdaterEnforcementHours`                | Auto-update policy                                                                                                                                                                                                                           |
-| `banner`                                                           | Persistent banner at the top of the app: `enabled`, `text`, `backgroundColor`, `textColor`, `linkUrl`                                                                                                                                        |
+Every key is optional; Claude Desktop applies its own default for any key you omit. The gateway validates each `desktop` block at boot against the configuration schema Claude Desktop itself uses, so a mistake surfaces at gateway start as an error naming the key rather than reaching every connected desktop. The gateway fails at boot when a block contains:
 
-`chatTabEnabled` and `chatAdvancedFileAnalysisEnabled` require Claude Code v2.1.227 or later on the gateway server. Earlier releases reject them at boot.
+* An unknown key
+* A recognized key whose value Claude Desktop would reject or silently drop, such as an empty value or a misspelled sub-key inside a nested entry
+* A key the gateway computes itself: the inference connection, the model list, and the OTLP relay. Configure those through [`upstreams`](#upstreams), [`models`](#models), and the [`telemetry`](#telemetry) section's `forward_to`.
+* A legacy alias of a current key. In the boot error, the gateway names the canonical key to write.
 
-Every key is optional; Claude Desktop applies its own default for any key you omit. The gateway rejects unknown keys at boot. If you don't deploy Claude Desktop, leave `desktop` out of your policies entirely; `/user/bootstrap` then returns 404 for every user.
+As with the `cli` block, the gateway validates against the schema bundled with its installed version. To deliver a setting introduced by a newer Claude Desktop release, upgrade the gateway first.
+
+The gateway fills in keys a policy's `desktop` block doesn't set from the `match: {}` catch-all's `desktop` block, the same way it fills in a policy's `cli` block from the base. If you set `disabledBuiltinTools` or `builtinToolPolicy` in both the base and a role policy, the gateway keeps the base's restriction:
+
+* `disabledBuiltinTools`: the gateway uses the union of the base's list and the policy's list
+* `builtinToolPolicy`: if you set a tool to a value other than `allow` in the base, the gateway keeps that value even if you set `allow` for the same tool in a role policy
+
+For every other key, if you set it in the role policy, the gateway uses the role policy's value. The gateway replaces an array or a nested object such as `banner` whole, so if you set `banner.text` in a role policy, the gateway drops the base's `banner.backgroundColor`.
+
+If you don't deploy Claude Desktop, leave `desktop` out of your policies entirely; the gateway then returns 404 from `/user/bootstrap` for every user.
 
 #### Precedence with other managed sources
 
@@ -641,7 +646,7 @@ See [Settings precedence](/docs/en/settings#settings-precedence) for the same ru
 Gateway policies apply to every Claude Code invocation on the machine, including non-interactive `claude -p` runs and sessions spawned by the Agent SDK. If the gateway is unreachable at startup, signed-in sessions exit with an error rather than running without their policy.
 
 <Warning>
-  `mcpServers` inside a policy's `cli` block is rejected at gateway boot. Per-group MCP distribution is not available; deploy MCP servers via the file-based `managed-mcp.json` on each device or let developers add them locally.
+  At boot, the gateway rejects `mcpServers` inside a policy's `cli` block. You can't distribute MCP servers per group to Claude Code clients; deploy MCP servers via the file-based `managed-mcp.json` on each device or let developers add them locally. You can deliver Claude Desktop's `managedMcpServers` setting to Claude Desktop clients through a policy's `desktop` block. To set it, you need Claude Code v2.1.232 or later on the gateway server.
 </Warning>
 
 ### `telemetry`

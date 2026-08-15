@@ -117,7 +117,13 @@ You can start a Remote Control session from the CLI or the VS Code extension. Th
 
 In an interactive terminal session, a `/rc active` indicator sits in the footer below the input box while the connection is up, and is hidden if the terminal is too narrow to fit it. The indicator text is a link to the session on claude.ai. Select it with the down arrow key and press Enter, or run `/remote-control` again, to open a status panel with the session URL and a QR code you can use to [connect from another device](#connect-from-another-device). The status panel also offers a disconnect option. Select it to turn Remote Control off; your local session keeps running in the terminal.
 
-If the connection fails, Claude Code shows a notification with the failure reason, and the indicator changes to a failure state that stays in the footer. Select the indicator and press Enter to review the details, or run `/remote-control` to retry.
+If the connection fails, Claude Code shows a notification with the failure reason and switches the indicator to a failure state that stays in the footer. To read the reason again, select the indicator with the down arrow key and press Enter. To reconnect, run `/remote-control`, unless the [reason says the session was taken over or ended elsewhere, or that the server can't find it](#session-ended-elsewhere).
+
+<span id="session-ended-elsewhere" />Read the reason before you reconnect. When the session was taken over or ended from another device, app, or Claude Code session, or the server can't find it, the reason says which, and Claude Code leaves out its usual advice to run `/remote-control`:
+
+* **Another device or Claude Code session took the session over**: run `/remote-control` only if you want to take it back from that device.
+* **You ended or archived the session from another device or app**: run `/remote-control` only if you want it back; Claude Code reopens an archived session.
+* **The server can't find the session**: it may have been deleted from another device or app.
 
 ### Session URL reminders
 
@@ -191,7 +197,9 @@ When you stop `claude remote-control` with Ctrl+C, the sessions it was serving s
 
 These commands work for about four hours after the server stopped. After that, run `claude remote-control` to start a new session. If you archived a session in the meantime, `--continue` and `--session-id` unarchive it on Claude Code v2.1.228 or later.
 
-A session you started with `claude --remote-control` or `/remote-control` comes back when you resume the conversation with `claude --continue` or `claude --resume`, as long as Remote Control was still on when the session ended.
+To bring back a session you started with `claude --remote-control` or `/remote-control`, resume the conversation with `claude --continue` or `claude --resume`; whether Claude Code reconnects, and to which session, depends on the conversation's [reconnection record](#resume-outcomes). If you resume the conversation in a second terminal while the first one still has Remote Control on, Claude Code prints a notice in the second terminal and leaves Remote Control off there instead of taking the session away from the first. Run `/remote-control` in the second terminal to move Remote Control to it.
+
+When you resume a conversation in Claude Desktop or an IDE extension that had Remote Control on, Claude Code reattaches it to the existing claude.ai session instead of adding a new one to the session list.
 
 ## Connection and security
 
@@ -302,7 +310,10 @@ Claude Code skips mobile push notifications while you are typing in or focused o
 
 * **One remote session per interactive process**: outside of server mode, each Claude Code instance supports one remote session at a time. Use [server mode](#start-a-remote-control-session) to run multiple concurrent sessions from a single process.
 * **Local process must keep running**: Remote Control runs as a local process. If you close the terminal, quit VS Code, or otherwise stop the `claude` process, the session goes offline until you [bring it back](#resume-sessions-after-stopping-the-server). To keep a session running on a remote machine after you disconnect from SSH, start it inside `tmux` or `screen`.
-* **Extended network outage**: if your machine is awake but unable to reach the network for more than roughly 10 minutes, the session times out and the process exits. Run `claude remote-control` again to start a new session.
+* **Extended network outage**: if your machine is awake but can't reach the network, what you do next depends on the mode:
+  * **Server mode**: Claude Code gives up after roughly 10 minutes and the `claude remote-control` process exits. Run `claude remote-control` again to start a new session.
+  * **Interactive session**: keep working locally. Claude Code retries for as long as the outage lasts and reconnects on its own when the network returns.
+* **Presence heartbeats failing**: if an interactive session disconnects with `could not reach the Remote Control server for about 30 minutes`, run `/remote-control` to reconnect. Claude Code shows this message only when the session's presence heartbeats have been failing while the rest of the connection stayed up; it re-registers the session for about 30 minutes before disconnecting.
 * **Forwarded dialogs expire**: Claude Code keeps permission prompts and `AskUserQuestion` questions open until you answer them. When Claude Code forwards another kind of dialog to the remote session, such as the model-choice prompt shown after a safety refusal, it waits five minutes by default, then closes the dialog and continues with the dialog's no-action default. Set [`dialogExpiry`](/docs/en/settings#available-settings) to adjust or disable the deadline. Requires Claude Code v2.1.224 or later. The approval dialog for a held cross-session message uses the same deadline. [The held-message expiry rules](/docs/en/cross-session-messaging#control-inbound-messages) cover the cases where Claude Code keeps the dialog open past it.
 * **Some commands are local-only**: commands that only run in the terminal interface, such as `/plugin` or `/resume`, work only from the local CLI, whether or not you pass an argument. The following work from mobile and web:
   * Text-output commands: `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/usage-credits` (prints the billing URL instead of opening a browser), `/recap`, `/reload-plugins`
@@ -377,24 +388,28 @@ A stale login token doesn't cause this error. When the Anthropic API rejects the
 
 When you resume a conversation with `claude --resume` or `claude --continue`, Claude Code reconnects to the Remote Control session recorded in that conversation. This message means the reconnection failed for a reason that may be temporary, such as a network interruption or a server error, so Claude Code can't confirm whether the remote session still exists.
 
-Your local session keeps running without Remote Control. Run `/remote-control` to retry the connection, or start a new session with `claude --remote-control` to create a new Remote Control session.
+Run `/remote-control` to retry the connection, or start a new session with `claude --remote-control` to create a new Remote Control session. Your local session keeps running without Remote Control in the meantime.
 
-Resuming can also end in two other ways:
+<span id="resume-outcomes" />When you resume, you can also get one of these outcomes instead of this message:
 
-* **The server reports that the recorded session no longer exists**: Claude Code shows [`Remote Control could not resume the previous session under the current login`](#remote-control-could-not-resume-the-previous-session-under-the-current-login) instead of this message, doesn't create a replacement session, and removes the reconnection record from the conversation.
-* **Remote Control was turned off before you resumed**: Claude Code keeps the reconnection record only while Remote Control stays on. Turning it off from the CLI's [status panel](#check-connection-status), the VS Code extension, or a host built on the [Agent SDK](/docs/en/agent-sdk/overview) removes the record, so resuming doesn't reconnect Remote Control.
+* **The server reports the recorded session gone, or the reconnection record names a different account**: Claude Code goes by what the conversation's reconnection record says:
+  * **The record names your signed-in account**: Claude Code starts a replacement session with an auto-generated name and leaves the conversation's earlier messages out of it. You get this after you delete the session from claude.ai or the Claude app, for example.
+  * **The record names a different account**: Claude Code starts a new session without the conversation's earlier messages and without showing a message, whether or not the recorded session still exists.
+  * **The record doesn't say which account owned the session, or Claude Code can't read your saved sign-in**: Claude Code shows [`Previous session is unavailable — run /remote-control to start a new one`](#previous-session-is-unavailable) instead of this message, starts nothing, and removes the record from the conversation.
+* **You turned Remote Control off before resuming**: unless the app hosting Claude Code had told it that the app owns the claude.ai session, Claude Code removed the reconnection record when you turned Remote Control off from the CLI's [status panel](#check-connection-status), the VS Code extension, or a host built on the [Agent SDK](/docs/en/agent-sdk/overview), so it doesn't reconnect. When an owning app turned it off, Claude Code kept the record and reconnects.
+* **Another Claude Code on this machine still has the session**: you see a notice that starts with `Remote Control not started here`, and Claude Code [leaves Remote Control off in the resumed session](#resume-sessions-after-stopping-the-server). Run `/remote-control` there to move it.
 
-Earlier versions created a new Remote Control session instead of showing a message: before v2.1.200 on any reconnection failure, and through v2.1.226 when the server reported the session gone.
+<span id="reconnect-history" />Before v2.1.232, Claude Code responded differently when the server reported the recorded session gone. From v2.1.227 through v2.1.231, Claude Code refused to start a replacement even when the record matched your account. Through v2.1.226, Claude Code started a replacement whether or not the record matched your account, and in v2.1.224 through v2.1.226 created it under the account signed in on that machine, never another account's, without uploading the conversation's earlier messages to it. Before v2.1.200, Claude Code created a new session after any reconnection failure.
 
-<h3 id="remote-control-could-not-resume-the-previous-session-under-the-current-login">
-  "Remote Control could not resume the previous session under the current login"
+<h3 id="previous-session-is-unavailable">
+  "Previous session is unavailable — run /remote-control to start a new one"
 </h3>
 
-Claude Code tried to reconnect to a previous Remote Control session and stopped: it couldn't confirm that the session is still available to the account you're now signed in with, for example because you signed in to a different account or the server reported the session gone. You can see this message after resuming a conversation with `claude --resume` or `claude --continue`, or after Claude Code reconnects on its own following a disconnect.
+Claude Code couldn't bring back the previous Remote Control session and stopped instead of starting a new one on its own. You can see this message after you resume a conversation with `claude --resume` or `claude --continue`, or after Claude Code [reconnects on its own following a disconnect](/docs/en/errors#remote-control-couldnt-refresh-your-login).
 
-Rather than start a fresh remote session, which by default would upload the local conversation under an account that may not own it, Claude Code leaves the session running locally without Remote Control. Run `/remote-control` to start a fresh Remote Control session under the current login. The related message `Remote Control could not verify the signed-in account — run /remote-control to reconnect` appears when the signed-in account changed or couldn't be read between Claude Code validating it and reconnecting, and has the same fix.
+Run `/remote-control` to start a new Remote Control session under the current login; your local session keeps running without Remote Control in the meantime. The related message `Remote Control could not verify the signed-in account — run /remote-control to reconnect` has the same fix; Claude Code shows it when the signed-in account changed or couldn't be read between validating it and reconnecting. If you run `/remote-control` after `Previous session is unavailable` without restarting Claude Code first, Claude Code leaves the conversation's earlier messages out of the new session.
 
-The automatic reconnection is part of disconnect recovery. When a [Remote Control disconnect message](/docs/en/errors#remote-control-couldnt-refresh-your-login) says to run `/login` to restore Remote Control, Claude Code watches for a new sign-in and reconnects to the previous remote session on its own. Any other disconnect listed in that entry needs a manual `/remote-control`. Both messages were added in v2.1.225.
+On resume, Claude Code [starts a new session in its place](#resume-outcomes) only if the conversation's reconnection record names the account that owned the session, because the server reports a session you deleted and a session owned by another account the same way. Claude Code before v2.1.227 didn't record that account, and Claude Code can't check the record when it can't read your saved sign-in. Claude Code before v2.1.232 showed `Remote Control could not resume the previous session under the current login — run /remote-control to start fresh` instead, in [a different set of cases](#reconnect-history).
 
 ### "Remote Control got an unexpected server response"
 

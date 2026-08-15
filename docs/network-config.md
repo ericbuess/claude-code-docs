@@ -102,12 +102,21 @@ export CLAUDE_CODE_CLIENT_KEY=/path/to/client-key.pem
 export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 ```
 
-Claude Code reads the certificate and key files at startup and re-reads them each time it applies settings. It doesn't watch those paths during a session, so it keeps presenting the loaded pair until it applies settings again.
+Claude Code reads the certificate and key files at startup and re-reads them each time it applies settings, such as when your organization changes the `env` block in [managed settings](/docs/en/server-managed-settings) mid-session.
 
-To rotate the certificate and key:
+To rotate the certificate and key, replace the files at the same paths. Claude Code picks up the replacement in a running session without a restart. When an API request fails with a connection-level error, such as a connection reset or a TLS handshake error, it re-reads both files and retries the request with the new pair. Before v2.1.232, Claude Code didn't re-read on connection errors, so it kept the pair it had already loaded until it next applied settings or you restarted.
 
-* **Running session**: replace the files at the same paths, then restart Claude Code so it picks up the new pair. A mid-session settings application, such as a remote managed-settings sync or running `/login`, also re-reads the files, but no such event is guaranteed to happen before the old pair expires and you see connection errors, so restart to be certain.
-* **Future sessions**: replace the files before the current pair expires so Claude Code doesn't load an already-expired pair on its next start.
+Claude Code re-reads the files in response to failed requests, not by watching them for changes:
+
+* **Timing**: Claude Code does nothing at the moment you replace the files. It presents the new pair on the retry after a qualifying failure, or on the next request after it applies settings, whichever comes first.
+* **Gateway rejections**: Claude Code re-reads when your gateway resets the connection or rejects the TLS handshake after it stops accepting the old pair. It doesn't re-read when the gateway completes the handshake and answers with an HTTP error. In that case, Claude Code loads the new pair when it next applies settings or when you restart it.
+* **Half-written rotations**: when Claude Code re-reads while your rotation is mid-write, such as reading a certificate and key that don't match each other, it keeps the previous pair and re-reads on the next failure.
+* **OTLP telemetry exporters**: Claude Code keeps the certificate the [exporters](/docs/en/monitoring-usage#mtls-authentication) loaded at first use, so restart Claude Code for a rotated certificate to reach your telemetry collector.
+* **Turn the reload off**: set [`CLAUDE_CODE_DISABLE_MTLS_RELOAD_ON_STALE_CONNECTION=1`](/docs/en/env-vars#variables) to turn off the connection-error re-read. Claude Code then picks up rotated files only when it next applies settings or at the next startup.
+
+To confirm Claude Code picked up a rotation, [start the session with debug logging](#verify-your-configuration) and look for `Stale connection — reloaded rotated mTLS client material` in the log. Claude Code doesn't log this line when it picks up the rotation while applying settings instead, so a missing line alone doesn't mean the rotation failed.
+
+Replace the files before the current pair expires so Claude Code doesn't load an already-expired pair at the next startup.
 
 In [cloud sessions](/docs/en/claude-code-on-the-web), the hosting environment manages the connection to the API, so Claude Code ignores the following variables when they come from a settings file `env` block:
 
@@ -224,6 +233,8 @@ For self-hosted [GitHub Enterprise Server](/docs/en/github-enterprise-server) in
 ### Desktop and claude.ai
 
 The preceding table covers the standalone CLI. The Claude Desktop app and claude.ai in a browser load their application code and user content from additional Anthropic CDN hosts, including `assets-proxy.anthropic.com` and the `*.claudeusercontent.com` origins that serve [artifacts](/docs/en/artifacts). Allowing `claude.ai` while blocking those hosts produces a blank page rather than an error. See [network access requirements](/docs/en/desktop#network-access-requirements) on the Desktop page.
+
+An [artifact](/docs/en/artifacts) that loads a typeface from [Google Fonts](/docs/en/artifacts#improve-the-visual-design) also requests `fonts.googleapis.com` and `fonts.gstatic.com`. Both hosts are optional. If you block them, artifacts render in fallback typefaces. Block with a fast rejection rather than a silent drop so the font request fails immediately instead of delaying the page's first render.
 
 ## Additional resources
 

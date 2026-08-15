@@ -404,7 +404,7 @@ Each object in the inner `hooks` array is a hook handler: the shell command, HTT
 * **[Command hooks](#command-hook-fields)** (`type: "command"`): run a shell command. Your script receives the event's [JSON input](#hook-input-and-output) on stdin and communicates results back through exit codes and stdout.
 * **[HTTP hooks](#http-hook-fields)** (`type: "http"`): send the event's JSON input as an HTTP POST request to a URL. The endpoint communicates results back through the response body using the same [JSON output format](#json-output) as command hooks.
 * **[MCP tool hooks](#mcp-tool-hook-fields)** (`type: "mcp_tool"`): call a tool on an already-connected [MCP server](/docs/en/mcp). The tool's text output is treated like command-hook stdout.
-* **[Prompt hooks](#prompt-and-agent-hook-fields)** (`type: "prompt"`): send a prompt to a Claude model for single-turn evaluation. The model returns a yes/no decision as JSON. See [Prompt-based hooks](#prompt-based-hooks).
+* **[Prompt hooks](#prompt-and-agent-hook-fields)** (`type: "prompt"`): send a prompt to a Claude model for single-turn evaluation. The model returns its decision as JSON. See [Prompt-based hooks](#prompt-based-hooks).
 * **[Agent hooks](#prompt-and-agent-hook-fields)** (`type: "agent"`): spawn a subagent that can use tools like Read, Grep, and Glob to verify conditions before returning a decision. Agent hooks are experimental and may change. See [Agent-based hooks](#agent-based-hooks).
 
 All matching hooks run in parallel. If you define the same handler in more than one settings file, it runs once. A plugin's or skill's copy of the same handler stays separate.
@@ -2371,7 +2371,7 @@ the stoppage occurred due to a user interrupt. API errors fire
 [StopFailure](#stopfailure) instead.
 
 <Tip>
-  The [`/goal`](/docs/en/goal) command is a built-in shortcut for a session-scoped prompt-based Stop hook. Use it when you want Claude to keep working until a condition holds without writing hook configuration.
+  The [`/goal`](/docs/en/goal) command is a built-in shortcut for a session-scoped prompt-based Stop hook. Use it when you want Claude to keep working toward a condition without writing hook configuration.
 </Tip>
 
 #### Stop input
@@ -3133,13 +3133,13 @@ This `Stop` hook asks the LLM to evaluate whether all tasks are complete before 
 }
 ```
 
-| Field             | Required | Description                                                                                                                                                                                                                                                           |
-| :---------------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`            | yes      | Must be `"prompt"`                                                                                                                                                                                                                                                    |
-| `prompt`          | yes      | The prompt text to send to the LLM. Use `$ARGUMENTS` as a placeholder for the hook input JSON. If `$ARGUMENTS` is not present, input JSON is appended to the prompt                                                                                                   |
-| `model`           | no       | Model to use for evaluation. Defaults to a fast model                                                                                                                                                                                                                 |
-| `timeout`         | no       | Timeout in seconds. Default: 30                                                                                                                                                                                                                                       |
-| `continueOnBlock` | no       | When the prompt returns `ok: false`, feed the reason back to Claude and continue the turn instead of stopping. Default: `false`. Implemented as `continue: true` on the resulting `decision: "block"`. See [Response schema](#response-schema) for per-event behavior |
+| Field             | Required | Description                                                                                                                                                                                               |
+| :---------------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`            | yes      | Must be `"prompt"`                                                                                                                                                                                        |
+| `prompt`          | yes      | The prompt text to send to the LLM. Use `$ARGUMENTS` as a placeholder for the hook input JSON. If `$ARGUMENTS` is not present, input JSON is appended to the prompt                                       |
+| `model`           | no       | Model to use for evaluation. Defaults to a fast model                                                                                                                                                     |
+| `timeout`         | no       | Timeout in seconds. Default: 30                                                                                                                                                                           |
+| `continueOnBlock` | no       | On the events it applies to, `true` feeds an `ok: false` reason back to Claude and continues instead of ending the turn. Default: `false`. See [Response schema](#response-schema) for per-event behavior |
 
 ### Response schema
 
@@ -3148,18 +3148,20 @@ The LLM must respond with JSON containing:
 ```json theme={null}
 {
   "ok": true | false,
-  "reason": "Explanation for the decision"
+  "reason": "Explanation for the decision",
+  "impossible": true | false
 }
 ```
 
-| Field    | Description                                                                               |
-| :------- | :---------------------------------------------------------------------------------------- |
-| `ok`     | `true` to allow. `false` produces a `decision: "block"`. See the per-event behavior below |
-| `reason` | Required when `ok` is `false`. Used as the block reason                                   |
+| Field        | Description                                                                                                                                                                                                                                      |
+| :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ok`         | `true` to allow. For `false`, see the per-event behavior below                                                                                                                                                                                   |
+| `reason`     | Required when `ok` is `false`                                                                                                                                                                                                                    |
+| `impossible` | Optional. The model returns it with `ok: false` when it judges the condition can never be satisfied. On `Stop` and `SubagentStop`, Claude Code then lets the turn end instead of feeding the reason back. Agent hooks and other events ignore it |
 
 What happens on `ok: false` depends on the event:
 
-* `Stop` and `SubagentStop`: the reason is fed back to Claude as its next instruction and the turn continues
+* `Stop` and `SubagentStop`: the reason is fed back to Claude as its next instruction and the turn continues, unless the response also sets `impossible: true`, in which case Claude Code allows the stop and the turn ends
 * `PreToolUse`: the tool call is denied; by default the turn ends and the deny reason appears in the chat as a warning line. Set `continueOnBlock: true` to instead return the reason to Claude as the tool error so it can adjust and continue, equivalent to a command hook's `permissionDecision: "deny"`. Before v2.1.210, the deny reason was returned to Claude as the tool error and the turn continued
 * `PostToolUse`: by default the turn ends and the reason appears in the chat as a warning line. Set `continueOnBlock: true` to feed the reason back to Claude and continue the turn instead
 * `PostToolBatch`, `UserPromptSubmit`, and `UserPromptExpansion`: the turn ends and the reason appears as a warning line. These events end the turn on `decision: "block"` regardless of `continue`
@@ -3173,7 +3175,7 @@ If you need finer control on any event, use a [command hook](#command-hook-field
 
 ### Check multiple conditions before stopping
 
-This `Stop` hook uses a detailed prompt to check three conditions before allowing Claude to stop. `SubagentStop` hooks use the same format to evaluate whether a [subagent](/docs/en/sub-agents) should stop. If `"ok"` is `false`, Claude continues working with the provided reason as its next instruction:
+This `Stop` hook uses a detailed prompt to check three conditions before allowing Claude to stop. `SubagentStop` hooks use the same format to evaluate whether a [subagent](/docs/en/sub-agents) should stop. If the model returns `"ok": false` because the condition isn't met yet, Claude continues working with the provided reason as its next instruction:
 
 ```json theme={null}
 {
@@ -3208,13 +3210,13 @@ When an agent hook fires:
 1. Claude Code spawns a subagent with your prompt and the hook's JSON input
 2. The subagent can use tools like Read, Grep, and Glob to investigate
 3. After up to 50 turns, the subagent returns a structured `{ "ok": true/false }` decision
-4. Claude Code processes the decision the same way as a prompt hook with `continueOnBlock: true`, as described under [Agent hook configuration](#agent-hook-configuration)
+4. Claude Code allows the action if `ok` is `true`. If `ok` is `false`, Claude Code handles the block the same way as a prompt hook with `continueOnBlock: true` on that event, as listed under [Response schema](#response-schema)
 
 Agent hooks are useful when verification requires inspecting actual files or test output, not just evaluating the hook input data alone.
 
 ### Agent hook configuration
 
-Set `type` to `"agent"` and provide a `prompt` string. The configuration fields are the same as [prompt hooks](#prompt-hook-configuration) except `continueOnBlock`, with a longer default timeout:
+Set `type` to `"agent"` and provide a `prompt` string. The configuration fields are the same as [prompt hooks](#prompt-hook-configuration), except that agent hooks have a longer default timeout and no `continueOnBlock` field:
 
 | Field     | Required | Description                                                                                 |
 | :-------- | :------- | :------------------------------------------------------------------------------------------ |
@@ -3223,7 +3225,7 @@ Set `type` to `"agent"` and provide a `prompt` string. The configuration fields 
 | `model`   | no       | Model to use. Defaults to a fast model                                                      |
 | `timeout` | no       | Timeout in seconds. Default: 60                                                             |
 
-The response schema is the same as prompt hooks: `{ "ok": true }` to allow or `{ "ok": false, "reason": "..." }` to block. On `ok: false`, Claude Code handles an agent hook the way it handles a [prompt hook with `continueOnBlock: true`](#response-schema) on the same event; agent hooks have no `continueOnBlock` field.
+The response schema is `{ "ok": true }` to allow or `{ "ok": false, "reason": "..." }` to block. On `ok: false`, Claude Code handles an agent hook the way it handles a [prompt hook with `continueOnBlock: true`](#response-schema) on the same event; agent hooks have no `continueOnBlock` field, and don't support the prompt-hook `impossible` field.
 
 This `Stop` hook verifies that all unit tests pass before allowing Claude to finish:
 
