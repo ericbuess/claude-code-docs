@@ -506,7 +506,7 @@ Client telemetry is off by default; configuring `telemetry.forward_to` is what t
 
 Point `telemetry.forward_to` at an OpenTelemetry collector, such as the [AWS Distro for OpenTelemetry (ADOT) collector](https://aws-otel.github.io/), and export from there to Amazon CloudWatch, Amazon Managed Service for Prometheus, or any OTLP backend.
 
-Run the collector as its own internal service reachable over `https://`: the gateway accepts plaintext `http://` only for loopback URLs, and even then its [SSRF guard](/docs/en/claude-apps-gateway-deploy#threat-model-summary) blocks loopback connections by default. Unless `CLAUDE_GATEWAY_ALLOW_LOOPBACK=1` is set in the gateway's environment, a sidecar collector on `http://localhost:4318` passes config validation but receives no traffic, with exports failing as `ECONNREFUSED_SSRF` in the gateway logs, and the gateway rejects an IP-literal URL such as `http://127.0.0.1:4318` at boot. That variable relaxes the loopback block for every operator-configured URL, not only telemetry, so prefer the internal-service pattern and reserve the sidecar-plus-flag setup for tasks whose network is otherwise locked down.
+Run the collector as its own internal service reachable over `https://`; the [`telemetry` reference](/docs/en/claude-apps-gateway-config#telemetry) covers the loopback exception and `CLAUDE_GATEWAY_ALLOW_LOOPBACK`.
 
 ### Gateway logs
 

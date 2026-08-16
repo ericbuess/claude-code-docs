@@ -183,15 +183,17 @@ The empty `matcher` fires on all notification types. To fire only on specific ev
 
 | Matcher                  | Fires when                                                                                               |
 | :----------------------- | :------------------------------------------------------------------------------------------------------- |
-| `permission_prompt`      | Claude needs you to approve a tool use and you haven't typed for about 6 seconds                         |
+| `permission_prompt`      | Claude needs you to approve a tool use and the prompt has waited about six seconds                       |
 | `idle_prompt`            | Claude finished responding about 60 seconds ago and you haven't typed since                              |
 | `auth_success`           | Authentication completes                                                                                 |
-| `elicitation_dialog`     | An MCP server opens an elicitation form and you haven't typed for about 6 seconds                        |
-| `elicitation_url_dialog` | An MCP server asks you to open a browser URL and you haven't typed for about 6 seconds                   |
+| `elicitation_dialog`     | An MCP server opens an elicitation form and you haven't typed for about six seconds                      |
+| `elicitation_url_dialog` | An MCP server asks you to open a browser URL and you haven't typed for about six seconds                 |
 | `elicitation_complete`   | An MCP elicitation form is submitted or dismissed                                                        |
 | `elicitation_response`   | An MCP elicitation response is sent back to the server                                                   |
 | `agent_needs_input`      | A background session starts waiting on your input. Fires only while [agent view](/docs/en/agent-view) is open |
 | `agent_completed`        | A background session finishes or fails. Fires only while [agent view](/docs/en/agent-view) is open            |
+
+Claude Code times `permission_prompt` differently in a terminal and in Claude Desktop, the VS Code extension, and other hosts that answer permission requests through the Agent SDK. See [when each notification type fires](/docs/en/hooks#notification) for both timings.
 
 The `agent_needs_input` and `agent_completed` matchers require Claude Code v2.1.198 or later.
 

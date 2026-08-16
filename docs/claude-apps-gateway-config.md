@@ -313,12 +313,7 @@ upstreams:
     auth:
       api_key: ${ANTHROPIC_API_KEY}
 
-# Per-upstream model IDs are keyed on the upstream's `name:`; an upstream
-# without a `name:` defaults to its provider string (e.g. `bedrock`). For a
-# built-in Claude model, an upstream you leave out of the map still serves it
-# with that provider's default ID; list the upstream to override the ID, for
-# example with a provisioned-throughput ARN. Only a custom `id` that isn't a
-# built-in model skips the upstreams missing from its map.
+# Per-upstream model IDs are keyed on the upstream's `name:`.
 models:
   - id: claude-opus-4-8
     label: Claude Opus 4.8
