@@ -54,13 +54,7 @@ Match your goal to a row below, then read the detail section that follows.
 
 [Permission modes](/docs/en/permission-modes) decide whether a tool call runs and whether you are prompted first. Isolation restricts what a command can access once it runs. The two work together: when a permission mode lets actions run without asking you, an isolation boundary limits what those actions can reach.
 
-When you pass `--dangerously-skip-permissions`, Claude acts without asking you first. Claude Code still prompts you only for:
-
-* Explicit [ask rules](/docs/en/permissions#manage-permissions)
-* Connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools)
-* MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool)
-* Removals targeting `/` or your home directory
-* The [cross-session messaging safeguards](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode)
+When you pass `--dangerously-skip-permissions`, Claude acts without asking you first. The [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves) still apply.
 
 With no prompts to catch mistakes, the isolation boundary you choose is what protects your system. Always run `--dangerously-skip-permissions` sessions inside a container, a VM, or the [sandbox runtime](#sandbox-runtime), so that file tools, MCP servers, and hooks are also inside the boundary. On Linux and macOS, Claude Code refuses to start with this flag when running as root, so run the container, VM, or sandbox runtime as a non-root user.
 

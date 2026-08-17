@@ -168,7 +168,7 @@ Store subagent files in different locations depending on scope. When multiple su
 
 Project subagents are discovered by walking up from the current working directory, so every `.claude/agents/` between there and the repository root is scanned. As of v2.1.178, when more than one of these nested directories defines the same `name`, Claude Code uses the definition closest to the working directory.
 
-Directories added with `--add-dir` are also scanned: a `.claude/agents/` folder inside an added directory loads alongside project subagents. See [Additional directories](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) for which other configuration types load from `--add-dir`. To share subagents across projects without `--add-dir`, use `~/.claude/agents/` or a [plugin](/docs/en/plugins).
+When you add a directory with `--add-dir` or `/add-dir`, Claude Code also loads its `.claude/agents/` folder, alongside your project subagents. See [Additional directories](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) for which other configuration types load from `--add-dir`. To share subagents across projects without `--add-dir`, use `~/.claude/agents/` or a [plugin](/docs/en/plugins).
 
 **User subagents** (`~/.claude/agents/`) are personal subagents available in all your projects.
 
@@ -237,9 +237,10 @@ Subagent files use YAML frontmatter for configuration, followed by the system pr
 <Note>
   Claude Code watches `~/.claude/agents/` and `.claude/agents/`. When you add or edit a subagent file on disk, or ask Claude to write one for you, Claude Code detects the change within a few seconds and the next delegation uses the updated definition, with no restart needed.
 
-  Two cases still need a restart:
+  Three cases still need a restart:
 
   * The watcher covers only directories that existed when the session started, so after creating a scope's first agent file in a new `agents` directory, restart to load it.
+  * Claude Code doesn't watch `.claude/agents/` inside directories added with `--add-dir` or `/add-dir`, so after adding or editing a subagent there, restart to load the change.
   * Sessions started with `--disable-slash-commands` don't watch these directories at all.
 </Note>
 
@@ -474,15 +475,7 @@ Set `permissionMode` to choose the permission mode a subagent runs in. Use the m
 <Warning>
   Use `bypassPermissions` with caution. It skips permission prompts, allowing the subagent to execute operations without approval, including writes to `.git`, `.config/git`, `.claude`, `.vscode`, `.idea`, `.husky`, `.cargo`, `.devcontainer`, `.yarn`, and `.mvn`.
 
-  Even in this mode, some operations still prompt:
-
-  * Explicit [`ask` rules](/docs/en/permissions#manage-permissions)
-  * Connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools)
-  * MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool)
-  * Root and home directory removals such as `rm -rf /`
-  * The [`isolatePeerMachines`](/docs/en/settings#available-settings) approval for messages beyond this machine
-
-  See [permission modes](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) for details.
+  Even in this mode, the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves) still apply. See [permission modes](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) for details.
 </Warning>
 
 If the parent uses `bypassPermissions` or `acceptEdits`, this takes precedence and can't be overridden. If the parent uses [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), the subagent inherits auto mode and any `permissionMode` in its frontmatter is ignored: the classifier evaluates the subagent's tool calls with the same block and allow rules as the parent session.
