@@ -155,8 +155,6 @@ If you didn't set an explicit name, Claude Code updates the title to reflect you
 
 When you rename a session from claude.ai or the Claude app, Claude Code also updates the local title shown in `claude --resume`. Claude Code applies the same rename to the session name shown on the prompt bar, and in the `claude agents` listing when the session [runs in the background](/docs/en/agent-view). Before v2.1.221, renaming from the session list at claude.ai or in the Claude app updated only the title, and the CLI kept its previous session name; `/rename`, which runs in the CLI itself, set the name on any version.
 
-If the environment already has an active session, you'll be asked whether to continue it or start a new one.
-
 If you don't have the Claude app yet, use the `/mobile` command inside Claude Code to display a download QR code for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) or [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude).
 
 ### What connected devices see
