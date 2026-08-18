@@ -4,9 +4,9 @@
 
 # Keep Claude working toward a goal
 
-> Set a completion condition with /goal and Claude keeps working across turns until the condition is met or judged impossible.
+> Set a completion condition with /goal and Claude keeps working until it's met, a model judges it impossible, or an error you have to fix clears the goal.
 
-The `/goal` command sets a completion condition and Claude keeps working toward it without you prompting each step. After each turn, a small fast model checks whether the condition holds. If the model judges it not yet met, Claude starts another turn instead of returning control to you. The goal clears automatically once the condition is met, or if the model judges the condition impossible to satisfy.
+The `/goal` command sets a completion condition and Claude keeps working toward it without you prompting each step. After each turn, a small fast model checks whether the condition holds. If the model judges it not yet met, Claude starts another turn instead of returning control to you. The goal clears automatically once the condition is met, if the model judges the condition impossible to satisfy, or if a turn fails on [an error you have to fix](#errors-you-have-to-fix-clear-the-goal).
 
 Use a goal for substantial work with a verifiable end state:
 
@@ -19,11 +19,11 @@ Use a goal for substantial work with a verifiable end state:
 
 Three approaches keep the current session running between prompts. Pick based on what should start the next turn:
 
-| Approach                                                            | Next turn starts when      | Stops when                                                    |
-| :------------------------------------------------------------------ | :------------------------- | :------------------------------------------------------------ |
-| `/goal`                                                             | The previous turn finishes | A model confirms the condition is met or judges it impossible |
-| [`/loop`](/docs/en/scheduled-tasks#run-a-prompt-repeatedly-with-%2Floop) | A time interval elapses    | You stop it, or Claude decides the work is done               |
-| [Stop hook](/docs/en/hooks-guide#prompt-based-hooks)                     | The previous turn finishes | Your own script or prompt decides                             |
+| Approach                                                            | Next turn starts when      | Stops when                                                                                                                                                                                      |
+| :------------------------------------------------------------------ | :------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/goal`                                                             | The previous turn finishes | A model confirms the condition is met or judges it impossible, or a turn fails on [an error you have to fix](#errors-you-have-to-fix-clear-the-goal), or you run [`/goal clear`](#clear-a-goal) |
+| [`/loop`](/docs/en/scheduled-tasks#run-a-prompt-repeatedly-with-%2Floop) | A time interval elapses    | You stop it, or Claude decides the work is done                                                                                                                                                 |
+| [Stop hook](/docs/en/hooks-guide#prompt-based-hooks)                     | The previous turn finishes | Your own script or prompt decides                                                                                                                                                               |
 
 `/goal` and a Stop hook both fire after every turn. `/goal` is a session-scoped shortcut: you type a condition and it's active for the current session only. A Stop hook lives in your settings file, applies to every session in its scope, and can run a script for deterministic checks or a prompt for model-evaluated ones.
 
@@ -123,7 +123,24 @@ Interrupt the process with Ctrl+C to stop a non-interactive goal before it resol
 
 If Claude keeps answering the evaluator without making progress (no tool use for several turns in a row), Claude Code stops the loop, prints a warning, and returns control to you with the goal still set. Evaluation resumes after your next prompt. The [hooks guide](/docs/en/hooks-guide#stop-hook-hits-the-block-cap) explains the underlying mechanism.
 
-If a subagent or a background shell command is still running when a turn ends, Claude Code skips the evaluation for that turn and evaluates when the next turn ends.
+### Errors you have to fix clear the goal
+
+If a turn fails on an error that won't clear until you fix it, Claude Code clears the goal and prints a warning naming the cause. The warning starts with `Goal cleared after an unrecoverable error` and ends with `Run /goal again to continue`. Fix the cause, then [set the goal again](#set-a-goal) with `/goal <condition>`. Four kinds of failure clear the goal:
+
+* An authentication failure, when Claude Code manages its own credentials. When a host manages them for you, such as the desktop app, the VS Code extension, or a [cloud session](/docs/en/claude-code-on-the-web), Claude Code leaves the goal active because the host restores access on its own.
+* An exhausted credit balance
+* A context overflow that [auto-compaction](/docs/en/model-config#set-the-auto-compact-window) couldn't clear
+* A model that isn't available
+
+After any other failure, including transient errors such as rate limits and overloaded servers, Claude Code leaves the goal active.
+
+### Background work defers evaluation
+
+If a subagent or a background shell command is still running when a turn ends, Claude Code skips the evaluation for that turn. It evaluates at the end of the next turn that finishes with no background work running. When the background work finishes, Claude Code delivers the result to Claude as a new turn, so you don't have to prompt.
+
+When a turn ends and background work has kept the goal waiting for 30 minutes or more, Claude Code asks Claude to check on that work. Claude Code lists the running tasks and asks Claude to read their output, keep waiting if they're progressing, and fix or stop any that are stuck. After each further 30 minutes of waiting, Claude Code asks again at the next turn end. To change the interval, set [`CLAUDE_CODE_GOAL_CHECKIN_MINUTES`](/docs/en/env-vars); set it to `0` to turn check-ins off. Check-ins require Claude Code v2.1.234 or later.
+
+### Evaluation model and cost
 
 To evaluate on a different model, set [`ANTHROPIC_DEFAULT_HAIKU_MODEL`](/docs/en/model-config#environment-variables).
 

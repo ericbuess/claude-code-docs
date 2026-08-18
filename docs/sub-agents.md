@@ -787,7 +787,7 @@ Subagents can run in the foreground or the background:
 
 For each subagent Claude spawns with the Agent tool, Claude Code picks foreground or background from the first of these cases that applies:
 
-* If an in-process [agent team](/docs/en/agent-teams#limitations) teammate spawned the subagent, Claude Code runs it in the foreground, and refuses with an error to spawn a subagent whose definition sets [`background: true`](#supported-frontmatter-fields).
+* If an in-process [agent team](/docs/en/agent-teams#limitations) teammate spawned the subagent, Claude Code runs it in the foreground. Claude Code refuses with an error to spawn a teammate's subagent whose definition sets [`background: true`](#supported-frontmatter-fields). Where [fork mode](#turn-fork-mode-on-or-off) is off and you haven't [turned background tasks off](/docs/en/env-vars), Claude Code also refuses with an error when a teammate sets `run_in_background: true`.
 * If you set [`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`](/docs/en/env-vars) to `1`, Claude Code runs the subagent in the foreground, in every kind of session and whether or not fork mode is on.
 * Where [fork mode](#turn-fork-mode-on-or-off) is on, as it is by default in an interactive session, Claude Code runs the subagent in the background, forks and non-fork subagents alike, and Claude can't ask for the foreground.
 * Where fork mode is off, Claude runs the subagent in the background by default and in the foreground when it needs the result before continuing. Fork mode is off in [non-interactive mode](/docs/en/headless) with `-p` and in the Agent SDK unless you turn it on. To keep a particular subagent in the background even when Claude wants the result, set its frontmatter [`background`](#supported-frontmatter-fields) field to `true`.
@@ -879,7 +879,7 @@ Use the **main conversation** when:
 * The task needs frequent back-and-forth or iterative refinement
 * Multiple phases share significant context, such as planning, implementation, and testing
 * You're making a quick, targeted change
-* Latency matters. Subagents start fresh and may need time to gather context
+* Latency matters. A subagent that isn't a [fork](#fork-the-current-conversation) starts fresh and may need time to gather context
 
 Use **subagents** when:
 
