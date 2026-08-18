@@ -332,6 +332,6 @@ If plugin skills don't work:
 
 * [Plugins](/docs/en/plugins) - Complete plugin development guide
 * [Plugins reference](/docs/en/plugins-reference) - Technical specifications
-* [Commands](/docs/en/agent-sdk/slash-commands) - Using commands in the SDK
+* [Commands](/docs/en/agent-sdk/skills#dispatch-commands-by-name) - Dispatching commands in the SDK
 * [Subagents](/docs/en/agent-sdk/subagents) - Working with specialized agents
 * [Skills](/docs/en/agent-sdk/skills) - Using Agent Skills
