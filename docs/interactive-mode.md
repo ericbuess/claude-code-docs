@@ -427,13 +427,36 @@ When working on a branch with an open pull request, Claude Code displays a click
 * Red: changes requested
 * Gray: draft
 
-The badge disappears once the pull request merges or closes. `Cmd+click` (macOS) or `Ctrl+click` (Windows/Linux) the link to open the pull request in your browser. The status refreshes every 60 seconds, and immediately after a `gh pr` or `git push` command runs in the session.
+The badge disappears once the pull request merges or closes. `Cmd+click` (macOS) or `Ctrl+click` (Windows/Linux) the link to open the pull request in your browser. How often Claude Code refreshes the status depends on your provider:
+
+* **Anthropic API with [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) on**: about every 90 seconds while you're active in the session, and less often while you're idle, while your terminal is unfocused, or while Claude Code keeps finding no pull request for the branch
+* **Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, Claude Platform on AWS, or feature-flag fetching off**: every 60 seconds
+
+On either schedule, Claude Code also refreshes as soon as a `git push`, or a `gh pr` command that changes the pull request such as `gh pr create` or `gh pr merge`, succeeds in the session. After an hour without input from you, Claude Code stops refreshing, and your next prompt starts it again.
 
 Claude Code renders the badge as a hyperlink even when it can't detect hyperlink support in your terminal, which commonly happens over SSH or in tmux. Set [`FORCE_HYPERLINK=0`](/docs/en/env-vars) to render the badge as plain text.
 
 <Note>
-  PR status requires the `gh` CLI to be installed and authenticated (`gh auth login`).
+  PR status for GitHub repositories requires the `gh` CLI to be installed and authenticated with `gh auth login`.
 </Note>
+
+### GitLab merge requests
+
+When you work on a branch with an open GitLab merge request, Claude Code shows a clickable `MR !N` badge in the footer slot that otherwise holds the GitHub PR link. `!N` is GitLab's own reference syntax for merge request number N. The colored underline shows the merge request's state:
+
+* Green: GitLab reports the merge request as mergeable
+* Yellow: any other open state
+* Gray: draft
+
+The badge disappears once the merge request merges or closes. Claude Code checks merge request status on the same schedule as the GitHub badge, and refreshes as soon as a `glab mr create` or `git push` succeeds in the session.
+
+To get the badge, you need:
+
+* Claude Code v2.1.234 or later
+* A repository remote that points at your GitLab host, either gitlab.com or a self-managed instance
+* The [`glab` CLI](https://gitlab.com/gitlab-org/cli) on your `PATH`, authenticated with `glab auth login`
+
+Claude Code ignores `glab`'s token environment variables, such as `GITLAB_TOKEN`, when it checks status, so you get no badge from an exported token alone. Claude Code also looks for `glab` and for its login once per session, so restart Claude Code after you install `glab` or run `glab auth login`.
 
 ## See also
 

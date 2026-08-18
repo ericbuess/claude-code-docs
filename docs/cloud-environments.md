@@ -138,6 +138,8 @@ registry.example.com
 
 Sessions in this environment can now reach `api.example.com`, any subdomain of `internal.example.com`, and `registry.example.com`, and no other domains through the session's network; [GitHub traffic](#github-proxy) and [MCP connector traffic](#network-access) don't go through this allowlist. A leading `*.` matches every subdomain. To keep the [Trusted domains](#default-allowed-domains) too, check **Also include default list of common package managers**; leave it unchecked to allow only what you list.
 
+If sessions in the environment work with [artifacts](/docs/en/artifacts), include `*.frame.claudeusercontent.com` in your list. Claude Code fetches artifact content from that host. If you leave it out, Claude can't read artifacts in sessions that run in the environment.
+
 Each environment has its own allowed-domains list; there's no organization-level allowlist that admins can push to every member's environments. [Server-managed settings](/docs/en/server-managed-settings) still apply inside cloud sessions, but none of them adds domains to the environment's network allowlist.
 
 ### GitHub proxy

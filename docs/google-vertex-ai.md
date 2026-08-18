@@ -190,6 +190,11 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 Most model versions have a corresponding `VERTEX_REGION_CLAUDE_*` variable. See the [Environment variables reference](/docs/en/env-vars) for the full list. Check [Google Cloud's Agent Platform Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) to determine which models support global endpoints versus regional only.
 
+If a region value isn't shaped like a region or location name, Claude Code treats it as unset. For example, Claude Code treats a value containing a slash, dot, or space as unset. Claude Code falls back to a different source for each variable:
+
+* `VERTEX_REGION_CLAUDE_*`: Claude Code falls back to `CLOUD_ML_REGION`.
+* `CLOUD_ML_REGION`: Claude Code falls back to `us-east5`.
+
 [Prompt caching](/docs/en/prompt-caching) is enabled automatically. To disable it, set `DISABLE_PROMPT_CACHING=1`. To request a 1-hour cache TTL instead of the 5-minute default, set `ENABLE_PROMPT_CACHING_1H=1`; cache writes with a 1-hour TTL are billed at a higher rate. For heightened rate limits, contact Google Cloud support. When using Google Cloud's Agent Platform, the `/logout` command is unavailable since authentication is handled through Google Cloud credentials.
 
 Claude Code decides between [MCP tool search](/docs/en/mcp#scale-with-mcp-tool-search) and upfront loading by model generation:

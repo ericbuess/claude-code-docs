@@ -28,7 +28,7 @@ To turn the shortcut off, set [`permissionExplainerEnabled`](/docs/en/settings#g
 
 ## Manage permissions
 
-You can view and manage Claude Code's tool permissions with `/permissions`. This UI lists all permission rules and the `settings.json` file each rule comes from.
+You can view and manage Claude Code's tool permissions with `/permissions`. The dialog lists all permission rules and the `settings.json` file each rule comes from. You can open the dialog while Claude is working: when you add or remove a rule, Claude Code applies the change starting with Claude's next tool call in the same turn. Before v2.1.234, Claude Code queued the command until the turn finished.
 
 * **Allow** rules let Claude Code use the specified tool without manual approval.
 * **Ask** rules prompt for confirmation whenever Claude Code tries to use the specified tool.
@@ -253,6 +253,8 @@ Common aliases are canonicalized before matching. A rule written for the cmdlet 
 Claude Code parses the PowerShell AST and checks each command in a compound command independently. Pipeline operators `|`, statement separators `;`, and on PowerShell 7+ the chain operators `&&` and `||` split a compound command into subcommands. A rule must match every subcommand for the compound command to be allowed.
 
 ### Read and Edit
+
+To block Claude's file tools from reading a file or directory, add a `Read` deny rule for its path, such as `Read(./.env)` or `Read(./secrets/**)`; [Exclude sensitive files](/docs/en/settings#exclude-sensitive-files) has a paste-ready example.
 
 `Edit` rules apply to all built-in tools that edit files. Claude makes a best-effort attempt to apply `Read` rules to all built-in tools that read files like Grep and Glob, to `@file` mentions in your prompts, and to the selection and open-file context that a connected [IDE](/docs/en/vs-code#the-built-in-ide-mcp-server) shares with Claude.
 
@@ -521,7 +523,11 @@ Embedding hosts can supply additional managed policy via the SDK `managedSetting
 
 `permissions.allow` rules and `permissions.additionalDirectories` entries in a project's `.claude/settings.json` grant capability, so Claude Code applies them only after you accept the [workspace trust dialog](/docs/en/security#additional-safeguards) for that folder. The dialog lists the rules and directories the folder would grant so you can review them first. `deny` and `ask` rules aren't affected, since they only restrict.
 
-Claude Code saves trust per workspace, keyed on the git repository root or, outside a repository, the directory you started Claude Code from. When you start in your home directory, trust is held for the current session only and isn't written to disk; see the [additional safeguards](/docs/en/security#additional-safeguards) note.
+Claude Code keys and stores the trust you accept according to where you start it:
+
+* In a repository, Claude Code keys the trust on the git repository root, so the trust covers the whole repository apart from any git repository nested inside it, such as a submodule. In a [worktree](/docs/en/worktrees), it uses the main checkout's root, as it does for [saved rules](#permission-system).
+* Outside a repository, Claude Code keys the trust on the directory you started it from, and the trust covers any subdirectory of that directory apart from a git repository nested inside it, such as a clone. Each covered subdirectory then counts as a folder whose parent you trusted.
+* When you start in your home directory, Claude Code holds the trust for the current session only and doesn't write it to disk; see the [additional safeguards](/docs/en/security#additional-safeguards) note.
 
 Claude Code shows the trust dialog in interactive sessions only. A `claude -p` run or an SDK session never shows it, and trusting a parent folder doesn't count for these rules, so [What runs before you trust a folder](#what-runs-before-you-trust-a-folder) says which repository content Claude Code still uses in each of those two situations.
 
@@ -529,13 +535,13 @@ Claude Code shows the trust dialog in interactive sessions only. A `claude -p` r
 
 `.claude/settings.local.json` is normally your own file, so its allow rules and additional directories apply without the trust step. Claude Code treats the file as repository-supplied instead, and holds its rules until you trust the folder, when the file is tracked in git or `.claude` is a symlink.
 
-Claude Code runs git to tell the two apart, and it runs git in a folder only after you accept a trust dialog for that folder or one of its parents, or in a `-p` or SDK session, which counts as accepted. Until then it holds the file's rules like project settings, with one exception: in your own configuration home, meaning your home directory or any directory whose `.claude` subdirectory you've set as [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars), the file applies right away without running git. Once the check has run, an untracked file, or one in a directory that isn't inside a git repository, applies even though you haven't trusted that exact folder.
+Claude Code runs git to tell the two apart, and it runs git in a folder only after you accept a trust dialog for that folder or for a parent directory whose trust extends to it, or in a `-p` or SDK session, which counts as accepted. Until then it holds the file's rules like project settings, with one exception: in your own configuration home, meaning your home directory or any directory whose `.claude` subdirectory you've set as [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars), the file applies right away without running git. Once the check has run, an untracked file, or one in a directory that isn't inside a git repository, applies even though you haven't trusted that exact folder.
 
 Versions 2.1.196 through 2.1.199 held the file's rules in your configuration home and outside git repositories too, and printed the [`this workspace has not been trusted`](/docs/en/errors#workspace-has-not-been-trusted) warning there. Before v2.1.207, an untracked file applied before you accepted the dialog.
 
 ### What runs before you trust a folder
 
-Each row is one kind of content a repository can supply. The columns are the two situations in which you haven't trusted the folder itself: you trusted only a parent folder, or you ran `claude -p` or the SDK there, which never shows the trust dialog.
+Each row is one kind of content a repository can supply. The columns are the two situations in which you haven't trusted the folder itself: you trusted only a parent folder, or you ran `claude -p` or the SDK there, which never shows the trust dialog. The parent-folder column doesn't apply inside a [nested repository](#project-allow-rules-and-workspace-trust): in an interactive session Claude Code shows the trust dialog for it, and a `claude -p` or SDK run there follows the `claude -p` column.
 
 | What the repository supplies                                                                                                                                                                                                                                                                                | You trusted only a parent folder                                                        | `claude -p` or the SDK, folder never trusted                                                                                                                                                    |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

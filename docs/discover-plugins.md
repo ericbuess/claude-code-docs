@@ -227,9 +227,15 @@ For example, `anthropics/claude-code` refers to the `claude-code` repository own
 
 ### Add from other Git hosts
 
-Add any git repository by providing the full URL. This works with any Git host, including GitLab, Bitbucket, and self-hosted servers. Include the `.git` suffix so Claude Code clones the repository rather than treating the URL as a direct link to a hosted `marketplace.json` file.
+Add a git marketplace repository by providing its full URL. For an `https://` URL, whether to include the `.git` suffix depends on the host:
 
-Include the `https://` prefix as well. Claude Code v2.1.196 and later reject a host typed without it, such as `gitlab.com/company/plugins.git`, as an invalid GitHub `owner/repo` shorthand, and the error tells you to add the prefix. Earlier versions misread it as a GitHub repository path and fail at clone time.
+* **`github.com` and `gitlab.com`**: Claude Code recognizes a repository URL with or without the `.git` suffix and clones it. Adding a `gitlab.com` URL without the suffix requires Claude Code v2.1.232 or later. Before v2.1.232, Claude Code treated it as a direct link to a hosted `marketplace.json` file.
+* **Azure DevOps**: omit the suffix. Claude Code clones any URL whose path contains `/_git/`. If you append `.git` to a `/_git/` path, the clone fails.
+* **Every other host, including self-managed GitLab servers**: include the `.git` suffix so Claude Code clones the repository rather than treating the URL as a direct link to a hosted `marketplace.json` file. For a host whose clone URLs don't carry the suffix, such as AWS CodeCommit, add the marketplace as a git entry in [`extraKnownMarketplaces`](/docs/en/settings#extraknownmarketplaces) instead. Claude Code clones a git entry whether or not its URL ends in `.git`.
+
+Claude Code also clones a `gitlab.com` URL with nested subgroups, such as `https://gitlab.com/group/subgroup/project`.
+
+Include the `https://` prefix. Claude Code v2.1.196 and later reject a host typed without it, such as `gitlab.com/company/plugins.git`, as an invalid GitHub `owner/repo` shorthand, and the error tells you to add the prefix. Earlier versions misread it as a GitHub repository path and fail at clone time.
 
 Using HTTPS:
 
@@ -242,6 +248,8 @@ Using SSH:
 ```shell theme={null}
 /plugin marketplace add git@gitlab.com:company/plugins.git
 ```
+
+Claude Code clones an SSH address whether or not it ends in `.git`.
 
 To add a specific branch or tag, append `#` followed by the ref:
 
@@ -295,12 +303,13 @@ You may also see plugins with **managed** scope. These are installed by administ
 
 Claude Code looks the plugin up in its local copy of the marketplace catalog. How you name the plugin controls whether Claude Code refreshes that copy first:
 
-* **With a marketplace name**: when you install `plugin-name@marketplace-name`, in a session or with `claude plugin install`, Claude Code refreshes that marketplace before the lookup, whether or not you turned on [auto-update](#configure-auto-updates) for it and even if you set `DISABLE_AUTOUPDATER`. Before v2.1.232, Claude Code didn't refresh the marketplace before the lookup. Claude Code skips this refresh in four cases:
+* **With a marketplace name**: when you install `plugin-name@marketplace-name`, in a session or with `claude plugin install`, Claude Code refreshes that marketplace before the lookup. Claude Code runs the refresh even if you turned off [auto-update](#configure-auto-updates) for the marketplace or set `DISABLE_AUTOUPDATER`. Before v2.1.232, Claude Code didn't refresh the marketplace before the lookup. Claude Code skips this refresh when:
   * The marketplace wasn't [added from GitHub, another Git host, or a remote URL](#add-marketplaces).
   * A [seed directory](/docs/en/plugin-marketplaces#pre-populate-plugins-for-containers) supplies the marketplace.
   * Claude Code refreshed the marketplace within the last 30 seconds.
   * You set [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars).
-* **Plugin name only**: when you run `/plugin install plugin-name` in a session, Claude Code refreshes only the marketplaces it also [updates in the background](#configure-auto-updates), and only after the lookup misses. `claude plugin install plugin-name` reads the cached catalogs without refreshing. To install a plugin that was published after your last refresh, run `/plugin marketplace update <marketplace-name>` in a session or [`claude plugin marketplace update <marketplace-name>`](/docs/en/plugin-marketplaces#plugin-marketplace-update) in your shell, then retry the install.
+  * [Managed settings](/docs/en/plugin-marketplaces#managed-marketplace-restrictions) block the marketplace, in which case Claude Code also refuses the install.
+* **Plugin name only**: when you run `/plugin install plugin-name` in a session, Claude Code refreshes only the marketplaces it also [updates in the background](#configure-auto-updates), and only after the lookup misses. When you run `claude plugin install plugin-name`, Claude Code reads the cached catalogs without refreshing. To install a plugin that was published after your last refresh, run `/plugin marketplace update <marketplace-name>` in a session or [`claude plugin marketplace update <marketplace-name>`](/docs/en/plugin-marketplaces#plugin-marketplace-update) in your shell, then retry the install.
 
 If the refresh before a named install fails, for example because you're offline, Claude Code looks the plugin up in the cached catalog anyway. `claude plugin install` reports `marketplace not refreshed` in its success message, and `/plugin install` shows the failure above the plugin's details or in its not-found message.
 

@@ -138,7 +138,7 @@ Beyond compaction, you can use other features to control what loads into context
 
 [Skills](/docs/en/skills) load on demand. Claude sees skill descriptions at session start, but the full content only loads when a skill is used. For skills you invoke manually, set `disable-model-invocation: true` to keep descriptions out of context until you need them. For skills you didn't write, use [`skillOverrides`](/docs/en/skills#override-skill-visibility-from-settings) to do the same from settings.
 
-[Subagents](/docs/en/sub-agents) get their own fresh context, completely separate from your main conversation. Their work doesn't bloat your context. When done, they return a summary. This isolation is why subagents help with long sessions.
+[Subagents](/docs/en/sub-agents) work in their own context window. A subagent starts fresh unless it's a [fork](/docs/en/sub-agents#fork-the-current-conversation), which starts with a copy of your conversation so far. Either way, the subagent's tool calls stay out of your context, and Claude gets back a summary when the subagent finishes.
 
 See [context costs](/docs/en/features-overview#understand-context-costs) for what each feature costs, and [reduce token usage](/docs/en/costs#reduce-token-usage) for tips on managing context.
 

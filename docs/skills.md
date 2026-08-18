@@ -262,6 +262,18 @@ What Claude Code does with a synced skill's body depends on where the session ru
 * In a Cowork session on your desktop, the body keeps the behavior a local skill has, except that Claude Code replaces every `!` command line with the [`disableSkillShellExecution` placeholder](#inject-dynamic-context), as it does for every skill you supply there.
 * In any other session on your machine, Claude Code doesn't run [`!` commands](#inject-dynamic-context), doesn't attach the files that `@` references name the way it does for a local skill, and doesn't substitute the `${CLAUDE_PROJECT_DIR}` and `${CLAUDE_SESSION_ID}` placeholders, so the `@` references and both placeholders reach Claude as literal text. A `!` command line reaches Claude as literal text too, or as that placeholder when `disableSkillShellExecution` is on.
 
+### Remove a skill
+
+How you remove a skill depends on where it came from:
+
+* **Personal or project skill**: delete the skill's directory, `~/.claude/skills/<skill-name>/` or `.claude/skills/<skill-name>/`. Claude Code [drops it from `/skills` in the current session](#live-change-detection); content from an invocation earlier in the session [stays in context](#skill-content-lifecycle) until the session ends.
+* **Enterprise skill**: an administrator deletes the skill's directory from `.claude/skills/` inside the [managed settings directory](/docs/en/settings#settings-files), for example `/etc/claude-code/.claude/skills/<skill-name>/` on Linux.
+* **Plugin skill**: disable or uninstall the plugin that provides it, from the `/plugin` menu or with `/plugin uninstall <plugin-name>@<marketplace-name>`. Claude Code unloads the plugin's skills after you run `/reload-plugins` or restart; see [Apply plugin changes without restarting](/docs/en/discover-plugins#apply-plugin-changes-without-restarting).
+* **Skill synced from claude.ai**: turn the skill off for your claude.ai account, in the same place you [enabled it](#skills-in-cowork-and-cloud-sessions). Claude Code removes it from `~/.claude/skills/synced/` the next time it [syncs your skills](#where-synced-skills-load). If you delete the directory by hand instead, the next sync downloads it again while the skill stays enabled on claude.ai.
+* **Bundled skill**: set [`disableBundledSkills`](#bundled-skills) to `true` to turn off every bundled skill except `/doctor`, or set one skill to `"off"` in [`skillOverrides`](#override-skill-visibility-from-settings) to hide it.
+
+To keep a personal or project skill but stop Claude from invoking it on its own, set [`disable-model-invocation: true`](#control-who-invokes-a-skill) in its frontmatter, or `"user-invocable-only"` in [`skillOverrides`](#override-skill-visibility-from-settings) when you don't want to edit the file.
+
 ## Configure skills
 
 Skills are configured through YAML frontmatter at the top of `SKILL.md` and the markdown content that follows.

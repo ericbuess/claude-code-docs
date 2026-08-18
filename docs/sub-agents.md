@@ -783,16 +783,18 @@ The CLI flag overrides the setting if both are present.
 Subagents can run in the foreground or the background:
 
 * **Foreground subagents** block the main conversation until complete. Permission prompts are passed through to you as they come up.
-* **Background subagents** run concurrently while you continue working. As of v2.1.186, when a background subagent reaches a tool call that needs permission, the prompt surfaces in your main session and names the subagent that is asking. Approve to let the subagent continue, or press Esc to deny that one tool call without stopping the subagent. Before v2.1.186, background subagents auto-denied any tool call that would have prompted.
+* **Background subagents** run concurrently while you continue working. When a background subagent reaches a tool call that needs permission, Claude Code surfaces the prompt in your main session and names the subagent that is asking. Approve to let the subagent continue, or press Esc to deny that one tool call without stopping the subagent. Before v2.1.186, background subagents auto-denied any tool call that would have prompted.
 
-For each subagent Claude spawns, Claude Code picks the mode from the first of these cases that applies:
+For each subagent Claude spawns with the Agent tool, Claude Code picks foreground or background from the first of these cases that applies:
 
+* If an in-process [agent team](/docs/en/agent-teams#limitations) teammate spawned the subagent, Claude Code runs it in the foreground, and refuses with an error to spawn a subagent whose definition sets [`background: true`](#supported-frontmatter-fields).
 * If you set [`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`](/docs/en/env-vars) to `1`, Claude Code runs the subagent in the foreground, in every kind of session and whether or not fork mode is on.
-* If an in-process [agent team](/docs/en/agent-teams#limitations) teammate spawned the subagent, Claude Code runs it in the foreground.
 * Where [fork mode](#turn-fork-mode-on-or-off) is on, as it is by default in an interactive session, Claude Code runs the subagent in the background, forks and non-fork subagents alike, and Claude can't ask for the foreground.
 * Where fork mode is off, Claude runs the subagent in the background by default and in the foreground when it needs the result before continuing. Fork mode is off in [non-interactive mode](/docs/en/headless) with `-p` and in the Agent SDK unless you turn it on. To keep a particular subagent in the background even when Claude wants the result, set its frontmatter [`background`](#supported-frontmatter-fields) field to `true`.
 
-Background subagents run with a [smaller built-in tool set](#available-tools) than foreground subagents, except for conversation forks, and they surface every permission prompt in your main session.
+For a skill with `context: fork`, Claude Code follows the rules in [Run skills in a subagent](/docs/en/skills#run-skills-in-a-subagent) instead, whether or not fork mode is on.
+
+Background subagents run with a [smaller built-in tool set](#available-tools) than foreground subagents, except for conversation forks, and they surface every permission prompt in your main session. When you answer one of those prompts with a choice that lasts beyond that one tool call, such as "Yes, allow all edits during this session", Claude Code applies your answer to the whole session, including your main conversation.
 
 A background subagent's results reach Claude as a completion notification in a later turn. Claude waits for that notification before reporting the subagent's results, and if you ask about progress first, it reports that the subagent is still running. Before v2.1.211, Claude sometimes reported results for a background subagent that hadn't finished.
 
@@ -1078,7 +1080,7 @@ Set the [`CLAUDE_CODE_FORK_SUBAGENT`](/docs/en/env-vars) environment variable to
 * `1` turns fork mode on in non-interactive mode and the Agent SDK as well
 * `0` turns fork mode off in every kind of session
 
-To keep fork mode on but stop Claude from spawning forks, [deny the `fork` subagent type](#disable-specific-subagents) with an `Agent(fork)` rule. Subagents still run in the background.
+To keep fork mode on but stop Claude from spawning forks, [deny the `fork` subagent type](#disable-specific-subagents) with an `Agent(fork)` rule. Claude Code still runs the subagents Claude spawns in the background, apart from the same [cases that stay in the foreground](#run-subagents-in-foreground-or-background).
 
 ## Example subagents
 

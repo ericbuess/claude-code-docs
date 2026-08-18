@@ -63,6 +63,7 @@ Match the message you see in your terminal to a section below.
 | `Login expired · Please run /login`                                                                                                                                                           | [Authentication](#login-expired)                                                                                              |
 | `Failed to authenticate: OAuth session expired and could not be refreshed`                                                                                                                    | [Authentication](#login-expired)                                                                                              |
 | `Anthropic profile login expired · Re-authenticate your Anthropic profile`                                                                                                                    | [Authentication](#anthropic-profile-login-expired)                                                                            |
+| `Anthropic profile login expired · Run /login to use your claude.ai account instead, or re-authenticate the profile`                                                                          | [Authentication](#anthropic-profile-login-expired)                                                                            |
 | `does not meet scope requirement user:profile`                                                                                                                                                | [Authentication](#oauth-scope-requirement)                                                                                    |
 | `claude.ai rejected the session token` / `session token rejected`                                                                                                                             | [Authentication](#claude-ai-rejected-the-session-token)                                                                       |
 | `AWS credentials expired or invalid`                                                                                                                                                          | [Authentication](#aws-credentials-expired-or-invalid)                                                                         |
@@ -399,6 +400,7 @@ Usage counts against the session and weekly allowances at the same time. A singl
 **What to do:**
 
 * Wait for the reset time shown in the error
+* In the Code tab of the [Desktop app](/docs/en/desktop), the session-limit card shows an **Auto-continue when limits reset** checkbox. The weekly-limit card doesn't offer it. When it's checked, the Desktop app retries the interrupted turn after the reset and shows the retry time on the card. Uncheck it to turn this off for your account.
 * For the Opus limit, run `/model` and switch to another model to keep working
 * Run `/usage` to see your plan limits and when they reset
 * Run `/usage-credits` to buy additional usage on Pro and Max, or to request it from your admin on Team and Enterprise. See [usage credits for paid plans](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) for how this is billed.
@@ -478,7 +480,7 @@ A related message, `spend limit unavailable`, means the gateway could not read i
 
 ### Credit balance is too low
 
-Your Console organization has run out of prepaid credits.
+Your Console organization has run out of prepaid credits, or Claude Code is sending your requests with a Console API key when you meant to use your subscription.
 
 ```text theme={null}
 Credit balance is too low
@@ -486,8 +488,8 @@ Credit balance is too low
 
 **What to do:**
 
+* If you have a Pro, Max, Team, or Enterprise plan and see this, run `/status` and check the `API key` row. An approved `ANTHROPIC_API_KEY` in your environment routes requests through that key instead of your subscription. Unset it in the current shell and remove it from your shell profile, then relaunch `claude`. Run `/login` if you haven't signed in with your subscription yet.
 * Add credits at [platform.claude.com/settings/billing](https://platform.claude.com/settings/billing), and consider enabling auto-reload there so the balance refills before it hits zero
-* Switch to subscription authentication with `/login` if you have a Pro, Max, Team, or Enterprise plan
 * Set per-workspace spend caps in the Console to prevent a single project from draining the org balance. See [Manage costs effectively](/docs/en/costs).
 
 ### Could not update your spend limit
@@ -808,18 +810,19 @@ You can check for this state before a request fails: [`/status`](/docs/en/comman
 
 ### Anthropic profile login expired
 
-Claude Code is authenticating through an Anthropic credential profile whose saved login credential has expired, and the profile holds no refresh credential Claude Code can use to renew it. Claude Code stops each request locally without retrying, because only re-authenticating the profile produces a working credential.
+Claude Code is authenticating through an Anthropic credential profile whose saved login credential has expired, and the profile holds no refresh credential Claude Code can use to renew it. Claude Code stops each request locally without retrying, because a retry would read the same expired credential.
 
 ```text theme={null}
 Anthropic profile login expired · Re-authenticate your Anthropic profile
+Anthropic profile login expired · Run /login to use your claude.ai account instead, or re-authenticate the profile
 ```
 
 This appears only when the active credential comes from an Anthropic credential profile, one you select with the `ANTHROPIC_PROFILE` environment variable or that Claude Code discovers as the active profile in your Anthropic configuration directory. Sessions that authenticate with `/login`, an API key, a bearer token such as `ANTHROPIC_AUTH_TOKEN`, or a third-party provider never see this message.
 
-Running `/login` doesn't renew the profile credential. Whether a working login can take over instead depends on how the profile was selected:
+Running `/login` doesn't renew the profile credential. Which form you see depends on whether you selected the profile or Claude Code discovered it, and tells you whether a working login can take over instead:
 
-* When you set `ANTHROPIC_PROFILE` explicitly, the profile keeps precedence over a saved login, so signing in doesn't stop the error.
-* When Claude Code discovered the profile from your configuration directory, a working `/login` takes precedence over it, and Claude Code authenticates with your claude.ai or Console account instead.
+* When you set `ANTHROPIC_PROFILE` explicitly, the message ends with `Re-authenticate your Anthropic profile`. Claude Code gives the profile precedence over a saved login, so signing in doesn't stop the error.
+* When Claude Code discovered the profile from your configuration directory, the message offers `/login`, because Claude Code gives a working `/login` precedence over the discovered profile and then authenticates with your claude.ai or Console account instead. Before v2.1.234, Claude Code showed the `Re-authenticate your Anthropic profile` form in this case too.
 
 **What to do:**
 
@@ -2142,7 +2145,7 @@ Ignoring 2 permissions.allow entries from .claude/settings.local.json: this work
 
 **What to do:**
 
-* Run `claude` in the directory and accept the trust dialog. The dialog appears even when a parent directory is already trusted, lists the rules being held back, and lets you decline and keep working without them. Before v2.1.200, no dialog appeared in that situation, so this step couldn't be completed there.
+* Run `claude` in the directory and accept the trust dialog. [Project allow rules and workspace trust](/docs/en/permissions#project-allow-rules-and-workspace-trust) says which folder that acceptance covers.
 * In [non-interactive mode](/docs/en/headless) with `-p` no dialog is shown. Set the `hasTrustDialogAccepted` entry in `~/.claude.json` using the exact `projects` key the message prints.
 * If the message names `.claude/settings.local.json` and you started Claude Code outside a git repository or in your home directory, update to v2.1.200 or later. Versions 2.1.196 through 2.1.199 treated your own `.claude/settings.local.json` as repository-supplied in those workspaces. On v2.1.207 and later, updating isn't enough outside a git repository if you haven't trusted the folder: determining that a folder isn't inside a repository runs git, and Claude Code runs that check only after you accept the trust dialog, so use the first step. Your home directory and any other [configuration home](/docs/en/permissions#project-allow-rules-and-workspace-trust) are exempt and don't wait for the dialog. See [Project allow rules and workspace trust](/docs/en/permissions#project-allow-rules-and-workspace-trust).
 
