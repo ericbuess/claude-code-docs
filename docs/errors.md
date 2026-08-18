@@ -58,6 +58,7 @@ Match the message you see in your terminal to a section below.
 | `Claude.ai login expired`                                                                                                                                                                     | [Authentication](#remote-control-couldnt-refresh-your-login)                                                                  |
 | `Claude.ai login was rejected — run /login, then /remote-control`                                                                                                                             | [Authentication](#remote-control-couldnt-refresh-your-login)                                                                  |
 | `OAuth token unavailable — run /login to restore Remote Control`                                                                                                                              | [Authentication](#remote-control-couldnt-refresh-your-login)                                                                  |
+| `signed-in claude.ai account or organization changed on this machine`                                                                                                                         | [Authentication](#remote-control-stopped-because-the-signed-in-account-changed)                                               |
 | `OAuth token revoked` / `OAuth token has expired`                                                                                                                                             | [Authentication](#oauth-token-revoked-or-expired)                                                                             |
 | `API Error: 401 Invalid authentication credentials`                                                                                                                                           | [Authentication](#api-error-401-invalid-authentication-credentials)                                                           |
 | `Login expired · Please run /login`                                                                                                                                                           | [Authentication](#login-expired)                                                                                              |
@@ -81,6 +82,7 @@ Match the message you see in your terminal to a section below.
 | `403` with `x-deny-reason: host_not_allowed` in a cloud or routine session                                                                                                                    | [Network](#host-not-allowed-in-a-cloud-session)                                                                               |
 | `403` with `This GraphQL query is not enabled for this session` in a cloud session                                                                                                            | [GitHub proxy](/docs/en/cloud-environments#github-proxy)                                                                           |
 | `Couldn't reconnect to your Remote Control session`                                                                                                                                           | [Network](#couldnt-reconnect-to-your-remote-control-session)                                                                  |
+| `N sessions ended while this machine was offline — the environment was cleaned up on the server and can't be resumed.`                                                                        | [Network](#sessions-ended-while-this-machine-was-offline)                                                                     |
 | `Couldn't share the transcript.`                                                                                                                                                              | [Network](#couldnt-share-the-transcript)                                                                                      |
 | `Prompt is too long` / `Input is too long for requested model`                                                                                                                                | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Prompt is too long · automatic compaction failed:`                                                                                                                                           | [Request errors](#prompt-is-too-long)                                                                                         |
@@ -125,6 +127,8 @@ Match the message you see in your terminal to a section below.
 | `Your checkout has no branches (detached HEAD only)`                                                                                                                                          | [Command-line errors](#your-checkout-has-no-branches)                                                                         |
 | `Failed to resume the conversation`                                                                                                                                                           | [Command-line errors](#failed-to-resume-the-conversation)                                                                     |
 | `No conversation found with session ID: <session-id>`                                                                                                                                         | [Command-line errors](#no-conversation-found-with-the-session-id)                                                             |
+| `Cannot switch renderers in this session`                                                                                                                                                     | [Command-line errors](#cannot-switch-renderers-in-this-session)                                                               |
+| `Cannot switch renderers while work is running in the background`                                                                                                                             | [Command-line errors](#cannot-switch-renderers-in-this-session)                                                               |
 | `Marketplace "<name>" is registered from an untrusted source`                                                                                                                                 | [Plugin errors](#marketplace-is-registered-from-an-untrusted-source)                                                          |
 | `references ${user_config.*} in a shell-form command`                                                                                                                                         | [Plugin errors](#plugin-command-references-user-config)                                                                       |
 | `Monitor "<name>" from plugin <plugin> references ${user_config.*} in its command`                                                                                                            | [Plugin errors](#plugin-command-references-user-config)                                                                       |
@@ -747,6 +751,27 @@ The middle of the message names what failed:
 
 Before v2.1.224, `OAuth token refresh failed — run /login to re-authenticate` read `OAuth token refresh failed — re-authenticate, then re-enable Remote Control`, and `JWT refresh failed: no OAuth token — run /login` read `no OAuth token available for recovery (code <N>)`. The `Claude.ai login expired`, `Claude.ai login was rejected`, and `OAuth token unavailable` messages were added in v2.1.225.
 
+<h3 id="remote-control-stopped-because-the-signed-in-account-changed">
+  Remote Control stopped because the signed-in account changed
+</h3>
+
+Claude Code shows this line during a [Remote Control](/docs/en/remote-control) session when you sign in to a different claude.ai account or organization on this machine. You made the switch outside the Claude Code session, for example by running `/login` in another terminal.
+
+A Remote Control session that you started while signed in through `/login` belongs to the claude.ai account and organization that were signed in at the time.
+
+```text theme={null}
+Remote Control disconnected — signed-in claude.ai account or organization changed on this machine — run /remote-control to start a session for the current account, or /login to switch back, then /remote-control
+```
+
+Claude Code stops the Remote Control session as soon as claude.ai confirms that the account or organization changed. Your local session keeps running without Remote Control.
+
+**What to do:**
+
+* Run `/remote-control` to start a new Remote Control session under the current account or organization
+* To switch back, run `/login` and sign in to the previous account or organization again. Then run `/remote-control`.
+
+Before v2.1.234, Claude Code didn't notice when you switched to a different account or organization outside the Claude Code session. Claude Code kept the Remote Control session connected until a later request to the Remote Control server failed with `Remote Control server rejected the request (HTTP 404)`. That failure could come hours after the switch.
+
 ### OAuth token revoked or expired
 
 Your saved login is no longer valid. A revoked token means you signed out everywhere or an admin removed access; an expired token means the automatic refresh failed mid-session.
@@ -1061,6 +1086,21 @@ Resuming with `claude --resume` or `claude --continue` reconnects to the [Remote
 * For other Remote Control startup messages, see [Troubleshoot Remote Control](/docs/en/remote-control#troubleshooting)
 
 If the server reports instead that the previous session is gone, you don't see this message. Claude Code starts a new session in its place or shows [`Previous session is unavailable — run /remote-control to start a new one`](/docs/en/remote-control#previous-session-is-unavailable), depending on [the conversation's reconnection record](/docs/en/remote-control#resume-outcomes). From v2.1.227 through v2.1.231, Claude Code showed a message that starts with `Remote Control could not resume the previous session under the current login` instead, and [earlier versions behaved differently again](/docs/en/remote-control#reconnect-history).
+
+<h3 id="sessions-ended-while-this-machine-was-offline">
+  Sessions ended while this machine was offline
+</h3>
+
+Claude Code shows this message in the terminal running [`claude remote-control`](/docs/en/remote-control#start-a-remote-control-session) after your machine was offline long enough that the server cleaned up the Remote Control environment your machine was serving. The sessions in that environment ended, and you can't resume them. The count is the number of sessions that ended.
+
+```text theme={null}
+2 sessions ended while this machine was offline — the environment was cleaned up on the server and can't be resumed.
+```
+
+**What to do:**
+
+* When Claude Code lists kept worktrees under this message, pick up any uncommitted work from them
+* Run `claude remote-control` to start a fresh environment
 
 <h3 id="couldnt-share-the-transcript">
   Couldn't share the transcript
@@ -1449,7 +1489,7 @@ The usual cause is a proxy or gateway that closes a long transfer before it fini
 
 ## Command-line errors
 
-These errors come from the `claude` command line, its subcommands, and commands such as `/security-review` that gather context by running shell commands before their prompt runs.
+These errors come from the `claude` command line, its subcommands, and commands such as `/security-review` that gather context by running shell commands before their prompt runs. So do errors from `/tui`, which relaunches the CLI.
 
 ### Conflict between --bg and --print
 
@@ -1717,6 +1757,30 @@ Common causes:
 
 * For an interactive session, open the [session picker](/docs/en/sessions#use-the-session-picker) with `claude --resume` and press `Ctrl+A` to widen it to every project on this machine, then select the session
 * Sessions created with `claude -p` or the [Agent SDK](/docs/en/agent-sdk/overview) don't appear in the picker, so re-check the ID against the `session_id` your original run printed
+
+### Cannot switch renderers in this session
+
+When you switch renderers, Claude Code restarts its process. You ran [`/tui`](/docs/en/fullscreen#enable-fullscreen-rendering) in a session Claude Code declines to restart, so it doesn't switch and saves nothing. Which message you see tells you the cause:
+
+* `Cannot switch renderers while work is running in the background`: you have background work running that a restart would abandon, such as a background shell or a subagent. Wait for the work to finish or stop it with [`/tasks`](/docs/en/commands), then run `/tui fullscreen` or `/tui default` again
+* `Cannot switch renderers in this session`: the session has restrictions Claude Code can't pass to the restarted process. Before v2.1.234, Claude Code restarted anyway and the relaunched session ran without them
+
+In the restrictions message, the part in parentheses names the restrictions Claude Code found:
+
+```text theme={null}
+Cannot switch renderers in this session — it has restrictions a restart can't carry over (permission rules set for this session only). Nothing was changed. Running /tui fullscreen in a session started without them switches every later session too.
+```
+
+Each reason the message can show in parentheses:
+
+* `launch flags: a custom system prompt, a tool allowlist, or restricted settings`: you started the session with a flag Claude Code doesn't pass back to the restarted process. These flags include [`--system-prompt`](/docs/en/cli-reference#cli-flags), `--system-prompt-file`, `--append-system-prompt-file`, a [`--tools`](/docs/en/cli-reference#cli-flags) allowlist, [`--setting-sources`](/docs/en/cli-reference#cli-flags), and [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags)
+* `permission rules set for this session only`: a [permission update](/docs/en/hooks#permission-update-entries) from a hook or SDK caller added deny or ask rules with the `session` destination. Session-scoped allow rules don't trigger the refusal. A restart drops them, and Claude Code prompts again instead
+* `ask-before-running rules with no command-line form`: a permission update from a hook or SDK caller added ask rules alongside the rules Claude Code passes back as `--allowed-tools` and `--disallowed-tools`. No flag exists for ask rules
+* `permission rules a command line cannot carry intact` and `added directories a command line cannot carry intact`: a permission update added a rule or directory path mid-session. The restarted process's command line can't carry its text as the same value
+
+**What to do:**
+
+* In a session started without those restrictions, run `/tui fullscreen`, or `/tui default` to switch back. Claude Code saves the [`tui` setting](/docs/en/settings#available-settings) there and uses it for every later session
 
 ## Plugin errors
 

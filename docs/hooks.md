@@ -306,7 +306,7 @@ Each event type matches on a different field:
 | `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                                        | tool name                                                    | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                                                                                           |
 | `SessionStart`                                                                                                                                    | how the session started                                      | `startup`, `resume`, `clear`, `compact`, `fork`                                                                                                                                            |
 | `Setup`                                                                                                                                           | which CLI flag triggered setup                               | `init`, `maintenance`                                                                                                                                                                      |
-| `SessionEnd`                                                                                                                                      | why the session ended                                        | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                                                                                   |
+| `SessionEnd`                                                                                                                                      | why the session ended                                        | `clear`, `resume`, `logout`, `prompt_input_exit`, `other`                                                                                                                                  |
 | `Notification`                                                                                                                                    | notification type                                            | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_url_dialog`, `elicitation_complete`, `elicitation_response`, `agent_needs_input`, `agent_completed` |
 | `SubagentStart`                                                                                                                                   | agent type                                                   | `general-purpose`, `Explore`, `Plan`, custom agent names, or plugin-scoped names like `^my-plugin:reviewer$`                                                                               |
 | `PreCompact`, `PostCompact`                                                                                                                       | what triggered compaction                                    | `manual`, `auto`                                                                                                                                                                           |
@@ -2920,14 +2920,14 @@ statistics, or saving session state. Supports matchers to filter by exit reason.
 
 The `reason` field in the hook input indicates why the session ended:
 
-| Reason                        | Description                                |
-| :---------------------------- | :----------------------------------------- |
-| `clear`                       | Session cleared with `/clear` command      |
-| `resume`                      | Session switched via interactive `/resume` |
-| `logout`                      | User logged out                            |
-| `prompt_input_exit`           | User exited while prompt input was visible |
-| `bypass_permissions_disabled` | Bypass permissions mode was disabled       |
-| `other`                       | Other exit reasons                         |
+| Reason                        | Description                                                                               |
+| :---------------------------- | :---------------------------------------------------------------------------------------- |
+| `clear`                       | Session cleared with `/clear` command                                                     |
+| `resume`                      | Session switched via interactive `/resume`                                                |
+| `logout`                      | User logged out                                                                           |
+| `prompt_input_exit`           | User exited while prompt input was visible                                                |
+| `other`                       | Other exit reasons                                                                        |
+| `bypass_permissions_disabled` | Removed in v2.1.234; Claude Code doesn't send it. Drop it from your `SessionEnd` matchers |
 
 #### SessionEnd input
 

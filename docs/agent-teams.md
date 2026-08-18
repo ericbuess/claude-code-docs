@@ -142,12 +142,16 @@ Spawn 4 teammates to refactor these modules in parallel. Use Sonnet for
 each teammate.
 ```
 
-Teammates don't inherit the lead's `/model` selection by default. To change the model used when the prompt doesn't specify one, set **Default teammate model** in `/config`. Pick **Default (leader's model)** to have teammates follow the lead's current model.
+When your prompt doesn't name a model for a teammate, Claude Code runs the teammate on the lead's current model, unless [`CLAUDE_CODE_SUBAGENT_MODEL`](/docs/en/model-config#environment-variables) is set.
 
-Claude Code checks each teammate's model, whether requested in your prompt or set through **Default teammate model**, against your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist. When the allowlist blocks a value, Claude Code substitutes another model:
+<Note>
+  `teammateDefaultModel` was removed in v2.1.234; Claude Code ignores a leftover value. Name the model in your prompt or set `CLAUDE_CODE_SUBAGENT_MODEL` instead.
+</Note>
+
+Claude Code checks the model your prompt requests for a teammate, or the one `CLAUDE_CODE_SUBAGENT_MODEL` supplies, against your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist. When the allowlist blocks a value, Claude Code substitutes another model:
 
 * **Family alias such as `opus`**: On the Anthropic API and Claude Platform on AWS, Claude Code runs the teammate on the newest version of that family the allowlist permits. On providers with provider-specific model IDs, where the [substitution doesn't operate](/docs/en/model-config#restrict-model-selection), a blocked alias falls back like any other blocked value per the next bullet
-* **Any other blocked value, including a family alias on providers where the substitution doesn't operate or whose family has no permitted version**: Claude Code uses the default teammate model. When the blocked value is the **Default teammate model** setting itself, Claude Code uses your provider's default Opus model, or the lead's model when the allowlist blocks that too
+* **Any other blocked value, including a family alias on providers where the substitution doesn't operate or whose family has no permitted version**: Claude Code runs the teammate on the lead's model
 
 Teammates inherit the lead's [effort level](/docs/en/model-config#adjust-effort-level). In split-pane mode this applies from v2.1.186; earlier versions did not pass the lead's session effort to split-pane teammates.
 

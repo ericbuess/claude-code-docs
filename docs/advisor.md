@@ -30,7 +30,9 @@ You can set the advisor model in three ways:
 * **`advisorModel` setting**: configure a persistent default in your [settings file](/docs/en/settings)
 * **`--advisor` flag**: set the advisor for a single session at launch
 
-If any of these sets an advisor model, the advisor is enabled for sessions whose main model [supports it](#choose-an-advisor-model), and an `Advisor Tool (experimental) is on and may use more tokens · /advisor` notification appears after the session starts. To stop using it, see [Turn the advisor off](#turn-the-advisor-off).
+Each of these enables the advisor for sessions whose main model [supports it](#choose-an-advisor-model). After the session starts, Claude Code shows an `Advisor Tool (experimental) is on and may use more tokens · /advisor` notification. To stop using the advisor, see [Turn the advisor off](#turn-the-advisor-off).
+
+On some plans, Fable as the advisor also needs your one-time [consent to bill Fable 5 usage to usage credits](/docs/en/model-config#fable-5-and-usage-credits). For what happens before you have given that consent, see [Fable advisor and usage credits](#fable-advisor-and-usage-credits).
 
 ### Use the `/advisor` command
 
@@ -42,7 +44,9 @@ Run `/advisor` without arguments to open a picker listing the available advisor 
 
 The command confirms with `Advisor set to` followed by the advisor model name. Your selection is saved to `advisorModel` in your user settings and persists across sessions.
 
-If your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist excludes the saved advisor model, the advisor is not invoked until you pick an allowed model with `/advisor`. If your current main model does not support the advisor, the selection is still saved and activates when you switch to a [compatible main model](#choose-an-advisor-model) with [`/model`](/docs/en/model-config#setting-your-model).
+Claude Code doesn't invoke a saved advisor that your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist excludes. To use the advisor, pick an allowed model with `/advisor`. Claude Code still saves an advisor that your current main model doesn't support. That advisor activates after you switch to a [compatible main model](#choose-an-advisor-model) with [`/model`](/docs/en/model-config#setting-your-model).
+
+On some plans, Fable as the advisor also needs your one-time [consent to bill Fable 5 usage to usage credits](/docs/en/model-config#fable-5-and-usage-credits). For what `/advisor fable` does before you have given that consent, see [Fable advisor and usage credits](#fable-advisor-and-usage-credits).
 
 ### Set `advisorModel` in settings
 
@@ -62,7 +66,14 @@ To set the advisor for a single session without changing your saved setting, lau
 claude --advisor opus
 ```
 
-The flag takes precedence over the `advisorModel` setting for that session, and isn't listed in `claude --help`. It exits with an error if the session's main model does not support the advisor, or if the requested advisor model is excluded by your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist.
+Claude Code uses the flag instead of the `advisorModel` setting for that session. It doesn't list `--advisor` in `claude --help`. Claude Code exits with an error at launch if:
+
+* The session's main model doesn't support the advisor
+* The requested model, such as Haiku, can't act as an advisor
+* Your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist excludes the requested model
+* You requested Fable and your account still requires the [usage-credits consent](#fable-advisor-and-usage-credits)
+
+If you start a [background session](/docs/en/agent-view) with `--advisor` and one of these applies, Claude Code starts the session without the advisor instead of exiting.
 
 ## Choose an advisor model
 
@@ -88,6 +99,14 @@ Claude Code validates the pairing before sending a request:
 * If the advisor is less capable than the main model, the advisor is not attached to the main model's requests. The `/advisor` command output and a notification show this. Subagents whose own model satisfies the pairing may still use the advisor.
 * If the main model or the advisor is a model Claude Code does not recognize, the advisor is not attached.
 
+### Fable advisor and usage credits
+
+On some plans, Fable 5 usage bills to usage credits, and Claude Code asks for your [one-time consent to bill Fable 5 usage to usage credits](/docs/en/model-config#fable-5-and-usage-credits) when you select Fable 5 with `/model`. Fable as the advisor bills the same way, so on those plans Claude Code doesn't apply Fable as the advisor until you have accepted that consent.
+
+Before you have accepted it, Claude Code doesn't save Fable as the advisor when you type `/advisor fable` or pick Fable in the `/advisor` picker. It points you to `/model fable` instead. With `claude --advisor fable`, Claude Code exits at launch with a message that points to `/model fable`. In a [background session](#use-the-advisor-flag), it starts the session without the advisor instead of exiting. With Fable already saved as your `advisorModel`, Claude Code sends requests without the advisor. In an interactive session whose main model supports the advisor, it also shows a notification that points to `/model fable`.
+
+To accept the consent, run `/model fable` and choose to continue on Fable 5. Claude Code records the consent and [saves Fable 5 as your selected model](/docs/en/model-config#default-model-setting). Then select Fable as the advisor.
+
 ### Common model pairings
 
 Any accepted pairing works. These combinations balance cost against capability in different ways:
@@ -109,7 +128,10 @@ You can ask for a consultation in your prompt the same way you would request any
 
 ## What you see during a session
 
-When Claude calls the advisor, the transcript shows an `Advising` line with the advisor model name while the call is in progress. When the result returns, the line confirms that the advisor has reviewed the conversation. Press `Ctrl+O` to expand it and read the advisor's full guidance.
+When Claude calls the advisor, the transcript shows an `Advising` line with the advisor model name while the call is in progress. When the result returns, the line reports whether the advisor gave guidance:
+
+* **Reviewed**: the line confirms that the advisor has reviewed the conversation. Press `Ctrl+O` to expand it and read the advisor's full guidance.
+* **Declined**: the line reads `Advisor declined to advise on this request`. If the advisor gave a reason, press `Ctrl+O` to read it.
 
 Claude generally follows the advisor's guidance, but adapts when its own evidence contradicts a specific claim: if a recommended step fails when tried, or the file contents contradict the advice, Claude surfaces the conflict rather than following the guidance unconditionally.
 
@@ -117,7 +139,7 @@ The advisor always receives the full conversation, and Claude controls the timin
 
 ## Cost
 
-Each advisor call sends the conversation to the advisor model, so it consumes tokens at the advisor model's rates in addition to your main model's usage. With API billing, advisor tokens are charged at the advisor model's input and output rates. On subscription plans, advisor usage counts toward your plan's usage limits.
+When Claude calls the advisor, the advisor model reads the conversation, so each call consumes tokens at the advisor model's rates in addition to your main model's usage. With API billing, you pay the advisor model's input and output rates for advisor tokens. On subscription plans, advisor usage counts toward your plan's usage limits, except that a Fable 5 advisor bills to [usage credits](/docs/en/model-config#fable-5-and-usage-credits) on plans where Fable 5 usage does. If your account requires the usage-credits consent, a Fable advisor bills nothing before you give it, because Claude Code [doesn't apply the selection](#fable-advisor-and-usage-credits) until then.
 
 Claude calls the advisor at decision points rather than on every turn, so pairing a faster main model with a stronger advisor typically costs less than running the stronger model throughout. Advisor usage counts toward the session totals shown by [`/usage`](/docs/en/costs#track-your-costs).
 

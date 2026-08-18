@@ -360,10 +360,11 @@ Through this surface, Claude sees only the sessions the desktop app runs itself:
 
 When Claude messages another session through this surface, Claude Code shows it there as a card labeled with the sending session's title and a link back, so you can always tell where a message came from. If the receiving session is mid-task, Claude Code holds the message and Claude reads it once the current work finishes. Claude can't deliver to an archived session, and tells you when a message doesn't go through.
 
-Claude Code applies three safety behaviors across sessions:
+Claude Code applies four safety behaviors across sessions:
 
 * Before archiving any session, Claude asks you first. You see the approval card in every permission mode, including Auto and Bypass permissions.
 * Through this surface, Claude can't send cross-session messages from a session nobody is watching, such as a scheduled-task run, and can't deliver messages into one.
+* Claude Code checks each message from this surface against the receiving session's [inbound controls](/docs/en/cross-session-messaging#control-inbound-messages). If you set [`crossSessionInbound`](/docs/en/settings#available-settings) to `refuse` in the receiving session, Claude Code drops messages from this surface. The check runs even when the receiving session doesn't have [cross-session messaging](/docs/en/cross-session-messaging#availability) itself. Before v2.1.234, Claude Code dropped every message from this surface to a receiving session without cross-session messaging.
 * Claude Code quotes each incoming message and attributes it to the session that sent it, and Claude still follows the receiving session's own permission settings when acting on one.
 
 Claude can also suggest new sessions. When it notices something worth fixing that's out of scope for the current task, it offers the work as a task chip in the chat. Click the chip to start that work in a new session with its own worktree; Claude continues your current session uninterrupted.
