@@ -561,7 +561,7 @@ Claude Code checks these plan requirements only when it connects to the Anthropi
 To turn off 1M context, set `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`. Claude Code removes 1M model variants from the model picker. On models with a native 1M window, such as Sonnet 5 and Fable 5, it also treats the model as having a 200K context window:
 
 * With auto-compaction on, sessions compact at the 200K boundary through [auto-compaction](#set-the-auto-compact-window). Setting the auto-compact window above 200K doesn't lift the hold, because Claude Code caps that window at the model's context window.
-* With auto-compaction off, sessions stop at the 200K boundary with a [`Prompt is too long` error](/docs/en/errors#prompt-is-too-long) instead of compacting.
+* With auto-compaction off, sessions stop at the 200K boundary with the [context-limit error](/docs/en/errors#prompt-is-too-long) instead of compacting.
 
 Before v2.1.223, Claude Code held only Sonnet 5, Opus 4.8, and Opus 5 sessions to 200K. See [environment variables](/docs/en/env-vars).
 

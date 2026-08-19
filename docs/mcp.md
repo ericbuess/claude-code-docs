@@ -153,6 +153,66 @@ claude mcp add-json events-server \
 
 The `type: "ws"` entry accepts the same `url`, `headers`, `headersHelper`, `timeout`, and `alwaysLoad` fields as `http`. Authentication is header-only, so pass a static token in `headers` or generate one at connect time with [`headersHelper`](#use-dynamic-headers-for-custom-authentication). The `claude mcp add --transport` flag doesn't accept `ws`.
 
+### Add a server from setup instructions written for another client
+
+MCP servers aren't specific to Claude Code, so a server's setup instructions may be written for Claude Desktop, Cursor, or another MCP client and give no `claude mcp add` command. To add the server anyway, look in those instructions for one of these three things:
+
+* **A URL** such as `https://mcp.example.com/mcp`: the server is remote.
+* **A launch command** such as `npx -y @example/mcp-server`: the server runs on your machine.
+* **An `mcpServers` JSON block**: configuration written for another client's settings file.
+
+Each is one of the inputs the four options in [Installing MCP servers](#installing-mcp-servers) take. Find the shape you have below to turn it into the command Claude Code accepts. Each command writes to [local scope](#local-scope) unless you add `--scope project` or `--scope user`.
+
+#### From a URL
+
+A URL means the server is remote. For an `https://` endpoint, add it with `--transport http`, or with `--transport sse` when the instructions say the endpoint uses SSE. For a `wss://` endpoint, use [Option 4](#option-4-add-a-remote-websocket-server) instead, since `--transport` doesn't accept `ws`:
+
+```bash theme={null}
+claude mcp add --transport http example https://mcp.example.com/mcp
+```
+
+If the instructions also give an API key or token header, pass it with `--header` as shown in [Option 1](#option-1-add-a-remote-http-server).
+
+#### From an `npx`, `uvx`, or binary command
+
+A launch command means the server runs as a local stdio process. Put the whole command after `--`, so Claude Code passes flags such as `-y` to the command that starts the server instead of reading them as its own options. Pass any environment variables the instructions ask for with `--env`, after the server name and before `--`:
+
+```bash theme={null}
+claude mcp add example --env API_KEY=your-key -- npx -y @example/mcp-server
+```
+
+[Option 3](#option-3-add-a-local-stdio-server) covers the `--` separator in full.
+
+#### From an `mcpServers` JSON block
+
+An `mcpServers` block written for another MCP client, such as Claude Desktop, uses the wrapper key and entry shape Claude Code reads. Pass `claude mcp add-json` the object inside `mcpServers`, not the wrapper. Two entries need a repair first:
+
+* **A `url` with no `type`**: add `"type": "http"`, `"type": "sse"`, or `"type": "ws"` to match the endpoint. Claude Code reads an entry with no `type` as a stdio server, so a `url` entry without a `type` fails.
+* **A key with characters other than letters, numbers, hyphens, and underscores**: pick a server name that uses only those characters. Otherwise the key is the server name.
+
+For example, this block:
+
+```json theme={null}
+{
+  "mcpServers": {
+    "example": {
+      "command": "npx",
+      "args": ["-y", "@example/mcp-server"]
+    }
+  }
+}
+```
+
+becomes this command:
+
+```bash theme={null}
+claude mcp add-json example '{"command":"npx","args":["-y","@example/mcp-server"]}'
+```
+
+[Add MCP servers from JSON configuration](#add-mcp-servers-from-json-configuration) covers shell escaping and the `--scope` flag for `add-json`. To share the server with your team instead, add `--scope project`, or add the entry under `mcpServers` in `.mcp.json` at your project root and commit it. [Project scope](#project-scope) covers how Claude Code loads and approves that file.
+
+Each `claude mcp add` and `claude mcp add-json` command prints an `Added ...` line. To check that Claude Code connected, run `claude mcp get <name>`; [Server status](#server-status) covers the statuses it shows and the approval step for `.mcp.json` servers.
+
 ### Managing your servers
 
 Once configured, you can manage your MCP servers with these commands:
