@@ -295,13 +295,14 @@ def get_session_messages(
 
 #### Return type: `SessionMessage`
 
-| Property             | Type                           | Description               |
-| :------------------- | :----------------------------- | :------------------------ |
-| `type`               | `Literal["user", "assistant"]` | Message role              |
-| `uuid`               | `str`                          | Unique message identifier |
-| `session_id`         | `str`                          | Session identifier        |
-| `message`            | `Any`                          | Raw message content       |
-| `parent_tool_use_id` | `None`                         | Reserved for future use   |
+| Property             | Type                           | Description                                                                                                                                                                                                           |
+| :------------------- | :----------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`               | `Literal["user", "assistant"]` | Message role                                                                                                                                                                                                          |
+| `uuid`               | `str`                          | Unique message identifier                                                                                                                                                                                             |
+| `session_id`         | `str`                          | Session identifier                                                                                                                                                                                                    |
+| `message`            | `Any`                          | Raw message content                                                                                                                                                                                                   |
+| `parent_tool_use_id` | `str \| None`                  | For subagent messages, the id of the spawning `Agent` tool-use block. `None` for main-session messages and older sessions                                                                                             |
+| `parent_agent_id`    | `str \| None`                  | For messages from a [nested subagent](/docs/en/sub-agents#let-subagents-spawn-their-own-subagents), the agent id of the parent subagent. `None` for main-session messages, top-level subagent messages, and older sessions |
 
 #### Example
 
@@ -776,6 +777,7 @@ class ClaudeAgentOptions:
     user: str | None = None
     include_partial_messages: bool = False
     include_hook_events: bool = False
+    forward_subagent_text: bool = False
     fork_session: bool = False
     resume_session_at: str | None = None
     resume_drops_turn: str | None = None
@@ -828,6 +830,7 @@ class ClaudeAgentOptions:
 | `user`                        | `str \| None`                                                                         | `None`                             | User identifier                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `include_partial_messages`    | `bool`                                                                                | `False`                            | Include partial message streaming events. When enabled, [`StreamEvent`](#streamevent) messages are yielded                                                                                                                                                                                                                                                                                                                                 |
 | `include_hook_events`         | `bool`                                                                                | `False`                            | Include hook lifecycle events in the message stream as `HookEventMessage` objects                                                                                                                                                                                                                                                                                                                                                          |
+| `forward_subagent_text`       | `bool`                                                                                | `False`                            | Forward subagent text and thinking blocks in the message stream. By default only subagent `tool_use` and `tool_result` blocks are emitted                                                                                                                                                                                                                                                                                                  |
 | `fork_session`                | `bool`                                                                                | `False`                            | When resuming with `resume`, fork to a new session ID instead of continuing the original session                                                                                                                                                                                                                                                                                                                                           |
 | `resume_session_at`           | `str \| None`                                                                         | `None`                             | When resuming, load the conversation only up to and including the message with this UUID. Use with `resume`, and usually `fork_session`, to branch from an earlier point                                                                                                                                                                                                                                                                   |
 | `resume_drops_turn`           | `str \| None`                                                                         | `None`                             | UUID of the user prompt whose turn a `resume_session_at` truncation discards. When set, the CLI refuses the resume if the discarded range holds entries not attributable to that turn. Requires Claude Code v2.1.223 or later; the bundled CLI satisfies this                                                                                                                                                                              |

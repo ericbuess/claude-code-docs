@@ -204,7 +204,10 @@ Each interface has its own control for switching permission modes during a sessi
     Use the mode dropdown next to the prompt box on [claude.ai/code](https://claude.ai/code) or in the mobile app. Permission prompts appear in claude.ai for approval. Which modes appear depends on where the session runs:
 
     * **Cloud sessions** on [Claude Code on the web](/docs/en/claude-code-on-the-web): Accept edits, Plan, and Auto. Accept edits corresponds to `default` mode: cloud sessions pre-approve file edits regardless of mode, so the dropdown shows Accept edits instead of Manual. Cloud sessions still honor `defaultMode: "acceptEdits"` from settings. Auto mode appears only when your organization allows it and the selected model supports it. Bypass permissions isn't available.
-    * **[Remote Control](/docs/en/remote-control) sessions** on your local machine: Manual, Accept edits, and Plan. You can't select Auto or Bypass permissions from the app. The dropdown shows the permission mode the local session is in, including a mode set from the terminal, and updates when the permission mode changes in the app or in the terminal. The one exception is Bypass permissions: the session never reports that mode to claude.ai, so switching into it from the terminal doesn't change what the dropdown shows. Before v2.1.202, sessions connected with `/remote-control` or `claude --remote-control` didn't report their mode at all, so claude.ai and the mobile app could show a mode the session wasn't in. The mismatch affected only the label: Claude Code generated permission prompts from the session's actual mode, and they still appeared in the app for approval.
+    * **[Remote Control](/docs/en/remote-control) sessions** on your local machine: Manual, Accept edits, and Plan. You can't select Auto or Bypass permissions from the app.
+      * Except for Bypass permissions, the dropdown shows the permission mode the local session is in, including one set from the terminal. It updates when the permission mode changes in the app or in the terminal. The session never reports Bypass permissions to claude.ai, so switching into it from the terminal doesn't change what the dropdown shows.
+      * Sessions hosted by the [desktop app](/docs/en/desktop) or the [VS Code extension](/docs/en/vs-code) report permission mode changes to claude.ai as they happen, the same as sessions hosted in a terminal.
+      * Before v2.1.202, sessions connected with `/remote-control` or `claude --remote-control` didn't report their permission mode at all, so claude.ai and the mobile app could show a permission mode the session wasn't in. The mismatch affected only the label. Claude Code generated permission prompts from the session's actual permission mode, and they still appeared in the app for approval.
 
     For Remote Control, the local machine running the session must be signed in with your claude.ai account; API keys aren't supported. You can also set the starting permission mode when launching that local session:
 
@@ -248,7 +251,7 @@ Press `Shift+Tab` again to leave plan mode without approving a plan.
 
 When the plan is ready, Claude presents it and asks how to proceed. From that prompt you can choose:
 
-* **Yes, and use auto mode**: approve and start in [auto mode](#eliminate-prompts-with-auto-mode). When auto mode is unavailable, this option reads **Yes, auto-accept edits**. Sessions started with bypass permissions enabled show **Yes, and bypass permissions** instead.
+* **Yes, and use auto mode**: approve and start in [auto mode](#eliminate-prompts-with-auto-mode). When auto mode is unavailable, this option reads **Yes, auto-accept edits**. If you started the session with bypass permissions enabled, the option reads **Yes, and switch to BYPASS PERMISSIONS (no further prompts) for this session** instead.
 * **Yes, manually approve edits**: approve and review each edit individually.
 * **No, keep planning**: stay in plan mode and tell Claude what to change.
 

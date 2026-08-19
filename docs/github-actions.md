@@ -146,7 +146,7 @@ For details on how the Claude Code GitHub Action limits what Claude can do with 
 The Claude Code GitHub Action detects how to run from your workflow configuration:
 
 * **Interactive mode**: when the workflow provides no `prompt` input, Claude waits for the trigger phrase, `@claude` by default, in an issue or pull request comment, in a pull request review, or in the body or title of a newly opened issue, then responds to that request. Progress and results appear as a comment on the triggering issue or PR.
-* **Automation mode**: when the workflow provides a `prompt` input, Claude runs without waiting for a mention, subject only to the [access checks](#who-can-trigger-runs). By default, results appear in the workflow run log rather than a comment. Claude can post to the issue or pull request when the prompt directs it to and it has a tool that can post, as in the [code-review example](#run-a-skill).
+* **Automation mode**: when the workflow provides a `prompt` input, Claude runs without waiting for a mention, subject only to the [checks on who can trigger runs](#who-can-trigger-runs). By default, results appear in the workflow run log rather than a comment. Claude can post to the issue or pull request when the prompt directs it to and it has a tool that can post, as in the [code-review example](#run-a-skill).
 
 ### Who can trigger runs
 

@@ -1511,6 +1511,8 @@ Batches with no markdown pass through unchanged. If the script fails, for exampl
 
 Runs after Claude creates tool parameters and before processing the tool call. Matches on tool name: `Bash`, `PowerShell`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `Agent`, `WebFetch`, `WebSearch`, `AskUserQuestion`, `ExitPlanMode`, and any [MCP tool names](#match-mcp-tools).
 
+To run a hook when a specific file changes on disk, whatever wrote it, use [FileChanged](#filechanged) instead of matching file-editing tools by name. Unlike PreToolUse, Claude Code runs FileChanged hooks after the change, and they have no decision control, so they can't block the write.
+
 <Warning>
   PreToolUse runs only when Claude calls a tool. Files you [reference with `@` in your prompt](/docs/en/common-workflows#reference-files-and-directories) are added without any tool call: Claude Code inserts their contents while building the prompt, so no PreToolUse hook fires for them, including hooks matching `Read`. To block specific paths from `@` references, use a [`Read` deny rule](/docs/en/permissions#read-and-edit) instead.
 
@@ -1883,6 +1885,11 @@ A hook can echo one of the `permission_suggestions` it received as its own `upda
 Runs immediately after a tool completes successfully.
 
 Matches on tool name, same values as PreToolUse.
+
+Match more broadly when the tool name isn't the right filter:
+
+* To run a hook after any tool completes successfully, omit the `matcher` or set it to `"*"`. Your hook can then discover what changed itself, for example by running `git status --porcelain`, which also lists untracked files that `git diff` misses. For tool calls that fail, add the same hook under [PostToolUseFailure](#posttoolusefailure).
+* To run a hook when a specific file changes on disk, whatever wrote it, use [FileChanged](#filechanged). Claude Code doesn't run a `PostToolUse` hook matching `Edit|Write` when a `Bash` command or a process outside Claude Code rewrites the same file.
 
 #### PostToolUse input
 
@@ -2705,12 +2712,46 @@ DirectoryAdded hooks have no decision control. They can't block the add, which h
 
 ### FileChanged
 
-Runs when a watched file changes on disk. Useful for reloading environment variables when project configuration files are modified.
+Runs when a watched file changes on disk. Claude Code detects changes with a filesystem watcher, not by inspecting tool calls, so it runs the hook no matter what changed the file: an `Edit` or `Write` tool call, a script Claude runs with `Bash`, or a process outside Claude Code entirely. A common use is reloading environment variables when project configuration files change.
 
 The `matcher` for this event serves two roles:
 
 * **Build the watch list**: the value is split on `|` and each segment is registered as a literal filename in the working directory, so `".envrc|.env"` watches exactly those two files. Regex patterns are not useful here: a value like `^\.env` would watch a file literally named `^\.env`.
 * **Filter which hooks run**: when a watched file changes, the same value filters which hook groups run using the standard [matcher rules](#matcher-patterns) against the changed file's basename.
+
+This example normalizes line endings in `data.csv` after any change, including a `Bash` command or an external script rewriting the file:
+
+```json theme={null}
+{
+  "hooks": {
+    "FileChanged": [
+      {
+        "matcher": "data.csv",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/path/to/normalize-line-endings.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The hook reads the changed file's absolute path from the `file_path` field of the [JSON input](#filechanged-input) on stdin. Its `grep` guard tests for the same thing `perl` removes, a CR at the end of a line, so the run after a normalization exits without touching the file. A looser guard loops forever, because `perl -i` rewrites the file even when it substitutes nothing and Claude Code runs the hook again after every rewrite. Save this script at `/path/to/normalize-line-endings.sh` and make it executable:
+
+```bash theme={null}
+#!/bin/bash
+FILE=$(jq -r .file_path)
+if grep -q $'\r$' "$FILE"; then
+  perl -pi -e 's/\r$//' "$FILE"
+fi
+```
+
+To confirm the hook works, ask Claude to append a CRLF line to `data.csv` with a `Bash` command. Claude Code runs the hook and the file ends up with LF endings.
+
+To watch files you can't name up front, return [`watchPaths`](#filechanged-output) from a hook to update the watch list dynamically. Claude Code starts the watcher only when something names a file to watch, so seed the list with a FileChanged group whose matcher names at least one file, or with a [SessionStart](#sessionstart-decision-control) or [CwdChanged](#cwdchanged) hook that returns `watchPaths`. The matcher still filters which hook groups run when a watched file changes, so give the group that handles dynamic paths an omitted matcher, which matches every watched file and adds nothing to the watch list. A `"*"` matcher also matches every file, but Claude Code registers it in the watch list like any other value, as a literal file named `*`.
 
 FileChanged hooks have access to `CLAUDE_ENV_FILE`. Variables written to that file persist into subsequent Bash commands for the session, just as in [SessionStart hooks](#persist-environment-variables).
 
