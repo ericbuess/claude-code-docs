@@ -485,7 +485,7 @@ With fetching off, you can still type `/code-review` yourself, but [Claude can't
 
 ### First session after an install or upgrade
 
-You can also miss a feature in this list in your first session after you install Claude Code, or after you upgrade to a version that adds the feature, even with none of these variables set. Claude Code fetches the flags during that session, so a feature that's otherwise available to you is there in your next session. Two features behave differently in that first session:
+You can also miss a [flag-gated feature](#features-that-need-feature-flag-fetching) in your first session after you install Claude Code, or after you upgrade to a version that adds the feature, even when none of the variables that disable flag fetching are set. Claude Code fetches the flags during that session, so a feature that's otherwise available to you is there in your next session. Two features behave differently in that first session:
 
 * Claude Code [binds the session's inbox socket](/docs/en/cross-session-messaging#the-sessions-inbox-socket) and exports the messaging variables partway through the session, as soon as the fetch completes, so other sessions can message it before you restart.
 * Claude Code checks the `claude import` flag before it starts a session, so if `claude import` is the first thing you run after installing, it prints [`claude import is not yet available in this build`](/docs/en/errors#claude-import-is-not-yet-available-in-this-build). Start a session, then run it again.

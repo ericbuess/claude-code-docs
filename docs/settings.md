@@ -1078,7 +1078,10 @@ Use host pattern matching when you want to allow all marketplaces from a specifi
 Host extraction by source type:
 
 * `github`: always matches against `github.com`
-* `git`: extracts hostname from the URL (supports both HTTPS and SSH formats)
+* `git`: extracts the hostname from the marketplace's [git URL](https://git-scm.com/docs/git-clone#_git_urls), depending on the URL's form:
+  * A URL with a scheme, such as `https://` or `ssh://`: the hostname in the URL.
+  * An SSH address without a scheme, in git's `user@host:path` form, such as `git@git.example.com:tools/plugins.git`: the host between `@` and `:`, which is the host git connects to.
+  * Any other form without a scheme: no host, so no `strictKnownMarketplaces` `hostPattern` entry matches it. For a `blockedMarketplaces` `hostPattern`, Claude Code takes a host from a wider set of forms, so a blocklist entry can still match such a form. Before v2.1.234, a `strictKnownMarketplaces` `hostPattern` also matched some forms that git doesn't treat as SSH addresses.
 * `url`: extracts hostname from the URL
 * `npm`, `file`, `directory`: not supported for host pattern matching
 
