@@ -136,7 +136,7 @@ Deploy the keys through your device management tooling. [Server-managed settings
 
 The keys also decide whether a session that doesn't use a login credential can start. See [`forceLoginOrgUUID`](/docs/en/settings#available-settings) in the settings reference for the full behavior.
 
-* **`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper`**: blocked at startup, since organization membership can't be verified for an environment credential. Before v2.1.146, the pin applied only to the login flow and didn't block API-key credentials
+* **`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper`**: blocked at startup, since organization membership can't be verified for an environment credential
 * **Cloud provider sessions such as Amazon Bedrock**: not blocked, because they authenticate against your cloud provider. Restrict those through your cloud IAM policies
 * **[Anthropic profile or federation credentials](#anthropic-profiles-and-federation-credentials)**: not blocked, and the keys don't check which organization the profile belongs to
 

@@ -183,10 +183,11 @@ This syntax differs from [Read and Edit permission rules](/docs/en/permissions#r
 
 You can also deny write or read access using `sandbox.filesystem.denyWrite` and `sandbox.filesystem.denyRead`, and re-allow specific paths within a denied region using `sandbox.filesystem.allowRead`. When read rules overlap, the more specific path wins:
 
-| Example rules                                           | Result                                                                                                                                                              |
-| :------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `"denyRead": ["~/"]` with `"allowRead": ["~/projects"]` | `~/projects` is readable and the rest of the home directory stays blocked. The narrower allow re-opens that part of the denied region                               |
-| `"allowRead": ["~/"]` with `"denyRead": ["~/.env"]`     | `~/.env` stays blocked and the rest of the home directory is readable. An exact deny holds inside a wider allow, so a broad allow can't silently re-expose a secret |
+| Example rules                                           | Result                                                                                                                                                                                         |
+| :------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `"denyRead": ["~/"]` with `"allowRead": ["~/projects"]` | `~/projects` is readable and the rest of the home directory stays blocked. The narrower allow re-opens that part of the denied region                                                          |
+| `"allowRead": ["~/"]` with `"denyRead": ["~/.env"]`     | `~/.env` stays blocked and the rest of the home directory is readable. The deny holds inside a wider allow, so a broad allow can't silently re-expose a secret                                 |
+| `"allowRead": ["~/"]` with `"denyRead": ["~/**/.env"]`  | Every `.env` under the home directory stays blocked and the rest is readable. A [wildcard deny](/docs/en/settings#sandbox-path-prefixes) holds inside a wider allow the same way an exact path does |
 
 The example below blocks reading from the entire home directory while still allowing reads from the current project. Place it in your project's `.claude/settings.json`, because the relative path `.` resolves to the project root only when the configuration lives in project settings:
 

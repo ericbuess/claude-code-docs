@@ -132,7 +132,7 @@ The hook fires on every session end where a child process was spawned, whatever 
 
 * `completed`: a clean exit, including a session archived or deleted while the child was still connected.
 * `failed`: a child crash or a setup failure after spawn.
-* `interrupted`: an idle release, startup timeout, server deassign, drain, watchdog kill, or the [`released=false` backstop](/docs/en/self-hosted-environments-reference#session-lifecycle-counter-semantics).
+* `interrupted`: an idle release, startup timeout, server deassign, drain, or watchdog kill.
 * `abandoned`: reserved for sessions another runner claimed; the hook doesn't currently fire in that case.
 
 The [session lifecycle counter semantics](/docs/en/self-hosted-environments-reference#session-lifecycle-counter-semantics) classify an idle release, a startup timeout, and a server deassign as `completed` instead: those are clean handoffs from the session's perspective even though this hook reports them as `interrupted`.
@@ -161,6 +161,15 @@ done
 ```
 
 The hook pushes with whatever git credentials are available in its own environment on the runner host. Under the [no-credentials-in-the-image posture](/docs/en/self-hosted-environments-deploy#configure-git), including when the built-in clone goes through the Anthropic git proxy, there are none, so mint a short-lived push credential inside the hook before pushing: exchange the session token the hook receives in `CLAUDE_CODE_SESSION_ACCESS_TOKEN` with your own token service, verifying it as [Verify session identity](/docs/en/self-hosted-environments-identity) describes. When the hook holds a credential the session didn't, also pin where it pushes: replace `origin` with an operator-supplied URL and pass `-c credential.helper=` plus your own helper, so repo-local config the session wrote can't redirect the credentialed push.
+
+#### Hook timing when the runner releases a session
+
+A released session can resume on another runner. On a runner on v2.1.236 or later, what the session was doing at release decides whether it can resume before this hook finishes:
+
+* **Idle after a turn, or timed out at startup**: the runner stops the child and runs this hook to completion. Only then does it release the session. A user message sent while the hook runs can't resume the session on another runner before the hook finishes.
+* **Waiting for the user to answer a prompt, such as a permission prompt**: the runner releases the session first, then runs this hook. A user message sent while the hook runs can resume the session on another runner before the hook finishes.
+
+A release at the [`--retire-at`](/docs/en/self-hosted-environments-reference#runner-cli-flags) time follows the same two paths. During a `SIGTERM` drain, the runner holds the session lease until the hook finishes; see [Shutdown timing](/docs/en/self-hosted-environments-deploy#shutdown-timing). Before v2.1.236, the runner released the session first and then ran this hook on both paths.
 
 ### command
 

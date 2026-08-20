@@ -22,7 +22,7 @@ Use messaging when one of your sessions has something another session needs mid-
 
 * **Hand over a finding**: when one session discovers a breaking change or makes a decision, Claude summarizes it for the session working on the affected area, instead of you re-explaining it there.
 * **Coordinate parallel worktrees**: when sessions work the same repository in separate [worktrees](/docs/en/worktrees), Claude can tell the other sessions what landed.
-* **Get status from long-running work**: have a migration or test run report back to the session you're watching, or ask it yourself from there.
+* **Get status from long-running work**: have a migration or test run report back to the session you're watching, or ask it yourself from there. If that session is on this machine, Claude can also [ask it for one notice when it next goes idle or exits](#get-a-notice-when-another-session-goes-idle).
 * **Message across machines**: reach one of your sessions on another machine or on the web.
 
 Use messaging between independent sessions that you start and steer yourself. Claude Code has a dedicated feature for each of the other ways to run or reach multiple sessions, so use the one built for what you're doing instead:
@@ -72,6 +72,35 @@ Between two ordinary interactive sessions with default settings, Claude Code del
 Once delivered, the message counts toward [usage](/docs/en/costs) like a prompt you type, and the receiving Claude can reply to the sender the same way, except in the [one-way cross-machine case](#message-sessions-on-other-machines).
 
 Permission boundaries stay per-session. Claude is instructed never to ask another session for an action that was denied or blocked in its own session, or that its own permission settings would block, and to route that work back to you instead. On the receiving side, the [receiving session's own permission prompts and rules still apply](#how-a-session-treats-an-incoming-message) to anything the message asks for.
+
+### Get a notice when another session goes idle
+
+Claude can ask one of your sessions on this machine to send back one notice when that session next goes idle or exits. Idle here means the session finished a turn with nothing queued. Use it when you're waiting on a long task in another session and want to hear when it's done instead of checking. Requires Claude Code v2.1.236 or later in both sessions.
+
+#### Ask for a notice
+
+Tell Claude what you're waiting on. This prompt asks for a notice from the migration session:
+
+```text wrap theme={null}
+Tell me when the migration session finishes what it's working on
+```
+
+Claude subscribes with the `SendMessage` tool's `notify_when_idle` input, either attached to a message it's sending anyway or on its own. On its own, Claude Code subscribes without starting a turn or spending tokens in the watched session, and sends the notice right away if that session is already idle. Attached to a message, Claude Code delivers the message first and sends the notice later.
+
+#### What each session shows
+
+The watched session shows a line saying another process asked to be told when the session is next idle. The asking session shows the notice as a line naming the watched session. The line can include the time that session's turn finished and a one-line status from that turn. If the asking session is idle, Claude Code starts a new turn with the notice.
+
+#### Limits
+
+The notice is one-shot: Claude Code sends it once from the watched session, and neither session polls the other. If no notice arrives within 12 hours, Claude Code drops the subscription and tells Claude, so it doesn't keep waiting.
+
+Each side's [inbound controls](#control-inbound-messages) apply to a notice like a message:
+
+* **`refuse` on either side**: nothing arrives. The watched session drops the request without recording or answering it, so the subscription expires unanswered after 12 hours, and an asking session with `refuse` never subscribes.
+* **`hold` on either side**: the notice arrives with less. The watched session leaves the one-line status out, and the asking session shows the notice in your transcript without delivering it to Claude.
+
+Only the Claude in your main conversation can subscribe, and only to your sessions on this machine. When a subagent or an agent team teammate sets `notify_when_idle`, Claude Code makes no subscription and tells it so. When Claude asks for a notice from any other agent, such as a teammate, a subagent, or a session beyond this machine, Claude Code refuses the whole call, including any message attached to it, and reports the refusal to Claude so it can resend the message without the request.
 
 ### See which sessions Claude can reach
 

@@ -7,7 +7,7 @@
 > Continue a local Claude Code session from your phone, tablet, or any browser using Remote Control. Works with claude.ai/code and the Claude mobile app.
 
 <Note>
-  Remote Control is in research preview and available on all plans. On Team and Enterprise, it is off by default until an Owner enables the Remote Control toggle in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code).
+  Remote Control is available on all plans. On Team and Enterprise, it is off by default until an Owner enables the Remote Control toggle in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code).
 </Note>
 
 Remote Control connects [claude.ai/code](https://claude.ai/code) or the Claude app for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) and [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude) to a Claude Code session running on your machine. Start a task at your desk, then pick it up from your phone on the couch or a browser on another computer.
@@ -338,9 +338,13 @@ You're authenticated with a long-lived token from `claude setup-token` or the `C
 
 Your cached account information is stale or incomplete. Run `claude auth login` to refresh it.
 
-### "Remote Control is not yet enabled for your account"
+### "Remote Control isn't enabled for this account"
 
-The Remote Control rollout has not reached your account, or your cached entitlements are out of date. If you recently changed plans, run `claude auth logout` then `claude auth login` to refresh them. Run `claude doctor` to see which individual eligibility check failed. Environment-variable conflicts, unreachable checks, and organization policy each produce their own message, so this error means the rollout gate itself. Before v2.1.154, a variable that disables feature-flag evaluation, such as `DISABLE_TELEMETRY` or `DO_NOT_TRACK`, also produced this message; the "Remote Control requires feature-flag evaluation" entry below covers that configuration.
+Claude Code checked Remote Control availability for the account you're signed in with and the check came back off. The usual cause is cached entitlements that are out of date after a plan change. Run `claude auth logout` then `claude auth login` to refresh them, and update Claude Code if you're on an old version.
+
+Run `claude doctor` to see which individual eligibility check failed. Environment-variable conflicts, unreachable checks, and your organization's Remote Control setting each produce their own message, so this error means the account-level check itself.
+
+Before v2.1.239, this message read "Remote Control is not yet enabled for your account". Before v2.1.154, a variable that disables feature-flag evaluation, such as `DISABLE_TELEMETRY` or `DO_NOT_TRACK`, also produced this message; the "Remote Control requires feature-flag evaluation" entry below covers that configuration.
 
 ### "Couldn't verify Remote Control eligibility"
 

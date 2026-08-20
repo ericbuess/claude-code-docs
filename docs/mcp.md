@@ -1213,12 +1213,6 @@ Tool search keeps MCP context usage low by deferring tool definitions until Clau
   Tool search isn't supported on Microsoft Foundry [deployments hosted on Azure](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options), which reject it server-side: Claude Code detects the rejection and loads MCP tools upfront for that deployment instead. [`ENABLE_TOOL_SEARCH`](#configure-tool-search) can't override this, since the rejection comes from the deployment itself.
 </Note>
 
-### How it works
-
-Tool search is enabled by default. MCP tools are deferred rather than loaded into context upfront, and Claude uses a search tool to discover relevant ones when a task needs them. Only the tools Claude actually uses enter context. From your perspective, MCP tools work exactly as before.
-
-If you prefer threshold-based loading, set `ENABLE_TOOL_SEARCH=auto`. Claude Code then loads every schema upfront while the definitions it would otherwise defer total less than 10% of the context window, and defers every one of those definitions once they reach 10%. See [Configure tool search](#configure-tool-search) for all options.
-
 ### For MCP server authors
 
 If you're building an MCP server, the server instructions field becomes more useful with tool search enabled. Server instructions help Claude understand when to search for your tools, similar to how [skills](/docs/en/skills) work.

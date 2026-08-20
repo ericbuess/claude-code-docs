@@ -1230,7 +1230,9 @@ From a marketplace directory, Claude Code doesn't open the plugins' skill, agent
 
 To find skill, agent, and command files whose frontmatter doesn't parse, run `claude plugin validate` and name the directory that holds them. Claude Code doesn't look outside the directory you name. Every run except one against a plugin that has a `plugin.json` requires Claude Code v2.1.233 or later.
 
-Pick the directory by what you want to check:
+##### Pick the directory to name
+
+Claude Code checks different files depending on which directory you name. Find what you want to check in the first column, and run that row's command:
 
 | To check                                                                                     | Run                                                                                             | Claude Code checks                                                                                                                                                       |
 | :------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1240,20 +1242,40 @@ Pick the directory by what you want to check:
 | A project's three directories at once                                                        | `claude plugin validate .claude`, or the project root when it has no `.claude-plugin/` manifest | `.claude/skills`, `.claude/agents`, and `.claude/commands`                                                                                                               |
 | Your user-level directories                                                                  | `claude plugin validate ~/.claude`                                                              | `~/.claude/skills`, `~/.claude/agents`, and `~/.claude/commands`                                                                                                         |
 
-A plugin run also warns about a `CLAUDE.md` at the plugin root. For paths you set through the [component path fields](/docs/en/plugins-reference#component-path-fields) in `plugin.json`, it checks that each path exists but doesn't read the files there, and it doesn't check a `SKILL.md` at the plugin root. To check a plugin whose skill is its root `SKILL.md`, run the command twice when the plugin sits in a directory named `skills`: name that `skills` directory to check the root `SKILL.md`, and name the plugin directory to check the rest. When the plugin sits under another name, such as `plugins/`, only the second run is available, and no run checks its root `SKILL.md`.
+##### Check a plugin whose skill is its root `SKILL.md`
 
-Claude Code doesn't follow symlinks inside the directory you name. What it does depends on where the link is:
+When you run `claude plugin validate` against a plugin directory, Claude Code doesn't check a `SKILL.md` at the plugin root. When the plugin sits in a directory named `skills`, run the command twice:
+
+* Name that `skills` directory to check the plugin's root `SKILL.md`.
+* Name the plugin directory to check the rest.
+
+When the plugin sits under another name, such as `plugins/`, the `skills`-directory run isn't available, and no run checks its root `SKILL.md`.
+
+##### Check files behind symlinks
+
+When you run `claude plugin validate`, Claude Code doesn't follow symlinks inside the directory you name. What it does depends on where the link is:
 
 * **A linked `skills`, `agents`, or `commands` directory under the plugin or `.claude` root**: Claude Code warns that nothing in it was read.
-* **A linked entry inside a `skills`, `agents`, or `commands` directory**: Claude Code skips it and warns, per directory, how many entries it skipped that a session would load. A plugin whose `skills` directory [links to a sibling plugin's skills](/docs/en/plugins-reference#share-files-within-a-marketplace-with-symlinks) passes with warnings; to check the linked skills, name the sibling plugin's directory. The same applies to a [symlinked skill entry](/docs/en/skills#where-skills-live) in `~/.claude/skills` or `.claude/skills`, which a session does follow; to check it, name a directory called `skills` that holds the real folder.
+* **A linked entry inside a `skills`, `agents`, or `commands` directory**: Claude Code skips it and warns, per directory, how many entries it skipped that a session would load.
 * **The `skills`, `agents`, or `commands` directory you name is itself a symlink, or its parent `.claude` directory is**: Claude Code reports an error and checks nothing in it. Name the real directory instead.
 
-A clean run ends with `Validation passed`. `No manifest found in directory` means Claude Code found no `plugin.json` or `marketplace.json` there, and no skill, agent, or command file in the directories it probes under it. Name the `skills`, `agents`, or `commands` directory that holds your files instead.
+In two skills cases, the run passes with warnings. To check the linked files, run again and name a directory that holds them directly:
+
+* **A plugin whose `skills` directory [links to a sibling plugin's skills](/docs/en/plugins-reference#share-files-within-a-marketplace-with-symlinks)**: name the sibling plugin's directory.
+* **A [symlinked skill entry](/docs/en/skills#where-skills-live) in `~/.claude/skills` or `.claude/skills`**: Claude Code follows the entry in a session. To check it, name a directory called `skills` that holds the real folder.
+
+##### Read the validation results
+
+A clean run ends with `Validation passed`.
+
+`No manifest found in directory` means Claude Code found no `plugin.json` or `marketplace.json` there, and no skill, agent, or command file in the directories it probes under it. Name the `skills`, `agents`, or `commands` directory that holds your files instead.
 
 Two of the errors Claude Code reports from these runs, with the fix for each:
 
 * `YAML frontmatter failed to parse: ...`: fix the YAML in the frontmatter block of the skill, agent, or command file. Until you do, a session reads no frontmatter fields from the file
 * `Invalid JSON syntax: ...` on `hooks/hooks.json`: fix the JSON syntax. Until you do, a session loads the plugin without the hooks in that file. Claude Code reports this error only in a plugin run
+
+In a plugin run, Claude Code also warns about a `CLAUDE.md` at the plugin root. For paths you set through the [component path fields](/docs/en/plugins-reference#component-path-fields) in `plugin.json`, Claude Code checks that each path exists but doesn't read the files there.
 
 ### Plugin installation failures
 

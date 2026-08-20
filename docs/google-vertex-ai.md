@@ -231,7 +231,7 @@ Claude Code uses these default models when no pinning variables are set:
 
 Background tasks such as session title generation use the small/fast model, normally a Haiku-class model. On Google Cloud's Agent Platform, Claude Code uses the default Sonnet model for background tasks because Haiku may not be enabled in every project or region. Two selections change which model carries them:
 
-* When you select a primary model with `--model`, `ANTHROPIC_MODEL`, or the `model` setting, background tasks use that model. Setting `ANTHROPIC_DEFAULT_OPUS_MODEL` without `ANTHROPIC_DEFAULT_SONNET_MODEL` counts as a selection too, because the built-in Sonnet model may not be enabled in a project that steers its own Opus.
+* When you select a primary model with `--model`, `ANTHROPIC_MODEL`, or the `model` setting, background tasks use that model. When Claude Code starts the session on the model you set with [`ANTHROPIC_DEFAULT_MODEL`](/docs/en/model-config#set-a-default-model-for-new-sessions), background tasks use that model too. Setting `ANTHROPIC_DEFAULT_OPUS_MODEL` without `ANTHROPIC_DEFAULT_SONNET_MODEL` also counts as a selection, because the built-in Sonnet model may not be enabled in a project that steers its own Opus.
 * To use Haiku for background tasks, set `ANTHROPIC_DEFAULT_HAIKU_MODEL` to a model ID that is available in your project.
 
 <Warning>
@@ -259,7 +259,7 @@ If you have pinned a model version that is older than the current Claude Code de
 
 If you have not pinned a model and the current default is unavailable in your project, Claude Code falls back for the current session and shows a notice. It tries earlier versions of the default model first and, when the default is an Opus model and no Opus version is available, falls back to the default Sonnet model. The fallback is not persisted. Enable the newer model in [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) or [pin a version](#5-pin-model-versions) to make the choice permanent.
 
-When you start the session on a specific Sonnet or Opus version, with `--model`, `ANTHROPIC_MODEL`, or the [`model` setting](/docs/en/settings), that version acts as the session's pinned default for the matching `sonnet` or `opus` alias. Claude Code skips the availability check for the built-in default your model replaces and starts on the model you configured, with no fallback notice.
+When you start the session on a specific Sonnet or Opus version, for example with `--model`, `ANTHROPIC_MODEL`, or the [`model` setting](/docs/en/settings), that version acts as the session's pinned default for the matching `sonnet` or `opus` alias. Claude Code skips the availability check for the built-in default your model replaces and starts on the model you configured, with no fallback notice.
 
 Model aliases such as `opus` don't act as pins, and neither does a model ID Claude Code doesn't recognize.
 

@@ -273,7 +273,7 @@ If the display flickers or the scroll position jumps while Claude is working, sw
 
 If flicker is the only problem and your terminal supports synchronized output but isn't auto-detected, such as Emacs `eat`, set [`CLAUDE_CODE_FORCE_SYNC_OUTPUT=1`](/docs/en/env-vars) to stop the flicker without changing renderers.
 
-Run `/tui fullscreen` to switch and save the preference. Your conversation relaunches intact and future sessions start in fullscreen. You can also set the `CLAUDE_CODE_NO_FLICKER` environment variable before starting Claude Code:
+Run `/tui fullscreen` to switch and save the preference. Your conversation relaunches intact and future sessions start in fullscreen unless a [fullscreen start fails](/docs/en/fullscreen#fullscreen-renderer-didnt-finish-starting). You can also set the `CLAUDE_CODE_NO_FLICKER` environment variable before starting Claude Code:
 
 <CodeGroup>
   ```bash Bash and Zsh theme={null}

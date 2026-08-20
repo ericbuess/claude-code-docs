@@ -359,6 +359,23 @@ VS Code reads `initialPermissionMode` from your user settings and ignores worksp
 | `allowDangerouslySkipPermissions`   | `false` | Adds Bypass permissions to the mode selector. Use it only in sandboxes with no internet access.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | `claudeProcessWrapper`              | -       | Executable used to launch the Claude process. The bundled binary path is passed as an argument when present. Set this to a separately installed `claude` binary if the extension build doesn't include one for your platform. In a wrapped setup, conversations start in Manual mode unless you set `initialPermissionMode` or picked Manual, Edit automatically, or Auto in an earlier conversation, because the extension skips the settings and built-in-default steps there; see [Switch permission modes](/docs/en/permission-modes#switch-permission-modes). An "Unsupported platform" error at activation means no binary is bundled for your platform; see [which platforms have prebuilt binaries](/docs/en/troubleshoot-install#native-binary-not-found-after-npm-install). |
 
+## Use a screen reader
+
+The extension's chat panel works with screen readers. You don't need to turn anything on: the extension announces conversation activity for every user, with no visual change. This is separate from the CLI's opt-in [screen reader mode](/docs/en/accessibility), which adapts the terminal interface.
+
+Screen reader support in the chat panel requires Claude Code v2.1.236 or later.
+
+During a conversation, the extension announces:
+
+* **Claude's replies**: the extension announces each reply once, when it's complete, and stays silent while text streams in. Your screen reader reads code blocks as a line-count summary, reads links by their label, and reads tables cell by cell; the full reply stays readable in the transcript.
+* **Permission requests and questions**: the extension announces a request when its permission prompt appears, naming the tool Claude wants to use. It announces in the same way when Claude asks you a question and when Claude finishes a plan and waits for your review.
+* **Status changes**: the extension announces when Claude starts working, when Claude is ready for your input, and when Claude Code starts compacting the conversation.
+* **Errors and model prompts**: the extension announces errors in the conversation, and announces when the [usage-credits consent prompt](/docs/en/model-config#fable-5-and-usage-credits) or the [flagged-request prompt](/docs/en/model-config#ask-before-switching) appears.
+
+Each turn in the transcript starts with a visually hidden heading labeled with the prompt that started the turn, so you can jump between turns with your screen reader's heading navigation. You can also move focus to the transcript itself with `Tab`, since the extension exposes it as a labeled region, and read it at your own pace. While Claude works, your screen reader reads a text label in place of the progress spinner's animation.
+
+When you reopen a session or switch to another one, the extension announces nothing: restored history, pending permission prompts, and in-progress status stay silent until something new happens.
+
 ## VS Code extension vs. Claude Code CLI
 
 Claude Code is available as both a VS Code extension (graphical panel) and a CLI (command-line interface in the terminal). Some features are only available in the CLI. If you need a CLI-only feature, run `claude` in VS Code's integrated terminal. This requires the [standalone CLI install](/docs/en/setup): the extension does not add `claude` to your PATH. See [Run CLI in VS Code](#run-cli-in-vs-code).

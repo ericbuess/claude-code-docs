@@ -8,7 +8,7 @@
 
 Claude Code has a screen reader mode that replaces its visual terminal interface with plain, linear text. Instead of boxes, progress animations, and in-place redraws, Claude Code prints labeled lines that a screen reader such as VoiceOver or NVDA reads in order. You can hold a full conversation, approve tool permissions, and review output end to end.
 
-Screen reader mode is opt-in. If you use a screen magnifier, reduced motion, or a colorblind-friendly theme instead of a screen reader, set `CLAUDE_CODE_ACCESSIBILITY`, `prefersReducedMotion`, or `theme` from the [Accessibility settings](#accessibility-settings) table.
+Screen reader mode is opt-in. If you use a screen magnifier, reduced motion, or a colorblind-friendly theme instead of a screen reader, set `CLAUDE_CODE_ACCESSIBILITY`, `prefersReducedMotion`, or `theme` from the [Accessibility settings](#accessibility-settings) table. Screen reader mode adapts the terminal interface only, so you don't need it in the VS Code extension's chat panel. On Claude Code v2.1.236 or later, the extension [announces conversation activity to your screen reader](/docs/en/vs-code#use-a-screen-reader) there without any setting.
 
 Screen reader mode requires Claude Code v2.1.181 or later. Earlier versions reject the `--ax-screen-reader` flag with `error: unknown option '--ax-screen-reader'`.
 
