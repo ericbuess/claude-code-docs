@@ -279,7 +279,7 @@ Settings passed by a launching process are parent settings. Claude Code ignores 
 
 Machines that only run Claude Desktop need it. Claude Desktop applies the model list and the disabled-tools list to embedded sessions itself, but the egress allowlist reaches them only as parent settings, in the form of `WebFetch` domain rules and sandbox network rules. Without the opt-in, those sessions run without the egress restriction, and nothing warns you. The gateway still rejects inference requests for models the policy doesn't grant.
 
-Machines where developers sign in through `/login` don't need it; every Claude Code invocation fetches its policy from the gateway directly. Fleets that configure a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) can't use it, because the helper's output replaces every other managed source and parent settings are never merged while a helper is configured.
+Machines where developers sign in through `/login` don't need it; every Claude Code invocation fetches its policy from the gateway directly. Machines where an MDM or file-based source wins and configures a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) can't use it, because Claude Code never merges parent settings into the helper's output.
 
 #### Set the opt-in
 
@@ -343,7 +343,7 @@ An OS policy, such as an HKLM registry policy or a managed-preferences plist, ou
 
 #### Lock behavior across sources
 
-Setting one lock doesn't restrict the others; each key is documented in the [settings reference](/docs/en/settings#available-settings). From an admin source below the winner, the two sandbox locks still apply, and `allowManagedPermissionRulesOnly` still blocks parent-supplied allow rules and `additionalDirectories`. The hooks and MCP server locks, and `allowManagedPermissionRulesOnly`'s effect on the developer's own rules, need the winning source. On [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) fleets, the locks are read from the helper's output alone.
+Setting one lock doesn't restrict the others; each key is documented in the [settings reference](/docs/en/settings#available-settings). From an admin source below the winner, the two sandbox locks still apply, and `allowManagedPermissionRulesOnly` still blocks parent-supplied allow rules and `additionalDirectories`. The hooks and MCP server locks, and `allowManagedPermissionRulesOnly`'s effect on the developer's own rules, need the winning source. When an MDM or file-based source wins and configures a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper), Claude Code reads the locks from the helper's output alone.
 
 Each lock makes Claude Code ignore the developer's own entries for that setting, so include your organization's allowlists next to the locks. Locking network domains with an empty managed domain list blocks all sandboxed outbound traffic, and locking MCP servers with no managed or parent-supplied `allowedMcpServers` loads every server that `deniedMcpServers` doesn't block. `allowRead` entries only re-allow paths inside `denyRead` regions, so pair them with a managed `denyRead`.
 
