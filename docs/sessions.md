@@ -196,12 +196,33 @@ Each line is a JSON object for a message, tool use, or metadata entry. The entry
 
 The location, retention, and write behavior are configurable:
 
-| To                                          | Set                                                    | Where                     |
-| ------------------------------------------- | ------------------------------------------------------ | ------------------------- |
-| Move storage off `~/.claude`                | [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars)                    | Environment variable      |
-| Change the 30-day retention                 | [`cleanupPeriodDays`](/docs/en/settings#available-settings) | `settings.json`           |
-| Suppress transcript writes in all modes     | [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/docs/en/env-vars)      | Environment variable      |
-| Suppress writes for one non-interactive run | [`--no-session-persistence`](/docs/en/cli-reference)        | CLI flag with `claude -p` |
+| To                                                                              | Set                                                    | Where                     |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------- |
+| Move storage off `~/.claude`                                                    | [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars)                    | Environment variable      |
+| [Name the `<project>` directory yourself](#name-the-project-directory-yourself) | [`CLAUDE_CODE_PROJECT_DIR_NAME`](/docs/en/env-vars)         | Environment variable      |
+| Change the 30-day retention                                                     | [`cleanupPeriodDays`](/docs/en/settings#available-settings) | `settings.json`           |
+| Suppress transcript writes in all modes                                         | [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/docs/en/env-vars)      | Environment variable      |
+| Suppress writes for one non-interactive run                                     | [`--no-session-persistence`](/docs/en/cli-reference)        | CLI flag with `claude -p` |
+
+### Name the project directory yourself
+
+By default, Claude Code derives the `<project>` name from the whole working directory path. To choose the name yourself, set `CLAUDE_CODE_PROJECT_DIR_NAME` alongside `CLAUDE_CONFIG_DIR`. Claude Code then stores that session's transcripts and [auto memory](/docs/en/memory#auto-memory) under your name. This suits a host that embeds Claude Code and gives each session its own config directory. Requires Claude Code v2.1.234 or later.
+
+For example, this launch keeps tenant A's data under `/srv/tenant-a` and names its project directory `work`:
+
+```bash theme={null}
+CLAUDE_CONFIG_DIR=/srv/tenant-a CLAUDE_CODE_PROJECT_DIR_NAME=work claude
+```
+
+Claude Code writes the session's transcripts to `/srv/tenant-a/projects/work/` and its auto memory to `/srv/tenant-a/projects/work/memory/`, whatever the working directory is.
+
+Three rules apply when you set it:
+
+* **Set `CLAUDE_CONFIG_DIR` too**: the name doesn't vary with the working directory, so under the default `~/.claude` it would merge every project's transcripts and auto memory into one directory. Claude Code ignores `CLAUDE_CODE_PROJECT_DIR_NAME` when `CLAUDE_CONFIG_DIR` is unset.
+* **Use 1-64 letters, digits, hyphens, or underscores**: don't use a Windows device name such as `con`. Claude Code ignores any other value and uses the derived name.
+* **Set it in the shell environment that starts `claude`**: Claude Code reads it once at startup from that environment, so an `env` block in a settings file can't set it.
+
+Once you've named a config directory's project directory, keep launching with that name. If you start Claude Code with the same `CLAUDE_CONFIG_DIR` but without `CLAUDE_CODE_PROJECT_DIR_NAME`, it reads and writes the derived directory again. The sessions stored under your name stay on disk: press `Ctrl+A` in the [session picker](#use-the-session-picker) to list sessions from every project directory under that config directory, the pinned one included, and whichever way you launch, [`claude --resume <session-id>`](#resume-a-session) finds a session stored under either name.
 
 ## See also
 
