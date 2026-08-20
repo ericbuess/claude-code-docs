@@ -337,7 +337,7 @@ Actions available in the `Scroll` context when [fullscreen rendering](/docs/en/f
 | `scroll:fullPageUp`         | (unbound)            | Scroll up the full viewport height                                                                        |
 | `scroll:fullPageDown`       | (unbound)            | Scroll down the full viewport height                                                                      |
 | `selection:copy`            | Ctrl+Shift+C / Cmd+C | Copy the selected text to the clipboard                                                                   |
-| `selection:clear`           | (unbound)            | Clear the active text selection                                                                           |
+| `selection:clear`           | (unbound)            | Clear the active text selection. Requires v2.1.234 or later                                               |
 | `selection:extendLeft`      | Shift+Left           | Extend the active selection one column left                                                               |
 | `selection:extendRight`     | Shift+Right          | Extend the active selection one column right                                                              |
 | `selection:extendUp`        | Shift+Up             | Extend the active selection one row up. Scrolls the viewport when the selection reaches the top edge      |

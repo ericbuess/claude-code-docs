@@ -88,6 +88,15 @@ With Copy on select off, press `Ctrl+Shift+c` to copy manually. On terminals tha
 
 With a selection active, hold `Shift` and press the arrow keys to extend it from the keyboard. `Shift+↑` and `Shift+↓` scroll the viewport when the selection reaches the top or bottom edge. `Shift+Home` and `Shift+End` extend to the start or end of the current line.
 
+In the normal prompt view, what happens to an active selection depends on the key you press:
+
+* **`Esc`**: Claude Code performs the key's usual action, such as interrupting the running response or dismissing an open dialog, and the selection stays highlighted.
+* **`PgUp`, `PgDn`, `Ctrl+Home`, `Ctrl+End`, or `Shift`, `Alt` or `Option`, or `Cmd`, `Win`, or `Super` with an arrow, `Home`, or `End` key**: the selection stays.
+* **Any other key, including plain arrow keys, `Enter`, and typed characters**: Claude Code clears the selection.
+* **A key bound to [`selection:clear`](/docs/en/keybindings#scroll-actions)**: Claude Code clears the selection, even when the key is `Esc` or another key that otherwise keeps it. The action has no default binding.
+
+In [transcript mode](#search-and-review-the-conversation), the navigation and search keys listed there also keep the selection.
+
 ## Scroll the conversation
 
 Fullscreen rendering handles scrolling inside the app. Use these shortcuts to navigate:
