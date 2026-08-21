@@ -112,7 +112,7 @@ Server-managed settings have the following limitations:
 
 * Settings apply uniformly to all users in the organization. Per-group configurations are not yet supported.
 * A [`managed-mcp.json`](/docs/en/managed-mcp) file can't be distributed through server-managed settings. Deliver the `allowedMcpServers` and `deniedMcpServers` policy keys there instead.
-* Settings restricted to OS-level policy sources, such as `policyHelper` and `wslInheritsWindowsSettings`, are not honored. Deploy them through MDM or a system `managed-settings.json` file instead.
+* Settings restricted to OS-level policy sources, such as `policyHelper` and `wslInheritsWindowsSettings`, aren't honored. Deploy them through MDM or a system `managed-settings.json` file instead. A `policyHelper` deployed that way runs only when its source wins [precedence within the managed tier](/docs/en/settings#precedence-within-the-managed-tier).
 
 ## Settings delivery
 
@@ -122,7 +122,7 @@ Server-managed settings and [endpoint-managed settings](/docs/en/settings#settin
 
 Within the managed tier, Claude Code uses the first source that delivers a non-empty configuration. Server-managed settings are checked first, then endpoint-managed settings. Apart from the [exception keys covered next](#per-key-exceptions-across-managed-sources), sources don't merge: if server-managed settings deliver any keys at all, other endpoint-managed settings are ignored. If server-managed settings deliver nothing, endpoint-managed settings apply.
 
-If the winning source is an MDM or file-based source that configures a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper), the helper's output replaces it as the only managed configuration for the run. A `policyHelper` configured in MDM or file-based settings is not consulted while server-managed settings deliver a non-empty configuration.
+If the winning source is an MDM or file-based source whose [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) supplies managed settings, the helper's output replaces it as the only managed configuration for the run. Claude Code doesn't consult a `policyHelper` configured in MDM or file-based settings while server-managed settings deliver a non-empty configuration.
 
 If you clear your server-managed configuration in the admin console with the intent of falling back to an endpoint-managed plist or registry policy, be aware that [cached settings](#fetch-and-caching-behavior) persist on client machines until the next successful fetch. Run `/status` to see which managed source is active.
 
@@ -130,7 +130,7 @@ If you clear your server-managed configuration in the admin console with the int
 
 Two kinds of keys are exceptions to the no-merge rule:
 
-* **Cross-source lock keys**: a small set of keys, such as the sandbox allowlist locks, [listed in the settings reference](/docs/en/settings#precedence-within-the-managed-tier). They are honored when any admin-controlled managed source sets them; the user-writable HKCU registry tier is excluded, and when an MDM or file-based source wins and configures a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper), the helper's output is the only source these checks read.
+* **Cross-source lock keys**: a small set of keys, such as the sandbox allowlist locks, [listed in the settings reference](/docs/en/settings#precedence-within-the-managed-tier). They are honored when any admin-controlled managed source sets them; the user-writable HKCU registry tier is excluded, and when an MDM or file-based source wins and its [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) supplies managed settings, the helper's output is the only source these checks read.
 * **The `env` block**: apart from the telemetry unit and routing variables paired with a credential key, both covered below, it merges per key across the admin-controlled sources. For each environment variable, the highest-priority source defining it wins, and lower admin sources fill in variables the higher sources leave unset. An endpoint-managed `env` entry therefore applies whenever the server-managed configuration leaves that variable unset, or while a cached server value for it is [withheld pending server confirmation](#fetch-and-caching-behavior). Requires Claude Code v2.1.223 or later. Before v2.1.223, Claude Code applies the winning source's whole `env` block only.
   * **Telemetry unit**: the `OTEL_EXPORTER_OTLP_*` exporter keys, the `OTEL_LOG_*` content-capture toggles, `OTEL_LOGS_EXPORTER`, and the beta tracing variables `ENABLE_BETA_TRACING_DETAILED` and `BETA_TRACING_ENDPOINT` follow the highest source that sets any of them as a unit. A source that delivers the `otelHeadersHelper` credential key claims the unit too, but lands these variables only when it is the winning source: a non-winning source that delivers the key contributes none of them and still blocks lower sources from filling them in. Either way, an exporter endpoint from one source can never pair with credentials from another.
   * **Credential-paired routing**: a source that pairs routing variables with a winner-only credential key, such as `apiKeyHelper` or `otelHeadersHelper`, contributes those routing variables only when it wins the slot.
@@ -193,7 +193,7 @@ To enable this, add the key to your managed settings configuration:
 }
 ```
 
-You can also set this key in an [endpoint-managed](/docs/en/settings#settings-files) MDM profile or system `managed-settings.json` file to enforce fail-closed behavior on first launch, before any server payload has been delivered. As of v2.1.191, this flag is an exception to the [precedence rule](#settings-precedence) above: it is honored when set in any admin-controlled managed source even if a cached server-managed payload is also present, so an MDM-delivered value is not ignored when server-managed settings exist. When an MDM or file-based source wins and configures a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper), the helper's output replaces every other managed source, this key included.
+You can also set this key in an [endpoint-managed](/docs/en/settings#settings-files) MDM profile or system `managed-settings.json` file to enforce fail-closed behavior on first launch, before any server payload has been delivered. As of v2.1.191, this flag is an exception to the [precedence rule](#settings-precedence) above: it is honored when set in any admin-controlled managed source even if a cached server-managed payload is also present, so an MDM-delivered value is not ignored when server-managed settings exist. When an MDM or file-based source wins and its [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) supplies managed settings, the helper's output replaces every other managed source, this key included.
 
 The settings fetch also sends a `Cache-Control: no-cache` header so intermediate HTTP proxies don't serve a stale response.
 

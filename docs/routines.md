@@ -377,7 +377,9 @@ One-off runs do not count against the daily routine cap. They draw down your reg
 
 ## Troubleshooting
 
-### `/schedule` returns "Unknown command"
+<h3 id="schedule-returns-unknown-command">
+  `/schedule` returns "Unknown command"
+</h3>
 
 The CLI hides `/schedule` when one of its requirements isn't met: the command menu shows `No commands match "/schedule"` while you type, and submitting it returns `Unknown command: /schedule` in every case below except a Console API key or an Anthropic profile with feature-flag fetching enabled. The cause is usually one of the following:
 

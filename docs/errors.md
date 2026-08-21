@@ -131,6 +131,7 @@ Match the message you see to a section below.
 | `Input must be provided either through stdin or as a prompt argument when using --print`                                                                                                      | [Command-line errors](#input-must-be-provided-when-using-print)                                                               |
 | `Error: Input contained only whitespace`                                                                                                                                                      | [Command-line errors](#input-contained-only-whitespace)                                                                       |
 | `Blank prompt — the message was only whitespace, so nothing was sent to the model.`                                                                                                           | [Command-line errors](#input-contained-only-whitespace)                                                                       |
+| `Unknown command: /<name>`, with or without a `Did you mean` suggestion                                                                                                                       | [Command-line errors](#unknown-command)                                                                                       |
 | `Diff is too large for ultrareview` / `PR #<N> is too large for ultrareview`                                                                                                                  | [Command-line errors](#diff-is-too-large-for-ultrareview)                                                                     |
 | `Could not find merge-base with <branch>`                                                                                                                                                     | [Command-line errors](#could-not-find-merge-base-with-the-base-branch)                                                        |
 | `Your checkout has no branches (detached HEAD only)`                                                                                                                                          | [Command-line errors](#your-checkout-has-no-branches)                                                                         |
@@ -1612,7 +1613,7 @@ The usual cause is a proxy or gateway that closes a long transfer before it fini
 
 ## Command-line errors
 
-These errors come from the `claude` command line, its subcommands, and commands such as `/security-review` that gather context by running shell commands before their prompt runs. So do errors from `/tui`, which relaunches the CLI.
+These errors come from the `claude` command line and its subcommands, from a command name you submit at the prompt, and from commands such as `/security-review` that gather context by running shell commands before their prompt runs. So do errors from `/tui`, which relaunches the CLI.
 
 ### Conflict between --bg and --print
 
@@ -1794,6 +1795,27 @@ Before v2.1.229, Claude Code sent the whitespace-only message to the API, which 
 **What to do:**
 
 * Include visible text in the prompt. If a script builds the prompt from a variable or file, check that the source isn't empty before calling Claude Code.
+
+### Unknown command
+
+You submitted a `/` name that doesn't match any command in this session, so Claude Code reports the name instead of running anything:
+
+```text theme={null}
+Unknown command: /hepl. Did you mean /help?
+```
+
+Claude Code suggests the closest command name or alias that the menu lists in this session. When nothing is close, the message ends after the name. The cause is usually one of the following:
+
+* A typo, such as `/hepl` for `/help`. [How the command menu matches what you type](/docs/en/commands#how-the-command-menu-matches-what-you-type) covers picking a close match before you submit
+* A command that exists but isn't available in this session because a requirement isn't met, such as your platform, plan, or authentication method. The troubleshooting entries for [`/web-setup`](/docs/en/web-quickstart#web-setup-shows-no-commands-match-or-unknown-command) and [`/schedule`](/docs/en/routines#schedule-returns-unknown-command) walk through two common cases
+* A command from a [plugin](/docs/en/plugins) or [MCP server](/docs/en/mcp#use-mcp-prompts-as-commands) that isn't installed or connected in this session
+
+Before v2.1.236, if you pressed `Enter` while the command menu listed a near match for the name you typed, Claude Code ran that match, so a typo such as `/hepl` ran `/help` instead of producing this message.
+
+**What to do:**
+
+* Run the suggested name, or type `/` followed by part of the name to see what's available in this session
+* If Claude Code reports a documented command as unknown, check its row in the [commands reference](/docs/en/commands) for the requirement it names
 
 ### Diff is too large for ultrareview
 

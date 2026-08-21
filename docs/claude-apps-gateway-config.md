@@ -663,15 +663,15 @@ Both are covered in the list later in this section. The highest-priority source 
 3. The `managed-settings.json` file
 4. The HKCU registry, on Windows only
 
-When an MDM or file-based source wins and configures a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper), the helper's output replaces that source and neither per-key exception applies. A `policyHelper` in those sources doesn't run while the gateway delivers a non-empty configuration.
+When an MDM or file-based source wins and its [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) supplies managed settings, the helper's output replaces that source and neither per-key exception applies. A `policyHelper` in those sources doesn't run while the gateway delivers a non-empty configuration.
 
 Embedding hosts such as [Claude Desktop](/docs/en/desktop) can supply policy through the SDK `managedSettings` option. Whether it applies depends on the machine's managed configuration:
 
 * On machines with an admin-deployed managed source, it is ignored unless the highest-priority source opts in with [`parentSettingsBehavior: "merge"`](/docs/en/settings#available-settings).
-* It is never merged when an MDM or file-based source wins and configures a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper).
+* It is never merged when an MDM or file-based source wins and its [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) supplies managed settings.
 * When merged, it passes through a restrictive-only allowlist. [Restrict parent settings](/docs/en/claude-apps-gateway#restrict-parent-settings) lists which allow-direction settings still apply without the `allowManaged*Only` locks.
 
-The following keys are honored when any admin source above the user-writable HKCU tier sets them, regardless of which source provides the rest of the policy. When an MDM or file-based source wins and configures a [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper), the helper's output is the only source these checks read:
+The following keys are honored when any admin source above the user-writable HKCU tier sets them, regardless of which source provides the rest of the policy. When an MDM or file-based source wins and its [`policyHelper`](/docs/en/settings#compute-managed-settings-with-a-policy-helper) supplies managed settings, the helper's output is the only source these checks read:
 
 * `sandbox.network.allowManagedDomainsOnly` and `sandbox.filesystem.allowManagedReadPathsOnly`: when locked, the corresponding allowlists are unioned across sources
 * [`allowAllClaudeAiMcps`](/docs/en/settings#available-settings): allow-only override for the claude.ai MCP server allowlist

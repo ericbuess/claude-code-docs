@@ -243,7 +243,7 @@ You can create pull requests by asking Claude directly ("create a pr for my chan
   </Step>
 </Steps>
 
-When you create a PR using `gh pr create`, the session is automatically linked to that PR. To find it later, run `claude --from-pr 1234` with your own PR number, which opens the session picker filtered to sessions linked to that PR, or paste the PR URL into the [`/resume` picker](/docs/en/sessions#use-the-session-picker) search.
+When Claude creates the PR with `gh pr create` or `glab mr create`, Claude Code links the session to the PR. Claude Code also links the session when Claude [works on an existing PR](/docs/en/agent-view#pull-request-status). To find the session later, run `claude --from-pr 1234` with your own PR number, which opens the session picker filtered to sessions linked to that PR, or paste the PR URL into the [`/resume` picker](/docs/en/sessions#use-the-session-picker) search.
 
 <Tip>
   Review Claude's generated PR before submitting and ask Claude to highlight potential risks or considerations.
@@ -306,7 +306,7 @@ Suppose you need to work with images in your codebase, and you want Claude's hel
     You can use any of these methods:
 
     1. Drag and drop an image into the Claude Code window
-    2. Copy an image and paste it into the CLI with Ctrl+V. On macOS, Cmd+V also works in iTerm2.
+    2. Copy an image and paste it into the CLI with `Ctrl+V`, or with [`Alt+V` on Windows and WSL](/docs/en/interactive-mode#general-controls)
     3. Provide an image path to Claude. E.g., "Analyze this image: /path/to/your/image.png"
   </Step>
 
@@ -374,8 +374,6 @@ Use @ to quickly include files or directories without waiting for Claude to read
     ```text wrap theme={null}
     What's the structure of @src/components?
     ```
-
-    This provides a directory listing with file information.
   </Step>
 
   <Step title="Reference MCP resources">

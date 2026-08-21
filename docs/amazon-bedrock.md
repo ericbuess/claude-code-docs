@@ -99,7 +99,7 @@ If you have AWS credentials and want to start using Claude Code through Amazon B
   </Step>
 
   <Step title="Start Claude Code and choose Amazon Bedrock">
-    Run `claude`. At the login prompt, select **3rd-party platform**, then **Amazon Bedrock**. If you're already signed in and see the chat prompt instead, run `/setup-bedrock` to open the wizard. The command works when typed even though it isn't listed in the command menu until Bedrock is configured.
+    Run `claude`. At the login prompt, select **3rd-party platform**, then **Amazon Bedrock**. If you're already signed in and see the chat prompt instead, run `/setup-bedrock` to open the wizard. Until `CLAUDE_CODE_USE_BEDROCK=1` is set, Claude Code [hides the command from the command menu](/docs/en/commands#how-the-command-menu-matches-what-you-type); type it in full.
   </Step>
 
   <Step title="Follow the wizard prompts">

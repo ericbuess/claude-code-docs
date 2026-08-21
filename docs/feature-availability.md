@@ -115,8 +115,8 @@ These features work in the local CLI but depend on a server-side capability that
 
     <tr>
       <td>[Cross-session messaging](/docs/en/cross-session-messaging)</td>
-      <td>✓ (macOS and Linux) <sup><a href="#fn6">6</a></sup></td>
-      <td>✓ (macOS and Linux) <sup><a href="#fn6">6</a></sup></td>
+      <td>✓ <sup><a href="#fn6">6</a></sup></td>
+      <td>✓ <sup><a href="#fn6">6</a></sup></td>
       <td>✗</td>
       <td>✗</td>
       <td>✗</td>
@@ -220,7 +220,7 @@ Organization-level controls and usage visibility.
 <span id="fn3" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>3</sup> Explicit intervals such as `/loop every 2 hours` work on every provider. On Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Microsoft Foundry, `/loop` cannot pick its own interval or supply the default maintenance prompt, so a prompt with no interval runs every 10 minutes, and `/loop` with no arguments shows the usage message. See [Scheduled tasks](/docs/en/scheduled-tasks).<br />
 <span id="fn4" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>4</sup> Subject to your agreement with the cloud provider.<br />
 <span id="fn5" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>5</sup> Dashboard and API only. [Contribution metrics](/docs/en/analytics#enable-contribution-metrics) requires a claude.ai Team or Enterprise organization.<br />
-<span id="fn6" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>6</sup> Requires Claude Code v2.1.224 or later. WSL 2 counts as Linux; native Windows isn't supported. With API key authentication, same-machine messaging only. Claude can find your [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions and your sessions on other machines only from a session that is connected to [Remote Control](/docs/en/remote-control). Connecting needs a claude.ai sign-in and the other [Remote Control requirements](/docs/en/remote-control#requirements). See [Message sessions on other machines](/docs/en/cross-session-messaging#message-sessions-on-other-machines).
+<span id="fn6" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>6</sup> Requires Claude Code v2.1.224 or later on macOS and Linux, including Linux inside WSL 2. On native Windows, requires Claude Code v2.1.234 or later. With API key authentication, same-machine messaging only. Claude can find your [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions and your sessions on other machines only from a session that is connected to [Remote Control](/docs/en/remote-control). Connecting needs a claude.ai sign-in and the other [Remote Control requirements](/docs/en/remote-control#requirements). See [Message sessions on other machines](/docs/en/cross-session-messaging#message-sessions-on-other-machines).
 
 <Note>
   If you authenticate through an [LLM gateway](/docs/en/llm-gateway), feature availability matches the underlying provider the gateway forwards to. Some Anthropic-only features such as the [Advisor](/docs/en/advisor) work only if the gateway forwards requests intact to the Anthropic API.

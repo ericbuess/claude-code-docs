@@ -7,7 +7,7 @@
 > Let Claude list and message your other Claude Code sessions on this machine, and reach your sessions on other machines or on the web.
 
 <Note>
-  Cross-session messaging requires Claude Code v2.1.224 or later and runs on macOS and Linux. When a session meets the requirements, messaging is on with nothing to enable. See [Availability](#availability) for provider requirements and how to confirm a session has it.
+  Cross-session messaging requires Claude Code v2.1.224 or later on macOS and Linux, including Linux inside WSL 2. On native Windows, it requires Claude Code v2.1.234 or later. When a session meets the requirements, messaging is on with nothing to enable. See [Availability](#availability) for provider requirements and how to confirm a session has it.
 </Note>
 
 Cross-session messaging lets Claude deliver a message from one of your Claude Code sessions to another. When a change in one session breaks what another is building on, Claude can warn that session before you notice. When one session settles a question another is blocked on, Claude can send the answer across.
@@ -140,7 +140,9 @@ How a message travels, and whether it passes through Anthropic servers, depends 
 
 Starting a conversation with a session on another of your machines requires Claude Code v2.1.225 or later and a target that [appears in the listing](#see-which-sessions-claude-can-reach). Before v2.1.225, Claude could only reply to a message that arrived from one.
 
-Same-machine delivery works wherever the feature is enabled. Each session registers itself in files on disk and binds its inbox socket there. When Claude lists or messages your local sessions, Claude Code reads those files to find them, so two sessions can reach each other only when they can see the same files. A container has its own filesystem, so a session inside it and a session on the host can't reach each other. Two sessions inside the same container can still message each other, including on a [self-hosted runner](/docs/en/self-hosted-environments).
+Same-machine delivery works wherever the feature is enabled. Each session registers itself in files on disk. When Claude lists or messages your local sessions, Claude Code reads those files to find the sessions, so two sessions can reach each other only when they can see the same files.
+
+A container has its own filesystem, so a session inside it and a session on the host can't reach each other. Two sessions inside the same container can still message each other, including on a [self-hosted runner](/docs/en/self-hosted-environments). A session inside WSL 2 and a native Windows session on the same computer can't reach each other either, because they register under different home directories and listen on different socket types.
 
 While this session is connected to Remote Control, when you message a session on another of your machines, Claude Code shows the message in that session's conversation under this session's Remote Control name. The Claude on that machine can reply to that name. For example, when this session is connected to Remote Control as `laptop-graceful-unicorn` and you message your desktop, you see the message in the desktop session under `laptop-graceful-unicorn`.
 
@@ -221,9 +223,9 @@ To let a `-p` worker take messages unattended, start it with `crossSessionInboun
 
 Read this section when a session you expect isn't in the agent list, when you want a script or hook to post into a session, or when a sandboxed command can't reach the socket.
 
-Claude Code binds an inbox socket for each session with cross-session messaging enabled, where other sessions on the machine deliver messages. It restricts the socket to your operating-system user, so on a shared machine another user's sessions can't reach it. For which session kinds bind one, see [Non-interactive sessions](#non-interactive-sessions).
+Claude Code binds an inbox socket for each session with cross-session messaging enabled, where other sessions on the machine deliver messages. The socket is a Unix domain socket on macOS and Linux, including Linux inside WSL 2, and a named pipe on native Windows. For which session kinds bind one, see [Non-interactive sessions](#non-interactive-sessions).
 
-You can find the path in two places:
+You can find the socket's path in two places:
 
 * `/status` shows it in the `Peer address` row. The path is prefixed with `uds:`.
 * Claude Code exports it to [hooks](/docs/en/hooks) and Bash commands as the [`CLAUDE_CODE_MESSAGING_SOCKET`](/docs/en/env-vars#variables) environment variable:
@@ -231,13 +233,20 @@ You can find the path in two places:
   * When a session starts before Claude Code has fetched the feature flag that turns messaging on, such as the first session after you install Claude Code or upgrade from a version without messaging, Claude Code binds the inbox and exports the variable as soon as the fetch completes. Hooks and processes that started before that point keep the variable unset, while later hooks and Bash commands see it.
   * Each session exports its own socket, never one inherited from a parent session.
 
-Alongside the path, Claude Code exports a per-session token as [`CLAUDE_CODE_MESSAGING_TOKEN`](/docs/en/env-vars#variables). A script posting to its own session's socket can send `{"type":"auth","token":"<token>"}` as the first line of its connection. The [own-child rules](#own-child-messages) below say when Claude Code consults the token and how it treats a message it can't verify.
+On macOS and Linux, Claude Code restricts the socket to your operating-system user. On native Windows, it instead requires each connection to authenticate first with a key that only your operating-system user can read. Either way, on a shared machine another user's sessions can't deliver to it.
+
+Alongside the socket's path, Claude Code exports a per-session token as [`CLAUDE_CODE_MESSAGING_TOKEN`](/docs/en/env-vars#variables). A script posting to its own session's socket can send `{"type":"auth","token":"<token>"}` as the first line of its connection, where `<token>` is the value of `CLAUDE_CODE_MESSAGING_TOKEN`. Whether Claude Code requires the line depends on the platform:
+
+* **macOS and Linux, including WSL 2**: the line is optional. Claude Code accepts a connection with or without it.
+* **Native Windows**: the line is required. Claude Code closes any connection whose first line isn't a valid auth line and delivers nothing from that connection.
+
+The [own-child rules](#own-child-messages) below say when Claude Code consults the token and how it treats a message it can't verify.
 
 <span id="own-child-messages" />Claude Code runs messages arriving on the socket through the same [inbound controls](#control-inbound-messages) as any other peer message, with one exception and one prerequisite:
 
 * **Own-child messages**: when no `crossSessionInbound` value applies, Claude Code delivers a message it verifies came from the session's own child processes, such as a hook or Bash command posting back to its own session's socket.
-  * On Linux, including inside WSL 2, Claude Code can verify by process evidence even for a child that has already exited. On macOS it can verify that way only while the posting process is still running, and in a container where Claude Code runs as process ID 1 it has no process evidence at all.
-  * Where that process evidence is missing, on macOS after the posting process has exited and in containers where Claude Code runs as process ID 1, Claude Code verifies a child that sent the session's exported [`CLAUDE_CODE_MESSAGING_TOKEN`](/docs/en/env-vars#variables) as its first-line auth frame.
+  * On Linux, including inside WSL 2, Claude Code can verify by process evidence even for a child that has already exited. On macOS it can verify that way only while the posting process is still running, and in a container where Claude Code runs as process ID 1 it has no process evidence at all. On native Windows it also has none.
+  * On macOS after the posting process has exited and in containers where Claude Code runs as process ID 1, that process evidence is missing, and Claude Code instead verifies a child that sent the session's exported [`CLAUDE_CODE_MESSAGING_TOKEN`](/docs/en/env-vars#variables) in the auth line that opened its connection. On native Windows, that token is the only way Claude Code verifies an own-child message.
   * When Claude Code can verify neither way, it treats the message like any other that asserts no permission class, so a session that bypasses permission prompts holds it for your approval.
 * **Sandboxed sessions**: control whether a Bash command can reach the socket from inside the [sandbox](/docs/en/sandboxing) with the sandbox's Unix-socket settings, [`sandbox.network.allowAllUnixSockets` and `sandbox.network.allowUnixSockets`](/docs/en/settings#sandbox-settings).
 
@@ -279,9 +288,9 @@ With this in place, Claude Code still binds each session's inbox socket, but dro
 
 ## Availability
 
-Cross-session messaging requires Claude Code v2.1.224 or later. Availability also depends on your platform, provider, and configuration:
+Cross-session messaging requires Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, and v2.1.234 or later on native Windows. Availability also depends on your platform, provider, and configuration:
 
-* **Operating system**: available on macOS and Linux, including Linux inside WSL 2. Claude Code doesn't offer cross-session messaging on native Windows.
+* **Operating system**: available on macOS, Windows, and Linux, including Linux inside WSL 2.
 * **Provider**: not available on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry.
 * **Feature-flag evaluation**: when any of [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, or `DISABLE_GROWTHBOOK`](/docs/en/env-vars#variables) turns off the feature-flag evaluation the feature depends on, cross-session messaging stays off. Each variable's row says which values do that. Unset whichever applies. These variables can come from your shell, from a settings file's `env` map, or from managed settings.
 

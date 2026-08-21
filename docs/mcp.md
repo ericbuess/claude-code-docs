@@ -1369,7 +1369,7 @@ MCP servers can expose prompts that become available as commands in Claude Code.
 
 <Steps>
   <Step title="Discover available prompts">
-    Type `/` to see all available commands, including those from MCP servers. MCP prompts appear with the format `/mcp__servername__promptname`.
+    Type `/` to see the commands available to you, including those from MCP servers. MCP prompts appear with the format `/mcp__servername__promptname`.
   </Step>
 
   <Step title="Execute a prompt without arguments">

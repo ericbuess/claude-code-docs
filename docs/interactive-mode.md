@@ -118,7 +118,7 @@ When the transcript viewer is open (toggled with `Ctrl+O`), these shortcuts are 
 
 ## Commands
 
-Type `/` in Claude Code to see all available commands, or type `/` followed by any letters to filter. The `/` menu shows everything you can invoke: built-in commands, bundled and user-authored [skills](/docs/en/skills), and commands contributed by [plugins](/docs/en/plugins) and [MCP servers](/docs/en/mcp#use-mcp-prompts-as-commands). Not all built-in commands are visible to every user since some depend on your platform or plan.
+Type `/` in Claude Code to see the commands available to you, or type `/` followed by any letters to filter. The `/` menu lists built-in commands, bundled and user-authored [skills](/docs/en/skills), and commands contributed by [plugins](/docs/en/plugins) and [MCP servers](/docs/en/mcp#use-mcp-prompts-as-commands). Not all built-in commands are visible to every user since some depend on your platform or plan, and [a few available commands are hidden from the menu by design](/docs/en/commands#how-the-command-menu-matches-what-you-type) and run when you type their full name.
 
 In [fullscreen rendering](/docs/en/fullscreen#use-the-mouse), the `/` command and `@` file suggestion lists also respond to the mouse: hovering highlights a row and clicking accepts it.
 
@@ -127,6 +127,8 @@ See the [commands reference](/docs/en/commands) for the full list of commands in
 ## Vim editor mode
 
 Enable vim-style editing via `/config` → Editor mode.
+
+Claude Code keeps your vim mode and cursor position when you toggle the [transcript viewer](#transcript-viewer) with `Ctrl+O` or open and close a panel such as `/config`. If you leave the prompt in NORMAL mode, it's still in NORMAL mode when you return, with the cursor where you left it.
 
 ### Mode switching
 
@@ -540,6 +542,7 @@ The task list is Claude's to-do checklist: items Claude created to plan multi-st
 On [Opus 4.8, Sonnet 5, Fable 5, Mythos 5, and later versions of those families](/docs/en/tools-reference#task-tool-availability), Claude keeps track of multi-step work without a written checklist, and Claude Code doesn't provide the tools that fill this list, so it stays empty. If you'd like the task list on those models anyway, opt in with `CLAUDE_CODE_ENABLE_TODO_TOOLS=1` or one of the other ways under [Task tool availability](/docs/en/tools-reference#task-tool-availability). On earlier models such as Opus 4.7, and after you opt in, the task list works as follows:
 
 * Press `Ctrl+T` to toggle the task list view. The display shows up to five tasks at a time. When Claude hasn't created any checklist items yet, the toggle has no visible effect because there's nothing to display
+* If you leave the list expanded, Claude Code restores the expanded view the next time you launch into a session that still has tasks, such as with `--resume` or `--continue`. When the task list is empty, Claude Code starts it collapsed
 * To see all tasks or clear them, ask Claude directly: "show me all tasks" or "clear all tasks"
 * Tasks persist across context compactions, helping Claude stay organized on larger projects
 * To share a task list across sessions, set `CLAUDE_CODE_TASK_LIST_ID` to use a named directory in `~/.claude/tasks/`: `CLAUDE_CODE_TASK_LIST_ID=my-project claude`
@@ -548,7 +551,7 @@ On [Opus 4.8, Sonnet 5, Fable 5, Mythos 5, and later versions of those families]
 
 When you return to the terminal after stepping away, Claude Code shows a one-line recap of what happened in the session so far. The recap generates in the background once at least three minutes have passed since the last completed turn and the terminal is unfocused, so it's ready when you switch back. Recaps only appear once the session has at least three turns, and never twice in a row.
 
-Run `/recap` to generate a summary on demand. To turn automatic recaps off, open `/config` and disable **Session recap**.
+Run `/recap` to generate a summary on demand. Claude Code caps both automatic recaps and `/recap` output at 400 characters. To turn automatic recaps off, open `/config` and turn off **Session recap**.
 
 Session recap is on by default for every plan and provider. The recap is always skipped in non-interactive mode.
 

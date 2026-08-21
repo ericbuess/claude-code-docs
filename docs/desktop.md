@@ -878,7 +878,7 @@ This table compares core capabilities between the CLI and Desktop. For a full li
 
 ### What's not available in Desktop
 
-The following features are only available in the CLI or VS Code extension, except where noted:
+The following features aren't available in Desktop, except where noted:
 
 * **Third-party providers**: Desktop connects to Anthropic's API by default. To route Desktop through a gateway, or to run the Code tab on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a self-hosted LLM gateway, follow the links in the [Third-party providers row](#feature-comparison).
 * **Linux (beta)**: Computer Use isn't yet available in the Linux desktop app. See [Claude Desktop on Linux](/docs/en/desktop-linux).

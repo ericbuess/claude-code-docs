@@ -69,7 +69,7 @@ To configure the Claude Code GitHub Action without running `/install-github-app`
   <Step title="Add an authentication secret">
     Add one of the following secrets to your repository, depending on how you authenticate. See GitHub's guide to [using secrets in GitHub Actions](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
 
-    * `ANTHROPIC_API_KEY`: a Claude API key from the [Claude Console](https://console.anthropic.com)
+    * `ANTHROPIC_API_KEY`: a Claude API key from the [Claude Console](https://platform.claude.com)
     * `CLAUDE_CODE_OAUTH_TOKEN`: an OAuth token that authenticates with your Claude subscription, available on Pro, Max, Team, and Enterprise plans. Generate one by running `claude setup-token` locally. See [Generate a long-lived token](/docs/en/authentication#generate-a-long-lived-token)
 
     In workflow files, pass the secret to the matching input: `anthropic_api_key` for an API key, or `claude_code_oauth_token` for an OAuth token.
@@ -92,7 +92,7 @@ With quick setup or manual setup, you configure one repository at a time. To rol
 * Store the authentication secret as an organization-level Actions secret so each repository doesn't need its own copy
 * Add the workflow file to each repository that should run the Claude Code GitHub Action, or define the job once as a [reusable workflow](https://docs.github.com/en/actions/using-workflows/reusing-workflows) that each repository calls
 
-For a secret shared across repositories, authenticate with an API key from the [Claude Console](https://console.anthropic.com) rather than an OAuth token, since an OAuth token is tied to the subscription of the person who ran `claude setup-token`.
+For a secret shared across repositories, authenticate with an API key from the [Claude Console](https://platform.claude.com) rather than an OAuth token, since an OAuth token is tied to the subscription of the person who ran `claude setup-token`.
 
 To avoid storing a long-lived secret entirely, authenticate through workload identity federation, where the Claude Code GitHub Action exchanges the workflow's GitHub OpenID Connect (OIDC) token for Claude API access through a Claude Console service account. Set these inputs:
 
@@ -110,7 +110,7 @@ For data handling and retention questions in a security review, see [data usage]
 To remove the Claude Code GitHub Action, undo each piece of the setup that applies to your installation:
 
 * **Workflow files**: delete the workflows that use `anthropics/claude-code-action` from `.github/workflows/`. If you used quick setup, look for `claude.yml` and, if you selected the review workflow, `claude-code-review.yml`. With the workflows deleted, the Claude Code GitHub Action no longer runs
-* **Secrets**: delete the `ANTHROPIC_API_KEY` or `CLAUDE_CODE_OAUTH_TOKEN` secret from the repository, and from organization-level Actions secrets if you [shared it across repositories](#set-up-for-an-organization). If you delete a secret, the credential it held stays valid. To retire an API key entirely, also delete the key in the [Claude Console](https://console.anthropic.com)
+* **Secrets**: delete the `ANTHROPIC_API_KEY` or `CLAUDE_CODE_OAUTH_TOKEN` secret from the repository, and from organization-level Actions secrets if you [shared it across repositories](#set-up-for-an-organization). If you delete a secret, the credential it held stays valid. To retire an API key entirely, also delete the key in the [Claude Console](https://platform.claude.com)
 * **GitHub App**: uninstall the Claude GitHub App in your repository or organization settings under GitHub Apps, but only if you don't use it for another Claude feature, such as Code Review or web auto-fix
 
 If you configured a [cloud provider](/docs/en/github-actions-cloud-providers), also delete the provider secrets, such as `AWS_ROLE_TO_ASSUME`, the `GCP_*` secrets, or the `AZURE_*` secrets, and uninstall the custom GitHub App along with its `APP_ID` and `APP_PRIVATE_KEY` secrets.

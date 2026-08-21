@@ -65,11 +65,15 @@ Add a per-region breakdown below the summary chart and republish.
 
 Anyone with the page open sees the update in place. Each publish becomes a version, and from the **Share** control in the page header you can choose which version viewers see.
 
-To update an artifact from a different session, give Claude the artifact's URL and ask it to revise. Without the URL, a new session always creates a new artifact rather than updating an existing one.
+To update an artifact from a different session, give Claude its URL, or attach it with [`/artifacts`](#find-an-artifact-again). Without either, a new session creates a new artifact instead of updating one.
 
 ```text wrap theme={null}
 Update https://claude.ai/code/artifact/5fbea6f3-... with today's numbers.
 ```
+
+## Find an artifact again
+
+Run `/artifacts` in Claude Code to list every artifact you own and every artifact shared with you. Select one and press `o` to open it in your browser or `c` to copy its link. Press `Enter` to attach it to the current session; before v2.1.216, `Enter` opened it in your browser. Claude Code reads the list from your claude.ai account, so it works in a new session and after `/clear`, when the link has scrolled out of the terminal. Requires Claude Code v2.1.208 or later.
 
 ## Share an artifact
 
@@ -86,7 +90,7 @@ Who you can share with depends on your plan:
 
 People you share with are viewers by default: they see each version you publish but can't change the page. On Team and Enterprise plans, you can also make someone an editor. In the share dialog, add a person and switch their role from **viewer** to **editor**.
 
-An editor publishes new versions the same way you [update the artifact from another session](#update-an-artifact): they give Claude the artifact's URL in their own session, and Claude pulls the current content and republishes with their changes. Everyone with the page open sees each update live.
+An editor publishes new versions the same way you [update the artifact from another session](#update-an-artifact): they give Claude the artifact's URL, or attach it from [`/artifacts`](#find-an-artifact-again), and Claude pulls the current content and republishes with their changes. Everyone with the page open sees each update live.
 
 ## Collect comments on an artifact
 
