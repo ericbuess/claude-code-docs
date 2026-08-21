@@ -48,7 +48,7 @@ Learn more: [Auto memory](/docs/en/memory#auto-memory)
 
 ### Auto mode
 
-A [permission mode](#permission-mode) where a separate classifier model reviews actions instead of you, so Claude Code runs most of them without asking you. Claude Code still asks you before actions your explicit ask rules match. On Pro, Max, and Team plans, auto mode is the [built-in starting permission mode](/docs/en/permission-modes#which-mode-a-session-starts-in) for interactive terminal and VS Code sessions. The classifier blocks scope escalation, untrusted infrastructure, and [prompt injection](#prompt-injection). It never sees tool results, so injected instructions can't influence its decisions.
+A [permission mode](#permission-mode) where a separate classifier model reviews actions instead of you, so Claude Code runs most of them without asking you. Claude Code still asks you before actions your explicit ask rules match. On Pro, Max, and Team plans, auto mode is the [built-in starting permission mode](/docs/en/permission-modes#which-mode-a-session-starts-in) for interactive terminal and VS Code sessions. The classifier blocks scope escalation, untrusted infrastructure, and [prompt injection](#prompt-injection). Tool results are stripped from what it sees, so hostile content in a file or web page can't manipulate it directly.
 
 Learn more: [Eliminate prompts with auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode)
 
@@ -56,7 +56,7 @@ Learn more: [Eliminate prompts with auto mode](/docs/en/permission-modes#elimina
 
 ### Bare mode
 
-With `--bare`, Claude Code starts without loading hooks, skills, plugins, MCP servers, auto memory, or CLAUDE.md. Recommended for CI and scripted calls where you need the same result on every machine.
+With `--bare`, Claude Code starts without loading hooks, skills, custom commands, subagents, plugins, MCP servers, auto memory, or CLAUDE.md, apart from skills in a directory you pass with `--add-dir`. Recommended for CI and scripted calls where you need the same result on every machine.
 
 Learn more: [Start faster with bare mode](/docs/en/headless#start-faster-with-bare-mode)
 
@@ -234,7 +234,7 @@ Learn more: [The `.claude` directory](/docs/en/claude-directory)
 
 ### Prompt injection
 
-Hostile instructions embedded in a file, web page, or tool result that attempt to redirect Claude toward actions you never asked for. Claude Code's defenses include the permission system, command injection detection, and trust verification. [Auto mode](#auto-mode) adds a server-side probe that scans tool results for suspicious content and a classifier that never sees tool results, so injected text cannot influence its approval decisions.
+Hostile instructions embedded in a file, web page, or tool result that attempt to redirect Claude toward actions you never asked for. Claude Code's defenses include the permission system, command injection detection, and trust verification. [Auto mode](#auto-mode) adds a server-side probe that scans tool results for suspicious content and a classifier that reviews actions with tool results stripped, so injected text can't manipulate it directly.
 
 Learn more: [Protect against prompt injection](/docs/en/security#protect-against-prompt-injection)
 

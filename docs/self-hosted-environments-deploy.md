@@ -74,6 +74,35 @@ Deploy runner and session containers in a network segment or namespace whose out
 
 For details on which telemetry each session emits and how to turn it off, see [Telemetry](/docs/en/self-hosted-environments-reference#telemetry).
 
+### Authenticate to an egress proxy
+
+Some corporate egress proxies require a `Proxy-Authorization` header on every connection. The token in that header often rotates too fast to write into the proxy URL you set in `HTTPS_PROXY`. Set `HTTPS_PROXY` or `HTTP_PROXY` to your proxy's URL as usual, then set `--proxy-authorization-command` or `--proxy-authorization-file` to tell the runner where to read the header value from. Both flags require Claude Code v2.1.238 or later.
+
+#### Choose where the `Proxy-Authorization` value comes from
+
+Pick the flag that matches how you produce the `Proxy-Authorization` token:
+
+* **[`--proxy-authorization-command <command>`](/docs/en/self-hosted-environments-reference#runner-cli-flags)**: choose this for a token you generate on demand. The runner runs the shell command and uses its trimmed stdout as the header value, for example `Bearer <token>`.
+* **[`--proxy-authorization-file <path>`](/docs/en/self-hosted-environments-reference#runner-cli-flags)**: choose this for a token another process rotates in place. The runner reads the file and uses its trimmed contents as the header value.
+
+#### Configurations the runner refuses to start with
+
+Each flag also has an environment variable form, listed beside it in the [runner CLI flags reference](/docs/en/self-hosted-environments-reference#runner-cli-flags). Before the runner contacts your proxy or the control plane, it checks the flags and their variables, and refuses to start in three cases:
+
+* **Both flags set**: one flag plus the other flag's environment variable counts as setting both.
+* **No proxy URL**: neither `HTTPS_PROXY` nor `HTTP_PROXY` holds an `http://` or `https://` URL. The runner reads both variables in upper or lower case, and doesn't consult `ALL_PROXY`.
+* **Either flag passed to the orchestrator subcommand**: `self-hosted-runner orchestrator` doesn't accept the flags or their environment variables. Pass the flag to each runner the orchestrator starts instead.
+
+#### What the runner changes while a proxy-authorization flag is set
+
+With either flag set, the runner starts a listener of its own and sends proxy traffic from itself, its lifecycle hooks, and its sessions through that listener. The listener adds the `Proxy-Authorization` header on the way to your proxy.
+
+* **Listener**: the listener is a forward proxy on `127.0.0.1`. The runner starts the listener before registering with the control plane, and exits at startup if the listener can't start.
+* **Proxy variables**: the runner rewrites whichever of `HTTPS_PROXY` and `HTTP_PROXY` you set so that it points at the listener. That rewritten value reaches the runner itself, its lifecycle hooks, and every session it runs.
+* **Token rotation**: a rotated token takes effect without a restart. For each connection the listener opens to your proxy, the runner runs your command or reads your file again and adds the result as the header.
+* **Session environment**: a session reaches your proxy only through the listener. In each session's environment the runner removes `ALL_PROXY`, removes any spelling of `HTTPS_PROXY` or `HTTP_PROXY` that you didn't set, and pins `NO_PROXY` to the runner's own value.
+* **Logs**: the runner never logs the header value.
+
 ## Configure git
 
 The runner manages repository checkouts but doesn't configure git identity or credentials by default. You control the runner's image and process environment, so you control the git config. Choose one of two approaches:
@@ -262,7 +291,7 @@ secrets:
 
 ## Shutdown timing
 
-On `SIGTERM`, the runner stops taking new work, waits up to `--drain-wait-sec`, zero by default, for in-flight turns to finish, terminates each child process, and runs the [`post-session` lifecycle hook](/docs/en/self-hosted-environments-configuration#post-session). The full drain path needs up to `--session-stop-grace-sec` + `--drain-wait-sec` + `--post-session-hook-timeout-sec`, plus 15 seconds of fixed overhead for process cleanup, plus 30 more seconds when [`--push-outcome-on-release`](/docs/en/self-hosted-environments-reference#runner-cli-flags) is set. That is 80 seconds at defaults, and the runner logs the total at startup. Sessions drain in parallel under this one budget, so the total doesn't grow with `--capacity`.
+On `SIGTERM`, the runner stops taking new work and, unless you set [`--defer-shutdown-max-min`](#defer-the-drain-past-the-first-signal), waits up to `--drain-wait-sec`, zero by default, for in-flight turns to finish, terminates each child process, and runs the [`post-session` lifecycle hook](/docs/en/self-hosted-environments-configuration#post-session). The full drain path needs up to `--session-stop-grace-sec` + `--drain-wait-sec` + `--post-session-hook-timeout-sec`, plus 15 seconds of fixed overhead for process cleanup, plus 30 more seconds when [`--push-outcome-on-release`](/docs/en/self-hosted-environments-reference#runner-cli-flags) is set. That is 80 seconds at defaults, and the runner logs the total at startup. Sessions drain in parallel under this one budget, so the total doesn't grow with `--capacity`.
 
 At the default `--drain-wait-sec 0`, a rolling restart interrupts in-flight turns; each session resumes on another runner, losing unpushed work as described under [Known issues](#additional-limitations). Set `--drain-wait-sec`, and raise the grace period to match, to let turns finish first.
 
@@ -272,17 +301,38 @@ Give the runner at least the total it logs at startup before the host stops it. 
 
 * **With a `SIGTERM` grace period**: set `terminationGracePeriodSeconds` on Kubernetes, `stop_grace_period` on Docker Compose, or your orchestrator's equivalent to at least that total. The Kubernetes default of 30 seconds is shorter than the runner's drain path, so Kubernetes stops the pod before the runner finishes draining.
 * **With [`--retire-at`](/docs/en/self-hosted-environments-reference#runner-cli-flags)**: size the margin between the retire time and the host's stop time to cover typical turns, plus the background-task hold that [Runner lifecycle](/docs/en/self-hosted-environments#runner-lifecycle) describes, plus that same total. Compute the retire time at each launch, for example `date +%s` plus the runner's intended lifetime.
+* **With [`--defer-shutdown-max-min`](#defer-the-drain-past-the-first-signal)**: add two more parts to the drain-path total. The first is the minutes you configure. The second is the post-release grace that [Defer the drain past the first signal](#defer-the-drain-past-the-first-signal) describes, 75 seconds at defaults. With the flag set, the runner also prints the combined figure at startup, after the drain-path total.
+
+### Defer the drain past the first signal
+
+Set [`--defer-shutdown-max-min <n>`](/docs/en/self-hosted-environments-reference#runner-cli-flags) if you want a runner you're restarting to go on serving the sessions it holds for up to `n` minutes, instead of draining them on the first signal. On the first `SIGTERM` or `SIGINT`, the runner stops taking new work and goes on serving the sessions it holds. It keeps polling so that the control plane doesn't requeue those sessions. Requires Claude Code v2.1.238 or later.
+
+#### What happens to the sessions the runner holds after the first signal
+
+In the first two stages that follow the signal, the runner releases sessions, and a released session resumes on a fresh runner when its user sends their next message. Counting from the first signal, the runner moves through three stages:
+
+* **For the first `n` minutes**: the runner serves its sessions normally and keeps enforcing `--startup-timeout-min` and `--kill-session-after-min`. If you also set [`--release-idle-session-min`](/docs/en/self-hosted-environments-reference#runner-cli-flags), the runner releases any session whose user has been idle that long; without it, the runner releases no session early, apart from a startup timeout.
+* **When the `n` minutes run out**: the runner releases every session it still holds, idle or not. The runner waits for a mid-turn session's turn to end, and up to 60 seconds more for a turn's background tasks, before releasing that session.
+* **When the post-release grace runs out**: the runner drains whatever sessions it still holds, and the control plane requeues each drained session to another runner right away. The post-release grace starts when the `n` minutes run out and is 75 seconds at defaults. If you set `--drain-wait-sec` above 60 seconds, the post-release grace is `--drain-wait-sec` plus 15 seconds instead.
+
+At any stage, the runner exits 0 as soon as it holds no sessions. A second signal cuts the stages short: the runner drains immediately, as it does on the first signal without `--defer-shutdown-max-min`. Once a drain is under way, the next signal force-exits the runner. That holds whether a second signal or the post-release grace running out started the drain.
+
+#### Size the stop timeout
+
+Give your host's stop timeout at least the sum of three parts: the `n` minutes you configure, the post-release grace, and the full drain path that [Shutdown timing](#shutdown-timing) describes. With default settings the post-release grace is 75 seconds and the drain path is 80 seconds, so allow `n` minutes plus 155 seconds. The runner prints this sum at startup whenever `--defer-shutdown-max-min` is set.
+
+If the stop timeout runs out before the runner finishes, the host kills the runner. The sessions it still holds get no `post-session` hook. The runner doesn't deregister, and the control plane requeues the sessions about a minute later. If you can't give the stop timeout that sum, leave `--defer-shutdown-max-min` unset so the runner drains on the first signal instead.
 
 ### What reaches a running post-session hook
 
 The `post-session` hook and the Claude session child each run in their own POSIX process group, separate from the runner's, so stop mechanisms reach them differently:
 
-* **A second `SIGTERM` to the runner**: force-exits the runner immediately, skipping whatever remains of the drain path. Nothing signals a mid-run `post-session` hook, so on a bare host where an init process adopts orphans, it finishes on its own, but unsupervised: its timeout budget no longer applies, and a write to the closed log pipe can kill it with `SIGPIPE`, so a hook that needs to survive a forced exit there should redirect its own output to a file. In the container recipes on this page the runner is the container's PID 1 and its exit ends the container, and under systemd's default `KillMode=control-group` the cgroup kill in the third bullet applies; in both, treat a forced exit as fatal to the hook and rely on the grace period instead.
+* **A `SIGTERM` while the runner is already draining**: force-exits the runner immediately, skipping whatever remains of the drain path. Without [`--defer-shutdown-max-min`](#defer-the-drain-past-the-first-signal), that is the second `SIGTERM` the runner receives. Nothing signals a mid-run `post-session` hook, so on a bare host where an init process adopts orphans, it finishes on its own, but unsupervised: its timeout budget no longer applies, and a write to the closed log pipe can kill it with `SIGPIPE`, so a hook that needs to survive a forced exit there should redirect its own output to a file. In the container recipes on this page the runner is the container's PID 1 and its exit ends the container, and under systemd's default `KillMode=control-group` the cgroup-wide kill reaches the hook too, as the **Cgroup-wide kills** entry describes; in both, treat a forced exit as fatal to the hook and rely on the grace period instead.
 * **Process-group-wide signals**, such as `kill -- -<pid>` in a wrapper script, shell job control, or a group-wide watchdog: reach the runner and a mid-`checkout`-hook subprocess, which stays group-attached deliberately, but not a mid-run `post-session` hook or the session child.
 * **Cgroup-wide kills**, such as systemd's default `KillMode=control-group` or the `SIGKILL` Kubernetes delivers to the whole container when `terminationGracePeriodSeconds` expires: reach everything, including the hook. Process-group isolation doesn't protect against these, which is why the grace period must cover the full drain path.
 * **The hook's own timeout**: when a hook exceeds `--post-session-hook-timeout-sec`, the runner sends `SIGTERM` to the hook's whole process group, then `SIGKILL` two seconds later, so a worker the hook forked, such as tar, rsync, or git, terminates with the wrapper shell instead of surviving as an orphan. The runner's supervision ends once the hook's stdio closes: a worker that redirected its own output to a file and outlives the `SIGTERM` stage is past the runner's reach.
 
-On the first `SIGTERM`, and again on a forced exit, the runner logs how many `post-session` hooks are still running, so you can tell a quiet drain from one that's mid-snapshot.
+When the drain starts, and again on a forced exit, the runner logs how many `post-session` hooks are still running, so you can tell a quiet drain from one that's mid-snapshot.
 
 ## Keep the base directory and capacity identical across runners
 
@@ -362,6 +412,7 @@ Common issues:
 * **Runner exits at startup with `cannot create or write to base directory`**: the runner can't create or write to `--base-dir`, which defaults to `/workspace`. Fix the directory's ownership or point `--base-dir` at a writable path, as described in [Keep the base directory and capacity identical across runners](#keep-the-base-directory-and-capacity-identical-across-runners). If the runner instead logs `[runner:fatal]` saying the base directory check timed out, the directory is on a hung NFS or CSI mount. Check mount health rather than permissions. The runner prints both of these startup failures to stderr before it opens `--log-file`, so look for them in the terminal or your platform's container logs rather than the log file. Before v2.1.225, the runner didn't check the base directory at startup, and this misconfiguration failed sessions after pickup instead.
 * **Sessions stay queued**: every online runner may be locked to a different account. Check each runner's `claude_code_self_hosted_runner_locked_account` [metric](/docs/en/self-hosted-environments-reference#prometheus-metrics) or its `Picked up session` log lines to see which account holds it. Add replicas, or wait for an existing runner to drain and restart. If the environment uses on-demand runners, check the orchestrator instead; see [On-demand runners](/docs/en/self-hosted-environments-configuration#on-demand-runners).
 * **Sessions fail immediately after pickup**: open the session in claude.ai/code to see the error. The most common causes are missing [git credentials](#configure-git) in the runner image and build tools that aren't installed. An unwritable base directory stops the runner at startup instead of failing sessions. See the **Runner exits at startup with `cannot create or write to base directory`** entry in this list.
+* **Sessions can't reach the network through an authenticating egress proxy**: when the source you set with [`--proxy-authorization-command` or `--proxy-authorization-file`](#authenticate-to-an-egress-proxy) fails, times out after 30 seconds, or yields an empty value, the runner answers that connection `502 Bad Gateway` and logs why. The runner redacts the command's stderr in that log and never logs the header value. With `--proxy-authorization-command`, run the command yourself on the host to confirm it prints the whole header value on stdout. If the runner instead exits at startup with `could not start the proxy-authorization listener`, it couldn't open its loopback listener.
 * **A session's branch no longer exists on the remote**: for a git source the session only reads from, the runner skips that source and continues on the remaining ones. For the source the session pushes results to, a deleted branch, typically because it was merged and auto-deleted, fails the session with an error naming the repository and branch and asking you to restore the branch and retry. The runner fails the session with the same error when skipping would leave it with no repository at all. Before v2.1.228, such a session started in an empty directory.
 * **Sessions take minutes to start**: the initial clone usually dominates. Watch the `claude_code_self_hosted_runner_session_init_duration_seconds` [metric](/docs/en/self-hosted-environments-reference#prometheus-metrics) to confirm, and cut the clone with a [pre-warmed checkout](#reuse-a-pre-warmed-checkout) or a smaller `CLAUDE_RUNNER_FETCH_DEPTH`.
 * **Pod is killed mid-drain**: raise `terminationGracePeriodSeconds` to at least the value the runner logs at startup. See [Shutdown timing](#shutdown-timing).

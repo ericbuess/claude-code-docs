@@ -85,16 +85,18 @@ When a developer starts a session and selects your environment, Anthropic's cont
 3. The child streams events back over HTTPS while the runner keeps polling; each poll refreshes the lease and doubles as the heartbeat.
 4. If the runner stops polling for about 60 seconds, the server requeues the session for another runner.
 
+The runner gives each poll request 10 seconds. When a request times out or is lost, the runner retries after a second or two instead of waiting for the next scheduled poll. Each further request that times out or is lost doubles the gap before the next retry, up to 20 seconds, and the runner shortens the gap whenever the lease is close to expiring.
+
 ### Runner lifecycle
 
-The first session a runner picks up locks the runner to the account of the user who started that session, and the runner runs up to `--capacity` concurrent sessions for that account. While the runner has active sessions, the runner keeps claiming the locked account's queued work. What happens once they finish depends on [`--drain-grace-sec`](/docs/en/self-hosted-environments-reference#runner-cli-flags):
+The first session a runner picks up locks the runner to the account of the user who started that session, and the runner runs up to `--capacity` concurrent sessions for that account. While the runner has active sessions and hasn't received a shutdown signal or reached its retire time, the runner keeps claiming the locked account's queued work. What happens once they finish depends on [`--drain-grace-sec`](/docs/en/self-hosted-environments-reference#runner-cli-flags):
 
 * **At the default of `0`**: the runner exits as soon as its active sessions finish, without polling for more, so the orchestrator you deploy it under, such as Kubernetes, can restart it with a fresh disk, ready to serve any account.
 * **At a positive value**: the runner keeps polling the locked account's queue for that many seconds before exiting.
 
 This lifecycle isolates each user's checked-out code without requiring the runner to delete disk state between users.
 
-A kill that delivers `SIGTERM` needs no flag: the runner drains as [Shutdown timing](/docs/en/self-hosted-environments-deploy#shutdown-timing) describes. If your infrastructure instead destroys hosts at a known wall-clock time without a signal, or with a grace period too short to drain, such as a sandbox lifetime cap or spot-instance reclamation, pass `--retire-at <epoch-seconds>` set to a few minutes before that time. At the retire time:
+How your infrastructure stops a runner decides whether you need `--retire-at`. A kill that delivers `SIGTERM` needs no flag: the runner drains as [Shutdown timing](/docs/en/self-hosted-environments-deploy#shutdown-timing) describes, or keeps serving the sessions it already holds when you set [`--defer-shutdown-max-min`](/docs/en/self-hosted-environments-deploy#defer-the-drain-past-the-first-signal). If your infrastructure instead destroys hosts at a known wall-clock time without a signal, or with a grace period too short to drain, such as a sandbox lifetime cap or spot-instance reclamation, pass `--retire-at <epoch-seconds>` set to a few minutes before that time. At the retire time:
 
 1. The runner stops taking new work.
 2. The runner releases each active session through the same release path the [`--release-idle-session-min`](/docs/en/self-hosted-environments-reference#runner-cli-flags) flag uses, so the session resumes on a fresh runner when the user sends their next message. When the runner releases each session depends on its state:
@@ -116,6 +118,8 @@ The runner and its sessions make several kinds of outbound connection, and no in
 Model inference uses the Anthropic API. The control plane delivers the API endpoint to each session, and the session authenticates with an Anthropic-issued, session-scoped OAuth token, so inference can't be routed through [Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry](/docs/en/third-party-integrations), or an [LLM gateway](/docs/en/llm-gateway) in self-hosted environments.
 
 Corporate egress proxies are supported. The runner and the optional [autoscaling orchestrator](/docs/en/self-hosted-environments-configuration#on-demand-runners) honor the proxy and mTLS environment variables described in [Network configuration](/docs/en/network-config), such as `HTTPS_PROXY` and `NO_PROXY`; set them in each process's environment. The variables cover control-plane calls, the orchestrator's [SCM connector](/docs/en/self-hosted-environments-reference#scm-connector-flags) WebSocket, and the built-in clone for HTTPS remotes, and sessions inherit them from the runner. Session streaming uses server-sent events over HTTPS, so a proxy in the path must not buffer responses.
+
+If your proxy also requires a `Proxy-Authorization` header, the runner can add it to each connection it opens to the proxy; see [Authenticate to an egress proxy](/docs/en/self-hosted-environments-deploy#authenticate-to-an-egress-proxy).
 
 ## What stays on your infrastructure
 

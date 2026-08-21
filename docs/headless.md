@@ -34,9 +34,9 @@ Claude Code exits with code 0 on success and a non-zero code when the run fails,
 
 ### Start faster with bare mode
 
-Add `--bare` to reduce startup time by skipping auto-discovery of hooks, skills, plugins, MCP servers, auto memory, and CLAUDE.md. Without it, `claude -p` loads the same [context](/docs/en/how-claude-code-works#the-context-window) an interactive session would, including anything configured in the working directory or `~/.claude`.
+Add `--bare` to reduce startup time by skipping auto-discovery of hooks, skills, custom commands, [subagents](/docs/en/sub-agents), plugins, MCP servers, auto memory, and CLAUDE.md. Without it, `claude -p` loads the same [context](/docs/en/how-claude-code-works#the-context-window) an interactive session would, including anything configured in the working directory or `~/.claude`.
 
-Bare mode is useful for CI and scripts where you need the same result on every machine. A hook in a teammate's `~/.claude` or an MCP server in the project's `.mcp.json` won't run, because bare mode never reads them.
+Bare mode is useful for CI and scripts where you need the same result on every machine. A hook in a teammate's `~/.claude` or an MCP server in the project's `.mcp.json` won't run, because bare mode never reads them. A directory you name with `--add-dir` is a partial exception: bare mode loads skills from its `.claude/skills/` folder, but still skips its `.claude/commands/` and `.claude/agents/` folders. [Skills from additional directories](/docs/en/skills#skills-from-additional-directories) covers what does and doesn't load.
 
 Without `--bare`, Claude Code runs the hooks in a project's `.claude/settings.json` even in a folder you've never trusted, because a `-p` session shows no workspace trust dialog. It also connects the servers in the project's `.mcp.json`, because a `-p` session can't show the per-server approval prompt either. [What runs before you trust a folder](/docs/en/permissions#what-runs-before-you-trust-a-folder) covers each kind of repository content under `-p` and how to keep it out.
 
@@ -68,7 +68,9 @@ If Claude starts a [background Bash task](/docs/en/tools-reference#bash-tool-beh
 
 Background [subagents](/docs/en/sub-agents) and workflows are exempt from the five-second grace because their result is part of the final output, so `claude -p` waits for them to complete. From v2.1.182, that wait is capped at ten minutes by default so a stuck background agent cannot hold the process open indefinitely. Adjust the cap with [`CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS`](/docs/en/env-vars), or set it to `0` to wait without a limit.
 
-If you stop a `claude -p` run with SIGTERM, for example from `kill`, a process supervisor, or an SDK host closing the session, Claude Code aborts the in-progress turn, terminates the process tree of any running Bash command, runs [`SessionEnd` hooks](/docs/en/hooks#sessionend), and exits with code 143.
+### Stop a run with SIGTERM
+
+If you stop a `claude -p` run with SIGTERM, for example from `kill` or a process supervisor, Claude Code terminates the process tree of any running Bash command, runs [`SessionEnd` hooks](/docs/en/hooks#sessionend), and exits with code 143. It doesn't interrupt the in-progress turn or record a result for it: a command that was running is recorded as killed, a permission prompt that was waiting for an answer is left unanswered, and no new tool, model request, or hook other than `SessionEnd` is started once the process has begun exiting, so resuming the session picks up from that point. An SDK host that closes the session ends Claude Code's input first, which cancels a waiting prompt before any signal arrives; to end the turn cleanly yourself, send SIGINT, or the SDK's `interrupt()`, before stopping the process.
 
 ## Examples
 
