@@ -73,7 +73,9 @@ Update https://claude.ai/code/artifact/5fbea6f3-... with today's numbers.
 
 ## Share an artifact
 
-A new artifact is visible only to you. To share it, open the artifact in your browser and use the **Share** control in the page header. The header names you as the artifact's author, so anyone you share it with can see who published the page. It also links to your gallery at [claude.ai/code/artifacts](https://claude.ai/code/artifacts), which lists every artifact you have created.
+A new artifact is visible only to you. To share it, open the artifact in your browser and use the **Share** control in the page header. The header also links to your gallery at [claude.ai/code/artifacts](https://claude.ai/code/artifacts), which lists every artifact you have created.
+
+Viewers in your organization can see who published the page: on an artifact shared within your organization, your name is in the title menu, and on a public artifact it's in the page header for signed-in viewers in your organization. A viewer who opens a public link without signing in, or from outside your organization, sees the label `Content is user-generated and unverified.` instead of your name.
 
 Who you can share with depends on your plan:
 
@@ -85,6 +87,43 @@ Who you can share with depends on your plan:
 People you share with are viewers by default: they see each version you publish but can't change the page. On Team and Enterprise plans, you can also make someone an editor. In the share dialog, add a person and switch their role from **viewer** to **editor**.
 
 An editor publishes new versions the same way you [update the artifact from another session](#update-an-artifact): they give Claude the artifact's URL in their own session, and Claude pulls the current content and republishes with their changes. Everyone with the page open sees each update live.
+
+## Collect comments on an artifact
+
+When you share an artifact within your organization, the people you share it with can leave comments on the page, and you can have Claude read those comments and reply to them. You need Claude Code v2.1.221 or later and a Team or Enterprise plan, because only an artifact you [share within your organization](#share-an-artifact) takes comments. Claude reads the comments in two cases:
+
+* **You ask Claude to read them**: give Claude the artifact's URL and ask for the comments. Claude lists each thread and marks the comments a commenter sent to it.
+* **A commenter sends a comment to Claude**: in a thread on the page, the commenter mentions `@claude` or uses the thread's Claude control, where the page offers one. Either gesture activates the thread, and Claude can reply only in a thread someone activated. Viewers see each reply attributed to Claude, via you.
+
+If you share an artifact publicly, viewers can't comment on it: the page says `Comments aren't available while this Artifact is shared publicly.` To switch an artifact that already has comment threads to a public link, delete the threads first.
+
+To ask for the comments yourself, give Claude the URL:
+
+```text wrap theme={null}
+Read the comments on https://claude.ai/code/artifact/5fbea6f3-... and make the changes the commenters ask for.
+```
+
+If Claude tells you it can't read comments, check three things:
+
+* You're running Claude Code v2.1.221 or later.
+* You're not in your first session since you installed Claude Code or upgraded from a version before v2.1.221. In that [first session after an install or upgrade](/docs/en/env-vars#first-session-after-an-install-or-upgrade), Claude can't read comments yet; start a new session and ask again.
+* You haven't turned feature-flag fetching off. If you set `DISABLE_GROWTHBOOK`, `DISABLE_TELEMETRY`, or `DO_NOT_TRACK`, also set [`CLAUDE_CODE_ARTIFACT_COMMENTS=1`](/docs/en/env-vars#features-that-need-feature-flag-fetching) so Claude can read comments without fetching flags.
+
+### Let Claude reply to comments on its own
+
+After your session publishes an artifact, Claude Code watches that artifact for comments for as long as the session runs. When a commenter sends a comment to Claude, it reaches your session right away, and Claude can read the thread and reply without you asking. You need Claude Code v2.1.228 or later. If you turned feature-flag fetching off, also set both [`CLAUDE_CODE_ARTIFACT_COMMENTS=1` and `CLAUDE_CODE_ARTIFACT_COMMENTS_AUTOREACT=1`](/docs/en/env-vars#features-that-need-feature-flag-fetching). Your [permission mode](/docs/en/permission-modes) decides what Claude does when a sent comment arrives:
+
+* **Claude replies on its own**: when your permission mode lets Claude post the reply without asking you, Claude reads the thread and replies, and edits the artifact when the comment asks for a change. You see `Auto-replied to comment thread on Artifact: <name>` or `Auto-edited Artifact: <name> in response to a comment thread`.
+* **Claude waits for you**: outside plan mode, when posting the reply would need your approval, you see `Comments are waiting on Artifact: <name>`. Claude then asks you for approval to read the thread, and again to post the reply.
+* **Claude pauses in plan mode**: you see `Comments are waiting on Artifact: <name>`, and Claude doesn't reply until you leave plan mode and ask it to read and reply.
+
+Claude also stops replying on its own to an artifact after it handles 60 sent comments or thread activations on that artifact within an hour. You see `Comments are waiting on Artifact: <name>` once, and Claude picks up again as that hour's comments age out.
+
+Run `/tasks` to see each artifact your session is watching, listed as a live-updates task. You can stop Claude from replying on its own in three ways, and each one lasts a different length of time:
+
+* **Press Ctrl+C once**: Claude stops replying on every artifact your session is watching, and starts again on an artifact when you have your session publish it again.
+* **Stop the task in `/tasks`**: Claude stops replying on that artifact for the rest of the session. Publishing it again doesn't start replies again, and if you resume the session later, Claude still doesn't reply there.
+* **Press `Ctrl+X Ctrl+K` twice within 3 seconds**: the chord that [stops every running background subagent](/docs/en/interactive-mode#general-controls) also stops Claude from replying on every artifact for the rest of the session.
 
 ## Pull live data with MCP connectors
 

@@ -16,9 +16,11 @@ For instructions about your project, conventions, or codebase, use [CLAUDE.md](/
 
 Claude Code's **Default** output style is the existing system prompt, designed to help you complete software engineering tasks efficiently.
 
-There are three additional built-in output styles:
+There are four additional built-in output styles:
 
 * **Proactive**: Claude executes immediately, makes reasonable assumptions instead of pausing for routine decisions, and prefers action over planning. This is stronger autonomous-execution guidance than [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) applies, and it works without changing your permission mode, so your permission mode still decides what runs without asking you.
+
+* **Concise**: Claude leads with the result, skips preamble and narration, and keeps responses short by default, while doing the engineering work as thoroughly as in the Default style. When you ask for an explanation or more detail, Claude answers in full. Claude always keeps the complete content of error reports, security warnings, and confirmations for destructive actions. Requires Claude Code v2.1.237 or later.
 
 * **Explanatory**: Provides educational "Insights" in between helping you complete software engineering tasks. Helps you understand implementation choices and codebase patterns.
 
@@ -106,7 +108,7 @@ Output styles directly modify Claude Code's system prompt.
 
 Output styles apply to the main conversation only: a [subagent runs its own system prompt](/docs/en/sub-agents#what-loads-at-startup), so styles don't change how subagents respond. A [fork](/docs/en/sub-agents#fork-the-current-conversation) is the exception, because it inherits the parent's full system prompt.
 
-Token usage depends on the style. Adding instructions to the system prompt increases input tokens, though prompt caching reduces this cost after the first request in a session. The built-in Explanatory and Learning styles produce longer responses than Default by design, which increases output tokens. For custom styles, output token usage depends on what your instructions tell Claude to produce.
+Token usage depends on the style. Adding instructions to the system prompt increases input tokens, though prompt caching reduces this cost after the first request in a session. The built-in Explanatory and Learning styles produce longer responses than Default by design, which increases output tokens, and the Concise style does the opposite by instructing Claude to keep responses short by default. For custom styles, output token usage depends on what your instructions tell Claude to produce.
 
 ## Comparisons to related features
 

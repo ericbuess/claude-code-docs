@@ -12,6 +12,7 @@ Claude Code works in any terminal without configuration. This page is for when s
 * [Option-key shortcuts do nothing on macOS](#enable-option-key-shortcuts-on-macos)
 * [No sound or alert when Claude finishes](#get-a-terminal-bell-or-notification)
 * [You run Claude Code inside tmux](#configure-tmux)
+* [Backspace deletes a whole word on Windows](#fix-backspace-deleting-a-whole-word-on-windows)
 * [Display flickers or scrollback jumps](#switch-to-fullscreen-rendering)
 * [You want Vim keys in the prompt](#edit-prompts-with-vim-keybindings)
 
@@ -118,6 +119,12 @@ set -as terminal-features 'xterm*:extkeys'
 ```
 
 The `allow-passthrough` line lets notifications and progress updates reach the outer terminal instead of being swallowed by tmux. The `extended-keys` lines let tmux distinguish Shift+Enter from plain Enter so the newline shortcut works.
+
+## Fix Backspace deleting a whole word on Windows
+
+On Windows, Claude Code reads a Backspace that arrives as `^H` as Ctrl+Backspace, which [deletes the previous word](/docs/en/interactive-mode#text-editing), except when `TERM_PROGRAM` is `mintty` or `TERM` is `cygwin`. On macOS and Linux, Claude Code reads it as plain Backspace.
+
+If each press of Backspace deletes a whole word, your terminal sends `^H` for plain Backspace. Set [`CLAUDE_CODE_BS_AS_CTRL_BACKSPACE=0`](/docs/en/env-vars). Backspace and Ctrl+H then erase one character each. If Ctrl+Backspace erases only one character on macOS or Linux because your terminal sends `^H` for it, set the variable to `1` instead.
 
 ## Match the color theme
 

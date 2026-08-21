@@ -182,7 +182,9 @@ Your terminal's `Cmd+f` and tmux search don't see the conversation because it li
 
 ## Clear the conversation
 
-Press `Ctrl+L` twice within two seconds to run `/clear` and start a new conversation. The first press redraws the screen and shows a hint; the second press clears the conversation. On macOS, double-pressing `Cmd+K` also runs `/clear`.
+Run `/clear` to start a new conversation. Pressing `Ctrl+L` or `Cmd+K` doesn't clear the conversation; Claude Code redraws the screen and keeps it. Before v2.1.238, Claude Code ran `/clear` when you pressed `Ctrl+L` or `Cmd+K` twice within two seconds.
+
+On iTerm2 and Terminal.app, your terminal handles `Cmd+K` itself and clears its own screen without telling Claude Code. Claude Code detects the cleared screen and repaints the conversation.
 
 ## Use with tmux
 
