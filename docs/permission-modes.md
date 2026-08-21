@@ -259,7 +259,7 @@ Approving a plan exits plan mode and switches the session to the permission mode
 
 Press `Ctrl+G` to open the proposed plan in your default text editor and edit it directly before Claude proceeds. When [`showClearContextOnPlanAccept`](/docs/en/settings#available-settings) is enabled, the list gains a first option that approves the plan and clears the planning context.
 
-Accepting a plan also names the session from the plan content automatically, unless you've already set a name with `--name` or `/rename`.
+Accepting a plan also gives the session a [generated title](/docs/en/sessions#name-your-sessions) based on the plan, unless you've already named the session.
 
 ### Set plan mode as the default
 

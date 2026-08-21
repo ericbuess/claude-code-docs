@@ -298,7 +298,7 @@ See [system prompt flags](/docs/en/cli-reference#system-prompt-flags) for more o
 
 ### Continue conversations
 
-Use `--continue` to continue the most recent conversation, or `--resume` with a session ID to continue a specific conversation. This example runs a review, then sends follow-up prompts:
+Use `--continue` to continue the most recent conversation, or `--resume` with a session ID to continue a specific conversation. `--continue` skips [background sessions](/docs/en/sessions#resume-a-session). This example runs a review, then sends follow-up prompts:
 
 ```bash theme={null}
 # First request

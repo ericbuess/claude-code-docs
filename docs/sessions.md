@@ -16,13 +16,13 @@ Sessions are saved continuously to [local transcript files](#export-and-locate-s
 
 | Command                     | What it does                                                              |
 | :-------------------------- | :------------------------------------------------------------------------ |
-| `claude --continue`         | Resumes the most recent session in the current directory                  |
+| `claude --continue`         | Resumes the most recent interactive session in the current directory      |
 | `claude --resume`           | Opens the [session picker](#use-the-session-picker)                       |
 | `claude --resume <name>`    | Resumes the named session directly                                        |
 | `claude --from-pr <number>` | Opens the session picker filtered to sessions linked to that pull request |
 | `/resume`                   | Switches to a different conversation from inside an active session        |
 
-Sessions created with [`claude -p`](/docs/en/headless) or the [Agent SDK](/docs/en/agent-sdk/overview) don't appear in the session picker, but you can still resume one by passing its session ID to `claude --resume <session-id>`.
+Claude Code leaves sessions created with [`claude -p`](/docs/en/headless) or the [Agent SDK](/docs/en/agent-sdk/overview) out of the session picker and out of `claude --continue`. You can still resume one by passing its session ID to `claude --resume <session-id>`. With `claude --continue`, Claude Code also skips [background sessions](/docs/en/agent-view) and [sessions whose first prompt was `/loop`](#where-the-session-picker-looks). When you run [`claude -p --continue`](/docs/en/headless#continue-conversations), Claude Code includes `-p`, SDK, and `/loop` sessions and still skips background sessions.
 
 You can run `claude --resume <session-id>` from any directory: Claude Code looks for the ID in the current project directory and its git worktrees first, then in every other project on this machine, so it finds a session that started elsewhere or moved with [`/cd`](/docs/en/commands). The cross-project search resolves the ID only when exactly one other project holds a transcript with messages for it, so a hand-copied duplicate makes Claude Code report not-found rather than resume an arbitrary copy. If no stored session matches the ID, Claude Code reports `No conversation found with session ID: <session-id>`. Before v2.1.223, the lookup stopped at the current project directory and its git worktrees, so you had to resume from the directory the session last worked in.
 
@@ -63,7 +63,7 @@ Claude Code stores sessions per project directory. By default the session picker
 
 Use `Ctrl+W` to widen to all worktrees of the repository or `Ctrl+A` to widen to every project on this machine.
 
-Sessions whose first prompt was a [`/loop`](/docs/en/scheduled-tasks#run-a-prompt-repeatedly-with-%2Floop) command don't appear in the picker; running `/loop` later in a conversation doesn't hide the session. Before v2.1.211, a `/loop` run early in a conversation hid the session from the picker permanently.
+Sessions whose first prompt was a [`/loop`](/docs/en/scheduled-tasks#run-a-prompt-repeatedly-with-%2Floop) command don't appear in the picker, and `claude --continue` skips them too. Running `/loop` later in a conversation doesn't hide the session. Before v2.1.211, a `/loop` run early in a conversation hid the session from the picker permanently.
 
 From v2.1.169, moving a session with [`/cd`](/docs/en/commands) relocates it to the new directory's project storage, so it appears in that directory's picker afterward. As of v2.1.196, a moved session stays out of the old directory's picker even after a crash or forced exit. On earlier versions, it could also reappear in the old directory's list after an exit that wasn't clean when the old path contained special characters such as underscores.
 
@@ -80,14 +80,14 @@ Resuming by name resolves across the current repository and its worktrees. Both 
 
 Give sessions descriptive names so they're findable in the session picker and resumable by name. This matters most when you're working on several tasks in parallel.
 
-| When                             | How to set the name                                                                                                                                                     |
-| :------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| At startup                       | `claude -n auth-refactor`                                                                                                                                               |
-| During a session                 | `/rename auth-refactor`. The name also appears on the prompt bar                                                                                                        |
-| From the session picker          | Highlight a session and press `Ctrl+R`                                                                                                                                  |
-| On plan accept                   | Accepting a plan in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) names the session from the plan content unless you've already set one      |
-| From claude.ai or the Claude app | Rename a [Remote Control session](/docs/en/remote-control#connect-from-another-device); Claude Code applies the same name in the CLI. Requires Claude Code v2.1.221 or later |
-| From the desktop app             | Rename a session in the [desktop app](/docs/en/desktop#work-in-parallel-with-sessions)                                                                                       |
+| When                             | How to set the name                                                                                                                                                               |
+| :------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| At startup                       | `claude -n auth-refactor`                                                                                                                                                         |
+| During a session                 | `/rename auth-refactor`. The name also appears on the prompt bar                                                                                                                  |
+| From the session picker          | Highlight a session and press `Ctrl+R`                                                                                                                                            |
+| On plan accept                   | Accepting a plan in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) gives the session a generated title based on the plan unless you've already named it |
+| From claude.ai or the Claude app | Rename a [Remote Control session](/docs/en/remote-control#connect-from-another-device); Claude Code applies the same name in the CLI. Requires Claude Code v2.1.221 or later           |
+| From the desktop app             | Rename a session in the [desktop app](/docs/en/desktop#work-in-parallel-with-sessions)                                                                                                 |
 
 Once you name a session through a CLI route or from claude.ai, return to it with `claude --resume <name>` or `/resume <name>`; a desktop-app session resumes in the app, which keeps its own session history. See [Resume a session](#resume-a-session) for how name resolution behaves across worktrees.
 
@@ -99,11 +99,10 @@ In three cases Claude Code doesn't rename the duplicate, so you can still see tw
 * It doesn't check the `--name` of a [background](/docs/en/agent-view#from-your-shell) or `-p` session at startup.
 * It can't rename a session on an earlier version of Claude Code.
 
-Interactive sessions you never name still get a default display name when they start. Requires Claude Code v2.1.196 or later. The default combines the working directory's name with a two-character suffix, for example `my-app-3f`, and identifies the session in listings of running sessions, such as [agent view](/docs/en/agent-view) and `claude agents --json` output.
+Sessions you don't name still get two labels that Claude Code assigns. Only the generated title works as a resume handle:
 
-The default isn't a resume handle: `claude --resume <name>`, `/resume <name>`, and the session picker match only names you set. Naming the session replaces the default.
-
-If you don't name a session, Claude Code generates a session title for it: a short summary of your first prompt, written by a background request to the small/fast model, normally a Haiku-class model. Naming the session with `--name` or `/rename` replaces the generated title. You see the generated title in the [session picker](#use-the-session-picker) and in the statusline [`session_name`](/docs/en/statusline) field when no name is set; like the default display name, it isn't a resume handle.
+* Default display name: interactive sessions you never name still get a default display name when they start. Requires Claude Code v2.1.196 or later. The default combines the working directory's name with a two-character suffix, for example `my-app-3f`, and identifies the session in listings of running sessions, such as [agent view](/docs/en/agent-view) and `claude agents --json` output. The default isn't a resume handle. If you pass it to `claude --resume` or `/resume`, Claude Code doesn't find the session. Naming the session replaces the default in those listings, and so does accepting a plan.
+* Generated title: if you don't name a session, Claude Code generates a session title for it. The title is a short summary of your first prompt, written by a background request to the small/fast model, normally a Haiku-class model. Accepting a plan replaces it with a title based on the plan. Naming the session replaces the generated title. You see the first-prompt title in the [session picker](#use-the-session-picker) and in the statusline [`session_name`](/docs/en/statusline) field when no name is set. The plan title shows in the same two places and also in the listings of running sessions, where it takes the place of the default display name. You can pass either title to `claude --resume` or `/resume`, and Claude Code resolves it the same way as a name you set.
 
 ## Use the session picker
 

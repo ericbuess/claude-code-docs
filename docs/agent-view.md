@@ -313,7 +313,7 @@ You can dispatch new background sessions from agent view, send or copy an existi
 
 Type a prompt in the input at the bottom of agent view and press `Enter` to start a new background session. The session is named automatically from the prompt; rename it later with `Ctrl+R`.
 
-The automatic name is a short label written by a [Haiku-class model](/docs/en/model-config). A name the session gets later also appears on its row, including the name Claude derives when you [accept a plan](/docs/en/permission-modes#review-and-approve-a-plan) in that session.
+The automatic name is a short label written by a [Haiku-class model](/docs/en/model-config). A name the session gets later also appears on its row, including the [generated title](/docs/en/sessions#name-your-sessions) the session gets when you [accept a plan](/docs/en/permission-modes#review-and-approve-a-plan) in that session.
 
 Paste an image into the prompt to include a screenshot or diagram with the task.
 
@@ -635,14 +635,14 @@ Every background session has a short ID you can use from the shell. The ID is pr
 
 Each entry describes one session:
 
-| Field                      | Present                    | Description                                                                                                                                                                                                                                   |
-| :------------------------- | :------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cwd`, `kind`, `startedAt` | Always                     | The working directory, `interactive` or `background`, and the start time in Unix milliseconds                                                                                                                                                 |
-| `id`                       | Background sessions        | Short ID, usable with `claude attach`, `claude logs`, and `claude stop`                                                                                                                                                                       |
-| `state`                    | Background sessions        | One of `working`, `blocked`, `done`, `failed`, or `stopped`                                                                                                                                                                                   |
-| `pid`, `status`            | While the process is alive | Process ID and current status                                                                                                                                                                                                                 |
-| `waitingFor`               | When `status` is `waiting` | What the session is blocked on: `permission prompt` for an approval, `input needed` for a question from Claude or an MCP server's input request, `sandbox request`, `worker request`, or `dialog open`                                        |
-| `sessionId`, `name`        | When set                   | `sessionId` is the full session UUID, usable with [`claude --resume`](/docs/en/sessions). An interactive session you never named carries a default `name` built from its working directory's name plus a two-character suffix, such as `my-app-3f` |
+| Field                      | Present                    | Description                                                                                                                                                                                                                           |
+| :------------------------- | :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `cwd`, `kind`, `startedAt` | Always                     | The working directory, `interactive` or `background`, and the start time in Unix milliseconds                                                                                                                                         |
+| `id`                       | Background sessions        | Short ID, usable with `claude attach`, `claude logs`, and `claude stop`                                                                                                                                                               |
+| `state`                    | Background sessions        | One of `working`, `blocked`, `done`, `failed`, or `stopped`                                                                                                                                                                           |
+| `pid`, `status`            | While the process is alive | Process ID and current status                                                                                                                                                                                                         |
+| `waitingFor`               | When `status` is `waiting` | What the session is blocked on: `permission prompt` for an approval, `input needed` for a question from Claude or an MCP server's input request, `sandbox request`, `worker request`, or `dialog open`                                |
+| `sessionId`, `name`        | When set                   | `sessionId` is the full session UUID, usable with [`claude --resume`](/docs/en/sessions). An interactive session's `name` is its [default display name](/docs/en/sessions#name-your-sessions) until you name the session or accept a plan in it |
 
 ## How background sessions are hosted
 

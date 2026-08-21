@@ -475,4 +475,3 @@ Explore related approaches for parallel work and delegation:
 
 * **Lightweight delegation**: [subagents](/docs/en/sub-agents) spawn helper agents for research or verification within your session, better for tasks that don't need inter-agent coordination
 * **Manual parallel sessions**: [Git worktrees](/docs/en/worktrees) let you run multiple Claude Code sessions yourself without automated team coordination
-* **Compare approaches**: see the [subagent vs agent team](/docs/en/features-overview#compare-similar-features) comparison for a side-by-side breakdown

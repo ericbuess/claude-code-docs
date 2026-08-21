@@ -2601,17 +2601,17 @@ exit 0
 
 Runs when a configuration file changes during a session. Use this to audit settings changes, enforce security policies, or block unauthorized modifications to configuration files.
 
-ConfigChange hooks fire for changes to settings files, managed policy settings, and skill files.
+Claude Code runs ConfigChange hooks when a settings file, a managed policy file, or a skill file changes. For managed policy, it runs them only when `managed-settings.json` or a file in `managed-settings.d/` changes. It applies [server-managed settings](/docs/en/server-managed-settings) and changes to macOS managed preferences or Windows registry policy without running them. On WSL with [`wslInheritsWindowsSettings`](/docs/en/settings#available-settings), it also applies a changed Windows-side managed settings file on its policy poll without running them.
 
 The matcher filters on the configuration source:
 
-| Matcher            | When it fires                             |
-| :----------------- | :---------------------------------------- |
-| `user_settings`    | `~/.claude/settings.json` changes         |
-| `project_settings` | `.claude/settings.json` changes           |
-| `local_settings`   | `.claude/settings.local.json` changes     |
-| `policy_settings`  | Managed policy settings change            |
-| `skills`           | A skill file in `.claude/skills/` changes |
+| Matcher            | When it fires                                                      |
+| :----------------- | :----------------------------------------------------------------- |
+| `user_settings`    | `~/.claude/settings.json` changes                                  |
+| `project_settings` | `.claude/settings.json` changes                                    |
+| `local_settings`   | `.claude/settings.local.json` changes                              |
+| `policy_settings`  | `managed-settings.json` or a file in `managed-settings.d/` changes |
+| `skills`           | A skill file in `.claude/skills/` changes                          |
 
 This example logs all configuration changes for security auditing:
 

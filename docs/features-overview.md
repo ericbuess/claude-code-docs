@@ -23,7 +23,8 @@ Extensions plug into different parts of the agentic loop:
 * **[Code intelligence](/docs/en/tools-reference#lsp-tool-behavior)** connects Claude to a language server for symbol-level navigation and live type errors
 * **[MCP](/docs/en/mcp)** connects Claude to external services and tools
 * **[Subagents](/docs/en/sub-agents)** run their own loops in isolated context, returning summaries
-* **[Agent teams](/docs/en/agent-teams)** coordinate multiple independent sessions with peer-to-peer messaging, plus a shared task list for [agents that have the Task tools](/docs/en/tools-reference#task-tool-availability)
+* **[Dynamic workflows](/docs/en/workflows)** run many subagents from a script Claude writes, returning one result
+* **[Cross-session messaging](/docs/en/cross-session-messaging)** lets Claude pass a message from one of your sessions to another
 * **[Hooks](/docs/en/hooks-guide)** run your script, HTTP request, MCP tool call, prompt, or subagent when Claude Code reaches a lifecycle event
 * **[Plugins](/docs/en/plugins)** and **[marketplaces](/docs/en/plugin-marketplaces)** package and distribute these features
 
@@ -33,16 +34,17 @@ Extensions plug into different parts of the agentic loop:
 
 Features range from always-on context that Claude sees every session, to on-demand capabilities you or Claude can invoke, to background automation that runs on specific events. The table below shows what's available and when each one makes sense.
 
-| Feature                                                        | What it does                                                                 | When to use it                                                                  | Example                                                                         |
-| -------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| **CLAUDE.md**                                                  | Persistent context loaded every conversation                                 | Project conventions, "always do X" rules                                        | "Use pnpm, not npm. Run tests before committing."                               |
-| **Skill**                                                      | Instructions, knowledge, and workflows Claude can use                        | Reusable content, reference docs, repeatable tasks                              | `/deploy` runs your deployment checklist; API docs skill with endpoint patterns |
-| **Subagent**                                                   | Isolated execution context that returns summarized results                   | Context isolation, parallel tasks, specialized workers                          | Research task that reads many files but returns only key findings               |
-| **[Agent teams](/docs/en/agent-teams)**                             | Coordinate multiple independent Claude Code sessions                         | Parallel research, new feature development, debugging with competing hypotheses | Spawn reviewers to check security, performance, and tests simultaneously        |
-| **[Code intelligence](/docs/en/tools-reference#lsp-tool-behavior)** | Language-server navigation and diagnostics                                   | Typed languages, large codebases where grep is slow or imprecise                | Jump to a symbol's definition instead of reading the whole file                 |
-| **MCP**                                                        | Connect to external services                                                 | External data or actions                                                        | Query your database, post to Slack, control a browser                           |
-| **Hook**                                                       | Script, HTTP request, MCP tool call, prompt, or subagent triggered by events | Automation that must run on every matching event                                | Run ESLint after every file edit                                                |
-| **[Artifact](/docs/en/artifacts)**                                  | Publish session output as a private, interactive web page                    | Output you want to see or share visually rather than as terminal text           | An incident timeline that updates as Claude investigates                        |
+| Feature                                                        | What it does                                                                 | When to use it                                                                | Example                                                                              |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **CLAUDE.md**                                                  | Persistent context loaded every conversation                                 | Project conventions, "always do X" rules                                      | "Use pnpm, not npm. Run tests before committing."                                    |
+| **Skill**                                                      | Instructions, knowledge, and workflows Claude can use                        | Reusable content, reference docs, repeatable tasks                            | `/deploy` runs your deployment checklist; API docs skill with endpoint patterns      |
+| **Subagent**                                                   | Isolated execution context that returns summarized results                   | Context isolation, parallel tasks, specialized workers                        | Research task that reads many files but returns only key findings                    |
+| **[Dynamic workflow](/docs/en/workflows)**                          | Script Claude writes that runs many subagents in the background              | Work that outgrows a handful of subagents, or findings you want cross-checked | Audit a whole codebase, with a second set of agents verifying each finding           |
+| **[Cross-session messaging](/docs/en/cross-session-messaging)**     | Claude delivers a message from one of your sessions to another               | Sessions you run yourself that need each other's findings mid-task            | One session warns another that a change it made breaks what the other is building on |
+| **[Code intelligence](/docs/en/tools-reference#lsp-tool-behavior)** | Language-server navigation and diagnostics                                   | Typed languages, large codebases where grep is slow or imprecise              | Jump to a symbol's definition instead of reading the whole file                      |
+| **MCP**                                                        | Connect to external services                                                 | External data or actions                                                      | Query your database, post to Slack, control a browser                                |
+| **Hook**                                                       | Script, HTTP request, MCP tool call, prompt, or subagent triggered by events | Automation that must run on every matching event                              | Run ESLint after every file edit                                                     |
+| **[Artifact](/docs/en/artifacts)**                                  | Publish session output as a private, interactive web page                    | Output you want to see or share visually rather than as terminal text         | An incident timeline that updates as Claude investigates                             |
 
 **[Plugins](/docs/en/plugins)** are the packaging layer. A plugin bundles skills, hooks, subagents, and MCP servers into a single installable unit. Plugin skills are namespaced (like `/my-plugin:review`) so multiple plugins can coexist. Use plugins when you want to reuse the same setup across multiple repositories or distribute to others via a **[marketplace](/docs/en/plugin-marketplaces)**.
 
@@ -121,29 +123,17 @@ Some features can seem similar. For a deeper walkthrough of choosing between the
     **Use skills** for content Claude only needs sometimes, like API documentation or a deployment checklist you trigger with `/<name>`.
   </Tab>
 
-  <Tab title="Subagent vs Agent team">
-    Both parallelize work, but they're architecturally different:
+  <Tab title="Subagent vs Dynamic workflow">
+    Both do work outside your main conversation. With subagents, Claude decides turn by turn what runs next. In a workflow, the script decides:
 
-    * **Subagents** run inside your session and report results back to your main context
-    * **Agent teams** are independent Claude Code sessions that communicate with each other
+    * **Subagents** are workers Claude spawns, each returning a summary to the conversation that spawned it
+    * **[Dynamic workflows](/docs/en/workflows)** are scripts Claude writes that run many subagents in the background and return one result
 
-    | Aspect            | Subagent                                                                                                                                             | Agent team                                                                                                                                    |
-    | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-    | **Context**       | Own context window; results return to the caller                                                                                                     | Own context window; fully independent                                                                                                         |
-    | **Communication** | Returns a result to the caller. Subagents that Claude named when it spawned them can also [message each other](/docs/en/sub-agents#what-loads-at-startup) | Teammates message each other directly                                                                                                         |
-    | **Coordination**  | Main agent manages all work                                                                                                                          | Self-coordination through messages, plus a shared task list for [agents that have the Task tools](/docs/en/tools-reference#task-tool-availability) |
-    | **Best for**      | Focused tasks where only the result matters                                                                                                          | Complex work requiring discussion and collaboration                                                                                           |
-    | **Token cost**    | Lower: results summarized back to main context                                                                                                       | Higher: each teammate is a separate Claude instance                                                                                           |
+    **Use a subagent** when you need a quick, focused worker: research a question, verify a claim, review a file. The subagent does the work and returns a summary, so your main conversation stays clean. Subagents that Claude named when it spawned them can also [message each other](/docs/en/sub-agents#what-loads-at-startup).
 
-    **Use a subagent** when you need a quick, focused worker: research a question, verify a claim, review a file. The subagent does the work and returns a summary. Your main conversation stays clean.
+    **Use a dynamic workflow** when a job [outgrows a handful of subagents](/docs/en/workflows#when-to-use-a-workflow), or when you want the findings cross-checked before you see them, such as a codebase-wide audit, a large migration, or a plan drafted from several angles. To start one, [ask for a workflow in your prompt](/docs/en/workflows#ask-for-a-workflow-in-your-prompt).
 
-    **Use an agent team** when teammates need to share findings, challenge each other, and coordinate independently. Agent teams are best for research with competing hypotheses, parallel code review, and new feature development where each teammate owns a separate piece.
-
-    **Transition point:** If you're running parallel subagents but hitting context limits, agent teams are the natural next step. For separate sessions that pass messages to each other without a team, see [cross-session messaging](/docs/en/cross-session-messaging).
-
-    <Note>
-      Agent teams are experimental and disabled by default. See [agent teams](/docs/en/agent-teams) for setup and current limitations.
-    </Note>
+    **To pass a finding from one of your sessions to another**, ask the first session's Claude to send it. Claude delivers it with [cross-session messaging](/docs/en/cross-session-messaging). [Run agents in parallel](/docs/en/agents) compares the other ways to run more than one Claude at once, including sessions you hand off and check back on later.
   </Tab>
 
   <Tab title="MCP vs Skill">
@@ -324,8 +314,12 @@ Each feature has its own guide with setup instructions, examples, and configurat
     Offload work to isolated context
   </Card>
 
-  <Card title="Agent teams" icon="network" href="/docs/en/agent-teams">
-    Coordinate multiple sessions working in parallel
+  <Card title="Dynamic workflows" icon="network" href="/docs/en/workflows">
+    Run many subagents from one script
+  </Card>
+
+  <Card title="Cross-session messaging" icon="terminal" href="/docs/en/cross-session-messaging">
+    Let Claude message your other sessions
   </Card>
 
   <Card title="MCP" icon="plug" href="/docs/en/mcp">

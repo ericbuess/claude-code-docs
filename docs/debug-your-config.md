@@ -65,7 +65,7 @@ If the hook appears but doesn't fire, the matcher is the usual cause. Check it f
 
 * The `matcher` field is a single string that uses `|` to match multiple tool names, for example `"Edit|Write"`. A `,` separator is equivalent, so `"Edit,Write"` matches the same tools. Before v2.1.191, a comma fell through to regex evaluation and the matcher never matched, so use `|` if you aren't on v2.1.191 yet.
 * A misspelled tool name produces a matcher that matches nothing, so the hook fails silently.
-* An array value is a schema error: Claude Code shows a settings error notice and rejects the whole user, project, or local settings file, `claude doctor` reports the validation failure, and no hook from that file appears in `/hooks`. In [managed settings](/docs/en/settings#settings-files), only the invalid entry is stripped and the file's other hooks still apply.
+* An array value is a schema error: Claude Code shows a settings error notice and rejects the whole user, project, or local settings file, `claude doctor` reports the validation failure, and no hook from that file appears in `/hooks`. In [managed settings](/docs/en/settings#settings-files), Claude Code drops the whole `hooks` key from the file that contains the array, so none of that file's hooks apply. The file's other settings still apply, and `claude doctor` lists the dropped key.
 
 Edits to `settings.json` take effect in the running session after a brief file-stability delay. You don't need to restart. If `/hooks` still shows the old definition a few seconds after saving, run `/hooks` again to refresh the view.
 
