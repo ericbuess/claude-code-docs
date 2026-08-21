@@ -1,1030 +1,268 @@
 {
   "files": {
-    "about-claude__additional-resources.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/additional-resources",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/additional-resources.md",
-      "hash": "6303bfff6af1937165805bbe94e3da23b32f9602c516810e2d72e986aa934bd9",
-      "last_updated": "2026-08-21T06:24:21.377578"
-    },
-    "about-claude__glossary.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/glossary",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/glossary.md",
-      "hash": "f025a764592beab9e3ae7678c27097ae335cf54f245017ab3c242661e78076f6",
-      "last_updated": "2026-08-21T06:24:21.959854"
-    },
-    "about-claude__model-deprecations.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations.md",
-      "hash": "c60574dc4c5322b6e9ff20f96bf9139bdb036e6b0ee532a3635c956e0b4f1f0f",
-      "last_updated": "2026-08-21T06:24:22.664990"
-    },
-    "about-claude__models__choosing-a-model.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model.md",
-      "hash": "05c5ed37e819fa723f1f41f7063ec2420f5c3f1b3ccec3ddd1548ac90b8c0d07",
-      "last_updated": "2026-08-21T06:24:23.323619"
-    },
-    "about-claude__models__introducing-claude-fable-5-and-claude-mythos-5.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5.md",
-      "hash": "630f7ddd22c5ed395b416e1f9bbfa772e220c5498ea8c6d262e3a90c242b2b73",
-      "last_updated": "2026-08-21T06:24:23.977139"
-    },
-    "about-claude__models__migration-guide.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/models/migration-guide",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/models/migration-guide.md",
-      "hash": "b81ebd536b83d233fca12365fd38094ab5caa24092b11910c545e792ecf82e7c",
-      "last_updated": "2026-08-21T06:24:24.790060"
-    },
-    "about-claude__models__model-ids-and-versions.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions.md",
-      "hash": "e5d0aa4d3c1bfe06b25439633d0147c9e8e48d56843aa5769d7742f5b39b5626",
-      "last_updated": "2026-08-21T06:24:25.496028"
-    },
-    "about-claude__models__optimizing-for-cost-and-intelligence.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md",
-      "hash": "08241834a7ee2863128209801d2d6261e49f5c35998d0957fb8928245552a179",
-      "last_updated": "2026-08-21T06:24:26.230449"
-    },
-    "about-claude__models__overview.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/models/overview",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/models/overview.md",
-      "hash": "4726a6944dfc908fef03d51ffd96b1d6f424b77f3e248121d8c0a6df08d395f9",
-      "last_updated": "2026-08-21T06:24:26.914305"
-    },
-    "about-claude__models__whats-new-opus-5.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/models/whats-new-opus-5",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/models/whats-new-opus-5.md",
-      "hash": "455ad640f8e490bf85bf7adcc4d4be5af9e0f9c11639b81440572f0c09d267b9",
-      "last_updated": "2026-08-21T06:24:27.659454"
-    },
-    "about-claude__models__whats-new-sonnet-5.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/models/whats-new-sonnet-5",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/models/whats-new-sonnet-5.md",
-      "hash": "66c374f15ce31ef36d7e8fcf9f020e6cda609b6b1ff86af5d2d954d0528b767c",
-      "last_updated": "2026-08-21T06:24:28.305823"
-    },
-    "about-claude__pricing.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/pricing",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/pricing.md",
-      "hash": "c3ea88b25e2906d72bc7b26693bb752bfb97d31952e5b814cf7f62d4087b2f8b",
-      "last_updated": "2026-08-21T06:24:29.014987"
-    },
-    "about-claude__use-case-guides__content-moderation.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/content-moderation",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/content-moderation.md",
-      "hash": "d24fa29f96004d2b6b40549b71bc76e609bbfeca9c98d6b46335c41a505f7746",
-      "last_updated": "2026-08-21T06:24:29.738003"
-    },
-    "about-claude__use-case-guides__customer-support-chat.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/customer-support-chat",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/customer-support-chat.md",
-      "hash": "1a1f25700d539bfb333b0408b09b21ae0e4b0248b5ccf9f1bbb3d2cd3739eda5",
-      "last_updated": "2026-08-21T06:24:30.762864"
-    },
-    "about-claude__use-case-guides__legal-summarization.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/legal-summarization",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/legal-summarization.md",
-      "hash": "a7539847a7b438bdaa8f9ce656dbff418e6de5fb216064e42400ff58229efb1e",
-      "last_updated": "2026-08-21T06:24:31.431702"
-    },
-    "about-claude__use-case-guides__ticket-routing.md": {
-      "original_url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/ticket-routing",
-      "original_md_url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/ticket-routing.md",
-      "hash": "c017b55c3de6c2e9d5f0cabfd6482f3a517d05016a46a13b65a25638de0c89b9",
-      "last_updated": "2026-08-21T06:24:32.506878"
-    },
-    "agents-and-tools__agent-skills__best-practices.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices.md",
-      "hash": "542eee1e150ff7e2853099dd9e24b94626817d5a50ba50af4a4c35101a355f13",
-      "last_updated": "2026-08-21T06:24:33.228811"
-    },
-    "agents-and-tools__agent-skills__claude-api-skill.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/claude-api-skill",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/claude-api-skill.md",
-      "hash": "a60c37f1cdcb37d3eadea5ab41a661b9fb921eefc1b4aade4ea811455f128412",
-      "last_updated": "2026-08-21T06:24:33.879861"
-    },
-    "agents-and-tools__agent-skills__enterprise.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/enterprise",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/enterprise.md",
-      "hash": "dbbd6b433898c561e78a1ee161bfcee4e996aec0e4442bfeaa26c1cf587eda67",
-      "last_updated": "2026-08-21T06:24:34.594202"
-    },
-    "agents-and-tools__agent-skills__overview.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview.md",
-      "hash": "a3efd2985aa5d1e706f195cf817aebbd8144e95698cf120497fc5a93622ea8f1",
-      "last_updated": "2026-08-21T06:24:35.343659"
-    },
-    "agents-and-tools__agent-skills__quickstart.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/quickstart",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/quickstart.md",
-      "hash": "7d7ce6e1a14c7ccee3043665b0f806eb11ade70b3af1e155b215d85921756fef",
-      "last_updated": "2026-08-21T06:24:36.029626"
-    },
-    "agents-and-tools__mcp-connector.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector.md",
-      "hash": "1e21ae953ad5085dc9073514671723ce7d250f16461a8e36bd1f88e1fa034f7e",
-      "last_updated": "2026-08-21T06:24:36.712221"
-    },
-    "agents-and-tools__mcp-tunnels__concepts.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/concepts",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/concepts.md",
-      "hash": "389d8204b7d8f06f5024d839e14515bd8ea21ae53046bf13f51384338d693ca3",
-      "last_updated": "2026-08-21T06:24:37.390286"
-    },
-    "agents-and-tools__mcp-tunnels__console.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/console",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/console.md",
-      "hash": "5efeb439117eb47d285195347c538b1c791b7b0801f7b30ba75114d38be5f67b",
-      "last_updated": "2026-08-21T06:24:38.050122"
-    },
-    "agents-and-tools__mcp-tunnels__deploy-compose.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/deploy-compose",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/deploy-compose.md",
-      "hash": "6faa089142cb46d0e5666684051fd4b153100352524f074847815ef4f98f9b9e",
-      "last_updated": "2026-08-21T06:24:38.704830"
-    },
-    "agents-and-tools__mcp-tunnels__deploy-helm.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/deploy-helm",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/deploy-helm.md",
-      "hash": "3df88989433a00bd52703ef41713ec37dc6899d06165521c7c09671918948f00",
-      "last_updated": "2026-08-21T06:24:39.320177"
-    },
-    "agents-and-tools__mcp-tunnels__overview.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/overview",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/overview.md",
-      "hash": "a3295ad039e938b1fa22ccc3027dea0aeb6b5934c83c220d2a146ac230b519bc",
-      "last_updated": "2026-08-21T06:24:40.026375"
-    },
-    "agents-and-tools__mcp-tunnels__quickstart.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/quickstart",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/quickstart.md",
-      "hash": "e76bc3460b6ca4fbc92d639aae42e2afa84f71fd91fa487fd19c1d84098b6cdc",
-      "last_updated": "2026-08-21T06:24:40.693262"
-    },
-    "agents-and-tools__mcp-tunnels__reference.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/reference",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/reference.md",
-      "hash": "3583f45364aaa94f15d2e51497896987b7277e8ad1902ece75f7a42729d929a7",
-      "last_updated": "2026-08-21T06:24:41.347884"
-    },
-    "agents-and-tools__mcp-tunnels__security.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/security",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/security.md",
-      "hash": "24918ef86a6d0316c629a136647b4b9ef6658150497082f9dfd8d45796659844",
-      "last_updated": "2026-08-21T06:24:42.083776"
-    },
-    "agents-and-tools__mcp-tunnels__troubleshooting.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/troubleshooting",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/troubleshooting.md",
-      "hash": "ddf6d13c064832cb5be31d5d48b1168292be74b91b9d9818dd8d30eeba7ea289",
-      "last_updated": "2026-08-21T06:24:42.670096"
-    },
-    "agents-and-tools__remote-mcp-servers.md": {
-      "original_url": "https://platform.claude.com/docs/en/agents-and-tools/remote-mcp-servers",
-      "original_md_url": "https://platform.claude.com/docs/en/agents-and-tools/remote-mcp-servers.md",
-      "hash": "bd8bc14c597f0adcf0caf3f63fd38ea1a919736af5c5022a1b9e5a998743d508",
-      "last_updated": "2026-08-21T06:24:43.327991"
-    },
-    "build-with-claude__batch-processing.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing.md",
-      "hash": "99b2a1886fed040e4e6cdeed0887e941e15e838e25ff1e82943db9c3b815bea2",
-      "last_updated": "2026-08-21T06:24:44.083708"
-    },
-    "build-with-claude__cache-diagnostics.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics.md",
-      "hash": "78a767f7d4d56b37fbad2f7ab82cdfd1553032483ba0b0ae4b45a97d1f5d6b71",
-      "last_updated": "2026-08-21T06:24:44.793562"
-    },
-    "build-with-claude__citations.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/citations",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/citations.md",
-      "hash": "1a3457a9a454f82889a907a132cc656a0bfb6f1a0e56912d32a73d7f60627229",
-      "last_updated": "2026-08-21T06:24:45.563659"
-    },
-    "build-with-claude__claude-in-amazon-bedrock.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock.md",
-      "hash": "c50244aa0b1d2ae6c8744cc68a386b96c120b1c4c62ab74ad7a69363a06c369e",
-      "last_updated": "2026-08-21T06:24:46.258145"
-    },
-    "build-with-claude__claude-in-microsoft-foundry.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry.md",
-      "hash": "8f71636f39fdbfb44266f9bf7a78559591c8ed739e4be264bbb7b3824881007d",
-      "last_updated": "2026-08-21T06:24:46.941397"
-    },
-    "build-with-claude__claude-on-amazon-bedrock-legacy.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/claude-on-amazon-bedrock-legacy",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/claude-on-amazon-bedrock-legacy.md",
-      "hash": "5fa2ee7e7cdfc7af6002747a6cb7ca8de121103041fe076d3962f8aef0a23730",
-      "last_updated": "2026-08-21T06:24:47.692547"
-    },
-    "build-with-claude__claude-on-vertex-ai.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/claude-on-vertex-ai",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/claude-on-vertex-ai.md",
-      "hash": "3ee5c842437170b9450cddeb9bacd6157a759aed1fc27848f89816eabf9ffe24",
-      "last_updated": "2026-08-21T06:24:48.285591"
-    },
-    "build-with-claude__claude-platform-on-aws.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws.md",
-      "hash": "f1d705d8fd3017cd3e7f33f9d8bdbf9bed8bf5c9506847eac510374861651410",
-      "last_updated": "2026-08-21T06:24:49.053303"
-    },
-    "build-with-claude__compaction.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/compaction",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/compaction.md",
-      "hash": "0ed25c803072c6778f2fab5f0540106df733e42991f590d9b5677efc155f7972",
-      "last_updated": "2026-08-21T06:24:49.674962"
-    },
-    "build-with-claude__context-editing.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/context-editing",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/context-editing.md",
-      "hash": "871bf3eecb6d074ff9fdd91cc454dae6af81f51ab5eefe7f38fa6e073f5412d8",
-      "last_updated": "2026-08-21T06:24:50.377061"
-    },
-    "build-with-claude__context-windows.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/context-windows.md",
-      "hash": "2a925449b15fbcf2d1e82ece6e81aa1a84b653bb91540a2dee339d5888859b4d",
-      "last_updated": "2026-08-21T06:24:51.027389"
-    },
-    "build-with-claude__effort.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/effort",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
-      "hash": "f41891d9a1c4752819f9073336fee804799e0ab5f5a7754336642ce2005aadd8",
-      "last_updated": "2026-08-21T06:24:51.721728"
-    },
-    "build-with-claude__embeddings.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/embeddings",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/embeddings.md",
-      "hash": "25a94a14c4a00486d301e7914ad884e632b9ac94cc31cdf0826e4e4865025b85",
-      "last_updated": "2026-08-21T06:24:52.412829"
-    },
-    "build-with-claude__extended-thinking.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/extended-thinking",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/extended-thinking.md",
-      "hash": "9f2bbb8c364ec087795ac79f77590ebe674c12774581f3cce065961f23bca8f7",
-      "last_updated": "2026-08-21T06:24:53.089659"
-    },
-    "build-with-claude__fallback-credit.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/fallback-credit",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/fallback-credit.md",
-      "hash": "b93474d158398a5dedb9d74843a14de3184d201f4011ca4597b9ec3c681bfdfa",
-      "last_updated": "2026-08-21T06:24:53.767707"
-    },
-    "build-with-claude__fast-mode.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/fast-mode",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/fast-mode.md",
-      "hash": "820a9a71a8d731479d4f330b0eb6429e23b370391c27a672bcb5599321f2c2d8",
-      "last_updated": "2026-08-21T06:24:54.427944"
-    },
-    "build-with-claude__files.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/files",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/files.md",
-      "hash": "0342d84f513d198a6d00b97ceddfd6c0a3f75e8600acb3ea29d2272d35da6953",
-      "last_updated": "2026-08-21T06:24:55.161442"
-    },
-    "build-with-claude__handling-stop-reasons.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons.md",
-      "hash": "26ef37c1864a0cb2972f51e3242abd902944660dda84c7ba51a3bef654488bc1",
-      "last_updated": "2026-08-21T06:24:55.802530"
-    },
-    "build-with-claude__mid-conversation-effort-example.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/mid-conversation-effort-example",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/mid-conversation-effort-example.md",
-      "hash": "88a2fa6d07b354b90d37bbab7c6c1f65502776a31e4be76eaefe73d788798fbd",
-      "last_updated": "2026-08-21T06:24:56.667188"
-    },
-    "build-with-claude__mid-conversation-system-messages.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages.md",
-      "hash": "b696f3090572c2a942f0602538b44b0359d171721d1415796efb4534922065e5",
-      "last_updated": "2026-08-21T06:24:57.332013"
-    },
-    "build-with-claude__multilingual-support.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/multilingual-support",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/multilingual-support.md",
-      "hash": "f67b5a26d9dd4c46a3a45e0c1928e0da0f48910458250651e6686ac40f758455",
-      "last_updated": "2026-08-21T06:24:57.992497"
-    },
-    "build-with-claude__overview.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/overview",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/overview.md",
-      "hash": "68a4954eefd71f8d7c257d5f7ff9470460c92c35beb846df6e7dd4be4cd473d5",
-      "last_updated": "2026-08-21T06:24:58.581507"
-    },
-    "build-with-claude__pdf-support.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/pdf-support",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/pdf-support.md",
-      "hash": "016c1ac7721438a6e2460a4469a109d04d76f97544034f43a1ddf9b6afc45b95",
-      "last_updated": "2026-08-21T06:24:59.204081"
-    },
-    "build-with-claude__prompt-caching.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching.md",
-      "hash": "3ce76cbe15423204c0abd1613dcd8806f61559e0ed254beb652b4fdbc8cea579",
-      "last_updated": "2026-08-21T06:24:59.959562"
-    },
-    "build-with-claude__prompt-engineering__claude-prompting-best-practices.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices.md",
-      "hash": "9d20eb0ff0330b71cd4e090132f87f2c12b545f2da54ecb7ab8312a59567d70e",
-      "last_updated": "2026-08-21T06:25:00.660423"
-    },
-    "build-with-claude__prompt-engineering__overview.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview.md",
-      "hash": "bbd9883560196e845718d2e3160b50afbfc828eb62d4674164536e38610d5c33",
-      "last_updated": "2026-08-21T06:25:01.337105"
-    },
-    "build-with-claude__prompt-engineering__prompting-claude-fable-5.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5.md",
-      "hash": "db8ce299fb927349a6f2f1df74b035691aa80c0e64372a1a069dd9bc2b3e2d81",
-      "last_updated": "2026-08-21T06:25:01.985205"
-    },
-    "build-with-claude__prompt-engineering__prompting-claude-opus-4-8.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8.md",
-      "hash": "aa91b441e21a600365661a791ed5dcb0d8f672da3e9eb64be5bf7e6cf0d1dbf7",
-      "last_updated": "2026-08-21T06:25:02.657926"
-    },
-    "build-with-claude__prompt-engineering__prompting-claude-opus-5.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5.md",
-      "hash": "aacd1264e880ff0ca647db36458cea7adb12d688046b0185fe3f016a466c5940",
-      "last_updated": "2026-08-21T06:25:03.390444"
-    },
-    "build-with-claude__prompt-engineering__prompting-claude-sonnet-5.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5.md",
-      "hash": "ca6369e9fc527603e57ec6809d491f9133c427f64ba299ed85440d30c6885199",
-      "last_updated": "2026-08-21T06:25:04.039904"
-    },
-    "build-with-claude__refusals-and-fallback.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback.md",
-      "hash": "e80c3cd553d9ed8af963d917df06c20ba17f739a62aa51d8471cb9289db155bf",
-      "last_updated": "2026-08-21T06:25:04.686422"
-    },
-    "build-with-claude__search-results.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/search-results",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/search-results.md",
-      "hash": "481d74932296b2da17ba8d5e067c580fbc1ed972f20489f2ce8318bb02c28df6",
-      "last_updated": "2026-08-21T06:25:05.376372"
-    },
-    "build-with-claude__skills-guide.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/skills-guide",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/skills-guide.md",
-      "hash": "b19c922acd72252f0c992d2943b71565fddea43e869208658fc4a212228c9027",
-      "last_updated": "2026-08-21T06:25:06.258117"
-    },
-    "build-with-claude__streaming.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/streaming",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/streaming.md",
-      "hash": "82fabc5d2e31d7a82284e3502872738c512d5ed305bace782d13eb7c3f60bd6d",
-      "last_updated": "2026-08-21T06:25:06.957237"
-    },
-    "build-with-claude__structured-outputs.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs.md",
-      "hash": "1440ba74d6eb67920a9748b13c5e6abb42fda52e0609c6fe848b1c75b20d4f2a",
-      "last_updated": "2026-08-21T06:25:07.709708"
-    },
-    "build-with-claude__task-budgets.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/task-budgets",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/task-budgets.md",
-      "hash": "dbd653c2613ed88df8f5e231f92eaf721e1fc310569a4d7c8d91d0934949e8f1",
-      "last_updated": "2026-08-21T06:25:08.303719"
-    },
-    "build-with-claude__thinking.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/thinking",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/thinking.md",
-      "hash": "c4bc2186d26e8abe4a7aa72e683ad2f16931f5ff91cfea66de76a4c347ffd0ad",
-      "last_updated": "2026-08-21T06:25:09.016563"
-    },
-    "build-with-claude__thinking-steering-and-cost.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/thinking-steering-and-cost",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/thinking-steering-and-cost.md",
-      "hash": "5aa4f9322c3c2def7d6793f9baf4132dd29a8ebfe9eb332e8e45ddc867eb2884",
-      "last_updated": "2026-08-21T06:25:09.679727"
-    },
-    "build-with-claude__thinking-tool-workflows.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/thinking-tool-workflows",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/thinking-tool-workflows.md",
-      "hash": "32ce51f7913a99ef39e109bb10699f07f7126ded8ade0b3a784f99a40ed58f6c",
-      "last_updated": "2026-08-21T06:25:10.430391"
-    },
-    "build-with-claude__thinking-troubleshooting.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/thinking-troubleshooting",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/thinking-troubleshooting.md",
-      "hash": "2c985ea0abd007cce3e29d0843ffc381727c6de3f47ba7a820e6e60e3a5c1989",
-      "last_updated": "2026-08-21T06:25:11.097616"
-    },
-    "build-with-claude__token-counting.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/token-counting",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/token-counting.md",
-      "hash": "39238a4c97fa9362a2051f4d77290cd94f49d376035b824d673d55a7c2b97fbf",
-      "last_updated": "2026-08-21T06:25:11.749746"
-    },
-    "build-with-claude__vision.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/vision",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/vision.md",
-      "hash": "bd6b4f823fa9be774202d16e0f11db19e68eac10994b04f1bbd5ff53acf7bd0e",
-      "last_updated": "2026-08-21T06:25:12.342380"
-    },
-    "build-with-claude__vision-coordinates.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/vision-coordinates",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/vision-coordinates.md",
-      "hash": "ccb90b21bf1e39c53fe969515fb8cef472eccaeb77f0dd62c8ad1118def36f57",
-      "last_updated": "2026-08-21T06:25:13.003546"
-    },
-    "build-with-claude__working-with-messages.md": {
-      "original_url": "https://platform.claude.com/docs/en/build-with-claude/working-with-messages",
-      "original_md_url": "https://platform.claude.com/docs/en/build-with-claude/working-with-messages.md",
-      "hash": "078cbd282c4482bee0bfd014ecb4144c6cbcbe587aced5699378d8dd8b017df9",
-      "last_updated": "2026-08-21T06:25:13.838513"
-    },
-    "claude_api_primer.md": {
-      "original_url": "https://platform.claude.com/docs/en/claude_api_primer",
-      "original_md_url": "https://platform.claude.com/docs/en/claude_api_primer.md",
-      "hash": "584a287a204754021389e49cc0883ecab22ebadae2375b7254f4bccfaef6e8b3",
-      "last_updated": "2026-08-21T06:25:14.510923"
-    },
-    "cli-sdks-libraries__cli__authentication.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/cli/authentication",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/cli/authentication.md",
-      "hash": "c4ab8cc08c9835140c010bfa11e9916a19dd08237cf177e09bc3fd46f5462bb5",
-      "last_updated": "2026-08-21T06:25:15.163194"
-    },
-    "cli-sdks-libraries__cli__quickstart.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/cli/quickstart",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/cli/quickstart.md",
-      "hash": "a857575b334097b4d83005a9a7bb7c83f9e4f53a1dac2aac2e3734986071b232",
-      "last_updated": "2026-08-21T06:25:15.849616"
-    },
-    "cli-sdks-libraries__cli__scripting.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/cli/scripting",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/cli/scripting.md",
-      "hash": "1866092431a75321fffc10d063fc61a53c99deb746381e6a040d56565dbb14dc",
-      "last_updated": "2026-08-21T06:25:16.509090"
-    },
-    "cli-sdks-libraries__cli__using.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/cli/using",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/cli/using.md",
-      "hash": "b20a5c22b2adb69508ee3e6a5b5987dba31dc32e64e892fde7cb5fadedbec8be",
-      "last_updated": "2026-08-21T06:25:17.180659"
-    },
-    "cli-sdks-libraries__libraries__apple-foundation-models.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/libraries/apple-foundation-models",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/libraries/apple-foundation-models.md",
-      "hash": "2a8a334dd6c40b0f4d159f75edcd1f7d2e585fc4b8424fed3c5d33c4eefa8767",
-      "last_updated": "2026-08-21T06:25:17.851713"
-    },
-    "cli-sdks-libraries__libraries__openai-sdk.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/libraries/openai-sdk",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/libraries/openai-sdk.md",
-      "hash": "e62ad7d512fea4181e4d7e33e3ad57140b66fa8fb633e1d359b58f4cddef41a1",
-      "last_updated": "2026-08-21T06:25:18.554451"
-    },
-    "cli-sdks-libraries__middleware.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/middleware",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/middleware.md",
-      "hash": "81ba368a89210f91354bd1c12f3d283ab27bb0f0c91b9752faaa061a08f35e7f",
-      "last_updated": "2026-08-21T06:25:19.408023"
-    },
-    "cli-sdks-libraries__overview.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/overview",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/overview.md",
-      "hash": "7a7f111f8dae62fd6c05663c12e72673df225083b760db14ebb28c7f8fac9976",
-      "last_updated": "2026-08-21T06:25:20.057710"
-    },
-    "cli-sdks-libraries__sdks__csharp.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/csharp",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/csharp.md",
-      "hash": "244dcd65b8275d9a9390b638e0fd356fb587ad9c858281a4b5d1f85263e47a4c",
-      "last_updated": "2026-08-21T06:25:20.727714"
-    },
-    "cli-sdks-libraries__sdks__go.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/go",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/go.md",
-      "hash": "ce3545fa24f01127ab9034398bbb315765b3327b93f60d90a5fec78e8179e081",
-      "last_updated": "2026-08-21T06:25:21.331951"
-    },
-    "cli-sdks-libraries__sdks__java.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/java",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/java.md",
-      "hash": "0be9aa48f1ae8323f0fb48f4f8161aa43aacd71a04c33daef263b95d5c40de46",
-      "last_updated": "2026-08-21T06:25:22.128569"
-    },
-    "cli-sdks-libraries__sdks__php.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/php",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/php.md",
-      "hash": "8c991e794cf532ef0068bb5cf6309def94575c52bb6793934dc95bd6e263b501",
-      "last_updated": "2026-08-21T06:25:22.802471"
-    },
-    "cli-sdks-libraries__sdks__python.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/python",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/python.md",
-      "hash": "5a643774883b7d53b80263b01de96be221f259fda5ff0b587c365e19a8b54988",
-      "last_updated": "2026-08-21T06:25:23.477378"
-    },
-    "cli-sdks-libraries__sdks__ruby.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/ruby",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/ruby.md",
-      "hash": "3660091b35e27e6280cbb83a4443da1ed37b187ccd0ec4daf94df8e56aa59264",
-      "last_updated": "2026-08-21T06:25:24.608624"
-    },
-    "cli-sdks-libraries__sdks__typescript.md": {
-      "original_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/typescript",
-      "original_md_url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/typescript.md",
-      "hash": "1b8d5bf00ad725b133808eb2430da96d909f43d9598e4feb55806abe76fa8bdc",
-      "last_updated": "2026-08-21T06:25:25.298177"
-    },
-    "get-api-key.md": {
-      "original_url": "https://platform.claude.com/docs/en/get-api-key",
-      "original_md_url": "https://platform.claude.com/docs/en/get-api-key.md",
-      "hash": "8acbda78bf95e9189bcfba958d19069c6036130e9b037de5cf15cca9ef31bb5e",
-      "last_updated": "2026-08-21T06:25:25.936798"
-    },
-    "get-started.md": {
-      "original_url": "https://platform.claude.com/docs/en/get-started",
-      "original_md_url": "https://platform.claude.com/docs/en/get-started.md",
-      "hash": "8e53422fb58087acf7c94867772cb4cf79ab84f00ff7a4a3773d9efd4d867efa",
-      "last_updated": "2026-08-21T06:25:26.513111"
-    },
-    "intro.md": {
-      "original_url": "https://platform.claude.com/docs/en/intro",
-      "original_md_url": "https://platform.claude.com/docs/en/intro.md",
-      "hash": "318b7cbe5bafaa902c6552b4f253779cb7ec0e793bdf37315f682d230a354b2e",
-      "last_updated": "2026-08-21T06:25:27.332929"
-    },
-    "manage-claude__access-transparency.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/access-transparency",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/access-transparency.md",
-      "hash": "00946afb5c4c2d853b0bc44f25284ffd410e81e9b0ebafd13fe6c5322eabf8ee",
-      "last_updated": "2026-08-21T06:25:28.038962"
-    },
-    "manage-claude__admin-api.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/admin-api",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/admin-api.md",
-      "hash": "0e5af336fe39eb46fa97aace4cf37760242b8db76be96f33ddc977f2c2ec0f68",
-      "last_updated": "2026-08-21T06:25:28.703871"
-    },
-    "manage-claude__admin-api-keys.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/admin-api-keys",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/admin-api-keys.md",
-      "hash": "65fbcf778abe7aaa3869228a738a4d2674955bc694c9651e669c394d72592e11",
-      "last_updated": "2026-08-21T06:25:29.380656"
-    },
-    "manage-claude__analytics-api.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/analytics-api",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/analytics-api.md",
-      "hash": "6d34fdb1e6de3d6e74b404cfcd3388cf3a6b3ce8b96053831fe9350b27429b2b",
-      "last_updated": "2026-08-21T06:25:30.046738"
-    },
-    "manage-claude__api-and-data-retention.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention.md",
-      "hash": "3f877d3fb2cfcaf996464093df16054a3bc3bbbda4c4b05afcf0ee1beecf2a01",
-      "last_updated": "2026-08-21T06:25:30.727009"
-    },
-    "manage-claude__app-attest.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/app-attest",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/app-attest.md",
-      "hash": "04500bc4d56d41138ede1258676adf7630e18d5e1fbe08d7ba09f7f739f59603",
-      "last_updated": "2026-08-21T06:25:31.377982"
-    },
-    "manage-claude__authentication.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/authentication",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/authentication.md",
-      "hash": "bca1c0394e120773344935ae14b8d3b5b2a3c65ffe62062efacb642bf8a3bbe6",
-      "last_updated": "2026-08-21T06:25:32.048878"
-    },
-    "manage-claude__claude-code-analytics-api.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/claude-code-analytics-api",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/claude-code-analytics-api.md",
-      "hash": "1273548acc4f69c99bfa2da0b9f21780db06f99da63e688590c13cd3430e05a4",
-      "last_updated": "2026-08-21T06:25:32.725255"
-    },
-    "manage-claude__cmek.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/cmek",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/cmek.md",
-      "hash": "a3b9f67afd6ddcedcad65bcbbb01f3f5f07081fa7b674ae8f070dd06ab567367",
-      "last_updated": "2026-08-21T06:25:33.414549"
-    },
-    "manage-claude__cmek-aws-kms.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/cmek-aws-kms",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/cmek-aws-kms.md",
-      "hash": "ac2ebe33e1776000f0ea58c2adb499c200576866cf6a8720e85141552da8ced4",
-      "last_updated": "2026-08-21T06:25:34.231466"
-    },
-    "manage-claude__cmek-azure-key-vault.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/cmek-azure-key-vault",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/cmek-azure-key-vault.md",
-      "hash": "4e7feb68773ee3d6b0daa0d618cbed212ffbc057d73f4eebec9aaac4fc2a32b9",
-      "last_updated": "2026-08-21T06:25:34.903950"
-    },
-    "manage-claude__cmek-google-cloud-kms.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/cmek-google-cloud-kms",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/cmek-google-cloud-kms.md",
-      "hash": "e9286ec4fa8a20b2bf2853a0b349031185c09a5b20f58db51ac533a221e3e35b",
-      "last_updated": "2026-08-21T06:25:35.546782"
-    },
-    "manage-claude__compliance-activity-feed.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/compliance-activity-feed",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/compliance-activity-feed.md",
-      "hash": "f204bcde3e7c9291d3e11b34f143fc720563157d6e70965914da12d1a8a44af2",
-      "last_updated": "2026-08-21T06:25:36.234512"
-    },
-    "manage-claude__compliance-api.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/compliance-api",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/compliance-api.md",
-      "hash": "b9907442c8944bc3dc00c77a6e7bece380afe73fb538b89e5858a49f5db74214",
-      "last_updated": "2026-08-21T06:25:36.896508"
-    },
-    "manage-claude__compliance-api-access.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/compliance-api-access",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/compliance-api-access.md",
-      "hash": "23389ec9a7b60cf2d7934044b89688edd1f835a33a6127d8c2bcbe17ecd6a702",
-      "last_updated": "2026-08-21T06:25:37.581459"
-    },
-    "manage-claude__compliance-content-data.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/compliance-content-data",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/compliance-content-data.md",
-      "hash": "5ed27fa48cbe578dfc95669ae3ac26afded8ec5fe30e47aa049d99f39ea3e974",
-      "last_updated": "2026-08-21T06:25:38.278952"
-    },
-    "manage-claude__compliance-errors.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/compliance-errors",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/compliance-errors.md",
-      "hash": "4aa2ff0d3c461fc0b4f9fcfcfc715e3b811e81c810b418f0152d020d0ee0d697",
-      "last_updated": "2026-08-21T06:25:39.074511"
-    },
-    "manage-claude__compliance-faq.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/compliance-faq",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/compliance-faq.md",
-      "hash": "fa57d5f84f7e6452ea76c409b5c5c672fe56f1d7b453eb34e8e18d4f78cbe905",
-      "last_updated": "2026-08-21T06:25:39.676092"
-    },
-    "manage-claude__compliance-integration-patterns.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/compliance-integration-patterns",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/compliance-integration-patterns.md",
-      "hash": "8cb0ebe1bcd55242dd9dab5f3451bc5d1dba0860d273e309f2c180fa2ece43fe",
-      "last_updated": "2026-08-21T06:25:40.255817"
-    },
-    "manage-claude__compliance-org-data.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/compliance-org-data",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/compliance-org-data.md",
-      "hash": "59fbe3ff143577f444dc82b9e1a10db30a0c398686b6c48d987a3f30f7bae357",
-      "last_updated": "2026-08-21T06:25:40.922236"
-    },
-    "manage-claude__compliance-sessions.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/compliance-sessions",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/compliance-sessions.md",
-      "hash": "6ab4eeb48d2d387416053286dd85d42623e019c34fff7ce81a35cddd121f028e",
-      "last_updated": "2026-08-21T06:25:41.607342"
-    },
-    "manage-claude__data-residency.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/data-residency",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/data-residency.md",
-      "hash": "29a2137e57c94e863158d244d4c1c52869b0bf4226cb24bdfe970d336131db47",
-      "last_updated": "2026-08-21T06:25:42.323003"
-    },
-    "manage-claude__inference-hooks.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/inference-hooks",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/inference-hooks.md",
-      "hash": "91c8b23e911214b8fccab72da6705cd86d8d812de5a358ad3d7aa25d7cceba02",
-      "last_updated": "2026-08-21T06:25:42.972528"
-    },
-    "manage-claude__inference-hooks-configuration.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/inference-hooks-configuration",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/inference-hooks-configuration.md",
-      "hash": "9df8dc3dea7e3fad25aeae3f8bf1ddddc038d3c54b7bd5270e957ef47ef159de",
-      "last_updated": "2026-08-21T06:25:43.796803"
-    },
-    "manage-claude__inference-hooks-endpoint.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/inference-hooks-endpoint",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/inference-hooks-endpoint.md",
-      "hash": "70feb2d3037f85143ee526b2e29bb6874c5b61a7b77c766f7290242955bd259a",
-      "last_updated": "2026-08-21T06:25:44.469518"
-    },
-    "manage-claude__rate-limits-api.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/rate-limits-api",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/rate-limits-api.md",
-      "hash": "310ed3c11981075bb7a119a9ea176f9ebc74fcea3d0682047b6fbb6f7a40a8d8",
-      "last_updated": "2026-08-21T06:25:45.067138"
-    },
-    "manage-claude__spend-limits-api.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/spend-limits-api",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/spend-limits-api.md",
-      "hash": "667f7a609505d0d5516ed3e496b20484b7a526f29cc1de5cd13119cb8c33d659",
-      "last_updated": "2026-08-21T06:25:45.755914"
-    },
-    "manage-claude__usage-cost-api.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api.md",
-      "hash": "a27a6eb355e359ae5cecb139fdf8cb6d2af064fc0f2edc47c02c29090dffaf62",
-      "last_updated": "2026-08-21T06:25:46.441416"
-    },
-    "manage-claude__user-management.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/user-management",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/user-management.md",
-      "hash": "ab293c98d47b245abb946d61bfd8b28519b19a2c6aac44711ba2edbae21ba4b9",
-      "last_updated": "2026-08-21T06:25:47.231200"
-    },
-    "manage-claude__wif-admin-api.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/wif-admin-api",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/wif-admin-api.md",
-      "hash": "fb1cc106693f7221864bfbbdd1dcd5b42bb6ec99c125b5f231b7b443ec416710",
-      "last_updated": "2026-08-21T06:25:47.898822"
-    },
-    "manage-claude__wif-providers__aws.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/aws",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/aws.md",
-      "hash": "9c097b02cadeff891d46fda2a9a43d637df60fc30e06bb2c17423c911dc54db1",
-      "last_updated": "2026-08-21T06:25:48.571240"
-    },
-    "manage-claude__wif-providers__azure.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/azure",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/azure.md",
-      "hash": "2c6cf9d6a7a7dc3e05755c700ef2c39dfd3c7079206e0b2b51e59873fad3727e",
-      "last_updated": "2026-08-21T06:25:49.312756"
-    },
-    "manage-claude__wif-providers__gcp.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/gcp",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/gcp.md",
-      "hash": "5c104d2f5bb7f6bbd30606196c878ee8156bd422525f64fb87af274da72a5f36",
-      "last_updated": "2026-08-21T06:25:50.004362"
-    },
-    "manage-claude__wif-providers__github-actions.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/github-actions",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/github-actions.md",
-      "hash": "0013cf9776f628177eb67ee7c1999fbe581715ed76b3078b38b6c7fe630e62e9",
-      "last_updated": "2026-08-21T06:25:50.765214"
-    },
-    "manage-claude__wif-providers__kubernetes.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/kubernetes",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/kubernetes.md",
-      "hash": "8b13fb2a457db389eab5e11bbd9879b50735bf7d8f54de0e556b554c90b1beed",
-      "last_updated": "2026-08-21T06:25:51.438936"
-    },
-    "manage-claude__wif-providers__okta.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/okta",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/okta.md",
-      "hash": "2106555740d19f1f1327662d6f9553363c51191758fbc078f919a32e1339897c",
-      "last_updated": "2026-08-21T06:25:52.104211"
-    },
-    "manage-claude__wif-providers__spiffe.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/spiffe",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/wif-providers/spiffe.md",
-      "hash": "055df84499a3fed79aaac796e16518eda93a2ce3d7c48a9f92270dbd1b7cdd94",
-      "last_updated": "2026-08-21T06:25:52.771593"
-    },
-    "manage-claude__wif-reference.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/wif-reference",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/wif-reference.md",
-      "hash": "031e6df9331540529e06322e9c08e11f383dcb756ce7a4da0883ed7a5897dd64",
-      "last_updated": "2026-08-21T06:25:53.477024"
-    },
-    "manage-claude__workload-identity-federation.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation.md",
-      "hash": "3992b22d1fb85c8850c67b3040e313bba58350be58dce310304183538657197c",
-      "last_updated": "2026-08-21T06:25:54.171230"
-    },
-    "manage-claude__workspaces.md": {
-      "original_url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
-      "original_md_url": "https://platform.claude.com/docs/en/manage-claude/workspaces.md",
-      "hash": "76727e2a928d45415b66937142407eb3bffb1eec50fdcf6bde711bb95b545d4e",
-      "last_updated": "2026-08-21T06:25:54.768713"
-    },
-    "managed-agents__agent-setup.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/agent-setup",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/agent-setup.md",
-      "hash": "e3c04dda6121710fbfc71ac0b60c671312b21a8b2b3a6173942e731620423525",
-      "last_updated": "2026-08-21T06:25:55.459263"
-    },
-    "managed-agents__budgets.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/budgets",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/budgets.md",
-      "hash": "b553b225f4714ecb5021c88c704110273696d76a81a5a62021b8218031243b58",
-      "last_updated": "2026-08-21T06:25:56.154657"
-    },
-    "managed-agents__cloud-sandboxes-reference.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/cloud-sandboxes-reference",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/cloud-sandboxes-reference.md",
-      "hash": "459b2dec087517d60b4cdea9aa5b6b70b5e0e7f1b358fa02baa894d86fc44c48",
-      "last_updated": "2026-08-21T06:25:56.728521"
-    },
-    "managed-agents__define-outcomes.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/define-outcomes",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/define-outcomes.md",
-      "hash": "bc06582b6888d004e127916297d8bdac0aa7c372ec92d5a0ecbc1c6616abc00a",
-      "last_updated": "2026-08-21T06:25:57.489312"
-    },
-    "managed-agents__dreams.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/dreams",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/dreams.md",
-      "hash": "600f552315c1af7a7179405be25e5552861eebf12d664c5c78a22619cd18b6ce",
-      "last_updated": "2026-08-21T06:25:58.183938"
-    },
-    "managed-agents__environments.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/environments",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/environments.md",
-      "hash": "02ad36b92b97980934b99c274e26f452587df8cabfc7ea30b5180e541c6d37f6",
-      "last_updated": "2026-08-21T06:25:58.849689"
-    },
-    "managed-agents__events-and-streaming.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/events-and-streaming",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/events-and-streaming.md",
-      "hash": "dda0181e3f9306306c31a26a52b99a356b057e39135d697f26a5f16f7d5d5be9",
-      "last_updated": "2026-08-21T06:25:59.587102"
-    },
-    "managed-agents__files.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/files",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/files.md",
-      "hash": "8b147f057d087e19607096893a97000ec409c9d325a784c0d45519539a1dec4d",
-      "last_updated": "2026-08-21T06:26:00.261130"
-    },
-    "managed-agents__github.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/github",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/github.md",
-      "hash": "c3c637893d4d865e14a491ee260f5713e29b0a1ed3fa007d4ed63f44a2221f44",
-      "last_updated": "2026-08-21T06:26:00.921078"
-    },
-    "managed-agents__mcp-connector.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/mcp-connector",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/mcp-connector.md",
-      "hash": "d08d7f7fa255770a41e60a1e2de9b47508a29a9a328a6122ff761c2938622eda",
-      "last_updated": "2026-08-21T06:26:01.610385"
-    },
-    "managed-agents__memory.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/memory",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/memory.md",
-      "hash": "88a5072c87d53c7e05afc023848d519caed70099e7e593e1a3cf5a18657858b9",
-      "last_updated": "2026-08-21T06:26:02.344023"
-    },
-    "managed-agents__migration.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/migration",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/migration.md",
-      "hash": "948b7ac50dcac1f63ba9284f102f54fd99feb9ec6f624e2bea634e4064fabebc",
-      "last_updated": "2026-08-21T06:26:02.957015"
-    },
-    "managed-agents__multiagent-orchestration.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration.md",
-      "hash": "0086131670b4d61ab4cf4eaa2f8bc3a6d1f53de077f51a0b343c128ffb0ca9f0",
-      "last_updated": "2026-08-21T06:26:03.685062"
-    },
-    "managed-agents__onboarding.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/onboarding",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/onboarding.md",
-      "hash": "611deb8c80fc79af2d6902c0954671a9c8a642c54c14271d3df35366d832174d",
-      "last_updated": "2026-08-21T06:26:04.360415"
-    },
-    "managed-agents__overview.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/overview",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/overview.md",
-      "hash": "481e095ec42fade0b03a46decb7090b6e8753fae76d2bfd6df68c9b17ed9d5b3",
-      "last_updated": "2026-08-21T06:26:05.023085"
-    },
-    "managed-agents__permission-policies.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/permission-policies",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/permission-policies.md",
-      "hash": "f14b9e2f1f3a338fa31728e74d0adc824cc318c924a2d869d88ae199124a926f",
-      "last_updated": "2026-08-21T06:26:05.715705"
-    },
-    "managed-agents__quickstart.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/quickstart",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/quickstart.md",
-      "hash": "1e9c64464daf6bb06fe951a4d587c087b3beb43642b7d50a5fdf38ef22ecbd0b",
-      "last_updated": "2026-08-21T06:26:06.405321"
-    },
-    "managed-agents__reference.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/reference",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/reference.md",
-      "hash": "a017f506ec9a4bc77464d293622ae9b470ebf5ae059af80c057cf9b5f493262d",
-      "last_updated": "2026-08-21T06:26:06.994855"
-    },
-    "managed-agents__scheduled-deployments.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/scheduled-deployments",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/scheduled-deployments.md",
-      "hash": "0e2fb32a505c9d10e793415b145910122d83044830af173934dc1eb6e2b76b5d",
-      "last_updated": "2026-08-21T06:26:07.595866"
-    },
-    "managed-agents__self-hosted-sandboxes.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes.md",
-      "hash": "a5e72010ce5f0b89c2fda6859ca1d449388cfc6eb8cb59ad39e2fcdc27f5bc90",
-      "last_updated": "2026-08-21T06:26:08.374480"
-    },
-    "managed-agents__self-hosted-sandboxes-security.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes-security",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes-security.md",
-      "hash": "e468f498b05131c7557ecea0e71ee277b60b9c342427126b24e32b8c11ebd1c8",
-      "last_updated": "2026-08-21T06:26:08.955087"
-    },
-    "managed-agents__session-operations.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/session-operations",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/session-operations.md",
-      "hash": "6014abe9dd525c3f9a3b48b5ab11a44f8ca4cbc06c17263eaa4a156663784e9d",
-      "last_updated": "2026-08-21T06:26:09.619319"
-    },
-    "managed-agents__sessions.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/sessions",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/sessions.md",
-      "hash": "965cd1a1131fa3783fcce08bb6e43d4f2addd6e17e49ac0da9a6ddc4beb3082b",
-      "last_updated": "2026-08-21T06:26:10.310687"
-    },
-    "managed-agents__skills.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/skills",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/skills.md",
-      "hash": "2da85e9987534c8e765038da402c657d946a9ed9d32b50d934610600f01d4eda",
-      "last_updated": "2026-08-21T06:26:10.986928"
-    },
-    "managed-agents__tools.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/tools",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/tools.md",
-      "hash": "794cd5ab1e708eb14f4d3d6945dc731c4a9c974f805268ebf5d5f16f267fbc18",
-      "last_updated": "2026-08-21T06:26:11.591939"
-    },
-    "managed-agents__vaults.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/vaults",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/vaults.md",
-      "hash": "1c652494ba286bb59083107a9d4b422ee2625f9cb244dd0e979801815ff7b9ea",
-      "last_updated": "2026-08-21T06:26:12.275544"
-    },
-    "managed-agents__webhooks.md": {
-      "original_url": "https://platform.claude.com/docs/en/managed-agents/webhooks",
-      "original_md_url": "https://platform.claude.com/docs/en/managed-agents/webhooks.md",
-      "hash": "37f9b6e5bbe5fff954b3adb921fafd5ac69eb8de009c43265fc53282bc67f036",
-      "last_updated": "2026-08-21T06:26:12.969722"
-    },
-    "release-notes__overview.md": {
-      "original_url": "https://platform.claude.com/docs/en/release-notes/overview",
-      "original_md_url": "https://platform.claude.com/docs/en/release-notes/overview.md",
-      "hash": "475e06b144b6a94cf0a3b137d804e097fee0c69a8f60a24828c3c9ff17297adb",
-      "last_updated": "2026-08-21T06:26:13.718815"
-    },
-    "release-notes__system-prompts.md": {
-      "original_url": "https://platform.claude.com/docs/en/release-notes/system-prompts",
-      "original_md_url": "https://platform.claude.com/docs/en/release-notes/system-prompts.md",
-      "hash": "5f22f4f307bd1f954bc676c4c9a158f967c99171c7c047db722b2bd139eec59d",
-      "last_updated": "2026-08-21T06:26:14.456978"
-    },
-    "test-and-evaluate__develop-tests.md": {
-      "original_url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
-      "original_md_url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests.md",
-      "hash": "df88c8c7e4b3990cbb558d16fcf6e02c4a542e576079e96b377ecaf24e525138",
-      "last_updated": "2026-08-21T06:26:15.396201"
-    },
-    "test-and-evaluate__strengthen-guardrails__handle-streaming-refusals.md": {
-      "original_url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/handle-streaming-refusals",
-      "original_md_url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/handle-streaming-refusals.md",
-      "hash": "aeee95d8e9d84e06965e4f4cc553a23888968238cb629c658722fc56ff724509",
-      "last_updated": "2026-08-21T06:26:16.059197"
-    },
-    "test-and-evaluate__strengthen-guardrails__increase-consistency.md": {
-      "original_url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency",
-      "original_md_url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency.md",
-      "hash": "f9199d8b674997104b7a90e287ef34fa276039529aea6eb01cb12527a4753066",
-      "last_updated": "2026-08-21T06:26:16.733160"
-    },
-    "test-and-evaluate__strengthen-guardrails__mitigate-jailbreaks.md": {
-      "original_url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
-      "original_md_url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks.md",
-      "hash": "07336594cc28a417d9f0cc36c86c72d53f2fd8fcb692529f2a8bfd5f90106e5b",
-      "last_updated": "2026-08-21T06:26:17.389991"
-    },
-    "test-and-evaluate__strengthen-guardrails__reduce-hallucinations.md": {
-      "original_url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
-      "original_md_url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations.md",
-      "hash": "6682502aad1f43b85911fa310212874afa496016c9feb669a988594b622d1aad",
-      "last_updated": "2026-08-21T06:26:18.068678"
-    },
-    "test-and-evaluate__strengthen-guardrails__reduce-latency.md": {
-      "original_url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency",
-      "original_md_url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency.md",
-      "hash": "ed3e1d853eeb0128f7874c371f8f4a1d2a0a7e63e074595b9b4262910ca88d2a",
-      "last_updated": "2026-08-21T06:26:18.748702"
-    },
-    "test-and-evaluate__strengthen-guardrails__reduce-prompt-leak.md": {
-      "original_url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-prompt-leak",
-      "original_md_url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-prompt-leak.md",
-      "hash": "db1608f147d42fb10038364945b7a688221c9eb567bcf17fac2570c3ca672d51",
-      "last_updated": "2026-08-21T06:26:19.395177"
+    "accessibility.md": {
+      "original_url": "https://code.claude.com/docs/en/accessibility",
+      "original_md_url": "https://code.claude.com/docs/en/accessibility.md",
+      "hash": "93509870505eb35e533c2c3fd8291351cde185b64f607b89284e5eafa70288b0",
+      "last_updated": "2026-08-21T09:23:35.391399"
+    },
+    "admin-setup.md": {
+      "original_url": "https://code.claude.com/docs/en/admin-setup",
+      "original_md_url": "https://code.claude.com/docs/en/admin-setup.md",
+      "hash": "afdd0ec00b9f874c2481efa9b2323ea95676836fce52f774a912523e8f2b4147",
+      "last_updated": "2026-08-21T09:23:35.982774"
+    },
+    "advisor.md": {
+      "original_url": "https://code.claude.com/docs/en/advisor",
+      "original_md_url": "https://code.claude.com/docs/en/advisor.md",
+      "hash": "ee6675cb291298c47d754058c66fd27416a295dbdf74bd6945d16efe001c44f3",
+      "last_updated": "2026-08-21T09:23:36.633632"
+    },
+    "agent-sdk__agent-loop.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/agent-loop",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/agent-loop.md",
+      "hash": "8c998e19a93f78b6df2bc32f1d2d6a766d9aeee49aa7f861f02fcf998d960b17",
+      "last_updated": "2026-08-21T09:23:37.213771"
+    },
+    "agent-sdk__claude-code-features.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/claude-code-features",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/claude-code-features.md",
+      "hash": "3c0a065fd495722953cb64804f4fa444da1d8332ee782c94886e7fc3ebf8d499",
+      "last_updated": "2026-08-21T09:23:38.483362"
+    },
+    "agent-sdk__cost-tracking.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/cost-tracking",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/cost-tracking.md",
+      "hash": "d3d6e3e907d9315cc21b96fab176341dcbe6d32978cd5c19860a1be048539e32",
+      "last_updated": "2026-08-21T09:23:40.611733"
+    },
+    "agent-sdk__custom-tools.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/custom-tools",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/custom-tools.md",
+      "hash": "d4a931e10220963502f100c09d9a7cb6a7108a75aec3d443b41bb6cdbc593341",
+      "last_updated": "2026-08-21T09:23:41.527680"
+    },
+    "agent-sdk__examples.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/examples",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/examples.md",
+      "hash": "82e9d6a127da350342d302286a7d63c8a8394fdf25c5f8624cced3cd72c5e705",
+      "last_updated": "2026-08-21T09:23:42.206564"
+    },
+    "agent-sdk__file-checkpointing.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/file-checkpointing",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/file-checkpointing.md",
+      "hash": "a13c717ee34e1377ac64f5f2ae295b72d95e583a9a5d4e8992a37510e86bb245",
+      "last_updated": "2026-08-21T09:23:42.977267"
+    },
+    "agent-sdk__hooks.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/hooks",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/hooks.md",
+      "hash": "5e9449c499940841c09b9d0fdd2cf41433ea1cbb13e6820aa3213a04155c29e8",
+      "last_updated": "2026-08-21T09:23:44.215445"
+    },
+    "agent-sdk__hosting.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/hosting",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/hosting.md",
+      "hash": "1da2fe6aee376119c3175db525e9293919bd4f1a7d3ad40d2bc86b6162b0066e",
+      "last_updated": "2026-08-21T09:23:45.216225"
+    },
+    "agent-sdk__mcp.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/mcp",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/mcp.md",
+      "hash": "b197bd01d02ce7801997bf2ba0d0b699a2cb77c17c18928aec0423afa38a6a25",
+      "last_updated": "2026-08-21T09:23:46.520461"
+    },
+    "agent-sdk__migration-guide.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/migration-guide",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/migration-guide.md",
+      "hash": "3dd004c9084cd0dbc4abd8db3fa899a0538d319be848fd63db7ae960c3754795",
+      "last_updated": "2026-08-21T09:23:47.219978"
+    },
+    "agent-sdk__modifying-system-prompts.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/modifying-system-prompts",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/modifying-system-prompts.md",
+      "hash": "d684f911bcd6fbdd32a28d26762a01e120421763811fef5cb0c587762afa157a",
+      "last_updated": "2026-08-21T09:23:47.989881"
+    },
+    "agent-sdk__observability.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/observability",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/observability.md",
+      "hash": "4ca096e3bc18ac0d62f6470e0a0d2e6d1f4ea76eeb1164edb650c4265747bd78",
+      "last_updated": "2026-08-21T09:23:48.854044"
+    },
+    "agent-sdk__overview.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/overview",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/overview.md",
+      "hash": "584a1641997bce448e6675b614c418d73b97087234419ab5227693b3dc89f9ff",
+      "last_updated": "2026-08-21T09:23:49.560952"
+    },
+    "agent-sdk__permissions.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/permissions",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/permissions.md",
+      "hash": "4cf890069cc3192c0eee98fd1497a5443b8db289395bc7f237ddbe04d7bd0cfe",
+      "last_updated": "2026-08-21T09:23:50.361438"
+    },
+    "agent-sdk__plugins.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/plugins",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/plugins.md",
+      "hash": "c8b179ee93ae6f4ee0a7b01b688153988c893a1cbca544859adea71097d296c0",
+      "last_updated": "2026-08-21T09:23:51.075990"
+    },
+    "agent-sdk__python.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/python",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/python.md",
+      "hash": "f53d91ac4f06383d3054e2b02832bb8757abefb5c36c3b3d38dc4dd32a1f77ab",
+      "last_updated": "2026-08-21T09:23:52.193680"
+    },
+    "agent-sdk__quickstart.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/quickstart",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/quickstart.md",
+      "hash": "56fda91b98e018dec0e4a0ee128f8e9ea0f6201238e25dcaf9f622f15ae24969",
+      "last_updated": "2026-08-21T09:23:52.925355"
+    },
+    "agent-sdk__secure-deployment.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/secure-deployment",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/secure-deployment.md",
+      "hash": "aa1300cfbe6574bb13e2dde964aea1320974013faabc6e92a43bfcfb01450722",
+      "last_updated": "2026-08-21T09:23:53.822013"
+    },
+    "agent-sdk__session-storage.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/session-storage",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/session-storage.md",
+      "hash": "9e643714c6cf9deebe0da821860f1c22a6d9dc31440c6949815ac4b863128184",
+      "last_updated": "2026-08-21T09:23:54.606012"
+    },
+    "agent-sdk__sessions.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/sessions",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/sessions.md",
+      "hash": "f0bc3b89f2dacc9c9d45bcd3d35333744eca350e0dd5e190b1eea4772cc3c088",
+      "last_updated": "2026-08-21T09:23:55.338030"
+    },
+    "agent-sdk__skills.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/skills",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/skills.md",
+      "hash": "afd81fe8632f84dc6b594556d85640067c5d69562969c78724febe329eb6e785",
+      "last_updated": "2026-08-21T09:23:56.148174"
+    },
+    "agent-sdk__streaming-output.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/streaming-output",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/streaming-output.md",
+      "hash": "fff2a8384040829deade1431be8d2e9344e1836a0a81fbdeadb99acf72f6ef64",
+      "last_updated": "2026-08-21T09:23:56.920104"
+    },
+    "agent-sdk__streaming-vs-single-mode.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/streaming-vs-single-mode",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/streaming-vs-single-mode.md",
+      "hash": "2069707484bdaf2f6b5cdf3d665fce355474b92481d903970b9e9d66a708fbff",
+      "last_updated": "2026-08-21T09:23:57.600233"
+    },
+    "agent-sdk__structured-outputs.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/structured-outputs",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/structured-outputs.md",
+      "hash": "a3f916716cf737c89a04d13860922f86fde11310437fe87e8de1262334e6a08d",
+      "last_updated": "2026-08-21T09:23:58.336895"
+    },
+    "agent-sdk__subagents.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/subagents",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/subagents.md",
+      "hash": "40f1fd38287bccc811ce075c6120e5a19753d3b183c75730b9f348a837edf121",
+      "last_updated": "2026-08-21T09:23:59.212258"
+    },
+    "agent-sdk__todo-tracking.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/todo-tracking",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/todo-tracking.md",
+      "hash": "b49170b98c64a3859977c92f0209895c02b1a7846dc253e2e08e8cbc72c6cb38",
+      "last_updated": "2026-08-21T09:24:00.603140"
+    },
+    "agent-sdk__tool-search.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/tool-search",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/tool-search.md",
+      "hash": "af9e2a41c394bd2518e16a95367ec457946928babf6a5cbbe7981a42ce6ec81d",
+      "last_updated": "2026-08-21T09:24:01.303801"
+    },
+    "agent-sdk__troubleshooting.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/troubleshooting",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/troubleshooting.md",
+      "hash": "de9891c420cf5849740c9eac1dac8ca6d5ea5b09244ee721dcfb3e85528e8043",
+      "last_updated": "2026-08-21T09:24:02.151510"
+    },
+    "agent-sdk__typescript.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/typescript",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/typescript.md",
+      "hash": "dd498e5135ecf95704130d66ff95b1dc95927ae8b37d14caebceb958b029f736",
+      "last_updated": "2026-08-21T09:24:03.589185"
+    },
+    "agent-sdk__typescript-v2-preview.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/typescript-v2-preview",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/typescript-v2-preview.md",
+      "hash": "d59d67e7bc6f7f27a75fbae3837acc1396216aad619d5bc8161185aed1121ba5",
+      "last_updated": "2026-08-21T09:24:04.342608"
+    },
+    "agent-sdk__user-input.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-sdk/user-input",
+      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/user-input.md",
+      "hash": "0b4415055db8b141b18f4cc04716d4402df5adfa9d260c1350dc9c12ebdac8c9",
+      "last_updated": "2026-08-21T09:24:05.140871"
+    },
+    "agent-teams.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-teams",
+      "original_md_url": "https://code.claude.com/docs/en/agent-teams.md",
+      "hash": "afd50dd3eaa8b65678bc626927b6cf0fce0ff8f5f9699a5e371a5897bdc867f1",
+      "last_updated": "2026-08-21T09:24:05.793655"
+    },
+    "agent-view.md": {
+      "original_url": "https://code.claude.com/docs/en/agent-view",
+      "original_md_url": "https://code.claude.com/docs/en/agent-view.md",
+      "hash": "b2c20afb3f543154238e786cdab5230476a45d10b044e312d9f0236119f13cd3",
+      "last_updated": "2026-08-21T09:24:06.839950"
+    },
+    "agents.md": {
+      "original_url": "https://code.claude.com/docs/en/agents",
+      "original_md_url": "https://code.claude.com/docs/en/agents.md",
+      "hash": "2d470eb82b5bc217bbd423db193677c49690ad0b4c4f73a0a9e97530caef6ca0",
+      "last_updated": "2026-08-21T09:24:07.616022"
+    },
+    "amazon-bedrock.md": {
+      "original_url": "https://code.claude.com/docs/en/amazon-bedrock",
+      "original_md_url": "https://code.claude.com/docs/en/amazon-bedrock.md",
+      "hash": "4c967b4d1cf239e0ab24e8896efc26ec2adb611cbff54822703d29a5853f508c",
+      "last_updated": "2026-08-21T09:24:08.430596"
+    },
+    "analytics.md": {
+      "original_url": "https://code.claude.com/docs/en/analytics",
+      "original_md_url": "https://code.claude.com/docs/en/analytics.md",
+      "hash": "6e1a46fbf128d24c0a252cd28d1c7377b3c050b24cc9827caf6e7e537e31fa97",
+      "last_updated": "2026-08-21T09:24:09.257789"
+    },
+    "artifacts.md": {
+      "original_url": "https://code.claude.com/docs/en/artifacts",
+      "original_md_url": "https://code.claude.com/docs/en/artifacts.md",
+      "hash": "a11e6fbd2e8de88b89b87b0023795ebb486c4d0c09083cef6e7f80980d43932c",
+      "last_updated": "2026-08-21T09:24:10.010664"
+    },
+    "authentication.md": {
+      "original_url": "https://code.claude.com/docs/en/authentication",
+      "original_md_url": "https://code.claude.com/docs/en/authentication.md",
+      "hash": "561c7450b6c3881fc601c10622ccbd7674a5354e20774ff7bcb29c1b9b955f7a",
+      "last_updated": "2026-08-21T09:24:10.859763"
+    },
+    "auto-mode-config.md": {
+      "original_url": "https://code.claude.com/docs/en/auto-mode-config",
+      "original_md_url": "https://code.claude.com/docs/en/auto-mode-config.md",
+      "hash": "9941cc39971653935dfab94086c2a48237f3a90a7dbe571a90915f004d018eb7",
+      "last_updated": "2026-08-21T09:24:11.717488"
+    },
+    "best-practices.md": {
+      "original_url": "https://code.claude.com/docs/en/best-practices",
+      "original_md_url": "https://code.claude.com/docs/en/best-practices.md",
+      "hash": "0ed0a6bc09b0d0bd69f4fcf7e2c494d860c3d3b40a318a09660019457eb834ac",
+      "last_updated": "2026-08-21T09:24:12.679718"
+    },
+    "champion-kit.md": {
+      "original_url": "https://code.claude.com/docs/en/champion-kit",
+      "original_md_url": "https://code.claude.com/docs/en/champion-kit.md",
+      "hash": "5ca0f6d751352107724d381e6fbe3f2f15945a2e30367a747ebcdc7f359360ed",
+      "last_updated": "2026-08-21T09:24:13.422308"
     },
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
@@ -1032,25 +270,867 @@
       "hash": "bed064bb93821d218dd9245e928cff030fbd040aaddcee24514f2ff05228d6ef",
       "last_updated": "2026-08-20T21:19:24.012567",
       "source": "claude-code-repository"
+    },
+    "channels.md": {
+      "original_url": "https://code.claude.com/docs/en/channels",
+      "original_md_url": "https://code.claude.com/docs/en/channels.md",
+      "hash": "bd42c3345bc421e4a0b61ca20a779c961a55f1df75ed081b2cb9c62a46367827",
+      "last_updated": "2026-08-21T09:24:16.850840"
+    },
+    "channels-reference.md": {
+      "original_url": "https://code.claude.com/docs/en/channels-reference",
+      "original_md_url": "https://code.claude.com/docs/en/channels-reference.md",
+      "hash": "b3fd0b5f24287dd4e5d49f5acc0a224d9224aa20f6c97273505b9cf50e12b046",
+      "last_updated": "2026-08-21T09:24:17.892859"
+    },
+    "checkpointing.md": {
+      "original_url": "https://code.claude.com/docs/en/checkpointing",
+      "original_md_url": "https://code.claude.com/docs/en/checkpointing.md",
+      "hash": "5ae281d0511b3f9fccdb53a900e7f61a3a2654bc5990927e588d6dcd3906d486",
+      "last_updated": "2026-08-21T09:24:18.804022"
+    },
+    "chrome.md": {
+      "original_url": "https://code.claude.com/docs/en/chrome",
+      "original_md_url": "https://code.claude.com/docs/en/chrome.md",
+      "hash": "888919f1518b622f77aa4ae4a4ce33f0d85bc8da4cacdd6e482ffc82199f2b9d",
+      "last_updated": "2026-08-21T09:24:19.572069"
+    },
+    "claude-apps-gateway.md": {
+      "original_url": "https://code.claude.com/docs/en/claude-apps-gateway",
+      "original_md_url": "https://code.claude.com/docs/en/claude-apps-gateway.md",
+      "hash": "1e9422188ab4b1c5b2c951712f982ef29bab16cad0215a44e47c09a70f5ea5c6",
+      "last_updated": "2026-08-21T09:24:20.419588"
+    },
+    "claude-apps-gateway-config.md": {
+      "original_url": "https://code.claude.com/docs/en/claude-apps-gateway-config",
+      "original_md_url": "https://code.claude.com/docs/en/claude-apps-gateway-config.md",
+      "hash": "9d325a9c4b00ee11f5fbc95d0f975c79ed6d929f1cdb676abad5a2f2fff9cb39",
+      "last_updated": "2026-08-21T09:24:22.027107"
+    },
+    "claude-apps-gateway-deploy.md": {
+      "original_url": "https://code.claude.com/docs/en/claude-apps-gateway-deploy",
+      "original_md_url": "https://code.claude.com/docs/en/claude-apps-gateway-deploy.md",
+      "hash": "63a948e0be67b493c65e165a8969f3b8044bba37ded16f07ff1ef0b9992b1161",
+      "last_updated": "2026-08-21T09:24:22.801835"
+    },
+    "claude-apps-gateway-on-aws.md": {
+      "original_url": "https://code.claude.com/docs/en/claude-apps-gateway-on-aws",
+      "original_md_url": "https://code.claude.com/docs/en/claude-apps-gateway-on-aws.md",
+      "hash": "039b3519cf692bdd7ac27a4d85d2e8c960fab31a84560570fb7152237236a60d",
+      "last_updated": "2026-08-21T09:24:23.588984"
+    },
+    "claude-apps-gateway-on-gcp.md": {
+      "original_url": "https://code.claude.com/docs/en/claude-apps-gateway-on-gcp",
+      "original_md_url": "https://code.claude.com/docs/en/claude-apps-gateway-on-gcp.md",
+      "hash": "caa7e445cfbc099cddef18f5b448cb245d93c04df03ff514772a395cc1b4ba19",
+      "last_updated": "2026-08-21T09:24:24.376413"
+    },
+    "claude-apps-gateway-spend-limits.md": {
+      "original_url": "https://code.claude.com/docs/en/claude-apps-gateway-spend-limits",
+      "original_md_url": "https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md",
+      "hash": "3a189ddd47d90f289a1847bc2ebacda1cd86b139d6e107b5ec29c4aa2e1cd913",
+      "last_updated": "2026-08-21T09:24:25.177658"
+    },
+    "claude-code-on-the-web.md": {
+      "original_url": "https://code.claude.com/docs/en/claude-code-on-the-web",
+      "original_md_url": "https://code.claude.com/docs/en/claude-code-on-the-web.md",
+      "hash": "28d533d04055ab44d598949462421fde9dd6814e1eefe28c4d1ab3e9bcc7194f",
+      "last_updated": "2026-08-21T09:24:25.779823"
+    },
+    "claude-directory.md": {
+      "original_url": "https://code.claude.com/docs/en/claude-directory",
+      "original_md_url": "https://code.claude.com/docs/en/claude-directory.md",
+      "hash": "25099bf1f49ce2cb333aa4e5bf296b064fab0b339c6e7a529da3955ba2e3cb29",
+      "last_updated": "2026-08-21T09:24:27.259815"
+    },
+    "claude-platform-on-aws.md": {
+      "original_url": "https://code.claude.com/docs/en/claude-platform-on-aws",
+      "original_md_url": "https://code.claude.com/docs/en/claude-platform-on-aws.md",
+      "hash": "37615ca54cb479d1a5bd54053b836c0aeccb4b6b57ffcf9ab63c35c4afab7a4a",
+      "last_updated": "2026-08-21T09:24:27.970443"
+    },
+    "claude-security.md": {
+      "original_url": "https://code.claude.com/docs/en/claude-security",
+      "original_md_url": "https://code.claude.com/docs/en/claude-security.md",
+      "hash": "15728be37be9fd79d4b0b680dabf7dd77f6ac88ed30a8915ba594afd5f89508d",
+      "last_updated": "2026-08-21T09:24:29.154970"
+    },
+    "claude-tag.md": {
+      "original_url": "https://code.claude.com/docs/en/claude-tag",
+      "original_md_url": "https://code.claude.com/docs/en/claude-tag.md",
+      "hash": "71a0a4e6c77545d48c76a50df303a62f20d933d79939fd42e4af178f3ff241fd",
+      "last_updated": "2026-08-21T09:24:29.858046"
+    },
+    "cli-reference.md": {
+      "original_url": "https://code.claude.com/docs/en/cli-reference",
+      "original_md_url": "https://code.claude.com/docs/en/cli-reference.md",
+      "hash": "a3592d30eab36dc74136a0a214032c487205dfa15c3511ab821900d68471d120",
+      "last_updated": "2026-08-21T09:24:30.417261"
+    },
+    "cloud-environments.md": {
+      "original_url": "https://code.claude.com/docs/en/cloud-environments",
+      "original_md_url": "https://code.claude.com/docs/en/cloud-environments.md",
+      "hash": "d785ec6be011d7a0617f4a92092cdf05443526f5f37a5044ba975ed090b4408b",
+      "last_updated": "2026-08-21T09:24:31.813224"
+    },
+    "code-review.md": {
+      "original_url": "https://code.claude.com/docs/en/code-review",
+      "original_md_url": "https://code.claude.com/docs/en/code-review.md",
+      "hash": "c06d9d357c7ac61a998278e5001e1c01a5418d4f5eaa3835d6c8618b7fefb750",
+      "last_updated": "2026-08-21T09:24:32.568269"
+    },
+    "commands.md": {
+      "original_url": "https://code.claude.com/docs/en/commands",
+      "original_md_url": "https://code.claude.com/docs/en/commands.md",
+      "hash": "6193356a1711741ac7b982826f114ba95d8968a07f6fa177ae44b4c6bea634e4",
+      "last_updated": "2026-08-21T09:24:33.368348"
+    },
+    "common-workflows.md": {
+      "original_url": "https://code.claude.com/docs/en/common-workflows",
+      "original_md_url": "https://code.claude.com/docs/en/common-workflows.md",
+      "hash": "9544fa5019de739654206948d597a6a90abd9f86a3dc504ba9871e1e295b3170",
+      "last_updated": "2026-08-21T09:24:34.085742"
+    },
+    "communications-kit.md": {
+      "original_url": "https://code.claude.com/docs/en/communications-kit",
+      "original_md_url": "https://code.claude.com/docs/en/communications-kit.md",
+      "hash": "e808b73b06fabf2cd5eeec86df10e216a2374ec0f32d9b378c8433ed609bc551",
+      "last_updated": "2026-08-21T09:24:34.953967"
+    },
+    "computer-use.md": {
+      "original_url": "https://code.claude.com/docs/en/computer-use",
+      "original_md_url": "https://code.claude.com/docs/en/computer-use.md",
+      "hash": "566ebcc950c55310845f98f78f24f97981eccd60e20a831fa9b95668e18a06ae",
+      "last_updated": "2026-08-21T09:24:35.886837"
+    },
+    "context-window.md": {
+      "original_url": "https://code.claude.com/docs/en/context-window",
+      "original_md_url": "https://code.claude.com/docs/en/context-window.md",
+      "hash": "a0e41a7e1224983db24e752c6826726d5f0e74a889585b7619476b54dab27e4d",
+      "last_updated": "2026-08-21T09:24:36.928987"
+    },
+    "corporate-launcher.md": {
+      "original_url": "https://code.claude.com/docs/en/corporate-launcher",
+      "original_md_url": "https://code.claude.com/docs/en/corporate-launcher.md",
+      "hash": "e0628f9c846ca93a62a0b18c2e44814dda67b927c19bb3c00babde28ab9a5381",
+      "last_updated": "2026-08-21T09:24:37.848544"
+    },
+    "costs.md": {
+      "original_url": "https://code.claude.com/docs/en/costs",
+      "original_md_url": "https://code.claude.com/docs/en/costs.md",
+      "hash": "39428ff69d5e338f5dac1f0038a7d81303ee4451e3ba87e5437646b94d702e38",
+      "last_updated": "2026-08-21T09:24:38.565484"
+    },
+    "cross-session-messaging.md": {
+      "original_url": "https://code.claude.com/docs/en/cross-session-messaging",
+      "original_md_url": "https://code.claude.com/docs/en/cross-session-messaging.md",
+      "hash": "6ed69df8d13151ee5fd678f9eac02c3a5d02d31d1c6deaa096a0041c5ead6dc2",
+      "last_updated": "2026-08-21T09:24:39.272540"
+    },
+    "data-usage.md": {
+      "original_url": "https://code.claude.com/docs/en/data-usage",
+      "original_md_url": "https://code.claude.com/docs/en/data-usage.md",
+      "hash": "b6011f8983f2355994ad22c89d6a5aa8aad820c3097e54607b26f409288d4491",
+      "last_updated": "2026-08-21T09:24:40.105851"
+    },
+    "debug-your-config.md": {
+      "original_url": "https://code.claude.com/docs/en/debug-your-config",
+      "original_md_url": "https://code.claude.com/docs/en/debug-your-config.md",
+      "hash": "698a9d85c621d33ca55741de4fd7692646700c35d2c00d69e3845c0771ed5419",
+      "last_updated": "2026-08-21T09:24:40.808720"
+    },
+    "deep-links.md": {
+      "original_url": "https://code.claude.com/docs/en/deep-links",
+      "original_md_url": "https://code.claude.com/docs/en/deep-links.md",
+      "hash": "fb78a55e6c411a3cc1d3f62f3aa9765ad416a41f9715641736f6595a35919d13",
+      "last_updated": "2026-08-21T09:24:41.593621"
+    },
+    "desktop.md": {
+      "original_url": "https://code.claude.com/docs/en/desktop",
+      "original_md_url": "https://code.claude.com/docs/en/desktop.md",
+      "hash": "d4975d3c35c9c40e3ca6a05c238f964545eccc022c21ef94f255243f7d269061",
+      "last_updated": "2026-08-21T09:24:42.899705"
+    },
+    "desktop-ios-simulator.md": {
+      "original_url": "https://code.claude.com/docs/en/desktop-ios-simulator",
+      "original_md_url": "https://code.claude.com/docs/en/desktop-ios-simulator.md",
+      "hash": "0d5c48a0ba3ad4772457abc46c471493da913f1bb6cba9b5dc3da08f596e3afc",
+      "last_updated": "2026-08-21T09:24:43.750352"
+    },
+    "desktop-linux.md": {
+      "original_url": "https://code.claude.com/docs/en/desktop-linux",
+      "original_md_url": "https://code.claude.com/docs/en/desktop-linux.md",
+      "hash": "3fb2b62a80c0c054626fccc30d840ba0ec476bde5d59c3704a757b4a8d02685d",
+      "last_updated": "2026-08-21T09:24:44.291681"
+    },
+    "desktop-quickstart.md": {
+      "original_url": "https://code.claude.com/docs/en/desktop-quickstart",
+      "original_md_url": "https://code.claude.com/docs/en/desktop-quickstart.md",
+      "hash": "4d7f8765d4533c66dd69f7c852d08dcbf668caa51f1fd5afe5d189244a901ded",
+      "last_updated": "2026-08-21T09:24:45.005953"
+    },
+    "desktop-scheduled-tasks.md": {
+      "original_url": "https://code.claude.com/docs/en/desktop-scheduled-tasks",
+      "original_md_url": "https://code.claude.com/docs/en/desktop-scheduled-tasks.md",
+      "hash": "a3818d29e5f008491e8b8db09cc127e1bd0bf987fb17ceab9582007597c571a4",
+      "last_updated": "2026-08-21T09:24:48.346463"
+    },
+    "desktop-wsl.md": {
+      "original_url": "https://code.claude.com/docs/en/desktop-wsl",
+      "original_md_url": "https://code.claude.com/docs/en/desktop-wsl.md",
+      "hash": "acbb2a4fa359dc84d507d8b7cea5b4153e194fe45b993d10837452b2fabe8ffc",
+      "last_updated": "2026-08-21T09:24:49.826985"
+    },
+    "devcontainer.md": {
+      "original_url": "https://code.claude.com/docs/en/devcontainer",
+      "original_md_url": "https://code.claude.com/docs/en/devcontainer.md",
+      "hash": "1ffaebecdee88353e3531115e4b02b6e6753ca0a70cb60a7a59ef2423ebbc0b1",
+      "last_updated": "2026-08-21T09:24:50.594665"
+    },
+    "discover-plugins.md": {
+      "original_url": "https://code.claude.com/docs/en/discover-plugins",
+      "original_md_url": "https://code.claude.com/docs/en/discover-plugins.md",
+      "hash": "60b15a31df37efddcbced8b23230969e43e13cacf4ef9f6ed4bd580f4b8cf096",
+      "last_updated": "2026-08-21T09:24:51.383070"
+    },
+    "env-vars.md": {
+      "original_url": "https://code.claude.com/docs/en/env-vars",
+      "original_md_url": "https://code.claude.com/docs/en/env-vars.md",
+      "hash": "4be43c98261d22698014a633d4e9c7c5f972b8d7b994a2be7712c6cfa1a2282a",
+      "last_updated": "2026-08-21T09:24:52.828551"
+    },
+    "errors.md": {
+      "original_url": "https://code.claude.com/docs/en/errors",
+      "original_md_url": "https://code.claude.com/docs/en/errors.md",
+      "hash": "132cef75d27cfe36a303b96046bf726a51a18a8d1dc9d45f64bdeec762a8b104",
+      "last_updated": "2026-08-21T09:24:54.164952"
+    },
+    "fast-mode.md": {
+      "original_url": "https://code.claude.com/docs/en/fast-mode",
+      "original_md_url": "https://code.claude.com/docs/en/fast-mode.md",
+      "hash": "51b8d11c6741b6d8046d0cf123a54584e84b8ed80b2e79beafd04baa54f2aded",
+      "last_updated": "2026-08-21T09:24:55.236689"
+    },
+    "feature-availability.md": {
+      "original_url": "https://code.claude.com/docs/en/feature-availability",
+      "original_md_url": "https://code.claude.com/docs/en/feature-availability.md",
+      "hash": "d6406d8e9c3ff103e6ff7ec924768d11ccefe2322623be0e312bee3d9523754a",
+      "last_updated": "2026-08-21T09:24:56.450481"
+    },
+    "features-overview.md": {
+      "original_url": "https://code.claude.com/docs/en/features-overview",
+      "original_md_url": "https://code.claude.com/docs/en/features-overview.md",
+      "hash": "13239ab3f914ce2146fbfa4ab8b3c9b564176d57af817885b51e2a2afd786ce5",
+      "last_updated": "2026-08-21T09:24:57.035287"
+    },
+    "fullscreen.md": {
+      "original_url": "https://code.claude.com/docs/en/fullscreen",
+      "original_md_url": "https://code.claude.com/docs/en/fullscreen.md",
+      "hash": "c06e7cb4f379bee56675f7a39c213b6c023822baa3e5f6b80fc220e702733afb",
+      "last_updated": "2026-08-21T09:24:57.789106"
+    },
+    "gateways.md": {
+      "original_url": "https://code.claude.com/docs/en/gateways",
+      "original_md_url": "https://code.claude.com/docs/en/gateways.md",
+      "hash": "7c10111ba4752cd6591de92413257d5491b12306c82c988fcbc4b9361746867d",
+      "last_updated": "2026-08-21T09:24:58.533172"
+    },
+    "github-actions.md": {
+      "original_url": "https://code.claude.com/docs/en/github-actions",
+      "original_md_url": "https://code.claude.com/docs/en/github-actions.md",
+      "hash": "0ca99e2a65d0522aae03d28a6b18c10a1355f268f3332beb3dc287e7b070968e",
+      "last_updated": "2026-08-21T09:25:00.222545"
+    },
+    "github-actions-cloud-providers.md": {
+      "original_url": "https://code.claude.com/docs/en/github-actions-cloud-providers",
+      "original_md_url": "https://code.claude.com/docs/en/github-actions-cloud-providers.md",
+      "hash": "7a7a329c318f99c2ba31868cd61df3f6430c614cf160711d6cead9d62b417c3b",
+      "last_updated": "2026-08-21T09:25:01.001356"
+    },
+    "github-enterprise-server.md": {
+      "original_url": "https://code.claude.com/docs/en/github-enterprise-server",
+      "original_md_url": "https://code.claude.com/docs/en/github-enterprise-server.md",
+      "hash": "f250aa7f2f0598670289e3bea3a8be98c8a9cd892bd80f279f5a6a5ebc28c88f",
+      "last_updated": "2026-08-21T09:25:01.757883"
+    },
+    "gitlab-ci-cd.md": {
+      "original_url": "https://code.claude.com/docs/en/gitlab-ci-cd",
+      "original_md_url": "https://code.claude.com/docs/en/gitlab-ci-cd.md",
+      "hash": "4f3ed7996e52c5519f7d890d9c87cc8985932f01c23f7206e0ca2ab01a88da3e",
+      "last_updated": "2026-08-21T09:25:02.475210"
+    },
+    "glossary.md": {
+      "original_url": "https://code.claude.com/docs/en/glossary",
+      "original_md_url": "https://code.claude.com/docs/en/glossary.md",
+      "hash": "64ae2fd9a68a7bb1d4a29df8294a99a12e632cc0ecddcb760511d89bbeac2aad",
+      "last_updated": "2026-08-21T09:25:03.268579"
+    },
+    "goal.md": {
+      "original_url": "https://code.claude.com/docs/en/goal",
+      "original_md_url": "https://code.claude.com/docs/en/goal.md",
+      "hash": "d4a502880070c8b6d0b1a77b3e7c01486f3b86b5ebe0d1ff04129fd30aaf18f5",
+      "last_updated": "2026-08-21T09:25:04.092957"
+    },
+    "google-vertex-ai.md": {
+      "original_url": "https://code.claude.com/docs/en/google-vertex-ai",
+      "original_md_url": "https://code.claude.com/docs/en/google-vertex-ai.md",
+      "hash": "74be65e539185e2ac5aa847c751d488e41df2f98bf8a67ed45ddebf00fb5b58c",
+      "last_updated": "2026-08-21T09:25:04.830955"
+    },
+    "headless.md": {
+      "original_url": "https://code.claude.com/docs/en/headless",
+      "original_md_url": "https://code.claude.com/docs/en/headless.md",
+      "hash": "620142d9bd8bca700497d9bfe29cb24257a3ed6577fc591a9c8a761ccc4f6d8b",
+      "last_updated": "2026-08-21T09:25:06.304320"
+    },
+    "hooks.md": {
+      "original_url": "https://code.claude.com/docs/en/hooks",
+      "original_md_url": "https://code.claude.com/docs/en/hooks.md",
+      "hash": "45512ff489ad1b8fa0378f7b2ac85c737f71760bca1336a9b03005e0da588ba5",
+      "last_updated": "2026-08-21T09:25:06.871299"
+    },
+    "hooks-guide.md": {
+      "original_url": "https://code.claude.com/docs/en/hooks-guide",
+      "original_md_url": "https://code.claude.com/docs/en/hooks-guide.md",
+      "hash": "3ed85190e03cf9787fd5d1abacfd2f39119d67437e6929504672c050d8d89759",
+      "last_updated": "2026-08-21T09:25:07.426319"
+    },
+    "how-claude-code-works.md": {
+      "original_url": "https://code.claude.com/docs/en/how-claude-code-works",
+      "original_md_url": "https://code.claude.com/docs/en/how-claude-code-works.md",
+      "hash": "557f278dba57a414fdcc82cbd33428f87c7f23a4b7e95152d5089ab97d211ee5",
+      "last_updated": "2026-08-21T09:25:08.163426"
+    },
+    "interactive-mode.md": {
+      "original_url": "https://code.claude.com/docs/en/interactive-mode",
+      "original_md_url": "https://code.claude.com/docs/en/interactive-mode.md",
+      "hash": "5d73c162f891bbaf52c06464bbe7788dea72ec60a4ce0006b7fbd3cc273ac721",
+      "last_updated": "2026-08-21T09:25:09.313774"
+    },
+    "jetbrains.md": {
+      "original_url": "https://code.claude.com/docs/en/jetbrains",
+      "original_md_url": "https://code.claude.com/docs/en/jetbrains.md",
+      "hash": "c310fb1fe91448cb57681922f2c2c56e1d4cb207d4b83aa65ef486c390e9782f",
+      "last_updated": "2026-08-21T09:25:10.154133"
+    },
+    "keybindings.md": {
+      "original_url": "https://code.claude.com/docs/en/keybindings",
+      "original_md_url": "https://code.claude.com/docs/en/keybindings.md",
+      "hash": "a28bbcdde51c14b2e6a8b0525251169c180917014debf3b7dfe11ce644d5ba3b",
+      "last_updated": "2026-08-21T09:25:10.887402"
+    },
+    "large-codebases.md": {
+      "original_url": "https://code.claude.com/docs/en/large-codebases",
+      "original_md_url": "https://code.claude.com/docs/en/large-codebases.md",
+      "hash": "8ecd0342f326ddd34abb24999670c71fd859f34171f3f837d2e2a717d19fe16a",
+      "last_updated": "2026-08-21T09:25:11.719015"
+    },
+    "legal-and-compliance.md": {
+      "original_url": "https://code.claude.com/docs/en/legal-and-compliance",
+      "original_md_url": "https://code.claude.com/docs/en/legal-and-compliance.md",
+      "hash": "d8814ea0d3a0ae8294d2e274ace1c5f7ab09353bae9da78a5050308828b4100f",
+      "last_updated": "2026-08-21T09:25:12.872456"
+    },
+    "llm-gateway.md": {
+      "original_url": "https://code.claude.com/docs/en/llm-gateway",
+      "original_md_url": "https://code.claude.com/docs/en/llm-gateway.md",
+      "hash": "e77e458089836ea04a710510e2710c000599f0c08c12cc75b686ad8a0a8f795a",
+      "last_updated": "2026-08-21T09:25:13.795116"
+    },
+    "llm-gateway-connect.md": {
+      "original_url": "https://code.claude.com/docs/en/llm-gateway-connect",
+      "original_md_url": "https://code.claude.com/docs/en/llm-gateway-connect.md",
+      "hash": "e2ed0b4c44412c843573441de2bc4b5fae60c6b11d8e8a9765d58f367cfdfd3c",
+      "last_updated": "2026-08-21T09:25:14.564984"
+    },
+    "llm-gateway-protocol.md": {
+      "original_url": "https://code.claude.com/docs/en/llm-gateway-protocol",
+      "original_md_url": "https://code.claude.com/docs/en/llm-gateway-protocol.md",
+      "hash": "b1c3b5f42a1a8cee942fcedfe8943bca44355fbdb0047e5e7ef6e75eed1a4cb2",
+      "last_updated": "2026-08-21T09:25:15.418919"
+    },
+    "llm-gateway-rollout.md": {
+      "original_url": "https://code.claude.com/docs/en/llm-gateway-rollout",
+      "original_md_url": "https://code.claude.com/docs/en/llm-gateway-rollout.md",
+      "hash": "70358b86f8e2ba8a84203ef5a449df71d2345ff121a07b3c063dd244883d4336",
+      "last_updated": "2026-08-21T09:25:16.890200"
+    },
+    "managed-mcp.md": {
+      "original_url": "https://code.claude.com/docs/en/managed-mcp",
+      "original_md_url": "https://code.claude.com/docs/en/managed-mcp.md",
+      "hash": "c81fafb73b920b8960d6e753f0cff628f07c5d63e09bedcee34023ba9841e449",
+      "last_updated": "2026-08-21T09:25:17.661549"
+    },
+    "mcp.md": {
+      "original_url": "https://code.claude.com/docs/en/mcp",
+      "original_md_url": "https://code.claude.com/docs/en/mcp.md",
+      "hash": "42f4f6df676f9a4296ea51590278b89390902fbc4ffe7800c73ae1f01b85ce68",
+      "last_updated": "2026-08-21T09:25:18.555489"
+    },
+    "mcp-quickstart.md": {
+      "original_url": "https://code.claude.com/docs/en/mcp-quickstart",
+      "original_md_url": "https://code.claude.com/docs/en/mcp-quickstart.md",
+      "hash": "d11aae0e0d5868076fd2c8af56f4a6ccae598b3c4c962c6d6718b6aa7f9f24a4",
+      "last_updated": "2026-08-21T09:25:19.303390"
+    },
+    "memory.md": {
+      "original_url": "https://code.claude.com/docs/en/memory",
+      "original_md_url": "https://code.claude.com/docs/en/memory.md",
+      "hash": "6458bf6c1696cdf26a707f8f2167a705c33279e9219df41c5842e13a3b74a8ab",
+      "last_updated": "2026-08-21T09:25:19.869512"
+    },
+    "microsoft-foundry.md": {
+      "original_url": "https://code.claude.com/docs/en/microsoft-foundry",
+      "original_md_url": "https://code.claude.com/docs/en/microsoft-foundry.md",
+      "hash": "29f3e08b5adc3143f136139dd3d3e6196feb79c9032994be6fce3490b14dc7aa",
+      "last_updated": "2026-08-21T09:25:20.711882"
+    },
+    "mobile.md": {
+      "original_url": "https://code.claude.com/docs/en/mobile",
+      "original_md_url": "https://code.claude.com/docs/en/mobile.md",
+      "hash": "179dd0d2cbc2082075408fdb8ffd1696e4cc0eebfd75fdfb19085c8ee588fc39",
+      "last_updated": "2026-08-21T09:25:21.503140"
+    },
+    "model-config.md": {
+      "original_url": "https://code.claude.com/docs/en/model-config",
+      "original_md_url": "https://code.claude.com/docs/en/model-config.md",
+      "hash": "0f865aed1d60e30806fbd350c843eab4a67d18d70ee2e6f08b265fc208940e7c",
+      "last_updated": "2026-08-21T09:25:22.518465"
+    },
+    "monitoring-usage.md": {
+      "original_url": "https://code.claude.com/docs/en/monitoring-usage",
+      "original_md_url": "https://code.claude.com/docs/en/monitoring-usage.md",
+      "hash": "f3664077c262ee3c9b512d0dc7f0bbae0e1ab6d1ef5f2627d8b0edcfe4de9f5d",
+      "last_updated": "2026-08-21T09:25:23.760584"
+    },
+    "network-config.md": {
+      "original_url": "https://code.claude.com/docs/en/network-config",
+      "original_md_url": "https://code.claude.com/docs/en/network-config.md",
+      "hash": "1ed21edbc9d0de99416d62c8dcafa8f3e1501da3b6d2224184c3a2939fec51c1",
+      "last_updated": "2026-08-21T09:25:24.552656"
+    },
+    "output-styles.md": {
+      "original_url": "https://code.claude.com/docs/en/output-styles",
+      "original_md_url": "https://code.claude.com/docs/en/output-styles.md",
+      "hash": "7f28ae3292fe686e7aaf37f6f199ea1fcca60cedfdf8bd79b45d1476836b989e",
+      "last_updated": "2026-08-21T09:25:25.676839"
+    },
+    "overview.md": {
+      "original_url": "https://code.claude.com/docs/en/overview",
+      "original_md_url": "https://code.claude.com/docs/en/overview.md",
+      "hash": "12a8ac12ac36b417afdd968c64944bd1ade572dbf51aeb1ef56c45eccf36a55c",
+      "last_updated": "2026-08-21T09:25:26.257881"
+    },
+    "permission-modes.md": {
+      "original_url": "https://code.claude.com/docs/en/permission-modes",
+      "original_md_url": "https://code.claude.com/docs/en/permission-modes.md",
+      "hash": "abc2e28fb649dffa640f6bb1730f9f2e13fcc88ec6c68bf08c920af9858a50d4",
+      "last_updated": "2026-08-21T09:25:26.819446"
+    },
+    "permissions.md": {
+      "original_url": "https://code.claude.com/docs/en/permissions",
+      "original_md_url": "https://code.claude.com/docs/en/permissions.md",
+      "hash": "ab0118cbe2fb7fe84fb70a6bc76c32a5a43315654ce267483b280da0221ba511",
+      "last_updated": "2026-08-21T09:25:27.422307"
+    },
+    "platforms.md": {
+      "original_url": "https://code.claude.com/docs/en/platforms",
+      "original_md_url": "https://code.claude.com/docs/en/platforms.md",
+      "hash": "4516ef873bfb1337a9ad8db5f4fc47089186f052dbdf47d016984318c24d9c98",
+      "last_updated": "2026-08-21T09:25:28.127318"
+    },
+    "plugin-dependencies.md": {
+      "original_url": "https://code.claude.com/docs/en/plugin-dependencies",
+      "original_md_url": "https://code.claude.com/docs/en/plugin-dependencies.md",
+      "hash": "83c24f0f9915f66d24011167fc164a90c5badc1832495932717ff2d34dd93868",
+      "last_updated": "2026-08-21T09:25:29.667703"
+    },
+    "plugin-hints.md": {
+      "original_url": "https://code.claude.com/docs/en/plugin-hints",
+      "original_md_url": "https://code.claude.com/docs/en/plugin-hints.md",
+      "hash": "cba6d1e4cb50ace8a02ed15cddc3f37f8098eadc01cae61a0f732b526b5b1232",
+      "last_updated": "2026-08-21T09:25:30.385269"
+    },
+    "plugin-marketplaces.md": {
+      "original_url": "https://code.claude.com/docs/en/plugin-marketplaces",
+      "original_md_url": "https://code.claude.com/docs/en/plugin-marketplaces.md",
+      "hash": "dd027e020ea06375b1b9f43ee605a08e654a118e98963ac64914e35db33a766e",
+      "last_updated": "2026-08-21T09:25:31.286286"
+    },
+    "plugin-relevance.md": {
+      "original_url": "https://code.claude.com/docs/en/plugin-relevance",
+      "original_md_url": "https://code.claude.com/docs/en/plugin-relevance.md",
+      "hash": "4737de5f2ee9153f2ab18196a34d54802558c545291f6b796e0d2def4040178b",
+      "last_updated": "2026-08-21T09:25:32.041413"
+    },
+    "plugins.md": {
+      "original_url": "https://code.claude.com/docs/en/plugins",
+      "original_md_url": "https://code.claude.com/docs/en/plugins.md",
+      "hash": "d353344e65fed118a88565ab463770a99d88ca073419b4d868ab4eb4dd54103a",
+      "last_updated": "2026-08-21T09:25:32.749356"
+    },
+    "plugins-reference.md": {
+      "original_url": "https://code.claude.com/docs/en/plugins-reference",
+      "original_md_url": "https://code.claude.com/docs/en/plugins-reference.md",
+      "hash": "dee03b014c2bc3ee8760344525a5289e14402a15e023ee61df49250ee2e479f4",
+      "last_updated": "2026-08-21T09:25:33.682456"
+    },
+    "prompt-caching.md": {
+      "original_url": "https://code.claude.com/docs/en/prompt-caching",
+      "original_md_url": "https://code.claude.com/docs/en/prompt-caching.md",
+      "hash": "cf53f933c70cc469e3aac3ad94bdd251c890ac5bbc165ae8536b4679f86ba59b",
+      "last_updated": "2026-08-21T09:25:34.469324"
+    },
+    "prompt-library.md": {
+      "original_url": "https://code.claude.com/docs/en/prompt-library",
+      "original_md_url": "https://code.claude.com/docs/en/prompt-library.md",
+      "hash": "0240042f18bd1ff6c25b078749720d1978266455e4d877d7bc408ec87f8ea313",
+      "last_updated": "2026-08-21T09:25:35.515877"
+    },
+    "quickstart.md": {
+      "original_url": "https://code.claude.com/docs/en/quickstart",
+      "original_md_url": "https://code.claude.com/docs/en/quickstart.md",
+      "hash": "f5b59b2f5b7186ab5fec800beacc45413c103c3e19b2c1292c00838b7d7c0c8d",
+      "last_updated": "2026-08-21T09:25:37.148589"
+    },
+    "remote-control.md": {
+      "original_url": "https://code.claude.com/docs/en/remote-control",
+      "original_md_url": "https://code.claude.com/docs/en/remote-control.md",
+      "hash": "750ed466597b4c7d1173a300acba3160d3330beb2193dce348b4da7d81a4ceb9",
+      "last_updated": "2026-08-21T09:25:38.007548"
+    },
+    "routines.md": {
+      "original_url": "https://code.claude.com/docs/en/routines",
+      "original_md_url": "https://code.claude.com/docs/en/routines.md",
+      "hash": "a2855f70de2fa86b53b5131ee170692404d81acc1c5956aad485fc2bbb219317",
+      "last_updated": "2026-08-21T09:25:38.809901"
+    },
+    "sandbox-environments.md": {
+      "original_url": "https://code.claude.com/docs/en/sandbox-environments",
+      "original_md_url": "https://code.claude.com/docs/en/sandbox-environments.md",
+      "hash": "b2d76369288b394d23bfd31cd39a4f4176d317bf0ee8c054af29d3abe0ce5372",
+      "last_updated": "2026-08-21T09:25:39.570414"
+    },
+    "sandboxing.md": {
+      "original_url": "https://code.claude.com/docs/en/sandboxing",
+      "original_md_url": "https://code.claude.com/docs/en/sandboxing.md",
+      "hash": "c36e1cf79e4028f3363556dd7662cfcda49b9368c0eb196a87e6946887c22dd9",
+      "last_updated": "2026-08-21T09:25:40.531415"
+    },
+    "scheduled-tasks.md": {
+      "original_url": "https://code.claude.com/docs/en/scheduled-tasks",
+      "original_md_url": "https://code.claude.com/docs/en/scheduled-tasks.md",
+      "hash": "6e804be52523ac46f8699add63edd352177cc2681d7ea914102fbf82d10dea1f",
+      "last_updated": "2026-08-21T09:25:41.372428"
+    },
+    "security.md": {
+      "original_url": "https://code.claude.com/docs/en/security",
+      "original_md_url": "https://code.claude.com/docs/en/security.md",
+      "hash": "7aba02e7f539d2384954d05443e1ce3ccd4f4b99adf54937b9e623b8fdaa7d25",
+      "last_updated": "2026-08-21T09:25:42.093631"
+    },
+    "security-guidance.md": {
+      "original_url": "https://code.claude.com/docs/en/security-guidance",
+      "original_md_url": "https://code.claude.com/docs/en/security-guidance.md",
+      "hash": "2a9c091b92d65ba780df239aebaafb89d9e31c6330a75b3fd6d36977a7c0e0e5",
+      "last_updated": "2026-08-21T09:25:42.829674"
+    },
+    "self-hosted-environments.md": {
+      "original_url": "https://code.claude.com/docs/en/self-hosted-environments",
+      "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments.md",
+      "hash": "f1ce05ace88c4e7661467f31da246e902d7d129da817e2299ecb5675666b0119",
+      "last_updated": "2026-08-21T09:25:43.578501"
+    },
+    "self-hosted-environments-configuration.md": {
+      "original_url": "https://code.claude.com/docs/en/self-hosted-environments-configuration",
+      "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments-configuration.md",
+      "hash": "b3dc68d6b3b9b1ff17a532061964ec21806ac2af689e2013f3e5011f16cdd7fb",
+      "last_updated": "2026-08-21T09:25:44.472850"
+    },
+    "self-hosted-environments-deploy.md": {
+      "original_url": "https://code.claude.com/docs/en/self-hosted-environments-deploy",
+      "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments-deploy.md",
+      "hash": "a855a2e706a87aaaef5dd9a1a14feafbfc17a3ac0476df450adb3db12f4c0023",
+      "last_updated": "2026-08-21T09:25:45.298721"
+    },
+    "self-hosted-environments-identity.md": {
+      "original_url": "https://code.claude.com/docs/en/self-hosted-environments-identity",
+      "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments-identity.md",
+      "hash": "a695691cbc7b133666fb9cef34c969b58acd3f35976e2d8401e61f5abdd9955f",
+      "last_updated": "2026-08-21T09:25:46.422566"
+    },
+    "self-hosted-environments-quickstart.md": {
+      "original_url": "https://code.claude.com/docs/en/self-hosted-environments-quickstart",
+      "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments-quickstart.md",
+      "hash": "4d2d8a4846a8e3283cb9f3f0f5d649df034e348eb83b668414035ce109da2fbc",
+      "last_updated": "2026-08-21T09:25:47.107636"
+    },
+    "self-hosted-environments-reference.md": {
+      "original_url": "https://code.claude.com/docs/en/self-hosted-environments-reference",
+      "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments-reference.md",
+      "hash": "8138727ae74514f3b60666d55531836f2e31fa8ced0e2a875ec5a822ba1f3d81",
+      "last_updated": "2026-08-21T09:25:47.894498"
+    },
+    "self-hosted-environments-testing.md": {
+      "original_url": "https://code.claude.com/docs/en/self-hosted-environments-testing",
+      "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments-testing.md",
+      "hash": "155e1998cbae0d08c7c79493968d39b237b60e5994ae8f91f63d3609308e624c",
+      "last_updated": "2026-08-21T09:25:48.649016"
+    },
+    "server-managed-settings.md": {
+      "original_url": "https://code.claude.com/docs/en/server-managed-settings",
+      "original_md_url": "https://code.claude.com/docs/en/server-managed-settings.md",
+      "hash": "cbb9d814c13982cb20b1a9e18126d8e02ece5f66939781ca44c9a73fb6f83af7",
+      "last_updated": "2026-08-21T09:25:49.735969"
+    },
+    "sessions.md": {
+      "original_url": "https://code.claude.com/docs/en/sessions",
+      "original_md_url": "https://code.claude.com/docs/en/sessions.md",
+      "hash": "5861c6bf998099861616d2a50e08e72145e34656a80074b19c0e6c49730e755d",
+      "last_updated": "2026-08-21T09:25:50.507560"
+    },
+    "settings.md": {
+      "original_url": "https://code.claude.com/docs/en/settings",
+      "original_md_url": "https://code.claude.com/docs/en/settings.md",
+      "hash": "4056c3d1558e20de056a07e7ed970b9c1aedd837ee4bed54dd291daf526c4fb8",
+      "last_updated": "2026-08-21T09:25:51.714001"
+    },
+    "setup.md": {
+      "original_url": "https://code.claude.com/docs/en/setup",
+      "original_md_url": "https://code.claude.com/docs/en/setup.md",
+      "hash": "22d94bf028d677c9069d0ccfba5c8feccf665460ebd4b3db5acbc1ab4b3e46c4",
+      "last_updated": "2026-08-21T09:25:52.511674"
+    },
+    "skills.md": {
+      "original_url": "https://code.claude.com/docs/en/skills",
+      "original_md_url": "https://code.claude.com/docs/en/skills.md",
+      "hash": "21ba53162166d02c1bd23a4dc215eeb01e95805712e3077cbf5060a1ef72075d",
+      "last_updated": "2026-08-21T09:25:53.584674"
+    },
+    "slack.md": {
+      "original_url": "https://code.claude.com/docs/en/slack",
+      "original_md_url": "https://code.claude.com/docs/en/slack.md",
+      "hash": "4373bdf9df4931f360dad2756c309935b3e3882dbf298012e0134028a2be2c37",
+      "last_updated": "2026-08-21T09:25:54.263564"
+    },
+    "statusline.md": {
+      "original_url": "https://code.claude.com/docs/en/statusline",
+      "original_md_url": "https://code.claude.com/docs/en/statusline.md",
+      "hash": "546fbc9424f28d62b3c55972b3fd1c8b61b9cb0b442b280928bebf3b1ea01114",
+      "last_updated": "2026-08-21T09:25:54.818273"
+    },
+    "sub-agents.md": {
+      "original_url": "https://code.claude.com/docs/en/sub-agents",
+      "original_md_url": "https://code.claude.com/docs/en/sub-agents.md",
+      "hash": "85d59add6479a67f55993995a8f170ab1236fba335fa8cd300657e52c19cf773",
+      "last_updated": "2026-08-21T09:25:55.388045"
+    },
+    "terminal-config.md": {
+      "original_url": "https://code.claude.com/docs/en/terminal-config",
+      "original_md_url": "https://code.claude.com/docs/en/terminal-config.md",
+      "hash": "4f93463dcd194115fe5f80020b13e5c47f420721f7178162e300b82ac7be3d6e",
+      "last_updated": "2026-08-21T09:25:56.502131"
+    },
+    "third-party-integrations.md": {
+      "original_url": "https://code.claude.com/docs/en/third-party-integrations",
+      "original_md_url": "https://code.claude.com/docs/en/third-party-integrations.md",
+      "hash": "b1a52b2f4b525d27ae2cb3aa083f47dd1f5a6432eef5551d74d7822a31de484f",
+      "last_updated": "2026-08-21T09:25:57.276293"
+    },
+    "tools-reference.md": {
+      "original_url": "https://code.claude.com/docs/en/tools-reference",
+      "original_md_url": "https://code.claude.com/docs/en/tools-reference.md",
+      "hash": "4752b93e9ab00406bdcecc32acd212ff8e5d90bb40abeca7ad9a509b0f1c569b",
+      "last_updated": "2026-08-21T09:25:57.853348"
+    },
+    "troubleshoot-install.md": {
+      "original_url": "https://code.claude.com/docs/en/troubleshoot-install",
+      "original_md_url": "https://code.claude.com/docs/en/troubleshoot-install.md",
+      "hash": "00ee610707c923d4014190aa678b73475c3cd442322d39d39d36843bbc63a84e",
+      "last_updated": "2026-08-21T09:25:59.685655"
+    },
+    "troubleshooting.md": {
+      "original_url": "https://code.claude.com/docs/en/troubleshooting",
+      "original_md_url": "https://code.claude.com/docs/en/troubleshooting.md",
+      "hash": "cce81af0a27e251016386854857b98282a856c72e62bbf583719452e66784824",
+      "last_updated": "2026-08-21T09:26:00.465469"
+    },
+    "ultrareview.md": {
+      "original_url": "https://code.claude.com/docs/en/ultrareview",
+      "original_md_url": "https://code.claude.com/docs/en/ultrareview.md",
+      "hash": "dac0e94064bfd048327a7abd9b3c63ea7194629056924347ce01187ec0ef8dc0",
+      "last_updated": "2026-08-21T09:26:01.256952"
+    },
+    "voice-dictation.md": {
+      "original_url": "https://code.claude.com/docs/en/voice-dictation",
+      "original_md_url": "https://code.claude.com/docs/en/voice-dictation.md",
+      "hash": "caeace34e205c03229d331dc319abaa02d8d1aec208bc9f5fcc07380b3ad919f",
+      "last_updated": "2026-08-21T09:26:02.022460"
+    },
+    "vs-code.md": {
+      "original_url": "https://code.claude.com/docs/en/vs-code",
+      "original_md_url": "https://code.claude.com/docs/en/vs-code.md",
+      "hash": "43c80d829fd5d427d03480d778ee9a3763d8fec8fcd71bbd47f8ce17bc83220d",
+      "last_updated": "2026-08-21T09:26:02.879253"
+    },
+    "web-quickstart.md": {
+      "original_url": "https://code.claude.com/docs/en/web-quickstart",
+      "original_md_url": "https://code.claude.com/docs/en/web-quickstart.md",
+      "hash": "2adf11ab3ffe956b2ffbf034f27cfa234f34d4c49ff0990b127b9cc8f4c8e743",
+      "last_updated": "2026-08-21T09:26:03.682085"
+    },
+    "whats-new.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new.md",
+      "hash": "598220ee884ac6bd854b235f57e7b9bbd6bf0e41f478523d52d824306c7bb039",
+      "last_updated": "2026-08-21T09:26:04.786420"
+    },
+    "whats-new__2026-w13.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w13",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w13.md",
+      "hash": "1f6b33d30fc2ba37f181750f871a769ba973868bd4c3b649f7c0b41856a91bc5",
+      "last_updated": "2026-08-21T09:26:05.521392"
+    },
+    "whats-new__2026-w14.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w14",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w14.md",
+      "hash": "d2ba66788eb385a4c3ad9f8b0ead51b24d9ec4d631dc4855c00f8a21b2d972fb",
+      "last_updated": "2026-08-21T09:26:06.661158"
+    },
+    "whats-new__2026-w15.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w15",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w15.md",
+      "hash": "0b44122d315a9909407b83def62e4edc8247262565bb4d1c22add11e21283be9",
+      "last_updated": "2026-08-21T09:26:07.395520"
+    },
+    "whats-new__2026-w16.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w16",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w16.md",
+      "hash": "cd6cc611efc53cf7319f2bab020f13d733affe6a6b7a5c270a2f218289fa64dc",
+      "last_updated": "2026-08-21T09:26:08.152725"
+    },
+    "whats-new__2026-w17.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w17",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w17.md",
+      "hash": "f578e85cf3fa449fd7c61e930970cd8fd70af9c2204d319b0c1a30daf99611df",
+      "last_updated": "2026-08-21T09:26:08.845377"
+    },
+    "whats-new__2026-w18.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w18",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w18.md",
+      "hash": "a567c98c444a4e80c35d2090bf2cf756b1ce097c75cb57364d8ab5ddf155051e",
+      "last_updated": "2026-08-21T09:26:09.564402"
+    },
+    "whats-new__2026-w19.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w19",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w19.md",
+      "hash": "3d6247b5b48579fcd46e23c5286b90c390fd2e7c1f4b66aebb12578622a95e14",
+      "last_updated": "2026-08-21T09:26:10.376365"
+    },
+    "whats-new__2026-w20.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w20",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w20.md",
+      "hash": "22e8189f0d539e07f0c6dbf0dac1de0145d64211cd0465acea97d0183e922525",
+      "last_updated": "2026-08-21T09:26:11.142205"
+    },
+    "whats-new__2026-w21.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w21",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w21.md",
+      "hash": "e17d2c9c819da2cd57397894b79b7355f2b590be6b023c41f1fe322fa51b6d22",
+      "last_updated": "2026-08-21T09:26:12.308710"
+    },
+    "whats-new__2026-w22.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w22",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w22.md",
+      "hash": "17ec54c9ef14d0426d4a4375efe470ba0ecc9aaefad5582d9efe317c3c220687",
+      "last_updated": "2026-08-21T09:26:12.993585"
+    },
+    "whats-new__2026-w23.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w23",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w23.md",
+      "hash": "b018b3971c54c267f4b4623676eedb339e2728b9a4c413cd07a0428739110dc4",
+      "last_updated": "2026-08-21T09:26:13.843169"
+    },
+    "whats-new__2026-w24.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w24",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w24.md",
+      "hash": "770e40ecefed1e8ebb77426c3b8a6fd59227e6d59bf5c30f679feb5dd962cedd",
+      "last_updated": "2026-08-21T09:26:14.541448"
+    },
+    "whats-new__2026-w25.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w25",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w25.md",
+      "hash": "833f8d3b700c7618cce2202daf834614b956be2c30651edb8c102815e7dcbd08",
+      "last_updated": "2026-08-21T09:26:15.318221"
+    },
+    "whats-new__2026-w26.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w26",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w26.md",
+      "hash": "3b2140a178f36250ee1a24643bdc12b83b4f1534e1a1f8a94d40556a4c7e0625",
+      "last_updated": "2026-08-21T09:26:16.180877"
+    },
+    "whats-new__2026-w27.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w27",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w27.md",
+      "hash": "f6386207819b3af9e7bb379d3e5df84dabf7f87b90fe9a5fc58e91d5c2ed5fe2",
+      "last_updated": "2026-08-21T09:26:16.922335"
+    },
+    "whats-new__2026-w28.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w28",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w28.md",
+      "hash": "d42c311bdf5932bcb49f8a765ada6d39073bfaa98d16fdf12807b7074463b83f",
+      "last_updated": "2026-08-21T09:26:18.123204"
+    },
+    "whats-new__2026-w29.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w29",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w29.md",
+      "hash": "275e9c88fadfa5cc0cb39665a4a5d89234c970295e0f4d0bc583e15e2ff9bb29",
+      "last_updated": "2026-08-21T09:26:19.117630"
+    },
+    "whats-new__2026-w30.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w30",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w30.md",
+      "hash": "df099e47a73428b58df52eea4515ce2cc5894b6090a769e0f172808906f33ba1",
+      "last_updated": "2026-08-21T09:26:19.847735"
+    },
+    "whats-new__2026-w32.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w32",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w32.md",
+      "hash": "f7f1e5a97f228bf821404093e534ceaa95b1263fcb486cde6dc3eec851a93eaa",
+      "last_updated": "2026-08-21T09:26:20.698574"
+    },
+    "workflows.md": {
+      "original_url": "https://code.claude.com/docs/en/workflows",
+      "original_md_url": "https://code.claude.com/docs/en/workflows.md",
+      "hash": "cc0942285cadc04f77bd8d90630d53a7e56df1d5d232fd1f71effd21b34faa22",
+      "last_updated": "2026-08-21T09:26:21.460564"
+    },
+    "worktrees.md": {
+      "original_url": "https://code.claude.com/docs/en/worktrees",
+      "original_md_url": "https://code.claude.com/docs/en/worktrees.md",
+      "hash": "8800a6f59f80daa0ec27e7dd8ee3b1dfad7b4bd91948f2c981db26be57949701",
+      "last_updated": "2026-08-21T09:26:22.246835"
+    },
+    "zero-data-retention.md": {
+      "original_url": "https://code.claude.com/docs/en/zero-data-retention",
+      "original_md_url": "https://code.claude.com/docs/en/zero-data-retention.md",
+      "hash": "218ed0e3c97a0f8f6f17679d701f1d1e77d844b65ebd54aef0e1f7eb929aaf95",
+      "last_updated": "2026-08-21T09:26:22.966457"
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-21T06:26:19.516052",
-    "fetch_duration_seconds": 149.210094,
-    "total_pages_discovered": 174,
-    "pages_fetched_successfully": 172,
-    "pages_failed": 3,
-    "failed_pages": [
-      "/docs/en/about-claude/use-case-guides/overview",
-      "/docs/en/home",
-      "/docs/en/resources/overview"
-    ],
-    "sitemap_url": "https://docs.anthropic.com/sitemap.xml",
-    "base_url": "https://platform.claude.com",
-    "total_files": 172,
+    "last_fetch_completed": "2026-08-21T09:26:23.004110",
+    "fetch_duration_seconds": 168.505947,
+    "total_pages_discovered": 186,
+    "pages_fetched_successfully": 187,
+    "pages_failed": 0,
+    "failed_pages": [],
+    "sitemap_url": "https://code.claude.com/docs/sitemap.xml",
+    "base_url": "https://code.claude.com",
+    "total_files": 186,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-21T06:26:19.516072",
+  "last_updated": "2026-08-21T09:26:23.004132",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
