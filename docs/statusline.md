@@ -134,7 +134,7 @@ These examples use Bash scripts, which work on macOS and Linux. On Windows, see 
 
 ## How status lines work
 
-Claude Code runs your script and pipes [JSON session data](#available-data) to it via stdin. Your script reads the JSON, extracts what it needs, and prints text to stdout. Claude Code displays whatever your script prints.
+Claude Code runs your script with [JSON session data](#available-data) on stdin and displays whatever the script prints to stdout.
 
 **When it updates**
 

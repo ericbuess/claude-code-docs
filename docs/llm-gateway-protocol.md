@@ -32,7 +32,9 @@ Anything not marked forward unchanged is yours to consume or ignore.
 
 ## API formats
 
-A gateway must expose at least one of the following API formats to Claude Code clients. Which format Claude Code speaks is determined by the client's configuration: the variable in the Selected by column of the table below points Claude Code at your gateway in that format. Google Cloud's Agent Platform is Google Cloud's Claude endpoint, formerly Vertex AI; its variable names keep the `VERTEX` spelling.
+A gateway must expose at least one of the following API formats to Claude Code clients. A client picks a format and points Claude Code at your gateway with the variables in the Selected by column of the table below.
+
+Google Cloud's Agent Platform is Google Cloud's Claude endpoint, formerly Vertex AI; its variable names keep the `VERTEX` spelling.
 
 | Format                                   | Selected by                                                   | Endpoints                                                                                                       | Forward unchanged                                                                                        |
 | :--------------------------------------- | :------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |

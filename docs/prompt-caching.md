@@ -83,10 +83,7 @@ These actions cause the next request to miss part or all of the cache. You see a
 
 Each model has its own cache. Switching with [`/model`](/docs/en/model-config#setting-your-model) means the next request reads the entire conversation history with no cache hits, even though the content is identical.
 
-When you run `/model` at the terminal, Claude Code asks you to confirm the switch only while the current cache hasn't expired. Whether the cache has expired depends on how long it has been since Claude Code last sent a request in this conversation or Claude last responded:
-
-* **Less than one [cache TTL](#cache-lifetime) ago**: the cache is still warm.
-* **One cache TTL or longer ago**: the cache has already expired, so Claude Code switches without asking.
+When you run `/model` at the terminal, Claude Code asks you to confirm the switch only while the cache is still warm. The cache stays warm for one [cache TTL](#cache-lifetime) after Claude Code last sent a request in this conversation or Claude last responded. Once that time passes, the cache has expired, so Claude Code switches without asking.
 
 Before v2.1.238, Claude Code didn't check the cache TTL and asked even after the cache had expired.
 

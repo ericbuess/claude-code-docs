@@ -99,7 +99,9 @@ Claude prints `Goal cleared:` followed by the condition to confirm, or `No goal 
 
 ### Resume with an active goal
 
-A goal that was still active when a session ended is restored when you resume that session with `--resume` or `--continue`. The condition carries over, but the turn count, timer, and token-spend baseline all reset on resume. A goal that was already achieved or cleared is not restored.
+When you resume a session, Claude Code restores a goal that was still active when the session ended. Claude Code restores it on every resume route: `--continue`, `--resume` with a session ID or name, and the [session picker](/docs/en/sessions#use-the-session-picker). Before v2.1.239, Claude Code restored the goal on every route except the `claude --resume` picker.
+
+Claude Code carries the condition over but resets the turn count, timer, and token-spend baseline. It doesn't restore a goal that was already achieved or cleared.
 
 ### Run non-interactively
 
@@ -138,12 +140,14 @@ After any other failure, including transient errors such as rate limits and over
 
 If a subagent or a background shell command is still running when a turn ends, Claude Code skips the evaluation for that turn. It evaluates at the end of the next turn that finishes with no background work running. When the background work finishes, Claude Code delivers the result to Claude as a new turn, so you don't have to prompt.
 
-Once background work has kept the goal waiting for 30 minutes, a check-in is due. In the check-in, Claude Code lists the running tasks and asks Claude to read their output, keep waiting if they're progressing, and fix or stop any that are stuck. After each check-in, the 30 minutes start again. Claude Code delivers a due check-in, the first one included, in one of two ways:
+Once background work has kept the goal waiting for 30 minutes, a check-in is due. In the check-in, Claude Code lists the running tasks and asks Claude to read their output, keep waiting if they're progressing, and fix or stop any that are stuck. After the first check-in, Claude Code waits twice as long before each later check-in, up to four times the first interval: with the default, 1 hour after the first check-in, then every 2 hours. Claude Code delivers a due check-in, the first one included, in one of two ways:
 
 * **When a turn ends**: Claude Code delivers the check-in at the end of the next turn that finishes with the work still running. In a non-interactive session, such as one started with `-p`, this is the only way Claude Code delivers check-ins.
-* **While the session is idle**: in an interactive session, Claude Code also starts a turn on its own to deliver the check-in instead of waiting for your next prompt. After the first check-in, Claude Code waits twice as long before each later idle check-in, up to four times the interval: with the default, 1 hour after the first check-in, then every 2 hours. If the background work has stopped without reporting a result, Claude Code asks Claude to continue toward the goal. Idle check-ins require Claude Code v2.1.236 or later.
+* **While the session is idle**: in an interactive session, Claude Code also starts a turn on its own to deliver the check-in instead of waiting for your next prompt. If the background work has stopped without reporting a result, Claude Code asks Claude to continue toward the goal. Idle check-ins require Claude Code v2.1.236 or later.
 
-To change the intervals, set [`CLAUDE_CODE_GOAL_CHECKIN_MINUTES`](/docs/en/env-vars). Claude Code uses your value in place of the 30-minute interval and scales the idle intervals with it. Set it to `0` to turn check-ins off. Check-ins require Claude Code v2.1.234 or later.
+Before v2.1.239, only idle check-ins backed off this way; a check-in delivered at a turn end recurred at the first interval.
+
+To change the first interval, set [`CLAUDE_CODE_GOAL_CHECKIN_MINUTES`](/docs/en/env-vars). Claude Code uses your value in place of the 30-minute interval and scales the later intervals with it. Set it to `0` to turn check-ins off. Check-ins require Claude Code v2.1.234 or later.
 
 ### Evaluation model and cost
 

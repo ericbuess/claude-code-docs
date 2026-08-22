@@ -7,7 +7,7 @@
 > Enable a smoother, flicker-free rendering mode with mouse support and stable memory usage in long conversations.
 
 <Note>
-  Fullscreen rendering is a [research preview](#research-preview). If you first used Claude Code on or after May 6, 2026, Claude Code renders fullscreen by default; run `/tui default` to switch back. If you started earlier, you keep the classic renderer; run `/tui fullscreen` to switch in your current conversation. Behavior may change based on feedback.
+  Fullscreen rendering is a [research preview](#research-preview). Whether you [start in fullscreen or in the classic renderer](#fullscreen-by-default) depends on your setup. Run `/tui fullscreen` or `/tui default` to switch in your current conversation. Behavior may change based on feedback.
 </Note>
 
 Fullscreen rendering is an alternative rendering path for the Claude Code CLI that eliminates flicker, keeps memory usage flat in long conversations, and adds mouse support. It draws the interface on the terminal's alternate screen buffer, like `vim` or `htop`, and only renders messages that are currently visible. This reduces the amount of data sent to your terminal on each update.
@@ -40,10 +40,6 @@ Claude Code declines to relaunch if the session has a restriction it can't pass 
 
 In that case Claude Code prints [`Cannot switch renderers in this session`](/docs/en/errors#cannot-switch-renderers-in-this-session) with the reasons. It doesn't switch or save anything.
 
-<Note>
-  If you first used Claude Code before May 6, 2026 and haven't saved a `tui` setting, Claude Code may open a dialog at startup offering the switch. If you accept, Claude Code relaunches the same way `/tui fullscreen` does, carrying the same session state, and saves the setting once the relaunched session has [started successfully](#fullscreen-renderer-didnt-finish-starting).
-</Note>
-
 You can also set the `CLAUDE_CODE_NO_FLICKER` environment variable before starting Claude Code:
 
 ```bash theme={null}
@@ -51,6 +47,30 @@ CLAUDE_CODE_NO_FLICKER=1 claude
 ```
 
 For how the [`tui`](/docs/en/settings-reference#tui) setting and the variable combine when both are set, see the setting's entry. After a [failed fullscreen start](#fullscreen-renderer-didnt-finish-starting), Claude Code still honors the variable but not the setting. The `/tui` command clears `CLAUDE_CODE_NO_FLICKER` from the relaunched process so the setting it writes takes effect.
+
+### Fullscreen by default
+
+Attached [background sessions](/docs/en/agent-view) render fullscreen, and other sessions in [screen reader mode](/docs/en/accessibility) use the classic renderer. Otherwise, Claude Code starts you in the renderer from the first row of this table that matches your setup:
+
+| Your situation                                                                                                                                                                            | Renderer you start in          |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------- |
+| You set [`CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1`](/docs/en/env-vars) or `CLAUDE_CODE_NO_FLICKER=0`                                                                                            | Classic                        |
+| You set `CLAUDE_CODE_NO_FLICKER=1`                                                                                                                                                        | Fullscreen                     |
+| Claude Code [turned fullscreen off after a failed fullscreen start](#fullscreen-renderer-didnt-finish-starting) on this machine                                                           | Classic                        |
+| You're in iTerm2's [`tmux -CC` integration mode](#use-with-tmux), or you're connected over SSH to Claude Code running on Windows                                                          | Classic                        |
+| You saved a [`tui` setting](/docs/en/settings-reference#tui)                                                                                                                                   | The renderer the setting names |
+| Your session doesn't [fetch feature flags from Anthropic](/docs/en/env-vars#features-that-need-feature-flag-fetching), and Claude Code has stopped offering the startup dialog on this machine | Classic                        |
+| Your session doesn't fetch feature flags from Anthropic, and this machine's first Claude Code launch ran v2.1.239 or later                                                                | Fullscreen                     |
+| Your session fetches feature flags from Anthropic, and you first used Claude Code on or after May 6, 2026                                                                                 | Fullscreen                     |
+| Anything else                                                                                                                                                                             | Classic                        |
+
+Sessions that don't fetch feature flags include those through [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or [Microsoft Foundry](/docs/en/microsoft-foundry), and those with telemetry turned off.
+
+If you start in the classic renderer and haven't saved a `tui` setting, Claude Code may open a dialog at startup offering the switch:
+
+* If you accept, Claude Code relaunches the same way `/tui fullscreen` does, carrying the same session state, and saves the setting once the relaunched session has [started successfully](#fullscreen-renderer-didnt-finish-starting).
+* If you choose **Not now**, Claude Code doesn't offer again on this machine.
+* Claude Code stops offering after it has shown the dialog on three launches, answered or not.
 
 ## What changes
 
@@ -279,7 +299,7 @@ Before v2.1.236, Claude Code kept starting sessions in fullscreen rendering afte
 
 #### How Claude Code counts failed starts
 
-* Sessions that count: only sessions that started in fullscreen rendering because your `tui` setting says so, because you accepted the [startup dialog](#enable-fullscreen-rendering), or because your account renders fullscreen by default
+* Sessions that count: only sessions that started in fullscreen rendering because your `tui` setting says so, because you accepted the [startup dialog](#fullscreen-by-default), or because Claude Code starts you in fullscreen by default
 * `CLAUDE_CODE_NO_FLICKER=1`: if you set it, Claude Code renders that session fullscreen even after a failed start, and doesn't count it
 * Count reset: Claude Code counts failed starts per Claude Code version, and a successful fullscreen start resets the count
 * Startup dialog: if you accepted the dialog and the relaunched session crashed, Claude Code prints neither line and doesn't show the dialog again on this Claude Code version

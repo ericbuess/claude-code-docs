@@ -564,28 +564,15 @@ export const ReferenceFilter = ({placeholder, noun, facets, facetOrder, columnHe
 
 <BackToIndex href="#all-settings" label="Back to index" />
 
-This reference page lists each key Claude Code reads from a settings file, plus the [short group of keys](#global-config-settings) it keeps in `~/.claude.json` instead.
-
-Use the [index](#all-settings) to find a key by name or purpose and to see its topic and scope, then open the key's linked entry for what it lets you do, where Claude Code reads it from, its type and default, and a minimal example to paste.
-
-For how to apply these settings, which settings file to use, and which value Claude Code uses when a key is set in more than one place, see [Claude Code settings](/docs/en/settings).
-
-## Scopes
-
-Claude Code reads settings from four files, and not every key works in every file. The **Scope** of a key names the files that can set it.
-
-* **User**: `~/.claude/settings.json`. Yours, in every project.
-* **Project**: `.claude/settings.json`. Checked into the repository, so everyone who clones it gets these settings.
-* **Local**: `.claude/settings.local.json`. Yours, in this project only. Claude Code keeps it out of git when it creates the file.
-* **Managed**: settings your organization deploys; see [Managed settings](/docs/en/managed-settings).
-
-`Any file` means all four. The `--settings` flag isn't a scope: it's a command line override that sits above the user, project, and local files and below managed settings in [settings precedence](/docs/en/settings#settings-precedence), and an entry says so when the flag is treated differently for its key. `Global config` keys aren't in a settings file at all: Claude Code keeps them in `~/.claude.json` and writes them when you change one in `/config`.
+This reference page lists each key Claude Code reads from a settings file, plus the [short group of keys](#global-config-settings) it keeps in `~/.claude.json` instead. To pick a file, or check precedence, start with [Claude Code settings](/docs/en/settings).
 
 <span id="available-settings" />
 
+<span id="scopes" />
+
 ## All settings
 
-Every key, grouped by topic below and listed here in one table. Filter the table by a key name or a word from its purpose, read the Scope column for which files can set the key, then follow the link to its entry.
+Every key below links to its entry. Scope lists the [files](/docs/en/settings#settings-files-and-who-they-affect) it can go in: `User` is `~/.claude/settings.json`, `Project` is `.claude/settings.json`, `Local` is `.claude/settings.local.json`, and `Managed` is [what your organization deploys](/docs/en/managed-settings). `Any file` means all four, and `Global config` means [`~/.claude.json`](#global-config-settings).
 
 <ReferenceFilter
   noun="settings"
@@ -2822,7 +2809,7 @@ Choose which convention `Ctrl+W` follows in the prompt input. Set it to `"readli
 }
 ```
 
-See [Make Ctrl+W delete back to whitespace](/docs/en/interactive-mode#make-ctrl-w-delete-back-to-whitespace). Requires Claude Code v2.1.238 or later.
+See [Make editing keys follow readline conventions](/docs/en/interactive-mode#make-ctrl-w-delete-back-to-whitespace) for the per-key behavior.
 
 ### `prefersReducedMotion`
 
@@ -3120,7 +3107,7 @@ Choose the terminal UI renderer. Use `"fullscreen"` for the flicker-free [alt-sc
 * **Type**: string, one of:
   * `"default"`: the classic main-screen renderer
   * `"fullscreen"`: the flicker-free alt-screen renderer with virtualized scrollback
-* **Default**: unset, so Claude Code picks the renderer by rollout: fullscreen if you first used Claude Code on or after May 6, 2026, otherwise the classic renderer
+* **Default**: unset, so Claude Code [picks the renderer for you](/docs/en/fullscreen#fullscreen-by-default)
 * **Per-session overrides**: [`CLAUDE_CODE_NO_FLICKER`](/docs/en/env-vars) and [`CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN`](/docs/en/env-vars) take precedence over this key for one session: `CLAUDE_CODE_NO_FLICKER=1` turns fullscreen on, and `CLAUDE_CODE_NO_FLICKER=0` or `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1` turns it off; when both are set, Claude Code turns it off
 
 ```json settings.json theme={null}
@@ -5063,11 +5050,11 @@ Keys an organization uses to compute, refresh, and combine managed settings. See
 
 ### `disableSideloadFlags`
 
-Reject the `--plugin-dir`, `--plugin-url`, `--agents`, and `--mcp-config` CLI flags at startup, which users could otherwise pass to bypass [`strictKnownMarketplaces`](#strictknownmarketplaces) for a single run. Claude Code exits with an error naming the rejected flags, and applies the same check to surfaces that start the CLI with these flags internally, currently [Cowork](/docs/en/desktop) local sessions in the desktop app. Requires Claude Code v2.1.193 or later.
+Reject the `--plugin-dir`, `--plugin-url`, `--agents`, and `--mcp-config` CLI flags at startup, which users could otherwise pass to bypass [`strictKnownMarketplaces`](#strictknownmarketplaces) for a single run. Claude Code exits with an error naming the rejected flags, and applies the same check to surfaces that start the CLI with these flags internally, currently [Cowork](/docs/en/desktop) local sessions in the desktop app. In [cloud sessions](/docs/en/claude-code-on-the-web), Claude Code drops the MCP servers the server delivered through `--mcp-config`, other than in-process `type: "sdk"` entries, and starts the session. Requires Claude Code v2.1.193 or later.
 
 * **Scope**: [`Managed`](#scopes)
 * **Type**: Boolean
-  * `true`: Claude Code rejects `--plugin-dir`, `--plugin-url`, `--agents`, and `--mcp-config` at startup and exits with an error naming them
+  * `true`: Claude Code rejects `--plugin-dir`, `--plugin-url`, `--agents`, and `--mcp-config` at startup and exits with an error naming them, except that in cloud sessions it drops the MCP servers the server delivered through `--mcp-config`, other than in-process `type: "sdk"` entries, and starts the session
   * `false`: Claude Code accepts those flags
 * **Default**: `false`
 
@@ -5077,7 +5064,9 @@ Reject the `--plugin-dir`, `--plugin-url`, `--agents`, and `--mcp-config` CLI fl
 }
 ```
 
-A `--mcp-config` whose servers are all in-process `type: "sdk"` entries is still accepted, so the Agent SDK and VS Code extension keep working. This key doesn't block `claude mcp add`, `.mcp.json`, or SDK `setMcpServers()`; pair it with [`allowedMcpServers`](/docs/en/managed-mcp) for per-server MCP control. Requires Claude Code v2.1.193 or later.
+Claude Code still accepts a `--mcp-config` whose servers are all in-process `type: "sdk"` entries, so the Agent SDK and VS Code extension keep working. Users can still add servers with `claude mcp add` or a `.mcp.json` file; for per-server control, set [`allowedMcpServers`](/docs/en/managed-mcp) as well. Requires Claude Code v2.1.193 or later.
+
+In cloud sessions, Claude Code also ignores server-delivered mid-session MCP updates, the path behind cloud session configuration and SDK `setMcpServers()` on remote workers. In-process `type: "sdk"` entries stay exempt there too. Before v2.1.239, a server-delivered `--mcp-config` blocked a cloud session from starting.
 
 ### `forceRemoteSettingsRefresh`
 
@@ -5095,7 +5084,7 @@ Block CLI startup until Claude Code has freshly fetched [server-managed settings
 }
 ```
 
-Set it in an MDM profile or the managed settings file to enforce fail-closed startup before the first server payload arrives. The `claude auth` subcommands are exempt, so users can re-authenticate when expired credentials are why the fetch fails. See [Enforce fail-closed startup](/docs/en/server-managed-settings#enforce-fail-closed-startup).
+Set it in an MDM profile or the managed settings file to enforce fail-closed startup before the first server payload arrives. Claude Code applies the check only in sessions that fetch server-managed settings, so a session that [doesn't fetch them](/docs/en/server-managed-settings#platform-availability) starts without waiting. The `claude auth` subcommands are exempt, so users can re-authenticate when expired credentials are why the fetch fails. See [Enforce fail-closed startup](/docs/en/server-managed-settings#enforce-fail-closed-startup).
 
 ### `parentSettingsBehavior`
 
@@ -5205,11 +5194,11 @@ This example re-runs the helper every five minutes:
 
 ### `wslInheritsWindowsSettings`
 
-Have Claude Code on WSL read managed settings from the Windows policy chain in addition to `/etc/claude-code`, with HKLM and the Windows managed settings file taking priority over `/etc/claude-code` and HKCU below it. Set it to extend the policy you already deploy on Windows to WSL sessions on the same machine, so they follow the same rules as host sessions. Claude Code honors it only when set in the HKLM registry key or in a managed settings file or drop-in under `C:\Program Files\ClaudeCode\`, both of which require Windows admin to write.
+Have Claude Code on WSL read managed settings from the Windows policy chain, with HKLM and the Windows managed settings file taking priority over `/etc/claude-code` and HKCU below it. While the chain is on, Claude Code reads `/etc/claude-code` only when no managed settings file or drop-in under `C:\Program Files\ClaudeCode\` delivers a policy key other than `wslInheritsWindowsSettings` itself. Set it to extend the policy you already deploy on Windows to WSL sessions on the same machine, so they follow the same rules as host sessions. Claude Code honors it only when set in the HKLM registry key or in a managed settings file or drop-in under `C:\Program Files\ClaudeCode\`, both of which require Windows admin to write.
 
 * **Scope**: [`Managed`](#scopes). In an admin-controlled Windows source.
 * **Type**: Boolean
-  * `true`: Claude Code on WSL reads managed settings from the Windows policy chain in addition to `/etc/claude-code`
+  * `true`: Claude Code on WSL reads managed settings from the Windows policy chain, and reads `/etc/claude-code` only when no managed settings file or drop-in under `C:\Program Files\ClaudeCode\` delivers a policy key other than `wslInheritsWindowsSettings`
   * `false`: WSL reads only `/etc/claude-code`
 * **Default**: `false`, so WSL reads only `/etc/claude-code`
 

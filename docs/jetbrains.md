@@ -25,7 +25,7 @@ The Claude Code plugin works with most JetBrains IDEs, including:
 * **Diff viewing**: Claude Code opens code changes in the IDE diff viewer instead of the terminal; change this with the **Diff tool** setting in `/config`
 * **Selection context**: the current selection or tab in the IDE is automatically shared with Claude Code. [`Read` deny rules](/docs/en/permissions#read-and-edit) block this sharing for matching files
 * **File reference shortcuts**: use `Cmd+Option+K` (Mac) or `Alt+Ctrl+K` (Linux/Windows) to insert file references such as `@src/auth.ts#L1-99`
-* **Diagnostic sharing**: after Claude edits a file, Claude Code pulls the IDE's new diagnostics for that file, such as lint and syntax errors, into the conversation, so Claude notices errors its edits introduce
+* **Diagnostic sharing**: Claude reads the IDE's inspection diagnostics, such as lint and syntax errors, by calling the [`getDiagnostics` tool](#the-built-in-ide-mcp-server); Claude Code doesn't request diagnostics from the plugin on its own after edits
 
 ## Installation
 
@@ -201,7 +201,7 @@ For Claude Code installation or login problems outside the IDE, see [Troubleshoo
 
 ### The built-in IDE MCP server
 
-When the plugin is active, it runs a local MCP server that the CLI connects to automatically. This is how the CLI opens diffs in the IDE's native diff viewer, reads your current selection for `@`-mentions, and pulls inspection diagnostics into the conversation.
+When the plugin is active, it runs a local MCP server that the CLI connects to automatically. This is how the CLI opens diffs in the IDE's native diff viewer, reads your current selection for `@`-mentions, and lets Claude read inspection diagnostics.
 
 The server is named `ide` and is hidden from `/mcp` because there's nothing to configure. If your organization uses a [`PreToolUse` hook](/docs/en/hooks#pretooluse) to allowlist MCP tools, though, you'll need to know it exists.
 
