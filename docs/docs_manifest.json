@@ -298,8 +298,8 @@
     "claude-apps-gateway.md": {
       "original_url": "https://code.claude.com/docs/en/claude-apps-gateway",
       "original_md_url": "https://code.claude.com/docs/en/claude-apps-gateway.md",
-      "hash": "847a1de96e50280485aef7f075b1620958442d0e151c70c8e3e212c822d85012",
-      "last_updated": "2026-08-22T00:33:12.111639"
+      "hash": "8663f94ba8c9f7245afbdad845269fdb640d346f25fe48802d1157f96979eba4",
+      "last_updated": "2026-08-22T21:10:46.948888"
     },
     "claude-apps-gateway-config.md": {
       "original_url": "https://code.claude.com/docs/en/claude-apps-gateway-config",
@@ -778,8 +778,8 @@
     "plugins-reference.md": {
       "original_url": "https://code.claude.com/docs/en/plugins-reference",
       "original_md_url": "https://code.claude.com/docs/en/plugins-reference.md",
-      "hash": "9cc919151ddfa0f388eaf0b1ca903a982f466ac0efa1f66560e23dc4673e5394",
-      "last_updated": "2026-08-22T15:11:17.619289"
+      "hash": "2997c815eebad8c8eccc5d0dbc10992d194b06de3eff855f497c7bcd6d81d0f1",
+      "last_updated": "2026-08-22T21:11:49.616447"
     },
     "prompt-caching.md": {
       "original_url": "https://code.claude.com/docs/en/prompt-caching",
@@ -796,8 +796,8 @@
     "quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/quickstart",
       "original_md_url": "https://code.claude.com/docs/en/quickstart.md",
-      "hash": "e1f9fc3587ad746953ff6457e075e6429ce04dcf01f5e3407fb2357aec6451eb",
-      "last_updated": "2026-08-22T18:14:04.363597"
+      "hash": "6a7a0a38ced1235db962c3cd321c05a4370dc68732c9b41780d47ee489b33e0e",
+      "last_updated": "2026-08-22T21:11:52.178060"
     },
     "remote-control.md": {
       "original_url": "https://code.claude.com/docs/en/remote-control",
@@ -1000,8 +1000,8 @@
     "whats-new.md": {
       "original_url": "https://code.claude.com/docs/en/whats-new",
       "original_md_url": "https://code.claude.com/docs/en/whats-new.md",
-      "hash": "598220ee884ac6bd854b235f57e7b9bbd6bf0e41f478523d52d824306c7bb039",
-      "last_updated": "2026-08-21T09:26:04.786420"
+      "hash": "30c6a1c955d7f66fa30e1fad08d49ff79ae92643906de413a303fd594d741667",
+      "last_updated": "2026-08-22T21:12:18.930773"
     },
     "whats-new__2026-w13.md": {
       "original_url": "https://code.claude.com/docs/en/whats-new/2026-w13",
@@ -1117,6 +1117,18 @@
       "hash": "cfbad4b72de7394d72cf97b7bb35a45ac25c8bc0b568db7f7c40478fe397ce4b",
       "last_updated": "2026-08-22T18:14:49.796015"
     },
+    "whats-new__2026-w33.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w33",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w33.md",
+      "hash": "da98bb03b1c777c4195e767a34f850f7fb7e17ab273f9fc268f34e4642095aba",
+      "last_updated": "2026-08-22T21:12:34.286713"
+    },
+    "whats-new__2026-w34.md": {
+      "original_url": "https://code.claude.com/docs/en/whats-new/2026-w34",
+      "original_md_url": "https://code.claude.com/docs/en/whats-new/2026-w34.md",
+      "hash": "1d892495d63b14a857c8aaaefa7d67568a43bd91f09009761e525c3083fa3a03",
+      "last_updated": "2026-08-22T21:12:34.999549"
+    },
     "workflows.md": {
       "original_url": "https://code.claude.com/docs/en/workflows",
       "original_md_url": "https://code.claude.com/docs/en/workflows.md",
@@ -1137,18 +1149,18 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-22T18:14:51.805226",
-    "fetch_duration_seconds": 176.23319,
-    "total_pages_discovered": 189,
-    "pages_fetched_successfully": 190,
+    "last_fetch_completed": "2026-08-22T21:12:37.236018",
+    "fetch_duration_seconds": 150.846436,
+    "total_pages_discovered": 191,
+    "pages_fetched_successfully": 192,
     "pages_failed": 0,
     "failed_pages": [],
     "sitemap_url": "https://code.claude.com/docs/sitemap.xml",
     "base_url": "https://code.claude.com",
-    "total_files": 189,
+    "total_files": 191,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-22T18:14:51.805255",
+  "last_updated": "2026-08-22T21:12:37.236047",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

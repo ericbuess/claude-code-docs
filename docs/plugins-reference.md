@@ -599,7 +599,7 @@ Claude Code reads all `pluginConfigs` values from only three settings sources:
 * **`--settings`**: the CLI flag or SDK inline settings
 * **Managed settings**: [organization-controlled policy](/docs/en/permissions#managed-settings)
 
-When more than one source sets the same key, managed settings take precedence, then `--settings`, then user settings. The [`--setting-sources`](/docs/en/cli-reference#cli-flags) flag narrows the list further.
+When more than one source sets the same key, managed settings take precedence, then `--settings`, then user settings. The only source you can remove from this list is user settings: pass [`--setting-sources`](/docs/en/cli-reference#cli-flags) without `user` and Claude Code skips them. Managed settings and `--settings` stay whatever you pass. The SDK's [`settingSources`](/docs/en/agent-sdk/claude-code-features#what-settingsources-does-not-control) option sets the same list.
 
 Entries in a project's `.claude/settings.json` or `.claude/settings.local.json` are ignored. Both files live in the workspace, so a cloned repository could supply values there, and those values would flow into plugin hook commands, MCP server configs, LSP commands, and monitor commands. Before v2.1.207, these entries were read. The restriction is specific to `pluginConfigs`: [`enabledPlugins`](/docs/en/settings-reference#enabledplugins) still honors project and local settings.
 
