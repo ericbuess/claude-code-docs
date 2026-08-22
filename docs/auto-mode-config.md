@@ -21,6 +21,7 @@ This page covers how to:
 * [Add a human checkpoint](#add-a-human-checkpoint) for pushes and pull requests with `permissions.ask`
 * [Choose where to set rules](#where-the-classifier-reads-configuration) across CLAUDE.md, user settings, and managed settings
 * [Define trusted infrastructure](#define-trusted-infrastructure) with `autoMode.environment`
+* [Generate environment entries](#generate-environment-entries) with `/auto-mode-setup`
 * [Override the block and allow rules](#override-the-block-and-allow-rules) when the defaults don't fit your pipeline
 * [Route all shell commands through the classifier](#route-all-shell-commands-through-the-classifier) with `autoMode.classifyAllShell`
 * [Inspect your effective config](#inspect-the-defaults-and-your-effective-config) with the `claude auto-mode` subcommands
@@ -157,6 +158,59 @@ A useful starting template: fill in the bracketed fields and remove any lines th
 The more specific context you give, the better the classifier can distinguish routine internal operations from exfiltration attempts.
 
 You don't need to fill everything in at once. A reasonable rollout: start with the defaults and add your source control org and key internal services, which resolves the most common false positives like pushing to your own repos. Add trusted domains and cloud buckets next. Fill the rest as blocks come up.
+
+<h2 id="generate-environment-entries">
+  Generate environment entries with `/auto-mode-setup`
+</h2>
+
+Run `/auto-mode-setup` to have Claude Code draft `autoMode.environment` entries, and sometimes [rule entries](#override-the-block-and-allow-rules) too, from your project and your recent sessions in it. If you accept the draft, Claude Code writes it to `~/.claude/settings.json`.
+
+<Note>
+  `/auto-mode-setup` requires a Pro, Max, or Team plan and Claude Code v2.1.228 or later. On native Windows it requires v2.1.233 or later. You can't run it in [Claude Code on the web](/docs/en/claude-code-on-the-web). It also needs [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching), so you can't run it in a session where you've turned flag fetching off.
+</Note>
+
+<h3 id="what-auto-mode-setup-reads">
+  What `/auto-mode-setup` reads
+</h3>
+
+If `~/.claude/settings.json` already holds `autoMode` entries, Claude Code starts by asking whether to add to your environment list or replace it, and keeps the rules you wrote either way. Claude Code then asks how you use this project and offers two optional scans before it scans anything. In the scan, Claude Code always reads these sources:
+
+* This project's `CLAUDE.md`, `README.md`, config files, and git remotes
+* Your `autoMode` and `permissions.allow` settings
+* The hosts, buckets, and command names from the commands Claude ran in your recent sessions in this project, never your messages
+
+The two optional scans add one source each:
+
+* The first word of each command in your shell history
+* The remote hosts and names of the repositories under your home directory
+
+### Review and save the draft
+
+Claude Code scans in the background, then shows you the draft. You accept or discard it as a whole, so edit `~/.claude/settings.json` afterwards to adjust single entries. When you accept, Claude Code writes the draft and reconciles it with the settings you already have:
+
+* Claude Code writes the `environment` list without `"$defaults"`, because the draft spells out the built-in entries it left unchanged
+* Claude Code includes `"$defaults"` in each of the `allow`, `soft_deny`, and `hard_deny` lists the draft adds entries to, unless you already wrote an `allow` list without it, so the [built-in rules](#override-the-block-and-allow-rules) you haven't replaced stay in effect
+* After saving, Claude Code offers to remove `permissions.allow` rules in `~/.claude/settings.json` that auto mode ignores, such as `Bash(*)`, or that auto-approve destructive commands
+
+Then run `claude auto-mode config` to [see the effective result](#inspect-the-defaults-and-your-effective-config).
+
+<h3 id="turn-off-auto-mode-setup">
+  Turn off `/auto-mode-setup`
+</h3>
+
+Once auto mode has blocked several actions and you still have no `autoMode.environment` entries, Claude Code shows a dialog titled "Teach auto mode about your environment?" at the end of a turn and offers to run `/auto-mode-setup` for you. To stop the offer but keep the command, select **Don't show again** in that dialog.
+
+To turn off both the command and the offer, add this [`skillOverrides`](/docs/en/skills#override-skill-visibility-from-settings) entry to `~/.claude/settings.json`:
+
+```json theme={null}
+{
+  "skillOverrides": {
+    "auto-mode-setup": "off"
+  }
+}
+```
+
+`/auto-mode-setup` is a built-in command rather than a [bundled skill](/docs/en/skills#bundled-skills), so this `skillOverrides` entry still applies to it, but [`disableBundledSkills`](/docs/en/settings-reference#disablebundledskills) doesn't turn it off.
 
 ## Override the block and allow rules
 
@@ -315,7 +369,7 @@ The reason shown with the call is the fixed text `Blocked by classifier` in most
 
 ### Fix repeated denials
 
-Repeated denials for the same destination usually mean the classifier is missing context. Add that destination to `autoMode.environment`, then run `claude auto-mode config` to confirm it took effect.
+Repeated denials for the same destination usually mean the classifier is missing context. Add that destination to `autoMode.environment`, or [run `/auto-mode-setup`](#generate-environment-entries) to have Claude Code draft the entries, then run `claude auto-mode config` to confirm the change took effect.
 
 To react to denials programmatically, use the [`PermissionDenied` hook](/docs/en/hooks#permissiondenied).
 

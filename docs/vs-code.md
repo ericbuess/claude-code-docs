@@ -437,7 +437,7 @@ To manage MCP servers without leaving VS Code, type `/mcp` in the chat panel. Th
 
 ## Work with git
 
-Claude Code integrates with git to help with version control workflows directly in VS Code. Ask Claude to commit changes, create pull requests, or work across branches.
+Claude Code integrates with git to help with version control workflows directly in VS Code. Ask Claude to commit changes, create pull requests, or work across branches. To start Claude in an isolated worktree with its own files and branch, see [Run parallel sessions with worktrees](/docs/en/worktrees).
 
 ### Create commits and pull requests
 
@@ -450,16 +450,6 @@ summarize the changes I've made to the auth module
 ```
 
 When creating pull requests, Claude generates descriptions based on the actual code changes and can add context about testing or implementation decisions.
-
-### Use git worktrees for parallel tasks
-
-Use the `--worktree` (`-w`) flag to start Claude in an isolated worktree with its own files and branch:
-
-```bash theme={null}
-claude --worktree feature-auth
-```
-
-Each worktree maintains independent file state while sharing git history. This prevents Claude instances from interfering with each other when working on different tasks. For more details, see [Run parallel sessions with Git worktrees](/docs/en/worktrees).
 
 ## Use third-party providers
 

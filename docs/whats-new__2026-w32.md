@@ -40,13 +40,13 @@
     <span className="digest-feature-pill">v2.1.224</span>
   </div>
 
-  <p className="digest-feature-lede">Self-hosted environments run Claude Code cloud sessions on your organization's own infrastructure, in public beta on Team and Enterprise plans. Run <code>claude self-hosted-runner</code> on your machines or containers to turn them into runners. When someone picks your environment while starting a session from claude.ai, the mobile or desktop apps, or `claude --cloud`, that session runs inside your network, with access to your internal services. An Owner or admin turns on <strong>Allow self-hosted environments</strong> in <a href="https://claude.ai/admin-settings/cloud-environments">admin settings</a> first.</p>
+  <p className="digest-feature-lede">Self-hosted environments run Claude Code cloud sessions on your organization's own infrastructure, in public beta on Team and Enterprise plans. Run <code>claude self-hosted-runner</code> on your machines or containers to turn them into runners. When someone picks your environment while starting a session from claude.ai, the mobile or desktop apps, or `claude --cloud`, that session runs inside your network, with access to your internal services. An Owner turns on <strong>Allow self-hosted environments</strong> in <a href="https://claude.ai/admin-settings/cloud-environments">admin settings</a> first.</p>
 
   <Frame>
     <img className="w-full" src="https://mintcdn.com/claude-code/N3yEaTYPXMXFrF6k/images/whats-new/self-hosted-environments.jpg?fit=max&auto=format&n=N3yEaTYPXMXFrF6k&q=85&s=ae9152cb1670c8af517d1aee57689b14" alt="The self-hosted environments admin page listing environments such as linux-dev and macos-prod with their status and active session counts" width="2048" height="1152" data-path="images/whats-new/self-hosted-environments.jpg" />
   </Frame>
 
-  <p className="digest-feature-try">Signed in as an Owner or admin, run the guided setup, which walks you through creating the environment and starts a runner:</p>
+  <p className="digest-feature-try">Signed in as an Owner, run the guided setup, which walks you through creating the environment and starts a runner:</p>
 
   ```bash terminal theme={null}
   claude self-hosted-runner setup

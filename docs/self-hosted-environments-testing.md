@@ -202,9 +202,9 @@ Create and delete environments programmatically so each CI run gets a clean one;
 
 ### Mint the admin token
 
-`$ADMIN_TOKEN` is a claude.ai OAuth access token for an account that holds an Owner or admin role, minted the same way as [Authenticate from CI](#authenticate-from-ci):
+`$ADMIN_TOKEN` is a claude.ai OAuth access token for an account that holds an Owner role, minted the same way as [Authenticate from CI](#authenticate-from-ci):
 
-* **Mint it**: run `claude auth login` with an account that holds an Owner or admin role, then read the current access token from the OS keychain on macOS or `~/.claude/.credentials.json` on Linux and Windows.
+* **Mint it**: run `claude auth login` with an account that holds an Owner role, then read the current access token from the OS keychain on macOS or `~/.claude/.credentials.json` on Linux and Windows.
 * **Read it fresh each run**: the CLI rotates the access token, and the same 30-day refresh-grant cap applies, so don't store a copy.
 * **Pass it via stdin**: as the example does, so the token never lands in curl's argument list or your build log.
 
@@ -223,7 +223,7 @@ ENVIRONMENT_ID=$(jq -er .pool.pool_id <<<"$create")
 ENVIRONMENT_SECRET=$(jq -er .pool_secret <<<"$create")
 ```
 
-Until an [Owner or admin turns on **Allow self-hosted environments**](/docs/en/self-hosted-environments#availability-and-limitations) for the organization, the call fails with a `403` `permission_error` reading `self-hosted runners are disabled by your organization's policy`.
+Until an [Owner turns on **Allow self-hosted environments**](/docs/en/self-hosted-environments#availability-and-limitations) for the organization, the call fails with a `403` `permission_error` reading `self-hosted runners are disabled by your organization's policy`.
 
 Start a runner on this host with `SELF_HOSTED_RUNNER_ENVIRONMENT_SECRET=$ENVIRONMENT_SECRET`, plus the capture hook and `E2E_REPLY_DIR` per [Install the capture hook](#install-the-capture-hook-on-your-test-runner), then run the test script.
 

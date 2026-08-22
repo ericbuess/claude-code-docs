@@ -83,7 +83,7 @@ cd /tmp && CLAUDE_CONFIG_DIR=/tmp/claude-clean claude
 
 The clean session has no user or project settings, hooks, MCP servers, plugins, or memory. On the first launch, expect the first-run setup screens, starting with theme selection. If you see them, the clean configuration directory is in effect. Later launches with the same directory skip these screens because Claude Code saves onboarding state there.
 
-* Managed settings still apply if your organization deploys them, since they live at a system path outside `~/.claude`
+* Managed settings still apply if your organization deploys them. Claude Code reads MDM profiles, registry policy, and `managed-settings.json` from locations outside the configuration directory, and [fetches server-managed settings](/docs/en/server-managed-settings#fetch-and-caching-behavior) again for the clean session once it has credentials
 * On Linux and Windows, you'll be prompted to log in again because credentials are stored under the configuration directory
 * On macOS, credentials are in the Keychain and carry over to the clean session
 
