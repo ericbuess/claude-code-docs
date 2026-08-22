@@ -348,7 +348,7 @@ Exceptions include the following sessions, where `/code-review` runs only when y
 
 A scheduled task never launches the [cloud review](#escalate-to-ultrareview), so schedule `/code-review` without the `ultra` argument.
 
-To stop both Claude and scheduled tasks from starting the review while keeping `/code-review` available for you to type, add a [`skillOverrides`](/docs/en/skills#override-skill-visibility-from-settings) entry to a [settings file](/docs/en/settings#settings-files) such as `~/.claude/settings.json`:
+To stop both Claude and scheduled tasks from starting the review while keeping `/code-review` available for you to type, add a [`skillOverrides`](/docs/en/skills#override-skill-visibility-from-settings) entry to a [settings file](/docs/en/settings#where-settings-live) such as `~/.claude/settings.json`:
 
 ```json theme={null}
 {

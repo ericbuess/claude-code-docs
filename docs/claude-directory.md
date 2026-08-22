@@ -113,7 +113,7 @@ config/secrets.json`,
           oneLiner: 'Permissions, hooks, and configuration',
           when: <>Overrides global <C>~/.claude/settings.json</C>. Local settings, CLI flags, and managed settings override this</>,
           description: 'Settings that Claude Code applies directly. Permissions control which commands and tools Claude can use; hooks run your scripts at specific points in a session. Unlike CLAUDE.md, which Claude reads as guidance, these are enforced whether Claude follows them or not.',
-          contains: [<><A href="/docs/en/permissions">permissions</A>: allow, deny, or prompt before Claude uses specific tools or commands</>, <><A href="/docs/en/hooks">hooks</A>: run your own scripts on events like before a tool call or after a file edit</>, <><A href="/docs/en/statusline">statusLine</A>: customize the line shown at the bottom while Claude works</>, <><A href="/docs/en/settings#available-settings">model</A>: pick a default model for this project</>, <><A href="/docs/en/settings#environment-variables">env</A>: environment variables set in every session</>, <><A href="/docs/en/output-styles">outputStyle</A>: select a custom system-prompt style from output-styles/</>],
+          contains: [<><A href="/docs/en/permissions">permissions</A>: allow, deny, or prompt before Claude uses specific tools or commands</>, <><A href="/docs/en/hooks">hooks</A>: run your own scripts on events like before a tool call or after a file edit</>, <><A href="/docs/en/statusline">statusLine</A>: customize the line shown at the bottom while Claude works</>, <><A href="/docs/en/settings-reference#available-settings">model</A>: pick a default model for this project</>, <><A href="/docs/en/settings-reference#environment-variables">env</A>: environment variables set in every session</>, <><A href="/docs/en/output-styles">outputStyle</A>: select a custom system-prompt style from output-styles/</>],
           tips: [<>Bash permission patterns support wildcards: <C>Bash(npm test *)</C> matches any command starting with <C>npm test</C></>, <>Array settings like <C>permissions.allow</C> combine across all scopes; scalar settings like <C>model</C> use the most specific value</>],
           exampleIntro: <>This example allows <C>npm test</C> and <C>npm run</C> commands without prompting, blocks <C>rm -rf</C>, and runs Prettier on files after Claude edits or writes them.</>,
           example: `{
@@ -441,7 +441,7 @@ Every finding must include a concrete fix.`
     }
   }
 }`,
-        docsLink: '/en/settings#global-config-settings'
+        docsLink: '/en/settings-reference#global-config-settings'
       }, {
         id: 'global-dot-claude',
         label: '.claude/',
@@ -1448,7 +1448,7 @@ The explorer covers files you author and edit. A few related files live elsewher
 
 | File                    | Location                   | Purpose                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ----------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `managed-settings.json` | System-level, varies by OS | Enterprise-enforced settings that you can't override, apart from [narrow exceptions](/docs/en/settings#exceptions-to-managed-settings-precedence). See [server-managed settings](/docs/en/server-managed-settings).                                                                                                                                                                                                                                                                |
+| `managed-settings.json` | System-level, varies by OS | Enterprise-enforced settings that you can't override, apart from [narrow exceptions](/docs/en/settings#security-keys-where-the-stricter-value-applies). See [where to save the file](/docs/en/managed-settings#deploy-a-managed-settings-file) and [which managed source Claude Code uses](/docs/en/managed-settings#precedence-within-the-managed-tier).                                                                                                                               |
 | `CLAUDE.local.md`       | Project root               | Your private preferences for this project, loaded alongside CLAUDE.md. Create it manually and add it to `.gitignore`.                                                                                                                                                                                                                                                                                                                                                    |
 | Installed plugins       | `~/.claude/plugins`        | Cloned marketplaces, installed plugin versions, and per-plugin data, managed by `claude plugin` commands. For a plugin installed from a marketplace [`command` source](/docs/en/plugin-marketplaces#command-sources) in link mode, Claude Code stores links here instead of a copy, and the plugin's files stay in the directory the command prints. See [plugin caching](/docs/en/plugins-reference#plugin-caching-and-file-resolution) for how orphaned versions are cleaned up. |
 
@@ -1458,18 +1458,18 @@ The explorer covers files you author and edit. A few related files live elsewher
 
 Different kinds of customization live in different files. Use this table to find where a change belongs.
 
-| You want to                                        | Edit                                     | Scope             | Reference                                          |
-| :------------------------------------------------- | :--------------------------------------- | :---------------- | :------------------------------------------------- |
-| Give Claude project context and conventions        | `CLAUDE.md`                              | project or global | [Memory](/docs/en/memory)                               |
-| Allow or block specific tool calls                 | `settings.json` `permissions` or `hooks` | project or global | [Permissions](/docs/en/permissions), [Hooks](/docs/en/hooks) |
-| Run a script before or after tool calls            | `settings.json` `hooks`                  | project or global | [Hooks](/docs/en/hooks)                                 |
-| Set environment variables for the session          | `settings.json` `env`                    | project or global | [Settings](/docs/en/settings#available-settings)        |
-| Keep personal overrides out of git                 | `settings.local.json`                    | project only      | [Settings scopes](/docs/en/settings#settings-files)     |
-| Add a prompt or capability you invoke with `/name` | `skills/<name>/SKILL.md`                 | project or global | [Skills](/docs/en/skills)                               |
-| Define a specialized subagent with its own tools   | `agents/*.md`                            | project or global | [Subagents](/docs/en/sub-agents)                        |
-| Orchestrate many subagents from a script           | `workflows/*.js`                         | project or global | [Dynamic workflows](/docs/en/workflows)                 |
-| Connect external tools over MCP                    | `.mcp.json`                              | project only      | [MCP](/docs/en/mcp)                                     |
-| Change how Claude formats responses                | `output-styles/*.md`                     | project or global | [Output styles](/docs/en/output-styles)                 |
+| You want to                                        | Edit                                     | Scope             | Reference                                           |
+| :------------------------------------------------- | :--------------------------------------- | :---------------- | :-------------------------------------------------- |
+| Give Claude project context and conventions        | `CLAUDE.md`                              | project or global | [Memory](/docs/en/memory)                                |
+| Allow or block specific tool calls                 | `settings.json` `permissions` or `hooks` | project or global | [Permissions](/docs/en/permissions), [Hooks](/docs/en/hooks)  |
+| Run a script before or after tool calls            | `settings.json` `hooks`                  | project or global | [Hooks](/docs/en/hooks)                                  |
+| Set environment variables for the session          | `settings.json` `env`                    | project or global | [Settings](/docs/en/settings-reference#all-settings)     |
+| Keep personal overrides out of git                 | `settings.local.json`                    | project only      | [Settings scopes](/docs/en/settings#where-settings-live) |
+| Add a prompt or capability you invoke with `/name` | `skills/<name>/SKILL.md`                 | project or global | [Skills](/docs/en/skills)                                |
+| Define a specialized subagent with its own tools   | `agents/*.md`                            | project or global | [Subagents](/docs/en/sub-agents)                         |
+| Orchestrate many subagents from a script           | `workflows/*.js`                         | project or global | [Dynamic workflows](/docs/en/workflows)                  |
+| Connect external tools over MCP                    | `.mcp.json`                              | project only      | [MCP](/docs/en/mcp)                                      |
+| Change how Claude formats responses                | `output-styles/*.md`                     | project or global | [Output styles](/docs/en/output-styles)                  |
 
 ## File reference
 
@@ -1492,7 +1492,7 @@ Click a filename to open that node in the explorer above.
 | [`CLAUDE.md`](#ce-claude-md)                        | Project and global | ✓      | Instructions loaded every session                                                                             | [Memory](/docs/en/memory)                                            |
 | [`rules/*.md`](#ce-rules)                           | Project and global | ✓      | Topic-scoped instructions, optionally path-gated                                                              | [Rules](/docs/en/memory#organize-rules-with-claude/rules/)           |
 | [`settings.json`](#ce-settings-json)                | Project and global | ✓      | Permissions, hooks, env vars, model defaults                                                                  | [Settings](/docs/en/settings)                                        |
-| [`settings.local.json`](#ce-settings-local-json)    | Project only       |        | Your personal overrides, gitignored when Claude Code saves a setting to it                                    | [Settings scopes](/docs/en/settings#settings-files)                  |
+| [`settings.local.json`](#ce-settings-local-json)    | Project only       |        | Your personal overrides, gitignored when Claude Code saves a setting to it                                    | [Settings scopes](/docs/en/settings#where-settings-live)             |
 | [`.mcp.json`](#ce-mcp-json)                         | Project only       | ✓      | Team-shared MCP servers                                                                                       | [MCP scopes](/docs/en/mcp#mcp-installation-scopes)                   |
 | [`.worktreeinclude`](#ce-worktreeinclude)           | Project only       | ✓      | Gitignored files to copy into new worktrees                                                                   | [Worktrees](/docs/en/worktrees#copy-gitignored-files-into-worktrees) |
 | [`skills/<name>/SKILL.md`](#ce-skills)              | Project and global | ✓      | Reusable prompts invoked with `/name` or auto-invoked                                                         | [Skills](/docs/en/skills)                                            |
@@ -1501,7 +1501,7 @@ Click a filename to open that node in the explorer above.
 | [`agents/*.md`](#ce-agents)                         | Project and global | ✓      | Subagent definitions with their own prompt and tools                                                          | [Subagents](/docs/en/sub-agents)                                     |
 | [`workflows/*.js`](#ce-workflows)                   | Project and global | ✓      | Dynamic workflow scripts written by Claude and saved from `/workflows`; each file becomes a `/<name>` command | [Dynamic workflows](/docs/en/workflows)                              |
 | [`agent-memory/<name>/`](#ce-agent-memory)          | Project and global | ✓      | Persistent memory for subagents                                                                               | [Persistent memory](/docs/en/sub-agents#enable-persistent-memory)    |
-| [`~/.claude.json`](#ce-claude-json)                 | Global only        |        | App state, OAuth, UI toggles, personal MCP servers                                                            | [Global config](/docs/en/settings#global-config-settings)            |
+| [`~/.claude.json`](#ce-claude-json)                 | Global only        |        | App state, OAuth, UI toggles, personal MCP servers                                                            | [Global config](/docs/en/settings-reference#global-config-settings)  |
 | [`projects/<project>/memory/`](#ce-global-projects) | Global only        |        | Auto memory: Claude's notes to itself across sessions                                                         | [Auto memory](/docs/en/memory#auto-memory)                           |
 | [`keybindings.json`](#ce-keybindings)               | Global only        |        | Custom keyboard shortcuts                                                                                     | [Keybindings](/docs/en/keybindings)                                  |
 | [`themes/*.json`](#ce-themes)                       | Global only        |        | Custom color themes                                                                                           | [Custom themes](/docs/en/terminal-config#create-a-custom-theme)      |
@@ -1516,7 +1516,7 @@ Beyond the config you author, `~/.claude` holds data Claude Code writes during s
 
 ### Cleaned up automatically
 
-Claude Code deletes the files in the paths below once they're older than [`cleanupPeriodDays`](/docs/en/settings#available-settings), as long as it can safely determine the retention period. The default is 30 days and the minimum is 1; setting `0` fails with a validation error. The same age cutoff applies to automatic removal of [orphaned worktrees](/docs/en/worktrees#clean-up-subagent-and-background-session-worktrees).
+Claude Code deletes the files in the paths below once they're older than [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays), as long as it can safely determine the retention period. The default is 30 days and the minimum is 1; setting `0` fails with a validation error. The same age cutoff applies to automatic removal of [orphaned worktrees](/docs/en/worktrees#clean-up-subagent-and-background-session-worktrees).
 
 | Path under `~/.claude/`                      | Contents                                                                                                                                                                                                                                                |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

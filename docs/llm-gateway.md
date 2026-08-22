@@ -36,7 +36,7 @@ When you're ready to roll out an LLM gateway to your organization, the sequence 
 
 1. Deploy the gateway and give it your provider credential, so it can authenticate the requests it forwards.
 2. Issue each developer a gateway credential, so usage is attributed to the developer and offboarding revokes one credential.
-3. Distribute the configuration through a [managed settings file](/docs/en/settings#settings-files) and your secrets tooling, so every machine receives the base URL and a credential. When both are distributed, developers don't configure anything. If you don't have settings distribution in place, developers follow the [connect page](/docs/en/llm-gateway-connect) to set the variables themselves.
+3. Distribute the configuration through a [managed settings file](/docs/en/managed-settings#delivery-mechanisms) and your secrets tooling, so every machine receives the base URL and a credential. When both are distributed, developers don't configure anything. If you don't have settings distribution in place, developers follow the [connect page](/docs/en/llm-gateway-connect) to set the variables themselves.
 4. Have each developer [check for the configuration in Claude Code](/docs/en/llm-gateway-connect#check-for-an-existing-configuration), so distribution problems surface before they depend on the gateway.
 
 [Roll out an LLM gateway for your organization](/docs/en/llm-gateway-rollout) walks each step and shows the configuration files to distribute at each one. The gateway is one part of organization setup; for policy enforcement, usage visibility, and data handling decisions, see [Set up Claude Code for your organization](/docs/en/admin-setup).

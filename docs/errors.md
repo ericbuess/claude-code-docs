@@ -80,6 +80,7 @@ Match the message you see to a section below.
 | `Unable to connect to Anthropic services` during setup                                                                                                                                        | [Network](#unable-to-connect-to-anthropic-services)                                                                           |
 | `Socket is closed`                                                                                                                                                                            | [Network](#socket-is-closed)                                                                                                  |
 | `Waiting for API response · will retry in`                                                                                                                                                    | [Automatic retries](#automatic-retries), or [Network](#unable-to-connect-to-api) if it persists                               |
+| `API returned an empty or malformed response`                                                                                                                                                 | [Network](#api-returned-an-empty-or-malformed-response)                                                                       |
 | `Bedrock streaming response has content-type "..."; expected "application/vnd.amazon.eventstream"`                                                                                            | [Network](#bedrock-streaming-response-has-an-unexpected-content-type)                                                         |
 | `SSL certificate verification failed`                                                                                                                                                         | [Network](#ssl-certificate-errors)                                                                                            |
 | `SSL certificate error (...)` during login or startup                                                                                                                                         | [Network](#ssl-certificate-errors)                                                                                            |
@@ -95,6 +96,10 @@ Match the message you see to a section below.
 | `Prompt is too long · automatic compaction failed:`                                                                                                                                           | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Context limit reached · /compact or /clear to continue`                                                                                                                                      | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Context limit reached · /clear to continue`                                                                                                                                                  | [Request errors](#prompt-is-too-long)                                                                                         |
+| `capability_rejected: prompt_too_long` on a Claude apps gateway session                                                                                                                       | [Request errors](#prompt-is-too-long)                                                                                         |
+| `upstream rejected the request` / `request too large for this upstream` on a Claude apps gateway session                                                                                      | [Upstream error messages](/docs/en/claude-apps-gateway-config#upstream-error-messages)                                             |
+| `upstream rate limit exceeded` on a Claude apps gateway session                                                                                                                               | [Upstream error messages](/docs/en/claude-apps-gateway-config#upstream-error-messages)                                             |
+| `all upstreams failed (N attempted)` on a Claude apps gateway session                                                                                                                         | [Upstream error messages](/docs/en/claude-apps-gateway-config#upstream-error-messages)                                             |
 | `Context exceeds the ...-token limit by ... tokens` in `/context` output                                                                                                                      | [Request errors](#context-exceeds-the-token-limit)                                                                            |
 | `Error during compaction: Conversation too long`                                                                                                                                              | [Request errors](#error-during-compaction-conversation-too-long)                                                              |
 | `Request too large`                                                                                                                                                                           | [Request errors](#request-too-large)                                                                                          |
@@ -201,6 +206,7 @@ Claude Code doesn't retry these failures:
 * A server error, dropped connection, or stalled stream that arrives after Claude has completed a block of text or a tool call, or has started one after finishing its thinking, but before it finishes the response. Claude Code could execute the same tool calls twice if it re-ran the request, so it keeps what Claude completed and shows an [incomplete-response notice](#the-response-above-may-be-incomplete). Claude Code still runs any tool calls Claude completed and continues the turn from their results. Before v2.1.199, Claude Code discarded the partial output and reported the whole turn as an error when a server error arrived mid-stream.
 * A failure that arrives after Claude has finished the response: nothing needs retrying, so Claude Code keeps the complete response and ends the turn normally.
 * An [Amazon Bedrock streaming response with an unexpected content-type](#bedrock-streaming-response-has-an-unexpected-content-type), because the gateway or proxy rewriting the response would rewrite the retry the same way. Requires Claude Code v2.1.208 or later.
+* A non-streaming retry of a failed streaming request that gets a success status but [no Claude API message in the body](#api-returned-an-empty-or-malformed-response). Claude Code ends the turn with that error.
 
 ### What you see while Claude Code retries or waits
 
@@ -456,13 +462,13 @@ Fable 5 limit reached · continuing on Fable 5 uses usage credits, and the promp
 Fable 5 now uses usage credits · the prompt to confirm went unanswered — nothing was sent · answer it where this session is running, or /model to change
 ```
 
-This happens in [Remote Control](/docs/en/remote-control) sessions, [background sessions](/docs/en/agent-view), and [agent team](/docs/en/agent-teams) teammate sessions. Claude Code shows the consent prompt only in the session's own interactive view: the terminal where it runs, or, for a background session, the [agents view](/docs/en/agent-view) once you attach. A Remote Control client can't display it. Claude Code closes the prompt at the [`dialogExpiry`](/docs/en/settings#available-settings) deadline, five minutes by default, or as soon as a new prompt arrives while nobody has typed at that terminal, such as a prompt sent from a Remote Control client. Typing at the terminal where the session runs cancels the deadline, and Claude Code waits for your answer. In a background session's attached view, typing doesn't cancel the deadline, so answer before it passes. Claude Code sends nothing and keeps your model, so when you send your next prompt, Claude Code shows the consent prompt again.
+This happens in [Remote Control](/docs/en/remote-control) sessions, [background sessions](/docs/en/agent-view), and [agent team](/docs/en/agent-teams) teammate sessions. Claude Code shows the consent prompt only in the session's own interactive view: the terminal where it runs, or, for a background session, the [agents view](/docs/en/agent-view) once you attach. A Remote Control client can't display it. Claude Code closes the prompt at the [`dialogExpiry`](/docs/en/settings-reference#dialogexpiry) deadline, five minutes by default, or as soon as a new prompt arrives while nobody has typed at that terminal, such as a prompt sent from a Remote Control client. Typing at the terminal where the session runs cancels the deadline, and Claude Code waits for your answer. In a background session's attached view, typing doesn't cancel the deadline, and a new prompt still closes the consent prompt, so answer before either happens. Claude Code sends nothing and keeps your model, so when you send your next prompt, Claude Code shows the consent prompt again.
 
 **What to do:**
 
 * At the terminal where the session runs, send another prompt and answer the consent prompt when it reappears. For a background session, attach to it from the [agents view](/docs/en/agent-view) first. Resending from a Remote Control client shows this message again, because the client can't display the prompt.
 * Run `/model` to switch to a model that doesn't bill usage credits
-* To give yourself more time to reach that terminal, set [`dialogExpiry`](/docs/en/settings#available-settings) to a longer value or `"never"`
+* To give yourself more time to reach that terminal, set [`dialogExpiry`](/docs/en/settings-reference#dialogexpiry) to a longer value or `"never"`
 
 Before v2.1.236, this message didn't appear: while a Remote Control client was connected, Claude Code waited 60 seconds for an answer and then continued the turn on your default model.
 
@@ -563,7 +569,7 @@ Not logged in · Please run /login
 
 * Run `/login` to authenticate with your Claude subscription or Console account
 * If you expected an environment variable to authenticate you, confirm `ANTHROPIC_API_KEY` is set and exported in the shell where you launched `claude`
-* For CI or automation where interactive login is not possible, configure an [`apiKeyHelper`](/docs/en/settings#available-settings) script that fetches a key at startup
+* For CI or automation where interactive login is not possible, configure an [`apiKeyHelper`](/docs/en/settings-reference#apikeyhelper) script that fetches a key at startup
 * See [Authentication precedence](/docs/en/authentication#authentication-precedence) to understand which credential Claude Code uses when several are present
 
 If you are prompted to log in repeatedly, see [Not logged in or token expired](/docs/en/troubleshoot-install#not-logged-in-or-token-expired) for system clock and macOS Keychain fixes.
@@ -600,12 +606,12 @@ When the message continues past `Fix external API key` with a description such a
 * Check for typos and confirm the key has not been revoked in the [Console](https://platform.claude.com/settings/keys)
 * In the same shell, run `env | grep ANTHROPIC`, or in PowerShell `Get-ChildItem Env:ANTHROPIC*`. Tools like direnv, dotenv shell plugins, and IDE terminals can load a stale key from a `.env` file in your project without you setting it explicitly.
 * Unset `ANTHROPIC_API_KEY` and run `/login` to use subscription auth instead
-* If the key comes from an [`apiKeyHelper`](/docs/en/settings#available-settings) script, run the script directly to confirm it prints a valid key on stdout
+* If the key comes from an [`apiKeyHelper`](/docs/en/settings-reference#apikeyhelper) script, run the script directly to confirm it prints a valid key on stdout
 * Run `/status` to confirm which credential source Claude Code is actually using
 
 ### Your apiKeyHelper script is failing
 
-Claude Code ran the command in your [`apiKeyHelper`](/docs/en/settings#available-settings) setting and didn't get a key back. Without one, the request reaches the API with a placeholder credential, and the API rejects it with `401`. The `Authentication` panel in the terminal shows which of these happened:
+Claude Code ran the command in your [`apiKeyHelper`](/docs/en/settings-reference#apikeyhelper) setting and didn't get a key back. Without one, the request reaches the API with a placeholder credential, and the API rejects it with `401`. The `Authentication` panel in the terminal shows which of these happened:
 
 * The command exited with an error or timed out
 * The command printed nothing to stdout
@@ -644,7 +650,7 @@ The first part of the message depends on where the bad value came from:
 * `Invalid ANTHROPIC_CUSTOM_HEADERS`: a header name or value you set in [`ANTHROPIC_CUSTOM_HEADERS`](/docs/en/env-vars). The description counts which `Name: Value` pair is at fault, such as `distinct header 2 of 3 parsed from ANTHROPIC_CUSTOM_HEADERS`, without repeating the name or value, since you chose both.
 * `Invalid request header from the environment`: a value Claude Code copies into a request header from another environment variable, such as `CLAUDE_AGENT_SDK_CLIENT_APP`. The description names the variable to fix.
 
-Claude Code reports a bad `ANTHROPIC_API_KEY` caught by this check as [Invalid API key](#invalid-api-key), with the same trailing description. It reports a bad saved `/login` credential as [Not logged in](#not-logged-in) instead; run `/login` to save a fresh one. An [`apiKeyHelper`](/docs/en/settings#available-settings) script's output never reaches this check: Claude Code validates it when the script runs, and output an HTTP header can't carry fails with [Your apiKeyHelper script is failing](#your-apikeyhelper-script-is-failing).
+Claude Code reports a bad `ANTHROPIC_API_KEY` caught by this check as [Invalid API key](#invalid-api-key), with the same trailing description. It reports a bad saved `/login` credential as [Not logged in](#not-logged-in) instead; run `/login` to save a fresh one. An [`apiKeyHelper`](/docs/en/settings-reference#apikeyhelper) script's output never reaches this check: Claude Code validates it when the script runs, and output an HTTP header can't carry fails with [Your apiKeyHelper script is failing](#your-apikeyhelper-script-is-failing).
 
 After the second `·`, the message describes the problem, as in this full example:
 
@@ -697,7 +703,7 @@ Environment variables and `apiKeyHelper` take precedence over `/login`, so runni
 **What to do:**
 
 * If the message names `ANTHROPIC_API_KEY`, unset it in the current shell and remove it from your shell profile or `.env` file, then relaunch `claude`
-* If the message names `apiKeyHelper`, remove the [`apiKeyHelper`](/docs/en/settings#available-settings) setting from your `settings.json`
+* If the message names `apiKeyHelper`, remove the [`apiKeyHelper`](/docs/en/settings-reference#apikeyhelper) setting from your `settings.json`
 * Run `/login` to sign in with your claude.ai account
 * Run `/status` afterward to confirm the active credential is your subscription rather than an API key
 * If you need API key authentication for automation, ask your organization admin to re-enable it in the Console
@@ -754,7 +760,7 @@ A second sentence explains what routed the session away from the Anthropic API; 
 **What to do:**
 
 * Unset the variable the message names, such as `CLAUDE_CODE_USE_BEDROCK` or `ANTHROPIC_BASE_URL`, and restart the session, or start Remote Control from a session that talks to the Anthropic API directly
-* If the variable isn't set in your shell, check the `env` key in your [settings files](/docs/en/settings#settings-files), which applies environment variables to every session
+* If the variable isn't set in your shell, check the `env` key in your [settings files](/docs/en/settings#where-settings-live), which applies environment variables to every session
 * For this and the other Remote Control startup messages, see [Troubleshoot Remote Control](/docs/en/remote-control#troubleshooting)
 
 <h3 id="remote-control-couldnt-refresh-your-login">
@@ -1073,6 +1079,28 @@ Before v2.1.214, Claude Code didn't retry this failure, and the turn stopped wit
 * If you see this error, update to v2.1.214 or later with `claude update`, then send your message again
 * If turns keep failing behind the same proxy after updating, work through [Unable to connect to API](#unable-to-connect-to-api) and check the proxy setup in [Network configuration](/docs/en/network-config)
 
+### API returned an empty or malformed response
+
+Claude Code shows this error when its non-streaming retry of a failed streaming request gets an HTTP success status but the body isn't a Claude API message: commonly an HTML error or sign-in page, an empty body, or JSON in another format. A proxy, gateway, or network sign-in page answering in the API's place is the usual source. Claude Code doesn't retry the request, and the turn ends with this error.
+
+```text theme={null}
+API returned an empty or malformed response (HTTP 200) — check for a proxy or gateway intercepting the request.
+```
+
+After that opening, the message reports what came back and which request failed:
+
+* A `Response:` clause with the content type, the kind of body, such as `body is an HTML page` or `empty body`, its size in bytes, and whether the response carried an Anthropic request id. When the response names a recognizable server, such as `nginx` or `cloudflare`, or carries intermediary headers, such as `cf-ray` or `via`, the clause lists those too.
+* A sentence naming the failed streaming request's id and the failure that triggered the retry. When a stream had opened before the failure, it also reports how many stream events arrived and, if any did, how long the stream had been silent when the attempt failed.
+
+Before v2.1.234, the message ended after `intercepting the request`.
+
+**What to do:**
+
+* Read the `Response:` clause to see which system answered. An HTML body, no Anthropic request id, or a named server such as `nginx` or `cloudflare` means that something between Claude Code and the API replied in its place
+* If you route through an [LLM gateway](/docs/en/llm-gateway-connect#troubleshoot-gateway-errors), test the route with a direct request and fix the hop that returns the non-API response
+* On a network with a sign-in page, such as guest Wi-Fi, complete the sign-in in a browser, then retry
+* If only the non-streaming route through your gateway is broken, set [`CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK=1`](/docs/en/env-vars#variables) so a request that fails mid-stream goes to the normal retry path instead of this fallback, except when the streaming endpoint itself returns `404`, where Claude Code still falls back
+
 ### Bedrock streaming response has an unexpected content-type
 
 A gateway or proxy between Claude Code and [Amazon Bedrock](/docs/en/amazon-bedrock) is transforming the streaming response body or its `Content-Type` header. Amazon Bedrock streams responses as `application/vnd.amazon.eventstream`, and Claude Code rejects a successful streaming response that reports a different content-type instead of decoding a body it can't read. The request isn't retried.
@@ -1247,7 +1275,7 @@ Context limit reached · /compact or /clear to continue
 
 The line names only `/clear` when [`DISABLE_COMPACT`](/docs/en/env-vars) is set. Longer forms of the error, such as the compaction-failed form below, keep the `Prompt is too long ·` wording. In `-p` output and the transcript, the text stays `Prompt is too long`.
 
-When you turned auto-compact off in your [user settings](/docs/en/settings#available-settings), the line also says so:
+When you turned auto-compact off in your [user settings](/docs/en/settings-reference#autocompactenabled), the line also says so:
 
 ```text theme={null}
 Context limit reached · /compact or /clear to continue · auto-compact is off · /config to turn it on
@@ -1256,6 +1284,8 @@ Context limit reached · /compact or /clear to continue · auto-compact is off �
 The **Auto-compact** toggle in `/config` writes `autoCompactEnabled` to user settings. The hint appears only when a `/config` change would take effect. For example, it doesn't appear when [`DISABLE_AUTO_COMPACT`](/docs/en/env-vars) or [`DISABLE_COMPACT`](/docs/en/env-vars) turned auto-compact off. It also doesn't appear when a higher-precedence scope, such as project or managed settings, set `autoCompactEnabled` to `false`. Nor does it appear in a terminal attached to a cloud session, where the cloud session owns auto-compact. Before v2.1.235, the line carried no auto-compact hint.
 
 Amazon Bedrock reports this condition as `Input is too long for requested model.`, which Claude Code handles the same way. Before v2.1.217, Claude Code didn't recognize the Bedrock wording, so auto-compact never triggered on it and `/compact` failed with the same error.
+
+A [Claude apps gateway](/docs/en/claude-apps-gateway-config#upstream-error-messages) reports this condition as `capability_rejected: prompt_too_long` when a cloud upstream rejects the request in the provider's own error shape. Claude Code treats the token the same as `Prompt is too long`. Before v2.1.228, Claude Code didn't recognize the token, so auto-compact didn't trigger on it.
 
 When automatic compaction ran on this turn and failed on an underlying error, such as an unavailable model or an authentication failure, the message names that error after a separator:
 
@@ -1696,7 +1726,7 @@ Claude Code turns `claude import` on through a feature flag it fetches from Anth
 **What to do:**
 
 * On a fresh installation, start `claude`, wait for the session to load, exit, and run `claude import` again
-* Where feature-flag fetching stays off, set the configuration up yourself: add MCP servers with [`claude mcp add`](/docs/en/mcp#installing-mcp-servers), and create the [`CLAUDE.md` files](/docs/en/memory#how-claude-md-files-load), [skills and commands](/docs/en/skills#where-skills-live), and [subagents](/docs/en/sub-agents#choose-the-subagent-scope) you want to carry over. The message also names `~/.claude/settings.json`. Of the configuration `claude import` carries, that file holds only the [permission mode](/docs/en/settings#permission-settings); Claude Code doesn't read MCP servers from it.
+* Where feature-flag fetching stays off, set the configuration up yourself: add MCP servers with [`claude mcp add`](/docs/en/mcp#installing-mcp-servers), and create the [`CLAUDE.md` files](/docs/en/memory#how-claude-md-files-load), [skills and commands](/docs/en/skills#where-skills-live), and [subagents](/docs/en/sub-agents#choose-the-subagent-scope) you want to carry over. The message also names `~/.claude/settings.json`. Of the configuration `claude import` carries, that file holds only the [permission mode](/docs/en/settings-reference#permission-settings); Claude Code doesn't read MCP servers from it.
 
 ### Could not read Claude Code config
 
@@ -1925,7 +1955,7 @@ Each reason the message can show in parentheses:
 
 **What to do:**
 
-* In a session started without those restrictions, run `/tui fullscreen`, or `/tui default` to switch back. Claude Code saves the [`tui` setting](/docs/en/settings#available-settings) there
+* In a session started without those restrictions, run `/tui fullscreen`, or `/tui default` to switch back. Claude Code saves the [`tui` setting](/docs/en/settings-reference#tui) there
 
 ## Plugin errors
 
@@ -2033,7 +2063,7 @@ When Claude Code refuses the Write tool, the message ends `and cannot be written
 
 **What to do:**
 
-* If Claude should be able to change the file, remove or narrow the `Read` deny rule in `/permissions` or in [settings](/docs/en/settings#permission-settings)
+* If Claude should be able to change the file, remove or narrow the `Read` deny rule in `/permissions` or in [settings](/docs/en/settings-reference#permission-settings)
 * If the file must stay untouched, keep the rule and add an `Edit` deny rule for the same path to block the NotebookEdit tool too
 
 <h3 id="subagent-type-is-required">
@@ -2452,7 +2482,7 @@ The `projects` key the message prints is the folder [Project allow rules and wor
 
 ### Is not matched by file permission checks
 
-Claude Code found a `Write`, `NotebookEdit`, `MultiEdit`, or `Glob` [permission rule](/docs/en/permissions#read-and-edit) with a path in one of your [settings files](/docs/en/settings#settings-files), in [managed settings](/docs/en/permissions#managed-settings), or in a `--allowedTools`, `--disallowedTools`, or `--settings` flag value. It checks file permissions against `Edit` and `Read` rules only, so it never consults a path rule that names one of the other file tools. It keeps the rule and changes nothing else; the warning names the rule, its source in parentheses, and the replacement to write:
+Claude Code found a `Write`, `NotebookEdit`, `MultiEdit`, or `Glob` [permission rule](/docs/en/permissions#read-and-edit) with a path in one of your [settings files](/docs/en/settings#where-settings-live), in [managed settings](/docs/en/managed-settings), or in a `--allowedTools`, `--disallowedTools`, or `--settings` flag value. It checks file permissions against `Edit` and `Read` rules only, so it never consults a path rule that names one of the other file tools. It keeps the rule and changes nothing else; the warning names the rule, its source in parentheses, and the replacement to write:
 
 ```text theme={null}
 Permission deny rule (.claude/settings.json): Write(docs/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(docs/**) instead (Edit rules cover all file-editing tools).
@@ -2485,7 +2515,7 @@ Claude Code enforces the 200K limit on its own for every model it recognizes as 
 
 **What to do:**
 
-* Set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000`](/docs/en/env-vars), or the [`autoCompactWindow`](/docs/en/settings#available-settings) setting to `200000`, so auto-compaction compacts at the 200K boundary
+* Set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000`](/docs/en/env-vars), or the [`autoCompactWindow`](/docs/en/settings-reference#autocompactwindow) setting to `200000`, so auto-compaction compacts at the 200K boundary
 * If the message names a model ID this version doesn't recognize, run `claude update`. A version that recognizes the ID as a 1M-context model enforces the limit without further configuration.
 * If you want the session to use the model's full window instead, unset `CLAUDE_CODE_DISABLE_1M_CONTEXT`; the warning reports only that the 200K limit isn't enforced
 
@@ -2517,7 +2547,7 @@ Claude Code doesn't write the line for provider IDs it resolves to a model it re
 
 **What to do:**
 
-* If you set the ID on purpose, such as an [LLM gateway](/docs/en/llm-gateway) alias, add a [`modelOverrides`](/docs/en/model-config#override-model-ids-per-version) entry to your [settings file](/docs/en/settings#settings-files) with the ID as its value. Use an Anthropic model ID as the key, not a family alias such as `opus`. For `my-proxy-model` from the example line, add this entry:
+* If you set the ID on purpose, such as an [LLM gateway](/docs/en/llm-gateway) alias, add a [`modelOverrides`](/docs/en/model-config#override-model-ids-per-version) entry to your [settings file](/docs/en/settings#where-settings-live) with the ID as its value. Use an Anthropic model ID as the key, not a family alias such as `opus`. For `my-proxy-model` from the example line, add this entry:
 
   ```json theme={null}
   {

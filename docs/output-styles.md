@@ -55,7 +55,7 @@ A custom output style is a Markdown file: frontmatter for metadata, then the ins
 
     * User: `~/.claude/output-styles`
     * Project: `.claude/output-styles`
-    * Managed policy: `.claude/output-styles` inside the [managed settings directory](/docs/en/settings#settings-files)
+    * Managed policy: `.claude/output-styles` inside the [managed settings directory](/docs/en/managed-settings#delivery-mechanisms)
 
     Project output styles load from every `.claude/output-styles/` between the working directory and the repository root. When more than one of these nested directories defines a style with the same name, Claude Code uses the one closest to the working directory.
   </Step>

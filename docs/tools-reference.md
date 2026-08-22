@@ -67,7 +67,7 @@ To add custom tools, connect an [MCP server](/docs/en/mcp). To extend Claude wit
 
 For the most part, Claude decides when to use these tools and you don't need to name them yourself when interacting with Claude. You reference tool names directly when defining permissions and other configuration:
 
-* in [`permissions.allow` and `permissions.deny`](/docs/en/settings#available-settings) in settings, and the `/permissions` interface
+* in [`permissions.allow`](/docs/en/settings-reference#permissions-allow) and [`permissions.deny`](/docs/en/settings-reference#permissions-deny) in settings, and the `/permissions` interface
 * in the `--allowedTools` and `--disallowedTools` [CLI flags](/docs/en/cli-reference)
 * in the Agent SDK's [`allowedTools` and `disallowedTools`](/docs/en/agent-sdk/permissions#allow-and-deny-rules) options
 * in a [subagent's `tools` or `disallowedTools`](/docs/en/sub-agents#supported-frontmatter-fields) frontmatter
@@ -129,7 +129,7 @@ When you answer by typing your own text, Claude Code relays the answer with neut
 
 ### Question auto-continue timeout
 
-Questions stay open until you answer them. If you want a question you leave unanswered to eventually close and let Claude continue without you, set the [`askUserQuestionTimeout`](/docs/en/settings#available-settings) setting to `60s`, `5m`, or `10m`, either in your user `settings.json` or from the **Question auto-continue timeout** row in `/config`.
+Questions stay open until you answer them. If you want a question you leave unanswered to eventually close and let Claude continue without you, set the [`askUserQuestionTimeout`](/docs/en/settings-reference#askuserquestiontimeout) setting to `60s`, `5m`, or `10m`, either in your user `settings.json` or from the **Question auto-continue timeout** row in `/config`.
 
 After a question sits that long with no input, the dialog closes on its own: it submits any options you'd already selected and tells Claude you may be away from your keyboard, so Claude proceeds on its own judgment and can re-ask later. You see a countdown for the last 20 seconds. Press any key to restart the timer; on terminals that report focus, switching to the window restarts it too.
 
@@ -336,7 +336,7 @@ The `timeout_ms` and `persistent` inputs behave the same as they do for a comman
 
 Opening a WebSocket prompts for approval; in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) the classifier decides instead. The prompt doesn't offer an option to skip future prompts for the same host.
 
-Claude Code denies URLs that point at a private, link-local, or cloud-metadata address, including hostnames that resolve to one. It also denies hosts in `sandbox.network.deniedDomains`, and when [`allowManagedDomainsOnly`](/docs/en/settings#sandbox-settings) is set in managed settings, any host outside the managed allowlist.
+Claude Code denies URLs that point at a private, link-local, or cloud-metadata address, including hostnames that resolve to one. It also denies hosts in `sandbox.network.deniedDomains`, and when [`allowManagedDomainsOnly`](/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly) is set in managed settings, any host outside the managed allowlist.
 
 ## NotebookEdit tool behavior
 
@@ -355,7 +355,7 @@ Permission rules use the `Edit(...)` path format. A rule like `Edit(notebooks/**
 The PowerShell tool lets Claude run PowerShell commands natively. On Windows, this means commands run in PowerShell instead of routing through Git Bash. How the tool becomes available depends on your platform:
 
 * **Windows without Git Bash**: the tool is enabled automatically.
-* **Windows with Git Bash installed**: the tool is rolling out progressively.
+* **Windows with Git Bash installed**: the tool is on by default for claude.ai and Console accounts; set `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` to enable it in Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry sessions, or `0` to turn it off.
 * **Linux, macOS, and WSL**: the tool is opt-in.
 
 Your [PreToolUse hooks](/docs/en/hooks#powershell) receive the tool's command string in `tool_input.command`, with the same fields as the Bash tool.
@@ -374,7 +374,7 @@ Set `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` in your environment or in `settings.json
 }
 ```
 
-On Windows, set the variable to `0` to opt out of the rollout. On Linux, macOS, and WSL, the tool requires PowerShell 7 or later: install `pwsh` and ensure it is on your `PATH`.
+On Windows, set the variable to `0` to turn the tool off. On Linux, macOS, and WSL, the tool requires PowerShell 7 or later: install `pwsh` and ensure it is on your `PATH`.
 
 On Windows, Claude Code auto-detects `pwsh.exe` for PowerShell 7+ with a fallback to `powershell.exe` for PowerShell 5.1. When the tool is enabled, Claude treats PowerShell as the primary shell. The Bash tool remains available for POSIX scripts when Git Bash is installed.
 
@@ -384,7 +384,7 @@ Claude Code spawns PowerShell with `-ExecutionPolicy Bypass` at process scope on
 
 Three additional settings control where PowerShell is used:
 
-* `"defaultShell": "powershell"` in [`settings.json`](/docs/en/settings#available-settings): routes interactive `!` commands through PowerShell. Requires the PowerShell tool to be enabled.
+* `"defaultShell": "powershell"` in [`settings.json`](/docs/en/settings-reference#all-settings): routes interactive `!` commands through PowerShell. Requires the PowerShell tool to be enabled.
 * `"shell": "powershell"` on individual [command hooks](/docs/en/hooks#command-hook-fields): runs that hook in PowerShell. Hooks spawn PowerShell directly, so this works regardless of `CLAUDE_CODE_USE_POWERSHELL_TOOL`.
 * `shell: powershell` in [skill frontmatter](/docs/en/skills#frontmatter-reference): runs `` !`command` `` blocks in PowerShell. Requires the PowerShell tool to be enabled.
 

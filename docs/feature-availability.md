@@ -30,7 +30,7 @@ These work on every provider:
 * [Subagents](/docs/en/sub-agents), [hooks](/docs/en/hooks-guide), [commands](/docs/en/commands), and [skills](/docs/en/skills)
 * [CLAUDE.md memory](/docs/en/memory), [plugins](/docs/en/plugins), and [MCP servers](/docs/en/mcp)
 * [Checkpoints](/docs/en/checkpointing), [sandboxing](/docs/en/sandboxing), and [Workflows](/docs/en/workflows)
-* [OpenTelemetry metrics](/docs/en/monitoring-usage) and the [managed settings file](/docs/en/settings#settings-files)
+* [OpenTelemetry metrics](/docs/en/monitoring-usage) and the [managed settings file](/docs/en/managed-settings#delivery-mechanisms)
 
 Three of these have provider-specific differences:
 

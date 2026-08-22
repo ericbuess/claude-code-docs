@@ -29,7 +29,7 @@ On macOS, there is nothing to install: sandboxing uses the built-in Seatbelt fra
     This opens the sandbox panel with three tabs, plus a Dependencies tab on Linux when the optional seccomp filter is missing:
 
     * **Mode**: choose how sandboxed commands are approved, covered in the next step
-    * **Overrides**: choose whether commands that fail under the sandbox can fall back to running unsandboxed. This is the [`allowUnsandboxedCommands`](/docs/en/settings#sandbox-settings) setting
+    * **Overrides**: choose whether commands that fail under the sandbox can fall back to running unsandboxed. This is the [`allowUnsandboxedCommands`](/docs/en/settings-reference#sandbox-allowunsandboxedcommands) setting
     * **Config**: view the resolved sandbox settings
 
     If the panel shows only a Dependencies tab, a required package is missing. Install it as described in [Set up Linux and WSL2](#set-up-linux-and-wsl2), restart Claude Code, and run `/sandbox` again.
@@ -46,10 +46,10 @@ On macOS, there is nothing to install: sandboxing uses the built-in Seatbelt fra
   </Step>
 </Steps>
 
-When you select a mode in the panel, Claude Code saves it to your project's local settings at `.claude/settings.local.json`, which apply to the current project. Claude Code adds that file to your global gitignore when it saves a setting there. To enable the sandbox across all of your projects, set [`sandbox.enabled`](/docs/en/settings#sandbox-settings) to `true` in your user settings at `~/.claude/settings.json`. To enforce sandboxing for every developer in an organization, use [managed settings](#enforce-sandboxing-with-managed-settings).
+When you select a mode in the panel, Claude Code saves it to your project's local settings at `.claude/settings.local.json`, which apply to the current project. Claude Code adds that file to your global gitignore when it saves a setting there. To enable the sandbox across all of your projects, set [`sandbox.enabled`](/docs/en/settings-reference#sandbox-enabled) to `true` in your user settings at `~/.claude/settings.json`. To enforce sandboxing for every developer in an organization, use [managed settings](#enforce-sandboxing-with-managed-settings).
 
 <Warning>
-  By default, if the sandbox cannot start because dependencies are missing or the platform is unsupported, Claude Code shows a warning and runs commands without sandboxing. To make this a hard failure instead, set [`sandbox.failIfUnavailable`](/docs/en/settings#sandbox-settings) to `true`. This is intended for managed deployments that require sandboxing as a security gate.
+  By default, if the sandbox cannot start because dependencies are missing or the platform is unsupported, Claude Code shows a warning and runs commands without sandboxing. To make this a hard failure instead, set [`sandbox.failIfUnavailable`](/docs/en/settings-reference#sandbox-failifunavailable) to `true`. This is intended for managed deployments that require sandboxing as a security gate.
 </Warning>
 
 ### Set up Linux and WSL2
@@ -109,7 +109,7 @@ When a required dependency is missing, the Dependencies tab is the only tab show
   <Accordion title="WSL2 notes">
     Check your WSL version with `wsl -l -v` from PowerShell. If you see `Sandboxing requires WSL2`, your distribution is running WSL1. Upgrade it to WSL2 or run Claude Code without sandboxing.
 
-    On WSL2, WSL hands a launch of a Windows binary such as `cmd.exe`, `powershell.exe`, or anything under `/mnt/c/` to the Windows host over a Unix socket, so whether a sandboxed command can launch one follows the sandbox's [Unix-socket settings](/docs/en/settings#sandbox-settings): the optional seccomp filter has to be installed to block the socket in the first place. To allow these launches, set `allowAllUnixSockets`; to keep them out of the sandbox entirely, add the command to [`excludedCommands`](/docs/en/settings#sandbox-settings).
+    On WSL2, WSL hands a launch of a Windows binary such as `cmd.exe`, `powershell.exe`, or anything under `/mnt/c/` to the Windows host over a Unix socket, so whether a sandboxed command can launch one follows the sandbox's [Unix-socket settings](/docs/en/settings-reference#sandbox-network-allowunixsockets): the optional seccomp filter has to be installed to block the socket in the first place. To allow these launches, set `allowAllUnixSockets`; to keep them out of the sandbox entirely, add the command to [`excludedCommands`](/docs/en/settings-reference#sandbox-excludedcommands).
   </Accordion>
 </AccordionGroup>
 
@@ -144,7 +144,7 @@ Some commands can't run inside the sandbox at all, such as tools that are incomp
 
 The retried command runs outside the sandbox, so it goes through the regular permission flow: in Manual mode you get a confirmation prompt; in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) the classifier evaluates the underlying command instead of prompting you. To be prompted on every unsandboxed retry even in auto mode, add an [ask rule](/docs/en/permissions#match-by-input-parameter) for `Bash(dangerouslyDisableSandbox:true)`.
 
-You can disable this escape hatch by setting `"allowUnsandboxedCommands": false` in your [sandbox settings](/docs/en/settings#sandbox-settings). When disabled, which the `/sandbox` Overrides tab shows as **Strict sandbox mode**, the `dangerouslyDisableSandbox` parameter is completely ignored and all commands must run sandboxed or be explicitly listed in `excludedCommands`.
+You can disable this escape hatch by setting `"allowUnsandboxedCommands": false` in your [sandbox settings](/docs/en/settings-reference#sandbox-settings). When disabled, which the `/sandbox` Overrides tab shows as **Strict sandbox mode**, the `dangerouslyDisableSandbox` parameter is completely ignored and all commands must run sandboxed or be explicitly listed in `excludedCommands`.
 
 #### Temporary directories
 
@@ -152,7 +152,7 @@ The session temp directory is writable inside the sandbox by default, alongside 
 
 ## Configure sandboxing
 
-Customize sandbox behavior through your `settings.json` file. See [Settings](/docs/en/settings#sandbox-settings) for the complete configuration reference.
+Customize sandbox behavior through your `settings.json` file. See [Settings](/docs/en/settings-reference#sandbox-settings) for the complete configuration reference.
 
 By default, sandboxed commands can write only to the current working directory and the session temp directory. If subprocess commands like `kubectl`, `terraform`, or `npm` need to write outside those directories, use `sandbox.filesystem.allowWrite` to grant access to specific paths:
 
@@ -179,15 +179,15 @@ Path prefixes control how paths are resolved:
 | `~/`              | Relative to home directory                                                             | `~/.kube` becomes `$HOME/.kube`                                           |
 | `./` or no prefix | Relative to the project root for project settings, or to `~/.claude` for user settings | `./output` in `.claude/settings.json` resolves to `<project-root>/output` |
 
-This syntax differs from [Read and Edit permission rules](/docs/en/permissions#read-and-edit), which use `//path` for absolute and `/path` for project-relative. Sandbox filesystem paths use standard conventions: `/tmp/build` is absolute. For how Claude Code treats a trailing slash or a wildcard in these paths, see [Sandbox path prefixes](/docs/en/settings#sandbox-path-prefixes).
+This syntax differs from [Read and Edit permission rules](/docs/en/permissions#read-and-edit), which use `//path` for absolute and `/path` for project-relative. Sandbox filesystem paths use standard conventions: `/tmp/build` is absolute. For how Claude Code treats a trailing slash or a wildcard in these paths, see [Sandbox path prefixes](/docs/en/settings-reference#sandbox-path-prefixes).
 
 You can also deny write or read access using `sandbox.filesystem.denyWrite` and `sandbox.filesystem.denyRead`, and re-allow specific paths within a denied region using `sandbox.filesystem.allowRead`. When read rules overlap, the more specific path wins:
 
-| Example rules                                           | Result                                                                                                                                                                                         |
-| :------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `"denyRead": ["~/"]` with `"allowRead": ["~/projects"]` | `~/projects` is readable and the rest of the home directory stays blocked. The narrower allow re-opens that part of the denied region                                                          |
-| `"allowRead": ["~/"]` with `"denyRead": ["~/.env"]`     | `~/.env` stays blocked and the rest of the home directory is readable. The deny holds inside a wider allow, so a broad allow can't silently re-expose a secret                                 |
-| `"allowRead": ["~/"]` with `"denyRead": ["~/**/.env"]`  | Every `.env` under the home directory stays blocked and the rest is readable. A [wildcard deny](/docs/en/settings#sandbox-path-prefixes) holds inside a wider allow the same way an exact path does |
+| Example rules                                           | Result                                                                                                                                                                                                   |
+| :------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `"denyRead": ["~/"]` with `"allowRead": ["~/projects"]` | `~/projects` is readable and the rest of the home directory stays blocked. The narrower allow re-opens that part of the denied region                                                                    |
+| `"allowRead": ["~/"]` with `"denyRead": ["~/.env"]`     | `~/.env` stays blocked and the rest of the home directory is readable. The deny holds inside a wider allow, so a broad allow can't silently re-expose a secret                                           |
+| `"allowRead": ["~/"]` with `"denyRead": ["~/**/.env"]`  | Every `.env` under the home directory stays blocked and the rest is readable. A [wildcard deny](/docs/en/settings-reference#sandbox-path-prefixes) holds inside a wider allow the same way an exact path does |
 
 The example below blocks reading from the entire home directory while still allowing reads from the current project. Place it in your project's `.claude/settings.json`, because the relative path `.` resolves to the project root only when the configuration lives in project settings:
 
@@ -241,12 +241,12 @@ Because turning filesystem isolation off widens what sandboxed commands can do, 
 
 Whether a managed `credentials.files` entry pins `filesystem.disabled`, locking the key to managed settings so developers can't turn filesystem isolation off, depends on the entry's `mode` and what happens to the entry when the sandbox starts:
 
-| Managed entry                                                                                          | Pins `filesystem.disabled`   | What protects the file when isolation is off                                                                                    |
-| ------------------------------------------------------------------------------------------------------ | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `"mode": "deny"`                                                                                       | Yes                          | Nothing: the read block is part of the filesystem layer                                                                         |
-| `"mode": "mask"`, applied as a mask                                                                    | No                           | Masking itself: the [sentinel copy and proxy](#mask-credential-files) on Linux and WSL2, the sandbox's own read rules on macOS  |
-| `"mode": "mask"`, [fallen back to `deny`](#mask-credential-files) at setup                             | No                           | Nothing, same as `deny`. List a path that can't be masked, such as a directory, as an explicit `deny` entry, which pins the key |
-| `"mode": "mask"`, [degraded to `deny` by validation](/docs/en/settings#invalid-entries-in-managed-settings) | Yes, like an explicit `deny` | Nothing, same as `deny`                                                                                                         |
+| Managed entry                                                                                                  | Pins `filesystem.disabled`   | What protects the file when isolation is off                                                                                    |
+| -------------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `"mode": "deny"`                                                                                               | Yes                          | Nothing: the read block is part of the filesystem layer                                                                         |
+| `"mode": "mask"`, applied as a mask                                                                            | No                           | Masking itself: the [sentinel copy and proxy](#mask-credential-files) on Linux and WSL2, the sandbox's own read rules on macOS  |
+| `"mode": "mask"`, [fallen back to `deny`](#mask-credential-files) at setup                                     | No                           | Nothing, same as `deny`. List a path that can't be masked, such as a directory, as an explicit `deny` entry, which pins the key |
+| `"mode": "mask"`, [degraded to `deny` by validation](/docs/en/managed-settings#invalid-entries-in-managed-settings) | Yes, like an explicit `deny` | Nothing, same as `deny`                                                                                                         |
 
 A fallback happens when the sandbox starts, after Claude Code has already read the settings the pin check runs on, so a fallen-back entry never pins. Validation rewrites an invalid entry to `deny` while settings load, so a degraded entry pins like one you wrote as `deny`.
 
@@ -263,7 +263,7 @@ Setting `filesystem.disabled` lifts the protections the filesystem layer itself 
 Two other things change:
 
 * Sandboxed commands inherit your shell's `$TMPDIR` instead of the session temp directory, because every temp directory is writable and Claude Code no longer redirects commands to the session one. On Linux the variable is often unset in the parent shell, so it can expand empty inside sandboxed commands; Claude Code tells Claude through its Bash tool guidance to create scratch directories with `mktemp -d` instead of relying on `$TMPDIR`.
-* [`autoAllowBashIfSandboxed`](/docs/en/settings#sandbox-settings) still defaults to `true`, so sandboxed commands keep running without prompts. Set it to `false` to prompt for sandboxed commands.
+* [`autoAllowBashIfSandboxed`](/docs/en/settings-reference#sandbox-autoallowbashifsandboxed) still defaults to `true`, so sandboxed commands keep running without prompts. Set it to `false` to prompt for sandboxed commands.
 
 ### Protect credentials
 
@@ -293,7 +293,7 @@ The example below blocks reads of the AWS credentials file and the SSH directory
 
 Environment variable entries and file entries also accept `"mode": "mask"`, described under [Mask credentials](#mask-credentials).
 
-File paths follow the same [prefix rules](/docs/en/settings#sandbox-path-prefixes) as `sandbox.filesystem.*` settings, and `deny` entries from every [settings scope](/docs/en/settings#settings-precedence) are merged. A `deny` entry only ever narrows access, so any scope can add one, but no scope can remove one that another scope added.
+File paths follow the same [prefix rules](/docs/en/settings-reference#sandbox-path-prefixes) as `sandbox.filesystem.*` settings, and `deny` entries from every [settings scope](/docs/en/settings#settings-precedence) are merged. A `deny` entry only ever narrows access, so any scope can add one, but no scope can remove one that another scope added.
 
 There is no built-in credential deny list, so only the files and variables you list are restricted. The setting affects sandboxed Bash commands only. To strip Anthropic and cloud provider credentials from all subprocesses regardless of sandboxing, set [`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`](/docs/en/env-vars).
 
@@ -307,7 +307,7 @@ Masking goes further than a `deny` entry under [Protect credentials](#protect-cr
 
 With `mask`, the sandboxed command sees a per-session sentinel value instead of the real one. Each `mask` entry can list `injectHosts`, the hosts the real value is allowed to reach. When a request leaves the sandbox for one of them, the [sandbox proxy](#network-isolation) replaces the sentinel with the real value. The command and anything it logs never hold the real credential, but its requests still authenticate.
 
-The proxy substitutes the credential inside request contents, so it has to see them. Set [`network.tlsTerminate`](/docs/en/settings#sandbox-settings) so the proxy terminates TLS itself. Without it, masking fails without exposing anything: the command still sees only the sentinel, but the sentinel reaches the server unchanged and authentication fails. Claude Code reports this misconfiguration at startup.
+The proxy substitutes the credential inside request contents, so it has to see them. Set [`network.tlsTerminate`](/docs/en/settings-reference#sandbox-network-tlsterminate) so the proxy terminates TLS itself. Without it, masking fails without exposing anything: the command still sees only the sentinel, but the sentinel reaches the server unchanged and authentication fails. Claude Code reports this misconfiguration at startup.
 
 Substitution covers headers and request bodies. Requests that authenticate with a signature derived from the credential, rather than the credential itself, need re-signing at the proxy; [Re-sign AWS requests](#re-sign-aws-requests) covers how that works for AWS.
 
@@ -338,7 +338,7 @@ The example below masks two tokens. `GH_TOKEN` is substituted only on requests t
 
 `/doctor` flags `injectHosts` entries that can never match with the warning `Sandbox credential injectHosts entries can never match their destination`.
 
-Unlike `deny`, masking authorizes the proxy to send your real credential to the listed hosts, so it is honored only from settings you or your administrator control: user settings, managed settings, and the `--settings` CLI flag. `mask` entries, `network.tlsTerminate`, and [`credentials.allowPlaintextInject`](/docs/en/settings#sandbox-settings), which lets the proxy inject credentials into unencrypted requests, are all ignored in a repository's `.claude/settings.json` or `.claude/settings.local.json`.
+Unlike `deny`, masking authorizes the proxy to send your real credential to the listed hosts, so it is honored only from settings you or your administrator control: user settings, managed settings, and the `--settings` CLI flag. `mask` entries, `network.tlsTerminate`, and [`credentials.allowPlaintextInject`](/docs/en/settings-reference#sandbox-credentials-allowplaintextinject), which lets the proxy inject credentials into unencrypted requests, are all ignored in a repository's `.claude/settings.json` or `.claude/settings.local.json`.
 
 When the same variable is listed with `deny` in any scope, `deny` takes precedence.
 
@@ -351,13 +351,13 @@ Masking replaces the variable's entire value by default, which suits a bare toke
   * `error` stops sandbox setup until you fix the configuration
 * `decode: "jwt"`: for a variable holding a JSON Web Token (JWT). Claude Code verifies the value is a JWT and replaces it with a structurally valid fake token, so code inside the sandbox that decodes the token keeps working. Add `maskClaims` to list top-level payload claims to mask individually instead of replacing the whole token; the other claims stay readable. When the value doesn't verify as a JWT, or no listed claim matches, Claude Code passes the variable through unmasked with a warning. `decode` can't be combined with `extract`.
 
-See the [`credentials.envVars[]` rows in the settings reference](/docs/en/settings#sandbox-settings) for the full field list.
+See the [`credentials.envVars[]` rows in the settings reference](/docs/en/settings-reference#sandbox-settings) for the full field list.
 
 #### Re-sign AWS requests
 
 AWS requests carry SigV4 signatures over the request contents, so mask `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` together. The proxy detects a SigV4 request by the access key's sentinel and re-signs it after substituting the real values. Masking the secret alone leaves requests signed with the placeholder, which the proxy can't detect, so they fail at AWS; Claude Code warns about this case at startup, but not when only the access key ID is masked. A detected request the proxy can't re-sign, such as one missing its `x-amz-date` header, fails with a proxy error instead of reaching the server with a broken signature.
 
-Claude Code links the conventional `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN` variables into one credential automatically when you mask their whole values. If your AWS credential lives in variables with other names, group them yourself with [`credentials.awsPairs`](/docs/en/settings#sandbox-settings), which requires Claude Code v2.1.224 or later. This example adds the pairing to a configuration that already masks `MY_KEY_ID`, `MY_SECRET_KEY`, and `MY_SESSION_TOKEN` whole-value, as in the [masking configuration above](#mask-environment-variables):
+Claude Code links the conventional `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN` variables into one credential automatically when you mask their whole values. If your AWS credential lives in variables with other names, group them yourself with [`credentials.awsPairs`](/docs/en/settings-reference#sandbox-credentials-awspairs), which requires Claude Code v2.1.224 or later. This example adds the pairing to a configuration that already masks `MY_KEY_ID`, `MY_SECRET_KEY`, and `MY_SESSION_TOKEN` whole-value, as in the [masking configuration above](#mask-environment-variables):
 
 ```json theme={null}
 {
@@ -384,7 +384,7 @@ Each entry follows these rules:
 
 Like `mask` entries, `awsPairs` is honored only from user settings, managed settings, and the `--settings` CLI flag.
 
-Three AWS request forms carry signatures the proxy can't recompute. When such a request is signed with a masked pair's placeholder, the proxy fails it rather than forward a broken signature; requests signed with unmasked credentials are never affected. The [`credentials.sigv4`](/docs/en/settings#sandbox-settings) setting, which requires Claude Code v2.1.224 or later, relaxes this per form: setting a form's key to `passthrough` forwards the request with its placeholder-derived signature, so the calling tool receives AWS's own rejection response instead of a proxy error. Like `awsPairs`, `sigv4` is honored only from user settings, managed settings, and the `--settings` CLI flag.
+Three AWS request forms carry signatures the proxy can't recompute. When such a request is signed with a masked pair's placeholder, the proxy fails it rather than forward a broken signature; requests signed with unmasked credentials are never affected. The [`credentials.sigv4`](/docs/en/settings-reference#sandbox-credentials-sigv4) setting, which requires Claude Code v2.1.224 or later, relaxes this per form: setting a form's key to `passthrough` forwards the request with its placeholder-derived signature, so the calling tool receives AWS's own rejection response instead of a proxy error. Like `awsPairs`, `sigv4` is honored only from user settings, managed settings, and the `--settings` CLI flag.
 
 | Request form                  | `sigv4` key | Why the proxy can't re-sign it                                                                    |
 | :---------------------------- | :---------- | :------------------------------------------------------------------------------------------------ |
@@ -399,7 +399,7 @@ File entries also accept `"mode": "mask"`, which requires Claude Code v2.1.221 o
 * **Linux and WSL2**: sandboxed commands read a sentinel copy of the file, a stand-in whose secret is replaced with a placeholder value, and the [sandbox proxy](#network-isolation) substitutes the real value on egress.
 * **macOS**: sandboxed commands can't read the listed file at all. Claude Code builds no sentinel copy and substitutes nothing on egress, so tools that authenticate with the file don't work inside the sandbox, the same effect as `deny`. Unlike a `deny` entry, the read block holds even when you [disable filesystem isolation](#disable-filesystem-isolation).
 
-On every platform, the [`network.tlsTerminate`](/docs/en/settings#sandbox-settings) requirement, `injectHosts`, and the settings-source restriction work the same way as for [masked environment variables](#mask-environment-variables).
+On every platform, the [`network.tlsTerminate`](/docs/en/settings-reference#sandbox-network-tlsterminate) requirement, `injectHosts`, and the settings-source restriction work the same way as for [masked environment variables](#mask-environment-variables).
 
 The example below masks a GitHub token stored in `~/.config/gh/hosts.yml`; the `extract` pattern, covered below, tells Claude Code which part of the file is the secret. On Linux and WSL2, sandboxed commands that read the file get a sentinel in place of the token, and the proxy substitutes the real token on requests to `api.github.com`:
 
@@ -477,15 +477,15 @@ If `git merge` or `git checkout` fails with `unable to unlink old` on one of the
 
 Network access is controlled through a proxy server running outside the sandbox:
 
-* **Domain restrictions**: Claude Code pre-allows no domains by default. The first time a command needs a new domain, Claude Code prompts for approval, or in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) sends the request to the classifier. If you choose Yes when prompted, Claude Code allows the host for the rest of the current session and doesn't prompt again for later connections to the same host. If you choose "Yes, and don't ask again", Claude Code saves a `WebFetch(domain:...)` allow rule to your [local settings](/docs/en/permissions#permission-system), so the host stays allowed in future sessions. Pre-allow domains with [`allowedDomains`](/docs/en/settings#sandbox-settings) to avoid the prompt entirely. Claude Code also pre-allows domains from `WebFetch` allow rules, as described in [Permission rules](#permission-rules).
-* **Strict allowlist**: if you set [`strictAllowlist`](/docs/en/settings#sandbox-settings) to `true` in user, managed, or CLI `--settings` settings, Claude Code denies sandboxed commands access to any host outside the allowlist instead of prompting. The allowlist is the same one the sandbox otherwise prompts against: `allowedDomains` plus domains from `WebFetch(domain:...)` allow rules, or only the managed settings entries when `allowManagedDomainsOnly` is set. Claude Code enforces this for sandboxed commands only; in-process tools such as `WebFetch` still follow their [permission rules](#permission-rules). Setting it in a repository's `.claude/settings.json` or `.claude/settings.local.json` has no effect. Requires Claude Code v2.1.219 or later.
-* **Managed lockdown**: if [`allowManagedDomainsOnly`](/docs/en/settings#sandbox-settings) is set in managed settings, non-allowed domains are blocked automatically instead of prompting, and only `allowedDomains` and `WebFetch(domain:...)` allow rules from managed settings are honored.
+* **Domain restrictions**: Claude Code pre-allows no domains by default. The first time a command needs a new domain, Claude Code prompts for approval, or in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) sends the request to the classifier. If you choose Yes when prompted, Claude Code allows the host for the rest of the current session and doesn't prompt again for later connections to the same host. If you choose "Yes, and don't ask again", Claude Code saves a `WebFetch(domain:...)` allow rule to your [local settings](/docs/en/permissions#permission-system), so the host stays allowed in future sessions. Pre-allow domains with [`allowedDomains`](/docs/en/settings-reference#sandbox-network-alloweddomains) to avoid the prompt entirely. Claude Code also pre-allows domains from `WebFetch` allow rules, as described in [Permission rules](#permission-rules).
+* **Strict allowlist**: if you set [`strictAllowlist`](/docs/en/settings-reference#sandbox-network-strictallowlist) to `true` in user, managed, or CLI `--settings` settings, Claude Code denies sandboxed commands access to any host outside the allowlist instead of prompting. The allowlist is the same one the sandbox otherwise prompts against: `allowedDomains` plus domains from `WebFetch(domain:...)` allow rules, or only the managed settings entries when `allowManagedDomainsOnly` is set. Claude Code enforces this for sandboxed commands only; in-process tools such as `WebFetch` still follow their [permission rules](#permission-rules). Setting it in a repository's `.claude/settings.json` or `.claude/settings.local.json` has no effect. Requires Claude Code v2.1.219 or later.
+* **Managed lockdown**: if [`allowManagedDomainsOnly`](/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly) is set in managed settings, non-allowed domains are blocked automatically instead of prompting, and only `allowedDomains` and `WebFetch(domain:...)` allow rules from managed settings are honored.
 * **Corporate proxy**: when your network requires outbound traffic to go through a corporate proxy, set `HTTPS_PROXY`, `HTTP_PROXY`, and `NO_PROXY` as [proxy configuration](/docs/en/network-config#proxy-configuration) describes, in the `env` block of your settings so that [background agents](/docs/en/network-config#set-network-variables-in-settings-not-the-shell) get them too, or in the environment you launch Claude Code from. Claude Code enforces the domain allowlist and then tunnels allowed connections through that upstream proxy.
 * **Custom proxy support**: advanced users can implement custom rules on outgoing traffic
 * **Comprehensive coverage**: restrictions apply to all scripts, programs, and subprocesses spawned by commands
 
 <Note>
-  The built-in proxy enforces the allowlist based on the requested hostname and, by default, does not terminate or inspect TLS traffic. The experimental [`network.tlsTerminate`](/docs/en/settings#sandbox-settings) setting, available in Claude Code v2.1.199 and later, makes the built-in proxy terminate TLS itself, which [`mask` credential entries](#mask-credentials) require. See [Security limitations](#security-limitations) for the implications of the default, and [Custom proxy configuration](#custom-proxy-configuration) if your threat model requires TLS inspection.
+  The built-in proxy enforces the allowlist based on the requested hostname and, by default, does not terminate or inspect TLS traffic. The experimental [`network.tlsTerminate`](/docs/en/settings-reference#sandbox-network-tlsterminate) setting, available in Claude Code v2.1.199 and later, makes the built-in proxy terminate TLS itself, which [`mask` credential entries](#mask-credentials) require. See [Security limitations](#security-limitations) for the implications of the default, and [Custom proxy configuration](#custom-proxy-configuration) if your threat model requires TLS inspection.
 </Note>
 
 #### IPv6 addresses in domain lists
@@ -562,7 +562,7 @@ Administrators can require sandboxing for every user, keep developers from widen
 
 ### Enforce sandboxing with managed settings
 
-To require the sandbox for every developer, deliver the `sandbox` keys through [managed settings](/docs/en/settings#settings-files), either as a file managed by your MDM or through [server-managed settings](/docs/en/server-managed-settings) on Claude.ai.
+To require the sandbox for every developer, deliver the `sandbox` keys through [managed settings](/docs/en/managed-settings#delivery-mechanisms), either as a file managed by your MDM or through [server-managed settings](/docs/en/server-managed-settings) on Claude.ai.
 
 The following managed settings configuration enables the sandbox, refuses to start Claude Code if the sandbox cannot initialize, and prevents the model from retrying commands outside the sandbox:
 
@@ -589,7 +589,7 @@ The sandbox does not run on native Windows, so if your fleet includes Windows ho
 
 For boolean keys such as `enabled` and `failIfUnavailable`, Claude Code uses the managed value and ignores anything a developer sets locally. For array keys such as `excludedCommands` and `allowRead`, Claude Code merges entries from every scope, so a developer can append entries that widen the policy.
 
-Set `allowManagedReadPathsOnly` to `true` in managed settings so that only `allowRead` entries from managed settings are honored. User, project, and local `allowRead` entries are ignored. This prevents developers from widening read access beyond the organization-approved paths. To lock network domains to the managed values the same way, set [`allowManagedDomainsOnly`](/docs/en/settings#sandbox-settings).
+Set `allowManagedReadPathsOnly` to `true` in managed settings so that only `allowRead` entries from managed settings are honored. User, project, and local `allowRead` entries are ignored. This prevents developers from widening read access beyond the organization-approved paths. To lock network domains to the managed values the same way, set [`allowManagedDomainsOnly`](/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly).
 
 When managed settings configure `sandbox.filesystem` or list any `sandbox.credentials.files` entry with `"mode": "deny"`, only managed settings can set [`filesystem.disabled`](#disable-filesystem-isolation), so developers can't switch off administrator-deployed filesystem restrictions. Whether a `mask` entry pins the key depends on how it resolves; the table under [Which settings can disable it](#which-settings-can-disable-it) covers the four cases.
 
@@ -604,7 +604,7 @@ For organizations requiring advanced network security, you can implement a custo
 * Log all network requests
 * Integrate with existing security infrastructure
 
-To point Claude Code at your proxy, set the proxy ports in [sandbox settings](/docs/en/settings#sandbox-settings):
+To point Claude Code at your proxy, set the proxy ports in [sandbox settings](/docs/en/settings-reference#sandbox-settings):
 
 ```json theme={null}
 {
@@ -623,11 +623,11 @@ Some commands fail inside the sandbox even though they work outside it. The fixe
 
 * **Commands fail with a host-not-allowed error**: many CLI tools need to reach specific hosts. Granting permission when prompted adds the host to your allowed list so the tool runs inside the sandbox in future.
 * **`jest` hangs or fails**: `watchman` is incompatible with the sandbox. Run `jest --no-watchman` instead.
-* **Go-based CLIs fail TLS verification on macOS**: tools such as `gh`, `gcloud`, and `terraform` may fail TLS verification under Seatbelt. List these tools in `excludedCommands` to run them outside the sandbox. If you are using `httpProxyPort` with a MITM proxy and custom CA, set [`enableWeakerNetworkIsolation`](/docs/en/settings#sandbox-settings) to `true` instead.
-* **`open`, `osascript`, or browser-based auth flows fail with error `-600` on macOS**: the sandbox blocks Apple Events by default. Set [`allowAppleEvents`](/docs/en/settings#sandbox-settings) to `true` in your user, managed, or CLI settings to allow them. Project settings are ignored for this key. Enabling it removes code-execution isolation, since sandboxed commands can then launch other applications unsandboxed with no user prompt and send AppleScript commands to running applications, subject to the macOS automation-consent prompt (TCC). Alternatively, add the command to `excludedCommands` to run it outside the sandbox.
+* **Go-based CLIs fail TLS verification on macOS**: tools such as `gh`, `gcloud`, and `terraform` may fail TLS verification under Seatbelt. List these tools in `excludedCommands` to run them outside the sandbox. If you are using `httpProxyPort` with a MITM proxy and custom CA, set [`enableWeakerNetworkIsolation`](/docs/en/settings-reference#sandbox-enableweakernetworkisolation) to `true` instead.
+* **`open`, `osascript`, or browser-based auth flows fail with error `-600` on macOS**: the sandbox blocks Apple Events by default. Set [`allowAppleEvents`](/docs/en/settings-reference#sandbox-allowappleevents) to `true` in your user, managed, or CLI settings to allow them. Project settings are ignored for this key. Enabling it removes code-execution isolation, since sandboxed commands can then launch other applications unsandboxed with no user prompt and send AppleScript commands to running applications, subject to the macOS automation-consent prompt (TCC). Alternatively, add the command to `excludedCommands` to run it outside the sandbox.
 * **`docker` commands fail**: `docker` is incompatible with the sandbox. Add `docker *` to `excludedCommands` to run it outside the sandbox.
-* **A git command fails with `unable to unlink old`**: `git merge`, `git checkout`, and similar commands fail this way when they need to replace a file the sandbox denies writes to, whether that file is under a [protected path](#protected-paths) such as `.claude/skills`, under one of your `denyWrite` entries, or outside the directories the sandbox lets commands write to at all. On Linux and WSL2 the error ends with `Read-only file system`. After the failure, Claude may [offer to rerun the command outside the sandbox](#sandbox-modes); approve that retry, or run the git command yourself in another terminal. If you've set `allowUnsandboxedCommands` to `false`, Claude can't offer the retry, so run the command yourself or, if the same git command fails often, add that command to [`excludedCommands`](/docs/en/settings#sandbox-settings).
-* **Bubblewrap fails to start inside a container**: in an unprivileged container, bubblewrap cannot mount a fresh `/proc` filesystem. Set [`enableWeakerNestedSandbox`](/docs/en/settings#sandbox-settings) to `true` so the inner sandbox bind-mounts the container's existing `/proc` instead. Only use this setting when the outer container already provides the isolation boundary you need, since it exposes process information to sandboxed commands that a fresh `/proc` mount would hide.
+* **A git command fails with `unable to unlink old`**: `git merge`, `git checkout`, and similar commands fail this way when they need to replace a file the sandbox denies writes to, whether that file is under a [protected path](#protected-paths) such as `.claude/skills`, under one of your `denyWrite` entries, or outside the directories the sandbox lets commands write to at all. On Linux and WSL2 the error ends with `Read-only file system`. After the failure, Claude may [offer to rerun the command outside the sandbox](#sandbox-modes); approve that retry, or run the git command yourself in another terminal. If you've set `allowUnsandboxedCommands` to `false`, Claude can't offer the retry, so run the command yourself or, if the same git command fails often, add that command to [`excludedCommands`](/docs/en/settings-reference#sandbox-excludedcommands).
+* **Bubblewrap fails to start inside a container**: in an unprivileged container, bubblewrap cannot mount a fresh `/proc` filesystem. Set [`enableWeakerNestedSandbox`](/docs/en/settings-reference#sandbox-enableweakernestedsandbox) to `true` so the inner sandbox bind-mounts the container's existing `/proc` instead. Only use this setting when the outer container already provides the isolation boundary you need, since it exposes process information to sandboxed commands that a fresh `/proc` mount would hide.
 * **`--dangerously-skip-permissions` fails as root**: this flag is blocked when running as root or via sudo on Linux and macOS, because root access combined with no permission prompts can modify any file or service on the system. The check is skipped automatically inside a recognized sandbox. To run autonomously in a container, use the [dev container](/docs/en/devcontainer) configuration, which runs Claude Code as a non-root user.
 
 ## Limitations
@@ -636,7 +636,7 @@ Sandboxing reduces risk but is not a complete isolation boundary. Review the lim
 
 ### Security limitations
 
-* **Network filtering**: the sandbox restricts which domains processes can connect to. By default the built-in proxy does not terminate or inspect TLS on outbound traffic, so the contents of encrypted connections are not examined. The experimental [`network.tlsTerminate`](/docs/en/settings#sandbox-settings) setting terminates TLS at the proxy for [`mask` credential substitution](#mask-credentials) but does not add content filtering. You are responsible for ensuring that only trusted domains are allowed in your policy.
+* **Network filtering**: the sandbox restricts which domains processes can connect to. By default the built-in proxy does not terminate or inspect TLS on outbound traffic, so the contents of encrypted connections are not examined. The experimental [`network.tlsTerminate`](/docs/en/settings-reference#sandbox-network-tlsterminate) setting terminates TLS at the proxy for [`mask` credential substitution](#mask-credentials) but does not add content filtering. You are responsible for ensuring that only trusted domains are allowed in your policy.
 
 <Warning>
   Allowing broad domains such as `github.com` can create paths for data exfiltration. Because the proxy makes its allow decision from the client-supplied hostname without inspecting TLS, code running inside the sandbox can potentially use [domain fronting](https://en.wikipedia.org/wiki/Domain_fronting) or similar techniques to reach hosts outside the allowlist. If your threat model requires stronger guarantees, configure a [custom proxy](#custom-proxy-configuration) that terminates TLS and inspects traffic, and install its CA certificate inside the sandbox. Stronger TLS-aware network isolation is an active area of development.
@@ -671,5 +671,5 @@ The sandbox isolates Bash subprocesses. Other tools operate under different boun
 * [Sandbox environments](/docs/en/sandbox-environments): compare the built-in sandbox with dev containers, containers, and VMs
 * [Security](/docs/en/security): comprehensive security features and best practices
 * [Permissions](/docs/en/permissions): permission configuration and access control
-* [Settings](/docs/en/settings): complete configuration reference
+* [Settings reference](/docs/en/settings-reference): every settings key
 * [CLI reference](/docs/en/cli-reference): command-line options

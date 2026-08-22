@@ -124,7 +124,7 @@ For more details on cloud execution, see [Claude Code on the web](/docs/en/claud
 
 ### Team security
 
-* Use [managed settings](/docs/en/settings#settings-files) to enforce organizational standards
+* Use [managed settings](/docs/en/settings#where-settings-live) to enforce organizational standards
 * Share approved permission configurations through version control
 * Train team members on security best practices
 * Monitor Claude Code usage through [OpenTelemetry metrics](/docs/en/monitoring-usage)

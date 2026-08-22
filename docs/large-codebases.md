@@ -141,7 +141,7 @@ These patterns cover other common cases:
 * `"**/packages/legacy-*/**"`: excludes every package whose name matches the glob, including rules
 * `"/home/user/monorepo/legacy/CLAUDE.md"`: excludes one specific file by absolute path
 
-Managed policy CLAUDE.md files cannot be excluded, so organization-wide instructions always apply. You can set `claudeMdExcludes` at any [settings scope](/docs/en/settings#configuration-scopes): user, project, local, or managed. Arrays merge across scopes, so a team can set project-level defaults while individuals add local overrides.
+Managed policy CLAUDE.md files cannot be excluded, so organization-wide instructions always apply. You can set `claudeMdExcludes` at any [settings scope](/docs/en/settings#where-settings-live): user, project, local, or managed. Arrays merge across scopes, so a team can set project-level defaults while individuals add local overrides.
 
 For the full exclusion documentation, see [Exclude specific CLAUDE.md files](/docs/en/memory#exclude-specific-claude-md-files).
 
@@ -158,8 +158,8 @@ For paths that are checked in, such as a vendored SDK or committed generated cod
 The deny rules can cover everyone working in the repository, only you, or every session on the machine, depending on which settings file you put them in:
 
 * **Everyone working in the repository**: commit the rules to `.claude/settings.json`. Like other project settings on this page, that file loads only from your starting directory, so place it at the repository root if you start Claude there, or in each package's `.claude/` if you start from subdirectories.
-* **Yourself only**: use `.claude/settings.local.json` at the repository root, which loads in every CLI session inside the repository regardless of starting directory. Relative patterns like the example's `Read(./vendor/**)` still [anchor at the directory you start Claude Code from](/docs/en/permissions#read-and-edit), so if you start sessions from subdirectories, write the rules in this file as `//`-absolute paths, such as `Read(//absolute/path/to/repo/vendor/**)`. Before v2.1.211, `.claude/settings.local.json` also loaded only from the starting directory.
-* **Everyone, enforced in every session**: set the rules in [managed settings](/docs/en/settings#settings-files), which user and project settings cannot override.
+* **Yourself only**: use `.claude/settings.local.json` at the repository root, which loads in every CLI session inside the repository regardless of starting directory, except in the cases where Claude Code [keeps the local file in the starting directory](/docs/en/settings#where-claude-code-looks-for-each-file), such as on Windows. Relative patterns like the example's `Read(./vendor/**)` still [anchor at the directory you start Claude Code from](/docs/en/permissions#read-and-edit), so if you start sessions from subdirectories, write the rules in this file as `//`-absolute paths, such as `Read(//absolute/path/to/repo/vendor/**)`. Before v2.1.211, `.claude/settings.local.json` also loaded only from the starting directory.
+* **Everyone, enforced in every session**: set the rules in [managed settings](/docs/en/managed-settings), which user and project settings cannot override.
 
 The example below blocks build artifacts and a vendored SDK:
 
@@ -195,7 +195,7 @@ If the install fails, match the message Claude Code reports:
 * `Marketplace "claude-plugins-official" not found`: add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`, then retry the install.
 * The plugin is [not found in the marketplace](/docs/en/discover-plugins#install-plugins): check the plugin name.
 
-To enable a plugin for everyone in the repository rather than installing it yourself, add it to the [`enabledPlugins` project setting](/docs/en/settings#plugin-settings).
+To enable a plugin for everyone in the repository rather than installing it yourself, add it to the [`enabledPlugins` project setting](/docs/en/settings-reference#plugin-settings).
 
 Code intelligence plugins require the language's language server binary on each developer's machine. See [which binary each language requires](/docs/en/discover-plugins#code-intelligence). Installing from the official marketplace requires network access to GitHub, where the marketplace is hosted. On a restricted network, [add the marketplace from an internal Git host or local path](/docs/en/discover-plugins#add-from-other-git-hosts) instead.
 
@@ -258,7 +258,7 @@ This creates a symlink from each worktree's `node_modules/` back to the main rep
   The `sparsePaths` and `symlinkDirectories` settings are read from your starting directory before the worktree is created. After creation, the session's working directory is the worktree root, not the subdirectory you launched from. Project settings inside the worktree therefore load from the worktree root's `.claude/settings.json`, the checked-out copy of the repository root's file. Put any other settings you need inside worktrees, such as permission rules or hooks, in the repository root's `.claude/settings.json`.
 </Note>
 
-For the full worktree settings reference, see [Worktree settings](/docs/en/settings#worktree-settings).
+For the full worktree settings reference, see [Worktree settings](/docs/en/settings-reference#worktree).
 
 ### Grant access across packages or repositories
 

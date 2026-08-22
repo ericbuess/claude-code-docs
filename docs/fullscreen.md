@@ -20,7 +20,7 @@ The difference is most noticeable in terminal emulators where rendering throughp
 
 ## Enable fullscreen rendering
 
-Run `/tui fullscreen` inside any Claude Code conversation. The CLI saves the [`tui` setting](/docs/en/settings#available-settings) and relaunches into fullscreen with your conversation intact, so you can switch mid-session without losing context. Run `/tui default` to switch back to the classic renderer, or `/tui` with no argument to print which renderer is active.
+Run `/tui fullscreen` inside any Claude Code conversation. The CLI saves the [`tui` setting](/docs/en/settings-reference#tui) and relaunches into fullscreen with your conversation intact, so you can switch mid-session without losing context. Run `/tui default` to switch back to the classic renderer, or `/tui` with no argument to print which renderer is active.
 
 In [screen reader mode](/docs/en/accessibility), Claude Code always uses the classic renderer except in attached [background sessions](/docs/en/agent-view), which still render fullscreen. If you run `/tui fullscreen` in any other session, Claude Code prints an explanation instead of switching and doesn't change the saved `tui` setting.
 
@@ -50,7 +50,7 @@ You can also set the `CLAUDE_CODE_NO_FLICKER` environment variable before starti
 CLAUDE_CODE_NO_FLICKER=1 claude
 ```
 
-Either one turns fullscreen rendering on. After a [failed fullscreen start](#fullscreen-renderer-didnt-finish-starting), Claude Code still honors the variable but not the setting. The `/tui` command clears `CLAUDE_CODE_NO_FLICKER` from the relaunched process so the setting it writes takes effect.
+For how the [`tui`](/docs/en/settings-reference#tui) setting and the variable combine when both are set, see the setting's entry. After a [failed fullscreen start](#fullscreen-renderer-didnt-finish-starting), Claude Code still honors the variable but not the setting. The `/tui` command clears `CLAUDE_CODE_NO_FLICKER` from the relaunched process so the setting it writes takes effect.
 
 ## What changes
 
@@ -148,7 +148,7 @@ To adjust scroll speed interactively, run `/scroll-speed`. The dialog shows a ru
 
 The command writes the same value the `CLAUDE_CODE_SCROLL_SPEED` environment variable sets, persisted to `~/.claude/settings.json`. The dialog's maximum is 10: if you set a higher value through the environment variable, the dialog shows 10, and saving from the dialog persists 10. The command isn't available in the JetBrains IDE terminal.
 
-Separately from the base speed, Claude Code accelerates the scroll rate when you spin the wheel quickly, so a fast spin covers more distance than the same number of slow notches. To turn acceleration off and keep a constant rate per notch, set `wheelScrollAccelerationEnabled` to `false` in [`settings.json`](/docs/en/settings#available-settings). This setting requires Claude Code v2.1.174 or later.
+Separately from the base speed, Claude Code accelerates the scroll rate when you spin the wheel quickly, so a fast spin covers more distance than the same number of slow notches. To turn acceleration off and keep a constant rate per notch, set `wheelScrollAccelerationEnabled` to `false` in [`settings.json`](/docs/en/settings-reference#all-settings). This setting requires Claude Code v2.1.174 or later.
 
 ### Scroll in the JetBrains IDE terminal
 

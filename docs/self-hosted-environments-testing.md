@@ -88,7 +88,7 @@ The `--environment` and `--ref` dispatch flags require Claude Code v2.1.224 or l
 
 In a non-interactive run, with `-p` or a piped prompt, Claude Code creates the session, prints the session ID and a link to it, and exits. From a terminal, `claude --environment <id> "task"` starts an attached interactive cloud session on the environment instead.
 
-The flag takes precedence over the [`remote.defaultEnvironmentId`](/docs/en/settings#available-settings) setting. It doesn't support `--output-format stream-json`, and can't be combined with flags that resume, attach to, or preconfigure a session, such as `--resume`, `--continue`, `--teleport`, `--session-id`, or `--init-only`. `--cloud` is rejected with a session ID or URL, and in non-interactive runs when it carries a description. A bare `--cloud` is treated as absent. From a terminal, you can pass the task as the `--cloud` description instead of a positional prompt.
+The flag takes precedence over the [`remote.defaultEnvironmentId`](/docs/en/settings-reference#remote-defaultenvironmentid) setting. It doesn't support `--output-format stream-json`, and can't be combined with flags that resume, attach to, or preconfigure a session, such as `--resume`, `--continue`, `--teleport`, `--session-id`, or `--init-only`. `--cloud` is rejected with a session ID or URL, and in non-interactive runs when it carries a description. A bare `--cloud` is treated as absent. From a terminal, you can pass the task as the `--cloud` description instead of a positional prompt.
 
 ## Example script
 

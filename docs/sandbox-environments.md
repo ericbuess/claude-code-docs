@@ -163,7 +163,7 @@ Use this approach when you want full VM isolation without provisioning infrastru
 
 Individual developers can opt into any of the sandboxing approaches on this page. What an organization can enforce, and with which tools, depends on the approach:
 
-* **Built-in Bash sandbox**: the only approach Claude Code enforces itself. Deliver the `sandbox` settings keys through [managed settings](/docs/en/settings#settings-files), either as a file managed by your MDM or through [server-managed settings](/docs/en/server-managed-settings) on Claude.ai. See [Enforce sandboxing with managed settings](/docs/en/sandboxing#enforce-sandboxing-with-managed-settings) for the keys to deploy and how to keep developers from widening the policy.
+* **Built-in Bash sandbox**: the only approach Claude Code enforces itself. Deliver the `sandbox` settings keys through [managed settings](/docs/en/managed-settings#delivery-mechanisms), either as a file managed by your MDM or through [server-managed settings](/docs/en/server-managed-settings) on Claude.ai. See [Enforce sandboxing with managed settings](/docs/en/sandboxing#enforce-sandboxing-with-managed-settings) for the keys to deploy and how to keep developers from widening the policy.
 * **Dev containers**: commit the [example dev container](/docs/en/devcontainer) to your repositories to standardize the environment across a team. This is a convention rather than an enforcement boundary, because Claude Code does not require a container. If developers should not be able to run Claude Code outside it, enforce that with your organization's device management or software allowlisting tools.
 * **Custom containers and VMs**: distribute Claude Code through the approved image and use your organization's device management or software allowlisting tools to prevent installation outside it.
 
@@ -175,4 +175,4 @@ These pages cover configuration and policy details for the sandboxing approaches
 * [Dev container](/docs/en/devcontainer): the preconfigured Docker development container
 * [Security](/docs/en/security): the full Claude Code security model
 * [Secure deployment](/docs/en/agent-sdk/secure-deployment): isolation guidance for Agent SDK applications
-* [Settings](/docs/en/settings#sandbox-settings): all sandbox configuration keys, including managed settings delivery
+* [Settings](/docs/en/settings-reference#sandbox-settings): all sandbox configuration keys, including managed settings delivery

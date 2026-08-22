@@ -175,17 +175,17 @@ Schema migration finished: the new column is tenant_id, and rebasing on main is 
 
 ### Control inbound messages
 
-Set [`crossSessionInbound`](/docs/en/settings#available-settings) to choose what a session does with messages arriving from your other sessions:
+Set [`crossSessionInbound`](/docs/en/settings-reference#crosssessioninbound) to choose what a session does with messages arriving from your other sessions:
 
-| Value    | Behavior                                                                                                                                                                                              |
-| :------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `accept` | Claude Code delivers each message to Claude                                                                                                                                                           |
-| `hold`   | Claude Code shows a notice for each message and doesn't deliver it. If an `accept` later applies, per the [precedence rules](/docs/en/settings#available-settings), Claude Code releases the held messages |
-| `refuse` | Claude Code drops each message without delivering it                                                                                                                                                  |
+| Value    | Behavior                                                                                                                                                                                                         |
+| :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `accept` | Claude Code delivers each message to Claude                                                                                                                                                                      |
+| `hold`   | Claude Code shows a notice for each message and doesn't deliver it. If an `accept` later applies, per the [precedence rules](/docs/en/settings-reference#crosssessioninbound), Claude Code releases the held messages |
+| `refuse` | Claude Code drops each message without delivering it                                                                                                                                                             |
 
 Beyond editing a settings file, you can select the value in the `/config` row **Messages from your other sessions**. Claude Code writes the value you select to your user settings. The row requires Claude Code v2.1.232 or later and doesn't appear while managed settings or the `--settings` flag sets the key, since a user-settings value wouldn't apply then. Claude Code rejects the `/config crossSessionInbound=value` shorthand for this key.
 
-To see which value applies, follow the `crossSessionInbound` precedence rules in the [settings reference](/docs/en/settings#available-settings). When no value applies, Claude Code decides per message from the two sessions' permission modes. It groups sessions that [bypass permission prompts](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) into one class, and every other session into the other. Plan mode counts as bypassing in sessions with bypass permissions available, and [auto](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), `acceptEdits`, and `dontAsk` count as prompting:
+To see which value applies, follow the `crossSessionInbound` precedence rules in the [settings reference](/docs/en/settings-reference#crosssessioninbound). When no value applies, Claude Code decides per message from the two sessions' permission modes. It groups sessions that [bypass permission prompts](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) into one class, and every other session into the other. Plan mode counts as bypassing in sessions with bypass permissions available, and [auto](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), `acceptEdits`, and `dontAsk` count as prompting:
 
 * **The receiving session prompts for permissions**: Claude Code delivers each message. It holds one for your approval only when the sending session identifies itself as bypassing permission prompts.
 * **The receiving session bypasses permission prompts**: Claude Code holds each message for your approval. It delivers one only when the sending session identifies itself as also bypassing.
@@ -194,7 +194,7 @@ When the default holds a message, Claude Code opens an approval dialog in the re
 
 * **Approve** delivers that one message to Claude.
 * **Deny**, or dismissing the dialog, drops it.
-* When the dialog stays unanswered past the [`dialogExpiry`](/docs/en/settings#available-settings) deadline, Claude Code closes it and drops the message. The deadline defaults to five minutes. While no terminal is attached to a [background session](/docs/en/agent-view), Claude Code leaves the dialog open past the deadline. After you attach, Claude Code closes the dialog and drops the message only if it stays unanswered for a full deadline period.
+* When the dialog stays unanswered past the [`dialogExpiry`](/docs/en/settings-reference#dialogexpiry) deadline, Claude Code closes it and drops the message. The deadline defaults to five minutes. While no terminal is attached to a [background session](/docs/en/agent-view), Claude Code leaves the dialog open past the deadline. After you attach, Claude Code closes the dialog and drops the message only if it stays unanswered for a full deadline period.
 * If this session's permission-mode class changes while messages are held, Claude Code re-applies the inbound rules, delivers the messages they now accept, and shows a notice.
 * If a settings change makes `refuse` apply while messages are held, Claude Code drops every held message and reports a refusal to each sender it can reach.
 
@@ -206,7 +206,7 @@ Claude Code holds at most 100 messages, separately from the delivery queue, and 
 
 Claude Code binds an inbox socket for a [`claude -p`](/docs/en/headless) session like an interactive one, so a long-running `-p` worker can receive messages and appears in the listing. When you start a session in [bare mode](/docs/en/headless#start-faster-with-bare-mode), Claude Code doesn't bind the socket, so that session can't receive messages and doesn't appear in the agent list.
 
-A `-p` session can't show the approval dialog. When the [inbound default](#control-inbound-messages) holds a message there, Claude Code keeps it for the same [`dialogExpiry`](/docs/en/settings#available-settings) deadline the dialog uses, five minutes by default:
+A `-p` session can't show the approval dialog. When the [inbound default](#control-inbound-messages) holds a message there, Claude Code keeps it for the same [`dialogExpiry`](/docs/en/settings-reference#dialogexpiry) deadline the dialog uses, five minutes by default:
 
 * **Before the deadline**: if a mode or settings change allows the message, Claude Code delivers it.
 * **Past the deadline**: Claude Code drops the message and reports it as expired to a sender it can reach.
@@ -248,7 +248,7 @@ The [own-child rules](#own-child-messages) below say when Claude Code consults t
   * On Linux, including inside WSL 2, Claude Code can verify by process evidence even for a child that has already exited. On macOS it can verify that way only while the posting process is still running, and in a container where Claude Code runs as process ID 1 it has no process evidence at all. On native Windows it also has none.
   * On macOS after the posting process has exited and in containers where Claude Code runs as process ID 1, that process evidence is missing, and Claude Code instead verifies a child that sent the session's exported [`CLAUDE_CODE_MESSAGING_TOKEN`](/docs/en/env-vars#variables) in the auth line that opened its connection. On native Windows, that token is the only way Claude Code verifies an own-child message.
   * When Claude Code can verify neither way, it treats the message like any other that asserts no permission class, so a session that bypasses permission prompts holds it for your approval.
-* **Sandboxed sessions**: control whether a Bash command can reach the socket from inside the [sandbox](/docs/en/sandboxing) with the sandbox's Unix-socket settings, [`sandbox.network.allowAllUnixSockets` and `sandbox.network.allowUnixSockets`](/docs/en/settings#sandbox-settings).
+* **Sandboxed sessions**: control whether a Bash command can reach the socket from inside the [sandbox](/docs/en/sandboxing) with the sandbox's Unix-socket settings, [`sandbox.network.allowAllUnixSockets` and `sandbox.network.allowUnixSockets`](/docs/en/settings-reference#sandbox-settings).
 
 ## Restrict cross-session messaging
 
@@ -256,7 +256,7 @@ Beyond the per-message defaults, you can narrow messaging in two ways. Require y
 
 ### Require approval for cross-machine messages
 
-Set [`isolatePeerMachines`](/docs/en/settings#available-settings) to `true` to require your explicit approval before any `SendMessage` reaches a session beyond this machine:
+Set [`isolatePeerMachines`](/docs/en/settings-reference#isolatepeermachines) to `true` to require your explicit approval before any `SendMessage` reaches a session beyond this machine:
 
 ```json theme={null}
 {
@@ -273,7 +273,7 @@ Receiving and sending are separate controls, so turn off whichever direction you
 * **Stop receiving**: set `crossSessionInbound` to `refuse`, and Claude Code drops inbound peer messages without delivering them. From project or local settings, `refuse` applies over every other source, and from your user settings it applies unless managed settings or the `--settings` flag set a value.
 * **Stop sending and listing**: add [permission deny rules](/docs/en/permissions#tool-specific-permission-rules) naming `SendMessage` and `ListAgents`. Both take the bare tool name with no specifier.
 
-Administrators can turn both sides off for an organization in [managed settings](/docs/en/permissions#managed-settings), combining the deny rules with the `refuse`:
+Administrators can turn both sides off for an organization in [managed settings](/docs/en/managed-settings), combining the deny rules with the `refuse`:
 
 ```json theme={null}
 {
@@ -321,7 +321,7 @@ The limits here are properties of the messaging channel itself and apply whereve
 * [Subagents](/docs/en/sub-agents#resume-subagents) and [agent teams](/docs/en/agent-teams#messages-between-agents): messaging within a single session or team
 * [Background agents](/docs/en/agent-view): dispatch and monitor the parallel sessions you might message
 * [Remote Control](/docs/en/remote-control): connect this session to reach your sessions on other machines
-* [Settings](/docs/en/settings#available-settings): `crossSessionInbound`, `isolatePeerMachines`, and `dialogExpiry`
+* [Settings](/docs/en/settings-reference#all-settings): `crossSessionInbound`, `isolatePeerMachines`, and `dialogExpiry`
 * [Permission modes](/docs/en/permission-modes): the modes behind the inbound default's two classes
 * [Tools reference](/docs/en/tools-reference): the `ListAgents` and `SendMessage` rows in the tools table
 * [Run agents in parallel](/docs/en/agents): compare the ways Claude Code runs multiple agents

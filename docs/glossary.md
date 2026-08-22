@@ -162,7 +162,7 @@ Learn more: [Get started with hooks](/docs/en/hooks-guide) · [Hooks reference](
 
 Settings enforced org-wide by IT or DevOps, delivered from Anthropic's servers through the admin console or deployed to devices at an OS-level path outside `~/.claude`. User and project settings cannot override managed settings. Server-managed delivery applies on [eligible configurations](/docs/en/server-managed-settings#platform-availability); see [Security considerations](/docs/en/server-managed-settings#security-considerations). Use this for security policies, compliance requirements, or standardized tooling across a fleet.
 
-Learn more: [Server-managed settings](/docs/en/server-managed-settings) · [Settings files](/docs/en/settings#settings-files)
+Learn more: [Server-managed settings](/docs/en/server-managed-settings) · [Settings files](/docs/en/settings#where-settings-live)
 
 ### MCP (Model Context Protocol)
 
@@ -270,7 +270,7 @@ Learn more: [Work with sessions](/docs/en/how-claude-code-works#work-with-sessio
 
 The hierarchy Claude Code reads configuration from, in precedence order from highest to lowest: [managed policy](#managed-settings), command-line arguments, local settings at `.claude/settings.local.json`, project settings at `.claude/settings.json`, then user settings at `~/.claude/settings.json`. Arrays merge across layers; scalars at a higher layer override lower ones. See [Settings precedence](/docs/en/settings#settings-precedence).
 
-Learn more: [Settings files](/docs/en/settings#settings-files)
+Learn more: [Settings files](/docs/en/settings#where-settings-live)
 
 ### Skill
 

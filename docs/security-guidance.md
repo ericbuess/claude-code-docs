@@ -57,7 +57,7 @@ User-scoped plugins do not carry into [Claude Code on the web](/docs/en/claude-c
 }
 ```
 
-Administrators can enable the plugin organization-wide by setting [`enabledPlugins`](/docs/en/settings#plugin-settings) in [managed settings](/docs/en/admin-setup).
+Administrators can enable the plugin organization-wide by setting [`enabledPlugins`](/docs/en/settings-reference#enabledplugins) in [managed settings](/docs/en/admin-setup).
 
 ## What the plugin checks
 

@@ -34,7 +34,7 @@ A resumed session restores the conversation along with the state saved in it:
 * Model: the session continues on the model it was using. The model isn't restored when it has been retired or isn't allowed by `availableModels`, when a `--model` flag or `ANTHROPIC_MODEL`-family environment variable picks one at launch, or on providers that use provider-specific deployment IDs, such as [Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry](/docs/en/third-party-integrations); see [model configuration](/docs/en/model-config#setting-your-model) for the resolution order.
 * Agent: a session started with [`--agent`](/docs/en/sub-agents#invoke-subagents-explicitly) or the `agent` setting continues as that agent, keeping its system prompt, tool restrictions, and model. Pass `--agent` when resuming to pick a different one. Claude Code looks for the agent in two places: the session's original directory, provided you have [trusted that workspace](/docs/en/permissions#project-allow-rules-and-workspace-trust), and then the directory you resume from, so a project-scoped agent still loads when you resume from another directory. If Claude Code doesn't find the agent in either place, the session resumes with the default tools and system prompt and shows a [warning naming the agent](/docs/en/errors#session-agent-no-longer-available).
 * Permission mode: the mode the session was in, with these exceptions. Pass `--permission-mode` to override the restored mode.
-  * `plan` and `bypassPermissions` are never restored; a session that was in one of them resumes in the mode a new session would start in. To [bypass permissions](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) again, enable it at launch with one of its launch flags or `permissions.defaultMode: "bypassPermissions"` in [settings](/docs/en/settings#permission-settings)
+  * `plan` and `bypassPermissions` are never restored; a session that was in one of them resumes in the mode a new session would start in. To [bypass permissions](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) again, enable it at launch with one of its launch flags or `permissions.defaultMode: "bypassPermissions"` in [settings](/docs/en/settings-reference#permission-settings)
   * `auto` is restored only when your account still meets the [auto mode requirements](/docs/en/permission-modes#eliminate-prompts-with-auto-mode)
   * Manual is restored as Manual when a new session would start in auto mode from the [built-in default](/docs/en/permission-modes#which-mode-a-session-starts-in); when a `defaultMode` from a settings file [takes effect](/docs/en/permission-modes#which-mode-a-session-starts-in), the session resumes in that mode instead
 * Active goal: a [goal](/docs/en/goal#resume-with-an-active-goal) that was still active when the session ended carries over; its turn count, timer, and token-spend baseline reset.
@@ -195,13 +195,13 @@ Each line is a JSON object for a message, tool use, or metadata entry. The entry
 
 The location, retention, and write behavior are configurable:
 
-| To                                                                              | Set                                                    | Where                     |
-| ------------------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------- |
-| Move storage off `~/.claude`                                                    | [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars)                    | Environment variable      |
-| [Name the `<project>` directory yourself](#name-the-project-directory-yourself) | [`CLAUDE_CODE_PROJECT_DIR_NAME`](/docs/en/env-vars)         | Environment variable      |
-| Change the 30-day retention                                                     | [`cleanupPeriodDays`](/docs/en/settings#available-settings) | `settings.json`           |
-| Suppress transcript writes in all modes                                         | [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/docs/en/env-vars)      | Environment variable      |
-| Suppress writes for one non-interactive run                                     | [`--no-session-persistence`](/docs/en/cli-reference)        | CLI flag with `claude -p` |
+| To                                                                              | Set                                                             | Where                     |
+| ------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------- |
+| Move storage off `~/.claude`                                                    | [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars)                             | Environment variable      |
+| [Name the `<project>` directory yourself](#name-the-project-directory-yourself) | [`CLAUDE_CODE_PROJECT_DIR_NAME`](/docs/en/env-vars)                  | Environment variable      |
+| Change the 30-day retention                                                     | [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays) | `settings.json`           |
+| Suppress transcript writes in all modes                                         | [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/docs/en/env-vars)               | Environment variable      |
+| Suppress writes for one non-interactive run                                     | [`--no-session-persistence`](/docs/en/cli-reference)                 | CLI flag with `claude -p` |
 
 ### Name the project directory yourself
 

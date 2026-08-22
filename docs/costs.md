@@ -207,7 +207,7 @@ For example, this PreToolUse hook filters test output to show only failures:
 
 <Tabs>
   <Tab title="settings.json">
-    Add this to your [settings.json](/docs/en/settings#settings-files) to run the hook before every Bash command:
+    Add this to your [settings.json](/docs/en/settings#where-settings-live) to run the hook before every Bash command:
 
     ```json theme={null}
     {
@@ -294,7 +294,7 @@ A session that has been open for hours can use far more of your plan limits than
 * **Long context**: Claude Code sends your full conversation with every request, and each time Claude uses tools it sends another request carrying that batch of tool results. With [prompt caching](/docs/en/prompt-caching), Claude Code re-reads that history at the [cached token rate](https://platform.claude.com/docs/en/about-claude/pricing), so a one-line question in a session that has been open all day still draws usage for the whole conversation. See [Manage context proactively](#manage-context-proactively) for ways to keep your context small
 * **Cache misses**: your first message after a break longer than the [cache lifetime](/docs/en/prompt-caching#cache-lifetime) misses the cache and reprocesses your full context. The lifetime is an hour on a subscription and drops to five minutes once you're drawing on [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans); on an API key or cloud provider, it's five minutes by default. You can keep the one-hour lifetime while drawing on usage credits by setting [`ENABLE_PROMPT_CACHING_1H=1`](/docs/en/env-vars). On Pro and Max plans, when you resume a large session after a long break, Claude Code [offers to resume from a summary](/docs/en/sessions#resume-from-a-summary) so later requests don't carry the full history
 * **Scheduled tasks**: a [scheduled task](/docs/en/scheduled-tasks) fires on its interval even while the session is idle, sending your full context each time
-* **Cross-session messages**: Claude Code delivers a [message from another of your sessions](/docs/en/cross-session-messaging) as a new turn when this session sits idle, sending your full context each time. To hold inbound messages instead of delivering them, set [`crossSessionInbound`](/docs/en/settings#available-settings) to `hold`
+* **Cross-session messages**: Claude Code delivers a [message from another of your sessions](/docs/en/cross-session-messaging) as a new turn when this session sits idle, sending your full context each time. To hold inbound messages instead of delivering them, set [`crossSessionInbound`](/docs/en/settings-reference#crosssessioninbound) to `hold`
 * **Goal check-ins**: while background work keeps an active [goal](/docs/en/goal) waiting, Claude Code [asks Claude to check on that work](/docs/en/goal#background-work-defers-evaluation) even when the session sits idle, starting a new turn that sends your full context. To turn check-ins off, set [`CLAUDE_CODE_GOAL_CHECKIN_MINUTES`](/docs/en/env-vars) to `0`. Idle check-ins require Claude Code v2.1.236 or later
 * **Agent teammates**: each active [teammate](#agent-team-token-costs) keeps consuming tokens until it exits
 * **Compaction**: `/compact` reads the conversation it summarizes, so [compacting a large context](/docs/en/prompt-caching#compacting-the-conversation) is itself a large request. When you want a fresh start instead of continuity, `/clear` costs nothing

@@ -33,7 +33,7 @@ Before using Remote Control, confirm that your environment meets these condition
   * You use Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry.
   * You point [`ANTHROPIC_BASE_URL`](/docs/en/env-vars) at a host other than `api.anthropic.com`, such as an [LLM gateway](/docs/en/llm-gateway) or proxy. Unset the variable to use Remote Control. Before v2.1.196, Claude Code allowed Remote Control with a custom `ANTHROPIC_BASE_URL`.
   * You sign in through an enterprise [Claude apps gateway](/docs/en/claude-apps-gateway).
-* **Feature-flag evaluation**: [`DISABLE_TELEMETRY`, `DO_NOT_TRACK`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, and `DISABLE_GROWTHBOOK`](/docs/en/env-vars) each disable the feature-flag evaluation that Remote Control availability depends on. Unset the variable wherever it's set, in your shell environment or in the `env` block of a [`settings.json` file](/docs/en/settings#available-settings), to use Remote Control.
+* **Feature-flag evaluation**: [`DISABLE_TELEMETRY`, `DO_NOT_TRACK`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, and `DISABLE_GROWTHBOOK`](/docs/en/env-vars) each disable the feature-flag evaluation that Remote Control availability depends on. Unset the variable wherever it's set, in your shell environment or in the `env` block of a [`settings.json` file](/docs/en/settings-reference#all-settings), to use Remote Control.
 * **Workspace trust**: run `claude` in your project directory at least once to accept the workspace trust dialog. The startup trust dialog never saves trust for your home directory, so start Remote Control from a project directory.
 
 ## Start a Remote Control session
@@ -154,7 +154,7 @@ The remote session title is chosen in this order:
 3. The last meaningful message in existing conversation history
 4. An auto-generated name like `myhost-graceful-unicorn`, where `myhost` is your machine's hostname or the prefix you set with `--remote-control-session-name-prefix`
 
-If you didn't set an explicit name, Claude Code updates the title to reflect your prompt once you send one. Claude Code matches auto-generated titles to the language of your conversation, or to the [`language`](/docs/en/settings#available-settings) setting if one is configured; the language matching requires Claude Code v2.1.176 or later.
+If you didn't set an explicit name, Claude Code updates the title to reflect your prompt once you send one. Claude Code matches auto-generated titles to the language of your conversation, or to the [`language`](/docs/en/settings-reference#language) setting if one is configured; the language matching requires Claude Code v2.1.176 or later.
 
 When you rename a session from claude.ai or the Claude app, Claude Code also updates the local title shown in `claude --resume`. Claude Code applies the same rename to the session name shown on the prompt bar, and in the `claude agents` listing when the session [runs in the background](/docs/en/agent-view). Before v2.1.221, renaming from the session list at claude.ai or in the Claude app updated only the title, and the CLI kept its previous session name; `/rename`, which runs in the CLI itself, set the name on any version.
 
@@ -177,7 +177,7 @@ A connected device shows the conversation in your terminal as it happens. These 
 Remote Control only activates when you explicitly run `claude remote-control`, `claude --remote-control`, or `/remote-control`, unless auto-connect is turned on. To turn auto-connect on for every interactive session, run `/config` inside Claude Code and set **Enable Remote Control for all sessions**. The toggle takes three values:
 
 * **`true`**: connect automatically when an interactive session starts.
-* **`false`**: turn auto-connect off, though a `true` from [managed settings](/docs/en/settings#settings-files) outranks it, because Claude Code saves the choice to your user settings. A `false` in project or local settings (`.claude/settings.json`, `.claude/settings.local.json`) turns auto-connect off even over a managed `true`.
+* **`false`**: turn auto-connect off, though a `true` from [managed settings](/docs/en/managed-settings) outranks it, because Claude Code saves the choice to your user settings. A `false` in project or local settings (`.claude/settings.json`, `.claude/settings.local.json`) turns auto-connect off even over a managed `true`.
 * **`default`**: clear your choice and follow your organization's admin default if one is set, otherwise Claude Code's current default.
 
 The same toggle appears outside the CLI:
@@ -185,7 +185,7 @@ The same toggle appears outside the CLI:
 * **Desktop app**: **Settings > Claude Code > Enable remote control by default**.
 * **VS Code extension**: **Enable Remote Control for all sessions** in the [command menu's](/docs/en/vs-code#use-the-prompt-box) Settings section. Requires Claude Code v2.1.203 or later.
 
-To turn auto-connect on from a settings file instead, set [`remoteControlAtStartup`](/docs/en/settings#available-settings) to `true` in your user `~/.claude/settings.json` or in [managed settings](/docs/en/settings#settings-files). In project or local settings (`.claude/settings.json`, `.claude/settings.local.json`), Claude Code honors a `false` and turns auto-connect off for that repository, but ignores a `true`, so a checked-in file can't turn on Remote Control for everyone who opens the repository.
+To turn auto-connect on from a settings file instead, set [`remoteControlAtStartup`](/docs/en/settings-reference#remotecontrolatstartup) to `true` in your user `~/.claude/settings.json` or in [managed settings](/docs/en/managed-settings). In project or local settings (`.claude/settings.json`, `.claude/settings.local.json`), Claude Code honors a `false` and turns auto-connect off for that repository, but ignores a `true`, so a checked-in file can't turn on Remote Control for everyone who opens the repository.
 
 Auto-connect signs in with your own claude.ai account, so a session it starts appears only in your own account's Claude apps and grants no one else access.
 
@@ -213,7 +213,7 @@ All traffic travels through the Anthropic API over TLS, the same transport secur
 
 While Remote Control is connected, the session transcript, including your messages, Claude's responses, and tool activity, is stored on Anthropic servers. The stored transcript keeps the conversation in sync across your devices and lets the session reconnect after a network drop. Execution and filesystem access stay on your machine, and stored transcripts are retained under the [Data usage](/docs/en/data-usage) policy.
 
-To turn Remote Control off entirely, use the [`disableRemoteControl`](/docs/en/settings#available-settings) setting. Organizations with compliance requirements such as Zero Data Retention can't enable Remote Control.
+To turn Remote Control off entirely, use the [`disableRemoteControl`](/docs/en/settings-reference#disableremotecontrol) setting. Organizations with compliance requirements such as Zero Data Retention can't enable Remote Control.
 
 ## Trusted Devices
 
@@ -320,7 +320,7 @@ Claude Code skips mobile push notifications while you are typing in or focused o
   * **Server mode**: Claude Code gives up after roughly 10 minutes and the `claude remote-control` process exits. Run `claude remote-control` again to start a new session.
   * **Interactive session**: keep working locally. Claude Code retries for as long as the outage lasts and reconnects on its own when the network returns.
 * **Presence heartbeats failing**: if an interactive session disconnects with `could not reach the Remote Control server for about 30 minutes`, run `/remote-control` to reconnect. Claude Code shows this message only when the session's presence heartbeats have been failing while the rest of the connection stayed up; it re-registers the session for about 30 minutes before disconnecting.
-* **Forwarded dialogs expire**: Claude Code keeps permission prompts and `AskUserQuestion` questions open until you answer them. When Claude Code forwards another kind of dialog to the remote session, such as the model-choice prompt shown after a safety refusal, it waits five minutes by default, then closes the dialog and continues with the dialog's no-action default. The mid-session [Fable 5 usage-credits consent prompt](/docs/en/model-config#fable-5-and-usage-credits) follows the same deadline but isn't forwarded: Claude Code shows it only in the terminal where the session runs, and if nobody has answered there by the deadline, it ends the turn without sending the request. Your model selection is unchanged, and Claude Code asks again on your next message. Set [`dialogExpiry`](/docs/en/settings#available-settings) to adjust or disable the deadline. Requires Claude Code v2.1.224 or later. Claude Code applies the same deadline to the approval dialog for a held cross-session message. [The held-message expiry rules](/docs/en/cross-session-messaging#control-inbound-messages) cover the cases where Claude Code keeps the dialog open past it.
+* **Forwarded dialogs expire**: Claude Code keeps permission prompts and `AskUserQuestion` questions open until you answer them. When Claude Code forwards another kind of dialog to the remote session, such as the model-choice prompt shown after a safety refusal, it waits five minutes by default, then closes the dialog and continues with the dialog's no-action default. The mid-session [Fable 5 usage-credits consent prompt](/docs/en/model-config#fable-5-and-usage-credits) follows the same deadline but isn't forwarded: Claude Code shows it only in the terminal where the session runs, and if nobody has answered there by the deadline, it ends the turn without sending the request. Your model selection is unchanged, and Claude Code asks again on your next message. Set [`dialogExpiry`](/docs/en/settings-reference#dialogexpiry) to adjust or disable the deadline. Requires Claude Code v2.1.224 or later. Claude Code applies the same deadline to the approval dialog for a held cross-session message. [The held-message expiry rules](/docs/en/cross-session-messaging#control-inbound-messages) cover the cases where Claude Code keeps the dialog open past it.
 * **Some commands are local-only**: commands that only run in the terminal interface, such as `/plugin` or `/resume`, work only from the local CLI, whether or not you pass an argument. The following work from mobile and web:
   * Text-output commands: `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/usage-credits` (prints the billing URL instead of opening a browser), `/recap`, `/reload-plugins`
   * `/model`, `/effort`, `/fast`, `/color`, and `/rename`: pass the value as an argument, for example `/model sonnet` or `/effort high`. From mobile and web, `/model` and `/effort` take the argument in place of the terminal picker or slider.
@@ -359,7 +359,7 @@ Claude Code could not reach the feature-flag service to check whether Remote Con
 
 ### "Remote Control requires feature-flag evaluation"
 
-One of these variables is set: [`DISABLE_TELEMETRY`, `DO_NOT_TRACK`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, or `DISABLE_GROWTHBOOK`](/docs/en/env-vars). Each of them disables the feature-flag evaluation that Remote Control availability depends on, and the full message names the variable Claude Code found. Unset that variable wherever it's set, in your shell environment or in the `env` block of a [`settings.json` file](/docs/en/settings#available-settings). On versions before 2.1.154, the same configuration produces "Remote Control is not yet enabled for your account" instead.
+One of these variables is set: [`DISABLE_TELEMETRY`, `DO_NOT_TRACK`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, or `DISABLE_GROWTHBOOK`](/docs/en/env-vars). Each of them disables the feature-flag evaluation that Remote Control availability depends on, and the full message names the variable Claude Code found. Unset that variable wherever it's set, in your shell environment or in the `env` block of a [`settings.json` file](/docs/en/settings-reference#all-settings). On versions before 2.1.154, the same configuration produces "Remote Control is not yet enabled for your account" instead.
 
 ### "Remote Control is only available when using Claude via api.anthropic.com"
 
@@ -371,7 +371,7 @@ The message names what routed the session away from the Anthropic API, such as `
 
 A policy blocks Remote Control. The message's own text tells you which:
 
-* **The error mentions `disableRemoteControl`**: your IT administrator has disabled Remote Control on this device through [managed settings](/docs/en/settings#settings-files), independent of the organization-wide toggle and of how you're signed in.
+* **The error mentions `disableRemoteControl`**: your IT administrator has disabled Remote Control on this device through [managed settings](/docs/en/managed-settings), independent of the organization-wide toggle and of how you're signed in.
 * **Otherwise, an Owner hasn't enabled it for your organization**: this form appears when you're signed in with an eligible claude.ai account but Remote Control is off, the default on Team and Enterprise plans. An Owner can enable it at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) by turning on the **Remote Control** toggle. This toggle is a server-side organization setting.
 
 ### "Remote Control isn't available for your organization due to its compliance policy"

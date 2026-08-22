@@ -137,13 +137,13 @@ The `ANTHROPIC_DEFAULT_*_MODEL_SUPPORTED_CAPABILITIES` [variables](/docs/en/mode
 
 Claude Code retries automatically after some upstream rejections and disables the rejected capability for the rest of the conversation. Rejections of the `thinking` field, of [thinking signatures](https://platform.claude.com/docs/en/build-with-claude/extended-thinking), and of mid-conversation system messages all recover this way. Context management and tool schema field rejections don't retry; those `400` errors reach the developer.
 
-The retry logic matches on the upstream's error wording, so forward error response bodies unmodified. A gateway that wraps upstream errors in its own envelope breaks the recovery path even when it preserves the status code.
+The retry logic matches on the upstream's error wording, so forward error response bodies unmodified. A gateway that wraps upstream errors in its own envelope breaks the recovery path, even when it preserves the status code, unless the envelope's message carries a stable `capability_rejected:` token. [Claude apps gateway substitutes those tokens for cloud providers' error wording](/docs/en/claude-apps-gateway-config#upstream-error-messages), for example `capability_rejected: prompt_too_long`.
 
 ### Disable pre-release capabilities
 
 `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` stops Claude Code from sending pre-release capabilities and their body fields on every provider, including context management and the beta tool fields. The variable doesn't affect adaptive reasoning, which is selected by model rather than by beta. It never suppresses the OAuth capability that subscription authentication requires.
 
-On Claude Code v2.1.227 or later, your organization can keep [MCP tool search](/docs/en/mcp#scale-with-mcp-tool-search) on under this variable through [managed settings](/docs/en/settings#settings-files). What Claude Code sends with that override in place depends on how you connect:
+On Claude Code v2.1.227 or later, your organization can keep [MCP tool search](/docs/en/mcp#scale-with-mcp-tool-search) on under this variable through [managed settings](/docs/en/managed-settings). What Claude Code sends with that override in place depends on how you connect:
 
 * On a direct connection, or through a gateway set with `ANTHROPIC_BASE_URL`, Claude Code keeps sending the tool-search beta header, `defer_loading` tool fields, and `tool_reference` blocks, and strips the rest
 * On a cloud provider, or signed in through a [Claude apps gateway](/docs/en/claude-apps-gateway), the override has no effect
@@ -190,7 +190,7 @@ Claude Code keeps an entry when its `id` contains `claude` or `anthropic` anywhe
 
 ### Picker entries and caching
 
-The picker is the interactive model list that opens when a developer runs `/model` in Claude Code. Each discovered entry is labeled "From gateway" and uses `display_name` when provided. The [`availableModels` managed setting](/docs/en/settings#available-settings) bounds what discovery can add.
+The picker is the interactive model list that opens when a developer runs `/model` in Claude Code. Each discovered entry is labeled "From gateway" and uses `display_name` when provided. The [`availableModels` managed setting](/docs/en/settings-reference#availablemodels) bounds what discovery can add.
 
 A discovered ID is skipped when it exactly matches a row already in the picker, or when both the discovered and existing IDs resolve to [Fable](/docs/en/model-config#work-with-fable-5). A discovered explicit ID is also folded into a built-in entry when both resolve to the same model. Built-in rows are keyed on aliases such as `sonnet`, so a discovered explicit ID of the model the alias currently resolves to, such as `claude-sonnet-5`, collapses into the `sonnet` row, while an ID the alias doesn't resolve to, such as `claude-sonnet-4-6`, still adds its own "From gateway" row alongside the built-in entry. Before v2.1.197, Claude Code didn't fold explicit IDs into built-in entries, so a discovered ID such as `claude-sonnet-5` added its own "From gateway" row alongside the `sonnet` row.
 

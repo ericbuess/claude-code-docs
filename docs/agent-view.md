@@ -64,7 +64,7 @@ This walkthrough covers the core agent view loop: dispatch a task, watch its row
 
 You can use `claude agents` as your primary entry point instead of `claude`: dispatch every task from agent view, attach when you want the full conversation, and press `←` to return to the table.
 
-Inside a regular `claude` session, the prompt footer's `←` hint counts the background agents that are waiting on you, such as `← 2 agents`, and returns to `← for agents` when none need input. Counts above 99 show as `99+`. The count refreshes about every ten seconds while the terminal is focused and immediately when focus returns. It briefly changes color when it moves and when an agent completes, and when a background session finishes while none need your input it briefly shows the number completed, such as `← 2 done`. Both flashes are off when the [`prefersReducedMotion` setting](/docs/en/settings#available-settings) is on, and the hint is hidden in [screen reader mode](/docs/en/accessibility).
+Inside a regular `claude` session, the prompt footer's `←` hint counts the background agents that are waiting on you, such as `← 2 agents`, and returns to `← for agents` when none need input. Counts above 99 show as `99+`. The count refreshes about every ten seconds while the terminal is focused and immediately when focus returns. It briefly changes color when it moves and when an agent completes, and when a background session finishes while none need your input it briefly shows the number completed, such as `← 2 done`. Both flashes are off when the [`prefersReducedMotion` setting](/docs/en/settings-reference#prefersreducedmotion) is on, and the hint is hidden in [screen reader mode](/docs/en/accessibility).
 
 ## Monitor sessions with agent view
 
@@ -127,7 +127,7 @@ The `#N` or `!N` label that can appear at the right edge of a row is a link to t
 
 The terminal tab title shows the awaiting-input count while agent view is open: `2 awaiting input · claude agents` when sessions need input, or `claude agents` when none do.
 
-While agent view is open, Claude Code also sends a notification through your configured [terminal notification channel](/docs/en/terminal-config#get-a-terminal-bell-or-notification) when a local background session starts needing your input, finishes, or fails. Sessions that run on a schedule, such as [`/loop`](/docs/en/scheduled-tasks) sessions, notify only when they need your input. Notifications use the same [`preferredNotifChannel` setting](/docs/en/settings#available-settings) as the rest of Claude Code and fire the [`Notification` hook](/docs/en/hooks#notification) with the `agent_needs_input` or `agent_completed` type.
+While agent view is open, Claude Code also sends a notification through your configured [terminal notification channel](/docs/en/terminal-config#get-a-terminal-bell-or-notification) when a local background session starts needing your input, finishes, or fails. Sessions that run on a schedule, such as [`/loop`](/docs/en/scheduled-tasks) sessions, notify only when they need your input. Notifications use the same [`preferredNotifChannel` setting](/docs/en/settings-reference#preferrednotifchannel) as the rest of Claude Code and fire the [`Notification` hook](/docs/en/hooks#notification) with the `agent_needs_input` or `agent_completed` type.
 
 Background sessions don't need any terminal open to keep working. A separate [supervisor process](#the-supervisor-process) runs them, so you can close agent view, close your shell, or start a new interactive session and your dispatched work keeps going.
 
@@ -473,7 +473,7 @@ Claude skips the worktree when:
 * The working directory isn't a git repository and no [`WorktreeCreate` hook](/docs/en/hooks#worktreecreate) is configured
 * The write is outside the working directory
 
-To turn off worktree isolation for a repository where git worktrees are impractical, set [`worktree.bgIsolation`](/docs/en/settings#worktree-settings) to `"none"`. Background sessions then edit your working copy directly without moving into a worktree first. Add the setting to the project's `.claude/settings.json`:
+To turn off worktree isolation for a repository where git worktrees are impractical, set [`worktree.bgIsolation`](/docs/en/settings-reference#worktree-bgisolation) to `"none"`. Background sessions then edit your working copy directly without moving into a worktree first. Add the setting to the project's `.claude/settings.json`:
 
 ```json theme={null}
 {
@@ -524,7 +524,7 @@ Either path keeps a directory that another finished session's records name.
 
 ### Set the model
 
-The model name shown in the agent view header is the dispatch default. New sessions you start from the input use this model, which comes from the [`model` setting](/docs/en/settings#available-settings) in your user settings. Set it by selecting a model in the [`/model` picker](/docs/en/model-config), or edit the setting directly.
+The model name shown in the agent view header is the dispatch default. New sessions you start from the input use this model, which comes from the [`model` setting](/docs/en/settings-reference#model) in your user settings. Set it by selecting a model in the [`/model` picker](/docs/en/model-config), or edit the setting directly.
 
 To override the dispatch default for the whole agent view session, pass `--model` when opening agent view. See [Permission mode, model, and effort](#permission-mode-model-and-effort).
 
@@ -549,7 +549,7 @@ A background session takes its settings, provider, permission mode, model, and e
 
 #### Settings and provider
 
-A background session reads its [settings](/docs/en/settings) from the directory it runs in, the same as if you had started `claude` there. This includes [`env` values](/docs/en/settings#available-settings) in project settings, so an `ANTHROPIC_MODEL` or provider variable set there applies to background sessions in that directory.
+A background session reads its [settings](/docs/en/settings) from the directory it runs in, the same as if you had started `claude` there. This includes [`env` values](/docs/en/settings-reference#env) in project settings, so an `ANTHROPIC_MODEL` or provider variable set there applies to background sessions in that directory.
 
 Cloud provider selection, such as `CLAUDE_CODE_USE_BEDROCK` or `CLAUDE_CODE_USE_VERTEX`, and `ANTHROPIC_DEFAULT_*_MODEL` aliases follow the shell that dispatched the session. If you export a [`CLAUDE_CODE_EXTRA_BODY`](/docs/en/env-vars) request-body override in that shell, it reaches the session the same way. A gateway `ANTHROPIC_BASE_URL` exported in that shell can reach the session too; see [the supervisor process](#the-supervisor-process) for the conditions and for how background sessions source provider settings and credentials.
 
@@ -571,7 +571,7 @@ claude agents --permission-mode plan --model opus --effort high
 
 `--effort` here accepts the same values as the [top-level `--effort` flag](/docs/en/cli-reference#cli-flags), including `ultracode`.
 
-`--agent` sets the [subagent](/docs/en/sub-agents) used when a dispatch prompt doesn't name one, either with `@name` or as the first word. It defaults to the [`agent` setting](/docs/en/settings#available-settings) if one is set, otherwise the built-in catch-all `claude` agent. Naming a subagent in the dispatch input overrides both.
+`--agent` sets the [subagent](/docs/en/sub-agents) used when a dispatch prompt doesn't name one, either with `@name` or as the first word. It defaults to the [`agent` setting](/docs/en/settings-reference#agent) if one is set, otherwise the built-in catch-all `claude` agent. Naming a subagent in the dispatch input overrides both.
 
 `claude agents` also accepts `--dangerously-skip-permissions` as shorthand for `--permission-mode bypassPermissions`, and `--allow-dangerously-skip-permissions` to make `bypassPermissions` available in each dispatched session's `Shift+Tab` cycle without starting in that mode. Both match the [top-level CLI flags](/docs/en/cli-reference).
 
@@ -583,7 +583,7 @@ Claude Code refuses `claude --bg --permission-mode bypassPermissions` until you'
 
 The permission mode, model, and effort you chose for a background session, along with the [configuration flags it carries](#what-carries-over-when-you-background), all persist when the supervisor later [stops and restarts](#the-supervisor-process) its process. A session you launched with `claude --bg --dangerously-skip-permissions` or `claude --bg --permission-mode bypassPermissions` stays in `bypassPermissions` after that restart. A model or effort you changed mid-session with `/model` or `/effort` is kept too.
 
-If the session took its effort from the [`effortLevel` setting](/docs/en/settings#available-settings) rather than from `--effort` or `/effort`, Claude Code reads the setting again each time it starts a process for the session. So when you edit `effortLevel` in `settings.json`, the change reaches sessions you background with `←` or `/bg`, and their later restarts.
+If the session took its effort from the [`effortLevel` setting](/docs/en/settings-reference#effortlevel) rather than from `--effort` or `/effort`, Claude Code reads the setting again each time it starts a process for the session. So when you edit `effortLevel` in `settings.json`, the change reaches sessions you background with `←` or `/bg`, and their later restarts.
 
 Claude Code also keeps a name you set with [`/rename`](/docs/en/commands) or `Ctrl+R` across that restart, so you can still run [`claude --resume <name>`](/docs/en/sessions#name-your-sessions) to reach the session.
 
@@ -734,7 +734,7 @@ Sessions survive that version mismatch intact: an older Claude Code version that
 
 ### Turn off agent view
 
-To turn off background agents and agent view entirely, set the `disableAgentView` [setting](/docs/en/settings) to `true` or set the `CLAUDE_CODE_DISABLE_AGENT_VIEW` environment variable. Administrators can enforce this through [managed settings](/docs/en/permissions#managed-settings).
+To turn off background agents and agent view entirely, set the `disableAgentView` [setting](/docs/en/settings) to `true` or set the `CLAUDE_CODE_DISABLE_AGENT_VIEW` environment variable. Administrators can enforce this through [managed settings](/docs/en/managed-settings).
 
 ## Troubleshooting
 
