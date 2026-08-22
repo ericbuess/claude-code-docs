@@ -2952,7 +2952,9 @@ type ArtifactInput = {
 };
 ```
 
-Publishes a local `.html` or `.md` file as a hosted artifact page, or lists the user's published artifacts. Omit `action` or pass `"publish"` to publish `file_path`, which is required for the publish action along with `favicon`, one or two emoji for the browser tab. `title` names the published page in the browser tab and gallery when the HTML file has no `<title>` tag. `url` targets an existing artifact to update in place instead of minting a new one, and `force` is a last-resort overwrite that discards another session's published version; on a 409 conflict the normal fix is to re-read, merge, and publish again rather than pass `force`.
+Publishes a local `.html` or `.md` file as a hosted artifact page, or lists the user's published artifacts. Omit `action` or pass `"publish"` to publish `file_path`, which is required for the publish action along with `favicon`, one or two emoji for the browser tab. `title` names the published page in the browser tab and gallery when the HTML file has no `<title>` tag. `url` targets an existing artifact to update in place instead of minting a new one.
+
+`force` is a last-resort overwrite that discards a newer version another session published. On a conflict, the failed publish returns the newer content; Claude merges its changes onto that content, or re-reads the artifact, and publishes again. Pass `force` only when the user explicitly asks to discard that version.
 
 Pass `"list"` to enumerate the user's published artifacts; only `limit` and `scope` may accompany it. `scope` defaults to `"mine"`, which lists artifacts the user owns; `"shared"` lists artifacts other people shared with the user, and `"all"` lists both.
 
@@ -3484,11 +3486,16 @@ type WebFetchOutput = {
   artifactRead?: {
     slug: string;
     ver?: string;
+    seeded?: false;
   };
 };
 ```
 
 Returns the fetched content with HTTP status and metadata.
+
+`artifactRead` is present only when Claude fetched an artifact the session can publish to, and it always carries that artifact's `slug`.
+
+`seeded` is `false` on a read that didn't deliver the page's full source, and that entry carries no `ver`. The field requires Agent SDK v0.3.239 or later.
 
 ### WebSearch
 
@@ -4697,6 +4704,8 @@ Emitted whenever the set of live background tasks changes: a task starts, comple
 Ordering relative to those per-task events is unspecified, so don't correlate the two streams.
 
 Nothing is emitted at startup. Reset to an empty set whenever the session's CLI process starts or restarts and let the next membership change repopulate it.
+
+When you send a repeated `initialize` control request to a running session, such as with [`reinitialize()`](#query-object) after a transport gap, Claude Code follows the response with a snapshot of the current live set, even when it is empty. A reconnecting host therefore learns what is running without waiting for the next membership change. Before Agent SDK v0.3.239, Claude Code sent no snapshot after a repeated `initialize`.
 
 Requires Claude Code v2.1.203 or later.
 
