@@ -927,7 +927,12 @@ Plugin versions determine cache paths and update detection: if the resolved vers
 
 #### Set up release channels
 
-To support "stable" and "latest" release channels for your plugins, you can set up two marketplaces that point to different refs or SHAs of the same repo. You can then assign the two marketplaces to different user groups through [managed settings](/docs/en/managed-settings).
+To support "stable" and "latest" release channels for your plugins, you can set up two marketplaces that point to different refs or SHAs of the same repo. You can then give each user group its own marketplace through managed settings in one of two ways:
+
+* Deploy separate [endpoint-managed settings](/docs/en/managed-settings#delivery-mechanisms), such as a managed settings file or an MDM profile, to each group's devices. On each device, Claude Code applies only the [highest-ranked managed source](/docs/en/managed-settings#precedence-within-the-managed-tier) that delivers any keys, so this route works only when the per-group file or profile is that source on the group's devices.
+* Define one [Claude apps gateway policy](/docs/en/claude-apps-gateway-config#managed) per group. The gateway applies the first policy whose match rule fits a user, so order the policies so that each user reaches their group's policy. A group policy's `extraKnownMarketplaces` replaces the catch-all policy's map rather than merging with it, so list every marketplace the group needs in the group's policy, not only its channel marketplace.
+
+Server-managed settings from the admin console [apply to every user in your organization](/docs/en/server-managed-settings#current-limitations), so they can't carry a per-group assignment.
 
 <Warning>
   Each channel must resolve to a different version. If you use explicit versions, `plugin.json` must declare a different `version` at each pinned ref. If you omit `version`, the distinct commit SHAs already distinguish the channels. If two refs resolve to the same version string, Claude Code treats them as identical and skips the update.
@@ -969,7 +974,7 @@ To support "stable" and "latest" release channels for your plugins, you can set 
 
 ##### Assign channels to user groups
 
-Assign each marketplace to the appropriate user group through managed settings. For example, the stable group receives:
+Assign each marketplace to its user group through the per-group endpoint-managed settings or gateway policy described under [Set up release channels](#set-up-release-channels). For example, the stable group receives:
 
 ```json theme={null}
 {

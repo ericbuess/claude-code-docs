@@ -1142,7 +1142,7 @@ A proxy or security appliance on your network is intercepting TLS traffic with i
 
 ```text theme={null}
 Unable to connect to API: SSL certificate verification failed. Check your proxy or corporate SSL certificates
-Unable to connect to API: Self-signed certificate detected
+Unable to connect to API: Self-signed certificate detected. Check your proxy or corporate SSL certificates
 ```
 
 As of v2.1.199, a certificate validation failure isn't retried, so this error appears on the first attempt instead of after the full [retry budget](#automatic-retries). Earlier versions spent a few minutes retrying before showing it. Transient TLS conditions, such as a handshake timeout, still retry.

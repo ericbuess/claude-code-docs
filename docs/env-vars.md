@@ -492,6 +492,7 @@ Claude Code turns some features on through feature flags it fetches from Anthrop
 * Read or reply to [comments on an artifact](/docs/en/artifacts#collect-comments-on-an-artifact), unless you set `CLAUDE_CODE_ARTIFACT_COMMENTS=1`; for Claude to reply to sent comments on its own, also set `CLAUDE_CODE_ARTIFACT_COMMENTS_AUTOREACT=1`. Neither override helps under `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, which [turns artifacts off entirely](/docs/en/artifacts#availability)
 * Have Claude Code refresh the [PR review status badge](/docs/en/interactive-mode#pr-review-status) less often while you're idle; Claude Code refreshes it every 60 seconds instead
 * Get the [v2 MCP client runtime](/docs/en/mcp#mcp-client-runtimes) and its protocol probe without setting `MCP_SDK_GENERATION` and `MCP_PROTOCOL_NEGOTIATION`; Claude Code uses the v1 runtime unless you set `MCP_SDK_GENERATION=v2`, and skips the probe unless you set `MCP_PROTOCOL_NEGOTIATION=auto`
+* Get the [PowerShell tool](/docs/en/tools-reference#powershell-tool) by default for claude.ai and Console accounts on Windows with Git Bash installed; Claude Code routes shell commands through Git Bash unless you set `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`. On Windows without Git Bash, the tool stays on
 
 With fetching off, you can still type `/code-review` yourself, but [Claude can't start the review on its own, and a scheduled `/code-review` reaches Claude as plain text](/docs/en/code-review#let-claude-start-the-review) instead of running the review.
 
