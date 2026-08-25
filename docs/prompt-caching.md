@@ -223,23 +223,44 @@ Cached prefixes expire after a period of inactivity. Each request that hits the 
 
 On a Pro or Max plan, when you resume a large session after a long break, Claude Code [offers to resume from a summary](/docs/en/sessions#resume-from-a-summary) so later requests don't carry the full history.
 
-The time to live (TTL) controls how long a gap the cache survives. The API offers two: a five-minute TTL, and a [one-hour TTL](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#1-hour-cache-duration) that keeps the cache warm through longer breaks but [bills cache writes at a higher rate](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#pricing). Claude Code picks the TTL for you based on how you authenticate, and you can override it with environment variables.
+The time to live (TTL) controls how long a gap the cache survives. The API offers two: a five-minute TTL, and a [one-hour TTL](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#1-hour-cache-duration) that keeps the cache warm through longer breaks but [bills cache writes at a higher rate](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#pricing). The longer TTL helps when you leave a session idle and come back to it, because you skip the reprocessing an expired prefix costs. It costs more on short bursts of work that never idle past five minutes, where the higher write rate applies and the longer cache lifetime goes unused.
 
-### On a Claude subscription
+### Which TTL each request gets
 
-On a Claude subscription, Claude Code requests the one-hour TTL automatically, so the cache survives breaks of up to an hour.
+Claude Code decides the TTL per request, and every request falls in one of two fixed buckets:
 
-If you've gone over your plan's usage limit and Claude Code is drawing on [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans), you are billed for that usage. Cache writes cost more at the one-hour TTL than at the five-minute TTL, so Claude Code automatically drops to the shorter one. To keep the one-hour TTL while drawing on usage credits, set `ENABLE_PROMPT_CACHING_1H=1`.
+* **Main conversation**: your interactive turns, non-interactive `-p` runs, and Agent SDK turns, plus the helpers Claude Code runs inline with them
+* **Everything else**: the requests Claude Code makes outside that conversation, such as [subagents](/docs/en/sub-agents), [workflows](/docs/en/workflows), in-process [teammates](/docs/en/agent-teams), forks, compaction, and session titles
 
-### On an API key or third-party provider
+Unless you choose a TTL yourself, Claude Code requests the one-hour TTL only on a Claude subscription within your plan's included usage. There it requests the hour for the main conversation, plus a small set of helper requests that Anthropic controls server-side. This table gives each bucket's default TTL under both kinds of billing.
 
-On an API key, Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or Claude Platform on AWS, you pay the per-token rates, so the TTL stays at the cheaper five minutes by default. To opt into the [one-hour TTL](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#1-hour-cache-duration), set `ENABLE_PROMPT_CACHING_1H=1`.
+| Request bucket    | Claude subscription, within plan usage                                         | Usage credits, API key, or cloud provider |
+| ----------------- | ------------------------------------------------------------------------------ | ----------------------------------------- |
+| Main conversation | One hour                                                                       | Five minutes                              |
+| Everything else   | Five minutes, except the server-controlled helper requests, which get one hour | Five minutes                              |
 
-On Amazon Bedrock, prompt caching support, minimum cacheable prefix length, and one-hour TTL availability all vary by model. If cache token counts stay at zero, check [supported models, regions, and limits](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models) in the Amazon Bedrock documentation.
+Once you go over your plan's usage limit and Claude Code draws on [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans), you are billed for that usage, so Claude Code drops the main conversation to the cheaper five-minute TTL. To keep the one-hour TTL there, [choose the TTL yourself](#choose-the-ttl-yourself).
 
-### Override the TTL
+### Choose the TTL yourself
 
-Set `FORCE_PROMPT_CACHING_5M=1` to force the five-minute TTL regardless of authentication. This is useful when you're debugging cache behavior, comparing the two TTLs, or overriding an `ENABLE_PROMPT_CACHING_1H` set in [managed settings](/docs/en/managed-settings).
+You can set a TTL for either bucket. Each control takes `5m` or `1h`, and Claude Code ignores any other value.
+
+* **Main conversation**: the [`promptCacheTtl`](/docs/en/settings-reference#promptcachettl) setting, or the `CLAUDE_CODE_PROMPT_CACHE_TTL` [environment variable](/docs/en/env-vars)
+* **Everything else**: the [`subagentPromptCacheTtl`](/docs/en/settings-reference#subagentpromptcachettl) setting, or the `CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL` environment variable
+
+Both settings and both environment variables require Claude Code v2.1.242 or later. If you sign in with an API key or use a cloud provider, set `promptCacheTtl` to `1h` to give the main conversation a one-hour cache. Requests outside it keep the five-minute default until you choose a TTL for that bucket too.
+
+When more than one control applies, Claude Code takes the first match in this order:
+
+1. `FORCE_PROMPT_CACHING_5M=1`, which forces five minutes for both buckets
+2. The bucket's environment variable
+3. The bucket's setting
+4. `ENABLE_PROMPT_CACHING_1H=1`, which requests one hour for both buckets
+5. The [default for the request's bucket](#which-ttl-each-request-gets)
+
+Set `FORCE_PROMPT_CACHING_5M=1` when you're debugging cache behavior, comparing the two TTLs, or overriding a longer TTL set in [managed settings](/docs/en/managed-settings).
+
+The one-hour TTL isn't available through the [Claude apps gateway](/docs/en/claude-apps-gateway#availability-and-limitations). On Amazon Bedrock, prompt caching support, minimum cacheable prefix length, and one-hour TTL availability all vary by model. If cache token counts stay at zero, check [supported models, regions, and limits](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models) in the Amazon Bedrock documentation.
 
 ## Cache scope
 
@@ -264,7 +285,7 @@ For visibility across an organization, the OpenTelemetry exporter reports cache 
 
 ## Subagents and the cache
 
-A [subagent](/docs/en/sub-agents) starts its own conversation with its own system prompt and tool set, separate from the parent's. Its first request doesn't read the parent's cache, because the two prefixes differ, and it warms a cache of its own across its turns. Subagents use the five-minute TTL even on a subscription, since the automatic one-hour TTL applies to the main conversation.
+A [subagent](/docs/en/sub-agents) starts its own conversation with its own system prompt and tool set, separate from the parent's. Its first request doesn't read the parent's cache, because the two prefixes differ, and it warms a cache of its own across its turns. Subagents fall outside the main-conversation [TTL bucket](#which-ttl-each-request-gets), so they get five minutes even on a subscription until you [choose a longer one](#choose-the-ttl-yourself).
 
 The parent's cache is unaffected. From the parent's side, the subagent's call and result append to the conversation, leaving the parent's prefix intact.
 

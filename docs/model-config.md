@@ -832,4 +832,4 @@ Claude Code automatically uses [prompt caching](/docs/en/prompt-caching) to opti
 | `DISABLE_PROMPT_CACHING_OPUS`   | Set to `1` to disable prompt caching for Opus models only                                         |
 | `DISABLE_PROMPT_CACHING_FABLE`  | Set to `1` to disable prompt caching for Fable models only                                        |
 
-To change the cache TTL or learn what triggers a cache miss, see [How Claude Code uses prompt caching](/docs/en/prompt-caching).
+To choose the cache TTL for the main conversation and for subagents separately, see [choose the TTL yourself](/docs/en/prompt-caching#choose-the-ttl-yourself). For what triggers a cache miss, see [How Claude Code uses prompt caching](/docs/en/prompt-caching).
