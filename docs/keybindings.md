@@ -328,8 +328,8 @@ Actions available in the `Scroll` context when [fullscreen rendering](/docs/en/f
 
 | Action                      | Default              | Description                                                                                               |
 | :-------------------------- | :------------------- | :-------------------------------------------------------------------------------------------------------- |
-| `scroll:lineUp`             | (unbound)            | Scroll up one line. Mouse wheel scrolling triggers this action                                            |
-| `scroll:lineDown`           | (unbound)            | Scroll down one line. Mouse wheel scrolling triggers this action                                          |
+| `scroll:lineUp`             | `wheelup`            | Scroll up one line. Mouse wheel scrolling triggers this action                                            |
+| `scroll:lineDown`           | `wheeldown`          | Scroll down one line. Mouse wheel scrolling triggers this action                                          |
 | `scroll:pageUp`             | PageUp               | Scroll up half the viewport height                                                                        |
 | `scroll:pageDown`           | PageDown             | Scroll down half the viewport height                                                                      |
 | `scroll:top`                | Ctrl+Home            | Jump to the start of the conversation                                                                     |
@@ -371,9 +371,7 @@ ctrl+shift+c    Multiple modifiers
 
 ### Uppercase letters
 
-A standalone uppercase letter implies Shift. For example, `K` is equivalent to `shift+k`. This is useful for vim-style bindings where uppercase and lowercase keys have different meanings.
-
-Uppercase letters with modifiers (e.g., `ctrl+K`) are treated as stylistic and do **not** imply Shift: `ctrl+K` is the same as `ctrl+k`.
+Claude Code parses key names case-insensitively, so `K` is the same binding as `k` and `ctrl+K` is the same as `ctrl+k`. To bind Shift and a letter, write `shift+k`.
 
 ### Chords
 
@@ -391,6 +389,7 @@ ctrl+k ctrl+s   Press Ctrl+K, release, then Ctrl+S
 * `space` - Space bar
 * `up`, `down`, `left`, `right` - Arrow keys
 * `backspace`, `delete` - Delete keys
+* `wheelup`, `wheeldown` - Mouse wheel scroll events
 
 ## Unbind default shortcuts
 
@@ -475,8 +474,8 @@ Claude Code validates your keybindings and shows warnings for:
 
 * Parse errors (invalid JSON or structure)
 * Invalid context names
+* Invalid action values, such as an action that isn't a string or `null`
 * Reserved shortcut conflicts
-* Terminal multiplexer conflicts
 * Duplicate bindings in the same context
 
 Claude Code reports warnings when the file loads and writes each one to the debug log. Start Claude Code with [`--debug`](/docs/en/cli-reference#cli-flags) to see the details.
