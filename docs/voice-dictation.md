@@ -53,7 +53,7 @@ Voice dictation persists across sessions. Set it directly in your [user settings
 }
 ```
 
-While voice dictation is enabled, the input footer shows a `hold space to speak` hint when the prompt is empty. The hint reflects your current `voice:pushToTalk` binding and updates if you [rebind the dictation key](#rebind-the-dictation-key). The hint text is the same in both modes, and it does not appear if you have a [custom status line](/docs/en/statusline) configured.
+For the first three sessions with voice dictation enabled, the input footer shows a `hold space to speak` hint when the prompt is empty. The hint reflects your current `voice:pushToTalk` binding and updates if you [rebind the dictation key](#rebind-the-dictation-key). The hint text is the same in both modes, and it does not appear if you have a [custom status line](/docs/en/statusline) configured.
 
 Transcription is tuned for coding vocabulary in both modes. Common development terms like `regex`, `OAuth`, `JSON`, and `localhost` are recognized correctly, and your current project name and git branch name are added as recognition hints automatically.
 
@@ -61,7 +61,7 @@ Transcription is tuned for coding vocabulary in both modes. Common development t
 
 Hold mode is push-to-talk: recording runs while you hold the key and stops when you release it. This is the default mode.
 
-Hold `Space` to start recording. Claude Code detects a held key by watching for rapid key-repeat events from your terminal, so there is a brief warmup before recording begins. The footer shows `keep holding…` during warmup, then switches to a live waveform once recording is active.
+Hold `Space` to start recording. Claude Code detects a held key by watching for rapid key-repeat events from your terminal, so there is a brief warmup before recording begins. The footer shows `keep holding…` during warmup, then `listening…` once recording is active. While recording, the prompt cursor becomes a bar that rises and falls with your microphone level, unless you have [`prefersReducedMotion`](/docs/en/settings-reference#prefersreducedmotion) turned on.
 
 The first couple of key-repeat characters type into the input during warmup and are removed automatically when recording activates. A single `Space` tap still types a space, since hold detection only triggers on rapid repeat.
 
@@ -83,7 +83,7 @@ By default, when you release the key, Claude Code inserts the transcript and wai
 
 Tap mode toggles recording with a single keypress: tap once to start, speak, then tap again to send the prompt. There is no warmup, and you don't need to keep the key held.
 
-Enable tap mode with `/voice tap`. With the prompt input empty, tap `Space` to start recording. The footer shows a live waveform while recording. Tap `Space` again to stop.
+Enable tap mode with `/voice tap`. With the prompt input empty, tap `Space` to start recording. The footer shows `● REC · tap to send` while recording. Tap `Space` again to stop.
 
 Claude Code inserts the transcript and submits the prompt automatically when the transcript is at least three words long. Shorter transcripts are inserted but not submitted, so an accidental tap does not send a stray word.
 
@@ -161,10 +161,10 @@ Common issues when voice dictation does not activate or record:
 * **`Voice mode requires a Claude.ai account`**: you are authenticated with an API key or a third-party provider. Run `/login` to sign in with a Claude.ai account.
 * **`Voice mode is disabled by your organization's policy`**: an administrator policy for your organization turns off voice dictation. Contact your organization administrator to confirm whether voice dictation is available for your organization.
 * **`Microphone access is denied`**: grant microphone permission to your terminal in system settings. On macOS, go to System Settings → Privacy & Security → Microphone and enable your terminal app, then run `/voice` again. On Windows, go to Settings → Privacy & security → Microphone and turn on microphone access for desktop apps, then run `/voice` again. If your terminal isn't listed in the macOS settings, see [Terminal not listed in macOS Microphone settings](#terminal-not-listed-in-macos-microphone-settings).
-* **`No audio recording tool found` on Linux**: the native audio module could not load and no fallback is installed. Install SoX with the command shown in the error message, for example `sudo apt-get install sox`.
+* **`Voice mode requires SoX for audio recording` on Linux**: the native audio module could not load and no fallback is installed. Install SoX with the command shown in the error message, for example `sudo apt-get install sox`.
 * **`Voice mode requires a microphone, but SoX could not open an audio capture device`**: SoX is installed, but the host has no audio capture device, for example a headless server or a container. Run Claude Code on a machine with a microphone. As of v2.1.195, Claude Code on Linux reports this message in that situation; earlier versions asked you to install SoX even when it was already installed.
 * **`Voice mode could not find a working audio recorder in WSL`**: WSLg routes audio through PulseAudio rather than an ALSA device, so SoX needs its PulseAudio backend installed explicitly. Run `sudo apt install sox libsox-fmt-pulse`. Installing `sox` alone pulls in the ALSA backend, which cannot record on WSL because there is no `/dev/snd` device.
-* **`Voice input is failing repeatedly and has been paused`**: voice dictation hit several capture failures in a row and stopped attempting new sessions until one succeeds. A failure counts whether the microphone fails to start or the recorder starts and then stops without producing any audio. This usually means the microphone or audio stack on this host can't capture audio, for example a headless server, a remote shell with no audio passthrough, or a denied microphone permission. Confirm a working input device, fix the underlying cause from the entries above, then trigger voice again. Before v2.1.202, only start-up failures counted toward the pause.
+* **`Voice input is failing repeatedly and has been paused`**: voice dictation hit three capture failures within 10 seconds. Claude Code pauses dictation until 10 seconds have passed since the first of those failures. A failure counts whether the microphone fails to start or the recorder starts and then stops without producing any audio. This usually means the microphone or audio stack on this host can't capture audio, for example a headless server, a remote shell with no audio passthrough, or a denied microphone permission. Confirm a working input device, fix the underlying cause from the entries above, then trigger voice again. Before v2.1.202, only start-up failures counted toward the pause.
 * **Nothing happens when holding `Space` in hold mode**: watch the prompt input while you hold. If spaces keep accumulating, voice dictation is likely off; run `/voice hold` to enable it. If only one or two spaces appear and then nothing, voice dictation is on but hold detection is not triggering. Hold detection requires your terminal to send key-repeat events, so it can't detect a held key if key-repeat is disabled at the OS level. Switch to tap mode with `/voice tap` to avoid the key-repeat requirement.
 * **Tapping `Space` types a space instead of recording in tap mode**: the first tap only starts recording when the prompt input is empty. Clear the input first, or check that you are in tap mode by running `/voice tap`.
 * **`No audio detected from microphone`**: recording started but captured silence. Confirm the correct input device is set as the system default and that its input level is not muted or near zero. On Windows, open Settings → System → Sound → Input and select your microphone. On macOS, open System Settings → Sound → Input.

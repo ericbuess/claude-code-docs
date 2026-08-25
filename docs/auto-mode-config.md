@@ -359,7 +359,7 @@ When the classifier produces [no verdict on the action](/docs/en/errors#auto-mod
 
 ### Fix a denial with an allow rule, an environment entry, or a retry
 
-Claude Code shows the blocked tool call wherever the denial appears, including the transcript, the denial notification, and the **Recently denied** tab. Pick the fix from what the call was trying to reach or do:
+Claude Code shows the blocked tool call wherever the denial appears, including the transcript and the **Recently denied** tab. Pick the fix from what the call was trying to reach or do:
 
 * A destination Claude needs throughout the task, such as a package registry, an internal domain, or a repository host: add it to `autoMode.environment`.
 * A command you want to run without review from now on: add an `allow` rule.

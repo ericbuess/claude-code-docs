@@ -82,6 +82,7 @@ Match the message you see to a section below.
 | `Socket is closed`                                                                                                                                                                            | [Network](#socket-is-closed)                                                                                                  |
 | `Waiting for API response · will retry in`                                                                                                                                                    | [Automatic retries](#automatic-retries), or [Network](#unable-to-connect-to-api) if it persists                               |
 | `API returned an empty or malformed response`                                                                                                                                                 | [Network](#api-returned-an-empty-or-malformed-response)                                                                       |
+| `Streaming response ended before any complete data was received`                                                                                                                              | [Network](#streaming-response-ended-before-any-complete-data-was-received)                                                    |
 | `Bedrock streaming response has content-type "..."; expected "application/vnd.amazon.eventstream"`                                                                                            | [Network](#bedrock-streaming-response-has-an-unexpected-content-type)                                                         |
 | `SSL certificate verification failed`                                                                                                                                                         | [Network](#ssl-certificate-errors)                                                                                            |
 | `SSL certificate error (...)` during login or startup                                                                                                                                         | [Network](#ssl-certificate-errors)                                                                                            |
@@ -1124,6 +1125,21 @@ Before v2.1.234, the message ended after `intercepting the request`.
 * If you route through an [LLM gateway](/docs/en/llm-gateway-connect#troubleshoot-gateway-errors), test the route with a direct request and fix the hop that returns the non-API response
 * On a network with a sign-in page, such as guest Wi-Fi, complete the sign-in in a browser, then retry
 * If only the non-streaming route through your gateway is broken, set [`CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK=1`](/docs/en/env-vars#variables) so a request that fails mid-stream goes to the normal retry path instead of this fallback, except when the streaming endpoint itself returns `404`, where Claude Code still falls back
+
+### Streaming response ended before any complete data was received
+
+A streaming response from your model provider completed without delivering any usable data, so Claude Code re-sent the request without streaming to finish the turn. Claude Code shows the warning once per session, in interactive sessions only. Before v2.1.239, Claude Code silently retried without streaming.
+
+```text theme={null}
+Streaming response ended before any complete data was received. Retrying without streaming. If this keeps happening, check any proxy or gateway between Claude Code and your model provider.
+```
+
+Claude Code sends each affected request twice: the empty streaming attempt and the retry. The usual cause is a proxy or gateway that consumes or transforms the streaming response body on its way back.
+
+**What to do:**
+
+* Configure any proxy or gateway between Claude Code and your model provider to pass streaming response bodies and their headers through unmodified
+* On [Amazon Bedrock](/docs/en/amazon-bedrock), see [Streaming errors behind a gateway or proxy](/docs/en/amazon-bedrock#streaming-errors-behind-a-gateway-or-proxy) for the header and body requirements
 
 ### Bedrock streaming response has an unexpected content-type
 

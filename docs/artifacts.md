@@ -110,7 +110,7 @@ Read the comments on https://claude.ai/code/artifact/5fbea6f3-... and make the c
 If Claude tells you it can't read comments, check three things:
 
 * You're running Claude Code v2.1.221 or later.
-* You're not in your first session since you installed Claude Code or upgraded from a version before v2.1.221. In that [first session after an install or upgrade](/docs/en/env-vars#first-session-after-an-install-or-upgrade), Claude can't read comments yet; start a new session and ask again.
+* You're not in your first session since you installed Claude Code or upgraded from a version before v2.1.221. In that [first session after an install or upgrade](/docs/en/env-vars#first-session-after-an-install-or-upgrade), Claude might not be able to read comments yet; start a new session and ask again.
 * You haven't turned feature-flag fetching off. If you set `DISABLE_GROWTHBOOK`, `DISABLE_TELEMETRY`, or `DO_NOT_TRACK`, also set [`CLAUDE_CODE_ARTIFACT_COMMENTS=1`](/docs/en/env-vars#features-that-need-feature-flag-fetching) so Claude can read comments without fetching flags.
 
 ### Let Claude reply to comments on its own
