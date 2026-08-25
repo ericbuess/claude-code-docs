@@ -406,6 +406,8 @@ When auto mode can't approve your session's actions, what happens depends on the
 
 Repeated blocks usually mean the classifier is missing context about your infrastructure. Use `/feedback` to report false positives, or have an administrator [configure trusted infrastructure](/docs/en/auto-mode-config).
 
+<span id="how-the-classifier-evaluates-actions" />
+
 <AccordionGroup>
   <Accordion title="How the classifier evaluates actions">
     Each action goes through a fixed decision order. The first matching step wins:

@@ -457,6 +457,8 @@ Claude Code can automatically update marketplaces and their installed plugins in
 
 Claude Code checks for marketplace and plugin updates after your session starts, with a random delay of up to ten minutes, so the running session keeps using the versions it loaded at launch. If any plugins were updated, you'll see a notification prompting you to run `/reload-plugins`, or the new versions load on your next launch.
 
+Auto-update also leaves out a plugin whose marketplace entry declares a `headersHelper`: Claude Code [neither runs the command nor downloads the archive](/docs/en/plugin-marketplaces#installs-and-updates-that-refuse-the-command-instead-of-asking) on that path; that section says when Claude Code lists the plugin in the `/plugin` Errors tab so you can update it from its own view.
+
 Claude Code updates plugins that have a [`command` source](/docs/en/plugin-marketplaces#command-sources) on a separate cadence from the marketplace auto-update setting and from `DISABLE_AUTOUPDATER`. Instead, it [re-runs the command once per session](/docs/en/plugin-marketplaces#when-claude-code-re-runs-the-command) and installs the output as a new plugin version when its [hash](/docs/en/plugins-reference#version-management) has changed.
 
 Toggle auto-update for individual marketplaces through the UI:

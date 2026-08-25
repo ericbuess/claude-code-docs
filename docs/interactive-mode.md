@@ -561,6 +561,58 @@ Run `/recap` to generate a summary on demand. Claude Code caps both automatic re
 
 Session recap is on by default for every plan and provider. The recap is always skipped in non-interactive mode.
 
+## Wait for a usage limit to reset
+
+When a claude.ai [usage limit](/docs/en/errors#youve-hit-your-session-limit) stops Claude mid-task, Claude Code waits in the open session and continues the task on its own after the limit resets. Automatic continue is on by default in interactive sessions signed in with a claude.ai subscription. Requires Claude Code v2.1.234 or later.
+
+While Claude Code waits, a line at the bottom of the session shows when it will continue:
+
+```text theme={null}
+Usage limit reached · continuing automatically at 3:45pm · esc to cancel
+```
+
+Keep the session open. What happens next depends on how the wait ends:
+
+* **At the reset**: the line reads `continuing shortly`, then `Usage limit reset · continuing automatically`, and Claude Code sends Claude a fixed prompt to pick the task up where it stopped. It doesn't resend your last message.
+* **After your computer slept**: if it slept for more than about 30 minutes and the limit reset while it slept, the line reads `Your usage limit has reset · press enter to continue`. Press `Enter` to continue. After a shorter sleep, Claude Code continues on its own.
+* **Early**: when you finish adding [usage credits](/docs/en/costs#add-usage-credits-to-your-subscription) with `/usage-credits`, sign back in after `/upgrade`, or switch models with `/model` during the wait, Claude Code checks whether usage is available again and continues right away if it is. It doesn't check after an upgrade or purchase you make in a browser on your own. Under [`opusplan`](/docs/en/model-config#opusplan-model-setting) and other model settings that run plan mode on a different model, Claude Code waits for the reset instead.
+
+The continued task runs like any other turn. Claude Code still asks for [permissions](/docs/en/permissions) as usual, so the task can stop on a prompt while you're away. If it hits the limit again, Claude Code re-arms the wait on its own at most twice in a row, then stops and shows `Automatic continue stopped after repeated usage-limit hits · /rate-limit-options to try again`.
+
+### Cancel the wait
+
+Press `Esc` at an empty prompt, or `Ctrl+C`, while the line shows, or run [`/rate-limit-options`](/docs/en/commands#all-commands) and pick **Don't continue automatically**. Claude Code confirms with a line that starts `Automatic continue cancelled`.
+
+After a cancel, nothing continues until you send a prompt or pick the row that starts **Wait here, then continue automatically** from `/rate-limit-options` again. Claude Code doesn't start a wait on its own again for that reset window; the next reset window starts fresh.
+
+The wait also ends without continuing the task in these cases:
+
+* **You send a prompt**: Claude Code runs your prompt instead of waiting.
+* **You exit Claude Code**: the wait doesn't restart when you resume the session.
+* **The conversation changes hands**: you switch accounts with `/login`, clear or rewind the conversation, `/resume` another session, pull one with `/teleport`, relaunch with `/tui`, or hand the session to Claude Desktop, a background session, or the cloud.
+* **The setting turns off, or the reset moves past 24 hours**: this ends only a wait Claude Code started on its own. A wait you picked from `/rate-limit-options` keeps counting down.
+* **The continuation is blocked**: a [`UserPromptSubmit` hook](/docs/en/hooks#userpromptsubmit) that blocks the continuation prompt, or a failure before it reaches the model, ends the wait. Claude Code tells you the continuation didn't run. Send a prompt to continue.
+
+### Start a wait yourself
+
+Claude Code doesn't start the wait on its own in these cases:
+
+* **Remote Control and agent team teammate sessions**: a person at that terminal can still start one.
+* **A reset more than 24 hours away**: a weekly limit can reset days out.
+* **An Opus or Sonnet limit while you run a model outside that family**: your next turn may not hit that limit. [`opusplan`](/docs/en/model-config#opusplan-model-setting) and other model settings that run plan mode on the limited family don't get this exception.
+
+In those cases, and whenever automatic continue is off, Claude Code opens the usage-limit options menu once per reset window when you hit a limit at your own terminal. Pick the row that starts **Wait here, then continue automatically** to start the wait. In a [Remote Control](/docs/en/remote-control) or [agent team](/docs/en/agent-teams) teammate session, run `/rate-limit-options` yourself to open the menu.
+
+Claude Code doesn't offer the wait at all in these cases:
+
+* **Background sessions and `-p` runs**: the menu row isn't available.
+* **API keys, cloud providers, and usage-based billing**: usage there is metered per request, so there is no reset to wait for.
+* **An [LLM gateway](/docs/en/llm-gateway#subscriptions-and-gateways) without a saved claude.ai login**: Claude Code offers the wait only while a saved claude.ai login is the active credential.
+
+### Turn automatic continue off
+
+In `/config`, turn off **Continue automatically at usage limit**, or set [`autoContinueAtUsageLimit`](/docs/en/settings-reference#autocontinueatusagelimit) to `false` in your user settings. `/config autoContinueAtUsageLimit=false` also works, including with `-p`, but the `key=value` form can't turn it back on, because the setting grants unattended execution. Which settings files Claude Code reads for this key is in the [settings reference](/docs/en/settings-reference#autocontinueatusagelimit).
+
 ## PR review status
 
 When working on a branch with an open pull request, Claude Code displays a clickable PR link in the footer, such as "PR #446". The link has a colored underline indicating the review state:
