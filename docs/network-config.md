@@ -194,7 +194,7 @@ Configure the timers with these variables, each detailed in the [environment var
 * `CLAUDE_BYTE_STREAM_IDLE_TIMEOUT_MS` sets the byte-level watchdog's timeout alone, clamped to between 10 seconds and 30 minutes, and takes precedence over `CLAUDE_STREAM_IDLE_TIMEOUT_MS` for that watchdog.
 * `API_FORCE_IDLE_TIMEOUT` set to `0` turns the body idle timeout off, and set to `1` turns it on for every provider. The watchdogs run independently of it, so to let a stream pause longer than their thresholds, also raise or disable them.
 
-When a timer aborts a stalled stream, Claude Code handles it like any other mid-stream failure: it retries, keeps completed output with an [incomplete-response notice](/docs/en/errors#the-response-above-may-be-incomplete), or ends the turn, depending on where the response stood.
+When a watchdog aborts a stalled stream, Claude Code treats it as a mid-stream failure: depending on how far the response had got, it retries the request or ends the turn with an error, keeps the completed output and shows an [incomplete-response notice](/docs/en/errors#the-response-above-may-be-incomplete), or ends the turn normally. [Automatic retries](/docs/en/errors#automatic-retries) says where each outcome applies. In a [non-interactive session](/docs/en/headless), Claude Code may first prompt Claude to continue the cut-off response; [that notice's entry](/docs/en/errors#the-response-above-may-be-incomplete) says when it does and when you still see the notice.
 
 ## Network access requirements
 

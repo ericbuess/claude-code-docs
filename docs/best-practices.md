@@ -498,7 +498,7 @@ For large migrations or analyses, you can distribute work across many parallel C
   <Step title="Write a script to loop through the list">
     ```bash theme={null}
     for file in $(cat files.txt); do
-      claude -p "Migrate $file from React to Vue. Return OK or FAIL." \
+      claude -p "Migrate $file from Python 2 to Python 3. Return OK or FAIL." \
         --allowedTools "Edit,Bash(git commit *)"
     done
     ```

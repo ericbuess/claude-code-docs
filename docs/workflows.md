@@ -245,7 +245,7 @@ use a workflow to run npx tsc --noEmit and keep fixing the reported errors until
 Discover the files to migrate, transform each one in an isolated copy so edits don't conflict, and verify each result.
 
 ```text wrap theme={null}
-use a workflow to migrate every component under src/components/ from styled-components to Tailwind, working on each file in its own isolated copy
+use a workflow to migrate every component under src/components/ from JavaScript to TypeScript, working on each file in its own isolated copy
 ```
 
 ### Review every changed file and write one summary
