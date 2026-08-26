@@ -376,8 +376,8 @@
     "code-review.md": {
       "original_url": "https://code.claude.com/docs/en/code-review",
       "original_md_url": "https://code.claude.com/docs/en/code-review.md",
-      "hash": "50426c7b6ef8a73e4c42ae6cc2cecca772f58200a09052eb4c65e37dc23f3c97",
-      "last_updated": "2026-08-22T00:33:21.692076"
+      "hash": "ca938026dbc7df33c5dadf800ddf0ef2033308e2b3a04b8b3951c302074016bf",
+      "last_updated": "2026-08-26T03:43:43.638414"
     },
     "commands.md": {
       "original_url": "https://code.claude.com/docs/en/commands",
@@ -460,8 +460,8 @@
     "desktop-linux.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-linux",
       "original_md_url": "https://code.claude.com/docs/en/desktop-linux.md",
-      "hash": "3fb2b62a80c0c054626fccc30d840ba0ec476bde5d59c3704a757b4a8d02685d",
-      "last_updated": "2026-08-21T09:24:44.291681"
+      "hash": "3962791d633a2c52d38d506a47216ff28dbcceb8817b0451a55f6c957bd151c5",
+      "last_updated": "2026-08-26T03:43:56.935089"
     },
     "desktop-quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-quickstart",
@@ -496,8 +496,8 @@
     "env-vars.md": {
       "original_url": "https://code.claude.com/docs/en/env-vars",
       "original_md_url": "https://code.claude.com/docs/en/env-vars.md",
-      "hash": "77ca6355db528d0cc9671cad917d0ec24dc6db8959e5eb04e3d236bc37ad8eb9",
-      "last_updated": "2026-08-25T21:16:44.631018"
+      "hash": "f5e59a5161443f12fbc34ef951e294244d1f53c9f459ae10325b9f856a4ec230",
+      "last_updated": "2026-08-26T03:44:04.013561"
     },
     "errors.md": {
       "original_url": "https://code.claude.com/docs/en/errors",
@@ -514,8 +514,8 @@
     "feature-availability.md": {
       "original_url": "https://code.claude.com/docs/en/feature-availability",
       "original_md_url": "https://code.claude.com/docs/en/feature-availability.md",
-      "hash": "9a4d9321e29c6112a08c86010fd3f83decde4c0b4c728e416ecbf823bf5cdbe0",
-      "last_updated": "2026-08-22T00:33:44.042450"
+      "hash": "d262352821bae315d4ac5a218d8a938b4e7f0555e73936afad177e0b4c421b21",
+      "last_updated": "2026-08-26T03:44:07.683310"
     },
     "features-overview.md": {
       "original_url": "https://code.claude.com/docs/en/features-overview",
@@ -1149,8 +1149,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-26T00:37:28.656744",
-    "fetch_duration_seconds": 166.369389,
+    "last_fetch_completed": "2026-08-26T03:45:48.891026",
+    "fetch_duration_seconds": 189.443106,
     "total_pages_discovered": 191,
     "pages_fetched_successfully": 192,
     "pages_failed": 0,
@@ -1160,7 +1160,7 @@
     "total_files": 191,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-26T00:37:28.656758",
+  "last_updated": "2026-08-26T03:45:48.891056",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
