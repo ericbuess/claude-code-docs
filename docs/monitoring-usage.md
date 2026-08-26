@@ -857,7 +857,7 @@ Logged when an MCP server connects, disconnects, or fails to connect.
 * `duration_ms`: Connection attempt duration in milliseconds
 * `error_code`: Error code when the connection failed
 * `is_plugin`: `true` when the server is provided by a plugin, `false` otherwise
-* `plugin_id_hash` (when `is_plugin` is `true`): Stable hash of the plugin name and marketplace, for grouping events by plugin without exposing the name
+* `plugin_id_hash` (when `is_plugin` is `true`): Stable hash of the plugin name and marketplace, for grouping events by plugin without exposing the name. Claude Code computes it as described under the [plugin loaded event](#plugin-loaded-event)
 * `plugin.name` (when `is_plugin` is `true`): Name of the plugin that provides the server. For third-party plugins this is the literal string `"third-party"` unless `OTEL_LOG_TOOL_DETAILS=1`; this protects third-party plugin names from appearing in logs by default. Plugins from official Anthropic sources are always identified by name. The `plugin_id_hash` and `plugin.name` attributes flow to your own monitoring backend and are not sent to Anthropic
 * `server_name` (when `OTEL_LOG_TOOL_DETAILS=1`): Configured server name
 * `error` (when `OTEL_LOG_TOOL_DETAILS=1`): Full error message when the connection failed
@@ -910,9 +910,9 @@ Logged once per enabled plugin at session start. Use this event to inventory whi
 * `plugin.name`: name of the plugin. For plugins outside the official marketplace and built-in bundle the value is `"third-party"` unless `OTEL_LOG_TOOL_DETAILS=1`
 * `marketplace.name`: marketplace the plugin was installed from, when known. Redacted to `"third-party"` under the same condition as `plugin.name`
 * `plugin.version`: version from the plugin manifest. Included only when the name is not redacted and the manifest declares a version
-* `plugin.scope`: provenance category for the plugin: `"official"`, `"org"`, `"user-local"`, or `"default-bundle"`
-* `enabled_via`: how the plugin came to be enabled: `"default-enable"`, `"org-policy"`, `"seed-mount"`, or `"user-install"`
-* `plugin_id_hash`: deterministic hash of the plugin name and marketplace, sent only to your configured exporter. Lets you count how many distinct third-party plugins are loaded across your fleet without recording their names
+* `plugin.scope`: provenance category for the plugin: `"official"`, `"community"`, `"org"`, `"user-local"`, or `"default-bundle"`
+* `enabled_via`: how the plugin came to be enabled: `"default-enable"`, `"org-policy"`, `"admin-install"`, `"seed-mount"`, or `"user-install"`. The `"admin-install"` value means the plugin is set to required or auto-install for your organization in [**Organization settings > Plugins**](https://claude.ai/admin-settings/plugins). Before v2.1.246, Claude Code reported these plugins as `"user-install"` or `"seed-mount"`
+* `plugin_id_hash`: deterministic hash of the plugin name and marketplace, sent only to your configured exporter. Lets you count the distinct third-party plugins loaded across your fleet without recording their names. For [plugins synced from claude.ai](/docs/en/plugins-reference#synced-plugins), Claude Code hashes the plugin name with the marketplace name that claude.ai reports for the plugin, or with `synced` otherwise. Before v2.1.246, Claude Code didn't use the marketplace name claude.ai reports in the hash
 * `has_hooks`: whether the plugin contributes hooks
 * `has_mcp`: whether the plugin contributes MCP servers
 * `host_owned_mcp`: `true` when the SDK host manages this plugin's MCP connections and Claude Code skipped reading the plugin's MCP server configuration, `false` otherwise. Requires Claude Code v2.1.172 or later
@@ -992,7 +992,7 @@ Logged once per configured hook at session start. Use this event to inventory wh
 * `safe_mode`: `"true"` when the session was started with [`--safe-mode`](/docs/en/cli-reference), `"false"` otherwise. Requires Claude Code v2.1.169 or later
 * `hook_matcher` (when `OTEL_LOG_TOOL_DETAILS=1`): the matcher string from the hook configuration, when one is set
 * `plugin.name` (when `hook_source` is `"pluginHook"`): name of the contributing plugin. For plugins outside the official marketplace and built-in bundle the value is `"third-party"` unless `OTEL_LOG_TOOL_DETAILS=1`
-* `plugin_id_hash` (when `hook_source` is `"pluginHook"`): deterministic hash of the plugin name and marketplace, sent only to your configured exporter. Lets you count distinct contributing plugins without recording their names
+* `plugin_id_hash` (when `hook_source` is `"pluginHook"`): deterministic hash of the plugin name and marketplace, sent only to your configured exporter. Lets you count distinct contributing plugins without recording their names. Claude Code computes it as described under the [plugin loaded event](#plugin-loaded-event)
 
 #### Hook execution start event
 

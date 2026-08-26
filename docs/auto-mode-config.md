@@ -23,6 +23,7 @@ This page covers how to:
 * [Define trusted infrastructure](#define-trusted-infrastructure) with `autoMode.environment`
 * [Generate environment entries](#generate-environment-entries) with `/auto-mode-setup`
 * [Override the block and allow rules](#override-the-block-and-allow-rules) when the defaults don't fit your pipeline
+* [Edit rules from `/permissions`](#edit-rules-from-permissions) without opening a settings file
 * [Route all shell commands through the classifier](#route-all-shell-commands-through-the-classifier) with `autoMode.classifyAllShell`
 * [Inspect your effective config](#inspect-the-defaults-and-your-effective-config) with the `claude auto-mode` subcommands
 * [Review denials](#review-denials) so you know what to add next
@@ -273,6 +274,18 @@ Each section is evaluated independently, so setting `environment` alone leaves t
 
 Only omit `"$defaults"` when you intend to take full ownership of the list. To do that safely, run `claude auto-mode defaults` to print the built-in rules, copy them into your settings file, then review each rule against your own pipeline and risk tolerance.
 
+<h2 id="edit-rules-from-permissions">
+  Edit rules from `/permissions`
+</h2>
+
+To view and edit classifier rules without opening a settings file, run [`/permissions`](/docs/en/permissions#manage-permissions) and select the **Auto mode** tab. The tab requires Claude Code v2.1.246 or later, and it appears only when [auto mode is available](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) to your session.
+
+The tab lists the `allow`, `soft_deny`, `hard_deny`, and `environment` entries from each of the [scopes the classifier reads](#where-the-classifier-reads-configuration), and shows whether the built-in rules are in effect for each section. Claude Code shows entries from [managed settings](/docs/en/server-managed-settings) or the `--settings` flag as read-only, and saves every change you make on the tab to `~/.claude/settings.json`. From the tab you can:
+
+* Add, edit, or delete rules in the `allow`, `soft_deny`, and `hard_deny` sections. When you add the first rule to a section, Claude Code also inserts `"$defaults"` so the [built-in rules](#override-the-block-and-allow-rules) stay in effect.
+* Turn the built-in rules for `allow`, `soft_deny`, or `hard_deny` off or back on. Claude Code records the choice by adding or removing `"$defaults"` in your list for that section, so a section needs at least one rule of your own before you can turn its built-in rules off.
+* Edit the `environment` entries as one document in your editor. If you haven't configured any `environment` entries yet, Claude Code first asks whether to replace the built-in environment, then opens the editor on the full built-in text. When you save, Claude Code replaces your `autoMode.environment` array with the document. Include the `"$defaults"` line to [keep the built-in entries](#define-trusted-infrastructure).
+
 ## Route all shell commands through the classifier
 
 By default, narrow Bash and PowerShell allow rules such as `Bash(npm test)` stay in effect in auto mode, and Claude Code resolves them before the classifier runs. Claude Code suspends only the broad rules that grant arbitrary code execution, such as `Bash(*)` or wildcarded interpreters, together with every rule that names [`Monitor`](/docs/en/tools-reference#monitor-tool), because Monitor commands run through the shell. This means a narrow rule can still let a destructive argument through without the classifier seeing it, for example a script path or flag the rule's prefix didn't anticipate.
@@ -364,6 +377,8 @@ Claude Code shows the blocked tool call wherever the denial appears, including t
 * A destination Claude needs throughout the task, such as a package registry, an internal domain, or a repository host: add it to `autoMode.environment`.
 * A command you want to run without review from now on: add an `allow` rule.
 * A one-off action you did intend: state that intent in your next message and let Claude retry.
+
+You can add the environment entry or `allow` rule from the `/permissions` dialog's [**Auto mode** tab](#edit-rules-from-permissions).
 
 The reason shown with the call is the fixed text `Blocked by classifier` in most sessions, in Claude Code v2.1.208 and later: the classifier scores each action on an internal severity scale rather than writing an explanation. Some sessions run a classifier model that writes a short explanation instead, in v2.1.193 and later; when one appears, treat it as a hint about which destination or intent the classifier was missing. Claude Code selects the classifier model, so which reason you see isn't something you configure.
 
