@@ -134,6 +134,7 @@ Match the message you see to a section below.
 | `` `claude import` is not yet available in this build ``                                                                                                                                      | [Command-line errors](#claude-import-is-not-yet-available-in-this-build)                                                      |
 | `Could not read Claude Code config`                                                                                                                                                           | [Command-line errors](#could-not-read-claude-code-config)                                                                     |
 | `Could not import <server>: <reason>`                                                                                                                                                         | [Command-line errors](#could-not-import-a-server-from-claude-desktop)                                                         |
+| `is Anthropic-hosted and doesn't support local OAuth`                                                                                                                                         | [Command-line errors](#anthropic-hosted-and-doesnt-support-local-oauth)                                                       |
 | `Error: MCP tool <name> (passed via --permission-prompt-tool) not found`                                                                                                                      | [Command-line errors](#mcp-permission-prompt-tool-not-found)                                                                  |
 | `Shell command failed for pattern "..."`, from `/security-review` or any skill that injects dynamic context                                                                                   | [Command-line errors](#security-review-fails-without-origin-head)                                                             |
 | `Shell command permission check failed for pattern "..."`, from a skill that injects dynamic context                                                                                          | [Command-line errors](#security-review-fails-without-origin-head)                                                             |
@@ -1841,6 +1842,23 @@ The text after the server name is the reason. The most common one is the name ch
 
 * Rename the server in `claude_desktop_config.json` to use only letters, numbers, hyphens, and underscores, then run `claude mcp add-from-claude-desktop` again
 * Add that server directly with `claude mcp add` or `claude mcp add-json` under a valid name. See [Import MCP servers from Claude Desktop](/docs/en/mcp#import-mcp-servers-from-claude-desktop).
+
+<h3 id="anthropic-hosted-and-doesnt-support-local-oauth">
+  Server is Anthropic-hosted and doesn't support local OAuth
+</h3>
+
+You started a sign-in for an MCP server whose URL points at an Anthropic-hosted connector host that authenticates through a third-party identity provider. These hosts include `microsoft365.mcp.claude.com`, `gmail.mcp.claude.com`, and `gcal.mcp.claude.com`. Claude Code refuses to start its local OAuth flow for these hosts from both the `/mcp` panel and `claude mcp login`, because [their sign-in works only through claude.ai](/docs/en/mcp#use-mcp-servers-from-claude-ai).
+
+```text theme={null}
+"gmail" is Anthropic-hosted and doesn't support local OAuth. Connect it via Settings → Connectors on claude.ai (requires `claude login`), then it'll be available here automatically.
+```
+
+Claude Code matches these hosts by URL, so the message appears when a server you added with `claude mcp add` or in `.mcp.json` points at one of them.
+
+**What to do:**
+
+* Remove your entry with `claude mcp remove <name>`, so it can't hide the claude.ai connector at the same URL
+* After removing it, connect the service at [claude.ai/customize/connectors](https://claude.ai/customize/connectors), while signed in to the account you use in Claude Code. Once connected, [the connector appears in Claude Code automatically](/docs/en/mcp#use-mcp-servers-from-claude-ai) if your active authentication method is a claude.ai subscription login
 
 ### MCP permission prompt tool not found
 
