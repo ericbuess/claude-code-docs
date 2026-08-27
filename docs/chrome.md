@@ -284,12 +284,12 @@ On Windows, you may encounter:
 
 These are the most frequently encountered errors and how to resolve them:
 
-| Error                                       | Cause                                            | Fix                                                             |
-| ------------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------- |
-| "Browser extension is not connected"        | Native messaging host cannot reach the extension | Restart Chrome and Claude Code, then run `/chrome` to reconnect |
-| Extension shows "Not detected" in `/chrome` | Chrome extension is not installed or is disabled | Install or enable the extension in `chrome://extensions`        |
-| "No tab available"                          | Claude tried to act before a tab was ready       | Ask Claude to create a new tab and retry                        |
-| "Receiving end does not exist"              | Extension service worker went idle               | Run `/chrome` and select "Reconnect extension"                  |
+| Error                                       | Cause                                                                                                                                          | Fix                                                                                                                                                                                                                                                  |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Browser extension is not connected"        | Native messaging host cannot reach the extension, or your organization's IP allowlist rejects the connection to `bridge.claudeusercontent.com` | Restart Chrome and Claude Code, then run `/chrome` to reconnect. If your organization uses IP allowlisting and the error persists, see [Organization IP allowlists and proxy egress](/docs/en/network-config#organization-ip-allowlists-and-proxy-egress) |
+| Extension shows "Not detected" in `/chrome` | Chrome extension is not installed or is disabled                                                                                               | Install or enable the extension in `chrome://extensions`                                                                                                                                                                                             |
+| "No tab available"                          | Claude tried to act before a tab was ready                                                                                                     | Ask Claude to create a new tab and retry                                                                                                                                                                                                             |
+| "Receiving end does not exist"              | Extension service worker went idle                                                                                                             | Run `/chrome` and select "Reconnect extension"                                                                                                                                                                                                       |
 
 ## See also
 

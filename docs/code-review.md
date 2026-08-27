@@ -104,7 +104,9 @@ An Owner enables Code Review once for the organization and selects which reposit
 
     * **Once after PR creation**: review runs once when a PR is opened or marked ready for review
     * **After every push**: review runs on every push to the PR branch, catching new issues as the PR evolves and auto-resolving threads when you fix flagged issues
-    * **Manual**: reviews start only when someone [comments `@claude review` on a PR](#manually-trigger-reviews); `@claude review always` starts a review and subscribes the PR to reviews on subsequent pushes
+    * **Manual**: opening or pushing to a PR doesn't start a review; comment [`@claude review`](#manually-trigger-reviews) to request one, or `@claude review always` to also subscribe the PR to reviews on subsequent pushes
+
+    Whichever option you choose, Claude reviews a [pull request from a fork](#review-pull-requests-from-forks) only when someone comments `@claude review` on it.
 
     Reviewing on every push runs the most reviews and costs the most. Manual mode is useful for high-traffic repos where you want to opt specific PRs into review, or to only start reviewing your PRs once they're ready.
   </Step>
@@ -134,12 +136,23 @@ For any of these commands to trigger a review:
 
 * Post it as a top-level PR comment, not an inline comment on a diff line
 * Put the command at the start of the comment, with `once` or `always` on the same line as the rest of the command
-* You must have owner, member, or collaborator access to the repository
+* You must have write, maintain, or admin permission on the repository
 * The PR must be open
+
+If the repository belongs to an organization and your membership in that organization is private, which is GitHub's default, GitHub doesn't identify you to Claude as a member. Claude may still react to your comment with 👀, but it doesn't start a review unless you were added to the repository directly as a collaborator, even when a team or the organization's base permissions give you write access. To fix this, [make your organization membership public](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-your-membership-in-organizations/publicizing-or-hiding-organization-membership) or ask a repository admin to add you to the repository as a collaborator.
 
 Unlike automatic triggers, manual triggers run on draft PRs, since an explicit request signals you want the review now regardless of draft status.
 
 If a review is already running on that PR, the request is queued until the in-progress review completes. You can monitor progress via the check run on the PR.
+
+### Review pull requests from forks
+
+Claude doesn't review a pull request from a fork automatically, regardless of the repository's **Review Behavior** setting. To start one, comment `@claude review` on the pull request. The [requirements for comment commands](#manually-trigger-reviews) still apply, and the write access you need is to the base repository, not the fork.
+
+To get another review of a fork pull request, post a new `@claude review` comment. `@claude review always` works too, but doesn't subscribe the pull request to reviews on later pushes. Nothing other than a comment command starts a review on a fork pull request:
+
+* Clicking **Re-run** on the check run doesn't start a review
+* Pushing new commits doesn't start a review, even in a repository set to **After every push**
 
 ## Customize reviews
 
@@ -240,9 +253,9 @@ The review trigger you choose affects total cost:
 
 * **Once after PR creation**: runs once per PR
 * **After every push**: runs on each push, multiplying cost by the number of pushes
-* **Manual**: no reviews until someone comments `@claude review` on a PR
+* **Manual**: no reviews on open or push, so cost accrues only from reviews someone requests
 
-In Once after PR creation or Manual mode, commenting `@claude review always` [opts the PR into push-triggered reviews](#manually-trigger-reviews), so additional cost accrues per push after that comment. In After every push mode, pushes already trigger reviews, so the subscription doesn't change per-push cost. Commenting `@claude review` runs a single review without subscribing to future pushes.
+In Once after PR creation or Manual mode, commenting `@claude review always` [opts the PR into push-triggered reviews](#manually-trigger-reviews), so additional cost accrues per push after that comment. In After every push mode, pushes already trigger reviews, so the subscription doesn't change per-push cost. Commenting `@claude review` runs a single review without subscribing to future pushes. Claude reviews a [pull request from a fork](#review-pull-requests-from-forks) only when someone comments `@claude review`, so a fork pull request never accrues per-push cost in any mode.
 
 Costs appear on your Anthropic bill regardless of whether your organization uses Amazon Bedrock or Google Cloud's Agent Platform for other Claude Code features. To set a monthly spend cap for Code Review, go to [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) and configure the limit for the Claude Code Review service.
 
@@ -256,9 +269,7 @@ Review runs are best-effort. A failed run never blocks your PR, but it also does
 
 When the review infrastructure hits an internal error or exceeds its time limit, the check run completes with a title of **Code review encountered an error** or **Code review timed out**. The conclusion is still neutral, so nothing blocks your merge, but no findings are posted.
 
-To run the review again, comment `@claude review` on the PR. This starts a fresh review without subscribing the PR to future pushes. If the PR is already subscribed to push-triggered reviews, pushing a new commit also starts a new review.
-
-The **Re-run** button in GitHub's Checks tab does not retrigger Code Review. Use the comment command or a new push instead.
+To run the review again, comment `@claude review` on the PR. This starts a fresh review without subscribing the PR to future pushes. If the PR isn't [from a fork](#review-pull-requests-from-forks), you can instead click **Re-run** on the **Claude Code Review** check in GitHub's Checks tab. A re-run also starts a fresh review without subscribing the PR.
 
 ### Review didn't run and the PR shows a spend-cap message
 

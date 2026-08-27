@@ -149,6 +149,8 @@ Match the message you see to a section below.
 | `No conversation found with session ID: <session-id>`                                                                                                                                         | [Command-line errors](#no-conversation-found-with-the-session-id)                                                             |
 | `Cannot switch renderers in this session`                                                                                                                                                     | [Command-line errors](#cannot-switch-renderers-in-this-session)                                                               |
 | `Cannot switch renderers while work is running in the background`                                                                                                                             | [Command-line errors](#cannot-switch-renderers-in-this-session)                                                               |
+| `Couldn't read your Zed keymap` / `Couldn't back up your Zed keymap` / `Couldn't update your Zed keymap`                                                                                      | [Command-line errors](#terminal-setup-left-your-zed-keymap-unchanged)                                                         |
+| `Your Zed keymap isn't a readable list of keybindings`                                                                                                                                        | [Command-line errors](#terminal-setup-left-your-zed-keymap-unchanged)                                                         |
 | `Marketplace "<name>" is registered from an untrusted source`                                                                                                                                 | [Plugin errors](#marketplace-is-registered-from-an-untrusted-source)                                                          |
 | `references ${user_config.*} in a shell-form command`                                                                                                                                         | [Plugin errors](#plugin-command-references-user-config)                                                                       |
 | `Monitor "<name>" from plugin <plugin> references ${user_config.*} in its command`                                                                                                            | [Plugin errors](#plugin-command-references-user-config)                                                                       |
@@ -170,6 +172,8 @@ Match the message you see to a section below.
 | `blocked because the path is spelled in a form that cannot be safely resolved`                                                                                                                | [Background session errors](#write-or-command-blocked-because-the-path-cannot-be-safely-resolved)                             |
 | `blocked because the path is network-shaped`                                                                                                                                                  | [Background session errors](#write-or-command-blocked-because-the-path-names-a-network-location)                              |
 | `This session has no saved transcript`                                                                                                                                                        | [Background session errors](#this-session-has-no-saved-transcript)                                                            |
+| `terminal host process died — press Enter to restart` / `This session's terminal host process died`                                                                                           | [Background session errors](#terminal-host-process-died)                                                                      |
+| `Session isn't responding` / `Press enter again to restart this session — it isn't responding`                                                                                                | [Background session errors](#session-isnt-responding)                                                                         |
 | `This session was running agent '<name>', which is no longer available`                                                                                                                       | [Background session errors](#session-agent-no-longer-available)                                                               |
 | `CLAUDE_CODE_PROCESS_WRAPPER: launcher ...`                                                                                                                                                   | [Background session errors](#claude_code_process_wrapper-launcher-errors)                                                     |
 | `EUNKNOWN: unknown error, uv_spawn`                                                                                                                                                           | [Background session errors](#eunknown-when-starting-a-background-session)                                                     |
@@ -179,6 +183,8 @@ Match the message you see to a section below.
 | `Transcript writes are failing (...)`                                                                                                                                                         | [Session saving warnings](#transcript-writes-are-failing)                                                                     |
 | `Transcript saving is off — CLAUDE_CODE_SKIP_PROMPT_HISTORY is set`                                                                                                                           | [Session saving warnings](#transcript-saving-is-off-skip-prompt-history)                                                      |
 | `Transcript saving is off — inherited CLAUDE_CODE_CHILD_SESSION marker`                                                                                                                       | [Session saving warnings](#transcript-saving-is-off-child-session-marker)                                                     |
+| `Claude Code's fullscreen renderer didn't finish starting last time on this machine` / `Claude Code's fullscreen renderer has repeatedly failed to start on this machine`                     | [Configuration warnings](#fullscreen-failed-start-notice)                                                                     |
+| `Claude Code exited after an unrecoverable interface error (...)`                                                                                                                             | [Configuration warnings](#exited-after-an-unrecoverable-interface-error)                                                      |
 | `Ignoring N permissions.allow entries from ... this workspace has not been trusted`                                                                                                           | [Configuration warnings](#workspace-has-not-been-trusted)                                                                     |
 | `headersHelper not run — this workspace has no persisted trust`                                                                                                                               | [Configuration warnings](#headershelper-not-run)                                                                              |
 | `... is not matched by file permission checks`                                                                                                                                                | [Configuration warnings](#is-not-matched-by-file-permission-checks)                                                           |
@@ -1232,7 +1238,7 @@ The status is the proxy's answer to the `CONNECT`. The host never answered, so e
 **What to do:**
 
 * Check the address and credentials in the proxy variable, as [Proxy configuration](/docs/en/network-config#proxy-configuration) describes, then run `curl -x http://proxy.example.com:8080 -I https://api.anthropic.com` from the shell you start Claude Code in, using your own proxy URL. On Windows PowerShell, run `curl.exe`. If this probe fails the same way, fix the proxy setup first. If it succeeds, the refusal is specific to the artifact host.
-* If your network lets Claude Code reach the artifact host directly, add `.claudeusercontent.com` to [`NO_PROXY`](/docs/en/network-config#environment-variables).
+* If your network lets Claude Code reach the artifact host directly, add `.frame.claudeusercontent.com` to [`NO_PROXY`](/docs/en/network-config#environment-variables). Keep the entry that narrow: a broader `.claudeusercontent.com` entry also bypasses the proxy for `bridge.claudeusercontent.com`, which organizations with [IP allowlisting](/docs/en/network-config#organization-ip-allowlists-and-proxy-egress) need to keep on the proxy.
 
 Before v2.1.238, Claude Code reported a refused tunnel as a generic network error.
 
@@ -2037,6 +2043,34 @@ Each reason the message can show in parentheses:
 
 * In a session started without those restrictions, run `/tui fullscreen`, or `/tui default` to switch back. Claude Code saves the [`tui` setting](/docs/en/settings-reference#tui) there
 
+<h3 id="terminal-setup-left-your-zed-keymap-unchanged">
+  /terminal-setup left your Zed keymap unchanged
+</h3>
+
+You ran [`/terminal-setup`](/docs/en/terminal-config#enter-multiline-prompts) in Zed, and Claude Code couldn't complete the update to your Zed `keymap.json`, so it left the file as it was.
+
+Each message names the path to your keymap and ends with the keybinding block to add yourself:
+
+```text theme={null}
+Couldn't update your Zed keymap, so it was left unchanged.
+To add the binding yourself, add this block to the keymap array in <path to keymap.json>:
+{ "context": "Terminal", "bindings": { "shift-enter": ["terminal::SendText", "\u001b\r"] } }
+```
+
+The first line of the message names the cause:
+
+* `Couldn't read your Zed keymap, so it was left unchanged.`: Claude Code couldn't read the file, for example because of file permissions
+* `Your Zed keymap isn't a readable list of keybindings, so it was left unchanged.`: the file read fine but doesn't parse as an array of keybinding blocks, even with `//` comments and trailing commas allowed
+* `Couldn't back up your Zed keymap; not modifying it.`: Claude Code couldn't copy the file to a `.bak` backup beside it, so it changed nothing
+* `Couldn't update your Zed keymap, so it was left unchanged.`: the merged result didn't verify as a valid keymap carrying the binding, so Claude Code discarded it instead of writing. A keybinding block with a duplicated key can cause this
+
+**What to do:**
+
+* Copy the block from the message into the top-level array in your `keymap.json` at the path the message names
+* For `isn't a readable list of keybindings`, fix the syntax error, or make the file's top-level value an array, then run `/terminal-setup` again
+
+Before v2.1.247, `/terminal-setup` couldn't parse a Zed keymap that used `//` comments or trailing commas, and it replaced the entire file with only its own binding while reporting the binding as installed. To restore a keymap an earlier version replaced, use the `.bak` backup file described under [Enter multiline prompts](/docs/en/terminal-config#enter-multiline-prompts).
+
 ## Plugin errors
 
 These errors come from [plugin](/docs/en/plugins) and [marketplace](/docs/en/plugin-marketplaces) configuration. For plugin problems that don't produce one of the messages on this page, such as a marketplace URL that doesn't load or a plugin that installs but doesn't appear, see [Plugin troubleshooting](/docs/en/discover-plugins#troubleshooting).
@@ -2346,6 +2380,62 @@ Opening the same session's row in [agent view](/docs/en/agent-view) shows `Press
 * To start the stopped session fresh anyway, run `claude respawn <id>` with the ID from the message, or press `Enter` twice on its row in agent view
 * If the session did finish a response and you still see this refusal on a version before v2.1.214, an unreadable folder in `~/.claude/projects` could make the transcript scan miss the saved conversation; update to v2.1.214 or later, which tolerates unreadable folders during the scan
 
+### Terminal host process died
+
+Each [background session's](/docs/en/agent-view) terminal runs in a host process under the background service, and that process died while the service still held its connection, so the session couldn't be reached.
+
+On Linux and WSL, the background service checks each host process every few seconds, marks the session failed when the process has exited but its connection to the service never closed, and shows the reason on its row in [agent view](/docs/en/agent-view#read-session-state):
+
+```text theme={null}
+terminal host process died — press Enter to restart
+```
+
+If you open the row before the check runs, the footer shows `This session's terminal host process died (the conversation is saved) — press Enter to restart it` and the row turns failed.
+
+From the shell, `claude attach <id>` restarts a session already marked failed for a dead host, and otherwise prints the cause and exits:
+
+```text theme={null}
+Couldn't attach to <id> — This session's terminal host process died (the conversation is saved) — run `claude attach <id>` again to restart it on a fresh host.
+```
+
+The conversation is saved either way.
+
+A row running a [shell command](/docs/en/agent-view#run-a-shell-command) instead shows `terminal host process died — its output is gone; the command was not run again`, and `claude attach` prints `This command's terminal host process died — its output is gone and the command was not run again`. Claude Code never reruns the command for you.
+
+**What to do:**
+
+* In agent view, press `Enter` on the failed row; the session restarts on a fresh host process and the conversation resumes
+* From the shell, run `claude attach <id>` again. Claude Code prints `Session <id>'s terminal host died — restarting it on a fresh one…` and reopens the session
+* You can't restart a shell-command row this way; dispatch the command again to rerun it
+
+Before v2.1.247, a dead host process could pass every liveness check the background service ran, so opening the session showed `opening… · esc to cancel` indefinitely and `claude attach <id>` waited without reporting an error.
+
+<h3 id="session-isnt-responding">
+  Session isn't responding
+</h3>
+
+You opened a [background session](/docs/en/agent-view) and the background service accepted the open, but no output arrived for about ten seconds, so Claude Code concludes that the process relaying the session's terminal can't deliver output, and ends the attempt instead of waiting.
+
+In agent view, Claude Code offers a restart in the footer:
+
+```text theme={null}
+Press enter again to restart this session — it isn't responding (its conversation is saved and resumes).
+```
+
+From the shell, `claude attach <id>` prints the cause and exits:
+
+```text theme={null}
+Couldn't attach to <id> — Session isn't responding — `claude stop <id>`, then `claude attach <id>` restarts it (the conversation is saved).
+```
+
+Claude Code never restarts a row running a [shell command](/docs/en/agent-view#run-a-shell-command) for you, because a restart would run the command again.
+
+**What to do:**
+
+* In agent view, press `Enter` on the same row again. Claude Code stops the unresponsive process and restarts the session, and the conversation resumes. Nothing is stopped without that second press
+* From the shell, run `claude stop <id>`, then `claude attach <id>`
+* For a shell-command row, press `Ctrl+X` in agent view or run `claude stop <id>` to stop it; dispatch the command again to rerun it
+
 <h3 id="session-agent-no-longer-available">
   Session agent no longer available
 </h3>
@@ -2526,7 +2616,43 @@ Inside tmux, Claude Code detects a marker that arrived through the tmux server's
 
 ## Configuration warnings
 
-Claude Code writes these messages to stderr rather than showing an error in the conversation, except where an entry notes that it writes the message to the debug log instead. It writes most of them at startup and writes the [unrecognized-model diagnostic line](#unrecognized-model-id-on-a-request) at request time.
+Claude Code writes these messages to stderr rather than showing an error in the conversation, except where an entry notes that it writes the message to the debug log instead. It writes most of them at startup. Two exceptions: it writes the [unrecognized-model diagnostic line](#unrecognized-model-id-on-a-request) at request time, and the [unrecoverable interface error message](#exited-after-an-unrecoverable-interface-error) as it exits.
+
+<h3 id="fullscreen-failed-start-notice">
+  Fullscreen renderer didn't finish starting
+</h3>
+
+A previous [fullscreen](/docs/en/fullscreen) session on this machine exited before it finished starting, so Claude Code starts this session on the classic renderer and prints one of these notices:
+
+```text theme={null}
+Claude Code's fullscreen renderer didn't finish starting last time on this machine, so this launch is using the classic renderer. It will try fullscreen again next launch; /tui default keeps the classic renderer.
+
+Claude Code's fullscreen renderer has repeatedly failed to start on this machine, so it has been turned off here. Run /tui fullscreen to try it again (this also resets after an update).
+```
+
+**What to do:**
+
+* Follow [Fullscreen rendering](/docs/en/fullscreen#fullscreen-renderer-didnt-finish-starting). It says which notice you get, what Claude Code does in later sessions, and how to try fullscreen again or keep the classic renderer.
+* If the session that died printed an exit message, see [Claude Code exited after an unrecoverable interface error](#exited-after-an-unrecoverable-interface-error) for what it names.
+
+Before v2.1.236, Claude Code printed no notice and kept starting sessions in fullscreen rendering after a failed start.
+
+<h3 id="exited-after-an-unrecoverable-interface-error">
+  Claude Code exited after an unrecoverable interface error
+</h3>
+
+Claude Code prints this message when it exits because its terminal interface hit an error it can't recover from, in either renderer. The second sentence appears only when the error happened while the [fullscreen](/docs/en/fullscreen) renderer was starting:
+
+```text theme={null}
+Claude Code exited after an unrecoverable interface error (<error>). It happened while the fullscreen renderer was starting, so the next launch will use the classic renderer (CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1 forces that any time).
+```
+
+**What to do:**
+
+* Start Claude Code again. To pick the conversation back up, run `claude --resume` in the same directory.
+* If the message names the fullscreen renderer, [Fullscreen rendering](/docs/en/fullscreen#fullscreen-renderer-didnt-finish-starting) says what the next launch does, which depends on how you turned fullscreen on, and how to try fullscreen again or keep the classic renderer.
+
+Before v2.1.236, Claude Code exited without printing a message after this kind of error.
 
 ### Workspace has not been trusted
 

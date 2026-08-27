@@ -26,7 +26,9 @@ When a signal matches and the plugin is not already installed, Claude Code shows
 * **Session-start suggestion**: if the `cwd` signal matches the working directory, a one-line `plugin suggestion: <name>@<marketplace> · /plugin` notification appears before the first turn. This surface requires Claude Code v2.1.153 or later.
 * **`/plugin` Discover tab**: the plugin is pinned to the top of the Discover list with an annotation such as "suggested for this directory" or "suggested for stripe commands". This surface requires Claude Code v2.1.154 or later.
 
-The spinner tip and the session-start notification are part of the spinner-tips system. Both are disabled when the user or project sets `spinnerTipsEnabled` to `false`, or when a custom `spinnerTipsOverride` is configured with `excludeDefault`. The Discover-tab pin is independent of tip settings.
+The spinner tip and the session-start notification are part of the spinner-tips system. Claude Code disables both when `spinnerTipsEnabled` resolves to `false` across your settings files, or when `excludeDefault` resolves to `true` across the [`spinnerTipsOverride`](/docs/en/settings-reference#spinnertipsoverride) keys in user, `--settings`, and managed settings and those keys configure at least one tip or a `tipsFile`.
+
+The Discover-tab pin is independent of tip settings.
 
 Claude Code never installs a plugin automatically. The user always confirms.
 

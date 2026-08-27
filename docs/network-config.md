@@ -227,6 +227,12 @@ When using [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Plat
 
 When routing through an [LLM gateway](/docs/en/llm-gateway) with [`ANTHROPIC_BASE_URL`](/docs/en/llm-gateway-connect#set-the-base-url-and-credential), the [fast mode](/docs/en/fast-mode) availability check still calls `api.anthropic.com` rather than the gateway base URL. The check does honor a configured HTTP proxy, so where a network block is the cause, an allowlist entry for `api.anthropic.com` in the proxy is the fix. A network block fails the check only where the host is unreachable even through the proxy, and fast mode then reports a connectivity error. The same connectivity error appears when the check presents a gateway-issued credential that Anthropic rejects; allowlisting doesn't help there, since nothing is blocked. See [use fast mode behind proxies and LLM gateways](/docs/en/fast-mode#use-fast-mode-behind-proxies-and-llm-gateways) for the variables that restore it.
 
+### Organization IP allowlists and proxy egress
+
+If your organization has [IP allowlisting](https://support.claude.com/en/articles/13200993-restrict-access-to-claude-with-ip-allowlisting) enabled for Claude, route `bridge.claudeusercontent.com` through the same proxy egress as `claude.ai` and `api.anthropic.com`, for example by placing it in the same Zscaler app segment or Netskope steering policy. If you can't route it that way, add the egress address your proxy uses for that host to your organization's IP allowlist, but only when that address is dedicated to your organization: a shared proxy egress range also admits the proxy vendor's other customers.
+
+Anthropic checks connections to `bridge.claudeusercontent.com` against your organization's IP allowlist using the address they arrive from. If your proxy sends traffic for that host out through an address that isn't on that allowlist, Claude Code can't connect to the [Claude in Chrome](/docs/en/chrome) extension even though the rest of Claude Code works.
+
 ### GitHub allow lists and firewalls
 
 [Claude Code on the web](/docs/en/claude-code-on-the-web) in Anthropic-hosted environments and [Code Review](/docs/en/code-review) connect to your repositories from Anthropic-managed infrastructure; sessions in a [self-hosted environment](/docs/en/self-hosted-environments) connect from inside your network, unless the runner opts into the [Anthropic git proxy](/docs/en/self-hosted-environments-deploy#use-the-anthropic-git-proxy), which fetches from Anthropic's side.

@@ -286,12 +286,18 @@ Actions available in the `ModelPicker` context:
 
 Actions available in the `Select` context:
 
-| Action            | Default         | Description      |
-| :---------------- | :-------------- | :--------------- |
-| `select:next`     | Down, J, Ctrl+N | Next option      |
-| `select:previous` | Up, K, Ctrl+P   | Previous option  |
-| `select:accept`   | Enter           | Accept selection |
-| `select:cancel`   | Escape          | Cancel selection |
+| Action            | Default         | Description                   |
+| :---------------- | :-------------- | :---------------------------- |
+| `select:next`     | Down, J, Ctrl+N | Next option                   |
+| `select:previous` | Up, K, Ctrl+P   | Previous option               |
+| `select:pageUp`   | PageUp          | Move up one page of options   |
+| `select:pageDown` | PageDown        | Move down one page of options |
+| `select:first`    | Home            | First option                  |
+| `select:last`     | End             | Last option                   |
+| `select:accept`   | Enter           | Accept selection              |
+| `select:cancel`   | Escape          | Cancel selection              |
+
+Claude Code applies your `select:pageUp`, `select:pageDown`, `select:first`, and `select:last` bindings in the `/skills` menu. In most other lists, such as the `/model` picker, Claude Code pages with PageUp and PageDown regardless of your bindings and ignores Home and End.
 
 ### Plugin actions
 
@@ -388,6 +394,8 @@ ctrl+k ctrl+s   Press Ctrl+K, release, then Ctrl+S
 * `tab` - Tab key
 * `space` - Space bar
 * `up`, `down`, `left`, `right` - Arrow keys
+* `pageup`, `pagedown` - Page Up and Page Down keys
+* `home`, `end` - Home and End keys
 * `backspace`, `delete` - Delete keys
 * `wheelup`, `wheeldown` - Mouse wheel scroll events
 
