@@ -120,7 +120,7 @@ Deploy a `managed-mcp.json` containing an empty server map to block every MCP se
 
 ### Allow claude.ai connectors alongside the managed set
 
-By default, deploying `managed-mcp.json` suppresses the [claude.ai connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) Claude Code fetches itself, including connectors an administrator configured for the organization in the claude.ai admin console. To load those connectors alongside the servers in `managed-mcp.json`, set `"allowAllClaudeAiMcps": true` in a [managed settings source](/docs/en/admin-setup#decide-how-settings-reach-devices). Requires Claude Code v2.1.149 or later.
+By default, deploying `managed-mcp.json` suppresses the [claude.ai connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) Claude Code fetches itself, including connectors an administrator configured for the organization in the claude.ai admin console. To load those connectors alongside the servers in `managed-mcp.json`, set `"allowAllClaudeAiMcps": true` in a [managed settings source](/docs/en/admin-setup#decide-how-settings-reach-devices).
 
 With the setting enabled, Claude Code loads the same claude.ai connectors it would load if `managed-mcp.json` weren't deployed. [Allowlists and denylists](#policy-based-control-with-allowlists-and-denylists) still apply to those connectors, so you can block specific ones with `deniedMcpServers`. The setting affects only the claude.ai connectors Claude Code fetches itself; plugin-provided servers stay suppressed.
 

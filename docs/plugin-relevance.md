@@ -21,8 +21,8 @@ Signal matching happens locally on the user's machine. The matching adds no netw
 When a signal matches and the plugin is not already installed, Claude Code shows the plugin in three places:
 
 * **Spinner tip**: a "Working with *topic*? Install the *plugin* plugin" message with the `/plugin install` command appears below the spinner while Claude is responding.
-* **Session-start suggestion**: if the `cwd` signal matches the working directory, a one-line `plugin suggestion: <name>@<marketplace> · /plugin` notification appears before the first turn. This surface requires Claude Code v2.1.153 or later.
-* **`/plugin` Discover tab**: the plugin is pinned to the top of the Discover list with an annotation such as "suggested for this directory" or "suggested for stripe commands". This surface requires Claude Code v2.1.154 or later.
+* **Session-start suggestion**: if the `cwd` signal matches the working directory, a one-line `plugin suggestion: <name>@<marketplace> · /plugin` notification appears before the first turn.
+* **`/plugin` Discover tab**: the plugin is pinned to the top of the Discover list with an annotation such as "suggested for this directory" or "suggested for stripe commands".
 
 The spinner tip and the session-start notification are part of the spinner-tips system. Claude Code disables both when `spinnerTipsEnabled` resolves to `false` across your settings files, or when `excludeDefault` resolves to `true` across the [`spinnerTipsOverride`](/docs/en/settings-reference#spinnertipsoverride) keys in user, `--settings`, and managed settings and those keys configure at least one tip or a `tipsFile`.
 

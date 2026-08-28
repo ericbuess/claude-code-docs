@@ -108,7 +108,7 @@ You can configure your model in several ways, listed in order of priority:
 4. **Settings**: configure permanently in your settings file using the `model` field
 5. **[Default for new sessions](#set-a-default-model-for-new-sessions)**: set `ANTHROPIC_DEFAULT_MODEL=<alias|name>`
 
-As of v2.1.153, `/model` saves your choice as the default for new sessions by writing the `model` field in your user settings. In the picker:
+`/model` saves your choice as the default for new sessions by writing the `model` field in your user settings. In the picker:
 
 * `Enter`: switch model and save as your default
 * `s`: switch model for this session only

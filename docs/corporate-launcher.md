@@ -26,7 +26,7 @@ With `CLAUDE_CODE_PROCESS_WRAPPER` set, Claude Code starts each of the following
 * The terminal host and the Claude Code session inside every agent view row, including the warm standby sessions the service keeps ready.
 * Sessions the service respawns after an update or a crash.
 * The relaunch Claude Code performs of itself to finish installing an update, including agent view's restart-for-update action.
-* The [Remote Control](/docs/en/remote-control) worker processes the background service manages. Requires Claude Code v2.1.210 or later.
+* The session processes that [Remote Control](/docs/en/remote-control) starts. Requires Claude Code v2.1.210 or later.
 * The split-pane teammate sessions that [agent teams](/docs/en/agent-teams) start in tmux or iTerm2. Teammate panes are interactive rather than background processes, but Claude Code starts them from its own binary, so the launcher covers them. Requires Claude Code v2.1.210 or later.
 
 On Windows, the variable is ignored: the launcher contract depends on `exec`, which Windows doesn't support. A Windows machine with the variable set runs every process unwrapped and keeps working, and the only signal is a warning in the [debug log](/docs/en/troubleshooting). If your launcher policy covers Windows, the variable doesn't satisfy it there: count Windows machines as unwrapped when you plan the rollout.
@@ -116,7 +116,6 @@ When the launcher can't run, Claude Code refuses to start the process instead of
   * The per-session authentication tokens, the model and provider selection, and `CLAUDE_CODE_PROCESS_WRAPPER` itself all travel on the inherited environment, so a launcher that rebuilds it from an allow list breaks the sessions it starts, and `/status` reports a launcher mismatch.
   * If the launcher must enter a namespace or sandbox that resets the environment, re-export the inherited environment inside it verbatim.
 * **Reach `exec` within about three seconds each time the launcher runs.** A cold background dispatch runs the launcher twice in series before the first byte of output, so do slow work such as a single sign-on exchange lazily or from a cache.
-  * A launcher that runs far past the budget is treated as a stalled start and restarted.
 * **Tolerate being invoked from inside itself.** Claude Code applies the launcher to every nested self-spawn, so a launcher that acquires an exclusive resource must detect that it already holds it.
 * **Don't write to the terminal before Claude Code starts.** Anything printed before the `exec` is reported as the crash cause if the session dies before initializing.
 

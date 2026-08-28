@@ -130,7 +130,7 @@ You can ask for a consultation in your prompt the same way you would request any
 
 When Claude calls the advisor, the transcript shows an `Advising` line with the advisor model name while the call is in progress. When the result returns, the line reports whether the advisor gave guidance:
 
-* **Reviewed**: the line confirms that the advisor has reviewed the conversation. Press `Ctrl+O` to expand it and read the advisor's full guidance.
+* **Reviewed**: the line confirms that the advisor has reviewed the conversation. When the advisor returned readable guidance, press `Ctrl+O` to read it.
 * **Declined**: the line reads `Advisor declined to advise on this request`. If the advisor gave a reason, press `Ctrl+O` to read it.
 
 Claude generally follows the advisor's guidance, but adapts when its own evidence contradicts a specific claim: if a recommended step fails when tried, or the file contents contradict the advice, Claude surfaces the conflict rather than following the guidance unconditionally.

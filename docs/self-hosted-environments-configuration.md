@@ -323,7 +323,7 @@ fi
 #   - init+fetch checkouts (runner default: only FETCH_HEAD exists)
 #   - clone-based checkouts (origin/* exist)
 #   - the runner default: the child starts on the session's outcome
-#     branch, which the runner creates with checkout -B after checkout
+#     branch, which the runner creates after checkout
 #   - detached HEAD, when a custom setup skips that branch creation
 # With no reference point at all (never fetched), stay silent rather
 # than false-positive on a read-only turn.
