@@ -146,6 +146,7 @@ Your script runs once when a session starts, including when you resume one. Afte
 * Vim mode toggles
 * You change the `command` in your `statusLine` settings
 * A [`refreshInterval`](#manually-configure-a-status-line) timer elapses, if you set one
+* A [rate-limit window](#rate-limit-usage) in the data your script last received reaches its `resets_at` time
 
 Claude Code debounces updates at 300ms, so rapid changes batch together and your script runs once after the changes stop. A change to the `command` itself skips the debounce: Claude Code runs the new command right away. If a new update triggers while your script is still running, Claude Code cancels the in-flight script. If you edit your script, the changes appear the next time an update trigger re-runs it.
 
@@ -306,7 +307,7 @@ Claude Code sends the following JSON fields to your script via stdin:
   * `agent`: appears only when running with the `--agent` flag or agent settings configured
   * `pr`: appears only while an open PR or GitLab merge request is found for the current branch, and is removed once it merges or closes. `pr.review_state` and `pr.kind` may be independently absent
   * `worktree`: appears only while the session is in a [worktree session](/docs/en/worktrees). When present, `branch` and `original_branch` may also be absent for hook-based worktrees
-  * `rate_limits`: appears only for Claude.ai subscribers (Pro/Max) after the first API response in the session. Each window (`five_hour`, `seven_day`) may be independently absent. Use `jq -r '.rate_limits.five_hour.used_percentage // empty'` to handle absence gracefully.
+  * `rate_limits`: appears only for Claude.ai subscribers (Pro/Max) after the first API response in the session. Each window (`five_hour`, `seven_day`) may be independently absent, and Claude Code drops a window once its `resets_at` time passes. Use `jq -r '.rate_limits.five_hour.used_percentage // empty'` to handle absence gracefully.
 
   **Fields that may be `null`**:
 

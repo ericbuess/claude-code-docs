@@ -29,7 +29,7 @@ Claude Code supports two approaches for centralized configuration. Server-manage
 | **Server-managed settings**                                               | Organizations without MDM, or users on unmanaged devices | Settings that Claude Code fetches from Anthropic's servers at startup and refreshes hourly during the session |
 | **[Endpoint-managed settings](/docs/en/managed-settings#delivery-mechanisms)** | Organizations with MDM or endpoint management            | Settings deployed to devices via MDM configuration profiles, registry policies, or managed settings files     |
 
-If your devices are enrolled in an MDM or endpoint management solution, endpoint-managed settings provide stronger security guarantees because the settings file can be protected from user modification at the OS level. Endpoint-managed settings don't reach [cloud sessions](/docs/en/model-config#surface-coverage) in Anthropic-hosted environments, so organizations using Claude Code on the web should configure server-managed settings as well. Sessions in a [self-hosted environment](/docs/en/self-hosted-environments) read the managed settings file in the runner image, but only when server-managed settings deliver no keys, per the [settings precedence](#settings-precedence) below and its [per-key exceptions](#per-key-exceptions-across-managed-sources).
+If your devices are enrolled in an MDM or endpoint management solution, endpoint-managed settings provide stronger security guarantees because the settings file can be protected from user modification at the OS level. Endpoint-managed settings don't reach [cloud sessions](/docs/en/model-config#surface-coverage) in Anthropic-hosted environments, so organizations using Claude Code on the web should configure server-managed settings as well. Sessions in a [self-hosted environment](/docs/en/self-hosted-environments) also read the managed settings file in the runner image. The [settings precedence](#settings-precedence) below says when that file applies.
 
 ## Configure server-managed settings
 
@@ -120,7 +120,7 @@ Server-managed settings have the following limitations:
 
 Server-managed settings and [endpoint-managed settings](/docs/en/managed-settings#delivery-mechanisms) both occupy the highest tier in the Claude Code [settings hierarchy](/docs/en/settings#settings-precedence). No other settings level can override them, including command line arguments, apart from the [exceptions to managed settings precedence](/docs/en/settings#exceptions-to-managed-settings-precedence).
 
-Within the managed tier, Claude Code uses the first source that delivers at least one policy key, checking server-managed settings first and then endpoint-managed settings; [Precedence within the managed tier](/docs/en/managed-settings#precedence-within-the-managed-tier) has the full ranking and the carve-out for `wslInheritsWindowsSettings`. Apart from the [exception keys covered next](#per-key-exceptions-across-managed-sources), sources don't merge: if server-managed settings deliver a policy key, other endpoint-managed settings are ignored. If server-managed settings deliver nothing, endpoint-managed settings apply.
+Within the managed tier, Claude Code by default uses the first source that delivers at least one policy key, checking server-managed settings first and then endpoint-managed settings, apart from the [exception keys covered next](#per-key-exceptions-across-managed-sources). [How Claude Code combines managed sources](/docs/en/managed-settings#precedence-within-the-managed-tier) has the full ranking, the carve-out for the control keys, and the opt-in that applies every source.
 
 If the selected source is an MDM policy or managed settings file whose [`policyHelper`](/docs/en/settings-reference#policyhelper) supplies managed settings, the helper's output replaces that source as the only managed configuration for the run. Claude Code doesn't consult a `policyHelper` configured in MDM or file-based settings while server-managed settings deliver a policy key.
 
@@ -252,13 +252,7 @@ Claude Code decides whether four privacy toggles need approval by the delivered 
 
 Server-managed settings require a direct connection to `api.anthropic.com`, and delivery requires the session to authenticate with a Team or Enterprise OAuth login, an OAuth token supplied through `CLAUDE_CODE_OAUTH_TOKEN`, or a directly configured API key. Keys returned by an [`apiKeyHelper`](/docs/en/settings-reference#apikeyhelper) script don't trigger the settings fetch.
 
-Server-managed settings are not available when using third-party model providers:
-
-* Amazon Bedrock
-* Google Cloud's Agent Platform
-* Microsoft Foundry
-* [Claude Platform on AWS](/docs/en/claude-platform-on-aws)
-* Custom API endpoints via `ANTHROPIC_BASE_URL` or third-party [LLM gateways](/docs/en/llm-gateway)
+In a [Cowork](https://claude.com/docs/cowork/overview) session in the Claude Desktop app, Claude Code doesn't fetch server-managed settings from the claude.ai admin console, even when the user signs in with a Team or Enterprise account. [Where and when a policy applies](/docs/en/managed-settings#where-and-when-a-policy-applies) covers which policy reaches Cowork sessions on the user's machine and remote Cowork sessions.
 
 If you export a `CLAUDE_CODE_USE_*` provider variable or a non-default `ANTHROPIC_BASE_URL` in your shell, Claude Code skips the settings fetch for your sessions. You can't clear the export with a server-managed `env` block, because the block arrives through the fetch that the export prevents. An [endpoint-managed settings](/docs/en/managed-settings#delivery-mechanisms) `env` block doesn't restore the fetch either: Claude Code checks eligibility before it applies managed `env` blocks, so the override changes the session's provider selection but the fetch stays skipped.
 

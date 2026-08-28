@@ -307,7 +307,7 @@ Toggle a server off in the `/mcp` panel to stop Claude Code from connecting to i
 
 When you toggle a server, Claude Code records your choice per project in `~/.claude.json`, in one of two lists that cover disjoint sets of servers:
 
-* `disabledMcpServers`: an opt-out list for user-configured servers, plugin servers, claude.ai connectors, and built-in servers that default to on. Claude Code doesn't connect to a server you list here. When you disable a claude.ai connector with the per-project `/mcp` toggle described in [Disable claude.ai connectors](#disable-claude-ai-connectors), Claude Code writes it to this list under its display name, for example `claude.ai Slack`.
+* `disabledMcpServers`: an opt-out list for user-configured servers, plugin servers, the claude.ai connectors Claude Code [fetches itself](#how-connectors-reach-claude-code), and built-in servers that default to on. Claude Code doesn't connect to a server you list here. When you disable a claude.ai connector with the per-project `/mcp` toggle described in [Disable claude.ai connectors](#disable-claude-ai-connectors), Claude Code writes it to this list under its display name, for example `claude.ai Slack`.
 * `enabledMcpServers`: an opt-in list for built-in servers that default to off, such as `computer-use`. Claude Code connects to a default-off server only when you list it here.
 
 Claude Code consults exactly one of the two lists for each server, so neither list overrides the other. If you add a regular server to `enabledMcpServers`, or a default-off built-in server to `disabledMcpServers`, Claude Code ignores the entry.
@@ -476,6 +476,7 @@ Or inline in `plugin.json`:
 * **Automatic lifecycle**: servers connect and disconnect at these points:
   * At session startup, Claude Code connects the servers for enabled plugins automatically. In `/mcp`, a remote (HTTP or SSE) plugin server you've used before can show the [`cached` status](#server-status-detail) instead; Claude Code connects it when Claude first calls one of its tools
   * If you enable or disable a plugin during a session, run `/reload-plugins` to connect or disconnect its MCP servers. When you reload, Claude Code keeps the live connections of plugin servers whose configuration is unchanged, and does the same when you [replace the session's MCP server list](/docs/en/agent-sdk/typescript#mcpsetserversresult) from the Agent SDK without naming them
+  * When you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later, Claude Code connects the servers of plugins the new directory's settings enable and disconnects the servers of plugins that are no longer enabled, so you don't need to run `/reload-plugins` after the move
   * In [web sessions](/docs/en/claude-code-on-the-web), an MCP call to a plugin server that isn't connected yet, such as right after an idle session wakes, starts the server on demand and waits for it to connect
 * **Path placeholders**: `${CLAUDE_PLUGIN_ROOT}` resolves to the plugin's installation directory, `${CLAUDE_PLUGIN_DATA}` to its [persistent state](/docs/en/plugins-reference#persistent-data-directory) directory, and `${CLAUDE_PROJECT_DIR}` to the stable project root. Substitution applies to:
   * `stdio` servers: `command`, `args`, `env`
@@ -940,12 +941,13 @@ A plugin-provided `headersHelper` can't reference the plugin's [`${user_config.*
 
 #### Where the helper runs
 
-Claude Code picks the `headersHelper` command's working directory from the configuration that declares the server. A `cd` later in the session doesn't move it. Each row below gives the directory that a relative path in your `headersHelper` command resolves against.
+Claude Code picks the `headersHelper` command's working directory from the configuration that declares the server. A `cd` that Claude runs in Bash doesn't move it, and [`/cd`](/docs/en/permissions#move-the-session-to-another-directory) moves it only for servers that run from the session's primary working directory. Each row below gives the directory that a relative path in your `headersHelper` command resolves against.
 
 | Where you configured the server                                                                                                                                                                              | Working directory                                                                            |
 | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
 | A [plugin](/docs/en/plugins-reference#mcp-servers)                                                                                                                                                                | The plugin's root directory. Requires Claude Code v2.1.195 or later                          |
-| A project `.mcp.json`, a [local-scope](#local-scope) server, an agent file in your project, a server from the SDK's `mcpServers` option or `setMcpServers()` method, or [`--mcp-config`](/docs/en/cli-reference)  | The directory you started Claude Code in                                                     |
+| A project `.mcp.json` or a [local-scope](#local-scope) server                                                                                                                                                | The project directory the server is declared in                                              |
+| An agent file in your project, a server from the SDK's `mcpServers` option or `setMcpServers()` method, or [`--mcp-config`](/docs/en/cli-reference)                                                               | The session's [primary working directory](/docs/en/permissions#working-directories)               |
 | [User scope](#user-scope), [managed MCP](/docs/en/managed-mcp), a [claude.ai connector](#use-mcp-servers-from-claude-ai), or an agent file from outside your project, including one from an `--add-dir` directory | Your configuration directory, `~/.claude` unless you set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) |
 
 Before v2.1.238, Claude Code also ran the helpers of user-scope, managed, and claude.ai connector servers, and of agent files from outside your project, from the directory you started it in.
@@ -963,7 +965,7 @@ When this applies to your helper, have the script read its credential from a fil
 
 #### Trust a folder before its headersHelper runs
 
-Claude Code executes a `headersHelper` as an arbitrary shell command. For a server in a project `.mcp.json` or at [local scope](#local-scope), it runs the helper only after you accept the [trust dialog](/docs/en/permissions#project-allow-rules-and-workspace-trust) for the folder you started the session in. Before v2.1.238, a `claude -p` or SDK session ran these helpers without checking trust, and an interactive session ran them once you had trusted a parent folder.
+Claude Code executes a `headersHelper` as an arbitrary shell command. For a server in a project `.mcp.json` or at [local scope](#local-scope), it runs the helper only after you accept the [trust dialog](/docs/en/permissions#project-allow-rules-and-workspace-trust) for the project directory the server is declared in. Before v2.1.238, a `claude -p` or SDK session ran these helpers without checking trust, and an interactive session ran them once you had trusted a parent folder.
 
 * **Trust that doesn't count**: a parent folder's trust, and the automatic trust a `claude -p` or SDK session gets for [hooks in settings files](/docs/en/permissions#what-runs-before-you-trust-a-folder)
 * **Until you trust the folder**: Claude Code connects the server with its static `headers` alone. In a `claude -p` or SDK session it also prints one [`headersHelper not run`](/docs/en/errors#headershelper-not-run) line per server to stderr, telling you how to grant the trust.
@@ -1090,16 +1092,31 @@ Some Anthropic-hosted connectors, such as Microsoft 365, Gmail, and Google Calen
 
 After you remove your entry with `claude mcp remove <name>` and connect the service on claude.ai, the connector appears in Claude Code automatically.
 
+### How connectors reach Claude Code
+
+Which settings govern a claude.ai connector depends on where your session runs, because only some sessions fetch connectors from claude.ai themselves. Each row below names how connectors arrive in one kind of session and what controls them there. The desktop app's [WSL sessions](/docs/en/desktop-wsl#what-works-in-a-wsl-session) have no row because connectors aren't available in them yet.
+
+| Where the session runs                                                                                                     | How connectors arrive                    | What governs them                                                                                                                                                                                                               |
+| :------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Terminal, [VS Code](/docs/en/vs-code), [JetBrains](/docs/en/jetbrains), and [Agent SDK](/docs/en/agent-sdk/claude-code-features) sessions | Claude Code fetches them from claude.ai  | The settings in this section and [managed MCP configuration](/docs/en/managed-mcp)                                                                                                                                                   |
+| [Cloud sessions](/docs/en/claude-code-on-the-web)                                                                               | The remote host passes them in           | Your claude.ai organization settings, plus the [allowlist and denylist](/docs/en/managed-mcp#policy-based-control-with-allowlists-and-denylists) settings that reach the session and any `managed-mcp.json` on the host that runs it |
+| The [desktop app](/docs/en/desktop)'s local and SSH sessions                                                                    | The desktop app delivers them in-process | `blocked` entries in your organization's [connector tool controls](#organization-controls-on-connector-tools)                                                                                                                   |
+
+[`disableClaudeAiConnectors`](#disable-claude-ai-connectors), `ENABLE_CLAUDEAI_MCP_SERVERS`, and [`allowAllClaudeAiMcps`](/docs/en/settings-reference#allowallclaudeaimcps) act only on the first row, the connectors Claude Code fetches itself. The other two rows differ from it in these ways:
+
+* **Cloud sessions**: `allowedMcpServers` and `deniedMcpServers` entries that reach the session, for example through [server-managed settings](/docs/en/server-managed-settings), filter the delivered connectors too. The session's proxy rewrites each connector's URL, so a `serverUrl` pattern written for the connector's own URL doesn't match it. To admit delivered connectors alongside a URL allowlist in a self-hosted environment, add the `serverUrl` entries listed under [Connector traffic leaves your network](/docs/en/self-hosted-environments-deploy#connector-traffic-leaves-your-network). Claude Code drops the delivered connectors when a `managed-mcp.json` is present on the host that runs the session, such as a [self-hosted runner host](/docs/en/self-hosted-environments-configuration#mcp-servers), whether or not you set `allowAllClaudeAiMcps`.
+* **Desktop app local and SSH sessions**: the desktop app registers the connectors as in-process `type: "sdk"` servers, and no MCP setting or `managed-mcp.json` reaches them. A user keeps a connector out of their own sessions by disconnecting it at [claude.ai/customize/connectors](https://claude.ai/customize/connectors). An organization blocks a connector's [tools](#organization-controls-on-connector-tools) or turns off [Claude Code in the desktop app](/docs/en/desktop#admin-console-controls) entirely.
+
 ### Organization controls on connector tools
 
-Your organization can set per-tool controls on [claude.ai connectors](https://claude.com/docs/connectors). Claude Code reads these settings at startup and enforces them locally. Run `/mcp` to see which setting applies to each tool on a connector.
+Your organization can set per-tool controls on [claude.ai connectors](https://claude.com/docs/connectors). Claude Code reads these settings at startup and enforces them locally, except in the desktop app's [local and SSH sessions](#how-connectors-reach-claude-code). There, the desktop app withholds `blocked` tools before it delivers a connector, and the `ask` setting doesn't reach Claude Code, so it applies the session's ordinary [permission rules](/docs/en/permissions) to those tools instead of prompting on every call. In sessions where Claude Code fetches connectors itself, run `/mcp` to see which setting applies to each tool on a connector.
 
 * **Tool set to `ask`**: Claude Code prompts on every call with the reason `Your organization requires approval for this tool`. The prompt appears even in `acceptEdits`, `auto`, and `bypassPermissions` [permission modes](/docs/en/permissions#permission-modes), and never offers an option to remember your choice. [Allow rules](/docs/en/permissions) that match the tool don't skip the prompt either. In `dontAsk` mode, which never prompts, Claude Code denies the call instead.
-* **Tool set to `blocked`**: Claude Code filters the tool out before Claude sees it, so it never appears in the tool list.
+* **Tool set to `blocked`**: Claude Code filters the tool out before Claude sees it, so it never appears in the tool list. The desktop app and claude.ai chat apply the same `blocked` setting, so Claude can't use the tool there either, and you can't withhold a tool from the desktop app's sessions while keeping it available in chat. The desktop app skips a connector whose tools are all blocked.
 
 ### Disable claude.ai connectors
 
-To disable claude.ai MCP servers in Claude Code, set [`disableClaudeAiConnectors`](/docs/en/settings-reference#disableclaudeaiconnectors) to `true` in any settings scope:
+Claude Code applies [`disableClaudeAiConnectors`](/docs/en/settings-reference#disableclaudeaiconnectors) only to the connectors it [fetches itself](#how-connectors-reach-claude-code), not to the connectors a cloud host or the desktop app delivers. To turn off the connectors it fetches, set the setting to `true` in any settings scope:
 
 ```json theme={null}
 {
@@ -1107,7 +1124,7 @@ To disable claude.ai MCP servers in Claude Code, set [`disableClaudeAiConnectors
 }
 ```
 
-This setting uses any-source-true semantics: `true` in any settings source takes precedence. A checked-in project `.claude/settings.json` can opt a repository out of cloud connectors, but a project-level `false` can't re-enable connectors that a user- or policy-level `true` has disabled. Servers passed explicitly via `--mcp-config` are unaffected.
+This setting uses any-source-true semantics: `true` in any settings source takes precedence. A checked-in project `.claude/settings.json` can opt a repository out of the connectors Claude Code fetches itself, but a project-level `false` can't re-enable connectors that a user- or policy-level `true` has disabled. Servers passed explicitly via `--mcp-config` are unaffected.
 
 You can also set the `ENABLE_CLAUDEAI_MCP_SERVERS` environment variable to `false`, which has the same effect for the current shell session:
 
@@ -1115,11 +1132,7 @@ You can also set the `ENABLE_CLAUDEAI_MCP_SERVERS` environment variable to `fals
 ENABLE_CLAUDEAI_MCP_SERVERS=false claude
 ```
 
-To block individual claude.ai connectors instead of all of them, add them to [`deniedMcpServers`](/docs/en/managed-mcp) by name or by URL pattern. For example, a `serverName` entry of `"claude.ai Slack"` blocks the Slack connector. To toggle a connector on or off for the current project only, use the `/mcp` panel.
-
-<Note>
-  These client-side settings govern local Claude Code sessions. In [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions, claude.ai connectors are provisioned by the remote host and arrive as explicit `--mcp-config` entries, so `disableClaudeAiConnectors` doesn't apply there. Connector URLs are also rewritten through the session proxy, so a `deniedMcpServers` `serverUrl` pattern targeting the vendor URL won't match. Manage which connectors a cloud session can use from your claude.ai organization settings.
-</Note>
+To block individual claude.ai connectors instead of all of them, add them to [`deniedMcpServers`](/docs/en/managed-mcp) by name or by URL pattern. For example, a `serverName` entry of `"claude.ai Slack"` blocks the Slack connector. You can also run `/mcp` to toggle any connector Claude Code fetches on or off for the current project only.
 
 ## Use Claude Code as an MCP server
 

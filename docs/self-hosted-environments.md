@@ -32,7 +32,7 @@ When a developer starts a cloud session, the session-start UI shows an environme
   </Frame>
 </div>
 
-The two Claude Code boxes in the diagram are session processes: one runner executing two sessions at once, up to its configured capacity. A runner serves one user at a time, locking to that user's account when it claims its first session, so checked-out code never mixes between users; [Runner lifecycle](#runner-lifecycle) covers the rule.
+The two Claude Code boxes in the diagram are session processes: one runner executing two sessions at once, up to its configured capacity. A runner serves one [owner](#key-concepts) at a time and locks to that owner when it claims its first session, so checked-out code never mixes between owners; [Runner lifecycle](#runner-lifecycle) covers the rule.
 
 You can start runners yourself and keep them running, or run the [autoscaling orchestrator](/docs/en/self-hosted-environments-configuration#on-demand-runners), a second process you host, which starts runners as sessions queue; each runner exits on its own when its work finishes. Either way, you set the environment up once, and it appears in the picker on every supported surface.
 
@@ -43,7 +43,7 @@ Check these before planning a rollout:
 * **Plans**: public beta for Team and Enterprise organizations. Self-hosted environments are off by default; an [Owner](/docs/en/cloud-environments#organization-shared-environments) turns on **Allow self-hosted environments** on the [**Cloud environments** admin page](https://claude.ai/admin-settings/cloud-environments), which requires [Claude Code on the web](/docs/en/claude-code-on-the-web) to be enabled for the organization.
 * **Zero Data Retention**: unavailable for organizations with [Zero Data Retention](/docs/en/zero-data-retention) enabled.
 * **Model inference**: sessions use the Anthropic API, and inference can't be routed through [Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry](/docs/en/third-party-integrations), or an [LLM gateway](/docs/en/llm-gateway).
-* **Surfaces**: sessions started from [Claude Code on the web](/docs/en/claude-code-on-the-web), the mobile and desktop apps, [scheduled routines](/docs/en/routines), and the terminal, with [`claude --cloud`](/docs/en/claude-code-on-the-web#from-terminal-to-web) or an [`--environment` dispatch](/docs/en/self-hosted-environments-testing#run-the-test-loop), can run in self-hosted environments. [Claude Tag](https://claude.com/docs/claude-tag/overview), [Claude Security](/docs/en/claude-security), and [Code Review](/docs/en/code-review) sessions don't route to them yet. Support for those surfaces follows separately.
+* **Surfaces**: sessions started from [Claude Code on the web](/docs/en/claude-code-on-the-web), the mobile and desktop apps, [scheduled routines](/docs/en/routines), and the terminal, with [`claude --cloud`](/docs/en/claude-code-on-the-web#from-terminal-to-web) or an [`--environment` dispatch](/docs/en/self-hosted-environments-testing#run-the-test-loop), can run in self-hosted environments. [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions can run in them too, but Claude can't use [Access bundles](https://claude.com/docs/claude-tag/concepts/glossary#access-bundle) in those sessions yet. [Claude Security](/docs/en/claude-security) and [Code Review](/docs/en/code-review) sessions don't route to them yet. Support for those two surfaces follows separately.
 * **Repositories**: sessions check out repositories from GitHub; see [GitHub authentication options](/docs/en/claude-code-on-the-web#github-authentication-options).
 * **Billing**: sessions in a self-hosted environment consume your organization's Claude Code usage the same way sessions in Anthropic-hosted environments do.
 
@@ -74,7 +74,12 @@ These terms appear throughout the self-hosted pages:
 
 In API fields, token claims, and metric names, the environment appears as `pool`, and the environment ID is the `pool_id`. The [reference](/docs/en/self-hosted-environments-reference) maps the two spellings, including the deprecated `pool` flag names.
 
-A runner serves one user at a time. The first session a runner picks up locks the runner to that user, and the runner then runs sessions only for that user, up to a configured capacity. The minimum fleet size is therefore the number of users you expect to be active at once.
+A runner serves one owner at a time. The first session a runner picks up locks the runner to that session's owner, and the runner then runs sessions only for that owner, up to a configured capacity. Who the owner is depends on how the session started:
+
+* **Sessions a user starts**: the owner is that user's account.
+* **Claude Tag channel sessions**: Claude runs them with no user account attached, so the owner is the [Claude Tag agent](https://claude.com/docs/claude-tag/concepts/glossary#agent-identity) that started the session. Every channel session that agent starts has the same owner, whoever sent the Slack message, so a runner locked to it serves sessions that different people started when you run it at a `--capacity` above one or with a positive `--drain-grace-sec`. A runner locked to a user never picks these up, and a runner locked to a Claude Tag agent never picks up a user's sessions.
+
+The minimum fleet size is therefore the number of owners you expect to be active at once, counting users and Claude Tag agents.
 
 ### Session lifecycle
 
@@ -89,12 +94,12 @@ The runner gives each poll request 10 seconds. When a request times out or is lo
 
 ### Runner lifecycle
 
-The first session a runner picks up locks the runner to the account of the user who started that session, and the runner runs up to `--capacity` concurrent sessions for that account. While the runner has active sessions and hasn't received a shutdown signal or reached its retire time, the runner keeps claiming the locked account's queued work. What happens once they finish depends on [`--drain-grace-sec`](/docs/en/self-hosted-environments-reference#runner-cli-flags):
+The first session a runner picks up locks the runner to that session's owner, and the runner runs up to `--capacity` concurrent sessions for that owner. While the runner has active sessions and hasn't received a shutdown signal or reached its retire time, the runner keeps claiming the locked owner's queued work. What happens once they finish depends on [`--drain-grace-sec`](/docs/en/self-hosted-environments-reference#runner-cli-flags):
 
-* **At the default of `0`**: the runner exits as soon as its active sessions finish, without polling for more, so the orchestrator you deploy it under, such as Kubernetes, can restart it with a fresh disk, ready to serve any account.
-* **At a positive value**: the runner keeps polling the locked account's queue for that many seconds before exiting.
+* **At the default of `0`**: the runner exits as soon as its active sessions finish, without polling for more, so the orchestrator you deploy it under, such as Kubernetes, can restart it with a fresh disk, ready to serve any owner.
+* **At a positive value**: the runner keeps polling the locked owner's queue for that many seconds before exiting.
 
-This lifecycle isolates each user's checked-out code without requiring the runner to delete disk state between users.
+This lifecycle isolates each owner's checked-out code without requiring the runner to delete disk state between owners.
 
 How your infrastructure stops a runner decides whether you need `--retire-at`. A kill that delivers `SIGTERM` needs no flag: the runner drains as [Shutdown timing](/docs/en/self-hosted-environments-deploy#shutdown-timing) describes, or keeps serving the sessions it already holds when you set [`--defer-shutdown-max-min`](/docs/en/self-hosted-environments-deploy#defer-the-drain-past-the-first-signal). If your infrastructure instead destroys hosts at a known wall-clock time without a signal, or with a grace period too short to drain, such as a sandbox lifetime cap or spot-instance reclamation, pass `--retire-at <epoch-seconds>` set to a few minutes before that time. At the retire time:
 

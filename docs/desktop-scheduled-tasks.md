@@ -36,7 +36,7 @@ Claude Code offers three ways to schedule recurring or one-off work:
 
 ## Create a scheduled task
 
-On Claude Desktop before 1.1.5368, local scheduled tasks aren't available. In the [**Code** tab](/docs/en/desktop), click **Routines** in the sidebar, then click **New routine** and choose **Local**. If **Routines** is missing from the sidebar, update the Desktop app, and check whether [routines are turned off for your organization](/docs/en/routines#routines-are-disabled-by-your-organizations-policy). Configure these fields:
+On Claude Desktop before 1.1.5368, local scheduled tasks aren't available. In the [**Code** tab](/docs/en/desktop), click **Routines** in the sidebar, then click **New routine** and choose **Local**. If **Routines** is missing from the sidebar, update the Desktop app; [Create a routine](/docs/en/routines#create-a-routine) says which plan and settings routines need. Configure these fields:
 
 | Field        | Description                                                                                                                                                                                                                                                                    |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -81,7 +81,7 @@ Each task has its own permission mode, which you set when creating or editing th
 
 To avoid stalls, click **Run now** after creating a task, watch for permission prompts, and select "always allow" for each one. Future runs of that task auto-approve the same tools without prompting. You can review and revoke these approvals from the task's detail page.
 
-Connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) and MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool) prompt on every call and don't offer an always-allow option. Runs that call these tools stall each time.
+MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool) prompt on every call and don't offer an always-allow option. Runs that call these tools stall each time.
 
 ## Manage scheduled tasks
 

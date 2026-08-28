@@ -395,7 +395,7 @@ A project-scope plugin is checked into the repository and reaches every collabor
 Personal-scope plugins have none of these restrictions.
 
 <Warning>
-  Project-scope `@skills-dir` plugins load only from the `.claude/skills/` of the directory where you start Claude Code. They don't [walk up to the repository root](/docs/en/skills#discovery-from-parent-and-nested-directories) the way plain skills and commands do, so launching from a subdirectory misses a plugin that lives at the repo root. Launch from the repository root, or run `/reload-plugins` after changing directories.
+  Project-scope `@skills-dir` plugins load only from the `.claude/skills/` of the session's [primary working directory](/docs/en/permissions#working-directories). They don't [walk up to the repository root](/docs/en/skills#discovery-from-parent-and-nested-directories) the way plain skills and commands do, so launching from a subdirectory misses a plugin that lives at the repo root. Launch from the repository root, or [move the session there with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later.
 </Warning>
 
 ### Edit, reload, and disable a skills-directory plugin
@@ -414,7 +414,7 @@ claude plugin disable my-tool@skills-dir
   Plugins synced from claude.ai
 </h2>
 
-In [Cowork](https://claude.com/product/cowork) and [cloud sessions](/docs/en/cloud-environments#what-carries-over-from-your-setup), Claude Code downloads the plugins enabled for your claude.ai account into `~/.claude/plugins/synced/` in the session's own environment and loads each one as `<name>@synced`, with no marketplace and no install record. Claude Code doesn't load them in sessions you start in your own terminal. On a machine where a synced session has run, `claude plugin list` still shows the downloaded copies, under a `Synced from claude.ai` heading that notes they load only in a synced session. Before v2.1.239, Claude Code loaded these plugins as `<name>@inline`, the identity that `--plugin-dir` plugins use.
+In [Cowork](https://claude.com/product/cowork) and [cloud sessions](/docs/en/cloud-environments#what-carries-over-from-your-setup), Claude Code downloads the plugins enabled for your claude.ai account into `~/.claude/plugins/synced/` in the session's own environment and loads each one as `<name>@synced`, with no marketplace and no install record. Claude Code doesn't load them in sessions you start in your own terminal. Inside that Cowork or cloud environment, `claude plugin list` shows the downloaded copies under a `Synced from claude.ai` heading. Before v2.1.239, Claude Code loaded these plugins as `<name>@inline`, the identity that `--plugin-dir` plugins use.
 
 Manage a synced plugin by the `<name>@synced` ID that `claude plugin list` prints:
 
@@ -471,9 +471,9 @@ The manifest is optional. If omitted, Claude Code auto-discovers components in [
 
 If you include a manifest, `name` is the only required field.
 
-| Field  | Type   | Description                                                                                                                                                                                                                       | Example              |
-| :----- | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------- |
-| `name` | string | Unique identifier (kebab-case, no spaces). When a [marketplace entry](/docs/en/plugin-marketplaces#plugin-entries) lists the plugin under a different name, the marketplace entry name is what `enabledPlugins` keys and `/plugin` use | `"deployment-tools"` |
+| Field  | Type   | Description                                                                                                                                                                                                                                                                                         | Example              |
+| :----- | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------- |
+| `name` | string | Unique identifier in kebab-case, with no spaces, control characters, or bidirectional-formatting characters. When a [marketplace entry](/docs/en/plugin-marketplaces#plugin-entries) lists the plugin under a different name, the marketplace entry name is what `enabledPlugins` keys and `/plugin` use | `"deployment-tools"` |
 
 This name is used for namespacing components. For example, in the UI, the
 agent `agent-creator` for the plugin with name `plugin-dev` will appear as
@@ -1064,7 +1064,7 @@ The command lists orphaned dependencies and asks for confirmation before removin
 
 ### plugin enable
 
-Enable a disabled plugin. If the plugin declares [dependencies](/docs/en/plugin-dependencies), Claude Code enables them transitively at the same scope, and the command fails when a dependency is not installed.
+Enable a disabled plugin. When the target is installed from a marketplace and declares [dependencies](/docs/en/plugin-dependencies), Claude Code enables them transitively at the same scope. The command fails under the conditions that [Enable or disable a plugin with dependencies](/docs/en/plugin-dependencies#enable-or-disable-a-plugin-with-dependencies) lists.
 
 ```bash theme={null}
 claude plugin enable <plugin> [options]
@@ -1083,7 +1083,7 @@ claude plugin enable <plugin> [options]
 
 ### plugin disable
 
-Disable a plugin without uninstalling it. Fails when another enabled plugin [depends on](/docs/en/plugin-dependencies#enable-or-disable-a-plugin-with-dependencies) the target. The error message includes a chained command that disables every dependent first.
+Disable a plugin without uninstalling it. When the target is installed from a marketplace, the command fails if another enabled plugin [depends on](/docs/en/plugin-dependencies#enable-or-disable-a-plugin-with-dependencies) it. The error message includes a chained command that disables every dependent first.
 
 ```bash theme={null}
 claude plugin disable [plugin] [options]
@@ -1146,7 +1146,7 @@ claude plugin list [options]
 Within an interactive session, `/plugin list` prints a similar listing inline, but it covers marketplace-installed plugins only:
 
 * Plugins loaded from skills directories appear in the `/plugin` interface and in `claude plugin list`, but not in the inline `/plugin list` output.
-* On Claude Code v2.1.239 or later, [plugins synced from claude.ai](#synced-plugins) appear in `claude plugin list` on any machine where a synced session has downloaded them, with a note that they load only in a synced session. They don't appear in the inline `/plugin list` output.
+* On Claude Code v2.1.239 or later, [plugins synced from claude.ai](#synced-plugins) appear in `claude plugin list` when you run it in the environment where a synced session downloaded them. They don't appear in the inline `/plugin list` output.
 * Plugins loaded for the session with `--plugin-dir` or `--plugin-url` appear in the `/plugin` interface, and in `claude plugin list` only when the same flag precedes the subcommand, as in `claude --plugin-dir <dir> plugin list`. Only the flag names their location, so a bare `claude plugin list` can't find them, unlike synced plugins and skills-directory plugins, whose fixed directories Claude Code scans.
 
 The interactive form accepts `--enabled` or `--disabled` to show only plugins in that state, and `ls` as a shorthand for `list`.

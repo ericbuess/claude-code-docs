@@ -175,13 +175,13 @@ In `claude -p` and the Agent SDK, Claude Code never shows this prompt. It runs t
 
 * **Permission rule**: `Workflow` in your allow rules approves every workflow, and `Workflow(<name>)` approves one saved workflow by name.
 * **Auto permission mode**: the [classifier](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) reviews the call and can approve it.
+* **Bypass permissions mode**: Claude Code approves the call.
+* **A `PreToolUse` hook**: a [hook](/docs/en/hooks#pretooluse) that returns `allow` for the call approves it.
 * **Your host**: a [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags) approves it, or, with the Agent SDK, a [`canUseTool`](/docs/en/agent-sdk/permissions) callback or a [`PermissionRequest` hook](/docs/en/hooks#permissionrequest) approves it.
 
 In the Desktop app, an approval card shows the workflow name, the phase list, and a token-usage caution, with **Once**, **Always**, and **Deny** actions. The progress view appears in the Background tasks side pane.
 
-The subagents the workflow spawns always run in `acceptEdits` mode and inherit your [tool allowlist](/docs/en/settings-reference#permission-settings), regardless of your session's permission mode. File edits are auto-approved.
-
-Shell commands, web fetches, and MCP tools that aren't in your allowlist can still prompt you mid-run. To avoid this on a long run, add the commands the agents need to your allowlist before starting.
+The subagents the workflow spawns use your [permission rules](/docs/en/settings-reference#permission-settings), and Claude Code picks their permission mode by the rules under [which permission mode a subagent runs in](/docs/en/sub-agents#permission-modes). To avoid prompts on a long run, add the tools the agents need to your allow rules before starting.
 
 ### Save the workflow for reuse
 

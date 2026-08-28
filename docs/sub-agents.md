@@ -138,7 +138,7 @@ This walkthrough creates a user-level subagent that reviews code and suggests im
     Use the code-improver agent to suggest improvements in this project
     ```
 
-    Claude delegates to your new subagent, which scans the codebase and returns improvement suggestions. In the transcript, the delegation appears as a tool call row showing the subagent's name followed by a short task description, such as `code-improver (Suggest code improvements)`.
+    Claude delegates to your new subagent, which scans the codebase and returns improvement suggestions. In the transcript, the delegation appears as a tool call row showing the subagent's name followed by a short task description, such as `code-improver(Suggest code improvements)`.
 
     If Claude can't find the new subagent, restart Claude Code and try again. This happens only when `~/.claude/agents/` didn't exist before the session started, because a running session doesn't detect a newly created `agents` directory.
   </Step>
@@ -232,7 +232,7 @@ The `--agents` flag accepts JSON with a `prompt` field plus these [frontmatter](
   For security reasons, plugin subagents don't support the `hooks`, `mcpServers`, or `permissionMode` frontmatter fields. These fields are ignored when loading agents from a plugin. If you need them, copy the agent file into `.claude/agents/` or `~/.claude/agents/`. You can also add rules to [`permissions.allow`](/docs/en/settings-reference#permissions-allow) in `settings.json` or `settings.local.json`, but these rules apply to the entire session, not only the plugin subagent.
 </Note>
 
-Subagent definitions from any of these scopes are also available to [agent teams](/docs/en/agent-teams#use-subagent-definitions-for-teammates): when spawning a teammate, you can reference a subagent type and the teammate uses its `tools` and `model`, with the definition's body appended to the teammate's system prompt as additional instructions. See [agent teams](/docs/en/agent-teams#use-subagent-definitions-for-teammates) for which frontmatter fields apply on that path.
+Subagent definitions from any of these scopes are also available to [agent teams](/docs/en/agent-teams#use-subagent-definitions-for-teammates): when spawning a teammate, you can reference a subagent type, and Claude Code applies parts of that definition to the teammate. See [agent teams](/docs/en/agent-teams#use-subagent-definitions-for-teammates) for which parts apply in each display mode.
 
 ### Write subagent files
 
@@ -495,14 +495,14 @@ Managed-settings restrictions apply to every subagent regardless of how it is de
 
 Set `permissionMode` to choose the permission mode a subagent runs in. Use the modes' config values, so Manual mode is `default`. If you leave it unset, the subagent inherits the main conversation's mode, which starts as [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) on Pro, Max, and Team plans unless your settings or your organization change it. Setting it overrides that mode, except in the cases described below.
 
-| Mode                | Behavior                                                                                                                                                                                                                                                                                                                        |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `default`           | Manual mode: prompts for permission                                                                                                                                                                                                                                                                                             |
-| `acceptEdits`       | Auto-accept file edits and common filesystem commands for paths in the working directory or `additionalDirectories`                                                                                                                                                                                                             |
-| `auto`              | [Auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode): a background classifier reviews commands and protected-directory writes                                                                                                                                                                                     |
-| `dontAsk`           | Auto-deny permission prompts. Explicitly allowed tools still work; `AskUserQuestion`, connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), and MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool) are denied even if you've allowed them |
-| `bypassPermissions` | Skip permission prompts                                                                                                                                                                                                                                                                                                         |
-| `plan`              | Plan mode (read-only exploration)                                                                                                                                                                                                                                                                                               |
+| Mode                | Behavior                                                                                                                                                                                                                                                                                                                                                                           |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`           | Manual mode: prompts for permission                                                                                                                                                                                                                                                                                                                                                |
+| `acceptEdits`       | Auto-accept file edits and common filesystem commands for paths in the working directory or `additionalDirectories`                                                                                                                                                                                                                                                                |
+| `auto`              | [Auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode): a background classifier reviews commands and protected-directory writes                                                                                                                                                                                                                                        |
+| `dontAsk`           | Auto-deny permission prompts. Explicitly allowed tools still work; `AskUserQuestion`, MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool), and connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code are denied even if you've allowed them |
+| `bypassPermissions` | Skip permission prompts                                                                                                                                                                                                                                                                                                                                                            |
+| `plan`              | Plan mode (read-only exploration)                                                                                                                                                                                                                                                                                                                                                  |
 
 <Warning>
   Use `bypassPermissions` with caution. It skips permission prompts, allowing the subagent to execute operations without approval, including writes to `.git`, `.config/git`, `.claude`, `.vscode`, `.idea`, `.husky`, `.cargo`, `.devcontainer`, `.yarn`, and `.mvn`.
@@ -855,6 +855,8 @@ As of v2.1.199, a subagent whose run ends on an API error, such as a usage limit
 * **Foreground**: if a rate limit, overload, or server error cuts off a subagent that already produced text output, the Agent tool returns that partial output with a note that the subagent was cut off and didn't finish its task. A subagent that produced nothing, or whose only output was tool calls, fails with [`Agent terminated early due to an API error`](/docs/en/errors#agent-terminated-early-due-to-an-api-error), followed by the error detail. In v2.1.199, a rate limit, overload, or server error that cut off the tool-calls-only shape returned an empty partial result containing only the cut-off note instead.
 * **Background**: the subagent is marked failed, and the message Claude receives when it ends names the API error and includes the subagent's last output, so partial work isn't lost.
 
+When you configure a [fallback model chain](/docs/en/model-config#fallback-model-chains) and a subagent encounters a failure the chain covers, such as its model being unavailable, Claude Code switches the subagent to the first model in the chain that accepts the request. The subagent keeps working instead of ending on the error.
+
 Once the underlying API error clears, ask Claude to retry the task or [resume the subagent](#resume-subagents).
 
 ### Subagent output scanning
@@ -894,7 +896,7 @@ Each subagent explores its area independently, then Claude synthesizes the findi
   When subagents complete, their results return to your main conversation. Running many subagents that each return detailed results can consume significant context.
 </Warning>
 
-For tasks that need sustained parallelism or exceed your context window, [agent teams](/docs/en/agent-teams) give each worker its own independent context.
+For work that needs to keep running in parallel or won't fit in one context window, run it in [separate sessions](/docs/en/agents) and let Claude [pass findings between them](/docs/en/cross-session-messaging).
 
 #### Chain subagents
 

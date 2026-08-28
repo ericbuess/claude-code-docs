@@ -10,9 +10,9 @@
   Agent teams are experimental and disabled by default. Enable them by setting `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in your [settings.json](/docs/en/settings) or environment. Without that variable, no team is set up at session start, no team directories are written, and Claude does not spawn or propose teammates. Agent teams have [known limitations](#limitations) around session resumption, task coordination, and shutdown behavior.
 </Warning>
 
-Agent teams let you coordinate multiple Claude Code instances working together. One session acts as the team lead, coordinating work, assigning tasks, and synthesizing results. Teammates work independently, each in its own context window, and communicate directly with each other.
+Agent teams let you coordinate multiple Claude Code instances working together. One session acts as the team lead, coordinating work, assigning tasks, and synthesizing results. Teammates work independently, each in its own context window, and communicate directly with each other. You can also talk to any teammate directly without going through the lead.
 
-Unlike [subagents](/docs/en/sub-agents), which run within a single session, you can also interact with individual teammates directly without going through the lead.
+Before you set up a team, check whether a lighter option does the job. [Subagents](/docs/en/sub-agents) work within a single session, and with [cross-session messaging](/docs/en/cross-session-messaging) Claude can pass findings between the sessions you run yourself.
 
 <Note>
   This page describes agent teams as of v2.1.178. With `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` set, spawning a teammate no longer needs a setup step, and cleanup happens automatically when the session exits. Before v2.1.178, you asked Claude to create and name a team first, and Claude used the `TeamCreate` and `TeamDelete` tools to set it up and remove it. Both tools no longer exist. The `team_name` input on the Agent tool is accepted but ignored, and the `team_name` field in `TaskCreated`, `TaskCompleted`, and `TeammateIdle` [hook payloads](/docs/en/hooks#taskcreated) carries the session-derived name and is deprecated.
@@ -142,7 +142,12 @@ Spawn 4 teammates to refactor these modules in parallel. Use Sonnet for
 each teammate.
 ```
 
-When your prompt doesn't name a model for a teammate, Claude Code runs the teammate on the lead's current model, unless [`CLAUDE_CODE_SUBAGENT_MODEL`](/docs/en/model-config#environment-variables) is set.
+Claude Code picks each teammate's model from the first of these that applies:
+
+1. [`CLAUDE_CODE_SUBAGENT_MODEL`](/docs/en/model-config#environment-variables), when it's set to anything other than `inherit`.
+2. The model your spawn prompt names for that teammate.
+3. For an in-process teammate spawned from a [subagent definition](#use-subagent-definitions-for-teammates), the definition's `model`.
+4. The lead's current model.
 
 <Note>
   `teammateDefaultModel` was removed in v2.1.234; Claude Code ignores a leftover value. Name the model in your prompt or set `CLAUDE_CODE_SUBAGENT_MODEL` instead.
@@ -255,17 +260,19 @@ There is no project-level equivalent of the team config. A file like `.claude/te
 
 When spawning a teammate, you can reference a [subagent](/docs/en/sub-agents) type from any [subagent scope](/docs/en/sub-agents#choose-the-subagent-scope): project, user, plugin, or CLI-defined. This lets you define a role once, such as a security-reviewer or test-runner, and reuse it both as a delegated subagent and as an agent team teammate.
 
-To use a subagent definition, mention it by name when asking Claude to spawn the teammate:
+To use a subagent definition, name it when you ask Claude to spawn the teammate:
 
 ```text wrap theme={null}
 Spawn a teammate using the security-reviewer agent type to audit the auth module.
 ```
 
-The teammate honors that definition's `tools` allowlist and `model`, and for an in-process teammate Claude Code appends the definition's body to the teammate's system prompt as additional instructions rather than replacing it. For an in-process teammate, Claude Code adds `SendMessage` to that allowlist. In a [session that has the Task tools](/docs/en/tools-reference#task-tool-availability), Claude Code adds `TaskCreate`, `TaskGet`, `TaskList`, and `TaskUpdate` to it too.
+Claude Code reads the subagent definition you named and applies these parts of it to the teammate. Where a part depends on the teammate's [display mode](#choose-a-display-mode), the entry says so:
 
-<Note>
-  The `skills` and `mcpServers` frontmatter fields in a subagent definition are not applied when that definition runs as an in-process teammate. In-process teammates load skills and MCP servers from your project and user settings, the same as a regular session.
-</Note>
+* **`tools`**: Claude Code limits the teammate to the tools in the definition's `tools` list. For an in-process teammate, Claude Code adds `SendMessage` to that list, and in a [session that has the Task tools](/docs/en/tools-reference#task-tool-availability) it adds `TaskCreate`, `TaskGet`, `TaskList`, and `TaskUpdate` too.
+* **`model`**: for an in-process teammate, Claude Code uses the definition's `model` when neither `CLAUDE_CODE_SUBAGENT_MODEL` nor your spawn prompt names a model. A split-pane teammate doesn't use the definition's `model`. See [how Claude Code picks a teammate's model](#specify-teammates-and-models).
+* **Body**: for an in-process teammate, Claude Code appends the definition's body to its default system prompt as additional instructions. For a split-pane teammate, Claude Code uses the body in place of its default system prompt.
+* **`skills`**: Claude Code doesn't apply the definition's `skills` to a teammate in either display mode. The teammate loads skills from your project and user settings.
+* **`mcpServers`**: for a split-pane teammate, Claude Code applies the definition's `mcpServers` under the [rules for that field](/docs/en/sub-agents#scope-mcp-servers-to-a-subagent), which cover a session started with `--agent` as well. An in-process teammate ignores the field and loads MCP servers from your project and user settings.
 
 ### Permissions
 
@@ -473,4 +480,5 @@ Agent teams are experimental. Current limitations to be aware of:
 Explore related approaches for parallel work and delegation:
 
 * **Lightweight delegation**: [subagents](/docs/en/sub-agents) spawn helper agents for research or verification within your session, better for tasks that don't need inter-agent coordination
+* **Messaging between your own sessions**: [cross-session messaging](/docs/en/cross-session-messaging) lets Claude pass findings between the sessions you run yourself
 * **Manual parallel sessions**: [Git worktrees](/docs/en/worktrees) let you run multiple Claude Code sessions yourself without automated team coordination

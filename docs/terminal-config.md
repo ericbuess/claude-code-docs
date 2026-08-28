@@ -309,6 +309,8 @@ Run `/tui fullscreen` to switch and save the preference. Your conversation relau
 
 When you paste more than 800 characters or more than two lines into the prompt, Claude Code collapses the input to a placeholder such as `[Pasted text #1 +120 lines]` so the input box stays usable. The full content is still sent to Claude when you submit.
 
+When you delete with a word or line shortcut such as `Ctrl+W` or `Ctrl+K`, or with a vim delete through an `f`/`t` motion such as `df]`, and the deleted range reaches inside a placeholder, Claude Code removes the placeholder whole. You can paste the deletion back to restore it, with [`Ctrl+Y`](/docs/en/interactive-mode#text-editing) after `Ctrl+W`, `Ctrl+U`, or `Ctrl+K`, or with [`p` in NORMAL mode](/docs/en/interactive-mode#editing-normal-mode) after a vim delete.
+
 Claude Code keeps the collapsed content under `~/.claude/paste-cache/`, so when you recall a prompt from [command history](/docs/en/interactive-mode#command-history) and resubmit it, Claude Code sends the full pasted content again, including in a later session, until the retention sweep removes the cache file.
 
 Claude Code deletes cache files older than [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays), following the [retention sweep rules](/docs/en/claude-directory#cleaned-up-automatically), so a recalled prompt can reference pasted text that no longer exists. When you submit such a prompt, Claude Code never sends the literal `[Pasted text #N]` string, and shows a notification naming the missing paste:

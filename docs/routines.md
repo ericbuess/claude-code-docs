@@ -44,7 +44,7 @@ Each example pairs a trigger type with the kind of work routines are suited to: 
 
 ## Create a routine
 
-Create a routine from the web at [claude.ai/code/routines](https://claude.ai/code/routines), from the Desktop app, or from the CLI. All three surfaces write to the same cloud account, so a routine you create in one shows up in the others immediately. In the Desktop app's **Code** tab, click **Routines** in the sidebar, then **New routine**, and choose **Cloud**; choosing **Local** instead creates a [Desktop scheduled task](/docs/en/desktop-scheduled-tasks), which runs on your machine rather than in the cloud. If **Routines** is missing from the Desktop sidebar, routines aren't available to your account; see ["Routines are disabled by your organization's policy"](#routines-are-disabled-by-your-organizations-policy).
+Create a routine from the web at [claude.ai/code/routines](https://claude.ai/code/routines), from the Desktop app, or from the CLI. All three surfaces write to the same cloud account, so a routine you create in one shows up in the others immediately. In the Desktop app's **Code** tab, click **Routines** in the sidebar, then **New routine**, and choose **Cloud**; choosing **Local** instead creates a [Desktop scheduled task](/docs/en/desktop-scheduled-tasks), which runs on your machine rather than in the cloud. If **Routines** is missing from the Desktop sidebar, routines aren't available to your account: they need a Pro, Max, Team, or Enterprise plan with Claude Code on the web enabled, and on Team and Enterprise plans an Owner can turn them off with the Routines toggle at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
 
 The creation form sets up the routine's prompt, repositories, environment, connectors, and triggers.
 
@@ -315,7 +315,7 @@ You can also ask about a routine's run history, for example `/schedule why did m
 
 ### Repositories and branch permissions
 
-Routines need GitHub access to clone repositories. When you create a routine from the CLI with `/schedule`, Claude checks whether your account has GitHub connected and prompts you to run `/web-setup` if it doesn't. See [GitHub authentication options](/docs/en/claude-code-on-the-web#github-authentication-options) for the two ways to grant access.
+Routines need GitHub access to clone repositories. When you create a routine from the CLI with `/schedule`, Claude checks whether your account has GitHub access for the repository you ran it from and, if it doesn't, adds a setup note naming how to grant it. See [GitHub authentication options](/docs/en/claude-code-on-the-web#github-authentication-options) for the two ways to grant access.
 
 Each repository you add is cloned on every run. Claude starts from the repository's default branch unless your prompt specifies otherwise.
 

@@ -524,7 +524,7 @@ An authenticated user who matches no policy gets the gateway's defaults, which m
 
   Two propagation clocks apply:
 
-  * **Policy contents**: editing a policy and redeploying reaches connected clients on their next managed-settings poll, within an hour
+  * **Policy contents**: editing a policy and redeploying reaches connected clients on their next managed-settings poll, within an hour, apart from the [changes that apply only at the next launch](/docs/en/server-managed-settings#fetch-and-caching-behavior)
   * **Group membership**: changing a user's group membership changes which policy matches them. This takes effect on the next session re-mint, meaning the next silent refresh, bounded by `session.ttl_hours`.
 </Note>
 
@@ -670,7 +670,7 @@ If you don't deploy Claude Desktop, leave `desktop` out of your policies entirel
 
 #### Precedence with other managed sources
 
-If a device also has an MDM-delivered policy or a local `managed-settings.json`, Claude Code doesn't merge the managed sources: gateway-delivered settings rank first, so the local sources supply the policy only when the gateway delivers no policy key. [Precedence within the managed tier](/docs/en/managed-settings#precedence-within-the-managed-tier) on the managed settings page has the full ranking and the [keys Claude Code reads from every admin source](/docs/en/managed-settings#keys-read-from-every-admin-source) regardless of which source it selected, such as the sandbox lock keys, `forceRemoteSettingsRefresh`, and the per-variable `env` merge. A [`policyHelper`](/docs/en/settings-reference#policyhelper) configured in an MDM profile or the managed settings file runs only when the gateway delivers no settings; the entry says what its output replaces.
+If a device also has an MDM-delivered policy or a local `managed-settings.json`, gateway-delivered settings rank first. [Precedence within the managed tier](/docs/en/managed-settings#precedence-within-the-managed-tier) on the managed settings page says when the local sources apply, and has the [keys Claude Code reads from every admin source](/docs/en/managed-settings#keys-read-from-every-admin-source) regardless of which source it selected, such as the sandbox lock keys, `forceRemoteSettingsRefresh`, and the per-variable `env` merge. A [`policyHelper`](/docs/en/settings-reference#policyhelper) configured in an MDM profile or the managed settings file runs only when the gateway delivers no settings; the entry says what its output replaces.
 
 Embedding hosts such as [Claude Desktop](/docs/en/desktop) can supply policy through the SDK `managedSettings` option. [Parent settings from embedding hosts](/docs/en/managed-settings#parent-settings-from-embedding-hosts) says when Claude Code applies it, and [Restrict parent settings](/docs/en/claude-apps-gateway#restrict-parent-settings) lists which allow-direction settings still apply without the `allowManaged*Only` locks.
 
@@ -914,7 +914,7 @@ Deploy the `managed-settings.json` file to each device, typically via your MDM p
 | Linux and WSL | `/etc/claude-code/managed-settings.json`                                                                                      |
 | Windows       | `C:\Program Files\ClaudeCode\managed-settings.json`, or Group Policy via the HKLM registry                                    |
 
-A registry policy on Windows or a managed-preferences plist on macOS replaces the `managed-settings.json` file rather than merging with it, apart from the [exception keys and cross-source checks above](#precedence-with-other-managed-sources). All three keys in this snippet follow the highest-priority-source rule, so fleets that deliver policy through Group Policy or configuration profiles must put all three in that mechanism instead.
+By default, a registry policy on Windows or a managed-preferences plist on macOS replaces the `managed-settings.json` file rather than merging with it, apart from the [exception keys and cross-source checks above](#precedence-with-other-managed-sources). All three keys in this snippet follow the highest-priority-source rule, so fleets that deliver policy through Group Policy or configuration profiles must put all three in that mechanism instead.
 
 For Claude Desktop, set the `bootstrapUrl` key in Claude Desktop's own [managed configuration](https://claude.com/docs/third-party/claude-desktop/configuration) to `<listen.public_url>/user/bootstrap`. The sign-in flow and per-group policy then match the CLI's once a policy opts in server-side with a `desktop` key; without the opt-in, `/user/bootstrap` returns 404. See [Claude Desktop overlay](#claude-desktop-overlay) for the server-side half.
 

@@ -372,7 +372,11 @@ When the classifier produces [no verdict on the action](/docs/en/errors#auto-mod
 
 ### Fix a denial with an allow rule, an environment entry, or a retry
 
-Claude Code shows the blocked tool call wherever the denial appears, including the transcript and the **Recently denied** tab. Pick the fix from what the call was trying to reach or do:
+To see what the classifier blocked, find the tool call in the conversation. If the call appears shortened or folded into a summary line such as `Ran 3 shell commands`, press `Ctrl+O` to open the [transcript viewer](/docs/en/interactive-mode#transcript-viewer), which expands it.
+
+Two other places on screen that report denials leave out the command or URL: the notice near the input box, such as `bash denied by auto mode · Blocked by classifier · /permissions`, gives the tool and the reason, and the **Recently denied** tab lists a shell command by the description Claude wrote for it. To capture the exact input of these denials programmatically, add a [`PermissionDenied` hook](/docs/en/hooks#permissiondenied), which receives it as `tool_input`.
+
+The text beneath the call tells you whether there is anything to fix. Text that reports a problem with the classifier itself, such as a model that `is temporarily unavailable` or a classifier error, means Claude Code blocked the call without a final verdict from the classifier; see [Auto mode cannot determine the safety of an action](/docs/en/errors#auto-mode-cannot-determine-the-safety-of-an-action) for what to do. Otherwise, a line reading `Denied by auto mode classifier` with a reason such as `Blocked by classifier` means the classifier judged the call unsafe, so pick the fix from what the call was trying to reach or do:
 
 * A destination Claude needs throughout the task, such as a package registry, an internal domain, or a repository host: add it to `autoMode.environment`.
 * A command you want to run without review from now on: add an `allow` rule.

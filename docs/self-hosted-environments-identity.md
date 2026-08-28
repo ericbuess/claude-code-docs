@@ -10,7 +10,7 @@
   Self-hosted environments are in public beta on Team and Enterprise plans; an [Owner](/docs/en/cloud-environments#organization-shared-environments) enables them by turning on **Allow self-hosted environments** on the [**Cloud environments** admin page](https://claude.ai/admin-settings/cloud-environments). This page covers session identity verification; see the [quickstart](/docs/en/self-hosted-environments-quickstart) for setup and [Deploy to production](/docs/en/self-hosted-environments-deploy) for the fleet recipes.
 </Note>
 
-A [self-hosted environment](/docs/en/self-hosted-environments) lets [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions run on infrastructure you operate instead of on Anthropic's. Because the session runs inside your network, Claude can call your internal services directly. Those services need a way to confirm that a request really came from a Claude Code session in your environment, and to identify which user created that session.
+A [self-hosted environment](/docs/en/self-hosted-environments) lets [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions run on infrastructure you operate instead of on Anthropic's. Because the session runs inside your network, Claude can call your internal services directly. Those services need a way to confirm that a request really came from a Claude Code session in your environment, and to identify the user or service identity that created that session.
 
 Every session in a self-hosted environment receives a signed JSON Web Token (JWT) in the `CLAUDE_CODE_SESSION_ACCESS_TOKEN` environment variable. A session presents the token like any bearer credential; for example, a script Claude runs can call your service with `curl -H "Authorization: Bearer $CLAUDE_CODE_SESSION_ACCESS_TOKEN"`. Anthropic signs the token and publishes the verification keys at a public JWKS endpoint. Your services fetch those keys, verify the signature, and read the claims to decide what access to grant.
 
@@ -22,13 +22,13 @@ Before you write verification code, know what the token establishes and the shap
 
 A valid token establishes some facts and deliberately not others:
 
-* **Proves**: Anthropic issued the token for a specific session in a specific environment, and how the session was created: by a user in your organization, or with an organization service key
+* **Proves**: Anthropic issued the token for a specific session in a specific environment, and how the session was created: by a user in your organization, or by your organization's service identity, which is how [Claude Tag channel sessions](https://claude.com/docs/claude-tag/concepts/agent-identity) start
 * **Doesn't prove**: which process on the runner host presents it. The token sits in an environment variable inside the session, so any code Claude runs, and any tool or MCP server the session starts, can read and present it.
 
 Two consequences for your services:
 
 * Verify the `aud` claim against your environment ID, the `ccpool_...` value shown with your environment on the [**Cloud environments** admin page](https://claude.ai/admin-settings/cloud-environments), to reject tokens issued to any other organization's environment.
-* Scope credentials you derive from the token to what a single coding session should be able to do, not to everything the creating user can do. See [Scope derived credentials](#scope-derived-credentials).
+* Scope credentials you derive from the token to what a single coding session should be able to do, not to everything the session's creator can do. See [Scope derived credentials](#scope-derived-credentials).
 
 ### Token format
 
@@ -84,7 +84,7 @@ Verify each incoming token against these checks:
   </Step>
 
   <Step title="Read the identity">
-    The creating user's identity is in the `act` claim: `act.sub` is their Anthropic user ID in the prefixed form `user:<id>`, and `act.email`, when the creating surface recorded one, is their email address. Sessions created with an organization service key carry no user identity, so treat a session as user-created only when `act.sub` carries the `user:` prefix, rather than testing whether identity claims are absent. See the [claims reference](#claims-reference) for the full structure and the flat duplicate claims.
+    The creating user's identity is in the `act` claim: `act.sub` is their Anthropic user ID in the prefixed form `user:<id>`, and `act.email`, when the creating surface recorded one, is their email address. Sessions your organization's service identity creates, including Claude Tag channel sessions, carry an `agent:` subject instead, so treat a session as user-created only when `act.sub` carries the `user:` prefix, rather than testing whether identity claims are absent. See the [claims reference](#claims-reference) for the full structure and the flat duplicate claims.
   </Step>
 </Steps>
 
@@ -175,7 +175,7 @@ The checks map directly onto standard JWT libraries. The examples below implemen
 
 [Wrapper scripts](/docs/en/self-hosted-environments-configuration#wrapper-scripts) run inside the session, before Claude starts. Instead of calling a JWT library, they can run the runner binary's `self-hosted-runner decode-token` subcommand. The subcommand reads the token from a positional argument, from `CLAUDE_CODE_SESSION_ACCESS_TOKEN`, or from piped stdin, in that order, then strips the prefix, verifies the signature against the JWKS endpoint, checks expiry, and prints the claims as JSON. The subcommand performs the signature and expiry checks only; it doesn't check `iss`, `aud`, or `ccr:role`. When your wrapper's auth decision depends on those claims, read them from the printed JSON and compare them explicitly.
 
-This command extracts the creator identity, preferring the SSO provider's subject, then the email address, then the always-present Anthropic user ID:
+This command extracts the creator identity, preferring the SSO provider's subject, then the email address, then the creator's `act.sub` subject, `user:<id>` or `agent:<id>`:
 
 ```bash theme={null}
 "$CLAUDE_RUNNER_CLAUDE_BIN" self-hosted-runner decode-token | jq -re '.act.attested_by.sub // .act.email // .act.sub'
@@ -187,7 +187,7 @@ Use `jq -re` rather than `jq -r` so a missing claim causes a non-zero exit. With
 
 ## Claims reference
 
-The table below lists the session token claims relevant to verification. Read identity from the `ccr:*` namespace and the `act` chain; the flat `account_email`, `organization_uuid`, and `account_uuid` claims are backward-compatibility duplicates that may be removed. Sessions created with an organization service key omit `act.email`, `ccr:account_id`, `account_email`, and `account_uuid`. The two email claims are optional for user-created sessions too: Anthropic records them at session creation only when the creating request's credentials carry an email, and a session dispatched from the CLI can lack both, so key identity on `act.sub` or `ccr:account_id` rather than on email. Tokens can also carry additional claims beyond this table; ignore claims you don't recognize.
+The table below lists the session token claims relevant to verification. Read identity from the `ccr:*` namespace and the `act` chain; the flat `account_email`, `organization_uuid`, and `account_uuid` claims are backward-compatibility duplicates that may be removed. Sessions your organization's service identity creates, including Claude Tag channel sessions, carry an `agent:` subject in `act.sub` and omit `act.email`, `ccr:account_id`, `account_email`, and `account_uuid`. The two email claims are optional for user-created sessions too: Anthropic records them at session creation only when the creating request's credentials carry an email, and a session dispatched from the CLI can lack both, so key identity on `act.sub` or `ccr:account_id` rather than on email. Tokens can also carry additional claims beyond this table; ignore claims you don't recognize.
 
 | Claim               | Type             | Description                                                                                                                                                                                                                                                                                                                                                                                           |
 | :------------------ | :--------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -209,11 +209,11 @@ The table below lists the session token claims relevant to verification. Read id
 
 ### The `act` chain
 
-The `act` claim records the full delegation path from the user who created the session down to the [environment](/docs/en/self-hosted-environments#key-concepts) whose secret admitted the runner, and the identity that created that secret. The creating user is the outermost actor, so `act.sub` identifies them directly.
+The `act` claim records the full delegation path from the user or service identity that created the session down to the [environment](/docs/en/self-hosted-environments#key-concepts) whose secret admitted the runner, and the identity that created that secret. The creator is the outermost actor, so `act.sub` identifies them directly.
 
 | Path              | Description                                                                                                                                                                                                                                              |
 | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `act.sub`         | The creating user's Anthropic user ID, in the form `user:<id>`.                                                                                                                                                                                          |
+| `act.sub`         | The creating user's Anthropic user ID, in the form `user:<id>`, or `agent:<id>` when your organization's service identity created the session, as it does for Claude Tag channel sessions.                                                               |
 | `act.email`       | The creating user's email address, when one was recorded at session creation. Don't require it; key on `act.sub`.                                                                                                                                        |
 | `act.attested_by` | The upstream identity provider's attestation for the creating user, when available. `act.attested_by.sub` is the subject your SSO provider, such as Google or Okta, issued. Prefer this over `act.email` when mapping to identities in your own systems. |
 | `act.act`         | The runner that spawned the session. `act.act.sub` is `ccr:runner:<runner_id>`.                                                                                                                                                                          |
@@ -222,15 +222,15 @@ The `act` claim records the full delegation path from the user who created the s
 
 ## Scope derived credentials
 
-The session token identifies the creating user, but don't treat it as equivalent to that user logging in directly. The token sits in an environment variable inside the session, so any code Claude runs, and any tool or MCP server the session starts, can read and present it.
+The session token identifies the user or service identity that created the session, but don't treat it as equivalent to that creator logging in directly. The token sits in an environment variable inside the session, so any code Claude runs, and any tool or MCP server the session starts, can read and present it.
 
 Verification is also offline: a token that verifies against the JWKS stays valid until its `exp`, whatever has happened to the session since, and Anthropic doesn't publish a revocation feed for session tokens. Bound anything you derive from the token accordingly.
 
 When your service exchanges the token for internal credentials, issue credentials scoped to what one coding session should reach:
 
-* **Limit capabilities**: grant read and write access to the resources the session needs for coding tasks, not administrative capabilities the user holds elsewhere.
+* **Limit capabilities**: grant read and write access to the resources the session needs for coding tasks, not administrative capabilities the creator holds elsewhere.
 * **Limit lifetime**: bound derived credentials to the token's `exp`, or shorter.
-* **Audit as the session**: record the `ccr:session_id` and `jti` alongside the user identity so you can trace actions back to a specific session.
+* **Audit as the session**: record the `ccr:session_id` and `jti` alongside the creator identity so you can trace actions back to a specific session.
 
 ## Related environment variables
 
