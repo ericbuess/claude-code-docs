@@ -45,6 +45,15 @@ Press `d` or `w` to switch between the last 24 hours and the last 7 days. The fi
 
 In the [VS Code extension](/docs/en/vs-code#check-account-and-usage), the attribution shares and behavior flags appear in the Account & usage dialog with a Day and Week toggle, without the Loops rows. Requires Claude Code v2.1.174 or later.
 
+#### Check your usage-credits spend
+
+`/usage` also shows a usage-credits row while [usage credits](#add-usage-credits-to-your-subscription) are on. What the row shows depends on your plan:
+
+* **Pro and Max**: your spend for the current month, measured against your monthly spend limit when you have set one. When you haven't set a limit, the row shows `Unlimited` and no spend figure.
+* **Team and Enterprise**: your own spend for the current month, measured against any [limit your organization set](#claude-for-teams-and-enterprise) that applies to you. A limit that covers the whole organization doesn't appear in the row. When you have no limit of your own, the row shows your spend with no limit beside it. While usage credits are off for you, `/usage` shows no usage-credits row.
+
+When you have a spend limit, the row appears as soon as usage credits are on and shows 0% until you first spend usage credits. Before v2.1.236, `/usage` showed the row only on Pro and Max plans, and a row with a spend limit stayed hidden until you had spent something.
+
 #### When the usage request fails
 
 When the request for your plan limits fails, most often because the usage endpoint is rate limited, `/usage` shows the last usage bars it loaded on this machine within the past 60 minutes, along with a `Showing last-known usage` note stating how long ago that data was fetched. Press `r` to retry; a successful retry replaces the last-known bars with fresh data. Without a snapshot from the past 60 minutes, `/usage` reports that the usage endpoint is rate limited and offers the same retry shortcut. Before v2.1.208, a rate-limited request in a session that hadn't loaded usage yet always showed the error with no bars.

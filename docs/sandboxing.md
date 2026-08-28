@@ -169,7 +169,9 @@ By default, sandboxed commands can write only to the current working directory a
 
 These paths are enforced at the OS level, so all commands running inside the sandbox, including their child processes, respect them. This is the recommended approach when a tool needs write access to a specific location, rather than excluding the tool from the sandbox entirely with `excludedCommands`.
 
-When the same filesystem array is defined in multiple [settings scopes](/docs/en/settings#settings-precedence), the arrays are merged: paths from every scope are combined, not replaced. When you edit these lists during a session, Claude Code [applies the change to the running session](/docs/en/settings#when-edits-take-effect), so the next sandboxed command runs under the new paths.
+When you define the same filesystem array in multiple [settings scopes](/docs/en/settings#settings-precedence), Claude Code merges them, combining paths from every scope rather than replacing one scope's array with another's. If you exclude a source with [`--setting-sources`](/docs/en/cli-reference) on the CLI or [`settingSources`](/docs/en/agent-sdk/claude-code-features#control-filesystem-settings-with-settingsources) in the Agent SDK, Claude Code ignores its `sandbox.filesystem` entries, its `Edit` permission rules, and its `Read` deny rules when building the sandbox configuration. Requires Claude Code v2.1.246 or later.
+
+When you edit these filesystem lists during a session, Claude Code [applies the change to the running session](/docs/en/settings#when-edits-take-effect), so the next sandboxed command runs under the new paths.
 
 Path prefixes control how paths are resolved:
 
@@ -293,7 +295,12 @@ The example below blocks reads of the AWS credentials file and the SSH directory
 
 Environment variable entries and file entries also accept `"mode": "mask"`, described under [Mask credentials](#mask-credentials).
 
-File paths follow the same [prefix rules](/docs/en/settings-reference#sandbox-path-prefixes) as `sandbox.filesystem.*` settings, and `deny` entries from every [settings scope](/docs/en/settings#settings-precedence) are merged. A `deny` entry only ever narrows access, so any scope can add one, but no scope can remove one that another scope added.
+File paths follow the same [prefix rules](/docs/en/settings-reference#sandbox-path-prefixes) as `sandbox.filesystem.*` settings. Claude Code merges the `deny` entries from every [settings scope](/docs/en/settings#settings-precedence) the session loads. A `deny` entry only ever narrows access, so any scope can add one, but no scope can remove one that another scope added.
+
+When you [exclude a settings source](#configure-sandboxing):
+
+* **Project or local settings**: Claude Code applies none of their `credentials` entries. Requires Claude Code v2.1.246 or later.
+* **User settings**: Claude Code still applies the `deny` entries in `~/.claude/settings.json` and keeps its [file `mask` entries](#mask-credential-files) as restrictions, but drops its [environment variable `mask` entries](#mask-environment-variables).
 
 There is no built-in credential deny list, so only the files and variables you list are restricted. The setting affects sandboxed Bash commands only. To strip Anthropic and cloud provider credentials from all subprocesses regardless of sandboxing, set [`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`](/docs/en/env-vars).
 
@@ -338,7 +345,7 @@ The example below masks two tokens. `GH_TOKEN` is substituted only on requests t
 
 `/doctor` flags `injectHosts` entries that can never match with the warning `Sandbox credential injectHosts entries can never match their destination`.
 
-Unlike `deny`, masking authorizes the proxy to send your real credential to the listed hosts, so it is honored only from settings you or your administrator control: user settings, managed settings, and the `--settings` CLI flag. `mask` entries, `network.tlsTerminate`, and [`credentials.allowPlaintextInject`](/docs/en/settings-reference#sandbox-credentials-allowplaintextinject), which lets the proxy inject credentials into unencrypted requests, are all ignored in a repository's `.claude/settings.json` or `.claude/settings.local.json`.
+Unlike `deny`, masking authorizes the proxy to send your real credential to the listed hosts, so Claude Code honors it only from settings you or your administrator control: user settings, managed settings, and the `--settings` CLI flag. Claude Code ignores `mask` entries in a repository's `.claude/settings.json` or `.claude/settings.local.json`. In those files it also ignores `network.tlsTerminate` and [`credentials.allowPlaintextInject`](/docs/en/settings-reference#sandbox-credentials-allowplaintextinject), the setting that lets the proxy inject credentials into unencrypted requests. If you [exclude user settings](#configure-sandboxing), Claude Code drops the environment variable `mask` entries in `~/.claude/settings.json` too.
 
 When the same variable is listed with `deny` in any scope, `deny` takes precedence.
 
@@ -399,7 +406,7 @@ File entries also accept `"mode": "mask"`, which requires Claude Code v2.1.221 o
 * **Linux and WSL2**: sandboxed commands read a sentinel copy of the file, a stand-in whose secret is replaced with a placeholder value, and the [sandbox proxy](#network-isolation) substitutes the real value on egress.
 * **macOS**: sandboxed commands can't read the listed file at all. Claude Code builds no sentinel copy and substitutes nothing on egress, so tools that authenticate with the file don't work inside the sandbox, the same effect as `deny`. Unlike a `deny` entry, the read block holds even when you [disable filesystem isolation](#disable-filesystem-isolation).
 
-On every platform, the [`network.tlsTerminate`](/docs/en/settings-reference#sandbox-network-tlsterminate) requirement, `injectHosts`, and the settings-source restriction work the same way as for [masked environment variables](#mask-environment-variables).
+On every platform, Claude Code applies the [`network.tlsTerminate`](/docs/en/settings-reference#sandbox-network-tlsterminate) requirement and `injectHosts` the same way as for [masked environment variables](#mask-environment-variables), and ignores repository settings the same way. If you [exclude user settings](#configure-sandboxing), Claude Code keeps the file `mask` entries in `~/.claude/settings.json` as restrictions, but the entries no longer authorize the proxy to substitute the real value.
 
 The example below masks a GitHub token stored in `~/.config/gh/hosts.yml`; the `extract` pattern, covered below, tells Claude Code which part of the file is the secret. On Linux and WSL2, sandboxed commands that read the file get a sentinel in place of the token, and the proxy substitutes the real token on requests to `api.github.com`:
 
@@ -589,9 +596,9 @@ The sandbox does not run on native Windows, so if your fleet includes Windows ho
 
 ### Keep developers from widening the policy
 
-For boolean keys such as `enabled` and `failIfUnavailable`, Claude Code uses the managed value and ignores anything a developer sets locally. For array keys such as `excludedCommands` and `allowRead`, Claude Code merges entries from every scope, so a developer can append entries that widen the policy.
+For boolean keys such as `enabled` and `failIfUnavailable`, Claude Code uses the managed value and ignores anything a developer sets locally. For array keys such as `excludedCommands` and `allowRead`, Claude Code merges entries from every scope the session loads, so a developer can append entries that widen the policy.
 
-Set `allowManagedReadPathsOnly` to `true` in managed settings so that only `allowRead` entries from managed settings are honored. User, project, and local `allowRead` entries are ignored. This prevents developers from widening read access beyond the organization-approved paths. To lock network domains to the managed values the same way, set [`allowManagedDomainsOnly`](/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly).
+Set `allowManagedReadPathsOnly` to `true` in managed settings so that only `allowRead` entries from managed settings are honored. This prevents developers from widening read access beyond the organization-approved paths. To lock network domains to the managed values the same way, set [`allowManagedDomainsOnly`](/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly).
 
 When managed settings configure `sandbox.filesystem` or list any `sandbox.credentials.files` entry with `"mode": "deny"`, only managed settings can set [`filesystem.disabled`](#disable-filesystem-isolation), so developers can't switch off administrator-deployed filesystem restrictions. Whether a `mask` entry pins the key depends on how it resolves; the table under [Which settings can disable it](#which-settings-can-disable-it) covers the four cases.
 

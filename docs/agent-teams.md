@@ -85,7 +85,7 @@ The lead's terminal lists teammates in the agent panel below the prompt input. F
 
 * **Up and down arrows**: select a teammate
 * **Enter**: open the selected teammate's transcript and message it directly
-* **Escape**: interrupt the selected teammate's current turn
+* **Escape**: clear the selection. While you're viewing a teammate's transcript, Escape interrupts that teammate's current turn
 
 As of v2.1.199, an idle teammate's row stays in the panel while any teammate or subagent is still working, so you can select it to review its transcript or send it more work. Once every agent in the panel is idle, idle rows hide after 30 seconds and reappear on the teammate's next turn; the teammate stays running and addressable while hidden. In v2.1.181 through v2.1.198, an idle row hid 30 seconds after its own turn ended, even while other teammates were still working; idle rows are not hidden on versions before v2.1.181.
 
@@ -155,18 +155,15 @@ Claude Code checks the model your prompt requests for a teammate, or the one `CL
 
 Teammates inherit the lead's [effort level](/docs/en/model-config#adjust-effort-level). In split-pane mode this applies from v2.1.186; earlier versions did not pass the lead's session effort to split-pane teammates.
 
-### Require plan approval for teammates
+### Have teammates plan before implementing
 
-For complex or risky tasks, you can require teammates to plan before implementing. The teammate works in read-only plan mode until the lead approves their approach:
+For complex or risky tasks, you can have teammates plan before implementing. A teammate that Claude spawns while the lead is in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) works in read-only plan mode until its plan is ready. Switch the lead into plan mode first, then ask for the teammate:
 
 ```text wrap theme={null}
 Spawn an architect teammate to refactor the authentication module.
-Require plan approval before they make any changes.
 ```
 
-When a teammate finishes planning, it sends a plan approval request to the lead. The lead reviews the plan and either approves it or rejects it with feedback. If rejected, the teammate stays in plan mode, revises based on the feedback, and resubmits. Once approved, the teammate exits plan mode and begins implementation.
-
-The lead makes approval decisions autonomously. To influence the lead's judgment, give it criteria in your prompt, such as "only approve plans that include test coverage" or "reject plans that modify the database schema."
+When a teammate finishes planning, it sends a plan approval request to the lead. Claude Code approves the plan in the lead's session as soon as the request arrives, without the lead reviewing it. The teammate's edits and commands still go through the permission prompts described in [Permissions](#permissions). Once approved, the teammate exits plan mode and begins implementation.
 
 ### Talk to teammates directly
 
@@ -264,17 +261,17 @@ To use a subagent definition, mention it by name when asking Claude to spawn the
 Spawn a teammate using the security-reviewer agent type to audit the auth module.
 ```
 
-The teammate honors that definition's `tools` allowlist and `model`, and the definition's body is appended to the teammate's system prompt as additional instructions rather than replacing it. For an in-process teammate, Claude Code adds `SendMessage` to that allowlist. In a [session that has the Task tools](/docs/en/tools-reference#task-tool-availability), Claude Code adds `TaskCreate`, `TaskGet`, `TaskList`, and `TaskUpdate` to it too.
+The teammate honors that definition's `tools` allowlist and `model`, and for an in-process teammate Claude Code appends the definition's body to the teammate's system prompt as additional instructions rather than replacing it. For an in-process teammate, Claude Code adds `SendMessage` to that allowlist. In a [session that has the Task tools](/docs/en/tools-reference#task-tool-availability), Claude Code adds `TaskCreate`, `TaskGet`, `TaskList`, and `TaskUpdate` to it too.
 
 <Note>
-  The `skills` and `mcpServers` frontmatter fields in a subagent definition are not applied when that definition runs as a teammate. Teammates load skills and MCP servers from your project and user settings, the same as a regular session.
+  The `skills` and `mcpServers` frontmatter fields in a subagent definition are not applied when that definition runs as an in-process teammate. In-process teammates load skills and MCP servers from your project and user settings, the same as a regular session.
 </Note>
 
 ### Permissions
 
 Teammates start with the lead's permission settings. If the lead runs with `--dangerously-skip-permissions`, all teammates do too. After spawning, you can change individual teammate modes, but you can't set per-teammate modes at spawn time.
 
-Teammate permission prompts appear in the lead session, so approve them there yourself. [Plan approval](#require-plan-approval-for-teammates) is the designed exception: the lead session grants teammate plan approvals without a separate prompt to you.
+Teammate permission prompts appear in the lead session, so approve them there yourself. [Plan approval](#have-teammates-plan-before-implementing) is the designed exception: the lead session grants teammate plan approvals without a separate prompt to you.
 
 #### Messages between agents
 

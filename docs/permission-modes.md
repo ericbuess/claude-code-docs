@@ -495,7 +495,7 @@ You can't enter `bypassPermissions` from a session that was started without it e
 claude --permission-mode bypassPermissions
 ```
 
-The `--dangerously-skip-permissions` flag is equivalent.
+The `--dangerously-skip-permissions` flag is equivalent. Claude Code refuses `bypassPermissions` in a session you start with [`--restricted`](/docs/en/cli-reference#cli-flags). `--restricted` requires Claude Code v2.1.248 or later.
 
 The first time you start an interactive session with this mode enabled, Claude Code shows a warning dialog asking you to accept responsibility for actions taken without permission checks. Claude Code saves your acceptance to user settings, so the dialog appears only once. If you decline, Claude Code exits. In [non-interactive mode](/docs/en/headless) no dialog is shown, and a [background session](/docs/en/agent-view) started with `--bg` is refused until you've accepted the dialog in an interactive session.
 

@@ -96,22 +96,23 @@ Actions for navigating command history:
 
 Actions available in the `Chat` context:
 
-| Action                | Default                           | Description                                                                                                                                                                                                                      |
-| :-------------------- | :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `chat:cancel`         | Escape                            | Cancel current input                                                                                                                                                                                                             |
-| `chat:clearInput`     | Ctrl+L                            | Force a full screen redraw, preserving input and conversation                                                                                                                                                                    |
-| `chat:clearScreen`    | Cmd+K                             | Force a full screen redraw, preserving input and conversation. See [Clear the conversation](/docs/en/fullscreen#clear-the-conversation) for how Cmd+K behaves on iTerm2 and Terminal.app                                              |
-| `chat:killAgents`     | Ctrl+X Ctrl+K                     | Stop all running [background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) in this session and turn off [artifact auto-replies](/docs/en/artifacts#let-claude-reply-to-comments-on-its-own) for the rest of it |
-| `chat:cycleMode`      | Shift+Tab\*                       | Cycle permission modes                                                                                                                                                                                                           |
-| `chat:modelPicker`    | Meta+P                            | Open model picker                                                                                                                                                                                                                |
-| `chat:fastMode`       | Meta+O                            | Toggle fast mode                                                                                                                                                                                                                 |
-| `chat:thinkingToggle` | Meta+T                            | Toggle extended thinking                                                                                                                                                                                                         |
-| `chat:submit`         | Enter                             | Submit message                                                                                                                                                                                                                   |
-| `chat:newline`        | Ctrl+J                            | Insert a newline without submitting                                                                                                                                                                                              |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-             | Undo last action                                                                                                                                                                                                                 |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E             | Open in external editor                                                                                                                                                                                                          |
-| `chat:stash`          | Ctrl+S                            | Stash current prompt                                                                                                                                                                                                             |
-| `chat:imagePaste`     | Ctrl+V (Alt+V on Windows and WSL) | Paste image from clipboard. On WSL, both shortcuts are bound by default                                                                                                                                                          |
+| Action                | Default                           | Description                                                                                                                                                                                                                                                                                              |
+| :-------------------- | :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `chat:cancel`         | Escape                            | Cancel current input                                                                                                                                                                                                                                                                                     |
+| `chat:clearInput`     | Ctrl+L                            | Force a full screen redraw, preserving input and conversation                                                                                                                                                                                                                                            |
+| `chat:clearScreen`    | Cmd+K                             | Force a full screen redraw, preserving input and conversation. See [Clear the conversation](/docs/en/fullscreen#clear-the-conversation) for how Cmd+K behaves on iTerm2 and Terminal.app                                                                                                                      |
+| `chat:killAgents`     | Ctrl+X Ctrl+K                     | Stop all running [background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) in this session and turn off [artifact auto-replies](/docs/en/artifacts#let-claude-reply-to-comments-on-its-own) for the rest of it                                                                         |
+| `chat:cycleMode`      | Shift+Tab\*                       | Cycle permission modes                                                                                                                                                                                                                                                                                   |
+| `chat:modelPicker`    | Meta+P                            | Open model picker                                                                                                                                                                                                                                                                                        |
+| `chat:fastMode`       | Meta+O                            | Toggle fast mode                                                                                                                                                                                                                                                                                         |
+| `chat:thinkingToggle` | Meta+T                            | Toggle extended thinking                                                                                                                                                                                                                                                                                 |
+| `chat:submit`         | Enter                             | Submit message                                                                                                                                                                                                                                                                                           |
+| `chat:queueSubmit`    | Ctrl+X Enter                      | Submit the message, marked to wait its turn: while Claude is working, Claude Code [queues it](/docs/en/interactive-mode#queue-messages-while-claude-works) and never interrupts the turn. Unlike `chat:submit`, it submits the draft even while autocomplete suggestions are open. Requires v2.1.247 or later |
+| `chat:newline`        | Ctrl+J                            | Insert a newline without submitting                                                                                                                                                                                                                                                                      |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-             | Undo last action                                                                                                                                                                                                                                                                                         |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E             | Open in external editor                                                                                                                                                                                                                                                                                  |
+| `chat:stash`          | Ctrl+S                            | Stash current prompt                                                                                                                                                                                                                                                                                     |
+| `chat:imagePaste`     | Ctrl+V (Alt+V on Windows and WSL) | Paste image from clipboard. On WSL, both shortcuts are bound by default                                                                                                                                                                                                                                  |
 
 \*On Windows without VT mode (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), defaults to Meta+M.
 
@@ -379,6 +380,17 @@ ctrl+shift+c    Multiple modifiers
 
 Claude Code parses key names case-insensitively, so `K` is the same binding as `k` and `ctrl+K` is the same as `ctrl+k`. To bind Shift and a letter, write `shift+k`.
 
+### Non-US keyboard layouts
+
+Write the key names of Ctrl shortcuts as Latin characters even when your active keyboard layout types other characters.
+
+How Claude Code matches the key you press to a binding depends on the kind of layout:
+
+* Under a non-Latin layout such as Cyrillic, Claude Code matches Ctrl shortcuts by the key's US-layout position when the terminal uses the Kitty keyboard protocol and reports that position. In such a terminal, with a Russian layout active, pressing Ctrl and the physical W key triggers `ctrl+w`. In a terminal that doesn't report the position, Claude Code matches whatever the terminal sends for the keypress: an ASCII control code triggers the Latin shortcut, and a keypress that arrives as the Cyrillic character matches no binding
+* Under layouts that rearrange Latin letters, such as AZERTY, Claude Code matches the letter that the key types, so pressing Ctrl and the key labeled A triggers `ctrl+a`
+
+Before v2.1.247, pressing a Ctrl shortcut under a non-Latin layout didn't trigger its binding in terminals that use the Kitty keyboard protocol, such as Ghostty, Kitty, WezTerm, and iTerm2.
+
 ### Chords
 
 Chords are sequences of keystrokes separated by spaces:
@@ -418,7 +430,7 @@ Set an action to `null` to unbind a default shortcut:
 
 This also works for chord bindings. Unbinding every chord that shares a prefix frees that prefix for use as a single-key binding. A chord in any active context keeps its prefix reserved, so you must unbind each chord in the context that defines it.
 
-The default `Ctrl+X` family spans two contexts: `ctrl+x ctrl+k` and `ctrl+x ctrl+e` in `Chat`, and `ctrl+x ctrl+b` in `Task`. To reclaim `ctrl+x` itself as a single-key binding, unbind all of them:
+Claude Code binds these default chords on the `ctrl+x` prefix: `ctrl+x ctrl+k`, `ctrl+x ctrl+e`, and `ctrl+x enter` in `Chat`, and `ctrl+x ctrl+b` in `Task`. The `ctrl+x enter` chord requires v2.1.247 or later. To reclaim `ctrl+x` itself as a single-key binding, unbind all of them:
 
 ```json theme={null}
 {
@@ -434,6 +446,7 @@ The default `Ctrl+X` family spans two contexts: `ctrl+x ctrl+k` and `ctrl+x ctrl
       "bindings": {
         "ctrl+x ctrl+k": null,
         "ctrl+x ctrl+e": null,
+        "ctrl+x enter": null,
         "ctrl+x": "chat:newline"
       }
     }
@@ -447,12 +460,15 @@ If you unbind some but not all chords on a prefix, pressing the prefix still ent
 
 These shortcuts cannot be rebound:
 
-| Shortcut  | Reason                                         |
-| :-------- | :--------------------------------------------- |
-| Ctrl+C    | Hardcoded interrupt/cancel                     |
-| Ctrl+D    | Hardcoded exit                                 |
-| Ctrl+M    | Identical to Enter in terminals (both send CR) |
-| Caps Lock | Not delivered to terminal applications         |
+| Shortcut  | Reason                                                                                                                                                                                                                                             |
+| :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ctrl+C    | Hardcoded interrupt/cancel                                                                                                                                                                                                                         |
+| Ctrl+D    | Hardcoded exit                                                                                                                                                                                                                                     |
+| Ctrl+M    | Claude Code always receives it as Enter                                                                                                                                                                                                            |
+| Ctrl+\[   | Claude Code always receives it as Escape                                                                                                                                                                                                           |
+| Ctrl+I    | Claude Code always receives it as Tab                                                                                                                                                                                                              |
+| Ctrl+H    | Sends the ASCII backspace byte. [How Claude Code reads it on Windows](/docs/en/terminal-config#fix-backspace-deleting-a-whole-word-on-windows) depends on your terminal and the [`CLAUDE_CODE_BS_AS_CTRL_BACKSPACE`](/docs/en/env-vars) environment variable |
+| Caps Lock | Not delivered to terminal applications                                                                                                                                                                                                             |
 
 ## Terminal conflicts
 
@@ -483,6 +499,7 @@ Claude Code validates your keybindings and shows warnings for:
 * Parse errors (invalid JSON or structure)
 * Invalid context names
 * Invalid action values, such as an action that isn't a string or `null`
+* Unknown action names, such as a typo of a registered action. Claude Code skips the binding and keeps any default binding for that key in effect. Before v2.1.246, a binding with an unknown action name silently disabled that key
 * Reserved shortcut conflicts
 * Duplicate bindings in the same context
 

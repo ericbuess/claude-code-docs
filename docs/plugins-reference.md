@@ -67,6 +67,18 @@ Detailed system prompt for the agent describing its role, expertise, and behavio
 
 Plugin agents support `name`, `description`, `model`, `effort`, `maxTurns`, `tools`, `disallowedTools`, `skills`, `memory`, `background`, and `isolation` frontmatter fields. The only valid `isolation` value is `"worktree"`. For security reasons, `hooks`, `mcpServers`, and `permissionMode` are not supported for plugin-shipped agents.
 
+Claude Code loads a plugin agent even when its frontmatter has no `name` or doesn't parse:
+
+* No `name`: Claude Code names the agent after the file, so `agents/reviewer.md` in a plugin named `my-plugin` loads as `my-plugin:reviewer`
+* Frontmatter that doesn't parse: Claude Code names the agent after the file, uses `Agent from my-plugin plugin` as its description, and ignores every field in the file
+
+By contrast, Claude Code skips a project, user, or managed agent file whose frontmatter has no `name` or doesn't parse.
+
+To find files in a plugin's default `agents/` directory whose frontmatter doesn't parse, run `claude plugin validate`. The path you pass depends on whether the plugin has a manifest, and both examples use `./my-plugin` as the plugin directory:
+
+* A plugin with a manifest: `claude plugin validate ./my-plugin`
+* A plugin without a manifest: `claude plugin validate ./my-plugin/agents`. Requires Claude Code v2.1.233 or later.
+
 Agents appear in the [@-mention typeahead](/docs/en/sub-agents#invoke-subagents-explicitly) under their scoped name, such as `my-plugin:code-reviewer`, once the plugin is enabled.
 
 For complete details, see [Subagents](/docs/en/sub-agents).

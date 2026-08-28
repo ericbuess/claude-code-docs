@@ -116,7 +116,7 @@ To run a single task as a workflow without changing the session's effort level, 
 ultracode: audit every API endpoint under src/routes/ for missing auth checks
 ```
 
-Claude Code highlights the keyword in your input and Claude writes a workflow script for the task instead of working through it turn by turn. The keyword only chooses how Claude structures the work: a workflow started this way runs inside the session's existing [permission mode](/docs/en/permission-modes), and its agents' tool calls receive the same permission checks and [sandboxing](/docs/en/sandboxing) as any other tool call in the session.
+Claude Code highlights the keyword in your input and Claude writes a workflow script for the task instead of working through it turn by turn. The keyword only chooses how Claude structures the work: the agents' tool calls receive the same permission checks and [sandboxing](/docs/en/sandboxing) as any other tool call in the session.
 
 If the run does what you wanted, you can [save it as a command](#save-the-workflow-for-reuse) afterward. If you already have an orchestrator built another way, such as a folder of subagent prompts or a skill that fans work out, you can point Claude at it and ask for a workflow that does the same thing.
 
@@ -156,7 +156,7 @@ With ultracode on, Claude decides when a task warrants a workflow. A single requ
 In the CLI, the per-run prompt shows the planned phases and these options:
 
 * **Yes, run it**: start the run
-* **Yes, and don't ask again for `<name>` in `<path>`**: start, and skip this prompt for this workflow in this project from now on
+* **Yes, and don't ask again for `<name>` in `<path>`**: start, and skip this prompt for this workflow in this project from now on. Claude Code offers this option when you run a bundled, saved, or plugin workflow by name, not for a script Claude wrote for the current task.
 * **View raw script**: read the script before deciding
 * **No**: cancel
 
@@ -164,19 +164,24 @@ In the CLI, the per-run prompt shows the planned phases and these options:
 
 Whether you see this prompt depends on your [permission mode](/docs/en/permission-modes):
 
-| Permission mode                            | When you're prompted                                                                                                                                    |
-| :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Auto                                       | First launch only. Any **Yes** records consent in your user settings, and later launches start without prompting. Skipped entirely when ultracode is on |
-| Manual, accept edits                       | Every run, unless you've selected **Yes, and don't ask again** for that workflow in this project                                                        |
-| Bypass permissions, `claude -p`, Agent SDK | Never. The run starts immediately                                                                                                                       |
+| Permission mode        | When you're prompted                                                                                                                                    |
+| :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Auto                   | First launch only. Any **Yes** records consent in your user settings, and later launches start without prompting. Skipped entirely when ultracode is on |
+| Manual, accept edits   | Every run, unless you've selected **Yes, and don't ask again** for that workflow in this project                                                        |
+| Bypass permissions     | Claude Code doesn't prompt you. The run starts immediately                                                                                              |
+| `claude -p`, Agent SDK | Claude Code doesn't prompt you                                                                                                                          |
+
+In `claude -p` and the Agent SDK, Claude Code never shows this prompt. It runs the Workflow tool call through the same [permission evaluation](/docs/en/agent-sdk/permissions#how-permissions-are-evaluated) as the rest of the session, so deny rules, ask rules, and `dontAsk` mode apply to the launch as they apply to every tool call. To let the workflow start in these runs, use one of these:
+
+* **Permission rule**: `Workflow` in your allow rules approves every workflow, and `Workflow(<name>)` approves one saved workflow by name.
+* **Auto permission mode**: the [classifier](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) reviews the call and can approve it.
+* **Your host**: a [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags) approves it, or, with the Agent SDK, a [`canUseTool`](/docs/en/agent-sdk/permissions) callback or a [`PermissionRequest` hook](/docs/en/hooks#permissionrequest) approves it.
 
 In the Desktop app, an approval card shows the workflow name, the phase list, and a token-usage caution, with **Once**, **Always**, and **Deny** actions. The progress view appears in the Background tasks side pane.
 
-Your permission mode controls only the launch prompt above. The subagents the workflow spawns always run in `acceptEdits` mode and inherit your [tool allowlist](/docs/en/settings-reference#permission-settings), regardless of your session's mode. File edits are auto-approved.
+The subagents the workflow spawns always run in `acceptEdits` mode and inherit your [tool allowlist](/docs/en/settings-reference#permission-settings), regardless of your session's permission mode. File edits are auto-approved.
 
 Shell commands, web fetches, and MCP tools that aren't in your allowlist can still prompt you mid-run. To avoid this on a long run, add the commands the agents need to your allowlist before starting.
-
-In `claude -p` and the Agent SDK there is no one to prompt, so tool calls follow your configured permission rules without interactive confirmation.
 
 ### Save the workflow for reuse
 
@@ -334,20 +339,18 @@ Once a run starts, you manage it from the `/workflows` view, or by expanding its
 
 ### Resume after a pause
 
-If you stop a run, you can resume it. Agents that already completed usually return their cached results, and the rest run live.
+Resume a paused run from `/workflows` by selecting it and pressing `p`. For a run you stopped, ask Claude to relaunch the workflow with the same script. Claude Code replays the run in the order agents started, and each agent either returns its saved result or runs again:
 
-Two rules decide which results survive:
+* **Completed**: returns its saved result. The first agent whose prompt differs from the previous run, because you edited the script or an earlier agent returned something different, runs again, and so does every agent after it, even ones that completed.
+* **Still running when you stopped**: starts over. Stopping the whole run doesn't count any agent as failed.
+* **Failed**: runs again, and so does every agent that started after it, even ones that completed. Stopping one agent alone, by selecting it in [`/workflows`](#watch-the-run) and pressing `x`, counts as failing.
 
-* An agent that was still running when you stopped isn't saved, so it starts over on resume.
-* Replay follows the order agents started. Cached results stop at the first agent that didn't finish, and every agent that started after that one runs again, even if it completed.
+That last case means a failure in the middle of a fan-out reruns work that already finished. If a script starts A, B, C, and D in that order and B fails, relaunching returns A from cache and runs B, C, and D again.
 
-The second rule is what makes stopping mid fan-out expensive. Say a script starts four agents, A, B, C, and D, in that order, and you stop the run while B is still going. On resume, A returns from cache. B runs again because it never finished. C and D run again too, because they started after B, even though both completed before you stopped.
+You can resume a run within the same Claude Code session. What happens to a running workflow when you leave the session depends on how you leave:
 
-A workflow that fans work out across many small agents therefore preserves more progress than one long agent.
-
-Resume a paused run from `/workflows` by selecting it and pressing `p`, or ask Claude to relaunch the workflow with the same script.
-
-Resume works within the same Claude Code session. If you exit Claude Code while a workflow is running, the next session starts the workflow fresh.
+* If you [background the session](/docs/en/agent-view#what-carries-over-when-you-background), Claude Code replays the run the same way in the background session and continues it.
+* If you exit Claude Code while a workflow is running and [agent view is on](/docs/en/agent-view#from-inside-a-session), the exit dialog offers `Move to background and exit`, which carries the run over the same way. If you choose `Exit and stop tasks` instead, or the option isn't offered, the run stops with the session. Claude Code keeps the run's saved results under that session's directory in `~/.claude/projects/`, so a session you resume with `claude --resume` can replay them when you ask Claude to relaunch the workflow, while a session you start fresh has nothing to replay and starts the workflow over.
 
 ### Cost
 

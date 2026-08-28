@@ -89,6 +89,7 @@ Match the message you see to a section below.
 | `403` with `x-deny-reason: host_not_allowed` in a cloud or routine session                                                                                                                    | [Network](#host-not-allowed-in-a-cloud-session)                                                                               |
 | `proxy refused the connection`                                                                                                                                                                | [Network](#the-proxy-refused-the-connection)                                                                                  |
 | `403` with `This GraphQL query is not enabled for this session` in a cloud session                                                                                                            | [GitHub proxy](/docs/en/cloud-environments#github-proxy)                                                                           |
+| `The cloud environments service returned an empty response` / `The cloud environments service returned a response in an unexpected format`                                                    | [Network](#the-cloud-environments-service-returned-an-empty-or-unexpected-response)                                           |
 | `Couldn't reconnect to your Remote Control session`                                                                                                                                           | [Network](#couldnt-reconnect-to-your-remote-control-session)                                                                  |
 | `N sessions ended while this machine was offline — the environment was cleaned up on the server and can't be resumed.`                                                                        | [Network](#sessions-ended-while-this-machine-was-offline)                                                                     |
 | `Couldn't share the transcript.`                                                                                                                                                              | [Network](#couldnt-share-the-transcript)                                                                                      |
@@ -96,6 +97,7 @@ Match the message you see to a section below.
 | `The remote session sent a reply this version can't display`                                                                                                                                  | [Network](#the-remote-sent-a-reply-this-version-cant-display)                                                                 |
 | `Prompt is too long` / `Input is too long for requested model`                                                                                                                                | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Prompt is too long · automatic compaction failed:`                                                                                                                                           | [Request errors](#prompt-is-too-long)                                                                                         |
+| `Prompt is too long · this conversation is a single exchange` / `A single-exchange conversation cannot be compacted`                                                                          | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Context limit reached · /compact or /clear to continue`                                                                                                                                      | [Request errors](#prompt-is-too-long)                                                                                         |
 | `Context limit reached · /clear to continue`                                                                                                                                                  | [Request errors](#prompt-is-too-long)                                                                                         |
 | `capability_rejected: prompt_too_long` on a Claude apps gateway session                                                                                                                       | [Request errors](#prompt-is-too-long)                                                                                         |
@@ -110,6 +112,7 @@ Match the message you see to a section below.
 | `Unable to resize image`                                                                                                                                                                      | [Request errors](#unable-to-resize-image)                                                                                     |
 | `PDF too large` / `PDF is password protected`                                                                                                                                                 | [Request errors](#pdf-errors)                                                                                                 |
 | `Extra inputs are not permitted`                                                                                                                                                              | [Request errors](#extra-inputs-are-not-permitted)                                                                             |
+| `API Error: 400 ... tools.N.custom.input_schema: JSON schema is invalid`                                                                                                                      | [Request errors](#tool-input-schema-is-invalid)                                                                               |
 | `There's an issue with the selected model`                                                                                                                                                    | [Request errors](#theres-an-issue-with-the-selected-model)                                                                    |
 | `Model ... is not a recognized model id`                                                                                                                                                      | [Request errors](#model-is-not-a-recognized-model-id)                                                                         |
 | `Claude Opus is not available with the Claude Pro plan`                                                                                                                                       | [Request errors](#claude-opus-is-not-available-with-the-claude-pro-plan)                                                      |
@@ -175,9 +178,12 @@ Match the message you see to a section below.
 | `This session has no saved transcript`                                                                                                                                                        | [Background session errors](#this-session-has-no-saved-transcript)                                                            |
 | `terminal host process died — press Enter to restart` / `This session's terminal host process died`                                                                                           | [Background session errors](#terminal-host-process-died)                                                                      |
 | `Session isn't responding` / `Press enter again to restart this session — it isn't responding`                                                                                                | [Background session errors](#session-isnt-responding)                                                                         |
+| `Session <id> was stopped while the respawn was in flight`                                                                                                                                    | [Background session errors](#session-was-stopped-while-the-respawn-was-in-flight)                                             |
 | `This session was running agent '<name>', which is no longer available`                                                                                                                       | [Background session errors](#session-agent-no-longer-available)                                                               |
 | `CLAUDE_CODE_PROCESS_WRAPPER: launcher ...`                                                                                                                                                   | [Background session errors](#claude_code_process_wrapper-launcher-errors)                                                     |
 | `EUNKNOWN: unknown error, uv_spawn`                                                                                                                                                           | [Background session errors](#eunknown-when-starting-a-background-session)                                                     |
+| `EACCES: permission denied, posix_spawn`                                                                                                                                                      | [Background session errors](#eacces-when-starting-a-background-session)                                                       |
+| `exited before it became reachable`                                                                                                                                                           | [Background session errors](#background-service-exited-before-it-became-reachable)                                            |
 | `Claude Code process exited with code N`                                                                                                                                                      | [Wrapper and IDE errors](#claude-code-process-exited-with-code-n)                                                             |
 | `Could not locate the Claude CLI on PATH`                                                                                                                                                     | [Wrapper and IDE errors](#could-not-locate-the-claude-cli-on-path)                                                            |
 | `Restored the code, but skipped N files`                                                                                                                                                      | [Rewind warnings](#restored-the-code-but-skipped-files)                                                                       |
@@ -186,6 +192,7 @@ Match the message you see to a section below.
 | `Transcript saving is off — inherited CLAUDE_CODE_CHILD_SESSION marker`                                                                                                                       | [Session saving warnings](#transcript-saving-is-off-child-session-marker)                                                     |
 | `Claude Code's fullscreen renderer didn't finish starting last time on this machine` / `Claude Code's fullscreen renderer has repeatedly failed to start on this machine`                     | [Configuration warnings](#fullscreen-failed-start-notice)                                                                     |
 | `Claude Code exited after an unrecoverable interface error (...)`                                                                                                                             | [Configuration warnings](#exited-after-an-unrecoverable-interface-error)                                                      |
+| `Agent descriptions are over the 15.0k-token limit`                                                                                                                                           | [Configuration warnings](#agent-descriptions-are-over-the-15000-token-limit)                                                  |
 | `Ignoring N permissions.allow entries from ... this workspace has not been trusted`                                                                                                           | [Configuration warnings](#workspace-has-not-been-trusted)                                                                     |
 | `headersHelper not run — this workspace has no persisted trust`                                                                                                                               | [Configuration warnings](#headershelper-not-run)                                                                              |
 | `... is not matched by file permission checks`                                                                                                                                                | [Configuration warnings](#is-not-matched-by-file-permission-checks)                                                           |
@@ -1243,6 +1250,27 @@ The status is the proxy's answer to the `CONNECT`. The host never answered, so e
 
 Before v2.1.238, Claude Code reported a refused tunnel as a generic network error.
 
+<h3 id="the-cloud-environments-service-returned-an-empty-or-unexpected-response">
+  The cloud environments service returned an empty or unexpected response
+</h3>
+
+Claude Code requests your [cloud environments](/docs/en/cloud-environments) list at several points, such as when you create a cloud session from the CLI or run [`/remote-env`](/docs/en/cloud-environments#select-an-environment-from-the-cli). When it can't read the server's answer, it shows one of these messages:
+
+```text theme={null}
+The cloud environments service returned an empty response (HTTP 200 with no body). This is usually temporary — try again in a moment.
+The cloud environments service returned a response in an unexpected format (HTTP 200 with a non-JSON body). This is usually temporary — try again in a moment.
+The cloud environments service returned a response in an unexpected format (HTTP 200 without a usable environments list). This is usually temporary — try again in a moment.
+```
+
+The server accepted the request but answered with a body that isn't the environments list: empty, not JSON, or JSON without the list. This usually accompanies a service-side disruption and clears on its own. Depending on the surface that requested the list, Claude Code may add a prefix, such as `couldn't list environments:` in the `/remote-env` dialog.
+
+**What to do:**
+
+* Retry the action. Claude Code requests the list again each time
+* If the message keeps appearing, check [status.claude.com](https://status.claude.com) for active incidents
+
+Before v2.1.236, Claude Code showed a raw JavaScript TypeError instead of these messages.
+
 <h3 id="couldnt-reconnect-to-your-remote-control-session">
   Couldn't reconnect to your Remote Control session
 </h3>
@@ -1352,9 +1380,29 @@ Prompt is too long · automatic compaction failed: <the underlying error>
 
 Resolve the named error first; `/compact` fails on the same error until you do. Before v2.1.229, a failed automatic compaction surfaced `Prompt is too long` without the cause.
 
+A single-exchange conversation has no earlier turns to summarize. When automatic compaction would have run on one, Claude Code skips the attempt and explains what fills the request instead. When the API doesn't report token counts in its error, the message reads:
+
+```text theme={null}
+Prompt is too long · this conversation is a single exchange and cannot be compacted — the request size comes mostly from system prompt, tool definitions, or attachments.
+```
+
+When the API reports token counts in its error, Claude Code compares them with its own estimate of the conversation's size to tell which is most of the request: the conversation's own content, or the system prompt, tool definitions, and attachment content that Claude Code sends with it. When the conversation's own content is most of the request, the message reads:
+
+```text theme={null}
+Prompt is too long · the request is ~<request tokens> tokens (limit <limit>) and this conversation's own content is most of it. A single-exchange conversation cannot be compacted; start with less content (smaller files or pasted text).
+```
+
+When most of the request is outside the conversation, the message reads:
+
+```text theme={null}
+Prompt is too long · the request is ~<request tokens> tokens (limit <limit>) but this conversation is only ~<conversation tokens> tokens — the rest is system prompt, tool definitions, and attachment content. A single-exchange conversation cannot be compacted; reduce attached files/tools or start with less context.
+```
+
+Before v2.1.162, Claude Code attempted the compaction anyway and surfaced the bare `Prompt is too long` when it failed.
+
 **What to do:**
 
-* Run `/compact` to summarize earlier turns and free space, or `/clear` to start fresh
+* In a multi-turn conversation, run `/compact` to summarize earlier turns and free space, or `/clear` to start fresh. A single-exchange conversation can't be compacted, so shrink the request instead
 * Run `/context` to see a breakdown of what is consuming the window: system prompt, tools, memory files, and messages
 * Disable MCP servers you are not using with `/mcp disable <name>` to remove their tool definitions from context
 * Trim large `CLAUDE.md` memory files, or move instructions into [path-scoped rules](/docs/en/memory#path-specific-rules) that load only when relevant
@@ -1381,7 +1429,7 @@ Both forms name `/clear` instead of `/compact` when you have set [`DISABLE_COMPA
 
 **What to do:**
 
-* Run `/compact` to summarize earlier turns and free space, or `/clear` to start fresh
+* In a multi-turn conversation, run `/compact` to summarize earlier turns and free space. To start fresh instead, run `/clear`
 * For more ways to reduce usage, see [Prompt is too long](#prompt-is-too-long)
 
 Before v2.1.216, `/context` showed usage above 100% with no warning line explaining what that meant or how to recover.
@@ -1489,6 +1537,24 @@ Claude Code sends beta-only fields such as `context_management` and `effort` alo
 
 * Configure your gateway to forward the `anthropic-beta` header. See [feature pass-through](/docs/en/llm-gateway-protocol#feature-pass-through) for what gateways must forward.
 * As a fallback, set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](/docs/en/env-vars) before launching. [Disable pre-release capabilities](/docs/en/llm-gateway-protocol#disable-pre-release-capabilities) covers the exact scope.
+
+### Tool input schema is invalid
+
+A tool in the request declared an `input_schema` that fails the API's JSON Schema validation, so the API rejected the whole request. The number after `tools.` is the failing tool's position in the request's tool list, not a name you can look up.
+
+```text theme={null}
+API Error: 400 ... tools.N.custom.input_schema: JSON schema is invalid
+```
+
+Claude Code [excludes MCP tools whose input schema would fail this validation](/docs/en/mcp#tools-with-invalid-input-schemas) when it loads a server's tools, so requests normally never include one. On a deployment that doesn't receive the remote configuration that enables the exclusion, Claude Code records in the server's log which tool would be rejected but sends it anyway, so this error can still occur. The error can also occur for a tool whose schema declares a JSON Schema dialect other than draft 2020-12 in `$schema`: Claude Code doesn't check those schemas against the JSON Schema meta-schema, though it still excludes one with an invalid top-level property name.
+
+Before v2.1.216, no deployment ran the exclusion checks.
+
+**What to do:**
+
+* If your Claude Code version is earlier than v2.1.216, run `claude update`.
+* Remove or [disable](/docs/en/mcp#disable-a-server-without-removing-it) the MCP server that declares the invalid schema. The error names the tool only by position. On v2.1.216 or later, check each server's log for a line naming a tool whose input schema would be rejected. If no log names one, disable servers one at a time.
+* If you maintain the server, fix the tool's `input_schema`. The schema must be valid JSON Schema, and top-level property names must be 1 to 64 characters long and use only ASCII letters and digits, `_`, `.`, and `-`. See [Tools with invalid input schemas](/docs/en/mcp#tools-with-invalid-input-schemas).
 
 <h3 id="theres-an-issue-with-the-selected-model">
   There's an issue with the selected model
@@ -2454,6 +2520,21 @@ Claude Code never restarts a row running a [shell command](/docs/en/agent-view#r
 * From the shell, run `claude stop <id>`, then `claude attach <id>`
 * For a shell-command row, press `Ctrl+X` in agent view or run `claude stop <id>` to stop it; dispatch the command again to rerun it
 
+### Session was stopped while the respawn was in flight
+
+You opened a [background session](/docs/en/agent-view) whose process wasn't running, and while Claude Code was restarting it, another Claude Code process stopped it, for example `claude stop` in another terminal. Claude Code keeps the session stopped:
+
+```text theme={null}
+Session <id> was stopped while the respawn was in flight
+```
+
+Opening a session you just dispatched, while its process is still starting, waits for the process instead. Before v2.1.246, opening it at that moment could stop it and show this message.
+
+**What to do:**
+
+* If you didn't stop the session, open its row again in agent view or run `claude respawn <id>` to restart it
+* If you stopped it yourself, nothing remains to do: the session stays stopped
+
 <h3 id="session-agent-no-longer-available">
   Session agent no longer available
 </h3>
@@ -2500,15 +2581,52 @@ Couldn't reach the background service (spawn background service: EUNKNOWN: unkno
 
 On some accounts the message says `daemon` in place of `background service`.
 
-Claude Code starts the background service through PowerShell so the service survives closing the terminal, using PowerShell 7 when it's installed and Windows PowerShell 5.1 otherwise. When neither PowerShell can run, Claude Code starts the service directly instead, so a policy that blocks only PowerShell doesn't cause this error. If you see it, the policy is blocking the Claude Code executable itself.
+On an npm installation, an `EUNKNOWN` that appears while `npm install -g @anthropic-ai/claude-code` is replacing the binary has the same cause as [`EACCES` during a reinstall](#eacces-when-starting-a-background-session) and clears when you retry after the install finishes.
+
+Claude Code starts the background service through PowerShell so the service survives closing the terminal, using PowerShell 7 when it's installed and Windows PowerShell 5.1 otherwise. When neither PowerShell can run, Claude Code starts the service directly instead, so a policy that blocks only PowerShell doesn't cause this error. If you see it while no npm install is running, the policy is blocking the Claude Code executable itself.
 
 Before v2.1.212, Claude Code used only Windows PowerShell 5.1 to start the service, so any machine where Group Policy blocked PowerShell 5.1 failed with `Couldn't start the session — EUNKNOWN: unknown error, uv_spawn`, even with PowerShell 7 installed.
 
 **What to do:**
 
 * If the message reads `Couldn't start the session`, upgrade to v2.1.212 or later. On earlier versions you can also run `claude daemon run` in a separate terminal first, then start the background session again. That command runs the background service in the terminal's foreground, so the service lasts only as long as that terminal stays open.
-* If the error appears on v2.1.212 or later, ask your Windows administrator to allow the Claude Code executable in the restriction policy
+* If an npm install was replacing the binary, wait for it to finish, then start the background session again
+* If the error appears on v2.1.212 or later while no npm install is running, ask your Windows administrator to allow the Claude Code executable in the restriction policy
 * If the background service stops when you close the terminal, Claude Code started it without PowerShell. Install PowerShell 7, or ask your administrator to unblock PowerShell, so the service can outlive the terminal.
+
+### EACCES when starting a background session
+
+Claude Code couldn't run its own binary to start the [background service](/docs/en/agent-view#the-supervisor-process) that hosts background sessions. On an npm installation, this usually means `npm install -g @anthropic-ai/claude-code` was replacing the binary at that moment, whether you ran it or the [auto-updater](/docs/en/setup#auto-updates) did. The error appears when you open a session from [agent view](/docs/en/agent-view):
+
+```text theme={null}
+Couldn't start the background service — spawn background service: EACCES: permission denied, posix_spawn '/usr/local/lib/node_modules/@anthropic-ai/claude-code/bin/claude'
+```
+
+When you start a session with `/background` or `claude --bg`, the same reason appears inside `Couldn't reach the background service (...)`. During the same reinstall window the error can name another code instead, such as `ENOENT` or `ENOEXEC`, or `EUNKNOWN` or `EPERM` on Windows; an `EUNKNOWN` that persists across retries has a [different cause](#eunknown-when-starting-a-background-session).
+
+On an npm installation, Claude Code waits up to ten seconds for the reinstall to finish and retries on its own, so you see the error only when the binary stays unrunnable for longer, such as while npm is still downloading the package. Before v2.1.246, Claude Code failed at once.
+
+**What to do:**
+
+* Wait a few seconds, then open the session or dispatch again.
+* If the error persists while no npm install is running, your user can't run the installed binary. Check its permissions and its directory's, or reinstall Claude Code.
+
+### Background service exited before it became reachable
+
+The process Claude Code started as the [background service](/docs/en/agent-view#the-supervisor-process) exited before it accepted connections, so Claude Code couldn't open your session. When the service printed an error before exiting, the reason in parentheses gives the exit code or signal and the first line the service printed, which names what stopped it:
+
+```text theme={null}
+Couldn't reach the background service (background service exited before it became reachable (exit code N): <the service's first error line>) — run 'claude daemon status'
+```
+
+When you open a session from [agent view](/docs/en/agent-view), the same reason follows `Couldn't start the background service —`. When the service printed nothing before exiting, the message says `nothing on stderr` instead.
+
+Claude Code reports the failure with the service's error line. Before v2.1.246, the failure surfaced only after a 45-second wait, as `background service did not become reachable within 45s`, without the service's error line.
+
+**What to do:**
+
+* If the message quotes a line, fix what it names, then open the session or dispatch again. The next attempt starts the service again
+* Run `claude daemon status` to check whether a service is running now
 
 ## Wrapper and IDE errors
 
@@ -2634,7 +2752,7 @@ Inside tmux, Claude Code detects a marker that arrived through the tmux server's
 
 ## Configuration warnings
 
-Claude Code writes these messages to stderr rather than showing an error in the conversation, except where an entry notes that it writes the message to the debug log instead. It writes most of them at startup. Two exceptions: it writes the [unrecognized-model diagnostic line](#unrecognized-model-id-on-a-request) at request time, and the [unrecoverable interface error message](#exited-after-an-unrecoverable-interface-error) as it exits.
+Claude Code writes most of these messages to stderr, not into the conversation, and writes most of them at startup. An entry says so when its message appears somewhere else, such as in the debug log or as a startup notice in the conversation view, or at another time, such as the [unrecognized-model diagnostic line](#unrecognized-model-id-on-a-request) at request time.
 
 <h3 id="fullscreen-failed-start-notice">
   Fullscreen renderer didn't finish starting
@@ -2671,6 +2789,21 @@ Claude Code exited after an unrecoverable interface error (<error>). It happened
 * If the message names the fullscreen renderer, [Fullscreen rendering](/docs/en/fullscreen#fullscreen-renderer-didnt-finish-starting) says what the next launch does, which depends on how you turned fullscreen on, and how to try fullscreen again or keep the classic renderer.
 
 Before v2.1.236, Claude Code exited without printing a message after this kind of error.
+
+<h3 id="agent-descriptions-are-over-the-15000-token-limit">
+  Agent descriptions are over the 15.0k-token limit
+</h3>
+
+Claude Code shows this warning as a startup notice in the conversation view rather than on stderr. The combined descriptions of your [subagents](/docs/en/sub-agents), except the built-in ones, exceed 15,000 tokens as Claude Code estimates them. Each agent counts its name plus its `description` frontmatter. Claude Code loads every agent whether or not the total is over the limit, so the warning doesn't change what loads.
+
+```text theme={null}
+Agent descriptions are over the 15.0k-token limit (~16.2k tokens) · ask Claude to trim agent descriptions in .claude/agents/
+```
+
+**What to do:**
+
+* Shorten the `description` frontmatter of your agent files, or ask Claude to trim them for you.
+* Remove agent files you no longer use.
 
 ### Workspace has not been trusted
 
