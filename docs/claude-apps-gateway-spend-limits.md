@@ -78,7 +78,7 @@ The pre-check queries Postgres with a two-second timeout. If the store is unreac
 
 ### Usage warnings in Claude Code
 
-Claude Code warns a developer as they approach their cap: once utilization passes 75%, and again past 95% of their fullest cap. When the gateway blocks a request, Claude Code shows the gateway's `429` message as is, including your `admin.blocked_message`.
+Claude Code warns a developer as they approach their cap: once utilization passes 75%, and again past 95% of their most-consumed cap. When the gateway blocks a request, Claude Code shows the gateway's `429` message as is, including your `admin.blocked_message`.
 
 The warning works off response headers:
 
@@ -86,6 +86,8 @@ The warning works off response headers:
 * With v2.1.225 or later on the developer's machine as well, Claude Code reads the headers and shows the warning.
 
 The headers always describe the developer's own cap: the gateway strips the upstream provider's rate-limit headers, which describe your shared quota, and never forwards them.
+
+With v2.1.251 or later on the developer's machine, Claude Code also reads the same headers to show a **Spend limit** bar in `/usage`, with the percentage of their cap used and when it resets, and to add a `rate_limits.spend_limit` object to the [status line](/docs/en/statusline#rate-limit-usage) input. Claude Code shows both as a percentage rather than a dollar amount, and needs nothing newer than v2.1.225 on the gateway server.
 
 ## Admin API reference
 

@@ -42,7 +42,7 @@ Pick regional endpoints to reduce latency and meet data-sovereignty requirements
 
 ## What can Claude do?
 
-Claude Code enables powerful CI/CD workflows that transform how you work with code:
+In a GitLab pipeline, Claude Code can:
 
 * Create and update MRs from issue descriptions or comments
 * Analyze performance regressions and propose optimizations

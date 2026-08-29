@@ -216,27 +216,28 @@ The reference below covers the tokens you can set in `overrides`. The interactiv
 
   Set the input box border color and the accent shown while a permission mode or indicator is active.
 
-  | Token          | Controls                                           |
-  | :------------- | :------------------------------------------------- |
-  | `promptBorder` | Input box border in Manual mode                    |
-  | `planMode`     | Plan mode accent and border                        |
-  | `autoAccept`   | Accept-edits mode accent and border                |
-  | `bashBorder`   | Input box border when entering a `!` shell command |
-  | `ide`          | IDE connection indicator                           |
-  | `fastMode`     | Fast mode indicator                                |
+  | Token          | Controls                                                                                                                                                                             |
+  | :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `promptBorder` | Input box border in Manual mode                                                                                                                                                      |
+  | `planMode`     | Plan mode accent and border                                                                                                                                                          |
+  | `autoAccept`   | Accept-edits mode accent and border                                                                                                                                                  |
+  | `bashBorder`   | Input box border when entering a `!` shell command                                                                                                                                   |
+  | `ide`          | IDE connection indicator                                                                                                                                                             |
+  | `fastMode`     | Fast mode indicator                                                                                                                                                                  |
+  | `effortUltra`  | The `ultracode` tag on the input box border while [ultracode](/docs/en/model-config#adjust-effort-level) is on. Your override of this color takes effect on Claude Code v2.1.239 or later |
 
   #### Diff rendering
 
   Color added and removed code in file edits and reviews.
 
-  | Token               | Controls                                           |
-  | :------------------ | :------------------------------------------------- |
-  | `diffAdded`         | Background of added lines                          |
-  | `diffRemoved`       | Background of removed lines                        |
-  | `diffAddedDimmed`   | Background of unchanged context near added lines   |
-  | `diffRemovedDimmed` | Background of unchanged context near removed lines |
-  | `diffAddedWord`     | Word-level highlight within an added line          |
-  | `diffRemovedWord`   | Word-level highlight within a removed line         |
+  | Token               | Controls                                                                      |
+  | :------------------ | :---------------------------------------------------------------------------- |
+  | `diffAdded`         | Background of added lines                                                     |
+  | `diffRemoved`       | Background of removed lines                                                   |
+  | `diffAddedDimmed`   | Background of added lines in the dimmed diff shown after you reject an edit   |
+  | `diffRemovedDimmed` | Background of removed lines in the dimmed diff shown after you reject an edit |
+  | `diffAddedWord`     | Word-level highlight within an added line                                     |
+  | `diffRemovedWord`   | Word-level highlight within a removed line                                    |
 
   #### Fullscreen mode
 

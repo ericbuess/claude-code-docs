@@ -240,7 +240,9 @@ If you deploy through [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's
 
 Security teams can configure managed permissions for what Claude Code is and is not allowed to do, which cannot be overwritten by local configuration. [Learn more](/docs/en/security).
 
-### Leverage MCP for integrations
+<h3 id="leverage-mcp-for-integrations">
+  Use MCP for integrations
+</h3>
 
 MCP is a great way to give Claude Code more information, such as connecting to ticket management systems or error logs. We recommend that one central team configures MCP servers and checks a `.mcp.json` configuration into the codebase so that all users benefit. [Learn more](/docs/en/mcp).
 
