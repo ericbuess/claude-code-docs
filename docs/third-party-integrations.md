@@ -213,6 +213,8 @@ Most organizations can use a cloud provider directly without additional configur
 
 For the per-provider environment variables that route Amazon Bedrock, Microsoft Foundry, or Google Cloud's Agent Platform through an LLM gateway, see [route to a cloud provider through a gateway](/docs/en/llm-gateway-connect#route-to-a-cloud-provider-through-a-gateway). Run `/status` in Claude Code to verify which provider, base URL, and proxy a session is using.
 
+If your organization uses [customer-managed encryption keys](https://platform.claude.com/docs/en/manage-claude/cmek) (CMEK) and routes Claude Code through an LLM gateway or a custom `ANTHROPIC_BASE_URL`, CMEK doesn't apply to Claude Code's operational telemetry on those sessions. To turn telemetry off for every developer, deliver `DISABLE_TELEMETRY` through managed settings as shown in [Turn telemetry off for your organization](/docs/en/managed-settings#turn-telemetry-off-for-your-organization).
+
 ## Best practices for organizations
 
 ### Invest in documentation and memory

@@ -192,7 +192,7 @@ If you resume the same session in two terminals without forking, messages from b
 
 These commands control what's in the context window without leaving the session:
 
-* **`/clear`**: start fresh with an empty context. Claude Code saves the previous conversation; resume it with `/resume`, or, in the same Claude Code process, from [the rewind menu's previous-session entry](/docs/en/checkpointing#rewind-past-a-cleared-conversation). You keep a name you set with `--name` or `/rename` in the new conversation, but not an AI-generated session title
+* **`/clear`**: start fresh with an empty context. Claude Code saves the previous conversation; resume it with `/resume`, or, in the same Claude Code process, from [the rewind menu's previous-session entry](/docs/en/checkpointing#rewind-past-a-cleared-conversation). With no argument, the new conversation keeps a name you set with `--name` or `/rename`, but not an AI-generated session title. To name the conversation you're leaving instead, pass the name, as in `/clear release-prep`; the new conversation then starts unnamed
 * **`/compact [instructions]`**: replace history with a summary, optionally focused on what you specify
 * **`/context`**: show what is currently consuming context
 
@@ -225,13 +225,14 @@ Each line is a JSON object for a message, tool use, or metadata entry. The entry
 
 The location, retention, and write behavior are configurable:
 
-| To                                                                              | Set                                                             | Where                     |
-| ------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------- |
-| Move storage off `~/.claude`                                                    | [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars)                             | Environment variable      |
-| [Name the `<project>` directory yourself](#name-the-project-directory-yourself) | [`CLAUDE_CODE_PROJECT_DIR_NAME`](/docs/en/env-vars)                  | Environment variable      |
-| Change the 30-day retention                                                     | [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays) | `settings.json`           |
-| Suppress transcript writes in all modes                                         | [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/docs/en/env-vars)               | Environment variable      |
-| Suppress writes for one non-interactive run                                     | [`--no-session-persistence`](/docs/en/cli-reference)                 | CLI flag with `claude -p` |
+| To                                                                                                          | Set                                                                                         | Where                                            |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Move storage off `~/.claude`                                                                                | [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars)                                                         | Environment variable                             |
+| [Name the `<project>` directory yourself](#name-the-project-directory-yourself)                             | [`CLAUDE_CODE_PROJECT_DIR_NAME`](/docs/en/env-vars)                                              | Environment variable                             |
+| Change the 30-day retention                                                                                 | [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays)                             | `settings.json`                                  |
+| Set an age limit for [Claude Desktop and Cowork transcripts](/docs/en/claude-directory#cleaned-up-automatically) | [`desktopSessionCleanupPeriodDays`](/docs/en/settings-reference#desktopsessioncleanupperioddays) | User settings, managed settings, or `--settings` |
+| Suppress transcript writes in all modes                                                                     | [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/docs/en/env-vars)                                           | Environment variable                             |
+| Suppress writes for one non-interactive run                                                                 | [`--no-session-persistence`](/docs/en/cli-reference)                                             | CLI flag with `claude -p`                        |
 
 ### Name the project directory yourself
 
