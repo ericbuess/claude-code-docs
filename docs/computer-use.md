@@ -90,6 +90,8 @@ Apps with broad reach show an extra warning in the prompt so you know what appro
 
 These apps aren't blocked. The warning lets you decide whether the task warrants that level of access.
 
+Approve Finder to let Claude click the desktop, the Dock, or a Finder window.
+
 Claude's level of control also varies by app category: browsers and trading platforms are view-only, terminals and IDEs are click-only, and everything else gets full control. See [app permissions in Desktop](/docs/en/desktop#app-permissions) for the complete tier breakdown.
 
 ## How Claude works on your screen
