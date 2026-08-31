@@ -276,7 +276,7 @@ When `OTEL_LOG_TOOL_CONTENT=1`, this span also records a `tool.output` span even
 
 **`claude_code.hook`**
 
-This span appears only when detailed beta tracing is active, which requires `ENABLE_BETA_TRACING_DETAILED=1` and `BETA_TRACING_ENDPOINT`. Set the pair in your shell, user settings, or managed settings; both variables are ignored in [project and local settings](/docs/en/settings-reference#variables-claude-code-ignores-in-env). `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` alone doesn't produce it.
+This span appears only when detailed beta tracing is active, which requires `ENABLE_BETA_TRACING_DETAILED=1` and `BETA_TRACING_ENDPOINT`, a pair that also [changes where your logs and traces go](/docs/en/env-vars#variables). Set the pair in your shell, user settings, or managed settings; both variables are ignored in [project and local settings](/docs/en/settings-reference#variables-claude-code-ignores-in-env). `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` alone doesn't produce it.
 
 In interactive CLI sessions, detailed beta tracing also requires your organization to be allowlisted for the feature. Agent SDK and non-interactive `-p` sessions don't require allowlisting.
 
