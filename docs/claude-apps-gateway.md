@@ -279,29 +279,31 @@ Claude Desktop runs its Cowork and Code tabs, plus the Chat tab when you enable 
 
 Other `cli` keys, such as hooks, `env`, and scoped permission rules like `Bash(npm *)`, reach only clients that sign in through `/login`. Claude Desktop reads the gateway URL from its own managed configuration and signs in with its own flow, separate from the `forceLoginMethod` and `forceLoginGatewayUrl` keys in [Set the gateway URL](#set-the-gateway-url).
 
-Settings passed by a launching process are parent settings. Claude Code ignores parent settings on any machine that has an admin-deployed managed source, unless the highest-priority source sets `parentSettingsBehavior: "merge"`.
+Settings passed by a launching process are parent settings. Claude Code ignores parent settings on any machine that has an admin-deployed managed source, unless the [source that delivers the policy](/docs/en/managed-settings#which-managed-source-claude-code-uses) sets `parentSettingsBehavior: "merge"`.
 
 #### Which machines need the opt-in
 
 Machines that only run Claude Desktop need it. Claude Desktop applies the model list and the disabled-tools list to embedded sessions itself, but the egress allowlist reaches them only as parent settings, in the form of `WebFetch` domain rules and sandbox network rules. Without the opt-in, those sessions run without the egress restriction, and nothing warns you. The gateway still rejects inference requests for models the policy doesn't grant.
 
-Machines where developers sign in through `/login` don't need it; every Claude Code invocation fetches its policy from the gateway directly. Fleets whose [`policyHelper`](/docs/en/settings-reference#policyhelper) supplies managed settings can't use it: parent settings are never merged then, because the helper's output replaces the other managed sources.
+Machines where developers sign in through `/login` don't need it; each Claude Code session fetches its policy from the gateway.
+
+Fleets whose [`policyHelper`](/docs/en/settings-reference#policyhelper) supplies managed settings can't use it: Claude Code never merges parent settings on those fleets, because it reads managed settings from the helper's output alone.
 
 #### Set the opt-in
 
-Deploy the key, mirror it to the source that wins on each machine, then verify.
+Deploy the managed settings snippet from [Set the gateway URL](#set-the-gateway-url), mirror it to any client-side source that outranks the file, then verify.
 
 <Steps>
   <Step title="Deploy the opt-in in the managed settings file">
     The [snippet above](#set-the-gateway-url) already includes `parentSettingsBehavior: "merge"`, so the file you push to machines carries it.
   </Step>
 
-  <Step title="Set the same key in any source that outranks the file">
-    Only the highest-priority admin source's value counts. A managed-preferences plist on macOS or an HKLM policy on Windows outranks the `managed-settings.json` file, and the gateway's own remote managed settings outrank both, so on machines that sign in to the gateway, also set the key in the gateway policy's [`cli` block](/docs/en/claude-apps-gateway-config#managed).
+  <Step title="Mirror the snippet to any source that outranks the file">
+    Claude Code reads `parentSettingsBehavior` only from the [selected source](/docs/en/managed-settings#which-managed-source-claude-code-uses). Adding any policy key to a source can make that source the selected one, so in a client-side source, mirror the whole snippet rather than `parentSettingsBehavior` alone. [Client-side managed settings](/docs/en/claude-apps-gateway-config#client-side-managed-settings) covers fleets that deliver policy through Group Policy or configuration profiles. A managed-preferences plist on macOS or an HKLM policy on Windows outranks the `managed-settings.json` file, and the gateway's own remote managed settings outrank both, so on machines that sign in to the gateway, also set `parentSettingsBehavior` in the gateway policy's [`cli` block](/docs/en/claude-apps-gateway-config#managed).
   </Step>
 
-  <Step title="Check which source won">
-    Call the Agent SDK's [`resolveSettings()`](/docs/en/agent-sdk/typescript#resolvesettings). Its result includes a `sources` list; the managed policy entry there carries a `policyOrigin` field naming the active source. `resolveSettings()` doesn't execute a configured `policyHelper`, so its result doesn't reflect the live session on machines where a helper supplies the managed settings.
+  <Step title="Check which source is selected">
+    On a machine that only runs Claude Desktop, call the Agent SDK's [`resolveSettings()`](/docs/en/agent-sdk/typescript#resolvesettings) and read `policyOrigin` on the `managed` entry in its `sources` list. The value names the selected client-side source, `plist`, `hklm`, or `file`, which is the source that must carry the snippet. Claude Desktop's embedded sessions don't fetch the gateway policy, so the gateway's `cli` block never counts as the selected source for them.
   </Step>
 </Steps>
 
@@ -374,7 +376,7 @@ Once connected, Claude Desktop sends model requests from every enabled tab throu
 
 There is no service-token flow for unattended pipelines. Gateway sign-in always runs the browser device flow, so a CI job with no developer to approve the sign-in can't authenticate; configure those against your provider directly.
 
-Once a developer has signed in, every Claude Code invocation on that machine uses the gateway session, including non-interactive `claude -p` runs and sessions started by the Agent SDK, and the [gateway policy applies to all of them](/docs/en/claude-apps-gateway-config#managed).
+Once a developer has signed in, each Claude Code session on that machine uses the gateway session, including non-interactive `claude -p` runs and sessions started by the Agent SDK. Claude Code applies the [gateway policy](/docs/en/claude-apps-gateway-config#managed) to each of them.
 
 The device flow separates the polling CLI from the approving browser, so a remote development box with no display still works: the developer runs `/login` over SSH on the remote machine and opens the verification link in the browser on their laptop.
 

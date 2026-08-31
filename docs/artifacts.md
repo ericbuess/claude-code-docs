@@ -105,8 +105,10 @@ An editor publishes new versions the same way you [update the artifact from anot
 
 When you share an artifact within your organization, the people you share it with can leave comments on the page, and you can have Claude read those comments and reply to them. You need Claude Code v2.1.221 or later and a Team or Enterprise plan, because only an artifact you [share within your organization](#share-an-artifact) takes comments. Claude reads the comments in two cases:
 
-* **You ask Claude to read them**: give Claude the artifact's URL and ask for the comments. Claude lists each thread and marks the comments a commenter sent to it.
-* **A commenter sends a comment to Claude**: in a thread on the page, the commenter mentions `@claude` or uses the thread's Claude control, where the page offers one. Either gesture activates the thread, and Claude can reply only in a thread someone activated. Viewers see each reply attributed to Claude, via you.
+* **You ask Claude to read them**: give Claude the artifact's URL and ask for the comments. Claude lists each thread and marks the comments someone who can edit the artifact sent to it.
+* **Someone who can edit the artifact sends a comment to Claude**: in a thread on the page, they send a comment with **Send to Claude**, or mention `@claude` in one. Either way, they activate the thread.
+
+Claude can reply to or resolve only an activated thread. Other threads stay open until a person resolves them on the page. Viewers see each reply attributed to Claude, via you.
 
 If you share an artifact publicly, viewers can't comment on it: the page says `Comments aren't available while this Artifact is shared publicly.` To switch an artifact that already has comment threads to a public link, delete the threads first.
 
@@ -124,7 +126,11 @@ If Claude tells you it can't read comments, check three things:
 
 ### Let Claude reply to comments on its own
 
-After your session publishes an artifact, Claude Code watches that artifact for comments for as long as the session runs. When a commenter sends a comment to Claude, it reaches your session right away, and Claude can read the thread and reply without you asking. You need Claude Code v2.1.228 or later. If you turned [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) off, Claude Code doesn't watch for comments. Your [permission mode](/docs/en/permission-modes) decides what Claude does when a sent comment arrives:
+After your session publishes an artifact, Claude Code watches that artifact for comments for as long as the session runs. When someone who can edit the artifact sends a comment to Claude, it reaches your session right away, and Claude can read the thread and reply without you asking.
+
+You need Claude Code v2.1.228 or later. If you turned [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) off, Claude Code doesn't watch for comments.
+
+Your [permission mode](/docs/en/permission-modes) decides what Claude does when a sent comment arrives:
 
 * **Claude replies on its own**: when your permission mode lets Claude post the reply without asking you, Claude reads the thread and replies, and edits the artifact when the comment asks for a change. You see `Auto-replied to comment thread on Artifact: <name>` or `Auto-edited Artifact: <name> in response to a comment thread`.
 * **Claude waits for you**: outside plan mode, when posting the reply would need your approval, you see `Comments are waiting on Artifact: <name>`. Claude then asks you for approval to read the thread, and again to post the reply.
@@ -132,11 +138,13 @@ After your session publishes an artifact, Claude Code watches that artifact for 
 
 Claude also stops replying on its own to an artifact after it handles 60 sent comments or thread activations on that artifact within an hour. You see `Comments are waiting on Artifact: <name>` once, and Claude picks up again as that hour's comments age out.
 
-Run `/tasks` to see each artifact your session is watching, listed as a live-updates task. You can stop Claude from replying on its own in three ways, and each one lasts a different length of time:
+Run `/tasks` to see each artifact your session is watching, listed as a live-updates task. You can stop Claude from replying on its own in any of these ways:
 
-* **Press Ctrl+C once**: Claude stops replying on every artifact your session is watching, and starts again on an artifact when you have your session publish it again.
-* **Stop the task in `/tasks`**: Claude stops replying on that artifact for the rest of the session. Publishing it again doesn't start replies again, and if you resume the session later, Claude still doesn't reply there.
-* **Press `Ctrl+X Ctrl+K` twice within 3 seconds**: the chord that [stops every running background subagent](/docs/en/interactive-mode#general-controls) also stops Claude from replying on every artifact for the rest of the session.
+* **Press Ctrl+C once at an idle prompt**: Claude pauses replying on every artifact your session is watching. Replies start again after you send your next message.
+* **Stop the task in `/tasks`**: Claude stops replying on that artifact until you ask it to resume replies there. Publishing the artifact again doesn't start replies again, and the stop still applies when you resume the session later.
+* **Press `Ctrl+X Ctrl+K` twice within 3 seconds**: the chord that [stops every running background subagent](/docs/en/interactive-mode#general-controls) also stops Claude from replying on every artifact for the rest of the session. Asking Claude to resume replies doesn't undo this stop.
+
+If the service that delivers comments becomes unavailable or stops answering, Claude Code keeps trying to reconnect for a while, then stops watching each artifact your session was watching.
 
 ## Pull live data with MCP connectors
 
@@ -231,6 +239,18 @@ Claude applies a built-in design skill when it builds an artifact, so pages get 
 Claude treats your design system as higher precedence than its own choices, and your prompt as higher precedence than both. The heading and format above are an example; any clear list of colors, fonts, and spacing works.
 
 For typography, Claude can load a typeface from Google Fonts, the one external font source an artifact page can load from. Claude inlines any other typeface as a `@font-face` data URI and gives every typeface a fallback stack, so the page still renders if a font doesn't load. To use a specific typeface, name it in your prompt or your design system.
+
+## Draft a design canvas
+
+To mock up a UI, a screen flow, a landing page, or a poster rather than build a page, run `/design` with a brief. Claude drafts the design as artboards on one canvas and publishes the canvas as an artifact that runs a research preview of Claude Design's editor. The brief names what you want drawn:
+
+```text wrap theme={null}
+/design a settings screen for a mobile banking app
+```
+
+Open the published artifact to review the artboards. Where saving is enabled for your account, select an element on an artboard, change it, and save to publish a new version; otherwise you view the draft and export it as PNG or PDF.
+
+`/design` requires a session where [artifacts are available](#availability) and Claude Code v2.1.234 or later.
 
 ## Page constraints
 

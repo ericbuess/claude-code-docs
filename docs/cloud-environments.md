@@ -86,7 +86,8 @@ An API credential is an API key or token you store on a cloud environment so Cla
 
 Two of these decide whether you can add a credential, and two decide whether the agent proxy can use it once added:
 
-* **Role**: an organization admin role in your claude.ai organization, which Admins and Owners hold
+* **Role**: an organization admin role in your claude.ai organization
+  * On Team and Enterprise, Owners hold it and Admins don't
   * On Pro and Max, you hold it in your own organization
   * Without it, you see a note instead of the credential list, on your own environments too. Ask an Owner to add the credential to a shared environment and run your sessions there
 * **Environment type**: an Anthropic-hosted cloud environment that already exists. A [self-hosted environment](/docs/en/self-hosted-environments) doesn't have API credentials
@@ -154,7 +155,7 @@ Archiving affects new sessions, not running ones:
 
 On Team and Enterprise plans, an Owner can create cloud environments that are shared with every member of the organization. The same role manages everything else on the **Cloud environments** admin page, including [self-hosted environments](/docs/en/self-hosted-environments); the Admin role can't open the page. The full list of roles that can open it is the one for [managing server-managed settings](/docs/en/server-managed-settings#access-control). Shared environments appear in each member's environment selector alongside their personal ones, so a team can standardize on one configuration instead of each member recreating it.
 
-Create, edit, and archive shared environments from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings). A shared environment also opens from the [environment selector](#configure-your-environment) at [claude.ai/code](https://claude.ai/code): an Admin or Owner can edit it there, and that dialog is where [API credentials](#add-api-credentials) are added. Other members see it read-only. Each shared environment has a name, a [network access level](#access-levels), [environment variables](#set-environment-variables) in `.env` format, and a [setup script](#setup-scripts). Owners choose the organization's [default environment](#the-default-environment) separately, at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
+Create, edit, and archive shared environments from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings). A shared environment also opens from the [environment selector](#configure-your-environment) at [claude.ai/code](https://claude.ai/code): an Owner can edit it there, and that dialog is where [API credentials](#add-api-credentials) are added. Other members see it read-only. Each shared environment has a name, a [network access level](#access-levels), [environment variables](#set-environment-variables) in `.env` format, and a [setup script](#setup-scripts). Owners choose the organization's [default environment](#the-default-environment) separately, at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
 
 Every member's sessions in a shared environment read its variables, so don't include secrets in them. To give those sessions a key they can't read, [add an API credential](#add-api-credentials) from that dialog.
 

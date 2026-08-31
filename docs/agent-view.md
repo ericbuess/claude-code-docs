@@ -320,7 +320,7 @@ The automatic name is a short label written by a [Haiku-class model](/docs/en/mo
 
 Paste an image into the prompt to include a screenshot or diagram with the task.
 
-Pasted text longer than 800 characters or more than two lines collapses to a `[Pasted text #N]` placeholder so the input stays on one line; the full text is sent when you dispatch. To review or edit the collapsed text before dispatching, paste the same text again and the placeholder expands back into the input.
+Pasted text longer than 800 characters or more than three lines collapses to a `[Pasted text #N]` placeholder so the input stays on one line; the full text is sent when you dispatch. To review or edit the collapsed text before dispatching, paste the same text again and the placeholder expands back into the input.
 
 Prefix or mention parts of the prompt to control how the session starts:
 
@@ -596,7 +596,7 @@ Claude Code refuses `claude --bg --permission-mode bypassPermissions` until you'
 
 The permission mode, model, and effort you chose for a background session, along with the [configuration flags it carries](#what-carries-over-when-you-background), all persist when the supervisor later [stops and restarts](#the-supervisor-process) its process. A session you launched with `claude --bg --dangerously-skip-permissions` or `claude --bg --permission-mode bypassPermissions` stays in `bypassPermissions` after that restart. A model or effort you changed mid-session with `/model` or `/effort` is kept too.
 
-If the session took its effort from the [`effortLevel` setting](/docs/en/settings-reference#effortlevel) rather than from `--effort` or `/effort`, Claude Code reads the setting again each time it starts a process for the session. So when you edit `effortLevel` in `settings.json`, the change reaches sessions you background with `←` or `/bg`, and their later restarts.
+If the session took its effort from your settings rather than from `--effort` or `/effort`, Claude Code reads your settings again each time it starts a process for the session. So when you edit the saved effort in `settings.json`, the change reaches sessions you background with `←` or `/bg`, and their later restarts. The saved effort is the [`effortLevel`](/docs/en/settings-reference#effortlevel) key or a [`modelSettings`](/docs/en/settings-reference#modelsettings) entry.
 
 Claude Code also keeps a name you set with [`/rename`](/docs/en/commands) or `Ctrl+R` across that restart, so you can still run [`claude --resume <name>`](/docs/en/sessions#name-your-sessions) to reach the session.
 
