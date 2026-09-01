@@ -790,6 +790,8 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`terminalProgressBarEnabled`](#terminalprogressbarenabled)                                     | Hide the terminal progress bar in terminals that support it                                                                                                                                                                 | Interface and terminal             | Any file                |
 | [`terminalTitleFromRename`](#terminaltitlefromrename)                                           | Stop [`/rename`](/docs/en/sessions#name-your-sessions) and `--name` from changing the terminal tab title                                                                                                                         | Interface and terminal             | Any file                |
 | [`theme`](#theme)                                                                               | Pick the interface [color theme](/docs/en/terminal-config#match-the-color-theme), built-in or custom                                                                                                                             | Interface and terminal             | Any file                |
+| [`timeFormat`](#timeformat)                                                                     | Show the times in the interface on a 12-hour or 24-hour clock, in UTC, or with a strftime pattern                                                                                                                           | Interface and terminal             | Any file                |
+| [`timeZone`](#timezone)                                                                         | Show the times in the interface in a time zone other than your system's                                                                                                                                                     | Interface and terminal             | Any file                |
 | [`tui`](#tui)                                                                                   | Choose the [fullscreen](/docs/en/fullscreen) or classic terminal renderer                                                                                                                                                        | Interface and terminal             | Any file                |
 | [`ultracode`](#ultracode)                                                                       | Have Claude plan a [workflow](/docs/en/workflows#let-claude-decide-with-ultracode) for each substantive task without being asked                                                                                                 | Model and responses                | Any file                |
 | [`useAutoModeDuringPlan`](#useautomodeduringplan)                                               | Let the [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) classifier review shell commands in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode); set `false` to get prompts instead | Permission settings                | User, local, or managed |
@@ -3354,6 +3356,57 @@ Pick the color theme for the interface. Appears in `/config` as **Theme**.
 ```
 
 See [Create a custom theme](/docs/en/terminal-config#create-a-custom-theme).
+
+### `timeFormat`
+
+Choose how Claude Code writes the times it shows in the interface, such as the `done 6:05 PM` at the end of each turn duration message and the timestamps in the [transcript viewer](/docs/en/interactive-mode#transcript-viewer). To pick a preset, run `/config` and set **Time format**. Requires Claude Code v2.1.257 or later.
+
+* **Scope**: [`Any file`](#scopes)
+* **Type**: string, one of:
+  * `"auto"`: the same as unset; each time keeps its built-in format, which follows your locale on the turn duration message
+  * `"12-hour"`: a 12-hour clock
+  * `"24-hour"`: a 24-hour clock
+  * `"24-hour-utc"`: a 24-hour clock in UTC with `Z` after the minutes, such as `18:05Z`; Claude Code ignores [`timeZone`](#timezone) for this preset
+  * A strftime pattern such as `"%H:%M"`: Claude Code writes each time with the pattern. Any value that contains a `%` is a pattern, and any other value outside the presets counts as `"auto"`
+* **Default**: `"auto"`
+
+```json settings.json theme={null}
+{
+  "timeFormat": "24-hour"
+}
+```
+
+`/config` offers only the presets, so to use a strftime pattern, add the key to a settings file. This example shows each time as a two-digit 24-hour clock:
+
+```json settings.json theme={null}
+{
+  "timeFormat": "%H:%M"
+}
+```
+
+The turn duration message and the transcript viewer then show times such as `18:05`. In the transcript viewer, the pattern is the whole timestamp, so add date directives when you want the date there. This example puts the date in front of the clock:
+
+```json settings.json theme={null}
+{
+  "timeFormat": "%Y-%m-%d %H:%M"
+}
+```
+
+The same surfaces then show times such as `2026-09-01 18:05`.
+
+### `timeZone`
+
+Show the times in the interface in a time zone other than your system's. Set it to an [IANA time zone name](https://www.iana.org/time-zones), such as `"UTC"` or `"Europe/Dublin"`. The times that [`timeFormat`](#timeformat) controls then show in this zone. If `timeFormat` is `"24-hour-utc"`, times stay in UTC and Claude Code ignores this key. `/config` has no row for this key, so set it in a settings file. Requires Claude Code v2.1.257 or later.
+
+* **Scope**: [`Any file`](#scopes)
+* **Type**: string, an IANA time zone name. When Claude Code doesn't recognize the name, it uses your system time zone
+* **Default**: unset, so times show in your system time zone
+
+```json settings.json theme={null}
+{
+  "timeZone": "Europe/Dublin"
+}
+```
 
 ### `tui`
 

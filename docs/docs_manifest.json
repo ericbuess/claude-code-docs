@@ -207,8 +207,8 @@
     "agent-teams.md": {
       "original_url": "https://code.claude.com/docs/en/agent-teams",
       "original_md_url": "https://code.claude.com/docs/en/agent-teams.md",
-      "hash": "71fdb875aebcd713b70815917e7dd8a9b2e3075fae0eff17de73c35b05048e5d",
-      "last_updated": "2026-08-31T16:48:14.357033"
+      "hash": "42ee37642823ee36bbb94238db39bbd7795ceedf06b2c769f215cf9175a75c8e",
+      "last_updated": "2026-09-01T22:53:28.283792"
     },
     "agent-view.md": {
       "original_url": "https://code.claude.com/docs/en/agent-view",
@@ -267,8 +267,8 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "60c0993623ebd77ac9ee79e3cb9913b403a9f22a62459b1e12bfb2ee536a8d49",
-      "last_updated": "2026-09-01T18:04:14.248732",
+      "hash": "84dec792b53b7181d65283ccdfa31af4774abf0229189f3abf89c6c45013dc51",
+      "last_updated": "2026-09-01T22:55:53.035339",
       "source": "claude-code-repository"
     },
     "channels.md": {
@@ -496,8 +496,8 @@
     "env-vars.md": {
       "original_url": "https://code.claude.com/docs/en/env-vars",
       "original_md_url": "https://code.claude.com/docs/en/env-vars.md",
-      "hash": "56266ae9f04ae3fc1740043b9b38b6a862afe534de81f216ecc8e69f300b961b",
-      "last_updated": "2026-09-01T18:02:33.787653"
+      "hash": "ec3f3d97dbf615114965b3f4e650b2811ddc3b595dadf6d6490ac7c4d37fbea8",
+      "last_updated": "2026-09-01T22:54:10.737378"
     },
     "errors.md": {
       "original_url": "https://code.claude.com/docs/en/errors",
@@ -700,8 +700,8 @@
     "model-config.md": {
       "original_url": "https://code.claude.com/docs/en/model-config",
       "original_md_url": "https://code.claude.com/docs/en/model-config.md",
-      "hash": "3dbfc8f63a6aabe2a91e61c90933302cab880521842906b40638bb70ac47b49d",
-      "last_updated": "2026-09-01T18:03:09.713671"
+      "hash": "00cdd121b128313bd9bad9e8947817b0a01dbd785e25091c9367f24526816196",
+      "last_updated": "2026-09-01T22:54:41.448992"
     },
     "monitoring-usage.md": {
       "original_url": "https://code.claude.com/docs/en/monitoring-usage",
@@ -910,8 +910,8 @@
     "settings-reference.md": {
       "original_url": "https://code.claude.com/docs/en/settings-reference",
       "original_md_url": "https://code.claude.com/docs/en/settings-reference.md",
-      "hash": "77307a313c4553d0219889a932e704730bd1139883fff78f1e941166e5498cf8",
-      "last_updated": "2026-09-01T18:03:43.290725"
+      "hash": "dad0b5b962271e8f0a10ead987a037ee1138054392865caad617b20dfd6dae76",
+      "last_updated": "2026-09-01T22:55:15.888821"
     },
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
@@ -940,8 +940,8 @@
     "sub-agents.md": {
       "original_url": "https://code.claude.com/docs/en/sub-agents",
       "original_md_url": "https://code.claude.com/docs/en/sub-agents.md",
-      "hash": "e98921cc27501a4bcb8b21cefab2fe06a227cf211bf492e870f7336820c029aa",
-      "last_updated": "2026-09-01T08:05:26.827357"
+      "hash": "a5c6748e506ffc27d8ff6f27f377f49767438d07c61c4f0862e7e3733fe1955e",
+      "last_updated": "2026-09-01T22:55:20.892213"
     },
     "terminal-config.md": {
       "original_url": "https://code.claude.com/docs/en/terminal-config",
@@ -1149,8 +1149,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-09-01T18:04:14.248793",
-    "fetch_duration_seconds": 181.674571,
+    "last_fetch_completed": "2026-09-01T22:55:53.035384",
+    "fetch_duration_seconds": 178.065997,
     "total_pages_discovered": 191,
     "pages_fetched_successfully": 192,
     "pages_failed": 0,
@@ -1160,7 +1160,7 @@
     "total_files": 191,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-09-01T18:04:14.248811",
+  "last_updated": "2026-09-01T22:55:53.035406",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
