@@ -88,7 +88,7 @@ You can run `/insights` on any plan and with any provider. The analysis runs thr
 
 ### Add usage credits to your subscription
 
-[Usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) let you keep working past your plan's usage limit. To manage them, run `/usage-credits` after signing in with your claude.ai subscription through `/login`; the command isn't available with API key authentication. What it opens depends on your role:
+[Usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) let you keep working past your plan's usage limit. To manage them, run `/usage-credits` after signing in with your claude.ai subscription through `/login`; the command isn't available with API key authentication. In self-serve Enterprise organizations, Enterprise trials, and Enterprise organizations billed through AWS Marketplace, the command requires Claude Code v2.1.248 or later; earlier versions reject it with [`Unknown command: /usage-credits`](/docs/en/errors#unknown-command). What it opens depends on your role:
 
 | Your role                                        | What `/usage-credits` does                                                                                                                                                                                                                        |
 | :----------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

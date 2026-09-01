@@ -253,7 +253,7 @@ The CLI fingerprints the gateway's TLS leaf certificate on first connect and pin
 openssl x509 -noout -fingerprint -sha256 -in cert.pem | cut -d= -f2 | tr -d : | tr 'A-F' 'a-f'
 ```
 
-When the certificate rotates, every developer sees the trust prompt again, so treat rotations as a planned event and republish the fingerprint.
+When the certificate rotates, every developer sees the trust prompt again, so treat rotations as a planned event and republish the fingerprint. If your gateway policy includes [settings that need approval](/docs/en/server-managed-settings#security-approval-dialogs), the developer also sees that approval dialog again after accepting the new certificate, because Claude Code keys [approval memory](/docs/en/server-managed-settings#approval-memory) to the pinned certificate.
 
 Once signed in, the [model picker](/docs/en/model-config) shows the models in the developer's `availableModels` allowlist, managed settings apply at startup and refresh hourly, and telemetry routes to your collector. Sessions refresh silently before `ttl_hours` expiry, and a failed refresh after IdP deprovisioning prompts a re-login.
 

@@ -180,7 +180,7 @@ export const ContextWindow = () => {
     color: '#B8860B',
     vis: 'hidden',
     desc: 'A PostToolUse hook in `settings.json` runs prettier after every file edit and reports back via `hookSpecificOutput.additionalContext`. That field enters Claude\'s context. Plain stdout on exit 0 does not. It is written to the debug log only.',
-    tip: 'Output JSON with `additionalContext` to send info to Claude. For PostToolUse hooks, exit code 2 surfaces stderr as an error but cannot block since the tool already ran. Keep output concise since it enters context without truncation.',
+    tip: 'Output JSON with `additionalContext` to send info to Claude. For PostToolUse hooks, exit code 2 surfaces stderr as an error but cannot block since the tool already ran. Output over 10,000 characters is saved to a file; Claude gets a preview and the file path instead.',
     link: '/en/hooks-guide'
   }, {
     t: 0.62,
@@ -333,7 +333,7 @@ export const ContextWindow = () => {
     color: '#558A42',
     vis: 'full',
     desc: "You ran a shell command with the ! prefix to see which files Claude modified. The command and its output both enter context as part of your message. Useful for grounding Claude in command output without Claude running it.",
-    link: '/en/interactive-mode#bash-mode-with-prefix'
+    link: '/en/interactive-mode#shell-mode-with-prefix'
   }, {
     t: 0.89,
     kind: 'user',

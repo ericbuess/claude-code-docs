@@ -128,7 +128,9 @@ Claude Code asks you to confirm usage-credits billing once per conversation: whe
 
 A review typically takes 5 to 10 minutes. The review runs as a background task, so you can keep working in your session, start other commands, or close the terminal entirely. If you chose to [post the findings to the pull request](#post-findings-to-the-pull-request), keep the session open until the review finishes; if the session ends first, Claude Code posts nothing.
 
-Use `/tasks` to see running and completed reviews, open the detail view for a review, or stop a review that is in progress. If you stop a review, Claude Code archives the cloud session and doesn't return partial findings. When the review finishes, the verified findings appear as a notification in your session. Each finding includes the file location and an explanation of the issue so you can ask Claude to fix it directly.
+Use `/tasks` to see running and completed reviews, open the detail view for a review, or stop a review that is in progress. If you stop a review, Claude Code archives the cloud session and doesn't return partial findings.
+
+When the review finishes, Claude Code shows the verified findings as a notification in your session. Each finding includes the file location and an explanation of the issue so you can ask Claude to fix it directly.
 
 ## Run ultrareview non-interactively
 
@@ -155,7 +157,15 @@ Progress messages and the live session URL go to stderr so stdout stays parseabl
 | `--post`              | [Post the finished findings](#post-findings-to-the-pull-request) to the pull request as one plain comment from your GitHub account. Works on `github.com` pull request targets; on other targets, Claude Code ignores the flag and says so. Requires Claude Code v2.1.227 or later |
 | `--no-post`           | Don't post the findings. This is the default, and if you pass both flags, Claude Code doesn't post. Requires Claude Code v2.1.227 or later                                                                                                                                         |
 
-Running `claude ultrareview` requires the same authentication and usage credit configuration as `/code-review ultra`. The subcommand exits with code 0 when the review completes with or without findings, code 1 when the review fails to launch, the cloud session errors, or the timeout elapses, and code 130 when interrupted with Ctrl-C. The remote review keeps running if you interrupt the subcommand; follow the session URL printed to stderr to watch it in the browser.
+Running `claude ultrareview` requires the same authentication and usage-credits configuration as `/code-review ultra`.
+
+The subcommand exits with one of three codes:
+
+* **0**: the review completed, with or without findings
+* **1**: the review failed to launch, the cloud session errored, or the timeout elapsed
+* **130**: you interrupted the subcommand with Ctrl-C
+
+If you interrupt the subcommand, the remote review keeps running; follow the session URL printed to stderr to watch it in the browser.
 
 With `--post`, the subcommand starts the post right after it prints the findings. If the run fails, times out, or you interrupt it, the subcommand posts nothing. If the review completes but the post can't start, Claude Code prints the reason to stderr, and the findings stay on stdout so you can post them by hand.
 
