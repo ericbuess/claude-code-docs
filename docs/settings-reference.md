@@ -596,7 +596,7 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`allowedMcpServers`](#allowedmcpservers)                                                       | Allowlist which [MCP servers](/docs/en/mcp) people can use                                                                                                                                                                       | MCP                                | Any file                |
 | [`allowManagedHooksOnly`](#allowmanagedhooksonly)                                               | Run only the [hooks](/docs/en/hooks) your organization deploys                                                                                                                                                                   | Hooks and automation               | Managed                 |
 | [`allowManagedMcpServersOnly`](#allowmanagedmcpserversonly)                                     | Make the managed [MCP](/docs/en/mcp) allowlist the only one that applies                                                                                                                                                         | MCP                                | Managed                 |
-| [`allowManagedPermissionRulesOnly`](#allowmanagedpermissionrulesonly)                           | Make [managed settings](/docs/en/managed-settings) the only source of [permission rules](/docs/en/permissions#managed-settings)                                                                                                       | Permission settings                | Managed                 |
+| [`allowManagedPermissionRulesOnly`](#allowmanagedpermissionrulesonly)                           | Make [managed settings](/docs/en/managed-settings) the only settings source of [permission rules](/docs/en/permissions#managed-settings)                                                                                              | Permission settings                | Managed                 |
 | [`alwaysThinkingEnabled`](#alwaysthinkingenabled)                                               | Turn [extended thinking](/docs/en/model-config#extended-thinking) off for every session                                                                                                                                          | Model and responses                | Any file                |
 | [`apiKeyHelper`](#apikeyhelper)                                                                 | Generate the [API credential](/docs/en/authentication#credential-management) with your own command                                                                                                                               | Authentication and providers       | Any file                |
 | [`askUserQuestionTimeout`](#askuserquestiontimeout)                                             | Let an unanswered question [auto-continue](/docs/en/tools-reference#question-auto-continue-timeout) after idle time                                                                                                              | Interface and terminal             | User or managed         |
@@ -692,7 +692,7 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`otelHeadersHelper`](#otelheadershelper)                                                       | Generate rotating [OpenTelemetry](/docs/en/monitoring-usage#dynamic-headers) headers with your own command                                                                                                                       | Authentication and providers       | Any file                |
 | [`outputStyle`](#outputstyle)                                                                   | Change Claude's role, tone, and output format with an [output style](/docs/en/output-styles)                                                                                                                                     | Model and responses                | Any file                |
 | [`parentSettingsBehavior`](#parentsettingsbehavior)                                             | Apply or drop restrictions an [SDK or IDE host](/docs/en/managed-settings#let-an-embedding-host-add-policy) passes when you deploy [managed settings](/docs/en/managed-settings)                                                      | Enterprise and managed settings    | Managed                 |
-| [`permissionExplainerEnabled`](#permissionexplainerenabled)                                     | Turn off the Ctrl+E command explanation on shell [permission prompts](/docs/en/permissions#permission-system)                                                                                                                    | Global config settings             | Global config           |
+| [`permissionExplainerEnabled`](#permissionexplainerenabled)                                     | Removed in v2.1.257, together with the `Ctrl+E` command explanation on shell permission prompts                                                                                                                             | Global config settings             | Global config           |
 | [`permissions`](#permissions)                                                                   | Set allow, ask, and deny rules and the starting [permission mode](/docs/en/permission-modes)                                                                                                                                     | Permission settings                | Any file                |
 | [`permissions.additionalDirectories`](#permissions-additionaldirectories)                       | Give Claude file access to [directories outside the current one](/docs/en/permissions#working-directories)                                                                                                                       | Permission settings                | Any file                |
 | [`permissions.allow`](#permissions-allow)                                                       | Approve listed [tool uses](/docs/en/permissions#permission-rule-syntax) without a prompt                                                                                                                                         | Permission settings                | Any file                |
@@ -1270,11 +1270,15 @@ Decide what Claude can do without asking, which permission mode a session starts
 
 ### `allowManagedPermissionRulesOnly`
 
-Make managed settings the only source of `allow`, `ask`, and `deny` permission rules. Claude Code then ignores rules in user, project, local, and `--settings` files, ignores `--allowedTools`, hides the always-allow choices in permission prompts, and stops saving new rules. When [parent settings from an embedding host](/docs/en/managed-settings#let-an-embedding-host-add-policy) apply, Claude Code treats them as part of the managed tier: it keeps their `deny` and `ask` rules and drops their `allow` rules and `additionalDirectories`.
+Make managed settings the only settings source of permission rules. Claude Code then ignores `allow`, `ask`, and `deny` rules in user, project, local, and `--settings` files, ignores `--allowedTools`, hides the always-allow choices in permission prompts, and stops saving new rules.
+
+When [parent settings from an embedding host](/docs/en/managed-settings#let-an-embedding-host-add-policy) apply, Claude Code treats them as part of the managed tier: it keeps their `deny` and `ask` rules and drops their `allow` rules and `additionalDirectories`.
+
+`--disallowedTools` rules and the current session's `deny` and `ask` rules still apply, including after Claude Code reloads settings mid-session. They only restrict, so they can't widen what the managed rules grant. Before v2.1.257, Claude Code dropped those command-line and session rules at the first settings reload.
 
 * **Scope**: [`Managed`](#scopes)
 * **Type**: Boolean
-  * `true`: managed settings are the only source of `allow`, `ask`, and `deny` rules; Claude Code ignores rules from other files and `--allowedTools`, drops the `allow` rules and `additionalDirectories` of any host-supplied parent settings that apply while keeping their `deny` and `ask` rules, hides always-allow choices, and stops saving new rules
+  * `true`: managed settings become the only settings source of permission rules
   * `false`: Claude Code applies permission rules from user, project, local, and `--settings` files in addition to the managed ones
 * **Default**: unset, so Claude Code applies permission rules from user, project, and local settings and from `--settings`, in addition to the managed ones
 
@@ -1483,7 +1487,7 @@ Like `allow` rules, entries in a project's `.claude/settings.json` take effect o
 
 Set the [permission mode](/docs/en/permission-modes) new sessions start in. When you leave it unset, sessions start in the [built-in default](/docs/en/permission-modes#which-mode-a-session-starts-in) for your plan and surface.
 
-* **Scope**: [`Any file`](#scopes). `auto` doesn't take effect from project or local settings, so set it in `~/.claude/settings.json` instead. Conversations the VS Code extension starts read only user, managed, and `--settings` values.
+* **Scope**: [`Any file`](#scopes). `auto` and `bypassPermissions` don't take effect from project or local settings, so set them in `~/.claude/settings.json` instead. Before v2.1.257, `bypassPermissions` took effect from any file. For conversations the VS Code extension starts, Claude Code reads only user, managed, and `--settings` values.
 * **Type**: string, one of:
   * `"default"`: Claude Code runs only reads without asking
   * `"acceptEdits"`: Claude Code also runs file edits and common filesystem commands such as `mkdir` and `mv` without asking
@@ -5767,21 +5771,15 @@ Claude Code ignores this key in `settings.json`.
 
 ### `permissionExplainerEnabled`
 
-When Claude asks permission to run a Bash or PowerShell command, you can press `Ctrl+E` on the prompt to get a model-generated [explanation of the command](/docs/en/permissions#permission-system): what it does, why Claude is running it, and what could go wrong, labeled **Low risk**, **Med risk**, or **High risk**. Claude Code asks the model for the explanation only when you press the shortcut, and showing it doesn't run the command. Set this key to `false` to turn the shortcut off.
+<Warning>
+  Removed in v2.1.257, together with the `Ctrl+E` command explanation on Bash and PowerShell permission prompts. Setting it has no effect on current versions.
+</Warning>
 
-* **Scope**: [`Global config`](#scopes)
+Through v2.1.256, you could press `Ctrl+E` on a Bash or PowerShell permission prompt to see a model-generated explanation of the command, and set this key to `false` to turn that shortcut off.
+
+* **Scope**: [`Global config`](#scopes). On v2.1.256 and earlier.
 * **Type**: Boolean
-  * `true`: you can press `Ctrl+E` on a Bash or PowerShell permission prompt to get a model-generated explanation of the command
-  * `false`: Claude Code turns the `Ctrl+E` shortcut off
 * **Default**: `true`
-
-```json ~/.claude.json theme={null}
-{
-  "permissionExplainerEnabled": false
-}
-```
-
-Claude Code ignores this key in `settings.json`.
 
 ### `teammateDefaultModel`
 
