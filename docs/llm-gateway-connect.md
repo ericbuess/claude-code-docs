@@ -93,7 +93,7 @@ Replace the values with the ones your gateway team gave you:
 
 Shell exports apply only to that terminal session and programs started from it. An editor launched from the dock or Start menu won't see them. To make the values persist across new terminals, add the same lines to your shell profile, such as `~/.zshrc`, `~/.bashrc`, or your PowerShell `$PROFILE`.
 
-If you export the gateway only in your shell, it doesn't reliably reach background agents hosted by the [supervisor](/docs/en/agent-view#how-background-sessions-are-hosted); see [how each background session sources its gateway](/docs/en/agent-view#the-supervisor-process). Use a settings file for any gateway that background agents must always route through.
+If you export the gateway only in your shell, it doesn't reliably reach background agents hosted by the [supervisor](/docs/en/agent-view#how-background-sessions-are-hosted); see [how each background session sources its gateway](/docs/en/agent-view#llm-gateway). Use a settings file for any gateway that background agents must always route through.
 
 #### Set in a settings file
 
