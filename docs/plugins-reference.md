@@ -1206,6 +1206,40 @@ Per-component (rounded)
 
 The always-on total is computed via the `count_tokens` API for your active model. Per-component numbers are proportionally scaled from that total. If the API is unreachable, the command falls back to a character-based estimate.
 
+### plugin validate
+
+Check a plugin or a marketplace for syntax and schema errors before publishing.
+
+The command exits 0 when validation passes, 1 when it fails, and 2 when the validation run itself fails, such as when the path you pass is unreadable.
+
+```bash theme={null}
+claude plugin validate <path> [options]
+```
+
+**Arguments:**
+
+* `<path>`: Path to a plugin directory or a marketplace directory. See [Validate a plugin or a directory without a manifest](/docs/en/plugin-marketplaces#validate-a-plugin-or-a-directory-without-a-manifest) for which files a plugin run covers.
+
+**Options:**
+
+| Option       | Description                                                                                                                                       | Default |
+| :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------ | :------ |
+| `--strict`   | Treat warnings as errors and exit 1 on them. Use in CI to catch issues the runtime tolerates, such as [unrecognized fields](#unrecognized-fields) |         |
+| `--json`     | Output the validation report as one JSON object with the same exit codes. Requires Claude Code v2.1.259 or later                                  |         |
+| `-h, --help` | Display help for command                                                                                                                          |         |
+
+With `--json`, Claude Code writes the report to stdout as one JSON object with these top-level fields:
+
+* `success`: the same verdict the exit code gives
+* `strict`: whether the run treated warnings as errors
+* `target`: the resolved path Claude Code validated
+* `manifest`: the manifest's own result, or `null` for a [run without a manifest](/docs/en/plugin-marketplaces#validate-a-plugin-or-a-directory-without-a-manifest)
+* `contents`: per-file results, each naming its `file` and carrying `errors`, `warnings`, and `notes` arrays
+
+On exit 2, the command writes nothing to stdout; the error message goes to stderr.
+
+Within an interactive session, `/plugin validate <path>` runs the same checks inline.
+
 ### plugin tag
 
 Create a release git tag for a plugin. By default the command tags the plugin in the current directory; pass a path to tag a plugin elsewhere. See [Tag plugin releases](/docs/en/plugin-dependencies#tag-plugin-releases-for-version-resolution).

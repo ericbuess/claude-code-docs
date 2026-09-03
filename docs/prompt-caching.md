@@ -73,6 +73,7 @@ These actions cause the next request to miss part or all of the cache. You see a
 * [Enabling or disabling a plugin](#enabling-or-disabling-a-plugin)
 * [Denying an entire tool](#denying-an-entire-tool)
 * [Compacting the conversation](#compacting-the-conversation)
+* [Accumulating many images](#accumulating-many-images)
 * [Upgrading Claude Code](#upgrading-claude-code)
 
 ### Switching models
@@ -160,6 +161,14 @@ After a break longer than the [cache lifetime](#cache-lifetime), there is no cac
 <Tip>
   Compaction works in your favor when the context you discard is content you no longer need. To choose when its overhead happens, run `/compact` at a natural break in your work, such as between tasks, instead of waiting for auto-compaction to trigger mid-task. If you've gone down a path you want to abandon entirely, [`/rewind`](#rewinding-the-conversation) to an earlier turn instead. Rewinding truncates back to a prefix that is already cached, rather than building a new one as compaction does.
 </Tip>
+
+### Accumulating many images
+
+The API limits how many images and PDFs each request can carry. For the current numbers, see [Request limits](https://platform.claude.com/docs/en/build-with-claude/vision#request-limits) in the API docs. Claude Code also caps the total size of the images and PDFs in a request, so large screenshots reach the limit with fewer images than small ones.
+
+When the next request would pass either limit, Claude Code removes a batch of the oldest images and PDFs from what it sends, which leaves room for more before it needs to remove any again. Claude can no longer see the removed images. If Claude needs one of them again, share it again.
+
+Removing images changes the messages that held them, so the next request reprocesses the conversation from the earliest of those messages onward. Because Claude Code removes a batch at a time, you see one slower turn per batch rather than one with each new screenshot.
 
 ### Upgrading Claude Code
 
@@ -291,7 +300,13 @@ A [subagent](/docs/en/sub-agents) starts its own conversation with its own syste
 
 The parent's cache is unaffected. From the parent's side, the subagent's call and result append to the conversation, leaving the parent's prefix intact.
 
-A [fork](/docs/en/sub-agents#fork-the-current-conversation), by contrast, inherits the parent's system prompt, tools, and conversation history exactly, so its first request reads the parent's cache. The compaction summarization call described in [Compacting the conversation](#compacting-the-conversation) uses the same prefix-sharing approach. In a [workflow fan-out](/docs/en/workflows#prompt-caching-in-a-fan-out) of same-prefix agents, Claude Code briefly holds all but the first so their first requests can read the prefix the first agent cached.
+A [fork](/docs/en/sub-agents#fork-the-current-conversation), by contrast, inherits the parent's system prompt, tools, and conversation history exactly, so its first request reads the parent's cache.
+
+Other requests can also read a prefix that an earlier request cached:
+
+* **Session copies**: a session you [copy with `/fork`](/docs/en/agent-view#copy-the-session-with-%2Ffork) receives its isolation instruction as a message at the end of the copied conversation, so the cache that the original conversation built stays intact.
+* **Compaction**: the summarization call described in [Compacting the conversation](#compacting-the-conversation) uses the same prefix-sharing approach.
+* **Workflow fan-outs**: in a [workflow fan-out](/docs/en/workflows#prompt-caching-in-a-fan-out) of same-prefix agents, Claude Code holds all but the first for up to 5 seconds by default, so their first requests can read the prefix that the first agent cached.
 
 ## Disable prompt caching
 
