@@ -200,11 +200,17 @@ Your terminal's `Cmd+f` and tmux search don't see the conversation because it li
 * **`[`**: writes the full conversation into your terminal's native scrollback buffer, with all tool output expanded. The conversation is now ordinary text in your terminal, so `Cmd+f`, tmux copy mode, and any other native tool can search or select it. Long sessions may pause for a moment while this happens. This lasts until you exit transcript mode with `Esc` or `q`, which returns you to fullscreen rendering. The next `Ctrl+o` starts fresh.
 * **`v`**: writes the conversation to a temporary file and opens it in `$VISUAL` or `$EDITOR`.
 
+## Watch your changes in the diff panel
+
+In fullscreen rendering, [`/diff`](/docs/en/interactive-mode#review-changes-with-%2Fdiff) opens a panel beside the conversation rather than a viewer you have to close, so you can watch the changes accumulate while Claude works. In a wide terminal the panel can also open on its own once Claude starts editing files. [Diff panel](/docs/en/interactive-mode#diff-panel) covers what it shows, how to keep it closed, and how to change what it compares against.
+
 ## Clear the conversation
 
-Run `/clear` to start a new conversation. Pressing `Ctrl+L` or `Cmd+K` doesn't clear the conversation; Claude Code redraws the screen and keeps it. Before v2.1.238, Claude Code ran `/clear` when you pressed `Ctrl+L` or `Cmd+K` twice within two seconds.
+Run `/clear` to start a new conversation.
 
-On iTerm2 and Terminal.app, your terminal handles `Cmd+K` itself and clears its own screen without telling Claude Code. Claude Code detects the cleared screen and repaints the conversation.
+To clear the screen and keep the conversation, press `Ctrl+L`. The earlier messages scroll up out of view, and you can scroll back with `PgUp` or the mouse wheel to read them again. Before v2.1.260, `Ctrl+L` redrew the screen without clearing it. Before v2.1.238, pressing it twice within two seconds ran `/clear`.
+
+`Cmd+K` does the same as `Ctrl+L` when your terminal passes it through to Claude Code. iTerm2 and Terminal.app handle `Cmd+K` themselves, and Claude Code redraws the conversation instead of clearing it, so press `Ctrl+L` on those terminals.
 
 ## Use with tmux
 

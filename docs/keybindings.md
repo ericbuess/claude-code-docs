@@ -59,6 +59,7 @@ Each binding block specifies a **context** where the bindings apply:
 | `Footer`          | Footer indicator navigation (tasks, teams, diff, artifacts)  |
 | `MessageSelector` | Rewind and summarize dialog message selection                |
 | `DiffDialog`      | Diff viewer navigation                                       |
+| `DiffPanel`       | The [diff panel](/docs/en/interactive-mode#diff-panel) is open    |
 | `ModelPicker`     | Model picker effort level                                    |
 | `Select`          | Generic select/list components                               |
 | `Plugin`          | Plugin dialog (browse, discover, manage)                     |
@@ -99,8 +100,8 @@ Actions available in the `Chat` context:
 | Action                | Default                           | Description                                                                                                                                                                                                                                                                                              |
 | :-------------------- | :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `chat:cancel`         | Escape                            | Cancel current input                                                                                                                                                                                                                                                                                     |
-| `chat:clearInput`     | Ctrl+L                            | Force a full screen redraw, preserving input and conversation                                                                                                                                                                                                                                            |
-| `chat:clearScreen`    | Cmd+K                             | Force a full screen redraw, preserving input and conversation. See [Clear the conversation](/docs/en/fullscreen#clear-the-conversation) for how Cmd+K behaves on iTerm2 and Terminal.app                                                                                                                      |
+| `chat:clearInput`     | Ctrl+L                            | Force a full screen redraw, preserving input and conversation. In [fullscreen rendering](/docs/en/fullscreen#clear-the-conversation), also clear the screen                                                                                                                                                   |
+| `chat:clearScreen`    | Cmd+K                             | Same as `chat:clearInput`. See [Clear the conversation](/docs/en/fullscreen#clear-the-conversation) for how Cmd+K behaves on iTerm2 and Terminal.app                                                                                                                                                          |
 | `chat:killAgents`     | Ctrl+X Ctrl+K                     | Stop all running [background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) in this session and turn off [artifact auto-replies](/docs/en/artifacts#let-claude-reply-to-comments-on-its-own) for the rest of it                                                                         |
 | `chat:cycleMode`      | Shift+Tab\*                       | Cycle permission modes                                                                                                                                                                                                                                                                                   |
 | `chat:modelPicker`    | Meta+P                            | Open model picker                                                                                                                                                                                                                                                                                        |
@@ -274,6 +275,19 @@ The diff detail view also binds pager-style keys to the standard [scroll actions
 | `scroll:top`          | G, Home        | Jump to the top             |
 | `scroll:bottom`       | Shift+G, End   | Jump to the bottom          |
 
+### Diff panel actions
+
+Actions for the [diff panel](/docs/en/interactive-mode#diff-panel) that `/diff` opens in fullscreen rendering. `app:cycleDiffBase` is in the `DiffPanel` context, which is active while the panel is open; the others are `Global`. The panel requires Claude Code v2.1.260 or later.
+
+| Action                      | Default              | Description                                                               |
+| :-------------------------- | :------------------- | :------------------------------------------------------------------------ |
+| `app:toggleReplTab`         | (unbound)            | Open or close the diff panel, the same as running `/diff`                 |
+| `app:cycleDiffBase`         | Ctrl+X B             | Cycle the panel's comparison base: this session, uncommitted, then branch |
+| `app:diffFileListUp`        | Ctrl+Up, Meta+Up     | Scroll the panel's file list up when it overflows                         |
+| `app:diffFileListDown`      | Ctrl+Down, Meta+Down | Scroll the panel's file list down when it overflows                       |
+| `app:toggleDiffNoiseFilter` | (unbound)            | Show or hide test and generated files in the panel                        |
+| `app:toggleDiffPreSession`  | (unbound)            | Expand or collapse the changes from before this session                   |
+
 ### Model picker actions
 
 Actions available in the `ModelPicker` context:
@@ -431,7 +445,7 @@ Set an action to `null` to unbind a default shortcut:
 
 This also works for chord bindings. Unbinding every chord that shares a prefix frees that prefix for use as a single-key binding. A chord in any active context keeps its prefix reserved, so you must unbind each chord in the context that defines it.
 
-Claude Code binds these default chords on the `ctrl+x` prefix: `ctrl+x ctrl+k`, `ctrl+x ctrl+e`, and `ctrl+x enter` in `Chat`, and `ctrl+x ctrl+b` in `Task`. The `ctrl+x enter` chord requires v2.1.247 or later. To reclaim `ctrl+x` itself as a single-key binding, unbind all of them:
+Claude Code binds these default chords on the `ctrl+x` prefix: `ctrl+x ctrl+k`, `ctrl+x ctrl+e`, and `ctrl+x enter` in `Chat`, `ctrl+x ctrl+b` in `Task`, and `ctrl+x b` in `DiffPanel`. The `ctrl+x enter` chord requires v2.1.247 or later, and `ctrl+x b` requires v2.1.260 or later. To reclaim `ctrl+x` itself as a single-key binding, unbind all of them:
 
 ```json theme={null}
 {
@@ -440,6 +454,12 @@ Claude Code binds these default chords on the `ctrl+x` prefix: `ctrl+x ctrl+k`, 
       "context": "Task",
       "bindings": {
         "ctrl+x ctrl+b": null
+      }
+    },
+    {
+      "context": "DiffPanel",
+      "bindings": {
+        "ctrl+x b": null
       }
     },
     {
