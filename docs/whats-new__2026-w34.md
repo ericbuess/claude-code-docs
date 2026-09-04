@@ -7,7 +7,7 @@
 > Draft editable UI artboards with the /design skill, set the Concise output style, and start a Claude Code session on your machine from your phone.
 
 <div className="digest-meta">
-  <span>Releases <a href="/docs/docs/en/changelog#2-1-234">v2.1.234 → v2.1.239</a></span>
+  <span>Releases <a href="/docs/en/changelog#2-1-234">v2.1.234 → v2.1.239</a></span>
   <span>3 features · August 17–21</span>
 </div>
 
@@ -31,7 +31,7 @@
 
   <p className="digest-feature-try">Claude prints a link to the published canvas. Open it, pick an artboard, and tell Claude which option to implement.</p>
 
-  <a className="digest-feature-link" href="/docs/docs/en/artifacts#availability">Where artifacts are available</a>
+  <a className="digest-feature-link" href="/docs/en/artifacts#availability">Where artifacts are available</a>
 </div>
 
 <div className="digest-feature">
@@ -56,7 +56,7 @@
 
   <p className="digest-feature-try">Run <code>/clear</code> or start a new session, and Claude's replies lead with the result.</p>
 
-  <a className="digest-feature-link" href="/docs/docs/en/output-styles#built-in-output-styles">Built-in output styles</a>
+  <a className="digest-feature-link" href="/docs/en/output-styles#built-in-output-styles">Built-in output styles</a>
 </div>
 
 <div className="digest-feature">
@@ -79,7 +79,7 @@
 
   <p className="digest-feature-try">Your machine appears as a device card at the top of the Code tab. Tap it to pick a directory and start a session there.</p>
 
-  <a className="digest-feature-link" href="/docs/docs/en/remote-control#start-a-remote-control-session">Start a Remote Control session</a>
+  <a className="digest-feature-link" href="/docs/en/remote-control#start-a-remote-control-session">Start a Remote Control session</a>
 </div>
 
 <div className="digest-wins">
@@ -87,18 +87,18 @@
 
   <div className="digest-wins-grid">
     <div>Claude Code now continues your session automatically when a claude.ai usage limit resets; turn it off from the <strong>Continue automatically at usage limit</strong> row in <code>/config</code></div>
-    <div>The optional <a href="/docs/docs/en/interactive-mode#check-spelling-as-you-type"><code>spellcheck</code> setting</a> underlines misspelled words in the prompt input as you type, using your installed <code>aspell</code>, <code>hunspell</code>, or <code>ispell</code></div>
-    <div>On a branch with an open GitLab merge request, with the <code>glab</code> CLI authenticated through <code>glab auth login</code>, the footer shows an <a href="/docs/docs/en/interactive-mode#gitlab-merge-requests"><code>MR !N</code> badge</a> colored by whether the merge request is a draft, open, or mergeable</div>
-    <div>Change the effort level from your phone or claude.ai/code and it <a href="/docs/docs/en/remote-control#what-connected-devices-see">applies to the session on your machine</a>; Remote Control sessions hosted by Desktop or VS Code also show connected devices the session's current permission mode</div>
-    <div>You can open <a href="/docs/docs/en/permissions#manage-permissions"><code>/permissions</code></a> or run <code>/add-dir \<path></code> while Claude is working; permission rule changes apply to the rest of the current turn</div>
-    <div>When background tasks keep a <a href="/docs/docs/en/goal#background-work-defers-evaluation"><code>/goal</code></a> waiting, Claude checks in on them after 30 minutes instead of waiting indefinitely and keeps checking in, at longer intervals while the session sits idle; set <code>CLAUDE\_CODE\_GOAL\_CHECKIN\_MINUTES=0</code> to opt out</div>
+    <div>The optional <a href="/docs/en/interactive-mode#check-spelling-as-you-type"><code>spellcheck</code> setting</a> underlines misspelled words in the prompt input as you type, using your installed <code>aspell</code>, <code>hunspell</code>, or <code>ispell</code></div>
+    <div>On a branch with an open GitLab merge request, with the <code>glab</code> CLI authenticated through <code>glab auth login</code>, the footer shows an <a href="/docs/en/interactive-mode#gitlab-merge-requests"><code>MR !N</code> badge</a> colored by whether the merge request is a draft, open, or mergeable</div>
+    <div>Change the effort level from your phone or claude.ai/code and it <a href="/docs/en/remote-control#what-connected-devices-see">applies to the session on your machine</a>; Remote Control sessions hosted by Desktop or VS Code also show connected devices the session's current permission mode</div>
+    <div>You can open <a href="/docs/en/permissions#manage-permissions"><code>/permissions</code></a> or run <code>/add-dir \<path></code> while Claude is working; permission rule changes apply to the rest of the current turn</div>
+    <div>When background tasks keep a <a href="/docs/en/goal#background-work-defers-evaluation"><code>/goal</code></a> waiting, Claude checks in on them after 30 minutes instead of waiting indefinitely and keeps checking in, at longer intervals while the session sits idle; set <code>CLAUDE\_CODE\_GOAL\_CHECKIN\_MINUTES=0</code> to opt out</div>
     <div>Your own prompts now render markdown in the transcript, with highlighted code blocks, inline code, and lists, the same way replies do</div>
-    <div>The new <a href="/docs/docs/en/model-config#set-a-default-model-for-new-sessions"><code>ANTHROPIC\_DEFAULT\_MODEL</code></a> environment variable sets the model new sessions start on; a <code>/model</code> pick still overrides it and persists across restarts</div>
-    <div>With the <code>notify\_when\_idle</code> input on <code>SendMessage</code>, Claude can ask another Claude Code session on the same machine to <a href="/docs/docs/en/cross-session-messaging#get-a-notice-when-another-session-goes-idle">send one notice when it next goes idle</a></div>
-    <div>Set <a href="/docs/docs/en/interactive-mode#make-ctrl-w-delete-back-to-whitespace"><code>keybindingFlavor</code></a> to <code>"readline"</code> to make <code>Ctrl+W</code> in the prompt delete back to the previous whitespace, as Bash does, instead of stopping at punctuation such as <code>/</code></div>
-    <div>On native Windows, your Claude Code sessions can now <a href="/docs/docs/en/cross-session-messaging#availability">message each other</a> with <code>SendMessage</code> and find each other with <code>ListAgents</code>, as on macOS and Linux</div>
-    <div>Self-hosted runners accept `--defer-shutdown-max-min`, which <a href="/docs/docs/en/self-hosted-environments-deploy#defer-the-drain-past-the-first-signal">keeps serving attached sessions</a> for a set number of minutes after SIGTERM</div>
-    <div>Self-hosted runners accept `--proxy-authorization-command` or `--proxy-authorization-file` to supply a fresh `Proxy-Authorization` header for <a href="/docs/docs/en/self-hosted-environments-deploy#authenticate-to-an-egress-proxy">egress proxies that require one</a></div>
+    <div>The new <a href="/docs/en/model-config#set-a-default-model-for-new-sessions"><code>ANTHROPIC\_DEFAULT\_MODEL</code></a> environment variable sets the model new sessions start on; a <code>/model</code> pick still overrides it and persists across restarts</div>
+    <div>With the <code>notify\_when\_idle</code> input on <code>SendMessage</code>, Claude can ask another Claude Code session on the same machine to <a href="/docs/en/cross-session-messaging#get-a-notice-when-another-session-goes-idle">send one notice when it next goes idle</a></div>
+    <div>Set <a href="/docs/en/interactive-mode#make-ctrl-w-delete-back-to-whitespace"><code>keybindingFlavor</code></a> to <code>"readline"</code> to make <code>Ctrl+W</code> in the prompt delete back to the previous whitespace, as Bash does, instead of stopping at punctuation such as <code>/</code></div>
+    <div>On native Windows, your Claude Code sessions can now <a href="/docs/en/cross-session-messaging#availability">message each other</a> with <code>SendMessage</code> and find each other with <code>ListAgents</code>, as on macOS and Linux</div>
+    <div>Self-hosted runners accept `--defer-shutdown-max-min`, which <a href="/docs/en/self-hosted-environments-deploy#defer-the-drain-past-the-first-signal">keeps serving attached sessions</a> for a set number of minutes after SIGTERM</div>
+    <div>Self-hosted runners accept `--proxy-authorization-command` or `--proxy-authorization-file` to supply a fresh `Proxy-Authorization` header for <a href="/docs/en/self-hosted-environments-deploy#authenticate-to-an-egress-proxy">egress proxies that require one</a></div>
   </div>
 </div>
 

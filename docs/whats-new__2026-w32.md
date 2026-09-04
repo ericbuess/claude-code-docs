@@ -7,7 +7,7 @@
 > Claude Code sessions message each other, self-hosted environments run cloud sessions on your infrastructure, and auto mode becomes the default permission mode.
 
 <div className="digest-meta">
-  <span>Releases <a href="/docs/docs/en/changelog#2-1-220">v2.1.220 → v2.1.224</a></span>
+  <span>Releases <a href="/docs/en/changelog#2-1-220">v2.1.220 → v2.1.224</a></span>
   <span>3 features · August 3–7</span>
 </div>
 
@@ -31,7 +31,7 @@
 
   <p className="digest-feature-try">The other session shows a <code>Message from</code> row once Claude has read the message; press <code>Ctrl+O</code> to expand it. To see which sessions Claude can reach, run <code>/list-agents</code>.</p>
 
-  <a className="digest-feature-link" href="/docs/docs/en/cross-session-messaging#message-another-session">Message another session</a>
+  <a className="digest-feature-link" href="/docs/en/cross-session-messaging#message-another-session">Message another session</a>
 </div>
 
 <div className="digest-feature">
@@ -54,7 +54,7 @@
 
   <p className="digest-feature-try">The environment shows <strong>Healthy</strong> in admin settings once the runner registers.</p>
 
-  <a className="digest-feature-link" href="/docs/docs/en/self-hosted-environments-quickstart#set-up-an-environment-and-runner">Self-hosted environments quickstart</a>
+  <a className="digest-feature-link" href="/docs/en/self-hosted-environments-quickstart#set-up-an-environment-and-runner">Self-hosted environments quickstart</a>
 </div>
 
 <div className="digest-feature">
@@ -77,26 +77,26 @@
 
   <p className="digest-feature-try">New sessions then show <code>auto mode on</code> in the status bar.</p>
 
-  <a className="digest-feature-link" href="/docs/docs/en/permission-modes#eliminate-prompts-with-auto-mode">Auto mode requirements and controls</a>
+  <a className="digest-feature-link" href="/docs/en/permission-modes#eliminate-prompts-with-auto-mode">Auto mode requirements and controls</a>
 </div>
 
 <div className="digest-wins">
   <p className="digest-wins-title">Other wins</p>
 
   <div className="digest-wins-grid">
-    <div>The VS Code extension gets <a href="/docs/docs/en/vs-code#extension-settings">Focus view</a>, which hides tool activity behind one expandable row per turn; toggle it from the command menu or with <code>Ctrl+Alt+F</code> (<code>Ctrl+Option+F</code> on Mac)</div>
-    <div>Sandbox credential files accept <a href="/docs/docs/en/sandboxing#mask-credential-files"><code>mode: "mask"</code></a> on Linux and WSL2, so sandboxed commands read a sentinel copy while the sandbox proxy substitutes the real value on egress; credential masking also gains <code>extract</code>, JWT-aware <code>decode</code>, and AWS SigV4 re-signing options</div>
-    <div>Marketplaces can distribute a plugin as a <a href="/docs/docs/en/plugin-marketplaces#zip-archives">zip archive</a> with the new <code>archive</code> source, downloaded over HTTPS with an optional SHA-256 pin, so installs work without git or npm</div>
-    <div><code>/review</code> is now an alias of <a href="/docs/docs/en/code-review#review-a-diff-locally"><code>/code-review</code></a>, and <code>/code-review</code> with no effort level reuses the level you typed last</div>
-    <div>A session you copy with <a href="/docs/docs/en/agent-view#copy-the-session-with-%2Ffork"><code>/fork</code></a> now makes its code changes in a worktree of its own instead of the original session's checkout</div>
-    <div>Plugins you install from <a href="/docs/docs/en/discover-plugins#install-plugins"><code>/plugin</code></a> activate in the current session when it's safe to do so; the install summary reports <code>Plugin is now active.</code> or tells you to run <code>/reload-plugins</code></div>
-    <div><a href="/docs/docs/en/agent-view#how-file-edits-are-isolated">Background sessions</a> that changed code in a worktree now commit and push before finishing, open a draft pull request only when the task calls for one, and follow the git instructions in your <code>CLAUDE.md</code></div>
-    <div>The 200-subagent-per-session cap is removed, so long-running sessions no longer refuse new subagents; the <a href="/docs/docs/en/sub-agents#concurrent-subagent-limit">concurrency</a> and depth limits still apply</div>
-    <div>A repository's checked-in settings can no longer turn on <a href="/docs/docs/en/remote-control#enable-remote-control-for-all-sessions">Remote Control auto-connect</a>; set <code>remoteControlAtStartup</code> in your user or managed settings instead, and project and local settings can only turn it off</div>
-    <div><a href="/docs/docs/en/worktrees#how-claude-code-enforces-isolation">Worktree isolation</a> now blocks not only file edits but also Bash commands and git redirects that reach the main checkout, in every session type and in the session's subagents</div>
+    <div>The VS Code extension gets <a href="/docs/en/vs-code#extension-settings">Focus view</a>, which hides tool activity behind one expandable row per turn; toggle it from the command menu or with <code>Ctrl+Alt+F</code> (<code>Ctrl+Option+F</code> on Mac)</div>
+    <div>Sandbox credential files accept <a href="/docs/en/sandboxing#mask-credential-files"><code>mode: "mask"</code></a> on Linux and WSL2, so sandboxed commands read a sentinel copy while the sandbox proxy substitutes the real value on egress; credential masking also gains <code>extract</code>, JWT-aware <code>decode</code>, and AWS SigV4 re-signing options</div>
+    <div>Marketplaces can distribute a plugin as a <a href="/docs/en/plugin-marketplaces#zip-archives">zip archive</a> with the new <code>archive</code> source, downloaded over HTTPS with an optional SHA-256 pin, so installs work without git or npm</div>
+    <div><code>/review</code> is now an alias of <a href="/docs/en/code-review#review-a-diff-locally"><code>/code-review</code></a>, and <code>/code-review</code> with no effort level reuses the level you typed last</div>
+    <div>A session you copy with <a href="/docs/en/agent-view#copy-the-session-with-%2Ffork"><code>/fork</code></a> now makes its code changes in a worktree of its own instead of the original session's checkout</div>
+    <div>Plugins you install from <a href="/docs/en/discover-plugins#install-plugins"><code>/plugin</code></a> activate in the current session when it's safe to do so; the install summary reports <code>Plugin is now active.</code> or tells you to run <code>/reload-plugins</code></div>
+    <div><a href="/docs/en/agent-view#how-file-edits-are-isolated">Background sessions</a> that changed code in a worktree now commit and push before finishing, open a draft pull request only when the task calls for one, and follow the git instructions in your <code>CLAUDE.md</code></div>
+    <div>The 200-subagent-per-session cap is removed, so long-running sessions no longer refuse new subagents; the <a href="/docs/en/sub-agents#concurrent-subagent-limit">concurrency</a> and depth limits still apply</div>
+    <div>A repository's checked-in settings can no longer turn on <a href="/docs/en/remote-control#enable-remote-control-for-all-sessions">Remote Control auto-connect</a>; set <code>remoteControlAtStartup</code> in your user or managed settings instead, and project and local settings can only turn it off</div>
+    <div><a href="/docs/en/worktrees#how-claude-code-enforces-isolation">Worktree isolation</a> now blocks not only file edits but also Bash commands and git redirects that reach the main checkout, in every session type and in the session's subagents</div>
     <div>A Bash command can no longer hide part of itself from permission checks, and tab or invisible-Unicode padding no longer hides part of a command from the approval dialog</div>
     <div>PreToolUse auto-allow hooks no longer bypass tool restrictions in Claude Code's internal side tasks such as summaries and compaction</div>
-    <div>The <a href="/docs/docs/en/ultraplan">Ultraplan</a> research preview is removed, including the <code>/ultraplan</code> command and the <code>ultraplan</code> keyword; use plan mode or Claude Code on the web instead</div>
+    <div>The <a href="/docs/en/ultraplan">Ultraplan</a> research preview is removed, including the <code>/ultraplan</code> command and the <code>ultraplan</code> keyword; use plan mode or Claude Code on the web instead</div>
   </div>
 </div>
 

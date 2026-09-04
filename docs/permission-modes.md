@@ -40,6 +40,7 @@ Claude Code doesn't auto-approve the following in any mode, including `bypassPer
 * Tools that require user interaction: the built-in `AskUserQuestion` tool and MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool)
 * `rm` and `rmdir` removals targeting a [critical path](#critical-paths), which no allow rule or `PreToolUse` hook `"allow"` approves
 * The [cross-session messaging safeguards](#skip-all-checks-with-bypasspermissions-mode)
+* Reads outside the working directories while [`permissions.blockReadsOutsideWorkingDirectories`](/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) is on: recognized file-reading Bash commands and any [unsandboxed retry](/docs/en/sandboxing#the-unsandboxed-retry-escape-hatch) that needs approval to run outside the sandbox prompt even in auto mode and `bypassPermissions` mode. Requires Claude Code v2.1.257 or later
 
 ## Common setups
 
@@ -400,6 +401,20 @@ Run `claude auto-mode defaults` to print the full rule lists as JSON. If routine
 
 Pushing to any branch of the repository you're working in and creating a pull request that matches your request run without a prompt, unless the change would send secrets or sensitive data outside the repository or the pull request targets a different repository or organization, the cases the [blocked list](#what-the-classifier-blocks-by-default) covers. To require a human checkpoint before these actions while staying in auto mode, add `permissions.ask` rules: see [Common boundaries](/docs/en/auto-mode-config#common-boundaries).
 
+<h3 id="first-read-outside-the-working-directories">
+  The first read outside the working directories
+</h3>
+
+While [`permissions.blockReadsOutsideWorkingDirectories`](/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) is off, file reads run without a prompt in auto mode, including reads outside the [working directories](/docs/en/permissions#working-directories). The first time Claude uses the Read, Grep, or Glob tool on a path outside them, Claude Code asks you whether to keep allowing those reads.
+
+The prompt doesn't appear in non-interactive `-p` runs or background sessions; reads there run as before.
+
+Whatever you answer, Claude keeps working:
+
+* **Keep allowing**: the read runs, later reads outside the working directories run as before, and Claude Code records your answer so the prompt doesn't appear again
+* **Block from now on**: the read is refused, and Claude Code sets [`permissions.blockReadsOutsideWorkingDirectories`](/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) to `true` in your user settings, which makes the file tools refuse such reads in every later session and every permission mode. To let Claude read such a path later, add its directory with `/add-dir` or remove the setting.
+* **Ask again next time**: the read is refused, and the next read outside the working directories prompts again
+
 ### Boundaries you state in conversation
 
 The classifier treats boundaries you state in the conversation as a block signal. If you tell Claude "don't push" or "wait until I review before deploying", the classifier blocks matching actions even when the default rules would allow them. A boundary stays in force until you lift it in a later message. Claude's own judgment that a condition was met does not lift it.
@@ -424,7 +439,7 @@ Repeated blocks usually mean the classifier is missing context about your infras
     Each action goes through a fixed decision order. The first matching step wins:
 
     1. Actions matching your [allow, ask, or deny rules](/docs/en/permissions#manage-permissions) resolve immediately. Writes to [protected paths](#protected-paths) route to the classifier even when an allow rule matches, and so do `rm` and `rmdir` removals targeting a [critical path](#critical-paths) in Claude Code v2.1.218 and later. MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool) prompt you directly even when an allow rule matches, and so do connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code. Ask rules that match on a command's content, such as `Bash(git push *)`, fall back to a permission prompt
-    2. Read-only actions and file edits in your working directory are auto-approved, except writes to [protected paths](#protected-paths)
+    2. Read-only actions and file edits in your working directory are auto-approved, except writes to [protected paths](#protected-paths) and [the first read outside the working directories](#first-read-outside-the-working-directories), which prompts you
     3. Everything else goes to the classifier. The connector tools and `requiresUserInteraction` MCP tools that prompt you directly in step 1 never reach the classifier, so neither an org-required approval nor a consent step is auto-approved
     4. If the classifier blocks, Claude receives the reason and tries an alternative. In most sessions the reason is the fixed text `Blocked by classifier` rather than a written explanation, in Claude Code v2.1.208 and later; see [Review denials](/docs/en/auto-mode-config#review-denials)
 

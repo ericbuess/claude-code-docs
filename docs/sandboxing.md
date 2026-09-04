@@ -121,7 +121,7 @@ Claude Code offers two sandbox modes. In both, the sandbox enforces the same fil
 
 #### Auto-allow mode
 
-When a command can be sandboxed, Claude Code runs it inside the sandbox and approves it automatically, without asking your permission. Commands that cannot be sandboxed, such as those needing network access to non-allowed hosts, fall back to the regular permission flow, where Claude Code checks your [permission rules](/docs/en/permissions) and gates any command those rules do not already allow, with a prompt in Manual mode or the classifier in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode).
+When a command can be sandboxed, Claude Code runs it inside the sandbox and approves it automatically, without asking your permission. Commands that cannot be sandboxed, such as those needing network access to non-allowed hosts, fall back to the regular permission flow, where Claude Code checks your [permission rules](/docs/en/permissions) and gates any command those rules do not already allow, with a prompt in Manual mode.
 
 Even in auto-allow mode, the following still apply:
 
@@ -144,7 +144,7 @@ All Bash commands go through the regular permission flow, even when sandboxed. T
 
 Some commands can't run inside the sandbox at all, such as tools that are incompatible with it or that need a host you haven't allowed. Claude Code reports sandbox violations in the blocked command's result, naming the path or host the sandbox denied, so Claude sees what the sandbox blocked. Rather than failing the task or requiring you to turn sandboxing off, Claude Code includes an escape hatch: Claude analyzes the violation and may retry the command with the `dangerouslyDisableSandbox` parameter.
 
-The retried command runs outside the sandbox, so it goes through the regular permission flow: in Manual mode you get a confirmation prompt; in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) the classifier evaluates the underlying command instead of prompting you. To be prompted on every unsandboxed retry even in auto mode, add an [ask rule](/docs/en/permissions#match-by-input-parameter) for `Bash(dangerouslyDisableSandbox:true)`.
+The retried command runs outside the sandbox, so it goes through the regular permission flow. In Manual mode you get a confirmation prompt. In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), the classifier evaluates the underlying command. While [`permissions.blockReadsOutsideWorkingDirectories`](/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) is on, a retry that needs approval to run outside the sandbox prompts you instead. To be prompted on every unsandboxed retry even in auto mode, add an [ask rule](/docs/en/permissions#match-by-input-parameter) for `Bash(dangerouslyDisableSandbox:true)`.
 
 You can disable this escape hatch by setting `"allowUnsandboxedCommands": false` in your [sandbox settings](/docs/en/settings-reference#sandbox-settings). When disabled, which the `/sandbox` Overrides tab shows as **Strict sandbox mode**, the `dangerouslyDisableSandbox` parameter is completely ignored and all commands must run sandboxed or be explicitly listed in `excludedCommands`.
 
@@ -210,6 +210,8 @@ The example below blocks reading from the entire home directory while still allo
 ```
 
 If you placed the same configuration in `~/.claude/settings.json`, `.` would resolve to `~/.claude` instead, and project files would remain blocked by the `denyRead` rule.
+
+To deny sandboxed commands read access to home directories and mounted volumes while keeping the working directories readable, set [`permissions.blockReadsOutsideWorkingDirectories`](/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) instead of writing path rules.
 
 ### Disable filesystem isolation
 
