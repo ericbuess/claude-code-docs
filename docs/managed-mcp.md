@@ -170,7 +170,7 @@ To turn off all the claude.ai connectors Claude Code fetches itself, see [`disab
 
 ### How a server is evaluated
 
-Before loading a server, including one from `managed-mcp.json`, Claude Code runs the three checks below in order. In-process `type: "sdk"` servers, which the [app that started the session registers](/docs/en/mcp#how-connectors-reach-claude-code), skip all three.
+Before loading a server, including one from `managed-mcp.json`, Claude Code runs the three checks below in order. It runs them again when a user reconnects a server or turns a disabled one back on in `/mcp`. In-process `type: "sdk"` servers, which the [app that started the session registers](/docs/en/mcp#how-connectors-reach-claude-code), skip all three.
 
 1. **Merge the lists.** Allowlist and denylist entries from every settings scope combine into one allowlist and one denylist, with the managed scope's lists coming from the [managed source or sources Claude Code applies](/docs/en/managed-settings#how-claude-code-combines-managed-sources). When `allowManagedMcpServersOnly` is `true`, only the managed allowlist is kept; the denylist always merges from every scope.
 2. **Check the denylist.** A server that matches any denylist entry, by URL, command, or name, is blocked. Nothing overrides a denylist match.
@@ -346,14 +346,15 @@ When `allowManagedMcpServersOnly` is `true`, allowlists from user, project, and 
 
 For what users see at startup when `managed-mcp.json` is deployed and the session also has `--mcp-config` servers, see [Exclusive control with managed-mcp.json](#exclusive-control-with-managed-mcp-json). Use this table to recognize the other reports and to tell users what to expect before you roll out a change:
 
-| Restriction                                                          | What the user sees                                                                                         |
-| :------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
-| `managed-mcp.json` is present and the user runs `claude mcp add`     | `Cannot add MCP server: enterprise MCP configuration is active and has exclusive control over MCP servers` |
-| The server is on a denylist and the user runs `claude mcp add`       | `Cannot add MCP server "<name>": server is explicitly blocked by enterprise policy`                        |
-| The server isn't on the allowlist and the user runs `claude mcp add` | `Cannot add MCP server "<name>": not allowed by enterprise policy`                                         |
-| A previously configured server is now blocked by policy              | The server silently disappears from `/mcp` and `claude mcp list` with no warning                           |
+| Restriction                                                                                                           | What the user sees                                                                                                           |
+| :-------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| `managed-mcp.json` is present and the user runs `claude mcp add`                                                      | `Cannot add MCP server: enterprise MCP configuration is active and has exclusive control over MCP servers`                   |
+| The server is on a denylist and the user runs `claude mcp add`                                                        | `Cannot add MCP server "<name>": server is explicitly blocked by enterprise policy`                                          |
+| The server isn't on the allowlist and the user runs `claude mcp add`                                                  | `Cannot add MCP server "<name>": not allowed by enterprise policy`                                                           |
+| A previously configured server is now blocked by policy                                                               | The server silently disappears from `/mcp` and `claude mcp list` with no warning                                             |
+| A server becomes blocked while a session is running, and the user selects **Reconnect** or turns it back on in `/mcp` | [`MCP server <name> is blocked by enterprise managed policy`](/docs/en/errors#mcp-server-is-blocked-by-enterprise-managed-policy) |
 
-In the last case, the user gets no signal that policy is the reason their server disappeared, so tell affected users which servers are blocked when you roll out a new restriction.
+When a server silently disappears, the user gets no signal that policy is the reason, so tell affected users which servers are blocked when you roll out a new restriction.
 
 ## Monitor MCP usage
 

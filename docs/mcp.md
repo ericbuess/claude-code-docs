@@ -231,6 +231,8 @@ claude mcp remove notion
 /mcp
 ```
 
+When you remove a remote server, Claude Code also deletes the OAuth tokens and client registration it stored for that server.
+
 #### Server status
 
 `claude mcp add` confirms a successful add by printing an `Added ...` line, which means the configuration was written. `claude mcp list` then shows a health status next to each server it lists, such as `✔ Connected`, `! Needs authentication`, or `✘ Failed to connect`. A failure status means Claude Code couldn't connect to that server, not that the list command failed.

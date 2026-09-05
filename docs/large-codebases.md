@@ -176,7 +176,7 @@ The example below blocks build artifacts and a vendored SDK:
 }
 ```
 
-Deny rules cover Claude's built-in file tools and recognized Bash file commands, including `cat`, `head`, `grep`, and `find`, when a denied path is passed as an argument. Claude Code also makes a best-effort attempt to leave denied paths out of the results of the built-in Grep and Glob tools. Claude still sees denied paths in the output of a Bash search such as `grep -r` or `find`.
+Deny rules cover Claude's built-in file tools. In Bash, they cover the file commands Claude Code recognizes, such as `cat`, `head`, `grep`, and `find`, when a denied path appears as an argument, and the target of a [redirection](/docs/en/permissions#redirections) such as `< file`. Claude Code also makes a best-effort attempt to leave denied paths out of the results of the built-in Grep and Glob tools. A Bash search such as `grep -r` or `find` over a directory that contains denied files still includes them in its output.
 
 Deny rules don't cover subprocesses that open files themselves. For the full pattern syntax, see [Read and Edit permission rules](/docs/en/permissions#read-and-edit).
 
