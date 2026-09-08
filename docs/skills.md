@@ -108,91 +108,68 @@ This example creates a skill that summarizes the uncommitted changes in your git
   </Step>
 </Steps>
 
-### Where skills live
+<h2 id="where-skills-live">
+  Choose where skills load
+</h2>
 
-Where you store a skill determines who can use it:
+Where you save a skill decides which sessions load it. Save it under your home directory to get it in every project, commit it to a repository to share it with everyone who works there, or distribute it through a plugin or managed settings to reach a whole team.
 
-| Location   | Path                                         | Applies to                     |
-| :--------- | :------------------------------------------- | :----------------------------- |
-| Enterprise | See [managed settings](/docs/en/managed-settings) | All users in your organization |
-| Personal   | `~/.claude/skills/<skill-name>/SKILL.md`     | All your projects              |
-| Project    | `.claude/skills/<skill-name>/SKILL.md`       | This project only              |
-| Plugin     | `<plugin>/skills/<skill-name>/SKILL.md`      | Where plugin is enabled        |
+| Location             | Path                                                                                                                 | Loads in                                                                                                                                                                                                |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Enterprise           | `.claude/skills/<skill-name>/SKILL.md` in the [managed settings directory](/docs/en/managed-settings#delivery-mechanisms) | All users on machines where your organization deploys it                                                                                                                                                |
+| Personal             | `~/.claude/skills/<skill-name>/SKILL.md`                                                                             | All your projects on this machine, but not [Cowork or cloud sessions](#skills-in-cowork-and-cloud-sessions)                                                                                             |
+| Project              | `.claude/skills/<skill-name>/SKILL.md`                                                                               | Sessions in this repository. Commit it so your team gets it too                                                                                                                                         |
+| Nested               | `<subdir>/.claude/skills/<skill-name>/SKILL.md`                                                                      | Sessions started in or below `<subdir>`. A session started above it loads the skill once Claude works on files there. See [monorepos and subdirectories](#discovery-from-parent-and-nested-directories) |
+| Additional directory | `.claude/skills/<skill-name>/SKILL.md` in a directory you pass with `--add-dir`                                      | That session. See [directories outside the project](#skills-from-additional-directories)                                                                                                                |
+| Plugin               | `<plugin>/skills/<skill-name>/SKILL.md`                                                                              | Wherever the [plugin](/docs/en/plugins) is enabled, as `/plugin-name:skill-name`                                                                                                                             |
+| claude.ai account    | Skills you enable in your claude.ai settings                                                                         | Cowork and cloud sessions. See [Skills synced from claude.ai](#how-synced-skills-behave) for local sessions                                                                                             |
 
-When skills share the same name, Claude Code resolves the conflict by source:
+Skill folders also follow these rules:
 
-* Across levels, enterprise overrides personal, and personal overrides project.
-  * For example, with a `deploy` skill in both `~/.claude/skills/` and your project's `.claude/skills/`, `/deploy` runs the personal one.
-* A skill at any of these levels also overrides a bundled skill with the same name, but not the bundled skill's aliases.
-  * For example, a `code-review` skill in your project's `.claude/skills/` replaces the bundled `/code-review`, and typing the bundled alias `/review` never runs your skill.
-* Plugin skills use a `plugin-name:skill-name` namespace, so they can't conflict with other levels.
-  * For example, `my-plugin/skills/deploy/SKILL.md` becomes `/my-plugin:deploy` and loads alongside a `deploy` skill in your project's `.claude/skills/`.
-* If you have files in `.claude/commands/`, those work the same way, but if a skill and a command share the same name, the skill takes precedence.
-  * For example, with both `.claude/commands/deploy.md` and `.claude/skills/deploy/SKILL.md`, `/deploy` runs the skill.
-* A skill or command from any of these sources overrides a skill [synced from your claude.ai account](#when-a-synced-skill-name-matches-another-command) with the same name.
-  * For example, with a `deploy` skill enabled on claude.ai and another in your project's `.claude/skills/`, `/deploy` runs the project one.
+* **Symlinked folders**: a `<skill-name>` entry in the enterprise, personal, or project location can be a symlink to a directory elsewhere on disk. Claude Code reads `SKILL.md` from the target and loads the skill once even if several locations point at the same target. Plugin skills [handle symlinks differently](/docs/en/plugins-reference#share-files-within-a-marketplace-with-symlinks).
+* **Reserved name**: don't name a skill folder `synced`, in any capitalization. Claude Code uses `~/.claude/skills/synced/` for [skills downloaded from claude.ai](#where-synced-skills-load) and skips a skill you author at that name in the enterprise, personal, and project locations.
+* **Command files**: a Markdown file in `.claude/commands/` is the older format and still works. It supports the same [frontmatter](#frontmatter-reference) except `name` and `paths`, and you invoke it by its file name. Prefer a skill for new work, since skills also support [supporting files](#add-supporting-files).
+* **Skill folder as a plugin**: add a `.claude-plugin/plugin.json` to a skill folder and it loads as a [plugin](/docs/en/plugins-reference#skills-directory-plugins) named `<name>@skills-dir`, so it can bundle agents, hooks, and MCP servers. In a project's `.claude/skills/`, this requires accepting the workspace trust dialog first.
 
-Skills also load from nested `.claude/skills/` directories below your working directory. When Claude reads or edits a file in a subdirectory, skills from that subdirectory's `.claude/skills/` become available. This lets a monorepo package provide its own skills that apply when working on that package, even if the session started at the repo root.
+<h3 id="discovery-from-parent-and-nested-directories">
+  Load skills in monorepos and subdirectories
+</h3>
 
-If a nested skill shares a name with another skill, both stay available. For example, with a `deploy` skill at the project root and another in `apps/web/.claude/skills/`:
+Claude Code loads project skills from `.claude/skills/` in the directory where you start it and in every parent directory up to the repository root, so starting in `packages/frontend/` still picks up skills defined at the root. When you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later, Claude Code adds the new directory's project skills.
 
-* The nested one appears under a directory-qualified name, `apps/web:deploy`.
-* Its description says which directory it applies to.
-* Claude picks the variant that matches the files it is working on.
+Skills in a `.claude/skills/` directory below where you started don't load at startup. They load the first time Claude reads or edits a file in that subdirectory and stay available for the rest of the session. Until then they don't appear in the `/` menu and you can't invoke them by name. To load them sooner, run `/add-dir` with the subdirectory's path, which requires Claude Code v2.1.257 or later.
 
-Typing `/deploy` runs the project-root skill. Type the qualified name `/apps/web:deploy` to run the nested variant explicitly.
+When a nested skill shares a name with another skill, both stay available. With a `deploy` skill at the repository root and another in `apps/web/.claude/skills/`:
 
-When you or Claude invoke the unqualified name, the project-root skill loads, and Claude Code appends a list of the directory-qualified variants to its content with an instruction to also invoke any variant whose directory holds the files Claude is working on. A nested skill therefore still applies to work in its directory when only the unqualified name is invoked.
+* `/deploy` runs the root skill. Claude Code also lists the directory-qualified variants for Claude, with an instruction to invoke the one whose directory holds the files it's working on, so the nested skill still applies to work in `apps/web/`.
+* `/apps/web:deploy` runs the nested skill on its own. Its description names the directory it applies to.
 
-The folder name `synced` is reserved in the enterprise, personal, and project skills locations, in any capitalization. Claude Code [downloads the skills you enable on claude.ai](/docs/en/env-vars#variables) into `~/.claude/skills/synced/` when `CLAUDE_CODE_SYNC_SKILLS` is set in non-interactive mode, and skips a skill you author at that name.
+<h3 id="skills-from-additional-directories">
+  Load skills from a directory outside the project
+</h3>
 
-A `<skill-name>` entry in the enterprise, personal, or project locations can be a symlink to a directory elsewhere on disk. Claude Code follows the symlink and reads `SKILL.md` from the target directory, and if the same target is reachable from more than one location, Claude Code loads the skill once. Plugin skills handle symlinks differently; see [Share files within a marketplace with symlinks](/docs/en/plugins-reference#share-files-within-a-marketplace-with-symlinks).
+When you add a directory with `--add-dir` or `/add-dir`, Claude Code loads the skills in that directory's `.claude/skills/`, along with its `.claude/commands/` and `.claude/agents/`. Directories the Agent SDK adds through [`additionalDirectories`](/docs/en/agent-sdk/typescript#options) in TypeScript or [`add_dirs`](/docs/en/agent-sdk/python#claudeagentoptions) in Python load the same way, because the SDK passes them as `--add-dir`. The `permissions.additionalDirectories` setting in `settings.json` grants file access only and loads none of these.
 
-<Note>
-  Add a `.claude-plugin/plugin.json` to a skill folder and it loads as a [plugin](/docs/en/plugins-reference#skills-directory-plugins) named `<name>@skills-dir`, so it can bundle agents, hooks, and MCP servers. In a project's `.claude/skills/`, this requires accepting the workspace trust dialog first.
-</Note>
+Claude Code watches `.claude/skills/` in a directory you pass with `--add-dir` at launch, as [Edit a skill during a session](#live-change-detection) describes. It doesn't watch the added directory's `.claude/commands/` or `.claude/agents/`, so restart the session after changing a file there.
 
-#### Live change detection
+These loads depend on the `project` [setting source](/docs/en/agent-sdk/claude-code-features#control-filesystem-settings-with-settingsources), which is on by default. A [`strictPluginOnlyCustomization`](/docs/en/settings-reference#strictpluginonlycustomization) policy, [bare mode](/docs/en/headless#start-faster-with-bare-mode), and [`--safe-mode`](/docs/en/cli-reference#cli-flags) each restrict them further, as those pages describe. See [Additional directories grant file access, not configuration](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) for the full table of what an added directory loads, including `CLAUDE.md` and plugin settings.
 
-Claude Code watches skill directories for file changes. When you add, edit, or remove a skill under `~/.claude/skills/`, the project `.claude/skills/`, or a `.claude/skills/` inside an `--add-dir` directory, Claude Code picks up the change within the current session, without a restart. If you create a top-level skills directory that didn't exist when the session started, restart Claude Code so it can watch the new directory.
+### Resolve skills that share a name
 
-<Note>
-  Live change detection covers `SKILL.md` text only. For a skill folder that is also a [plugin](/docs/en/plugins-reference#skills-directory-plugins), changes to `hooks/`, `.mcp.json`, `agents/`, and `output-styles/` need `/reload-plugins` to take effect.
-</Note>
+When two skills share a name, where each one came from decides which one `/name` runs. The table covers the enterprise, personal, project, nested, plugin, and claude.ai locations, bundled skills, and command files:
 
-#### Discovery from parent and nested directories
+| Same name in                                                  | Which one runs                                                                                                                                                             |
+| :------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Two of enterprise, personal, and project                      | Enterprise over personal, and personal over project. With `deploy` in both `~/.claude/skills/` and the project's `.claude/skills/`, `/deploy` runs the personal one        |
+| Any of those locations and a [bundled skill](#bundled-skills) | Your skill replaces the bundled command, but not its aliases. A project `code-review` skill replaces `/code-review`, and the bundled alias `/review` never runs your skill |
+| A skill and a file in `.claude/commands/`                     | The skill                                                                                                                                                                  |
+| A project-root skill and a nested skill                       | Both load. See [monorepos and subdirectories](#discovery-from-parent-and-nested-directories)                                                                               |
+| A plugin skill and a skill at any of the locations above      | Both load, because plugin skills are namespaced as `/plugin-name:skill-name`                                                                                               |
+| Any of the above and a skill synced from claude.ai            | The other skill or command. See [When a synced skill name matches another command](#when-a-synced-skill-name-matches-another-command)                                      |
 
-Project skills load from `.claude/skills/` in the directory where you start Claude Code and in every parent directory up to the repository root. Starting Claude in a subdirectory still picks up skills defined at the root. To load skills from a directory outside that path at startup, pass it with [`--add-dir`](/docs/en/cli-reference). Claude Code reads `.claude/skills/` inside each added directory alongside the project skills. When you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later, Claude Code adds the new directory's project skills.
-
-Skills in nested `.claude/skills/` directories below your starting directory don't load at startup. They load the first time Claude reads or edits a file in the subdirectory that contains them, and stay available for the rest of the session. For example, after Claude edits a file under `packages/frontend/`, skills in `packages/frontend/.claude/skills/` become available. Until then, those skills don't appear in autocomplete, and you can't invoke them by name.
-
-To load a subdirectory's skills before Claude reads or edits a file there, run `/add-dir` with that subdirectory's path. This requires Claude Code v2.1.257 or later.
-
-<Note>
-  Files in `.claude/commands/` support the same [frontmatter](#frontmatter-reference), except `name` and `paths`, which Claude Code ignores in a command file. You invoke a command file by its file name. Skills are recommended since they support additional features like [supporting files](#add-supporting-files).
-</Note>
-
-#### Skills from additional directories
-
-The `--add-dir` flag and `/add-dir` command [grant file access](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) rather than configuration discovery, but skills and commands are an exception: Claude Code loads `.claude/skills/` and `.claude/commands/` from each added directory automatically. This exception applies to `--add-dir`, `/add-dir`, and directories the Agent SDK adds through [`additionalDirectories`](/docs/en/agent-sdk/typescript#options) in TypeScript or [`add_dirs`](/docs/en/agent-sdk/python#claudeagentoptions) in Python, which the SDK passes to Claude Code as `--add-dir`.
-
-The `permissions.additionalDirectories` setting in `settings.json` grants file access only and doesn't load skills, commands, or subagents, even though the TypeScript option has the same name. See [Live change detection](#live-change-detection) for how skill edits are picked up during a session.
-
-Claude Code loads skills, commands, and subagents from an added directory only when the `project` [setting source](/docs/en/agent-sdk/claude-code-features#control-filesystem-settings-with-settingsources) is enabled, which is the default. If you pass [`--setting-sources`](/docs/en/cli-reference) on the CLI, or set `settingSources` or `setting_sources` explicitly in the SDK, include `project` in the list. In `--safe-mode`, Claude Code loads none of the three. A [`strictPluginOnlyCustomization`](/docs/en/settings-reference#strictpluginonlycustomization) managed policy and [bare mode](/docs/en/headless#start-faster-with-bare-mode) treat the three differently:
-
-* **Skills** in `.claude/skills/`: a policy that locks skills turns them off. Bare mode still loads them.
-* **Commands** in `.claude/commands/`: the same skills lock turns them off. Bare mode skips them.
-* **Subagents** in `.claude/agents/`: the policy's [`agents`](/docs/en/settings-reference#strictpluginonlycustomization-agents) entry turns them off, not its `skills` entry. Bare mode skips every `.claude/agents/` folder, including the project's own.
-
-Claude Code never watches `.claude/agents/` or `.claude/commands/` in an added directory, so after you add or edit a subagent or command file there, restart the session to load the change. In bare mode, Claude Code doesn't watch skill directories at all.
-
-Apart from the `enabledPlugins` and `extraKnownMarketplaces` keys in an added directory's `.claude/settings.json` and `.claude/settings.local.json`, Claude Code doesn't load other `.claude/` configuration, such as output styles, from additional directories. See the [exceptions table](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) for the complete list of what is and isn't loaded, and the recommended ways to share configuration across projects.
-
-<Note>
-  CLAUDE.md files from `--add-dir` directories are not loaded by default. To load them, set `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`. See [Load from additional directories](/docs/en/memory#load-from-additional-directories).
-</Note>
-
-#### Skills in Cowork and cloud sessions
+<h3 id="skills-in-cowork-and-cloud-sessions">
+  Use skills in Cowork and cloud sessions
+</h3>
 
 [Cowork](https://claude.com/product/cowork) sessions and [cloud sessions](/docs/en/cloud-environments#what-carries-over-from-your-setup), including [routines](/docs/en/routines), don't read `~/.claude/skills/` on your machine. Both interactive and scheduled Cowork sessions load the skills enabled for your claude.ai account, synced at session start; manage them from **Customize** in the Desktop app sidebar or from the skills settings on claude.ai. Cloud sessions additionally load project skills committed to the cloned repository's `.claude/skills/`.
 
@@ -201,7 +178,7 @@ If a skill exists only in `~/.claude/skills/` on your machine, Claude Code repor
 * For Cowork and cloud sessions, enable the skill for your claude.ai account.
 * For cloud sessions, you can instead commit the skill to the repository's `.claude/skills/`, or ship it in a plugin declared in the repository's `.claude/settings.json`. Repo-declared plugins [install at session start](/docs/en/cloud-environments#what-carries-over-from-your-setup); plugins enabled only in your user settings don't transfer.
 
-[Desktop scheduled tasks](/docs/en/desktop-scheduled-tasks) are different: they run locally on your machine and load skills from the same locations as any other local session.
+[Desktop scheduled tasks](/docs/en/desktop-scheduled-tasks) run locally on your machine, so they do load `~/.claude/skills/`.
 
 <h3 id="how-synced-skills-behave">
   Skills synced from claude.ai
@@ -259,6 +236,14 @@ What Claude Code does with a synced skill's body depends on where the session ru
 * In a cloud session, the body keeps the behavior a local skill has, because the session runs in an isolated container.
 * In a Cowork session on your desktop, the body keeps the behavior a local skill has, except that Claude Code replaces every `!` command line with the [`disableSkillShellExecution` placeholder](#inject-dynamic-context), as it does for every skill you supply there.
 * In any other session on your machine, Claude Code doesn't run [`!` commands](#inject-dynamic-context), doesn't attach the files that `@` references name the way it does for a local skill, and doesn't substitute the `${CLAUDE_PROJECT_DIR}` and `${CLAUDE_SESSION_ID}` placeholders, so the `@` references and both placeholders reach Claude as literal text. A `!` command line reaches Claude as literal text too, or as that placeholder when `disableSkillShellExecution` is on.
+
+<h3 id="live-change-detection">
+  Edit a skill during a session
+</h3>
+
+Claude Code watches skill directories for file changes, except in [bare mode](/docs/en/headless#start-faster-with-bare-mode). When you add, edit, or remove a skill under `~/.claude/skills/`, the project `.claude/skills/`, or a `.claude/skills/` inside an `--add-dir` directory, Claude Code picks up the change within the current session, without a restart. If you create a top-level skills directory that didn't exist when the session started, restart Claude Code so it can watch the new directory.
+
+Live change detection covers `SKILL.md` text only. For a skill folder that is also a [plugin](/docs/en/plugins-reference#skills-directory-plugins), changes to `hooks/`, `.mcp.json`, `agents/`, and `output-styles/` need `/reload-plugins` to take effect.
 
 ### Remove a skill
 
