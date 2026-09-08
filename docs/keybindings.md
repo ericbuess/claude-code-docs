@@ -184,9 +184,9 @@ The `historySearch:next`, `historySearch:accept`, `historySearch:cancel`, and `h
 
 Actions available in the `Task` context:
 
-| Action            | Default               | Description                                                                                                     |
-| :---------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------- |
-| `task:background` | Ctrl+B, Ctrl+X Ctrl+B | Background current task. The Ctrl+X Ctrl+B chord requires v2.1.169 or later and avoids the tmux prefix conflict |
+| Action            | Default               | Description                                                                      |
+| :---------------- | :-------------------- | :------------------------------------------------------------------------------- |
+| `task:background` | Ctrl+B, Ctrl+X Ctrl+B | Background current task. The Ctrl+X Ctrl+B chord avoids the tmux prefix conflict |
 
 ### Theme actions
 

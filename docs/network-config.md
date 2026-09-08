@@ -259,6 +259,6 @@ Artifacts can also load JavaScript libraries, such as React or a charting packag
 
 ## Additional resources
 
-* [Claude Code settings](/docs/en/settings)
+* [Settings files and precedence](/docs/en/settings)
 * [Environment variables reference](/docs/en/env-vars)
 * [Troubleshooting guide](/docs/en/troubleshooting)

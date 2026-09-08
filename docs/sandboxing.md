@@ -710,5 +710,5 @@ The sandbox isolates Bash subprocesses. Other tools operate under different boun
 * [Sandbox environments](/docs/en/sandbox-environments): compare the built-in sandbox with dev containers, containers, and VMs
 * [Security](/docs/en/security): comprehensive security features and best practices
 * [Permissions](/docs/en/permissions): permission configuration and access control
-* [Settings reference](/docs/en/settings-reference): every settings key
+* [All settings](/docs/en/settings-reference): every settings key
 * [CLI reference](/docs/en/cli-reference): command-line options

@@ -95,7 +95,7 @@ Use `Ctrl+W` to widen to all worktrees of the repository or `Ctrl+A` to widen to
 
 Sessions whose first prompt was a [`/loop`](/docs/en/scheduled-tasks#run-a-prompt-repeatedly-with-%2Floop) command don't appear in the picker, and `claude --continue` skips them too. Running `/loop` later in a conversation doesn't hide the session. Before v2.1.211, a `/loop` run early in a conversation hid the session from the picker permanently.
 
-From v2.1.169, moving a session with [`/cd`](/docs/en/commands) relocates it to the new directory's project storage, so it appears in that directory's picker afterward. As of v2.1.196, a moved session stays out of the old directory's picker even after a crash or forced exit. On earlier versions, it could also reappear in the old directory's list after an exit that wasn't clean when the old path contained special characters such as underscores.
+Moving a session with [`/cd`](/docs/en/commands) relocates it to the new directory's project storage, so it appears in that directory's picker afterward. As of v2.1.196, a moved session stays out of the old directory's picker even after a crash or forced exit. On earlier versions, it could also reappear in the old directory's list after an exit that wasn't clean when the old path contained special characters such as underscores.
 
 When you select a session from another worktree of the same repository, Claude Code resumes it in place; when the session's own worktree no longer exists, Claude Code [resumes it in your current directory](/docs/en/worktrees#resume-a-worktree-session). When you select a session from an unrelated project, Claude Code copies a `cd` and resume command to your clipboard instead. If that project's directory no longer exists, Claude Code resumes the session in your current directory rather than copying a `cd` command that would fail.
 
@@ -233,6 +233,10 @@ The location, retention, and write behavior are configurable:
 | Set an age limit for [Claude Desktop and Cowork transcripts](/docs/en/claude-directory#cleaned-up-automatically) | [`desktopSessionCleanupPeriodDays`](/docs/en/settings-reference#desktopsessioncleanupperioddays) | User settings, managed settings, or `--settings` |
 | Suppress transcript writes in all modes                                                                     | [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/docs/en/env-vars)                                           | Environment variable                             |
 | Suppress writes for one non-interactive run                                                                 | [`--no-session-persistence`](/docs/en/cli-reference)                                             | CLI flag with `claude -p`                        |
+
+### Delete session data
+
+Transcripts age out under the [retention sweep rules](/docs/en/claude-directory#cleaned-up-automatically). To delete a project's transcripts and related state sooner, run [`claude project purge`](/docs/en/claude-directory#clear-local-data). If you delete a [background session](/docs/en/agent-view) with [`claude rm <id>`](/docs/en/agent-view#what-deleting-a-session-removes), its transcript stays on disk and remains available through `claude --resume`.
 
 ### Name the project directory yourself
 
