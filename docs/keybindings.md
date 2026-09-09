@@ -61,8 +61,10 @@ Each binding block specifies a **context** where the bindings apply:
 | `DiffDialog`      | Diff viewer navigation                                       |
 | `DiffPanel`       | The [diff panel](/docs/en/interactive-mode#diff-panel) is open    |
 | `ModelPicker`     | Model picker effort level                                    |
+| `EffortSlider`    | Effort slider opened by `/effort`                            |
 | `Select`          | Generic select/list components                               |
 | `Plugin`          | Plugin dialog (browse, discover, manage)                     |
+| `Agents`          | [Agent view](/docs/en/agent-view) (`claude agents`)               |
 | `Scroll`          | Conversation scrolling and text selection in fullscreen mode |
 
 Before v2.1.205, a `Doctor` context and a `doctor:fix` action existed for the `/doctor` diagnostics screen.
@@ -111,7 +113,7 @@ Actions available in the `Chat` context:
 | `chat:queueSubmit`    | Ctrl+X Enter                      | Submit the message, marked to wait its turn: while Claude is working, Claude Code [queues it](/docs/en/interactive-mode#queue-messages-while-claude-works) and never interrupts the turn. Unlike `chat:submit`, it submits the draft even while autocomplete suggestions are open. Requires v2.1.247 or later |
 | `chat:newline`        | Ctrl+J                            | Insert a newline without submitting                                                                                                                                                                                                                                                                      |
 | `chat:undo`           | Ctrl+\_, Ctrl+Shift+-             | Undo last action                                                                                                                                                                                                                                                                                         |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E             | Open in external editor                                                                                                                                                                                                                                                                                  |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E             | Open in external editor. The [agent view dispatch input](/docs/en/agent-view#keyboard-shortcuts) follows this action's single-keystroke bindings too                                                                                                                                                          |
 | `chat:stash`          | Ctrl+S                            | Stash current prompt                                                                                                                                                                                                                                                                                     |
 | `chat:imagePaste`     | Ctrl+V (Alt+V on Windows and WSL) | Paste image from clipboard. On WSL, both shortcuts are bound by default                                                                                                                                                                                                                                  |
 
@@ -298,6 +300,14 @@ Actions available in the `ModelPicker` context:
 | `modelPicker:increaseEffort`  | Right   | Increase effort level                        |
 | `modelPicker:thisSessionOnly` | s       | Apply highlighted model to this session only |
 
+### Effort slider actions
+
+Actions available in the `EffortSlider` context, the slider that opens when you run `/effort` with no arguments. The slider's Left, Right, Enter, and Escape keys can't be rebound.
+
+| Action                         | Default | Description                                                                                                             |
+| :----------------------------- | :------ | :---------------------------------------------------------------------------------------------------------------------- |
+| `effortSlider:thisSessionOnly` | s       | Apply the focused [effort level](/docs/en/model-config#adjust-effort-level) to this session only. Requires v2.1.257 or later |
+
 ### Select actions
 
 Actions available in the `Select` context:
@@ -335,6 +345,21 @@ Actions available in the `Settings` context. The `select:accept` and `confirm:no
 | `settings:retry`  | R            | Retry loading usage data on error               |
 | `select:accept`   | Enter, Space | Change the selected setting or open its submenu |
 | `confirm:no`      | Escape       | Close the panel. Changes are already saved      |
+
+### Agents actions
+
+Actions available in the `Agents` context, which applies in [agent view](/docs/en/agent-view), opened with `claude agents`. Requires v2.1.257 or later.
+
+| Action              | Default | Description                                                                             |
+| :------------------ | :------ | :-------------------------------------------------------------------------------------- |
+| `agents:switchView` | Ctrl+S  | Switch [session grouping](/docs/en/agent-view#organize-the-list) between state and directory |
+| `agents:togglePin`  | Ctrl+T  | [Pin or unpin](/docs/en/agent-view#organize-the-list) the selected session                   |
+
+While agent view is open, Claude Code uses the `Agents` binding for any key the `Agents` context binds, and it ignores a `Chat` or `Global` binding on the same key. For example, pressing Ctrl+S in agent view switches the session grouping rather than triggering the default `chat:stash`.
+
+The dispatch input's external-editor shortcut isn't an `Agents` action. Agent view follows the `Chat` context's `chat:externalEditor` binding, Ctrl+G by default.
+
+Bindings fire on single keystrokes in agent view, so the Ctrl+X Ctrl+E chord bound to `chat:externalEditor` doesn't open the editor there.
 
 ### Voice actions
 

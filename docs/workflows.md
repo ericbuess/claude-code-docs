@@ -304,6 +304,10 @@ The body is plain JavaScript with top-level `await`. `agent()` spawns one subage
 
 An `agent()` call resolves to `null` if you stop it mid-run or it hits an unrecoverable API error. `pipeline()` keeps that `null` in the results array, which is why the example ends with `.filter(Boolean)` to drop those entries.
 
+If you pass a `schema` on an `agent()` call, that subagent returns JSON matching the shape instead of prose. Claude Code checks the schema before starting the subagent: when it can prove the schema contradicts itself, the call fails with an error naming the contradiction, and the subagent never starts. One contradiction it can prove is a `required` key that `additionalProperties: false` rules out.
+
+If the subagent's output still fails validation after five attempts, the call fails with an error that includes the last validation failure. To change the attempt count, set [`MAX_STRUCTURED_OUTPUT_RETRIES`](/docs/en/env-vars).
+
 ### Edit a saved script
 
 To change a [workflow you saved](#save-the-workflow-for-reuse), edit its `.js` file or ask Claude to make the change. Before you edit or ask, run the `/workflow-authoring` [bundled skill](/docs/en/skills#bundled-skills) to load the script-writing reference Claude works from. The skill requires Claude Code v2.1.248 or later.
@@ -355,9 +359,13 @@ The runtime applies the following constraints:
 
 Once a run starts, you manage it from the `/workflows` view, or by expanding its progress line in the task panel below the input box.
 
+When you stop a run, it stays in the task panel while any of its agents' processes are still running. If you stop it again, Claude Code re-signals those processes.
+
 ### Resume after a pause
 
-Resume a paused run from `/workflows` by selecting it and pressing `p`. For a run you stopped, ask Claude to relaunch the workflow with the same script. Claude Code replays the run in the order agents started, and each agent either returns its saved result or runs again:
+Resume a paused run from `/workflows` by selecting it and pressing `p`. For a run you stopped, ask Claude to relaunch the workflow with the same script. If agents from the stopped run haven't exited yet, Claude Code refuses the relaunch until they have, so a second copy of those agents can't run alongside them.
+
+Claude Code replays the run in the order agents started, and each agent either returns its saved result or runs again:
 
 * **Completed**: returns its saved result. The first agent whose prompt differs from the previous run, because you edited the script or an earlier agent returned something different, runs again, and so does every agent after it, even ones that completed.
 * **Still running when you stopped**: starts over. Stopping the whole run doesn't count any agent as failed.

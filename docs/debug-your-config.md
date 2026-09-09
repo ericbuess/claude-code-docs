@@ -65,7 +65,9 @@ If the hook appears but doesn't fire, the matcher is the usual cause. Check it f
 * A misspelled tool name produces a matcher that matches nothing, so the hook fails silently.
 * An array value is a schema error: Claude Code shows a settings error notice and rejects the whole user, project, or local settings file, `claude doctor` reports the validation failure, and no hook from that file appears in `/hooks`. In [managed settings](/docs/en/managed-settings), Claude Code drops the whole `hooks` key from the file that contains the array, so none of that file's hooks apply. The file's other settings still apply, and `claude doctor` lists the dropped key.
 
-Edits to `settings.json` take effect in the running session after a brief file-stability delay. You don't need to restart. If `/hooks` still shows the old definition a few seconds after saving, run `/hooks` again to refresh the view.
+When you edit `settings.json`, the change takes effect in the running session after a brief file-stability delay, even if you create the file or the project's `.claude/` folder itself after the session started. You don't need to restart. Before v2.1.257, Claude Code didn't detect edits in a `.claude/` folder created after the session started.
+
+If `/hooks` still shows the old definition a few seconds after you save, run `/hooks` again to refresh the view.
 
 If `/hooks` shows the hook but it still does not fire, the next step is to watch hook evaluation live. Start a session with `claude --debug` and trigger the tool call. The debug log records each event, which matchers were checked, and the hook's exit code and output. See [Debug hooks](/docs/en/hooks#debug-hooks) for the log format and [hooks troubleshooting](/docs/en/hooks-guide#limitations-and-troubleshooting) for common failure patterns.
 

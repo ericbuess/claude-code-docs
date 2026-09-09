@@ -161,6 +161,8 @@ How a message travels, and whether it passes through Anthropic servers, depends 
 
 Starting a conversation with a session on another of your machines requires Claude Code v2.1.225 or later and a target that [appears in the listing](#see-which-sessions-claude-can-reach). Before v2.1.225, Claude could only reply to a message that arrived from one.
 
+You can message a session shown as `offline` in [the listing](#see-which-sessions-claude-can-reach), one whose Remote Control connection has dropped. The send goes through, but the message arrives only after that session's machine reconnects. Claude is told as much when it sends.
+
 Same-machine delivery works wherever the feature is enabled. Each session registers itself in files on disk. When Claude lists or messages your local sessions, Claude Code reads those files to find the sessions, so two sessions can reach each other only when they can see the same files.
 
 A container has its own filesystem, so a session inside it and a session on the host can't reach each other. Two sessions inside the same container can still message each other, including on a [self-hosted runner](/docs/en/self-hosted-environments). A session inside WSL 2 and a native Windows session on the same computer can't reach each other either, because they register under different home directories and listen on different socket types.
@@ -225,7 +227,8 @@ When the default holds a message, Claude Code opens an approval dialog in the re
 
 * **Approve** delivers that one message to Claude.
 * **Deny**, or dismissing the dialog, drops it.
-* When the dialog stays unanswered past the [`dialogExpiry`](/docs/en/settings-reference#dialogexpiry) deadline, Claude Code closes it and drops the message. The deadline defaults to five minutes. While no terminal is attached to a [background session](/docs/en/agent-view), Claude Code leaves the dialog open past the deadline. After you attach, Claude Code closes the dialog and drops the message only if it stays unanswered for a full deadline period.
+* When the dialog stays unanswered past the [`dialogExpiry`](/docs/en/settings-reference#dialogexpiry) deadline, Claude Code closes it and drops the message. The deadline defaults to five minutes.
+* While no terminal is attached to a [background session](/docs/en/agent-view), Claude Code leaves the dialog open past the deadline. After you attach, if the dialog stays unanswered for a full deadline period, Claude Code closes it and drops the message.
 * If this session's permission-mode class changes while messages are held, Claude Code re-applies the inbound rules, delivers the messages they now accept, and shows a notice.
 * If a settings change makes `refuse` apply while messages are held, Claude Code drops every held message and reports a refusal to each sender it can reach.
 
@@ -340,6 +343,7 @@ To check a session, type `/list-agents`, also available as `/peers`. The result 
   * **Inbound controls**: the [receiving session's inbound controls](#control-inbound-messages) can hold or drop what you send it.
   * **Cloud session missing**: a cloud session appears only while this session is connected to [Remote Control](/docs/en/remote-control).
   * **Other-machine session missing**: a session on another of your machines appears only when it runs with [Remote Control](/docs/en/remote-control) and this session is connected as well.
+  * **Other-machine session `offline`**: a message to a session listed as `offline` goes through, but [arrives only after that session's machine reconnects](#message-sessions-on-other-machines).
   * **Older cloud or other-machine session missing**: Claude Code [reads those session lists newest first and stops after a bounded number of pages](#see-which-sessions-claude-can-reach), so Claude can't message a session that fell past them by name.
   * **Starting a conversation**: [Message sessions on other machines](#message-sessions-on-other-machines) covers starting a conversation with a session beyond this machine.
 

@@ -409,7 +409,12 @@ When the [install summary](#install-plugins) reports `Plugin is now active.`, Cl
 
 When the reload would invalidate the prompt cache, the command warns and skips until you rerun it with `--force`.
 
-Claude Code reloads all active plugins and shows counts for plugins, skills, agents, hooks, plugin MCP servers, and plugin LSP servers. In the skills count, Claude Code includes every skill a plugin provides: both its `commands/` entries and its `SKILL.md` skills. Before v2.1.246, Claude Code counted only `commands/` entries, so it could reload a plugin's `SKILL.md` skills and still report `0 skills` in the summary.
+`/reload-plugins` also runs in sessions without an interactive terminal, such as the desktop app, the Agent SDK, and [non-interactive mode](/docs/en/headless) with `-p`. Requires Claude Code v2.1.260 or later. Two limits apply in those sessions:
+
+* The command runs only when you type it directly into the session, such as in the `-p` prompt or the desktop app's prompt box. When you send it over a remote connection instead, such as [Remote Control](/docs/en/remote-control) or a relayed chat message, the command declines without reloading anything.
+* The reload doesn't connect or disconnect plugin MCP servers. Those changes take effect in your next session.
+
+Claude Code reloads all active plugins and shows counts for plugins, skills, agents, hooks, plugin MCP servers, and plugin LSP servers, omitting the plugin MCP server count in a session without an interactive terminal. In the skills count, Claude Code includes every skill a plugin provides: both its `commands/` entries and its `SKILL.md` skills. Before v2.1.246, Claude Code counted only `commands/` entries, so it could reload a plugin's `SKILL.md` skills and still report `0 skills` in the summary.
 
 Reloading has a token cost on the next request: newly loaded components announce themselves in content appended to the conversation, while the existing history still reads from the prompt cache. A plugin that provides MCP servers costs more when its tools aren't deferred by [tool search](/docs/en/mcp#scale-with-mcp-tool-search): the change invalidates the cache and the next request re-reads the entire conversation. See [enabling or disabling a plugin](/docs/en/prompt-caching#enabling-or-disabling-a-plugin) for details.
 

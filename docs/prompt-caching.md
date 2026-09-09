@@ -89,7 +89,9 @@ You can also require this confirmation or skip it with a [PreModelSwitch hook](/
 
 The [`opusplan` model setting](/docs/en/model-config#opusplan-model-setting) resolves to Opus during plan mode and Sonnet during execution, so each plan-mode toggle is a model switch and starts a fresh cache.
 
-[Automatic model fallback](/docs/en/model-config#automatic-model-fallback) on Fable 5.1, Fable 5, and Opus 5 is also a model switch. When a safety classifier flags a request and the flagged category has a fallback model, Claude Code re-runs the request on that model and the session continues there.
+[Automatic model fallback](/docs/en/model-config#automatic-model-fallback) on Fable models and Opus 5 is also a model switch. When a safety classifier flags a request in a category that has a fallback model, Claude Code re-runs the request on that model and the session continues there.
+
+When a skill or command's frontmatter names a [`model`](/docs/en/skills#frontmatter-reference) other than the session's current model, that turn is also a model switch: the next request reads the entire conversation history with no cache hits. The session model resumes on your next prompt. A `context: fork` skill sets the [forked subagent's model](/docs/en/skills#run-skills-in-a-subagent) instead.
 
 ### Changing effort level
 
@@ -144,6 +146,10 @@ Claude Code applies a plugin change when you run [`/reload-plugins`](/docs/en/di
 * When you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later, Claude Code applies the plugins the new directory's settings enable as part of the move, without the full re-read warning that holds a `/reload-plugins`.
 
 When you run `/reload-plugins` and the reload would trigger a full re-read, Claude Code shows a warning and doesn't apply the reload. Rerun it with `--force` to apply the reload anyway.
+
+`/reload-plugins` also runs in sessions without an interactive terminal, such as the desktop app, the Agent SDK, and [non-interactive mode](/docs/en/headless) with `-p`, when you type it into the session directly. Requires Claude Code v2.1.260 or later.
+
+In those sessions the reload applies everything except plugin MCP server changes, which [take effect in your next session](/docs/en/discover-plugins#apply-plugin-changes-without-restarting) and so never cost a full re-read mid-session.
 
 #### Plugins you enable and then disable in one session
 
@@ -217,7 +223,7 @@ Switching between [permission modes](/docs/en/permission-modes), such as from Ma
 
 ### Invoking skills and commands
 
-[Skills](/docs/en/skills) and [commands](/docs/en/commands) inject their instructions as user messages at the point of invocation. Nothing earlier in the conversation changes.
+[Skills](/docs/en/skills) and [commands](/docs/en/commands) inject their instructions as user messages at the point of invocation. Nothing earlier in the conversation changes. A skill or command whose frontmatter names a `model` can be a [model switch](#switching-models) for that turn.
 
 ### Running `/recap`
 

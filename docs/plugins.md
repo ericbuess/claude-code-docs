@@ -298,7 +298,7 @@ claude --plugin-dir ./my-plugin.zip
 
 When a `--plugin-dir` plugin has the same name as an installed marketplace plugin, the local copy takes precedence for that session. This lets you test changes to a plugin you already have installed without uninstalling it first. The exception is plugins that managed settings force-enable or force-disable: `--plugin-dir` cannot override those.
 
-As you make changes to your plugin, run `/reload-plugins` to pick up the updates without restarting. This reloads plugins, skills, agents, hooks, plugin MCP servers, and plugin LSP servers. Test your plugin components:
+As you make changes to your plugin, run `/reload-plugins` to pick up the updates without restarting. This reloads plugins, skills, agents, hooks, plugin MCP servers, and plugin LSP servers; in a session without an interactive terminal, plugin MCP server changes [wait for your next session](/docs/en/discover-plugins#apply-plugin-changes-without-restarting). Test your plugin components:
 
 * Try your skills with `/plugin-name:skill-name`
 * Check that agents appear in `/context` under Custom Agents, or @-mention one by its scoped name

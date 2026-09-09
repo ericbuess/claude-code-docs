@@ -30,8 +30,8 @@ Use a model alias to select model settings without remembering exact version num
 | Model alias      | Behavior                                                                                                                                                                                                                                                                                                                                 |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`default`**    | Special value that clears any model override and reverts to the [runtime default for your account](#default-model-setting). Not itself a model alias                                                                                                                                                                                     |
-| **`best`**       | Uses the latest Fable model where it's available to you, otherwise the same model as `opus`                                                                                                                                                                                                                                              |
-| **`fable`**      | Uses the latest Fable model for your hardest and longest-running tasks                                                                                                                                                                                                                                                                   |
+| **`best`**       | Uses the model the [`fable` alias resolves to](#fable-alias-resolution) where Fable is available to you, otherwise the same model as `opus`                                                                                                                                                                                              |
+| **`fable`**      | Uses the [Fable model for your provider](#fable-alias-resolution) for your hardest and longest-running tasks                                                                                                                                                                                                                             |
 | **`sonnet`**     | Uses the latest Sonnet model for daily coding tasks                                                                                                                                                                                                                                                                                      |
 | **`opus`**       | Uses the latest Opus model for complex reasoning tasks                                                                                                                                                                                                                                                                                   |
 | **`haiku`**      | Uses the fast and efficient Haiku model for simple tasks                                                                                                                                                                                                                                                                                 |
@@ -48,7 +48,11 @@ The version that the `opus` and `sonnet` aliases resolve to depends on the provi
 | Amazon Bedrock, Google Cloud's Agent Platform        | Opus 5   | Sonnet 4.5 |
 | Microsoft Foundry                                    | Opus 4.6 | Sonnet 4.5 |
 
-Unless you set `ANTHROPIC_DEFAULT_FABLE_MODEL`, the `fable` alias resolves to Fable 5.1. Before v2.1.255, it resolved to Fable 5.
+<span id="fable-alias-resolution" />
+
+Unless you set `ANTHROPIC_DEFAULT_FABLE_MODEL`, the `fable` alias resolves to Fable 5.1, except in [Claude apps gateway](/docs/en/claude-apps-gateway) sessions, where `fable` and `best` resolve to Fable 5. Before v2.1.257, `fable` resolved to Fable 5 on every provider.
+
+A gateway that isn't configured to serve `claude-fable-5-1` rejects requests for that model. To use Fable 5.1 through a gateway that serves it, select it with `/model claude-fable-5-1`.
 
 Where an alias resolves to an older model, newer models are available by selecting the full model name explicitly or setting `ANTHROPIC_DEFAULT_OPUS_MODEL` or `ANTHROPIC_DEFAULT_SONNET_MODEL`.
 
@@ -66,10 +70,10 @@ Aliases point to the recommended version for your provider and update over time.
 
 Neither Fable model is the account-type default on any plan or provider. Select one explicitly:
 
-* **Fable 5.1**: run `/model fable`, or launch with `claude --model fable`.
+* **Fable 5.1**: run `/model fable`, or launch with `claude --model fable`. In [Claude apps gateway](/docs/en/claude-apps-gateway) sessions, where the alias resolves to Fable 5, run `/model claude-fable-5-1` instead.
 * **Fable 5**: select it by model ID. On the Anthropic API, run `/model claude-fable-5` or launch with `claude --model claude-fable-5`. On other providers, use your provider's Fable 5 model ID or [pin it](#pin-models-for-third-party-deployments) with `ANTHROPIC_DEFAULT_FABLE_MODEL`.
 
-If your user settings hold `claude-fable-5` or `claude-fable-5[1m]` as the model, for example because you selected Fable in the `/model` picker before v2.1.255, and you connect to the Anthropic API directly, Claude Code changes that saved value to the `fable` or `fable[1m]` alias the first time you run v2.1.255 or later, and the startup model line shows `(auto-updated)` once. A `claude-fable-5` value in project, local, or managed settings is left as it is.
+If you connect to the Anthropic API directly and your user settings hold `claude-fable-5` or `claude-fable-5[1m]` as the model, for example because you selected Fable in the `/model` picker before v2.1.257, Claude Code changes that saved value to the `fable` or `fable[1m]` alias the first time you run v2.1.257 or later. The startup model line shows `(auto-updated)` once. A `claude-fable-5` value in project, local, or managed settings stays as it is.
 
 Requests that a Fable model's safety classifiers flag, most often in cybersecurity and biology domains, trigger [automatic model fallback](#automatic-model-fallback).
 
@@ -81,7 +85,7 @@ To get the most from Fable:
 * **Size up larger tasks**: give it work you would normally break into pieces. It holds long sessions without losing the thread.
 
 <Note>
-  Fable 5.1 requires Claude Code v2.1.255 or later. If a request for it from an older version fails, see [Claude Code does not support this model](/docs/en/errors#claude-code-does-not-support-this-model). Fable 5 requires v2.1.170 or later. Run `claude update` to upgrade. For availability under zero data retention, see [Model availability under ZDR](/docs/en/zero-data-retention#model-availability-under-zdr).
+  Fable 5.1 requires Claude Code v2.1.257 or later. If a request for it from an older version fails, see [Claude Code does not support this model](/docs/en/errors#claude-code-does-not-support-this-model). Fable 5 requires v2.1.170 or later. Run `claude update` to upgrade. For availability under zero data retention, see [Model availability under ZDR](/docs/en/zero-data-retention#model-availability-under-zdr).
 </Note>
 
 On the Anthropic API, the `/model` picker lists a Fable model only after the server reports it available for your organization. When you type `/model fable` or a Fable model ID, Claude Code checks availability with the server directly, so a typed selection can succeed even when the picker doesn't list the entry.
@@ -136,7 +140,11 @@ A model you pick for the new launch with `--model` or `ANTHROPIC_MODEL` still ta
 
 When the active model at startup comes from project or managed settings rather than your own selection, the startup header shows which settings file set it. Run `/model` to override; the project or managed setting reapplies on the next launch. On platforms that embed Claude Code and set [`CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`](/docs/en/env-vars), the host's model configuration takes precedence over managed model settings, while a managed `availableModels` allowlist stays in force unless the host supplies its own; [Exceptions to managed settings precedence](/docs/en/settings#exceptions-to-managed-settings-precedence) says which keys and variables the host overrides.
 
-When a model switch is requested through the [Agent SDK](/docs/en/agent-sdk/overview) `setModel()` method or by an app such as the [Desktop app](/docs/en/desktop) that runs the Claude Code CLI for you, Claude Code checks that the string is one it recognizes before saving it. This check requires Claude Code v2.1.200 or later. On the Anthropic API, Claude Code recognizes:
+If you or your organization configure [PreModelSwitch hooks](/docs/en/hooks#premodelswitch), they run before a requested switch applies and can block it or ask you to confirm.
+
+When Claude Code can't tell which PreModelSwitch hooks your organization's [managed plugins](/docs/en/settings-reference#enabledplugins) deliver, for example because a managed plugin failed to load, it refuses the switch rather than apply it unchecked, and it checks again on each new attempt. See [Model switch was blocked by a PreModelSwitch hook](/docs/en/errors#model-switch-was-blocked-by-a-premodelswitch-hook) for the message and recovery.
+
+When you switch models through the [Agent SDK](/docs/en/agent-sdk/overview) `setModel()` method or from a device connected through [Remote Control](/docs/en/remote-control), or an app such as the [Desktop app](/docs/en/desktop) that runs the Claude Code CLI switches for you, Claude Code checks that the string is one it recognizes before saving it. This check requires Claude Code v2.1.200 or later. Checking a Remote Control pick requires Claude Code v2.1.260 or later on your machine. On the Anthropic API, Claude Code recognizes:
 
 * a model alias
 * an entry from the `/model` picker
@@ -404,7 +412,7 @@ When an admin has set an [organization default model](#organization-default-mode
 
 When managed settings [enforce the allowlist for the Default model](#enforce-the-allowlist-for-the-default-model) and the account-type default is not in `availableModels`, `default` resolves to the enforced Default instead of the account-type default above. When both apply, the organization default replaces the account-type default first and enforcement then applies to it: an allowlisted organization default is kept, while one outside the list resolves to the enforced Default.
 
-Fable models are not the account-type default on any plan or provider. Choosing one with `/model` saves it as the selected model in your user settings, so later sessions start on it. For the one-time change Claude Code makes to a saved Fable 5 selection in v2.1.255, see [Work with Fable](#work-with-fable).
+Fable models are not the account-type default on any plan or provider. Choosing one with `/model` saves it as the selected model in your user settings, so later sessions start on it. For the one-time change Claude Code makes to a saved Fable 5 selection in v2.1.257, see [Work with Fable](#work-with-fable).
 
 ### `opusplan` model setting
 
@@ -521,11 +529,18 @@ If you set a level the active model does not support, Claude Code falls back to 
 With the [`ultracode`](/docs/en/settings-reference#ultracode) setting off, Claude Code resolves the session's effort level in this order, taking the first that applies:
 
 1. An explicit choice: the [`CLAUDE_CODE_EFFORT_LEVEL`](/docs/en/env-vars#variables) environment variable, launching with `--effort`, or `/effort` in the session ([a non-interactive `/effort` has narrower effect](#non-interactive-effort))
-2. The model's default effort, on Fable 5, Opus 4.8, or Opus 4.7: from the first time you run one of these models, Claude Code holds that model's default effort across sessions, even when your settings resolve a different level, until you change effort once, for example with an interactive `/effort`, the `/model` picker's effort slider, or `--effort` at launch. Opus 5 and Fable 5.1 have no such hold
+2. The model's default effort, on Fable 5, Opus 4.8, or Opus 4.7: from the first time you run one of these models, Claude Code holds that model's default effort across sessions, even when your settings resolve a different level. Opus 5 and Fable 5.1 have no such hold. Whether a level you set ends the hold depends on how you set it, for example:
+   * **Ends the hold**: confirming a level interactively, with `Enter` in the `/effort` slider or the `/model` picker or with a level typed after `/effort`, or picking a level from a connected device's [Remote Control](/docs/en/remote-control#what-connected-devices-see) effort control
+   * **Leaves the hold in place for later sessions**: `--effort` at launch, or `s` in the `/effort` slider or the `/model` picker
 3. Your settings: the level you saved for the model or an [`effortLevel`](/docs/en/settings-reference#effortlevel) key, with the precedence between them and across settings files stated at [`modelSettings`](/docs/en/settings-reference#modelsettings)
 4. The model's default effort: `high` on every model that supports effort, except that Opus 4.7 defaults to `xhigh` and, when your organization sets a default effort level for its [organization default model](#organization-default-model), that level is the default when you run that model
 
-When you set `low`, `medium`, `high`, or `xhigh` in an interactive session on your machine, Claude Code saves the level and applies it in later sessions. It saves the level per model, under the [`modelSettings`](/docs/en/settings-reference#modelsettings) key in your user settings, so each model keeps its own saved level.
+When you set `low`, `medium`, `high`, or `xhigh` in an interactive session on your machine, you choose how long it lasts by how you confirm it:
+
+* `Enter` in the `/effort` slider or the `/model` picker, or a level typed after `/effort`: save the level as your default and apply it in later sessions
+* `s` in the `/effort` slider or the `/model` picker: apply the level to this session only. Requires Claude Code v2.1.257 or later
+
+Claude Code saves the level per model, under the [`modelSettings`](/docs/en/settings-reference#modelsettings) key in your user settings, so each model keeps its own saved level.
 
 `max` is the deepest reasoning level. Unless you set it through the `CLAUDE_CODE_EFFORT_LEVEL` environment variable, Claude Code applies `max` to the current session only.
 
@@ -535,7 +550,7 @@ When you set `low`, `medium`, `high`, or `xhigh` in an interactive session on yo
 
 <span id="non-interactive-effort" />
 
-A level set with `/effort` in [non-interactive mode](/docs/en/headless), with the `-p` flag, applies to the current session only and isn't saved as your default. It also doesn't count as the one change that ends the model-default step above on Fable 5, Opus 4.8, or Opus 4.7: while that step is in effect, a non-interactive `/effort` reports `Not applied`, so pass `--effort` at launch instead.
+When you set a level with `/effort` in a [`-p` run](/docs/en/headless), Claude Code applies it to that session only and doesn't save it as your default. On Fable 5, Opus 4.8, and Opus 4.7, that level also neither ends the hold on the model's default effort nor overrides it for the session. While that hold is in effect, a non-interactive `/effort` reports `Not applied`, so pass `--effort` at launch instead.
 
 The `/effort` menu also offers `ultracode`. Ultracode is a Claude Code setting rather than a model effort level: it sends `xhigh` to the model and additionally has Claude orchestrate [dynamic workflows](/docs/en/workflows) for substantive tasks. For where it can be set persistently, see the [`ultracode`](/docs/en/settings-reference#ultracode) setting.
 
@@ -580,7 +595,7 @@ You can change effort through any of the following:
 * **`--effort` flag**: pass a level name to set it for a single session when launching Claude Code
 * **Environment variable**: set `CLAUDE_CODE_EFFORT_LEVEL` to a level name or `auto`
 * **Settings**: set a per-model level in [`modelSettings`](/docs/en/settings-reference#modelsettings), or set [`effortLevel`](/docs/en/settings-reference#effortlevel) to `low`, `medium`, `high`, or `xhigh` as the default for models without one. `max` isn't accepted in either key, and `ultracode` has its own [`ultracode`](/docs/en/settings-reference#ultracode) key
-* **From a connected device**: in a [Remote Control](/docs/en/remote-control#what-connected-devices-see) session, pick a level from the effort control on your phone or in your browser. The level applies to the current session only. Requires Claude Code v2.1.234 or later
+* **From a connected device**: in a [Remote Control](/docs/en/remote-control#what-connected-devices-see) session, pick a level from the effort control on your phone or in your browser. The level applies to the current session only, though it also ends the [hold on the model's default effort](#adjust-effort-level). Requires Claude Code v2.1.234 or later
 * **Skill and subagent frontmatter**: set `effort` in a [skill](/docs/en/skills#frontmatter-reference) or [subagent](/docs/en/sub-agents#supported-frontmatter-fields) markdown file to override the effort level when that skill or subagent runs
 
 Frontmatter effort applies when that skill or subagent is active, overriding the session level but not the environment variable.
@@ -593,7 +608,7 @@ The effort slider appears in `/model` when a supported model is selected. The cu
 
 Adaptive reasoning makes thinking optional on each step, so Claude can respond faster to routine prompts and reserve deeper thinking for steps that benefit from it. If you want Claude to think more or less often than the current level produces, you can say so directly in your prompt or in `CLAUDE.md`; the model responds to that guidance within its effort setting.
 
-Fable 5.1, Fable 5, Sonnet 5, and Opus 4.7 and later always use adaptive reasoning. The fixed thinking budget mode and `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` do not apply to them.
+Fable models, Sonnet 5, and Opus 4.7 and later always use adaptive reasoning. The fixed thinking budget mode and `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` don't apply to them.
 
 On Opus 4.6 and Sonnet 4.6, you can set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` to revert to the previous fixed thinking budget controlled by `MAX_THINKING_TOKENS`. See [environment variables](/docs/en/env-vars).
 
@@ -601,13 +616,13 @@ On Opus 4.6 and Sonnet 4.6, you can set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1
 
 Extended thinking is the reasoning Claude emits before responding. On models that support [adaptive reasoning](#adjust-effort-level), the effort level is the primary control for how much thinking happens; the settings below turn thinking on or off and control how it displays. With thinking turned off on the Anthropic API, Claude Code sends effort `high` instead of a higher level to models it knows [don't accept that combination](/docs/en/errors#effort-isnt-available-with-thinking-turned-off), such as Opus 5.
 
-| Control                                 | How to set it                                                                                                                                                                                                                                                                                                                                                                           |
-| :-------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Toggle for the current session          | Press `Option+T` on macOS or `Alt+T` on Windows and Linux                                                                                                                                                                                                                                                                                                                               |
-| Set the global default                  | Run `/config` and toggle thinking mode. Saved as `alwaysThinkingEnabled` in `~/.claude/settings.json`                                                                                                                                                                                                                                                                                   |
-| Disable through an environment variable | Set [`MAX_THINKING_TOKENS=0`](/docs/en/env-vars), which turns thinking off on the Anthropic API except on Fable 5.1 and Fable 5. On [third-party providers](/docs/en/third-party-integrations) this omits the `thinking` parameter instead, and adaptive-reasoning models may still think. Other values apply only with a [fixed thinking budget](#adaptive-reasoning-and-fixed-thinking-budgets) |
+| Control                                 | How to set it                                                                                                                                                                                                                                                                                                                                                                          |
+| :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Toggle for the current session          | Press `Option+T` on macOS or `Alt+T` on Windows and Linux                                                                                                                                                                                                                                                                                                                              |
+| Set the global default                  | Run `/config` and toggle thinking mode. Saved as `alwaysThinkingEnabled` in `~/.claude/settings.json`                                                                                                                                                                                                                                                                                  |
+| Disable through an environment variable | Set [`MAX_THINKING_TOKENS=0`](/docs/en/env-vars), which turns thinking off on the Anthropic API except on Fable models. On [third-party providers](/docs/en/third-party-integrations), Claude Code omits the `thinking` parameter instead, and adaptive-reasoning models may still think. Other values apply only with a [fixed thinking budget](#adaptive-reasoning-and-fixed-thinking-budgets) |
 
-Thinking cannot be turned off on Fable 5.1 or Fable 5. The session toggle, `alwaysThinkingEnabled`, and `MAX_THINKING_TOKENS=0` have no effect there, and the model decides per step how much to think based on the effort level.
+You can't turn thinking off on Fable models. The session toggle, `alwaysThinkingEnabled`, and `MAX_THINKING_TOKENS=0` have no effect there, and a Fable model decides per step how much to think based on the effort level.
 
 Claude Code collapses thinking output by default. Press `Ctrl+O` to toggle verbose mode and see the reasoning as gray italic text. Interactive sessions on the Anthropic API receive redacted thinking blocks by default, so set `showThinkingSummaries: true` in [settings](/docs/en/settings) if you want the full summaries available when you expand. You are charged for all thinking tokens generated, even when collapsed or redacted.
 
@@ -685,16 +700,24 @@ If you don't set an auto-compact window, Claude Code compacts when the conversat
 * [Cloud sessions](/docs/en/claude-code-on-the-web) compact as the conversation approaches the model's limit
 * Sonnet 4.6 and Opus 4.6 without [extended context](#extended-context) compact at the 200K boundary, and so do Opus 4.8 and Opus 5 when they run with a 200K context window, such as on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry
 * When you set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/docs/en/env-vars), models with a native 1M window, such as Sonnet 5 and the Fable models, compact at the 200K boundary
-* Sonnet 5 compacts at the [threshold for its configuration](#sonnet-5-context-window)
+* Models running with a native 1M window, such as Sonnet 5, the Fable models, and Opus 4.7 and later on the Anthropic API, compact before the window fills, at about 967K tokens by default. On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, [Pin models for third-party deployments](#pin-models-for-third-party-deployments) says which models run with that window; for the configurations that budget Sonnet 5 at 200K instead, see [Sonnet 5 context window](#sonnet-5-context-window)
 * Sessions on a model ID Claude Code doesn't recognize, such as an [LLM gateway](/docs/en/llm-gateway) alias, compact at the context window Claude Code assumes for the ID; see [Correct the window for a gateway or custom model ID](#correct-the-window-for-a-gateway-or-custom-model-id)
 
 ### Correct the window for a gateway or custom model ID
 
-On an [LLM gateway](/docs/en/llm-gateway) or other custom deployment, Claude Code can assume a context window for the model ID that differs from the model's real window, whether or not it resolves the ID to a Claude model. [`CLAUDE_CODE_MAX_CONTEXT_TOKENS`](/docs/en/env-vars) declares the window Claude Code should assume instead. How the variable applies depends on the ID. An unrecognized ID, an unrecognized `[1m]` ID, and an ID that starts with `claude-` or resolves to a Claude model are three separate cases:
+On an [LLM gateway](/docs/en/llm-gateway) or other custom deployment, Claude Code can assume a context window for the model ID that differs from the model's real window, whether or not it resolves the ID to a Claude model. Set [`CLAUDE_CODE_MAX_CONTEXT_TOKENS`](/docs/en/env-vars) to the window Claude Code should assume instead.
 
-* If the ID doesn't start with `claude-` or contain `[1m]`, in any casing, and Claude Code can't resolve it to a Claude model, the variable applies directly and proactive compaction continues at the declared window.
-* If the ID doesn't start with `claude-` but contains `[1m]`, in any casing, and Claude Code can't resolve it to a Claude model, Claude Code assumes a 1M window for it and the variable doesn't apply on its own. To correct the window while keeping proactive compaction, also set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/docs/en/env-vars). With a declared window above 200K, Claude Code then shows a [startup warning](/docs/en/errors#the-200k-limit-isnt-enforced) that the 200K limit isn't enforced. The warning is expected in this configuration.
-* If the ID starts with `claude-` in any casing or resolves to a Claude model, the variable takes effect only when [`DISABLE_COMPACT`](/docs/en/env-vars) is also set, which disables all compaction. For example, Claude Code resolves an ID that contains a Claude model name, such as `anthropic/claude-opus-4-8` or `us.anthropic.claude-…-v1:0`, to that model. This includes IDs that also contain `[1m]`: Claude Code resolves `claude-opus-4-8[1m]` to Opus 4.8 even with `CLAUDE_CODE_DISABLE_1M_CONTEXT` set.
+How the variable applies depends on the ID. Claude Code treats an ID as a provider or custom spelling when it doesn't start with `claude-`, in any casing, or when it carries a suffix that Claude Code strips when reading the ID, such as the `@YYYYMMDD` date used on Google Cloud's Agent Platform. Before v2.1.259, Claude Code didn't count a stripped suffix, so an unrecognized `claude-` ID with a date suffix was treated as a bare `claude-` name.
+
+An unrecognized provider or custom spelling, the same spelling with `[1m]`, and every other ID are three separate cases:
+
+* If Claude Code can't resolve a provider or custom spelling to a model it recognizes and the ID doesn't contain `[1m]`, the variable applies directly and proactive compaction continues at the declared window.
+* If Claude Code can't resolve a provider or custom spelling to a model it recognizes and the ID contains `[1m]`, in any casing, Claude Code assumes a 1M window for it and the variable doesn't apply on its own. To correct the window while keeping proactive compaction, also set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/docs/en/env-vars). With that variable set, Claude Code sizes the ID like the same spelling without `[1m]`, so `CLAUDE_CODE_MAX_CONTEXT_TOKENS` applies when it would apply to that untagged spelling.
+
+  With a declared window above 200K, Claude Code then shows a [startup warning](/docs/en/errors#the-200k-limit-isnt-enforced) that the 200K limit isn't enforced. The warning is expected in this configuration.
+* If the ID resolves to a model Claude Code recognizes, or the ID is a bare `claude-` name with no suffix for Claude Code to strip, in any casing, the variable takes effect only when you also set [`DISABLE_COMPACT`](/docs/en/env-vars), which disables all compaction.
+
+  For example, an ID that contains a Claude model name that Claude Code knows, such as `anthropic/claude-opus-4-8`, `us.anthropic.claude-…-v1:0`, or the dated `claude-sonnet-4-5@20250929`, resolves to that model. This includes IDs that also contain `[1m]`: Claude Code resolves `claude-opus-4-8[1m]` to Opus 4.8 even with `CLAUDE_CODE_DISABLE_1M_CONTEXT` set.
 
 For a model ID Claude Code doesn't recognize, set [`CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1`](/docs/en/env-vars) to have Claude Code compact only after the API rejects the conversation with a [too-long error Claude Code recognizes](/docs/en/errors#prompt-is-too-long). Claude Code doesn't run that recovery when a gateway [rewrites the error](/docs/en/llm-gateway-connect#troubleshoot-gateway-errors) to wording Claude Code doesn't recognize.
 
@@ -769,13 +792,13 @@ Use the following environment variables with version-specific model IDs for your
 
 Apply the same pattern for `ANTHROPIC_DEFAULT_FABLE_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, and `ANTHROPIC_DEFAULT_HAIKU_MODEL`. For current and legacy model IDs across all providers, see [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview). To upgrade users to a new model version, update these environment variables and redeploy.
 
-To enable [extended context](#extended-context) for a pinned model, append `[1m]` to the model ID in `ANTHROPIC_DEFAULT_OPUS_MODEL` or `ANTHROPIC_DEFAULT_SONNET_MODEL`:
+To enable [extended context](#extended-context) for a pinned model, append `[1m]` to the model ID in `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, or `ANTHROPIC_DEFAULT_FABLE_MODEL`:
 
 ```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-8[1m]'
 ```
 
-The `[1m]` suffix applies the 1M context window to all usage of the `opus` and `sonnet` aliases, including the plan-mode Opus phase of [`opusplan`](#opusplan-model-setting).
+With the `[1m]` suffix, the 1M context window applies to all usage of the pinned alias, including the plan-mode Opus phase of [`opusplan`](#opusplan-model-setting) and [subagents](/docs/en/sub-agents#choose-a-model) whose `model` frontmatter names the alias.
 
 * Claude Code strips the suffix before sending the model ID to your provider.
 * Only append `[1m]` when the underlying model [supports 1M context](https://platform.claude.com/docs/en/build-with-claude/context-windows#context-window-sizes-by-model).

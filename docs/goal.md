@@ -99,7 +99,7 @@ Claude prints `Goal cleared:` followed by the condition to confirm, or `No goal 
 
 ### Resume with an active goal
 
-When you resume a session, Claude Code restores a goal that was still active when the session ended. Claude Code restores it on every resume route: `--continue`, `--resume` with a session ID or name, and the [session picker](/docs/en/sessions#use-the-session-picker). Before v2.1.239, Claude Code restored the goal on every route except the `claude --resume` picker.
+When you resume a session, Claude Code restores a goal that was still active when the session ended. Claude Code restores it on every resume route: `--continue`, `--resume` with a session ID, name, or [transcript file path](/docs/en/sessions#resume-a-session), and the [session picker](/docs/en/sessions#use-the-session-picker). Before v2.1.239, Claude Code restored the goal on every route except the `claude --resume` picker.
 
 Claude Code carries the condition over but resets the turn count, timer, and token-spend baseline. It doesn't restore a goal that was already achieved or cleared.
 

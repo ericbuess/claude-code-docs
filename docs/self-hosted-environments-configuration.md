@@ -117,16 +117,16 @@ Runs once per session, after the Claude Code child has exited and before the run
 
 The hook fires on every session end where a child process was spawned, whatever the cause; the `CLAUDE_RUNNER_EXIT_REASON` values below enumerate the cases. It can't fire when the runner terminates abruptly, such as a VM preemption or a power loss; if you need guarantees against abrupt termination, snapshot periodically from inside the session with a Claude Code `PostToolUse` hook instead. The runner sets:
 
-| Variable                           | Description                                                                                                                                                  |
-| :--------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CLAUDE_RUNNER_SESSION_ID`         | Session ID in the tagged `session_...` form                                                                                                                  |
-| `CLAUDE_RUNNER_SESSION_UUID`       | The same session ID in canonical UUID form                                                                                                                   |
-| `CLAUDE_RUNNER_EXIT_REASON`        | How the session ended; see the values below the table                                                                                                        |
-| `CLAUDE_RUNNER_WORKSPACE_PATHS`    | Colon-separated absolute paths of the session's working trees. Empty for zero-repo sessions.                                                                 |
-| `CLAUDE_RUNNER_DEBUG_LOG_PATH`     | Path to the session's debug log, still on disk while the hook runs                                                                                           |
-| `CLAUDE_RUNNER_API_BASE_URL`       | Anthropic API base URL for session-scoped calls                                                                                                              |
-| `CLAUDE_RUNNER_CLIENT_PLATFORM`    | The client surface that created the session, such as `web_claude_ai`, `desktop_app`, or `ios`. Unset when the session has no recorded or recognized surface. |
-| `CLAUDE_CODE_SESSION_ACCESS_TOKEN` | The session access token, for session-scoped API calls                                                                                                       |
+| Variable                           | Description                                                                                                                                                                                          |
+| :--------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CLAUDE_RUNNER_SESSION_ID`         | Session ID in the tagged `session_...` form                                                                                                                                                          |
+| `CLAUDE_RUNNER_SESSION_UUID`       | The same session ID in canonical UUID form                                                                                                                                                           |
+| `CLAUDE_RUNNER_EXIT_REASON`        | How the session ended; see the values below the table                                                                                                                                                |
+| `CLAUDE_RUNNER_WORKSPACE_PATHS`    | Colon-separated absolute paths of the session's working trees. Empty for zero-repo sessions.                                                                                                         |
+| `CLAUDE_RUNNER_DEBUG_LOG_PATH`     | Path to the session's debug log, still on disk while the hook runs                                                                                                                                   |
+| `CLAUDE_RUNNER_API_BASE_URL`       | Anthropic API base URL for session-scoped calls                                                                                                                                                      |
+| `CLAUDE_RUNNER_CLIENT_PLATFORM`    | The client surface that created the session, such as `web_claude_ai`, `desktop_app`, or `ios`. Unset when the session has no recorded or recognized surface. Requires Claude Code v2.1.229 or later. |
+| `CLAUDE_CODE_SESSION_ACCESS_TOKEN` | The session access token, for session-scoped API calls                                                                                                                                               |
 
 `CLAUDE_RUNNER_EXIT_REASON` takes one of four values:
 
@@ -241,14 +241,15 @@ RUN claude mcp add --scope user --transport http internal http://mcp-gateway.svc
 
 The runner snapshots the host's config once at startup. The snapshot captures the `mcpServers` key from the host's `.claude.json`, which lives next to rather than inside `~/.claude/`, and the runner seeds only that key into each session's isolated config; account state and project history are dropped. To confirm the servers reached sessions, start a session on the environment and ask Claude to list its MCP tools; the runner also logs a startup warning for any captured entry whose `type` it doesn't recognize and drops the entry, so you can see why that server is missing from sessions. When `SELF_HOSTED_RUNNER_HOST_CONFIG_DIR` is set, the runner reads `.claude.json` from that directory instead, so pointing the variable at an empty directory disables MCP seeding too.
 
-Two other sources work as well:
+Claude Code also loads MCP servers from other sources:
 
 * The enterprise-scope [managed MCP file](/docs/en/managed-mcp) at its standard system path: `/etc/claude-code/managed-mcp.json` on Linux runner hosts, `/Library/Application Support/ClaudeCode/managed-mcp.json` on macOS hosts. Use it for locked-down fleets where only administrator-listed servers may load. See [exclusive control with managed-mcp.json](/docs/en/managed-mcp#exclusive-control-with-managed-mcp-json) for the precedence rules. When this file is on the runner host, Claude Code skips the MCP servers Anthropic's control plane delivers to a session, including claude.ai connectors, and names them in a warning on the session child's stderr, which the runner records at the `debug` log level. Before v2.1.229, those sessions exited at startup with `You cannot dynamically configure MCP servers when an enterprise MCP config is present`.
+* The [`managedMcpServers`](/docs/en/settings-reference#managedmcpservers) key in [managed settings](/docs/en/managed-settings) on the runner host: provides HTTP and SSE servers without taking exclusive control, so servers from the other sources still load. Requires Claude Code v2.1.259 or later.
 * `<repo>/.mcp.json`: project scope. Commit the file to the repository; its servers are auto-approved in cloud sessions.
 
-When connector delivery is enabled for your organization, Anthropic's control plane delivers the connectors you've configured on claude.ai to interactively-created sessions through server-provided MCP configuration, routed through `api.anthropic.com`. Sessions created programmatically, such as [CLI dispatches](/docs/en/self-hosted-environments-testing#run-the-test-loop), don't receive connector delivery; give them MCP servers through the host snapshot, the [managed MCP file](/docs/en/managed-mcp), or `<repo>/.mcp.json` instead. The child's OAuth token doesn't carry a scope for fetching connectors directly, so the child doesn't attempt that fetch itself; delivery is server-driven.
+When connector delivery is enabled for your organization, Anthropic's control plane delivers the connectors you've configured on claude.ai to interactively-created sessions through server-provided MCP configuration, routed through `api.anthropic.com`. Sessions created programmatically, such as [CLI dispatches](/docs/en/self-hosted-environments-testing#run-the-test-loop), don't receive connector delivery; give them MCP servers through any of the other sources this section lists instead. The child's OAuth token doesn't carry a scope for fetching connectors directly, so the child doesn't attempt that fetch itself; delivery is server-driven.
 
-`settings.json` and `managed-settings.json` don't carry MCP server definitions; there is no top-level `mcpServers` field in the settings schema.
+`settings.json` doesn't carry MCP server definitions, and there is no top-level `mcpServers` field in the settings schema. In managed settings, provide servers with the [`managedMcpServers`](/docs/en/settings-reference#managedmcpservers) key instead.
 
 Sessions inherit the runner's environment, so set [`ENABLE_TOOL_SEARCH`](/docs/en/mcp#scale-with-mcp-tool-search) there to control MCP tool search for every session a runner spawns; the MCP page covers the values.
 

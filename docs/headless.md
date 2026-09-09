@@ -323,7 +323,7 @@ See [system prompt flags](/docs/en/cli-reference#system-prompt-flags) for more o
 
 ### Continue conversations
 
-Use `--continue` to continue the most recent conversation, or `--resume` with a session ID to continue a specific conversation. `--continue` skips [background sessions](/docs/en/sessions#resume-a-session). This example runs a review, then sends follow-up prompts:
+Use `--continue` to continue the most recent conversation, or `--resume` with a session ID to continue a specific conversation. On Claude Code v2.1.257 or later, when you pass `--continue`, Claude Code opens a [background session](/docs/en/sessions#resume-a-session) that has finished, but not one that is still running. This example runs a review, then sends follow-up prompts:
 
 ```bash theme={null}
 # First request
@@ -342,6 +342,8 @@ claude -p "Continue that review" --resume "$session_id"
 ```
 
 You can run the two commands from different directories: Claude Code [finds the session by its ID](/docs/en/sessions#resume-a-session) in any project on this machine. Before v2.1.223, Claude Code looked for the ID only in the current project directory and its git worktrees, so you had to run both commands from the same directory.
+
+In place of the session ID, you can pass `--resume` the absolute path to a session's `.jsonl` [transcript file](/docs/en/sessions#where-transcripts-are-stored), and Claude Code continues the conversation stored in that file.
 
 ## Next steps
 

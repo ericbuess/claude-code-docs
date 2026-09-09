@@ -88,7 +88,7 @@ The advisor must be at least as capable as the main model. The accepted advisors
 | Opus 4.7 or later    | Fable, and Opus 4.7 or later         | Opus 4.7 and later Opus models are ranked as equally capable, so any of them accepts another as an advisor. An Opus 4.7 main with an Opus 4.6 or Sonnet 5 advisor is rejected |
 | Fable 5.1 or Fable 5 | Fable 5.1, or the same Fable version | An Opus or Sonnet advisor is rejected, and so is a Fable 5 advisor for a Fable 5.1 main model                                                                                 |
 
-Fable 5.1 requires Claude Code v2.1.255 or later and Fable 5 requires v2.1.170 or later, plus [Fable access](/docs/en/model-config#work-with-fable).
+Fable 5.1 requires Claude Code v2.1.257 or later, and Fable 5 requires v2.1.170 or later. Both require [Fable access](/docs/en/model-config#work-with-fable).
 
 Set the advisor as `fable`, `opus`, or `sonnet`. These aliases resolve to Claude Code's built-in default version for each model family, which advances with new Claude Code releases. You can also pass a full model ID such as `claude-opus-5`.
 

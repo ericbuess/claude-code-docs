@@ -113,12 +113,13 @@ Match the message you see to a section below.
 | `Unable to resize image`                                                                                                                                                                              | [Request errors](#unable-to-resize-image)                                                                                     |
 | `PDF too large` / `PDF is password protected`                                                                                                                                                         | [Request errors](#pdf-errors)                                                                                                 |
 | `Extra inputs are not permitted`                                                                                                                                                                      | [Request errors](#extra-inputs-are-not-permitted)                                                                             |
-| `API Error: 400 ... tools.N.custom.input_schema: JSON schema is invalid`                                                                                                                              | [Request errors](#tool-input-schema-is-invalid)                                                                               |
+| `API Error: 400 ... tools.N.custom.input_schema: JSON schema is invalid` / `Property keys should match pattern`                                                                                       | [Request errors](#tool-input-schema-is-invalid)                                                                               |
 | `There's an issue with the selected model`                                                                                                                                                            | [Request errors](#theres-an-issue-with-the-selected-model)                                                                    |
 | `Model ... is not a recognized model id`                                                                                                                                                              | [Request errors](#model-is-not-a-recognized-model-id)                                                                         |
 | `Claude Opus is not available with the Claude Pro plan`                                                                                                                                               | [Request errors](#claude-opus-is-not-available-with-the-claude-pro-plan)                                                      |
 | `Claude Code ... does not support this model; version ... or newer is required`                                                                                                                       | [Request errors](#claude-code-does-not-support-this-model)                                                                    |
 | `Model ... is restricted by your organization's settings`                                                                                                                                             | [Request errors](#model-is-restricted-by-your-organizations-settings)                                                         |
+| `Model switch ... blocked by a PreModelSwitch hook`                                                                                                                                                   | [Request errors](#model-switch-was-blocked-by-a-premodelswitch-hook)                                                          |
 | `thinking.type.enabled is not supported for this model`                                                                                                                                               | [Request errors](#thinking-type-enabled-is-not-supported-for-this-model)                                                      |
 | `Effort '<level>' isn't available with thinking turned off on this model`                                                                                                                             | [Request errors](#effort-isnt-available-with-thinking-turned-off)                                                             |
 | `effort '<level>' is not supported when thinking is disabled`                                                                                                                                         | [Request errors](#effort-isnt-available-with-thinking-turned-off)                                                             |
@@ -210,6 +211,7 @@ Match the message you see to a section below.
 | `EUNKNOWN: unknown error, uv_spawn`                                                                                                                                                                   | [Background session errors](#eunknown-when-starting-a-background-session)                                                     |
 | `EACCES: permission denied, posix_spawn`                                                                                                                                                              | [Background session errors](#eacces-when-starting-a-background-session)                                                       |
 | `exited before it became reachable`                                                                                                                                                                   | [Background session errors](#background-service-exited-before-it-became-reachable)                                            |
+| `Claude Code is being updated by npm on this machine (still not runnable after 2 min, ...)`                                                                                                           | [Background session errors](#eacces-when-starting-a-background-session)                                                       |
 | `Claude Code process exited with code N`                                                                                                                                                              | [Wrapper and IDE errors](#claude-code-process-exited-with-code-n)                                                             |
 | `Could not locate the Claude CLI on PATH`                                                                                                                                                             | [Wrapper and IDE errors](#could-not-locate-the-claude-cli-on-path)                                                            |
 | `Restored the code, but skipped N files`                                                                                                                                                              | [Rewind warnings and errors](#restored-the-code-but-skipped-files)                                                            |
@@ -555,7 +557,7 @@ Fable limit reached · continuing on Fable 5.1 uses usage credits, and the promp
 Fable 5.1 now uses usage credits · the prompt to confirm went unanswered — nothing was sent · answer it where this session is running, or /model to change
 ```
 
-The messages name the session's Fable model, so on Fable 5 they read `continuing on Fable 5` and `Fable 5 now uses usage credits`. Before v2.1.255, the first message began `Fable 5 limit reached`.
+The messages name the session's Fable model, so on Fable 5 they read `continuing on Fable 5` and `Fable 5 now uses usage credits`. Before v2.1.257, the first message began `Fable 5 limit reached`.
 
 This happens in [Remote Control](/docs/en/remote-control) sessions, [background sessions](/docs/en/agent-view), and [agent team](/docs/en/agent-teams) teammate sessions. Claude Code shows the consent prompt only in the session's own interactive view: the terminal where it runs, or, for a background session, the [agents view](/docs/en/agent-view) once you attach. A Remote Control client can't display it. Claude Code closes the prompt at the [`dialogExpiry`](/docs/en/settings-reference#dialogexpiry) deadline, five minutes by default, or as soon as a new prompt arrives while nobody has typed at that terminal, such as a prompt sent from a Remote Control client. Typing at the terminal where the session runs cancels the deadline, and Claude Code waits for your answer. In a background session's attached view, typing doesn't cancel the deadline, and a new prompt still closes the consent prompt, so answer before either happens. Claude Code sends nothing and keeps your model, so when you send your next prompt, Claude Code shows the consent prompt again.
 
@@ -715,6 +717,8 @@ Claude Code ran the command in your [`apiKeyHelper`](/docs/en/settings-reference
 ```text theme={null}
 Your apiKeyHelper script is failing · This usually means you need to re-authenticate with your provider · Run /status to see the script's error output
 ```
+
+In [non-interactive mode](/docs/en/headless), stderr also carries the specific reason, prefixed with `apiKeyHelper failed:`.
 
 Claude Code re-runs the script and retries the request up to two more times before showing this message, so the failure surfaces within three attempts. Before v2.1.208, Claude Code spent the full [retry budget](#automatic-retries) resending the request with the placeholder credential and then reported a generic `401` authentication error instead of the script failure.
 
@@ -1610,7 +1614,10 @@ A tool in the request declared an `input_schema` that fails the API's JSON Schem
 
 ```text theme={null}
 API Error: 400 ... tools.N.custom.input_schema: JSON schema is invalid
+API Error: 400 ... tools.N.custom.input_schema.properties: Property keys should match pattern '^[a-zA-Z0-9_.-]{1,64}$'
 ```
+
+The first form means the schema isn't valid JSON Schema draft 2020-12. The second means a top-level property name doesn't match the pattern the message quotes.
 
 Claude Code [excludes MCP tools whose input schema would fail this validation](/docs/en/mcp#tools-with-invalid-input-schemas) when it loads a server's tools, so requests normally never include one.
 
@@ -1712,6 +1719,24 @@ Claude Code treats a model family alias, one of `opus`, `sonnet`, `haiku`, or `f
 * Run `/model` to pick from the models your organization allows. Restricted models are hidden from the picker.
 * If the restricted model was set in `--model`, `ANTHROPIC_MODEL`, the `model` field of a settings file, or the `model` frontmatter of a [subagent](/docs/en/sub-agents#choose-a-model), skill, or command, remove or update that value so the notice doesn't recur
 * If you need access to the restricted model, ask your organization admin to enable it. See [Organization model restrictions](/docs/en/model-config#organization-model-restrictions).
+
+### Model switch was blocked by a PreModelSwitch hook
+
+A [PreModelSwitch hook](/docs/en/hooks#premodelswitch) didn't approve the model switch you or a client requested, so the session keeps its current model. When the switch came from an [Agent SDK](/docs/en/agent-sdk/overview) host or [Remote Control](/docs/en/remote-control) rather than a command you typed, the message reads `Model switch blocked by a PreModelSwitch hook` without naming the target model.
+
+```text theme={null}
+Model switch to Opus 4.6 was blocked by a PreModelSwitch hook: Opus 4.6 is retired for this project. Use a newer model.
+```
+
+The reason after the colon says what refused the switch:
+
+* **A reason a hook wrote**: a PreModelSwitch hook supplied that reason when it [denied the switch or asked for confirmation](/docs/en/hooks#premodelswitch-decision-control). Address what it asks, or pick a model your hooks allow.
+* **`PreModelSwitch hook <name> did not respond before its timeout`**: a hook that doesn't answer before its [timeout](/docs/en/hooks#timeouts) blocks the switch. Fix the hanging command or raise that hook's `timeout`, then switch again.
+* **`confirmation required, and this session cannot ask`**: a hook answered `ask` without a reason, and a control request has no way to show the confirmation prompt. A `/model` command in a [`-p` run](/docs/en/headless) reports the same condition with `(run /model interactively to confirm)` after the reason. Make the switch from an interactive session, or change the hook's decision for this model.
+* **`so organization-managed PreModelSwitch hooks could not be checked`**: Claude Code couldn't tell which PreModelSwitch hooks your organization's [managed plugins](/docs/en/settings-reference#enabledplugins) deliver, for example because a managed plugin failed to load. One of those hooks might block the switch, so Claude Code refuses rather than apply the switch unchecked. The start of the reason names what failed. Claude Code re-checks on every switch attempt, so a failure that has since cleared stops blocking; if it keeps failing, run `claude --debug` and switch again to capture the details, then fix the plugin or ask your admin to fix it.
+* **`a PreModelSwitch hook failed before answering`** or **`PreModelSwitch hooks were cancelled (the control stream closed) before answering`**: the hook run ended without a verdict, and Claude Code doesn't treat that as approval. Run `claude --debug` to see what failed, then switch again.
+
+Before v2.1.260, the managed-plugin refusal read `plugin hooks could not be loaded, so PreModelSwitch hooks could not be checked; see the debug log`. Claude Code retried the plugin load once and then refused later switches in the session, even when your organization managed no plugins. Restart the session to run the plugin load again on those versions.
 
 ### thinking.type.enabled is not supported for this model
 
@@ -1971,7 +1996,10 @@ You started `claude` from a directory that was deleted or moved after your shell
 
 ```text theme={null}
 The current directory no longer exists (it was deleted or moved). Start Claude Code from an existing directory.
+error: The current working directory was deleted, so that command didn't work. Please cd into a different directory and try again.
 ```
+
+The cause and the fix are the same for both forms.
 
 When Claude Code can't read the working directory for a different reason, such as a permissions change, the message names the error code instead: `Can't read the current directory (EACCES). Start Claude Code from a different directory.`
 
@@ -2413,9 +2441,11 @@ The marketplace is registered under a name that is [reserved for official Anthro
 Marketplace "claude-community" is registered from an untrusted source: The name 'claude-community' is reserved for official Anthropic marketplaces. Only repositories from 'github.com/anthropics/' can use this name. To fix it, remove the marketplace and re-add it from the official source.
 ```
 
+For a marketplace whose source isn't a GitHub repository or a Git URL, such as a local directory, the middle sentence reads `can only be used with GitHub sources from the 'anthropics' organization` instead. `claude plugin marketplace add` runs the same check, and refuses a reserved name with `Failed to add marketplace:` followed by the same reserved-name sentence.
+
 **What to do:**
 
-* Run `claude plugin marketplace remove <name>`, then add the marketplace again from the official `github.com/anthropics` repository
+* If the marketplace is already registered, run `claude plugin marketplace remove <name>`, then add it again from the official `github.com/anthropics` repository
 * If you publish a third-party marketplace that used the name before it became reserved, rename it and ask users to re-add it from your source
 * See the reserved name list under [Marketplace schema](/docs/en/plugin-marketplaces#marketplace-schema)
 
@@ -2853,22 +2883,25 @@ Before v2.1.248, opening such a row re-ran the session's original prompt instead
   Worktree has commits that are not pushed anywhere
 </h3>
 
-You tried to delete a [background session](/docs/en/agent-view#what-deleting-a-session-removes) whose worktree holds commits Claude Code can't confirm are saved elsewhere. Claude Code keeps the worktree and the session row rather than destroy the commits. `claude rm` prints the kept path and the reason:
+You tried to delete a [background session](/docs/en/agent-view#what-deleting-a-session-removes) whose worktree holds commits Claude Code can't confirm are saved elsewhere. Claude Code keeps the worktree and the session row rather than destroy the commits unseen. `claude rm` names the branch and the unpushed commits, and says how to proceed:
 
 ```text theme={null}
-kept 7c5dcf5d — worktree has commits that are not pushed anywhere
-  worktree kept at /home/you/project/.claude/worktrees/fix-login
-  resolve that (commit/push, or remove the worktree), then run 'claude rm 7c5dcf5d' again
+kept 7c5dcf5d — 2 unpushed commits on claude/fix-login (a1b2c3d Fix login flow, … and 1 more)
+  worktree: /home/you/project/.claude/worktrees/fix-login
+  push them, or discard the worktree and its commits: claude rm 7c5dcf5d --discard-unpushed a1b2c3d000000000000000000000000000000000@0123456789abcdef0123456789abcdef
 ```
 
-When you delete from [agent view](/docs/en/agent-view) with a `Ctrl+X` double-press, you consent to discarding uncommitted changes, but not to discarding commits, so Claude Code refuses there too. After a refused delete, the session's row shows `not deleted` with the same reason.
+When Claude Code can't summarize the commits, the message reads `worktree has commits that are not pushed anywhere` instead. In [agent view](/docs/en/agent-view), the session's row shows `not deleted` with the same reason.
 
 Commits on a remote don't block the delete. Neither do commits on the local copy of your `origin` remote's default branch, as long as that branch is checked out in your main checkout, the repository directory itself rather than a worktree.
 
 **What to do:**
 
-* Push the worktree's branch, or merge it into the default branch checked out in your main checkout, then delete the session again
-* To delete the session without pushing or merging the commits, first note the branch that `git worktree list` shows for the path the message names. Remove the worktree yourself with `git worktree remove --force <path>`, as described in [Clean up subagent and background-session worktrees](/docs/en/worktrees#clean-up-subagent-and-background-session-worktrees), then run `claude rm <id>` again. Neither step deletes that branch, so the commits stay on it until you run `git branch -D <branch>`.
+* To keep the commits, push the worktree's branch, or merge it into the default branch checked out in your main checkout, then delete the session again
+* To discard the commits, run the `claude rm <id> --discard-unpushed` command the message printed, or press `Ctrl+X` twice on the session's row in agent view again. This removes the session and the worktree along with its branch, the unpushed commits, and any uncommitted changes. If the worktree has gained a commit since the refusal, Claude Code keeps it again and shows the updated state
+* When the message says the worktree is also recorded by another finished session, deleting again doesn't discard it: push the commits, then delete the session again
+
+Before v2.1.260, the message didn't name the branch or the commits, and deleting again was refused the same way: deleting the session without pushing meant removing the worktree yourself with `git worktree remove --force <path>`, then running `claude rm <id>` again.
 
 Before v2.1.248, the default branch checked out in your main checkout didn't count: a branch you had already merged there still triggered this refusal until its commits reached a remote.
 
@@ -3012,11 +3045,17 @@ Couldn't start the background service — spawn background service: EACCES: perm
 
 When you start a session with `/background` or `claude --bg`, the same reason appears inside `Couldn't reach the background service (...)`. During the same reinstall window the error can name another code instead, such as `ENOENT` or `ENOEXEC`, or `EUNKNOWN` or `EPERM` on Windows; an `EUNKNOWN` that persists across retries has a [different cause](#eunknown-when-starting-a-background-session).
 
-On an npm installation, Claude Code waits up to ten seconds for the reinstall to finish and retries on its own, so you see the error only when the binary stays unrunnable for longer, such as while npm is still downloading the package. Before v2.1.246, Claude Code failed at once.
+On an npm installation, Claude Code waits for the reinstall to finish and retries on its own: up to ten seconds, and up to two minutes while an npm install of Claude Code is visibly still running on the machine, which covers another Claude Code process downloading an update. When the install outlasts that wait, the failure names the update instead of the bare error code:
+
+```text theme={null}
+Claude Code is being updated by npm on this machine (still not runnable after 2 min, EACCES) — try again when the update finishes
+```
+
+Before v2.1.257, the wait stopped at ten seconds in every case, so this error appeared while another Claude Code process was still downloading an update. Before v2.1.246, Claude Code failed at once, without waiting.
 
 **What to do:**
 
-* Wait a few seconds, then open the session or dispatch again.
+* Wait a few seconds, then open the session or dispatch again. When the message says Claude Code is being updated, retry after the update finishes.
 * If the error persists while no npm install is running, your user can't run the installed binary. Check its permissions and its directory's, or reinstall Claude Code.
 
 ### Background service exited before it became reachable
@@ -3030,6 +3069,11 @@ Couldn't reach the background service (background service exited before it becam
 When you open a session from [agent view](/docs/en/agent-view), the same reason follows `Couldn't start the background service —`. When the service printed nothing before exiting, the message says `nothing on stderr` instead.
 
 Claude Code reports the failure with the service's error line. Before v2.1.246, the failure surfaced only after a 45-second wait, as `background service did not become reachable within 45s`, without the service's error line.
+
+Two quoted reasons have known causes:
+
+* `Error: claude native binary not installed.`: an npm install was replacing the Claude Code binary at that moment, so the service ran npm's placeholder instead. Retry after the install finishes; if the line persists with no install running, [complete the npm install](/docs/en/troubleshoot-install#native-binary-not-found-after-npm-install). Before v2.1.257, a macOS npm self-update produced this failure on every start during the install window.
+* `nothing on stderr` with exit code 1, on every start, on Windows: `daemon.lock` names a process that Claude Code can neither signal nor prove is gone, so each new service concludes another one holds the lock and exits. A lock whose writer Claude Code can prove is gone is replaced on its own and doesn't produce this failure. When the failure repeats on every start, delete `~/.claude/daemon.lock`, then open the session or dispatch again. Before v2.1.257, such a lock blocked every start until you deleted the file.
 
 **What to do:**
 

@@ -102,13 +102,15 @@ The prompt box supports several features:
   * **Manual**: Claude asks permission before file edits and most shell commands.
   * **Plan**: Claude describes what it will do and waits for approval before making changes. VS Code automatically opens the plan as a full Markdown document where you can add inline comments to give feedback before Claude begins.
   * **Edit automatically**: Claude makes edits without asking.
-* **Model**: select **Switch model…** from the command menu to change the model mid-session. You can also click the model name at the bottom of the prompt box to open the same picker. The picker includes a **More models** page with the models not on the main list. When the current model supports [effort levels](/docs/en/model-config#adjust-effort-level), the picker also shows an **Effort** row. The model name button, the **More models** page, and the **Effort** row require Claude Code v2.1.257 or later.
+* **Model**: select **Switch model…** from the command menu to change the model mid-session. You can also click the model name at the bottom of the prompt box to open the same picker. When the current model supports [effort levels](/docs/en/model-config#adjust-effort-level), the picker also shows an **Effort** row. The model name button and the **Effort** row require Claude Code v2.1.257 or later.
 * **Command menu**: click `/` or type `/` to open the command menu. Options include attaching files, switching models, and toggling extended thinking. The Customize section provides access to MCP servers, slash commands, output styles, hooks, memory, permissions, and plugins. Items with a terminal icon open in the integrated terminal.
   * To browse commands such as `/usage` or [`/remote-control`](/docs/en/remote-control), select **Slash commands** in the Customize section. A dialog lists them with a filter box. Pick one to run it. Typing `/` in the prompt box still suggests commands inline. Requires Claude Code v2.1.257 or later.
   * Select **Output styles** in the Customize section to pick an [output style](/docs/en/output-styles), including your custom styles. Requires Claude Code v2.1.257 or later.
+
+    To create a custom style instead, select **Build a custom style** from the **Output styles** menu. Claude Code writes the [style file](/docs/en/output-styles#create-a-custom-output-style) for you at the project or user level. Requires Claude Code v2.1.261 or later.
   * The Settings section includes **Enable Remote Control for all sessions**, which sets [`remoteControlAtStartup`](/docs/en/settings-reference#remotecontrolatstartup) to control whether [new interactive sessions connect to Remote Control automatically](/docs/en/remote-control#enable-remote-control-for-all-sessions). Requires Claude Code v2.1.203 or later.
 
-    When you flip the toggle, the change applies to the sessions already open in VS Code, not only to sessions you start afterwards. If you turn it off, the open sessions disconnect. Before v2.1.257, the toggle applied only to sessions started after the change.
+    When you turn the toggle on or off in a VS Code window, the change applies to the sessions already open in that VS Code window, not only to sessions you start afterwards. If you turn it off, the open sessions disconnect. With Claude Code v2.1.261 or later, the change also reaches sessions open in your other VS Code windows.
   * The Settings section also includes **Focus view**, which hides tool calls, tool results, and thinking behind expandable rows, leaving your prompts and Claude's responses. Claude's latest to-do list stays visible, and so does the text a pending question from Claude is asking about; this requires Claude Code v2.1.225 or later. Toggle it there, with `Ctrl+Option+F` (Mac) / `Ctrl+Alt+F` (Windows/Linux), or from the Command Palette with **Claude Code: Toggle Focus view**. The change applies to every open session and persists across sessions. Requires Claude Code v2.1.221 or later.
   * To report a bug, click **Report a problem** at the bottom of the menu, or type `/bug` or `/feedback` with an optional description that prefills the report. When you submit the report and you're signed in to Anthropic on a first-party connection, Claude Code sends it to Anthropic. On a third-party provider, or without Anthropic credentials, the dialog still opens, but submitting shows an error and sends nothing: unlike the CLI's `/bug`, the extension doesn't write a local archive. Requires Claude Code v2.1.229 or later.
 * **Side questions**: type `/btw` followed by a question to ask about your session [without adding to the conversation](/docs/en/interactive-mode#side-questions-with-%2Fbtw). The answer opens in a panel beside the chat, where you can ask follow-up questions. The thread survives window reloads. Claude Code keeps the newest 20 exchanges and expires stored threads on the [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays) schedule, as long as Claude Code can [safely determine the retention period](/docs/en/claude-directory#cleaned-up-automatically). To clear a thread, click the trash icon in the panel. Requires Claude Code v2.1.227 or later.
@@ -398,13 +400,13 @@ When you reopen a session or switch to another one, the extension announces noth
 
 Claude Code is available as both a VS Code extension (graphical panel) and a CLI (command-line interface in the terminal). Some features are only available in the CLI. If you need a CLI-only feature, run `claude` in VS Code's integrated terminal. This requires the [standalone CLI install](/docs/en/setup): the extension does not add `claude` to your PATH. See [Run CLI in VS Code](#run-cli-in-vs-code).
 
-| Feature             | CLI                 | VS Code Extension                                                                    |
-| ------------------- | ------------------- | ------------------------------------------------------------------------------------ |
-| Commands and skills | [All](/docs/en/commands) | Subset (type `/` to see available)                                                   |
-| MCP server config   | Yes                 | Partial (add servers via CLI; manage existing servers with `/mcp` in the chat panel) |
-| Checkpoints         | Yes                 | Yes                                                                                  |
-| `!` bash shortcut   | Yes                 | No                                                                                   |
-| Tab completion      | Yes                 | No                                                                                   |
+| Feature             | CLI                 | VS Code Extension                                                                                 |
+| ------------------- | ------------------- | ------------------------------------------------------------------------------------------------- |
+| Commands and skills | [All](/docs/en/commands) | Subset (type `/` to see available)                                                                |
+| MCP server config   | Yes                 | Yes ([add and manage servers](#connect-to-external-tools-with-mcp) with `/mcp` in the chat panel) |
+| Checkpoints         | Yes                 | Yes                                                                                               |
+| `!` bash shortcut   | Yes                 | No                                                                                                |
+| Tab completion      | Yes                 | No                                                                                                |
 
 ### Rewind with checkpoints
 
@@ -440,18 +442,20 @@ Visibility for background tasks in the extension is limited compared to the CLI.
 
 MCP (Model Context Protocol) servers give Claude access to external tools, databases, and APIs.
 
-To add an MCP server, open the integrated terminal (`` Ctrl+` `` or `` Cmd+` ``) and run `claude mcp add`. The example below adds GitHub's remote MCP server, which authenticates with a [personal access token](https://github.com/settings/personal-access-tokens) passed as a header:
+To manage MCP servers without leaving VS Code, type `/mcp` in the chat panel. From the dialog that opens, you can add servers, remove servers saved at the local, user, or project [scope](/docs/en/mcp#mcp-installation-scopes), enable or disable servers, reconnect to a server, and manage OAuth authentication. Adding and removing servers in the dialog requires Claude Code v2.1.261 or later.
+
+You can also run `claude mcp add` in VS Code's integrated terminal (`` Ctrl+` `` or `` Cmd+` ``). The dialog and the terminal command save to the same MCP configuration, and changes from either take effect in conversations you start afterwards. The example below adds GitHub's remote MCP server, which authenticates with a [personal access token](https://github.com/settings/personal-access-tokens) passed as a header:
 
 ```bash theme={null}
 claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
   --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
-Replace `YOUR_GITHUB_PAT` with your personal access token. The `claude mcp add` command saves the configuration without validating credentials, so a placeholder value is accepted here but the server fails to connect later. To verify the connection, type `/mcp` in the chat panel and check that the server shows `connected`. A server with bad credentials shows `failed`.
+Replace `YOUR_GITHUB_PAT` with your personal access token. The `claude mcp add` command saves the configuration without validating credentials, so a placeholder value is accepted here but the server fails to connect later. To verify the connection, start a new conversation, type `/mcp`, and check that the server shows **Connected**. A server with bad credentials shows **Failed**.
 
 Once configured, ask Claude to use the tools (e.g., "Review PR #456").
 
-To manage MCP servers without leaving VS Code, type `/mcp` in the chat panel. The MCP management dialog lets you enable or disable servers, reconnect to a server, and manage OAuth authentication. See the [MCP documentation](/docs/en/mcp) for available servers.
+To find servers to connect, see [Find and build MCP servers](/docs/en/mcp#find-and-build-mcp-servers).
 
 ## Work with git
 
@@ -605,5 +609,5 @@ For additional help, see the [troubleshooting guide](/docs/en/troubleshooting).
 Now that you have Claude Code set up in VS Code:
 
 * [Explore common workflows](/docs/en/common-workflows) to get the most out of Claude Code
-* [Set up MCP servers](/docs/en/mcp) to extend Claude's capabilities with external tools. Add servers using the CLI, then manage them with `/mcp` in the chat panel.
+* [Set up MCP servers](/docs/en/mcp) to extend Claude's capabilities with external tools. Add and manage them with `/mcp` in the chat panel.
 * [Configure Claude Code settings](/docs/en/settings) to customize allowed commands, hooks, and more. These settings are shared between the extension and CLI.

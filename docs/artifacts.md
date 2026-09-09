@@ -56,7 +56,7 @@ After you approve an artifact once, Claude Code republishes it without asking, a
 * You have since [shared it publicly](#share-an-artifact)
 * You have since shared it with specific people or your organization with the latest version chosen as the version viewers see
 
-After the first publish, Claude prints the URL, and your browser opens to the new page. Press `Ctrl+]` at any time to reopen the most recent artifact from the terminal.
+After the first publish, Claude prints the URL, and your browser opens to the new page. If you sent the prompt through [Remote Control](/docs/en/remote-control) from claude.ai, Claude Desktop, or the Claude mobile app, no tab opens on the machine running the session. The browser opens there the next time Claude publishes the artifact from a prompt you type at the terminal. Press `Ctrl+]` at any time to reopen the session's most recent artifact.
 
 Claude picks the artifact's title and an emoji for its browser-tab icon. Both appear in your [gallery of artifacts](#share-an-artifact) on claude.ai and in shared links, so ask Claude to use a specific title or icon if you want one.
 

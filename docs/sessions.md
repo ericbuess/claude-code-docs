@@ -14,15 +14,18 @@ The [desktop app](/docs/en/desktop#work-in-parallel-with-sessions), [Claude Code
 
 Sessions are saved continuously to [local transcript files](#export-and-locate-session-data) as you work, so you can return to one after exiting or running `/clear`. Use these entry points:
 
-| Command                     | What it does                                                              |
-| :-------------------------- | :------------------------------------------------------------------------ |
-| `claude --continue`         | Resumes the most recent interactive session in the current directory      |
-| `claude --resume`           | Opens the [session picker](#use-the-session-picker)                       |
-| `claude --resume <name>`    | Resumes the named session directly                                        |
-| `claude --from-pr <number>` | Opens the session picker filtered to sessions linked to that pull request |
-| `/resume`                   | Switches to a different conversation from inside an active session        |
+| Command                             | What it does                                                                                                           |
+| :---------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| `claude --continue`                 | Reopens the most recent conversation in the current directory                                                          |
+| `claude --resume`                   | Opens the [session picker](#use-the-session-picker)                                                                    |
+| `claude --resume <name>`            | Resumes the named session directly                                                                                     |
+| `claude --resume <transcript-path>` | Resumes the conversation stored in the `.jsonl` [transcript file](#where-transcripts-are-stored) at that absolute path |
+| `claude --from-pr <number>`         | Opens the session picker filtered to sessions linked to that pull request                                              |
+| `/resume`                           | Switches to a different conversation from inside an active session                                                     |
 
-Claude Code leaves sessions created with [`claude -p`](/docs/en/headless) or the [Agent SDK](/docs/en/agent-sdk/overview) out of the session picker and out of `claude --continue`. You can still resume one by passing its session ID to `claude --resume <session-id>`. With `claude --continue`, Claude Code also skips [background sessions](/docs/en/agent-view) and [sessions whose first prompt was `/loop`](#where-the-session-picker-looks). When you run [`claude -p --continue`](/docs/en/headless#continue-conversations), Claude Code includes `-p`, SDK, and `/loop` sessions and still skips background sessions.
+Claude Code leaves sessions created with [`claude -p`](/docs/en/headless) or the [Agent SDK](/docs/en/agent-sdk/overview) out of the session picker and out of `claude --continue`. You can still resume one by passing its session ID to `claude --resume <session-id>`. With `claude --continue`, Claude Code also skips [sessions whose first prompt was `/loop`](#where-the-session-picker-looks). When you run [`claude -p --continue`](/docs/en/headless#continue-conversations), Claude Code includes `-p`, SDK, and `/loop` sessions.
+
+`claude --continue` opens a [background session](/docs/en/agent-view) that has finished, but not one that is still running; opening finished background sessions requires Claude Code v2.1.257 or later. If your most recent conversation is one you [moved to the background](/docs/en/agent-view#send-the-session-to-the-background) and it is still running there, Claude Code exits with `Your most recent conversation is running in the background` and that session's ID. Attach to the session from [`claude agents`](/docs/en/agent-view#attach-to-a-session), or run `claude --resume` to pick another one.
 
 You can run `claude --resume <session-id>` from any directory: Claude Code looks for the ID in the current project directory and its git worktrees first, then in every other project on this machine, so it finds a session that started elsewhere or moved with [`/cd`](/docs/en/commands). The cross-project search resolves the ID only when exactly one other project holds a transcript with messages for it, so a hand-copied duplicate makes Claude Code report not-found rather than resume an arbitrary copy. If no stored session matches the ID, Claude Code reports `No conversation found with session ID: <session-id>`. Before v2.1.223, the lookup stopped at the current project directory and its git worktrees, so you had to resume from the directory the session last worked in.
 
