@@ -231,7 +231,7 @@ You pick a cloud session's [permission mode](/docs/en/permission-modes) from the
 
 Each session shows a diff indicator with lines added and removed, like `+42 -18`. Select it to open the diff view, leave inline comments on specific lines, and send them to Claude with your next message.
 
-Claude Code computes these diffs, including the per-file diffs shown as Claude edits, from raw git blob content, so diff drivers and `textconv` filters configured in the repository don't apply.
+Claude Code computes these diffs, including the per-file diffs shown as Claude edits, from raw git blob content, so diff drivers and `textconv` filters configured in the repository don't apply. For a file in a repository that isn't one of the session's own checkouts, such as one cloned inside the workspace during the session, the per-file diff shows Claude's edit itself rather than a git comparison.
 
 See [Review and iterate](/docs/en/web-quickstart#review-and-iterate) for the full walkthrough including PR creation. To have Claude monitor the PR for CI failures and review comments automatically, see [Auto-fix pull requests](#auto-fix-pull-requests).
 
@@ -339,7 +339,7 @@ Run `/login` to sign in with your claude.ai account, then retry the command. If 
 
 ### Environment expired
 
-Cloud sessions stop after a period of inactivity and the session's VM is reclaimed. On the web, the session is marked expired in the session list.
+Cloud sessions stop after a period of inactivity and the session's VM is reclaimed. A session counts as inactive while it waits for you to approve an [MCP connector](/docs/en/cloud-environments#network-access) tool call or to sign in to an MCP server, and it can expire during that wait. On the web, the session is marked expired in the session list.
 
 Reopen the session from [claude.ai/code](https://claude.ai/code) to provision a fresh VM with your conversation history restored. Background work that was still running when the VM was reclaimed, such as subagents and shell commands, isn't restored.
 

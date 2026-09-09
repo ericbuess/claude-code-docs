@@ -34,7 +34,7 @@ Auto mode allows pushes to any branch of the repository you're working in, inclu
 
 <Info>Before v2.1.211, the classifier allowed pushes only to your working branch, branches Claude created, and routine pushes to the default branch.</Info>
 
-If you want a human checkpoint before every push or pull request, add permission rules: the [recipes below](#add-a-human-checkpoint) keep auto mode on for everything else.
+If you want a human checkpoint before Claude's push and pull request commands, add permission rules: the [recipes below](#add-a-human-checkpoint) keep auto mode on for everything else.
 
 ### Add a human checkpoint
 
@@ -51,11 +51,13 @@ The most direct mechanism is [`permissions.ask`](/docs/en/permissions#permission
 }
 ```
 
+These rules match commands that begin with `git push` or `gh pr create`. A push Claude writes another way, such as `git -C <dir> push` or `git -c <key>=<value> push`, [doesn't match the rule](/docs/en/permissions#bash-rule-limits), so it isn't checkpointed. For a checkpoint that inspects the full command text, add a [PreToolUse hook](/docs/en/hooks#pretooluse).
+
 Pick the mechanism that matches how firm the boundary needs to be:
 
 | Boundary                          | Mechanism                                                  | Behavior in auto mode                                                                                                                                                                                           |
 | :-------------------------------- | :--------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Prompt before the action          | `permissions.ask`                                          | Always prompts for content-scoped rules like the recipe above. The classifier cannot auto-approve a matching action.                                                                                            |
+| Prompt before the action          | `permissions.ask`                                          | Always prompts for a command that matches a content-scoped rule like the recipe above. The classifier cannot auto-approve a matching action.                                                                    |
 | Never run the action              | `permissions.deny`                                         | Blocks before the classifier is consulted. Neither the classifier nor user intent can override it.                                                                                                              |
 | One-off boundary for this session | State it in conversation, like "don't push until I review" | The classifier blocks matching actions, but the boundary can be lost if [context compaction](/docs/en/costs#reduce-token-usage) removes the message that stated it. Use an ask or deny rule for a durable guarantee. |
 

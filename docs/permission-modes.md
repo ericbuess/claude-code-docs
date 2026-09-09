@@ -125,7 +125,7 @@ The next session you start shows `⏸ manual mode on` in the status bar.
 
 ## Switch permission modes
 
-Each interface has its own control for switching permission modes during a session and its own way of choosing the permission mode new sessions start in. Asking Claude in chat to change the permission mode doesn't work. Select your interface to see its controls.
+Each interface has its own control for switching permission modes during a session and its own way of choosing the permission mode new sessions start in. Select your interface to see its controls.
 
 <Tabs>
   <Tab title="CLI">
@@ -393,7 +393,7 @@ Claude Code v2.1.261 and later also block these by default:
 * Installing dependencies declared in your lock files or manifests
 * Reading `.env` and sending credentials to their matching API
 * Read-only HTTP requests
-* Pushing to any branch of the repository you're working in, including the default branch. A non-default branch whose name marks it as a deploy or publication target, such as `production` or `gh-pages`, isn't covered: the classifier judges a push there on its own terms. The push's content is still checked against the other rules, [`permissions.deny` rules](/docs/en/permissions#manage-permissions) can still block pushes to specific branches outright in every mode, and the remote's own branch protection still applies. Before v2.1.211, only pushes to the branch you started on, branches Claude created, and routine pushes to the default branch were allowed by default, and before v2.1.203 any direct push to the default branch was blocked
+* Pushing to any branch of the repository you're working in, including the default branch. A non-default branch whose name marks it as a deploy or publication target, such as `production` or `gh-pages`, isn't covered: the classifier judges a push there on its own terms. The push's content is still checked against the other rules, [`permissions.deny` rules](/docs/en/permissions#manage-permissions) can still block push commands [as written](/docs/en/permissions#bash-rule-limits) in every mode, and the remote's own branch protection still applies. Before v2.1.211, only pushes to the branch you started on, branches Claude created, and routine pushes to the default branch were allowed by default, and before v2.1.203 any direct push to the default branch was blocked
 
 Claude Code v2.1.195 and later also allow these by default:
 
@@ -412,7 +412,7 @@ Sandbox network access requests are routed through the classifier rather than al
 
 Run `claude auto-mode defaults` to print the full rule lists as JSON. If routine actions get blocked, an administrator can add trusted repos, buckets, and services via the `autoMode.environment` setting: see [Configure auto mode](/docs/en/auto-mode-config).
 
-Pushing to any branch of the repository you're working in and creating a pull request that matches your request run without a prompt, unless the push or pull request falls under the [blocked list](#what-the-classifier-blocks-by-default), such as secrets or sensitive data leaving the repository, or a pull request that targets a different repository or organization. To require a human checkpoint before these actions while staying in auto mode, add `permissions.ask` rules: see [Common boundaries](/docs/en/auto-mode-config#common-boundaries).
+Pushing to any branch of the repository you're working in and creating a pull request that matches your request run without a prompt, unless the push or pull request falls under the [blocked list](#what-the-classifier-blocks-by-default), such as secrets or sensitive data leaving the repository, or a pull request that targets a different repository or organization. To require a human checkpoint before these commands while staying in auto mode, add `permissions.ask` rules, which match the command [as written](/docs/en/permissions#bash-rule-limits): see [Common boundaries](/docs/en/auto-mode-config#common-boundaries).
 
 <h3 id="first-read-outside-the-working-directories">
   The first read outside the working directories

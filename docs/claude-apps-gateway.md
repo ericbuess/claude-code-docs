@@ -247,7 +247,9 @@ Have these in place before you start:
 
 Developers connect from their own laptops with one browser sign-in, using their corporate work account. They don't need a claude.ai account, an API key, or a subscription, because requests to the model go through the gateway using the organization's upstream credential. Connection is driven by the [client-side managed settings](/docs/en/claude-apps-gateway-config#client-side-managed-settings) you push via MDM, so there is no manual setup on the developer side; this section covers what the admin configures.
 
-The CLI fingerprints the gateway's TLS leaf certificate on first connect and pins it per hostname. Publish the expected SHA-256 fingerprint alongside the gateway URL so developers have something to compare against. The `/login` prompt shows the first 16 characters of the fingerprint as lowercase hexadecimal with no colons. To print the full fingerprint in that form from the certificate file, run:
+The CLI fingerprints the gateway's TLS leaf certificate on first connect and pins it per hostname. It checks that pin again during sign-in, on silent session refreshes, and on managed-settings fetches, while inference requests use standard TLS validation without the pin. Requests routed through an HTTPS proxy skip the pin check, so add the gateway host to `NO_PROXY` to keep them direct.
+
+Publish the expected SHA-256 fingerprint alongside the gateway URL so developers have something to compare against. The `/login` prompt shows the first 16 characters of the fingerprint as lowercase hexadecimal with no colons. To print the full fingerprint in that form from the certificate file, run:
 
 ```bash theme={null}
 openssl x509 -noout -fingerprint -sha256 -in cert.pem | cut -d= -f2 | tr -d : | tr 'A-F' 'a-f'
@@ -255,7 +257,9 @@ openssl x509 -noout -fingerprint -sha256 -in cert.pem | cut -d= -f2 | tr -d : | 
 
 When the certificate rotates, every developer sees the trust prompt again, so treat rotations as a planned event and republish the fingerprint. If your gateway policy includes [settings that need approval](/docs/en/server-managed-settings#security-approval-dialogs), the developer also sees that approval dialog again after accepting the new certificate, because Claude Code keys [approval memory](/docs/en/server-managed-settings#approval-memory) to the pinned certificate.
 
-Once signed in, the [model picker](/docs/en/model-config) shows the models in the developer's `availableModels` allowlist, managed settings apply at startup and refresh hourly, and telemetry routes to your collector. Sessions refresh silently before `ttl_hours` expiry, and a failed refresh after IdP deprovisioning prompts a re-login.
+Once the developer signs in, the [model picker](/docs/en/model-config) shows the models in their `availableModels` allowlist. Managed settings apply at startup and refresh hourly, and telemetry routes to your collector.
+
+Sessions refresh silently before `ttl_hours` expiry. When a refresh fails after IdP deprovisioning, Claude Code prompts the developer to log in again.
 
 ### Set the gateway URL
 
@@ -390,7 +394,8 @@ These guarantees apply to every session signed in through `/login`. The embedded
 * **Telemetry destination**: in sessions signed in through `/login`, the CLI sends its OTLP/HTTP exports to the gateway regardless of any locally set `OTEL_EXPORTER_OTLP_ENDPOINT`, and the gateway relays them to the destinations in [`telemetry.forward_to`](/docs/en/claude-apps-gateway-config#telemetry). In the embedded sessions [Claude Desktop launches](#connect-claude-desktop), the CLI sends its exports to the configured `OTEL_EXPORTER_OTLP_ENDPOINT`. The CLI attaches the gateway session token to those exports only when that endpoint points at the gateway itself. With no destination configured for a signal, the gateway accepts and discards it, so if you already collect Claude Code telemetry directly, add your collector as a `forward_to` destination.
 * **Credentials**: the gateway token is the session's only credential. `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_API_KEY`, `apiKeyHelper`, [Anthropic profiles](/docs/en/authentication#anthropic-profiles-and-federation-credentials), and any earlier claude.ai login are ignored while signed in, so developers don't need to log out of claude.ai first.
 * **Managed settings**: locked keys can't be overridden locally. The CLI applies the policy at startup and applies changes on each hourly poll, apart from the [changes that apply only at the next launch](/docs/en/server-managed-settings#fetch-and-caching-behavior).
-* **Startup**: signed-in sessions exit at startup with an error after about 10 seconds when the gateway is unreachable, rather than starting without their settings.
+* **Startup with the gateway unreachable**: signed-in sessions exit at startup with an error after about 10 seconds rather than starting without their settings.
+* **Startup after the gateway ends the session**: see [Enforce fail-closed startup](/docs/en/server-managed-settings#enforce-fail-closed-startup) for which launches open signed out of the gateway and which exit when the gateway answers with a `401`.
 * **Deprovisioning**: a session whose user is disabled in the IdP expires within `ttl_hours` when the next refresh fails.
 
 ### What the organization can see

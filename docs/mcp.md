@@ -92,7 +92,9 @@ In `--output-format stream-json` runs, Claude Code also reports a skipped `--mcp
   The SSE (Server-Sent Events) transport is deprecated. Use HTTP servers instead, where available.
 </Warning>
 
-Some services still expose only an SSE endpoint. Use the same command as the HTTP transport, with `--transport sse`:
+Some services still expose only an SSE endpoint. Add these with the same `claude mcp add --transport http <name> <url>` command as [an HTTP server](#option-1-add-a-remote-http-server). Claude Code tries the HTTP transport first and switches to SSE when the server doesn't accept it. The automatic switch requires Claude Code v2.1.265 or later.
+
+On an earlier version, or to connect over SSE directly, pass `--transport sse` instead:
 
 ```bash theme={null}
 # Basic syntax
@@ -165,7 +167,7 @@ Each is one of the inputs the four options in [Installing MCP servers](#installi
 
 #### From a URL
 
-A URL means the server is remote. For an `https://` endpoint, add it with `--transport http`, or with `--transport sse` when the instructions say the endpoint uses SSE. For a `wss://` endpoint, use [Option 4](#option-4-add-a-remote-websocket-server) instead, since `--transport` doesn't accept `ws`:
+A URL means the server is remote. For an `https://` endpoint, add it with `--transport http`, or follow [Option 2](#option-2-add-a-remote-sse-server) when the instructions say the endpoint uses SSE. For a `wss://` endpoint, use [Option 4](#option-4-add-a-remote-websocket-server) instead, since `--transport` doesn't accept `ws`:
 
 ```bash theme={null}
 claude mcp add --transport http example https://mcp.example.com/mcp
@@ -333,7 +335,7 @@ On v2, Claude Code also:
 * Doesn't register a [channel](#push-messages-with-channels) server that connects on the newer revision, because that revision can't carry channel messages.
 * Fails an [MCP OAuth sign-in](#authenticate-with-remote-mcp-servers) whose authorization response names an unexpected issuer.
 
-Anthropic can keep a specific server on the earlier protocol, or off that stream, with a feature flag Claude Code fetches. In a [Claude Code on the web](/docs/en/cloud-environments#network-access) session, Claude Code asks its MCP connectors only if you set `MCP_PROTOCOL_NEGOTIATION` to `auto`.
+Anthropic can keep a specific server on the earlier protocol, or off that stream, with a feature flag Claude Code fetches.
 
 To pick the runtime yourself, set [`MCP_SDK_GENERATION`](/docs/en/env-vars) to `v1` or `v2`. To decide whether Claude Code asks, set [`MCP_PROTOCOL_NEGOTIATION`](/docs/en/env-vars) to `auto` or `legacy`. Where Claude Code uses v1 by default, pinning `v2` doesn't make it ask, so set `auto` too.
 
@@ -700,6 +702,7 @@ Claude Code marks a remote server as needing authentication when the server resp
 * For a server you haven't signed in to, either status code flags it in `/mcp` so you can complete the OAuth flow.
 * For a [claude.ai connector](#use-mcp-servers-from-claude-ai), a `401` caused by claude.ai rejecting your session token doesn't flag the connector, because re-authorizing the connector can't fix your login. Claude Code shows the [session-token-rejected state](/docs/en/errors#claude-ai-rejected-the-session-token) instead.
 * For a server whose `Authorization` header you configured, in `headers` or through a [`headersHelper`](#use-dynamic-headers-for-custom-authentication), a `401` or `403` while connecting doesn't flag the server, because the credential to fix is the one you configured. Claude Code reports the connection as failed instead.
+* For a connector [delivered to a cloud session](#how-connectors-reach-claude-code), Claude Code doesn't run a sign-in flow, because the session's proxy authenticates to the connector with the authorization you granted in claude.ai. When a connector there needs authorizing again, reconnect it at [claude.ai/customize/connectors](https://claude.ai/customize/connectors) rather than from the session.
 
 When a request to an OAuth server you already signed in to returns `401 Unauthorized`, Claude Code refreshes the stored token, reconnects, and retries the request once. It flags the server in `/mcp` only if that retry also fails. Before v2.1.206, a token refresh that failed for a transient reason, such as a network error, flagged an OAuth server as needing authentication for the rest of the session even though its refresh token was still valid.
 
@@ -1216,6 +1219,7 @@ When MCP tools produce large outputs, Claude Code helps manage the token usage t
 * **Configurable limit**: you can adjust the maximum allowed MCP output tokens using the `MAX_MCP_OUTPUT_TOKENS` environment variable
 * **Default limit**: the default maximum is 25,000 tokens
 * **Scope**: the environment variable applies to tools that don't declare their own limit. Tools that set [`anthropic/maxResultSizeChars`](#raise-the-limit-for-a-specific-tool) use that value instead for text content, regardless of what `MAX_MCP_OUTPUT_TOKENS` is set to. Tools that return image data are still subject to `MAX_MCP_OUTPUT_TOKENS`
+* **Over the limit**: when a result with no image content exceeds the limit, Claude Code saves it to a file and replaces it in the conversation with a message that names the file path, so Claude reads the file when it needs the content. The file goes in the session's `tool-results` directory under [`~/.claude/projects/`](/docs/en/claude-directory#cleaned-up-automatically).
 
 To increase the limit for tools that produce large outputs:
 

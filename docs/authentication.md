@@ -120,6 +120,8 @@ After you sign in without a key, you have a profile instead of a stored API key:
 * **What it signs you out of**: Claude Code signs you out of any claude.ai login stored on the machine
 * **How to undo it**: run `/logout`, which removes and revokes the credential this sign-in wrote
 
+If your organization uses [server-managed settings](/docs/en/server-managed-settings), they apply to this sign-in on Claude Code v2.1.257 or later.
+
 Everything else about profiles applies to this sign-in, including where it ranks against your other credentials, the `Profile` row you get in `/status`, and the features that need a claude.ai login. See [Anthropic profiles and federation credentials](#anthropic-profiles-and-federation-credentials).
 
 ### Cloud provider authentication
@@ -233,7 +235,11 @@ Claude Code checks three sources in this order and stops at the first one that i
 
 The `user_oauth` rule keeps a leftover `ant auth login` profile from moving your requests off the account you signed in to with `/login`. For the federation variables, Claude Code also reads the other variables in the [WIF reference](https://platform.claude.com/docs/en/manage-claude/wif-reference#environment-variables), such as `ANTHROPIC_IDENTITY_TOKEN_FILE`, when it exchanges your identity token. For the profile file format, see the [WIF reference](https://platform.claude.com/docs/en/manage-claude/wif-reference#profile-configuration-file).
 
-To confirm which source Claude Code chose, run `/status`: a `Profile` row names the source in place of the `Login method` row. If you start Claude Code with `--debug`, it also writes a `Using Anthropic profile auth` line with the source name to the debug log at `~/.claude/debug/<session-id>.txt`. When Claude Code passes over a `user_oauth` active profile because you have a working `/login` credential, it writes a warning to the debug log saying it's using the claude.ai login instead. When a `user_oauth` profile's login has expired and Claude Code can't renew it, requests fail with [Anthropic profile login expired](/docs/en/errors#anthropic-profile-login-expired).
+To confirm which source Claude Code chose, run `/status`. A `Profile` row names the source in place of the `Login method` row, and when the profile is the credential in use, `Organization` and `Email` rows show its account.
+
+If you start Claude Code with `--debug`, it also writes a `Using Anthropic profile auth` line with the source name to the debug log at `~/.claude/debug/<session-id>.txt`. When Claude Code passes over a `user_oauth` active profile because you have a working `/login` credential, it writes a warning to the debug log saying it's using the claude.ai login instead.
+
+When a `user_oauth` profile's login has expired and Claude Code can't renew it, requests fail with [Anthropic profile login expired](/docs/en/errors#anthropic-profile-login-expired).
 
 Features that need your claude.ai login, such as [claude.ai connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) and [`/schedule`](/docs/en/routines), aren't available while one of these sources is selected. To stop Claude Code from selecting a source:
 

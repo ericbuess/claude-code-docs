@@ -22,11 +22,11 @@ The API caches by matching the start of each request, called the prefix, against
 
 To get the most out of prefix matching, Claude Code orders each request so content that rarely changes between turns comes first:
 
-| Layer           | Content                                           | Changes when                                                                                    |
-| --------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| System prompt   | Core instructions, tool definitions, output style | The set of loaded tool definitions changes, you switch output style, or Claude Code is upgraded |
-| Project context | CLAUDE.md, auto memory, unscoped rules            | Session starts, or after `/clear` or `/compact`                                                 |
-| Conversation    | Your messages, Claude's responses, tool results   | Every turn                                                                                      |
+| Layer           | Content                                         | Changes when                                                          |
+| --------------- | ----------------------------------------------- | --------------------------------------------------------------------- |
+| System prompt   | Core instructions, tool definitions             | The set of loaded tool definitions changes or Claude Code is upgraded |
+| Project context | CLAUDE.md, auto memory, unscoped rules          | Session starts, or after `/clear` or `/compact`                       |
+| Conversation    | Your messages, Claude's responses, tool results | Every turn                                                            |
 
 A change to the conversation layer leaves the system prompt and project context cached. A change to the system prompt invalidates everything, because all later content now sits behind a different prefix. The third column gives common triggers rather than an exhaustive list, and the sections below cover the full set.
 
@@ -139,11 +139,12 @@ When you enable a [code intelligence plugin](/docs/en/discover-plugins#code-inte
 
 #### When plugin changes apply
 
-Claude Code applies a plugin change when you run [`/reload-plugins`](/docs/en/discover-plugins#apply-plugin-changes-without-restarting) or start a new session. You pay the cost, whether appended announcements or a full re-read, on the first turn after the change applies, not when you run `/plugin enable` or `/plugin disable`. Claude Code can also apply a change on its own in three cases:
+A plugin change applies when you run [`/reload-plugins`](/docs/en/discover-plugins#apply-plugin-changes-without-restarting) or start a new session, not when you run `/plugin enable` or `/plugin disable`. You pay the cost, whether appended announcements or a full re-read, on the first turn after the change applies. Claude Code can also apply a change on its own:
 
 * For a plugin with a `command` source, Claude Code [can reload the plugin itself](/docs/en/plugin-marketplaces#when-claude-code-re-runs-the-command).
 * When you [install a plugin from the `/plugin` interface](/docs/en/discover-plugins#install-plugins), Claude Code can activate it during the install. Claude Code tells you in the install summary whether it did or whether to run `/reload-plugins`.
 * When you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later, Claude Code applies the plugins the new directory's settings enable as part of the move, without the full re-read warning that holds a `/reload-plugins`.
+* In interactive sessions, when you add or remove a plugin in a [folder of plugins](/docs/en/plugins#test-your-plugins-locally) you passed with `--plugin-dir`, the change applies right away. If applying it would trigger a full re-read, Claude Code holds the change instead and shows a notice to run `/reload-plugins`. Requires Claude Code v2.1.265 or later.
 
 When you run `/reload-plugins` and the reload would trigger a full re-read, Claude Code shows a warning and doesn't apply the reload. Rerun it with `--force` to apply the reload anyway.
 
@@ -163,7 +164,9 @@ Only a deny rule that matches in the tool-name position has this effect: a bare 
 
 ### Changing output style
 
-[Output style](/docs/en/output-styles) is part of the system prompt. When you switch styles mid-session with `/config` or the `outputStyle` setting, Claude uses the new style starting with your next message, and that request reads the entire conversation history with no cache hits. To keep that cost small, switch styles before your first message in a session or right after `/clear` or `/compact`, when there is little or no conversation history to re-read.
+When you switch [output styles](/docs/en/output-styles) mid-session with `/config` or the `outputStyle` setting, Claude uses the new style starting with your next message. In a conversation that [keeps a recorded system prompt](/docs/en/cli-reference#system-prompt-flags-in-resumed-conversations), as sessions signed in with a claude.ai or Console account do by default, Claude Code delivers the new style's instructions as a message in the conversation. That request still reads the system prompt and the earlier conversation from the cache.
+
+In sessions that don't [fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching), such as on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, the style's instructions are part of the system prompt, so the request after a switch reads the entire conversation history with no cache hits. There, switch styles before your first message in a session or right after `/clear` or `/compact`, when there is little or no conversation history to re-read.
 
 Before v2.1.251, a mid-session style switch kept the cache but didn't apply until you ran `/clear` or started a new session.
 
@@ -320,6 +323,7 @@ Other requests can also read a prefix that an earlier request cached:
 
 * **Session copies**: a session you [copy with `/fork`](/docs/en/agent-view#copy-the-session-with-%2Ffork) receives its isolation instruction as a message at the end of the copied conversation, so the cache that the original conversation built stays intact.
 * **Compaction**: the summarization call described in [Compacting the conversation](#compacting-the-conversation) uses the same prefix-sharing approach.
+* **Resumed subagents**: when Claude [resumes a subagent](/docs/en/sub-agents#resume-subagents), the resumed run's first request can read the cache the original run warmed.
 * **Workflow fan-outs**: in a [workflow fan-out](/docs/en/workflows#prompt-caching-in-a-fan-out) of same-prefix agents, Claude Code holds all but the first for up to 5 seconds by default, so their first requests can read the prefix that the first agent cached.
 
 ## Disable prompt caching

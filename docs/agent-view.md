@@ -443,7 +443,7 @@ claude --agent code-reviewer --bg "address review comments on PR 1234"
 
 If the name doesn't match any of your subagents, the launch fails: Claude Code prints a `no agent named` warning and still reports the session as backgrounded, but the session exits immediately with an `--agent '<name>' not found` error.
 
-When the backgrounded session later resumes or restarts, Claude Code restores the agent's system prompt and tool restrictions. It searches the session's own directory for the agent first, provided you've [trusted that workspace](/docs/en/permissions#project-allow-rules-and-workspace-trust), so a project-scoped agent still loads when the session is resumed from another directory. If the agent no longer exists, the session continues with the default tools and system prompt and its transcript opens with a [warning naming the agent](/docs/en/errors#session-agent-no-longer-available).
+When the backgrounded session later resumes or restarts, Claude Code restores the agent and its tool restrictions; for its system prompt, see [System prompt flags in resumed conversations](/docs/en/cli-reference#system-prompt-flags-in-resumed-conversations). It searches the session's own directory for the agent first, provided you've [trusted that workspace](/docs/en/permissions#project-allow-rules-and-workspace-trust), so a project-scoped agent still loads when the session is resumed from another directory. If the agent no longer exists, the session continues with the default tools and its transcript opens with a [warning naming the agent](/docs/en/errors#session-agent-no-longer-available).
 
 To continue an existing conversation in the background, pass its full session ID with `--resume`:
 
@@ -756,7 +756,7 @@ Session state is stored under your Claude Code config directory. If you set [`CL
 | `~/.claude/daemon.log`           | Supervisor log                                                                                                                                 |
 | `~/.claude/daemon/roster.json`   | List of running background sessions, used to reconnect after a restart                                                                         |
 | `~/.claude/jobs/<id>/state.json` | Per-session state shown in agent view. Read it through [`claude agents --json`](#read-session-state-from-a-script) instead of parsing the file |
-| `~/.claude/jobs/<id>/tmp/`       | Per-session scratch directory. Writes here don't prompt for permission. Removed when the session is deleted                                    |
+| `~/.claude/jobs/<id>/tmp/`       | Per-session scratch directory. Claude's `Write` and `Edit` calls here don't prompt for permission. Removed when the session is deleted         |
 
 Each background session has the `CLAUDE_JOB_DIR` environment variable set to its `~/.claude/jobs/<id>` directory, so shell commands the session runs can write temporary files to `$CLAUDE_JOB_DIR/tmp` without colliding with parallel sessions.
 

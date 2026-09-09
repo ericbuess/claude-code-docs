@@ -126,7 +126,7 @@ You can configure your model in several ways, listed in order of priority:
 * `Enter`: switch model and save as your default
 * `s`: switch model for this session only
 
-Typing `/model <name>` directly behaves like `Enter`. A model set with `/model` in [non-interactive mode](/docs/en/headless), with the `-p` flag, applies to the current session only and isn't saved as your default. Project and managed settings still take precedence and reapply on the next launch. An [organization default model](#organization-default-model) that your admin has configured to override user selection also reapplies on the next launch.
+Typing `/model <name>` directly behaves like `Enter`. If you set a model with `/model` in [non-interactive mode](/docs/en/headless), with the `-p` flag, your choice applies to the current session only and isn't saved as your default; `/model` in that mode requires Claude Code v2.1.205 or later. Project and managed settings still take precedence and reapply on the next launch. An [organization default model](#organization-default-model) that your admin has configured to override user selection also reapplies on the next launch.
 
 In v2.1.144 through v2.1.152, `/model` applied to the current session only and `d` in the picker saved a default.
 
@@ -391,6 +391,8 @@ The organization default reaches only sessions authenticated with the Anthropic 
 
 ## Organization effort limits
 
+Your organization can cap the [effort level](#adjust-effort-level) in two ways. On a Claude Enterprise plan, organization admins set per-role effort limits, described below. On any plan and any provider, including Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, the [`maxEffortLevel`](/docs/en/settings-reference#maxeffortlevel) managed setting caps effort on the client instead. When both apply to a model, the lower cap applies.
+
 Organization admins on Claude Enterprise plans can set a maximum [effort level](#adjust-effort-level) per model for each custom role, alongside role-level [organization model restrictions](#organization-model-restrictions). Levels above the cap aren't offered in the `/effort` picker, and naming a higher level with `--effort` or `/effort` runs at the cap instead. In interactive sessions and plain-text `--print` runs, a warning names the requested and applied levels; with `json` or `stream-json` output or in background agents, the clamp applies silently. Caps are per model, so switching models can change which levels are available. When several of your roles grant the same model, the least restrictive cap applies. Requires Claude Code v2.1.195 or later.
 
 Effort limits are delivered together with [organization model restrictions](#organization-model-restrictions) and reach the same sessions.
@@ -423,7 +425,7 @@ The `opusplan` model alias provides an automated hybrid approach:
 
 This pairs Opus's reasoning for planning with Sonnet's efficiency for execution.
 
-The plan-mode Opus phase uses the same context window as the `opus` model setting. On subscription tiers where Opus is [automatically upgraded to 1M context](#extended-context), `opusplan` receives the upgrade in plan mode as well. To force 1M context for both phases when you are not on an auto-upgrade tier, set the model to `opusplan[1m]`.
+The plan-mode Opus phase uses the same context window as the `opus` model setting. On subscription tiers where Opus is [automatically upgraded to 1M context](#extended-context), `opusplan` receives the upgrade in plan mode as well. To force 1M context for both phases when you aren't on an auto-upgrade tier, [set the model](#setting-your-model) to `opusplan[1m]`, for example with `/model opusplan[1m]`. Setting it with `/model` requires Claude Code v2.1.265 or later; on earlier versions, use the `--model` flag or the `model` setting instead.
 
 When [`availableModels`](#restrict-model-selection) excludes the newest Opus but permits an older version, for example `["sonnet", "claude-opus-4-6"]`, `opusplan` uses the newest permitted Opus for planning and stays on Sonnet only when every Opus is excluded. A Haiku session that would normally upgrade to Sonnet in plan mode likewise uses the newest permitted Sonnet, and stays on Haiku only when every Sonnet is excluded. Before v2.1.205, plan mode stayed on the session's model whenever the newest version of the upgrade family was excluded, even when the allowlist permitted an older one.
 
@@ -524,7 +526,7 @@ The available effort levels depend on the model. Models not listed here do not s
 | Opus 5, Sonnet 5, Opus 4.8, and Opus 4.7 | `low`, `medium`, `high`, `xhigh`, `max` |
 | Opus 4.6 and Sonnet 4.6                  | `low`, `medium`, `high`, `max`          |
 
-If you set a level the active model does not support, Claude Code falls back to the highest supported level at or below the one you set. For example, `xhigh` runs as `high` on Opus 4.6. Your organization can also cap which levels are available for a model; see [Organization effort limits](#organization-effort-limits).
+If you set a level the active model does not support, Claude Code falls back to the highest supported level at or below the one you set. For example, `xhigh` runs as `high` on Opus 4.6. Your organization or your own settings can also cap the levels a model offers; see [Organization effort limits](#organization-effort-limits).
 
 With the [`ultracode`](/docs/en/settings-reference#ultracode) setting off, Claude Code resolves the session's effort level in this order, taking the first that applies:
 
@@ -594,13 +596,13 @@ You can change effort through any of the following:
 * **In `/model`**: use left/right arrow keys to adjust the effort slider when selecting a model
 * **`--effort` flag**: pass a level name to set it for a single session when launching Claude Code
 * **Environment variable**: set `CLAUDE_CODE_EFFORT_LEVEL` to a level name or `auto`
-* **Settings**: set a per-model level in [`modelSettings`](/docs/en/settings-reference#modelsettings), or set [`effortLevel`](/docs/en/settings-reference#effortlevel) to `low`, `medium`, `high`, or `xhigh` as the default for models without one. `max` isn't accepted in either key, and `ultracode` has its own [`ultracode`](/docs/en/settings-reference#ultracode) key
+* **Settings**: set a per-model level in [`modelSettings`](/docs/en/settings-reference#modelsettings), or set [`effortLevel`](/docs/en/settings-reference#effortlevel) to `low`, `medium`, `high`, or `xhigh` as the default for models without one. `max` isn't accepted as a level in either key, and `ultracode` has its own [`ultracode`](/docs/en/settings-reference#ultracode) key
 * **From a connected device**: in a [Remote Control](/docs/en/remote-control#what-connected-devices-see) session, pick a level from the effort control on your phone or in your browser. The level applies to the current session only, though it also ends the [hold on the model's default effort](#adjust-effort-level). Requires Claude Code v2.1.234 or later
 * **Skill and subagent frontmatter**: set `effort` in a [skill](/docs/en/skills#frontmatter-reference) or [subagent](/docs/en/sub-agents#supported-frontmatter-fields) markdown file to override the effort level when that skill or subagent runs
 
 Frontmatter effort applies when that skill or subagent is active, overriding the session level but not the environment variable.
 
-The `effortLevel` key in [managed settings](/docs/en/managed-settings) is a starting default, not enforcement: users can change it for a session with `/effort` or `--effort`, and the managed value re-asserts as the default in new sessions.
+If you set `effortLevel` in [managed settings](/docs/en/managed-settings), Claude Code applies it at the settings step of the [effort resolution order](#adjust-effort-level), and users can still change the level with `/effort` or `--effort`. To keep users at or below a level, set [`maxEffortLevel`](/docs/en/settings-reference#maxeffortlevel).
 
 The effort slider appears in `/model` when a supported model is selected. The current effort level is also shown in the session header next to the model name, for example "with low effort", so you can confirm which setting is active without opening `/model`. The footer also briefly shows the effort level at startup and when it changes.
 
@@ -807,7 +809,7 @@ With the `[1m]` suffix, the 1M context window applies to all usage of the pinned
 <Note>
   An `availableModels` allowlist delivered through [MDM or a managed settings file](/docs/en/managed-settings#delivery-mechanisms) still applies when using third-party providers; [server-managed settings are not delivered there](/docs/en/server-managed-settings#platform-availability).
 
-  Filtering matches on a model alias such as `opus`, a version prefix such as `claude-opus-4-8`, or the full provider-form model ID. Provider-specific prefixes such as `us.anthropic.` are not stripped, so to allow a specific model, list its full provider-form ID, or map it through [`modelOverrides`](#override-model-ids-per-version). Any `[1m]` suffix is stripped from both the allowlist entry and the requested model before matching.
+  Filtering matches on a model alias such as `opus`, a version prefix such as `claude-opus-4-8`, or the full provider-form model ID. Provider-specific prefixes such as `us.anthropic.` are not stripped, so to allow a specific model, list its full provider-form ID, or map it through [`modelOverrides`](#override-model-ids-per-version). For a pinned model, that ID is the value you set in its `ANTHROPIC_DEFAULT_*_MODEL` variable. Any `[1m]` suffix is stripped from both the allowlist entry and the requested model before matching.
 </Note>
 
 ### Customize pinned model display and capabilities

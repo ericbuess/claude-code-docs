@@ -90,7 +90,7 @@ The progress view shows each phase with its agent counts, token totals, and elap
 | Key            | Action                                                                                                                      |
 | :------------- | :-------------------------------------------------------------------------------------------------------------------------- |
 | `↑` / `↓`      | Select a phase or agent                                                                                                     |
-| `Enter` or `→` | Drill into the selected phase, then into an agent to read its prompt, recent tool calls, and result                         |
+| `Enter` or `→` | Drill into the selected phase, then into an agent's detail. In the detail, `Enter` expands or collapses it                  |
 | `Esc` or `←`   | Back out one level. In v2.1.203 through v2.1.205, `←` didn't step back out of a phase or agent; use `Esc` on those versions |
 | `j` / `k`      | Scroll within the agent detail when it overflows                                                                            |
 | `f`            | Filter the agent list in the selected phase by status. Press again to cycle                                                 |
@@ -98,6 +98,10 @@ The progress view shows each phase with its agent counts, token totals, and elap
 | `x`            | Stop the selected agent, or stop the whole workflow when focus is on the run                                                |
 | `r`            | Restart the selected running agent                                                                                          |
 | `s`            | [Save](#save-the-workflow-for-reuse) the run's script as a command                                                          |
+
+The agent detail lists the agent's prompt, its recent tool calls, and its result. Each call shows its state, such as still running or failed. When the agent keeps a task list of its own, the detail shows it too, with each task's status.
+
+Press `Enter` to expand the detail. The prompt and result then show in full, and each listed call shows its input and the start of its result.
 
 ## Have Claude write a workflow
 
@@ -376,7 +380,11 @@ That last case means a failure in the middle of a fan-out reruns work that alrea
 You can resume a run within the same Claude Code session. What happens to a running workflow when you leave the session depends on how you leave:
 
 * If you [background the session](/docs/en/agent-view#what-carries-over-when-you-background), Claude Code replays the run the same way in the background session and continues it.
-* If you exit Claude Code while a workflow is running and [agent view is on](/docs/en/agent-view#from-inside-a-session), the exit dialog offers `Move to background and exit`, which carries the run over the same way. If you choose `Exit and stop tasks` instead, or the option isn't offered, the run stops with the session. Claude Code keeps the run's saved results under that session's directory in `~/.claude/projects/`, so a session you resume with `claude --resume` can replay them when you ask Claude to relaunch the workflow, while a session you start fresh has nothing to replay and starts the workflow over.
+* If you exit Claude Code while a workflow is running and [agent view is on](/docs/en/agent-view#from-inside-a-session), the exit dialog offers `Move to background and exit`, which carries the run over the same way. If you choose `Exit and stop tasks` instead, or the option isn't offered, the run stops with the session. Claude Code keeps the run's saved results under that session's directory in `~/.claude/projects/`, so a session you resume with `claude --resume` can replay them when you ask Claude to relaunch the workflow. In a session you start fresh, Claude has no earlier run to relaunch and starts the workflow over as a new run.
+
+In a [cloud session](/docs/en/claude-code-on-the-web), Claude Code also saves the run's results with the session's conversation history, which survives when the session's VM is reclaimed. When you [reopen such a session](/docs/en/claude-code-on-the-web#environment-expired) and ask Claude to relaunch the workflow, completed agents still return their saved results.
+
+In local and cloud sessions alike, when Claude relaunches an earlier run and Claude Code can't find that run's saved results at all, the relaunch fails with a `nothing to resume` error instead of starting the run over on its own. Ask Claude to start the workflow over as a new run.
 
 ### Cost
 

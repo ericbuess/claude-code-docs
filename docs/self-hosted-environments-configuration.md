@@ -130,12 +130,12 @@ The hook fires on every session end where a child process was spawned, whatever 
 
 `CLAUDE_RUNNER_EXIT_REASON` takes one of four values:
 
-* `completed`: a clean exit, including a session archived or deleted while the child was still connected.
-* `failed`: a child crash or a setup failure after spawn.
-* `interrupted`: an idle release, startup timeout, server deassign, drain, or watchdog kill.
-* `abandoned`: reserved for sessions another runner claimed; the hook doesn't currently fire in that case.
+* `completed`: the session ended cleanly. The Claude Code process exited normally, or the session was archived or deleted while it was still running.
+* `failed`: the Claude Code process crashed, or setup failed after it started.
+* `interrupted`: the runner stopped the session. It released the session to free the slot, the session timed out at startup, the server moved the session off this runner, the runner was draining, or the session outlasted its [`--kill-session-after-min`](/docs/en/self-hosted-environments-reference#runner-cli-flags) limit.
+* `abandoned`: reserved for a session another runner claimed. The hook doesn't currently fire in that case.
 
-The [session lifecycle counter semantics](/docs/en/self-hosted-environments-reference#session-lifecycle-counter-semantics) classify an idle release, a startup timeout, and a server deassign as `completed` instead: those are clean handoffs from the session's perspective even though this hook reports them as `interrupted`.
+The [session lifecycle counters](/docs/en/self-hosted-environments-reference#session-lifecycle-counter-semantics) count a release, a startup timeout, and a server move as `completed` rather than `interrupted`, because the runner handed the slot back cleanly. Expect that difference if you compare hook receipts with the counters.
 
 The hook's exit status never affects the session outcome; a failure is logged and ignored. The runner waits up to `--post-session-hook-timeout-sec`, 60 seconds by default, on every session end including runner shutdown. This example saves uncommitted work to a rescue branch:
 
@@ -169,7 +169,9 @@ A released session can resume on another runner. On a runner on v2.1.236 or late
 * **Idle after a turn, or timed out at startup**: the runner stops the child and runs this hook to completion. Only then does it release the session. A user message sent while the hook runs can't resume the session on another runner before the hook finishes.
 * **Waiting for the user to answer a prompt, such as a permission prompt**: the runner releases the session first, then runs this hook. A user message sent while the hook runs can resume the session on another runner before the hook finishes.
 
-A release at the [`--retire-at`](/docs/en/self-hosted-environments-reference#runner-cli-flags) time follows the same two paths. During a `SIGTERM` drain, the runner holds the session lease until the hook finishes; see [Shutdown timing](/docs/en/self-hosted-environments-deploy#shutdown-timing). Before v2.1.236, the runner released the session first and then ran this hook on both paths.
+This applies whenever the runner releases a session: at the idle timeout, at the [`--retire-at`](/docs/en/self-hosted-environments-reference#runner-cli-flags) time, and, on a runner on v2.1.260 or later, at a session's [`--kill-session-after-min`](/docs/en/self-hosted-environments-reference#runner-cli-flags) limit. A session whose turn has ended and that holds only background tasks counts as idle here. Before v2.1.236, the runner released the session first and then ran this hook in both cases.
+
+During a `SIGTERM` drain, the runner holds the session lease until the hook finishes; see [Shutdown timing](/docs/en/self-hosted-environments-deploy#shutdown-timing).
 
 ### command
 
