@@ -602,6 +602,8 @@ You can change effort through any of the following:
 
 Frontmatter effort applies when that skill or subagent is active, overriding the session level but not the environment variable.
 
+On Fable 5, Opus 4.8, and Opus 4.7, frontmatter effort also applies while the [hold on the model's default effort](#adjust-effort-level) is in effect. Before v2.1.267, the hold took precedence and Claude Code ignored the frontmatter level while the hold was active.
+
 If you set `effortLevel` in [managed settings](/docs/en/managed-settings), Claude Code applies it at the settings step of the [effort resolution order](#adjust-effort-level), and users can still change the level with `/effort` or `--effort`. To keep users at or below a level, set [`maxEffortLevel`](/docs/en/settings-reference#maxeffortlevel).
 
 The effort slider appears in `/model` when a supported model is selected. The current effort level is also shown in the session header next to the model name, for example "with low effort", so you can confirm which setting is active without opening `/model`. The footer also briefly shows the effort level at startup and when it changes.

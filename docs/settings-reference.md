@@ -4086,7 +4086,7 @@ This example keeps a machine from downloading the account's skills, whatever a s
 Choose which [channel](/docs/en/channels) plugins can push messages into sessions in your organization. When you set it, Claude Code uses your list in place of the default Anthropic allowlist; each entry names a plugin and the marketplace it comes from.
 
 * **Scope**: [`Managed`](#scopes)
-* **Type**: array of objects, each with `marketplace` and `plugin` strings
+* **Type**: array of objects, each with `marketplace` and `plugin` strings. An entry can instead be a `"plugin@marketplace"` string such as `"telegram@claude-plugins-official"`, which Claude Code treats as the equivalent object. The string form requires Claude Code v2.1.267 or later; earlier versions reject the whole `allowedChannelPlugins` value when it contains one
 * **Default**: unset, so Claude Code uses the default Anthropic allowlist
 
 This example turns channels on and allows only the Telegram plugin from the official Anthropic marketplace:
@@ -4100,7 +4100,9 @@ This example turns channels on and allows only the Telegram plugin from the offi
 }
 ```
 
-An empty array blocks every channel plugin. This key takes effect once channels pass the [`channelsEnabled`](#channelsenabled) gate for the account: on Team and Enterprise plans, and on Console accounts with managed settings, that means `channelsEnabled: true`. See [Restrict which channel plugins can run](/docs/en/channels#restrict-which-channel-plugins-can-run).
+An empty array blocks every channel plugin.
+
+This key takes effect once channels pass the [`channelsEnabled`](#channelsenabled) gate for the account: on Team and Enterprise plans, and on Console accounts with managed settings, that means `channelsEnabled: true`. See [Restrict which channel plugins can run](/docs/en/channels#restrict-which-channel-plugins-can-run).
 
 ### `blockedMarketplaces`
 

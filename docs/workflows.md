@@ -306,7 +306,7 @@ return audits.filter(Boolean)
 
 The body is plain JavaScript with top-level `await`. `agent()` spawns one subagent, `pipeline()` runs one per item in a list, and `parallel()` runs a set of agent tasks at the same time and waits for all of them.
 
-An `agent()` call resolves to `null` if you stop it mid-run or it hits an unrecoverable API error. `pipeline()` keeps that `null` in the results array, which is why the example ends with `.filter(Boolean)` to drop those entries.
+An `agent()` call resolves to `null` if you stop it mid-run or it hits an unrecoverable API error. In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), the classifier can block an `agent()` call before the subagent starts. A blocked call resolves to `null` and shows in the run's progress view with the reason. `pipeline()` keeps each `null` in the results array, which is why the example ends with `.filter(Boolean)` to drop those entries.
 
 If you pass a `schema` on an `agent()` call, that subagent returns JSON matching the shape instead of prose. Claude Code checks the schema before starting the subagent: when it can prove the schema contradicts itself, the call fails with an error naming the contradiction, and the subagent never starts. One contradiction it can prove is a `required` key that `additionalProperties: false` rules out.
 
