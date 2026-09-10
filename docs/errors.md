@@ -215,6 +215,8 @@ Match the message you see to a section below.
 | `its permission check expired before it ran (too many concurrent file operations)` / `ripgrep was found only by name on PATH`                                                                         | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `task output swap refused (tasks dir moved or linked)`                                                                                                                                                | [Tool errors](#task-output-swap-refused)                                                                                      |
 | `Command killed: its output file was replaced or could no longer be verified`                                                                                                                         | [Tool errors](#task-output-swap-refused)                                                                                      |
+| `the source file is not valid UTF-8 text` / `the source file is not valid UTF-16 text`                                                                                                                | [Tool errors](#the-source-file-is-not-valid-utf-8-text)                                                                       |
+| `the source file has the replacement character U+FFFD`                                                                                                                                                | [Tool errors](#the-source-file-is-not-valid-utf-8-text)                                                                       |
 | `Can't open MCP settings while no terminal is attached to this background session`                                                                                                                    | [Background session errors](#commands-refused-in-a-background-session)                                                        |
 | `Can't open MCP settings in a background session`                                                                                                                                                     | [Background session errors](#commands-refused-in-a-background-session)                                                        |
 | `blocked because the path is spelled in a form that cannot be safely resolved`                                                                                                                        | [Background session errors](#write-or-command-blocked-because-the-path-cannot-be-safely-resolved)                             |
@@ -233,6 +235,7 @@ Match the message you see to a section below.
 | `EUNKNOWN: unknown error, uv_spawn`                                                                                                                                                                   | [Background session errors](#eunknown-when-starting-a-background-session)                                                     |
 | `EACCES: permission denied, posix_spawn`                                                                                                                                                              | [Background session errors](#eacces-when-starting-a-background-session)                                                       |
 | `exited before it became reachable`                                                                                                                                                                   | [Background session errors](#background-service-exited-before-it-became-reachable)                                            |
+| `Couldn't start a background session (working directory no longer exists or is not accessible: ...)`                                                                                                  | [Background session errors](#working-directory-no-longer-exists-when-starting-a-background-session)                           |
 | `Claude Code is being updated by npm on this machine (still not runnable after 2 min, ...)`                                                                                                           | [Background session errors](#eacces-when-starting-a-background-session)                                                       |
 | `Claude Code process exited with code N`                                                                                                                                                              | [Wrapper and IDE errors](#claude-code-process-exited-with-code-n)                                                             |
 | `Could not locate the Claude CLI on PATH`                                                                                                                                                             | [Wrapper and IDE errors](#could-not-locate-the-claude-cli-on-path)                                                            |
@@ -1690,14 +1693,18 @@ Unable to resize image — image processing is unavailable and dimensions could 
 Unable to resize image — dimensions exceed the 2000x2000px limit and image processing failed. Please resize the image to reduce its pixel dimensions.
 Unable to resize image (… raw, … base64). The image exceeds the … API limit and compression failed. Please resize the image manually or use a smaller image.
 Unable to resize image — could not verify image dimensions are within the 2000x2000px API limit.
+Unable to resize image — it is a CMYK JPEG, which Claude Code cannot decode, and at …px it is over the 2000x2000px limit, so it cannot be sent. Re-save it as an RGB PNG or JPEG and try again.
+Unable to resize image — it is an animated WebP whose first frame Claude Code cannot decode, and at …px it is over the 2000x2000px limit, so it cannot be sent. Save its first frame as a PNG or JPEG and try again.
+Unable to resize image — its pixels could not be decoded (the file may be damaged, or use an encoding Claude Code cannot read), and it is over the … API limit (… raw, … base64), so it cannot be sent. Re-save it as a PNG or JPEG and try again.
 ```
 
-Claude Code normally resizes large images automatically. These errors mean the native image processor failed to load or returned an error, so the image couldn't be resized to fit within API limits.
+Claude Code normally resizes large images automatically. These errors mean the image couldn't be decoded or resized to fit within the API limits.
 
 **What to do:**
 
-* If the message asks you to convert the image, convert it to PNG, JPEG, GIF, or WebP and attach it again. Claude Code can verify dimensions for these formats without the image processor.
+* If the message asks you to convert the image, convert it to PNG, JPEG, GIF, or WebP and attach it again. Claude Code can verify dimensions for these formats from the file header, without decoding the image.
 * If the message reports a dimension or size limit, resize or recompress the image below that limit before attaching.
+* If the message names a cause, such as a CMYK JPEG, an animated WebP, or a possibly damaged file, re-save the image in the format the message suggests and attach it again.
 
 ### PDF errors
 
@@ -3088,6 +3095,28 @@ Command killed: its output file was replaced or could no longer be verified
 * Or check your project's directory under the Claude Code temp directory, `/private/tmp/claude-501/-Users-you-my-project` in the example message. If that path is a symbolic link, or a directory that shouldn't be there, remove the link or directory itself rather than the link's target, and restart Claude Code
 * If the refusal repeats, a process is replacing, linking, or removing entries under Claude Code's temp directory while the session runs. Set [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) to a directory nothing else manages and restart
 
+<h3 id="the-source-file-is-not-valid-utf-8-text">
+  The source file is not valid UTF-8 text
+</h3>
+
+Claude tried to publish an [artifact](/docs/en/artifacts) from a file whose bytes don't decode as text, or whose text already contains the replacement character `U+FFFD`, so Claude Code refused the publish before uploading anything. The message appears in the Artifact tool result and names the first position to fix:
+
+```text wrap theme={null}
+file_path: the source file is not valid UTF-8 text (first invalid byte at line 12, column 40). It may be saved in another encoding or contain binary data. Rewrite it as UTF-8, then publish again. Nothing was published.
+
+file_path: the source file has the replacement character U+FFFD at line 12, column 40, usually left where an earlier edit or paste lost a character. Replace it with the intended text (in HTML, write an intended U+FFFD as &#xFFFD;), then publish again. Nothing was published.
+```
+
+Claude Code decodes the file as UTF-8, or as UTF-16 when it starts with a little-endian UTF-16 byte-order mark. When such a UTF-16 file doesn't decode, the first message names `UTF-16` and still tells you to rewrite the file as UTF-8. When more positions follow the named one, the message adds a count such as `(+2 more)` after the position.
+
+**What to do:**
+
+* Usually nothing: Claude rewrites the file and publishes again
+* If the file is one you wrote or exported, save it again as UTF-8, and replace each `U+FFFD` with the character an earlier edit, paste, or conversion lost
+* To show an intentional `U+FFFD` on the page, write it as `&#xFFFD;` in the HTML instead of the literal character
+
+Before v2.1.267, Claude Code uploaded such a file without checking it, and the server refused the publish instead.
+
 ## Background session errors
 
 [Background sessions](/docs/en/agent-view) run without an interactive terminal of their own, so commands that need one behave differently there. These messages appear in the transcript of a background session, in the terminal that attaches to one, in the session or shell you dispatch from, or, for the [worktree-guard entries](#write-or-command-blocked-because-the-path-cannot-be-safely-resolved) below, in any session isolated in a worktree or running a worktree-isolated subagent; where a message is specific to one surface, its entry says so.
@@ -3396,6 +3425,20 @@ Two quoted reasons have known causes:
 
 * If the message quotes a line, fix what it names, then open the session or dispatch again. The next attempt starts the service again
 * Run `claude daemon status` to check whether a service is running now
+
+### Working directory no longer exists when starting a background session
+
+You tried to start a [background session](/docs/en/agent-view) in a directory that doesn't exist anymore. This happens when you dispatch from agent view or run `/background` after the directory you're working in was deleted or moved. It also happens when you attach to or restart a session whose process has exited and whose directory is gone, because the new process would start in that same directory. Claude Code doesn't start the session, and the message names the missing directory:
+
+```text theme={null}
+Couldn't start a background session (working directory no longer exists or is not accessible: /tmp/demo)
+```
+
+Before v2.1.257, the session appeared to start and then showed in agent view as a failed row with the same reason.
+
+**What to do:**
+
+* Recreate the directory the message names, or dispatch from a directory that exists, then try again
 
 ## Wrapper and IDE errors
 

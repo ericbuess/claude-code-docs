@@ -245,7 +245,7 @@ export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
 
 When enabling Amazon Bedrock for Claude Code, keep the following in mind:
 
-* As of v2.1.172, you only need to set `AWS_REGION` to override your AWS profile's region or when your profile has no region. Claude Code resolves the region in this order:
+* You only need to set `AWS_REGION` to override your AWS profile's region or when your profile has no region. Claude Code resolves the region in this order:
 
   * `AWS_REGION`
   * `AWS_DEFAULT_REGION`
@@ -256,7 +256,7 @@ When enabling Amazon Bedrock for Claude Code, keep the following in mind:
 
   The active profile is `AWS_PROFILE` if set, otherwise `default`. Set `AWS_SHARED_CREDENTIALS_FILE` or `AWS_CONFIG_FILE` to point at non-default file paths.
 
-  Run `/status` to see the resolved region. When the region came from your AWS config files or the default fallback, Claude Code also notes the source in the `/status` output. On v2.1.171 and earlier, Claude Code doesn't read the AWS config files, so set `AWS_REGION` explicitly.
+  Run `/status` to see the resolved region. When the region came from your AWS config files or the default fallback, Claude Code also notes the source in the `/status` output.
 * When using Amazon Bedrock, the `/logout` command is unavailable since authentication is handled through AWS credentials.
 * The WebSearch tool is not available on Amazon Bedrock. See [WebSearch tool behavior](/docs/en/tools-reference#websearch-tool-behavior).
 * You can use settings files for environment variables like `AWS_PROFILE` that you don't want to leak to other processes. See [Settings](/docs/en/settings) for more information.
@@ -491,7 +491,7 @@ export CLAUDE_CODE_USE_MANTLE=1
 export AWS_REGION=us-east-1
 ```
 
-Claude Code constructs the endpoint URL from the AWS region. As of v2.1.172, the region is resolved with the same precedence as [Amazon Bedrock above](#3-configure-claude-code); earlier versions use `AWS_REGION` only. To override the URL for a custom endpoint or gateway, set `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`.
+Claude Code constructs the endpoint URL from the AWS region, resolved with the same precedence as [Amazon Bedrock above](#3-configure-claude-code). To override the URL for a custom endpoint or gateway, set `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`.
 
 Run `/status` inside Claude Code to confirm. The provider line shows `Amazon Bedrock (Mantle)` when Mantle is active.
 

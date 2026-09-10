@@ -112,7 +112,7 @@ Once the gateway is serving, push `forceLoginMethod`, `forceLoginGatewayUrl`, an
 
 Once you deploy the keys, Claude Code stops using a leftover API key or claude.ai login on the machine, so plan the push together with your sign-in instructions. [Administrator policy requires a Cloud gateway sign-in](/docs/en/errors#administrator-policy-requires-a-cloud-gateway-sign-in) describes the messages developers see.
 
-See [Client-side managed settings](/docs/en/claude-apps-gateway-config#client-side-managed-settings) for the file paths and the Claude Desktop `bootstrapUrl` equivalent.
+See [where each mechanism stores the policy](/docs/en/managed-settings#where-each-mechanism-stores-the-policy) for the file paths, and [Client-side managed settings](/docs/en/claude-apps-gateway-config#client-side-managed-settings) for the Claude Desktop `bootstrapUrl` equivalent.
 
 ## Operations
 

@@ -1001,11 +1001,12 @@ Have Claude respond in a language other than English by default. There is no fix
 
 ### `maxEffortLevel`
 
-Cap the [effort level](/docs/en/model-config#adjust-effort-level) a session can use, leaving lower levels available. Any higher level runs at the cap instead, including one from `/effort`, the `/model` picker, `--effort`, [`CLAUDE_CODE_EFFORT_LEVEL`](/docs/en/env-vars), or the model's own default. Claude Code applies the cap itself before each request, so it holds on every provider, including Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. Requires Claude Code v2.1.267 or later.
+Cap the [effort level](/docs/en/model-config#adjust-effort-level) a session can use, leaving lower levels available. Any higher level runs at the cap instead, including one from `/effort`, the `/model` picker, `--effort`, [`CLAUDE_CODE_EFFORT_LEVEL`](/docs/en/env-vars), a skill's or subagent's `effort` frontmatter, or the model's own default. Claude Code applies the cap itself before each request, so it holds on every provider, including Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. Requires Claude Code v2.1.267 or later.
 
 * **Scope**: [`Any file`](#scopes). Deploy it in managed settings to enforce it for an organization. When several scopes set a cap, the lowest applies, so a cap set in one scope can't be raised from another
 * **Type**: string, one of `"low"`, `"medium"`, `"high"`, `"xhigh"`, or `"max"`. A `"max"` value sets no cap
 * **Default**: unset, so no cap applies
+* **Effect on ultracode**: a cap below `xhigh` makes [ultracode](#ultracode) unavailable on the models the cap applies to
 * **Per-model caps**: add `maxEffortLevel` to a model's [`modelSettings`](#modelsettings) entry. That entry replaces this key for the model only within the settings source that sets both, such as your user settings or one [managed source](/docs/en/managed-settings#how-claude-code-combines-managed-sources). Set `"max"` there to exempt the model from that source's cap; Claude Code still applies caps from other sources
 
 This example caps every model at `medium` and exempts Sonnet 4.6:

@@ -40,7 +40,7 @@ Configure an environment when the default isn't enough: when Claude needs to rea
 
 ## Configure your environment
 
-Create, edit, and archive environments from the environment selector at [claude.ai/code](https://claude.ai/code), which you reach after [web onboarding](/docs/en/web-quickstart). Environments you create are personal to your account; [shared environments](#organization-shared-environments) created by an Owner appear in the same selector. See [Installed tools](#installed-tools) for what's available without any configuration.
+Create, edit, and archive environments from the environment selector, which you reach at [claude.ai/code](https://claude.ai/code) after [web onboarding](/docs/en/web-quickstart), or from the prompt box in the [Desktop app](/docs/en/desktop#cloud-sessions). Environments you create are personal to your account; [shared environments](#organization-shared-environments) created by an Owner appear in the same selector. See [Installed tools](#installed-tools) for what's available without any configuration.
 
 <Steps>
   <Step title="Open the environment selector">
@@ -140,7 +140,7 @@ Run `/remote-env` in your terminal to choose the default environment for cloud s
 
 A [self-hosted environment](/docs/en/self-hosted-environments) ID, which has the form `ccpool_...`, follows a stricter source rule. See [`remote.defaultEnvironmentId`](/docs/en/settings-reference#remote-defaultenvironmentid) for the settings layers Claude Code honors it from.
 
-`/remote-env` only sets the default: it doesn't start a session, and it can't add or edit environments. Manage them at [claude.ai/code](https://claude.ai/code).
+`/remote-env` only sets the default: it doesn't start a session, and it can't add or edit environments. Manage them from the [environment selector](#configure-your-environment).
 
 ### Archive an environment
 

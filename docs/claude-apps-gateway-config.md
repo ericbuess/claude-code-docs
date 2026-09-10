@@ -920,13 +920,7 @@ For the CLI, set these keys in the per-OS `managed-settings.json`. The two login
 
 `parentSettingsBehavior: "merge"` keeps Claude Desktop's delivery of the egress allowlist to its embedded Claude Code sessions working; [Deliver policy to Claude Desktop sessions](/docs/en/claude-apps-gateway#deliver-policy-to-claude-desktop-sessions) explains the mechanism and where the opt-in must sit.
 
-Deploy the `managed-settings.json` file to each device, typically via your MDM platform. The file path differs by platform:
-
-| Platform      | Path                                                                                                                          |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| macOS         | `/Library/Application Support/ClaudeCode/managed-settings.json`, or the `com.anthropic.claudecode` managed preferences domain |
-| Linux and WSL | `/etc/claude-code/managed-settings.json`                                                                                      |
-| Windows       | `C:\Program Files\ClaudeCode\managed-settings.json`, or Group Policy via the HKLM registry                                    |
+Deploy the `managed-settings.json` file to each device, typically via your MDM platform. The file path differs by platform. See [where each mechanism stores the policy](/docs/en/managed-settings#where-each-mechanism-stores-the-policy).
 
 By default, a registry policy on Windows or a managed-preferences plist on macOS replaces the `managed-settings.json` file rather than merging with it, apart from the [exception keys and cross-source checks above](#precedence-with-other-managed-sources). All three keys in this snippet follow the highest-priority-source rule, so fleets that deliver policy through Group Policy or configuration profiles must put all three in that mechanism instead.
 

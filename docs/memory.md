@@ -247,7 +247,9 @@ Glob syntax treats `[` as the start of a bracket expression such as `[abc]`. A p
 
 #### Share rules across projects with symlinks
 
-The `.claude/rules/` directory supports symlinks, so you can maintain a shared set of rules and link them into multiple projects. Symlinks are resolved and loaded normally, and circular symlinks are detected and handled gracefully.
+The `.claude/rules/` directory supports symlinks, so you can maintain a shared set of rules and link them into multiple projects. Circular symlinks are detected and handled gracefully.
+
+Claude Code treats a symlink whose target is outside your working directory like an [external import](#import-additional-files). The linked rules don't load until you approve external imports for the project, and after that only the ones without a [`paths` field](#path-specific-rules) load. Claude Code asks for that approval only when a project memory file imports a file outside the working directory with `@path`, not for symlinks alone. To load shared rules without that approval, keep them in [`~/.claude/rules/`](#user-level-rules), where they apply to every project on your machine.
 
 This example links both a shared directory and an individual file:
 

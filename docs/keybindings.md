@@ -472,7 +472,7 @@ Set an action to `null` to unbind a default shortcut:
 
 This also works for chord bindings. Unbinding every chord that shares a prefix frees that prefix for use as a single-key binding. A chord in any active context keeps its prefix reserved, so you must unbind each chord in the context that defines it.
 
-Claude Code binds these default chords on the `ctrl+x` prefix: `ctrl+x ctrl+k`, `ctrl+x ctrl+e`, and `ctrl+x enter` in `Chat`, `ctrl+x ctrl+b` in `Task`, and `ctrl+x b` in `DiffPanel`. The `ctrl+x enter` chord requires v2.1.247 or later, and `ctrl+x b` requires v2.1.260 or later. To reclaim `ctrl+x` itself as a single-key binding, unbind all of them:
+Claude Code binds these default chords on the `ctrl+x` prefix: `ctrl+x ctrl+k`, `ctrl+x ctrl+e`, `ctrl+x enter`, `ctrl+x ctrl+a`, and `ctrl+x tab` in `Chat`, `ctrl+x ctrl+b` in `Task`, and `ctrl+x b` in `DiffPanel`. The `ctrl+x enter` chord requires v2.1.247 or later, and `ctrl+x b`, `ctrl+x ctrl+a`, and `ctrl+x tab` require v2.1.260 or later. To reclaim `ctrl+x` itself as a single-key binding, unbind all of them:
 
 ```json theme={null}
 {
@@ -495,6 +495,8 @@ Claude Code binds these default chords on the `ctrl+x` prefix: `ctrl+x ctrl+k`, 
         "ctrl+x ctrl+k": null,
         "ctrl+x ctrl+e": null,
         "ctrl+x enter": null,
+        "ctrl+x ctrl+a": null,
+        "ctrl+x tab": null,
         "ctrl+x": "chat:newline"
       }
     }

@@ -85,7 +85,7 @@ To get the most from Fable:
 * **Size up larger tasks**: give it work you would normally break into pieces. It holds long sessions without losing the thread.
 
 <Note>
-  Fable 5.1 requires Claude Code v2.1.257 or later. If a request for it from an older version fails, see [Claude Code does not support this model](/docs/en/errors#claude-code-does-not-support-this-model). Fable 5 requires v2.1.170 or later. Run `claude update` to upgrade. For availability under zero data retention, see [Model availability under ZDR](/docs/en/zero-data-retention#model-availability-under-zdr).
+  Fable 5.1 requires Claude Code v2.1.257 or later. If a request for it from an older version fails, see [Claude Code does not support this model](/docs/en/errors#claude-code-does-not-support-this-model). Run `claude update` to upgrade. For availability under zero data retention, see [Model availability under ZDR](/docs/en/zero-data-retention#model-availability-under-zdr).
 </Note>
 
 On the Anthropic API, the `/model` picker lists a Fable model only after the server reports it available for your organization. When you type `/model fable` or a Fable model ID, Claude Code checks availability with the server directly, so a typed selection can succeed even when the picker doesn't list the entry.
@@ -567,7 +567,15 @@ Passing `ultracode` to the `--effort` flag or the Agent SDK `effortLevel` value 
 
 The persisted `effortLevel` setting and the `CLAUDE_CODE_EFFORT_LEVEL` environment variable don't accept `ultracode`. When `CLAUDE_CODE_EFFORT_LEVEL` is set to a level other than `xhigh`, requests run at that level and ultracode's workflow orchestration stays inactive. Selecting ultracode then shows a warning that the environment variable overrides effort for the session.
 
-When ultracode isn't available, for example when [workflows are turned off](/docs/en/workflows#turn-workflows-off), `--effort ultracode` sets `xhigh` effort only.
+<span id="when-ultracode-is-available" />
+
+Ultracode is unavailable when:
+
+* [Workflows are turned off](/docs/en/workflows#turn-workflows-off)
+* The model doesn't support `xhigh` effort
+* An [effort cap](#organization-effort-limits) below `xhigh` applies to the model
+
+In those cases `--effort ultracode` starts the session with ultracode off, at the highest effort level the model and any cap allow, up to `xhigh`.
 
 #### Choose an effort level
 
@@ -600,7 +608,7 @@ You can change effort through any of the following:
 * **From a connected device**: in a [Remote Control](/docs/en/remote-control#what-connected-devices-see) session, pick a level from the effort control on your phone or in your browser. The level applies to the current session only, though it also ends the [hold on the model's default effort](#adjust-effort-level). Requires Claude Code v2.1.234 or later
 * **Skill and subagent frontmatter**: set `effort` in a [skill](/docs/en/skills#frontmatter-reference) or [subagent](/docs/en/sub-agents#supported-frontmatter-fields) markdown file to override the effort level when that skill or subagent runs
 
-Frontmatter effort applies when that skill or subagent is active, overriding the session level but not the environment variable.
+Frontmatter effort applies when that skill or subagent is active, overriding the session level but not the environment variable. A [`maxEffortLevel`](/docs/en/settings-reference#maxeffortlevel) or [organization effort cap](#organization-effort-limits) still limits the level the skill or subagent runs at.
 
 On Fable 5, Opus 4.8, and Opus 4.7, frontmatter effort also applies while the [hold on the model's default effort](#adjust-effort-level) is in effect. Before v2.1.267, the hold took precedence and Claude Code ignored the frontmatter level while the hold was active.
 

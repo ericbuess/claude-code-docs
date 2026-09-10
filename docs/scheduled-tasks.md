@@ -8,23 +8,23 @@
 
 Scheduled tasks let Claude re-run a prompt automatically on an interval. Use them to poll a deployment, babysit a PR, check back on a long-running build, or remind yourself to do something later in the session. To react to events as they happen instead of polling, see [Channels](/docs/en/channels): your CI can push the failure into the session directly. To keep the session working turn after turn toward a condition rather than on an interval, see [`/goal`](/docs/en/goal).
 
-Tasks are session-scoped: they live in the current conversation and stop when you start a new one. Resuming with `--resume` or `--continue` brings back any task that hasn't [expired](#seven-day-expiry): a recurring task created within the last 7 days, or a one-shot whose scheduled time hasn't passed yet. For scheduling that survives independently of any session, use [Routines](/docs/en/routines) to create a routine on the cloud, set up a [Desktop scheduled task](/docs/en/desktop-scheduled-tasks), or use [GitHub Actions](/docs/en/github-actions).
+Tasks are session-scoped: they live in the current conversation and stop when you start a new one. When you resume with `--resume` or `--continue`, Claude Code restores tasks that haven't [expired](#seven-day-expiry), except those listed under [Limitations](#limitations). For scheduling that survives independently of any session, use [Routines](/docs/en/routines) to create a routine on the cloud, set up a [Desktop scheduled task](/docs/en/desktop-scheduled-tasks), or use [GitHub Actions](/docs/en/github-actions).
 
 ## Compare scheduling options
 
 Claude Code offers three ways to schedule recurring or one-off work:
 
-|                            | [Cloud](/docs/en/routines)               | [Desktop](/docs/en/desktop-scheduled-tasks) | [`/loop`](/docs/en/scheduled-tasks)      |
-| :------------------------- | :---------------------------------- | :------------------------------------- | :---------------------------------- |
-| Runs on                    | Cloud, Anthropic-managed by default | Your machine                           | Your machine                        |
-| Requires machine on        | No                                  | Yes                                    | Yes                                 |
-| Requires open session      | No                                  | No                                     | Yes                                 |
-| Persistent across restarts | Yes                                 | Yes                                    | Restored on `--resume` if unexpired |
-| Access to local files      | No (fresh clone)                    | Yes                                    | Yes                                 |
-| MCP servers                | Connectors configured per task      | [Config files](/docs/en/mcp) and connectors | Inherits from session               |
-| Permission prompts         | No (runs autonomously)              | Configurable per task                  | Inherits from session               |
-| Customizable schedule      | Via `/schedule` in the CLI          | Yes                                    | Yes                                 |
-| Minimum interval           | 1 hour                              | 1 minute                               | 1 minute                            |
+|                            | [Cloud](/docs/en/routines)               | [Desktop](/docs/en/desktop-scheduled-tasks) | [`/loop`](/docs/en/scheduled-tasks)                                             |
+| :------------------------- | :---------------------------------- | :------------------------------------- | :------------------------------------------------------------------------- |
+| Runs on                    | Cloud, Anthropic-managed by default | Your machine                           | Your machine                                                               |
+| Requires machine on        | No                                  | Yes                                    | Yes                                                                        |
+| Requires open session      | No                                  | No                                     | Yes                                                                        |
+| Persistent across restarts | Yes                                 | Yes                                    | Restored on `--resume`, with [exceptions](/docs/en/scheduled-tasks#limitations) |
+| Access to local files      | No (fresh clone)                    | Yes                                    | Yes                                                                        |
+| MCP servers                | Connectors configured per task      | [Config files](/docs/en/mcp) and connectors | Inherits from session                                                      |
+| Permission prompts         | No (runs autonomously)              | Configurable per task                  | Inherits from session                                                      |
+| Customizable schedule      | Via `/schedule` in the CLI          | Yes                                    | Yes                                                                        |
+| Minimum interval           | 1 hour                              | 1 minute                               | 1 minute                                                                   |
 
 <Tip>
   Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
@@ -207,7 +207,7 @@ Session-scoped scheduling has inherent constraints:
 
 * Tasks only fire while Claude Code is running and idle. Closing the terminal or letting the session exit stops them firing. [Backgrounding the session](/docs/en/agent-view#from-inside-a-session) carries `/loop` tasks over to a background session, which keeps running without a terminal.
 * No catch-up for missed fires. If a task's scheduled time passes while Claude is busy on a long-running request, it fires once when Claude becomes idle, not once per missed interval.
-* Starting a fresh conversation clears all session-scoped tasks. Resuming with `claude --resume` or `claude --continue` restores recurring tasks that have not [expired](#seven-day-expiry) and one-shot tasks whose scheduled time has not yet passed. Background Bash and monitor tasks are never restored on resume.
+* Starting a fresh conversation clears all session-scoped tasks. When you resume a session with `claude --resume` or `claude --continue`, Claude Code restores the tasks scheduled with `CronCreate`, except recurring tasks that have [expired](#seven-day-expiry) and one-shot tasks whose scheduled time has passed. A [self-paced `/loop`](#let-claude-choose-the-interval) isn't restored, so run `/loop` again to restart it. Background Bash and monitor tasks are never restored on resume.
 * With [feature-flag fetching off](/docs/en/env-vars#features-that-need-feature-flag-fetching), Claude Code stores a task you asked to keep across sessions in the project's `.claude` directory. When that directory or the task file in it is a symlink, Claude Code returns an error instead of scheduling the task.
 
 For cron-driven automation that needs to run unattended:

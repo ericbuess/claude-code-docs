@@ -155,7 +155,7 @@ To turn it on while you choose a model, move the `/model` picker's effort slider
 
 With ultracode on, Claude decides when a task warrants a workflow. A single request can turn into several workflows in a row: one to understand the code, one to make the change, and one to verify it. This applies to every task in the session, so each request uses more tokens and takes longer than at lower effort levels.
 
-`/effort ultracode` lasts for the current session; to have every session start with it, set the [`ultracode`](/docs/en/settings-reference#ultracode) setting. Drop back with `/effort high` when you return to routine work. It's available on models that support `xhigh` [effort](/docs/en/model-config#adjust-effort-level); on other models the `/effort` menu doesn't offer it.
+`/effort ultracode` lasts for the current session; to have every session start with it, set the [`ultracode`](/docs/en/settings-reference#ultracode) setting. Drop back with `/effort high` when you return to routine work. The `/effort` menu offers it only [when ultracode is available](/docs/en/model-config#when-ultracode-is-available).
 
 ### Approve the plan before it runs
 

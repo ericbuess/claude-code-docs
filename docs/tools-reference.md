@@ -179,13 +179,7 @@ For long-running processes such as dev servers or watch builds, Claude can set `
 
 A command that a [foreground subagent](/docs/en/sub-agents#run-subagents-in-foreground-or-background) started stops when that subagent gives its final response. A command that the main conversation or a background subagent started keeps running after a final response. In non-interactive mode with the `-p` flag, [background commands end shortly after the run's final result](/docs/en/headless#background-tasks-at-exit).
 
-When a command reaches its timeout without finishing, Claude Code moves it to the background instead of stopping it. Claude keeps working while the command continues. Claude Code applies the same lifetime rules to a moved command as to any other background command, so it still ends a foreground subagent's command at that subagent's final response. Setting [`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1`](/docs/en/env-vars#variables) disables auto-backgrounding along with the rest of the background task functionality.
-
-Claude Code never auto-backgrounds three kinds of command. It stops them at the timeout instead:
-
-* A command that starts with `sleep`.
-* A command that runs `git` anywhere in it.
-* A compound command Claude Code can't fully parse into simple commands. Claude Code treats a parameter expansion such as `${VAR}` as unparseable, so it stops a command that ends in `; exit "${PIPESTATUS[0]}"` at the timeout even when the rest of that command parses.
+When a command reaches its timeout without finishing, Claude Code moves it to the background instead of stopping it, unless the command starts with `sleep`. Claude keeps working while the command continues. Claude Code applies the same lifetime rules to a moved command as to any other background command, so it still ends a foreground subagent's command at that subagent's final response. Setting [`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1`](/docs/en/env-vars#variables) disables auto-backgrounding along with the rest of the background task functionality.
 
 The result of a command moved to the background states what happened:
 

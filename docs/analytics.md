@@ -121,10 +121,6 @@ Click **Export all users** to download complete contribution data for all users 
 
 When contribution metrics are enabled, Claude Code analyzes merged pull requests to determine which code was written with Claude Code assistance. This is done by matching Claude Code session activity against the code in each PR.
 
-#### Tagging criteria
-
-PRs are tagged as "with Claude Code" if they contain at least one line of code written during a Claude Code session. The system uses conservative matching: only code where there is high confidence in Claude Code's involvement is counted as assisted.
-
 #### Attribution process
 
 When a pull request is merged:

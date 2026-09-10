@@ -167,7 +167,7 @@ export CLAUDE_CODE_SCROLL_SPEED=3
 
 A value of `3` matches the default in `vim` and similar applications. The setting accepts any positive value up to 20, including fractional values below 1 such as `0.25` to slow accelerated trackpad and wheel scrolling in terminals that already amplify wheel events.
 
-To adjust scroll speed interactively, run `/scroll-speed`. The dialog shows a ruler you can scroll while it is open so you can feel the change immediately. Press `←` and `→` to adjust the speed, `r` to reset to the auto-detected default, and `Enter` to save. The dialog steps in whole numbers up to 10, and on terminals that support finer control it also offers quarter steps down to 0.25. Quarter steps require Claude Code v2.1.172 or later.
+To adjust scroll speed interactively, run `/scroll-speed`. The dialog shows a ruler you can scroll while it is open so you can feel the change immediately. Press `←` and `→` to adjust the speed, `r` to reset to the auto-detected default, and `Enter` to save. The dialog steps in whole numbers up to 10, and on terminals that support finer control it also offers quarter steps down to 0.25.
 
 The command writes the same value the `CLAUDE_CODE_SCROLL_SPEED` environment variable sets, persisted to `~/.claude/settings.json`. The dialog's maximum is 10: if you set a higher value through the environment variable, the dialog shows 10, and saving from the dialog persists 10. The command isn't available in the JetBrains IDE terminal.
 
