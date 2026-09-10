@@ -394,13 +394,18 @@ Setting the variable has these effects and limits:
 
 ### Route to a cloud provider through a gateway
 
-These configurations point Claude Code at a gateway through a provider-specific base URL variable in place of `ANTHROPIC_BASE_URL`. Amazon Bedrock and Google Cloud's Agent Platform gateways accept those providers' native request formats; Microsoft Foundry and Claude Platform on AWS gateways accept the Anthropic Messages format and differ only in which base URL variable reaches them.
+These configurations point Claude Code at a gateway through a provider-specific base URL variable in place of `ANTHROPIC_BASE_URL`. Amazon Bedrock and Google Cloud's Agent Platform gateways accept those providers' native request formats; Microsoft Foundry and Claude Platform on AWS gateways accept the Anthropic Messages format. On the Amazon Bedrock and Google Cloud's Agent Platform routes, Claude Code also limits the beta headers and request fields it sends to the set that provider accepts. For what your gateway receives on each route, see the [gateway compatibility guide](/docs/en/llm-gateway-protocol).
 
 Use one only if your gateway team specifically named Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or the Claude Platform on AWS. If the [verification request](#verify-the-connection) above returned JSON, you can skip this section.
 
-Set the block for the provider your gateway team named. The skip-auth variables tell Claude Code not to sign requests with provider credentials, since the gateway holds those. If the gateway needs its own token, add `ANTHROPIC_AUTH_TOKEN` after the block, except for Microsoft Foundry, which uses `ANTHROPIC_FOUNDRY_API_KEY` as shown.
+Set the block for the provider your gateway team named. The skip-auth variables in the Amazon Bedrock, Google Cloud's Agent Platform, and Claude Platform on AWS blocks tell Claude Code not to sign requests with the cloud provider's credentials, since the gateway holds those. If the gateway also needs its own token, where you put it depends on the provider:
+
+* **Amazon Bedrock, Google Cloud's Agent Platform, or Claude Platform on AWS**: add `ANTHROPIC_AUTH_TOKEN` after the block. Claude Code sends it to the gateway as an `Authorization: Bearer` header. For a credential in a different scheme or header, use [`ANTHROPIC_CUSTOM_HEADERS`](#send-additional-headers) instead. Keep the skip-auth variable set either way, since without it Claude Code removes any `Authorization` header that `ANTHROPIC_AUTH_TOKEN`, an [`apiKeyHelper`](#rotate-credentials-with-apikeyhelper), or `ANTHROPIC_CUSTOM_HEADERS` would add.
+* **Microsoft Foundry**: use `ANTHROPIC_FOUNDRY_API_KEY` as [its block](#microsoft-foundry) shows
 
 #### Amazon Bedrock
+
+Leave `AWS_BEARER_TOKEN_BEDROCK` unset when the gateway issues its own credential. If you set it, Claude Code sends that [Amazon Bedrock API key](/docs/en/amazon-bedrock#2-configure-aws-credentials) as the `Authorization` header instead of your gateway token, even with `CLAUDE_CODE_SKIP_BEDROCK_AUTH` set.
 
 <Tabs>
   <Tab title="Bash or Zsh">
@@ -421,6 +426,8 @@ Set the block for the provider your gateway team named. The skip-auth variables 
 </Tabs>
 
 #### Google Cloud's Agent Platform
+
+Replace the project ID and region with your own values. Claude Code includes both in the path of each request it sends to the gateway:
 
 <Tabs>
   <Tab title="Bash or Zsh">
@@ -443,6 +450,12 @@ Set the block for the provider your gateway team named. The skip-auth variables 
     ```
   </Tab>
 </Tabs>
+
+The block covers routing and authentication. The region overrides and model pins from the [Agent Platform setup](/docs/en/google-vertex-ai#4-configure-claude-code) apply through a gateway as well:
+
+* **Per-model regions**: if your gateway serves some models from a region other than `CLOUD_ML_REGION`, set the matching `VERTEX_REGION_CLAUDE_*` variable for each, for example `VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1`. The [environment variables reference](/docs/en/env-vars) lists the exact names.
+* **Model versions**: pin `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, and `ANTHROPIC_DEFAULT_HAIKU_MODEL` as in [Pin model versions](/docs/en/google-vertex-ai#5-pin-model-versions). Setting `ANTHROPIC_DEFAULT_HAIKU_MODEL` also moves background tasks such as session titles to that model, and that section explains which model runs them otherwise.
+* **Model capabilities**: if you pin a model ID that your Claude Code version doesn't recognize, features such as effort levels or extended thinking can stay disabled on it. Declare what the model supports with [`ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES`](/docs/en/model-config#customize-pinned-model-display-and-capabilities) and its Sonnet and Haiku counterparts.
 
 #### Microsoft Foundry
 

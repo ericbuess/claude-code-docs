@@ -72,7 +72,6 @@ These actions cause the next request to miss part or all of the cache. You see a
 * [Connecting or disconnecting an MCP server](#connecting-or-disconnecting-an-mcp-server)
 * [Enabling or disabling a plugin](#enabling-or-disabling-a-plugin)
 * [Denying an entire tool](#denying-an-entire-tool)
-* [Changing output style](#changing-output-style)
 * [Compacting the conversation](#compacting-the-conversation)
 * [Accumulating many images](#accumulating-many-images)
 * [Upgrading Claude Code](#upgrading-claude-code)
@@ -139,14 +138,14 @@ When you enable a [code intelligence plugin](/docs/en/discover-plugins#code-inte
 
 #### When plugin changes apply
 
-A plugin change applies when you run [`/reload-plugins`](/docs/en/discover-plugins#apply-plugin-changes-without-restarting) or start a new session, not when you run `/plugin enable` or `/plugin disable`. You pay the cost, whether appended announcements or a full re-read, on the first turn after the change applies. Claude Code can also apply a change on its own:
+A change you make in the `/plugin` menu goes through [`/reload-plugins`](/docs/en/discover-plugins#apply-plugin-changes-without-restarting), which Claude Code runs for you when you close the menu. You pay the cost, whether appended announcements or a full re-read, on the first turn after the change applies. Claude Code can also apply a change on its own:
 
 * For a plugin with a `command` source, Claude Code [can reload the plugin itself](/docs/en/plugin-marketplaces#when-claude-code-re-runs-the-command).
-* When you [install a plugin from the `/plugin` interface](/docs/en/discover-plugins#install-plugins), Claude Code can activate it during the install. Claude Code tells you in the install summary whether it did or whether to run `/reload-plugins`.
+* When you [install a plugin from the `/plugin` interface](/docs/en/discover-plugins#install-plugins), Claude Code can activate it during the install. The install summary tells you whether it did.
 * When you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later, Claude Code applies the plugins the new directory's settings enable as part of the move, without the full re-read warning that holds a `/reload-plugins`.
 * In interactive sessions, when you add or remove a plugin in a [folder of plugins](/docs/en/plugins#test-your-plugins-locally) you passed with `--plugin-dir`, the change applies right away. If applying it would trigger a full re-read, Claude Code holds the change instead and shows a notice to run `/reload-plugins`. Requires Claude Code v2.1.265 or later.
 
-When you run `/reload-plugins` and the reload would trigger a full re-read, Claude Code shows a warning and doesn't apply the reload. Rerun it with `--force` to apply the reload anyway.
+When `/reload-plugins` runs and the reload would trigger a full re-read, Claude Code shows a warning and doesn't apply the reload. Run `/reload-plugins --force` to apply it anyway.
 
 `/reload-plugins` also runs in sessions without an interactive terminal, such as the desktop app, the Agent SDK, and [non-interactive mode](/docs/en/headless) with `-p`, when you type it into the session directly. Requires Claude Code v2.1.260 or later.
 
@@ -161,14 +160,6 @@ When you disable a plugin you enabled earlier in the session, Claude Code restor
 Adding a bare tool name like `Bash` or `WebFetch` as a [deny rule](/docs/en/permissions#manage-permissions) removes that tool from Claude's context entirely. Claude Code loads built-in tool definitions into the system prompt layer, so adding or removing one of these rules mid-session invalidates the cache. Claude Code applies the change on the next request, whether you add the rule through `/permissions` or by [editing a settings file directly](/docs/en/settings#when-edits-take-effect). That includes a rule you add through `/permissions` in the middle of a turn.
 
 Only a deny rule that matches in the tool-name position has this effect: a bare tool name, the equivalent `Bash(*)` form, or a [tool-name glob](/docs/en/permissions#tool-name-wildcards) like `"*"`. A glob that matches only MCP tools, such as `"mcp__*"`, removes those tools the same way but leaves the cache intact when the matched tools are [deferred](#connecting-or-disconnecting-an-mcp-server), the default, since deferred definitions were never in the cached prefix. Scoped deny rules like `Bash(rm *)`, and all allow and ask rules, don't change which tools Claude sees. Claude Code checks them when Claude attempts a call, leaving the prefix intact.
-
-### Changing output style
-
-When you switch [output styles](/docs/en/output-styles) mid-session with `/config` or the `outputStyle` setting, Claude uses the new style starting with your next message. In a conversation that [keeps a recorded system prompt](/docs/en/cli-reference#system-prompt-flags-in-resumed-conversations), as sessions signed in with a claude.ai or Console account do by default, Claude Code delivers the new style's instructions as a message in the conversation. That request still reads the system prompt and the earlier conversation from the cache.
-
-In sessions that don't [fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching), such as on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, the style's instructions are part of the system prompt, so the request after a switch reads the entire conversation history with no cache hits. There, switch styles before your first message in a session or right after `/clear` or `/compact`, when there is little or no conversation history to re-read.
-
-Before v2.1.251, a mid-session style switch kept the cache but didn't apply until you ran `/clear` or started a new session.
 
 ### Compacting the conversation
 
@@ -205,6 +196,7 @@ These actions either append to the end of the conversation or don't touch the re
 * [Editing files in your repository](#editing-files-in-your-repository)
 * [Editing CLAUDE.md mid-session](#editing-claude-md-mid-session)
 * [Changing permission mode](#changing-permission-mode)
+* [Changing output style](#changing-output-style)
 * [Invoking skills and commands](#invoking-skills-and-commands)
 * [Running `/recap`](#running-%2Frecap)
 * [Rewinding the conversation](#rewinding-the-conversation)
@@ -224,6 +216,12 @@ Your project-root and user-level CLAUDE.md files are read once at session start 
 
 Switching between [permission modes](/docs/en/permission-modes), such as from Manual to accept edits, does not change the system prompt or tool definitions, so mode changes are cache-safe. The exception is plan mode with the [`opusplan`](/docs/en/model-config#opusplan-model-setting) model setting, which switches the model between Opus and Sonnet as you enter or leave plan mode. That makes the mode toggle a [model switch](#switching-models).
 
+### Changing output style
+
+When you switch [output styles](/docs/en/output-styles) mid-session with `/config` or the `outputStyle` setting, Claude uses the new style starting with your next message. Claude Code delivers the new style's instructions as a message in the conversation, so that request still reads the system prompt and the earlier conversation from the cache.
+
+Before v2.1.251, a mid-session style switch kept the cache but didn't apply until you ran `/clear` or started a new session.
+
 ### Invoking skills and commands
 
 [Skills](/docs/en/skills) and [commands](/docs/en/commands) inject their instructions as user messages at the point of invocation. Nothing earlier in the conversation changes. A skill or command whose frontmatter names a `model` can be a [model switch](#switching-models) for that turn.
@@ -242,10 +240,7 @@ Restoring file checkpoints alongside the conversation has no separate effect on 
 
 When you [resume a session](/docs/en/sessions#resume-a-session), Claude Code sends the whole conversation again, and the request reads from the cache whatever part of its prefix is unchanged and still within the [cache lifetime](#cache-lifetime). The layer table at the top of this page says what changes each layer.
 
-The system prompt is the one layer a resume can treat two ways. It would change after a [Claude Code upgrade](#upgrading-claude-code) or with different [`--append-system-prompt`](/docs/en/cli-reference#system-prompt-flags) text on the resume, and whether the resumed conversation picks up that change right away varies by how you connect.
-
-* In sessions signed in with a claude.ai or Console account, and other sessions that [fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching), the resumed conversation keeps the system prompt it started with by default, so its history still sits behind the same prompt. The change takes effect once the conversation is compacted or in a new conversation. [System prompt flags in resumed conversations](/docs/en/cli-reference#system-prompt-flags-in-resumed-conversations) covers `--system-prompt-snapshot off` and bare mode, where this doesn't apply.
-* On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and other sessions that don't fetch feature flags, Claude Code builds the system prompt fresh on the resume, so the history now sits behind a different prompt and the resumed request reprocesses the entire conversation with no cache hits. The cost scales with the length of the conversation.
+The system prompt would change after a [Claude Code upgrade](#upgrading-claude-code) or with different [`--append-system-prompt`](/docs/en/cli-reference#system-prompt-flags) text on the resume. By default, the resumed conversation keeps the system prompt it started with, so its history still sits behind the same prompt, and the change takes effect once the conversation is compacted or in a new conversation. [System prompt flags in resumed conversations](/docs/en/cli-reference#system-prompt-flags-in-resumed-conversations) covers `--system-prompt-snapshot off` and bare mode, where this doesn't apply.
 
 ## Cache lifetime
 

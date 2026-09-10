@@ -463,7 +463,7 @@ All metrics and events share these standard attributes:
 | `user.account_uuid`                  | Account UUID (when authenticated)                                                                                                                                                                                                    | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true)        |
 | `user.account_id`                    | Account ID in tagged format matching Anthropic admin APIs (when authenticated), such as `user_01BWBeN28...`                                                                                                                          | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true)        |
 | `user.id`                            | Random anonymous identifier generated on first run and persisted in `~/.claude.json`. It contains no personal information and is not derived from your Claude account. Deleting the file produces a new unrelated value on next run. | Always included                                            |
-| `user.email`                         | User email address (when authenticated via OAuth)                                                                                                                                                                                    | Always included when available                             |
+| `user.email`                         | User email address, from your sign-in or, in a [cloud session](/docs/en/claude-code-on-the-web), from the session's own credentials                                                                                                       | Always included when available                             |
 | `terminal.type`                      | Terminal type, such as `iTerm.app`, `vscode`, `cursor`, or `tmux`                                                                                                                                                                    | Always included when detected                              |
 | Keys from `OTEL_RESOURCE_ATTRIBUTES` | Custom attributes you set, such as `department` or `team.id`. See [Multi-team organization support](#multi-team-organization-support)                                                                                                | `OTEL_METRICS_INCLUDE_RESOURCE_ATTRIBUTES` (default: true) |
 
@@ -1207,7 +1207,9 @@ Per-model breakdowns of commits can only be approximated by joining against the 
 
 Claude Code retries failed API requests internally and emits a single `claude_code.api_error` event only after it gives up, so the event itself is the terminal signal for that request. Intermediate retry attempts are not logged as separate events.
 
-The `attempt` attribute on the event records the total number of attempts. `CLAUDE_CODE_MAX_RETRIES` defaults to 10 and is capped at 15; as of v2.1.199, `CLAUDE_CODE_RETRY_WATCHDOG` raises the default and removes the cap. When the request exhausts all retries on a transient error, `attempt` equals one more than that effective limit: 11 by default, and never more than 16 unless the watchdog is set. A lower value indicates a non-retryable error such as a `400` response.
+The `attempt` attribute on the event records the total number of attempts. `CLAUDE_CODE_MAX_RETRIES` defaults to 10 and is capped at 15. On v2.1.199 or later, you can set `CLAUDE_CODE_RETRY_WATCHDOG` to raise the default and remove the cap.
+
+When the request exhausts all retries on a transient error, `attempt` equals one more than that effective limit: 11 by default, and never more than 16 unless the watchdog is set. A lower value indicates a non-retryable error such as a `400` response, or a cause with its own smaller retry budget. For example, Claude Code retries a failure to load AWS or Google Cloud credentials at most twice.
 
 To distinguish a session that recovered from one that stalled, group events by `session.id` and check whether a later `api_request` event exists after the error.
 
@@ -1230,7 +1232,7 @@ OpenTelemetry events are the audit data source for Claude Code activity. Every e
 
 ### Attribute actions to users
 
-The [standard attributes](#standard-attributes) on each event include the authenticated user's identity: `user.email`, `user.account_uuid`, `user.account_id`, and `organization.id` when signed in with a Claude account, plus `user.id` and the per-session `session.id`. `user.id` is an installation-scoped identifier, except on [Claude apps gateway](/docs/en/claude-apps-gateway) sessions, where it is the IdP subject from the gateway-issued token.
+The [standard attributes](#standard-attributes) on each event include the authenticated user's identity: `user.email`, `user.account_uuid`, `user.account_id`, and `organization.id` when signed in with a Claude account or, in a [cloud session](/docs/en/claude-code-on-the-web), when the session's own credentials carry them, plus `user.id` and the per-session `session.id`. `user.id` is an installation-scoped identifier, except on [Claude apps gateway](/docs/en/claude-apps-gateway) sessions, where it is the IdP subject from the gateway-issued token.
 
 MCP tool calls, Bash commands, and file edits are therefore attributed to the developer who started the session. Claude Code doesn't act under a separate service account; the identity recorded on each event is the developer's own Claude account, or the developer's IdP identity on a [Claude apps gateway](/docs/en/claude-apps-gateway) session.
 

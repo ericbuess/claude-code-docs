@@ -92,7 +92,7 @@ This example creates a marketplace with one plugin: a `quality-review` skill for
   </Step>
 
   <Step title="Add and install">
-    From the directory that contains `my-marketplace`, start Claude Code and run the following commands. The install command opens a plugin details view where you select an installation scope to confirm the install. Check the install summary: if it reports `Run /reload-plugins to activate.`, run that command.
+    From the directory that contains `my-marketplace`, start Claude Code and run the following commands. The install command opens a plugin details view where you select an installation scope to confirm the install. Check the install summary: if it reports `Run /reload-plugins to activate.`, see [Apply plugin changes without restarting](/docs/en/discover-plugins#apply-plugin-changes-without-restarting).
 
     ```shell theme={null}
     /plugin marketplace add ./my-marketplace

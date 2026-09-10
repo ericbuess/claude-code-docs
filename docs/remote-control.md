@@ -126,9 +126,11 @@ You can start a Remote Control session from the CLI or the VS Code extension. Th
 
 ### Check connection status
 
-In an interactive terminal session, a `/rc active` indicator sits in the footer below the input box while the connection is up, and is hidden if the terminal is too narrow to fit it. The indicator text is a link to the session on claude.ai. Select it with the down arrow key and press Enter, or run `/remote-control` again, to open a status panel with the session URL and a QR code you can use to [connect from another device](#connect-from-another-device). The status panel also offers a disconnect option. Select it to turn Remote Control off; your local session keeps running in the terminal.
+In an interactive terminal session, a `/rc active` indicator shows while the connection is up, and is hidden if the terminal is too narrow to fit it. With [fullscreen rendering](/docs/en/fullscreen) it sits at the end of the working-directory line in the startup header, and without it, in the footer below the input box.
 
-If the connection fails, Claude Code shows a notification with the failure reason and switches the indicator to a failure state that stays in the footer. To read the reason again, select the indicator with the down arrow key and press Enter. To reconnect, run `/remote-control`, unless the [reason says the session was taken over or ended elsewhere, or that the server can't find it](#session-ended-elsewhere).
+The indicator text is a link to the session on claude.ai. Run `/remote-control` again to open a status panel with the session URL and a QR code for [connecting from another device](#connect-from-another-device). When the indicator is in the footer, you can also open the panel by selecting the indicator with the down arrow key and pressing Enter. The panel also offers a disconnect option, which turns Remote Control off while your local session keeps running in the terminal.
+
+If the connection fails, Claude Code shows a notification with the failure reason, adds a warning line with the reason to the conversation, and switches the indicator to a failure state that stays in place. To reconnect, run `/remote-control`, unless the [reason says the session was taken over or ended elsewhere, or that the server can't find it](#session-ended-elsewhere).
 
 <span id="session-ended-elsewhere" />Read the reason before you reconnect. When the session was taken over or ended from another device, app, or Claude Code session, or the server can't find it, the reason says which, and Claude Code leaves out its usual advice to run `/remote-control`:
 

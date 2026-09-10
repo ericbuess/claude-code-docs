@@ -36,11 +36,7 @@ If the install fails, the fix depends on which message Claude Code reports:
 * If it reports `Marketplace "claude-plugins-official" not found`, add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`, then retry the install.
 * If it reports that it [can't find the plugin in the marketplace](/docs/en/discover-plugins#install-plugins), check the plugin name for a typo.
 
-Check the install summary. If it reports `Run /reload-plugins to activate.`, apply the pending change without a restart:
-
-```text theme={null}
-/reload-plugins
-```
+Check the install summary. If it reports `Run /reload-plugins to activate.`, see [Apply plugin changes without restarting](/docs/en/discover-plugins#apply-plugin-changes-without-restarting) to activate the plugin in your current session.
 
 Once the plugin is active, you're ready to [scan and fix your codebase](#scan-and-fix-your-codebase).
 

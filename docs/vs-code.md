@@ -50,7 +50,7 @@ Once installed, you can start using Claude Code through the VS Code interface:
 
     Other ways to open Claude Code:
 
-    * **Activity Bar**: click the Spark icon in the left sidebar to open the sessions list. Click any session to open it as a full editor tab, or start a new one. This icon is always visible in the Activity Bar.
+    * **Activity Bar**: click the Spark icon in the left sidebar to open the sessions list. Click any session to open it in your [preferred location](#extension-settings), or start a new one. This icon is always visible in the Activity Bar.
     * **Command Palette**: `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux), type "Claude Code", and select an option like "Open in New Tab"
     * **Status Bar**: if you've set [`preferredLocation`](#extension-settings) to `sidebar`, or opened Claude with **Claude Code: Open in Side Bar**, click **✱ Claude Code** in the bottom-right corner of the window. This works even when no file is open.
 
@@ -254,7 +254,7 @@ Switch to the **Marketplaces** tab to add or remove plugin sources:
 * Click the refresh icon to update a marketplace's plugin list
 * Click the trash icon to remove a marketplace
 
-After you make changes, a banner prompts you to restart Claude Code to apply them.
+Plugin changes you make in the dialog apply right away to the Claude Code sessions open in that VS Code window. If the session you opened the dialog from can't reload its plugins, the dialog offers to try again or to restart Claude in that session.
 
 <Note>
   Plugin management in VS Code uses the same CLI commands under the hood. Plugins and marketplaces you configure in the extension are also available in the CLI, and vice versa.

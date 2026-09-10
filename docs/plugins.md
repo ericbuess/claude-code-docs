@@ -218,7 +218,7 @@ When reviewing code, check for:
 4. Test coverage
 ```
 
-After you install the plugin, check the install summary: if it reports `Run /reload-plugins to activate.`, run that command to load the Skills. For complete Skill authoring guidance including progressive disclosure and tool restrictions, see [Agent Skills](/docs/en/skills).
+After you install the plugin, check the install summary: if it reports `Run /reload-plugins to activate.`, see [Apply plugin changes without restarting](/docs/en/discover-plugins#apply-plugin-changes-without-restarting) to load the Skills in your current session. For complete Skill authoring guidance including progressive disclosure and tool restrictions, see [Agent Skills](/docs/en/skills).
 
 ### Add LSP servers to your plugin
 
