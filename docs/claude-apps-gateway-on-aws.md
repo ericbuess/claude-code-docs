@@ -28,7 +28,7 @@ The gateway runs as a private HTTPS endpoint on your network that developers sig
 * **Amazon ECR** repository for the gateway image
 * **Amazon RDS for PostgreSQL** instance in private subnets, not publicly accessible, for the gateway's [store](/docs/en/claude-apps-gateway-config#store)
 * **AWS Secrets Manager** secrets for the JWT signing key, the OIDC client secret, and the Postgres URL
-* **IAM role** with `bedrock:InvokeModel` and `bedrock:InvokeModelWithResponseStream`, attached as the ECS task role or bound via IAM Roles for Service Accounts (IRSA) on EKS
+* **IAM role** with `bedrock:InvokeModel`, `bedrock:InvokeModelWithResponseStream`, and `bedrock:CountTokens`, attached as the ECS task role or bound via IAM Roles for Service Accounts (IRSA) on EKS
 * **Internal Application Load Balancer** for HTTPS
 
 ## Prerequisites
@@ -103,7 +103,7 @@ The steps below provision the full deployment with `aws` commands.
       "Version": "2012-10-17",
       "Statement": [{
         "Effect": "Allow",
-        "Action": ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
+        "Action": ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream", "bedrock:CountTokens"],
         "Resource": [
           "arn:aws:bedrock:${AWS_REGION}:${ACCOUNT_ID}:inference-profile/us.anthropic.*",
           "arn:aws:bedrock:*::foundation-model/anthropic.*"
@@ -218,6 +218,8 @@ The steps below provision the full deployment with `aws` commands.
     * `trusted_proxies`: the front end's source ranges. The gateway honors `X-Forwarded-For` only when the TCP peer is in this list, then walks the chain past trusted hops, so per-IP sign-in rate limits and audit events record developer IPs instead of the load balancer's.
 
     On both tracks the front end is an internal ALB, whether created directly or by the AWS Load Balancer Controller, and an ALB's nodes take addresses from the subnets it is attached to, so set `trusted_proxies` to those subnets' CIDRs. This trusts every host in those subnets as a proxy. Keep the ALB's ingress source, your corporate CIDR, from overlapping them, and don't share the subnets with untrusted workloads that could spoof client IPs via `X-Forwarded-For`.
+
+    The ALB's client port preservation attribute, `routing.http.xff_client_port.enabled`, can stay at either setting: with it on, the ALB writes the client as `203.0.113.7:54321` or `[2001:db8::1]:54321`, and the gateway reads both with the port dropped.
 
     ```yaml gateway.yaml theme={null}
     listen:
