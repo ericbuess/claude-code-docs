@@ -321,6 +321,8 @@ Once you turn artifacts off in a [`--settings`](/docs/en/cli-reference#cli-flags
 
 You can also set `"enableArtifact": false` in a project's `.claude/settings.json` or `.claude/settings.local.json` to turn artifacts off for sessions in that project. An `"enableArtifact": true` in either file doesn't turn them back on. Honoring the key in project and local settings requires Claude Code v2.1.242 or later.
 
+If you add a `WebFetch` deny or ask rule with no `domain:` part, it doesn't turn artifacts off or block artifact reads. A [`WebFetch(domain:claude.ai)` rule in `deny` or `ask` does apply to artifact reads](/docs/en/permissions#allow-or-deny-every-fetch).
+
 ## Manage artifacts for your organization
 
 Owners on Team and Enterprise plans control artifacts from [claude.ai admin settings](https://claude.ai/admin-settings/claude-code). Artifact content is stored on Anthropic-operated infrastructure and is visible only to authenticated members of the publishing organization, unless the artifact is [shared publicly](#control-public-sharing).

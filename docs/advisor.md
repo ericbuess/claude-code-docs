@@ -85,14 +85,14 @@ If you start a [background session](/docs/en/agent-view) with `--advisor` and on
 
 The advisor must be at least as capable as the main model. The accepted advisors for each main model are:
 
-| Main model           | Accepted advisors                    | Notes                                                                                                                                                                         |
-| -------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Haiku 4.5            | Fable, Opus, Sonnet                  | Haiku can call the advisor but cannot act as one                                                                                                                              |
-| Sonnet 4.6           | Fable, Opus, Sonnet                  |                                                                                                                                                                               |
-| Sonnet 5             | Fable, Opus, Sonnet 5                | A Sonnet 4.6 advisor is rejected                                                                                                                                              |
-| Opus 4.6             | Fable, Opus, Sonnet 5                | Sonnet 5 and Opus 4.6 are ranked as equally capable, so an Opus 4.6 main accepts a Sonnet 5 advisor                                                                           |
-| Opus 4.7 or later    | Fable, and Opus 4.7 or later         | Opus 4.7 and later Opus models are ranked as equally capable, so any of them accepts another as an advisor. An Opus 4.7 main with an Opus 4.6 or Sonnet 5 advisor is rejected |
-| Fable 5.1 or Fable 5 | Fable 5.1, or the same Fable version | An Opus or Sonnet advisor is rejected, and so is a Fable 5 advisor for a Fable 5.1 main model                                                                                 |
+| Main model           | Accepted advisors            | Notes                                                                                                                                                                         |
+| -------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Haiku 4.5            | Fable, Opus, Sonnet          | Haiku can call the advisor but cannot act as one                                                                                                                              |
+| Sonnet 4.6           | Fable, Opus, Sonnet          |                                                                                                                                                                               |
+| Sonnet 5             | Fable, Opus, Sonnet 5        | A Sonnet 4.6 advisor is rejected                                                                                                                                              |
+| Opus 4.6             | Fable, Opus, Sonnet 5        | Sonnet 5 and Opus 4.6 are ranked as equally capable, so an Opus 4.6 main accepts a Sonnet 5 advisor                                                                           |
+| Opus 4.7 or later    | Fable, and Opus 4.7 or later | Opus 4.7 and later Opus models are ranked as equally capable, so any of them accepts another as an advisor. An Opus 4.7 main with an Opus 4.6 or Sonnet 5 advisor is rejected |
+| Fable 5.1 or Fable 5 | Fable 5.1 or Fable 5         | An Opus or Sonnet advisor is rejected                                                                                                                                         |
 
 Fable 5.1 requires Claude Code v2.1.257 or later. Both Fable models require [Fable access](/docs/en/model-config#work-with-fable).
 

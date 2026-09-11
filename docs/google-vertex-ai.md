@@ -104,7 +104,7 @@ If you have Google Cloud credentials and want to start using Claude Code through
   </Step>
 
   <Step title="Follow the wizard prompts">
-    Choose how you authenticate to Google Cloud: Application Default Credentials from `gcloud`, a service account key file, or credentials already in your environment. The wizard detects your project and region, verifies which Claude models your project can invoke, and lets you pin them. It saves the result to the `env` block of your [user settings file](/docs/en/settings), so you don't need to export environment variables yourself.
+    Choose how you authenticate to Google Cloud: Application Default Credentials from `gcloud`, a service account key file, or credentials already in your environment. The wizard asks for your project and region, verifies which Claude models your project can invoke, and lets you pin them. It saves the result to the `env` block of your [user settings file](/docs/en/settings), so you don't need to export environment variables yourself.
   </Step>
 </Steps>
 

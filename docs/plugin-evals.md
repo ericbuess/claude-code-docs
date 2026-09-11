@@ -8,7 +8,7 @@
 
 `claude plugin eval` runs your [plugin](/docs/en/plugins) against a suite of test cases and scores the results. Each case is a realistic prompt plus one or more graders. A grader is a pass/fail check on what Claude produced, such as a regex over the reply, whether a particular tool was called, or a rubric that a second model judges the reply against.
 
-You don't have to write the suite by hand; `claude plugin eval init` asks you about your plugin, proposes the cases and graders, tries them, and writes the files, and you can ask Claude to do the same from a session you already have open.
+You don't have to write the suite manually. `claude plugin eval init` asks you about your plugin, proposes the cases and graders, tries them, and writes the files. You can also ask Claude to do the same from a session you already have open.
 
 Use evals to measure how reliably your plugin steers Claude to the right outcome, to catch regressions when you change the plugin or a new model ships, and to see what the plugin contributes compared with no plugin at all.
 
@@ -32,17 +32,15 @@ An eval suite lives in a directory called `evals/` inside your plugin, laid out 
 
 ### What happens in a run
 
-For each run of a case, Claude Code starts a fresh, [isolated](#how-runs-are-isolated) [non-interactive session](/docs/en/headless) with only your plugin loaded, sends the prompt, and lets Claude work until it finishes or hits the case's turn or time limit. Each grader then checks the final reply, the full transcript, or a file Claude created, and passes or fails.
+For each run of a case, Claude Code starts a fresh, [isolated](#how-runs-are-isolated) [non-interactive session](/docs/en/headless) with only your plugin loaded, sends the prompt, and lets Claude work until it finishes or hits the case's turn or time limit. Each grader then checks the final reply, the transcript, or a file Claude created, and passes or fails.
 
 ### How a case is scored
 
-One run of a non-deterministic agent tells you little, so each case runs three times by default. A run's score is the fraction of its graders that passed, weighted if you set weights, and the case's score is the mean across its runs. A case passes when its score meets the [`--threshold`](#command-options), `1.0` by default.
+One run of a non-deterministic agent tells you little, so each case runs three times by default. A run's score is the fraction of its graders that passed, weighted if you set weights, and the case's score is the mean across its runs. A case passes when its score meets the [`--threshold`](#command-options), `1.0` by default. In model calls, a suite makes roughly cases × runs agent runs with the plugin and as many again for the [no-plugin baseline](#the-no-plugin-baseline), plus three short judge calls per `llm` or `baseline` grader per run.
 
 ### The no-plugin baseline
 
 A high score on its own doesn't tell you the plugin helped, because Claude might do as well without it. To separate the two, each case's runs are repeated with no plugin loaded by default, and you get two scores, `WITH` and `W/OUT`. Their difference, `Δ`, is what the plugin contributed. If a case scores 1.0 both with and without the plugin, the plugin isn't what made it pass. The two sets of runs are called the with-arm and the without-arm; [Compare against a no-plugin baseline](#compare-against-a-no-plugin-baseline) covers how graders are scored across them and how to turn the baseline off.
-
-A suite makes roughly cases × runs × arms agent runs plus three short judge calls per `llm` or `baseline` grader per run, and results vary between runs.
 
 ## Create your first eval suite
 
@@ -64,7 +62,7 @@ This walkthrough writes one case for your own plugin, runs it, and reads the res
 
     If you already have a Claude Code session open at the plugin root, you can instead ask Claude there to run `claude plugin eval init`. Claude runs the command and then asks you the same questions in that conversation.
 
-    If you'd rather write a case yourself to see exactly what the files contain, follow [Write a case by hand](#write-a-case-by-hand) and come back here to run it.
+    If you'd rather write a case yourself to see exactly what the files contain, follow [Write a case manually](#write-a-case-manually) and come back here to run it.
   </Step>
 
   <Step title="Run the suite">
@@ -74,7 +72,7 @@ This walkthrough writes one case for your own plugin, runs it, and reads the res
     claude plugin eval .
     ```
 
-    You already trusted this directory during step 1, so the run starts immediately. If you wrote the case by hand instead, the run first asks `Trust this plugin directory? [y/N]`; answer `y`. [What a run can access](#security) explains what you're agreeing to.
+    You already trusted this directory during step 1, so the run starts immediately. If you wrote the case manually instead, the run first asks `Trust this plugin directory? [y/N]`; answer `y`. [What a run can access](#security) explains what you're agreeing to.
 
     Each case runs three times with your plugin and three times without it, so one case is six runs. A progress line prints as each run finishes, with that run's score and each grader's verdict.
   </Step>
@@ -133,7 +131,7 @@ my-plugin/
     └── results/               # written by each run; add to .gitignore
 ```
 
-### Write a case by hand
+### Write a case manually
 
 Having Claude write the cases with `claude plugin eval init` is the recommended path. To write one yourself instead, start from a blank template. The following command writes a case named `first-case` with a placeholder `prompt.md` and one placeholder grader, and runs nothing:
 
@@ -148,7 +146,7 @@ evals/first-case/
     └── criteria.md      # one grader: how to score the result
 ```
 
-In `prompt.md` you write the message Claude receives in each run, and set the run's limits and the tools the case may use in its frontmatter. Open `evals/first-case/prompt.md` and replace the placeholder body with your request, phrased the way a user would type it rather than naming the skill:
+In `prompt.md` you write the message Claude receives in each run, and set the run's limits and the tools the case may use in its frontmatter. Open `evals/first-case/prompt.md` and replace the placeholder body with a request one of your skills should handle, phrased the way a user would type it rather than naming the skill. This example is for a skill that drafts commit messages; use your own request:
 
 ```markdown theme={null}
 ---
@@ -156,10 +154,10 @@ max_turns: 10
 allowed_tools: [Read, Glob, Grep, Skill]
 ---
 
-<a request a user would type that your skill should handle>
+Write me a commit message for this change: I renamed getUser to fetchUser and updated the three call sites.
 ```
 
-For a skill that drafts commit messages, the body might be `Write me a commit message for this change: I renamed getUser to fetchUser and updated the three call sites.` Each run starts in an empty working directory, so put whatever the task needs in the prompt itself, or [set up the workspace](#add-setup-or-history-with-case-yaml) first. The [full list of frontmatter fields](#prompt-md-fields) covers the model, timeout, tags, and environment variables.
+Each run starts in an empty working directory, so put whatever the task needs in the prompt itself, or [set up the workspace](#add-setup-or-history-with-case-yaml) first. The [full list of frontmatter fields](#prompt-md-fields) covers the model, timeout, tags, and environment variables.
 
 Each file under `graders/` is one check applied after the run. Open `evals/first-case/graders/criteria.md` and replace the placeholder with a rubric for the judge model, written as concrete PASS and FAIL conditions:
 
@@ -231,7 +229,7 @@ If `evals/` is already taken by another tool, keep the suite in a different dire
 * **In `plugin.json`**: add `"experimental": { "evals": "quality/evals" }`.
 * **On the command line**: pass `--eval-dir quality/evals` to both `claude plugin eval` and `claude plugin eval init`.
 
-If you set both, the flag's directory is used. Give a relative path of plain directory names such as `qa` or `quality/evals`; an absolute path or one containing `..` is rejected. Cases, results, and `init` output all move to that directory.
+If you set both, the flag's directory is used. Give a relative path of plain directory names such as `qa` or `quality/evals`. An absolute path or one containing `..` isn't accepted: as a flag value it's an error, while an unusable manifest value prints a `Warning:` line and the run uses `evals/` instead. Cases, results, and `init` output all move to that directory.
 
 ## Set up fixtures and mocks
 
@@ -289,9 +287,9 @@ To run against the plugin's real MCP servers instead, pass one of these flags. E
 
 #### Replay agent mock answers
 
-A `type: agent` mock answers with a model call, so its output varies between runs. When a run completes without an error or abort, Claude Code saves each answer an agent mock gave under the results directory in `mock-recordings/`.
+A `type: agent` mock answers with a call to the [`--judge-model`](#command-options), so its output varies between runs and changes if you change the judge. When a run completes without an error or abort, Claude Code saves each answer an agent mock gave under the results directory in `mock-recordings/`.
 
-Open `ADOPT.txt` there to see each recording and the `.replay/<server>/` directory to copy it into, beside the mock that produced it. After you copy a recording there, later runs answer the identical call from it with no model call. Commit `.replay/` alongside `mocks/` so CI runs are repeatable.
+Open `ADOPT.txt` there to see each recording and the `.replay/<server>/` directory to copy it into, beside the mock that produced it. After you copy a recording there, later runs answer the identical call from it with no model call. Commit `mocks/.replay/` with the rest of `mocks/` so CI runs are repeatable.
 
 ## Run evals
 
@@ -374,7 +372,7 @@ The job's exit code tells you what happened:
 | 130       | Interrupted. Partial results are written                                                                                                                                                                       |
 | 143       | Terminated, such as by a CI timeout                                                                                                                                                                            |
 
-Problems writing or publishing the HTML report never change the exit code. With `--json` the run prints no progress or per-case diagnostics, so to see why a case scored low, run it locally without `--json`.
+Problems writing or publishing the HTML report never change the exit code. To see why a case scored low, run it locally without `--json` so the per-run progress and grader lines print.
 
 A CI runner needs a Claude Code install and [credentials in the environment](/docs/en/authentication) such as `ANTHROPIC_API_KEY`. Without `--trust-plugin`, a job whose checkout directory Claude Code doesn't already trust is refused with exit 1 when it has no terminal, or waits at the prompt when the runner allocates one. `claude plugin eval init` needs a terminal to ask you its questions; in CI, run `claude plugin eval init --bare <name>` to get the blank template.
 
@@ -386,7 +384,16 @@ Every run with at least one case writes a `results/<timestamp>/` directory insid
 
 ### HTML report
 
-`report.html` shows the suite's scores and `Δ`, then each case with its prompt, its graders, and every run's verdicts and explanations. It's a single self-contained file that makes no external requests, so you can attach it to a CI job or open it from disk.
+`report.html` is a single self-contained file that makes no external requests, so you can attach it to a CI job or open it from disk. This example is the top of a report for a three-case suite run with `--threshold 0.8`; the cost shown is a list-price estimate and varies with the model and the number of cases:
+
+<img src="https://mintcdn.com/claude-code/qq7LHDi_F0aeFHgk/images/plugin-eval-report.png?fit=max&auto=format&n=qq7LHDi_F0aeFHgk&q=85&s=106eb6e6a70a6565f891ea3a4564f87d" alt="Top of an eval report: a verdict line reading &#x22;Plugin effect: +33.3 pts vs baseline, improved 2, flat 1, regressed 0 of 3 cases&#x22;, five summary tiles for suite score, ablation delta, baseline score, cases passing the threshold, and perfect runs, then the first case with its delta, score bar, and one run whose two graders both show pass" width="1360" height="1032" data-path="images/plugin-eval-report.png" />
+
+Read it from the top down:
+
+* **The verdict line and tiles** answer whether the plugin helped across the whole suite. Suite score is the mean of the per-case with-plugin scores, Ablation Δ is how far that sits above or below the baseline score, and Cases counts how many met the threshold. Perfect runs is the share of with-plugin runs where every grader passed.
+* **Each case card** shows the case's own `Δ` and with-plugin score, with a tick on the bar at the threshold. A case whose `Δ` is negative gets a red left edge, so regressions stand out when you scroll.
+* **Inside a case**, the with-plugin runs come first and the baseline runs after. Each run lists its graders with a pass or fail chip. A failed grader is already expanded with its explanation, and an `llm` grader also shows the judge's votes and the evidence it was shown, which is where you find out why a run scored low. Graders that don't count toward the score, such as `tool_used: Skill`, carry a `plugin-fired indicator` badge.
+* **Prompt and Graders**, below the runs, show the case's prompt and each grader's rubric or pattern, so someone reading the report without the suite can see what was asked and what counted as good.
 
 If you're signed in with a claude.ai subscription and [artifacts](/docs/en/artifacts) are available for your account, Claude Code also publishes the report as a private artifact and prints `Published: <url>`. Pass `--no-publish` to keep it local. If no `Published:` line appears, such as with API-key authentication, the local file is the report.
 
@@ -470,6 +477,7 @@ evals/
 
 | Field                  | Default                      | Purpose                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | :--------------------- | :--------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `schema_version`       | `"1.1"`, set for you         | Case format version. Cases written as `prompt.md` get it automatically, so you rarely set it                                                                                                                                                                                                                                                                                                                                                                                  |
 | `name`                 | The directory name           | Case name. `--case` globs match it and the report keys on it                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `description`          |                              | For humans. Not used at run time                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `tags`                 | `[]`                         | Labels for `--tag` filtering. A case runs if any of its tags matches                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -516,7 +524,7 @@ Every grader file under `graders/` takes these keys in frontmatter, plus the opt
 | Value                            | What the grader sees                                                                                                                                                                                                                                                                                           |
 | :------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `last_message`                   | Claude's final response text. This is the default                                                                                                                                                                                                                                                              |
-| `trace`                          | The whole session as JSON, one message per line. Quotes and newlines inside it are JSON-escaped, so a regex matches `\"` rather than `"`.                                                                                                                                                                      |
+| `trace`                          | The session as JSON, one message per line. A `regex` grader sees every message; an `llm` judge sees the first 12 and the last 12. Quotes and newlines inside it are JSON-escaped, so a regex matches `\"` rather than `"`                                                                                      |
 | `files`                          | The list of paths Claude created during the run, one per line. Not their contents, and not files that a scaffold created or that Claude only modified                                                                                                                                                          |
 | `{ source: file, path: <path> }` | The contents of one file in the workspace after the run. Use this to grade what the plugin produced. A PNG, JPEG, GIF, or WebP file is shown to an `llm` judge as an image. An `llm` judge refuses other binary files such as `.pptx` or PDF; render them to an image or write them out as text and grade that |
 | `mock_calls`                     | Each call Claude made to a [mocked MCP tool](#mock-mcp-servers), with its input and the mock's answer                                                                                                                                                                                                          |
