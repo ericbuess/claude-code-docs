@@ -185,6 +185,7 @@ Match the message you see to a section below.
 | `Couldn't read your Zed keymap` / `Couldn't back up your Zed keymap` / `Couldn't update your Zed keymap`                                                                                              | [Command-line errors](#terminal-setup-left-your-zed-keymap-unchanged)                                                         |
 | `Your Zed keymap isn't a readable list of keybindings`                                                                                                                                                | [Command-line errors](#terminal-setup-left-your-zed-keymap-unchanged)                                                         |
 | `Skill usage reports are not available on this connection.`                                                                                                                                           | [Command-line errors](#skill-usage-reports-are-not-available-on-this-connection)                                              |
+| `` `plugin eval` is currently in early access `` / `` `plugin eval` is currently unavailable ``                                                                                                       | [Plugin errors](#plugin-eval-is-currently-in-early-access)                                                                    |
 | `Marketplace "<name>" is registered from an untrusted source`                                                                                                                                         | [Plugin errors](#marketplace-is-registered-from-an-untrusted-source)                                                          |
 | `references ${user_config.*} in a shell-form command`                                                                                                                                                 | [Plugin errors](#plugin-command-references-user-config)                                                                       |
 | `Monitor "<name>" from plugin <plugin> references ${user_config.*} in its command`                                                                                                                    | [Plugin errors](#plugin-command-references-user-config)                                                                       |
@@ -2687,6 +2688,27 @@ Skill usage reports are not available on this connection.
 ## Plugin errors
 
 These errors come from [plugin](/docs/en/plugins) and [marketplace](/docs/en/plugin-marketplaces) configuration. For plugin problems that don't produce one of the messages on this page, such as a marketplace URL that doesn't load or a plugin that installs but doesn't appear, see [Plugin troubleshooting](/docs/en/discover-plugins#troubleshooting).
+
+<h3 id="plugin-eval-is-currently-in-early-access">
+  plugin eval is currently in early access
+</h3>
+
+You ran [`claude plugin eval`](/docs/en/plugin-evals) or `claude plugin eval init` and it exited 1 with one of these messages before doing anything:
+
+```text theme={null}
+`plugin eval` is currently in early access
+```
+
+```text theme={null}
+`plugin eval` is currently unavailable
+```
+
+The first message means your build is older than v2.1.269, the first version where the command is generally available. The second means Anthropic has switched the command off server-side; nothing on your machine turns it back on.
+
+**What to do:**
+
+* Run `claude --version`, then `claude update`, and run the command again in a fresh session. See the [requirements for plugin evals](/docs/en/plugin-evals#requirements)
+* If you see the second message on a current build, try again later after another `claude update`
 
 ### Marketplace is registered from an untrusted source
 
