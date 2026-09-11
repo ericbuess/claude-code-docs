@@ -665,7 +665,11 @@ To keep an unmatched command from aborting here, pre-approve it with [`allowed-t
 
 ### Run skills in a subagent
 
-Add `context: fork` to your frontmatter when you want a skill to run in isolation. The skill content becomes the prompt that drives the subagent. It won't have access to your conversation history.
+Add `context: fork` to your frontmatter when you want a skill to run in isolation. Claude Code starts a new subagent of the type set in the `agent` field and gives it the skill content as its prompt. The subagent doesn't see your conversation history, so the skill's instructions have to stand on their own.
+
+<Note>
+  Despite the name, a skill with `context: fork` doesn't run in a [fork of the current conversation](/docs/en/sub-agents#fork-the-current-conversation), which would hand the subagent everything you've discussed so far. When the task depends on that history, fork the conversation instead of using `context: fork`.
+</Note>
 
 The forked subagent runs in the [background](/docs/en/sub-agents#run-subagents-in-foreground-or-background): you keep working while it runs, and its result arrives in your conversation when it completes. Set `background: false` in the frontmatter to instead wait for the result in the turn that invoked the skill. Before v2.1.218, forked skills always blocked the turn until they finished.
 

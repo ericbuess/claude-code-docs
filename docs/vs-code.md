@@ -246,6 +246,28 @@ When you install a plugin, choose the installation scope:
 * **Install for this project**: shared with project collaborators (project scope)
 * **Install locally**: only for you, only in this repository (local scope)
 
+### Share a plugin install link
+
+To send someone straight to installing a specific plugin, give them the extension's `install-plugin` URL. Opening it launches or focuses VS Code, opens the Claude Code panel, and opens the **Manage plugins** dialog on that plugin's scope choice. Nothing installs until the person picks a scope. If the plugin's marketplace isn't configured in their Claude Code yet, the dialog first asks them to add it.
+
+```text theme={null}
+vscode://anthropic.claude-code/install-plugin?plugin=code-review&marketplace=anthropics/claude-plugins-official
+```
+
+The URL takes two query parameters:
+
+| Parameter     | Description                                                                                                                                                                                                                                                    |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugin`      | The plugin's name as its marketplace lists it. Required.                                                                                                                                                                                                       |
+| `marketplace` | Where the plugin comes from, in any form the [Marketplaces tab](#manage-marketplaces) accepts, such as a GitHub `owner/repo` or a git URL. URL-encode it if it contains characters such as `&`. Defaults to `anthropics/claude-plugins-official` when omitted. |
+
+Two cases end at a message in the dialog instead of the scope choice:
+
+* **The marketplace doesn't list a plugin by that name**: the dialog reports that the plugin wasn't found. Check the `plugin` value against the marketplace's listing.
+* **The plugin is already installed**: the dialog says so, and nothing changes.
+
+GitHub READMEs, issues, and some other Markdown hosts strip links whose scheme isn't `http` or `https`, so a `vscode://` link there renders as plain text. Put the URL in a code block on those hosts, as [The link renders as plain text instead of being clickable](/docs/en/deep-links#the-link-renders-as-plain-text-instead-of-being-clickable) describes for `claude-cli://` links.
+
 ### Manage marketplaces
 
 Switch to the **Marketplaces** tab to add or remove plugin sources:
@@ -354,7 +376,7 @@ For example, to open a tab pre-filled with "review my changes":
 vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 ```
 
-To launch a terminal session instead of a VS Code tab, use the CLI's `claude-cli://` handler. See [Launch sessions from links](/docs/en/deep-links).
+The extension also handles `vscode://anthropic.claude-code/install-plugin`, which [opens the plugin dialog on one plugin](#share-a-plugin-install-link). To launch a terminal session instead of a VS Code tab, use the CLI's `claude-cli://` handler. See [Launch sessions from links](/docs/en/deep-links).
 
 ## Configure settings
 

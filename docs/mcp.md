@@ -572,7 +572,7 @@ The resulting `.mcp.json` file follows a standardized format:
 
 For security reasons, Claude Code prompts for approval in interactive sessions before using project-scoped servers from `.mcp.json` files. To reset those approval choices, run `claude mcp reset-project-choices`.
 
-In `claude -p` runs, [Agent SDK](/docs/en/headless) sessions, and [cloud sessions](/docs/en/claude-code-on-the-web), Claude Code can't show that prompt: it loads project-scoped servers without asking. Claude Code also skips the prompt in a session you start in `bypassPermissions` mode with [`skipDangerousModePermissionPrompt`](/docs/en/settings-reference#skipdangerousmodepermissionprompt) set. To keep a server out anyway:
+In `claude -p` runs, [Agent SDK](/docs/en/headless) sessions, and [cloud sessions](/docs/en/claude-code-on-the-web), Claude Code can't show that prompt: it loads project-scoped servers without asking. Claude Code also skips the prompt in a session you start in `bypassPermissions` mode with [`skipDangerousModePermissionPrompt`](/docs/en/settings-reference#skipdangerousmodepermissionprompt) set in your user settings or in managed settings. To keep a server out anyway:
 
 * Add it to [`disabledMcpjsonServers`](/docs/en/settings-reference#disabledmcpjsonservers), which blocks it in every permission mode.
 * Exclude project settings entirely with [`--setting-sources`](/docs/en/cli-reference#cli-flags) or the SDK's `settingSources` option.
@@ -842,6 +842,8 @@ Some MCP servers don't support automatic OAuth setup via Dynamic Client Registra
   Tips:
 
   * The client secret is stored securely in your system keychain (macOS) or a credentials file, not in your config
+  * You can set the client secret only when you add the server. When you authenticate with `claude mcp login` or from `/mcp`, Claude Code uses the stored secret and doesn't prompt for one or read `MCP_CLIENT_SECRET`
+  * To add or change the secret later, remove the server with `claude mcp remove <name>`, then add it again with `--client-secret` and the same `--scope`
   * If the server uses a public OAuth client with no secret, use only `--client-id` without `--client-secret`
   * These flags only apply to HTTP and SSE transports. They have no effect on stdio servers
   * Use `claude mcp get <name>` to verify that OAuth credentials are configured for a server

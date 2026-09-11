@@ -94,6 +94,17 @@ To put Claude's output on your clipboard, ask Claude to print the content in its
 
 To let a piped command reach the clipboard directly instead, add `pbcopy *`, `wl-copy *`, or `xclip *` to [`excludedCommands`](/docs/en/settings-reference#sandbox-excludedcommands) so the command runs outside the sandbox.
 
+### Copied text doesn't reach your local clipboard over SSH
+
+When Claude Code runs on a remote machine over SSH, it can't run a clipboard tool on your local machine. Outside tmux, when you select text in [fullscreen rendering](/docs/en/fullscreen) or run `/copy`, Claude Code sends the text to your terminal as an OSC 52 escape sequence instead. Your terminal decides whether to put it on your clipboard. `/copy` reports `Copied to clipboard` whether or not the text arrived, and outside tmux the selection notice reads `sent N chars via OSC 52`.
+
+Some terminals don't act on OSC 52. iTerm2 ignores it until you turn on **Settings > General > Selection > Applications in terminal may access clipboard**, and macOS Terminal.app doesn't support it.
+
+To get the text without OSC 52:
+
+* Hold your terminal's native-selection key while you drag, then copy with your terminal's usual shortcut, such as `Cmd+C`. The key is `Fn` in Terminal.app and `Option` in iTerm2. [Keep native text selection](/docs/en/fullscreen#keep-native-text-selection) lists it for other terminals.
+* Set [`CLAUDE_CODE_DISABLE_MOUSE=1`](/docs/en/env-vars) on the remote machine so your terminal handles selection for the whole session.
+
 ### Search and discovery issues
 
 If the Search tool, `@file` mentions, custom agents, or custom skills aren't finding files, the bundled `ripgrep` binary may not run on your system. Install your platform's `ripgrep` package and tell Claude Code to use it instead:
