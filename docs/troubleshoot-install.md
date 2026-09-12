@@ -395,35 +395,7 @@ This means the install directory isn't in your shell's search path. See [Verify 
 
 The `curl ... | bash` command downloads the script and pipes it to Bash for execution. This error, and the related `curl: (23) Failure writing output to destination`, means Bash did not receive the complete script. Exit code 56 indicates the download itself was interrupted, and exit code 23 indicates curl could not write what it received to the pipe, usually because Bash exited early.
 
-**Solutions:**
-
-1. **Check network stability**: Claude Code binaries are hosted at `downloads.claude.ai`. Test that you can reach it:
-
-   ```bash theme={null}
-   curl -sI https://downloads.claude.ai/claude-code-releases/latest
-   ```
-
-   An `HTTP/2 200` line means you reached the server and the original failure was likely intermittent; retry the install command. Other results point to the cause:
-
-   * `403`: usually a proxy or network filter blocking the host, or Claude Code is [not available in your region](https://www.anthropic.com/supported-countries)
-   * `5xx`: usually a temporary service issue; wait a few minutes and retry
-   * `Could not resolve host` or a connection timeout: your network is blocking the download
-
-2. **Try an alternative install method**:
-
-   On macOS:
-
-   ```bash theme={null}
-   brew install --cask claude-code
-   ```
-
-   On Windows:
-
-   ```powershell theme={null}
-   winget install Anthropic.ClaudeCode
-   ```
-
-   Then run `claude --version` to confirm: the command prints a version number such as `2.1.211 (Claude Code)`. If the shell reports `claude` isn't found, open a new terminal window and retry: the session you installed from keeps its old `PATH`.
+Test that you can reach `downloads.claude.ai` with the check in [Check network connectivity](#check-network-connectivity). If you reached the server, the original failure was likely intermittent; retry the install command. You can also [try an alternative install method](/docs/en/setup#install-claude-code).
 
 ### Homebrew cask unavailable or outdated
 

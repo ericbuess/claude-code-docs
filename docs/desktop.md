@@ -24,9 +24,9 @@ The Claude Desktop app has three tabs: **Chat** for conversations, **Cowork** fo
 
 For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). On Linux, install with apt; see [Claude Desktop on Linux](/docs/en/desktop-linux).
 
-After installing, launch Claude, sign in, and click the **Code** tab. The first time you open it on Windows, you need [Git for Windows](https://git-scm.com/downloads/win) installed; restart the app after installing it. For a walkthrough of your first session, see the [Get started guide](/docs/en/desktop-quickstart).
+After installing, launch Claude, sign in, and click the **Code** tab. For a walkthrough of your first session, see the [Get started guide](/docs/en/desktop-quickstart).
 
-In the Code tab, each conversation is a **session**: it has its own chat history, project folder, and code changes, independent of any other session. The sidebar lists your sessions and lets you run several in parallel. Within a session you can:
+In the Code tab, each conversation is a **session**: it has its own chat history and project folder, independent of any other session. The sidebar lists your sessions and lets you run several in parallel. Within a session you can:
 
 * [Review and comment on diffs](#review-changes-with-diff-view), then [watch the resulting PR through CI](#monitor-pull-request-status)
 * [Preview your running app](#preview-your-app) in the Browser pane while Claude verifies its own changes, and [open external sites](#browse-external-sites) alongside it
@@ -320,7 +320,7 @@ Each session is an independent conversation with its own context and changes. Yo
 
 ### Work in parallel with sessions
 
-Click **+ New session** in the sidebar, or press **Cmd+N** on macOS or **Ctrl+N** on Windows, to work on multiple tasks in parallel. Press **Ctrl+Tab** and **Ctrl+Shift+Tab** to cycle through sessions in the sidebar. For Git repositories, each session gets its own isolated copy of your project using [Git worktrees](/docs/en/worktrees), so changes in one session don't affect other sessions until you commit them.
+Click **+ New session** in the sidebar, or press **Cmd+N** on macOS or **Ctrl+N** on Windows, to work on multiple tasks in parallel. Press **Ctrl+Tab** and **Ctrl+Shift+Tab** to cycle through sessions in the sidebar. For Git repositories, select the **worktree** option next to the branch name to give the session its own isolated copy of your project using [Git worktrees](/docs/en/worktrees), so changes in one session don't affect other sessions until you commit them.
 
 To view two sessions at once, hold **Cmd** on macOS or **Ctrl** on Windows and click a session in the sidebar. The session opens in a second pane alongside the one you already have open. While the split is active, clicking another sidebar session replaces whichever pane has focus. Press **Cmd+\\** on macOS or **Ctrl+\\** on Windows to close the focused pane and return to a single session.
 
@@ -329,7 +329,7 @@ Worktrees are stored in `<project-root>/.claude/worktrees/` by default. You can 
 To include gitignored files like `.env` in new worktrees, create a [`.worktreeinclude` file](/docs/en/worktrees#copy-gitignored-files-into-worktrees) in your project root.
 
 <Note>
-  Session isolation requires [Git](https://git-scm.com/downloads). Most Macs include Git by default. Run `git --version` in Terminal to check; if it prints a version number, Git is installed. On Windows, Git is required for the Code tab to work: [download Git for Windows](https://git-scm.com/downloads/win), install it, and restart the app. If you run into Git errors, ask Claude in the [Cowork tab](https://claude.com/product/cowork) to help troubleshoot your setup.
+  Session isolation requires [Git](https://git-scm.com/downloads). Most Macs include Git by default. Run `git --version` in Terminal to check; if it prints a version number, Git is installed. If you run into Git errors, ask Claude in the [Cowork tab](https://claude.com/product/cowork) to help troubleshoot your setup.
 </Note>
 
 Use the controls at the top of the sidebar to filter sessions by status, project, or environment, and to group sessions by project. To rename a session, click the session title in the toolbar at the top of the active session.
@@ -890,7 +890,7 @@ This table compares core capabilities between the CLI and Desktop. For a full li
 | [Plugins](/docs/en/plugins)                                | `/plugin` command                                                              | Plugin manager UI                                                                                                                                                                                                                                                                                                                                 |
 | @mention files                                        | Text-based                                                                     | With autocomplete; local and SSH sessions only                                                                                                                                                                                                                                                                                                    |
 | File attachments                                      | Not available                                                                  | Images, PDFs                                                                                                                                                                                                                                                                                                                                      |
-| Session isolation                                     | [`--worktree`](/docs/en/cli-reference) flag                                         | Automatic worktrees                                                                                                                                                                                                                                                                                                                               |
+| Session isolation                                     | [`--worktree`](/docs/en/cli-reference) flag                                         | **worktree** option when starting a session                                                                                                                                                                                                                                                                                                       |
 | Multiple sessions                                     | Separate terminals                                                             | Sidebar tabs                                                                                                                                                                                                                                                                                                                                      |
 | Recurring tasks                                       | Cron jobs, CI pipelines                                                        | [Scheduled tasks](/docs/en/desktop-scheduled-tasks)                                                                                                                                                                                                                                                                                                    |
 | Computer use                                          | [Enable via `/mcp`](/docs/en/computer-use) on macOS                                 | [App and screen control](#let-claude-use-your-computer) on macOS and Windows                                                                                                                                                                                                                                                                      |
@@ -951,7 +951,7 @@ If Claude can't find tools like `npm`, `node`, or other CLI commands, verify the
 
 ### Git and Git LFS errors
 
-On Windows, Git is required for the Code tab to start local sessions. If you see "Git is required," install [Git for Windows](https://git-scm.com/downloads/win) and restart the app.
+Sessions that run in their own worktree need Git. If you see "Git is required," install [Git](https://git-scm.com/downloads), or [Git for Windows](https://git-scm.com/downloads/win) on Windows, and try again. On Windows, Claude Desktop versions before 1.49585.0 asked for Git before starting any local session; if you see that prompt and aren't using worktrees, update the app.
 
 If you see "Git LFS is required by this repository but is not installed," install Git LFS from [git-lfs.com](https://git-lfs.com/), run `git lfs install`, and restart the app.
 

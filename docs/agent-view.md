@@ -650,7 +650,7 @@ Claude Code refuses `claude --bg --permission-mode bypassPermissions` until you'
 
 The permission mode, model, and effort you chose for a background session, along with the [configuration flags it carries](#what-carries-over-when-you-background), all persist when the supervisor later [stops and restarts](#the-supervisor-process) its process. A session you launched with `claude --bg --dangerously-skip-permissions` or `claude --bg --permission-mode bypassPermissions` stays in `bypassPermissions` after that restart. A model or effort you changed mid-session with `/model` or `/effort` is kept too.
 
-If the session took its effort from your settings rather than from `--effort` or `/effort`, Claude Code reads your settings again each time it starts a process for the session. So when you edit the saved effort in `settings.json`, the change reaches sessions you background with `←` or `/bg`, and their later restarts. The saved effort is the [`effortLevel`](/docs/en/settings-reference#effortlevel) key or a [`modelSettings`](/docs/en/settings-reference#modelsettings) entry.
+If the session took its effort from your settings rather than from `--effort` or `/effort`, Claude Code reads your settings again each time it starts a process for the session. After you edit the saved effort in `settings.json`, the change reaches sessions you background with `←` or `/bg`, and their later restarts. The saved effort is the [`effortLevel`](/docs/en/settings-reference#effortlevel) key or a [`modelSettings`](/docs/en/settings-reference#modelsettings) entry.
 
 Claude Code also keeps a name you set with [`/rename`](/docs/en/commands) or `Ctrl+R` across that restart, so you can still run [`claude --resume <name>`](/docs/en/sessions#name-your-sessions) to reach the session.
 

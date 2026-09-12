@@ -24,13 +24,14 @@ Pressing Enter submits your message. To add a line break without submitting, pre
 
 In most terminals you can also press Shift+Enter, but support varies by terminal emulator:
 
-| Terminal                                                                | Shift+Enter for newline                     |
-| :---------------------------------------------------------------------- | :------------------------------------------ |
-| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal | Works without setup                         |
-| VS Code, Cursor, Devin Desktop, Alacritty, Zed                          | Run `/terminal-setup` once                  |
-| gnome-terminal, JetBrains IDEs such as PyCharm and Android Studio       | Not available; use Ctrl+J or `\` then Enter |
+| Terminal                                                                                           | Shift+Enter for newline                                     |
+| :------------------------------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal                            | Works without setup                                         |
+| Other terminals that support the kitty keyboard protocol, such as foot and Alacritty 0.16 or later | Works without setup. Requires Claude Code v2.1.269 or later |
+| VS Code, Cursor, Devin Desktop, Alacritty before 0.16, Zed                                         | Run `/terminal-setup` once                                  |
+| gnome-terminal, JetBrains IDEs such as PyCharm and Android Studio                                  | Not available; use Ctrl+J or `\` then Enter                 |
 
-For VS Code, Cursor, Devin Desktop, Alacritty, and Zed, `/terminal-setup` writes a Shift+Enter keybinding into the terminal's configuration file. On the first run you see a confirmation such as `Installed VSCode terminal Shift+Enter key binding`. Existing bindings are left in place; if you see a message such as `VSCode terminal Shift+Enter key binding already configured`, no change was made. Run `/terminal-setup` directly in the host terminal rather than inside tmux or screen, since it needs to write to the host terminal's configuration.
+For VS Code, Cursor, Devin Desktop, Alacritty before 0.16, and Zed, `/terminal-setup` writes a Shift+Enter keybinding into the terminal's configuration file. On the first run you see a confirmation such as `Installed VSCode terminal Shift+Enter key binding`. Existing bindings are left in place; if you see a message such as `VSCode terminal Shift+Enter key binding already configured`, no change was made. Run `/terminal-setup` directly in the host terminal rather than inside tmux or screen, since it needs to write to the host terminal's configuration.
 
 In VS Code, Cursor, and Devin Desktop, `/terminal-setup` also updates two editor settings: it sets `terminal.integrated.gpuAcceleration` to `"off"` to prevent garbled text in the integrated terminal, and it sets `terminal.integrated.mouseWheelScrollSensitivity` for smoother scrolling in [fullscreen mode](/docs/en/fullscreen). To undo the GPU acceleration change, set it back to `"auto"` and reload the editor window.
 

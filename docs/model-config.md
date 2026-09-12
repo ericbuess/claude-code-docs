@@ -124,9 +124,11 @@ You can configure your model in several ways, listed in order of priority:
 `/model` saves your choice as the default for new sessions by writing the `model` field in your user settings. In the picker:
 
 * `Enter`: switch model and save as your default
-* `s`: switch model for this session only
+* `s`: switch model for this session only and leave your default unchanged. To use a different key, rebind [`modelPicker:thisSessionOnly`](/docs/en/keybindings#model-picker-actions)
 
-Typing `/model <name>` directly behaves like `Enter`. If you set a model with `/model` in [non-interactive mode](/docs/en/headless), with the `-p` flag, your choice applies to the current session only and isn't saved as your default; `/model` in that mode requires Claude Code v2.1.205 or later. Project and managed settings still take precedence and reapply on the next launch. An [organization default model](#organization-default-model) that your admin has configured to override user selection also reapplies on the next launch.
+Typing `/model <name>` directly behaves like `Enter`. To switch for this session only, open the picker with `/model` and press `s` on the model's row.
+
+If you set a model with `/model` in [non-interactive mode](/docs/en/headless), with the `-p` flag, your choice applies to the current session only and isn't saved as your default; `/model` in that mode requires Claude Code v2.1.205 or later. Project and managed settings still take precedence and reapply on the next launch. An [organization default model](#organization-default-model) that your admin has configured to override user selection also reapplies on the next launch.
 
 In v2.1.144 through v2.1.152, `/model` applied to the current session only and `d` in the picker saved a default.
 
