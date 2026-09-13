@@ -158,14 +158,14 @@ These loads depend on the `project` [setting source](/docs/en/agent-sdk/claude-c
 
 When two skills share a name, where each one came from decides which one `/name` runs. The table covers the enterprise, personal, project, nested, plugin, and claude.ai locations, bundled skills, and command files:
 
-| Same name in                                                  | Which one runs                                                                                                                                                             |
-| :------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Two of enterprise, personal, and project                      | Enterprise over personal, and personal over project. With `deploy` in both `~/.claude/skills/` and the project's `.claude/skills/`, `/deploy` runs the personal one        |
-| Any of those locations and a [bundled skill](#bundled-skills) | Your skill replaces the bundled command, but not its aliases. A project `code-review` skill replaces `/code-review`, and the bundled alias `/review` never runs your skill |
-| A skill and a file in `.claude/commands/`                     | The skill                                                                                                                                                                  |
-| A project-root skill and a nested skill                       | Both load. See [monorepos and subdirectories](#discovery-from-parent-and-nested-directories)                                                                               |
-| A plugin skill and a skill at any of the locations above      | Both load, because plugin skills are namespaced as `/plugin-name:skill-name`                                                                                               |
-| Any of the above and a skill synced from claude.ai            | The other skill or command. See [When a synced skill name matches another command](#when-a-synced-skill-name-matches-another-command)                                      |
+| Same name in                                                                                 | Which one runs                                                                                                                                                                                   |
+| :------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Two of enterprise, personal, and project                                                     | Enterprise over personal, and personal over project. With `deploy` in both `~/.claude/skills/` and the project's `.claude/skills/`, `/deploy` runs the personal one                              |
+| Any of those locations and a [bundled skill](#bundled-skills)                                | Your skill replaces the bundled command, but not its aliases. A project `code-review` skill replaces `/code-review`, and the bundled alias `/review` never runs your skill                       |
+| A skill and a file in `.claude/commands/`                                                    | The skill                                                                                                                                                                                        |
+| A project-root skill and a nested skill                                                      | Both load. See [monorepos and subdirectories](#discovery-from-parent-and-nested-directories)                                                                                                     |
+| A plugin skill and a skill at any of the locations above                                     | Both load, because plugin skills are namespaced as `/plugin-name:skill-name`                                                                                                                     |
+| Any of the above and a skill [synced from your claude.ai account](#how-synced-skills-behave) | The other skill or command. The synced skill still runs as `/anthropic-skills:<name>`. See [When a synced skill name matches another command](#when-a-synced-skill-name-matches-another-command) |
 
 <h3 id="skills-in-cowork-and-cloud-sessions">
   Use skills in Cowork and cloud sessions
@@ -216,11 +216,20 @@ In any other session on your machine, Claude Code loads them only after you down
 
 #### When a synced skill name matches another command
 
-Claude Code skips a synced skill whose name matches any other command, and that other command runs. The other command can be a built-in command, a [bundled skill](#bundled-skills), a skill at any [local level](#where-skills-live), a plugin skill, a file in `.claude/commands/`, or an [MCP prompt](/docs/en/mcp#use-mcp-prompts-as-commands). Claude Code also reserves the names of its own built-in commands and bundled skills even when they're unavailable in your session, for example after you turn bundled skills off, so it skips a synced skill with one of those names too.
+You can invoke a synced skill by its full name, `/anthropic-skills:<name>`, or by its short name, `/<name>`. When another command uses that short name, `/<name>` runs the other command, and the synced skill runs only as `/anthropic-skills:<name>`. With a local `deploy` skill and a synced `deploy`, `/deploy` runs the local skill and `/anthropic-skills:deploy` runs the synced one. Before v2.1.269, a synced skill had only its short name.
+
+The other command can be any of these:
+
+* A built-in command or a [bundled skill](#bundled-skills), including one that's unavailable in your session, for example after you turn bundled skills off
+* A skill at any [local level](#where-skills-live) or a file in `.claude/commands/`
+* A plugin skill
+* An [MCP prompt](/docs/en/mcp#use-mcp-prompts-as-commands)
 
 Claude Code labels synced skills so you can tell where they came from. The `/skills` menu and `/context` group synced skills under `claude.ai sync`, and the `/` command menu marks them as coming from claude.ai.
 
-When it compares names, Claude Code ignores case, spacing, and invisible characters, and treats compatibility forms such as fullwidth letters and dash variants as their plain equivalents, so a synced `Commit` can't load beside a local `commit`. A name that differs only by a look-alike letter from another alphabet counts as a different name, and the `claude.ai sync` label is how you tell the two apart. These checks and labels require Claude Code v2.1.228 or later.
+When it compares names, Claude Code ignores case, spacing, and invisible characters, and treats compatibility forms such as fullwidth letters and dash variants as their plain equivalents. For example, a local `commit` skill keeps `/commit`, and a synced `Commit` runs only as `/anthropic-skills:Commit`.
+
+A name that differs only by a look-alike letter from another alphabet counts as a different name, and the `claude.ai sync` label is how you tell the two apart. These checks and labels require Claude Code v2.1.228 or later.
 
 #### How Claude Code handles the frontmatter of a synced skill
 
@@ -374,10 +383,11 @@ The table below shows where the command name comes from for each layout:
 | File in a subdirectory of `.claude/commands/`                                                      | Subdirectory path relative to `commands/` with each `/` replaced by `:`, then the file name without extension | `.claude/commands/frontend/component.md` → `/frontend:component`                                                                     |
 | Plugin `skills/` subdirectory                                                                      | Frontmatter `name` or the directory name, namespaced by plugin                                                | `my-plugin/skills/review/SKILL.md` → `/my-plugin:review`, or `/my-plugin:fancy` with `name: fancy`                                   |
 | Plugin root `SKILL.md`                                                                             | Frontmatter `name`, with the plugin directory name as a fallback                                              | `my-plugin/SKILL.md` with `name: review` → `/my-plugin:review`. See [Path behavior rules](/docs/en/plugins-reference#path-behavior-rules) |
+| Skill [synced from claude.ai](#how-synced-skills-behave)                                           | The skill's name on your claude.ai account, prefixed with `anthropic-skills:`                                 | Account skill `deploy` → `/anthropic-skills:deploy`, or `/deploy` while no other command uses that name                              |
 
 In a plugin skill, the frontmatter `name` replaces the directory name in the last segment of the command, so `my-plugin/skills/review/SKILL.md` with `name: fancy` becomes `/my-plugin:fancy`. The bare `/fancy` also invokes the skill unless another command already uses that name. If the `name` you write already starts with the plugin's own prefix, Claude Code doesn't add the prefix again on v2.1.246 or later. For example, `name: my-plugin:fancy` still becomes `/my-plugin:fancy`. From v2.1.216 through v2.1.245, Claude Code doubled the prefix when the `name` already carried it.
 
-In [non-interactive sessions](/docs/en/headless), the names `help` and `feedback` aren't reserved for their terminal-only built-in commands, so a plugin skill with one of those names keeps its bare command there. Every other terminal-only built-in's name, such as `/login`, stays reserved even though the command can't run in those sessions. A synced skill named `help` or `feedback` is still skipped there, because Claude Code [skips a synced skill](#when-a-synced-skill-name-matches-another-command) whose name matches any built-in command whether or not that command can run.
+In [non-interactive sessions](/docs/en/headless), the names `help` and `feedback` aren't reserved for their terminal-only built-in commands, so a plugin skill with one of those names keeps its bare command there. Every other terminal-only built-in's name, such as `/login`, stays reserved even though the command can't run in those sessions.
 
 For a plugin-root `SKILL.md`, there is no skill directory to take the name from, so `name` supplies the whole final segment. Without a `name` field, Claude Code falls back to the plugin's directory name.
 
