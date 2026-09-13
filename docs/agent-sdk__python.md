@@ -252,18 +252,18 @@ def list_sessions(
 
 #### Return type: `SDKSessionInfo`
 
-| Property        | Type          | Description                                                          |
-| :-------------- | :------------ | :------------------------------------------------------------------- |
-| `session_id`    | `str`         | Unique session identifier                                            |
-| `summary`       | `str`         | Display title: custom title, auto-generated summary, or first prompt |
-| `last_modified` | `int`         | Last modified time in milliseconds since epoch                       |
-| `file_size`     | `int \| None` | Session file size in bytes (`None` for remote storage backends)      |
-| `custom_title`  | `str \| None` | User-set session title                                               |
-| `first_prompt`  | `str \| None` | First meaningful user prompt in the session                          |
-| `git_branch`    | `str \| None` | Git branch at the end of the session                                 |
-| `cwd`           | `str \| None` | Working directory for the session                                    |
-| `tag`           | `str \| None` | User-set session tag (see [`tag_session()`](#tag_session))           |
-| `created_at`    | `int \| None` | Session creation time in milliseconds since epoch                    |
+| Property        | Type          | Description                                                                     |
+| :-------------- | :------------ | :------------------------------------------------------------------------------ |
+| `session_id`    | `str`         | Unique session identifier                                                       |
+| `summary`       | `str`         | Display title: custom title, auto-generated summary, or first prompt            |
+| `last_modified` | `int`         | Last modified time in milliseconds since epoch                                  |
+| `file_size`     | `int \| None` | Session file size in bytes (`None` for remote storage backends)                 |
+| `custom_title`  | `str \| None` | Session title: the user-set title, or the auto-generated title when none is set |
+| `first_prompt`  | `str \| None` | First meaningful user prompt in the session                                     |
+| `git_branch`    | `str \| None` | Git branch at the end of the session                                            |
+| `cwd`           | `str \| None` | Working directory for the session                                               |
+| `tag`           | `str \| None` | User-set session tag (see [`tag_session()`](#tag_session))                      |
+| `created_at`    | `int \| None` | Session creation time in milliseconds since epoch                               |
 
 #### Example
 
@@ -441,7 +441,7 @@ class ClaudeSDKClient:
     async def receive_messages(self) -> AsyncIterator[Message]
     async def receive_response(self) -> AsyncIterator[Message]
     async def interrupt(self) -> None
-    async def set_permission_mode(self, mode: str) -> None
+    async def set_permission_mode(self, mode: PermissionMode) -> None
     async def set_model(self, model: str | None = None) -> None
     async def rewind_files(self, user_message_id: str) -> None
     async def get_mcp_status(self) -> McpStatusResponse
@@ -469,7 +469,7 @@ class ClaudeSDKClient:
 | `reconnect_mcp_server(server_name)`       | Retry connecting to an MCP server that failed or was disconnected                                                                                                 |
 | `toggle_mcp_server(server_name, enabled)` | Enable or disable an MCP server mid-session. Disabling removes its tools                                                                                          |
 | `stop_task(task_id)`                      | Stop a running background task. A [`TaskNotificationMessage`](#tasknotificationmessage) with status `"stopped"` follows in the message stream                     |
-| `get_server_info()`                       | Get server information including session ID and capabilities                                                                                                      |
+| `get_server_info()`                       | Get the server's initialization info, including available commands and output styles                                                                              |
 | `disconnect()`                            | Disconnect from Claude                                                                                                                                            |
 
 #### Context Manager Support
@@ -1818,7 +1818,14 @@ The dataclass has no field for `resource_links`. Read it from the `data` dict th
 Union type of all content blocks.
 
 ```python theme={null}
-ContentBlock = TextBlock | ThinkingBlock | ToolUseBlock | ToolResultBlock
+ContentBlock = (
+    TextBlock
+    | ThinkingBlock
+    | ToolUseBlock
+    | ToolResultBlock
+    | ServerToolUseBlock
+    | ServerToolResultBlock
+)
 ```
 
 ### `TextBlock`
@@ -3365,7 +3372,7 @@ class SandboxNetworkConfig(TypedDict, total=False):
 | `allowedDomains`          | `list[str]` | `[]`    | Domain names that sandboxed processes can access                                                                                                                                              |
 | `deniedDomains`           | `list[str]` | `[]`    | Domain names that sandboxed processes cannot access. Takes precedence over `allowedDomains`                                                                                                   |
 | `allowManagedDomainsOnly` | `bool`      | `False` | Managed-settings only: when set in managed settings, ignore `allowedDomains` and `WebFetch(domain:...)` allow rules from non-managed settings sources. Has no effect when set via SDK options |
-| `allowUnixSockets`        | `list[str]` | `[]`    | Unix socket paths that processes can access (e.g., Docker socket)                                                                                                                             |
+| `allowUnixSockets`        | `list[str]` | `[]`    | macOS only: Unix socket paths that processes can access, such as the Docker socket. Ignored on Linux                                                                                          |
 | `allowAllUnixSockets`     | `bool`      | `False` | Allow access to all Unix sockets                                                                                                                                                              |
 | `allowLocalBinding`       | `bool`      | `False` | Allow processes to bind to local ports (e.g., for dev servers)                                                                                                                                |
 | `allowMachLookup`         | `list[str]` | `[]`    | macOS only: XPC/Mach service names to allow. Supports a trailing wildcard                                                                                                                     |
