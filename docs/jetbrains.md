@@ -86,7 +86,7 @@ Configure the Claude Code plugin by going to **Settings → Tools → Claude Cod
 #### General settings
 
 * **Claude command**: specify a custom command to run Claude, for example `claude`, `/usr/local/bin/claude`, or `npx @anthropic-ai/claude-code`
-* **Suppress notification for Claude command not found**: skip notifications about not finding the Claude command
+* **Suppress notification for when Claude Command is not found**: skip notifications about not finding the Claude command
 * **Enable using Option+Enter for multi-line prompts**: on macOS only. When enabled, Option+Enter inserts new lines in Claude Code prompts. Disable if the Option key is being captured unexpectedly. Requires a terminal restart.
 * **Enable automatic updates**: automatically check for and install plugin updates, applied on restart
 
@@ -211,9 +211,9 @@ The server is named `ide` and is hidden from `/mcp` because there's nothing to c
 
 **Tools exposed to the model.** The server hosts several tools, but only one is visible to the model. The rest are internal RPC the CLI uses for its own UI, such as opening diffs and reading selections, and are filtered out before the tool list reaches Claude.
 
-| Tool name (as seen by hooks) | What it does                                                                                                          | Read-only |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------- |
-| `mcp__ide__getDiagnostics`   | Returns the IDE's inspection diagnostics, the errors and warnings shown in the editor. Optionally scoped to one file. | Yes       |
+| Tool name (as seen by hooks) | What it does                                                                                                                                                                                                  | Read-only |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| `mcp__ide__getDiagnostics`   | Returns the IDE's inspection diagnostics, the errors and warnings shown in the editor. Each call covers one file: the file Claude specifies, or the file in your active editor if Claude doesn't specify one. | Yes       |
 
 The JetBrains plugin does not expose a code-execution tool to the model.
 

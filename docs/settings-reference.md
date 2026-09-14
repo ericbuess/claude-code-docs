@@ -3076,7 +3076,7 @@ your-repo-file-index --query "$query" | head -20
 
 ### `footerLinksRegexes`
 
-Render extra clickable badges in the footer below the input box when a regex matches turn output: tool results, including file contents and fetched pages, and Claude's own responses. Use it to turn IDs printed by project CLIs, such as review tools and issue trackers, into session links. Requires Claude Code v2.1.176 or later.
+Render extra clickable badges in the footer below the input box when a regex matches turn output: tool results, including file contents and fetched pages, and Claude's own responses. Use it to turn IDs printed by project CLIs, such as review tools and issue trackers, into session links.
 
 * **Scope**: [`User or managed`](#scopes)
 * **Type**: array of objects, each with `type` set to `"regex"`, a `pattern` regex, a `url` template, and an optional `label`; `{name}` placeholders in `url` and `label` are filled from named capture groups in `pattern`
@@ -3097,7 +3097,7 @@ This example matches issue keys such as `PROJ-1234` and builds each link from th
 }
 ```
 
-With this configured, when `PROJ-1234` appears in a tool result or in Claude's reply, a `PROJ-1234` badge appears in the footer linking to `https://issues.example.com/browse/PROJ-1234`. Requires Claude Code v2.1.176 or later.
+With this configured, when `PROJ-1234` appears in a tool result or in Claude's reply, a `PROJ-1234` badge appears in the footer linking to `https://issues.example.com/browse/PROJ-1234`.
 
 #### Badge constraints
 
@@ -3630,7 +3630,7 @@ Turn voice dictation on with the single Boolean form that predates the `voice` o
 
 ### `wheelScrollAccelerationEnabled`
 
-Accelerate mouse-wheel scroll speed during fast scrolls in [fullscreen rendering](/docs/en/fullscreen#mouse-wheel-scrolling). Set it to `false` for a constant scroll rate per wheel notch. Requires Claude Code v2.1.174 or later.
+Accelerate mouse-wheel scroll speed during fast scrolls in [fullscreen rendering](/docs/en/fullscreen#mouse-wheel-scrolling). Set it to `false` for a constant scroll rate per wheel notch.
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: Boolean
@@ -3643,8 +3643,6 @@ Accelerate mouse-wheel scroll speed during fast scrolls in [fullscreen rendering
   "wheelScrollAccelerationEnabled": false
 }
 ```
-
-Requires Claude Code v2.1.174 or later.
 
 ## Git and attribution
 
