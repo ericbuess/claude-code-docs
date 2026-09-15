@@ -771,7 +771,7 @@ Any git hosting service works, such as GitLab, Bitbucket, and self-hosted server
 
 ### Private repositories
 
-Claude Code supports installing plugins from private repositories. If you distribute your marketplace through [**Organization settings > Plugins**](https://claude.ai/admin-settings/plugins) instead, your git credentials aren't involved: organization sync reads the marketplace repository through the Claude GitHub App or your organization's GitHub Enterprise App, and a plugin source it can't authenticate to must be public. See [Distribute through organization settings](#distribute-through-organization-settings) for the full rules.
+Claude Code supports installing plugins from private repositories. If you distribute your marketplace through [**Organization settings > Plugins**](https://claude.ai/admin-settings/plugins) instead, your git credentials aren't involved: organization sync reads the marketplace repository through your organization's GitHub or GitLab connection on claude.ai. See [Distribute through organization settings](#distribute-through-organization-settings) for which plugin sources can be private.
 
 #### Commands you run
 
@@ -814,12 +814,16 @@ The rewrite stores the token in plaintext in your gitconfig, so use a token with
 
 If you distribute plugins through [**Organization settings > Plugins**](https://claude.ai/admin-settings/plugins) on a Team or Enterprise plan, these source rules apply:
 
-* The marketplace repository must be private or internal. Organization sync reads it through the Claude GitHub App or your organization's GitHub Enterprise App.
+* On github.com and gitlab.com, the marketplace repository must be private or internal. Organization sync reads the repository through the connection that matches its host:
+  * **github.com**: the Claude GitHub App
+  * **Your GitHub Enterprise Server host**: your organization's [GitHub Enterprise App](/docs/en/github-enterprise-server#admin-setup)
+  * **gitlab.com or your self-managed GitLab instance**: the access token in your organization's [GitLab configuration](#sync-a-gitlab-hosted-marketplace) for that host
 * Each plugin source must be of type `github`, `url`, or `git-subdir`, or a [relative path](#relative-paths) that starts with `./`. If you list a plugin by bare name under `metadata.pluginRoot`, organization sync rejects it as an unsupported source, so write the path out, such as `./plugins/deploy-tools`.
-* A plugin source can be private in two cases:
+* A plugin source can be private in three cases:
   * A github.com source that shares the marketplace repository's owner
   * A source on your organization's GitHub Enterprise host with the GHE App installed on the repository
-* Organization sync fetches every other source without credentials, so github.com repositories under a different owner and repositories on other hosts, such as GitLab or Bitbucket, must be public.
+  * A `url` or `git-subdir` source on the same GitLab host as the marketplace repository. On gitlab.com, the source must also be under the same top-level group or user namespace as the marketplace repository.
+* Any other plugin source must be a public repository on github.com, gitlab.com, or bitbucket.org, which organization sync fetches without credentials. Organization sync rejects plugin sources on hosts these rules don't cover.
 
 See [Manage plugins for your organization](https://support.claude.com/en/articles/13837433) for the admin workflow.
 
@@ -833,6 +837,12 @@ For example, this `marketplace.json` plugin entry references a plugin you commit
   "source": "./plugins/deploy-tools"
 }
 ```
+
+#### Sync a GitLab-hosted marketplace
+
+To sync a marketplace from gitlab.com or a self-managed GitLab instance, an [Owner](/docs/en/server-managed-settings#access-control) first adds a GitLab configuration for that host at [**Organization settings > Claude Code**](https://claude.ai/admin-settings/claude-code). GitLab configurations are in public beta and apply only to plugin marketplace sync. Adding one doesn't make GitLab repositories available in [Claude Code on the web](/docs/en/claude-code-on-the-web#limitations). See [Manage plugins for your organization](https://support.claude.com/en/articles/13837433) for the setup steps.
+
+When you add the marketplace, enter the project's HTTPS URL, such as `https://gitlab.example.com/platform/claude-plugins`. Projects in nested subgroups work. Organization sync reads the project's default branch. If you turn on **Sync automatically**, only pushes to the default branch start a sync.
 
 #### Keep executables out of the top-level bin directory
 
