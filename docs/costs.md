@@ -126,7 +126,7 @@ By default, Claude Code computes every cost figure it shows developers at list p
   </Step>
 
   <Step title="Write the setting">
-    Set `multiplier` for a flat percentage off list price, list each model's four per-token rates under `overrides`, or do both. The [`modelPricing` entry](/docs/en/settings-reference#modelpricing) has the shape and a paste-ready example.
+    Set `multiplier` below 1 for a flat discount or above 1 for a markup, list each model's four per-token rates under `overrides`, or do both. A markup requires Claude Code v2.1.271 or later. The [`modelPricing` entry](/docs/en/settings-reference#modelpricing) has the shape and a paste-ready example.
   </Step>
 
   <Step title="Deploy it through managed settings">

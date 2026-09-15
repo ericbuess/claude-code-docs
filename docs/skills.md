@@ -700,10 +700,10 @@ A forked skill that runs in the background applies its edits outside your sessio
 
 Skills and [subagents](/docs/en/sub-agents) work together in two directions:
 
-| Approach                     | System prompt            | Task                        | Also loads                                          |
-| :--------------------------- | :----------------------- | :-------------------------- | :-------------------------------------------------- |
-| Skill with `context: fork`   | From agent type          | SKILL.md content            | CLAUDE.md, except when the agent is Explore or Plan |
-| Subagent with `skills` field | Subagent's markdown body | Claude's delegation message | Preloaded skills + CLAUDE.md                        |
+| Approach                     | System prompt            | Task                        | Also loads                                                                                               |
+| :--------------------------- | :----------------------- | :-------------------------- | :------------------------------------------------------------------------------------------------------- |
+| Skill with `context: fork`   | From agent type          | SKILL.md content            | CLAUDE.md, per the agent's [startup context](/docs/en/sub-agents#what-loads-at-startup)                       |
+| Subagent with `skills` field | Subagent's markdown body | Claude's delegation message | Preloaded skills + CLAUDE.md, per the subagent's [startup context](/docs/en/sub-agents#what-loads-at-startup) |
 
 With `context: fork`, you write the task in your skill and pick an agent type to execute it. The built-in Explore and Plan agents [skip CLAUDE.md and git status](/docs/en/sub-agents#what-loads-at-startup) to keep their context small, so a forked skill using `agent: Explore` sees only the SKILL.md content and the agent's own system prompt. For the inverse, where you define a custom subagent that uses skills as reference material, see [Subagents](/docs/en/sub-agents#preload-skills-into-subagents).
 

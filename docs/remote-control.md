@@ -126,17 +126,13 @@ You can start a Remote Control session from the CLI or the VS Code extension. Th
 
 ### Check connection status
 
-In an interactive terminal session, a `/rc active` indicator shows while the connection is up, and is hidden if the terminal is too narrow to fit it. With [fullscreen rendering](/docs/en/fullscreen) it sits at the end of the working-directory line in the startup header, and without it, in the footer below the input box.
+In an interactive session, while Remote Control is connected, the terminal shows an `/rc active` indicator that links to the session on claude.ai. The indicator is hidden when the terminal is too narrow to fit it. To see the session URL and a QR code for [connecting from another device](#connect-from-another-device), run `/remote-control` again to open the status panel. The panel also lets you disconnect Remote Control while your local session keeps running.
 
-The indicator text is a link to the session on claude.ai. Run `/remote-control` again to open a status panel with the session URL and a QR code for [connecting from another device](#connect-from-another-device). When the indicator is in the footer, you can also open the panel by selecting the indicator with the down arrow key and pressing Enter. The panel also offers a disconnect option, which turns Remote Control off while your local session keeps running in the terminal.
+<span id="session-ended-elsewhere" />If the connection fails in an interactive session, the indicator changes to show the failure, and Claude Code shows the reason in a notification and adds it to the conversation. Run `/remote-control` to reconnect, unless the reason says the session changed somewhere else:
 
-If the connection fails, Claude Code shows a notification with the failure reason, adds a warning line with the reason to the conversation, and switches the indicator to a failure state that stays in place. To reconnect, run `/remote-control`, unless the [reason says the session was taken over or ended elsewhere, or that the server can't find it](#session-ended-elsewhere).
-
-<span id="session-ended-elsewhere" />Read the reason before you reconnect. When the session was taken over or ended from another device, app, or Claude Code session, or the server can't find it, the reason says which, and Claude Code leaves out its usual advice to run `/remote-control`:
-
-* **Another device or Claude Code session took the session over**: run `/remote-control` only if you want to take it back from that device.
-* **You ended or archived the session from another device or app**: run `/remote-control` only if you want it back; Claude Code reopens an archived session.
-* **The server can't find the session**: it may have been deleted from another device or app.
+* **Another connection took over this session**: another device or Claude Code session has it now. Run `/remote-control` only if you want to take it back.
+* **This session was ended or archived from another device or app**: run `/remote-control` only if you want the session back. Claude Code reopens an archived session.
+* **The server no longer reports this session**: it may have been deleted from another device or app.
 
 ### Session URL reminders
 
@@ -168,7 +164,7 @@ If you didn't set an explicit name, Claude Code updates the title to reflect you
 
 When you rename a session from claude.ai or the Claude app, Claude Code also updates the local title shown in `claude --resume`. Claude Code applies the same rename to the session name shown on the prompt bar, and in the `claude agents` listing when the session [runs in the background](/docs/en/agent-view). Before v2.1.221, renaming from the session list at claude.ai or in the Claude app updated only the title, and the CLI kept its previous session name; `/rename`, which runs in the CLI itself, set the name on any version.
 
-If you don't have the Claude app yet, use the `/mobile` command inside Claude Code to display a download QR code for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) or [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude).
+If you don't have the Claude app yet, run `/mobile` inside Claude Code to show a QR code for [claude.ai/mobile](https://claude.ai/mobile), which opens the right app store for your phone.
 
 ### What connected devices see
 
@@ -379,7 +375,7 @@ Before v2.1.239, this message read "Remote Control is not yet enabled for your a
 
 ### "Couldn't verify Remote Control eligibility"
 
-Claude Code could not reach the feature-flag service to check whether Remote Control is enabled for your account, typically because you are offline or a proxy is blocking the request. Retry once you have network access, or run `claude doctor` for details. The related message "Couldn't verify your organization's Remote Control policy" has the same cause and the same fix. Both messages were added in v2.1.178.
+Claude Code could not reach the feature-flag service to check whether Remote Control is enabled for your account, typically because you are offline or a proxy is blocking the request. Retry once you have network access, or run `claude doctor` for details. The related message "Couldn't verify your organization's Remote Control policy" means Claude Code couldn't read that policy, and has the same fix. Both messages were added in v2.1.178.
 
 ### "Remote Control requires feature-flag evaluation"
 

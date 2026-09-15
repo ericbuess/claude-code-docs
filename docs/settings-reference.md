@@ -1118,7 +1118,9 @@ Report spend at the rates your organization pays instead of list price. Set it w
 * **Type**: object with an optional `multiplier` and an optional `overrides` map
 * **Default**: unset, so Claude Code reports list price unless a host application supplies a table
 
-This example sets contracted rates for Sonnet 4.6 and then reduces every figure, the Sonnet row included, by 15%. Set `multiplier` alone for a flat discount, `overrides` alone for per-model rates, or both:
+Set `multiplier` alone for a flat discount or markup, `overrides` alone for per-model rates, or both.
+
+This example sets contracted rates for Sonnet 4.6 and then reduces every figure, the Sonnet row included, by 15%:
 
 ```json managed-settings.json theme={null}
 {
@@ -1136,6 +1138,8 @@ This example sets contracted rates for Sonnet 4.6 and then reduces every figure,
 }
 ```
 
+Set `multiplier` above 1, up to 10, to mark every figure up. A markup requires Claude Code v2.1.271 or later. Earlier versions ignore a `multiplier` above 1 with a warning and keep the rest of the setting.
+
 For the steps, including how to confirm the rates are in effect, see [Report spend at your contracted rates](/docs/en/costs#report-spend-at-your-contracted-rates).
 
 <span id="modelpricing-multiplier" />
@@ -1146,7 +1150,7 @@ For the steps, including how to confirm the rates are in effect, see [Report spe
 
 | Field        | Type                                                                                                    | What it does                                                                                                                                                                                                        |
 | :----------- | :------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `multiplier` | number greater than 0 and at most 1                                                                     | Scales every cost Claude Code computes, whether or not an `overrides` row covers it                                                                                                                                 |
+| `multiplier` | number greater than 0 and at most 10                                                                    | Scales every cost Claude Code computes, whether or not an `overrides` row covers it. Below 1 is a discount, above 1 a markup                                                                                        |
 | `overrides`  | map of model ID to a rate object with `input`, `output`, `cacheRead`, and `cacheWrite`, each 0 to 10000 | The USD-per-million-token rates for that model, all four required. `cacheWrite` covers both five-minute and one-hour cache writes. See [Which models a row applies to](#which-models-a-modelpricing-row-applies-to) |
 
 Claude Code uses a row's rates exactly as you wrote them, without adding the fast-mode surcharge or the [US-only-inference rate](https://platform.claude.com/docs/en/about-claude/pricing). If you also set `multiplier`, Claude Code applies it on top of the row's rates. Claude Code drops a row with a rate it can't parse, or a `multiplier` it can't parse, and keeps the rest; see [Fix a broken settings file](/docs/en/settings#fix-a-broken-settings-file).
@@ -3971,15 +3975,15 @@ The `ultracode` effort setting, `/workflows`, and saved workflow commands are un
 
 ### `workflowSizeGuideline`
 
-Set the [agent count Claude aims for](/docs/en/workflows#set-a-size-guideline) in the dynamic workflows it writes. Claude Code sends the value to Claude as advice, not an enforced cap: `"small"` asks for fewer than 5 agents, `"medium"` fewer than 15, and `"large"` fewer than 50. Choose `"small"` when you want to bound what a workflow spends. Requires Claude Code v2.1.219 or later.
+Set the [agent count Claude aims for](/docs/en/workflows#set-a-size-guideline) in the dynamic workflows it writes. Claude Code sends the value to Claude as advice, not an enforced cap: `"small"` asks for fewer than 5 agents, `"medium"` fewer than 10, and `"large"` fewer than 50. Choose `"small"` when you want to bound what a workflow spends. Requires Claude Code v2.1.219 or later.
 
 * **Scope**: [`Any file`](#scopes). A value there takes precedence over the **Dynamic workflow size** choice in `/config`, which Claude Code stores in `~/.claude.json`, and Claude Code hides that row while a settings file sets the key.
 * **Type**: string, one of:
   * `"unrestricted"`: no guideline, so Claude sizes the workflow to the task
   * `"small"`: Claude aims for fewer than 5 agents
-  * `"medium"`: Claude aims for fewer than 15 agents
+  * `"medium"`: Claude aims for fewer than 10 agents
   * `"large"`: Claude aims for fewer than 50 agents
-* **Default**: `"medium"`
+* **Default**: `"medium"`, or `"small"` when you're signed in on a Pro plan with Claude Code v2.1.271 or later
 
 ```json settings.json theme={null}
 {

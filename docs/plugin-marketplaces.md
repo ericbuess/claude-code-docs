@@ -568,7 +568,9 @@ Claude Code doesn't run a `headersHelper` command, or drops headers that came fr
 
 #### How users accept a headersHelper command
 
-A user accepts a plugin entry's command each time they install or update that one plugin by itself, from the plugin's own view in `/plugin` or with `claude plugin install` or `claude plugin update`. Claude Code shows the command and the archive URL, and runs the command only after the user accepts. In a non-interactive shell, pass [`--yes`](/docs/en/plugins-reference#plugin-install) to accept it.
+A user accepts a plugin entry's command each time they install or update that one plugin by itself, from the plugin's own view in `/plugin` or with `claude plugin install` or `claude plugin update`. Claude Code shows the command and the archive URL, and runs the command only after the user accepts.
+
+In a non-interactive shell, pass [`--yes`](/docs/en/plugins-reference#plugin-install) to accept the command. To accept only the command that a previous `--json` run displayed, pass [`--accept-command`](/docs/en/plugins-reference#plugin-install) with the `sha256` the run reported.
 
 Claude Code runs only the command it showed, for the archive URL it showed. If the entry's command or archive URL changed in between, Claude Code refuses the install or update. A change in the query string alone doesn't count.
 
@@ -639,7 +641,8 @@ Claude Code doesn't support link mode on Windows and refuses to install a link-m
 
 Claude Code runs your command on the user's machine, so it binds every run to the user's explicit acceptance:
 
-* When users install the plugin from its details screen in `/plugin`, or install or update it with `claude plugin install` or `claude plugin update` in an interactive terminal, Claude Code shows them the exact command string first and records the accepted command for that installation. A `claude plugin update` that can proceed on the recorded acceptance of the same command shows nothing. In a non-interactive shell, such as a provisioning script, pass `--yes` to `claude plugin install` or `claude plugin update` to accept the command it prints.
+* When users install the plugin from its details screen in `/plugin`, or install or update it with `claude plugin install` or `claude plugin update` in an interactive terminal, Claude Code shows them the exact command string first and records the accepted command for that installation. A `claude plugin update` that can proceed on the recorded acceptance of the same command shows nothing.
+* In a non-interactive shell, such as a provisioning script, pass `--yes` to `claude plugin install` or `claude plugin update` to accept the command it prints. To accept only the command that a previous `--json` run displayed, pass [`--accept-command`](/docs/en/plugins-reference#plugin-install) with the `sha256` the run reported.
 * Every other path runs only the command the user already accepted. This includes updates started from `/plugin` and the background runs described in [When Claude Code re-runs the command](#when-claude-code-re-runs-the-command). When none was accepted, Claude Code refuses to run the command and tells the user how to review it. Claude Code never installs a command-sourced plugin as a dependency of another plugin, so users install it themselves first.
 * If you change the entry's `command`, or switch its `mode`, users keep the version they already have and Claude Code stops re-running the command. In interactive sessions, the `/plugin` Errors tab shows the new command until the user reviews and accepts it by running `claude plugin update <plugin>@<marketplace>`.
 

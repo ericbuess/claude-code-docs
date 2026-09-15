@@ -379,7 +379,9 @@ To pre-approve specific tools instead, append `--allowed-tools` with your rules,
 
 ### How each session's config is assembled
 
-The runner gives each session its own config directory, seeded from an in-memory snapshot of the host's `~/.claude/` that the runner captures once at startup: `settings.json`, `CLAUDE.md`, hooks, agents, commands, and skills in your runner image apply to every session as the user-level baseline. Because the snapshot is taken at startup, config changes on a running host take effect only after a runner restart. Set `SELF_HOSTED_RUNNER_HOST_CONFIG_DIR` to seed from a different path, or point it at an empty directory to disable seeding.
+The runner gives each session its own config directory, seeded from a snapshot of the host's `~/.claude/` that the runner captures once at startup: `settings.json`, `CLAUDE.md`, hooks, agents, commands, and skills in your runner image apply to every session as the user-level baseline. If you change config on a running host, the change takes effect only after you restart the runner.
+
+Set `SELF_HOSTED_RUNNER_HOST_CONFIG_DIR` to seed from a different path, or point it at an empty directory to disable seeding.
 
 Repository-committed `.claude/settings.json` layers on top as project settings. Sessions also read [`managed-settings.json`](/docs/en/settings#where-settings-live) from the standard system path in your runner image. Whether its keys apply alongside [server-managed settings](/docs/en/server-managed-settings) follows [how Claude Code combines managed sources](/docs/en/managed-settings#how-claude-code-combines-managed-sources): by default, when your organization delivers any server-managed keys, sessions ignore the runner image's file apart from the [keys Claude Code reads from every admin source](/docs/en/managed-settings#keys-read-from-every-admin-source), such as the `env` block, the sandbox locks, the sandbox binary paths, and `forceRemoteSettingsRefresh`. See [settings precedence](/docs/en/settings#settings-precedence).
 

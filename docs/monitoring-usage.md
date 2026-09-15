@@ -203,7 +203,7 @@ Every span carries the [standard attributes](#standard-attributes) plus a `span.
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
 | `user_prompt`             | Prompt text. Value is `<REDACTED>` unless the gate is set                                                                                                              | `OTEL_LOG_USER_PROMPTS` |
 | `user_prompt_length`      | Prompt length in characters                                                                                                                                            |                         |
-| `interaction.sequence`    | 1-based counter of interactions in this session                                                                                                                        |                         |
+| `interaction.sequence`    | 1-based counter of interactions, counted per Claude Code process rather than per session, as described for [`event.sequence`](#event-correlation-attributes)           |                         |
 | `parent.source`           | How the span got its trace parent: `env` when it parented under an inbound `TRACEPARENT`, `none` when it started its own trace. Requires Claude Code v2.1.268 or later |                         |
 | `interaction.duration_ms` | Wall-clock duration of the turn                                                                                                                                        |                         |
 
@@ -625,10 +625,13 @@ When a user submits a prompt, Claude Code may make multiple API calls and run se
 | Attribute           | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `prompt.id`         | UUID v4 identifier linking all events produced while processing a single user prompt                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `event.sequence`    | 0-based counter for ordering events, counted per Claude Code process rather than per session                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `message.uuid`      | UUID of the message as persisted in the session transcript, the `~/.claude/projects/*/*.jsonl` files. Present on `assistant_response`, and on `user_prompt` except for command dispatches, which can produce zero or many messages. On `assistant_response`, this is the response's final transcript entry, which the next turn's `parentUuid` chains from. Requires Claude Code v2.1.214 or later                                                                                                |
 | `client_request_id` | Client-generated UUID sent as the `x-client-request-id` request header. Present on `api_request` and `api_error` on first-party API connections; absent on third-party provider backends and when the request was retried through the non-streaming fallback. Pairs a request with its response and remains available for failures such as timeouts that never produced a server `request_id`. Matches the same attribute on the `llm_request` trace span. Requires Claude Code v2.1.214 or later |
 
 To trace all activity triggered by a single prompt, filter your events by a specific `prompt.id` value. This returns the user\_prompt event, any api\_request events, and any tool\_result events that occurred while processing that prompt.
+
+`event.sequence` starts at 0 each time a Claude Code process starts and counts up for the life of that process. It keeps counting across `/clear`, which assigns a new `session.id`. If you [resume a session without forking](/docs/en/how-claude-code-works#resume-or-fork-sessions), the session keeps its `session.id` but takes its `event.sequence` values from the process that resumed it, so within one session a later event can carry a lower value than an earlier one, or repeat one. To order a session's events, sort by `event.timestamp` and use `event.sequence` to order events that share a timestamp.
 
 For message-level reconstruction, each event class carries a key that matches a field in the session transcript. The transcript entry format is [internal to Claude Code](/docs/en/sessions#where-transcripts-are-stored) and changes between versions, so a pipeline that joins on these fields can break on any release; treat the joins as version-specific rather than a stable contract:
 
@@ -647,7 +650,7 @@ Logged when a user submits a prompt.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"user_prompt"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `prompt_length`: Length of the prompt
 * `prompt`: Prompt content. Redacted by default. Set `OTEL_LOG_USER_PROMPTS=1` to include it
 * `message.uuid`: UUID of the resulting user message, matching the persisted transcript entry. Absent on command dispatches, which can produce zero or many messages. Requires Claude Code v2.1.214 or later
@@ -665,7 +668,7 @@ Logged after each API request that returns text content from the model. Only the
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"assistant_response"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `response_length`: Length of the response text in characters
 * `response`: Response text, truncated at the content limit (60 KB by default). Redacted to `<REDACTED>` by default. Set `OTEL_LOG_ASSISTANT_RESPONSES=1` to include it. When `OTEL_LOG_ASSISTANT_RESPONSES` is unset, `OTEL_LOG_USER_PROMPTS` controls it instead, so set `OTEL_LOG_ASSISTANT_RESPONSES=0` to keep responses redacted while prompt logging is on
 * `model`: Model identifier (for example, "claude-sonnet-5")
@@ -684,7 +687,7 @@ Logged when a tool completes execution. Not emitted if the tool call was rejecte
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"tool_result"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `tool_name`: Name of the tool
 * `tool_use_id`: Unique identifier for this tool invocation. Matches the `tool_use_id` passed to hooks, allowing correlation between OTel events and hook-captured data.
 * `success`: `"true"` or `"false"`
@@ -716,7 +719,7 @@ Logged for each API request to Claude.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"api_request"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `model`: Model used (for example, "claude-sonnet-5")
 * `cost_usd`: Estimated cost in USD
 * `cost_usd_micros`: Estimated cost in millionths of a US dollar, emitted as an integer
@@ -743,7 +746,7 @@ Logged when an API request to Claude fails.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"api_error"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `model`: Model used (for example, "claude-sonnet-5")
 * `error`: Error message
 * `status_code`: HTTP status code as a number. Absent for non-HTTP errors such as connection failures.
@@ -767,7 +770,7 @@ Logged when an API request returns `stop_reason: "refusal"`. Refusals arrive on 
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"api_refusal"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `model`: Model identifier from the request
 * `request_id`: Anthropic API request ID from the response's `request-id` header, such as `"req_011..."`. Present only when the API returns one.
 * `query_source`: Subsystem that issued the request, such as `"repl_main_thread"`, `"compact"`, or a subagent name. See [`api_request`](#api-request-event) for definitions.
@@ -791,7 +794,7 @@ Logged for each API request attempt when `OTEL_LOG_RAW_API_BODIES` is set. One e
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"api_request_body"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `body`: JSON-serialized Messages API request parameters, such as the system prompt, messages, and tools, truncated at the content limit (60 KB by default). Extended-thinking content in prior assistant turns is redacted. Emitted only in inline mode (`OTEL_LOG_RAW_API_BODIES=1`).
 * `body_ref`: Absolute path to a `<dir>/<uuid>.request.json` file containing the untruncated body. Emitted only in file mode (`OTEL_LOG_RAW_API_BODIES=file:<dir>`).
 * `body_length`: Untruncated body length. UTF-8 bytes when `OTEL_LOG_RAW_API_BODIES=file:<dir>`, or UTF-16 code units when `=1`
@@ -810,7 +813,7 @@ Logged for each successful API response when `OTEL_LOG_RAW_API_BODIES` is set.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"api_response_body"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `body`: JSON-serialized Messages API response, including the id, content blocks, usage, and stop reason, truncated at the content limit (60 KB by default). Extended-thinking content is redacted. Emitted only in inline mode (`OTEL_LOG_RAW_API_BODIES=1`).
 * `body_ref`: Absolute path to a `<dir>/<request_id>.response.json` file containing the untruncated body. Emitted only in file mode (`OTEL_LOG_RAW_API_BODIES=file:<dir>`).
 * `body_length`: Untruncated body length. UTF-8 bytes when `OTEL_LOG_RAW_API_BODIES=file:<dir>`, or UTF-16 code units when `=1`
@@ -830,7 +833,7 @@ Logged when a tool permission decision is made (accept/reject).
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"tool_decision"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `tool_name`: Name of the tool (for example, "Read", "Edit", "Write", "NotebookEdit")
 * `tool_use_id`: Unique identifier for this tool invocation. Matches the `tool_use_id` passed to hooks, allowing correlation between OTel events and hook-captured data.
 * `decision`: Either `"accept"` or `"reject"`
@@ -863,7 +866,7 @@ Logged when the permission mode changes, for example from `Shift+Tab` cycling, e
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"permission_mode_changed"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `from_mode`: The previous permission mode, for example `"default"`, `"plan"`, `"acceptEdits"`, `"auto"`, or `"bypassPermissions"`
 * `to_mode`: The new permission mode
 * `trigger`: What caused the change. One of `"shift_tab"`, `"exit_plan_mode"`, `"auto_gate_denied"`, or `"auto_opt_in"`. Absent when the transition originates from the SDK or bridge
@@ -879,7 +882,7 @@ Logged when `/login` or `/logout` completes.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"auth"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `action`: `"login"` or `"logout"`
 * `success`: `"true"` or `"false"`
 * `auth_method`: Authentication method, such as `"oauth"`
@@ -897,7 +900,7 @@ Logged when an MCP server connects, disconnects, or fails to connect.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"mcp_server_connection"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `status`: `"connected"`, `"failed"`, or `"disconnected"`
 * `transport_type`: Server transport, such as `"stdio"`, `"sse"`, or `"http"`
 * `server_scope`: Scope the server is configured at, such as `"user"`, `"project"`, or `"local"`
@@ -920,7 +923,7 @@ Logged when Claude Code catches an unexpected internal error. Only the error cla
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"internal_error"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `error_name`: Error class name, such as `"TypeError"` or `"SyntaxError"`
 * `error_code`: Node.js errno code such as `"ENOENT"` when present on the error
 
@@ -935,7 +938,7 @@ Logged when a plugin finishes installing, from both the `claude plugin install` 
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"plugin_installed"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `marketplace.is_official`: `"true"` if the marketplace is an official Anthropic marketplace, `"false"` otherwise
 * `install.trigger`: `"cli"` or `"ui"`
 * `plugin.name`: Name of the installed plugin. For third-party marketplaces this is included only when `OTEL_LOG_TOOL_DETAILS=1`
@@ -953,7 +956,7 @@ Logged once per enabled plugin at session start. Use this event to inventory whi
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"plugin_loaded"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `plugin.name`: name of the plugin. For plugins outside the official marketplace and built-in bundle the value is `"third-party"` unless `OTEL_LOG_TOOL_DETAILS=1`
 * `marketplace.name`: marketplace the plugin was installed from, when known. Redacted to `"third-party"` under the same condition as `plugin.name`
 * `plugin.version`: version from the plugin manifest. Included only when the name is not redacted and the manifest declares a version
@@ -979,7 +982,7 @@ Logged when a skill is invoked, whether Claude calls it through the Skill tool o
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"skill_activated"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `skill.name`: Name of the skill. For user-defined and third-party plugin skills the value is the placeholder `"custom_skill"` unless `OTEL_LOG_TOOL_DETAILS=1`
 * `invocation_trigger`: How the skill was triggered (`"user-slash"`, `"claude-proactive"`, or `"nested-skill"`)
 * `skill.source`: Where the skill was loaded from (for example, `"bundled"`, `"userSettings"`, `"projectSettings"`, `"plugin"`)
@@ -998,7 +1001,7 @@ Logged when Claude Code resolves an `@`-mention in a prompt. Not every mention e
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"at_mention"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `mention_type`: Type of mention (`"file"`, `"directory"`, `"agent"`, `"mcp_resource"`, `"peer"`). The `"peer"` value means you mentioned [one of your other Claude Code sessions](/docs/en/cross-session-messaging). Requires Claude Code v2.1.232 or later
 * `success`: Whether the mention resolved successfully (`"true"` or `"false"`)
 
@@ -1013,7 +1016,7 @@ Logged once when an API request fails after more than one attempt. Emitted along
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"api_retries_exhausted"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `model`: Model used
 * `error`: Final error message
 * `status_code`: HTTP status code as a number. Absent for non-HTTP errors.
@@ -1032,7 +1035,7 @@ Logged once per configured hook at session start. Use this event to inventory wh
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"hook_registered"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `hook_event`: hook event type, such as `"PreToolUse"` or `"PostToolUse"`
 * `hook_type`: hook implementation type: `"command"`, `"prompt"`, `"mcp_tool"`, `"http"`, or `"agent"`
 * `hook_source`: where the hook is defined: `"userSettings"`, `"projectSettings"`, `"localSettings"`, `"flagSettings"`, `"policySettings"`, or `"pluginHook"`
@@ -1052,7 +1055,7 @@ Logged when one or more hooks begin executing for a hook event.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"hook_execution_start"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `hook_event`: Hook event type, such as `"PreToolUse"` or `"PostToolUse"`
 * `hook_name`: Full hook name including matcher, such as `"PreToolUse:Write"`
 * `num_hooks`: Number of matching hook commands
@@ -1072,7 +1075,7 @@ Logged when all hooks for a hook event have finished.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"hook_execution_complete"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `hook_event`: Hook event type
 * `hook_name`: Full hook name including matcher
 * `num_hooks`: Number of matching hook commands
@@ -1097,7 +1100,7 @@ Logged when an official-marketplace plugin hook emits per-invocation metrics. On
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"hook_plugin_metrics"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `plugin_id`: plugin identifier in `<name>@<marketplace>` form
 * `hook_event`: hook event type that emitted the metrics
 * Up to 20 plugin-emitted metric keys. Names match `^[a-z][a-z0-9_]{0,39}$`. Values are boolean or number.
@@ -1113,7 +1116,7 @@ Logged when conversation compaction completes.
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"compaction"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `trigger`: `"auto"` or `"manual"`
 * `success`: `"true"` or `"false"`
 * `duration_ms`: Compaction duration
@@ -1133,7 +1136,7 @@ Logged when a [subagent](/docs/en/sub-agents) finishes and returns its result to
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"subagent_completed"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `agent_type`: The subagent type. Built-in agent names and agents from official-marketplace plugins appear verbatim; other agent names are replaced with `"custom"` unless `OTEL_LOG_TOOL_DETAILS=1` is set
 * `agent.source`: Where the agent definition came from: `built-in`, `plugin`, or the settings source that defined a custom agent, such as `userSettings` or `projectSettings`
 * `is_built_in`: Whether the subagent is a built-in agent type
@@ -1157,7 +1160,7 @@ Logged when a session quality survey is shown or answered. See [Session quality 
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"feedback_survey"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `event_type`: Survey lifecycle event, for example `"appeared"`, `"responded"`, or `"transcript_prompt_appeared"`
 * `appearance_id`: Unique ID linking the events emitted for one survey instance
 * `survey_type`: Which survey produced the event. `"session"` is the "How is Claude doing?" rating prompt
@@ -1179,7 +1182,7 @@ When Claude Code can't safely determine the retention period, it pauses the swee
 * All [standard attributes](#standard-attributes)
 * `event.name`: `"retention_sweep"`
 * `event.timestamp`: ISO 8601 timestamp
-* `event.sequence`: monotonically increasing counter for ordering events within a session
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `result`: `"complete"` when the sweep ran, `"skipped"` when Claude Code paused it
 * `period_days`: The `cleanupPeriodDays` value from merged settings, in days, or `30` when no source sets it. On skipped events, the value the sweep would have used, computed from the settings sources Claude Code could read
 * `used_default`: `"true"` when no readable settings source sets `cleanupPeriodDays`, `"false"` otherwise. On complete events, `"true"` means the 30-day default applied

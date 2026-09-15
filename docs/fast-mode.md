@@ -30,7 +30,9 @@ In the CLI, toggle fast mode in either of these ways:
 * Type `/fast` and press Tab to toggle on or off
 * Set `"fastMode": true` in your [user settings file](/docs/en/settings)
 
-By default, fast mode you turn on in an interactive session persists across sessions. In [non-interactive mode](/docs/en/headless), with the `-p` flag, `/fast` works only in a session launched with fast mode in its [`--settings`](/docs/en/cli-reference#cli-flags) value, for example `claude -p --settings '{"fastMode": true}'`; the toggle then applies to that session only and isn't saved as your default, and in any other non-interactive session the command reports that fast mode isn't available. You can configure fast mode to reset each session. See [require per-session opt-in](#require-per-session-opt-in) for details.
+By default, fast mode you turn on in an interactive session persists across sessions. You can configure fast mode to reset each session. See [require per-session opt-in](#require-per-session-opt-in) for details.
+
+Outside a [cloud session](#use-fast-mode-in-cloud-sessions), in [non-interactive mode](/docs/en/headless) with the `-p` flag, `/fast` works only in a session launched with fast mode in its [`--settings`](/docs/en/cli-reference#cli-flags) value, for example `claude -p --settings '{"fastMode": true}'`; the toggle then applies to that session only and isn't saved as your default. The `-p` form requires Claude Code v2.1.205 or later. Elsewhere in non-interactive mode, the command reports that fast mode isn't available.
 
 You can run `/fast` while Claude is working, and Claude Code toggles fast mode without waiting for the turn to end. Claude Code finishes the running turn at its original speed, so the speed change takes effect from your next turn. If your current model doesn't support fast mode, turning it on also switches your model, and Claude Code uses the new model from its next request in that turn.
 
@@ -57,6 +59,12 @@ Fast mode follows your model switches in both directions:
 Whenever a model switch turns fast mode on or off, Claude Code shows a `Fast mode ON` or `Fast mode OFF` confirmation, and the `↯` icon appears while fast mode is on. This holds whether you switch with `/model`, with [`/config model=<model>`](/docs/en/settings), or from a device connected through [Remote Control](/docs/en/remote-control).
 
 Claude Code resends the session's fast mode status to devices connected through Remote Control after a model switch, a reconnection, or a failed [availability check](#use-fast-mode-behind-proxies-and-llm-gateways).
+
+### Use fast mode in cloud sessions
+
+Fast mode works in [cloud sessions](/docs/en/claude-code-on-the-web) when it's available on your account, whether the session runs on Anthropic-managed infrastructure or a [self-hosted runner](/docs/en/self-hosted-environments). Requires Claude Code v2.1.271 or later in the session's environment.
+
+Type `/fast on` in the session to turn fast mode on. It stays on for that session only and isn't saved as your default. The [requirements](#requirements) apply in cloud sessions too.
 
 ## Understand the cost tradeoff
 
@@ -121,7 +129,10 @@ Fast mode requires all of the following:
 * **Owner enablement for Team and Enterprise**: fast mode is disabled by default for Team and Enterprise organizations. An Owner must explicitly [enable fast mode](#enable-fast-mode-for-your-organization) before users can access it.
 
 <Note>
-  If fast mode has not been enabled for your organization, the `/fast` command will show "Fast mode has been disabled by your organization." If your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist excludes the fast-mode Opus model, `/fast` is refused with "is not in your organization's allowed models". The exception is a session already running on an allowed Opus model that supports fast mode: `/fast` enables fast mode on your current model instead of switching models.
+  Two organization settings can block turning fast mode on with `/fast`:
+
+  * **Fast mode not enabled**: if fast mode hasn't been enabled for your organization, turning fast mode on with `/fast` shows "Fast mode has been disabled by your organization."
+  * **Fast-mode model not allowed**: if your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist excludes the fast-mode Opus model, turning it on is refused with "is not in your organization's allowed models". In a session already running on an allowed Opus model that supports fast mode, `/fast` instead enables fast mode on your current model without switching models.
 </Note>
 
 ### Enable fast mode for your organization
@@ -155,7 +166,7 @@ Two gateway configurations report "Fast mode has been disabled by your organizat
 
 In both cases, set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK=1` to restore fast mode. `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS` doesn't apply to either case, since it only bypasses failed checks and both of these produce a disabled response instead. Allowlisting direct egress doesn't help the bearer-token case, which never sends the request.
 
-The variables affect only the client-side check. When your organization has fast mode disabled, the API rejects fast mode requests whether or not they're set.
+The variables affect only the client-side check. When your organization has fast mode disabled, the API rejects fast mode requests whether or not they're set. A rejection from the API stands even with a skip variable set. Claude Code retries the rejected request at standard speed, turns fast mode off, and `/fast` reports that your organization has disabled fast mode.
 
 Setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` also suppresses the availability check. Without a previously cached successful check, `/fast` reports "Fast mode is currently unavailable"; both skip variables restore fast mode in that configuration too.
 
