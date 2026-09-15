@@ -913,6 +913,7 @@ A second sentence explains what routed the session away from the Anthropic API; 
 
 * A `CLAUDE_CODE_USE_*` provider variable, such as `CLAUDE_CODE_USE_BEDROCK` for [Amazon Bedrock](/docs/en/amazon-bedrock) or `CLAUDE_CODE_USE_VERTEX` for [Google Cloud's Agent Platform](/docs/en/google-vertex-ai)
 * [`ANTHROPIC_BASE_URL`](/docs/en/env-vars) pointing at a host other than `api.anthropic.com`, such as an [LLM gateway](/docs/en/llm-gateway) or proxy, even when you sign in with claude.ai; before v2.1.196, a custom base URL didn't block Remote Control
+* `ANTHROPIC_UNIX_SOCKET` set, so the session sends its requests through a local socket rather than to `api.anthropic.com`
 * An enterprise [cloud gateway](/docs/en/claude-apps-gateway) sign-in made through `/login`, which doesn't support Remote Control and has no variable to unset
 
 **What to do:**
@@ -1385,6 +1386,8 @@ After that opening, the message reports what came back and which request failed:
 * A sentence naming the failed streaming request's id and the failure that triggered the retry. When a stream had opened before the failure, it also reports how many stream events arrived and, if any did, how long the stream had been silent when the attempt failed.
 
 Before v2.1.234, the message ended after `intercepting the request`.
+
+Before v2.1.271, a reply that carried a valid API message under a non-JSON content type such as `text/plain` also ended the turn with this error. Some LLM gateways use that content type for the non-streaming reply.
 
 **What to do:**
 

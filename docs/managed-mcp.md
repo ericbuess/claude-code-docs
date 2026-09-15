@@ -44,7 +44,13 @@ Claude Code supports a range of restriction levels. Each pattern uses one or mor
 
 ## Exclusive control with managed-mcp.json
 
-If you deploy a `managed-mcp.json` file, Claude Code loads only the servers that file defines, the servers you [provide through `managedMcpServers`](#provide-servers-through-managed-settings), plus any in-process servers the app that started the session registers, such as the VS Code extension's own server or the [connectors the desktop app delivers](/docs/en/mcp#how-connectors-reach-claude-code). Users can't add, modify, or use any other MCP servers, including plugin-provided servers and servers passed with the [`--mcp-config` CLI flag](/docs/en/cli-reference#cli-flags). The file also suppresses the claude.ai connectors Claude Code fetches itself unless you [allow them alongside the managed set](#allow-claude-ai-connectors-alongside-the-managed-set).
+When you deploy a `managed-mcp.json` file, Claude Code loads only these MCP servers:
+
+* The servers the file defines
+* Servers you [provide through `managedMcpServers`](#provide-servers-through-managed-settings)
+* In-process servers that the app that started the session registers, such as the VS Code extension's own server or the [connectors the desktop app delivers](/docs/en/mcp#how-connectors-reach-claude-code)
+
+Users can't add, modify, or use any other MCP servers, including plugin-provided servers and servers passed with the [`--mcp-config` CLI flag](/docs/en/cli-reference#cli-flags). The file also suppresses the claude.ai connectors Claude Code fetches itself unless you [allow them alongside the managed set](#allow-claude-ai-connectors-alongside-the-managed-set).
 
 ### Deploy managed-mcp.json
 
@@ -115,7 +121,9 @@ If you used `allowedMcpServers` to keep some of your own `managed-mcp.json` serv
 
 To confirm the file is in effect, run two checks on a managed machine:
 
-1. `claude mcp list` shows only the servers in `managed-mcp.json`, plus any you provide through `managedMcpServers`. If a user's own servers still appear, the file isn't being read; check the path and permissions.
+1. `claude mcp list` shows only the servers in `managed-mcp.json`, plus any you provide through `managedMcpServers`. Two other results mean something is wrong:
+   * If a user's own servers still appear, Claude Code isn't reading the file, so check its path and the permissions on its parent directories.
+   * If the file's servers don't appear and the `MCP config diagnostics` section marks the enterprise config as failed to parse, Claude Code can't read or parse the file. Fix the error that section names, then have the user restart Claude Code.
 2. `claude mcp add --transport http test https://example.com/mcp` fails with `Cannot add MCP server: enterprise MCP configuration is active and has exclusive control over MCP servers`. The URL doesn't need to be a real server, since the policy check rejects the command before anything is contacted.
 
 ### Disable MCP entirely
@@ -459,7 +467,7 @@ For what users see at startup when `managed-mcp.json` is deployed and the sessio
 | The server is on a denylist and the user runs `claude mcp add`                                                        | `Cannot add MCP server "<name>": server is explicitly blocked by enterprise policy`                                          |
 | The server isn't on the allowlist and the user runs `claude mcp add`                                                  | `Cannot add MCP server "<name>": not allowed by enterprise policy`                                                           |
 | The user runs `claude mcp remove` on a server from `managedMcpServers`                                                | `MCP server "<name>" is provided by your organization (managed settings) and cannot be removed locally.`                     |
-| A previously configured server is now blocked by policy                                                               | The server silently disappears from `/mcp` and `claude mcp list` with no warning                                             |
+| A previously configured server is now blocked by policy                                                               | The server disappears from `/mcp` and `claude mcp list`                                                                      |
 | A server becomes blocked while a session is running, and the user selects **Reconnect** or turns it back on in `/mcp` | [`MCP server <name> is blocked by enterprise managed policy`](/docs/en/errors#mcp-server-is-blocked-by-enterprise-managed-policy) |
 
 When a server silently disappears, the user gets no signal that policy is the reason, so tell affected users which servers are blocked when you roll out a new restriction.

@@ -232,7 +232,11 @@ When the default holds a message, Claude Code opens an approval dialog in the re
 * If this session's permission-mode class changes while messages are held, Claude Code re-applies the inbound rules, delivers the messages they now accept, and shows a notice.
 * If a settings change makes `refuse` apply while messages are held, Claude Code drops every held message and reports a refusal to each sender it can reach.
 
-When the sender is an interactive session on the same machine, Claude Code shows a notice there when the receiver holds the message, and a follow-up when the receiver later delivers, denies, or expires it. If the receiver refuses it, Claude Code shows a notice there that the receiver isn't accepting cross-session messages and tells the sender's Claude not to wait or resend.
+When the sender is a session on the same machine, Claude Code sends a notice back to it when the receiver holds the message, and a follow-up when the receiver later delivers, denies, or expires it. The notice reaches the sending Claude, so it knows not to keep waiting on a message the other session hasn't read.
+
+In an interactive sending session, the notice appears in the transcript. A [`claude -p`](/docs/en/headless) sender receives it in [streamed output](/docs/en/headless#stream-responses) as an [informational `system` message](/docs/en/agent-sdk/typescript#sdkinformationalmessage). Notices to `claude -p` senders require Claude Code v2.1.271 or later.
+
+If the receiver refuses the message, the sender's notice says the receiver isn't accepting cross-session messages and tells the sender's Claude not to wait or resend.
 
 Claude Code holds at most 100 messages, separately from the delivery queue, and past that drops the oldest.
 
