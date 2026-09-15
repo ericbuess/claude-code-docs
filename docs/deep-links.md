@@ -23,7 +23,7 @@ This page covers how to [build a link](#build-a-link), [embed one in a runbook o
 
 The `claude-cli://` prefix is a custom URL scheme that Claude Code registers with your operating system, similar to how `mailto:` links open your email client. When you click a deep link:
 
-1. The browser or app hands the URL to your operating system.
+1. The browser or app passes the URL to your operating system.
 2. The operating system recognizes the `claude-cli://` prefix and starts Claude Code on your machine.
 3. A new terminal window opens with Claude Code running in the directory the link specified, and the link's prompt text already in the input box.
 4. You read the prompt, edit it if you want, and press Enter to send it.

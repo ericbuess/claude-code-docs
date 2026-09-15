@@ -157,7 +157,7 @@ A wrong or unreachable base URL produces a different symptom: Claude Code [retri
 
 ### Distribute the configuration
 
-Every developer machine needs the gateway address and a credential. You can distribute them centrally through [managed settings](/docs/en/managed-settings#delivery-mechanisms), so developers configure nothing, or hand developers the values to set themselves.
+Every developer machine needs the gateway address and a credential. You can distribute them centrally through [managed settings](/docs/en/managed-settings#delivery-mechanisms), so developers configure nothing, or give developers the values to set themselves.
 
 #### What to distribute
 

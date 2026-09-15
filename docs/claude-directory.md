@@ -1512,7 +1512,7 @@ If a setting, hook, or file isn't taking effect, see [Debug your configuration](
 
 ## Application data
 
-Beyond the config you author, `~/.claude` holds data Claude Code writes during sessions. These files are plaintext. Anything that passes through a tool lands in a transcript on disk: file contents, command output, pasted text.
+Beyond the config you author, `~/.claude` holds data Claude Code writes during sessions. These files are plaintext. Anything that passes through a tool is written to a transcript on disk: file contents, command output, pasted text.
 
 ### Cleaned up automatically
 

@@ -72,7 +72,7 @@ Install the language server binary from the table below before using these plugi
 You can also [create your own LSP plugin](/docs/en/plugins-reference#lsp-servers) for other languages.
 
 <Note>
-  If you see `Executable not found in $PATH` in the `/plugin` Errors tab after installing a plugin, install the required binary from the table above.
+  If you see `Executable not found in $PATH` in the `/plugin` Errors tab after installing a plugin, install the binary the [code intelligence](#code-intelligence) table lists for that plugin.
 </Note>
 
 #### What Claude gains from code intelligence plugins

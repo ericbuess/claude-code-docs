@@ -36,11 +36,11 @@ The Claude app for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id647
 
 From the app you can start cloud sessions, drive a Claude Code session running on your computer, or message Dispatch a task. The app is the same for all three; they differ in where the work happens.
 
-| Feature                                              | What you connect to                                                   | When to use                                                                                                                                          |
-| :--------------------------------------------------- | :-------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Claude Code on the web](/docs/en/claude-code-on-the-web) | A cloud session on cloud infrastructure, Anthropic-managed by default | Your repository is on GitHub and the task should keep running after you put your phone away. See the [web quickstart](/docs/en/web-quickstart) to set up. |
-| [Remote Control](/docs/en/remote-control)                 | A Claude Code session running on your computer                        | The work needs your local filesystem, tools, or MCP servers.                                                                                         |
-| [Dispatch](/docs/en/desktop#sessions-from-dispatch)       | The Desktop app on your computer                                      | You want to message a task and let Dispatch decide how to run it. Requires a Pro or Max plan.                                                        |
+| Feature                                        | What you connect to                                             | When to use                                                                                                                                            |
+| :--------------------------------------------- | :-------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Cloud sessions](/docs/en/claude-code-on-the-web)   | A session on cloud infrastructure, Anthropic-managed by default | Your repository is on GitHub and the task should keep running after you put your phone away. See the [cloud quickstart](/docs/en/web-quickstart) to set up. |
+| [Remote Control](/docs/en/remote-control)           | A Claude Code session running on your computer                  | The work needs your local filesystem, tools, or MCP servers.                                                                                           |
+| [Dispatch](/docs/en/desktop#sessions-from-dispatch) | The Desktop app on your computer                                | You want to message a task and let Dispatch decide how to run it. Requires a Pro or Max plan.                                                          |
 
 If your computer will be off, use cloud sessions, which run in the cloud and continue with your laptop closed. Remote Control and Dispatch drive your own machine, so it needs to stay on with Claude Code or the Desktop app running. If your machine sleeps during a Remote Control session, Claude Code reconnects when the machine comes back online.
 
@@ -50,9 +50,9 @@ Cloud sessions and Remote Control run from the **Code** tab. For Dispatch, which
 
 ### Start and monitor cloud sessions
 
-Claude Code on the web runs tasks on cloud infrastructure, Anthropic-managed by default, so a session continues after you put your phone away. From the Code tab, select a repository and branch, describe the task, and submit it. Sessions persist across devices: a task you start on your laptop is ready to review from your phone, and one you start from your phone is waiting when you're back at your desk.
+Cloud sessions run tasks on cloud infrastructure, Anthropic-managed by default, so a session continues after you put your phone away. From the Code tab, select a repository and branch, describe the task, and submit it. Sessions persist across devices: a task you start on your laptop is ready to review from your phone, and one you start from your phone is waiting when you're back at your desk.
 
-Open a session in the app to check progress, answer Claude's questions, or steer it in a new direction. You can also tell Claude to [watch a pull request](/docs/en/claude-code-on-the-web#auto-fix-pull-requests) and fix CI failures or review comments as they arrive. To connect GitHub and set up your environment, follow the [web quickstart](/docs/en/web-quickstart), and see [Claude Code on the web](/docs/en/claude-code-on-the-web) for everything cloud sessions can do.
+Open a session in the app to check progress, answer Claude's questions, or steer it in a new direction. You can also tell Claude to [watch a pull request](/docs/en/claude-code-on-the-web#auto-fix-pull-requests) and fix CI failures or review comments as they arrive. To connect GitHub and set up your environment, follow the [cloud quickstart](/docs/en/web-quickstart), and see [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web) for everything cloud sessions can do.
 
 ### Continue a local session with Remote Control
 
@@ -82,7 +82,7 @@ The mobile client covers most of what a session needs, with a few limitations:
 ## Related resources
 
 * [Platforms and integrations](/docs/en/platforms): compare every surface Claude Code runs on
-* [Claude Code on the web](/docs/en/claude-code-on-the-web): how cloud sessions run and how to move work to and from your terminal
+* [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web): how cloud sessions run and how to move work to and from your terminal
 * [Configure cloud environments](/docs/en/cloud-environments): network access levels, environment variables, and setup scripts for cloud sessions
 * [Remote Control](/docs/en/remote-control): continue a local session from any device
 * [Sessions from Dispatch](/docs/en/desktop#sessions-from-dispatch): how Dispatch tasks become Code sessions in the Desktop app

@@ -60,7 +60,7 @@ This example uses [Bun](https://bun.sh) as the runtime for its built-in HTTP ser
 
 <Steps>
   <Step title="Create the project">
-    The permission relay examples later on this page import `zod` directly, so it installs alongside the MCP SDK. Create a new directory and install both:
+    The [permission relay](#relay-permission-prompts) examples import `zod` directly, so it installs alongside the MCP SDK. Create a new directory and install both:
 
     ```bash theme={null}
     mkdir webhook-channel && cd webhook-channel
@@ -110,7 +110,7 @@ This example uses [Bun](https://bun.sh) as the runtime for its built-in HTTP ser
     })
     ```
 
-    The file does three things in order:
+    The file configures the server, connects over stdio, and starts an HTTP listener, in that order:
 
     * **Server configuration**: creates the MCP server with `claude/channel` in its capabilities, which is what tells Claude Code this is a channel. Claude Code delivers the [`instructions`](#server-options) string to Claude as context when the server connects: tell Claude what events to expect, whether to reply, and how to route replies if it should.
     * **Stdio connection**: connects to Claude Code over stdin/stdout. This is standard for any [MCP server](https://modelcontextprotocol.io/docs/concepts/transports#standard-io).
@@ -764,7 +764,7 @@ Listing files is read-only, so Claude runs it without approval. The permission d
 curl -d "yes <id>" -H "X-Sender: dev" localhost:8788
 ```
 
-The local dialog closes, the `reply` tool runs, and Claude's reply lands in the stream.
+The local dialog closes, the `reply` tool runs, and Claude's reply appears in the stream.
 
 The three channel-specific pieces in this file:
 

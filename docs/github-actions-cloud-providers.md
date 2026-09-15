@@ -35,14 +35,14 @@ Before you start, you need:
 
 ## Set up the integration
 
-Beyond the prerequisites, you create four things: a GitHub identity for the Claude Code GitHub Action, the cloud-side trust configuration, the repository secrets, and the workflow file. The steps below walk through each.
+Beyond the prerequisites, you create a GitHub identity for the Claude Code GitHub Action, the cloud-side trust configuration, the repository secrets, and the workflow file. The steps below walk through each.
 
 <Steps>
   <Step title="Choose a GitHub identity">
     The Claude Code GitHub Action pushes commits and posts comments through a GitHub identity. The [quick setup](/docs/en/github-actions#quick-setup) installs the official Claude GitHub App for this. With a cloud provider, you choose the identity yourself:
 
     * **Official [Claude GitHub App](https://github.com/apps/claude)**: install it on the repository, or skip to the next step if it's already installed
-    * **Custom GitHub App**: create your own app, described below, when you want only the three permissions the Claude Code GitHub Action uses rather than the [official app's full set](/docs/en/github-actions#github-app-permissions)
+    * **Custom GitHub App**: create your own app when you want only the three permissions the Claude Code GitHub Action uses rather than the [official app's full set](/docs/en/github-actions#github-app-permissions)
     * **GitHub's automatic `GITHUB_TOKEN`**: no app to create or install, but GitHub doesn't trigger your CI workflows on commits made with it
 
     The workflow examples in the fourth step authenticate with a custom app. That step also says what to change for the other two options.

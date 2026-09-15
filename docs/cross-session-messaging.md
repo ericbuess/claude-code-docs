@@ -4,7 +4,7 @@
 
 # Message your other Claude Code sessions
 
-> Let Claude list and message your other Claude Code sessions on this machine, and reach your sessions on other machines or on the web.
+> Let Claude list and message your other Claude Code sessions on this machine, and reach your sessions on other machines or in the cloud.
 
 <Note>
   Cross-session messaging requires Claude Code v2.1.224 or later on macOS and Linux, including Linux inside WSL 2. On native Windows, it requires Claude Code v2.1.234 or later. When a session meets the requirements, messaging is on with nothing to enable. See [Availability](#availability) for provider requirements and how to confirm a session has it.
@@ -23,7 +23,7 @@ Use messaging when one of your sessions has something another session needs mid-
 * **Hand over a finding**: when one session discovers a breaking change or makes a decision, Claude summarizes it for the session working on the affected area, instead of you re-explaining it there.
 * **Coordinate parallel worktrees**: when sessions work the same repository in separate [worktrees](/docs/en/worktrees), Claude can tell the other sessions what landed.
 * **Get status from long-running work**: have a migration or test run report back to the session you're watching, or ask it yourself from there. If that session is on this machine, Claude can also [ask it for one notice when it next goes idle or exits](#get-a-notice-when-another-session-goes-idle).
-* **Message across machines**: reach one of your sessions on another machine or on the web.
+* **Message across machines**: reach one of your sessions on another machine or in the cloud.
 
 Use messaging between independent sessions that you start and steer yourself. Claude Code has a dedicated feature for each of the other ways to run or reach multiple sessions, so use the one built for what you're doing instead:
 
@@ -123,7 +123,7 @@ Claude finds a message's target on its own, so you don't need to run anything be
 * **Subagents**: agents running inside the current session.
 * **Teammates**: this session's own [agent team](/docs/en/agent-teams) teammates. Before v2.1.239, teammates didn't appear in the listing, though Claude could already message them by name.
 * **Your other local sessions**: Claude Code sessions running on the same machine, including [background sessions](/docs/en/agent-view). A session appears only when it binds an [inbox socket](#the-sessions-inbox-socket).
-* **Your cloud sessions**: your [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions, shown while this session is connected to [Remote Control](/docs/en/remote-control). Claude Code labels them `cloud` in the listing.
+* **Your [cloud sessions](/docs/en/claude-code-on-the-web)**: shown while this session is connected to [Remote Control](/docs/en/remote-control). Claude Code labels them `cloud` in the listing.
 * **Your Remote Control sessions on other machines**: shown while this session is connected to [Remote Control](/docs/en/remote-control), and labeled `Remote Control`. Claude Code shows `offline` as the status of a session whose Remote Control connection has dropped.
 
 This session isn't one of the rows. If Claude addresses a message to this session's own name, Claude Code refuses it and tells Claude the target is the current session. Before v2.1.239, the listing didn't show this session's name, and Claude Code reported a message sent to it as an agent it couldn't find.
@@ -153,11 +153,11 @@ When you rename a session, or start or resume an interactive one, with a name an
 
 How a message travels, and whether it passes through Anthropic servers, depends on where the target session runs:
 
-| Where the other session runs                            | How the message travels                                                                                                      |
-| :------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------- |
-| On this machine                                         | Over a per-session socket on macOS and Linux, or a per-session named pipe on native Windows, never through Anthropic servers |
-| On another of your machines                             | Through Anthropic servers, arriving over that machine's [Remote Control](/docs/en/remote-control) connection                      |
-| On [Claude Code on the web](/docs/en/claude-code-on-the-web) | Through Anthropic servers, straight to the cloud session                                                                     |
+| Where the other session runs               | How the message travels                                                                                                      |
+| :----------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| On this machine                            | Over a per-session socket on macOS and Linux, or a per-session named pipe on native Windows, never through Anthropic servers |
+| On another of your machines                | Through Anthropic servers, arriving over that machine's [Remote Control](/docs/en/remote-control) connection                      |
+| In the [cloud](/docs/en/claude-code-on-the-web) | Through Anthropic servers, straight to the cloud session                                                                     |
 
 Starting a conversation with a session on another of your machines requires Claude Code v2.1.225 or later and a target that [appears in the listing](#see-which-sessions-claude-can-reach). Before v2.1.225, Claude could only reply to a message that arrived from one.
 
@@ -339,7 +339,7 @@ Cross-session messaging requires Claude Code v2.1.224 or later on macOS, Linux, 
 
   To stop a session from receiving them, set [`crossSessionInbound`](#turn-off-cross-session-messaging) to `refuse`.
 
-* **Sessions beyond this machine**: Claude finds your [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions and your sessions on other machines from a session that is connected to Remote Control, which needs a claude.ai sign-in as this session's active authentication and the other [Remote Control requirements](/docs/en/remote-control#requirements). Claude can't find those sessions with an API key or on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Microsoft Foundry.
+* **Sessions beyond this machine**: Claude finds your [cloud sessions](/docs/en/claude-code-on-the-web) and your sessions on other machines from a session that is connected to Remote Control, which needs a claude.ai sign-in as this session's active authentication and the other [Remote Control requirements](/docs/en/remote-control#requirements). Claude can't find those sessions with an API key or on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Microsoft Foundry.
 
 To check a session, type `/list-agents`, also available as `/peers`. The result separates a session that doesn't have the feature from a session where something narrower blocked a message, such as a missing `SendMessage` tool or a refused send:
 

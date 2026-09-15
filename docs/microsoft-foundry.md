@@ -96,7 +96,7 @@ Before configuring Claude Code with Microsoft Foundry, ensure you have:
 
 First, create a Claude resource in Azure:
 
-1. Navigate to the [Microsoft Foundry portal](https://ai.azure.com/)
+1. Go to the [Microsoft Foundry portal](https://ai.azure.com/)
 2. Create a new resource, noting your resource name
 3. Create deployments for the Claude models, noting the deployment name you give each; you'll set these names as the model variables in step 4:
 

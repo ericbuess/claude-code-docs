@@ -531,7 +531,7 @@ claude plugin validate ./my-plugin --strict
 
 Set `defaultEnabled: false` in `plugin.json` to ship a plugin that installs disabled. The user turns it on with `claude plugin enable <plugin>` or the `/plugin` interface. Use this for plugins that add cost or scope a user should opt into, such as one that connects to an external service.
 
-`defaultEnabled` is the fallback when nothing else has decided the plugin's state. Two things take precedence over it:
+`defaultEnabled` is the fallback when nothing else has decided the plugin's state. The user's setting and a dependency requirement take precedence over it:
 
 * **The user's setting**: an entry for the plugin in `enabledPlugins` at any settings scope. Once written, it persists across plugin updates and reinstalls, so changing `defaultEnabled` in a later release does not flip an existing user.
 * **A dependency requirement**: when a plugin is required by another one that is active, Claude Code writes `true` for it at install or enable time. That gives it an explicit setting, so its own default no longer applies. See [Enable or disable a plugin with dependencies](/docs/en/plugin-dependencies#enable-or-disable-a-plugin-with-dependencies).
@@ -553,8 +553,8 @@ The same field can appear in a plugin's marketplace entry, where it takes preced
 | `experimental.themes`   | string\|array         | Color theme files/directories (replaces default `themes/`). See [Themes](#themes)                                                                                                                       | `"./themes/"`                                        |
 | `experimental.monitors` | string\|array         | Background [Monitor](/docs/en/tools-reference#monitor-tool) configurations that start automatically when the plugin is active. See [Monitors](#monitors)                                                     | `"./monitors.json"`                                  |
 | `experimental.evals`    | string\|array         | Directory below the plugin root that holds the plugin's [eval cases](/docs/en/plugin-evals#use-a-different-eval-directory), when it isn't the default `evals/`. `claude plugin eval --eval-dir` overrides it | `"quality/evals"`                                    |
-| `userConfig`            | object                | User-configurable values prompted at enable time. See [User configuration](#user-configuration)                                                                                                         | See below                                            |
-| `channels`              | array                 | Channel declarations for message injection (Telegram, Slack, Discord style). See [Channels](#channels)                                                                                                  | See below                                            |
+| `userConfig`            | object                | User-configurable values prompted at enable time. See [User configuration](#user-configuration)                                                                                                         |                                                      |
+| `channels`              | array                 | Channel declarations for message injection (Telegram, Slack, Discord style). See [Channels](#channels)                                                                                                  |                                                      |
 | `dependencies`          | array                 | Other plugins this plugin requires, optionally with semver version constraints. See [Constrain plugin dependency versions](/docs/en/plugin-dependencies)                                                     | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
 
 ### Experimental components

@@ -513,7 +513,7 @@ Each key under `upstream_model` must match the `name` of a configured upstream, 
 
 ### `managed`
 
-The `managed` block defines role-based access policies keyed on IdP groups or email domain. Policies are evaluated in order; the first match is selected, then merged onto the `match: {}` catch-all base described below. They are served per-user at `GET /managed/settings` with ETag/304 caching.
+The `managed` block defines role-based access policies keyed on IdP groups or email domain. Policies are evaluated in order; the first match is selected, then merged onto the `match: {}` catch-all base. They are served per-user at `GET /managed/settings` with ETag/304 caching.
 
 ```yaml theme={null}
 managed:
@@ -760,7 +760,7 @@ telemetry:
   Each destination opts into `metrics`, `logs`, and `traces` independently, and the default is metrics only. The signals differ in sensitivity:
 
   * **Metrics**: aggregate counters such as token counts, request counts, and latency
-  * **Logs and traces**: can carry full bash commands, tool inputs, and file paths, covering anything Claude Code does on a developer's machine
+  * **Logs and traces**: can carry full Bash commands, tool inputs, and file paths, covering anything Claude Code does on a developer's machine
 
   Enable logs and traces only on destinations with the access controls and retention policy that data warrants.
 </Warning>
@@ -842,6 +842,17 @@ Four optional top-level blocks, `access_control`, `limits`, `timeouts`, and `rat
 | `timeouts`       | `upstream_ttfb_ms`                             | 120000   | Max wait for the upstream's response headers (time to first byte). The response body then streams with no wall-clock cap. Applies to the direct Anthropic upstream path; every other provider is bounded by its provider SDK's own timeout.                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `rate_limits`    | `device_authorization.max` / `.window_seconds` | 30 / 600 | Per-IP rate limit on the unauthenticated device-authorization endpoint. Raise for a large org behind a shared egress IP or NAT. These limits apply only to the device-grant sign-in flow, not to `/v1/messages` inference. See [User-code brute-force resistance](/docs/en/claude-apps-gateway-deploy#user-code-brute-force-resistance).                                                                                                                                                                                                                                                                                                                                                                          |
 | `rate_limits`    | `device_verify.max` / `.window_seconds`        | 10 / 600 | Per-IP rate limit on `user_code` submissions at `/device`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+
+If you leave both `access_control` lists empty, which is the default, the gateway serves any client address, so only your network restricts who can reach it. That matters because a gateway can push [managed settings](#managed) that run commands on developer machines.
+
+While `allow_cidrs` is empty, the gateway warns in two places, without changing how it answers any request:
+
+* **At boot**: a warning in the operational log recommends allowing only the private ranges `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10`, `127.0.0.0/8`, `::1/128`, and `fc00::/7`, plus any other internal ranges your developers connect from. If you bind the gateway to a loopback address and set neither `trusted_proxies` nor `public_url`, as in local development, the warning doesn't appear.
+* **At runtime**: the first time a request arrives from an address outside those private ranges, the gateway logs a warning and emits an [`access.public_client` audit event](/docs/en/claude-apps-gateway-deploy#logs) carrying the client IP. Both fire once per process. Link-local addresses, `169.254.0.0/16` and `fe80::/10`, don't count as public. The gateway answers `/healthz` and `/readyz` before this check runs, so health probes from public ranges don't trigger it.
+
+Both signals use the client address as the gateway resolves it. If a load balancer, port-forward, or tunnel relays traffic and isn't listed in `listen.trusted_proxies`, the gateway sees the relay's address, which is usually private, so neither the runtime warning nor a private allow list catches traffic relayed through it.
+
+Behind such a front end, set [`listen.trusted_proxies`](#listen) first so the gateway sees real client addresses, and keep the gateway and everything in front of it unreachable from the public internet regardless.
 
 ## Complete example
 
@@ -1010,7 +1021,7 @@ By default, a registry policy on Windows or a managed-preferences plist on macOS
 
 For Claude Desktop, set the `bootstrapUrl` key in Claude Desktop's own [managed configuration](https://claude.com/docs/third-party/claude-desktop/configuration) to `<listen.public_url>/user/bootstrap`. The sign-in flow and per-group policy then match the CLI's once a policy opts in server-side with a `desktop` key; without the opt-in, `/user/bootstrap` returns 404. See [Claude Desktop overlay](#claude-desktop-overlay) for the server-side half.
 
-[`forceLoginGatewayUrl`](/docs/en/settings-reference#forcelogingatewayurl), and the `"gateway"` value of [`forceLoginMethod`](/docs/en/settings-reference#forceloginmethod), are honored only from a managed source on the machine: `managed-settings.json`, the macOS plist or Windows HKLM registry, or a policy helper. A developer setting them in their own `~/.claude/settings.json` has no effect, and neither does setting them in the gateway payload.
+Claude Code honors [`forceLoginGatewayUrl`](/docs/en/settings-reference#forcelogingatewayurl), [`gatewayInternalNetworks`](/docs/en/settings-reference#gatewayinternalnetworks), and the `"gateway"` value of [`forceLoginMethod`](/docs/en/settings-reference#forceloginmethod) only from a managed source on the machine: `managed-settings.json`, the macOS plist or Windows HKLM registry, or a policy helper. A developer setting them in their own `~/.claude/settings.json` has no effect, and neither does setting them in the gateway payload.
 
 ## Related
 

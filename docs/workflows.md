@@ -27,7 +27,7 @@ Reach for a workflow when a task needs more agents than one conversation can coo
 | Scale                           | A few delegated tasks per turn | Same as subagents            | A handful of long-running peers        | Dozens to hundreds of agents per run |
 | Interruption                    | Restarts the turn              | Restarts the turn            | Teammates keep running                 | Resumable in the same session        |
 
-A workflow moves the plan into code. With subagents, skills, and agent teams, Claude is the orchestrator: it decides turn by turn what to spawn or assign next, and every result lands in a context window. A workflow script holds the loop, the branching, and the intermediate results itself, so Claude's context holds only the final answer.
+A workflow moves the plan into code. With subagents, skills, and agent teams, Claude is the orchestrator: it decides turn by turn what to spawn or assign next, and every result goes into a context window. A workflow script holds the loop, the branching, and the intermediate results itself, so Claude's context holds only the final answer.
 
 Moving the plan into code also lets a workflow apply a repeatable quality pattern, not just run more agents: it can have independent agents adversarially review each other's findings before they're reported, or draft a plan from several angles and weigh them against each other, so you get a more trustworthy result than a single pass.
 
@@ -61,7 +61,7 @@ The quickest way to see a workflow in action is to run `/deep-research`, the [bu
   </Step>
 
   <Step title="Read the report">
-    When the run finishes, the report lands in your session. It cites the sources each claim came from, with claims that didn't survive cross-checking already filtered out.
+    When the run finishes, the report appears in your session. It cites the sources each claim came from, with claims that didn't survive cross-checking already filtered out.
 
     When the verifier agents can't check a claim, such as after a rate limit or API error, the report lists that claim as unverified instead of counting it as refuted.
   </Step>
@@ -261,7 +261,7 @@ use a workflow to migrate every component under src/components/ from JavaScript 
 
 ### Review every changed file and write one summary
 
-Run a reviewer per file, then hand all the findings to one agent that ranks and deduplicates them.
+Run a reviewer per file, then pass all the findings to one agent that ranks and deduplicates them.
 
 ```text wrap theme={null}
 use a workflow to review every file changed in this PR for correctness issues, then merge the per-file findings into one ranked summary

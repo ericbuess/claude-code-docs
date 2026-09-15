@@ -76,7 +76,7 @@ Because Claude sees your whole project, it can work across it. When you ask Clau
 
 ## Environments and interfaces
 
-The agentic loop, tools, and capabilities described above are the same everywhere you use Claude Code. What changes is where the code executes and how you interact with it.
+The [agentic loop](#the-agentic-loop), [tools](#tools), and capabilities are the same everywhere you use Claude Code. What changes is where the code executes and how you interact with it.
 
 ### Execution environments
 

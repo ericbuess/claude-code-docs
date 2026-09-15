@@ -94,6 +94,12 @@ You can place CLAUDE.md at project scope in `./CLAUDE.md` or `./.claude/CLAUDE.m
 
 Learn more: [CLAUDE.md files](/docs/en/memory#claude-md-files)
 
+### Cloud session
+
+A Claude Code session that keeps running after you close your laptop, because it runs on cloud infrastructure instead of your machine: Anthropic-managed by default, or a [self-hosted environment](/docs/en/self-hosted-environments) your organization operates. You start one from claude.ai/code, the Claude mobile app, the Desktop app with **Cloud** selected, `claude --cloud`, or a [routine](/docs/en/routines). A session in your terminal, IDE, or the Desktop app with **Local** selected is a local session; to reach a local session from another device, use [Remote Control](#remote-control).
+
+Learn more: [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web)
+
 ### Command
 
 A reusable instruction you invoke by typing `/name` in the prompt. Built-in commands such as `/clear`, `/model`, and `/compact` control the session. You can define your own commands as files in `.claude/commands/`, or install them from a [plugin](#plugin). [Skills](#skill) are the recommended way to package multi-step commands.
@@ -242,7 +248,7 @@ Learn more: [Protect against prompt injection](/docs/en/security#protect-against
 
 ### Remote Control
 
-A way to continue a local Claude Code session from your phone or browser via claude.ai. Your code execution and files stay on your machine; the interface is remote. Different from Claude Code on the web, which runs in a cloud sandbox.
+A way to continue a local Claude Code session from your phone or browser via claude.ai. Your code execution and files stay on your machine; the interface is remote. Different from a [cloud session](/docs/en/claude-code-on-the-web), which runs in a cloud sandbox.
 
 Learn more: [Remote Control](/docs/en/remote-control)
 
@@ -298,9 +304,9 @@ Learn more: [Platforms and integrations](/docs/en/platforms)
 
 ### Teleport
 
-A command, `/teleport`, that pulls a cloud Claude Code session into your local terminal. Claude fetches the branch, loads the conversation history, and resumes from the web session's last state. The reverse direction is `--cloud`, which sends a local task to run on the web.
+A command, `/teleport`, that pulls a cloud Claude Code session into your local terminal. Claude fetches the branch, loads the conversation history, and resumes from the cloud session's last state. The reverse direction is `--cloud`, which sends a local task to run in the cloud.
 
-Learn more: [From web to terminal](/docs/en/claude-code-on-the-web#from-web-to-terminal)
+Learn more: [From cloud to terminal](/docs/en/claude-code-on-the-web#from-cloud-to-terminal)
 
 ### Tool
 
@@ -336,8 +342,9 @@ Learn more: [Run parallel sessions with git worktrees](/docs/en/worktrees)
 
 These terms appear in older docs, blog posts, and community content. Use the current name when searching this site.
 
-| Old term        | Now called                                    | Notes                                |
-| --------------- | --------------------------------------------- | ------------------------------------ |
-| Headless mode   | [Non-interactive mode](#non-interactive-mode) | Same `-p` flag, same behavior        |
-| Custom commands | [Skills](#skill)                              | `.claude/commands/` files still work |
-| Slash commands  | Commands                                      | "Slash" dropped from product copy    |
+| Old term                                                                | Now called                                    | Notes                                                                         |
+| ----------------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------- |
+| Headless mode                                                           | [Non-interactive mode](#non-interactive-mode) | Same `-p` flag, same behavior                                                 |
+| Web session; "Claude Code on the web" as the name for any cloud session | [Cloud session](#cloud-session)               | "Claude Code on the web" now names only the browser surface at claude.ai/code |
+| Custom commands                                                         | [Skills](#skill)                              | `.claude/commands/` files still work                                          |
+| Slash commands                                                          | Commands                                      | "Slash" dropped from product copy                                             |

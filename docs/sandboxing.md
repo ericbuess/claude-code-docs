@@ -200,7 +200,7 @@ Path prefixes control how paths are resolved:
 
 This syntax differs from [Read and Edit permission rules](/docs/en/permissions#read-and-edit), which use `//path` for absolute and `/path` for project-relative. Sandbox filesystem paths use standard conventions: `/tmp/build` is absolute. For how Claude Code treats a trailing slash or a wildcard in these paths, see [Sandbox path prefixes](/docs/en/settings-reference#sandbox-path-prefixes).
 
-You can also deny write or read access using `sandbox.filesystem.denyWrite` and `sandbox.filesystem.denyRead`, and re-allow specific paths within a denied region using `sandbox.filesystem.allowRead`. When read rules overlap, the more specific path wins:
+You can also deny write or read access using `sandbox.filesystem.denyWrite` and `sandbox.filesystem.denyRead`, and re-allow specific paths within a denied region using `sandbox.filesystem.allowRead`. When read rules overlap, the rule with the narrower path applies:
 
 | Example rules                                           | Result                                                                                                                                                                                                   |
 | :------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -602,7 +602,7 @@ Administrators can require sandboxing for every user, keep developers from widen
 
 ### Enforce sandboxing with managed settings
 
-To require the sandbox for every developer, deliver the `sandbox` keys through [managed settings](/docs/en/managed-settings#delivery-mechanisms), either as a file managed by your MDM or through [server-managed settings](/docs/en/server-managed-settings) on Claude.ai.
+To require the sandbox for every developer, deliver the `sandbox` keys through [managed settings](/docs/en/managed-settings#delivery-mechanisms), either as a file managed by your MDM or through [server-managed settings](/docs/en/server-managed-settings) on claude.ai.
 
 The following managed settings configuration enables the sandbox, refuses to start Claude Code if the sandbox cannot initialize, and prevents the model from retrying commands outside the sandbox:
 

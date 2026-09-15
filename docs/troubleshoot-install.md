@@ -870,7 +870,7 @@ The `npm error path` line names the directory npm couldn't move. Delete that dir
     rm -rf "$(npm root -g)/@anthropic-ai/claude-code"
     ```
 
-    Then remove any leftover temp directories. If zsh prints `no matches found`, there were none to remove:
+    Then remove any leftover temp directories. If Zsh prints `no matches found`, there were none to remove:
 
     ```bash theme={null}
     rm -rf "$(npm root -g)/@anthropic-ai/.claude-code-"*

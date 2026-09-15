@@ -126,7 +126,7 @@
     <div>Auto mode follow-ups: new <code>PermissionDenied</code> hook fires on classifier denials (return <code>retry: true</code> to let Claude try a different approach), and <code>/permissions</code> → Recently denied lets you retry manually with <code>r</code></div>
     <div>New <code>defer</code> value for <code>permissionDecision</code> in <code>PreToolUse</code> hooks: <code>-p</code> sessions pause at a tool call and exit with a <code>deferred\_tool\_use</code> payload so an SDK app or custom UI can surface it, then resume with <code>--resume</code></div>
     <div><code>/buddy</code>: hatch a small creature that watches you code. An April Fools' joke, no longer available</div>
-    <div><code>disableSkillShellExecution</code> setting blocks inline shell from skills, slash commands, and plugin commands</div>
+    <div><code>disableSkillShellExecution</code> setting blocks inline shell from skills, custom commands, and plugin commands</div>
     <div>Edit tool now works on files viewed via <code>cat</code> or <code>sed -n</code> without a separate Read</div>
     <div>Hook output over 50K saved to disk with a path + preview instead of injected into context</div>
     <div>Thinking summaries off by default in interactive sessions (<code>showThinkingSummaries: true</code> to restore)</div>

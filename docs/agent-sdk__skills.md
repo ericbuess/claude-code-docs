@@ -118,7 +118,7 @@ This section is the SDK's command documentation. A command is anything you run b
 * **Your skills**: prompt artifacts that you author, each a directory holding a `SKILL.md` file. A user-invocable skill's name joins the surface automatically, so dispatching your own `/security-check` and running a built-in work the same way
 * **Custom command files**: an older artifact form with the same behavior, flat Markdown files in `.claude/commands/` whose filenames become command names. Skills are their recommended successor
 
-By default, both you and Claude can invoke any skill. You can restrict either path through the skill's [frontmatter](/docs/en/skills#control-who-invokes-a-skill). For a definition of the two terms, see the glossary's [Command](/docs/en/glossary#command) and [Skill](/docs/en/glossary#skill) entries. See [Commands in Claude Code](/docs/en/commands) for every built-in and [Extend Claude with skills](/docs/en/skills) for the complete guide to both artifact forms.
+By default, both you and Claude can invoke any skill. You can restrict either path through the skill's [frontmatter](/docs/en/skills#control-who-invokes-a-skill). For definitions of command and skill, see the glossary's [Command](/docs/en/glossary#command) and [Skill](/docs/en/glossary#skill) entries. See [Commands in Claude Code](/docs/en/commands) for every built-in and [Extend Claude with skills](/docs/en/skills) for the complete guide to both artifact forms.
 
 ### Discover available commands
 

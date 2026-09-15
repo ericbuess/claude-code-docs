@@ -68,7 +68,7 @@ exit 0
 
 ### Before you start the runner
 
-Two things the hook depends on:
+The hook has these requirements:
 
 * Install it before you start the runner. The runner snapshots `~/.claude/` once at startup, so a hook added to a running runner takes effect only after a restart.
 * Export `E2E_REPLY_DIR` to the runner process. The hook is a no-op when the variable is unset or the directory doesn't exist, so set it wherever you start the runner, such as the systemd unit, pod spec, or CI step. The test script below requires it too.
@@ -194,7 +194,7 @@ The CLI refreshes the short-lived access token automatically on each invocation,
 
 ### Ephemeral CI runners
 
-There is no long-lived CI token for this today. The scope that grants remote-session control, `user:sessions:claude_code`, is capped server-side at 30 days, so `claude setup-token`, which mints a one-year inference-only token, doesn't cover it. The [environment secret](/docs/en/self-hosted-environments-quickstart#set-up-an-environment-and-runner) isn't accepted either, since it only authorizes a runner to register with the environment, not to create sessions.
+There is no long-lived CI token for this today. The scope that grants cloud-session control, `user:sessions:claude_code`, is capped server-side at 30 days, so `claude setup-token`, which mints a one-year inference-only token, doesn't cover it. The [environment secret](/docs/en/self-hosted-environments-quickstart#set-up-an-environment-and-runner) isn't accepted either, since it only authorizes a runner to register with the environment, not to create sessions.
 
 To provision a stored login onto an ephemeral runner, set [`CLAUDE_CODE_OAUTH_REFRESH_TOKEN` and `CLAUDE_CODE_OAUTH_SCOPES`](/docs/en/env-vars#variables) so `claude auth login` exchanges the token without a browser; the same 30-day cap applies to the refresh grant. Contact your Anthropic account team if you need a machine-identity path that isn't bound to a human account.
 

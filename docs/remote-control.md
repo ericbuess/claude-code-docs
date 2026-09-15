@@ -19,9 +19,9 @@ When you start a Remote Control session on your machine, Claude keeps running lo
 * **Send images and files from your phone or browser**: attach a photo or file in the Claude app or at claude.ai/code, with or without a caption. Claude sees attached photos directly as part of your message. Claude Code downloads other files to your machine and passes them to Claude as `@` file references.
 * **Survive interruptions**: if your laptop sleeps or your network drops, Claude Code reconnects automatically when your machine comes back online. While the connection is rebuilding, Claude Code queues messages, permission prompts, and status updates from subagents and workflows, and delivers them once the connection recovers.
 
-Unlike [Claude Code on the web](/docs/en/claude-code-on-the-web), which runs on cloud infrastructure, Remote Control sessions run directly on your machine and interact with your local filesystem. The web and mobile interfaces are a window into that local session.
+Unlike [cloud sessions](/docs/en/claude-code-on-the-web), which run on cloud infrastructure, Remote Control sessions run directly on your machine and interact with your local filesystem. The web and mobile interfaces are a window into that local session.
 
-This page covers setup, how to start and connect to sessions, and how Remote Control compares to Claude Code on the web.
+This page covers setup, how to start and connect to sessions, and how Remote Control compares to cloud sessions.
 
 ## Requirements
 
@@ -42,7 +42,7 @@ You can start a Remote Control session from the CLI or the VS Code extension. Th
 
 <Tabs>
   <Tab title="Server mode">
-    Navigate to your project directory and run:
+    In your project directory, run:
 
     ```bash theme={null}
     claude remote-control
@@ -172,8 +172,8 @@ A connected device shows the conversation in your terminal as it happens. These 
 
 * **Compaction and `/clear`**: while Claude Code [compacts the conversation](/docs/en/context-window#what-survives-compaction), connected devices show the progress and then where the conversation was compacted. When you run `/clear`, the conversation resets on connected devices too.
 * **Switching conversations with `/resume`**: the connected device doesn't receive the switched-to conversation's title or earlier history, but new messages in both directions go to and from whichever conversation is open in your terminal. To work on the original conversation from the device again, run `/resume` in your terminal and switch back to it.
-* **Pulling a session with `/teleport`**: when you pull a [Claude Code on the web session](/docs/en/claude-code-on-the-web#from-web-to-terminal) into your terminal with `/teleport`, the connected device doesn't receive the pulled conversation's earlier history. New messages in both directions go to and from the pulled conversation, which is now the one open in your terminal.
-* **Messages from your other sessions**: with [cross-session messaging](/docs/en/cross-session-messaging), the same connection carries messages between your own sessions on different machines and from your [Claude Code on the web](/docs/en/claude-code-on-the-web) sessions, through Anthropic servers like the rest of Remote Control traffic. [Message sessions on other machines](/docs/en/cross-session-messaging#message-sessions-on-other-machines) covers the delivery rules and [Control inbound messages](/docs/en/cross-session-messaging#control-inbound-messages) covers the inbound controls. Requires Claude Code v2.1.224 or later.
+* **Pulling a session with `/teleport`**: when you pull a [cloud session](/docs/en/claude-code-on-the-web#from-cloud-to-terminal) into your terminal with `/teleport`, the connected device doesn't receive the pulled conversation's earlier history. New messages in both directions go to and from the pulled conversation, which is now the one open in your terminal.
+* **Messages from your other sessions**: with [cross-session messaging](/docs/en/cross-session-messaging), the same connection carries messages between your own sessions on different machines and from your [cloud sessions](/docs/en/claude-code-on-the-web), through Anthropic servers like the rest of Remote Control traffic. [Message sessions on other machines](/docs/en/cross-session-messaging#message-sessions-on-other-machines) covers the delivery rules and [Control inbound messages](/docs/en/cross-session-messaging#control-inbound-messages) covers the inbound controls. Requires Claude Code v2.1.224 or later.
 * **Prompts you send mid-turn**: when you send a prompt from a connected device before the current turn ends, Claude Code queues it and keeps it in the device's transcript after that turn finishes.
 * **Diff of your changes**: when the session's directory is in a git repository, a connected device's diff pane shows the diff of your uncommitted changes. The device requests the diff over the connection, and Claude Code computes it on your machine. When your working tree is clean, Claude Code instead serves your branch's changes since it diverged from the default branch. Before v2.1.247, Claude Code reported the diff to connected devices only in sessions served by `claude remote-control`.
 * **Model**: when you pick a [model](/docs/en/model-config) from a connected device, Claude Code runs the session on that model. The terminal's `/model` picker, `/status`, and `/config` show that model. Requires Claude Code v2.1.238 or later.
@@ -282,11 +282,11 @@ Open [claude.ai/settings/account](https://claude.ai/settings/account#trusted-dev
 
 For a lost or stolen device, the member removes it from this page. If the member cannot sign in, an admin can use **Sign out everywhere** in the admin console to revoke every session and enrolled device for that member, after which the member re-enrolls the devices they still hold.
 
-## Remote Control vs Claude Code on the web
+## Remote Control vs cloud sessions
 
-Remote Control and [Claude Code on the web](/docs/en/claude-code-on-the-web) both use the claude.ai/code interface. The key difference is where the session runs: Remote Control executes on your machine, so your local MCP servers, tools, and project configuration stay available. Claude Code on the web executes in the cloud.
+Remote Control and [cloud sessions](/docs/en/claude-code-on-the-web) both use the claude.ai/code interface. The key difference is where the session runs: Remote Control executes on your machine, so your local MCP servers, tools, and project configuration stay available. A cloud session executes on cloud infrastructure, Anthropic-managed by default.
 
-Use Remote Control when you're in the middle of local work and want to keep going from another device. Use Claude Code on the web when you want to kick off a task without any local setup, work on a repo you don't have cloned, or run multiple tasks in parallel.
+Use Remote Control when you're in the middle of local work and want to keep going from another device. Use a cloud session when you want to start a task without any local setup, work on a repo you don't have cloned, or run multiple tasks in parallel.
 
 ## Mobile push notifications
 
@@ -349,7 +349,7 @@ Claude Code skips mobile push notifications while you are typing in or focused o
 
 You're not signed in with a claude.ai account, or another credential is taking precedence over your login. The message takes one of these forms:
 
-* Signed out, from `/remote-control` or `--remote-control`: `Remote Control requires a claude.ai subscription.`
+* Signed out, from `/remote-control` or `--remote-control`: `Remote Control requires a claude.ai subscription.` or `/remote-control requires a claude.ai subscription.`
 * Signed out, from `claude remote-control`: `You must be logged in to use Remote Control. Remote Control is only available with claude.ai subscriptions.`
 * Signed in, but an API key or token is in use: `Remote Control requires claude.ai subscription auth.` followed by the credential in use, such as `ANTHROPIC_API_KEY is set, so this session is using API-key auth`. An `apiKeyHelper` setting and `ANTHROPIC_AUTH_TOKEN` are named the same way.
 
@@ -467,11 +467,11 @@ Claude Code offers several ways to work when you're not at your terminal. They d
 
 ## Related resources
 
-* [Claude Code on the web](/docs/en/claude-code-on-the-web): run sessions in the cloud instead of your machine, configured through [cloud environments](/docs/en/cloud-environments)
-* [Cross-session messaging](/docs/en/cross-session-messaging): let Claude message your sessions on other machines or on [Claude Code on the web](/docs/en/claude-code-on-the-web)
+* [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web): run sessions in the cloud instead of your machine, configured through [cloud environments](/docs/en/cloud-environments)
+* [Cross-session messaging](/docs/en/cross-session-messaging): let Claude message your sessions on other machines or your [cloud sessions](/docs/en/claude-code-on-the-web)
 * [Channels](/docs/en/channels): forward Telegram, Discord, or iMessage into a session so Claude reacts to messages while you're away
 * [Dispatch](/docs/en/desktop#sessions-from-dispatch): message a task from your phone and it can spawn a Desktop session to handle it
 * [Authentication](/docs/en/authentication): set up `/login` and manage credentials for claude.ai
 * [CLI reference](/docs/en/cli-reference): full list of flags and commands including `claude remote-control`
 * [Security](/docs/en/security): how Remote Control sessions fit into the Claude Code security model
-* [Data usage](/docs/en/data-usage): what data flows through the Anthropic API during local and remote sessions
+* [Data usage](/docs/en/data-usage): what data flows through the Anthropic API during local, Remote Control, and cloud sessions

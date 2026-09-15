@@ -151,7 +151,7 @@ what scheduled tasks do I have?
 cancel the deploy check job
 ```
 
-Under the hood, Claude uses these tools:
+These are the underlying tools Claude uses:
 
 | Tool         | Purpose                                                                                                         |
 | :----------- | :-------------------------------------------------------------------------------------------------------------- |
