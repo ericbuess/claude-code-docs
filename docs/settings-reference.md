@@ -1361,12 +1361,12 @@ When more than one of those files sets the same array, Claude Code concatenates 
 
 ### `autoMode.classifyAllShell`
 
-Send every Bash and PowerShell command through the auto mode classifier while auto mode is active. By default, auto mode suspends only allow rules that could run arbitrary code: tool-wide and wildcard rules such as `Bash(*)`, and interpreter or shell-wrapper prefixes such as `Bash(python *)`. A command that any other allow rule matches, such as `Bash(npm test)`, skips the classifier, and a destructive argument the rule's prefix didn't anticipate can get through unseen. Setting this key suspends every shell allow rule for the session so the classifier sees every command. Requires Claude Code v2.1.193 or later.
+Send every Bash and PowerShell command through the auto mode classifier while auto mode is active. By default, auto mode suspends only allow rules that could run arbitrary code: tool-wide and wildcard rules such as `Bash(*)`, and interpreter or shell-wrapper prefixes such as `Bash(python *)`. A command that any other allow rule matches, such as `Bash(npm test)`, skips the classifier unless it carries [per-command allowed domains](/docs/en/sandboxing#per-command-allowed-domains-in-auto-mode). When it skips, a destructive argument the rule's prefix didn't anticipate can get through unseen. Setting this key suspends every shell allow rule for the session so the classifier sees every command. Requires Claude Code v2.1.193 or later.
 
 * **Scope**: [`User or managed`](#scopes). Read wherever [`autoMode`](#automode) is read.
 * **Type**: Boolean
   * `true`: while auto mode is active, Claude Code sends every Bash and PowerShell command through the classifier and suspends your shell allow rules; outside auto mode the rules still apply
-  * `false`: auto mode suspends only allow rules that could run arbitrary code, such as `Bash(*)` and `Bash(python *)`; a command that any other allow rule matches skips the classifier, and every other shell command goes through it
+  * `false`: auto mode suspends only allow rules that could run arbitrary code, such as `Bash(*)` and `Bash(python *)`; a command that any other allow rule matches skips the classifier unless it carries [per-command allowed domains](/docs/en/sandboxing#per-command-allowed-domains-in-auto-mode), and every other shell command goes through it
 * **Default**: `false`
 
 ```json settings.json theme={null}
@@ -1537,6 +1537,8 @@ Like `allow` rules, entries in a project's `.claude/settings.json` take effect o
 ### `permissions.blockReadsOutsideWorkingDirectories`
 
 Stop Claude from reading paths outside the session's [working directories](/docs/en/permissions#working-directories) with the Read, Grep, Glob, and LSP tools, in every permission mode including `bypassPermissions`. A Bash command that reads a matching path through a file command Claude Code recognizes, such as `cat`, prompts you even in auto mode and `bypassPermissions` mode. Requires Claude Code v2.1.257 or later.
+
+A Bash command the shell parser can't trace, such as one that changes directory more than once or runs a subshell, prompts you even in auto mode and `bypassPermissions` mode. The prompt appears even when the command names no path outside the working directories. This prompt doesn't apply when the command runs in the [sandbox](/docs/en/sandboxing) and the sandbox enforces the block.
 
 Claude Code also writes `true` here when you choose to block such reads on [auto mode's prompt before the first read outside the working directories](/docs/en/permission-modes#first-read-outside-the-working-directories).
 
@@ -2516,7 +2518,7 @@ Deny sandboxed commands access to hosts outside the allowlist instead of prompti
 * **Scope**: [`User or managed`](#scopes). A repository can't turn it on or off.
 * **Type**: Boolean
   * `true`: Claude Code denies sandboxed commands access to hosts outside the allowlist
-  * `false`: unless another trusted settings file sets `true`, Claude Code decides a host outside the allowlist by permission mode instead of denying it outright: it runs the classifier in auto mode, denies in `dontAsk` mode, allows in `bypassPermissions` mode and in interactive terminal plan-mode sessions where bypass is available, and otherwise asks you
+  * `false`: unless another trusted settings file sets `true`, Claude Code decides a host outside the allowlist by permission mode instead of denying it outright: in auto mode it checks the host against the command's [per-command allowed domains](/docs/en/sandboxing#per-command-allowed-domains-in-auto-mode), in `dontAsk` mode it denies, in `bypassPermissions` mode and in interactive terminal plan-mode sessions where bypass is available it allows, and otherwise it asks you
 * **Default**: `false`
 
 ```json settings.json theme={null}

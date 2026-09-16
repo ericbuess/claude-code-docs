@@ -20,7 +20,7 @@ The first two approaches in the table below run on the host operating system wit
 
 | Approach                                    | What is isolated                                                            | Requires Docker | Setup effort                                                                                                 |
 | :------------------------------------------ | :-------------------------------------------------------------------------- | :-------------- | :----------------------------------------------------------------------------------------------------------- |
-| [Sandboxed Bash tool](#sandboxed-bash-tool) | Bash commands and their child processes                                     | No              | Minimal on macOS; low on Linux and WSL2                                                                      |
+| [Sandboxed Bash tool](#sandboxed-bash-tool) | Bash, PowerShell, and Monitor commands and their child processes            | No              | Minimal on macOS; low on Linux and WSL2                                                                      |
 | [Sandbox runtime](#sandbox-runtime)         | The whole Claude Code process, including file tools, MCP servers, and hooks | No              | Low                                                                                                          |
 | [Dev container](#dev-containers)            | Full development environment                                                | Yes             | Medium                                                                                                       |
 | [Custom container](#custom-container)       | Full development environment                                                | Yes             | Medium to high                                                                                               |
@@ -60,7 +60,7 @@ With no prompts to catch mistakes, the isolation boundary you choose is what pro
 
 [Auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) replaces the prompt with a classifier that reviews actions. The classifier is a per-action control, not an isolation boundary, so an isolation boundary still adds defense in depth for unattended runs, and is not required the way it is for `--dangerously-skip-permissions`.
 
-The [sandboxed Bash tool](#sandboxed-bash-tool) on its own constrains only Bash, so it is not sufficient for fully unattended runs in either mode. You can layer approaches: running the sandboxed Bash tool inside a container or VM gives you OS-level command restrictions on top of the outer environment boundary. For how the Bash sandbox itself interacts with permission rules and modes, see [How sandboxing relates to permissions and permission modes](/docs/en/sandboxing#how-sandboxing-relates-to-permissions-and-permission-modes).
+The [sandboxed Bash tool](#sandboxed-bash-tool) on its own constrains only shell commands, so it is not sufficient for fully unattended runs in either mode. You can layer approaches: running the sandboxed Bash tool inside a container or VM gives you OS-level command restrictions on top of the outer environment boundary. For how the Bash sandbox itself interacts with permission rules and modes, see [How sandboxing relates to permissions and permission modes](/docs/en/sandboxing#how-sandboxing-relates-to-permissions-and-permission-modes).
 
 ## Sandboxed Bash tool
 
@@ -68,7 +68,7 @@ The [sandboxed Bash tool](#sandboxed-bash-tool) on its own constrains only Bash,
   This option does not support native Windows. On Windows hosts, use WSL2 or one of the container or VM approaches below.
 </Note>
 
-The sandboxed Bash tool is built into Claude Code. It uses operating system primitives to restrict the filesystem and network access of every Bash command Claude runs.
+The sandboxed Bash tool is built into Claude Code. It uses operating system primitives to restrict the filesystem and network access of every Bash, PowerShell, or Monitor command Claude runs.
 
 Run the `/sandbox` command to open the sandbox panel and choose a mode. The [Sandboxing](/docs/en/sandboxing) guide covers the approval modes, the default boundary, and how to widen or narrow it.
 
@@ -81,7 +81,7 @@ To put built-in tools, MCP servers, and hooks all behind one OS boundary, run th
 
 ## Sandbox runtime
 
-The [`@anthropic-ai/sandbox-runtime`](https://github.com/anthropic-experimental/sandbox-runtime) package wraps an entire process in the same Seatbelt or bubblewrap isolation that the built-in Bash sandbox uses. Running Claude Code through the runtime constrains every tool, hook, and MCP server in the session, not only Bash. The runtime is a beta research preview, and its configuration format may change as the package evolves.
+The [`@anthropic-ai/sandbox-runtime`](https://github.com/anthropic-experimental/sandbox-runtime) package wraps an entire process in the same Seatbelt or bubblewrap isolation that the built-in Bash sandbox uses. Running Claude Code through the runtime constrains every tool, hook, and MCP server in the session, not only shell commands. The runtime is a beta research preview, and its configuration format may change as the package evolves.
 
 This section covers what you configure and what the runtime enforces on its own. For deploying the runtime in Agent SDK applications, see the [secure deployment guide](/docs/en/agent-sdk/secure-deployment#sandbox-runtime).
 

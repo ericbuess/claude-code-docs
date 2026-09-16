@@ -6,7 +6,7 @@
 
 > Learn how Claude Code's sandboxed Bash tool provides filesystem and network isolation for safer, more autonomous agent execution.
 
-The Bash sandbox lets Claude run most shell commands without stopping to ask permission. Instead of approving each command, you define which files and network domains commands can touch, and the operating system enforces that boundary for every Bash command and its child processes.
+The Bash sandbox lets Claude run most shell commands without stopping to ask permission. Instead of approving each command, you define which files and network domains commands can touch, and the operating system enforces that boundary for every Bash, PowerShell, or Monitor command and its child processes.
 
 <Note>
   To compare other isolation approaches such as dev containers, custom containers, and virtual machines, see [Sandbox environments](/docs/en/sandbox-environments). To reduce permission prompts for tools other than Bash, see [permission modes](/docs/en/permission-modes).
@@ -40,7 +40,9 @@ On macOS, there is nothing to install: sandboxing uses the built-in Seatbelt fra
   </Step>
 
   <Step title="Run a Bash command">
-    Ask Claude to run a command, such as a build or a test suite. By default, commands inside the sandbox can write to the working directory, the session temp directory, and any [directories you've added](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) with `--add-dir`, `/add-dir`, or `permissions.additionalDirectories`. The first time a command needs a new network domain, Claude Code prompts for approval, or in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) sends the request to the classifier.
+    Ask Claude to run a command, such as a build or a test suite. By default, commands inside the sandbox can write to the working directory, the session temp directory, and any [directories you've added](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) with `--add-dir`, `/add-dir`, or `permissions.additionalDirectories`.
+
+    The first time a command needs a new network domain, Claude Code prompts for approval; in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), Claude instead names the hosts a command needs [on the command itself](#per-command-allowed-domains-in-auto-mode) for the classifier to review with it.
 
     Commands that can't run sandboxed fall back to the regular permission flow. Claude Code titles their permission prompt "Bash command (unsandboxed)" instead of "Bash command", so you can tell which commands ran outside the sandbox. To widen or narrow what the sandbox allows, see [Configure sandboxing](#configure-sandboxing).
 
@@ -137,7 +139,7 @@ Even in auto-allow mode, the following still apply:
 * A bare `Bash` ask rule, or the equivalent `Bash(*)` form, is skipped for commands that run sandboxed; it still applies to commands that fall back to the regular permission flow. In [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), the rule isn't skipped: it prompts for sandboxed commands too, including read-only ones. Before v2.1.212, the skip applied in plan mode as well
 
 <Info>
-  Auto-allow mode works independently of your permission mode setting, with one exception: [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode). Even if you're not in "accept edits" mode, sandboxed Bash commands run automatically when auto-allow is enabled. This means Bash commands that modify files within the sandbox boundaries execute without prompting, even in Manual mode, where the file edit tools would prompt.
+  Auto-allow mode works independently of your permission mode setting, except in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) and, in auto mode, for a command that carries [per-command allowed domains](#per-command-allowed-domains-in-auto-mode). Even if you're not in "accept edits" mode, sandboxed Bash commands run automatically when auto-allow is enabled. This means Bash commands that modify files within the sandbox boundaries execute without prompting, even in Manual mode, where the file edit tools would prompt.
 
   In plan mode, auto-allow doesn't widen approvals; see [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) for how Claude Code gates commands while you plan. Before v2.1.212, auto-allow ran sandboxed commands without a prompt in plan mode too.
 </Info>
@@ -515,7 +517,9 @@ If `git merge` or `git checkout` fails with `unable to unlink old` on one of the
 
 Network access is controlled through a proxy server running outside the sandbox:
 
-* **Domain restrictions**: Claude Code pre-allows no domains by default. The first time a command needs a new domain, Claude Code prompts for approval, or in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) sends the request to the classifier. If you choose Yes when prompted, Claude Code allows the host for the rest of the current session and doesn't prompt again for later connections to the same host. If you choose "Yes, and don't ask again", Claude Code saves a `WebFetch(domain:...)` allow rule to your [local settings](/docs/en/permissions#permission-system), so the host stays allowed in future sessions. Pre-allow domains with [`allowedDomains`](/docs/en/settings-reference#sandbox-network-alloweddomains) to avoid the prompt entirely. Claude Code also pre-allows domains from `WebFetch(domain:...)` allow rules, as described in [Permission rules](#permission-rules).
+* **Domain restrictions**: Claude Code pre-allows no domains by default. The first time a command needs a new domain, Claude Code prompts for approval; in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), Claude instead names the hosts a command needs on the command itself, per [Per-command allowed domains](#per-command-allowed-domains-in-auto-mode).
+* **Approval choices**: if you choose Yes when prompted, Claude Code allows the host for the rest of the current session and doesn't prompt again for later connections to the same host. If you choose "Yes, and don't ask again", Claude Code saves a `WebFetch(domain:...)` allow rule to your [local settings](/docs/en/permissions#permission-system), so the host stays allowed in future sessions.
+* **Pre-allowed domains**: pre-allow domains with [`allowedDomains`](/docs/en/settings-reference#sandbox-network-alloweddomains) to avoid the prompt entirely. Claude Code also pre-allows domains from `WebFetch(domain:...)` allow rules, as described in [Permission rules](#permission-rules).
 * **Strict allowlist**: if you set [`strictAllowlist`](/docs/en/settings-reference#sandbox-network-strictallowlist) to `true` in user, managed, or CLI `--settings` settings, Claude Code denies sandboxed commands access to any host outside the allowlist instead of prompting. The allowlist is the same one the sandbox otherwise prompts against: `allowedDomains` plus domains from `WebFetch(domain:...)` allow rules, or only the managed settings entries when `allowManagedDomainsOnly` is set. Claude Code enforces this for sandboxed commands only; in-process tools such as `WebFetch` still follow their [permission rules](#permission-rules). Setting it in a repository's `.claude/settings.json` or `.claude/settings.local.json` has no effect. Requires Claude Code v2.1.219 or later.
 * **Managed lockdown**: if [`allowManagedDomainsOnly`](/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly) is set in managed settings, non-allowed domains are blocked automatically instead of prompting, and only `allowedDomains` and `WebFetch(domain:...)` allow rules from managed settings are honored.
 * **Corporate proxy**: when your network requires outbound traffic to go through a corporate proxy, set `HTTPS_PROXY`, `HTTP_PROXY`, and `NO_PROXY` as [proxy configuration](/docs/en/network-config#proxy-configuration) describes, in the `env` block of your settings so that [background agents](/docs/en/network-config#set-network-variables-in-settings-not-the-shell) get them too, or in the environment you launch Claude Code from. Claude Code enforces the domain allowlist and then tunnels allowed connections through that upstream proxy.
@@ -527,6 +531,18 @@ In a `WebFetch(domain:...)` rule, the sandbox honors two wildcard forms: a leadi
 <Note>
   The built-in proxy enforces the allowlist based on the requested hostname and, by default, does not terminate or inspect TLS traffic. The experimental [`network.tlsTerminate`](/docs/en/settings-reference#sandbox-network-tlsterminate) setting, available in Claude Code v2.1.199 and later, makes the built-in proxy terminate TLS itself, which [`mask` credential entries](#mask-credentials) require. See [Security limitations](#security-limitations) for the implications of the default, and [Custom proxy configuration](#custom-proxy-configuration) if your threat model requires TLS inspection.
 </Note>
+
+#### Per-command allowed domains in auto mode
+
+In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) with sandboxing on, Claude names the hosts a command needs on the command itself instead of triggering a network approval for each connection. Each Bash, PowerShell, or [Monitor](/docs/en/tools-reference#monitor-tool) command that runs in the sandbox can carry a list of hosts beyond the sandbox's allowlist: a domain such as `registry.npmjs.org`, a wildcard such as `*.pythonhosted.org`, or an IP address, each with an optional `:port`. The classifier reviews the hosts together with the command. Requires Claude Code v2.1.271 or later.
+
+An approved list opens those hosts for that one command alone, for as long as it runs. Nothing is added to your session's allowed hosts or your settings; the next command names its own hosts.
+
+A command that carries hosts goes to the classifier instead of being approved by a permission rule or the sandbox's [auto-allow mode](#sandbox-modes). If an [ask rule](/docs/en/permissions#manage-permissions) forces a prompt for the command, the permission dialog in your terminal lists the hosts beside it, and approving there covers both.
+
+A per-command list widens only what the sandbox denies by default. [`deniedDomains`](/docs/en/settings-reference#sandbox-network-denieddomains) entries still block. When [`strictAllowlist`](/docs/en/settings-reference#sandbox-network-strictallowlist) or [`allowManagedDomainsOnly`](/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly) locks the allowlist, Claude Code refuses per-command lists.
+
+While per-command lists apply, Claude Code refuses a connection to a host that no approved command listed, without a prompt or a classifier check. The refusal names the host in the command's result, and Claude re-runs the command with the host added.
 
 #### IPv6 addresses in domain lists
 
@@ -562,7 +578,7 @@ Sandboxing, [permission rules](/docs/en/permissions), and [permission modes](/do
 Permission rules and sandboxing control different things:
 
 * **Permission rules** control which tools Claude Code can use and are evaluated before any tool runs. They apply to every tool: Bash, Read, Edit, WebFetch, MCP, and others, except that a deny or ask rule can't block [`EndConversation`](/docs/en/tools-reference#endconversation-tool-behavior) while any other tool remains.
-* **Sandboxing** provides OS-level enforcement that restricts what Bash commands can access at the filesystem and network level. It applies only to Bash commands and their child processes.
+* **Sandboxing** provides OS-level enforcement that restricts what shell commands can access at the filesystem and network level. It applies only to Bash, PowerShell, and [Monitor](/docs/en/tools-reference#monitor-tool) commands and their child processes.
 
 The two layers also differ in how they are enforced. Claude Code evaluates permission decisions before a command runs, based on the command string and, in auto mode, a separate classifier's judgment about whether the command is safe. The operating system enforces the sandbox boundary on the running process, so it holds regardless of what the model chose to run and even if an allowed command does more than its name suggests.
 
@@ -594,7 +610,7 @@ The [claude-code repository's examples directory](https://github.com/anthropics/
 | [Auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) | Whether each tool call runs                 | A classifier that reviews actions                                                                                                                                                            |
 | `--dangerously-skip-permissions`                                   | Whether each tool call runs                 | Nothing. [Protected path](/docs/en/permission-modes#protected-paths) checks are also skipped; the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves) still apply |
 
-The sandbox's [auto-allow mode](#sandbox-modes) is separate from [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode): auto-allow approves Bash commands because the sandbox boundary contains them, while auto mode uses a classifier to review actions. The two work independently and can be combined. To choose an isolation boundary for unattended runs, see [Sandbox environments](/docs/en/sandbox-environments#how-isolation-relates-to-permission-modes). For a table of common permission mode and sandbox pairings with the flags that start each one, see [Common setups](/docs/en/permission-modes#common-setups).
+The sandbox's [auto-allow mode](#sandbox-modes) is separate from [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode): auto-allow approves Bash commands because the sandbox boundary contains them, while auto mode uses a classifier to review actions. The two work independently and can be combined, with the exceptions listed under [Sandbox modes](#sandbox-modes). To choose an isolation boundary for unattended runs, see [Sandbox environments](/docs/en/sandbox-environments#how-isolation-relates-to-permission-modes). For a table of common permission mode and sandbox pairings with the flags that start each one, see [Common setups](/docs/en/permission-modes#common-setups).
 
 ## Configure the sandbox for your organization
 

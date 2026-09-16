@@ -479,7 +479,9 @@ To let Claude fetch freely while keeping the sandbox allowlist as it is, use the
 }
 ```
 
-When you ask Claude to fetch a page, it fetches without a prompt. When you ask it to run a [sandboxed](/docs/en/sandboxing) `curl` against a host outside the sandbox allowlist, Claude Code still prompts you for that host, or in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) sends the request to the classifier, because the bare rule didn't add the host to the allowlist.
+When you ask Claude to fetch a page, it fetches without a prompt. When you ask it to run a [sandboxed](/docs/en/sandboxing) `curl` against a host outside the sandbox allowlist, Claude Code still prompts you for that host, because the bare rule didn't add the host to the allowlist.
+
+In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), Claude instead names the host in the command's [per-command allowed domains](/docs/en/sandboxing#per-command-allowed-domains-in-auto-mode) for the classifier to review.
 
 ### MCP
 
@@ -603,7 +605,7 @@ To share that configuration across projects, use one of these approaches:
 Permissions and [sandboxing](/docs/en/sandboxing) are complementary security layers:
 
 * **Permissions** control which tools Claude Code can use and which files or domains it can access. They apply to Bash, Read, Edit, WebFetch, MCP, and every other tool, except that a deny or ask rule can't block [`EndConversation`](/docs/en/tools-reference#endconversation-tool-behavior) while any other tool remains.
-* **Sandboxing** provides OS-level enforcement that restricts the Bash tool's filesystem and network access. It applies only to Bash commands and their child processes.
+* **Sandboxing** provides OS-level enforcement that restricts shell commands' filesystem and network access. It applies only to Bash, PowerShell, and [Monitor](/docs/en/tools-reference#monitor-tool) commands and their child processes.
 
 Use both for defense-in-depth, since sandbox restrictions still apply even if a prompt injection bypasses Claude's decision-making. Paths and domains from both sandbox settings and permission rules are [merged into the final sandbox configuration](/docs/en/sandboxing#permission-rules).
 
