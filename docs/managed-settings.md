@@ -165,7 +165,7 @@ The cross-source keys include:
 * The sandbox binary paths `sandbox.bwrapPath` and `sandbox.socatPath`
 * The sandbox `ripgrep` binary, [`sandbox.ripgrep`](/docs/en/settings-reference#sandbox-ripgrep)
 * `sandbox.filesystem.disabled` and `sandbox.network.strictAllowlist`
-* [`useAutoModeDuringPlan`](/docs/en/settings-reference#useautomodeduringplan) and [`syncClaudeAiSkills`](/docs/en/settings-reference#syncclaudeaiskills), where a `false` from any admin source turns the behavior off. A `false` in the developer's user or local settings turns it off too; each key can only deny
+* [`useAutoModeDuringPlan`](/docs/en/settings-reference#useautomodeduringplan), [`syncClaudeAiSkills`](/docs/en/settings-reference#syncclaudeaiskills), and [`syncClaudeAiPlugins`](/docs/en/settings-reference#syncclaudeaiplugins), where a `false` from any admin source turns the behavior off. A `false` in the developer's user or local settings turns it off too; each key can only deny
 * [`enableArtifact`](/docs/en/settings-reference#enableartifact), where a `false` from any admin source turns the [Artifact tool](/docs/en/artifacts) off. A `false` in the developer's user, project, or local settings turns it off too, and no source turns it back on; see [which lower-level values still count](/docs/en/settings#exceptions-to-managed-settings-precedence). Requires Claude Code v2.1.242 or later
 * [`maxEffortLevel`](/docs/en/settings-reference#maxeffortlevel), where the lowest cap in any admin source applies. If a developer sets a lower cap in their own settings or with `--settings`, Claude Code applies that one; no source can raise the cap. Requires Claude Code v2.1.267 or later
 * A commit-trailer opt-out in `attribution`, or in the deprecated `includeCoAuthoredBy`, from any tier

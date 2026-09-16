@@ -406,6 +406,8 @@ Dispatch is one of several ways to work with Claude when you're away from your t
 
 Connect external services, add reusable workflows, customize Claude's behavior, and configure preview servers. To manage connectors, skills, and plugins in one place, click **Customize** in the sidebar. The [Cowork](https://claude.com/product/cowork) tab in the Desktop app sources its skills, plugins, and connectors from this Customize configuration, which syncs through your claude.ai account, not from the CLI's `~/.claude` directory.
 
+Claude Code also loads the skills and plugins enabled for your claude.ai account in terminal sessions where you sign in with the same account. See [Skills synced from claude.ai](/docs/en/skills#how-synced-skills-behave) and [Plugins synced from claude.ai](/docs/en/plugins-reference#synced-plugins).
+
 ### Connect external tools
 
 For local and [SSH](#ssh-sessions) sessions, click the **+** button next to the prompt box and select **Connectors** to add integrations like Google Calendar, Slack, GitHub, Linear, Notion, and more. You can add connectors before or during a session. The **+** button is not available in cloud or WSL sessions, but [routines](/docs/en/routines) configure connectors at routine creation time.
@@ -422,7 +424,9 @@ Connectors are [MCP servers](/docs/en/mcp) with a graphical setup flow. Use them
 
 You can send a command while Claude is working, the same as any other message, and the session returns to idle once the turn finishes. Before v2.1.206, a command sent mid-turn could leave the session showing as running and messages you sent afterward weren't delivered.
 
-Personal skills in `~/.claude/skills/` apply to local sessions; an [SSH](#ssh-sessions) session reads `~/.claude/skills/` from the remote host's home directory, not from your machine. Cloud sessions load the skills enabled for your claude.ai account instead. See [Skills in Cowork and cloud sessions](/docs/en/skills#skills-in-cowork-and-cloud-sessions).
+Local sessions load your personal skills from `~/.claude/skills/`. An [SSH](#ssh-sessions) session reads `~/.claude/skills/` from the remote host's home directory, not from your machine.
+
+Local and cloud sessions also load the skills enabled for your claude.ai account. Cloud sessions load them instead of `~/.claude/skills/`, as [Skills in Cowork and cloud sessions](/docs/en/skills#skills-in-cowork-and-cloud-sessions) describes.
 
 ### Install plugins
 

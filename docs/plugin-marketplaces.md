@@ -947,6 +947,8 @@ Disable all marketplace additions, including the official Anthropic marketplace:
 }
 ```
 
+Claude Code downloads the plugins [synced from claude.ai](/docs/en/plugins-reference#synced-plugins) from your account rather than from a marketplace, so this lockdown doesn't cover them. To stop those as well, set [`syncClaudeAiPlugins`](/docs/en/settings-reference#syncclaudeaiplugins) to `false` in managed settings, or turn off Skills for your organization on claude.ai.
+
 Allow only the official Anthropic marketplace. Matching for a single-repository entry is exact, so this entry doesn't cover `ref` or `path` variants of the same repository:
 
 ```json theme={null}

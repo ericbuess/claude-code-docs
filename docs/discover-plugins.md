@@ -8,6 +8,8 @@
 
 Plugins extend Claude Code with skills, agents, hooks, and MCP servers. Plugin marketplaces are catalogs that help you discover and install these extensions without building them yourself.
 
+You can also enable plugins on claude.ai, for yourself or through your organization. Claude Code syncs those into your sessions without a marketplace install, as [Plugins synced from claude.ai](/docs/en/plugins-reference#synced-plugins) describes.
+
 Looking to create and distribute your own marketplace? See [Create and distribute a plugin marketplace](/docs/en/plugin-marketplaces).
 
 ## How marketplaces work
@@ -338,6 +340,8 @@ From the list you can:
 * type to filter by plugin name or description
 * press Enter to open a plugin's detail view and enable, disable, or uninstall it
 
+Claude Code also lists the [plugins synced from your claude.ai account](/docs/en/plugins-reference#synced-plugins) in the **Installed** tab, with `synced` as their source. You can enable or disable one there unless your organization marked it as required. To remove one, turn it off on claude.ai. Synced plugins appear in terminal sessions on Claude Code v2.1.273 or later.
+
 When you uninstall a plugin that a project's `.claude/settings.json` enables, Claude Code asks which scope you mean: disable it for you alone, which writes an override to your `.claude/settings.local.json` and leaves the plugin installed for the project, or uninstall it for everyone, which removes it from the shared `.claude/settings.json`.
 
 The detail view shows the components the plugin contributes: commands, skills, agents, hooks, MCP servers, and LSP servers. The same inventory is available from the command line with `claude plugin details`.
@@ -408,6 +412,7 @@ For plugin changes that happen outside the menu, run `/reload-plugins` yourself.
 * A `claude plugin` command you ran in another terminal
 * Edits to a plugin you loaded with [`--plugin-dir`](/docs/en/plugins#test-your-plugins-locally) while you develop it
 * A plugin [auto-update](#configure-auto-updates) whose notification asks you to reload
+* A [sync from your claude.ai account](/docs/en/plugins-reference#synced-plugins) that added, updated, or removed a plugin and showed a notification asking you to reload
 * A change in a [`--plugin-dir` folder](/docs/en/plugins#test-your-plugins-locally) that Claude Code held because applying it would invalidate the prompt cache
 
 Before v2.1.268, plugins you enabled, disabled, or uninstalled in the menu, and installs that didn't activate during the install, stayed pending until you ran `/reload-plugins`.

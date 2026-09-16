@@ -148,8 +148,10 @@ The `ANTHROPIC_DEFAULT_*_MODEL_SUPPORTED_CAPABILITIES` [variables](/docs/en/mode
 What Claude Code does after an upstream rejection depends on what was rejected:
 
 * When the upstream rejects the `thinking` field, a mid-conversation system message, or the `cache_control` marker on such a message, Claude Code retries the request and disables the rejected capability for the rest of the conversation
-* When the upstream rejects a [thinking signature](https://platform.claude.com/docs/en/build-with-claude/extended-thinking), Claude Code retries the request without the conversation's earlier thinking blocks and keeps them out of every later request. New responses still include thinking
+* When the upstream rejects a [thinking signature](https://platform.claude.com/docs/en/build-with-claude/extended-thinking), including with a `400` whose message says the block is `bound to a different conversation`, Claude Code removes earlier thinking blocks from the request, retries, and keeps them out of every later request. New responses still include thinking
 * Claude Code doesn't retry rejections of context management or tool schema fields, so those `400` errors reach the developer
+
+The `bound to a different conversation` rejection comes from the API's [preserved thinking](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking) check, which fails when `system`, `tools`, or earlier `messages` content differs from the request that produced the thinking. A gateway that rewrites any of that content can cause the rejection itself; [Libraries, proxies, and gateways](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking#libraries-proxies-gateways) covers what to pass through unchanged.
 
 The retry logic matches on the upstream's error wording, so forward error response bodies unmodified. A gateway that wraps upstream errors in its own envelope breaks the recovery path, even when it preserves the status code, unless the envelope's message carries a stable `capability_rejected:` token. [Claude apps gateway substitutes those tokens for cloud providers' error wording](/docs/en/claude-apps-gateway-config#upstream-error-messages), for example `capability_rejected: prompt_too_long`.
 

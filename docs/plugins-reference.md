@@ -418,15 +418,29 @@ claude plugin disable my-tool@skills-dir
   Plugins synced from claude.ai
 </h2>
 
-In [Cowork](https://claude.com/product/cowork) and [cloud sessions](/docs/en/cloud-environments#what-carries-over-from-your-setup), Claude Code downloads the plugins enabled for your claude.ai account into `~/.claude/plugins/synced/` in the session's own environment and loads each one as `<name>@synced`, with no marketplace and no install record. Claude Code doesn't load them in sessions you start in your own terminal. Inside that Cowork or cloud environment, `claude plugin list` shows the downloaded copies under a `Synced from claude.ai` heading. Before v2.1.239, Claude Code loaded these plugins as `<name>@inline`, the identity that `--plugin-dir` plugins use.
+Claude Code loads the plugins enabled for your claude.ai account, including plugins your organization turns on for its members, alongside the plugins you install from marketplaces. It downloads each one into `~/.claude/plugins/synced/` and loads it as `<name>@synced`, with no marketplace and no install record. A synced plugin runs with the same trust as a marketplace plugin you installed: its skills, agents, hooks, MCP servers, and LSP servers all load.
 
-Manage a synced plugin by the `<name>@synced` ID that `claude plugin list` prints:
+Where Claude Code syncs these plugins depends on the session:
 
-* **Turn one off**: in the synced session, run `claude plugin disable <name>@synced`, or ask Claude to run it. Claude Code saves the choice as `"<name>@synced": false` in that environment's user-level [`enabledPlugins`](/docs/en/settings-reference#enabledplugins). A synced plugin that your organization requires can't be turned off this way. The command reports that the plugin is required by your organization and saves nothing. To turn the plugin back on, run `claude plugin enable <name>@synced` in the same session.
-* **Keep one out of synced sessions**: to keep a plugin out of every synced session, [turn it off for your claude.ai account](/docs/en/desktop#extend-claude-code). To keep it out of one project's synced sessions in every environment, set `"<name>@synced": false` under `enabledPlugins` in that project's committed `.claude/settings.json`.
-* **Manage the plugin itself on claude.ai**: `claude plugin install`, `update`, and `uninstall` don't apply to a synced plugin. To remove one, turn the plugin off for your claude.ai account; the next synced session starts without it.
+* In [Cowork](https://claude.com/product/cowork) and [cloud sessions](/docs/en/cloud-environments#what-carries-over-from-your-setup), Claude Code downloads them into the session's own environment when the session starts. Before v2.1.239, Claude Code loaded these plugins as `<name>@inline`, the identity that `--plugin-dir` plugins use.
+* In terminal sessions where you sign in with your claude.ai account, Claude Code checks your account once each time it starts, then downloads new and updated plugins and removes the ones that you or your organization turned off, all in the background. Syncing in terminal sessions requires Claude Code v2.1.273 or later.
 
-When an enabled plugin from any other source, such as a marketplace install, a [skills-directory plugin](#skills-directory-plugins), or a `--plugin-dir` plugin, matches a synced plugin's name, Claude Code loads that plugin and reports the synced copy as not loaded. To use the claude.ai copy instead, disable your own copy. Before v2.1.239, Claude Code loaded the synced copy instead of a same-named marketplace install.
+The launch check runs in the background, so it can finish after your session has started. When it adds, updates, or removes a synced plugin in an interactive session, Claude Code shows `Plugins changed. Run /reload-plugins to activate.` Run [`/reload-plugins`](/docs/en/discover-plugins#apply-plugin-changes-without-restarting) to load the change in that session, or leave it for the next time you start Claude Code. If you enable a plugin on claude.ai while a session is running, Claude Code downloads it the next time it starts.
+
+Plugin sync in terminal sessions runs under the same sign-in conditions as [skills synced from claude.ai](/docs/en/skills#where-synced-skills-load). It also needs a sign-in that grants Claude Code access to your account's plugins.
+
+A sign-in from an earlier version of Claude Code picks up plugin access the next time Claude Code renews that sign-in in the background, within a few hours, or right away if you run `/login` again. Plugin sync starts the next time you start Claude Code after that.
+
+`claude plugin list` shows synced plugins under a `Synced from claude.ai` heading, and the `/plugin` **Installed** tab lists them with `synced` as their source. Manage a synced plugin by the `<name>@synced` ID that `claude plugin list` prints:
+
+* **Turn one off**: run `claude plugin disable <name>@synced`, or disable it from the `/plugin` **Installed** tab. Claude Code saves the choice as `"<name>@synced": false` in your user-level [`enabledPlugins`](/docs/en/settings-reference#enabledplugins). To turn the plugin back on, run `claude plugin enable <name>@synced`.
+* **Keep one out everywhere**: [turn the plugin off for your claude.ai account](/docs/en/desktop#extend-claude-code). To keep it out of one project in every environment, set `"<name>@synced": false` under `enabledPlugins` in that project's committed `.claude/settings.json`.
+* **Manage the plugin itself on claude.ai**: `claude plugin install`, `update`, and `uninstall` don't apply to a synced plugin. Claude Code downloads a plugin's updates at the next sync. To remove one, turn the plugin off for your claude.ai account, and Claude Code removes it at the next sync.
+* **Stop syncing on a machine**: set [`syncClaudeAiPlugins`](/docs/en/settings-reference#syncclaudeaiplugins) to `false` in your user settings. Claude Code stops downloading, and the next time it starts it moves the plugins it already synced to `~/.claude/plugins/.trash/` and no longer loads them. Your organization can set the same key in [managed settings](/docs/en/managed-settings), or turn off Skills on claude.ai, which stops plugins from syncing too.
+
+You can't turn off a plugin that your organization marks as required on claude.ai. Claude Code loads it even if you disabled it earlier, and `claude plugin disable` refuses with `Plugin "<name>@synced" is required by your organization and can't be disabled here. Contact your admin to change it.` In `claude plugin list`, these plugins are marked `required by your org`.
+
+When an enabled plugin from any other source matches a synced plugin's name, Claude Code loads that plugin and reports the synced copy as not loaded. Other sources include marketplace installs, [skills-directory plugins](#skills-directory-plugins), `--plugin-dir` plugins, and plugins built into Claude Code. To use the claude.ai copy instead, disable your own copy. Before v2.1.239, Claude Code loaded the synced copy instead of a same-named marketplace install.
 
 ***
 
@@ -790,10 +804,11 @@ The data directory is deleted automatically when you uninstall the plugin from t
 
 ## Plugin caching and file resolution
 
-Plugins are specified in one of two ways:
+Plugins are specified in one of three ways:
 
 * Through `claude --plugin-dir` or `claude --plugin-url`, for the duration of a session.
 * Through a marketplace, installed for future sessions.
+* Through your claude.ai account, [synced](#synced-plugins) into `~/.claude/plugins/synced/`.
 
 For security and verification purposes, Claude Code copies *marketplace* plugins to the user's local **plugin cache** (`~/.claude/plugins/cache`), unless the plugin loads in place. A [`command` source in link mode](/docs/en/plugin-marketplaces#copy-mode-and-link-mode) loads in place through links in the cache entry. A [relative path source](/docs/en/plugin-marketplaces#relative-paths) in a marketplace added from a local directory loads in place from the marketplace folder.
 
@@ -1107,7 +1122,7 @@ claude plugin enable <plugin> [options]
 
 The command takes these arguments:
 
-* `<plugin>`: Plugin name or `plugin-name@marketplace-name`
+* `<plugin>`: Plugin name, `plugin-name@marketplace-name`, or `plugin-name@synced` for a [plugin synced from claude.ai](#synced-plugins)
 
 The command accepts these options:
 
@@ -1131,7 +1146,7 @@ claude plugin disable [plugin] [options]
 
 The command takes these arguments:
 
-* `[plugin]`: Plugin name or `plugin-name@marketplace-name`. Optional when using `--all`
+* `[plugin]`: Plugin name, `plugin-name@marketplace-name`, or `plugin-name@synced` for a [plugin synced from claude.ai](#synced-plugins). Optional when using `--all`
 
 The command accepts these options:
 
@@ -1189,7 +1204,7 @@ The command accepts these options:
 Within an interactive session, `/plugin list` prints a similar listing inline, but it covers marketplace-installed plugins only:
 
 * Plugins loaded from skills directories appear in the `/plugin` interface and in `claude plugin list`, but not in the inline `/plugin list` output.
-* On Claude Code v2.1.239 or later, [plugins synced from claude.ai](#synced-plugins) appear in `claude plugin list` when you run it in the environment where a synced session downloaded them. They don't appear in the inline `/plugin list` output.
+* [Plugins synced from claude.ai](#synced-plugins) appear in `claude plugin list` on Claude Code v2.1.239 or later and in the `/plugin` interface, but not in the inline `/plugin list` output.
 * Plugins loaded for the session with `--plugin-dir` or `--plugin-url` appear in the `/plugin` interface, and in `claude plugin list` only when the same flag precedes the subcommand, as in `claude --plugin-dir <dir> plugin list`. Only the flag names their location, so a bare `claude plugin list` can't find them, unlike synced plugins and skills-directory plugins, whose fixed directories Claude Code scans.
 
 The interactive form accepts `--enabled` or `--disabled` to show only plugins in that state, and `ls` as a shorthand for `list`.
