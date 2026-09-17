@@ -630,7 +630,7 @@ Claude Code treats an `rm` or `rmdir` target as a critical path when it is any o
 
 Claude Code also treats a glob or trailing slash directly under a shell variable, such as `rm -rf "$DIR"/*`, as a critical-path removal, because the command becomes a removal from the filesystem root when the variable is empty.
 
-Hiding the removal inside command substitution with `$(...)` or backticks, or process substitution with `<(...)`, doesn't skip the check. Claude Code finds a critical-path removal whether it sits inside the substitution, as in `echo "$(rm -rf ~)"`, or elsewhere in the same command.
+Hiding the removal inside a subshell with `(...)`, a brace group with `{ ...; }`, command substitution with `$(...)` or backticks, or process substitution with `<(...)`, doesn't skip the check. Claude Code finds a critical-path removal whether it sits inside the nested form, as in `(rm -rf ~)` or `echo "$(rm -rf ~)"`, or elsewhere in the same command.
 
 ### Remove-Item in PowerShell
 

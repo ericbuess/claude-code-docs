@@ -10,7 +10,7 @@
   Projects are in public beta on Pro and Max plans and rolling out gradually, starting with accounts that have used [cloud sessions](/docs/en/claude-code-on-the-web) and don't have existing projects in claude.ai chat or Cowork. They aren't available on Team or Enterprise plans yet. If **Projects** doesn't appear in the sidebar at [claude.ai/code](https://claude.ai/code) or in the Code tab of the [desktop app](/docs/en/desktop), the rollout hasn't reached your account, and you can [join the waitlist](https://claude.com/form/projects). [Run agents in parallel](/docs/en/agents) lists what you can use in the meantime.
 </Note>
 
-A project is one ongoing conversation where Claude coordinates a stream of related work for you. You tell it what needs doing and it starts a thread for each task. Each thread is a [cloud session](/docs/en/claude-code-on-the-web): Claude Code running in the cloud rather than on your machine. Threads run in parallel and keep going after you close the laptop.
+A project is one ongoing conversation where Claude coordinates a stream of related work for you. You tell it what needs doing and it starts a thread for each task. Each thread is a [cloud session](/docs/en/claude-code-on-the-web): Claude Code running in the cloud rather than on your machine. Threads run in parallel and keep going after you close the laptop, and you can check on them and steer them from your phone.
 
 Without a project, running several sessions means doing the coordinating yourself: you decide what each one works on, repeat the same background at the start of each, and check back to see which finished or needs an answer. With a project, you instead:
 
@@ -67,7 +67,7 @@ Here is how those parts connect, from you through the conversation to the thread
 
 ## Create a project
 
-You create and use projects at [claude.ai/code](https://claude.ai/code) or in the Code tab of the desktop app. There are two ways to start one:
+You create and use projects at [claude.ai/code](https://claude.ai/code), in the Code tab of the desktop app, or in the Claude mobile app for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) and [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude). In the browser and the desktop app there are two ways to start a project:
 
 * **From scratch**, when you know the stream of work you want Claude to run: open the **New project** dialog and name it. [Start a new project from scratch](#start-a-new-project-from-scratch) walks through the dialog.
 * **From a cloud session that's already doing the work**: choose **Continue as a project** from that session's menu, and Claude proposes the project's setup from what the session was doing. See [Start from an existing cloud session](#start-from-an-existing-cloud-session).
@@ -175,7 +175,11 @@ When a thread changes code, this is what it does unless you tell it otherwise:
 * **Pull request**: opens one when you ask, and can open one on its own for a bug fix or another concrete change.
 * **After it opens**: watches the pull request with [auto-fix](/docs/en/claude-code-on-the-web#auto-fix-pull-requests) turned on, whether or not auto-fix is on for your other cloud sessions. It pushes fixes when CI fails, addresses review comments, and replies in the thread when checks pass and the pull request is ready for you.
 
-The thread's card in the conversation shows a button for the pull request's next step when there is one, such as **Resolve conflicts**, **Fix CI**, **Address comments**, or **Merge it**. Clicking it sends that instruction to the thread as a message from you, so you can prompt the thread yourself instead of waiting for it to react to the pull request. **Review PR** opens the pull request on GitHub.
+When a thread has pushed a branch or opened a pull request, its card in the conversation can show a button for the next step:
+
+* **Resolve conflicts**, **Fix CI**, **Address comments**, and **Merge it** send that instruction to the thread as a message from you, so you can prompt the thread yourself instead of waiting for it to react to the pull request.
+* **Review PR** opens the pull request on GitHub.
+* **Create PR** appears when an idle thread has pushed a branch but hasn't opened a pull request. Clicking it creates the pull request from that branch directly rather than sending the thread an instruction to open one.
 
 To change when threads open pull requests, for example only when you ask, or which branch they start from, say so in the task or in [project instructions](#write-project-instructions).
 
@@ -386,7 +390,7 @@ Several Claude Code features let more than one session work at the same time, so
 
 ## Limitations
 
-* Projects are available at claude.ai/code and in the desktop app, not in the terminal CLI or through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. The CLI's [`claude project`](/docs/en/cli-reference) command, which manages local Claude Code state for a directory, is unrelated.
+* Projects are available at claude.ai/code, in the desktop app, and in the Claude mobile app, not in the terminal CLI or through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. The CLI's [`claude project`](/docs/en/cli-reference) command, which manages local Claude Code state for a directory, is unrelated.
 * Project threads are [cloud sessions](/docs/en/claude-code-on-the-web) with Anthropic as the model provider. [Security](/docs/en/security) and [Data usage](/docs/en/data-usage) cover how cloud sessions are isolated and what's retained.
 * A local session can't be part of a project.
 * A thread's sandbox pauses between turns and resumes when the thread continues. If the sandbox can't be resumed, the thread continues from a fresh clone, so uncommitted changes can be lost. On long tasks, ask Claude to commit and push work in progress.
@@ -455,7 +459,7 @@ These messages name their own cause. The table gives the next step for each.
 | "The project's environment was removed"                                                        | Choose a different environment in **Project settings > Environment**; the change applies to new threads                                                                                                                   |
 | "Setup script failed"                                                                          | Click **Edit setup script** on the error, fix the script in the environment, then send another message. [Setup script failed](/docs/en/web-quickstart#setup-script-failed) lists common causes                                 |
 | "Claude ran out of context on this turn"                                                       | The thread filled its context window. If the message says the thread continues in a fresh session, it carries on by itself; otherwise ask Claude in the project conversation to start a new thread for the remaining work |
-| "Reached the turn limit"                                                                       | The thread hit the cap on steps for one message. Send another message with a smaller or more specific request, or ask Claude to split the task across threads                                                             |
+| "Reached the turn limit"                                                                       | The thread reached the cap on agentic turns that [`CLAUDE_CODE_MAX_TURNS`](/docs/en/env-vars) sets. Send another message to continue, or raise or remove that variable where it's set                                          |
 
 ## Related resources
 

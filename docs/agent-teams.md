@@ -278,6 +278,10 @@ Claude Code reads the subagent definition you named and applies these parts of i
 * **`skills`**: Claude Code doesn't apply the definition's `skills` to a teammate in either display mode. The teammate loads skills from your project and user settings.
 * **`mcpServers`**: for a split-pane teammate, Claude Code applies the definition's `mcpServers` under the [rules for that field](/docs/en/sub-agents#scope-mcp-servers-to-a-subagent), which cover a session started with `--agent` as well. An in-process teammate ignores the field and loads MCP servers from your project and user settings.
 
+When Claude messages an in-process teammate that is no longer running, Claude Code brings it back in the same session, restores any conversation saved for it, and gives it the message as its next prompt. After you resume a session, teammates aren't brought back this way, per [the resume limitation](#limitations).
+
+For a teammate it brings back, Claude Code re-applies a definition that came from a project's `.claude/agents/` directory or an `--add-dir` directory only if you've [trusted the folder the agent file is in](/docs/en/permissions#what-runs-before-you-trust-a-folder). Trusting a parent folder doesn't count. Until then, the teammate comes back with none of the definition's tools or instructions, keeping only the tools Claude Code adds to every in-process teammate. See [the teammate's agent definition was not restored](/docs/en/errors#teammate-agent-definition-not-restored) for the notice text.
+
 ### Permissions
 
 Teammates start with the lead's permission mode, except [`dontAsk` mode](/docs/en/permission-modes#allow-only-pre-approved-tools-with-dontask-mode), which they don't inherit. If the lead runs with `--dangerously-skip-permissions`, all teammates do too. After spawning, you can change an individual teammate's permission mode, but you can't set per-teammate permission modes at spawn time.

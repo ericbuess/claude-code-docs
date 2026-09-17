@@ -68,6 +68,7 @@ Match the message you see to a section below.
 | `OAuth token revoked` / `OAuth token has expired`                                                                                                                                                                                                                    | [Authentication](#oauth-token-revoked-or-expired)                                                                             |
 | `API Error: 401 Invalid authentication credentials`                                                                                                                                                                                                                  | [Authentication](#api-error-401-invalid-authentication-credentials)                                                           |
 | `Login expired · Please run /login`                                                                                                                                                                                                                                  | [Authentication](#login-expired)                                                                                              |
+| `Claude login not accepted · Run /login, then try again`                                                                                                                                                                                                             | [Authentication](#claude-login-not-accepted)                                                                                  |
 | `Not signed in to the Cloud gateway — run /login.`                                                                                                                                                                                                                   | [Authentication](#administrator-policy-requires-a-cloud-gateway-sign-in)                                                      |
 | `Administrator policy requires a Cloud gateway sign-in on this machine`                                                                                                                                                                                              | [Authentication](#administrator-policy-requires-a-cloud-gateway-sign-in)                                                      |
 | `Failed to authenticate: OAuth session expired and could not be refreshed`                                                                                                                                                                                           | [Authentication](#login-expired)                                                                                              |
@@ -77,18 +78,26 @@ Match the message you see to a section below.
 | `Anthropic profile login expired · Run /login to use your claude.ai account instead, or re-authenticate the profile`                                                                                                                                                 | [Authentication](#anthropic-profile-login-expired)                                                                            |
 | `does not meet scope requirement user:profile`                                                                                                                                                                                                                       | [Authentication](#oauth-scope-requirement)                                                                                    |
 | `claude.ai rejected the session token` / `session token rejected`                                                                                                                                                                                                    | [Authentication](#claude-ai-rejected-the-session-token)                                                                       |
+| `MCP server "<name>" needs you to sign in again (run /mcp to re-authenticate)`                                                                                                                                                                                       | [Authentication](#mcp-server-needs-you-to-sign-in-again)                                                                      |
+| `rejected the credential from its headersHelper` / `rejected the Authorization header in its config`                                                                                                                                                                 | [Authentication](#mcp-server-needs-you-to-sign-in-again)                                                                      |
+| `MCP server "<name>" needs additional permissions (scope: "<scope>") — run /mcp to re-authenticate`                                                                                                                                                                  | [Authentication](#mcp-server-needs-you-to-sign-in-again)                                                                      |
+| `MCP server "<name>" requires re-authorization (token expired)`                                                                                                                                                                                                      | [Authentication](#mcp-server-needs-you-to-sign-in-again)                                                                      |
 | `Issuer mismatch in authorization response (RFC 9207)`                                                                                                                                                                                                               | [Authentication](#issuer-mismatch-in-authorization-response)                                                                  |
 | `Cloud gateway session expired — run /login to reconnect.`                                                                                                                                                                                                           | [Authentication](#cloud-gateway-session-expired)                                                                              |
 | `Cloud gateway <url> no longer accepts this session`                                                                                                                                                                                                                 | [Authentication](#cloud-gateway-session-expired)                                                                              |
 | `AWS credentials expired or invalid`                                                                                                                                                                                                                                 | [Authentication](#aws-credentials-expired-or-invalid)                                                                         |
 | `AWS authentication failed`                                                                                                                                                                                                                                          | [Authentication](#aws-authentication-failed)                                                                                  |
+| `Google Cloud credentials expired or invalid`                                                                                                                                                                                                                        | [Authentication](#google-cloud-credentials-expired-or-invalid)                                                                |
+| `Google Cloud authentication failed`                                                                                                                                                                                                                                 | [Authentication](#google-cloud-authentication-failed)                                                                         |
+| `Microsoft Foundry authentication failed`                                                                                                                                                                                                                            | [Authentication](#microsoft-foundry-authentication-failed)                                                                    |
+| `Gateway refused the request`                                                                                                                                                                                                                                        | [Authentication](#gateway-refused-the-request)                                                                                |
 | `Could not load AWS credentials` / `Could not load Google Cloud credentials`                                                                                                                                                                                         | [Authentication](#could-not-load-aws-or-google-cloud-credentials)                                                             |
 | `AWS default-chain credential resolve timed out`                                                                                                                                                                                                                     | [Authentication](#aws-default-chain-credential-resolve-timed-out)                                                             |
 | `Timed out after 60s waiting for AWS`                                                                                                                                                                                                                                | [Authentication](#bedrock-setup-verification-timed-out-waiting-for-aws)                                                       |
 | `A request to AWS timed out. Check your network and proxy settings, then try again.`                                                                                                                                                                                 | [Authentication](#bedrock-setup-verification-timed-out-waiting-for-aws)                                                       |
 | `Could not load the default credentials` on Google Cloud's Agent Platform                                                                                                                                                                                            | [Authentication](#could-not-load-aws-or-google-cloud-credentials)                                                             |
 | `Unable to connect to API`                                                                                                                                                                                                                                           | [Network](#unable-to-connect-to-api)                                                                                          |
-| `Connection refused —` / `Can't reach the API server —` / `No internet route —` / `Couldn't connect through your proxy` / `Connection dropped`, each ending with an error code in parentheses                                                                        | [Network](#unable-to-connect-to-api)                                                                                          |
+| `Connection refused —` / `Can't reach the API server —` / `No internet route —` / `Couldn't connect through your proxy` / `Connection dropped`, each with an error code in parentheses                                                                               | [Network](#unable-to-connect-to-api)                                                                                          |
 | `Unable to connect to Anthropic services` during setup                                                                                                                                                                                                               | [Network](#unable-to-connect-to-anthropic-services)                                                                           |
 | `Socket is closed`                                                                                                                                                                                                                                                   | [Network](#socket-is-closed)                                                                                                  |
 | `Waiting for API response · will retry in`                                                                                                                                                                                                                           | [Automatic retries](#automatic-retries), or [Network](#unable-to-connect-to-api) if it persists                               |
@@ -183,6 +192,7 @@ Match the message you see to a section below.
 | `Your connected GitHub account can't see <owner>/<repo>`                                                                                                                                                                                                             | [Command-line errors](#your-connected-github-account-cant-see-the-repository)                                                 |
 | `The GitHub App preflight failed transiently (network or service hiccup) — retry in a moment to start from GitHub instead`                                                                                                                                           | [Command-line errors](#the-github-app-preflight-failed-transiently)                                                           |
 | `GitHub isn't connected to your Claude account, so this repository can't be cloned in the cloud`                                                                                                                                                                     | [Command-line errors](#github-isnt-connected-to-your-claude-account)                                                          |
+| `Single sign-on authorization needed`                                                                                                                                                                                                                                | [Command-line errors](#single-sign-on-authorization-needed)                                                                   |
 | `Failed to resume the conversation`                                                                                                                                                                                                                                  | [Command-line errors](#failed-to-resume-the-conversation)                                                                     |
 | `No conversation found with session ID: <session-id>`                                                                                                                                                                                                                | [Command-line errors](#no-conversation-found-with-the-session-id)                                                             |
 | `Cannot switch renderers in this session`                                                                                                                                                                                                                            | [Command-line errors](#cannot-switch-renderers-in-this-session)                                                               |
@@ -216,7 +226,7 @@ Match the message you see to a section below.
 | `Refusing to send: connected endpoint is not the expected process` / `Refusing to send: connected endpoint identity could not be read`                                                                                                                               | [Tool errors](#refusing-to-send-a-cross-session-message)                                                                      |
 | `Refusing to send: connected endpoint is not owned by this user` / `Refusing to send: connected endpoint owner could not be read`                                                                                                                                    | [Tool errors](#refusing-to-send-a-cross-session-message)                                                                      |
 | `Refusing to send: connected endpoint is a different process with the expected pid`                                                                                                                                                                                  | [Tool errors](#refusing-to-send-a-cross-session-message)                                                                      |
-| `Refusing to read <path>: its symlink resolution changed after permission was checked` / `Refusing to search <path>: its symlink resolution changed after permission was checked`                                                                                    | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
+| `Refusing to read <path>: its symlink resolution changed after permission was checked (<reason>)` / `Refusing to search <path>: its symlink resolution changed after permission was checked`                                                                         | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `Refusing to write <path>: its parent-directory symlink resolution changed after permission was checked` / `Refusing to write <path>: it is a symbolic link. Write to the link's target path instead`                                                                | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `Refusing to search <path>: a path one of its Read deny rules is written through changed while the search was being prepared` / `Refusing to search <path>: it could not be opened`                                                                                  | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `its permission check expired before it ran (too many concurrent file operations)` / `ripgrep was found only by name on PATH`                                                                                                                                        | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
@@ -249,6 +259,7 @@ Match the message you see to a section below.
 | `Couldn't start a background session (working directory no longer exists or is not accessible: ...)`                                                                                                                                                                 | [Background session errors](#working-directory-no-longer-exists-when-starting-a-background-session)                           |
 | `Claude Code is being updated by npm on this machine (still not runnable after 2 min, ...)`                                                                                                                                                                          | [Background session errors](#eacces-when-starting-a-background-session)                                                       |
 | `Claude Code process exited with code N`                                                                                                                                                                                                                             | [Wrapper and IDE errors](#claude-code-process-exited-with-code-n)                                                             |
+| `The connection to Claude Code ended before this message completed`                                                                                                                                                                                                  | [Wrapper and IDE errors](#the-connection-to-claude-code-ended-before-this-message-completed)                                  |
 | `Could not locate the Claude CLI on PATH`                                                                                                                                                                                                                            | [Wrapper and IDE errors](#could-not-locate-the-claude-cli-on-path)                                                            |
 | `Restored the code, but skipped N files`                                                                                                                                                                                                                             | [Rewind warnings and errors](#restored-the-code-but-skipped-files)                                                            |
 | `No files were restored: N files failed (backup missing, or the file could not be updated)`                                                                                                                                                                          | [Rewind warnings and errors](#no-files-were-restored)                                                                         |
@@ -1073,6 +1084,20 @@ You can check for this state before a request fails: [`/status`](/docs/en/comman
 * In non-interactive mode, run `claude` in the same environment, complete `/login`, then rerun your command. For automation that can't sign in interactively, authenticate with `ANTHROPIC_API_KEY` or [generate a long-lived token with `claude setup-token`](/docs/en/authentication#generate-a-long-lived-token).
 * If signing in keeps failing, see [Login and authentication](/docs/en/troubleshoot-install#login-and-authentication)
 
+### Claude login not accepted
+
+You tried to start a [cloud session](/docs/en/claude-code-on-the-web), and the server refused to create it with a 401: it didn't accept the Claude login this machine sent, usually because the login expired or was revoked.
+
+The first part of the line is the server's own reason when it gives one. Otherwise the line reads:
+
+```text theme={null}
+Claude login not accepted · Run /login, then try again
+```
+
+**What to do:**
+
+* Run `/login`, complete the sign-in, then start the session again
+
 <h3 id="administrator-policy-requires-a-cloud-gateway-sign-in">
   Administrator policy requires a Cloud gateway sign-in
 </h3>
@@ -1169,6 +1194,48 @@ claude.ai rejected the session token. Run /login, then reconnect.
 
 Before v2.1.222, Claude Code marked the connector as needing authentication instead, which pointed you at the connector's authorization flow even though completing it didn't resolve the state.
 
+### MCP server needs you to sign in again
+
+A remote [MCP server](/docs/en/mcp) rejected the credential on a tool call mid-session, usually because a sign-in or token expired or because the token lacks a permission the tool needs. The tool call fails, and `/mcp` marks the server as [needing authentication](/docs/en/mcp#authenticate-with-remote-mcp-servers).
+
+For a server you sign in to from Claude Code, including a claude.ai connector, the sign-in expired or was revoked:
+
+```text theme={null}
+MCP server "<name>" needs you to sign in again (run /mcp to re-authenticate)
+```
+
+Run `/mcp`, select the server, and sign in again from its menu.
+
+For a server configured with a [`headersHelper`](/docs/en/mcp#use-dynamic-headers-for-custom-authentication) script, Claude Code has already re-run the helper and retried the call once before showing this:
+
+```text theme={null}
+MCP server "<name>" rejected the credential from its headersHelper (check the helper and run /mcp to reconnect, or to authenticate if the server also uses OAuth)
+```
+
+Check that the helper returns a credential the server accepts, then reconnect from `/mcp`, which runs the helper again.
+
+For a server with a static `Authorization` header in its configuration:
+
+```text theme={null}
+MCP server "<name>" rejected the Authorization header in its config (update it, then run /mcp to reconnect)
+```
+
+Update the header value where the server is configured, then reconnect from `/mcp`.
+
+Before v2.1.273, the expired sign-in, `headersHelper`, and `Authorization` header cases all showed `MCP server "<name>" requires re-authorization (token expired)`.
+
+A server can also refuse a tool call with HTTP 403 `insufficient_scope` to ask you to authorize a scope, sometimes one your token already lists. The message names that scope:
+
+```text theme={null}
+MCP server "<name>" needs additional permissions (scope: "<scope>") — run /mcp to re-authenticate
+```
+
+Run `/mcp`, select the server, and authenticate again from its menu.
+
+When the server's configuration sets neither [`oauth.scopes`](/docs/en/mcp#restrict-oauth-scopes) nor [`authServerMetadataUrl`](/docs/en/mcp#override-oauth-metadata-discovery), Claude Code requests the scope the server named. With either setting, Claude Code requests that setting's scopes instead. If you pinned `oauth.scopes`, add the missing scope to that list before you authenticate again.
+
+Before v2.1.274, this case showed the `needs you to sign in again` message, and before v2.1.273 it showed `requires re-authorization (token expired)` like the other cases.
+
 ### Issuer mismatch in authorization response
 
 During an [MCP OAuth sign-in](/docs/en/mcp#authenticate-with-remote-mcp-servers), the authorization server redirected back to Claude Code with an `iss` parameter that doesn't name the issuer that Claude Code expected from the server's OAuth metadata. A wrong issuer at this step is how an authorization server mix-up attack looks, so Claude Code fails the sign-in instead of exchanging the authorization code. Claude Code shows the error in the `/mcp` server menu after the browser sign-in:
@@ -1189,27 +1256,28 @@ Before v2.1.232, Claude Code used the v2 runtime only in a gradual rollout or wh
 
 ### AWS credentials expired or invalid
 
-This message requires Claude Code v2.1.198 or later and only appears when [`awsAuthRefresh`](/docs/en/amazon-bedrock#advanced-credential-configuration) is set in your settings file. Your AWS session token expired or was rejected, and the automatic refresh Claude Code already ran didn't produce a credential the API accepts. It appears on a 401 from [Claude Platform on AWS](/docs/en/claude-platform-on-aws) or the [Mantle endpoint](/docs/en/amazon-bedrock#use-the-mantle-endpoint), which is how those providers report an expired security token.
+Your AWS session token expired or was rejected. This message appears on a 401 from [Claude Platform on AWS](/docs/en/claude-platform-on-aws) or the [Mantle endpoint](/docs/en/amazon-bedrock#use-the-mantle-endpoint), which is how those providers report an expired security token.
 
-The action hint in the middle names the `awsAuthRefresh` command from your settings, so it varies. The stable part is the leading `AWS credentials expired or invalid`:
+The action hint in the middle varies with your setup. The stable part is the leading `AWS credentials expired or invalid`:
 
 ```text theme={null}
 AWS credentials expired or invalid · run /login and select "Claude Platform on AWS · refresh credentials", or run `aws sso login --profile myprofile` in another terminal · API Error: 401 ...
 ```
 
-Without `awsAuthRefresh` configured, the same 401 shows the generic `Please run /login` message instead, which can't refresh AWS credentials.
+Before v2.1.273, this message appeared only when `awsAuthRefresh` was configured.
 
 **What to do:**
 
-* Run the `awsAuthRefresh` command named in the message, such as `aws sso login --profile myprofile`, in another terminal and complete the browser sign-in, then retry
-* In an interactive session, run `/login`, choose **3rd-party platform**, then select **Claude Platform on AWS · refresh credentials** under **Using 3rd-party platforms** to run the same command without restarting Claude Code. See [Configure AWS credentials](/docs/en/claude-platform-on-aws#1-configure-aws-credentials)
+* If the hint says credentials are managed by this environment, the app that launched Claude Code owns the credential and the other steps here don't apply: retry, or contact your administrator
+* If [`awsAuthRefresh`](/docs/en/amazon-bedrock#advanced-credential-configuration) is set, run the command named in the message, such as `aws sso login --profile myprofile`, in another terminal and complete the browser sign-in, then retry. Otherwise refresh the AWS credential you use yourself: your SSO sign-in, access keys, API key, or proxy token
+* With `awsAuthRefresh` set in an interactive session, you can instead run `/login`, choose **3rd-party platform**, then select **Claude Platform on AWS · refresh credentials** under **Using 3rd-party platforms** to run the same command without restarting Claude Code. See [Configure AWS credentials](/docs/en/claude-platform-on-aws#1-configure-aws-credentials)
 * If the error repeats after the refresh command succeeds, confirm the identity is valid outside Claude Code with `aws sts get-caller-identity` in the same shell and profile
 
 ### AWS authentication failed
 
-This message requires Claude Code v2.1.198 or later and only appears when [`awsAuthRefresh`](/docs/en/amazon-bedrock#advanced-credential-configuration) is set in your settings file. Your AWS provider returned a 403, or [Amazon Bedrock](/docs/en/amazon-bedrock) returned a 401.
+Your AWS provider returned a 403, or [Amazon Bedrock](/docs/en/amazon-bedrock) returned a 401.
 
-Claude Code can't tell which cause you hit. Amazon Bedrock reports an expired security token as a 403, but a 403 is also how it reports an authorization denial, such as an `AccessDeniedException` from a missing IAM permission or a model that isn't enabled for your account.
+Amazon Bedrock reports an expired security token as a 403, but a 403 is also how it reports an authorization denial, such as an `AccessDeniedException` from a missing IAM permission. Claude Code can't tell those two causes apart.
 
 A 401 from Amazon Bedrock also lands here rather than under [AWS credentials expired or invalid](#aws-credentials-expired-or-invalid), because Amazon Bedrock doesn't report an expired token as a 401. A 401 from that endpoint typically comes from something else in the request path, such as a corporate proxy.
 
@@ -1219,13 +1287,72 @@ A credential refresh fixes an expired token and can't fix the other causes, so t
 AWS authentication failed · run /login and select "Claude Platform on AWS · refresh credentials", or run `aws sso login --profile myprofile` in another terminal · if credentials are current, check AWS permissions and model access · API Error: 403 ...
 ```
 
-The action hint in the middle names the `awsAuthRefresh` command from your settings, so it varies. The stable part is the leading `AWS authentication failed`.
+The action hint in the middle varies with your setup. The stable part is the leading `AWS authentication failed`.
+
+When the 403 is Amazon Bedrock's answer that you don't have access to the model with the specified model ID, the hint instead tells you to enable the model for your account and region in the Amazon Bedrock console.
+
+Before v2.1.273, this message appeared only when `awsAuthRefresh` was configured.
 
 **What to do:**
 
-* Run the `awsAuthRefresh` command named in the message, or `aws sso login`, in case an expired credential is the cause
+* If the hint says credentials are managed by this environment, the app that launched Claude Code owns the credential and the other steps here don't apply: retry, or contact your administrator
+* Refresh your AWS credentials in case an expired credential is the cause: run the [`awsAuthRefresh`](/docs/en/amazon-bedrock#advanced-credential-configuration) command named in the message when one is set, or refresh your SSO sign-in, access keys, API key, or proxy token yourself
 * If your credentials are current, confirm the IAM permissions in [IAM configuration](/docs/en/amazon-bedrock#iam-configuration) are attached to the identity you're using and that the selected model is enabled for your account and region
 * Run `aws sts get-caller-identity` to confirm which identity your requests use; a stale `AWS_PROFILE` or default profile is a common cause of a permission mismatch
+
+### Google Cloud credentials expired or invalid
+
+Your Google Cloud credentials for [Google Cloud's Agent Platform](/docs/en/google-vertex-ai) expired or were rejected: the request returned a 401, which is how Agent Platform reports credential expiry.
+
+The action hint in the middle varies with your setup. The stable part is the leading `Google Cloud credentials expired or invalid`:
+
+```text theme={null}
+Google Cloud credentials expired or invalid · refresh your Google Cloud credentials (application default sign-in, or the key file in GOOGLE_APPLICATION_CREDENTIALS) and retry · API Error: 401 ...
+```
+
+**What to do:**
+
+* If the hint says credentials are managed by this environment, the app that launched Claude Code owns the credential and the other steps here don't apply: retry, or contact your administrator
+* If you authenticate with application default credentials, run the [`gcpAuthRefresh`](/docs/en/google-vertex-ai#advanced-credential-configuration) command named in the message, or `gcloud auth application-default login`, and complete the sign-in, then retry
+* If you route through an [LLM gateway](/docs/en/llm-gateway) with `CLAUDE_CODE_SKIP_VERTEX_AUTH` set, refresh the gateway token in `ANTHROPIC_AUTH_TOKEN` or `ANTHROPIC_CUSTOM_HEADERS`, then retry
+* If you authenticate with a service account key file, confirm `GOOGLE_APPLICATION_CREDENTIALS` points at a valid key. See [Configure GCP credentials](/docs/en/google-vertex-ai#3-configure-gcp-credentials)
+* If the error repeats after a refresh, confirm the identity works outside Claude Code with `gcloud auth application-default print-access-token` in the same shell
+
+Before v2.1.273, a 401 from Agent Platform showed the generic `Please run /login` or `Failed to authenticate` message instead, which can't refresh Google Cloud credentials.
+
+### Google Cloud authentication failed
+
+[Google Cloud's Agent Platform](/docs/en/google-vertex-ai) returned a 403, which it uses for authorization denials rather than expired credentials. Usually the identity you authenticate with is missing an IAM permission, or the model isn't enabled for your project.
+
+The action hint in the middle varies with your setup. The stable part is the leading `Google Cloud authentication failed`:
+
+```text theme={null}
+Google Cloud authentication failed · refresh your Google Cloud credentials (application default sign-in, or the key file in GOOGLE_APPLICATION_CREDENTIALS) and retry · if credentials are current, check GCP IAM permissions and Vertex AI model access · API Error: 403 ...
+```
+
+**What to do:**
+
+* If the hint says credentials are managed by this environment, the app that launched Claude Code owns the credential and the other steps here don't apply: retry, or contact your administrator
+* Confirm the roles in [IAM configuration](/docs/en/google-vertex-ai#iam-configuration) are granted to the identity you authenticate with
+* Confirm the model is enabled for your project. See [Request model access](/docs/en/google-vertex-ai#2-request-model-access)
+
+Before v2.1.273, a 403 from Agent Platform showed the generic `Please run /login` or `Failed to authenticate` message instead, which can't refresh Google Cloud credentials.
+
+### Microsoft Foundry authentication failed
+
+[Microsoft Foundry](/docs/en/microsoft-foundry) returned a 401 or 403: the Azure credential on the request was rejected, or the identity behind it doesn't have access to the Foundry resource. `/login` can't mint Azure credentials. The action hint in the middle varies with your setup. The stable part is the leading `Microsoft Foundry authentication failed`:
+
+```text theme={null}
+Microsoft Foundry authentication failed · refresh your Foundry credential (ANTHROPIC_FOUNDRY_AUTH_TOKEN, ANTHROPIC_FOUNDRY_API_KEY, Azure sign-in for Entra, or your proxy token) and retry · if credentials are current, check access to the Foundry resource · API Error: 401 ...
+```
+
+**What to do:**
+
+* If the hint says credentials are managed by this environment, the app that launched Claude Code owns the credential and the other steps here don't apply: retry, or contact your administrator
+* Refresh the credential you configured in [Configure Azure credentials](/docs/en/microsoft-foundry#2-configure-azure-credentials): rotate `ANTHROPIC_FOUNDRY_API_KEY`, mint a fresh `ANTHROPIC_FOUNDRY_AUTH_TOKEN`, or run `az login` so the default Microsoft Entra credential chain can sign in again
+* If the credential is current, confirm the identity has access to the Foundry resource. See [Azure RBAC configuration](/docs/en/microsoft-foundry#azure-rbac-configuration)
+
+Before v2.1.273, a 401 or 403 from Microsoft Foundry showed the generic `Please run /login` or `Failed to authenticate` message instead, which can't refresh Azure credentials.
 
 ### Could not load AWS or Google Cloud credentials
 
@@ -1309,6 +1436,21 @@ Cloud gateway <url> no longer accepts this session. Start `claude` and sign in a
 * Run `/login` in the session and complete the browser sign-in
 * For a non-interactive launch, start `claude` in the same environment, run `/login`, then rerun your command
 
+### Gateway refused the request
+
+You're signed in through a [Claude apps gateway](/docs/en/claude-apps-gateway), and a request returned a 403: the gateway, or the upstream behind it, refused it. Signing in again doesn't change a refusal, so the message points at your gateway administrator:
+
+```text theme={null}
+Gateway refused the request · signing in again won't change this — check with your gateway administrator · API Error: 403 ...
+```
+
+**What to do:**
+
+* Ask your gateway administrator to look up the request. The `API Error:` tail carries the refusal the gateway returned
+* For administrators: an [access control rule](/docs/en/claude-apps-gateway-config#http-tuning) on the gateway returns a 403 that the [audit log](/docs/en/claude-apps-gateway-deploy#logs) records with its reason, and an upstream's authorization denial passes through per [Upstream error messages](/docs/en/claude-apps-gateway-config#upstream-error-messages)
+
+Before v2.1.273, a 403 on a gateway session showed the generic `Please run /login` or `Failed to authenticate` message instead, and signing in again didn't clear the refusal.
+
 ## Network and connection errors
 
 Most of these errors mean a network request from Claude Code failed to reach its destination, or something between Claude Code and the API altered the response on its way back; where an entry also has a local cause, such as a failed archive write, its body says so. They usually originate in your local network, proxy, or firewall, or in the cloud environment's network policy.
@@ -1322,7 +1464,7 @@ Unable to connect to API. Check your internet connection
 Connection refused — a firewall or proxy may be blocking it (ConnectionRefused)
 Can't reach the API server — check your internet or DNS (ENOTFOUND)
 No internet route — check your connection or VPN (EHOSTUNREACH)
-Couldn't connect through your proxy (ERR_PROXY_TUNNEL)
+Couldn't connect through your proxy (ERR_PROXY_TUNNEL) — the proxy refused the tunnel: check its credentials and that it allows this host
 Connection dropped (ECONNRESET)
 fetch failed
 Request timed out. Check your internet connection and proxy settings
@@ -1442,13 +1584,15 @@ Before v2.1.208, the same misconfiguration surfaced as `API Error: Truncated eve
 A proxy or security appliance on your network is intercepting TLS traffic with its own certificate, and Claude Code does not trust it.
 
 ```text theme={null}
-Unable to connect to API: SSL certificate verification failed. Check your proxy or corporate SSL certificates
-Unable to connect to API: Self-signed certificate detected. Check your proxy or corporate SSL certificates
+Unable to connect to API: SSL certificate verification failed (UNABLE_TO_GET_ISSUER_CERT_LOCALLY). The certificate comes from an authority Claude Code doesn't trust, usually a TLS-inspecting corporate proxy or a gateway signed by a private CA: set NODE_EXTRA_CA_CERTS to that CA bundle, or add it to the system certificate store · see https://code.claude.com/docs/en/network-config
+Unable to connect to API: Self-signed certificate detected (SELF_SIGNED_CERT_IN_CHAIN). The certificate comes from an authority Claude Code doesn't trust, usually a TLS-inspecting corporate proxy or a gateway signed by a private CA: set NODE_EXTRA_CA_CERTS to that CA bundle, or add it to the system certificate store · see https://code.claude.com/docs/en/network-config
 ```
+
+Before v2.1.273, both messages ended at `Check your proxy or corporate SSL certificates`, without the OpenSSL code or the `NODE_EXTRA_CA_CERTS` hint.
 
 As of v2.1.199, a certificate validation failure isn't retried, so this error appears on the first attempt instead of after the full [retry budget](#automatic-retries). Earlier versions spent a few minutes retrying before showing it. Transient TLS conditions, such as a handshake timeout, still retry.
 
-During `/login` and the startup connectivity check, the same failure is reported with the OpenSSL code and the fix inline:
+During `/login` and the startup connectivity check, the same failure produces a different message:
 
 ```text theme={null}
 SSL certificate error (UNABLE_TO_GET_ISSUER_CERT_LOCALLY). If you are behind a corporate proxy or TLS-intercepting firewall, set NODE_EXTRA_CA_CERTS to your CA bundle path, or ask IT to allowlist *.anthropic.com. Run `claude doctor` for details.
@@ -2543,7 +2687,7 @@ Input this long without a newline usually means the producer isn't a stream-json
 
 ### Unknown command
 
-You submitted a `/` name that doesn't match any command in this session, so Claude Code reports the name instead of running anything:
+In an interactive terminal session, you submitted a `/` name that doesn't match any command in this session, so Claude Code reports the name instead of running anything:
 
 ```text theme={null}
 Unknown command: /hepl. Did you mean /help?
@@ -2554,6 +2698,16 @@ Claude Code suggests the closest command name or alias that the menu lists in th
 * A typo, such as `/hepl` for `/help`. [How the command menu matches what you type](/docs/en/commands#how-the-command-menu-matches-what-you-type) covers picking a close match before you submit
 * A command that exists but isn't available in this session because a requirement isn't met, such as your platform, plan, or authentication method. The troubleshooting entries for [`/web-setup`](/docs/en/web-quickstart#web-setup-shows-no-commands-match-or-unknown-command) and [`/schedule`](/docs/en/routines#schedule-returns-unknown-command) walk through two common cases. Some commands answer with their own message when your organization's policy disables them, such as [`Cloud sessions are disabled by your organization's policy`](#cloud-sessions-are-disabled-by-your-organizations-policy)
 * A command from a [plugin](/docs/en/plugins) or [MCP server](/docs/en/mcp#use-mcp-prompts-as-commands) that isn't installed or connected in this session
+
+Claude Code answers an unmatched `/` name this way only in an interactive terminal session. In every other session, it sends the prompt to Claude as a normal message instead, with a note that the command didn't run and a list of commands Claude can run in the session. Those sessions include:
+
+* `-p` runs
+* [Agent SDK](/docs/en/agent-sdk/overview) applications
+* The Code tab of the [Desktop app](/docs/en/desktop)
+* The chat panel of the [VS Code extension](/docs/en/vs-code)
+* [Cloud sessions](/docs/en/claude-code-on-the-web) and [routines](/docs/en/routines)
+
+For a built-in command that can't run in one of those sessions, Claude Code still answers that the command isn't available instead of sending it to Claude. Before v2.1.274, only cloud sessions and routines sent an unmatched name to Claude. Before v2.1.273, they answered `Unknown command` too.
 
 Claude Code doesn't treat every prompt that starts with `/` as a command. It sends the prompt to Claude as a normal message when the first word after the `/` starts with punctuation, such as the `/--` that opens a Lean doc comment, or is a path such as `/var/log/syslog`.
 
@@ -2685,6 +2839,25 @@ When you create a routine with [`/schedule`](/docs/en/routines), the same messag
 * Rerun the command a minute after connecting
 
 Before v2.1.268, Claude Code reported this as a temporary failure of the Claude GitHub App check and suggested retrying or installing the app; neither connects a GitHub account.
+
+<h3 id="single-sign-on-authorization-needed">
+  Single sign-on authorization needed
+</h3>
+
+You ran [`/install-github-app`](/docs/en/github-actions#quick-setup) and chose a repository whose organization enforces SAML single sign-on. Before setup, Claude Code checks your access to the repository with the GitHub CLI, and GitHub refused that check because your `gh` token isn't authorized for the organization yet. The wizard shows the warning with the steps to authorize:
+
+```text theme={null}
+Single sign-on authorization needed
+<owner>/<repo> belongs to an organization that enforces SAML single sign-on, and your GitHub CLI token isn't authorized for it yet.
+```
+
+**What to do:**
+
+* Re-authorize your GitHub CLI login with the `repo` and `workflow` scopes by running `gh auth refresh -h github.com -s repo,workflow`, and authorize the organization when GitHub prompts for single sign-on
+* If you authenticate with a personal access token in `GH_TOKEN`, open [github.com/settings/tokens](https://github.com/settings/tokens), select **Configure SSO** on the token, and authorize the organization
+* Run `/install-github-app` again
+
+Before v2.1.273, Claude Code showed the `Admin permissions required` warning for this condition instead.
 
 ### Failed to resume the conversation
 
@@ -3192,13 +3365,13 @@ Before v2.1.248, Claude Code didn't check the endpoint's owning user or process 
 
 Claude Code checks a file path's [permission rules](/docs/en/permissions#read-and-edit), then confirms that resolution again when the tool opens the file or starts the search. When it can't confirm that the path still leads to the location the check approved, Claude Code refuses the operation instead of following it. The refusal appears in the tool result:
 
-```text theme={null}
-Refusing to read /path/to/file: its symlink resolution changed after permission was checked. If a link in the working directory is being rewritten concurrently, stop that and retry.
+```text wrap theme={null}
+Refusing to read /path/to/file: its symlink resolution changed after permission was checked (a link on the way now leads somewhere the check did not see). If a link in the working directory is being rewritten concurrently, stop that and retry.
 ```
 
 The text after the path names the reason:
 
-* `its symlink resolution changed after permission was checked`: a symlink along the path, or at a Grep or Glob search root, was replaced between the permission check and the operation
+* `its symlink resolution changed after permission was checked`: a symlink along the path, or at a Grep or Glob search root, was replaced between the permission check and the operation. In a read refusal, the parenthesized phrase names which comparison failed.
 * `its parent-directory symlink resolution changed after permission was checked`: a directory the write path passes through no longer resolves to the approved location
 * `it is a symbolic link. Write to the link's target path instead`: a symbolic link sits at the approved write location itself
 * `a path one of its Read deny rules is written through changed while the search was being prepared. Retry.`: a `Read` deny rule for the search names a path that passes through a symlink, and that link changed while Claude Code was preparing the search
@@ -3211,6 +3384,7 @@ The text after the path names the reason:
 * Usually nothing: the refusal reaches Claude as the tool result, and the refused operation doesn't run
 * If a symlink refusal repeats on one path, find what keeps rewriting a link there, such as a build tool or file watcher, or ask Claude to use the file's resolved path instead of the linked one
 * If this refusal appears for every file while Claude Code runs on Windows inside an AppContainer or restricted-token sandbox, upgrade to v2.1.265 or later
+* If a read refusal appears on macOS for a file that nothing is rewriting, such as a screenshot dragged into the prompt, upgrade to v2.1.273 or later
 * For the ripgrep refusal, install ripgrep with your package manager so `rg` resolves to an absolute path on `PATH`, or keep searches under the working directory
 
 Before v2.1.251, Claude Code re-checked a path's resolution only for file writes, so a link replaced after the permission check could redirect a read or search to a different location without a message. Of these refusals, only the parent-directory write refusal appears on earlier versions.
@@ -3634,6 +3808,10 @@ The underlying `claude` process exited with a non-zero code. The exit code alone
 Error: Claude Code process exited with code 1
 ```
 
+On Windows, the native build can exit with code `4294967295` right after a turn completes. When that exit lands at a turn boundary, with no message waiting and no background task running, the [VS Code extension](/docs/en/vs-code) closes the session quietly instead of showing this error. Your next message resumes the conversation.
+
+Before v2.1.273, the extension showed the error for that exit at every turn boundary, even though nothing was lost.
+
 **What to do:**
 
 * In VS Code, follow the **View output logs** link shown with the error to see the underlying failure
@@ -3656,6 +3834,21 @@ Failed to run Claude Code: Error: Could not locate the Claude CLI on PATH. Launc
 * Open a new PowerShell window outside VS Code and run `where.exe claude`. If it doesn't print a path, the CLI isn't on your PATH: add its install directory by following [Verify your PATH](/docs/en/troubleshoot-install#verify-your-path). If it prints a path, the entry comes from your PowerShell profile or from a PATH change VS Code hasn't picked up yet; the next two steps cover those cases.
 * Set the PATH entry as a user or system environment variable, not in your PowerShell profile. The extension doesn't run your profile, so a PATH edit that lives only there never reaches it.
 * Restart VS Code after changing PATH. The extension checks the PATH that VS Code captured at startup, so a PATH change takes effect only after a restart.
+
+<h3 id="the-connection-to-claude-code-ended-before-this-message-completed">
+  The connection to Claude Code ended before this message completed
+</h3>
+
+The [VS Code extension](/docs/en/vs-code) sent your message to the `claude` process, and the connection ended without an error before the process acknowledged or finished it. The extension can't tell whether the message was processed, so it asks you to send it again:
+
+```text theme={null}
+The connection to Claude Code ended before this message completed — it may not have been processed, so please send it again.
+```
+
+**What to do:**
+
+* Send the message again. The next message starts a fresh `claude` process that resumes the conversation.
+* If it repeats, run `claude` in a terminal in the same project. A failure that keeps ending the process usually reproduces there with its real error message.
 
 ## Rewind warnings and errors
 

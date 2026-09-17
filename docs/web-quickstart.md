@@ -61,7 +61,7 @@ Connecting GitHub is a one-time step. If you already use the GitHub CLI, you can
 
 <Steps>
   <Step title="Visit claude.ai/code">
-    Go to [claude.ai/code](https://claude.ai/code) and sign in with your claude.ai account. On macOS or Windows, the first screen offers the Claude Code desktop app and other ways to install Claude Code. To stay in the browser, click **Continue on web** at the bottom of the page.
+    Go to [claude.ai/code](https://claude.ai/code) and sign in with your claude.ai account.
   </Step>
 
   <Step title="Sign in with GitHub">

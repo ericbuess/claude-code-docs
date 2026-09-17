@@ -213,6 +213,8 @@ Some of Anthropic's skills, such as `pdf` and `xlsx`, always sync. For the rest,
 
 To stop syncing on a machine, set [`syncClaudeAiSkills`](/docs/en/settings-reference#syncclaudeaiskills) to `false` in your user settings. Claude Code stops downloading, and the next time it starts it moves the skills it already synced to `~/.claude/skills/.trash/` and no longer loads them. Your organization can turn syncing off for everyone by turning off Skills on claude.ai. To stop syncing while leaving Skills on, it can set the same key in [managed settings](/docs/en/managed-settings).
 
+If your organization turns Skills off on claude.ai, Claude Code removes the downloaded skills and they stop loading. The removed skills move to `~/.claude/skills/.trash/`, where you can recover the files until the [retention sweep](/docs/en/claude-directory#cleaned-up-automatically) deletes them. Once your organization turns Skills back on, Claude Code downloads the skills you enabled at the next sync.
+
 #### When a synced skill name matches another command
 
 You can invoke a synced skill by its full name, `/anthropic-skills:<name>`, or by its short name, `/<name>`. When another command uses that short name, `/<name>` runs the other command, and the synced skill runs only as `/anthropic-skills:<name>`. With a local `deploy` skill and a synced `deploy`, `/deploy` runs the local skill and `/anthropic-skills:deploy` runs the synced one. Before v2.1.269, a synced skill had only its short name.

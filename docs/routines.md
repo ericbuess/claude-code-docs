@@ -158,7 +158,7 @@ API triggers are added to an existing routine from the web. The CLI cannot curre
 
 <Steps>
   <Step title="Open the routine for editing">
-    Go to [claude.ai/code/routines](https://claude.ai/code/routines), click the routine you want to trigger via API, then click the pencil icon to open **Edit routine**.
+    Go to [claude.ai/code/routines](https://claude.ai/code/routines), click the routine you want to trigger via API, then open the menu next to the routine's name and select **Edit**.
   </Step>
 
   <Step title="Add an API trigger">
@@ -232,7 +232,7 @@ The Claude GitHub App must be installed on the repository you want to subscribe 
 
 <Steps>
   <Step title="Open the routine for editing">
-    Go to [claude.ai/code/routines](https://claude.ai/code/routines), click the routine, then click the pencil icon to open **Edit routine**.
+    Go to [claude.ai/code/routines](https://claude.ai/code/routines), click the routine, then open the menu next to the routine's name and select **Edit**.
   </Step>
 
   <Step title="Add a GitHub event trigger">
@@ -299,9 +299,9 @@ Click any run to open it as a full session. From there you can see what Claude d
 From the routine detail page you can:
 
 * Click **Run now** to start a run immediately without waiting for the next scheduled time. You can optionally supply run-specific text, which reaches the routine the same way as the API trigger's `text` field.
-* Use the toggle in the **Repeats** section to pause or resume the schedule. Paused routines keep their configuration but don't run until you re-enable them.
-* Click the pencil icon to open **Edit routine** and change the name, prompt, repositories, environment, connectors, or any of the routine's triggers. The **Select a trigger** section is where you add or remove schedules, API tokens, and GitHub event triggers.
-* Click the delete icon to remove the routine. Past sessions created by the routine remain in your session list.
+* Use the on/off switch at the top of the page to pause or resume the schedule. Paused routines keep their configuration but don't run until you re-enable them.
+* Open the menu next to the routine's name and select **Edit** to change the name, prompt, repositories, environment, connectors, or any of the routine's triggers. The **Select a trigger** section is where you add or remove schedules, API tokens, and GitHub event triggers.
+* Open the same menu and select **Delete** to delete the routine.
 
 ### Manage routines from the CLI
 
@@ -341,7 +341,7 @@ To allow additional domains:
 
 <Steps>
   <Step title="Open the routine for editing">
-    On the routine's detail page, click the pencil icon to open **Edit routine**.
+    On the routine's detail page, open the menu next to the routine's name and select **Edit**.
   </Step>
 
   <Step title="Open the environment selector">
