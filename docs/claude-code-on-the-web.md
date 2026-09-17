@@ -20,7 +20,7 @@ You can start a cloud session from any of these surfaces:
 * **Terminal**: [`claude --cloud`](#from-terminal-to-cloud)
 * **Routines**: [scheduled and triggered runs](/docs/en/routines) each run as a cloud session
 
-A session in your terminal, your IDE, or the Desktop app with **Local** selected runs on your own machine instead. To steer one of those local sessions from your phone or browser, use [Remote Control](/docs/en/remote-control).
+To have Claude start and keep track of many cloud sessions for one body of work, use a [project](/docs/en/claude-projects). A session in your terminal, your IDE, or the Desktop app with **Local** selected runs on your own machine instead. To steer one of those local sessions from your phone or browser, use [Remote Control](/docs/en/remote-control).
 
 <Tip>
   New to cloud sessions? Start with [Get started](/docs/en/web-quickstart) to connect your GitHub account and submit your first task.
@@ -48,12 +48,14 @@ See [Configure cloud environments](/docs/en/cloud-environments) to change what a
 
 Cloud sessions need access to your GitHub repositories to clone code and push branches. You can grant access in two ways:
 
-| Method           | How you connect                                                                            | Repositories sessions can reach                                                            | Best for                                                                |
-| :--------------- | :----------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| **GitHub App**   | Authorize the Claude GitHub App during [web onboarding](/docs/en/web-quickstart)                | Any public repository, and private repositories that the Claude GitHub App is installed on | Browser onboarding; teams that want [Auto-fix](#auto-fix-pull-requests) |
-| **`/web-setup`** | Run `/web-setup` in your terminal to send your local `gh` CLI token to your Claude account | Any repository your `gh` token can access, whether or not the App is installed             | Individual developers who already use `gh`                              |
+| Method           | How you connect                                                                            | Repositories sessions can reach                                                              | Best for                                                                |
+| :--------------- | :----------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
+| **GitHub App**   | Authorize the Claude GitHub App during [web onboarding](/docs/en/web-quickstart)                | Any public repository, and private repositories that the Claude GitHub App is installed on   | Browser onboarding; teams that want [Auto-fix](#auto-fix-pull-requests) |
+| **`/web-setup`** | Run `/web-setup` in your terminal to send your local `gh` CLI token to your Claude account | Any repository your `gh` token can access, whether or not the Claude GitHub App is installed | Individual developers who already use `gh`                              |
 
 Installing the Claude GitHub App on a repository also enables [Auto-fix](#auto-fix-pull-requests) for pull requests in it.
+
+Threads in a [project](/docs/en/claude-projects) need the Claude GitHub App installed on each repository they clone, whichever method you connected with. See [Set up GitHub access](/docs/en/claude-projects#set-up-github-access).
 
 For how `/schedule` checks repository access before creating a routine, see [Repositories and branch permissions](/docs/en/routines#repositories-and-branch-permissions). See [Connect from your terminal](/docs/en/web-quickstart#connect-from-your-terminal) for the `/web-setup` walkthrough, including what `/web-setup` stores and how to remove it.
 
@@ -216,7 +218,7 @@ Cloud sessions support [built-in commands](/docs/en/commands) that produce text 
 
 * **`/model`, `/effort`, `/color`, and `/rename`**: pass the value as an argument, for example `/model sonnet`, instead of opening the terminal picker or slider. The argument forms require Claude Code v2.1.205 or later in the session's environment and follow each command's [availability notes](/docs/en/commands#all-commands): `/effort` reports `Not applied` while a model's [launch-default effort hold](/docs/en/model-config#adjust-effort-level) is in force.
 * **`/fast`**: toggles [fast mode](/docs/en/fast-mode#use-fast-mode-in-cloud-sessions) for the session when fast mode is [available on your account](/docs/en/fast-mode#requirements). Requires Claude Code v2.1.271 or later in the session's environment.
-* **`/config`**: in your browser at claude.ai/code, opens the Claude Code section of your settings instead of setting a value, and text after the command, including `key=value`, is ignored. To change settings for a cloud session, use [environment variables](/docs/en/cloud-environments#set-environment-variables) or commit [settings files](/docs/en/settings) to the repository.
+* **`/config`**: in your browser at claude.ai/code, opens the Claude Code section of your settings instead of setting a value, and text after the command, including `key=value`, is ignored. To change a setting for a cloud session, set an [environment variable](/docs/en/cloud-environments#set-environment-variables) on the environment, or in a session with one repository, commit the key to that repository's `.claude/settings.json`. [Settings in cloud sessions](/docs/en/settings#settings-in-cloud-sessions) lists what each session reads.
 
 For context management specifically:
 
@@ -366,6 +368,7 @@ Before relying on cloud sessions for a workflow, account for these constraints:
 ## Related resources
 
 * [Cloud environments](/docs/en/cloud-environments): configure network access, environment variables, and setup scripts for cloud sessions
+* [Projects](/docs/en/claude-projects): one conversation where Claude coordinates parallel cloud sessions on your repositories and reports back
 * [Ultrareview](/docs/en/ultrareview): run a deep multi-agent code review in a cloud sandbox
 * [Routines](/docs/en/routines): automate work on a schedule, via API call, or in response to GitHub events
 * [Hooks configuration](/docs/en/hooks): run scripts at session lifecycle events

@@ -325,7 +325,7 @@ Claude pushes its work to branches prefixed with `claude/`, which are always acc
 
 Routines can use your connected MCP connectors to read from and write to external services during each run. For example, a routine that triages support requests might read from a Slack channel and create issues in Linear.
 
-Connectors are the [claude.ai integrations](/docs/en/mcp#use-mcp-servers-from-claude-ai) on your account. MCP servers you added locally in the CLI with `claude mcp add` are stored on your machine rather than your claude.ai account, so they do not appear in the connectors list. To use one of those servers in a routine, add it as a connector at [claude.ai/customize/connectors](https://claude.ai/customize/connectors), or declare it in a committed [`.mcp.json`](/docs/en/mcp#project-scope) so it is part of the cloned repository.
+Connectors are the [claude.ai integrations](/docs/en/mcp#use-mcp-servers-from-claude-ai) on your account. MCP servers you added locally in the CLI with `claude mcp add` are stored on your machine rather than your claude.ai account, so they do not appear in the connectors list. To use one of those servers in a routine, add it as a connector at [claude.ai/customize/connectors](https://claude.ai/customize/connectors). For a routine with one repository, you can instead declare it in a committed [`.mcp.json`](/docs/en/mcp#project-scope) so it is part of the cloned repository.
 
 When you create a routine, all of your currently connected connectors are included by default. Remove any that aren't needed to limit which tools Claude has access to during the run. You can also add connectors directly from the routine form.
 
@@ -400,5 +400,6 @@ An Owner in your Team or Enterprise organization has likely turned off the **Rou
 * [`/loop` and in-session scheduling](/docs/en/scheduled-tasks): schedule local tasks within an open CLI session
 * [Desktop scheduled tasks](/docs/en/desktop-scheduled-tasks): local scheduled tasks that run on your machine with access to local files
 * [Cloud environments](/docs/en/cloud-environments): configure network access, environment variables, and setup scripts for cloud sessions
+* [Projects](/docs/en/claude-projects): ongoing work Claude coordinates across parallel cloud sessions; routines created from a project appear on its **Routines** tab
 * [MCP connectors](/docs/en/mcp): connect external services like Slack, Linear, and Google Drive
 * [GitHub Actions](/docs/en/github-actions): run Claude in your CI pipeline on repository events

@@ -67,9 +67,9 @@ Connecting GitHub is a one-time step. If you already use the GitHub CLI, you can
   <Step title="Sign in with GitHub">
     After you sign in, claude.ai/code prompts you to connect GitHub. Follow the prompt, and claude.ai/code sends you to GitHub's authorization page. Approve the authorization request, and GitHub returns you to claude.ai/code. Cloud sessions work with existing GitHub repositories. To start a new project, [create an empty repository on GitHub](https://github.com/new) first.
 
-    With this connection, a session can clone any public repository, but can work in a private repository only when the Claude GitHub App is installed on it. [Install the App](https://github.com/apps/claude/installations/new) on each GitHub account or organization whose private repositories you want to use. On a GitHub organization, an organization owner may need to approve the installation. Installing the App also enables [Auto-fix](/docs/en/claude-code-on-the-web#auto-fix-pull-requests), which lets Claude respond to CI failures and review comments on pull requests in those repositories.
+    With this connection, a session can clone any public repository, but can work in a private repository only when the Claude GitHub App is installed on it. [Install the Claude GitHub App](https://github.com/apps/claude/installations/new) on each GitHub account or organization whose private repositories you want to use. On a GitHub organization, an organization owner may need to approve the installation. Installing it also enables [Auto-fix](/docs/en/claude-code-on-the-web#auto-fix-pull-requests), which lets Claude respond to CI failures and review comments on pull requests in those repositories.
 
-    If onboarding prompts you to install the App at this point and you'd rather do it later, click **Skip**.
+    If onboarding prompts you to install the Claude GitHub App at this point and you'd rather do it later, click **Skip**.
   </Step>
 
   <Step title="Set up your Default environment">
@@ -88,7 +88,7 @@ Connecting GitHub is a one-time step. If you already use the GitHub CLI, you can
 
 If you already use the GitHub CLI (`gh`), you can connect GitHub for cloud sessions from your terminal. This requires the [Claude Code CLI](/docs/en/quickstart). On Team and Enterprise plans, `/web-setup` is available only after an Owner turns on [Quick web setup](/docs/en/claude-code-on-the-web#github-authentication-options).
 
-When you run `/web-setup`, Claude Code reads the token that `gh auth token` prints, asks you to confirm, and sends the token to Anthropic. Anthropic stores it encrypted with your claude.ai account, and your cloud sessions use it for GitHub access until you [remove it](#remove-the-web-setup-token). A cloud session can then access any repository that token can access, with no Claude GitHub App installation.
+When you run `/web-setup`, Claude Code reads the token that `gh auth token` prints, asks you to confirm, and sends the token to Anthropic. Anthropic stores it encrypted with your claude.ai account, and your cloud sessions use it for GitHub access until you [remove it](#remove-the-web-setup-token). A cloud session you start yourself can then access any repository that token can access, with no Claude GitHub App installation. Threads in a [project](/docs/en/claude-projects#set-up-github-access) still need the Claude GitHub App.
 
 If you already connected GitHub in the browser, `/web-setup` warns you that continuing replaces that connection for your cloud sessions.
 

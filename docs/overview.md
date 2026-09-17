@@ -115,7 +115,7 @@ Claude Code runs on several surfaces: the terminal, IDE extensions, a desktop ap
   </Tab>
 
   <Tab title="Web">
-    Run Claude Code in your browser with no local setup. Kick off long-running tasks and check back when they're done, work on repos you don't have locally, or run multiple tasks in parallel. Available on desktop browsers and [the Claude app for iOS and Android](/docs/en/mobile).
+    Run Claude Code in your browser with no local setup. Kick off long-running tasks and check back when they're done, work on repos you don't have locally, or run multiple tasks in parallel. For a longer body of work, create a [project](/docs/en/claude-projects) and let Claude coordinate the parallel sessions for you. Available on desktop browsers and [the Claude app for iOS and Android](/docs/en/mobile).
 
     Start coding at [claude.ai/code](https://claude.ai/code).
 
