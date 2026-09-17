@@ -825,10 +825,13 @@ Logged for each API request attempt when `OTEL_LOG_RAW_API_BODIES` is set. One e
 * `body_truncated`: `"true"` when inline truncation occurred. Absent in file mode and when no truncation occurred.
 * `model`: Model identifier from the request parameters
 * `query_source`: Subsystem that issued the request (for example, `"compact"`)
+* `request_body_id`: UUID that identifies this attempt's request body. The [`api_response_body` event](#api-response-body-event) for the attempt that succeeds carries the same value, so you can pair a response with the exact request that produced it. Requires Claude Code v2.1.274 or later
 
 #### API response body event
 
 Logged for each successful API response when `OTEL_LOG_RAW_API_BODIES` is set.
+
+In file mode (`OTEL_LOG_RAW_API_BODIES=file:<dir>`), Claude Code also appends one JSON line to `<dir>/index.jsonl` for each successful response, with the fields `timestamp`, `session_id`, `query_source`, `model`, `request_id`, `message_id`, `message_uuid`, `request_file`, and `response_file`. Read it to find the request and response files behind a given transcript message without querying your telemetry backend. The index file requires Claude Code v2.1.274 or later.
 
 **Event Name**: `claude_code.api_response_body`
 
@@ -845,6 +848,9 @@ Logged for each successful API response when `OTEL_LOG_RAW_API_BODIES` is set.
 * `model`: Model identifier
 * `query_source`: Subsystem that issued the request
 * `request_id`: Anthropic API request ID from the response's `request-id` header, such as `"req_011..."`. Present only when the API returns one.
+* `request_body_id`: The `request_body_id` of the [`api_request_body` event](#api-request-body-event) that this response answers. Requires Claude Code v2.1.274 or later
+* `message.id`: Message ID the API assigned to the response, the `id` field of the response body. Requires Claude Code v2.1.274 or later
+* `message.uuid`: UUID of the response's final transcript entry. Together with `request_body_id`, it links a transcript message to the request and response bodies behind it. Requires Claude Code v2.1.274 or later
 
 #### Tool decision event
 
@@ -1409,7 +1415,9 @@ For a comprehensive guide on measuring return on investment for Claude Code, inc
 * Tool content is not logged in trace spans by default. To include it, set `OTEL_LOG_TOOL_CONTENT=1`. The `claude_code.tool` span then carries a [`tool.output` span event](#tool-output-span-event) with raw file contents and Bash command output, truncated at the content limit (60 KB by default) per attribute. Tool content also reaches spans through [`new_context`, whose gate differs per span](#new-context-gates). Configure your telemetry backend to filter or redact these attributes as needed
 * Raw Anthropic Messages API request and response bodies are not logged by default. To include them, set `OTEL_LOG_RAW_API_BODIES` in your shell, user settings, or managed settings. It's ignored in [project and local settings](/docs/en/settings-reference#variables-claude-code-ignores-in-env). The bodies contain the full conversation history, including the system prompt, every prior user and assistant turn, and tool results, so enabling this implies consent to everything the other `OTEL_LOG_*` content flags would reveal. Claude Code always redacts Claude's extended-thinking content from these bodies, regardless of other settings. The value you set determines how Claude Code delivers the bodies:
   * With `=1`, Claude Code emits `api_request_body` and `api_response_body` log events for each API call. The events' `body` attribute carries the JSON-serialized payload, truncated at the content limit (60 KB by default)
-  * With `=file:<dir>`, Claude Code writes untruncated bodies to `.request.json` and `.response.json` files under that directory, and the events carry a `body_ref` path instead of the inline body. Ship the directory with a log collector or sidecar rather than through the telemetry stream
+  * With `=file:<dir>`, Claude Code writes untruncated bodies to `.request.json` and `.response.json` files under that directory, and the events carry a `body_ref` path instead of the inline body. Ship the directory with a log collector or sidecar rather than through the telemetry stream.
+
+    For each successful response, Claude Code also appends one line to `index.jsonl` in that directory, linking the response file to the request file that produced it and to the transcript message it became. Each line holds no message content, and the [API response body event](#api-response-body-event) section lists its fields. The index file requires Claude Code v2.1.274 or later
 
 ## Monitor Claude Code on Amazon Bedrock
 
