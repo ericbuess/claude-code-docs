@@ -18,7 +18,9 @@ The [Claude apps gateway](/docs/en/claude-apps-gateway), Anthropic's self-hosted
 This page covers:
 
 * [API formats](#api-formats) and the endpoints to serve for each
+* [Client behavior by connection method](#how-the-connection-method-changes-client-behavior): how model IDs, `anthropic-beta` values, request fields, and defaults differ between the formats and a Claude apps gateway sign-in
 * [Request headers](#request-headers): which must reach the upstream and which your gateway can consume
+* [Response headers](#response-headers): what to return so stall detection, retries, and usage limit display work
 * The [system prompt attribution block](#system-prompt-attribution-block) and how it interacts with prompt caching
 * [Feature pass-through](#feature-pass-through): what breaks when headers or body fields are stripped
 * [Model discovery](#model-discovery)
@@ -76,6 +78,37 @@ Which format the client speaks determines what your gateway receives. The common
 
 Bridging that difference is your gateway's job. [Feature pass-through](#feature-pass-through) describes what breaks when it doesn't.
 
+If your upstream is Amazon Bedrock or Google Cloud's Agent Platform, you can avoid the bridging by exposing that provider's format instead. [Route to a cloud provider through a gateway](/docs/en/llm-gateway-connect#route-to-a-cloud-provider-through-a-gateway) shows the client configuration for that format.
+
+## How the connection method changes client behavior
+
+The way a developer connects to your gateway determines which model IDs, `anthropic-beta` values, and request fields Claude Code sends, and which defaults it applies. Your gateway sees one of three client behaviors:
+
+* **Amazon Bedrock or Agent Platform format**: the developer sets `CLAUDE_CODE_USE_BEDROCK=1` with `ANTHROPIC_BEDROCK_BASE_URL`, or `CLAUDE_CODE_USE_VERTEX=1` with `ANTHROPIC_VERTEX_BASE_URL`, pointing at your gateway. Claude Code uses that provider's model IDs, request fields, and defaults.
+* **Anthropic Messages format**: the developer sets `ANTHROPIC_BASE_URL` to your gateway. Claude Code treats the gateway as the Claude API and can't tell which upstream you forward to.
+* **Claude apps gateway sign-in**: the developer signs in to a [Claude apps gateway](/docs/en/claude-apps-gateway). That gateway speaks the Anthropic Messages format but can route to any upstream, so Claude Code sends only the `anthropic-beta` values and model-capability assumptions that Amazon Bedrock and Agent Platform also accept.
+
+### Requests and defaults by connection method
+
+The table below compares the three connection methods, one behavior per row. It leaves out Microsoft Foundry and Claude Platform on AWS, which also use the Anthropic Messages format but which Claude Code reaches through their own variables. For those, see the [Microsoft Foundry](/docs/en/microsoft-foundry) and [Claude Platform on AWS](/docs/en/claude-platform-on-aws) pages.
+
+| Behavior                                                                                                       | Amazon Bedrock or Agent Platform format                                                                                                                                                                           | Anthropic Messages format                                                                                                                                                              | Claude apps gateway sign-in                                                                                            |
+| :------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| Model IDs in requests by default                                                                               | The provider's form, such as `us.anthropic.claude-opus-4-8` on Amazon Bedrock                                                                                                                                     | Anthropic IDs, such as `claude-opus-4-8`                                                                                                                                               | Anthropic IDs                                                                                                          |
+| `anthropic-beta` values sent                                                                                   | The subset Amazon Bedrock and Agent Platform accept                                                                                                                                                               | The full set described under [feature pass-through](#feature-pass-through), unless the developer sets [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`](#disable-pre-release-capabilities)    | The subset Amazon Bedrock and Agent Platform accept                                                                    |
+| Request fields for a model ID Claude Code doesn't recognize, such as a gateway alias                           | Thinking with a fixed budget rather than adaptive reasoning, and no effort or context management fields                                                                                                           | Everything current Claude models accept on the Claude API, including adaptive reasoning, effort, and context management, which an Amazon Bedrock or Agent Platform upstream can reject | Same as the Amazon Bedrock or Agent Platform format                                                                    |
+| One-hour [prompt cache TTL](/docs/en/prompt-caching#choose-the-ttl-yourself) when a developer opts in               | Requested through the `ttl` field in `cache_control`, with no beta value                                                                                                                                          | Requested through the `ttl` field plus an `extended-cache-ttl` value in `anthropic-beta`, which you must forward                                                                       | See the Claude apps gateway [availability and limitations](/docs/en/claude-apps-gateway#availability-and-limitations) table |
+| Model for [background tasks](/docs/en/costs#background-token-usage) unless `ANTHROPIC_DEFAULT_HAIKU_MODEL` pins one | The default Sonnet model, or the main model once one is selected, as the [Amazon Bedrock](/docs/en/amazon-bedrock#4-pin-model-versions) and [Agent Platform](/docs/en/google-vertex-ai#5-pin-model-versions) pages describe | The main model, or the default Haiku model when `ANTHROPIC_API_KEY` or `apiKeyHelper` supplies an Anthropic Console key and `ANTHROPIC_AUTH_TOKEN` is unset                            | The main model                                                                                                         |
+
+For the features each connection supports and the telemetry it sends to Anthropic by default, see [Feature availability](/docs/en/feature-availability#availability-by-model-provider) and [Default behaviors by API provider](/docs/en/data-usage#default-behaviors-by-api-provider).
+
+### Settings for unrecognized model IDs
+
+Two client-side settings change what Claude Code assumes for a model ID it doesn't recognize, whichever connection method the developer uses:
+
+* **Context window**: Claude Code assumes 200K, or 1M when the ID carries `[1m]`. To declare the real window, see [Correct the window for a gateway or custom model ID](/docs/en/model-config#correct-the-window-for-a-gateway-or-custom-model-id)
+* **Capabilities**: to give a gateway alias the capabilities of the model behind it, map that model's Anthropic ID to your alias with a [`modelOverrides`](/docs/en/errors#unrecognized-model-id-on-a-request) entry in the settings you distribute. For where the `ANTHROPIC_DEFAULT_*_MODEL_SUPPORTED_CAPABILITIES` variables apply, see [feature pass-through](#feature-pass-through)
+
 ## Request headers
 
 Claude Code includes these headers on API requests. Header names are case-insensitive on the wire. Forward `anthropic-version` and `anthropic-beta` unchanged, plus `anthropic-workspace-id` when the upstream is the [Claude Platform on AWS](/docs/en/claude-platform-on-aws); the rest the gateway may consume for routing, attribution, and tracing, and need not forward.
@@ -100,6 +133,17 @@ Treat the headers and body fields as open lists, not closed ones. Claude Code ga
 When forwarding to an Anthropic-format upstream, pass `anthropic-*` request headers and request body fields through unchanged rather than allowlisting the ones you see today. A gateway pinned to an observed list strips the next capability's header or field and breaks it on the release that introduces it.
 
 The exception is a non-Anthropic upstream such as Amazon Bedrock or Google Cloud's Agent Platform, where bridging the schema difference is the gateway's job; see [feature pass-through](#feature-pass-through).
+
+## Response headers
+
+Claude Code reads these response headers to detect stalled streams, to decide whether and when to retry, and to show usage limits. The table lists what to return for each. Also forward error response bodies unmodified, so Claude Code's [capability-rejection recovery](#automatic-retry-and-error-forwarding) can match the upstream's error wording.
+
+| Header                          | What to return and why                                                                                                                                                                                                                                                                                                                                                |
+| :------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content-type`                  | Return `text/event-stream` on streamed Anthropic Messages-format responses, and `application/vnd.amazon.eventstream`, unmodified, on Amazon Bedrock-format responses, where [a different type fails the request](/docs/en/amazon-bedrock#streaming-errors-behind-a-gateway-or-proxy). [Streaming](#streaming) lists which connections run stall detection on these streams |
+| `retry-after`                   | Return integer seconds rather than an HTTP date. Claude Code waits at least that long before the next [automatic retry](/docs/en/errors#automatic-retries), and outside [`CLAUDE_CODE_RETRY_WATCHDOG`](/docs/en/env-vars) sessions a value above 60 stops the retries and shows the error at once                                                                               |
+| `x-should-retry`                | Pass the upstream's value through unchanged. Claude Code reads this header as one input when deciding whether to retry a failed request: `true` marks the response retryable and `false` marks it not retryable. For retry counts, backoff, and which failures Claude Code retries, see [automatic retries](/docs/en/errors#automatic-retries)                             |
+| `anthropic-ratelimit-unified-*` | Forward the upstream's values unchanged on every response. Claude Code reads them on successful responses to show usage against plan limits to developers signed in with claude.ai, and on a `429` to tell a plan limit or spend cap from a temporary throttle; see [usage limits](/docs/en/errors#usage-limits)                                                           |
 
 ## System prompt attribution block
 

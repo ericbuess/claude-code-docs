@@ -10,7 +10,7 @@ Some organizations require every process on a workstation to start through a man
 
 `CLAUDE_CODE_PROCESS_WRAPPER` starts every process Claude Code launches from its own binary through your launcher: the background service, every session it hosts in [agent view](/docs/en/agent-view), and Claude Code's relaunches after an update. Set it to your launcher's absolute path, and Claude Code runs the launcher with the Claude Code command as its arguments.
 
-A launcher that wraps the `claude` command on your `PATH` can't reach these processes, because they start from the binary's direct path without looking up `claude`.
+A launcher that wraps the `claude` command on your `PATH` can't reach the background service or the sessions it hosts, because they start from the binary's direct path without looking up `claude`.
 
 <Note>
   `CLAUDE_CODE_PROCESS_WRAPPER` requires Claude Code v2.1.208 or later. Earlier versions ignore the variable and start every process unwrapped. The equivalent [`processWrapper` setting](/docs/en/settings-reference#processwrapper) requires v2.1.210 or later. Earlier versions ignore it as an unknown key, apply no launcher, and report no error.
@@ -36,7 +36,7 @@ On Windows, the variable is ignored: the launcher contract depends on `exec`, wh
 The following processes don't start through the launcher:
 
 * An [installed background service](/docs/en/agent-view#the-supervisor-process) whose unit was written before the launcher was configured: `launchd` or `systemd` starts that process from its unit file. `/status` and `claude daemon status` warn while the running service and the configured launcher don't match, and the sessions the service spawns still start through the launcher once the service restarts with the variable in its settings.
-* A session you start yourself in a terminal, which runs however you invoked it. To cover these sessions, put a script named `claude` in a directory earlier on `PATH` that runs your launcher with the real binary; don't replace the managed symlink. Self-spawns don't consult `PATH`, so the two launchers never stack.
+* A session you start yourself in a terminal, which runs however you invoked it. To cover these sessions, put a script named `claude` in a directory earlier on `PATH` that runs your launcher with the real binary; don't replace the managed symlink. The background service and its sessions start without a `PATH` lookup, so the two launchers don't stack there.
 * The first process of a `claude-cli://` deep link, which the operating system's protocol handler starts directly. Everything that session starts in the background afterward runs through the launcher. To close this path entirely, [prevent handler registration](/docs/en/deep-links#registration-and-supported-platforms) with the `disableDeepLinkRegistration` setting.
 * The relaunch that `--worktree` combined with `--tmux` performs: the terminal multiplexer starts that pane, not Claude Code's binary.
 * The native-messaging host that [Claude in Chrome](/docs/en/chrome) registers: the browser starts it, not Claude Code's binary.

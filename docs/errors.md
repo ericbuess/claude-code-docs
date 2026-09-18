@@ -230,6 +230,7 @@ Match the message you see to a section below.
 | `Refusing to send: connected endpoint is a different process with the expected pid`                                                                                                                                                                                  | [Tool errors](#refusing-to-send-a-cross-session-message)                                                                      |
 | `Refusing to read <path>: its symlink resolution changed after permission was checked (<reason>)` / `Refusing to search <path>: its symlink resolution changed after permission was checked`                                                                         | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `Refusing to write <path>: its parent-directory symlink resolution changed after permission was checked` / `Refusing to write <path>: it is a symbolic link. Write to the link's target path instead`                                                                | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
+| `Refusing to write through symlink: <path>` / `Refusing to write into symlinked directory: <path>`                                                                                                                                                                   | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `Refusing to search <path>: a path one of its Read deny rules is written through changed while the search was being prepared` / `Refusing to search <path>: it could not be opened`                                                                                  | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `its permission check expired before it ran (too many concurrent file operations)` / `ripgrep was found only by name on PATH`                                                                                                                                        | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `task output swap refused (tasks dir moved or linked)`                                                                                                                                                                                                               | [Tool errors](#task-output-swap-refused)                                                                                      |
@@ -3408,11 +3409,13 @@ Claude Code checks a file path's [permission rules](/docs/en/permissions#read-an
 Refusing to read /path/to/file: its symlink resolution changed after permission was checked (a link on the way now leads somewhere the check did not see). If a link in the working directory is being rewritten concurrently, stop that and retry.
 ```
 
-The text after the path names the reason:
+Each refusal names its reason:
 
 * `its symlink resolution changed after permission was checked`: a symlink along the path, or at a Grep or Glob search root, was replaced between the permission check and the operation. In a read refusal, the parenthesized phrase names which comparison failed.
 * `its parent-directory symlink resolution changed after permission was checked`: a directory the write path passes through no longer resolves to the approved location
-* `it is a symbolic link. Write to the link's target path instead`: a symbolic link sits at the approved write location itself
+* `it is a symbolic link. Write to the link's target path instead`: a symbolic link sits at the approved write location itself, for example a `CLAUDE.md` that is a symlink to `AGENTS.md`; the message directs Claude to the link's target
+* `Refusing to write through symlink: <path>. Resolve the symlink and pass the real target path explicitly.`: the same condition caught when another writer opens the file, such as a write to a symlinked `.mcp.json`
+* `Refusing to write into symlinked directory: <path>`: the directory that holds the file is itself a symbolic link, for example a project's `.claude/` directory linked to another location
 * `a path one of its Read deny rules is written through changed while the search was being prepared. Retry.`: a `Read` deny rule for the search names a path that passes through a symlink, and that link changed while Claude Code was preparing the search
 * `it could not be opened (EACCES) — it is unreadable, or is being replaced concurrently.`: the search root exists but couldn't be opened; the parenthesized code is the operating system error
 * `its permission check expired before it ran (too many concurrent file operations). Retry.`: Claude Code evicted the approval record under many simultaneous file operations before the tool used it; retrying runs a fresh permission check
@@ -3426,7 +3429,7 @@ The text after the path names the reason:
 * If a read refusal appears on macOS for a file that nothing is rewriting, such as a screenshot dragged into the prompt, upgrade to v2.1.273 or later
 * For the ripgrep refusal, install ripgrep with your package manager so `rg` resolves to an absolute path on `PATH`, or keep searches under the working directory
 
-Before v2.1.251, Claude Code re-checked a path's resolution only for file writes, so a link replaced after the permission check could redirect a read or search to a different location without a message. Of these refusals, only the parent-directory write refusal appears on earlier versions.
+Before v2.1.251, Claude Code re-checked a path's resolution only for file writes, so a link replaced after the permission check could redirect a read or search to a different location without a message. Of these, only the parent-directory, through-symlink, and symlinked-directory write refusals appear on earlier versions.
 
 <h3 id="task-output-swap-refused">
   Task output swap refused

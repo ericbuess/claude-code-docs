@@ -32,8 +32,9 @@ These work on every provider:
 * [Checkpoints](/docs/en/checkpointing), [sandboxing](/docs/en/sandboxing), and [Workflows](/docs/en/workflows)
 * [OpenTelemetry metrics](/docs/en/monitoring-usage) and the [managed settings file](/docs/en/managed-settings#delivery-mechanisms)
 
-Three of these have provider-specific differences:
+These have provider-specific differences:
 
+* **CLAUDE.md memory**: `CLAUDE.md` files load on every provider. Reading [`AGENTS.md` files](/docs/en/memory#agents-md) as project instructions also requires a session that [fetches feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching)
 * **MCP servers**: [connectors from claude.ai](/docs/en/mcp#use-mcp-servers-from-claude-ai) load only when your claude.ai subscription is the active authentication method. [Tool search](/docs/en/mcp#configure-tool-search) is off by default when `ANTHROPIC_BASE_URL` points to a non-first-party host, and isn't supported on Google Cloud's Agent Platform models earlier than the Claude 4.5 generation or on Microsoft Foundry [deployments hosted on Azure](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options)
 * **Subagents**: the built-in [Explore subagent](/docs/en/sub-agents#built-in-subagents) caps its inherited model at Opus on the Claude API, and inherits the main conversation's model directly on any other provider, including Claude Platform on AWS
 * **[Commands](/docs/en/commands#all-commands)**:
@@ -216,6 +217,8 @@ Organization-level controls and usage visibility.
 
 <Note>
   If you authenticate through an [LLM gateway](/docs/en/llm-gateway), feature availability matches the underlying provider the gateway forwards to, except for the features Claude Code itself turns off. Whenever `ANTHROPIC_BASE_URL` points at a host other than `api.anthropic.com`, Claude Code turns off features such as [Remote Control](/docs/en/remote-control#requirements) and [server-managed settings](/docs/en/server-managed-settings#platform-availability), whatever the gateway forwards. Some Anthropic-only features such as the [Advisor](/docs/en/advisor) work only if the gateway forwards requests intact to the Anthropic API.
+
+  For how the requests Claude Code sends differ between an Amazon Bedrock- or Agent Platform-format gateway, an `ANTHROPIC_BASE_URL` gateway, and a Claude apps gateway sign-in, see [client behavior by connection method](/docs/en/llm-gateway-protocol#how-the-connection-method-changes-client-behavior).
 </Note>
 
 ### Summary by provider

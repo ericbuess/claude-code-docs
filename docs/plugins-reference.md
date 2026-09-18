@@ -837,7 +837,10 @@ Claude Code runs the install inside the copied version directory each time it cr
 
 If a plugin contains more than one of these lockfiles, Claude Code uses the first match, checking in order: `bun.lock`, `bun.lockb`, `npm-shrinkwrap.json`, `package-lock.json`.
 
-Claude Code skips `yarn.lock` and `pnpm-lock.yaml` because Yarn and pnpm support resolution-time configuration hooks that bypass `--ignore-scripts`. When a `bunfig.toml` sits beside the matched bun lockfile, Claude Code skips the install entirely, because the file can configure a security scanner that Bun loads and runs during the install. The filename match ignores letter case. Remove the `bunfig.toml`, or ship an npm lockfile in place of the bun lockfile.
+Claude Code skips the install in two cases, each with its own fix:
+
+* If your plugin ships only a `yarn.lock` or `pnpm-lock.yaml`, replace it with an npm lockfile.
+* If a `bunfig.toml` sits beside the bun lockfile, remove the `bunfig.toml`, or replace the bun lockfile with an npm lockfile.
 
 Ship an npm lockfile for the widest reach. Claude Code runs the matched lockfile's package manager from the user's PATH and doesn't fall back to the other lockfile if it's missing. For a plugin distributed through an npm source, use `npm-shrinkwrap.json`; npm excludes `package-lock.json` from published packages.
 
@@ -849,7 +852,7 @@ Claude Code constrains this dependency install so that no code from the plugin o
 
 Claude Code fetches an npm-source plugin before this dependency install, and none of the package's own install scripts run during the fetch. See [npm packages](/docs/en/plugin-marketplaces#npm-packages).
 
-A failed or skipped install never blocks the plugin. When the install fails, or Claude Code skips a yarn or pnpm lockfile or a bun lockfile with a `bunfig.toml` beside it, it records the reason as a warning in [debug output](#debugging-commands). A plugin with a `package.json` and no lockfile is skipped without a log entry. A timed-out install can leave a partial `node_modules` tree in the cached copy.
+A failed or skipped install never blocks the plugin. When the install fails, or Claude Code skips it because of a yarn or pnpm lockfile or a `bunfig.toml`, it records the reason as a warning in [debug output](#debugging-commands). A plugin with a `package.json` and no lockfile is skipped without a log entry. A timed-out install can leave a partial `node_modules` tree in the cached copy.
 
 You can't turn the automatic install off; no setting or environment variable disables it. In restricted networks, see the [network access requirements](/docs/en/network-config#network-access-requirements) for the hosts to allow.
 

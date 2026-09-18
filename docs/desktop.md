@@ -206,15 +206,15 @@ Right-click any file path in the chat, diff viewer, or file pane to open a conte
 
 ### Switch view modes
 
-View modes control how much detail appears in the chat transcript. Switch modes from the **Transcript view** dropdown next to the send button, or press **Ctrl+O** on macOS or Windows to cycle through them.
+View modes control how much detail appears in the chat transcript. Switch modes from the **Transcript view** dropdown next to the send button, or press **Ctrl+O** on macOS or Windows to cycle through them. The Thinking mode appears in the dropdown only after Claude has produced thinking in the session you're viewing.
 
-| Mode        | What it shows                                                  |
-| ----------- | -------------------------------------------------------------- |
-| **Normal**  | Tool calls collapsed into summaries, with full text responses  |
-| **Verbose** | Every tool call, file read, and intermediate step Claude takes |
-| **Summary** | Only Claude's final responses and the changes it made          |
+| Mode         | What it shows                                                                          |
+| ------------ | -------------------------------------------------------------------------------------- |
+| **Normal**   | Tool calls collapsed into summaries, with full text responses                          |
+| **Thinking** | Tool calls collapsed into summaries, plus Claude's thinking                            |
+| **Verbose**  | Every tool call, file read, and intermediate step Claude takes, plus Claude's thinking |
 
-Use Verbose when debugging why Claude took a particular action. Use Summary when you're running multiple sessions and want to scan results quickly.
+Use Thinking to follow Claude's reasoning with tool calls still collapsed. Use Verbose when debugging why Claude took a particular action. Claude Desktop versions before 1.46388.1 also list a Summary mode, and a session still set to Summary opens in Normal once you update.
 
 ### Keyboard shortcuts
 
