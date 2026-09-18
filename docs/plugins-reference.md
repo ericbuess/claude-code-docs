@@ -93,6 +93,8 @@ Plugins can provide event handlers that respond to Claude Code events automatica
 
 **Format**: JSON configuration with event matchers and actions
 
+`hooks/hooks.json` can carry a top-level `$schema` key that names a JSON Schema URL for editor autocomplete and validation. Claude Code ignores the key at load time.
+
 **Hook configuration**:
 
 ```json theme={null}
@@ -833,7 +835,9 @@ Claude Code runs the install inside the copied version directory each time it cr
 | `bun.lock` or `bun.lockb`                    | `bun install --frozen-lockfile --ignore-scripts` |
 | `npm-shrinkwrap.json` or `package-lock.json` | `npm ci --ignore-scripts`                        |
 
-If a plugin contains more than one of these lockfiles, Claude Code uses the first match, checking in order: `bun.lock`, `bun.lockb`, `npm-shrinkwrap.json`, `package-lock.json`. Claude Code skips `yarn.lock` and `pnpm-lock.yaml` because Yarn and pnpm support resolution-time configuration hooks that bypass `--ignore-scripts`.
+If a plugin contains more than one of these lockfiles, Claude Code uses the first match, checking in order: `bun.lock`, `bun.lockb`, `npm-shrinkwrap.json`, `package-lock.json`.
+
+Claude Code skips `yarn.lock` and `pnpm-lock.yaml` because Yarn and pnpm support resolution-time configuration hooks that bypass `--ignore-scripts`. When a `bunfig.toml` sits beside the matched bun lockfile, Claude Code skips the install entirely, because the file can configure a security scanner that Bun loads and runs during the install. The filename match ignores letter case. Remove the `bunfig.toml`, or ship an npm lockfile in place of the bun lockfile.
 
 Ship an npm lockfile for the widest reach. Claude Code runs the matched lockfile's package manager from the user's PATH and doesn't fall back to the other lockfile if it's missing. For a plugin distributed through an npm source, use `npm-shrinkwrap.json`; npm excludes `package-lock.json` from published packages.
 
@@ -843,9 +847,9 @@ Claude Code constrains this dependency install so that no code from the plugin o
 * **No lifecycle scripts:** `--ignore-scripts` keeps `preinstall`, `install`, and `postinstall` scripts from running, so dependencies that build native modules in those scripts download but don't compile during this install.
 * **60-second timeout:** Claude Code stops an install that runs longer and treats it as failed.
 
-Fetching an npm-source plugin itself runs `npm install` with lifecycle scripts enabled, before this dependency install runs.
+Claude Code fetches an npm-source plugin before this dependency install, and none of the package's own install scripts run during the fetch. See [npm packages](/docs/en/plugin-marketplaces#npm-packages).
 
-A failed or skipped install never blocks the plugin. When the install fails, or Claude Code skips a yarn or pnpm lockfile, it records the reason as a warning in [debug output](#debugging-commands). A plugin with a `package.json` and no lockfile is skipped without a log entry. A timed-out install can leave a partial `node_modules` tree in the cached copy.
+A failed or skipped install never blocks the plugin. When the install fails, or Claude Code skips a yarn or pnpm lockfile or a bun lockfile with a `bunfig.toml` beside it, it records the reason as a warning in [debug output](#debugging-commands). A plugin with a `package.json` and no lockfile is skipped without a log entry. A timed-out install can leave a partial `node_modules` tree in the cached copy.
 
 You can't turn the automatic install off; no setting or environment variable disables it. In restricted networks, see the [network access requirements](/docs/en/network-config#network-access-requirements) for the hosts to allow.
 
@@ -1462,7 +1466,7 @@ For every source type except `command`, Claude Code resolves the version from th
 2. The `version` field in the plugin's marketplace entry in `marketplace.json`
 3. The git commit SHA of the plugin's source, for `github`, `url`, `git-subdir`, and relative-path sources in a git-hosted marketplace
 4. The SHA-256 digest, for [`archive` sources](/docs/en/plugin-marketplaces#zip-archives): the `sha256` pin in the marketplace entry, or the digest of the downloaded file when you set no pin. Claude Code shortens it to the first 12 characters
-5. `unknown`, for `npm` sources or local directories not inside a git repository
+5. `unknown`, for `npm` sources, or for local directories when neither the plugin directory nor its marketplace is a git repository. Claude Code doesn't take the version from a repository that encloses the install path, such as a git-managed `~/.claude`
 
 For a [`command` source](/docs/en/plugin-marketplaces#command-sources), Claude Code always derives the version from what the command produced: a 12-character content hash on its own, or appended to the `plugin.json` version as `<version>-<hash>` when one is set. Claude Code ignores the marketplace entry's `version` field for command sources. A command whose hashed output changes therefore produces a new version, even when the authored version string stays the same. In [link mode](/docs/en/plugin-marketplaces#copy-mode-and-link-mode), the hash covers the printed directory's real path and its top-level entries rather than the file contents.
 

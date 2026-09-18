@@ -71,11 +71,15 @@ Claude Code never posts unless you choose to on that run, and `--no-post` is the
 * **Interactive**: in the launch dialog, select **Run and post the findings to the PR as me**. If you add `--post` to the command, as in `/code-review ultra 1234 --post`, Claude Code preselects that choice and still asks before launching.
 * **Non-interactive**: run the [`claude ultrareview` subcommand](#run-ultrareview-non-interactively) with `--post`. You consent to the post by running the subcommand with the flag, so Claude Code posts without asking. In a `claude -p '/code-review ultra'` run, Claude Code exits before the findings arrive, so it posts nothing; use the subcommand instead.
 
-Claude Code doesn't post from your machine. It sends the findings to a [cloud session](/docs/en/claude-code-on-the-web), which posts the comment through the GitHub account you've connected to Claude. Posting requires the same claude.ai sign-in as the review itself. Because posting runs through a cloud session, it isn't available on third-party providers or when you set [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars).
+Claude Code doesn't post from your machine. It sends the review's session ID to the Anthropic API, which posts the review's stored findings as the comment through the GitHub account you've connected to Claude. Posting requires the same claude.ai sign-in as the review itself, and it isn't available on third-party providers or when you set [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars).
 
 In an interactive session, Claude Code starts the post when the findings arrive, so keep the session open until the review finishes. Claude Code keeps the posting choice only in that session. If the session ends before the review finishes, Claude Code posts nothing, even if you resume the conversation later.
 
-When the post can't start while your session is open, Claude tells you that nothing went to the PR and why, and the findings stay in your terminal so you can post them by hand.
+When the post finishes, Claude tells you the outcome:
+
+* **Posted**: Claude gives you a link to the comment.
+* **Already posted**: an earlier post of the same review already put the comment on the PR, so Claude links you to the pull request instead of posting again.
+* **Failed**: Claude tells you why, and the findings stay in your terminal so you can post them by hand.
 
 ### Pass a request in plain words
 
@@ -167,7 +171,10 @@ The subcommand exits with one of three codes:
 
 If you interrupt the subcommand, the remote review keeps running; follow the session URL printed to stderr to watch it in the browser.
 
-With `--post`, the subcommand starts the post right after it prints the findings. If the run fails, times out, or you interrupt it, the subcommand posts nothing. If the review completes but the post can't start, Claude Code prints the reason to stderr, and the findings stay on stdout so you can post them by hand.
+With `--post`, the subcommand starts the post right after printing the findings, and prints the link to stderr.
+
+* If the run fails, times out, or you interrupt it, the subcommand posts nothing.
+* If the review completes but the comment isn't posted, Claude Code prints the reason to stderr, and the findings stay on stdout so you can post them by hand.
 
 For automatic reviews on GitHub pull requests, [Code Review](/docs/en/code-review) integrates with your repository directly and posts findings as inline PR comments without a CLI step.
 

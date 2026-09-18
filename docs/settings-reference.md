@@ -2933,7 +2933,7 @@ Appears in `/config` as **Auto-scroll** when fullscreen rendering is on, which w
 
 ### `axScreenReader`
 
-Render screen-reader friendly output: flat text without decorative borders or animations. Screen-reader mode uses the classic renderer, so the `tui` setting has no effect while it is active; attached [background sessions](/docs/en/agent-view) still render fullscreen. Requires Claude Code v2.1.181 or later.
+Render screen-reader friendly output: flat text without decorative borders or animations. Screen-reader mode uses the classic renderer, so the `tui` setting has no effect while it is active; attached [background sessions](/docs/en/agent-view) still render fullscreen.
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: Boolean
@@ -2947,8 +2947,6 @@ Render screen-reader friendly output: flat text without decorative borders or an
   "axScreenReader": true
 }
 ```
-
-Requires Claude Code v2.1.181 or later.
 
 ### `bashEditDiffEnabled`
 
@@ -4682,7 +4680,7 @@ Users can still add MCP servers of their own; only servers that match the manage
 Block specific MCP servers. Claude Code refuses to load a matching server wherever it's defined, including plugin servers, servers passed with `--mcp-config`, servers from `managed-mcp.json`, servers from [`managedMcpServers`](#managedmcpservers), and the claude.ai connectors [it fetches itself](/docs/en/mcp#how-connectors-reach-claude-code). In-process `type: "sdk"` servers are exempt; the app that started the session registers them.
 
 * **Scope**: [`Any file`](#scopes). Entries from every file merge into one denylist, and [`allowManagedMcpServersOnly`](#allowmanagedmcpserversonly) doesn't change that. Deploy it in managed settings to enforce it.
-* **Type**: array of objects, each with exactly one key: `serverName`, any non-empty string, so a claude.ai connector's display name such as `"claude.ai Slack"` works; `serverCommand`, an array of the command and its arguments matched exactly; or `serverUrl`, a URL pattern with `*` wildcards
+* **Type**: array of objects, each with exactly one key: `serverName`, a string, so a claude.ai connector's display name such as `"claude.ai Slack"` works; `serverCommand`, an array of the command and its arguments matched exactly; or `serverUrl`, a URL pattern with `*` wildcards
 * **Default**: unset, so no server is blocked; an empty array also blocks nothing
 
 ```json settings.json theme={null}

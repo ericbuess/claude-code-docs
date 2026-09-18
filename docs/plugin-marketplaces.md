@@ -166,6 +166,8 @@ Each plugin entry needs at minimum a `name` and a `source` that tells Claude Cod
   **Reserved names**: the following marketplace names are reserved for official Anthropic use and can't be used by third-party marketplaces: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `claude-plugins-community`, `claude-community`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `anthropic-agent-skills`, `knowledge-work-plugins`, `life-sciences`, `claude-for-legal`, `claude-for-financial-services`, `financial-services-plugins`, `first-party-plugins`, `claude-tag-plugins`, `healthcare`. Names that impersonate official marketplaces, such as `official-claude-plugins` or `anthropic-plugins-v2`, are also blocked. Reserving these names prevents a third-party marketplace from presenting itself as an Anthropic-published source.
 
   Claude Code re-checks reserved names every time it loads a marketplace, not only when you add one. A marketplace that was registered under one of these names before the name became reserved stops loading and reports that it is [registered from an untrusted source](/docs/en/errors#marketplace-is-registered-from-an-untrusted-source). Remove that marketplace and re-add it from the official Anthropic source. A third-party marketplace affected by a newly reserved name loads again as soon as you re-add it under a different name. Before v2.1.205, `first-party-plugins` and `healthcare` weren't reserved, and a marketplace already registered under a reserved name kept loading. Before v2.1.265, `claude-tag-plugins` wasn't reserved.
+
+  You also can't name a marketplace `npm`, `pip`, `uv`, `cargo`, `github`, or `gh`, in any casing. This check requires Claude Code v2.1.275 or later.
 </Note>
 
 ### Owner fields
@@ -260,7 +262,7 @@ Claude Code copies each installed plugin into the local versioned plugin cache a
 | `github`      | object                          | `repo`, `ref?`, `sha?`             |                                                                                                                                                                                                                                                     |
 | `url`         | object                          | `url`, `ref?`, `sha?`              | Git URL source                                                                                                                                                                                                                                      |
 | `git-subdir`  | object                          | `url`, `path`, `ref?`, `sha?`      | Subdirectory within a git repo. Clones sparsely to minimize bandwidth for monorepos                                                                                                                                                                 |
-| `npm`         | object                          | `package`, `version?`, `registry?` | Installed via `npm install`                                                                                                                                                                                                                         |
+| `npm`         | object                          | `package`, `version?`, `registry?` | npm package, fetched with your npm client and unpacked without running install scripts                                                                                                                                                              |
 | `archive`     | object                          | `url`, `sha256?`                   | Zip archive downloaded over HTTPS. Works without git or npm on the user's machine. Requires Claude Code v2.1.224 or later                                                                                                                           |
 | `command`     | object                          | `command`, `timeout?`, `mode?`     | Plugin directory produced by running a local command, re-run once per session to pick up changes. Requires Claude Code v2.1.229 or later                                                                                                            |
 
@@ -405,7 +407,11 @@ The `url` field also accepts a GitHub shorthand (`owner/repo`) or SSH URLs (`git
 
 ### npm packages
 
-Plugins distributed as npm packages are installed using `npm install`. This works with any package on the public npm registry or a private registry your team hosts.
+An npm source can name any package on the public npm registry or on a private registry your team hosts. Claude Code resolves the package with your npm client, downloads the tarball, and unpacks it into the plugin cache.
+
+The package's install scripts, such as `preinstall` or `postinstall`, never run, and its dependencies aren't installed during the fetch.
+
+If the package ships a supported lockfile beside its `package.json`, Claude Code installs those [Node.js package dependencies](/docs/en/plugins-reference#node-js-package-dependencies) in a separate step, also with scripts disabled. Otherwise, publish the plugin with everything it needs already built. An MCP server that needs other packages can launch through `npx`, which installs them at first run.
 
 ```json theme={null}
 {
@@ -1064,6 +1070,8 @@ The allowlist uses exact matching for most source types, apart from owner-wildca
 
 The allowlist's exact matching treats URLs that differ only by a trailing slash, a `.git` suffix, or the `ssh://` and `https://` scheme as different values. If your organization's marketplace can be cloned by more than one URL form, prefer a `hostPattern` entry over a literal URL so the `https://`, `ssh://`, and `user@host:path` forms all match.
 
+A [marketplace hosted on claude.ai](/docs/en/discover-plugins#add-from-claude-ai) is matched by host: a `hostPattern` entry that matches `claude.ai` governs it, in `strictKnownMarketplaces` and in `blockedMarketplaces`. On the allowlist, such an entry doesn't admit a member's personal claude.ai uploads. Requires Claude Code v2.1.273 or later.
+
 Because `strictKnownMarketplaces` is set in [managed settings](/docs/en/managed-settings), individual users and project configurations can't override these restrictions.
 
 For complete configuration details including all supported source types and comparison with `extraKnownMarketplaces`, see the [strictKnownMarketplaces reference](/docs/en/settings-reference#strictknownmarketplaces).
@@ -1247,10 +1255,11 @@ A URL must include its scheme. As of Claude Code v2.1.196, a host typed without 
 
 **Options:**
 
-| Option                | Description                                                                                                                                         | Default |
-| :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- | :------ |
-| `--scope <scope>`     | Where to declare the marketplace: `user`, `project`, or `local`. See [Plugin installation scopes](/docs/en/plugins-reference#plugin-installation-scopes) | `user`  |
-| `--sparse <paths...>` | Limit checkout to specific directories via git sparse-checkout. Useful for monorepos                                                                |         |
+| Option                | Description                                                                                                                                                               | Default |
+| :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------ |
+| `--scope <scope>`     | Where to declare the marketplace: `user`, `project`, or `local`. See [Plugin installation scopes](/docs/en/plugins-reference#plugin-installation-scopes)                       | `user`  |
+| `--sparse <paths...>` | Limit checkout to specific directories via git sparse-checkout. Useful for monorepos                                                                                      |         |
+| `--claudeai`          | Read the argument as the name of a [marketplace hosted on claude.ai](/docs/en/discover-plugins#add-from-claude-ai) instead of a source. Requires Claude Code v2.1.273 or later |         |
 
 Add a marketplace from GitHub using `owner/repo` shorthand:
 
@@ -1294,6 +1303,14 @@ For a monorepo, limit the checkout to the directories that contain plugin conten
 claude plugin marketplace add acme-corp/monorepo --sparse .claude-plugin plugins
 ```
 
+Add a [marketplace hosted on claude.ai](/docs/en/discover-plugins#add-from-claude-ai) by the name printed in the `From claude.ai:` section of `claude plugin marketplace list`:
+
+```bash theme={null}
+claude plugin marketplace add --claudeai claudeai-organization-library
+```
+
+With `--claudeai`, the command refuses `--scope` and `--sparse`. The marketplace is hosted for your account, not declared in a settings file, so you can't share it through a project's `.claude/settings.json`.
+
 ### Plugin marketplace list
 
 List all configured marketplaces.
@@ -1309,6 +1326,10 @@ claude plugin marketplace list [options]
 | `--json` | Output as JSON |
 
 With `--json`, each entry includes `name`, `source`, an `installLocation` field with the local cache path where the marketplace is stored, and source-specific fields: `repo` for GitHub sources, `url` for git and URL sources, and `path` for local sources. GitHub and git sources also include a `ref` field when the marketplace was added with a pinned branch or tag.
+
+An added [claude.ai marketplace](/docs/en/discover-plugins#add-from-claude-ai) has no local clone, so its entry carries its claude.ai identifiers, `marketplaceId` and `organizationUuid`, in place of `installLocation`.
+
+In terminal sessions where [plugins sync from your claude.ai account](/docs/en/plugins-reference#synced-plugins), the text listing ends with a `From claude.ai:` section naming what claude.ai lists for your account beyond the marketplaces you've added. To add one of them, see [Add from claude.ai](/docs/en/discover-plugins#add-from-claude-ai). The `--json` output covers configured marketplaces only and leaves that section out. Requires Claude Code v2.1.273 or later.
 
 ### Plugin marketplace remove
 

@@ -212,6 +212,12 @@ Teleport requires claude.ai subscription authentication. If you're authenticated
 
 Sessions appear in the sidebar at claude.ai/code. From there you can review changes, share with teammates, archive finished work, or delete sessions permanently.
 
+### Take back a queued message
+
+If you send a message while Claude is working, the message queues until Claude reads it. To take a queued message back, click the ✕ on it. The text returns to the message box so you can edit it or send something else.
+
+If Claude has already read the message, it stays in the conversation.
+
 ### Manage context
 
 Cloud sessions support [built-in commands](/docs/en/commands) that produce text output. Commands that only run in the terminal interface, such as `/plugin` or `/resume`, aren't available. Commands that open a picker or panel in the terminal behave differently in cloud sessions:

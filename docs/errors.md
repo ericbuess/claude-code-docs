@@ -200,6 +200,8 @@ Match the message you see to a section below.
 | `Couldn't read your Zed keymap` / `Couldn't back up your Zed keymap` / `Couldn't update your Zed keymap`                                                                                                                                                             | [Command-line errors](#terminal-setup-left-your-zed-keymap-unchanged)                                                         |
 | `Your Zed keymap isn't a readable list of keybindings`                                                                                                                                                                                                               | [Command-line errors](#terminal-setup-left-your-zed-keymap-unchanged)                                                         |
 | `Skill usage reports are not available on this connection.`                                                                                                                                                                                                          | [Command-line errors](#skill-usage-reports-are-not-available-on-this-connection)                                              |
+| `Custom output styles can't be selected over Remote Control or from a relayed message`                                                                                                                                                                               | [Command-line errors](#custom-output-styles-cant-be-selected-over-remote-control)                                             |
+| `Output styles are saved to local settings (.claude/settings.local.json), which this session doesn't load`                                                                                                                                                           | [Command-line errors](#output-styles-are-saved-to-local-settings-which-this-session-doesnt-load)                              |
 | `` `plugin eval` is currently in early access `` / `` `plugin eval` is currently unavailable ``                                                                                                                                                                      | [Plugin errors](#plugin-eval-is-currently-in-early-access)                                                                    |
 | `Marketplace "<name>" is registered from an untrusted source`                                                                                                                                                                                                        | [Plugin errors](#marketplace-is-registered-from-an-untrusted-source)                                                          |
 | `references ${user_config.*} in a shell-form command`                                                                                                                                                                                                                | [Plugin errors](#plugin-command-references-user-config)                                                                       |
@@ -1764,6 +1766,13 @@ Prompt is too long · automatic compaction failed: <the underlying error>
 
 Resolve the named error first; `/compact` fails on the same error until you do. Before v2.1.229, a failed automatic compaction surfaced `Prompt is too long` without the cause.
 
+When automatic compaction runs on this error, it normally summarizes your oldest exchanges and keeps the newest. As a last resort, Claude Code summarizes differently:
+
+* When it can't summarize any whole exchange, Claude Code keeps your newest prompt word for word and summarizes everything before it.
+* In that case, when the conversation doesn't end with your prompt, Claude Code summarizes the whole conversation instead.
+
+Claude Code skips this recovery when the content it would carry forward holds no model reply and less than about 1,000 tokens of your own text, such as a short retry sent after an oversized paste. Run `/clear` to start fresh. Before v2.1.269, compaction failed whenever it couldn't summarize a whole exchange, so a session in that state hit this error again on every turn.
+
 A single-exchange conversation has no earlier turns to summarize. When automatic compaction would have run on one, Claude Code skips the attempt and explains what fills the request instead. When the API doesn't report token counts in its error, the message reads:
 
 ```text theme={null}
@@ -1786,7 +1795,7 @@ Before v2.1.162, Claude Code attempted the compaction anyway and surfaced the ba
 
 **What to do:**
 
-* In a multi-turn conversation, run `/compact` to summarize earlier turns and free space, or `/clear` to start fresh. A single-exchange conversation can't be compacted, so shrink the request instead
+* Run `/compact` to summarize earlier turns and free space, or `/clear` to start fresh. If `/compact` answers `Not enough messages to compact.`, the conversation is a single exchange with nothing earlier to summarize, so the space is taken by that one prompt and what Claude Code sends with every request: run `/clear` and resend with less pasted text or smaller attachments, or reduce the tool definitions and memory files using the steps below
 * Run `/context` to see a breakdown of what is consuming the window: system prompt, tools, memory files, and messages
 * Disable MCP servers you are not using with `/mcp disable <name>` to remove their tool definitions from context
 * Trim large `CLAUDE.md` memory files, or move instructions into [path-scoped rules](/docs/en/memory#path-specific-rules) that load only when relevant
@@ -2960,6 +2969,36 @@ Skill usage reports are not available on this connection.
 **What to do:**
 
 * Run `/skill-doctor` in the terminal on the machine where the session is running, or run `claude -p "/skill-doctor"` there
+
+<h3 id="custom-output-styles-cant-be-selected-over-remote-control">
+  Custom output styles can't be selected over Remote Control
+</h3>
+
+You ran [`/output-style`](/docs/en/output-styles#change-your-output-style) from the mobile app or web via [Remote Control](/docs/en/remote-control), or the command arrived in a message relayed into the session. Because such a turn may not come from the account owner, Claude Code lists and selects only [built-in styles](/docs/en/output-styles#built-in-output-styles) on it, and adds this notice whenever the command lists the styles or doesn't recognize the name you gave. A [custom style](/docs/en/output-styles#create-a-custom-output-style) name gets the same reply as a name that doesn't exist:
+
+```text theme={null}
+Custom output styles can't be selected over Remote Control or from a relayed message. Select one in the session itself, or pick a built-in style here.
+```
+
+**What to do:**
+
+* Pick a built-in style, for example `/output-style concise`
+* To use a custom style, set [`outputStyle`](/docs/en/settings-reference#outputstyle) in the project's `.claude/settings.local.json`, or run `/output-style <style>` at the session's own terminal if it has one
+
+<h3 id="output-styles-are-saved-to-local-settings-which-this-session-doesnt-load">
+  Output styles are saved to local settings which this session doesn't load
+</h3>
+
+You tried to switch [output styles](/docs/en/output-styles) with `/output-style <style>` or `/config outputStyle=<style>` in a session whose setting sources exclude `local`. Examples are an [Agent SDK](/docs/en/agent-sdk/typescript) session whose [`settingSources`](/docs/en/agent-sdk/typescript#options) leaves out `"local"` and a CLI session started with a [`--setting-sources`](/docs/en/cli-reference#cli-flags) value that leaves out `local`. Both commands save the style to `.claude/settings.local.json`, a file such a session never reads back, so Claude Code refuses instead of writing a setting that would have no effect:
+
+```text theme={null}
+Output styles are saved to local settings (.claude/settings.local.json), which this session doesn't load, so the style can't be changed here.
+```
+
+**What to do:**
+
+* Add `local` to the session's setting sources and switch again
+* Set the [`outputStyle`](/docs/en/settings-reference#outputstyle) key in a settings file the session does load, such as `.claude/settings.json` in the project or `~/.claude/settings.json`. In the TypeScript SDK, set `outputStyle` inside the inline `settings` object instead; see [Activate an output style](/docs/en/agent-sdk/modifying-system-prompts#activate-an-output-style)
 
 ## Plugin errors
 

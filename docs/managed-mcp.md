@@ -99,12 +99,12 @@ Any user on the machine can read this file, so don't store API keys or other cre
 
 ### Servers passed with `--mcp-config` or `--strict-mcp-config`
 
-When a session receives servers through `--mcp-config` while `managed-mcp.json` is deployed, what the user sees differs between a workstation and a cloud session:
+When a session receives servers through `--mcp-config` while a `managed-mcp.json` that Claude Code can read and parse is deployed, what the user sees differs between a workstation and a cloud session:
 
 * On a workstation, Claude Code exits at startup with `You cannot dynamically configure MCP servers when an enterprise MCP config is present`.
 * In [cloud sessions](/docs/en/claude-code-on-the-web) on a host where the file is deployed, such as a [self-hosted runner](/docs/en/self-hosted-environments-configuration#mcp-servers), Claude Code starts with the managed servers only and skips the claude.ai connectors and other servers the cloud host delivers through `--mcp-config`. Nothing in the session tells the user which servers were left out. Claude Code names them in a warning on its stderr, which a self-hosted runner records at the `debug` log level.
 
-If a user passes `--strict-mcp-config`, Claude Code exits at startup on a workstation and in a cloud session alike, because that flag asks to replace the managed set.
+The `--strict-mcp-config` flag asks to replace the managed set. If a user passes it while such a file is deployed, Claude Code exits at startup on a workstation and in a cloud session alike.
 
 ### How allowlists and denylists apply to the managed set
 
@@ -280,7 +280,7 @@ See [Invalid entries in managed settings](/docs/en/managed-settings#invalid-entr
 
 The `serverName` validation differs between the two lists:
 
-* In `deniedMcpServers`, `serverName` accepts any non-empty string, so you can block [claude.ai connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) by their display name. For example, `{ "serverName": "claude.ai Slack" }` blocks the Slack connector. Prefer a `serverUrl` entry when you need the deny to be robust to renames, or when a connector name collides and gains a ` (N)` suffix.
+* In `deniedMcpServers`, `serverName` accepts any non-empty string without leading or trailing whitespace, so you can block [claude.ai connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) by their display name. For example, `{ "serverName": "claude.ai Slack" }` blocks the Slack connector. Prefer a `serverUrl` entry when you need the deny to be robust to renames, or when a connector name collides and gains a ` (N)` suffix.
 * In `allowedMcpServers`, `serverName` is limited to letters, numbers, hyphens, and underscores. Use `serverUrl` to allowlist a claude.ai connector Claude Code fetches itself; for connectors a cloud host delivers to self-hosted sessions, use the entries listed under [Connector traffic leaves your network](/docs/en/self-hosted-environments-deploy#connector-traffic-leaves-your-network) instead.
 
 To turn off all the claude.ai connectors Claude Code fetches itself, see [`disableClaudeAiConnectors`](/docs/en/mcp#disable-claude-ai-connectors).
