@@ -314,9 +314,11 @@ To prevent developers from using auto mode, set `disableAutoMode` to `"disable"`
 
 In v2.1.158 through v2.1.206, auto mode was off on these providers until you set `CLAUDE_CODE_ENABLE_AUTO_MODE=1`, and Claude Code ignored `defaultMode: "auto"` on these providers unless the variable was also set. The variable is still accepted for compatibility and has no effect from v2.1.207 onward.
 
-#### Server-side classifier review
+### Server-side classifier review
 
-On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, Claude Code reviews auto mode actions with its own classifier requests by default. To have the platform's server-side classifier review [the actions that go to the classifier](#how-the-classifier-evaluates-actions) as part of the session's model requests instead, set [`CLAUDE_CODE_AUTO_MODE_SERVER=1`](/docs/en/env-vars). Where the platform runs the classifier, its verdicts decide those actions; where it doesn't, Claude Code falls back to its own classifier requests. In v2.1.271 and v2.1.272, asking the platform was the default on these providers.
+On the Anthropic API, [Claude Platform on AWS](/docs/en/claude-platform-on-aws), Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, and whenever you point `ANTHROPIC_BASE_URL` at an [LLM gateway or proxy](/docs/en/llm-gateway), Claude Code in auto mode asks the server to review [the actions that go to the classifier](#how-the-classifier-evaluates-actions) as part of the session's model requests. Where the server reviews them, its verdicts decide those actions. Where it doesn't, typically because a gateway or proxy interferes with the traffic, Claude Code falls back to its own classifier requests, and once that fallback holds for the rest of the session it shows a [one-time dialog about classifier request charges](/docs/en/auto-mode-classifier-billing) on accounts where those requests are billed. To skip asking the server and always use Claude Code's own classifier requests, set [`CLAUDE_CODE_AUTO_MODE_SERVER=0`](/docs/en/env-vars). The variable isn't read on a direct connection to the Anthropic API. If you set `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` and leave `CLAUDE_CODE_AUTO_MODE_SERVER` unset, Claude Code also stops asking the server.
+
+Asking the server by default requires Claude Code v2.1.278 or later.
 
 ### What the classifier blocks by default
 
@@ -495,7 +497,7 @@ Repeated blocks usually mean the classifier is missing context about your infras
 
     The session's first auto-mode request validates the Sonnet 5 default: if the request succeeds, Sonnet 5 stays the session's classifier model, and if it fails because the model isn't available, the session uses the fallback instead. After that validation settles, the classifier's model doesn't change for the session.
 
-    On Enterprise plans and on accounts that use the Claude API, [Claude Platform on AWS](/docs/en/claude-platform-on-aws), Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, classifier calls count toward your token usage. Each check sends a portion of the transcript plus the pending action, adding a round-trip before execution. Reads and working-directory edits outside protected paths skip the classifier, so the overhead comes mainly from shell commands and network operations. On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, you can move the review into the session's model requests instead; see [Server-side classifier review](#server-side-classifier-review).
+    On Enterprise plans and on accounts that use the Claude API, [Claude Platform on AWS](/docs/en/claude-platform-on-aws), Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, classifier calls count toward your token usage. Each check sends a portion of the transcript plus the pending action, adding a round-trip before execution. Reads and working-directory edits outside protected paths skip the classifier, so the overhead comes mainly from shell commands and network operations. Where the server reviews the actions as part of the session's model requests, there are no separate classifier calls to count; see [Server-side classifier review](#server-side-classifier-review).
 
     Sandboxed network access adds no per-connection classifier requests. The classifier judges [the hosts a command names](/docs/en/sandboxing#per-command-allowed-domains-in-auto-mode) together with the command in one review, and Claude Code checks each connection against the approved list without calling the classifier again.
   </Accordion>

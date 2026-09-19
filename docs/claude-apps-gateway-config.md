@@ -84,7 +84,7 @@ OpenID Connect (OIDC) is the SSO protocol the gateway uses with your identity pr
 | `id_token_signed_response_alg`  | No       | Expected id\_token signing algorithm. Default `RS256`. Set for IdPs that sign with ES256, PS256, or EdDSA.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `additional_authorized_parties` | No       | Extra `azp` values to accept beyond `client_id`, for Keycloak broker and token-exchange flows                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `discovery_url`                 | No       | Fetch the discovery document from this URL instead of deriving it from `issuer`, for IdPs behind a proxy that rewrites the issuer host. The path must contain `/.well-known/`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `use_proxy`                     | No       | Send the gateway's own IdP requests through the forward proxy in `HTTPS_PROXY` or `HTTP_PROXY`, honoring `NO_PROXY`. Unset or `false`, those requests go direct. Requires v2.1.227 or later; see [IdP requests through a forward proxy](#idp-requests-through-a-forward-proxy) below.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `use_proxy`                     | No       | Send the gateway's own IdP requests through the forward proxy in `HTTPS_PROXY` or `HTTP_PROXY`, honoring `NO_PROXY`. `false` keeps those requests direct. Requires v2.1.227 or later; see [IdP requests through a forward proxy](#idp-requests-through-a-forward-proxy) below.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `form_action_origins`           | No       | Additional origins for the `/device` page's `Content-Security-Policy: form-action` directive. The gateway already allows `'self'` and the discovered `authorization_endpoint` origin, but Chrome enforces `form-action` against the entire redirect chain. If your IdP redirects through a second host, such as Azure AD federated to ADFS, hub-spoke Okta, or a corporate SSO interceptor, list every origin the authorization request may redirect through.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `ca_cert_pem`                   | No       | The PEM-encoded CA certificate itself, not a path to a file. It replaces the system trust store for IdP requests only. To load a mounted file, write `${file:/etc/gateway/idp-ca.pem}`. Use for Keycloak or Dex behind corporate PKI.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
@@ -93,6 +93,43 @@ OpenID Connect (OIDC) is the SSO protocol the gateway uses with your identity pr
 The inference upstreams honor `HTTPS_PROXY` and `HTTP_PROXY` on every version. The gateway's own requests to the IdP, discovery, JWKS, token, and userinfo, go direct unless you set `oidc.use_proxy: true`, which requires v2.1.227 or later. When a proxy variable is set, `use_proxy` is unset, and the issuer isn't covered by `NO_PROXY`, the gateway keeps those requests direct and logs a notice at boot asking you to choose; `use_proxy: false` keeps them direct and silences the notice.
 
 With `use_proxy: true`, the pod resolves each IdP endpoint's hostname itself and asks the proxy to `CONNECT` to the resolved IP address, so the proxy must accept `CONNECT` to the IP address of every host the discovery document names, not only the issuer. Use an `http://` proxy URL. `ca_cert_pem` and the [SSRF guard](/docs/en/claude-apps-gateway-deploy#threat-model-summary) apply on the proxied path as well.
+
+[Proxy-only egress](#proxy-only-egress) changes both of these: while it's active, IdP requests follow the proxy unless you set `use_proxy: false`, and the gateway hands the proxy each IdP hostname without resolving it first.
+
+#### Proxy-only egress
+
+Set `CLAUDE_GATEWAY_PROXY_IS_EGRESS_BOUNDARY=1` in the gateway's environment, next to `HTTPS_PROXY`, when the pod reaches other hosts only through that forward proxy and can't resolve public DNS names itself, or when the proxy refuses `CONNECT` to an IP address. Requires v2.1.277 or later. It's an environment variable rather than a `gateway.yaml` key so that nothing in the config file can relax the gateway's address check.
+
+```bash theme={null}
+export HTTPS_PROXY=http://proxy.corp.example.com:3128
+export NO_PROXY=
+export no_proxy=
+export CLAUDE_GATEWAY_PROXY_IS_EGRESS_BOUNDARY=1
+```
+
+The gateway logs one `network:` line at boot while proxy-only egress is active.
+
+Each row below is one class of outbound request on a gateway with `HTTPS_PROXY` set, by default and while proxy-only egress is active.
+
+| Outbound request                                                                                                             | Default                                                                                                                                                          | Proxy-only egress active                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `provider: anthropic` upstreams, Workload Identity Federation token exchange, `telemetry.forward_to` exports                 | Resolved and checked locally, then `CONNECT` to the checked IP address through the proxy. A telemetry collector listed in `NO_PROXY` is reached directly instead | Hostname handed to the proxy                                                              |
+| IdP discovery, JWKS, token, and userinfo                                                                                     | Direct unless [`oidc.use_proxy: true`](#idp-requests-through-a-forward-proxy), then `CONNECT` to the checked IP address                                          | Hostname handed to the proxy, unless `oidc.use_proxy: false` keeps an internal IdP direct |
+| Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Microsoft Foundry upstreams; Google group lookups | Hostname handed to the proxy                                                                                                                                     | Unchanged                                                                                 |
+
+Proxy-only egress stays off unless the gateway's environment meets all three of these conditions:
+
+* `HTTPS_PROXY` or `HTTP_PROXY` is set.
+* `NO_PROXY` and `no_proxy` are empty. If your platform injects either into pods, set both to an empty value on the gateway container. Listing a telemetry collector in `NO_PROXY` keeps proxy-only egress off.
+* `CLAUDE_GATEWAY_ALLOW_LOOPBACK` isn't turned on. A collector or IdP on the pod's own loopback can't be combined with proxy-only egress, because a loopback address handed to the proxy would be the proxy host's own, so give those services an address the proxy can reach instead. For the same reason the gateway refuses `localhost`-style names outright while proxy-only egress is active.
+
+When one of those conditions isn't met, the gateway logs a warning at boot naming the variable that stopped it and keeps the default behavior.
+
+Once proxy-only egress is active, allow every destination in the proxy, including an internal collector and any host configured by IP address. You can still keep an internal IdP direct with [`oidc.use_proxy: false`](#idp-requests-through-a-forward-proxy).
+
+<Warning>
+  Turn this on only when the proxy's allowlist is at least as strict as the gateway's own check. The proxy must refuse cloud metadata endpoints such as `169.254.169.254` and `metadata.google.internal`, link-local addresses, and the proxy host's own loopback, and it must refuse them by the address a name resolves to, not only by name, because the gateway no longer catches a hostname that resolves to one of them. A proxy that connects anywhere it's asked removes the gateway's [SSRF guard](/docs/en/claude-apps-gateway-deploy#threat-model-summary) for these requests.
+</Warning>
 
 ### `session`
 
@@ -107,12 +144,13 @@ The `session` block shapes the bearer tokens the gateway mints after sign-in: th
 
 The `store` block points the gateway at its PostgreSQL database, which holds device grants and rate-limit counters.
 
-| Field             | Required | Description                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ----------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `postgres_url`    | Yes      | `postgres://` or `postgresql://` URL. Required: the device-grant rendezvous, where the browser callback writes and the polling CLI reads, needs cross-replica state. The gateway runs its own schema migrations at boot and on upgrade, so the role needs rights to create and alter tables on the target schema. See [Upgrades](/docs/en/claude-apps-gateway-deploy#upgrades) and [Postgres](/docs/en/claude-apps-gateway-deploy#postgres). |
-| `username`        | No       | Overrides the user in `postgres_url`                                                                                                                                                                                                                                                                                                                                                                                               |
-| `password`        | No       | Database credential. Set it here rather than in `postgres_url` so the credential stays out of the URL. Accepts any characters and takes precedence over URL credentials.                                                                                                                                                                                                                                                           |
-| `max_connections` | No       | Postgres connection-pool size per replica. Default `5`, which is conservative and friendly to shared databases. With [spend limits](#admin) enabled, the hot path does a few operations per inference request, so raise it for a dedicated database under load, and keep replicas × this below the database's `max_connections`.                                                                                                   |
+| Field                     | Required | Description                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `postgres_url`            | Yes      | `postgres://` or `postgresql://` URL. Required: the device-grant rendezvous, where the browser callback writes and the polling CLI reads, needs cross-replica state. The gateway runs its own schema migrations at boot and on upgrade, so the role needs rights to create and alter tables on the target schema. See [Upgrades](/docs/en/claude-apps-gateway-deploy#upgrades) and [Postgres](/docs/en/claude-apps-gateway-deploy#postgres). |
+| `username`                | No       | Overrides the user in `postgres_url`                                                                                                                                                                                                                                                                                                                                                                                               |
+| `password`                | No       | Database credential. Set it here rather than in `postgres_url` so the credential stays out of the URL. Accepts any characters and takes precedence over URL credentials.                                                                                                                                                                                                                                                           |
+| `max_connections`         | No       | Postgres connection-pool size per replica. Default `5`, which is conservative and friendly to shared databases. With [spend limits](#admin) enabled, the hot path does a few operations per inference request, so raise it for a dedicated database under load, and keep replicas × this below the database's `max_connections`.                                                                                                   |
+| `connect_timeout_seconds` | No       | Seconds the gateway waits when it opens a Postgres connection. A whole number from `1` to `60`, default `5`. Raise it if connection attempts time out when a new gateway instance starts. Requires Claude Code v2.1.274 or later on the gateway server. Earlier versions refuse to start when the key is set.                                                                                                                      |
 
 For local development, point `postgres_url` at a throwaway Postgres container, for example `docker run --rm -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres`.
 
@@ -333,6 +371,51 @@ upstreams:
 | ACI / App Service       | Enable system-assigned or user-assigned managed identity on the resource. `use_azure_ad: true` picks it up.                                                                               |
 | Anywhere else           | `auth: { api_key: "${FOUNDRY_API_KEY}" }`. Quote `${…}` inside `{ }`.                                                                                                                     |
 
+#### Static headers on upstream requests
+
+To add fixed headers to the requests the gateway sends to one upstream, set `headers:` on that upstream. Use it when a proxy you run in front of the provider routes or attributes traffic by a header.
+
+`headers:` requires Claude Code v2.1.277 or later on the gateway server. An earlier gateway refuses to start when it finds the key. Upgrade every replica before you add the key, and remove the key before you roll back to an earlier version.
+
+The headers go to the server that `base_url` names, or to the provider's own endpoint when `base_url` is unset. The provider receives them too unless your proxy removes them.
+
+This example reaches a `provider: vertex` upstream through a proxy at `upstream-proxy.internal.example.com`. It sets the `x-source` header the proxy reads, and sends a token from the `PROXY_TOKEN` environment variable as `x-proxy-token`:
+
+```yaml theme={null}
+upstreams:
+  - provider: vertex
+    region: us-east5
+    project_id: example-prod
+    base_url: https://upstream-proxy.internal.example.com
+    auth: {}
+    headers:
+      x-source: claude-apps-gateway
+      x-proxy-token: ${PROXY_TOKEN}
+```
+
+Values are printable ASCII text with no space at either end. Quote a number, `true`, or `false` so YAML reads it as text.
+
+To keep a secret out of the config file, use [secret expansion](#secret-expansion) to load the value from an environment variable with `${VAR}` or from a file with `${file:/path}`. A `${VAR}` that resolves to an empty value stops the gateway from starting.
+
+`headers:` works on every provider, and each upstream sends only its own.
+
+Not every request that the gateway sends to an upstream carries them:
+
+| Request the gateway sends to this upstream                             | Carries `headers:`                   |
+| ---------------------------------------------------------------------- | ------------------------------------ |
+| `/v1/messages`, streaming or not, and `/v1/messages/count_tokens`      | Yes                                  |
+| A request that failed over from another upstream                       | Yes, this upstream's `headers:` only |
+| Amazon Bedrock's `CountTokens` call for a request the client abandoned | No                                   |
+| The Workload Identity Federation token exchange                        | No                                   |
+
+On an Amazon Bedrock or Claude Platform on AWS upstream that signs requests with AWS SigV4, these headers are part of the signature, so your proxy must pass them through unchanged.
+
+If you use a name the gateway reserves, it refuses to start, and the startup error names the header. Reserved names include:
+
+* `authorization` and `x-api-key`
+* `host`, `content-type`, and `user-agent`
+* Any name starting with `anthropic-`, `x-goog-`, `x-amz-`, or `x-amzn-`
+
 #### Multiple upstreams
 
 The same provider can appear more than once with a distinct `name:`. This covers different regions, different accounts via different credential chains, provisioned throughput versus on-demand, and cross-provider fallback.
@@ -340,6 +423,12 @@ The same provider can appear more than once with a distinct `name:`. This covers
 The gateway tries upstreams in order. `5xx`, `429`, `401`, `403`, `404`, timeouts, and missing-endpoint (`501`) fail over; other `4xx` doesn't.
 
 `429` is per-upstream capacity, so provisioned-throughput (PT) exhaustion fails over to on-demand. If you set [`forward_user_identity: true`](#per-user-identity-headers-for-a-proxy-you-run) on an upstream, a `429` to a request that carried the developer's email is a per-user denial instead and doesn't fail over.
+
+Every request starts at the first upstream. A request reaches a later upstream only when every upstream ahead of it has failed or doesn't serve the requested model.
+
+The gateway keeps no record of failed upstreams, so while an upstream is down, every request that reaches it still tries it and waits for it to fail before moving on.
+
+For an Anthropic API upstream, [`timeouts.upstream_ttfb_ms`](#http-tuning) bounds the wait on a down upstream. That setting doesn't apply to the other providers, where the gateway waits up to one hour for an upstream to start responding.
 
 `404` is per-upstream model availability, so an upstream that hasn't enabled a model doesn't block a later upstream that serves it. An upstream that can't resolve the requested model is skipped without a network round-trip.
 
@@ -735,11 +824,17 @@ The CLI stamps each export with the authenticated user's identity, read from the
 
 [Claude Desktop](#claude-desktop-overlay) and Cowork sessions signed in through the gateway stamp their telemetry with `user.email` and `user.groups` alongside `enduser.id`, so you can cover terminal, Desktop, and Cowork usage with one query on `user.email` or `user.groups`. `user.groups` is the comma-separated IdP group list.
 
+Desktop and Cowork telemetry also carries `enduser.sub`, the `sub` claim your identity provider issues for the user, which stays the same when a user's email changes. Terminal sessions stamp the same value under `user.id`, so a query that matches `enduser.sub` against terminal `user.id` covers one user's terminal, Desktop, and Cowork usage together. On Desktop and Cowork exports, `user.id` is an anonymous identifier, not the subject.
+
 Like all OpenTelemetry data from Claude Code, these attributes go only to destinations your organization configures, never to Anthropic.
 
 If a user's group list is longer than 255 characters once percent-encoded, or a group name contains a comma or equals sign, the gateway leaves `user.groups` off that user's Desktop and Cowork telemetry rather than truncating it. That user's terminal sessions still carry the full list.
 
+The gateway leaves `enduser.sub` off when the subject is longer than 255 characters once percent-encoded, or contains a space, a character outside printable ASCII, or one of `,` `;` `=` `\` `"` `%`. That user's Desktop and Cowork telemetry keeps its other attributes.
+
 You need Claude Code v2.1.265 or later on the gateway server for `user.email` and `user.groups` on Desktop and Cowork telemetry, and Claude Desktop 1.24012 or later on each developer's machine for `user.groups`.
+
+You need Claude Code v2.1.274 or later on the gateway server for `enduser.sub`.
 
 ```yaml theme={null}
 telemetry:
@@ -771,6 +866,12 @@ Each `forward_to` URL must use `https://`, with one exception for a collector on
 * `http://127.0.0.1:<port>` or `http://[::1]:<port>` fails boot unless that variable is set
 
 For an in-cluster collector, expose it over HTTPS at its own internal address, or run it as a sidecar with the variable set.
+
+When `HTTPS_PROXY` is set, the gateway sends exports through that proxy.
+
+To reach an internal collector directly, add it to `NO_PROXY` by hostname or by a domain with a leading dot such as `.internal.example.com`, which requires Claude Code v2.1.277 or later on the gateway server. Make sure the gateway can reach the collector without the proxy. An entry without a leading dot matches only that exact name, not names under it. CIDR ranges don't match.
+
+With [proxy-only egress](#proxy-only-egress) turned on, allow the collector in the proxy instead, since any `NO_PROXY` entry keeps proxy-only egress off.
 
 Telemetry is off in the CLI by default. When you set both `telemetry.forward_to` and `listen.public_url`, the gateway turns it on for connected clients by pushing six environment variables through `/managed/settings`:
 
@@ -839,9 +940,9 @@ Four optional top-level blocks, `access_control`, `limits`, `timeouts`, and `rat
 | `limits`         | `max_request_bytes`                            | 32 MiB   | Max inbound request body; oversize requests get `413` before the body is buffered. Raise for large file or image requests.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `limits`         | `max_request_header_bytes`                     | unset    | When set, oversize headers return `431`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `limits`         | `max_url_length`                               | unset    | When set, an over-long URL returns `414`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `timeouts`       | `upstream_ttfb_ms`                             | 120000   | Max wait for the upstream's response headers (time to first byte). The response body then streams with no wall-clock cap. Applies to the direct Anthropic upstream path; every other provider is bounded by its provider SDK's own timeout.                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `rate_limits`    | `device_authorization.max` / `.window_seconds` | 30 / 600 | Per-IP rate limit on the unauthenticated device-authorization endpoint. Raise for a large org behind a shared egress IP or NAT. These limits apply only to the device-grant sign-in flow, not to `/v1/messages` inference. See [User-code brute-force resistance](/docs/en/claude-apps-gateway-deploy#user-code-brute-force-resistance).                                                                                                                                                                                                                                                                                                                                                                          |
-| `rate_limits`    | `device_verify.max` / `.window_seconds`        | 10 / 600 | Per-IP rate limit on `user_code` submissions at `/device`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `timeouts`       | `upstream_ttfb_ms`                             | 120000   | Max wait for the upstream's response headers (time to first byte). The response body then streams with no wall-clock cap. Applies to the direct Anthropic upstream path; on every other provider the gateway waits up to one hour for the response to start.                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `rate_limits`    | `device_authorization.max` / `.window_seconds` | 30 / 600 | Per-IP rate limit on the unauthenticated device-authorization endpoint. Raise for a large org behind a shared egress IP or NAT. [Large rollouts](/docs/en/claude-apps-gateway-deploy#large-rollouts) shows how to size it. These limits apply only to the device-grant sign-in flow, not to `/v1/messages` inference. See [User-code brute-force resistance](/docs/en/claude-apps-gateway-deploy#user-code-brute-force-resistance).                                                                                                                                                                                                                                                                                    |
+| `rate_limits`    | `device_verify.max` / `.window_seconds`        | 10 / 600 | Per-IP rate limit on `user_code` submissions at `/device`. It is what stops someone from guessing another developer's code. [Large rollouts](/docs/en/claude-apps-gateway-deploy#large-rollouts) shows how far to raise it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 If you leave both `access_control` lists empty, which is the default, the gateway serves any client address, so only your network restricts who can reach it. That matters because a gateway can push [managed settings](#managed) that run commands on developer machines.
 
@@ -903,6 +1004,7 @@ session:
 store:
   postgres_url: ${GATEWAY_POSTGRES_URL}
   # max_connections: 5
+  # connect_timeout_seconds: 5
 
 # Enables /v1/organizations/spend_limits (mirrors the Anthropic Admin API)
 # and per-developer spend enforcement on /v1/messages. Omit to disable.

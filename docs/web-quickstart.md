@@ -182,6 +182,8 @@ When Claude finishes, review the changes, leave feedback on specific lines, and 
 <Steps>
   <Step title="Open the diff view">
     A diff indicator shows lines added and removed across the session, for example `+42 -18`. Select it to open the diff view, with a file list on the left and changes on the right.
+
+    The diff compares the session's changes against its base branch by default. To compare against a different branch, select **Compare against** and pick one.
   </Step>
 
   <Step title="Leave inline comments">
