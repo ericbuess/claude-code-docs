@@ -361,8 +361,9 @@ The script must output valid JSON with string key-value pairs representing HTTP 
 echo "{\"Authorization\": \"Bearer $(get-token.sh)\", \"X-API-Key\": \"$(get-api-key.sh)\"}"
 ```
 
-If the helper fails or prints output that doesn't meet these requirements, Claude Code reports the error in:
+If the helper fails or prints output that doesn't meet these requirements, exports fail and your telemetry backend receives nothing from the session until the helper works again. Claude Code reports the failure in:
 
+* A warning notification in interactive sessions, [`otelHeadersHelper failed; telemetry is not being exported`](/docs/en/errors#otelheadershelper-failed), shown once per session when the helper first fails
 * `/status` output
 * The debug log, when running with [`--debug`](/docs/en/cli-reference#cli-flags) or after running `/debug` in the session
 * stderr, in non-interactive sessions started with `-p`

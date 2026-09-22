@@ -35,7 +35,7 @@ export const ContextWindow = () => {
     tokens: 280,
     color: '#6B6964',
     vis: 'hidden',
-    desc: 'Working directory, platform, shell, OS version, and whether this is a git repo. Git branch, status, and recent commits load as a separate block at the very end of the system prompt.',
+    desc: 'Working directory, platform, shell, OS version, and whether this is a git repo. Git branch, status, and recent commits load as a separate block.',
     link: null
   }, {
     t: 0.08,
@@ -1587,7 +1587,7 @@ The session walks through a realistic flow with representative token counts:
 * **Before you type anything**: CLAUDE.md, auto memory, MCP tool names, and skill descriptions all load into context. [AGENTS.md files](/docs/en/memory#agents-md) can load too, on their own or alongside CLAUDE.md. Your own setup may add more here, like an [output style](/docs/en/output-styles) or text from [`--append-system-prompt`](/docs/en/cli-reference).
 * **As Claude works**: each file read adds to context, [path-scoped rules](/docs/en/memory#path-specific-rules) load automatically alongside matching files, and a [PostToolUse hook](/docs/en/hooks-guide) fires after each edit.
 * **The follow-up prompt**: a [subagent](/docs/en/sub-agents) handles the research in its own separate context window, so the large file reads stay out of yours. Only the summary and a small metadata trailer come back.
-* **At the end**: `/compact` replaces the conversation with a structured summary. Most startup content reloads automatically; the table below shows what happens to each mechanism.
+* **At the end of the walkthrough**: you run `/compact`, which replaces the conversation with a structured summary. Most startup content reloads automatically; the table below shows what happens to each mechanism.
 
 ## What survives compaction
 
@@ -1598,6 +1598,7 @@ When a long session compacts, Claude Code summarizes the conversation history to
 | System prompt and output style                                                                                                                            | Both still apply                                                                                      |
 | Project-root CLAUDE.md and unscoped rules                                                                                                                 | Re-injected from disk                                                                                 |
 | Auto memory                                                                                                                                               | Re-injected from disk                                                                                 |
+| [Git status snapshot](/docs/en/settings-reference#includegitinstructions)                                                                                      | Claude Code reads a fresh one from your repository                                                    |
 | The plan Claude wrote in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode)                                                         | Re-injected from disk                                                                                 |
 | Rules with `paths:` frontmatter                                                                                                                           | Claude Code reloads them as Claude reads files they match                                             |
 | Nested CLAUDE.md in subdirectories                                                                                                                        | Claude Code reloads them as Claude reads files in that subdirectory                                   |

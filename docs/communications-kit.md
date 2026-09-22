@@ -97,7 +97,7 @@ Use this as your standard org-wide rollout message. It covers what Claude Code i
     📚 Quickstart · VS Code · Free 1-hr course
        https://code.claude.com/docs/en/quickstart
        https://code.claude.com/docs/en/vs-code
-       https://anthropic.skilljar.com/claude-code-in-action
+       https://academy.claude.com/courses/claude-code-in-action
 
     Questions → this thread. [Owner] is on point.
     ```
