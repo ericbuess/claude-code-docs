@@ -222,6 +222,18 @@ Claude Code uses any pattern that would exceed the budget unexpanded, and its li
 
 Glob syntax treats `[` as the start of a bracket expression such as `[abc]`. A pattern with a `[` that can't be read as a bracket expression, such as `photos [2024/**`, is invalid: it matches nothing, and the rule's other patterns keep working. To match a literal `[` in a file name, escape it as `photos \[2024/**`. Before v2.1.207, one invalid pattern made the Read tool fail for every file the rule was evaluated against, instead of matching nothing.
 
+<h4 id="rules-frontmatter-reference">
+  Rule frontmatter reference
+</h4>
+
+Configure a rule with YAML [frontmatter](/docs/en/glossary#frontmatter) between `---` markers at the top of the file. `paths` is the only field Claude Code reads from a rule; any other field is ignored without an error. Claude Code removes the frontmatter before loading the rule into context.
+
+| Field   | Required | Description                                                                                                                  |
+| :------ | :------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| `paths` | No       | Glob patterns that [scope the rule to matching files](#path-specific-rules). Accepts a YAML list or a comma-separated string |
+
+If the YAML between the markers doesn't parse, Claude Code ignores the frontmatter and loads the rule as if it had no `paths`. Run `claude --debug` to see the parse error.
+
 #### Share rules across projects with symlinks
 
 The `.claude/rules/` directory supports symlinks, so you can maintain a shared set of rules and link them into multiple projects. Circular symlinks are detected and handled gracefully.
@@ -384,7 +396,7 @@ In these sessions Claude reads `CLAUDE.md` files only, and **Project instruction
 * You're on a Claude Code version before v2.1.277
 * Your session doesn't [fetch feature flags from Anthropic](/docs/en/env-vars#features-that-need-feature-flag-fetching), for example because you use Amazon Bedrock or another third-party provider, or you disabled telemetry. The linked section has the full list
 * It's your [first session after you install or upgrade](/docs/en/env-vars#first-session-after-an-install-or-upgrade) to a version with `AGENTS.md` support. Claude reads `AGENTS.md` from your next session on
-* You or your organization set [`disableAllHooks`](/docs/en/settings-reference#disableallhooks) or [`allowManagedHooksOnly`](/docs/en/settings-reference#allowmanagedhooksonly), or you disabled the built-in `agents-md` plugin in `/plugin`
+* You disabled the built-in `agents-md` plugin in `/plugin`
 
 To give Claude your `AGENTS.md` in these sessions, [import it from a `CLAUDE.md`](#share-one-file-with-other-coding-tools).
 
@@ -392,12 +404,11 @@ To give Claude your `AGENTS.md` in these sessions, [import it from a `CLAUDE.md`
 
 An `AGENTS.md` that Claude reads through the **Project instructions** setting differs from a `CLAUDE.md` in these places:
 
-|                                                                                                                                       | `CLAUDE.md`                                                                  | `AGENTS.md` read through the setting                                                                                                                                                      |
-| :------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/memory` and the **Memory files** list in `/context`                                                                                 | Listed                                                                       | Not listed. To confirm Claude read it, look for the [`AGENTS.md loaded` line](#when-claude-code-reads-agents-md) under the default value, or ask Claude what its project instructions say |
-| [`InstructionsLoaded` hooks](/docs/en/hooks#instructionsloaded)                                                                            | Fire                                                                         | Don't fire. They fire as usual for an `AGENTS.md` that a `CLAUDE.md` imports or symlinks to                                                                                               |
-| Directories you add with `--add-dir` while [`CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD`](#load-from-additional-directories) is set | Their `CLAUDE.md` loads                                                      | Their `AGENTS.md` doesn't load                                                                                                                                                            |
-| An `@path` import of a file outside your working directory                                                                            | Claude Code asks you to approve [external imports](#import-additional-files) | Loads only if you already approved external imports for this project, with no prompt                                                                                                      |
+|                                                                                                                                       | `CLAUDE.md`                                                                  | `AGENTS.md` read through the setting                                                        |
+| :------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| [`InstructionsLoaded` hooks](/docs/en/hooks#instructionsloaded)                                                                            | Fire                                                                         | Don't fire. They fire as usual for an `AGENTS.md` that a `CLAUDE.md` imports or symlinks to |
+| Directories you add with `--add-dir` while [`CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD`](#load-from-additional-directories) is set | Their `CLAUDE.md` loads                                                      | Their `AGENTS.md` doesn't load                                                              |
+| An `@path` import of a file outside your working directory                                                                            | Claude Code asks you to approve [external imports](#import-additional-files) | Loads only if you already approved external imports for this project, with no prompt        |
 
 ### Remove an earlier AGENTS.md workaround
 
@@ -540,7 +551,7 @@ CLAUDE.md content is delivered as a user message after the system prompt, not as
 
 To debug:
 
-* Run `/context` and check the list under **Memory files** to verify your CLAUDE.md and CLAUDE.local.md files loaded. If a `CLAUDE.md` file is missing there, Claude can't see it. An `AGENTS.md` appears there only when a `CLAUDE.md` imports it, not when Claude [reads it directly](#where-agents-md-differs-from-claude-md). Use `/memory` to open and edit the files.
+* Run `/context` and check the list under **Memory files** to verify your CLAUDE.md and CLAUDE.local.md files loaded. If a `CLAUDE.md` file is missing there, Claude can't see it. Use `/memory` to open and edit the files.
 * Check that the relevant CLAUDE.md is in a location that gets loaded for your session (see [Choose where to put CLAUDE.md files](#choose-where-to-put-claude-md-files)).
 * Make instructions more specific. "Use 2-space indentation" works better than "format code nicely."
 * Look for conflicting instructions across CLAUDE.md files. If two files give different guidance for the same behavior, Claude may pick one arbitrarily.
@@ -562,7 +573,9 @@ If your repository has an `AGENTS.md` and Claude doesn't seem to know what it sa
 3. Check whether your session is one that [can't load `AGENTS.md`](#when-agents-md-support-is-unavailable), such as a session on a third-party provider or with telemetry disabled.
 4. Type `/config` in your session to open the settings panel and confirm **Project instructions** isn't set to `claude-md` or `managed-only`. If you don't see the setting there at all, your session is one that [can't load `AGENTS.md`](#when-agents-md-support-is-unavailable).
 
-`AGENTS.md` doesn't appear in `/memory` or `/context` when Claude reads it directly, so check for the `AGENTS.md loaded` line or ask Claude what its project instructions say instead.
+To check whether Claude read your `AGENTS.md`, run `/memory` and look for its path in the list.
+
+Before v2.1.280, `/memory` and `/context` didn't list an `AGENTS.md` that Claude read directly. On those versions, ask Claude what its project instructions say instead.
 
 If you want to keep the `CLAUDE.md` you found, or your session can't load `AGENTS.md`, [add a `CLAUDE.md` next to your `AGENTS.md` that imports it](#share-one-file-with-other-coding-tools).
 

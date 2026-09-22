@@ -276,7 +276,7 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: "Generate a summary of yesterday's commits and open issues"
           claude_args: |
-            --model claude-opus-4-8
+            --model claude-opus-5-5
             --allowedTools "mcp__github__list_commits,mcp__github__list_issues"
 ```
 

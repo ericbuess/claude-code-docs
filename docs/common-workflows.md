@@ -307,7 +307,7 @@ Suppose you need to work with images in your codebase, and you want Claude's hel
 
     1. Drag and drop an image into the Claude Code window
     2. Copy an image and paste it into the CLI with `Ctrl+V`, or with [`Alt+V` on Windows and WSL](/docs/en/interactive-mode#general-controls)
-    3. Provide an image path to Claude. E.g., "Analyze this image: /path/to/your/image.png"
+    3. Provide an image path to Claude, for example "Analyze this image: /path/to/your/image.png"
   </Step>
 
   <Step title="Ask Claude to analyze the image">

@@ -91,16 +91,18 @@ In the VS Code extension, you can also create the file from the [**Output styles
 
 [Plugins](/docs/en/plugins-reference) can also ship output styles in an `output-styles/` directory.
 
-### Frontmatter
+<h3 id="frontmatter">
+  Frontmatter reference
+</h3>
 
-Output style files support these frontmatter fields:
+Configure an output style with YAML [frontmatter](/docs/en/glossary#frontmatter) between `---` markers at the top of the file. All fields are optional, and field names use lowercase words separated by hyphens. A misspelled field is ignored without an error. If the YAML doesn't parse, the style still loads under its file name with no fields set; run `claude --debug` to see the parse error.
 
-| Frontmatter                | Purpose                                                                                                                                                                                                                                                  | Default                 |
-| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------- |
-| `name`                     | Name of the output style, if not the file name                                                                                                                                                                                                           | Inherits from file name |
-| `description`              | Description of the output style, shown in the `/config` picker                                                                                                                                                                                           | None                    |
-| `keep-coding-instructions` | Keep Claude Code's built-in software engineering instructions                                                                                                                                                                                            | `false`                 |
-| `force-for-plugin`         | Plugin output styles only: apply this style automatically whenever the plugin is enabled, without requiring users to select it. Overrides the user's `outputStyle` setting. If multiple enabled plugins set this, Claude Code uses the first one loaded. | `false`                 |
+| Field                      | Required | Description                                                                                                                                                                                                                                                                                |
+| :------------------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | No       | Name of the output style, shown in the `/config` picker. Default: the file name                                                                                                                                                                                                            |
+| `description`              | No       | Description of the output style, shown in the `/config` picker                                                                                                                                                                                                                             |
+| `keep-coding-instructions` | No       | Set to `true` to keep Claude Code's built-in software engineering instructions alongside your style. Default: `false`                                                                                                                                                                      |
+| `force-for-plugin`         | No       | Plugin output styles only. Set to `true` to apply this style automatically whenever the plugin is enabled, without requiring users to select it. Overrides the user's `outputStyle` setting. If multiple enabled plugins set this, Claude Code uses the first one loaded. Default: `false` |
 
 ## How output styles work
 

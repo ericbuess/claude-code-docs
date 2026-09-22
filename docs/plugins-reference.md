@@ -65,9 +65,13 @@ disallowedTools: Write, Edit
 Detailed system prompt for the agent describing its role, expertise, and behavior.
 ```
 
-Plugin agents support `name`, `description`, `model`, `effort`, `maxTurns`, `tools`, `disallowedTools`, `skills`, `memory`, `background`, [`omitClaudeMd`](/docs/en/sub-agents#supported-frontmatter-fields), and `isolation` frontmatter fields. The only valid `isolation` value is `"worktree"`.
+#### Plugin agent frontmatter
 
-For security reasons, plugin-shipped agents don't support `hooks`, `mcpServers`, or `permissionMode`.
+A plugin agent file uses the same [frontmatter fields as a subagent file](/docs/en/sub-agents#supported-frontmatter-fields), except that Claude Code honors only some of them when the agent comes from a plugin:
+
+* **Supported**: `name`, `description`, `model`, `effort`, `maxTurns`, `tools`, `disallowedTools`, `skills`, `memory`, `background`, `omitClaudeMd`, `isolation`, `color`, and `experimental`. The only valid `isolation` value is `"worktree"`.
+* **Not supported, for security reasons**: `hooks`, `mcpServers`, and `permissionMode`. Claude Code ignores these when loading an agent from a plugin. To use them, copy the agent file into `.claude/agents/` or `~/.claude/agents/`.
+* **Not supported**: `initialPrompt`.
 
 You can put plugin agent files in subfolders of `agents/`. Claude Code [loads them recursively](/docs/en/sub-agents#choose-the-subagent-scope) and joins the plugin name, each subfolder name, and the file name with colons to form the agent's scoped name. For example, `agents/review/security.md` in a plugin named `my-plugin` loads as `my-plugin:review:security`. Two settings change that name:
 
@@ -606,17 +610,17 @@ The `userConfig` field declares values that Claude Code prompts the user for whe
 
 Keys must be valid identifiers. Each option supports these fields:
 
-| Field         | Required | Description                                                                                                                       |
-| :------------ | :------- | :-------------------------------------------------------------------------------------------------------------------------------- |
-| `type`        | Yes      | One of `string`, `number`, `boolean`, `directory`, or `file`                                                                      |
-| `title`       | Yes      | Label shown in the configuration dialog                                                                                           |
-| `description` | Yes      | Help text shown beneath the field                                                                                                 |
-| `sensitive`   | No       | If `true`, masks input and stores the value in secure storage instead of `settings.json`                                          |
-| `required`    | No       | If `true`, validation fails when the field is empty                                                                               |
-| `default`     | No       | Value used when the user provides nothing                                                                                         |
-| `options`     | No       | For `string` type, the values the field accepts, shown in `/config` as a picker over them. Requires Claude Code v2.1.271 or later |
-| `multiple`    | No       | For `string` type, allow an array of strings                                                                                      |
-| `min` / `max` | No       | Bounds for `number` type                                                                                                          |
+| Field         | Required | Description                                                                                                                                                                                              |
+| :------------ | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`        | Yes      | One of `string`, `number`, `boolean`, `directory`, or `file`                                                                                                                                             |
+| `title`       | Yes      | Label shown in the configuration dialog                                                                                                                                                                  |
+| `description` | Yes      | Help text shown beneath the field                                                                                                                                                                        |
+| `sensitive`   | No       | If `true`, masks input and stores the value in secure storage instead of `settings.json`                                                                                                                 |
+| `required`    | No       | If `true`, validation fails when the field is empty                                                                                                                                                      |
+| `default`     | No       | Value used when the user provides nothing                                                                                                                                                                |
+| `options`     | No       | For `string` type, the values the field accepts, shown in `/config` as a picker over them. See [Limit a field to fixed options](#limit-a-field-to-fixed-options). Requires Claude Code v2.1.271 or later |
+| `multiple`    | No       | For `string` type, allow an array of strings                                                                                                                                                             |
+| `min` / `max` | No       | Bounds for `number` type                                                                                                                                                                                 |
 
 Except `sensitive` fields and `multiple` lists, each field of each enabled plugin also appears as a row in the `/config` panel. The rows require Claude Code v2.1.269 or later.
 
@@ -645,6 +649,41 @@ Claude Code reads all `pluginConfigs` values from only three settings sources:
 When more than one source sets the same key, managed settings take precedence, then `--settings`, then user settings. The only source you can remove from this list is user settings: pass [`--setting-sources`](/docs/en/cli-reference#cli-flags) without `user` and Claude Code skips them. Managed settings and `--settings` stay whatever you pass. The SDK's [`settingSources`](/docs/en/agent-sdk/claude-code-features#what-settingsources-does-not-control) option sets the same list.
 
 Entries in a project's `.claude/settings.json` or `.claude/settings.local.json` are ignored. Both files live in the workspace, so a cloned repository could supply values there, and those values would flow into plugin hook commands, MCP server configs, LSP commands, and monitor commands. Before v2.1.207, these entries were read. The restriction is specific to `pluginConfigs`: [`enabledPlugins`](/docs/en/settings-reference#enabledplugins) still honors project and local settings.
+
+#### Limit a field to fixed options
+
+Set `options` on a `userConfig` field to make users pick its value from a fixed list.
+
+To limit a `tone` field to three options, list them in `options` and set `default` to one of them:
+
+```json theme={null}
+{
+  "userConfig": {
+    "tone": {
+      "type": "string",
+      "title": "Tone",
+      "description": "Voice for generated replies",
+      "options": ["neutral", "warm", "formal"],
+      "default": "neutral"
+    }
+  }
+}
+```
+
+If you declare `options` on any field, users on Claude Code versions before v2.1.271 can't load the plugin.
+
+When you set `options` on a field, follow these rules:
+
+* Set `type` to `string`
+* Don't set `multiple` or `sensitive` to `true`
+* Set `default` to one of the options
+* If you leave `default` unset, set `required` to `true`
+* List at least one option, each 1 to 64 characters long
+* Don't start or end an option with a space
+* Don't use control characters, invisible characters, characters that change text direction, or spaces other than a regular space in an option
+* Don't list the same option twice, even in a different letter case
+
+If you break any of these rules, the plugin fails to load. Run `claude plugin validate` to see which field breaks which rule.
 
 ### Channels
 
@@ -1404,7 +1443,7 @@ This shows:
 | Hooks not firing                    | Script not executable           | Run `chmod +x script.sh`                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | MCP server fails                    | Missing `${CLAUDE_PLUGIN_ROOT}` | Use variable for all plugin paths                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | Path errors                         | Absolute paths used             | Make paths relative, starting with `./`; see [Path behavior rules](#path-behavior-rules), which cover the `skills` field's `"."` exception                                                                                                                                                                                                                                                                                                                   |
-| LSP `Executable not found in $PATH` | Language server not installed   | Install the binary (e.g., `npm install -g typescript-language-server typescript`)                                                                                                                                                                                                                                                                                                                                                                            |
+| LSP `Executable not found in $PATH` | Language server not installed   | Install the binary (for example, `npm install -g typescript-language-server typescript`)                                                                                                                                                                                                                                                                                                                                                                     |
 
 ### Example error messages
 

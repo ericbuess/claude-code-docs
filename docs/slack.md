@@ -21,7 +21,7 @@ This integration is built on the existing Claude for Slack app but adds intellig
 
 * **Bug investigation and fixes**: Ask Claude to investigate and fix bugs as soon as they're reported in Slack channels.
 * **Quick code reviews and modifications**: Have Claude implement small features or refactor code based on team feedback.
-* **Collaborative debugging**: When team discussions provide crucial context (e.g., error reproductions or user reports), Claude can use that information to inform its debugging approach.
+* **Collaborative debugging**: When team discussions provide crucial context (for example, error reproductions or user reports), Claude can use that information to inform its debugging approach.
 * **Parallel task execution**: Kick off coding tasks in Slack while you continue other work, receiving notifications when complete.
 
 ## Prerequisites

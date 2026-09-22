@@ -330,7 +330,7 @@ You may also see plugins with **managed** scope. These are installed by administ
 Claude Code looks the plugin up in its local copy of the marketplace catalog. How you name the plugin controls whether Claude Code refreshes that copy first:
 
 * **With a marketplace name**: when you install `plugin-name@marketplace-name`, in a session or with `claude plugin install`, Claude Code refreshes that marketplace before the lookup. Claude Code runs the refresh even if you turned off [auto-update](#configure-auto-updates) for the marketplace or set `DISABLE_AUTOUPDATER`. Before v2.1.232, Claude Code didn't refresh the marketplace before the lookup. Claude Code skips this refresh when:
-  * The marketplace wasn't [added from GitHub, another Git host, or a remote URL](#add-marketplaces).
+  * The marketplace wasn't [added from GitHub, another Git host, a remote URL](#add-marketplaces), or [claude.ai](#add-from-claude-ai).
   * A [seed directory](/docs/en/plugin-marketplaces#pre-populate-plugins-for-containers) supplies the marketplace.
   * Claude Code refreshed the marketplace within the last 30 seconds.
   * You set [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars).

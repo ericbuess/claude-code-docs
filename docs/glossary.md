@@ -154,6 +154,14 @@ Visible step-by-step reasoning the model performs before responding. You can adj
 
 Learn more: [Use extended thinking](/docs/en/model-config#extended-thinking)
 
+## F
+
+### Frontmatter
+
+A block of YAML settings at the very top of a Markdown file, between an opening `---` line and a closing `---` line. Skills, subagents, output styles, and rules each read their configuration from frontmatter, such as a skill's `description` or a subagent's `tools`, and treat everything after the closing `---` as the instructions. The opening `---` must be the file's first line. Each file type accepts its own set of fields.
+
+Learn more: [Skill frontmatter](/docs/en/skills#frontmatter-reference), [Subagent frontmatter](/docs/en/sub-agents#supported-frontmatter-fields), [Output style frontmatter](/docs/en/output-styles#frontmatter), [Rule frontmatter](/docs/en/memory#rules-frontmatter-reference)
+
 ## H
 
 ### Hook

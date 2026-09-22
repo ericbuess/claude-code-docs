@@ -1507,6 +1507,20 @@ Click a filename to open that node in the explorer above.
 | [`keybindings.json`](#ce-keybindings)               | Global only        |        | Custom keyboard shortcuts                                                                                     | [Keybindings](/docs/en/keybindings)                                  |
 | [`themes/*.json`](#ce-themes)                       | Global only        |        | Custom color themes                                                                                           | [Custom themes](/docs/en/terminal-config#create-a-custom-theme)      |
 
+## Frontmatter fields by file
+
+Skills, command files, subagents, output styles, and rules read their configuration from YAML [frontmatter](/docs/en/glossary#frontmatter) at the top of the file, and each accepts its own set of fields. This table lists the field names for each file and links to the reference that describes them.
+
+| File                     | Frontmatter fields                                                                                                                                                                                                                                                            | Reference                                                           |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `skills/<name>/SKILL.md` | `name`, `description`, `when_to_use`, `argument-hint`, `arguments`, `disable-model-invocation`, `user-invocable`, `allowed-tools`, `disallowed-tools`, `model`, `effort`, `context`, `agent`, `background`, `hooks`, `paths`, `shell`, `metadata`, `license`, `compatibility` | [Skill frontmatter](/docs/en/skills#frontmatter-reference)               |
+| `commands/*.md`          | The skill fields except `name` and `paths`                                                                                                                                                                                                                                    | [Skill frontmatter](/docs/en/skills#frontmatter-reference)               |
+| `agents/*.md`            | `name`, `description`, `tools`, `disallowedTools`, `model`, `permissionMode`, `maxTurns`, `skills`, `mcpServers`, `hooks`, `memory`, `background`, `effort`, `isolation`, `color`, `initialPrompt`, `omitClaudeMd`, `experimental`                                            | [Subagent frontmatter](/docs/en/sub-agents#supported-frontmatter-fields) |
+| `output-styles/*.md`     | `name`, `description`, `keep-coding-instructions`, `force-for-plugin`                                                                                                                                                                                                         | [Output style frontmatter](/docs/en/output-styles#frontmatter)           |
+| `rules/*.md`             | `paths`                                                                                                                                                                                                                                                                       | [Rule frontmatter](/docs/en/memory#rules-frontmatter-reference)          |
+
+Agents shipped in a [plugin](/docs/en/plugins-reference#plugin-agent-frontmatter) honor a subset of the subagent fields.
+
 ## Troubleshoot configuration
 
 If a setting, hook, or file isn't taking effect, see [Debug your configuration](/docs/en/debug-your-config) for the inspection commands and a symptom-first lookup table.

@@ -94,13 +94,13 @@ The advisor must be at least as capable as the main model. The accepted advisors
 | Sonnet 5             | Fable, Opus 4.7 or later, Sonnet 5 | A Sonnet 4.6 advisor is rejected, and the API refuses an Opus 4.6 advisor                      |
 | Opus 4.6             | Fable, Opus, Sonnet 5              | A Sonnet 4.6 advisor is rejected                                                               |
 | Opus 4.7 or Opus 4.8 | Fable, and Opus 4.7 or later       | An Opus 4.6 or Sonnet advisor is rejected                                                      |
-| Opus 5               | Fable, Opus 5                      | An Opus 4.6 or Sonnet advisor is rejected, and the API refuses an Opus 4.7 or Opus 4.8 advisor |
+| Opus 5.5 or Opus 5   | Fable, and Opus 5 or later         | An Opus 4.6 or Sonnet advisor is rejected, and the API refuses an Opus 4.7 or Opus 4.8 advisor |
 | Fable 5              | Fable 5.1 or Fable 5               | An Opus or Sonnet advisor is rejected                                                          |
 | Fable 5.1            | Fable 5.1                          | An Opus or Sonnet advisor is rejected, and the API refuses a Fable 5 advisor                   |
 
 Fable 5.1 requires Claude Code v2.1.257 or later. Both Fable models require [Fable access](/docs/en/model-config#work-with-fable).
 
-Set the advisor as `fable`, `opus`, or `sonnet`. These aliases resolve to Claude Code's built-in default version for each model family, which advances with new Claude Code releases. You can also pass a full model ID such as `claude-opus-5`.
+Set the advisor as `fable`, `opus`, or `sonnet`. These aliases resolve to Claude Code's built-in default version for each model family, which advances with new Claude Code releases. You can also pass a full model ID such as `claude-opus-5-5`.
 
 Subagents inherit the configured advisor and apply the same pairing check against their own model.
 
@@ -171,7 +171,7 @@ The advisor model's own read of the conversation is not cached. Each advisor cal
 
 The advisor tool requires all of the following:
 
-* **Anthropic API only**: the advisor is a server-executed tool. It is not available on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry. Through an [LLM gateway](/docs/en/llm-gateway) configured with `ANTHROPIC_BASE_URL`, availability depends on whether the gateway forwards the request intact to the Anthropic API.
+* **Anthropic API only**: the advisor is a server-executed tool. It is not available on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry. Through an [LLM gateway](/docs/en/llm-gateway) configured with `ANTHROPIC_BASE_URL`, availability depends on whether the gateway forwards the request intact to the Anthropic API. If the gateway or its upstream doesn't recognize the advisor tool, see [Automatic retry and error forwarding](/docs/en/llm-gateway-protocol#automatic-retry-and-error-forwarding) for how Claude Code responds.
 * **Supported main model**: Fable, Opus 4.6 or later, Sonnet 4.6 or later, or Haiku 4.5. See [Choose an advisor model](#choose-an-advisor-model) for which advisors each accepts.
 * **Feature-flag fetching**: Claude Code turns the advisor on through a feature flag it fetches from Anthropic. In a session where a variable that turns flag fetching off is set, such as `DISABLE_TELEMETRY`, the advisor stays off. See [Features that need feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching).
 
