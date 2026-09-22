@@ -162,7 +162,9 @@ Have these in place before you start:
     volumes: { pgdata: }
     ```
 
-    The gateway is a single Linux binary that reads the config, connects to Postgres and applies its schema migrations, runs OIDC discovery against your IdP, builds upstream clients, and starts listening. Boot is fail-closed for the config, the Postgres connection with a 5-second timeout, OIDC discovery, and upstream client construction. If any of those is unreachable or misconfigured, the gateway exits with an error rather than serving traffic in a degraded state.
+    The gateway is a single Linux binary that reads the config, connects to Postgres and applies its schema migrations, runs OIDC discovery against your IdP, builds upstream clients, and starts listening.
+
+    Boot is fail-closed for the config, the Postgres connection, OIDC discovery, and upstream client construction. If any of those is unreachable or misconfigured, the gateway exits with an error rather than serving traffic in a degraded state.
 
     A successful boot doesn't validate the inference path, because Amazon Bedrock and Google Cloud's Agent Platform instance credentials resolve on the first request, not at boot.
 
@@ -260,6 +262,10 @@ openssl x509 -noout -fingerprint -sha256 -in cert.pem | cut -d= -f2 | tr -d : | 
 ```
 
 When the certificate rotates, every developer sees the trust prompt again, so treat rotations as a planned event and republish the fingerprint. If your gateway policy includes [settings that need approval](/docs/en/server-managed-settings#security-approval-dialogs), the developer also sees that approval dialog again after accepting the new certificate, because Claude Code keys [approval memory](/docs/en/server-managed-settings#approval-memory) to the pinned certificate.
+
+A gateway can return the optional `email` field in its token response to name the account that a sign-in used. When it does, the developer confirms the account before Claude Code saves the credential. After a confirmed sign-in, `/status` shows the account.
+
+The confirmation requires Claude Code v2.1.275 or later on the developer machine; a client below that version ignores the field. The gateway server in the `claude` binary doesn't return the field, so its sign-ins complete without the confirmation.
 
 Once the developer signs in, the [model picker](/docs/en/model-config) shows the models in their `availableModels` allowlist. Managed settings apply at startup and refresh hourly, and telemetry routes to your collector.
 
@@ -455,6 +461,9 @@ These guarantees apply to every session signed in through `/login`. The embedded
 * **Startup with the gateway unreachable**: signed-in sessions exit at startup with an error after about 10 seconds rather than starting without their settings.
 * **Startup after the gateway ends the session**: see [Enforce fail-closed startup](/docs/en/server-managed-settings#enforce-fail-closed-startup) for the launches that open signed out of the gateway and the ones that exit when the gateway answers with a `401`.
 * **Deprovisioning**: a session whose user is disabled in the IdP expires within `ttl_hours` when the next refresh fails.
+* **Sign-out**: `/logout` deletes the gateway credential from the developer's machine.
+  * When the gateway's discovery document advertises a `revocation_endpoint` on the gateway URL's own scheme, host, and port, `/logout` also sends the stored tokens to that endpoint so the gateway can end the session on its side. The request is best effort, so sign-out completes on the developer's machine whether or not the endpoint answers. The revocation requires Claude Code v2.1.275 or later on the developer's machine.
+  * The gateway server in the `claude` binary advertises none, so a sign-out from it ends the session on the developer's machine only. To force sessions out server-side, see [JWT secret rotation](/docs/en/claude-apps-gateway-deploy#jwt-secret-rotation).
 
 ### What the organization can see
 

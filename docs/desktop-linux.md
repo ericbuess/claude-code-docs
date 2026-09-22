@@ -14,7 +14,7 @@ The desktop app on Linux gives you the same Chat, Cowork, and Claude Code experi
 
 ## Requirements
 
-* Ubuntu 22.04 or later, or Debian 12 or later
+* A Debian-based distribution: Ubuntu 22.04 or later, or Debian 12 or later
 * x86\_64 or arm64
 
 Other Debian-based distributions that meet these requirements may work but aren't officially tested. On distributions that aren't Debian-based, such as Fedora or Arch, run the [CLI](/docs/en/setup#system-requirements) instead. If you work on Windows with WSL 2, install the Windows desktop app and run sessions inside your distribution; see [Claude Code Desktop in WSL](/docs/en/desktop-wsl).

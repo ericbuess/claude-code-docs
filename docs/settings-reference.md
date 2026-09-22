@@ -743,7 +743,7 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`sandbox.enabled`](#sandbox-enabled)                                                                 | Turn on [Bash sandboxing](/docs/en/sandboxing#get-started) on macOS, Linux, and WSL2                                                                                                                                             | Sandbox settings                   | Any file                |
 | [`sandbox.enableWeakerNestedSandbox`](#sandbox-enableweakernestedsandbox)                             | Run the Linux [sandbox](/docs/en/sandboxing) inside an unprivileged container                                                                                                                                                    | Sandbox settings                   | Any file                |
 | [`sandbox.enableWeakerNetworkIsolation`](#sandbox-enableweakernetworkisolation)                       | Let `gh`, `gcloud`, and `terraform` verify TLS behind a MITM proxy inside the [sandbox](/docs/en/sandboxing#troubleshooting) on macOS                                                                                            | Sandbox settings                   | Any file                |
-| [`sandbox.excludedCommands`](#sandbox-excludedcommands)                                               | Name commands that always run outside the [sandbox](/docs/en/sandboxing)                                                                                                                                                         | Sandbox settings                   | Any file                |
+| [`sandbox.excludedCommands`](#sandbox-excludedcommands)                                               | Name commands Claude Code can run outside the [sandbox](/docs/en/sandboxing)                                                                                                                                                     | Sandbox settings                   | Any file                |
 | [`sandbox.failIfUnavailable`](#sandbox-failifunavailable)                                             | Refuse to start when the [sandbox](/docs/en/sandboxing) can't, instead of running unsandboxed                                                                                                                                    | Sandbox settings                   | Any file                |
 | [`sandbox.filesystem`](#sandbox-filesystem)                                                           | Control which paths [sandboxed](/docs/en/sandboxing#filesystem-isolation) commands can read and write                                                                                                                            | Sandbox settings                   | Any file                |
 | [`sandbox.filesystem.allowManagedReadPathsOnly`](#sandbox-filesystem-allowmanagedreadpathsonly)       | Stop developers from re-opening [read paths your organization blocked](/docs/en/sandboxing#keep-developers-from-widening-the-policy)                                                                                             | Sandbox settings                   | Managed                 |
@@ -795,7 +795,7 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`syncClaudeAiPlugins`](#syncclaudeaiplugins)                                                         | Stop loading the [plugins enabled on your claude.ai account](/docs/en/plugins-reference#synced-plugins) and stop downloading new ones                                                                                            | Plugins and skills                 | User, local, or managed |
 | [`syncClaudeAiSkills`](#syncclaudeaiskills)                                                           | Stop loading the [skills enabled on your claude.ai account](/docs/en/skills#how-synced-skills-behave) and stop downloading new ones                                                                                              | Plugins and skills                 | User, local, or managed |
 | [`syntaxHighlightingDisabled`](#syntaxhighlightingdisabled)                                           | Turn off syntax highlighting in diffs and code blocks                                                                                                                                                                       | Interface and terminal             | Any file                |
-| [`taskOutputMaxChars`](#taskoutputmaxchars)                                                           | Set how much of a [background task's](/docs/en/tools-reference#background-commands) output Claude receives inline                                                                                                                | Memory and context                 | Any file                |
+| [`taskOutputMaxChars`](#taskoutputmaxchars)                                                           | Removed in v2.1.277, together with the `TaskOutput` tool it sized                                                                                                                                                           | Memory and context                 | Any file                |
 | [`teammateDefaultModel`](#teammatedefaultmodel)                                                       | Removed in v2.1.234; see [Specify teammates and models](/docs/en/agent-teams#specify-teammates-and-models) for how Claude Code picks a teammate's model                                                                          | Global config settings             | Global config           |
 | [`teammateMode`](#teammatemode)                                                                       | Choose how [agent team teammates display](/docs/en/agent-teams#choose-a-display-mode)                                                                                                                                            | Agents, sessions, and worktrees    | Any file                |
 | [`terminalProgressBarEnabled`](#terminalprogressbarenabled)                                           | Hide the terminal progress bar in terminals that support it                                                                                                                                                                 | Interface and terminal             | Any file                |
@@ -973,7 +973,9 @@ Turn [fast mode](/docs/en/fast-mode) on for sessions where it's available, for i
 
 ### `fastModePerSessionOptIn`
 
-Normally, running `/fast` saves [`fastMode`](#fastmode) to a person's user settings, so fast mode is on at the start of every later session. Set this key to `true` to stop that: a saved `fastMode: true` no longer turns fast mode on at session start, and each person has to run `/fast` in each session they want it. Claude Code leaves the `fastMode` key in their file, so turning this key off restores the old behavior. Owners on Team or Enterprise plans can deploy it organization-wide through [server-managed settings](/docs/en/server-managed-settings).
+Normally, running `/fast` saves [`fastMode`](#fastmode) to a person's user settings, so fast mode is on at the start of every later session. Set this key to `true` to stop that: a saved `fastMode: true` no longer turns fast mode on at session start, and each person has to run `/fast` in each session they want it. Claude Code leaves the `fastMode` key in their file, so turning this key off restores the old behavior.
+
+Owners on Team or Enterprise plans can deploy it organization-wide through [server-managed settings](/docs/en/server-managed-settings). When managed settings set the key, `/fast on` is refused outside interactive terminal sessions and reports that your organization has disabled fast mode. That covers [non-interactive mode](/docs/en/headless), the [VS Code extension](/docs/en/vs-code), and [cloud sessions](/docs/en/claude-code-on-the-web).
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: Boolean
@@ -1168,7 +1170,9 @@ Claude Code decides which models a row applies to from the row's key:
 
 ### `modelSettings`
 
-Save an [effort level](/docs/en/model-config#adjust-effort-level) for each model you use. In an interactive session on your machine, when you save `low`, `medium`, `high`, or `xhigh` as your default with `/effort` or the `/model` picker's effort slider, Claude Code writes that level here under the model you're using, so you rarely edit this key yourself. The [`effortLevel`](#effortlevel) entry lists the sessions where `/effort` applies to that session only. Requires Claude Code v2.1.251 or later.
+Save an [effort level](/docs/en/model-config#adjust-effort-level) for each model you use. Requires Claude Code v2.1.251 or later.
+
+In an interactive session on your machine, when you save `low`, `medium`, `high`, or `xhigh` as your default with `/effort` or the `/model` picker's effort slider, Claude Code writes that level here under the model you're using, so you rarely edit this key yourself. When you pick one of those levels in the [VS Code extension's model picker](/docs/en/vs-code#use-the-prompt-box), Claude Code saves it here the same way. The [`effortLevel`](#effortlevel) entry lists the sessions where `/effort` applies to that session only.
 
 Edit the key by hand to change or remove a level you saved.
 
@@ -1741,7 +1745,9 @@ See [Sandbox modes](/docs/en/sandboxing#sandbox-modes) for what auto-allow mode 
 
 ### `sandbox.excludedCommands`
 
-Name commands that Claude Code always runs outside the sandbox, such as tools that don't work under it. Each entry uses the same syntax as the content of a `Bash(...)` [permission rule](/docs/en/permissions#permission-rule-syntax): an exact command, a prefix such as `docker *`, or a wildcard pattern. When any part of a compound command matches an entry, Claude Code runs the whole command unsandboxed.
+Name commands that Claude Code runs outside the sandbox, such as tools that don't work under it. Each entry uses the same syntax as the content of a `Bash(...)` [permission rule](/docs/en/permissions#permission-rule-syntax): an exact command, a prefix such as `docker *`, or a wildcard pattern.
+
+Your entries take a Bash call out of the sandbox only when they cover every command in it, and some call shapes stay sandboxed even then. A `docker *` entry alone doesn't take `npm ci && docker build .` out of the sandbox.
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: array of command patterns
@@ -1754,6 +1760,16 @@ Name commands that Claude Code always runs outside the sandbox, such as tools th
   }
 }
 ```
+
+Claude Code keeps a Bash call sandboxed when it has one of these shapes, among others:
+
+* A command starting with `sudo`, `eval`, or `xargs`
+* A `cd`, `pushd`, or `popd`, wherever it appears in the call
+* A command substitution, a subshell, or a control-flow block such as `if` or `for`
+* A redirection, such as `docker build . > build.log`, other than one that only duplicates a file descriptor, as `2>&1` does
+* A command name that comes from a variable
+
+For example, `cd build && docker compose up` stays sandboxed under a `docker *` entry, and adding a `cd` entry doesn't change that.
 
 Excluded commands still go through the regular permission flow. Exclusion is a convenience, not a security boundary: prefer [`filesystem.allowWrite`](#sandbox-filesystem-allowwrite) when a tool only needs to write somewhere specific. Claude Code merges entries across every settings scope the session loads, and there is no managed-only lock for this list, so keep a managed list narrow.
 
@@ -2860,19 +2876,11 @@ Raise it to keep long descriptions intact at the cost of more context per turn; 
 
 ### `taskOutputMaxChars`
 
-Set how many characters of a [background task's](/docs/en/tools-reference#background-commands) output Claude receives inline when Claude reads the task with the `TaskOutput` tool. When a finished task's output is longer, Claude receives the most recent characters. Raise the limit when your background tasks routinely produce more output than the default. Requires Claude Code v2.1.261 or later.
+<Warning>
+  Removed in v2.1.277, together with the `TaskOutput` tool it sized. Setting it has no effect on current versions. Claude reads a background task's [output file](/docs/en/tools-reference#background-commands) with `Read` instead.
+</Warning>
 
-* **Scope**: [`Any file`](#scopes)
-* **Type**: number of characters, a positive integer. Claude Code clamps the value into the range `4000` to `128000`
-* **Default**: unset, so Claude receives up to 32,000 characters inline
-
-```json settings.json theme={null}
-{
-  "taskOutputMaxChars": 100000
-}
-```
-
-When you set this key, Claude Code ignores the [`TASK_MAX_OUTPUT_LENGTH`](/docs/en/env-vars) environment variable.
+Through v2.1.276, you set this key to the number of characters of a [background task's](/docs/en/tools-reference#background-commands) output that Claude received inline when it read the task with the `TaskOutput` tool.
 
 ## Interface and terminal
 
@@ -5429,7 +5437,7 @@ Run your own command to generate the headers Claude Code sends with OpenTelemetr
 }
 ```
 
-Set the refresh interval with [`CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`](/docs/en/env-vars). See [Dynamic headers](/docs/en/monitoring-usage#dynamic-headers) for the script requirements and where Claude Code reports a failing helper.
+Set the refresh interval with [`CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`](/docs/en/env-vars). See [Dynamic headers](/docs/en/monitoring-usage#dynamic-headers) for the script requirements and what happens when the helper fails.
 
 ## Updates and versioning
 
@@ -5458,7 +5466,7 @@ Claude Code writes `"stable"` to your user settings when you pick it under **Aut
 Keep background auto-updates and `claude update` from installing any version below this one, so moving to the `"stable"` channel doesn't downgrade you from a newer `"latest"` build. Claude Code writes this key for you when you choose to stay on your current version while switching channels in `/config`, and clears it when you switch back to `"latest"`.
 
 * **Scope**: [`Any file`](#scopes). Set it in managed settings to pin an organization-wide minimum that user and project settings can't lower.
-* **Type**: string, a version number such as `"2.1.100"`
+* **Type**: string, a version number such as `"2.1.100"`; a value that isn't a valid version is ignored
 * **Default**: unset, so updates can install any version the channel offers
 
 This example follows the stable channel and refuses to install any version below 2.1.100:

@@ -46,6 +46,8 @@ To compare against a base other than the default branch, pass the branch name. T
 
 The base branch doesn't need to exist in your local clone; Claude Code fetches it from `origin`. If the name has a typo, Claude Code suggests the closest branch name in the error.
 
+A commit id or tag also works as the base, and the review then covers the changes on your branch since that commit.
+
 ### Review a pull request
 
 To review a GitHub pull request instead of a local branch, pass the PR number:
@@ -102,8 +104,13 @@ Claude Code treats your text as a note only when it has more than one word and i
 Ultrareview checks the diff before any review work runs and tells you when it can't review it as-is:
 
 * **Diff too large**: a branch review can include up to 500 changed files and 8,000 changed lines by default. The exact values can change, and the [refusal](/docs/en/errors#diff-is-too-large-for-ultrareview) names the ones in effect, the size of your diff, and the files with the most changed lines. Claude Code refuses a too-large pull request the same way, naming its file and line counts but not the per-file breakdown
-* **Nothing to review**: when the diff against the base is empty, Claude Code says so and suggests staging or committing local edits, or passing a different base
-* **No merge base**: when your branch shares no history with the base branch, Claude Code falls back to reviewing every tracked file in the repository instead; the fallback requires a full clone and applies the same size limits. On a checkout with no branches or other refs, such as a detached HEAD created by checking out `FETCH_HEAD` after fetching a URL, Claude Code [refuses the review](/docs/en/errors#your-checkout-has-no-branches) and suggests creating a branch first
+* **Nothing to review**: when the diff against the base is empty, ultrareview refuses and names the branch or commit it compared against and the case you're in, such as being on the base branch itself with nothing uncommitted, or a branch whose commits are all part of the base already. It also suggests the way out for that case, such as switching to the branch with your work, staging or committing local edits, or passing a different base
+* **First commit**: a repository's first commit has nothing earlier to compare with, so ultrareview reviews every file in it after you confirm in the launch dialog. If you have untracked files, it refuses instead and tells you to `git add` the ones you want reviewed. The same size limits apply.
+
+  A first commit is reviewed whole only after that confirmation, so the `claude ultrareview` subcommand and `claude -p` refuse it and point you to an interactive session instead. Requires Claude Code v2.1.277 or later
+* **No merge base**: when your branch shares no history with the base branch, or the repository has no base branch to compare with, ultrareview reviews every tracked file in the repository instead. The fallback requires a full clone and applies the same size limits. It launches only when you confirm in the launch dialog or run the `claude ultrareview` subcommand yourself. In `claude -p` and anywhere else neither happens, ultrareview refuses, says the review would cover every file, and points you to an interactive session.
+
+  On a checkout with no branches or other refs, such as a detached HEAD created by checking out `FETCH_HEAD` after fetching a URL, Claude Code [refuses the review](/docs/en/errors#your-checkout-has-no-branches) and suggests creating a branch first
 
 ## Pricing and free runs
 
@@ -148,7 +155,7 @@ claude ultrareview origin/main
 
 Without arguments, the subcommand reviews the diff between your current branch and the default branch, with the same [whole-repository fallback](#diff-limits-and-fallbacks) as `/code-review ultra` when no merge base exists. Pass a PR number to review a pull request, or a base branch to review against it; [base-branch handling](#review-against-a-different-base) matches the interactive command.
 
-You consent to the whole-repository fallback and to the billing and terms prompt when you run the subcommand, so the run starts without waiting for input.
+You consent to the whole-repository fallback and to the billing and terms prompt when you run the subcommand, so the run starts without waiting for input. Running it yourself is what counts as consent. When Claude runs the subcommand for you instead, for example through the Bash tool, Claude Code refuses the whole-repository review.
 
 On Claude Code v2.1.218 or later, you can also start the cloud review by running `/code-review ultra` in a non-interactive session, for example `claude -p '/code-review ultra'`. Claude Code launches the review and prints a tracking link without waiting for the findings, unlike `claude ultrareview`, which blocks until they arrive. When the review would bill usage credits, Claude Code stops before launching and points you to `claude ultrareview`, because the billing confirmation needs an interactive session. Before v2.1.218, `/code-review ultra` in a non-interactive session ran a local review.
 

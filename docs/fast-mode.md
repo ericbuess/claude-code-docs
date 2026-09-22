@@ -14,11 +14,11 @@ Fast mode is a high-speed configuration for Claude Opus, making the model up to 
 
 Fast mode is not a different model. It uses Claude Opus with a different API configuration that prioritizes speed over cost efficiency. You get identical quality and capabilities with faster responses. Fast mode is supported on Opus 5 and Opus 4.8. It is not available on Sonnet, Haiku, or other models.
 
-Claude Code treats Opus 4.7 like any other model without fast mode support: switching to it turns fast mode off. Fast mode for Opus 4.7 was deprecated on June 25, 2026, and removed on July 24, 2026.
+Opus 4.7 doesn't support fast mode, so switching to it turns fast mode off. Fast mode for Opus 4.7 was deprecated on June 25, 2026, and removed on July 24, 2026.
 
 What to know:
 
-* Use `/fast` to toggle on fast mode in the Claude Code CLI. The VS Code extension follows your [`fastMode` setting](#toggle-fast-mode) and offers a **Toggle fast mode** command when the selected model supports fast mode.
+* Use `/fast` to toggle on fast mode in the Claude Code CLI. The [VS Code extension](/docs/en/vs-code) offers a **Toggle fast mode** command when the selected model supports fast mode. Claude Code saves that toggle to your [`fastMode` setting](#toggle-fast-mode).
 * Fast mode pricing per MTok input/output is \$10/\$50 on Opus 5 and Opus 4.8.
 * Available to Claude Code users on subscription plans (Pro/Max/Team/Enterprise) and on Claude Console. Team and Enterprise organizations need an Owner to enable it first, and Console organizations need access provisioned first, both described under [Requirements](#requirements).
 * For Claude Code users on subscription plans (Pro/Max/Team/Enterprise), fast mode is available via usage credits only and not included in the subscription rate limits.
@@ -129,9 +129,11 @@ Fast mode requires all of the following:
 * **Owner enablement for Team and Enterprise**: fast mode is disabled by default for Team and Enterprise organizations. An Owner must explicitly [enable fast mode](#enable-fast-mode-for-your-organization) before users can access it.
 
 <Note>
-  Two organization settings can block turning fast mode on with `/fast`:
+  Four organization settings can block turning fast mode on with `/fast`:
 
   * **Fast mode not enabled**: if fast mode hasn't been enabled for your organization, turning fast mode on with `/fast` shows "Fast mode has been disabled by your organization."
+  * **Fast mode turned off by managed settings**: if your organization deploys [managed settings](/docs/en/managed-settings) that set [`fastMode: false`](/docs/en/settings-reference#fastmode), turning fast mode on with `/fast` shows the same "Fast mode has been disabled by your organization" message.
+  * **Per-session opt-in required**: managed settings that set [`fastModePerSessionOptIn: true`](#require-per-session-opt-in) refuse `/fast on` with the same message everywhere except an interactive terminal session.
   * **Fast-mode model not allowed**: if your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist excludes the fast-mode Opus model, turning it on is refused with "is not in your organization's allowed models". In a session already running on an allowed Opus model that supports fast mode, `/fast` instead enables fast mode on your current model without switching models.
 </Note>
 
@@ -181,6 +183,8 @@ By default, fast mode a user turns on in an interactive session persists across 
 ```
 
 This is useful for controlling costs in organizations where users run multiple concurrent sessions. The user's fast mode preference is still saved, so removing this setting restores the default persistent behavior.
+
+When managed settings set the key, `/fast on` works only in an interactive terminal session. Everywhere else, including [non-interactive mode](/docs/en/headless), the [VS Code extension](/docs/en/vs-code), and [cloud sessions](#use-fast-mode-in-cloud-sessions), it's refused with a message that your organization has disabled fast mode.
 
 ## Handle rate limits
 

@@ -126,6 +126,37 @@ Subagent IDs are generated fresh each time Claude Code spawns a subagent. Teamma
 
 If your developers set `ANTHROPIC_CUSTOM_HEADERS`, those headers appear on requests as well.
 
+### Gateway hint headers
+
+Claude Code can also send routing hints: per-request facts a gateway or router can use to schedule, cache, or attribute a request. Requires Claude Code v2.1.273 or later.
+
+Whether a request carries them depends on where Claude Code sends it:
+
+* Direct connection to the Anthropic API: sent by default
+* Custom base URL: off by default, because a proxy that rejects unknown headers would fail the request. To receive them, set [`CLAUDE_CODE_GATEWAY_HINT_HEADERS=1`](/docs/en/env-vars) for your developers, for example in the `env` block of [managed settings](/docs/en/managed-settings)
+* Any other backend, including Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and Claude Platform on AWS: sent only when `CLAUDE_CODE_GATEWAY_HINT_HEADERS=1` is set
+
+Setting `CLAUDE_CODE_GATEWAY_HINT_HEADERS` to `0` stops the headers on every connection.
+
+The headers carry only what the rows below list: fixed vocabularies, tool names, and durations, never prompt text or file contents. Every value is printable ASCII.
+
+| Header                              | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| :---------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `x-claude-code-request-class`       | What kind of request this is: `main` for a turn of the main conversation, `subagent` for a turn of a [subagent](/docs/en/sub-agents), `workflow` for an agent running inside a workflow, `compaction` for the summarization request that compacts a conversation, or `auxiliary` for side requests such as session titles, classifiers, and summaries. Sent on every request                                                                                                                  |
+| `x-claude-code-agent-type`          | The kind of subagent that issued the request: a built-in agent type name such as `Explore`, `Plan`, or `general-purpose`, or `custom` for a user-defined agent, `teammate` for an [agent team](/docs/en/agent-teams) member running in the lead's process, or `fork` for a [fork](/docs/en/sub-agents#fork-the-current-conversation). Present only on a subagent's own turns; a subagent's compaction or side requests keep the agent ID but carry no type. A user-chosen agent name is never sent |
+| `x-claude-code-compaction`          | Present on the request that summarizes the conversation during a [compaction](/docs/en/prompt-caching#compacting-the-conversation). The value says what triggered it: `auto` when the context window approached capacity, `manual` for `/compact`, or `reactive` when the API rejected a request as too long. Absent on every other request                                                                                                                                                   |
+| `x-claude-code-context-compacted`   | Present once, on the first main-conversation request after a compaction, with the same values as `x-claude-code-compaction`. The conversation prefix before this request is no longer used, so a cache keyed on it can be dropped                                                                                                                                                                                                                                                        |
+| `x-claude-code-prev-tool-durations` | Measured run time of the tool calls whose results this request carries, as `<name>=<ms>;<name>=<ms>`, for example `Bash=742;Read=9`. Sent on the next request of the same conversation after a batch of tool calls, from the main session or a subagent                                                                                                                                                                                                                                  |
+
+Before parsing `x-claude-code-prev-tool-durations`, check how Claude Code builds the value and what it leaves out:
+
+* Entries: one per tool call that ran, in the order its result was collected, in whole milliseconds
+* Cap: Claude Code sends at most 32 entries and 4 KB, keeping the first entries
+* Encoding: tool names are percent-encoded, covering `%`, `;`, `=`, comma, space, and any character outside printable ASCII
+* Parsing: split on `;`, then on `=`, and decode each name
+* Absence: compaction calls, side requests, and the first request of a new prompt never carry it. Don't read a missing header as a turn that ran no tools
+* Times: each one excludes permission prompts and hooks, and parallel tool calls each report their own time, so the entries don't add up to the gap between requests
+
 ### Forward as open lists
 
 Treat the headers and body fields as open lists, not closed ones. Claude Code gains capabilities over releases, and they arrive as new `anthropic-beta` values, new request body fields, and occasionally new `anthropic-*` or `x-claude-code-*` headers.
