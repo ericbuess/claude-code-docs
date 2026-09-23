@@ -343,7 +343,7 @@ Claude Code can read [`AGENTS.md`](/docs/en/glossary#agents-md) as your project 
 To change the default, for example to have Claude always read both files, read only `CLAUDE.md`, or read only your organization's managed instructions, [change the **Project instructions** setting](#choose-which-instruction-files-load).
 
 <Note>
-  Reading `AGENTS.md` directly requires Claude Code v2.1.277 or later. In some sessions, such as those on Amazon Bedrock or with telemetry disabled, Claude [can't read `AGENTS.md`](#when-agents-md-support-is-unavailable), so [import it from a `CLAUDE.md`](#share-one-file-with-other-coding-tools) there instead.
+  Reading `AGENTS.md` directly requires Claude Code v2.1.277 or later. In some sessions Claude [can't read `AGENTS.md`](#when-agents-md-support-is-unavailable), so [import it from a `CLAUDE.md`](#share-one-file-with-other-coding-tools) there instead.
 </Note>
 
 ### When Claude Code reads AGENTS.md
@@ -394,11 +394,10 @@ Your change applies from the next message you send and in every new session.
 In these sessions Claude reads `CLAUDE.md` files only, and **Project instructions** doesn't appear in the `/config` settings panel:
 
 * You're on a Claude Code version before v2.1.277
-* Your session doesn't [fetch feature flags from Anthropic](/docs/en/env-vars#features-that-need-feature-flag-fetching), for example because you use Amazon Bedrock or another third-party provider, or you disabled telemetry. The linked section has the full list
-* It's your [first session after you install or upgrade](/docs/en/env-vars#first-session-after-an-install-or-upgrade) to a version with `AGENTS.md` support. Claude reads `AGENTS.md` from your next session on
 * You disabled the built-in `agents-md` plugin in `/plugin`
+* In some cases, it's your [first session after you upgrade](/docs/en/env-vars#first-session-after-an-install-or-upgrade) from v2.1.276 or earlier. Claude reads `AGENTS.md` from your next session on
 
-To give Claude your `AGENTS.md` in these sessions, [import it from a `CLAUDE.md`](#share-one-file-with-other-coding-tools).
+Before v2.1.281, some sessions, such as those on Amazon Bedrock or with telemetry disabled, read `CLAUDE.md` files only. On those versions, update Claude Code. To give Claude your `AGENTS.md` in any of these sessions, [import it from a `CLAUDE.md`](#share-one-file-with-other-coding-tools).
 
 ### Where AGENTS.md differs from CLAUDE.md
 
@@ -569,9 +568,8 @@ For instructions you want at the system prompt level, use [`--append-system-prom
 If your repository has an `AGENTS.md` and Claude doesn't seem to know what it says, the usual cause is a `CLAUDE.md` somewhere on the project path. By default Claude reads `AGENTS.md` only when you have no `CLAUDE.md` or `CLAUDE.local.md` in your working directory or above it. Check these in order:
 
 1. Look for a `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` in your working directory or any directory above it, other than your `~/.claude/CLAUDE.md`. If you find one, Claude reads it instead of `AGENTS.md` unless you set **Project instructions** to `claude-md-and-agents-md`.
-2. Run `claude --version` and confirm v2.1.277 or later.
-3. Check whether your session is one that [can't load `AGENTS.md`](#when-agents-md-support-is-unavailable), such as a session on a third-party provider or with telemetry disabled.
-4. Type `/config` in your session to open the settings panel and confirm **Project instructions** isn't set to `claude-md` or `managed-only`. If you don't see the setting there at all, your session is one that [can't load `AGENTS.md`](#when-agents-md-support-is-unavailable).
+2. Run `claude --version` and confirm v2.1.277 or later. Before v2.1.281, some sessions, such as those on Amazon Bedrock or with telemetry disabled, [couldn't load `AGENTS.md`](#when-agents-md-support-is-unavailable) either, so on those versions update to v2.1.281 or later.
+3. Type `/config` in your session to open the settings panel and confirm **Project instructions** isn't set to `claude-md` or `managed-only`. If you don't see the setting there at all, your session is one that [can't load `AGENTS.md`](#when-agents-md-support-is-unavailable).
 
 To check whether Claude read your `AGENTS.md`, run `/memory` and look for its path in the list.
 
