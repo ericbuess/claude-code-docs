@@ -314,6 +314,8 @@ As you make changes to your plugin, run `/reload-plugins` to pick up the updates
   To test a plugin together with a plugin it depends on, see [Test a plugin and its dependency locally](/docs/en/plugin-dependencies#test-a-plugin-and-its-dependency-locally).
 </Tip>
 
+To load plugins in a session where you can't add the flag, list their absolute paths in the [`CLAUDE_CODE_PLUGIN_DIRS`](/docs/en/env-vars#variables) environment variable instead. Claude Code loads each path as it loads a `--plugin-dir` path. These plugins load in addition to any you pass with `--plugin-dir`. [Project and local settings can't set this variable](/docs/en/settings-reference#variables-claude-code-ignores-in-env). `CLAUDE_CODE_PLUGIN_DIRS` requires Claude Code v2.1.280 or later.
+
 Trying the plugin with `--plugin-dir` tells you it can work. To find out how often Claude actually reaches for it and gets the right result, run it against a set of test prompts with [`claude plugin eval`](/docs/en/plugin-evals). Each prompt runs several times with and without the plugin loaded, so you can see what the plugin contributes and catch regressions when you change it or a new model ships.
 
 To load several plugins from one place, pass a folder that holds them, such as `--plugin-dir ./plugins`. Loading a folder of plugins requires Claude Code v2.1.265 or later. Claude Code reads the folder's top level to decide which plugins load, and in an interactive session it also watches the folder for later changes:

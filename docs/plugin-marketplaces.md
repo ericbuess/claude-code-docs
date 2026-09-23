@@ -787,39 +787,22 @@ When you run `/plugin marketplace add`, `/plugin install`, `/plugin update`, or 
 
 #### Background auto-updates
 
-By default, the background refresh disables git credential helpers when it checks the marketplace's remote for new commits, so the check can't authenticate to private repositories over HTTPS even when a helper is configured. SSH remotes aren't affected: a key loaded in `ssh-agent` authenticates the background check the same way as the commands you run.
+The background refresh checks the marketplace's remote for new commits with your configured git credential helpers, the same as the commands you run. For SSH remotes, a key loaded in `ssh-agent` authenticates the check. Claude Code runs the check non-interactively: it turns off git's terminal prompts and askpass programs, and tells credential helpers not to prompt. Whether the check can authenticate to a private repository over HTTPS depends on your helper:
 
-When the check finds new commits, or fails because it can't reach or authenticate to the remote, Claude Code clones the marketplace again and swaps the new clone in. If that clone fails, the existing checkout stays in place. The re-clone does use your stored git credentials, but it can [time out on large repositories](#git-operations-time-out), so private-marketplace auto-updates may fail intermittently.
+* A helper that can supply a stored credential without prompting authenticates the check. Git Credential Manager, the macOS Keychain helper, and `git-credential-store` work this way once they hold a credential for the host.
+* A helper that needs to prompt you can't answer in the background. The update fails quietly and the existing checkout stays in place, so your plugins keep working from the last synced state. Run `/plugin marketplace update <name>` to refresh the marketplace with your credentials.
+
+When the check finds the checkout up to date, Claude Code leaves it as it is. When the check finds new commits, or fails because it can't reach or authenticate to the remote, Claude Code clones the marketplace again and swaps the new clone in. If that clone fails, the existing checkout stays in place. The re-clone can [time out on large repositories](#git-operations-time-out).
 
 Two settings make private marketplaces behave predictably:
 
 * Set `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` to keep the existing checkout without attempting the re-clone when the background check can't reach or authenticate to the remote. Your plugins keep working from the last synced state, and manual updates with `/plugin marketplace update` still authenticate with your credentials.
-* Configure a git credential helper, for example with `gh auth setup-git` for GitHub, so the re-clone can authenticate without prompting.
+* Configure a git credential helper, for example with `gh auth setup-git` for GitHub, so the background check and the re-clone can authenticate without prompting.
 
 Setting a provider token such as `GITHUB_TOKEN` in your environment doesn't by itself enable background authentication. Tokens take effect only through a configured credential helper, for example the `gh` CLI's helper, which reads `GH_TOKEN` and `GITHUB_TOKEN`.
 
-To make the background check itself authenticate over HTTPS, configure a global git URL rewrite. The rewrite embeds a token in the remote URL, so it takes effect even though the background check disables credential helpers. When the check finds the checkout up to date, Claude Code skips the re-clone. The following example rewrites the marketplace repository's URL to include an access token:
-
-```bash theme={null}
-git config --global url."https://x-access-token:YOUR_TOKEN@github.com/acme-corp/plugins".insteadOf "https://github.com/acme-corp/plugins"
-```
-
-Scope the rewrite to the marketplace repository or organization path. A rewrite whose base is only the host applies to every fetch and push to that host on the machine and overrides your normal credentials, including pushes to your own repositories.
-
-Each provider expects a different username in the rewritten URL, and the same path scoping applies to every provider. For self-hosted servers, replace the hostname with your server's hostname:
-
-| Provider  | Rewritten URL form                                                |
-| :-------- | :---------------------------------------------------------------- |
-| GitHub    | `https://x-access-token:YOUR_TOKEN@github.com/acme-corp/plugins`  |
-| GitLab    | `https://oauth2:YOUR_TOKEN@gitlab.com/acme-corp/plugins`          |
-| Bitbucket | `https://x-token-auth:YOUR_TOKEN@bitbucket.org/acme-corp/plugins` |
-
-The rewrite stores the token in plaintext in your gitconfig, so use a token with read-only access to the marketplace repository.
-
 <Note>
   In CI/CD environments, configure a git credential helper before installing plugins from private repositories. On GitHub Actions, export a token with read access to the marketplace repository as `GH_TOKEN`, then run `gh auth setup-git`. The default workflow token can only access the workflow's own repository, so a private marketplace in another repository needs a personal access token or app token.
-
-  If you configure a global URL rewrite in the pipeline, the rewrite also authenticates the background check directly.
 </Note>
 
 ### Distribute through organization settings
@@ -1488,13 +1471,14 @@ For manual installation and updates:
 
 For background auto-updates:
 
-* By default, background refreshes disable git credential helpers when they check the remote for new commits, so the check can't authenticate over HTTPS. SSH remotes with a key loaded in `ssh-agent` still authenticate
-* When the check can't authenticate, Claude Code re-clones the marketplace with your stored credentials, but the re-clone may time out on large repositories
+* The background check uses your configured git credential helpers but never prompts, so your helper must be able to answer with a stored credential. SSH remotes with a key loaded in `ssh-agent` also authenticate
+* If your helper needs to prompt you, the background update fails quietly and the existing checkout stays in place. Sign in to your helper first so it holds a credential for the host. For GitHub, run `gh auth login`, then `gh auth setup-git`
+* When the check finds new commits, or can't reach or authenticate to the remote, Claude Code re-clones the marketplace with the same credentials. The re-clone may time out on large repositories
 * Set `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` to keep the existing checkout without attempting the re-clone when the background check can't reach or authenticate to the remote
-* Configure a git credential helper, for example `gh auth setup-git`, so the re-clone can authenticate
 * If the re-clone times out on a large repository, increase the limit with [`CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS`](#git-operations-time-out)
-* Configure a [git URL rewrite](#private-repositories) scoped to the marketplace repository so the background check authenticates directly
 * Or update private marketplaces manually with `/plugin marketplace update <name>`, which uses your credentials
+
+Before v2.1.280, the background check ran without your credential helpers and couldn't authenticate to private repositories over HTTPS.
 
 ### Marketplace updates fail in offline environments
 

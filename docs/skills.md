@@ -1088,6 +1088,14 @@ The Skills row in `/context` reports the size of the listing after the budget is
 
 To raise the budget, set the [`skillListingBudgetFraction`](/docs/en/settings-reference#skilllistingbudgetfraction) setting (for example, `0.02` = 2%) or the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable to a fixed character count. To free budget for other skills, set low-priority entries to `"name-only"` in [`skillOverrides`](#override-skill-visibility-from-settings) so they list without a description. You can also trim the `description` and `when_to_use` text at the source: put the key use case first, since each entry's combined text is capped at 1,536 characters regardless of budget. The cap is configurable with [`skillListingMaxDescChars`](/docs/en/settings-reference#skilllistingmaxdescchars).
 
+### Personal skills disappeared
+
+If skill folders you created in `~/.claude/skills/` are gone, look in `~/.claude/skills/.trash/`. When Claude Code [syncs skills from claude.ai](#how-synced-skills-behave), it downloads them into the separate `synced` subfolder and doesn't move or delete the folders you create.
+
+Before v2.1.280, a file named `manifest.json` in `~/.claude/skills/` caused Claude Code to move the skill folders that file listed into a timestamped folder under `~/.claude/skills/.trash/`, and those skills stopped loading.
+
+To restore a skill, move its folder from the timestamped folder back into `~/.claude/skills/`. Do this before the [retention sweep](/docs/en/claude-directory#cleaned-up-automatically) deletes trash entries, by default 30 days after they were moved to the trash.
+
 ## Related resources
 
 * **[Debug your configuration](/docs/en/debug-your-config)**: diagnose why a skill isn't appearing or triggering

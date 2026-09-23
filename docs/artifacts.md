@@ -306,6 +306,10 @@ Artifacts require every condition below. When one is not met, Claude writes a lo
 | Organization policy | Customer-managed encryption keys (CMEK), HIPAA, and [Zero Data Retention](/docs/en/zero-data-retention) are not enabled for the organization.                                                                                                                                                                                                                                                                             |
 | Surface             | Claude Code CLI, or the Claude desktop app version 1.13576.0 or later. [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions can also publish artifacts when both Claude Tag and artifacts are enabled for the organization. Off by default in [Agent SDK](/docs/en/agent-sdk/overview), GitHub Action, and MCP-server contexts, and when [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars) is set. |
 
+Whether artifacts are allowed for your organization comes from your organization's policy, which Claude Code loads from `api.anthropic.com`. When Claude Code can't load the policy, artifacts are unavailable. When you ask for one, Claude says why.
+
+If a proxy, VPN, or web filter is involved, ask your IT admin to let `api.anthropic.com` through. Claude Code keeps retrying in the background, and artifacts become available once the policy loads and allows them.
+
 ## Disable artifacts
 
 To turn artifacts off for your own sessions regardless of your organization's setting, use any of:

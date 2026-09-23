@@ -1117,6 +1117,11 @@ Logged when all hooks for a hook event have finished.
 * `num_non_blocking_error`: Count that failed without blocking
 * `num_cancelled`: Count cancelled before completion
 * `total_duration_ms`: Wall-clock duration of all matching hooks
+* `stdout_chars`: Total characters of stdout across the matching hooks that succeeded. Requires Claude Code v2.1.280 or later
+* `additional_context_chars`: Total characters of `additionalContext` returned by the matching hooks. Requires Claude Code v2.1.280 or later
+* `system_message_chars`: Total characters of `systemMessage` returned by the matching hooks. Requires Claude Code v2.1.280 or later
+* `initial_user_message_chars`: Total characters of `initialUserMessage` returned by the matching hooks. Requires Claude Code v2.1.280 or later
+* `num_outputs_persisted`: Number of hook outputs over the [10,000-character cap](/docs/en/hooks#json-output) that Claude Code saved to a file. Requires Claude Code v2.1.280 or later
 * `managed_only`: `"true"` when only managed-policy hooks are permitted
 * `hook_source`: `"policySettings"` or `"merged"`
 * `safe_mode`: `"true"` when the session was started with [`--safe-mode`](/docs/en/cli-reference), `"false"` otherwise. Requires Claude Code v2.1.169 or later

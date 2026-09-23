@@ -1420,7 +1420,9 @@ Add clear, descriptive server instructions that explain:
 * When Claude should search for your tools
 * Key capabilities your server provides
 
-Claude Code truncates tool descriptions and server instructions at 2KB each. Keep them concise to avoid truncation, and put critical details near the start.
+Claude Code truncates each tool description and each server's instructions at 2,048 characters by default. Keep them concise, and put critical details near the start.
+
+To change the limit for every MCP server in your session, set [`CLAUDE_CODE_MAX_MCP_DESCRIPTION_LENGTH`](/docs/en/env-vars#variables) to a number of characters. This variable requires Claude Code v2.1.280 or later.
 
 ### Configure tool search
 

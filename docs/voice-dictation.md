@@ -65,6 +65,8 @@ Hold `Space` to start recording. Claude Code detects a held key by watching for 
 
 The first couple of key-repeat characters type into the input during warmup and are removed automatically when recording activates. A single `Space` tap still types a space, since hold detection only triggers on rapid repeat.
 
+Holding or tapping `Space` starts dictation only where the keypress would otherwise type into the prompt. In the [transcript viewer](/docs/en/interactive-mode#transcript-viewer), `Space` pages through the conversation, and in [vim mode](/docs/en/interactive-mode#vim-editor-mode) outside INSERT it is a command. A [rebound modifier combination](#rebind-the-dictation-key) like `meta+k` never types text, so it starts dictation from those places too.
+
 <Tip>
   To skip the warmup, switch to [tap mode](#tap-to-record-and-send) with `/voice tap`, or [rebind to a modifier combination](#rebind-the-dictation-key) like `meta+k`. Modifier combos start recording on the first keypress.
 </Tip>
@@ -90,6 +92,14 @@ Claude Code inserts the transcript and submits the prompt automatically when the
 The three-word threshold counts words for languages written without spaces. Japanese, Chinese, and Thai transcripts count individual words, so they auto-submit in tap mode and in hold mode with `autoSubmit`.
 
 The first tap only starts recording when the prompt input is empty, so you can still type spaces normally while composing a message. The second tap stops recording regardless of input contents. Recording also stops automatically after 15 seconds of silence or two minutes total.
+
+## Cancel a recording
+
+Press `Esc` or `Ctrl+C` to cancel a dictation instead of finalizing it. Claude Code stops the microphone, discards the transcript, and restores the prompt to what it held before the recording started.
+
+Both keys also cancel while a finished recording's transcript is still processing. A prompt you edited or submitted during processing stays as you left it.
+
+Neither key does anything else in the press that cancels: `Esc` doesn't interrupt Claude's response, and `Ctrl+C` doesn't clear the prompt or count as the first of the [two presses that exit Claude Code](/docs/en/interactive-mode#general-controls).
 
 ## Change the dictation language
 
