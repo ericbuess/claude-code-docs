@@ -425,7 +425,7 @@ These are the fields a gating script usually reads. The document also carries th
   What a run can access
 </h2>
 
-`claude plugin eval` loads the target plugin's skills and hooks and runs its eval suite on your machine, as you. Pointing it at a plugin is the same trust decision as `claude --plugin-dir`, so only evaluate plugins you trust. The isolation described in this section limits what the agent under test can reach; it isn't a boundary against the plugin's own code, and a suite that passes says nothing about whether the plugin is safe.
+`claude plugin eval` loads the target plugin's skills, hooks, and agents and runs its eval suite on your machine, as you. Pointing it at a plugin is the same trust decision as `claude --plugin-dir`, so only evaluate plugins you trust. The isolation described in this section limits what the agent under test can reach; it isn't a boundary against the plugin's own code, and a suite that passes says nothing about whether the plugin is safe.
 
 ### Trust the plugin directory
 
@@ -589,6 +589,14 @@ No `<case>/prompt.md` or `<case>/case.yaml` exists beneath the eval directory in
 If the summary has no `W/OUT` column, or the case fails with "ablation requested but no plugin resolved", no plugin was found for the case. Add `plugins: ["../.."]` to the case, giving the path from the case directory to the plugin directory.
 
 If the plugin did load and `Δ` is still near zero with your `tool_used: Skill` grader failing, that's usually a real finding, meaning the skill's `description` doesn't trigger on the prompt's phrasing. Adjust the description and re-run the same suite.
+
+### "Agent type '...' not found" for one of your plugin's agents
+
+By default each case runs both with your plugin and without it, and the runs without it are the [no-plugin baseline](#the-no-plugin-baseline). When Claude dispatches one of your plugin's agents in a baseline run, the Agent tool call fails with `Agent type '<plugin>:<agent-name>' not found. Available agents: ...`. The list names only agents that exist without the plugin, such as the [built-in subagents](/docs/en/sub-agents#built-in-subagents).
+
+The error is expected, since `Δ` compares your plugin's runs against the baseline. In the JSON result, the baseline runs are under `cases[].arms.without`.
+
+In runs with your plugin loaded, a case that lists `Agent` in `allowed_tools` can dispatch one of your plugin's agents by its namespaced name, such as `my-plugin:code-reviewer` for the `code-reviewer` agent in a plugin named `my-plugin`. To skip the baseline runs, pass `--ablation none`.
 
 ### Everything scores zero although the right files were produced
 
