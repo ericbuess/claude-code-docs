@@ -232,10 +232,10 @@ To turn Remote Control off entirely, use the [`disableRemoteControl`](/docs/en/s
 <Note>
   Trusted Devices is currently in beta. Features and functionality may evolve as the experience is refined.
 
-  Trusted Devices is available on Team and Enterprise plans. It is off by default until an Owner enables it.
+  Trusted Devices is available on Pro, Max, Team, and Enterprise plans and is off by default. On Team and Enterprise plans, an Owner turns it on for the organization. On Pro and Max plans, you turn on **Require trusted devices** yourself in your settings, on the Cowork or Account page.
 </Note>
 
-Trusted Devices is an organization-wide setting that requires members to verify their device before they can view or steer Remote Control sessions from claude.ai, the Claude mobile apps, or Claude Desktop. It ties Remote Control access to a known device and a recent authentication, not just a signed-in account.
+Trusted Devices requires each member of your organization, or you alone on a Pro or Max plan, to verify their device before they can view or steer Remote Control sessions from claude.ai, the Claude mobile apps, or Claude Desktop. It ties Remote Control access to a known device and a recent authentication, not just a signed-in account.
 
 When the setting is on, interacting with a Remote Control session requires both of the following:
 
@@ -246,13 +246,15 @@ Biometric checks run on the device through the operating system or browser, the 
 
 The setting applies only to Remote Control. Regular Claude chat, Claude Code in the terminal, and API usage are unaffected.
 
-### Enable Trusted Devices for your organization
+<h3 id="enable-trusted-devices-for-your-organization">
+  Enable Trusted Devices for a Team or Enterprise organization
+</h3>
 
-An Owner enables the setting from the Claude Code admin console.
+An Owner enables the setting from the claude.ai organization settings.
 
 <Steps>
-  <Step title="Open Claude Code admin settings">
-    Go to [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code). The **Require trusted devices** toggle appears under the Remote Control setting.
+  <Step title="Go to the Capabilities page">
+    Go to [**Organization settings > Capabilities > Remote sessions**](https://claude.ai/admin-settings/capabilities). The **Require trusted devices** toggle appears in that section.
   </Step>
 
   <Step title="Turn on Require trusted devices">

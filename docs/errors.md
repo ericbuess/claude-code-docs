@@ -34,6 +34,8 @@ Match the message you see to a section below.
 | `Auto mode could not evaluate this action and is blocking it for safety`                                                                                                                                                                                             | [Server errors](#auto-mode-cannot-determine-the-safety-of-an-action)                                                          |
 | `Auto mode classifier transcript exceeded context window`                                                                                                                                                                                                            | [Server errors](#auto-mode-cannot-determine-the-safety-of-an-action)                                                          |
 | `Agent aborted: auto mode classifier request refused by the safety safeguard`                                                                                                                                                                                        | [Server errors](#auto-mode-cannot-determine-the-safety-of-an-action)                                                          |
+| `The server-side auto mode classifier gave no verdict`                                                                                                                                                                                                               | [Server errors](#the-server-returned-no-safety-verdict)                                                                       |
+| `Auto mode is unavailable — the server returned no safety verdict for the last 10 responses`                                                                                                                                                                         | [Server errors](#the-server-returned-no-safety-verdict)                                                                       |
 | `Agent terminated early due to an API error`                                                                                                                                                                                                                         | [Server errors](#agent-terminated-early-due-to-an-api-error)                                                                  |
 | `You've hit your session limit` / `You've hit your weekly limit` / `You've hit your Opus limit` / `You've hit your Sonnet limit`                                                                                                                                     | [Usage limits](#youve-hit-your-session-limit)                                                                                 |
 | `Usage credits required for 1M context`                                                                                                                                                                                                                              | [Usage limits](#usage-credits-required-for-1m-context)                                                                        |
@@ -152,6 +154,8 @@ Match the message you see to a section below.
 | `API Error: 400 orphaned tool_result in conversation history`                                                                                                                                                                                                        | [Request errors](#tool-use-or-thinking-block-mismatch)                                                                        |
 | `API Error: 400 duplicate tool_use ID in conversation history`                                                                                                                                                                                                       | [Request errors](#tool-use-or-thinking-block-mismatch)                                                                        |
 | `[Unsupported tool content removed]`                                                                                                                                                                                                                                 | [Request errors](#unsupported-tool-content-removed)                                                                           |
+| `role 'system' must precede an 'assistant' message`                                                                                                                                                                                                                  | [Request errors](#role-system-must-precede-an-assistant-message)                                                              |
+| `Invalid encrypted_content in search_result block` / `Invalid encrypted_index in text block` / `Failed to decrypt web search result content`                                                                                                                         | [Request errors](#invalid-encrypted-content-in-search-result-block)                                                           |
 | `server_tool_use.name: Input should be` on every turn of a resumed session                                                                                                                                                                                           | [Request errors](#unsupported-tool-content-removed)                                                                           |
 | `<model> can't help with this. Start a new session to continue`                                                                                                                                                                                                      | [Request errors](#usage-policy-refusal)                                                                                       |
 | `Claude Code is unable to respond to this request, which appears to violate our Usage Policy`                                                                                                                                                                        | [Request errors](#usage-policy-refusal)                                                                                       |
@@ -169,6 +173,7 @@ Match the message you see to a section below.
 | `Error: Invalid --agents configuration:`                                                                                                                                                                                                                             | [Command-line errors](#invalid-agents-configuration)                                                                          |
 | `Error: Settings file exceeds the 2MiB limit`                                                                                                                                                                                                                        | [Command-line errors](#settings-file-exceeds-the-2mib-limit)                                                                  |
 | `The current directory no longer exists (it was deleted or moved)` / `Can't read the current directory`                                                                                                                                                              | [Command-line errors](#the-current-directory-no-longer-exists)                                                                |
+| `Temp directory <dir> ... Refusing to use it` / `ENOSPC: no space left on device, mkdir '<dir>'`                                                                                                                                                                     | [Command-line errors](#temp-directory-refused-or-cannot-be-created)                                                           |
 | `couldn't be resolved to a real location, so its skills, commands, and agents weren't loaded`                                                                                                                                                                        | [Command-line errors](#directory-couldnt-be-resolved-to-a-real-location)                                                      |
 | `Error: Workspace not trusted` when starting Remote Control                                                                                                                                                                                                          | [Command-line errors](#workspace-not-trusted-when-starting-remote-control)                                                    |
 | `` `<flag>` before `remote-control` is not carried over to the sessions Remote Control starts ``                                                                                                                                                                     | [Command-line errors](#not-carried-over-to-the-sessions-remote-control-starts)                                                |
@@ -212,6 +217,7 @@ Match the message you see to a section below.
 | `` `plugin eval` is currently in early access `` / `` `plugin eval` is currently unavailable ``                                                                                                                                                                      | [Plugin errors](#plugin-eval-is-currently-in-early-access)                                                                    |
 | `Marketplace "<name>" is registered from an untrusted source`                                                                                                                                                                                                        | [Plugin errors](#marketplace-is-registered-from-an-untrusted-source)                                                          |
 | `Marketplace "<name>" is already added from a different source`                                                                                                                                                                                                      | [Plugin errors](#marketplace-is-already-added-from-a-different-source)                                                        |
+| `"<name>" is another spelling of "<reserved>", a reserved marketplace name`                                                                                                                                                                                          | [Plugin errors](#marketplace-name-is-another-spelling-of-a-reserved-name)                                                     |
 | `references ${user_config.*} in a shell-form command`                                                                                                                                                                                                                | [Plugin errors](#plugin-command-references-user-config)                                                                       |
 | `Monitor "<name>" from plugin <plugin> references ${user_config.*} in its command`                                                                                                                                                                                   | [Plugin errors](#plugin-command-references-user-config)                                                                       |
 | `headersHelper for MCP server '<name>' references ${user_config.*}`                                                                                                                                                                                                  | [Plugin errors](#plugin-command-references-user-config)                                                                       |
@@ -543,6 +549,37 @@ What happens to the action depends on where Claude requested it:
 
 * In an interactive session, approve or deny the action in the prompt that appears
 * In an interactive session, run `/compact` to reduce the conversation size so subsequent actions fit within the classifier window again
+
+### The server returned no safety verdict
+
+Under [server-side classifier review](/docs/en/permission-modes#server-side-classifier-review), auto mode denies an action when the server gives no verdict for it. The denial names a category in parentheses when Claude Code can determine one, such as `(timed out)`:
+
+```text theme={null}
+The server-side auto mode classifier gave no verdict (timed out), so auto mode cannot determine the safety of <tool>.
+```
+
+The rest of the message tells Claude whether one retry can help. Before some of these denials, Claude Code waits so that Claude's next attempt doesn't follow at once. During the wait in an interactive session, the spinner shows `Auto mode check unavailable` with a countdown, and pressing `Esc` interrupts the turn.
+
+After ten responses in a row with no verdict, auto mode stops the turn:
+
+```text theme={null}
+Auto mode is unavailable — the server returned no safety verdict for the last 10 responses, so Claude stopped. Send a message to try again, or switch out of auto mode.
+```
+
+The stop message appears in a different place in each kind of session:
+
+* In an interactive session, the message appears as a warning in the transcript and the turn ends
+* In a [non-interactive](/docs/en/headless) `-p` run, the run ends and reports an execution error. With the default text output, the message prints on stderr.
+* When a [subagent](/docs/en/sub-agents) hit the limit, the subagent stops before finishing, and Claude receives whatever it produced with a note that auto mode stopped it
+
+**What to do:**
+
+* Send another message to have Claude try again. The count of responses starts over.
+* If the stop repeats and your requests go through an [LLM gateway or proxy](/docs/en/llm-gateway), check whether it cuts streaming responses short or rewrites them. [Server-side classifier review](/docs/en/permission-modes#server-side-classifier-review) says which gateway behavior causes denials, and the [gateway compatibility guide](/docs/en/llm-gateway-protocol#feature-pass-through) lists what to pass through unchanged.
+* Set `CLAUDE_CODE_AUTO_MODE_SERVER=0` before you start Claude Code to use its own classifier requests instead. Before v2.1.281, Claude Code didn't read the variable on a direct connection to the Anthropic API.
+* To approve the actions yourself instead, [switch out of auto mode](/docs/en/permission-modes#switch-permission-modes)
+
+Before v2.1.280, Claude Code denied each action from a response without a verdict immediately and never stopped the turn.
 
 ### Agent terminated early due to an API error
 
@@ -2235,6 +2272,50 @@ Such content reaches a session file when something other than the Anthropic API 
 * None needed when you see the placeholder line. The session continues without the removed content.
 * If every turn of a resumed session fails with the 400 error instead, run `claude update` and resume the session again. Versions before v2.1.246 don't remove the content.
 
+<h3 id="role-system-must-precede-an-assistant-message">
+  role 'system' must precede an 'assistant' message
+</h3>
+
+The API refused the request with a 400 because a system message sits at a position in the conversation it doesn't accept:
+
+```text theme={null}
+API Error: 400 messages.6: role 'system' must precede an 'assistant' message or end the array; ...
+```
+
+Claude Code sends some of its reminder and attachment text as system messages inside the conversation. When the API refuses one's position, Claude Code retries the request once with that text sent as ordinary user messages instead. The API's sibling placement wordings, such as `use the top-level 'system' parameter for the initial system prompt`, get the same recovery.
+
+When the error does appear, the refused system message isn't one Claude Code can remove. That usually means a proxy or [LLM gateway](/docs/en/llm-gateway) between Claude Code and the API added a system message of its own or reordered the conversation.
+
+**What to do:**
+
+* Run `/clear` to start a fresh conversation. If the error returns there too, the cause is on the request path, not in the saved conversation.
+* If the error repeats on every turn behind a proxy or gateway configured through [`ANTHROPIC_BASE_URL`](/docs/en/env-vars), connect without the proxy to confirm the source, and report the error to whoever operates it
+
+Before v2.1.280, Claude Code didn't recognize this wording, so the error also appeared when the refused system message was one Claude Code itself sent, and every later turn of the conversation failed the same way.
+
+<h3 id="invalid-encrypted-content-in-search-result-block">
+  Invalid encrypted\_content in search\_result block
+</h3>
+
+The API refused the request with a 400 because the conversation history holds hosted web-search content it can't decrypt. The wording names the field it can't read:
+
+```text theme={null}
+API Error: 400 messages.21.content.0: Invalid `encrypted_content` in `search_result` block
+API Error: 400 messages.21.content.3.citations.0: Invalid `encrypted_index` in `text` block
+API Error: 400 Failed to decrypt web search result content
+```
+
+Results from the API's hosted [web search tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool) carry encrypted fields that only the API can read. The API refuses a request that replays content it can't decrypt, such as content produced for a different organization.
+
+Claude Code's own [WebSearch tool](/docs/en/tools-reference#websearch-tool-behavior) records search results as plain text, so these blocks usually reach a conversation through a proxy or [LLM gateway](/docs/en/llm-gateway) that ran hosted web search itself.
+
+The refused blocks stay in the conversation history, so every later turn and `/compact` fail the same way.
+
+**What to do:**
+
+* Run `/clear` or start a new session; the new conversation doesn't carry the refused blocks
+* If you run Claude Code behind a proxy or gateway, report the error to whoever operates it
+
 ### Usage Policy refusal
 
 The API declined to respond because content in the conversation triggered a [Usage Policy](https://www.anthropic.com/legal/aup) check. The message includes a Request ID you can quote to support if you believe the refusal is incorrect.
@@ -2450,6 +2531,29 @@ On macOS, `EPERM` for a directory in `~/Desktop`, `~/Documents`, `~/Downloads`, 
 * Change to a directory that exists, such as your home or project directory, then run `claude` again
 * If the directory was recreated at the same path, your shell still holds the deleted one. Run `cd "$PWD"` or leave and re-enter the directory, then run `claude` again
 * For `EPERM` on macOS, quit your terminal app with Cmd+Q, open it again, return to that folder, and run `claude`. If `ls` in that folder still fails, open **System Settings > Privacy & Security > Files and Folders**, turn on the folder for your terminal app, then reopen the terminal
+
+<h3 id="temp-directory-refused-or-cannot-be-created">
+  Temp directory refused or cannot be created
+</h3>
+
+On macOS and Linux, Claude Code creates a private temp directory at startup, `claude-<uid>` under the system temp directory or the [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) override. When the directory can't be created, or an entry already at that path fails the safety checks, Claude Code prints the failure to stderr and exits with code 1 rather than start the session:
+
+```text wrap theme={null}
+ENOSPC: no space left on device, mkdir '/tmp/claude-501'
+
+Temp directory /tmp/claude-501 is not a directory (may be an attacker-planted symlink). Refusing to use it. Set CLAUDE_CODE_TMPDIR to a directory you control, or ask an administrator to remove it.
+
+Temp directory /tmp/claude-501 is owned by uid 502, expected 501. Refusing to use it — another user may have pre-created it. Set CLAUDE_CODE_TMPDIR to a directory you control, or ask an administrator to remove it.
+
+Temp directory /tmp/claude-501 is not readable (its mode may have been altered, or a path component denies search). Refusing to use it — restore its permissions (chmod 0700) or remove it. Set CLAUDE_CODE_TMPDIR to a directory you control, or ask an administrator to remove it.
+```
+
+**What to do:**
+
+* For `ENOSPC`, free disk space on the volume that holds the temp directory
+* For the `Refusing to use it` forms, remove the named entry itself, not what a link points to, and start Claude Code again; for the `owned by uid` form, only an administrator or that user can remove it
+* For `is not readable`, run `chmod 0700` on the named directory, or remove it and start again
+* In any of these cases, set [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) to a directory you control and start Claude Code again, leaving the refused path alone
 
 <h3 id="directory-couldnt-be-resolved-to-a-real-location">
   Directory couldn't be resolved to a real location
@@ -3108,6 +3212,29 @@ For a marketplace whose source isn't a GitHub repository or a Git URL, such as a
 * If the marketplace is already registered, run `claude plugin marketplace remove <name>`, then add it again from the official `github.com/anthropics` repository
 * If you publish a third-party marketplace that used the name before it became reserved, rename it and ask users to re-add it from your source
 * See the reserved name list under [Marketplace schema](/docs/en/plugin-marketplaces#marketplace-schema)
+
+<h3 id="marketplace-name-is-another-spelling-of-a-reserved-name">
+  Marketplace name is another spelling of a reserved name
+</h3>
+
+The marketplace's name isn't itself a reserved name, but Claude Code treats it as another spelling of one. [Reserved marketplace names](/docs/en/plugin-marketplaces#reserved-name-spellings) lists which spellings count as a reserved name. Claude Code refuses such a name when you add the marketplace:
+
+```text theme={null}
+Failed to add marketplace: "claude.code.plugins" is another spelling of "claude-code-plugins", a reserved marketplace name.
+```
+
+When a marketplace is already registered under such a name, its entry stops loading, and `/plugin`, `claude plugin install`, and `claude plugin update` warn:
+
+```text wrap theme={null}
+known_marketplaces.json has an entry named "claude.code.plugins", another spelling of the reserved marketplace name "claude-code-plugins", so it is ignored. Remove it with: claude plugin marketplace remove claude.code.plugins
+```
+
+When the name would need shell quoting, the add-time refusal reads `This marketplace's name is another spelling of "<reserved>", a reserved marketplace name. It is not exactly the reserved name it appears to be.`
+
+**What to do:**
+
+* Rename the marketplace to a name that doesn't spell a reserved name and add it again
+* For the ignored-entry warning, run the `claude plugin marketplace remove` command it gives, or remove the entry from `~/.claude/plugins/known_marketplaces.json`
 
 ### Marketplace is already added from a different source
 

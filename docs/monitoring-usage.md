@@ -60,6 +60,8 @@ Example managed settings configuration:
 }
 ```
 
+Claude Code ignores the [OpenTelemetry exporter variables](/docs/en/settings-reference#variables-claude-code-ignores-in-env) in a repository's `.claude/settings.json` and `.claude/settings.local.json`, so a repository can't use them to turn telemetry on, choose where it goes, or capture content. Set them in managed settings, or have each developer set them in their shell or `~/.claude/settings.json`. A repository can still turn a signal off by setting its exporter selector, such as `OTEL_LOGS_EXPORTER`, to `none`, unless managed settings, a `--settings` file, or the environment you start Claude Code from sets that variable.
+
 Claude Code doesn't pass `OTEL_*` environment variables to the subprocesses it spawns, including the Bash tool, hooks, MCP servers, and language servers. An OpenTelemetry-instrumented application that you run through the Bash tool doesn't inherit Claude Code's exporter endpoint or headers, so set those variables directly in the command if that application needs to export its own telemetry.
 
 ### How managed settings lock the OTLP destination
@@ -91,7 +93,11 @@ When the desktop app or a [self-hosted environment](/docs/en/self-hosted-environ
 
 ### Common configuration variables
 
-These variables configure exporters, endpoints, and export behavior for all deployments. If you set a per-signal endpoint or protocol variable, such as `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`, Claude Code uses it instead of the generic variable for that signal. If you set a per-signal headers variable, such as `OTEL_EXPORTER_OTLP_METRICS_HEADERS`, Claude Code merges it with the generic `OTEL_EXPORTER_OTLP_HEADERS` for that signal. On machines with managed settings, see [How managed settings lock the OTLP destination](#how-managed-settings-lock-the-otlp-destination) for what Claude Code removes.
+These variables configure exporters, endpoints, and export behavior for all deployments.
+
+If you set a per-signal endpoint or protocol variable, such as `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`, Claude Code uses it instead of the generic variable for that signal. If you set a per-signal headers variable, such as `OTEL_EXPORTER_OTLP_METRICS_HEADERS`, Claude Code merges it with the generic `OTEL_EXPORTER_OTLP_HEADERS` for that signal.
+
+On machines with managed settings, see [How managed settings lock the OTLP destination](#how-managed-settings-lock-the-otlp-destination) for what Claude Code removes.
 
 | Environment Variable                                | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Example Values                                                                                                                                                 |
 | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1247,7 +1253,7 @@ By default, the event carries the managed sources and the policy helper's state 
 * Set it in the `env` block of managed settings, user settings, or `--settings`, or in the environment you launch Claude Code with. A value in project or local settings doesn't turn it on, because a cloned repository can write them.
 * Server-managed settings can set it without showing the [security approval dialog](/docs/en/server-managed-settings#security-approval-dialogs), because the variable only adds your organization's own redacted policy to an event your organization already receives.
 
-In an interactive session in a folder you haven't [trusted](/docs/en/permissions#what-runs-before-you-trust-a-folder), Claude Code doesn't export the refusal event, because project and local settings could point the export at a different collector before trust.
+In an interactive session in a folder you haven't [trusted](/docs/en/permissions#what-runs-before-you-trust-a-folder), Claude Code doesn't export the refusal event.
 
 **Event Name**: `claude_code.managed_settings_resolved`
 

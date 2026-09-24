@@ -1202,7 +1202,7 @@ export const text = {
   },
   "migrate-a-pattern-across": {
     title: "Migrate a pattern across the codebase",
-    teaches: "Describe the old pattern and the new one. Asking Claude to identify every place first means the call sites are listed in the response, so you can check none were missed. For a migration across many files, run [/batch](/docs/en/commands). Claude splits the work into units for you to approve, then background subagents make the changes and open one pull request per unit."
+    teaches: "Describe the old pattern and the new one. Asking Claude to identify every place first means the call sites are listed in the response, so you can check none were missed. For a migration across many files, run [/batch](/docs/en/commands). Claude splits the work into units for you to approve, then background subagents make the changes."
   },
   "optimize-against-a-measurable": {
     title: "Optimize against a measurable target",

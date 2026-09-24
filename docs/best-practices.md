@@ -489,7 +489,7 @@ You can do something similar with tests: have one Claude write tests, then anoth
   Loop through tasks calling `claude -p` for each. Use `--allowedTools` to scope permissions for batch operations.
 </Tip>
 
-For large migrations or analyses, you can distribute work across many parallel Claude invocations. In a git repository, run [`/batch <instruction>`](/docs/en/commands#all-commands) to have Claude split the change across 5 to 30 subagents. Each subagent works in its own worktree and opens a pull request. To drive the fan-out from your own script instead, loop over `claude -p`:
+For large migrations or analyses, you can distribute work across many parallel Claude invocations. Run [`/batch <instruction>`](/docs/en/commands#all-commands) to have Claude split the change across 5 to 30 subagents. Each subagent works in its own worktree. To drive the fan-out from your own script instead, loop over `claude -p`:
 
 <Steps>
   <Step title="Generate a task list">

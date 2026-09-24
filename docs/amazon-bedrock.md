@@ -480,7 +480,9 @@ If your organization delivers the guardrail headers through a [Claude apps gatew
 
 ## Use the Mantle endpoint
 
-Mantle is an Amazon Bedrock endpoint that serves Claude models through the native Anthropic API shape rather than the Amazon Bedrock Invoke API. It uses the same [AWS credentials](#2-configure-aws-credentials), [IAM permissions](#iam-configuration), and [`awsAuthRefresh` configuration](#advanced-credential-configuration).
+Mantle is an Amazon Bedrock endpoint that serves Claude models through the native Anthropic API shape rather than the Amazon Bedrock Invoke API. It uses the same [AWS credentials](#2-configure-aws-credentials) and [`awsAuthRefresh` configuration](#advanced-credential-configuration).
+
+Mantle has its own IAM actions under the `bedrock-mantle:` prefix, so the `bedrock:` actions in [IAM configuration](#iam-configuration) don't cover it. Grant your IAM identity `bedrock-mantle:CreateInference` for inference and `bedrock-mantle:CountTokens` for token counting. See [Making inference requests](https://docs.aws.amazon.com/bedrock/latest/userguide/inference.html) and [Counting tokens](https://docs.aws.amazon.com/bedrock/latest/userguide/count-tokens.html) in the AWS documentation, and the [service authorization reference](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonbedrockpoweredbyawsmantle.html) for every Mantle action.
 
 ### Enable Mantle
 
@@ -608,7 +610,10 @@ Update to v2.1.196 or later.
 
 If `/status` does not show `Amazon Bedrock (Mantle)` after you set `CLAUDE_CODE_USE_MANTLE`, the variable is not reaching the process. Confirm it is exported in the shell where you launched `claude`, or set it in the `env` block of your [settings file](/docs/en/settings).
 
-A `403` from the Mantle endpoint with valid credentials means your AWS account has not been granted access to the model you requested. Contact your AWS account team to request access.
+What a `403` from the Mantle endpoint means depends on whether the error names an IAM action:
+
+* If the error names a `bedrock-mantle:` action, grant your IAM identity that action.
+* If the error names no action and your credentials are valid, your AWS account has not been granted access to the model you requested. Contact your AWS account team to request access.
 
 A `400` that names the model ID means that model is not served on Mantle. Mantle has its own model lineup separate from the standard Amazon Bedrock catalog, so inference profile IDs such as `us.anthropic.claude-sonnet-4-6` will not work. Use a Mantle-format ID, or enable [both endpoints](#run-mantle-alongside-the-invoke-api) so Claude Code routes each request to the endpoint where the model is available.
 

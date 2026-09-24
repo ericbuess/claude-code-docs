@@ -62,7 +62,7 @@ Learn more: [Eliminate prompts with auto mode](/docs/en/permission-modes#elimina
 
 ### Bare mode
 
-With `--bare`, Claude Code starts without loading hooks, skills, custom commands, subagents, plugins, MCP servers, auto memory, or CLAUDE.md, apart from skills in a directory you pass with `--add-dir`. Recommended for CI and scripted calls where you need the same result on every machine.
+With `--bare`, Claude Code starts without loading hooks, skills, custom commands, subagents, installed plugins, MCP servers, auto memory, or CLAUDE.md, apart from skills in a directory you pass with `--add-dir`. Recommended for CI and scripted calls where you need the same result on every machine.
 
 Learn more: [Start faster with bare mode](/docs/en/headless#start-faster-with-bare-mode)
 

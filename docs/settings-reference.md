@@ -2764,7 +2764,7 @@ Exclusions apply only to user, project, and local memory files; managed policy C
 
 ### `env`
 
-Set environment variables for every session and for the subprocesses Claude Code starts from it. Any variable in the [environment variables reference](/docs/en/env-vars) can go here, which is how you apply one to every session or roll it out to your team.
+Set environment variables for every session and for the subprocesses Claude Code starts from it. Most variables in the [environment variables reference](/docs/en/env-vars) can go here, which is how you apply one to every session or roll it out to your team. Project and local settings can't set [some of them](#variables-claude-code-ignores-in-env).
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: object mapping variable names to string values
@@ -2783,7 +2783,7 @@ This example turns off automatic compaction and routes API requests through a pr
 
 #### How `env` values interact with your shell
 
-* A value here overwrites the same variable exported in your shell, and when more than one settings file sets a variable, the [highest-precedence](/docs/en/settings#settings-precedence) one applies.
+* A value here overwrites the same variable exported in your shell, and when more than one settings file sets a variable, the [highest-precedence](/docs/en/settings#settings-precedence) one applies. [Variables Claude Code ignores in `env`](#variables-claude-code-ignores-in-env) lists the exceptions for project and local settings.
 * To cancel a shell export, set the variable to `""`. Claude Code treats an empty value as unset for provider selection, and subprocesses inherit the empty value.
 * `NO_COLOR` and `FORCE_COLOR` set here reach only subprocesses. To change Claude Code's own interface colors, set them in your shell before launching `claude`.
 * Values here are plain text in the settings file and reach every subprocess Claude Code starts. For an OTLP bearer token that rotates, use [`otelHeadersHelper`](#otelheadershelper); for API credentials, use [`apiKeyHelper`](#apikeyhelper).
@@ -2792,18 +2792,31 @@ This example turns off automatic compaction and routes API requests through a pr
 
 * From user settings, `--settings`, and managed settings: at startup, and again in the running session when a saved change alters the merged `env`.
 * From project and local settings: after you trust the workspace, or at startup in `-p` mode, which never shows the trust dialog, and again when a saved change alters the merged `env`.
-* Variables Claude Code classifies as safe, such as model selection, timeouts and limits, feature toggles, and telemetry settings: at startup from every settings file, apart from the [variables project and local settings can't set](#variables-claude-code-ignores-in-env).
+* Variables Claude Code classifies as safe, such as model selection, timeouts and limits, and feature toggles: at startup from every settings file, apart from the [variables project and local settings can't set](#variables-claude-code-ignores-in-env).
 * After you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later: the new directory's project and local `env` values, on top of the previous directory's.
 
 #### Variables Claude Code ignores in `env`
 
-* Project and local settings can't set variables that a checked-out repository shouldn't control; set those in your shell, user settings, or managed settings instead. Claude Code drops each one and logs a warning you can see with `claude --debug`. They include:
+* Project and local settings can't set variables that a checked-out repository shouldn't control; set those in your shell, user settings, or managed settings instead. Claude Code drops each one, apart from a few values that turn telemetry off, and logs a warning you can see with `claude --debug`. They include:
 
   * Variables that choose where Claude Code stores or writes its own files: `CLAUDE_CONFIG_DIR`, `CLAUDE_CODE_TMPDIR`, and the operating-system directory variables such as `HOME`, `TMPDIR`, `TMP`, `TEMP`, and the `XDG_*` family.
   * Variables that export session content: [`OTEL_LOG_RAW_API_BODIES`](/docs/en/env-vars#variables) and the detailed beta tracing pair `ENABLE_BETA_TRACING_DETAILED` and `BETA_TRACING_ENDPOINT`.
+  * The [OpenTelemetry exporter](/docs/en/monitoring-usage) variables that turn telemetry on, choose where it goes, or choose what content it captures:
+
+    * `CLAUDE_CODE_ENABLE_TELEMETRY`, plus the enhanced telemetry beta pair `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` and `ENABLE_ENHANCED_TELEMETRY_BETA`
+    * The exporter selectors `OTEL_LOGS_EXPORTER`, `OTEL_METRICS_EXPORTER`, and `OTEL_TRACES_EXPORTER`
+    * The content variables `OTEL_LOG_USER_PROMPTS`, `OTEL_LOG_ASSISTANT_RESPONSES`, `OTEL_LOG_TOOL_CONTENT`, and `OTEL_LOG_TOOL_DETAILS`
+    * `OTEL_EXPORTER_OTLP_*` variables whose names end in `_ENDPOINT`, `_HEADERS`, `_PROTOCOL`, `_CERTIFICATE`, `_CLIENT_KEY`, or `_INSECURE`, in the generic and per-signal forms, such as `OTEL_EXPORTER_OTLP_ENDPOINT` and `OTEL_EXPORTER_OTLP_METRICS_HEADERS`
+    * `OTEL_EXPORTER_PROMETHEUS_HOST` and `OTEL_EXPORTER_PROMETHEUS_PORT`
+
+    Only these values still apply from project and local settings, because they turn something off: `none` for the three exporter selectors, and an off value such as `0` for `OTEL_LOG_USER_PROMPTS`, `OTEL_LOG_TOOL_CONTENT`, and `OTEL_LOG_TOOL_DETAILS`. Such a value overrides the same variable in your user settings, but not one that the environment you start Claude Code from, a `--settings` file, or managed settings sets.
+
+    When a project or local settings file sets a variable in this group, a local interactive session shows a notice at startup. Run `/status` or `claude doctor` to see which ones Claude Code ignored and which turned telemetry off; both list names, never values. A non-interactive run with `-p` or an Agent SDK session shows no notice, so check that your collector still receives data after you upgrade. If it doesn't, set the variables in your user settings, managed settings, the job's environment, or a file you pass with `--settings`.
+
+    Ignoring this group in project and local settings requires Claude Code v2.1.282 or later.
   * Variables that change how Claude Code starts or syncs, such as `CLAUDE_CODE_PROCESS_WRAPPER`, `CLAUDE_CODE_SYNC_SKILLS`, `CLAUDE_CODE_SYNC_PLUGINS`, `CLAUDE_CODE_PLUGIN_CACHE_DIR`, and `CLAUDE_CODE_PLUGIN_SEED_DIR`.
 
-  Before v2.1.251, project and local settings could set every variable this list names except `HOME`, `XDG_CONFIG_HOME`, and the variables that change how Claude Code starts or syncs.
+  Before v2.1.251, project and local settings could also set the variables in this list that choose where Claude Code writes its files or that export session content, except `HOME` and `XDG_CONFIG_HOME`.
 * Identity variables that Claude Code's hosting environments own, such as `CLAUDE_CODE_REMOTE` and `CLAUDE_CODE_ACCOUNT_UUID`, are ignored from every file.
 * [`CLAUDE_CODE_MESSAGING_SOCKET` and `CLAUDE_CODE_MESSAGING_TOKEN`](/docs/en/env-vars#variables), which Claude Code exports itself, are ignored from every file. Ignoring the socket variable requires Claude Code v2.1.224 or later, and ignoring the token requires v2.1.228 or later.
 * [`CLAUDE_CODE_PROJECT_DIR_NAME`](/docs/en/sessions#name-the-project-directory-yourself), which Claude Code reads from the launch environment only, is ignored from every file; requires v2.1.234 or later.
@@ -3693,8 +3706,10 @@ Control the attribution Claude Code adds to commits and pull requests and how it
 Customize the attribution Claude Code adds to git commits and pull requests. Commits get a [git trailer](https://git-scm.com/docs/git-interpret-trailers) such as `Co-Authored-By` by default; pull request descriptions get plain text. Set each part separately with the sub-keys below.
 
 * **Scope**: [`Any file`](#scopes)
-* **Type**: object with `commit` and `pr` strings and a `sessionUrl` Boolean
+* **Type**: object with `commit` and `pr` strings and a `sessionUrl` Boolean, or `false` to hide all attribution. The `false` value requires Claude Code v2.1.281 or later; earlier versions reject it and [skip the whole user, project, or local settings file](/docs/en/settings#fix-a-broken-settings-file) that holds it
 * **Default**: unset, so Claude Code uses the standard attribution shown under each sub-key
+
+To hide all attribution, set `attribution` to `false`. In a settings file that earlier versions also read, set [`commit`](#attribution-commit) and [`pr`](#attribution-pr) to empty strings and [`sessionUrl`](#attribution-sessionurl) to `false` instead.
 
 This example replaces the commit attribution, removes pull request attribution, and drops the session link:
 
@@ -3708,7 +3723,7 @@ This example replaces the commit attribution, removes pull request attribution, 
 }
 ```
 
-To hide all attribution, set [`commit`](#attribution-commit) and [`pr`](#attribution-pr) to empty strings and [`sessionUrl`](#attribution-sessionurl) to `false`. Once you set `commit` or `pr`, Claude Code ignores the deprecated `includeCoAuthoredBy` setting and uses its default text for whichever of the two you left unset.
+Once you set `commit` or `pr`, Claude Code ignores the deprecated `includeCoAuthoredBy` setting and uses its default text for whichever of the two you left unset.
 
 Claude Code tells Claude that your own instructions about attribution, such as a CLAUDE.md or [memory](/docs/en/memory) rule, take precedence over these commit and PR lines, unless the line is set in [managed settings](/docs/en/managed-settings).
 
@@ -3732,7 +3747,7 @@ Use [`attribution`](#attribution) instead, which replaces this key and lets you 
 }
 ```
 
-To hide all attribution today, set [`attribution.commit`](#attribution-commit) and [`attribution.pr`](#attribution-pr) to empty strings and [`attribution.sessionUrl`](#attribution-sessionurl) to `false`.
+To hide all attribution, see [`attribution`](#attribution).
 
 ### `includeGitInstructions`
 
