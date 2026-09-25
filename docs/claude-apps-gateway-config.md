@@ -35,7 +35,7 @@ Five sections are [required](#required-sections). Every other section is [option
 * [`managed`](#managed): managed settings policies by IdP group
 * [`telemetry`](#telemetry): OTLP forwarding to your observability stack
 * [`access_control`, `limits`, `timeouts`, `rate_limits`](#http-tuning): IP allow/deny, request size caps, upstream time-to-first-byte, and per-IP sign-in limits
-* [`load_test_mode`](#load_test_mode): load test the gateway without calling a model provider
+* [`load_test_mode`](#load_test_mode): load testing the gateway without calling a model provider
 
 ## Secret expansion
 
@@ -881,6 +881,8 @@ Telemetry is off in the CLI by default. When you set both `telemetry.forward_to`
 * `OTEL_EXPORTER_OTLP_ENDPOINT=<public_url>`
 * `OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf`
 
+When you [add your own labels](#add-your-own-labels), the gateway also pushes `OTEL_RESOURCE_ATTRIBUTES`.
+
 Before Claude Code v2.1.265 on the gateway server, the gateway pushed all three exporter selectors as `otlp`, including for signals no destination opted into.
 
 The pushed endpoint is built from the public URL, so metrics and logs need no OTEL configuration from developers or policies.
@@ -897,6 +899,35 @@ Without a `forward_to` destination for a signal, the gateway accepts and discard
 Set it to `1` only in the policies whose groups you want traced. A policy that doesn't set it inherits the value from your `match: {}` catch-all policy if that policy sets one, per the [merge rules](#managed). To keep a group's clients from sending traces even when a developer sets the variable locally, set it to `0` in that group's policy.
 
 Both protobuf and JSON OTLP encodings are relayed, and any OpenTelemetry-compatible backend works as a destination.
+
+#### Add your own labels
+
+To put fixed labels such as `service.namespace` or `deployment.environment.name` on the telemetry of sessions signed in through the gateway, set `telemetry.resource_attributes`. Each label is an OpenTelemetry resource attribute, and every destination receives the same labels.
+
+Sessions get the labels only when you also set `telemetry.forward_to` and `listen.public_url`. This example adds two labels:
+
+```yaml theme={null}
+telemetry:
+  forward_to:
+    - url: https://otel-collector.internal.example.com
+  resource_attributes:
+    service.namespace: claude
+    deployment.environment.name: prod
+```
+
+The gateway refuses to start when a label breaks one of these rules, and the startup error names the label:
+
+* Names use only letters, digits, `.`, `_`, and `-`
+* Names aren't reserved. Compared in any letter case, the reserved names are everything that starts with `user.`, `enduser.`, or `identity.`, plus `service.name`, `service.version`, `claude.deployment_mode`, `host.arch`, `os.type`, `os.version`, and `wsl.version`
+* Values are non-empty printable ASCII with no space and none of `, ; = \ " %`
+* Values are at most 255 characters as the gateway counts them after percent-encoding, so `/`, `:`, and `@` each count as three
+* Values are text, so quote a number, `true`, or `false`
+
+You need Claude Code v2.1.281 or later on the gateway server to set `telemetry.resource_attributes`. An earlier gateway refuses to start when it finds the key. Upgrade every replica before you add the key, and remove the key before you roll back to an earlier version.
+
+Terminal sessions signed in through `/login` receive the labels as `OTEL_RESOURCE_ATTRIBUTES`, pushed with the other [telemetry variables](#telemetry). If you set `OTEL_RESOURCE_ATTRIBUTES` in a policy's `env` block, terminal sessions that policy matches get that value instead of the labels. Claude Desktop receives the labels from the gateway alongside `user.email` and the other identity attributes.
+
+Claude Code also copies each label onto every metric data point, so you can filter metrics by it in a backend that doesn't index resource attributes. To turn that copy off, see [Metrics cardinality control](/docs/en/monitoring-usage#metrics-cardinality-control).
 
 #### Export directly to your collector
 
@@ -960,9 +991,9 @@ Behind such a front end, set [`listen.trusted_proxies`](#listen) first so the ga
 
 The `load_test_mode` block lets you load test a gateway without calling a model provider. While it's on, the gateway builds and signs each provider request as usual, discards it instead of sending it, and streams a canned reply back through its normal response path. The reply is filler text that begins with a sentence saying it is canned.
 
-Requires v2.1.283 or later. Earlier versions refuse to start when the key is set, so upgrade every replica before you add the block and remove it before you roll back.
+Requires Claude Code v2.1.282 or later on the gateway server. An earlier gateway refuses to start when it finds the key. Upgrade every replica before you add the block, and remove the block before you roll back.
 
-The example below turns the mode on with the defaults, a reply of 750 output tokens streamed over about 10 seconds:
+The example below turns the mode on with the defaults, a reply of roughly 750 tokens of text streamed over about 10 seconds:
 
 ```yaml theme={null}
 load_test_mode:
@@ -979,7 +1010,11 @@ load_test_mode:
 
 A load test in this mode covers the gateway, your Postgres, and everything in front of the gateway. It doesn't cover the provider's limits, speed, or network path.
 
-While the mode is on, a request can carry an `x-load-test-user` header holding a whole number of up to seven digits, and the gateway counts each number as a separate developer with the email and groups of the developer whose token came with the request. Give the load-test deployment its own empty database, because the gateway refuses to start with the mode on against a database in which any developer has already spent anything.
+No model request is sent to the provider, so a replica's CPU per request is an estimate and reads lower than production, which also encrypts its traffic to the provider. Confirm a replica count with a small pilot against the real provider. Before v2.1.283, the estimate reads much lower.
+
+While the mode is on, a request can carry an `x-load-test-user` header holding a whole number of up to seven digits. The gateway counts each number as a separate developer, with the email and groups of the developer whose token came with the request.
+
+Give the load-test deployment its own empty database, because the gateway refuses to start with the mode on against a database in which any developer has already spent anything.
 
 <Warning>
   Never turn this on for a gateway that developers use. Every request gets the canned reply and no model is called. The gateway logs a `load_test_mode is on` warning at boot and marks each `inference` [audit event](/docs/en/claude-apps-gateway-deploy#logs) with `load_test: true` while the mode is on.

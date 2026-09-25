@@ -96,8 +96,10 @@ Fullscreen rendering captures mouse events and handles them inside Claude Code:
 * **Click an option in a multi-select menu** to toggle it, and click the submit button to confirm your choices. Clicking a free-text row, such as the `Other` row in a multiple-choice question, focuses its input field so you can type an answer. Requires Claude Code v2.1.208 or later.
 * **Click a setting's value in the `/config` panel** to change it, and scroll the settings list with the mouse wheel. Requires Claude Code v2.1.271 or later.
 * **Scroll a select or multi-select menu with the mouse wheel** when it has more options than it shows at once, such as the `/model` list in a short terminal window. The wheel scrolls the list while the pointer is over its options. Requires Claude Code v2.1.280 or later.
+* **Scroll an overflowing list with its scrollbar.** In list panels such as `/skills`, `/mcp`, and `/plugin`'s Installed list, a scrollbar appears beside a list with more rows than fit while the pointer is over it. Click the track to jump to that point, or drag the thumb. Requires Claude Code v2.1.281 or later.
 * **Click a collapsed tool result** to expand it and see the full output. Click again to collapse. The tool call and its result expand together. Only messages that have more to show are clickable.
   * Clicking also expands the output of a `!` shell command, whether an older truncated result or the live progress row while the command runs. Requires Claude Code v2.1.257 or later.
+  * Clicking also expands a dim `Message from @<sender>` line when the sender is a [teammate](/docs/en/agent-teams) or another agent running in your session. The line for a message from [one of your other sessions](/docs/en/cross-session-messaging#what-a-message-looks-like) also shows the message's first line and isn't clickable, so press `Ctrl+o` to read that one.
 * **Hold `Cmd` on macOS, or `Ctrl` on Linux and Windows, and click a URL or file path** to open it. Plain `http://` and `https://` URLs open in your browser, and file paths in tool output, like the ones printed after an Edit or Write, open in your default application. A plain click without the modifier doesn't open links, matching native terminal behavior.
   * Claude Code renders a network (UNC) path, such as `\\server\share\file.ts`, as plain text with no link, because opening a network path can send your Windows credentials to the host it names.
   * Some macOS terminals forward `Cmd`+click to the running app instead of opening the link themselves, and the terminal mouse protocol has no way to encode the `Cmd` key, so Claude Code receives a plain click. In Ghostty, and in Warp on macOS, Claude Code detects this and lets a plain click on a link open it, and holding `Cmd` still works.
@@ -264,7 +266,7 @@ If you rely on native selection all the time, set `CLAUDE_CODE_DISABLE_MOUSE=1` 
 CLAUDE_CODE_NO_FLICKER=1 CLAUDE_CODE_DISABLE_MOUSE=1 claude
 ```
 
-With mouse capture disabled, keyboard scrolling with `PgUp`, `PgDn`, `Ctrl+Home`, and `Ctrl+End` still works, and your terminal handles selection natively. You lose click-to-position-cursor, click-to-expand tool output, URL clicking, and wheel scrolling inside Claude Code.
+With mouse capture disabled, keyboard scrolling with `PgUp`, `PgDn`, `Ctrl+Home`, and `Ctrl+End` still works, and your terminal handles selection natively. You lose click-to-position-cursor, click-to-expand, URL clicking, and wheel scrolling inside Claude Code.
 
 To keep wheel scrolling but turn off click, drag, and hover handling, set `CLAUDE_CODE_DISABLE_MOUSE_CLICKS=1` instead. Requires Claude Code v2.1.195 or later. `CLAUDE_CODE_DISABLE_MOUSE` takes precedence when both variables are set.
 

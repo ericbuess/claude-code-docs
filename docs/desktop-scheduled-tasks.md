@@ -55,7 +55,7 @@ Pick a preset from the Schedule control:
 
 * **Manual**: no schedule, only runs when you click **Run now**. Useful for saving a prompt you trigger on demand
 * **Hourly**: runs every hour
-* **Daily**: shows a time picker, defaults to 9:00 AM local time
+* **Daily**: runs every day at the local time you pick
 * **Weekdays**: same as Daily but skips Saturday and Sunday
 * **Weekly**: shows a time picker and a day picker
 

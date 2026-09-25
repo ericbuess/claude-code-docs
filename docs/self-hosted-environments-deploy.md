@@ -194,11 +194,15 @@ RUN git config --system user.name "Claude" \
 ENTRYPOINT ["claude"]
 ```
 
-Swap `linux-x64` for `linux-arm64` if your nodes are ARM, or for `linux-x64-musl` or `linux-arm64-musl` on a musl-based image such as Alpine; see [Alpine Linux setup](/docs/en/setup#alpine-linux-and-musl-based-distributions) for the extra packages musl images need. The URL is the standard Claude Code release location, so you can verify the downloaded binary against the release's signed manifest as described in [Binary integrity and code signing](/docs/en/setup#binary-integrity-and-code-signing). Build the image with Claude Code version 2.1.224 or later, then push it to your registry and reference it in the recipes below:
+Swap `linux-x64` for `linux-arm64` if your nodes are ARM, or for `linux-x64-musl` or `linux-arm64-musl` on a musl-based image such as Alpine; see [Alpine Linux setup](/docs/en/setup#alpine-linux-and-musl-based-distributions) for the extra packages musl images need. The URL is the standard Claude Code release location, so you can verify the downloaded binary against the release's signed manifest as described in [Binary integrity and code signing](/docs/en/setup#binary-integrity-and-code-signing). The runner requires Claude Code version 2.1.224 or later. Build the image, then push it to your registry and reference it in the recipes below:
 
 ```bash theme={null}
-docker build --build-arg CLAUDE_CODE_VERSION=2.1.267 -t <your-registry>/claude-runner:latest .
+docker build \
+  --build-arg CLAUDE_CODE_VERSION="$(curl -fsSL https://downloads.claude.ai/claude-code-releases/stable)" \
+  -t <your-registry>/claude-runner:latest .
 ```
+
+The command substitution looks up the current `stable` release number and passes it as the build argument, so running the same command after a new stable release rebuilds the download layer with the newer binary. To pin a specific release for reproducible builds, pass the version number directly as `CLAUDE_CODE_VERSION`. Replace `stable` with `latest` in the lookup URL when you need a release newer than the stable channel, such as one a [newly launched model requires](/docs/en/model-config).
 
 ## Size CPU and memory for sessions
 

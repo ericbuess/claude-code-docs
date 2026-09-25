@@ -67,6 +67,7 @@ Match the message you see to a section below.
 | `signed-in claude.ai account or organization changed on this machine`                                                                                                                                                                                                | [Authentication](#remote-control-stopped-because-the-signed-in-account-changed)                                               |
 | `Remote Control stopped — the app running this session is now signed in to a different Claude account`                                                                                                                                                               | [Authentication](#remote-control-stopped-because-the-app-running-the-session-signed-out-or-switched-accounts)                 |
 | `Remote Control stopped — the app running this session is signed out of Claude`                                                                                                                                                                                      | [Authentication](#remote-control-stopped-because-the-app-running-the-session-signed-out-or-switched-accounts)                 |
+| `Couldn't verify your organization's policy for remote control`                                                                                                                                                                                                      | [Troubleshoot Remote Control](/docs/en/remote-control#couldnt-verify-your-organizations-policy-for-remote-control)                 |
 | `OAuth token revoked` / `OAuth token has expired`                                                                                                                                                                                                                    | [Authentication](#oauth-token-revoked-or-expired)                                                                             |
 | `API Error: 401 Invalid authentication credentials`                                                                                                                                                                                                                  | [Authentication](#api-error-401-invalid-authentication-credentials)                                                           |
 | `Login expired · Please run /login`                                                                                                                                                                                                                                  | [Authentication](#login-expired)                                                                                              |
@@ -250,6 +251,9 @@ Match the message you see to a section below.
 | `its permission check expired before it ran (too many concurrent file operations)` / `ripgrep was found only by name on PATH`                                                                                                                                        | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `task output swap refused (tasks dir moved or linked)`                                                                                                                                                                                                               | [Tool errors](#task-output-swap-refused)                                                                                      |
 | `Command killed: its output file was replaced or could no longer be verified`                                                                                                                                                                                        | [Tool errors](#task-output-swap-refused)                                                                                      |
+| `Your disk quota is full on the filesystem with Claude Code's temp directory <dir> (EDQUOT)`                                                                                                                                                                         | [Tool errors](#disk-quota-or-temp-filesystem-is-full)                                                                         |
+| `The filesystem with Claude Code's temp directory <dir>, or your disk quota on it, is full (ENOSPC)`                                                                                                                                                                 | [Tool errors](#disk-quota-or-temp-filesystem-is-full)                                                                         |
+| `Command output was lost: the temp filesystem at <dir> is full` / `is out of inodes`                                                                                                                                                                                 | [Tool errors](#disk-quota-or-temp-filesystem-is-full)                                                                         |
 | `the source file is not valid UTF-8 text` / `the source file is not valid UTF-16 text`                                                                                                                                                                               | [Tool errors](#the-source-file-is-not-valid-utf-8-text)                                                                       |
 | `the source file has the replacement character U+FFFD`                                                                                                                                                                                                               | [Tool errors](#the-source-file-is-not-valid-utf-8-text)                                                                       |
 | `Reading a local file from outside this session's connected folders, or through a link, needs the approval card`                                                                                                                                                     | [Tool errors](#reading-a-local-file-from-outside-the-connected-folders)                                                       |
@@ -277,6 +281,7 @@ Match the message you see to a section below.
 | `EACCES: permission denied, posix_spawn`                                                                                                                                                                                                                             | [Background session errors](#eacces-when-starting-a-background-session)                                                       |
 | `exited before it became reachable`                                                                                                                                                                                                                                  | [Background session errors](#background-service-exited-before-it-became-reachable)                                            |
 | `Couldn't start a background session (working directory no longer exists or is not accessible: ...)`                                                                                                                                                                 | [Background session errors](#working-directory-no-longer-exists-when-starting-a-background-session)                           |
+| `Workspace not trusted.` when starting or restarting a background session                                                                                                                                                                                            | [Background session errors](#workspace-not-trusted-when-dispatching-a-background-session)                                     |
 | `Claude Code is being updated by npm on this machine (still not runnable after 2 min, ...)`                                                                                                                                                                          | [Background session errors](#eacces-when-starting-a-background-session)                                                       |
 | `Claude Code process exited with code N`                                                                                                                                                                                                                             | [Wrapper and IDE errors](#claude-code-process-exited-with-code-n)                                                             |
 | `The connection to Claude Code ended before this message completed`                                                                                                                                                                                                  | [Wrapper and IDE errors](#the-connection-to-claude-code-ended-before-this-message-completed)                                  |
@@ -289,6 +294,7 @@ Match the message you see to a section below.
 | `Claude Code's fullscreen renderer didn't finish starting last time on this machine` / `Claude Code's fullscreen renderer has repeatedly failed to start on this machine`                                                                                            | [Configuration warnings](#fullscreen-failed-start-notice)                                                                     |
 | `Claude Code exited after an unrecoverable interface error (...)`                                                                                                                                                                                                    | [Configuration warnings](#exited-after-an-unrecoverable-interface-error)                                                      |
 | `Agent descriptions are over the 15.0k-token limit`                                                                                                                                                                                                                  | [Configuration warnings](#agent-descriptions-are-over-the-15000-token-limit)                                                  |
+| `Not loaded: rename <path>, then restart — its name uses "<name>", a name reserved for the skills synced from your claude.ai account`                                                                                                                                | [Configuration warnings](#a-skill-command-or-workflow-wasnt-loaded-because-its-name-is-reserved)                              |
 | `Ignoring N permissions.allow entries from ... this workspace has not been trusted`                                                                                                                                                                                  | [Configuration warnings](#workspace-has-not-been-trusted)                                                                     |
 | `is a network path, which cannot be added as a working directory`                                                                                                                                                                                                    | [Configuration warnings](#working-directory-is-a-network-path)                                                                |
 | `Remote managed settings failed to load (<cause>)`                                                                                                                                                                                                                   | [Configuration warnings](#remote-managed-settings-failed-to-load)                                                             |
@@ -3682,6 +3688,28 @@ Command killed: its output file was replaced or could no longer be verified
 * Or check your project's directory under the Claude Code temp directory, `/private/tmp/claude-501/-Users-you-my-project` in the example message. If that path is a symbolic link, or a directory that shouldn't be there, remove the link or directory itself rather than the link's target, and restart Claude Code
 * If the refusal repeats, a process is replacing, linking, or removing entries under Claude Code's temp directory while the session runs. Set [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) to a directory nothing else manages and restart
 
+<h3 id="disk-quota-or-temp-filesystem-is-full">
+  Disk quota or temp filesystem is full
+</h3>
+
+Claude Code saves each Bash and PowerShell command's output to a file under its temp directory. When a command exits with a nonzero code and no output at all, Claude Code checks whether the filesystem holding that file is out of space or inodes, or whether your disk quota on it is used up. If so, a diagnostic appears in the command's result in place of the empty output:
+
+```text wrap theme={null}
+Your disk quota is full on the filesystem with Claude Code's temp directory /private/tmp/claude-501/-Users-you-my-project/1f0e62dc-4b0a-4f5e-9c2d-8a7b6c5d4e3f/tasks (EDQUOT), so any output this command printed was lost, and it may have failed because it could not write. Delete files you no longer need there, or restart Claude Code with CLAUDE_CODE_TMPDIR set to a directory on another filesystem.
+```
+
+The message names what ran out:
+
+* `Your disk quota is full ... (EDQUOT)`: your own quota on that filesystem is used up. A quota can be full while the filesystem still shows free space
+* `The filesystem with Claude Code's temp directory ..., or your disk quota on it, is full (ENOSPC)`: the filesystem, or your quota on it, has no space left
+* `Command output was lost: the temp filesystem at ... is full` or `... is out of inodes`: the filesystem has almost no free space left, or is running out of inodes
+
+**What to do:**
+
+* Delete files you no longer need on the filesystem that holds Claude Code's temp directory. For `EDQUOT`, delete files that count against your own quota. For `out of inodes`, delete many files rather than a few large ones, since each file takes one inode whatever its size
+* Or restart Claude Code with [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) set to a directory on a filesystem with room
+* Then have Claude run the command again. The output it printed was lost, not truncated
+
 <h3 id="the-source-file-is-not-valid-utf-8-text">
   The source file is not valid UTF-8 text
 </h3>
@@ -4071,7 +4099,7 @@ Two quoted reasons have known causes:
 
 ### Working directory no longer exists when starting a background session
 
-You tried to start a [background session](/docs/en/agent-view) in a directory that doesn't exist anymore. This happens when you dispatch from agent view or run `/background` after the directory you're working in was deleted or moved. It also happens when you attach to or restart a session whose process has exited and whose directory is gone, because the new process would start in that same directory. Claude Code doesn't start the session, and the message names the missing directory:
+You tried to start a [background session](/docs/en/agent-view) in a directory that doesn't exist anymore. Claude Code doesn't start the session, and the message names the missing directory:
 
 ```text theme={null}
 Couldn't start a background session (working directory no longer exists or is not accessible: /tmp/demo)
@@ -4082,6 +4110,27 @@ Before v2.1.257, the session appeared to start and then showed in agent view as 
 **What to do:**
 
 * Recreate the directory the message names, or dispatch from a directory that exists, then try again
+
+### Workspace not trusted when dispatching a background session
+
+You started or restarted a [background session](/docs/en/agent-view) in a directory you haven't [trusted](/docs/en/permissions#project-allow-rules-and-workspace-trust), and the workspace trust dialog couldn't appear to ask you. Claude Code doesn't start the session:
+
+```text theme={null}
+Workspace not trusted. Run `claude` in /path/to/project once and accept the trust prompt, then retry.
+```
+
+From a terminal in the session's own directory, the same command shows the trust dialog instead and starts the session once you accept. This message appears where no dialog can, such as in a script, or when you restart a session from a directory other than its own.
+
+Two variants name a different cause:
+
+* **`The home directory is trusted one session at a time`**: the session's directory is your home directory. Claude Code never saves trust for the home directory, so accepting the dialog there in an earlier session doesn't count.
+* **`<path> could not be resolved on disk`**: Claude Code couldn't find the session's directory on disk.
+
+**What to do:**
+
+* Run `claude` in the directory the message names and accept the trust dialog, then run the command again
+* For the home-directory message, run the command from a terminal in your home directory so the dialog can appear, or start the session from a project directory instead
+* For the `could not be resolved on disk` message, recreate the directory, or start a new session from a directory that exists
 
 ## Wrapper and IDE errors
 
@@ -4303,6 +4352,26 @@ Agent descriptions are over the 15.0k-token limit (~16.2k tokens) · ask Claude 
 * Shorten the `description` frontmatter of your agent files, or ask Claude to trim them for you.
 * Remove agent files you no longer use.
 
+<h3 id="a-skill-command-or-workflow-wasnt-loaded-because-its-name-is-reserved">
+  A skill, command, or workflow wasn't loaded because its name is reserved
+</h3>
+
+A skill folder, a frontmatter `name`, a file or subfolder in `.claude/commands/`, or a [saved workflow](/docs/en/workflows#save-the-workflow-for-reuse) uses the name `anthropic-skills` or a name that starts with `anthropic-skills:`. Claude Code [reserves that name for skills synced from claude.ai](/docs/en/skills#names-reserved-for-synced-skills) and doesn't load that item.
+
+Claude Code shows this warning as a startup notice in the conversation view rather than on stderr:
+
+```text theme={null}
+Not loaded: rename .claude/skills/anthropic-skills, then restart — its name uses "anthropic-skills", a name reserved for the skills synced from your claude.ai account
+```
+
+The notice names what to change for the first item it refused: a folder or file to rename, a `name:` line to edit, or a workflow to rename. When more than one item was refused, the notice ends with a count such as `· 2 more`, and the [debug log](/docs/en/debug-your-config) names each one.
+
+**What to do:**
+
+* Rename the item the notice names, or edit the `name:` line it points to, then restart the session.
+
+Before v2.1.282, Claude Code loaded skills and commands with these names.
+
 ### Workspace has not been trusted
 
 Claude Code found `permissions.allow` rules or `permissions.additionalDirectories` entries in the project's `.claude/settings.json` or `.claude/settings.local.json` and didn't apply them, because [allow rules from project settings require workspace trust](/docs/en/permissions#project-allow-rules-and-workspace-trust). The count, the setting name, and the file named in the message vary with your configuration. `deny` and `ask` rules aren't affected.
@@ -4345,7 +4414,11 @@ Before v2.1.257, Claude Code accepted a reachable network path as a working dire
   Remote managed settings failed to load
 </h3>
 
-Your session is eligible for [server-managed settings](/docs/en/server-managed-settings), but Claude Code couldn't fetch them, so it shows this warning in interactive sessions. The parenthesized cause names what failed, such as `network error`, `request timed out`, or `authentication rejected (401)`, and the rest of the line says which policy the session runs on:
+Your session is eligible for [server-managed settings](/docs/en/server-managed-settings), but Claude Code couldn't fetch them or couldn't apply what the server returned, so it shows this warning in interactive sessions.
+
+The parenthesized cause names what failed, such as `network error`, `request timed out`, or `authentication rejected (401)`. The cause `no setting in the server response could be applied as written` means the server answered but none of the settings it returned passed [validation](/docs/en/server-managed-settings#invalid-entries-in-delivered-settings). Before v2.1.282, this cause read `server returned invalid settings`.
+
+The rest of the line says which policy the session runs on:
 
 * **Settings cached from an earlier successful fetch**: Claude Code runs the session on that cached policy, except the [withheld environment variables](/docs/en/server-managed-settings#fetch-and-caching-behavior), and the line reads `using cached policy`.
 * **No cache**: Claude Code runs the session without server-managed settings, and the line reads `no remote policy applied`.
@@ -4353,6 +4426,7 @@ Your session is eligible for [server-managed settings](/docs/en/server-managed-s
 **What to do:**
 
 * Act on the cause the message names: for a network cause, check that this machine can reach `api.anthropic.com`; for an authentication cause, check your sign-in with `/status`
+* For `no setting in the server response could be applied as written`, ask your administrator to correct the settings on the server
 * Run `/status` or `claude doctor` for the full diagnostic
 
 Before v2.1.248, Claude Code reported a failed settings fetch only in the debug log.

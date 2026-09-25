@@ -413,7 +413,7 @@ Claude Code sends Anthropic operational [telemetry](/docs/en/data-usage#telemetr
 
 Claude Code applies a value of `1` without showing the user the [approval dialog](/docs/en/server-managed-settings#environment-variables-and-the-approval-dialog).
 
-If you turn telemetry off, Claude Code stops sending the usage data that feeds your organization's [analytics dashboard](/docs/en/analytics) for the developers the policy reaches. The variable also turns off feature-flag fetching, which makes Remote Control, default auto mode, and the other [features that need feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) unavailable for those developers.
+If you turn telemetry off, Claude Code stops sending the usage data that feeds your organization's [analytics dashboard](/docs/en/analytics) for the developers the policy reaches. The variable also turns off [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) for those developers. For Remote Control, see the [Remote Control requirements](/docs/en/remote-control#requirements).
 
 [Where and when a policy applies](#where-and-when-a-policy-applies) says which delivery mechanism reaches each surface, and [Platform availability](/docs/en/server-managed-settings#platform-availability) says which sessions skip the server-managed settings fetch.
 

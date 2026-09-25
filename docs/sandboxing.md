@@ -40,7 +40,7 @@ On macOS, there is nothing to install: sandboxing uses the built-in Seatbelt fra
   </Step>
 
   <Step title="Run a Bash command">
-    Ask Claude to run a command, such as a build or a test suite. By default, commands inside the sandbox can write to the working directory, the session temp directory, and any [directories you've added](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) with `--add-dir`, `/add-dir`, or `permissions.additionalDirectories`.
+    Ask Claude to run a command, such as a build or a test suite. By default, commands inside the sandbox can write to the working directory, a [per-user temp directory](/docs/en/env-vars), and any [directories you've added](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) with `--add-dir`, `/add-dir`, or `permissions.additionalDirectories`.
 
     The first time a command needs a new network domain, Claude Code prompts for approval; in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), Claude instead names the hosts a command needs [on the command itself](#per-command-allowed-domains-in-auto-mode) for the classifier to review with it.
 
@@ -165,7 +165,7 @@ Before v2.1.260, strict sandbox mode sandboxed shell-mode commands in every sess
 
 #### Temporary directories
 
-The session temp directory is writable inside the sandbox by default, alongside the working directory. Unless you [disable filesystem isolation](#disable-filesystem-isolation), Claude Code sets `$TMPDIR` to this directory for sandboxed commands, so tools that write temporary files work without extra configuration.
+A per-user temp directory is writable inside the sandbox by default, alongside the working directory. Unless you [disable filesystem isolation](#disable-filesystem-isolation), Claude Code sets `$TMPDIR` to this directory for sandboxed commands, so tools that write temporary files work without extra configuration.
 
 Unsandboxed commands inherit your shell's `$TMPDIR` when it is set, so while filesystem isolation is on, sandboxed and unsandboxed commands resolve `$TMPDIR` to different directories. If your shell leaves `$TMPDIR` unset or empty, an unsandboxed command that references `$TMPDIR` receives your [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) override, or the operating system's temp directory when you haven't set one or the override is a long path, so the variable doesn't expand to an empty string. To pass temporary files between the two, write them under the working directory instead.
 
@@ -173,7 +173,7 @@ Unsandboxed commands inherit your shell's `$TMPDIR` when it is set, so while fil
 
 Customize sandbox behavior through your `settings.json` file. See [Settings](/docs/en/settings-reference#sandbox-settings) for the complete configuration reference.
 
-By default, sandboxed commands can write to the current working directory, the session temp directory, and any [directories you've added](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) with `--add-dir`, `/add-dir`, or `permissions.additionalDirectories`. If subprocess commands like `kubectl`, `terraform`, or `npm` need to write outside those directories, use `sandbox.filesystem.allowWrite` to grant access to specific paths:
+By default, sandboxed commands can write to the current working directory, the per-user temp directory, and any [directories you've added](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) with `--add-dir`, `/add-dir`, or `permissions.additionalDirectories`. If subprocess commands like `kubectl`, `terraform`, or `npm` need to write outside those directories, use `sandbox.filesystem.allowWrite` to grant access to specific paths:
 
 ```json theme={null}
 {
@@ -287,7 +287,7 @@ Setting `filesystem.disabled` lifts the protections the filesystem layer itself 
 
 Two other things change:
 
-* Sandboxed commands inherit your shell's `$TMPDIR` instead of the session temp directory, because every temp directory is writable and Claude Code no longer redirects commands to the session one.
+* Sandboxed commands inherit your shell's `$TMPDIR` instead of the per-user temp directory, because every temp directory is writable and Claude Code no longer redirects commands to the per-user one.
 
   On Linux the variable is often unset in the parent shell. The Bash tool guidance tells Claude to create scratch directories with `mktemp -d` instead of relying on `$TMPDIR`.
 * [`autoAllowBashIfSandboxed`](/docs/en/settings-reference#sandbox-autoallowbashifsandboxed) still defaults to `true`, so sandboxed commands keep running without prompts. Set it to `false` to prompt for sandboxed commands.
@@ -492,9 +492,9 @@ Two optional fields refine how matching behaves. Both apply only when `mode` is 
 
 The sandboxed Bash tool restricts file system access to specific directories:
 
-* **Default write behavior**: read and write access to the current working directory and its subdirectories, any directories you've added with `--add-dir`, `/add-dir`, or [`permissions.additionalDirectories`](/docs/en/settings-reference#permissions-additionaldirectories), plus the session temp directory that `$TMPDIR` points to
+* **Default write behavior**: read and write access to the current working directory and its subdirectories, any directories you've added with `--add-dir`, `/add-dir`, or [`permissions.additionalDirectories`](/docs/en/settings-reference#permissions-additionaldirectories), plus the per-user temp directory that `$TMPDIR` points to
 * **Default read behavior**: read access to the entire computer, except certain denied directories. Note that this default still allows reading credential files such as `~/.aws/credentials` and `~/.ssh/`. Use [`sandbox.credentials`](#protect-credentials) to block reads of these files and unset secret environment variables, or add the paths to `denyRead`.
-* **Blocked access**: cannot modify files outside the working directory, added directories, and session temp directory without explicit permission, including shell configuration files such as `~/.bashrc` and system binaries in `/bin/`
+* **Blocked access**: cannot modify files outside the working directory, added directories, and the per-user temp directory without explicit permission, including shell configuration files such as `~/.bashrc` and system binaries in `/bin/`
 * **Git worktrees**: when the working directory is a [linked git worktree](/docs/en/worktrees), the sandbox also allows writes to the main repository's shared `.git` directory so commands such as `git commit` can update refs and the index. Writes to `hooks/` and `config` inside that directory remain denied.
 * **Configurable**: define custom allowed and denied paths through settings
 

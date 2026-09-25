@@ -81,7 +81,11 @@ On SIGTERM, Claude Code terminates the process tree of any Bash command that is 
 * **Running a command**: Claude Code records the command as killed in the session.
 * **Waiting for an answer to a permission prompt**: if you send SIGTERM to the process, Claude Code leaves the prompt unanswered. If your program closes the session through the Agent SDK, the SDK ends Claude Code's input before sending any signal, and Claude Code cancels the prompt as soon as the input ends.
 
-When you [resume the session](#continue-conversations), Claude Code continues the turn that SIGTERM left unfinished.
+When you [resume the session](#continue-conversations), Claude Code leaves the interrupted turn as it is, and your next prompt drives the conversation. To have Claude Code continue the interrupted turn on resume instead, set [`CLAUDE_CODE_RESUME_INTERRUPTED_TURN=1`](/docs/en/env-vars).
+
+### If the working directory is deleted
+
+If the working directory of a `claude -p` or Agent SDK session is deleted mid-session, the session keeps running. When a turn starts while the directory is missing, Claude Code emits a [warning message](/docs/en/agent-sdk/typescript#sdkinformationalmessage) in `stream-json` output, and shell commands fail until the directory exists again.
 
 ## Examples
 

@@ -307,6 +307,10 @@ Run `/tui fullscreen` to switch and save the preference. Your conversation relau
   ```
 </CodeGroup>
 
+## Cap response width in wide terminals
+
+In a wide terminal, each line of prose in Claude's responses runs the full width of the window. To wrap the prose at a set number of columns instead, set [`maxProseWidth`](/docs/en/settings-reference#maxprosewidth) in your settings.
+
 ## Paste large content
 
 When you paste more than 800 characters or more than three lines into the prompt, Claude Code collapses the input to a placeholder such as `[Pasted text #1 +120 lines]` so the input box stays usable, and still sends the full content when you submit. For very large inputs such as entire files or long logs, write the content to a file and ask Claude to read it instead of pasting. The conversation transcript stays readable and Claude can refer to the file by path in later turns. The VS Code integrated terminal can also drop characters from very large pastes before they reach Claude Code, so use a file there.

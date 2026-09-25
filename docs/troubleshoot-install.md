@@ -43,6 +43,7 @@ Match the error message or symptom you're seeing to a fix:
 | `App unavailable in region`                                                                                | Claude Code is not available in your country. See [supported countries](https://www.anthropic.com/supported-countries).                       |
 | `unable to get local issuer certificate`                                                                   | [Configure corporate CA certificates](#tls-or-ssl-connection-errors)                                                                          |
 | `OAuth error` or `403 Forbidden`                                                                           | [Fix authentication](#login-and-authentication)                                                                                               |
+| `Claude Code access has not been granted for this account`                                                 | [Get a role that includes Claude Code](#claude-code-access-has-not-been-granted-for-this-account)                                             |
 | `Unable to connect to Anthropic services` during setup                                                     | See [Unable to connect to Anthropic services](/docs/en/errors#unable-to-connect-to-anthropic-services) in the Error reference                      |
 | `Could not load the default credentials` or `Could not load credentials from any providers`                | [Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry credentials](#bedrock-agent-platform-or-foundry-credentials-not-loading) |
 | `ChainedTokenCredential authentication failed` or `CredentialUnavailableError`                             | [Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry credentials](#bedrock-agent-platform-or-foundry-credentials-not-loading) |
@@ -134,11 +135,18 @@ Check if the install directory is in your PATH by listing your PATH entries and 
     source ~/.zshrc
     ```
 
-    For Bash, the default on most Linux distributions:
+    For Bash on Linux, where it's the default on most distributions:
 
     ```bash theme={null}
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
     source ~/.bashrc
+    ```
+
+    For Bash on macOS, add the line to `~/.bash_profile` instead. Terminal on macOS starts Bash as a login shell, which ignores `~/.bashrc` and reads only the first of `~/.bash_profile`, `~/.bash_login`, or `~/.profile` that exists. If you already have a `~/.bash_login` or `~/.profile` and no `~/.bash_profile`, put the line in that file rather than creating `~/.bash_profile`:
+
+    ```bash theme={null}
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bash_profile
+    source ~/.bash_profile
     ```
 
     Alternatively, close and reopen your terminal.
@@ -923,6 +931,15 @@ If you see `API Error: 403 {"error":{"type":"forbidden","message":"Request not a
 * **Claude Pro/Max users**: verify your subscription is active at [claude.ai/settings](https://claude.ai/settings)
 * **Anthropic Console users**: confirm your account has the "Claude Code" or "Developer" role. Admins assign this in the Anthropic Console under Settings → Members.
 * **Behind a proxy**: corporate proxies can interfere with API requests. See [network configuration](/docs/en/network-config) for proxy setup.
+
+### Claude Code access has not been granted for this account
+
+If the sign-in page shows `Authorization failed` with the message `Claude Code access has not been granted for this account. Contact your administrator.` after you log in from Claude Code, your Claude Enterprise organization has set your role to Custom and none of the [custom roles](https://support.claude.com/en/articles/13930452) assigned to your groups grants Claude Code. On the Custom role, you get access only from those custom roles, so nothing you change in Claude Code resolves this error.
+
+To get access:
+
+1. Ask an Owner of your Claude organization to assign a custom role that grants Claude Code access to one of your groups, or to change your role from Custom to a standard role such as User. Owners manage roles in the organization's [role settings](https://claude.ai/admin-settings/roles).
+2. After the Owner makes the change, run `claude` and log in again.
 
 ### This organization has been disabled with an active subscription
 

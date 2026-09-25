@@ -195,7 +195,7 @@ If Postgres goes down, the gateway itself keeps serving signed-in developers and
 * **[Spend-limit enforcement](/docs/en/claude-apps-gateway-spend-limits#postgres-availability)**: fails open by default during the outage, so inference still flows; flip it to fail closed if you'd rather block than run unmetered
 * **Readiness**: `/readyz` reports not-ready during the outage, so orchestrators that gate traffic on readiness remove every replica from rotation at once. In that topology all traffic, including inference the gateway could still serve, fails at the load balancer until Postgres recovers. The liveness probe on `/healthz` keeps passing, so replicas aren't restarted. Point the readiness probe at `/healthz` instead if you'd rather signed-in developers keep working through a store outage; the cost is that new sign-ins fail against a replica that still reports ready.
 
-If your IdP goes down, existing sessions work until `ttl_hours`, new logins fail, and a session refresh gets a try-again answer and goes through once the IdP is back. Set a longer `ttl_hours` if your IdP has frequent maintenance windows.
+If your IdP goes down, existing sessions work until `ttl_hours` and new logins fail. A session refresh gets a try-again answer and succeeds once the IdP is back. Set a longer `ttl_hours` if your IdP has frequent maintenance windows.
 
 ### JWT secret rotation
 

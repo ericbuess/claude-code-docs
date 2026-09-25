@@ -50,6 +50,14 @@ Each compiled executable embeds a single platform's binary. Match the platform p
 * To cross-compile, install the non-matching platform package, for example `npm install @anthropic-ai/claude-agent-sdk-linux-x64 --force`.
 * On Windows, the binary subpath is `claude.exe`, for example `@anthropic-ai/claude-agent-sdk-win32-x64/claude.exe`.
 
+### Import the `/core` entry when you bundle the Agent SDK
+
+If your application bundles the Agent SDK together with its own dependencies, import from `@anthropic-ai/claude-agent-sdk/core` instead of the package root. The `/core` entry requires TypeScript Agent SDK v0.3.282 or later, and its types require TypeScript 5.0 or later.
+
+The `/core` entry exports the same `query()`, `startup()`, `tool()`, `createSdkMcpServer()`, and `resolveSettings()` as the root entry, along with the functions that rename, tag, and delete sessions, `AbortError`, the runtime constants, and every type. It adds no names of its own. To keep the code your application loads small, `/core` leaves out some root exports, including `prewarm()`, the `InMemorySessionStore` class, and the helpers that list, read, fork, import, and summarize sessions. If you need one of them, use the root entry instead.
+
+The root entry inlines its own copies of `zod` and `@modelcontextprotocol/sdk`. The `/core` entry imports them from your `node_modules` at the ranges the Agent SDK's `peerDependencies` declare, so a bundle that already includes them doesn't carry a second copy. Import from either the root or `/core` in a given process, not both: they are separate bundles, and loading both gives you two copies of the Agent SDK's classes and state.
+
 ## Functions
 
 ### `query()`
@@ -79,7 +87,7 @@ Returns a [`Query`](#query-object) object that extends `AsyncGenerator<`[`SDKMes
 
 ### `startup()`
 
-Pre-warms the CLI subprocess by spawning it and completing the initialize handshake before a prompt is available. The returned [`WarmQuery`](#warmquery) handle accepts a prompt later and writes it to an already-ready process, so the first `query()` call resolves without paying subprocess spawn and initialization cost inline.
+Pre-warms the CLI subprocess by spawning it and completing the initialize handshake before a prompt is available. The returned [`WarmQuery`](#warmquery) handle accepts a prompt later and writes it to an already-ready process, so the first `query()` call resolves without paying subprocess spawn and initialization cost inline. If you don't know the session's working directory yet, use [`prewarm()`](#prewarm) instead.
 
 ```typescript theme={null}
 function startup(params?: {
@@ -111,6 +119,48 @@ const warm = await startup({ options: { maxTurns: 3 } });
 
 // Later, when a prompt is ready, this is immediate
 for await (const message of warm.query("What files are here?")) {
+  console.log(message);
+}
+```
+
+### `prewarm()`
+
+*Alpha.* Starts a Claude Code process as a spare before you know which session it will serve, so you can bind it to a session later with [`claim()`](#spareprocess). Use it in an application that boots before the user picks a folder. Requires TypeScript Agent SDK v0.3.282 or later.
+
+`prewarm()` completes the same initialize handshake as [`startup()`](#startup), with the process waiting in `options.cwd` when you set it and otherwise in a private temporary directory under your Claude Code config directory. The session's working directory, its `SessionStart` hooks, its stdio MCP servers, and its CLAUDE.md and git context wait for the claim. A spare holds roughly 230 to 260 MB of memory while it waits. If your [`spawnClaudeCodeProcess`](#options) runs Claude Code on another machine or in a container, set `options.cwd` to a directory that exists there for the spare to wait in.
+
+```typescript theme={null}
+function prewarm(params?: {
+  options?: Options;
+  initializeTimeoutMs?: number;
+}): Promise<SpareProcess>;
+```
+
+`options` and `initializeTimeoutMs` mean the same as for `startup()`, except that `options.cwd` sets only the directory the spare waits in. The promise resolves with a [`SpareProcess`](#spareprocess) once the process has completed its initialize handshake. `prewarm()` throws if `options` sets `resume`, `continue`, or `forkSession`, because a spare has no session yet. Everything a claim can't set, such as `mcpServers`, `hooks`, `canUseTool`, `settingSources`, `systemPrompt`, and `plugins`, is fixed for the life of the spare, so keep one spare per distinct set of those options and prewarm again when they change.
+
+#### Example
+
+Prewarm on application boot, then claim the spare when the user starts a session:
+
+```typescript theme={null}
+import { prewarm } from "@anthropic-ai/claude-agent-sdk";
+
+// On application boot, before the session's folder is known
+const spare = await prewarm({ options: { maxTurns: 3 } });
+
+// Later, when the user starts a session in a folder
+const claimedQuery = spare.claim({
+  prompt: "What files are here?",
+  options: { cwd: "/path/to/project" },
+});
+
+spare.claimed.catch((error: Error) => {
+  // Unless the message starts with "option_not_applied", the prompt didn't run:
+  // start this session with query() instead
+  console.error("Claim failed:", error.message);
+});
+
+for await (const message of claimedQuery) {
   console.log(message);
 }
 ```
@@ -477,6 +527,7 @@ Configuration object for the `query()` function.
 | `toolAliases`                     | `Record<string, string>`                                                                                                                                                                                       | `undefined`                                 | Map built-in tool names to MCP tool names so Claude calls your MCP implementation in place of the built-in. For example, `{ Bash: 'mcp__workspace__bash' }`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `toolConfig`                      | [`ToolConfig`](#toolconfig)                                                                                                                                                                                    | `undefined`                                 | Configuration for built-in tool behavior. See [`ToolConfig`](#toolconfig) for details                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `tools`                           | `string[] \| { type: 'preset'; preset: 'claude_code' }`                                                                                                                                                        | `undefined`                                 | Tool configuration. Pass an array of tool names or use the preset to get Claude Code's default tools                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `verbatimPrompts`                 | `boolean`                                                                                                                                                                                                      | `false`                                     | Deliver every prompt as written. The SDK sends each user message with `client_composed: true`. See [`client_composed`](#sdkusermessage) for what Claude Code skips on those messages. Use this option when your prompt text includes content the end user didn't type. For per-turn control, leave it off and set `client_composed` on individual streamed messages instead. Requires TypeScript Agent SDK v0.3.280 or later and Claude Code v2.1.248 or later; the Claude Code version bundled with those SDK versions satisfies the Claude Code requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 #### Handle slow or stalled API responses
 
@@ -656,6 +707,35 @@ interface WarmQuery extends AsyncDisposable {
 | `close()`       | Close the subprocess without sending a prompt. Use this to discard a warm query that is no longer needed                  |
 
 `WarmQuery` implements `AsyncDisposable`, so it can be used with `await using` for automatic cleanup.
+
+### `SpareProcess`
+
+*Alpha.* Handle returned by [`prewarm()`](#prewarm): a started Claude Code process that isn't bound to a session yet and can be claimed once. Requires TypeScript Agent SDK v0.3.282 or later.
+
+```typescript theme={null}
+interface SpareProcess extends AsyncDisposable {
+  claim(params: {
+    prompt: string | AsyncIterable<SDKUserMessage>;
+    options: ClaimOptions;
+  }): Query;
+  readonly claimed: Promise<{ cwd: string; sessionId: string; parkedMs?: number; sdkMcpSettled: boolean }>;
+  readonly exited: Promise<void>;
+  close(): void;
+}
+```
+
+#### Members
+
+| Member                       | Description                                                                                                                                                                                                                                                                                                                       |
+| :--------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `claim({ prompt, options })` | Bind the spare to a session in `options.cwd` and send its first message. Returns a [`Query`](#query-object) synchronously, as `query()` does. Can only be called once                                                                                                                                                             |
+| `claimed`                    | Resolves with the session's working directory and ID once Claude Code accepts the claim. Rejects when Claude Code refuses the claim, when the process exited or was closed first, and, with a message that starts with `option_not_applied`, when the session is running without the `model` or `maxThinkingTokens` you asked for |
+| `exited`                     | Settles when the process exits, claimed or not. Replace a spare that exits before you claim it                                                                                                                                                                                                                                    |
+| `close()`                    | Terminate the process. Before a claim this discards the spare and rejects `claimed`                                                                                                                                                                                                                                               |
+
+`options.cwd` is required. A claim can also set `additionalDirectories`, `model`, `permissionMode`, `maxThinkingTokens`, a flag-settings overlay in `settings`, `appendSystemPrompt`, `title`, `agents`, and per-session tokens in `env`.
+
+Claude Code can refuse a claim, for example for a folder that doesn't exist or one whose project settings set `env`, `agent`, or `model`. When `claimed` rejects with a message that starts with `option_not_applied`, the session is running without the `model` or `maxThinkingTokens` you asked for. After any other rejection your prompt hasn't run, so start the session with `query()` instead.
 
 ### `SDKControlInitializeResponse`
 
@@ -888,7 +968,9 @@ type SDKControlMcpReadResourceResponse = {
 
 Pass `readMcpResource()` the server name as `mcpServerStatus()` reports it and a `ui://` URI, such as the `ui.resourceUri` a tool declares in its [`_meta`](#mcpserverstatus). The call rejects for any other URI scheme, for an [SDK MCP server](#createsdkmcpserver) your application hosts itself, and for a server that isn't connected. It's available when the init message's [`capabilities`](#sdksystemmessage) include `mcp_read_resource_v1`.
 
-Each `contents` entry is one content item as the server sent it. `blob` holds base64 data for a binary item, and `_meta` is the item's own `_meta`, where an MCP Apps server puts the resource's `ui.csp` and `ui.permissions`. The contents are untrusted third-party HTML, so render them in a sandbox.
+Each `contents` entry is one content item as the server sent it, minus any `_meta` key under the `com.anthropic/` prefix, which is reserved for Claude Code. `blob` holds base64 data for a binary item, and `_meta` is the item's own `_meta`, where an MCP Apps server puts the resource's `ui.csp` and `ui.permissions`.
+
+The contents are untrusted third-party HTML, so render them in a sandbox.
 
 ### `AgentDefinition`
 
@@ -1278,6 +1360,7 @@ type SDKUserMessage = {
   parent_tool_use_id: string | null;
   isSynthetic?: boolean;
   shouldQuery?: boolean;
+  client_composed?: true;
   tool_use_result?: unknown;
   origin?: SDKMessageOrigin;
   inline_pastes?: string[];
@@ -1286,7 +1369,10 @@ type SDKUserMessage = {
 
 Set `pasted_content` to send content the user pasted into your prompt UI rather than typed, one entry per paste, each a string or an array of content blocks. Claude Code appends each entry's text after the typed text, in order, and may wrap each paste in `<pasted_content>` tags. Blocks other than text are ignored, so send images and documents in `message.content`. Requires Agent SDK v0.3.277 or later.
 
-Set `shouldQuery` to `false` to append the message to the transcript without triggering an assistant turn. The message is held and merged into the next user message that does trigger a turn. Use this to inject context, such as the output of a command you ran out of band, without spending a model call on it.
+Set `shouldQuery` or `client_composed` to change how Claude Code handles a message you send:
+
+* `shouldQuery`: set it to `false` to append the message to the transcript without triggering an assistant turn. The message is held and merged into the next user message that does trigger a turn. Use this to inject context, such as the output of a command you ran out of band, without spending a model call on it.
+* `client_composed`: set it to `true` to have Claude Code deliver the message text as written. Claude Code then doesn't expand `@path` or [`@server:resource`](/docs/en/mcp#use-mcp-resources) mentions, and doesn't run text that starts with `/` as a command. While the [`verbatimPrompts`](#options) option is on, the SDK sets the field on every message. Requires TypeScript Agent SDK v0.3.280 or later and Claude Code v2.1.248 or later.
 
 On a message that carries a `tool_result` block, `tool_use_result` is the tool's structured output object rather than the text sent to the model. Its shape depends on the tool named by the matching `tool_use` block, so the field is typed `unknown`; the built-in shapes are listed under [Tool Output Types](#tool-output-types).
 
@@ -1308,6 +1394,7 @@ type SDKUserMessageReplay = {
   message: MessageParam;
   parent_tool_use_id: string | null;
   isSynthetic?: boolean;
+  client_composed?: true;
   tool_use_result?: unknown;
   origin?: SDKMessageOrigin;
   isReplay: true;
@@ -1456,7 +1543,7 @@ Claude Code omits the field in these cases:
 
 The `uuid`s of every message you sent that Claude Code answered in this turn. When you send several messages close together, Claude Code can merge them into one turn, and `user_message_uuid` then names only the last of them. To match the reply to any of the merged messages, look for that message's `uuid` anywhere in this list. Requires Agent SDK v0.3.259 or later.
 
-Claude Code sets the list together with `user_message_uuid` on each reply frame that carries that field and on the result. For the full set of frames that carry `user_message_uuid`, and the version each requires, see [`user_message_uuid`](#user_message_uuid). The list always contains `user_message_uuid` and holds at most 64 entries.
+Claude Code sets the list together with `user_message_uuid` on each reply frame that carries that field and on the result. For the full set of turn frames that echo the answered message's `uuid`, and the version each requires, see [`user_message_uuid`](#user_message_uuid). The list always contains `user_message_uuid` and holds at most 64 entries.
 
 When Claude Code picks up a regular message you sent while a turn was running, it adds that message's `uuid` to the result's list.
 
@@ -5163,6 +5250,8 @@ type SDKLocalCommandOutputMessage = {
 
 Emitted when the set of available commands changes mid-session, such as when Claude Code discovers skills as the agent enters a subdirectory. The `commands` array is the full updated list, so replace any cached command list with this payload. Calling [`supportedCommands()`](#query-object) after this message returns the same updated list, because the method tracks the latest push; this requires Agent SDK v0.3.216 or later. In earlier SDK versions, `supportedCommands()` returns the snapshot captured at initialization and never reflects mid-session changes.
 
+Claude Code also emits this message when an MCP server's [prompts](/docs/en/mcp#use-mcp-prompts-as-commands) join or leave the list, for example when a server finishes connecting after the session starts. This requires Claude Code v2.1.281 or later.
+
 ```typescript theme={null}
 type SDKCommandsChangedMessage = {
   type: "system";
@@ -5196,8 +5285,19 @@ type SDKConversationResetMessage = {
   new_conversation_id: UUID;
   uuid: UUID;
   session_id: string;
+  trigger?: "clear" | "plan_mode_exit" | "fresh_session" | "onboarding";
+  user_message_uuid?: string;
+  timestamp?: string;
 };
 ```
+
+The optional fields describe the reset:
+
+* `trigger`: what discarded the conversation. Reset your transcript on every `conversation_reset` message, including one where this field is absent or carries a value you don't recognize.
+* `user_message_uuid`: the `uuid` of the user message that carried the `/clear`. Use it to match the reset to that message.
+* `timestamp`: when the reset happened, as an ISO 8601 string in UTC. Use it for display, not for ordering messages.
+
+The `trigger`, `user_message_uuid`, and `timestamp` fields require Claude Code v2.1.281 or later.
 
 The SDK's published typings declare `SDKConversationResetMessage` in Claude Code v2.1.203 and later. Before v2.1.203, `SDKMessage` referenced the type without declaring it, so narrowing on `type === "conversation_reset"` failed to typecheck when `skipLibCheck` was disabled.
 

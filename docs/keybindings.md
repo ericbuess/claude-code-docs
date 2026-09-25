@@ -152,6 +152,8 @@ Before v2.1.257, a `confirm:toggleExplanation` action, bound to `Ctrl+E` by defa
 
 Dialogs use `confirm:yes` and `confirm:no` to accept and cancel even when they don't ask a yes-or-no question. If you bind a bare letter such as `y` or `n` in this context, the letter also acts on dialogs that never show it as a key. A dialog that shows `y` and `n` as its keys reads those letters itself and needs no binding.
 
+In most dialogs, pressing `Ctrl+C` or `Ctrl+D` twice closes the dialog instead of exiting Claude Code. The hint after the first press says whether the second press closes the dialog or exits. Both keys are [reserved](#reserved-shortcuts) and can't be rebound.
+
 This example binds `y` to `confirm:yes` and `n` to `confirm:no`:
 
 ```json theme={null}
@@ -238,6 +240,10 @@ Actions available in the `Tabs` context:
 | `tabs:next`     | Tab, Right      | Next tab     |
 | `tabs:previous` | Shift+Tab, Left | Previous tab |
 
+In a tabbed dialog, `tabs:next` and `tabs:previous` switch tabs while the tab row has focus. In some dialogs, such as `/help` and `/sandbox`, the tab-switching keys also work from inside the tab's content.
+
+`Up` and `Down` move focus between the tab row and the tab's content, and a list in the content responds to keys only while it has focus.
+
 ### Attachments actions
 
 Actions available in the `Attachments` context:
@@ -253,15 +259,15 @@ Actions available in the `Attachments` context:
 
 Actions available in the `Footer` context:
 
-| Action                  | Default           | Description                                                                                                                                                                                   |
-| :---------------------- | :---------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `footer:next`           | Right             | Next footer item                                                                                                                                                                              |
-| `footer:previous`       | Left              | Previous footer item                                                                                                                                                                          |
-| `footer:up`             | Up                | Navigate up in footer (deselects at top)                                                                                                                                                      |
-| `footer:down`           | Down              | Navigate down in footer                                                                                                                                                                       |
-| `footer:openSelected`   | Enter             | Open selected footer item                                                                                                                                                                     |
-| `footer:clearSelection` | Escape            | Clear footer selection                                                                                                                                                                        |
-| `footer:dismiss`        | Backspace, Delete | Dismiss the selected [artifact](/docs/en/artifacts) link from the footer; the published artifact itself is unaffected. On other footer rows, these keys have no effect. Requires v2.1.217 or later |
+| Action                  | Default   | Description                                                                                                                                                                                                   |
+| :---------------------- | :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `footer:next`           | Right     | Next footer item                                                                                                                                                                                              |
+| `footer:previous`       | Left      | Previous footer item                                                                                                                                                                                          |
+| `footer:up`             | Up        | Navigate up in footer (deselects at top)                                                                                                                                                                      |
+| `footer:down`           | Down      | Navigate down in footer                                                                                                                                                                                       |
+| `footer:openSelected`   | Enter     | Open selected footer item                                                                                                                                                                                     |
+| `footer:clearSelection` | Escape    | Clear footer selection                                                                                                                                                                                        |
+| `footer:dismiss`        | (unbound) | Removed in v2.1.281. A `keybindings.json` that still names the action remains valid, and the binding does nothing. Before v2.1.281, Backspace and Delete dismissed the selected artifact link from the footer |
 
 While a footer item is selected, such as a row in the agent panel below the prompt, `Enter` opens it even when you rebind `Enter` in the `Chat` context to `chat:queueSubmit` or `chat:newline`.
 
@@ -350,7 +356,7 @@ Actions available in the `Select` context:
 | `select:accept`   | Enter           | Accept selection              |
 | `select:cancel`   | Escape          | Cancel selection              |
 
-Claude Code applies your `select:pageUp`, `select:pageDown`, `select:first`, and `select:last` bindings in the `/skills` menu. In most other lists, such as the `/model` picker, your `select:first` and `select:last` bindings apply. PageUp and PageDown page through the options in those lists regardless of your bindings.
+In list panels such as `/skills` and `/mcp`, Claude Code applies your `select:pageUp`, `select:pageDown`, `select:first`, and `select:last` bindings. In most other lists, such as the `/model` picker, your `select:first` and `select:last` bindings apply. PageUp and PageDown page through the options in those lists regardless of your bindings.
 
 Before v2.1.280, those other lists ignored Home, End, and your `select:first` and `select:last` bindings.
 

@@ -1290,6 +1290,14 @@ The annotation applies independently of `MAX_MCP_OUTPUT_TOKENS` for text content
   If you frequently encounter output warnings with specific MCP servers you don't control, consider increasing the `MAX_MCP_OUTPUT_TOKENS` limit. You can also ask the server author to add the `anthropic/maxResultSizeChars` annotation or to paginate their responses. The annotation has no effect on tools that return image content; for those, raising `MAX_MCP_OUTPUT_TOKENS` is the only option.
 </Warning>
 
+### Images in tool results
+
+When an MCP tool returns a PNG, JPEG, GIF, or WebP image, Claude sees the image inline in the conversation. The inline copy may be scaled down or compressed to fit the model's image size limits. Claude Code also saves the original bytes to a file in the session's `tool-results` directory under [`~/.claude/projects/`](/docs/en/claude-directory#cleaned-up-automatically) and gives Claude the path. Claude can then crop, convert, or reuse the full-resolution file with tools such as Bash.
+
+If you disable session persistence with [`--no-session-persistence`](/docs/en/cli-reference#cli-flags) or [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/docs/en/env-vars), Claude Code writes no image file and Claude receives only the inline copy.
+
+Saving MCP image results to a file requires Claude Code v2.1.283 or later.
+
 ## Tool input schemas with a root-level combinator
 
 Some MCP servers declare a tool's input schema as a JSON Schema union, with `anyOf`, `oneOf`, or `allOf` at the top level of the schema. The Claude API doesn't accept those keywords at the schema root. It does accept combinators nested inside `properties`, which Claude Code sends unchanged.
@@ -1494,6 +1502,8 @@ Setting `alwaysLoad: true` also makes startup wait for the server's tools, cappe
 ## Use MCP prompts as commands
 
 MCP servers can expose prompts that become available as commands in Claude Code.
+
+Prompts from a server named `anthropic-skills` don't appear, because Claude Code [reserves that name](/docs/en/skills#names-reserved-for-synced-skills) for skills synced from claude.ai. The server's tools still work. Rename the server in your MCP configuration to list its prompts.
 
 ### Execute MCP prompts
 

@@ -1538,7 +1538,7 @@ Claude Code deletes the files in the paths below once they're older than [`clean
 | `projects/<project>/<session>.jsonl`                                                                                            | Full conversation transcript: every message, tool call, and tool result                                                                                                                                                                                                                                                                 |
 | `projects/<project>/<session>.orphaned-<timestamp>-<suffix>.jsonl`, `projects/<project>/<session>.jsonl.superseded-<timestamp>` | A previous transcript for the session that Claude Code set aside instead of overwriting or deleting it. It doesn't appear in the session picker                                                                                                                                                                                         |
 | `projects/<project>/<session>/subagents/`                                                                                       | [Subagent](/docs/en/sub-agents) conversation transcripts, removed with the parent session transcript when it ages out                                                                                                                                                                                                                        |
-| `projects/<project>/<session>/tool-results/`                                                                                    | Large tool outputs spilled to separate files                                                                                                                                                                                                                                                                                            |
+| `projects/<project>/<session>/tool-results/`                                                                                    | Large tool outputs spilled to separate files, and full-size copies of [images that MCP tools return](/docs/en/mcp#images-in-tool-results)                                                                                                                                                                                                    |
 | `file-history/<session>/`                                                                                                       | Pre-edit snapshots of files Claude changed, used for [checkpoint restore](/docs/en/checkpointing). Holds snapshots for the 100 most recent checkpoints; snapshot files that no retained checkpoint references are deleted, except each file's first snapshot                                                                                 |
 | `plans/`                                                                                                                        | Plan files written during [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode)                                                                                                                                                                                                                                      |
 | `debug/`                                                                                                                        | Per-session debug logs, written while debug logging is on, such as when you start with [`--debug`](/docs/en/cli-reference#cli-flags) or run `/debug`                                                                                                                                                                                         |
@@ -1565,6 +1565,26 @@ Claude Code skips the age-based sweep in these cases:
 
 * **Bare mode**: when you run `claude -p` with [`--bare`](/docs/en/headless#start-faster-with-bare-mode), Claude Code doesn't run the sweep in that session.
 * **Paused sweep**: if Claude Code can't safely determine the retention period, it pauses the retention cleanup sweep; the [`retention_sweep` event](/docs/en/monitoring-usage#retention-sweep-event) lists each configuration that pauses it. When the cause is a settings file that can't be read or parsed, or settings errors with `cleanupPeriodDays` or `desktopSessionCleanupPeriodDays` explicitly set, Claude Code also shows a warning in `/status` until you fix the settings errors. When [managed settings](/docs/en/server-managed-settings) provide `cleanupPeriodDays`, Claude Code runs the sweep at the managed value in either case.
+
+### Session scratchpad directory
+
+The scratchpad is a per-session directory that Claude Code gives Claude for temporary files: intermediate results, helper scripts, and drafts that don't belong in your project. When Claude says it saved something "to the scratchpad", the file is there. Claude uses it instead of `/tmp`, and can create, edit, and read files in it without a permission prompt.
+
+The scratchpad lives under Claude Code's temp directory rather than `~/.claude`. Find the current session's path for your platform:
+
+* **macOS**: `/private/tmp/claude-<uid>/<project>/<session-id>/scratchpad/`
+* **Linux**: `/tmp/claude-<uid>/<project>/<session-id>/scratchpad/`, or the same shape under `$TMPDIR` when your system sets one
+* **Windows**: `%TEMP%\claude\<project>\<session-id>\scratchpad\`
+
+`<project>` is your working directory path with every character other than letters and digits replaced by `-`, such as `-Users-you-my-project`. If you set [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars), the tree moves under that directory instead. Hooks receive the current session's path as [`scratchpad_dir`](/docs/en/hooks#common-input-fields).
+
+Scratchpad files last as long as the session's transcript: the [retention sweep](#cleaned-up-automatically) deletes the directory when it deletes the transcript, and [`claude project purge`](#clear-local-data) doesn't touch the temp directory. Because the directory sits under the system temp location, your operating system can also clear it, such as on restart. To keep something Claude wrote there, ask Claude to move it into your project.
+
+A session has a scratchpad only when all of these hold:
+
+* You're signed in with a claude.ai account rather than an API key
+* The session uses the Anthropic API, not Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry
+* [`enableArtifact`](/docs/en/settings-reference#enableartifact) isn't set to `false`
 
 ### Kept until you delete them
 
@@ -1604,7 +1624,7 @@ Run `claude project purge` to delete the state Claude Code holds for one project
 * Matching prompt lines in `history.jsonl`
 * The project's entry in `~/.claude.json`
 
-Images you pasted or attached in the project's sessions are stored under Claude Code's temp directory rather than `~/.claude`, so the purge doesn't remove them. The [retention sweep](#cleaned-up-automatically) deletes them once they're older than `cleanupPeriodDays`.
+Images you pasted or attached in the project's sessions and each session's [scratchpad](#session-scratchpad-directory) are stored under Claude Code's temp directory rather than `~/.claude`, so the purge doesn't remove them. The [retention sweep](#cleaned-up-automatically) still deletes the images once they're older than `cleanupPeriodDays`; a purged session's scratchpad stays until you delete it or your operating system clears the temp directory.
 
 The command prints the full deletion plan and asks for confirmation before removing anything.
 

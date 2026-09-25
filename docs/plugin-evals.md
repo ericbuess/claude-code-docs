@@ -16,7 +16,7 @@ Use evals to:
 * Catch regressions when you change the plugin or a new model is released
 * See what the plugin contributes compared with no plugin
 
-This page is for plugin and skill authors who have a working plugin and want to test its behavior, and for teams that gate plugin changes in CI. Its case format is separate from the `evals/evals.json` file the [skill-creator plugin](/docs/en/skills#run-evals-with-skill-creator) uses. To create a plugin, see [Create a plugin](/docs/en/plugins/create); to check a plugin's files for syntax and schema errors rather than its behavior, use [`claude plugin validate`](/docs/en/plugins/cli-reference#plugin-validate).
+This page is for plugin and skill authors who have a working plugin and want to test its behavior, and for teams that gate plugin changes in CI. For iterating on one skill inside a Claude Code conversation, the [skill-creator plugin](/docs/en/skills#run-evals-with-skill-creator) runs a similar comparison with its own `evals/evals.json` format, and neither tool reads the other's case files. To create a plugin, see [Create a plugin](/docs/en/plugins/create); to check a plugin's files for syntax and schema errors rather than its behavior, use [`claude plugin validate`](/docs/en/plugins/cli-reference#plugin-validate).
 
 <Note>
   Every eval run and every judge grader is a real model call on your account, counted against your plan's usage or your API bill, so check the [requirements](#requirements) first. Then [create your first eval suite](#create-your-first-eval-suite), or go to [Run evals in CI](#run-evals-in-ci) if you already have one.
@@ -27,6 +27,7 @@ This page is for plugin and skill authors who have a working plugin and want to 
 To run plugin evals you need:
 
 * Claude Code v2.1.269 or later. Run `claude --version` to check and `claude update` to upgrade.
+* Git 2.31 or later, if git is installed. Run `git --version` to check. With an older git, `claude plugin eval` [stops before running any case](#git-is-too-old-for-claude-plugin-eval). Without git, it runs normally.
 * A plugin directory with a `plugin.json` or `.claude-plugin/plugin.json` manifest, or a [skills-directory plugin](/docs/en/plugins/loading#plugins-shared-through-a-repository).
 * The same authentication and model provider your normal Claude Code sessions use. Eval runs, judge-scored graders, and `claude plugin eval init` call the model with your credentials, so they count against your plan's usage limits or your API bill. When the command reports a cost, the figure is a [list-price estimate](/docs/en/costs) of those calls.
 
@@ -412,7 +413,7 @@ The job's exit code tells you what happened:
 | 130       | Interrupted. Partial results are written                                                                                                                                                                       |
 | 143       | Terminated, such as by a CI timeout                                                                                                                                                                            |
 
-Problems writing or publishing the HTML report never change the exit code.
+The with-minus-without delta is reported but never changes the exit code, and neither do problems writing or publishing the HTML report.
 
 To see why a case scored low, run it locally without `--json` so the per-run progress and grader lines print.
 
@@ -633,6 +634,20 @@ Anthropic has switched the command off server-side. Nothing on your machine turn
 ### "is not a trusted plugin directory, and this run cannot stop to ask you about it"
 
 This is the first run against a directory Claude Code doesn't trust yet, and it can't ask you because stdin or stdout isn't a terminal, you passed `--json`, or the `CI` environment variable is set to a true value such as `true`. Run `claude plugin eval <dir>` once in a terminal and answer the prompt, or pass `--trust-plugin` if you trust the plugin's code and suite. See [What a run can access](#security).
+
+<h3 id="git-is-too-old-for-claude-plugin-eval">
+  "is too old for claude plugin eval"
+</h3>
+
+The `git` on your `PATH` is older than 2.31, so `claude plugin eval` stopped before running any case and exited 1 with a message naming your version:
+
+```text theme={null}
+git 2.30 is too old for claude plugin eval: it ignores the environment configuration (GIT_CONFIG_COUNT, added in git 2.31) that switches off the repository's git hooks and helper programs for the run. Install git 2.31 or newer.
+```
+
+For each run, Claude Code switches off git hooks, credential helpers, and other programs a repository's git configuration can start. It does so through environment configuration that git reads only from version 2.31. An older git ignores that configuration, so the suite stops rather than scoring runs where those programs could execute. Install git 2.31 or later and run the suite again.
+
+Before v2.1.283, `claude plugin eval` didn't check the git version, and on an older git the suite ran with those programs left on.
 
 ### "No eval cases found"
 

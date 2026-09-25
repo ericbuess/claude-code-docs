@@ -139,7 +139,7 @@ Pick the tab for where you run Claude Code.
 A plugin's install scope decides who gets the plugin and which settings file records it as enabled:
 
 * **User scope**: the plugin is enabled for you in every project on this machine. The entry goes in `enabledPlugins` in `~/.claude/settings.json`.
-* **Project scope**: the plugin is enabled for everyone who works in this repository. The entry goes in `.claude/settings.json`, which you commit.
+* **Project scope**: the plugin is enabled for everyone who works in this repository. The entry goes in `.claude/settings.json`, which you commit. Committing that entry turns the plugin on for your collaborators but doesn't download it to their machines, so each collaborator also runs `claude plugin install <name>@<marketplace> --scope project` once; see [Enabled in project settings but not installed](/docs/en/plugins/loading#enabled-in-project-settings-but-not-installed).
 * **Local scope**: the plugin is enabled for you in this repository only. The entry goes in `.claude/settings.local.json`.
 
 Some plugins are set by their author to start turned off, through the [`defaultEnabled`](/docs/en/plugins/manifest-reference#defaultenabled) field. Such a plugin is installed but stays off until you turn it on with `claude plugin enable <name>` in your shell, or from the **Installed** tab of `/plugin` in a session.
