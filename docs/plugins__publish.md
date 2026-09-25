@@ -4,9 +4,9 @@
 
 # Publish and distribute a plugin
 
-> Publish a Claude Code plugin through your own marketplace or Anthropic's community marketplace, with a pre-release checklist and how users get updates.
+> Publish a Claude Code plugin through your own marketplace or Anthropic's directory, with a pre-release checklist and how users get updates.
 
-Publishing a Claude Code plugin means listing it in a marketplace, a JSON catalog that lists plugins and where to fetch each one, so that other people can install it by name and receive your updates. You can run your own marketplace or submit your plugin to Anthropic's community marketplace. To share a plugin without publishing it, send people the plugin's directory or a `.zip` of it to load themselves.
+Publishing a Claude Code plugin means listing it in a marketplace, a JSON catalog that lists plugins and where to fetch each one, so that other people can install it by name and receive your updates. You can run your own marketplace or submit your plugin to Anthropic's directory. To share a plugin without publishing it, send people the plugin's directory or a `.zip` of it to load themselves.
 
 This page is for the author of a working plugin who is ready to share it.
 
@@ -23,11 +23,11 @@ Start with [Choose how to distribute](#choose-how-to-distribute) to compare the 
 
 Choose a distribution option based on who needs to install the plugin:
 
-| Route                                                                     | Who can install                                                                     | What you need                                                                                  | Do users get your updates automatically? |
-| :------------------------------------------------------------------------ | :---------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- | :--------------------------------------- |
-| [No marketplace](#share-a-plugin-without-a-marketplace)                   | The people you send the plugin folder or a `.zip` of it                             | The plugin's folder                                                                            | None. They load the copy you sent        |
-| [Your own marketplace](#publish-through-your-own-marketplace)             | Anyone who can reach the repository, which can be a private one your team can clone | A git repository or other host with a `.claude-plugin/marketplace.json` that lists your plugin | Off                                      |
-| [Anthropic's community marketplace](#submit-to-the-community-marketplace) | Anyone who adds `anthropics/claude-plugins-community`                               | A submission through the plugin directory submission form                                      | Off                                      |
+| Route                                                         | Who can install                                                                                                                                     | What you need                                                                                  | Do users get your updates automatically?     |
+| :------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- | :------------------------------------------- |
+| [No marketplace](#share-a-plugin-without-a-marketplace)       | The people you send the plugin folder or a `.zip` of it                                                                                             | The plugin's folder                                                                            | None. They load the copy you sent            |
+| [Your own marketplace](#publish-through-your-own-marketplace) | Anyone who can reach the repository, which can be a private one your team can clone                                                                 | A git repository or other host with a `.claude-plugin/marketplace.json` that lists your plugin | Off                                          |
+| [Anthropic's directory](#submit-to-anthropics-directory)      | People who add it on claude.ai or in Cowork. It also loads in their Claude Code sessions through [account sync](/docs/en/plugins/loading#synced-plugins) | A GitHub repository holding the plugin and a paid claude.ai plan to submit from                | Yes, after the version you push is published |
 
 Auto-update is a per-marketplace setting on the user's side that fetches new versions in the background.
 
@@ -123,34 +123,37 @@ Users receive a release when they ask for it or when auto-update is on for your 
 
 [Install plugins](/docs/en/plugins/install) covers the user-side commands, and [when auto-update runs](/docs/en/plugins/loading#when-auto-update-runs) covers the timing.
 
-## Submit to the community marketplace
+<h2 id="submit-to-anthropics-directory">
+  Submit to Anthropic's directory
+</h2>
 
-Anthropic's community marketplace, `claude-community`, is the public marketplace that lists plugins submitted through the plugin directory submission form.
+Anthropic's directory is the catalog people browse on claude.ai and in Cowork to add plugins and connectors. One listing there reaches people on claude.ai, in Cowork, and in Claude Code. You submit from the developer portal at [claude.ai/directory/manage](https://claude.ai/directory/manage); [Prepare for review](https://claude.com/docs/directory/publish#prepare-for-review) on claude.com describes what happens to each version before it's published.
 
-Users add the community marketplace in a Claude Code session with `/plugin marketplace add anthropics/claude-plugins-community` and install from it as `@claude-community`.
+Submitting requires a paid claude.ai plan. On Pro and Max you submit from your own account. On Team and Enterprise, an Owner can submit, and on Enterprise an Owner can also grant the **Directory** permission to other members through a custom role under **Organization settings > Roles**. See [Confirm you can submit to the directory](https://claude.com/docs/directory/publish#confirm-you-can-submit-to-the-directory).
 
-For how the community marketplace differs from the official marketplace, see [Anthropic's marketplaces](/docs/en/plugins/anthropic-marketplaces).
+The submission steps, the checks each version must pass, and what happens after you publish are documented on claude.com, because they're the same whichever surface your users are on:
 
-To submit your plugin to the community marketplace, use one of the in-app forms:
+* [Publish to the directory](https://claude.com/docs/directory/publish#before-you-submit-to-the-directory): what you can submit and who can submit it
+* [Submit a plugin](https://claude.com/docs/plugins/submit#submit-a-plugin): the portal steps and [updating a published plugin](https://claude.com/docs/plugins/submit#update-a-published-plugin)
+* [Plugin pre-submission checklist](https://claude.com/docs/plugins/pre-submission-checklist#run-the-checks-before-you-submit): the checks to run and fix before you submit
+* [Move an earlier submission to the developer portal](https://claude.com/docs/directory/publish#move-an-earlier-submission-to-the-developer-portal): what to do if you submitted a plugin through one of the earlier submission forms, before the portal existed
 
-* **claude.ai**: [claude.ai/admin-settings/directory/submissions/plugins/new](https://claude.ai/admin-settings/directory/submissions/plugins/new)
-* **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
+Before you open the portal, validate locally and check which of your components load outside Claude Code:
 
-The claude.ai form requires a Team or Enterprise organization and the Directory permission, which Owners hold by default. Individual authors who aren't part of a Team or Enterprise organization can use the Console form instead.
+* **Run `claude plugin validate ./your-plugin --strict` in your shell**: replace `./your-plugin` with the path to your plugin directory. The command catches manifest errors locally; [plugin validate](/docs/en/plugins/cli-reference#plugin-validate) lists which files each run reads. The portal applies additional directory rules that the CLI doesn't check, so a clean local run doesn't guarantee a clean portal validation.
+* **Check what loads where**: some plugin components are Claude Code-only and don't load on claude.ai or in Cowork. The [component support table](https://claude.com/docs/plugins/platform-support#compare-component-support-by-app) lists each component by app, so you know what users outside Claude Code will get.
 
-In your shell, run `claude plugin validate ./your-plugin` locally before you submit, replacing `./your-plugin` with the path to your plugin directory. When validation passes, Claude Code prints `✔ Validation passed`, or `✔ Validation passed with warnings` if there are warnings. Warnings don't fail validation; add `--strict` to treat them as errors.
+Anthropic's official marketplace, `claude-plugins-official`, doesn't take submissions through the directory portal. If you work with an Anthropic partner contact, ask them about an official-marketplace listing.
 
-Listed plugins appear in the [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) catalog, in nearly every case pinned to a specific commit SHA.
+### How a listed plugin reaches Claude Code users
 
-There can be a delay between submitting and your plugin appearing in `marketplace.json`. To check whether your plugin is installable yet, search for its name in the [community catalog](https://github.com/anthropics/claude-plugins-community/blob/main/.claude-plugin/marketplace.json).
-
-The official marketplace, `claude-plugins-official`, doesn't take submissions through these forms. If you work with an Anthropic partner contact, ask them about an official-marketplace listing.
+A person who installs your plugin from the directory on claude.ai has it on their account, and Claude Code loads it as `<name>@synced`. [Plugins synced from claude.ai](/docs/en/plugins/loading#synced-plugins) covers what they see and how they turn it off.
 
 ## Ship updates, renames, and removals
 
 ### Release a new version
 
-If you publish through your own marketplace and your `plugin.json` sets `version`, increment it and push. Users who run `claude plugin update` or have auto-update on then receive the new version, as described under [Ship updates to users](#ship-updates-to-users).
+If you publish through your own marketplace and your `plugin.json` sets `version`, increment it and push. Users who run `claude plugin update` or have auto-update on then receive the new version, as described under [Ship updates to users](#ship-updates-to-users). For a directory listing, see [Update a published plugin](https://claude.com/docs/plugins/submit#update-a-published-plugin).
 
 ### Tag a release
 

@@ -15,7 +15,7 @@ This page is for people writing their own plugins.
 
   * **Installing someone else's plugin**: see [Install plugins](/docs/en/plugins/install)
   * **Not sure you need a plugin**: see [Decide whether you need a plugin](/docs/en/plugins/overview#decide-whether-you-need-a-plugin) on the overview
-  * **Your plugin's users are on claude.ai or in Cowork**: the same folder installs there with a different subset of components. See [Plugins on claude.ai and in Cowork](https://claude.com/docs/plugins/overview)
+  * **Your plugin's users are on claude.ai or in Cowork**: the same folder installs there with a different subset of components. See [Plugin structure and testing](https://claude.com/docs/plugins/build) and the [component support table](https://claude.com/docs/plugins/platform-support#compare-component-support-by-app)
 </Note>
 
 Start from the section that matches what you already have:
@@ -136,7 +136,7 @@ A plugin you built with [Create your first plugin](#create-your-first-plugin) ex
 
 * **Send it to a few people directly**: give them the plugin's directory or a `.zip` of it, and nothing needs to be published. See [Share a plugin without a marketplace](/docs/en/plugins/publish#share-a-plugin-without-a-marketplace).
 * **List it in your own marketplace**: teammates add your marketplace once and install the plugin by name, and they receive your updates. See [Publish through your own marketplace](/docs/en/plugins/publish#publish-through-your-own-marketplace).
-* **Submit it to Anthropic's community marketplace**: once it's listed, anyone who adds that marketplace can install it. See [Submit to the community marketplace](/docs/en/plugins/publish#submit-to-the-community-marketplace).
+* **Submit it to Anthropic's directory**: after it passes review, people can add it on claude.ai and in Cowork, and it reaches Claude Code through their account. See [Submit to Anthropic's directory](/docs/en/plugins/publish#submit-to-anthropics-directory).
 
 ### Plugin layout
 
@@ -387,8 +387,8 @@ After you've confirmed the plugin works, delete the originals from `.claude/` an
 
 * [Plugin components](/docs/en/plugins/components): add agents, hooks, MCP servers, LSP servers, and user configuration to your plugin
 * [Test plugins with evals](/docs/en/plugin-evals): write eval cases and run them with `claude plugin eval` to check how reliably the plugin guides Claude's behavior
-* [Publish a plugin](/docs/en/plugins/publish): version it, put it in a marketplace, and submit it to the community marketplace
-* [Plugins on claude.ai and in Cowork](https://claude.com/docs/plugins/overview): the same plugin folder installs on claude.ai and in Cowork. Some components are Claude Code-only
+* [Publish a plugin](/docs/en/plugins/publish): version it, put it in a marketplace, and submit it for review
+* [Plugin structure and testing](https://claude.com/docs/plugins/build): the same plugin folder installs on claude.ai and in Cowork. Some components are Claude Code-only, and the [component support table](https://claude.com/docs/plugins/platform-support#compare-component-support-by-app) lists which load on each surface
 * [Plugin manifest reference](/docs/en/plugins/manifest-reference): every `plugin.json` field, path rule, and directory
 * [Skills](/docs/en/skills): write the skills your plugin provides
 * [Anthropic's plugins in the claude-code repository](https://github.com/anthropics/claude-code/tree/main/plugins): complete worked examples of the layout on this page, such as `feature-dev` and `code-review`

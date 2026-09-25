@@ -90,7 +90,7 @@ A plugin you turn on for your claude.ai account also loads in Claude Code, along
 
 In terminal sessions, a synced plugin's skills, agents, hooks, MCP servers, and LSP servers all load, with the same trust as a marketplace plugin you installed.
 
-For the components Cowork loads, see [Plugins on claude.ai and in Cowork](https://claude.com/docs/plugins/overview) on claude.com.
+For the components Cowork loads, see the [component support table](https://claude.com/docs/plugins/platform-support#compare-component-support-by-app) on claude.com.
 
 Synced plugins load in Cowork sessions and in terminal sessions where you sign in with your claude.ai account:
 

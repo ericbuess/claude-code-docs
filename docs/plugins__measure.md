@@ -88,6 +88,8 @@ Claude Code doesn't report a plugin's usage back to its author. Usage is recorde
 * **They're teammates you can ask**: each user's own Claude Code shows them whether they still use the plugin, in four places: the [`/plugin` panel](#not-used-recently-in-/plugin), [`/skill-doctor`](#find-skills-that-never-run), [`/doctor`](#unused-plugins-in-/doctor), and [`/usage`](#usage-share-in-/usage). All four are commands the user runs at the Claude Code prompt in a session on their own machine.
 * **Neither**: you have no usage signal from Claude Code for that plugin.
 
+For usage of a plugin listed in Anthropic's directory, see [Track published plugin usage](https://claude.com/docs/connectors/building/after-publishing#track-published-plugin-usage) on claude.com.
+
 ### Not used recently in `/plugin`
 
 On the **Installed** tab of `/plugin`, a plugin the user installed from a marketplace moves under a **Not used recently** header once it has gone unused for at least 14 days and 10 sessions. The plugin's details also show a `Last used:` line. For what users do with that header and line, see [Find plugins you no longer use](/docs/en/plugins/install#find-plugins-you-no-longer-use).

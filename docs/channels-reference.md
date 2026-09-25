@@ -776,7 +776,7 @@ The three channel-specific pieces in this file:
 
 To make your channel installable and shareable, wrap it in a [plugin](/docs/en/plugins/overview) and publish it to a [marketplace](/docs/en/plugins/overview). Users install it with `/plugin install`, then enable it per session with `--channels plugin:<name>@<marketplace>`.
 
-A channel published to your own marketplace still needs `--dangerously-load-development-channels` to run, since it isn't on the [approved allowlist](/docs/en/channels#supported-channels). The default allowlist is the channel plugins in `claude-plugins-official`. The [in-app submission forms](/docs/en/plugins/publish#submit-to-the-community-marketplace) add plugins to the community marketplace, which is not on the channel allowlist.
+A channel published to your own marketplace still needs `--dangerously-load-development-channels` to run, since it isn't on the [approved allowlist](/docs/en/channels#supported-channels). The default allowlist is the channel plugins in `claude-plugins-official`. The community marketplace is not on the channel allowlist.
 
 If you are working with an Anthropic partner contact, reach out to them to coordinate an official-marketplace listing. On Team and Enterprise plans, an admin can instead include your plugin in the organization's own [`allowedChannelPlugins`](/docs/en/channels#restrict-which-channel-plugins-can-run) list, which replaces the default Anthropic allowlist.
 

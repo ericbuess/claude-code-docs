@@ -14,7 +14,8 @@ This page is for administrators, and the settings here govern Claude Code.
   These cases are covered on other pages:
 
   * **Installing plugins for yourself**: start at [Install plugins](/docs/en/plugins/install)
-  * **Controlling which plugins members can use in claude.ai and Cowork**: see [Manage plugins for your organization](https://support.claude.com/en/articles/13837433) in the help center
+  * **Controlling which plugins members can use in claude.ai and Cowork**: see [Manage plugins for your organization](https://claude.com/docs/plugins/admin) on claude.com
+  * **Rolling one plugin out to claude.ai, Cowork, and Claude Code together**: see [Choose a rollout route](https://claude.com/docs/plugins/org-rollout#choose-a-rollout-route) on claude.com
   * **The plugins page in claude.ai's admin settings**: [**Organization settings > Plugins & skills**](https://claude.ai/admin-settings/skills?tab=inventory) turns plugins on for members' claude.ai accounts, and those reach Claude Code as [synced plugins](/docs/en/plugins/loading#synced-plugins). It doesn't set any of the keys on this page
 </Note>
 
