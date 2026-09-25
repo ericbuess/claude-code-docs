@@ -28,7 +28,7 @@ These work on every provider:
 * [CLI](/docs/en/quickstart) and [Agent SDK](/docs/en/agent-sdk/overview)
 * [VS Code](/docs/en/vs-code) and [JetBrains](/docs/en/jetbrains) extensions
 * [Subagents](/docs/en/sub-agents), [hooks](/docs/en/hooks-guide), [commands](/docs/en/commands), and [skills](/docs/en/skills)
-* [CLAUDE.md memory](/docs/en/memory), [plugins](/docs/en/plugins), and [MCP servers](/docs/en/mcp)
+* [CLAUDE.md memory](/docs/en/memory), [plugins](/docs/en/plugins/overview), and [MCP servers](/docs/en/mcp)
 * [Checkpoints](/docs/en/checkpointing), [sandboxing](/docs/en/sandboxing), and [Workflows](/docs/en/workflows)
 * [OpenTelemetry metrics](/docs/en/monitoring-usage) and the [managed settings file](/docs/en/managed-settings#delivery-mechanisms)
 

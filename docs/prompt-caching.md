@@ -119,7 +119,7 @@ Editing your MCP config does not by itself change the cache. The new config take
 
 ### Enabling or disabling a plugin
 
-When you enable or disable a [plugin](/docs/en/plugins), what the change costs depends on which component types the plugin provides. The cases below cover each component type, when Claude Code applies the change, and what happens when you disable a plugin again in the same session.
+When you enable or disable a [plugin](/docs/en/plugins/overview), what the change costs depends on which component types the plugin provides. The cases below cover each component type, when Claude Code applies the change, and what happens when you disable a plugin again in the same session.
 
 #### Plugin components that keep the cache
 
@@ -127,29 +127,29 @@ Claude Code never invalidates the cache for a plugin's skills, commands, agents,
 
 #### Plugins that provide MCP servers
 
-When you enable or disable a plugin that provides [MCP servers](/docs/en/plugins-reference#mcp-servers), Claude Code follows the same rules as when you [connect or disconnect an MCP server](#connecting-or-disconnecting-an-mcp-server):
+When you enable or disable a plugin that provides [MCP servers](/docs/en/plugins/components#mcp-servers), Claude Code follows the same rules as when you [connect or disconnect an MCP server](#connecting-or-disconnecting-an-mcp-server):
 
 * If Claude Code defers the server's tools, it keeps the cache.
 * If Claude Code loads them into the prefix, the next request re-reads the entire conversation.
 
 #### Code intelligence plugins
 
-When you enable a [code intelligence plugin](/docs/en/discover-plugins#code-intelligence), Claude gets the [LSP tool](/docs/en/tools-reference#lsp-tool-behavior).
+When you enable a [code intelligence plugin](/docs/en/plugins/code-intelligence), Claude gets the [LSP tool](/docs/en/tools-reference#lsp-tool-behavior).
 
 #### When plugin changes apply
 
-A change you make in the `/plugin` menu goes through [`/reload-plugins`](/docs/en/discover-plugins#apply-plugin-changes-without-restarting), which Claude Code runs for you when you close the menu. You pay the cost, whether appended announcements or a full re-read, on the first turn after the change applies. Claude Code can also apply a change on its own:
+A change you make in the `/plugin` menu goes through [`/reload-plugins`](/docs/en/plugins/cli-reference#reload-plugins), which Claude Code runs for you when you close the menu. You pay the cost, whether appended announcements or a full re-read, on the first turn after the change applies. Claude Code can also apply a change on its own:
 
-* For a plugin with a `command` source, Claude Code [can reload the plugin itself](/docs/en/plugin-marketplaces#when-claude-code-re-runs-the-command).
-* When you [install a plugin from the `/plugin` interface](/docs/en/discover-plugins#install-plugins), Claude Code can activate it during the install. The install summary tells you whether it did.
+* For a plugin with a `command` source, Claude Code [can reload the plugin itself](/docs/en/plugins/loading#when-a-command-source-re-runs).
+* When you [install a plugin from the `/plugin` interface](/docs/en/plugins/install#install-a-plugin), Claude Code can activate it during the install. The install summary tells you whether it did.
 * When you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later, Claude Code applies the plugins the new directory's settings enable as part of the move, without the full re-read warning that holds a `/reload-plugins`.
-* In interactive sessions, when you add or remove a plugin in a [folder of plugins](/docs/en/plugins#test-your-plugins-locally) you passed with `--plugin-dir`, the change applies right away. If applying it would trigger a full re-read, Claude Code holds the change instead and shows a notice to run `/reload-plugins`. Requires Claude Code v2.1.265 or later.
+* In interactive sessions, when you add or remove a plugin in a [folder of plugins](/docs/en/plugins/create#load-a-directory-or-archive-for-one-session) you passed with `--plugin-dir`, the change applies right away. If applying it would trigger a full re-read, Claude Code holds the change instead and shows a notice to run `/reload-plugins`. Requires Claude Code v2.1.265 or later.
 
 When `/reload-plugins` runs and the reload would trigger a full re-read, Claude Code shows a warning and doesn't apply the reload. Run `/reload-plugins --force` to apply it anyway.
 
 `/reload-plugins` also runs in sessions without an interactive terminal, such as the desktop app, the Agent SDK, and [non-interactive mode](/docs/en/headless) with `-p`, when you type it into the session directly. Requires Claude Code v2.1.260 or later.
 
-In those sessions the reload applies everything except plugin MCP server changes, which [take effect in your next session](/docs/en/discover-plugins#apply-plugin-changes-without-restarting) and so never cost a full re-read mid-session.
+In those sessions the reload applies everything except plugin MCP server changes, which [take effect in your next session](/docs/en/plugins/cli-reference#reload-plugins) and so never cost a full re-read mid-session.
 
 #### Plugins you enable and then disable in one session
 

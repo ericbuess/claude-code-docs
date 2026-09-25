@@ -2860,7 +2860,7 @@ Claude Code suggests the closest command name or alias that the menu lists in th
 
 * A typo, such as `/hepl` for `/help`. [How the command menu matches what you type](/docs/en/commands#how-the-command-menu-matches-what-you-type) covers picking a close match before you submit
 * A command that exists but isn't available in this session because a requirement isn't met, such as your platform, plan, or authentication method. The troubleshooting entries for [`/web-setup`](/docs/en/web-quickstart#web-setup-shows-no-commands-match-or-unknown-command) and [`/schedule`](/docs/en/routines#schedule-returns-unknown-command) walk through two common cases. Some commands answer with their own message when your organization's policy disables them, such as [`Cloud sessions are disabled by your organization's policy`](#cloud-sessions-are-disabled-by-your-organizations-policy)
-* A command from a [plugin](/docs/en/plugins) or [MCP server](/docs/en/mcp#use-mcp-prompts-as-commands) that isn't installed or connected in this session
+* A command from a [plugin](/docs/en/plugins/overview) or [MCP server](/docs/en/mcp#use-mcp-prompts-as-commands) that isn't installed or connected in this session
 
 Claude Code answers an unmatched `/` name this way only in an interactive terminal session. In every other session, it sends the prompt to Claude as a normal message instead, with a note that the command didn't run and a list of commands Claude can run in the session. Those sessions include:
 
@@ -3174,7 +3174,7 @@ Output styles are saved to local settings (.claude/settings.local.json), which t
 
 ## Plugin errors
 
-These errors come from [plugin](/docs/en/plugins) and [marketplace](/docs/en/plugin-marketplaces) configuration. For plugin problems that don't produce one of the messages on this page, such as a marketplace URL that doesn't load or a plugin that installs but doesn't appear, see [Plugin troubleshooting](/docs/en/discover-plugins#troubleshooting).
+These errors come from [plugin](/docs/en/plugins/overview) and [marketplace](/docs/en/plugins/overview) configuration. For plugin problems that don't produce one of the messages on this page, such as a marketplace URL that doesn't load or a plugin that installs but doesn't appear, see [Plugin troubleshooting](/docs/en/plugins/troubleshooting).
 
 <h3 id="plugin-eval-is-currently-in-early-access">
   plugin eval is currently in early access
@@ -3199,7 +3199,7 @@ The first message means your build is older than v2.1.269, the first version whe
 
 ### Marketplace is registered from an untrusted source
 
-The marketplace is registered under a name that is [reserved for official Anthropic marketplaces](/docs/en/plugin-marketplaces#marketplace-schema), but its registered source isn't an `anthropics` GitHub repository. Claude Code re-checks reserved names every time it loads or refreshes a marketplace, so the marketplace and the plugins installed from it stop loading. Before v2.1.205, the name was checked only when the marketplace was added, so an entry registered before its name became reserved kept loading.
+The marketplace is registered under a name that is [reserved for official Anthropic marketplaces](/docs/en/plugins/marketplace-reference#marketplace-file), but its registered source isn't an `anthropics` GitHub repository. Claude Code re-checks reserved names every time it loads or refreshes a marketplace, so the marketplace and the plugins installed from it stop loading. Before v2.1.205, the name was checked only when the marketplace was added, so an entry registered before its name became reserved kept loading.
 
 ```text theme={null}
 Marketplace "claude-community" is registered from an untrusted source: The name 'claude-community' is reserved for official Anthropic marketplaces. Only repositories from 'github.com/anthropics/' can use this name. To fix it, remove the marketplace and re-add it from the official source.
@@ -3211,13 +3211,13 @@ For a marketplace whose source isn't a GitHub repository or a Git URL, such as a
 
 * If the marketplace is already registered, run `claude plugin marketplace remove <name>`, then add it again from the official `github.com/anthropics` repository
 * If you publish a third-party marketplace that used the name before it became reserved, rename it and ask users to re-add it from your source
-* See the reserved name list under [Marketplace schema](/docs/en/plugin-marketplaces#marketplace-schema)
+* See the reserved name list under [Marketplace schema](/docs/en/plugins/marketplace-reference#marketplace-file)
 
 <h3 id="marketplace-name-is-another-spelling-of-a-reserved-name">
   Marketplace name is another spelling of a reserved name
 </h3>
 
-The marketplace's name isn't itself a reserved name, but Claude Code treats it as another spelling of one. [Reserved marketplace names](/docs/en/plugin-marketplaces#reserved-name-spellings) lists which spellings count as a reserved name. Claude Code refuses such a name when you add the marketplace:
+The marketplace's name isn't itself a reserved name, but Claude Code treats it as another spelling of one. [Reserved names](/docs/en/plugins/marketplace-reference#reserved-name-spellings) lists which spellings count as a reserved name. Claude Code refuses such a name when you add the marketplace:
 
 ```text theme={null}
 Failed to add marketplace: "claude.code.plugins" is another spelling of "claude-code-plugins", a reserved marketplace name.
@@ -3238,7 +3238,7 @@ When the name would need shell quoting, the add-time refusal reads `This marketp
 
 ### Marketplace is already added from a different source
 
-You confirmed adding a marketplace through [`/plugin install <plugin> --marketplace <source>`](/docs/en/discover-plugins#add-a-marketplace-and-install-in-one-command), and the catalog Claude Code fetched from that source names itself the same as a marketplace you already added from a different source. Claude Code keeps the existing marketplace instead of replacing it, and the plugin isn't installed.
+You confirmed adding a marketplace through [`/plugin install <plugin> --marketplace <source>`](/docs/en/plugins/install#add-a-marketplace-and-install-in-one-command), and the catalog Claude Code fetched from that source names itself the same as a marketplace you already added from a different source. Claude Code keeps the existing marketplace instead of replacing it, and the plugin isn't installed.
 
 ```text theme={null}
 Marketplace "acme-tools" is already added from a different source (github:acme/plugins). To use this source instead, remove that marketplace first with /plugin marketplace remove acme-tools.
@@ -3253,7 +3253,7 @@ Marketplace "acme-tools" is already added from a different source (github:acme/p
   Plugin command references user\_config in a shell command
 </h3>
 
-A plugin hook, [monitor](/docs/en/plugins-reference#monitors), or MCP [`headersHelper`](/docs/en/mcp#use-dynamic-headers-for-custom-authentication) command references a `${user_config.KEY}` [plugin option](/docs/en/plugins-reference#user-configuration), and the substituted string would be passed to a shell. A configured value containing `$(...)`, backticks, or `;` would run as code there, so Claude Code refuses to start the component instead of substituting the value. The check runs on the command template, so the error appears even when no value is configured yet. Before v2.1.207, the value was substituted into the shell command.
+A plugin hook, [monitor](/docs/en/plugins/components#monitors), or MCP [`headersHelper`](/docs/en/mcp#use-dynamic-headers-for-custom-authentication) command references a `${user_config.KEY}` [plugin option](/docs/en/plugins/manifest-reference#user-configuration), and the substituted string would be passed to a shell. A configured value containing `$(...)`, backticks, or `;` would run as code there, so Claude Code refuses to start the component instead of substituting the value. The check runs on the command template, so the error appears even when no value is configured yet. Before v2.1.207, the value was substituted into the shell command.
 
 The wording depends on which surface referenced the option. A shell-form hook reports:
 
@@ -3281,7 +3281,7 @@ headersHelper for MCP server 'internal-api' references ${user_config.*}. The sub
 
 ### Plugin archive integrity check failed
 
-The plugin's marketplace entry uses an [`archive` source](/docs/en/plugin-marketplaces#zip-archives) with a `sha256` pin, and the digest of the downloaded file doesn't match the pin. Claude Code refuses the install, so nothing changes in the plugin cache. The mismatch has three possible causes:
+The plugin's marketplace entry uses an [`archive` source](/docs/en/plugins/marketplace-reference#archive-plugin-source) with a `sha256` pin, and the digest of the downloaded file doesn't match the pin. Claude Code refuses the install, so nothing changes in the plugin cache. The mismatch has three possible causes:
 
 * The file at the URL changed after the author computed the pin
 * The author entered the wrong digest in the marketplace entry
@@ -3299,7 +3299,7 @@ Plugin archive integrity check failed for https://artifacts.example.com/claude-p
 
 ### Path escapes plugin directory
 
-A plugin component path, declared in the plugin's `plugin.json` or in its [marketplace entry](/docs/en/plugin-marketplaces#plugin-entries), resolves outside the plugin's own directory. Claude Code drops that path and loads the rest of the plugin. The component name in the message, such as `commands` or `hooks`, names the field that declared the path.
+A plugin component path, declared in the plugin's `plugin.json` or in its [marketplace entry](/docs/en/plugins/marketplace-reference#plugin-entries), resolves outside the plugin's own directory. Claude Code drops that path and loads the rest of the plugin. The component name in the message, such as `commands` or `hooks`, names the field that declared the path.
 
 ```text theme={null}
 commands path escapes plugin directory: ./../shared.md
@@ -3307,7 +3307,7 @@ commands path escapes plugin directory: ./../shared.md
 
 In `claude plugin` command output, the same error reads `Path escapes plugin directory: ./../shared.md (commands)`.
 
-Claude Code rejects both a path that points outside the plugin as written, such as `../shared-utils`, and a symlink that leads outside the plugin and isn't one the [marketplace symlink rules](/docs/en/plugins-reference#share-files-within-a-marketplace-with-symlinks) allow. For a symlink, the message also says where the path resolves:
+Claude Code rejects both a path that points outside the plugin as written, such as `../shared-utils`, and a symlink that leads outside the plugin and isn't one the [marketplace symlink rules](/docs/en/plugins/host-marketplace#share-files-within-a-marketplace-with-symlinks) allow. For a symlink, the message also says where the path resolves:
 
 ```text theme={null}
 commands path escapes plugin directory: ./commands/deploy.md — it resolves to /home/user/shared/deploy.md, outside the plugin directory
@@ -3328,13 +3328,13 @@ Before v2.1.257, the check looked only at the path's spelling, not at where a sy
 * Move the referenced file inside the plugin directory and point the path at it with a `./` relative path
 * If the path is a symlink to a file outside the plugin, replace the symlink with a copy of the file
 * If the message says the path contains a backslash, write the path with forward slashes, for example `./commands/deploy.md`
-* To share files with other plugins in the same marketplace, link them with a symlink inside the plugin directory, following the [symlink rules](/docs/en/plugins-reference#share-files-within-a-marketplace-with-symlinks)
+* To share files with other plugins in the same marketplace, link them with a symlink inside the plugin directory, following the [symlink rules](/docs/en/plugins/host-marketplace#share-files-within-a-marketplace-with-symlinks)
 
 ### Path could not be checked
 
 Claude Code asked the operating system whether a plugin path exists and got an error other than "not found", so it doesn't load what the path names. How much of the plugin loads depends on which path failed:
 
-* One of a plugin's [default component locations](/docs/en/plugins-reference#file-locations-reference), such as the `skills/` folder, the `monitors/monitors.json` file, or a [`SKILL.md` at the plugin root](/docs/en/plugins-reference#skills): the plugin's other components still load
+* One of a plugin's [default component locations](/docs/en/plugins/manifest-reference#standard-layout), such as the `skills/` folder, the `monitors/monitors.json` file, or a [`SKILL.md` at the plugin root](/docs/en/plugins/components#skills): the plugin's other components still load
 * The plugin's own directory: nothing from that plugin loads
 
 You don't see this error for a path that doesn't exist at all. In `/plugin`, the error appears under the plugin and names the path and the code the operating system returned:
@@ -3362,12 +3362,12 @@ Before v2.1.265, Claude Code treated a default component folder it couldn't chec
 
 ### Marketplace entry path does not stay inside the marketplace directory
 
-The plugin's [marketplace entry](/docs/en/plugin-marketplaces#plugin-entries) declares a source path that Claude Code can't resolve to a location inside the marketplace's own directory, so the plugin doesn't install or load. The refusal covers:
+The plugin's [marketplace entry](/docs/en/plugins/marketplace-reference#plugin-entries) declares a source path that Claude Code can't resolve to a location inside the marketplace's own directory, so the plugin doesn't install or load. The refusal covers:
 
 * An entry path that is absolute, climbs out of the marketplace with `..`, or is spelled like a network path
 * On macOS and Linux, an entry path that contains a backslash anywhere after the leading `./`
 * An entry in a marketplace fetched from a remote source, such as git or a URL, that reaches its target through a symlink resolving outside the marketplace directory
-* A relative entry in a marketplace added from a direct URL to its `marketplace.json`: Claude Code downloads only that file, so no local plugin files exist for the path to name. See [Plugins with relative paths fail in URL-based marketplaces](/docs/en/plugin-marketplaces#plugins-with-relative-paths-fail-in-url-based-marketplaces)
+* A relative entry in a marketplace added from a direct URL to its `marketplace.json`: Claude Code downloads only that file, so no local plugin files exist for the path to name. See [Plugins with relative paths fail in URL-based marketplaces](/docs/en/plugins/troubleshooting#plugins-with-relative-paths-fail-in-url-based-marketplaces)
 
 `claude plugin install` reports the refusal like this:
 
@@ -3384,7 +3384,7 @@ Plugin source path refused: ./my-plugin does not stay inside its marketplace dir
 **What to do:**
 
 * If you maintain the marketplace, write the entry's `source` as a plain relative path with forward slashes, such as `./plugins/my-plugin`, and keep any symlink it crosses pointed inside the marketplace directory
-* If you added the marketplace from a direct URL, relative entries can't resolve. Ask the marketplace author to use [another plugin source](/docs/en/plugin-marketplaces#plugin-sources), or add the marketplace from its git repository instead
+* If you added the marketplace from a direct URL, relative entries can't resolve. Ask the marketplace author to use [another plugin source](/docs/en/plugins/marketplace-reference#plugin-sources), or add the marketplace from its git repository instead
 
 ### Failed to load marketplace configuration
 
@@ -3412,7 +3412,7 @@ Before v2.1.246, `claude plugin install` didn't report this failure.
   Plugin is required by your organization
 </h3>
 
-You ran `claude plugin disable`, or used the `/plugin` **Installed** tab, to turn off a [plugin synced from claude.ai](/docs/en/plugins-reference#synced-plugins) that your organization marks as required:
+You ran `claude plugin disable`, or used the `/plugin` **Installed** tab, to turn off a [plugin synced from claude.ai](/docs/en/plugins/loading#synced-plugins) that your organization marks as required:
 
 ```text theme={null}
 Plugin "<name>@synced" is required by your organization and can't be disabled here. Contact your admin to change it.

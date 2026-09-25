@@ -46,7 +46,7 @@ To update a review workflow that an earlier version generated, do one of the fol
 * Run `/install-github-app` again. When the repository already has a `claude.yml`, select **Update workflow file with latest version**. Claude Code pushes fresh copies of the workflow files to a new branch and opens the pull request, the same as a first install.
 * Add the `--comment` argument and the `claude_args` line from the [review workflow example](#run-a-skill) to the checked-in file yourself, which keeps any other edits you made to it.
 
-After installing the GitHub App, Claude Code asks whether to continue with GitHub Actions setup. Choose **Skip for now** to stop with only the GitHub App installed. Run `/install-github-app` again later to finish the workflow and secret steps. Before v2.1.187, Claude Code proceeded straight to workflow selection.
+After installing the GitHub App, Claude Code asks whether to continue with GitHub Actions setup. Choose **Skip for now** to stop with only the GitHub App installed. Run `/install-github-app` again later to finish the workflow and secret steps.
 
 <Note>
   * When you install the GitHub App, you grant it several permissions. See [GitHub App permissions](#github-app-permissions) for the full set
@@ -215,7 +215,7 @@ Claude replies in a comment on the same issue or PR and updates it as it works.
 The `prompt` input accepts a [skill](/docs/en/skills) invocation as well as plain text:
 
 * For a skill in your repository's `.claude/skills/` directory, run `actions/checkout` before the `anthropics/claude-code-action` step so the skill files are available on the runner, then pass `/skill-name` as the `prompt`.
-* For a skill packaged in a [plugin](/docs/en/plugins), install the plugin with the `plugin_marketplaces` and `plugins` inputs, then pass the namespaced `/plugin-name:skill-name` as the `prompt`. The `plugins` input takes `plugin-name@marketplace-name`, where the marketplace name comes from the marketplace's own manifest rather than its repository URL.
+* For a skill packaged in a [plugin](/docs/en/plugins/overview), install the plugin with the `plugin_marketplaces` and `plugins` inputs, then pass the namespaced `/plugin-name:skill-name` as the `prompt`. The `plugins` input takes `plugin-name@marketplace-name`, where the marketplace name comes from the marketplace's own manifest rather than its repository URL.
 
 The following workflow installs the `code-review` plugin and runs its skill when a pull request is opened, updated, reopened, or marked ready for review. It runs the same plugin as the review workflow from quick setup. Use a workflow like this when you want to control the prompt, model, and triggers yourself. For automatic reviews without maintaining a workflow file, see [Code Review](/docs/en/code-review). On public repositories, GitHub withholds secrets from runs triggered by fork pull requests, so the review runs only on pull requests from branches in the same repository.
 

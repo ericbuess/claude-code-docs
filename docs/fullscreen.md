@@ -92,7 +92,7 @@ Fullscreen rendering captures mouse events and handles them inside Claude Code:
 
 * **Click in the prompt input** to position your cursor anywhere in the text you're typing.
 * **Click a suggestion in the `/` command or `@` file list** to accept it. Hovering highlights the row under your cursor.
-* **Click an option in a select menu** to choose it. This covers permission prompts, `/model`, `/config`, and other dialogs that show a list of options. Hovering shows a pointer on the row under your cursor. Requires Claude Code v2.1.187 or later.
+* **Click an option in a select menu** to choose it. This covers permission prompts, `/model`, `/config`, and other dialogs that show a list of options. Hovering shows a pointer on the row under your cursor.
 * **Click an option in a multi-select menu** to toggle it, and click the submit button to confirm your choices. Clicking a free-text row, such as the `Other` row in a multiple-choice question, focuses its input field so you can type an answer. Requires Claude Code v2.1.208 or later.
 * **Click a setting's value in the `/config` panel** to change it, and scroll the settings list with the mouse wheel. Requires Claude Code v2.1.271 or later.
 * **Scroll a select or multi-select menu with the mouse wheel** when it has more options than it shows at once, such as the `/model` list in a short terminal window. The wheel scrolls the list while the pointer is over its options. Requires Claude Code v2.1.280 or later.

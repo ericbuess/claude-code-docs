@@ -248,7 +248,7 @@ MCP tool definitions are [deferred by default](/docs/en/mcp#scale-with-mcp-tool-
 
 ### Install code intelligence plugins for typed languages
 
-[Code intelligence plugins](/docs/en/discover-plugins#code-intelligence) give Claude precise symbol navigation instead of text-based search, reducing unnecessary file reads when exploring unfamiliar code. A single "go to definition" call replaces what might otherwise be a grep followed by reading multiple candidate files. Installed language servers also report type errors automatically after edits, so Claude catches mistakes without running a compiler.
+[Code intelligence plugins](/docs/en/plugins/code-intelligence) give Claude precise symbol navigation instead of text-based search, reducing unnecessary file reads when exploring unfamiliar code. A single "go to definition" call replaces what might otherwise be a grep followed by reading multiple candidate files. Installed language servers also report type errors automatically after edits, so Claude catches mistakes without running a compiler.
 
 ### Offload processing to hooks and skills
 

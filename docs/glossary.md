@@ -242,9 +242,9 @@ Learn more: [Analyze before you edit with plan mode](/docs/en/permission-modes#a
 
 ### Plugin
 
-A bundle of skills, hooks, subagents, and MCP servers packaged as a single installable unit. Plugin skills are namespaced as `plugin-name:skill-name` so multiple plugins coexist. Distribute plugins across teams via a [marketplace](/docs/en/plugin-marketplaces).
+A bundle of skills, hooks, subagents, and MCP servers packaged as a single installable unit. Plugin skills are namespaced as `plugin-name:skill-name` so multiple plugins coexist. Distribute plugins across teams via a [marketplace](/docs/en/plugins/overview).
 
-Learn more: [Plugins](/docs/en/plugins)
+Learn more: [Plugins](/docs/en/plugins/overview)
 
 ### Project trust
 

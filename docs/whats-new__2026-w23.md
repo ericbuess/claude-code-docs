@@ -59,7 +59,7 @@
   > /plugin list --enabled
   ```
 
-  <a className="digest-feature-link" href="/docs/en/plugins-reference#plugin-list">Plugin commands</a>
+  <a className="digest-feature-link" href="/docs/en/plugins/cli-reference#plugin-list">Plugin commands</a>
 </div>
 
 <div className="digest-feature">

@@ -46,7 +46,7 @@ You can also have Claude scaffold a server for you with the official [`mcp-serve
     If the install fails, match the message Claude Code reports:
 
     * `Marketplace "claude-plugins-official" not found`: add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`, then retry the install.
-    * The plugin is [not found in the marketplace](/docs/en/discover-plugins#install-plugins): check the plugin name.
+    * The plugin is [not found in the marketplace](/docs/en/plugins/install#install-a-plugin): check the plugin name.
 
     If the install summary reports `Run /reload-plugins to activate.`, Claude Code then runs that reload for you. If the reload warns that your next message would re-read the conversation, run `/reload-plugins --force`.
   </Step>
@@ -263,7 +263,7 @@ A `disabledMcpjsonServers` entry in any settings file still rejects the server.
 
 #### Server status detail
 
-In `/mcp`, including a server's menu there, and in the [`/plugin`](/docs/en/plugins) manager, a remote HTTP or SSE server you've used before can show a `cached` status such as `cached 2h ago · connects on first use · 5 tools`. Claude Code loaded the server's tool list from its discovery cache, saved in a previous session, instead of connecting at startup, and Claude Code connects the server the first time Claude calls one of the server's tools. The tools are available from your first message, so you don't need to do anything. The discovery cache and its `cached` status require Claude Code v2.1.221 or later.
+In `/mcp`, including a server's menu there, and in the [`/plugin`](/docs/en/plugins/install) manager, a remote HTTP or SSE server you've used before can show a `cached` status such as `cached 2h ago · connects on first use · 5 tools`. Claude Code loaded the server's tool list from its discovery cache, saved in a previous session, instead of connecting at startup, and Claude Code connects the server the first time Claude calls one of the server's tools. The tools are available from your first message, so you don't need to do anything. The discovery cache and its `cached` status require Claude Code v2.1.221 or later.
 
 The discovery cache is off by default unless a gradual rollout has enabled it for your account. Set [`MCP_DISCOVERY_CACHE=1`](/docs/en/env-vars) to turn it on, or `0` to keep it off even when the rollout has enabled it. Before v2.1.238, the cache was on by default.
 
@@ -282,7 +282,7 @@ When you complete authentication from `/mcp` and the connection still fails with
 * For a server in the local, project, or user [scope](#mcp-installation-scopes) or in managed MCP configuration, the origin shows the host as written in that configuration, so a `${VAR}` reference in the host isn't expanded in the message.
 * For a failure with no status or error code, Claude Code shows the error text without the origin.
 
-A remote server whose configuration has an empty `url` shows as `not configured` in `/mcp`, in `claude mcp list`, and in the [`/plugin`](/docs/en/plugins) manager, and Claude Code doesn't attempt to connect to it. A plugin can include a placeholder entry like this for a connector you configure later, so Claude Code doesn't report it as an error or a setup issue. The server's detail view in `/mcp` reads `No URL configured for this server`; set the entry's `url` to connect it. Before v2.1.208, Claude Code reported an empty `url` as a configuration issue with a prompt to reconnect.
+A remote server whose configuration has an empty `url` shows as `not configured` in `/mcp`, in `claude mcp list`, and in the [`/plugin`](/docs/en/plugins/install) manager, and Claude Code doesn't attempt to connect to it. A plugin can include a placeholder entry like this for a connector you configure later, so Claude Code doesn't report it as an error or a setup issue. The server's detail view in `/mcp` reads `No URL configured for this server`; set the entry's `url` to connect it. Before v2.1.208, Claude Code reported an empty `url` as a configuration issue with a prompt to reconnect.
 
 #### Configuration warnings
 
@@ -412,7 +412,7 @@ The per-server `timeout` is a hard wall-clock limit per tool call, and progress 
 
 A per-server `timeout` of at least 1000 also acts as a floor on the idle timeout described below: Claude Code never aborts that server's tool calls for idleness sooner than the per-server `timeout`. Requires Claude Code v2.1.203 or later.
 
-A tool call to an MCP server that sends no response and no progress notification for the idle window aborts with an error instead of waiting for the wall-clock limit. The idle timeout requires Claude Code v2.1.187 or later. It applies to every server type except IDE servers and SDK in-process servers. The idle window defaults to five minutes for HTTP, SSE, WebSocket, and [claude.ai connector](#use-mcp-servers-from-claude-ai) servers, and to 30 minutes for stdio servers. Before v2.1.203, stdio servers were exempt from the idle timeout.
+A tool call to an MCP server that sends no response and no progress notification for the idle window aborts with an error instead of waiting for the wall-clock limit. The idle timeout applies to every server type except IDE servers and SDK in-process servers. The idle window defaults to five minutes for HTTP, SSE, WebSocket, and [claude.ai connector](#use-mcp-servers-from-claude-ai) servers, and to 30 minutes for stdio servers. Before v2.1.203, stdio servers were exempt from the idle timeout.
 
 Set the [`CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`](/docs/en/env-vars) environment variable in milliseconds to change the idle window, or set it to `0` to disable the check.
 
@@ -436,7 +436,7 @@ A call waiting on an open [elicitation dialog](#respond-to-mcp-elicitation-reque
 
 ### Plugin-provided MCP servers
 
-[Plugins](/docs/en/plugins) can bundle MCP servers that provide tools and integrations when you enable the plugin. Plugin MCP servers work identically to user-configured servers.
+[Plugins](/docs/en/plugins/overview) can bundle MCP servers that provide tools and integrations when you enable the plugin. Plugin MCP servers work identically to user-configured servers.
 
 **How plugin MCP servers work**:
 
@@ -481,11 +481,11 @@ Or inline in `plugin.json`:
 
 * **Automatic lifecycle**: servers connect and disconnect at these points:
   * At session startup, Claude Code connects the servers for enabled plugins automatically. In `/mcp`, a remote (HTTP or SSE) plugin server you've used before can show the [`cached` status](#server-status-detail) instead; Claude Code connects it when Claude first calls one of its tools
-  * If you enable or disable a plugin during a session, Claude Code connects or disconnects its MCP servers when the change applies. [Apply plugin changes without restarting](/docs/en/discover-plugins#apply-plugin-changes-without-restarting) describes when that is. In a session without an interactive terminal, `/reload-plugins` doesn't connect or disconnect plugin MCP servers; those changes take effect in your next session
+  * If you enable or disable a plugin during a session, Claude Code connects or disconnects its MCP servers when the change applies. [Apply plugin changes without restarting](/docs/en/plugins/cli-reference#reload-plugins) describes when that is. In a session without an interactive terminal, `/reload-plugins` doesn't connect or disconnect plugin MCP servers; those changes take effect in your next session
   * When you reload, Claude Code keeps the live connections of plugin servers whose configuration is unchanged, and does the same when you [replace the session's MCP server list](/docs/en/agent-sdk/typescript#mcpsetserversresult) from the Agent SDK without naming them
   * When you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later, Claude Code connects the servers of plugins the new directory's settings enable and disconnects the servers of plugins that are no longer enabled, so you don't need to run `/reload-plugins` after the move
   * In [cloud sessions](/docs/en/claude-code-on-the-web), an MCP call to a plugin server that isn't connected yet, such as right after an idle session wakes, starts the server on demand and waits for it to connect
-* **Path placeholders**: `${CLAUDE_PLUGIN_ROOT}` resolves to the plugin's installation directory, `${CLAUDE_PLUGIN_DATA}` to its [persistent state](/docs/en/plugins-reference#persistent-data-directory) directory, and `${CLAUDE_PROJECT_DIR}` to the stable project root. Substitution applies to:
+* **Path placeholders**: `${CLAUDE_PLUGIN_ROOT}` resolves to the plugin's installation directory, `${CLAUDE_PLUGIN_DATA}` to its [persistent state](/docs/en/plugins/components#path-variables-and-persistent-data) directory, and `${CLAUDE_PROJECT_DIR}` to the stable project root. Substitution applies to:
   * `stdio` servers: `command`, `args`, `env`
   * `http`, `sse`, and `ws` servers: `url`, `headers`, and `headersHelper`. Before v2.1.195, `headersHelper` passed the placeholder through as a literal string
 * **User environment access**: access to the same environment variables as manually configured servers
@@ -505,7 +505,7 @@ Use this full name when referencing the tool in [permission rules](/docs/en/perm
 
 The server itself registers under the scoped name `plugin:<plugin-name>:<server-name>`, such as `plugin:my-plugin:database-tools`. Use that name where a configured server name is expected, such as an [`mcp_tool` hook's `server` field](/docs/en/hooks#mcp-tool-hook-fields).
 
-See the [plugin components reference](/docs/en/plugins-reference#mcp-servers) for details on bundling MCP servers with plugins.
+See the [plugin components reference](/docs/en/plugins/components#mcp-servers) for details on bundling MCP servers with plugins.
 
 ## MCP installation scopes
 
@@ -598,7 +598,7 @@ When the same server is defined in more than one place, Claude Code connects to 
 1. Local scope
 2. Project scope
 3. User scope
-4. [Plugin-provided servers](/docs/en/plugins)
+4. [Plugin-provided servers](/docs/en/plugins/components#mcp-servers)
 5. [claude.ai connectors](#use-mcp-servers-from-claude-ai)
 
 The three scopes match duplicates by name. Plugins and connectors match by endpoint, so one that points at the same URL or command as a server above is treated as a duplicate.
@@ -784,7 +784,7 @@ If you configured `headers.Authorization` for the server and the server rejects 
 
 ### Authenticate from the command line
 
-From v2.1.186, `claude mcp login <name>` runs a configured server's OAuth flow directly from your shell, so you don't need to open the `/mcp` panel inside a session.
+The `claude mcp login <name>` command runs a configured server's OAuth flow directly from your shell, so you don't need to open the `/mcp` panel inside a session.
 
 ```bash theme={null}
 claude mcp login sentry
@@ -792,7 +792,7 @@ claude mcp login sentry
 
 To clear stored credentials later, run `claude mcp logout <name>`.
 
-As of v2.1.191, the command detects when no local browser is available, such as during an SSH session or on Linux without a display server, and prints the authorization URL instead of trying to open a browser. Open the URL on your local machine, then paste the full redirect URL from your browser's address bar back at the prompt. The command needs an interactive terminal for the paste step, so connect with `ssh -t`. Pass `--no-browser` to force the URL prompt even when a local browser is detected.
+`claude mcp login` detects when no local browser is available, such as during an SSH session or on Linux without a display server, and prints the authorization URL instead of trying to open a browser. Open the URL on your local machine, then paste the full redirect URL from your browser's address bar back at the prompt. The command needs an interactive terminal for the paste step, so connect with `ssh -t`. Pass `--no-browser` to force the URL prompt even when a local browser is detected.
 
 ```bash theme={null}
 claude mcp login sentry --no-browser
@@ -982,15 +982,15 @@ If the server rejects the helper's credential while connecting, Claude Code repo
 
 Claude Code sets these environment variables when executing the helper:
 
-| Variable                      | Value                                                                                                        |
-| :---------------------------- | :----------------------------------------------------------------------------------------------------------- |
-| `CLAUDE_CODE_MCP_SERVER_NAME` | the name of the MCP server                                                                                   |
-| `CLAUDE_CODE_MCP_SERVER_URL`  | the URL of the MCP server                                                                                    |
-| `CLAUDE_PLUGIN_ROOT`          | the plugin's root directory. Set only when a [plugin](/docs/en/plugins-reference#mcp-servers) provides the server |
+| Variable                      | Value                                                                                                         |
+| :---------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| `CLAUDE_CODE_MCP_SERVER_NAME` | the name of the MCP server                                                                                    |
+| `CLAUDE_CODE_MCP_SERVER_URL`  | the URL of the MCP server                                                                                     |
+| `CLAUDE_PLUGIN_ROOT`          | the plugin's root directory. Set only when a [plugin](/docs/en/plugins/components#mcp-servers) provides the server |
 
 Use these to write a single helper script that serves multiple MCP servers.
 
-A plugin-provided `headersHelper` can't reference the plugin's [`${user_config.*}`](/docs/en/plugins-reference#user-configuration) values, because the command runs through a shell. Claude Code reports the server as misconfigured with an [error](/docs/en/errors#plugin-command-references-user-config) and doesn't substitute the value. Put `${user_config.KEY}` in the server's `headers` field instead, which isn't shell-parsed, or have the helper script read the value from a config file. Before v2.1.207, `headersHelper` substituted `${user_config.*}` values.
+A plugin-provided `headersHelper` can't reference the plugin's [`${user_config.*}`](/docs/en/plugins/manifest-reference#user-configuration) values, because the command runs through a shell. Claude Code reports the server as misconfigured with an [error](/docs/en/errors#plugin-command-references-user-config) and doesn't substitute the value. Put `${user_config.KEY}` in the server's `headers` field instead, which isn't shell-parsed, or have the helper script read the value from a config file. Before v2.1.207, `headersHelper` substituted `${user_config.*}` values.
 
 #### Where the helper runs
 
@@ -998,7 +998,7 @@ Claude Code picks the `headersHelper` command's working directory from the confi
 
 | Where you configured the server                                                                                                                                                                              | Working directory                                                                            |
 | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| A [plugin](/docs/en/plugins-reference#mcp-servers)                                                                                                                                                                | The plugin's root directory. Requires Claude Code v2.1.195 or later                          |
+| A [plugin](/docs/en/plugins/components#mcp-servers)                                                                                                                                                               | The plugin's root directory. Requires Claude Code v2.1.195 or later                          |
 | A project `.mcp.json` or a [local-scope](#local-scope) server                                                                                                                                                | The project directory the server is declared in                                              |
 | An agent file in your project, a server from the SDK's `mcpServers` option or `setMcpServers()` method, or [`--mcp-config`](/docs/en/cli-reference)                                                               | The session's [primary working directory](/docs/en/permissions#working-directories)               |
 | [User scope](#user-scope), [managed MCP](/docs/en/managed-mcp), a [claude.ai connector](#use-mcp-servers-from-claude-ai), or an agent file from outside your project, including one from an `--add-dir` directory | Your configuration directory, `~/.claude` unless you set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) |
@@ -1121,7 +1121,7 @@ If you've logged into Claude Code with a [claude.ai](https://claude.ai) account,
   </Step>
 </Steps>
 
-Claude Code marks a connector `managed` in `/mcp` and in the [`/plugin`](/docs/en/plugins) manager when your organization manages its authentication in claude.ai. Managed status doesn't change how Claude Code connects to the connector or applies your organization's [tool controls](#organization-controls-on-connector-tools).
+Claude Code marks a connector `managed` in `/mcp` and in the [`/plugin`](/docs/en/plugins/install) manager when your organization manages its authentication in claude.ai. Managed status doesn't change how Claude Code connects to the connector or applies your organization's [tool controls](#organization-controls-on-connector-tools).
 
 Connectors you have never signed in to are collapsed behind a `Show unused connectors` row at the end of the claude.ai section, so an organization-provisioned list doesn't fill the panel. Select the row to expand them. A connector you signed in to before stays visible even when it currently needs re-authentication.
 

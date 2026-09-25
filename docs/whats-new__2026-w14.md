@@ -116,7 +116,7 @@
       └── my-tool
   ```
 
-  <a className="digest-feature-link" href="/docs/en/plugins-reference#file-locations-reference">Plugins reference</a>
+  <a className="digest-feature-link" href="/docs/en/plugins/manifest-reference#standard-layout">Plugins reference</a>
 </div>
 
 <div className="digest-wins">

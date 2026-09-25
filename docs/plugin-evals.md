@@ -6,13 +6,17 @@
 
 > Write eval cases for your Claude Code plugin, run them with claude plugin eval, grade the results, compare against a no-plugin baseline, and gate CI on the score.
 
-`claude plugin eval` runs your [plugin](/docs/en/plugins) against a suite of test cases and scores the results. Each case is a realistic prompt plus one or more graders. A grader is a pass/fail check on what Claude produced, such as a regex over the reply, whether a particular tool was called, or a rubric that a second model judges the reply against.
+The `claude plugin eval` shell command runs your [plugin](/docs/en/plugins/overview) against a suite of test cases and scores the results. Each case is a realistic prompt plus one or more graders. A grader is a pass/fail check on what Claude produced, such as a regex over the reply, whether a particular tool was called, or a rubric that a second model judges the reply against.
 
 You don't have to write the suite manually. `claude plugin eval init` asks you about your plugin, proposes the cases and graders, tries them, and writes the files. You can also ask Claude to do the same from a session you already have open.
 
-Use evals to measure how reliably your plugin steers Claude to the right outcome, to catch regressions when you change the plugin or a new model ships, and to see what the plugin contributes compared with no plugin at all.
+Use evals to:
 
-This page is for plugin and skill authors who have a working plugin and want to test its behavior, and for teams that gate plugin changes in CI. Its case format is separate from the `evals/evals.json` file the [skill-creator plugin](/docs/en/skills#run-evals-with-skill-creator) uses. To create a plugin, see [Create plugins](/docs/en/plugins); to check a plugin's files for syntax and schema errors rather than its behavior, use [`claude plugin validate`](/docs/en/plugins-reference#plugin-validate).
+* Measure how reliably your plugin leads Claude to produce the right outcome
+* Catch regressions when you change the plugin or a new model is released
+* See what the plugin contributes compared with no plugin
+
+This page is for plugin and skill authors who have a working plugin and want to test its behavior, and for teams that gate plugin changes in CI. Its case format is separate from the `evals/evals.json` file the [skill-creator plugin](/docs/en/skills#run-evals-with-skill-creator) uses. To create a plugin, see [Create a plugin](/docs/en/plugins/create); to check a plugin's files for syntax and schema errors rather than its behavior, use [`claude plugin validate`](/docs/en/plugins/cli-reference#plugin-validate).
 
 <Note>
   Every eval run and every judge grader is a real model call on your account, counted against your plan's usage or your API bill, so check the [requirements](#requirements) first. Then [create your first eval suite](#create-your-first-eval-suite), or go to [Run evals in CI](#run-evals-in-ci) if you already have one.
@@ -23,7 +27,7 @@ This page is for plugin and skill authors who have a working plugin and want to 
 To run plugin evals you need:
 
 * Claude Code v2.1.269 or later. Run `claude --version` to check and `claude update` to upgrade.
-* A plugin directory with a `plugin.json` or `.claude-plugin/plugin.json` manifest, or a [skills-directory plugin](/docs/en/plugins-reference#skills-directory-plugins).
+* A plugin directory with a `plugin.json` or `.claude-plugin/plugin.json` manifest, or a [skills-directory plugin](/docs/en/plugins/loading#plugins-shared-through-a-repository).
 * The same authentication and model provider your normal Claude Code sessions use. Eval runs, judge-scored graders, and `claude plugin eval init` call the model with your credentials, so they count against your plan's usage limits or your API bill. When the command reports a cost, the figure is a [list-price estimate](/docs/en/costs) of those calls.
 
 ## How an eval run works
@@ -36,11 +40,15 @@ For each run of a case, Claude Code starts a fresh, [isolated](#how-runs-are-iso
 
 ### How a case is scored
 
-One run of a non-deterministic agent tells you little, so each case runs three times by default. A run's score is the fraction of its graders that passed, weighted if you set weights, and the case's score is the mean across its runs. A case passes when its score meets the [`--threshold`](#command-options), `1.0` by default. In model calls, a suite makes roughly cases × runs agent runs with the plugin and as many again for the [no-plugin baseline](#the-no-plugin-baseline), plus three short judge calls per `llm` or `baseline` grader per run.
+One run of a non-deterministic agent tells you little, so each case runs three times by default. A run's score is the fraction of its graders that passed, weighted if you set weights, and the case's score is the mean across its runs. A case passes when its score meets the [`--threshold`](#command-options), `1.0` by default.
+
+In model calls, a suite makes roughly cases × runs agent runs with the plugin and the same number again for the [no-plugin baseline](#the-no-plugin-baseline), plus three short judge calls per `llm` or `baseline` grader per run.
 
 ### The no-plugin baseline
 
-A high score on its own doesn't tell you the plugin helped, because Claude might do as well without it. To separate the two, each case's runs are repeated with no plugin loaded by default, and you get two scores, `WITH` and `W/OUT`. Their difference, `Δ`, is what the plugin contributed. If a case scores 1.0 both with and without the plugin, the plugin isn't what made it pass. The two sets of runs are called the with-arm and the without-arm; [Compare against a no-plugin baseline](#compare-against-a-no-plugin-baseline) covers how graders are scored across them and how to turn the baseline off.
+A high score on its own doesn't tell you the plugin helped, because Claude might do as well without it. To separate the two, each case's runs are repeated with no plugin loaded by default, and you get two scores, `WITH` and `W/OUT`. Their difference, `Δ`, is what the plugin contributed. If a case scores 1.0 both with and without the plugin, the plugin isn't what made it pass.
+
+The two sets of runs are called the with-arm and the without-arm; [Score against the no-plugin baseline](#compare-against-a-no-plugin-baseline) covers how graders are scored across them and how to turn the baseline off.
 
 ## Create your first eval suite
 
@@ -58,7 +66,11 @@ This walkthrough writes one case for your own plugin, runs it, and reads the res
     claude plugin eval init
     ```
 
-    If Claude Code doesn't already trust this directory it first asks `Trust this plugin directory?`; answer `y`. An interactive Claude Code session then opens. Claude reads your plugin and asks you what a good result looks like, proposes prompts that should and shouldn't trigger the plugin, designs graders for each, pilots them once to check they behave, and writes one case directory per prompt under `evals/`, each named after its prompt. When Claude tells you the suite is ready, exit that session with `/exit` or Ctrl+D to return to your shell.
+    If Claude Code doesn't already trust this directory it first asks `Trust this plugin directory?`; answer `y`.
+
+    An interactive Claude Code session then opens. Claude reads your plugin and asks you what a good result looks like, proposes prompts that should and shouldn't trigger the plugin, designs graders for each, runs them once as a trial to check they behave, and writes one case directory per prompt under `evals/`, each named after its prompt.
+
+    When Claude tells you the suite is ready, exit that session with `/exit` or Ctrl+D to return to your shell.
 
     If you already have a Claude Code session open at the plugin root, you can instead ask Claude there to run `claude plugin eval init`. Claude runs the command and then asks you the same questions in that conversation.
 
@@ -157,7 +169,9 @@ allowed_tools: [Read, Glob, Grep, Skill]
 Write me a commit message for this change: I renamed getUser to fetchUser and updated the three call sites.
 ```
 
-Each run starts in an empty working directory, so put whatever the task needs in the prompt itself, or [set up the workspace](#add-setup-or-history-with-case-yaml) first. The [full list of frontmatter fields](#prompt-md-fields) covers the model, timeout, tags, and environment variables.
+Each run starts in an empty working directory, so put whatever the task needs in the prompt itself, or [set up the workspace](#add-setup-or-history-with-case-yaml) first.
+
+The [full list of frontmatter fields](#prompt-md-fields) covers the model, timeout, tags, and environment variables.
 
 Each file under `graders/` is one check applied after the run. Open `evals/first-case/graders/criteria.md` and replace the placeholder with a rubric for the judge model, written as concrete PASS and FAIL conditions:
 
@@ -170,7 +184,7 @@ PASS if <what a correct response contains>.
 FAIL if <what a wrong or missing response looks like>.
 ```
 
-Then add a second grader that checks whether your skill is what produced the answer. Create `evals/first-case/graders/skill-fired.md`, replacing `your-skill-name` with the `name` from your skill's `SKILL.md`:
+Then add a second grader that checks whether your skill is what produced the answer. Create `evals/first-case/graders/skill-fired.md`, replacing `your-skill-name` with the skill's directory name under `skills/`, which is the name Claude invokes it by:
 
 ```markdown theme={null}
 ---
@@ -180,7 +194,9 @@ input_match: '"skill"\s*:\s*"(?:[\w-]+:)?your-skill-name"'
 ---
 ```
 
-This passes when Claude invoked that skill at least once during the run, including by its namespaced `plugin-name:skill-name` form. [Grader types](#grader-types) lists the other checks available, such as matching a regex or confirming a file was created.
+This passes when Claude invoked that skill at least once during the run, including by its namespaced `plugin-name:skill-name` form.
+
+[Grader types](#grader-types) lists the other checks available, such as matching a regex or confirming a file was created.
 
 With both files saved, run the case the way the [quickstart](#create-your-first-eval-suite) does, with `claude plugin eval .` from the plugin root.
 
@@ -188,7 +204,9 @@ With both files saved, run the case the way the [quickstart](#create-your-first-
   Set run limits and tools in prompt.md
 </h3>
 
-Set a case's `max_turns`, `timeout_seconds`, `model`, `tags`, and the `allowed_tools` it may use in `prompt.md` frontmatter; the [prompt.md frontmatter](#prompt-md-fields) reference lists every field and its default. Claude receives the body exactly as you wrote it. `@path` mentions in it aren't expanded into file attachments, so if Claude needs to read a file, grant a tool for it in `allowed_tools`.
+Set a case's `max_turns`, `timeout_seconds`, `model`, `tags`, and the `allowed_tools` it may use in `prompt.md` frontmatter; the [prompt.md frontmatter](#prompt-md-fields) reference lists every field and its default.
+
+Claude receives the body exactly as you wrote it. `@path` mentions in it aren't expanded into file attachments, so if Claude needs to read a file, grant a tool for it in `allowed_tools`.
 
 <h3 id="grade-the-result">
   Choose and weight graders
@@ -196,7 +214,9 @@ Set a case's `max_turns`, `timeout_seconds`, `model`, `tags`, and the `allowed_t
 
 A grader's frontmatter sets its `type`, and optionally a `weight` that makes it count for more of the run's score and an [`arm`](#compare-against-a-no-plugin-baseline) that controls how it's scored against the baseline. Of the six types, `regex`, `tool_used`, `tool_order`, and `file_exists` are computed from the transcript and files and cost nothing, while `llm` and `baseline` call a judge model and add to the run's cost.
 
-There are no custom-code graders. [Grader types](#grader-types) lists each type's options and pass condition, and [what a grader can look at](#what-a-grader-can-look-at) lists the values `target` and `focus` accept.
+There are no custom-code graders.
+
+[Grader types](#grader-types) lists each type's options and pass condition, and [what a grader can look at](#what-a-grader-can-look-at) lists the values `target` and `focus` accept.
 
 The judge for `llm` and `baseline` graders is a small fast model by default. Pass `--judge-model sonnet` or a full model ID to use a stronger one for nuanced rubrics.
 
@@ -205,7 +225,7 @@ The judge for `llm` and `baseline` graders is a small fast model by default. Pas
 An `llm` grader asks a model for a verdict, so its answer can differ between runs, and it differs more the longer the text it has to read. These habits keep a suite's scores steady enough to trust:
 
 * For long output such as a generated file, grade it with a `regex` grader over the file's contents, which checks the whole file the same way every time. Keep `llm` graders for short outputs, with rubrics written as concrete PASS and FAIL conditions.
-* Give each case one grader on the result, such as the final message or a produced file, and one on how Claude got there, such as `tool_used` or `tool_order`. Together they tell you both whether the answer was right and whether your plugin produced it.
+* Give each case one grader on the result, such as the final message or a produced file, and one on the steps Claude took to produce it, such as `tool_used` or `tool_order`. Together they tell you both whether the answer was right and whether your plugin produced it.
 * If a case's `tool_used: Skill` grader passes but `Δ` is negative, suspect the judge before the plugin. A small judge model can mark a correct answer wrong because it's formatted differently from what the rubric describes. Re-run with `--judge-model sonnet`, and tighten the rubric so formatting doesn't decide the verdict.
 * To check that a build or test passed inside the run, have the prompt ask Claude to run it and write the outcome to a file, grade that file, and assert the command ran with a `tool_used` grader whose `input_match` names the command.
 
@@ -213,14 +233,21 @@ An `llm` grader asks a model for a verdict, so its answer can differ between run
   Score against the no-plugin baseline
 </h3>
 
-When a plugin is under test, each case runs in two arms by default. The with-arm is its runs with the plugin loaded, and the without-arm is the same number of runs with no plugin at all. The summary and report show both scores and `Δ`, the with-arm score minus the without-arm score. Pass `--ablation none` to run only the with-arm, which halves the cost when you don't need the comparison, such as while iterating on graders.
+When a plugin is under test, each case runs in two arms by default. The with-arm is its runs with the plugin loaded, and the without-arm is the same number of runs with no plugin at all. The summary and report show both scores and `Δ`, the with-arm score minus the without-arm score.
+
+Pass `--ablation none` to run only the with-arm, which halves the cost when you don't need the comparison, such as while iterating on graders.
 
 In a two-arm run, some graders are reported with `scored: false`. A check like "the skill was invoked" can never pass without the plugin, so counting it would push the without-arm toward zero and inflate `Δ`. To keep the two arms comparable, Claude Code excludes such graders from the score in both arms and reports them in the with-arm as pass/fail indicators only. That includes:
 
 * Every `tool_used` grader whose `tool` is `Skill`
+* Every `regex` grader with `target: mock_calls` and every `llm` grader with `focus: mock_calls`, when each [mocked server](#mock-mcp-servers) in the case is one your plugin declares
 * Any grader you mark `arm: with-only`
 
-If every grader in a case is one of these, they're scored normally instead, since there would be nothing left to score. Set `arm: both` on a grader to score it in both arms regardless, which is what you want for a "must not invoke the skill" check with `min: 0` and `max: 0`. Under `--ablation none` nothing is excluded, so the same suite can produce a different absolute score in the two modes.
+Three settings change that exclusion:
+
+* **Every grader excluded**: if every grader in a case is in the excluded set, they're scored normally instead, since there would be nothing left to score.
+* **`arm: both`**: set `arm: both` on a grader to score it in both arms regardless, which is what you want for a "must not invoke the skill" check with `min: 0` and `max: 0`.
+* **`--ablation none`**: under `--ablation none` nothing is excluded, so the same suite can produce a different absolute score in the two modes.
 
 ### Use a different eval directory
 
@@ -233,15 +260,17 @@ If you set both, the flag's directory is used. Give a relative path of plain dir
 
 ## Set up fixtures and mocks
 
-A case can need more than a prompt: files or a git repository in the workspace, an earlier conversation to continue, or answers from the MCP servers your plugin talks to. Each of those is set up beside the case so runs stay repeatable.
+A case can need more than a prompt: files or a git repository in the workspace, an earlier conversation to continue, or answers from the MCP servers your plugin connects to. Each of those is set up beside the case so runs stay repeatable.
 
 <h3 id="add-setup-or-history-with-case-yaml">
   Seed the workspace or conversation
 </h3>
 
-Each run starts in an empty workspace. When a case needs more than the prompt, add a `case.yaml` beside `prompt.md` with a `context` block.
+Each run starts in an empty workspace. When a case needs more than the prompt, add a `case.yaml` beside `prompt.md` with a `context` block:
 
-To create fixture files or a git repository first, write a Bash script in the case directory and name it in `context.scaffold_script`. The script runs as you, outside the agent's sandbox, and only when you pass `--scaffold`, so pass that flag only for suites you or your organization wrote. To continue an earlier conversation, save the transcript as a `.jsonl` file and name it in `context.history_file`, and the case's prompt becomes the next user turn. To let Claude read fixture directories in the case during the run, list them in `context.add_dirs`.
+* **Fixture files or a git repository**: write a Bash script in the case directory and name it in `context.scaffold_script`. The script runs as you, outside the agent's sandbox, and only when you pass `--scaffold`, so pass that flag only for suites you or your organization wrote.
+* **An earlier conversation to continue**: save the transcript as a `.jsonl` file and name it in `context.history_file`, and the case's prompt becomes the next user turn.
+* **Fixture directories Claude can read during the run**: list them in `context.add_dirs`.
 
 A `case.yaml` also needs `schema_version: "1.1"` and `name`; the [case.yaml fields](#case-yaml-fields) reference has the full list.
 
@@ -260,11 +289,11 @@ context:
   Mock MCP servers
 </h3>
 
-You can evaluate a plugin whose skills call MCP tools without the real service behind them. Put one Markdown file per tool under `evals/mocks/<server>/<tool>.md` for the whole suite, or under a case's own `mocks/` directory for one case, where `<server>` is the server's name in your plugin's [MCP configuration](/docs/en/plugins-reference#mcp-servers).
+You can evaluate a plugin whose skills call MCP tools without the real service behind them. Put one Markdown file per tool under `evals/mocks/<server>/<tool>.md` for the whole suite, or under a case's own `mocks/` directory for one case, where `<server>` is the server's name in your plugin's [MCP configuration](/docs/en/plugins/components#mcp-servers).
 
-A run never starts your plugin's real MCP servers unless you ask. Claude Code registers a stand-in under each server's own name. Tools with a mock file answer from it and are allowed without an `--allow-tools` grant, and a tool with no mock file isn't available to Claude. A server with no mocks at all appears in the case's `mocked:` progress line as `plugin_<plugin>_<server>[not started: no mock]`.
+A run never starts your plugin's real MCP servers unless you ask. Claude Code registers a substitute server under each server's own name. Tools with a mock file answer from it and are allowed without an `--allow-tools` grant, and a tool with no mock file isn't available to Claude. A server with no mocks at all appears in the case's `mocked:` progress line as `plugin_<plugin>_<server>[not started: no mock]`.
 
-The file's body is what the tool returns to Claude. This mock stands in for a `create_issue` tool on a server named `tracker`, checks the input Claude sends, and echoes the title back. Save it as `evals/mocks/tracker/create_issue.md`:
+The file's body is what the tool returns to Claude. This mock substitutes for a `create_issue` tool on a server named `tracker`, checks the input Claude sends, and echoes the title back. Save it as `evals/mocks/tracker/create_issue.md`:
 
 ```markdown theme={null}
 ---
@@ -276,7 +305,14 @@ expect:
 Created issue #4821: {{input.title}}
 ```
 
-Insert fields from the call's input with `{{input.<field>}}`, and the contents of a fixture file beside the mock with `{{file:fixtures/{input.<field>}.json}}`. The `expect:` block guards the input. If a call violates it, the run aborts with score 0 and records why, so a case can assert what your plugin asked the server to do. Set `error: true` to return the body as a tool error instead, or `type: agent` to have a small model answer as the server from instructions in the body. The [mock file reference](#mock-files) lists every key and the `_server.md` and `_tools.json` files.
+A mock file's body and frontmatter accept these options:
+
+* **Substitutions**: insert fields from the call's input with `{{input.<field>}}`, and the contents of a fixture file beside the mock with `{{file:fixtures/{input.<field>}.json}}`.
+* **`expect:`**: the `expect:` block guards the input. If a call violates it, the run aborts with score 0 and records why, so a case can assert what your plugin asked the server to do.
+* **`error: true`**: set `error: true` to return the body as a tool error instead.
+* **`type: agent`**: set `type: agent` to have a small model answer as the server from instructions in the body.
+
+The [mock file reference](#mock-files) lists every key and the `_server.md` and `_tools.json` files.
 
 To grade the calls themselves, point a grader at `target: mock_calls`.
 
@@ -304,22 +340,24 @@ Most of the time you run `claude plugin eval .` from the plugin root, which runs
 | A plugin's root directory, such as `.`                    | Every case under its eval directory, with that plugin loaded                                                                                                                                      |
 | A single `prompt.md` or `case.yaml` file                  | That case, with its enclosing plugin loaded                                                                                                                                                       |
 | An installed plugin by name, `name` or `name@marketplace` | The cases in the installed copy's eval directory, with the installed copy loaded. Results are written under `./evals/results/` in your current directory, or `./<dir>/results/` with `--eval-dir` |
-| `name@skills-dir`                                         | The same, for a [skills-directory plugin](/docs/en/plugins-reference#skills-directory-plugins)                                                                                                         |
+| `name@skills-dir`                                         | The same, for a [skills-directory plugin](/docs/en/plugins/loading#plugins-shared-through-a-repository)                                                                                                |
 | Omitted                                                   | The current directory as a path                                                                                                                                                                   |
 
-Add `--case <glob>` to filter by case name and `--tag <tag>` to keep cases with any of the given tags. Put the target before `--tag`, `--allow-tools`, and `--json`. The first two take a list and `--json` takes an optional path, so each of them reads a target that follows as its own value.
+Add `--case <glob>` to filter by case name and `--tag <tag>` to keep cases with any of the given tags.
+
+Put the target before `--tag`, `--allow-tools`, and `--json`. The first two take a list and `--json` takes an optional path, so each of them reads a target that follows as its own value.
 
 ### Grant tools
 
 Runs never stop to ask for permission. Built-in tools that need a grant you didn't give, such as `Bash`, `Write`, `Edit`, `WebFetch`, and `WebSearch`, are removed from the session, so Claude can't call them at all.
 
-The allowlist is the read-only tools the case lists in `allowed_tools`, from `Read`, `Glob`, `Grep`, `NotebookRead`, `Skill`, `Agent`, `TodoWrite`, and the task tools `TaskCreate`, `TaskGet`, `TaskList`, `TaskUpdate`, and `TaskStop`, plus whatever you grant with `--allow-tools`. That grant applies to every case in the run. To let cases use `Bash`, `Write`, `Edit`, `WebFetch`, or `WebSearch`, grant them yourself:
+A run allows only the read-only tools the case lists in `allowed_tools`, from `Read`, `Glob`, `Grep`, `NotebookRead`, `Skill`, `AskUserQuestion`, `Agent`, `TodoWrite`, and the task tools `TaskCreate`, `TaskGet`, `TaskList`, `TaskUpdate`, and `TaskStop`, plus whatever you grant with `--allow-tools`. That grant applies to every case in the run. To let cases use `Bash`, `Write`, `Edit`, `WebFetch`, or `WebSearch`, grant them yourself:
 
 ```bash theme={null}
 claude plugin eval . --allow-tools Write Edit "Bash(npm test *)"
 ```
 
-When a case asked for a tool you didn't grant, the run lists it on stderr as `not granted`. Tools on a [mocked](#mock-mcp-servers) MCP server need no grant. Tools on a real plugin MCP server need both the server started, with `--allow-real-servers` or `--mocks off`, and a grant by name, such as `--allow-tools "mcp__plugin_my-plugin_github__*"`; a plugin's MCP tools are named `mcp__plugin_<plugin>_<server>__<tool>`.
+When a case asked for a tool you didn't grant, the progress output lists it as `not granted`. Tools on a [mocked](#mock-mcp-servers) MCP server need no grant. Tools on a real plugin MCP server need both the server started, with `--allow-real-servers` or `--mocks off`, and a grant by name, such as `--allow-tools "mcp__plugin_my-plugin_github__*"`; a plugin's MCP tools are named `mcp__plugin_<plugin>_<server>__<tool>`.
 
 When you grant `Bash` in any form, every command runs under Claude Code's [OS-level sandbox](/docs/en/sandboxing). Writes are confined to the run's workspace, your home directory and Claude Code configuration are unreadable, and network access is limited to domains you grant with `--allow-tools "WebFetch(domain:example.com)"`. If you grant Bash or PowerShell on a machine with no sandbox backend, Claude Code refuses each run rather than running it unconfined, and the case shows a run error and usually scores 0. Native Windows has no backend, so run shell-granting suites under WSL2; on Linux, install `bubblewrap` and `socat` first. See the [sandboxing prerequisites](/docs/en/sandboxing).
 
@@ -327,25 +365,25 @@ When you grant `Bash` in any form, every command runs under Claude Code's [OS-le
 
 This table covers the options for run count, models, scoring, cost, tool grants, mocks, and output. Run `claude plugin eval --help` for the complete list, which also includes `--case`, `--tag`, `--eval-dir`, `--no-scaffold`, `--report`, and `--verbose`.
 
-| Option                     | Default                                                                        | Effect                                                                                                                                                                                                                                                                                     |
-| :------------------------- | :----------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--runs <n>`               | Each case's `runs`, else 3                                                     | Runs per case per arm                                                                                                                                                                                                                                                                      |
-| `-j`, `--concurrency <n>`  | `1`                                                                            | Run up to this many agent runs at once, from 1 to 8. They share your account's rate limit, so this shortens wall-clock time rather than raising throughput past that limit. Results keep case order                                                                                        |
-| `--model <model>`          | Each case's `model`, else `ANTHROPIC_MODEL` if set, else Claude Code's default | Model for the agent under test. Pin it in CI so a model rollout isn't mistaken for a plugin regression                                                                                                                                                                                     |
-| `--judge-model <model>`    | A small fast model                                                             | Model for `llm` and `baseline` graders                                                                                                                                                                                                                                                     |
-| `--ablation <mode>`        | `with-without` when a plugin resolves, else `none`                             | Whether to also run each case without the plugin to measure what it adds. `none` runs one arm; `with-without` adds the no-plugin baseline                                                                                                                                                  |
-| `--threshold <0..1>`       | `1.0`                                                                          | A case passes when its with-arm score is at least this. Any case below it makes the command exit 1                                                                                                                                                                                         |
-| `--max-cost-usd <usd>`     | No ceiling                                                                     | A ceiling on the run's list-price cost estimate, not on plan usage. Checked before each run starts. Once spent, nothing further starts; runs already in flight finish, so spend can pass the ceiling by those runs. If any run is left unstarted, the command exits 2 with partial results |
-| `--allow-tools <tools...>` | None                                                                           | Grant tools beyond the read-only set. See [Grant tools](#grant-tools)                                                                                                                                                                                                                      |
-| `--scaffold`               | Off                                                                            | Run each case's [`scaffold_script`](#add-setup-or-history-with-case-yaml)                                                                                                                                                                                                                  |
-| `--trust-plugin`           | Off                                                                            | Skip the first-run trust prompt for a plugin whose code and suite you'd run yourself. Pass it in CI so the job is never refused by or left waiting at the prompt. See [What a run can access](#security)                                                                                   |
-| `--mocks <mode>`           | `record`                                                                       | `record` answers MCP tool calls from [mocks](#mock-mcp-servers), doesn't start the plugin's real servers, and saves agent-mock answers for replay. `off` ignores mocks and starts the plugin's real MCP servers                                                                            |
-| `--allow-real-servers`     | Off                                                                            | With `--mocks record`, also start the plugin's real MCP servers for servers that have no mock                                                                                                                                                                                              |
-| `--json [path]`            | Off                                                                            | Print the [result document](#json-result) to stdout, or write it to a path ending in `.json`. The run is quiet: no progress lines or summary table                                                                                                                                         |
-| `--output-dir <dir>`       | `<eval dir>/results/<timestamp>/`                                              | Where `aggregate-result.json` and `report.html` go                                                                                                                                                                                                                                         |
-| `--no-publish`             |                                                                                | Keep the HTML report local. See [HTML report](#html-report)                                                                                                                                                                                                                                |
-| `--publish-report`         |                                                                                | Publish the report even where it would stay local by default, such as a run a Claude Code session started                                                                                                                                                                                  |
-| `--keep-temp`              | Off                                                                            | Keep every run's sandbox directory and print its path, for debugging what Claude produced                                                                                                                                                                                                  |
+| Option                     | Default                                                                        | Effect                                                                                                                                                                                                                                                                                        |
+| :------------------------- | :----------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--runs <n>`               | Each case's `runs`, else 3                                                     | Runs per case per arm                                                                                                                                                                                                                                                                         |
+| `-j`, `--concurrency <n>`  | `1`                                                                            | Run up to this many agent runs at once, from 1 to 8. They share your account's rate limit, so this shortens wall-clock time rather than raising throughput past that limit. Results keep case order                                                                                           |
+| `--model <model>`          | Each case's `model`, else `ANTHROPIC_MODEL` if set, else Claude Code's default | Model for the agent under test. Pin it in CI so a model rollout isn't mistaken for a plugin regression                                                                                                                                                                                        |
+| `--judge-model <model>`    | A small fast model                                                             | Model for `llm` and `baseline` graders                                                                                                                                                                                                                                                        |
+| `--ablation <mode>`        | `with-without` when a plugin resolves, else `none`                             | Whether to also run each case without the plugin to measure what it adds. `none` runs one arm; `with-without` adds the no-plugin baseline                                                                                                                                                     |
+| `--threshold <0..1>`       | `1.0`                                                                          | A case passes when its with-arm score is at least this. Any case below it makes the command exit 1                                                                                                                                                                                            |
+| `--max-cost-usd <usd>`     | No ceiling                                                                     | A ceiling on the run's list-price cost estimate, not on plan usage. Checked before each run starts. Once spent, nothing further starts; runs that already started finish, so spend can pass the ceiling by those runs. If any run is left unstarted, the command exits 2 with partial results |
+| `--allow-tools <tools...>` | None                                                                           | Grant tools beyond the read-only set. See [Grant tools](#grant-tools)                                                                                                                                                                                                                         |
+| `--scaffold`               | Off                                                                            | Run each case's [`scaffold_script`](#add-setup-or-history-with-case-yaml)                                                                                                                                                                                                                     |
+| `--trust-plugin`           | Off                                                                            | Skip the first-run trust prompt for a plugin whose code and suite you'd run yourself. Pass it in CI so the job is never refused by or left waiting at the prompt. See [What a run can access](#security)                                                                                      |
+| `--mocks <mode>`           | `record`                                                                       | `record` answers MCP tool calls from [mocks](#mock-mcp-servers), doesn't start the plugin's real servers, and saves agent-mock answers for replay. `off` ignores mocks and starts the plugin's real MCP servers                                                                               |
+| `--allow-real-servers`     | Off                                                                            | With `--mocks record`, also start the plugin's real MCP servers for servers that have no mock                                                                                                                                                                                                 |
+| `--json [path]`            | Off                                                                            | Print the [result document](#json-result) to stdout, or write it to a path ending in `.json`. The run is quiet: no progress lines or summary table                                                                                                                                            |
+| `--output-dir <dir>`       | `<eval dir>/results/<timestamp>/`                                              | Where `aggregate-result.json` and `report.html` go                                                                                                                                                                                                                                            |
+| `--no-publish`             |                                                                                | Keep the HTML report local. See [HTML report](#html-report)                                                                                                                                                                                                                                   |
+| `--publish-report`         |                                                                                | Publish the report even where it would stay local by default, such as a run a Claude Code session started                                                                                                                                                                                     |
+| `--keep-temp`              | Off                                                                            | Keep every run's sandbox directory and print its path, for debugging what Claude produced                                                                                                                                                                                                     |
 
 <h3 id="run-evals-in-ci">
   Run evals in CI
@@ -374,9 +412,15 @@ The job's exit code tells you what happened:
 | 130       | Interrupted. Partial results are written                                                                                                                                                                       |
 | 143       | Terminated, such as by a CI timeout                                                                                                                                                                            |
 
-Problems writing or publishing the HTML report never change the exit code. To see why a case scored low, run it locally without `--json` so the per-run progress and grader lines print.
+Problems writing or publishing the HTML report never change the exit code.
 
-A CI runner needs a Claude Code install and [credentials in the environment](/docs/en/authentication) such as `ANTHROPIC_API_KEY`. Without `--trust-plugin`, a job whose checkout directory Claude Code doesn't already trust is refused with exit 1 when it has no terminal, or waits at the prompt when the runner allocates one. `claude plugin eval init` needs a terminal to ask you its questions; in CI, run `claude plugin eval init --bare <name>` to get the blank template.
+To see why a case scored low, run it locally without `--json` so the per-run progress and grader lines print.
+
+A CI runner also needs these in place:
+
+* **Install and credentials**: a CI runner needs a Claude Code install and [credentials in the environment](/docs/en/authentication) such as `ANTHROPIC_API_KEY`.
+* **Trust**: without `--trust-plugin`, a job whose checkout directory Claude Code doesn't already trust needs the [first-run trust prompt](#trust-the-plugin-directory), and a run that can't ask is refused with exit 1.
+* **`init` in CI**: `claude plugin eval init` needs a terminal to ask you its questions; in CI, run `claude plugin eval init --bare <name>` to get the blank template.
 
 To keep costs predictable, give quick every-change suites only graders that don't call a judge, use `--ablation none` where you don't need `Δ`, and leave `partial: true` documents and runs with `skippedPaidGraders` out of any trend you chart.
 
@@ -392,7 +436,7 @@ Every run with at least one case writes a `results/<timestamp>/` directory insid
 
 Read it from the top down:
 
-* **The verdict line and tiles** answer whether the plugin helped across the whole suite. Suite score is the mean of the per-case with-plugin scores, Ablation Δ is how far that sits above or below the baseline score, and Cases counts how many met the threshold. Perfect runs is the share of with-plugin runs where every grader passed.
+* **The verdict line and tiles** answer whether the plugin helped across the whole suite. Suite score is the mean of the per-case with-plugin scores, Ablation Δ is how far that is above or below the baseline score, and Cases counts how many met the threshold. Perfect runs is the share of with-plugin runs where every grader passed.
 * **Each case card** shows the case's own `Δ` and with-plugin score, with a tick on the bar at the threshold. A case whose `Δ` is negative gets a red left edge, so regressions stand out when you scroll.
 * **Inside a case**, the with-plugin runs come first and the baseline runs after. Each run lists its graders with a pass or fail chip. A failed grader is already expanded with its explanation, and an `llm` grader also shows the judge's votes and the evidence it was shown, which is where you find out why a run scored low. Graders that don't count toward the score, such as `tool_used: Skill`, carry a `plugin-fired indicator` badge.
 * **Prompt and Graders**, below the runs, show the case's prompt and each grader's rubric or pattern, so someone reading the report without the suite can see what was asked and what counted as good.
@@ -425,19 +469,29 @@ These are the fields a gating script usually reads. The document also carries th
   What a run can access
 </h2>
 
-`claude plugin eval` loads the target plugin's skills, hooks, and agents and runs its eval suite on your machine, as you. Pointing it at a plugin is the same trust decision as `claude --plugin-dir`, so only evaluate plugins you trust. The isolation described in this section limits what the agent under test can reach; it isn't a boundary against the plugin's own code, and a suite that passes says nothing about whether the plugin is safe.
+`claude plugin eval` loads the target plugin's skills, hooks, and agents and runs its eval suite on your machine, as you. Pointing it at a plugin is the same trust decision as `claude --plugin-dir`, so only evaluate plugins you trust.
+
+The isolation described in this section limits what the agent under test can reach; it isn't a boundary against the plugin's own code, and a suite that passes says nothing about whether the plugin is safe.
 
 ### Trust the plugin directory
 
-The first time you run `claude plugin eval` against a directory, Claude Code asks `Trust this plugin directory?` before it loads anything from it, unless you already accepted the trust prompt there in an interactive `claude` session. Inside a git repository, answering yes trusts the whole repository, for interactive sessions too. When stdin or stdout isn't a terminal, or under `--json`, the run can't ask and is refused with exit 1; pass `--trust-plugin` to assert the trust yourself, only for a plugin you'd run on your own machine. A target you name rather than give as a path, meaning an installed plugin or a skills-directory plugin, skips the prompt.
+The first time you run `claude plugin eval` against a directory, Claude Code asks `Trust this plugin directory?` before it loads anything from it, unless you already accepted the trust prompt there in an interactive `claude` session. Inside a git repository, answering yes trusts the whole repository, for interactive sessions too. When stdin or stdout isn't a terminal, under `--json`, or when the `CI` environment variable is set to a true value such as `true`, the run can't ask and is refused with exit 1; pass `--trust-plugin` to assert the trust yourself, only for a plugin you'd run on your own machine. A target you name rather than give as a path, meaning an installed plugin or a skills-directory plugin, skips the prompt.
 
-Some parts of the plugin and suite run only when you pass their flag for that run: a case's [`scaffold_script`](#add-setup-or-history-with-case-yaml) with `--scaffold`, [tools beyond the read-only set](#grant-tools) with `--allow-tools`, and the plugin's [real MCP servers](#mock-mcp-servers) with `--allow-real-servers` or `--mocks off`. A case's `allowed_tools` and a skill's own `allowed-tools` frontmatter can't widen any of them. When the plugin ships hooks you didn't write, or you start its real MCP servers, treat its scores as advisory unless you ran it in an isolated environment such as a container or CI runner, since hooks and servers run outside the agent's sandbox and could touch the files the graders read.
+Some parts of the plugin and suite run only when you pass their flag for that run:
+
+* A case's [`scaffold_script`](#add-setup-or-history-with-case-yaml) with `--scaffold`
+* [Tools beyond the read-only set](#grant-tools) with `--allow-tools`
+* The plugin's [real MCP servers](#mock-mcp-servers) with `--allow-real-servers` or `--mocks off`
+
+A case's `allowed_tools` and a skill's own `allowed-tools` frontmatter can't widen any of them.
+
+When the plugin includes hooks you didn't write, or you start its real MCP servers, treat its scores as advisory unless you ran it in an isolated environment such as a container or CI runner, since hooks and servers run outside the agent's sandbox and could modify the files the graders read.
 
 <h3 id="how-runs-are-isolated">
   How runs are isolated
 </h3>
 
-Each run gets a throwaway home directory, working directory, and Claude Code configuration, and the agent under test runs there as a `claude -p` child process with only your plugin loaded. Keep these consequences in mind when you write cases:
+Each run gets a temporary home directory, working directory, and Claude Code configuration, and the agent under test runs there as a `claude -p` child process with only your plugin loaded. Keep these consequences in mind when you write cases:
 
 * **Nothing personal or project-level loads.** Your user settings, hooks, `CLAUDE.md` files, MCP servers, other installed plugins, memory, and skills are absent, and no project-scoped `.claude/` or `.mcp.json` above the sandbox is read. Most of your shell environment is withheld too; only an [allowlist](#prompt-md-fields) and `EVAL_*` variables reach the run. If the plugin needs setup, ship it in the plugin, create it in a `scaffold_script`, or pass `EVAL_*` variables.
 * **Managed policy can still restrict a run.** Restrictions in [managed settings](/docs/en/managed-settings) an administrator deployed to the machine apply inside a run, so results on a managed machine can differ from an unmanaged one by that policy.
@@ -491,13 +545,13 @@ evals/
 | `timeout_seconds`      | `300`                        | Wall-clock cap per run, up to 3600                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `allowed_tools`        | `[]`                         | Tools the case wants, such as `[Read, Glob, Grep, Skill]`. Read-only tools are granted when listed here; for anything else, see [Grant tools](#grant-tools)                                                                                                                                                                                                                                                                                                                   |
 | `append_system_prompt` |                              | Text appended to the child session's system prompt                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `env`                  | `{}`                         | Extra environment variables for the child session. Keys must match `EVAL_[A-Z0-9_]*`; any other key fails the run. The run inherits only an allowlist from your shell: basics such as `PATH` and locale, proxy and certificate settings, the variables that select and authenticate your model provider, most `ANTHROPIC_*` and `CLAUDE_CODE_*` configuration, and `EVAL_*`. To hand the plugin anything else, such as a toolchain setting, export it as an `EVAL_*` variable |
+| `env`                  | `{}`                         | Extra environment variables for the child session. Keys must match `EVAL_[A-Z0-9_]*`; any other key fails the run. The run inherits only an allowlist from your shell: basics such as `PATH` and locale, proxy and certificate settings, the variables that select and authenticate your model provider, most `ANTHROPIC_*` and `CLAUDE_CODE_*` configuration, and `EVAL_*`. To pass the plugin anything else, such as a toolchain setting, export it as an `EVAL_*` variable |
 
 <h3 id="case-yaml-fields">
   case.yaml fields
 </h3>
 
-`case.yaml` describes the same case in YAML and adds the fields that point at other files. It requires `schema_version: "1.1"` and `name`. The `prompt.md` fields `description`, `tags`, `plugins`, `runs`, and `expected_outcome` go at the top level; `model`, `max_turns`, `timeout_seconds`, `allowed_tools`, `append_system_prompt`, and `env` go under `execution:`. When both files exist, `prompt.md` frontmatter overrides the matching `case.yaml` fields, the `prompt.md` body is the prompt, and `graders/*.md` are added after any graders listed in `case.yaml`.
+`case.yaml` is an alternative or companion to `prompt.md`: it describes a case in YAML and adds the fields that point at other files. It requires `schema_version: "1.1"` and `name`. The `prompt.md` fields `description`, `tags`, `plugins`, `runs`, and `expected_outcome` go at the top level; `model`, `max_turns`, `timeout_seconds`, `allowed_tools`, `append_system_prompt`, and `env` go under `execution:`. When both files exist, `prompt.md` frontmatter overrides the matching `case.yaml` fields, the `prompt.md` body is the prompt, and `graders/*.md` are added after any graders listed in `case.yaml`.
 
 These fields exist only in `case.yaml`:
 
@@ -513,11 +567,11 @@ These fields exist only in `case.yaml`:
 
 Every grader file under `graders/` takes these keys in frontmatter, plus the options for its type. The grader's name is the filename without `.md`:
 
-| Key      | Default  | Purpose                                                                                                                                                                     |
-| :------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`   | required | One of the [grader types](#grader-types)                                                                                                                                    |
-| `weight` | `1`      | Relative weight in the run's score. Any positive number                                                                                                                     |
-| `arm`    | unset    | `with-only` excludes the grader from scoring in a [two-arm run](#compare-against-a-no-plugin-baseline); `both` forces a `tool_used: Skill` grader to be scored in both arms |
+| Key      | Default  | Purpose                                                                                                                                                                                      |
+| :------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`   | required | One of the [grader types](#grader-types)                                                                                                                                                     |
+| `weight` | `1`      | Relative weight in the run's score. Any positive number                                                                                                                                      |
+| `arm`    | unset    | `with-only` excludes the grader from scoring in a [two-arm run](#compare-against-a-no-plugin-baseline); `both` forces a grader Claude Code would otherwise exclude to be scored in both arms |
 
 #### What a grader can look at
 
@@ -552,7 +606,7 @@ A `<tool>.md` file under `mocks/<server>/` answers one tool. Its body is the too
 
 | Key          | Default | Purpose                                                                                                                                                                                                                                                                             |
 | :----------- | :------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`       | `fixed` | `fixed` returns the body as written. `agent` treats the body as instructions for a small model that plays the server for the run and sees earlier calls as history                                                                                                                  |
+| `type`       | `fixed` | `fixed` returns the body as written. `agent` treats the body as instructions for a small model that acts as the server for the run and sees earlier calls as history                                                                                                                |
 | `expect`     | unset   | A map from dotted input paths to a type name such as `string`, `number`, `boolean`, `array`, or `object`, a `/regex/`, a literal, or a list of allowed literals. A call that violates it aborts the run with score 0 and is reported as `aborted` with the server, tool, and reason |
 | `error`      | `false` | `fixed` only. Return the body as a tool error                                                                                                                                                                                                                                       |
 | `abort_when` | unset   | `agent` only. Prose listing the only conditions under which the agent may abort the run                                                                                                                                                                                             |
@@ -566,7 +620,7 @@ A case's own `mocks/` directory uses the same layout and overrides the suite's m
 
 ## Troubleshooting
 
-These are the problems authors hit most often, keyed on what you see.
+These are the problems authors encounter most often, keyed on what you see.
 
 ### "plugin eval is currently in early access"
 
@@ -578,7 +632,7 @@ Anthropic has switched the command off server-side. Nothing on your machine turn
 
 ### "is not a trusted plugin directory, and this run cannot stop to ask you about it"
 
-This is the first run against a directory Claude Code doesn't trust yet, and it can't ask you because stdin or stdout isn't a terminal or you passed `--json`. Run `claude plugin eval <dir>` once in a terminal and answer the prompt, or pass `--trust-plugin` if you trust the plugin's code and suite. See [What a run can access](#security).
+This is the first run against a directory Claude Code doesn't trust yet, and it can't ask you because stdin or stdout isn't a terminal, you passed `--json`, or the `CI` environment variable is set to a true value such as `true`. Run `claude plugin eval <dir>` once in a terminal and answer the prompt, or pass `--trust-plugin` if you trust the plugin's code and suite. See [What a run can access](#security).
 
 ### "No eval cases found"
 
@@ -600,11 +654,15 @@ In runs with your plugin loaded, a case that lists `Agent` in `allowed_tools` ca
 
 ### Everything scores zero although the right files were produced
 
-Your graders target `files`, the list of created paths, when you meant the file's contents. Use `{ source: file, path: <path> }` as the `target` or `focus`. Separately, `file_exists` counts only files created during the run, so a file the scaffold created or that Claude only edited is invisible to it; grade its contents, or use `tool_used` on `Edit`.
+Your graders target `files`, the list of created paths, when you meant the file's contents. Use `{ source: file, path: <path> }` as the `target` or `focus`.
+
+Separately, `file_exists` counts only files created during the run, so a file the scaffold created or that Claude only edited is invisible to it; grade its contents, or use `tool_used` on `Edit`.
 
 ### A regex over the trace doesn't match text I can see
 
-The default `target` is `last_message`, not the trace. When you do target `trace`, it's JSON per line, so quotes appear as `\"`. Regexes use JavaScript syntax, so put `i` in `flags` rather than writing `(?i)`.
+* **Wrong target**: the default `target` is `last_message`, not the trace.
+* **JSON escaping**: when you do target `trace`, it's JSON per line, so quotes appear as `\"`.
+* **Regex syntax**: regexes use JavaScript syntax, so put `i` in `flags` rather than writing `(?i)`.
 
 ### Tools are denied, MCP tools are missing, or Bash won't run
 
@@ -612,7 +670,7 @@ Anything beyond the read-only set needs your grant, such as `--allow-tools Bash 
 
 ### The run exits 1 but the results look fine
 
-The default `--threshold` is 1.0, so the command exits 1 when any case scores below perfect. Set a threshold that matches your bar. Exit 1 also covers a case file that failed to load, which is reported on stderr above the table.
+The default `--threshold` is 1.0, so the command exits 1 when any case scores below perfect. Set a threshold that matches the score you require. Exit 1 also covers a case file that failed to load, which is reported on stderr above the table.
 
 ### "--json output path must end in .json"
 
@@ -620,7 +678,7 @@ You put the target after `--json`, so it was read as the output path. Put the ta
 
 ### A grader shows passed: false under a run that scored 1.0
 
-That grader is excluded from the score by design in a two-arm run, and its `scored` field is `false`. See [Compare against a no-plugin baseline](#compare-against-a-no-plugin-baseline).
+That grader is excluded from the score by design in a two-arm run, and its `scored` field is `false`. See [Score against the no-plugin baseline](#compare-against-a-no-plugin-baseline).
 
 ### Runs fail with a usage-limit or rate-limit error partway through
 
@@ -632,8 +690,9 @@ The defaults are 10 turns and 300 seconds. Raise `max_turns` and `timeout_second
 
 ## See also
 
-* [Create plugins](/docs/en/plugins): build the plugin you're testing, and load it with `--plugin-dir` during development
-* [Plugins reference](/docs/en/plugins-reference#plugin-eval): the `plugin eval` and `plugin eval init` command entries and the manifest's `experimental.evals` key
+* [Create a plugin](/docs/en/plugins/create): build the plugin you're testing, and load it with `--plugin-dir` during development
+* [Plugin commands reference](/docs/en/plugins/cli-reference#plugin-eval): the `plugin eval` and `plugin eval init` command entries. The manifest's [`experimental.evals`](/docs/en/plugins/manifest-reference#fields) key is on the manifest reference
 * [Skills](/docs/en/skills): how a skill's description decides when Claude invokes it, which is what a case that checks whether the skill triggers is measuring
 * [Sandboxing](/docs/en/sandboxing): the OS-level sandbox that applies when you grant Bash to a run
-* [Create and distribute a plugin marketplace](/docs/en/plugin-marketplaces): publish the plugin once its suite passes
+* [Publish a plugin](/docs/en/plugins/publish): publish the plugin once its suite passes
+* [Measure plugin cost and usage](/docs/en/plugins/measure): what the plugin adds to each session's context and whether people still use it

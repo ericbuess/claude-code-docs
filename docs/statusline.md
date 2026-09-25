@@ -1104,7 +1104,7 @@ The per-task `effort` field is the reasoning effort set for that subagent, in it
 
 Write one JSON line to stdout per row you want to override, in the form `{"id": "<task id>", "content": "<row body>"}`. The `content` string is rendered as-is, including ANSI colors and OSC 8 hyperlinks. Omit a task's `id` to keep the default rendering for that row; emit an empty `content` string to hide it.
 
-The same trust, `disableAllHooks`, and [`allowManagedHooksOnly`](/docs/en/settings-reference#allowmanagedhooksonly) gates that apply to `statusLine` apply here. Plugins can ship a default `subagentStatusLine` in their [`settings.json`](/docs/en/plugins-reference#standard-plugin-layout), but unlike hooks, plugin values don't run under `allowManagedHooksOnly` even when the plugin is force-enabled in managed settings `enabledPlugins`.
+The same trust, `disableAllHooks`, and [`allowManagedHooksOnly`](/docs/en/settings-reference#allowmanagedhooksonly) gates that apply to `statusLine` apply here. Plugins can ship a default `subagentStatusLine` in their [`settings.json`](/docs/en/plugins/manifest-reference#standard-layout), but unlike hooks, plugin values don't run under `allowManagedHooksOnly` even when the plugin is force-enabled in managed settings `enabledPlugins`.
 
 ## Tips
 

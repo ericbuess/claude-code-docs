@@ -21,7 +21,7 @@ On first run the plugin creates a virtual environment under `~/.claude/security/
 
 ## Install the plugin
 
-In a terminal Claude Code session, install from the [official Anthropic marketplace](/docs/en/discover-plugins#official-anthropic-marketplace):
+In a terminal Claude Code session, install from the [official Anthropic marketplace](/docs/en/plugins/anthropic-marketplaces):
 
 ```text theme={null}
 /plugin install security-guidance@claude-plugins-official
@@ -31,16 +31,16 @@ In a terminal Claude Code session, install from the [official Anthropic marketpl
 
 * **Claude desktop app, local or SSH session**: open the [plugin browser](/docs/en/desktop#install-plugins) by clicking the **+** button next to the prompt, then **Plugins**, then **Add plugin**
 * **VS Code extension**: install from the [**Manage plugins** dialog](/docs/en/vs-code#manage-plugins)
-* **Cloud sessions**: enable the plugin for your claude.ai account so Claude Code loads it as a [synced plugin](/docs/en/plugins-reference#synced-plugins). A cloud session doesn't load plugins from your user settings or from the repository's `.claude/settings.json`, as [What carries over from your setup](/docs/en/cloud-environments#what-carries-over-from-your-setup) explains
+* **Cloud sessions**: a cloud session doesn't load plugins from your user settings or from the repository's `.claude/settings.json`, as [What carries over from your setup](/docs/en/cloud-environments#what-carries-over-from-your-setup) explains. For plugins your organization distributes through managed settings, see [Manage plugins for your organization](/docs/en/plugins/org)
 
 The terminal install prompts for a scope. Choose user scope to write the plugin to your user settings, so it loads in every new local session you start on this machine.
 
 If the install fails, match the message Claude Code reports:
 
 * `Marketplace "claude-plugins-official" not found`: add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`, then retry the install.
-* The plugin is [not found in the marketplace](/docs/en/discover-plugins#install-plugins): check the plugin name.
+* The plugin is [not found in the marketplace](/docs/en/plugins/install#install-a-plugin): check the plugin name.
 
-Check the install summary. If it reports `Run /reload-plugins to activate.`, see [Apply plugin changes without restarting](/docs/en/discover-plugins#apply-plugin-changes-without-restarting) to activate the plugin in your current session.
+Check the install summary. If it reports `Run /reload-plugins to activate.`, see [Apply plugin changes without restarting](/docs/en/plugins/cli-reference#reload-plugins) to activate the plugin in your current session.
 
 ### Enable for your team in local sessions
 
@@ -243,4 +243,4 @@ To go deeper on the pieces this page touches:
 
 * [Code Review](/docs/en/code-review): set up the PR-time multi-agent review
 * [Automate actions with hooks](/docs/en/hooks-guide): build your own checks at the same lifecycle points
-* [Discover and install plugins](/docs/en/discover-plugins#official-anthropic-marketplace): browse other official plugins
+* [Find plugins in the official marketplace](/docs/en/plugins/anthropic-marketplaces#find-plugins-in-the-official-marketplace): where to browse the other official plugins

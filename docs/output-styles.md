@@ -155,7 +155,7 @@ In the VS Code extension, you can also create the file from the [**Output styles
   </Step>
 </Steps>
 
-[Plugins](/docs/en/plugins-reference) can also ship output styles in an `output-styles/` directory.
+[Plugins](/docs/en/plugins/manifest-reference) can also ship output styles in an `output-styles/` directory.
 
 <h3 id="frontmatter">
   Frontmatter reference
@@ -206,5 +206,5 @@ The built-in Explanatory and Learning styles produce longer responses than Defau
 
 * [Settings](/docs/en/settings): where the `outputStyle` field lives and how settings precedence works
 * [Permission modes](/docs/en/permission-modes): how the Proactive style compares to auto mode
-* [Plugins](/docs/en/plugins): package and distribute output styles alongside skills, hooks, and agents
+* [Plugins](/docs/en/plugins/overview): package and distribute output styles alongside skills, hooks, and agents
 * [Debug your configuration](/docs/en/debug-your-config): diagnose why an output style isn't taking effect
