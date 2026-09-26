@@ -161,14 +161,14 @@ These loads depend on the `project` [setting source](/docs/en/agent-sdk/claude-c
 
 When two skills share a directory or file name, where each one came from decides which one `/name` runs. For a name set by the frontmatter `name` field, see [How a skill gets its command name](#how-a-skill-gets-its-command-name). The table covers the enterprise, personal, project, nested, plugin, and claude.ai locations, bundled skills, and command files:
 
-| Same name in                                                                                                   | Which one runs                                                                                                                                                                                   |
-| :------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Two of enterprise, personal, and project                                                                       | Enterprise over personal, and personal over project. With `deploy` in both `~/.claude/skills/` and the project's `.claude/skills/`, `/deploy` runs the personal one                              |
-| Any of those locations and a [bundled skill](#bundled-skills)                                                  | Your skill replaces the bundled command, but not its aliases. A project `code-review` skill replaces `/code-review`, and the bundled alias `/review` never runs your skill                       |
-| A skill and a file in `.claude/commands/`                                                                      | The skill                                                                                                                                                                                        |
-| A project-root skill and a nested skill                                                                        | Both load. See [monorepos and subdirectories](#discovery-from-parent-and-nested-directories)                                                                                                     |
-| A plugin skill and a skill at any of the locations above                                                       | Both load, because plugin skills are namespaced as `/plugin-name:skill-name`                                                                                                                     |
-| Any of the above and the short name of a skill [synced from your claude.ai account](#how-synced-skills-behave) | The other skill or command. The synced skill still runs as `/anthropic-skills:<name>`. See [When a synced skill name matches another command](#when-a-synced-skill-name-matches-another-command) |
+| Same name in                                                                                                   | Which one runs                                                                                                                                                                                           |
+| :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Two of enterprise, personal, and project                                                                       | Enterprise over personal, and personal over project. With `deploy` in both `~/.claude/skills/` and the project's `.claude/skills/`, `/deploy` runs the personal one                                      |
+| Any of those locations and a [bundled skill](#bundled-skills)                                                  | Your skill replaces the bundled command, but not its aliases. A project `code-review` skill replaces `/code-review`, and the bundled alias `/review` never runs your skill                               |
+| A skill and a file in `.claude/commands/`                                                                      | The skill                                                                                                                                                                                                |
+| A project-root skill and a nested skill                                                                        | Both load. See [monorepos and subdirectories](#discovery-from-parent-and-nested-directories)                                                                                                             |
+| A plugin skill and a skill at any of the locations above                                                       | Both load, because plugin skills are namespaced as `/plugin-name:skill-name`                                                                                                                             |
+| Any of the above and the short name of a skill [synced from your claude.ai account](#how-synced-skills-behave) | The other skill or command. The synced skill is then listed and runs only under its full name. See [When a synced skill name matches another command](#when-a-synced-skill-name-matches-another-command) |
 
 <h3 id="skills-in-cowork-and-cloud-sessions">
   Use skills in Cowork and cloud sessions
@@ -222,9 +222,13 @@ If your organization turns Skills off on claude.ai, Claude Code removes the down
 
 #### When a synced skill name matches another command
 
-You can invoke a synced skill by its full name, `/anthropic-skills:<name>`, or by its short name, `/<name>`. When another command uses that short name, `/<name>` runs the other command, and the synced skill runs only as `/anthropic-skills:<name>`. With a local `deploy` skill and a synced `deploy`, `/deploy` runs the local skill and `/anthropic-skills:deploy` runs the synced one. Before v2.1.269, a synced skill had only its short name.
+You can invoke a synced skill by its short name, `/<name>`, or by its full name, `/anthropic-skills:<name>`. When another command uses the short name, `/<name>` runs the other command, and the synced skill runs only as `/anthropic-skills:<name>`. With a local `deploy` skill and a synced `deploy`, `/deploy` runs the local skill and `/anthropic-skills:deploy` runs the synced one. Before v2.1.269, a synced skill had only its short name.
 
-The other command can be any of these:
+In the `/` menu, `/skills`, and `/context`, a synced skill appears under its short name, or under its full name while another command uses the short name. Run `/skills` in your session. A note under the list explains each synced skill that lost its short name. If one of your personal skills or command files in `~/.claude/` uses the name, the note also says what to rename or delete to free it.
+
+From v2.1.269 through v2.1.280, these lists showed every synced skill under its full name, and `/skills` had no such note; both changed in v2.1.281.
+
+The command that uses the short name can be any of these:
 
 * A built-in command or a [bundled skill](#bundled-skills), including one that's unavailable in your session, for example after you turn bundled skills off
 * A skill at any [local level](#where-skills-live) or a file in `.claude/commands/`
@@ -266,7 +270,9 @@ What Claude Code does with a synced skill's body depends on where the session ru
   Edit a skill during a session
 </h3>
 
-Claude Code watches skill directories for file changes, except in [bare mode](/docs/en/headless#start-faster-with-bare-mode). When you add, edit, or remove a skill under `~/.claude/skills/`, the project `.claude/skills/`, or a `.claude/skills/` inside an `--add-dir` directory, Claude Code picks up the change within the current session, without a restart. If you create a top-level skills directory that didn't exist when the session started, restart Claude Code so it can watch the new directory.
+Claude Code watches skill directories for file changes, except in [bare mode](/docs/en/headless#start-faster-with-bare-mode). When you add, edit, or remove a skill under `~/.claude/skills/`, the project `.claude/skills/`, or a `.claude/skills/` inside an `--add-dir` directory, Claude Code picks up the change within the current session, without a restart.
+
+If you create a top-level skills directory that didn't exist when the session started, run [`/reload-skills`](/docs/en/commands#all-commands) to pick up the skills you put there. Claude Code isn't watching that directory yet, so run `/reload-skills` again after each later change there.
 
 Live change detection covers `SKILL.md` text only. For a skill folder that is also a [plugin](/docs/en/plugins/loading#plugins-shared-through-a-repository), changes to `hooks/`, `.mcp.json`, `agents/`, and `output-styles/` need `/reload-plugins` to take effect.
 
@@ -1093,7 +1099,7 @@ If Claude uses your skill when you don't want it:
 
 ### Skill descriptions are cut short
 
-Claude Code loads a listing of skill names and descriptions into context so Claude knows what's available. The listing always contains every skill name, but if you have many skills, Claude Code shortens descriptions to fit the listing's character budget, which can strip the keywords Claude needs to match your request. The budget scales at 1% of the model's context window. When the listing overflows, Claude Code drops descriptions starting with the skills you invoke least, so the skills you use most keep their full text.
+Claude Code loads a listing of skill names and descriptions into context so Claude knows what's available. The listing always contains every skill name, but if you have many skills, Claude Code drops some descriptions to fit the listing's character budget, which removes the keywords Claude needs to match your request. The budget scales at 1% of the model's context window. When the listing overflows, Claude Code drops descriptions starting with the skills you invoke least, so the skills you use most keep their full text.
 
 Run `/doctor` for an estimate of the listing's context cost and its biggest contributors. To find skills worth turning off, run [`/skill-doctor`](#find-unused-skills). When the listing exceeds its budget, Claude Code also writes a warning to the debug log, visible with [`--debug`](/docs/en/cli-reference#cli-flags).
 

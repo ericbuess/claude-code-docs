@@ -275,15 +275,24 @@ While a footer item is selected, such as a row in the agent panel below the prom
 
 ### Message selector actions
 
-Actions available in the `MessageSelector` context:
+In the message list of the [rewind menu](/docs/en/checkpointing), you move through messages and pick one with the [Select actions](#select-actions) and their default keys. Your `Select` bindings for those actions apply there too. The `MessageSelector` context has no actions or default bindings of its own. Use it to change a key for this list alone, by binding a Select action such as `select:accept` in a `MessageSelector` block.
 
-| Action                   | Default                                   | Description       |
-| :----------------------- | :---------------------------------------- | :---------------- |
-| `messageSelector:up`     | Up, K, Ctrl+P                             | Move up in list   |
-| `messageSelector:down`   | Down, J, Ctrl+N                           | Move down in list |
-| `messageSelector:top`    | Ctrl+Up, Shift+Up, Meta+Up, Shift+K       | Jump to top       |
-| `messageSelector:bottom` | Ctrl+Down, Shift+Down, Meta+Down, Shift+J | Jump to bottom    |
-| `messageSelector:select` | Enter                                     | Select message    |
+This example binds `o` to pick the highlighted message in the rewind menu, without changing any other list:
+
+```json theme={null}
+{
+  "bindings": [
+    {
+      "context": "MessageSelector",
+      "bindings": {
+        "o": "select:accept"
+      }
+    }
+  ]
+}
+```
+
+Before v2.1.283, this list ignored `Select` bindings and had its own actions: `messageSelector:up`, `messageSelector:down`, `messageSelector:top`, `messageSelector:bottom`, and `messageSelector:select`. If your `keybindings.json` binds one of those names, the binding keeps working in this list as the Select action that does the same thing. `Home` and `End` jump to either end of the list; before v2.1.283, keys such as `Shift+K` and `Shift+J` did that by default.
 
 ### Diff actions
 
@@ -296,8 +305,11 @@ Actions available in the `DiffDialog` context:
 | `diff:nextSource`     | Right     | Next diff source                                                                                                                                    |
 | `diff:previousFile`   | Up, K     | Previous file in the file list; scroll up one line in the detail view                                                                               |
 | `diff:nextFile`       | Down, J   | Next file in the file list; scroll down one line in the detail view                                                                                 |
-| `diff:viewDetails`    | Enter     | View diff details                                                                                                                                   |
 | `diff:back`           | (unbound) | Go back in diff viewer. Escape performs the back action via `diff:dismiss`. The previous default of Left in the detail view was removed in v2.1.203 |
+
+The file list also responds to the [Select actions](#select-actions), through their default keys and your `Select` bindings. `select:previous` and `select:next` move to the previous and next file, and `Enter` opens the selected file's diff through `select:accept`. To change one of those keys for the file list alone, bind the Select action in a `DiffDialog` block.
+
+Before v2.1.283, the file list ignored `Select` bindings, and `Enter` opened the selected file's diff through a separate `diff:viewDetails` action. If your `keybindings.json` binds `diff:viewDetails`, the binding keeps working in the file list as `select:accept`.
 
 The diff detail view also binds pager-style keys to the standard [scroll actions](#scroll-actions). These bindings are part of the `DiffDialog` context and apply only in the detail view; the `Scroll` context defaults listed under [Scroll actions](#scroll-actions) are unchanged.
 

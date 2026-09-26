@@ -128,6 +128,8 @@ Open a terminal in the directory where you want to keep the plugin, such as `~/p
 
 The plugin loads only in sessions you start with `--plugin-dir`. To keep working on it without the flag, or to test a `.zip` build, see [Develop without a marketplace](#develop-without-a-marketplace).
 
+To have Claude scaffold and check a larger plugin with you, [install](/docs/en/plugins/install#install-a-plugin) Anthropic's `plugin-dev` plugin from the `claude-plugins-official` marketplace, which adds skills and agents for writing components such as skills, hooks, and MCP servers and for validating the finished plugin. Once it's installed, run `/plugin-dev:create-plugin` followed by a description of the plugin you want, and Claude walks you through designing, creating, and validating it.
+
 <h3 id="share-the-plugin">
   Share your plugin
 </h3>

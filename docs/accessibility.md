@@ -99,7 +99,7 @@ macOS Terminal doesn't act on the markers, and Claude Code doesn't emit them in 
 
 ## Answer menus and prompts
 
-In screen reader mode, menus you'd normally navigate with the arrow keys, including permission prompts, become numbered lists. Claude Code announces each option as a numbered line, then an `Enter selection` prompt that names the valid range. Type the number of the option you want and press Enter.
+In screen reader mode, menus you'd normally navigate with the arrow keys, including permission prompts, become numbered lists. Claude Code announces each option as a numbered line, then a `Select with numbers` prompt that names the valid range. Type the number of the option you want and press Enter.
 
 * Press Escape to cancel a menu whose prompt ends with `or Escape to cancel`.
 * If you type a number that isn't on the list, Claude Code announces the valid range and lets you try again.

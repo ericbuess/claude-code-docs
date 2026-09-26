@@ -126,7 +126,7 @@ With the variables exported in your shell, send a one-token request to the gatew
 <Tabs>
   <Tab title="Bash or Zsh">
     ```bash theme={null}
-    curl -X POST "$ANTHROPIC_BASE_URL/v1/messages" \
+    curl -sS -w '\n%{http_code}\n' -X POST "$ANTHROPIC_BASE_URL/v1/messages" \
       -H "Authorization: Bearer $ANTHROPIC_AUTH_TOKEN" \
       -H "anthropic-version: 2023-06-01" \
       -H "content-type: application/json" \

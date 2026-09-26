@@ -203,7 +203,7 @@ Claude Code ignores the variable in these cases, and the Default option resolves
 
 * You set it to `default`, `inherit`, `opusplan`, or `haiku`
 * [`enforceAvailableModels`](#enforce-the-allowlist-for-the-default-model) is on
-* [`availableModels`](#restrict-model-selection) or [organization model restrictions](#organization-model-restrictions) exclude the model
+* Your organization's [model restrictions](#restrict-model-selection) exclude the model
 * The model isn't available to your account
 
 When a new session would start on the variable's model, a session you resume with `claude --resume`, `--continue`, or the `/resume` picker starts on it too. Claude Code doesn't restore the model saved in that session's transcript. Otherwise Claude Code doesn't use the variable when you [resume a session](#setting-your-model).
@@ -219,7 +219,7 @@ When you pick a model with `/model` and your next session starts on something el
 
 ## Restrict model selection
 
-Enterprise administrators can use `availableModels` in [managed or policy settings](/docs/en/managed-settings) to restrict which models users can select. Entries match a model family such as `sonnet`, a version prefix such as `claude-sonnet-4-5`, or a full model ID such as `claude-sonnet-4-5-20250929`. A version prefix also matches later model IDs that extend it with another segment, so `claude-fable-5` permits both Fable 5 and Fable 5.1, while `claude-fable-5-1` permits Fable 5.1 only.
+Enterprise administrators can use `availableModels` in [managed or policy settings](/docs/en/managed-settings) to restrict which models users can select. Entries match a model family such as `sonnet`, a version prefix such as `claude-sonnet-4-5`, or a full model ID such as `claude-sonnet-4-5-20250929`. A version prefix also matches later model IDs that extend it with another segment, so `claude-fable-5` permits both Fable 5 and Fable 5.1, while `claude-fable-5-1` permits Fable 5.1 only. To block a model the list permits, or to make each model ID entry permit only the version it names, see [Block specific models or versions](#block-specific-models-or-versions).
 
 On platforms that embed Claude Code and set [`CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`](/docs/en/env-vars), the host's model configuration takes precedence over managed model settings, while a managed `availableModels` allowlist stays in force unless the host supplies its own; [Exceptions to managed settings precedence](/docs/en/settings#exceptions-to-managed-settings-precedence) says which keys and variables the host overrides.
 
@@ -285,9 +285,9 @@ Every surface enforces the allowlist it receives. Which delivery mechanism reach
 
 ### Default model behavior
 
-On its own, `availableModels` leaves the Default option on the system's [runtime default](#default-model-setting) for the account until you also set [`enforceAvailableModels`](#enforce-the-allowlist-for-the-default-model). If that default is a model you intend to restrict, set `enforceAvailableModels` as well.
+With the default prefix matching, `availableModels` on its own leaves the Default option on the system's [runtime default](#default-model-setting) for the account until you also set [`enforceAvailableModels`](#enforce-the-allowlist-for-the-default-model). If that default is a model you intend to restrict, set `enforceAvailableModels` as well, or [block that model](#block-specific-models-or-versions).
 
-An empty `availableModels` array never engages the Default-model enforcement: with `availableModels: []`, named model selections are blocked but the Default model for the account type remains usable regardless of `enforceAvailableModels`.
+With `availableModels: []`, named model selections are blocked and `enforceAvailableModels` has no effect.
 
 ### Enforce the allowlist for the Default model
 
@@ -302,18 +302,19 @@ Set `enforceAvailableModels: true` alongside a non-empty `availableModels` in ma
 
 The Default option resolves to the account-type default, or to the [organization default model](#organization-default-model) when an admin has set one. When that model is not in the allowlist, the Default option instead resolves to the first `availableModels` entry that names an allowed, available model, and the `/model` picker's Default row shows that model. This applies everywhere the default is reached: session startup, selecting Default in `/model`, the `"default"` keyword in [fallback model chains](#fallback-model-chains), and the fallback used when an excluded selection is dropped.
 
-`enforceAvailableModels` remaps the Default option only when `availableModels` is non-empty. With `availableModels: []`, the Default model for the account type remains usable, so the setting cannot lock users out of every model. When `availableModels` is non-empty but no entry resolves to an allowed and available model, enforcement is skipped and Default resolves to the account-type default, with a warning visible only under `--debug`. Keep at least one guaranteed-available entry in the list to avoid this.
+`enforceAvailableModels` remaps the Default option only when `availableModels` is non-empty. When `availableModels` is non-empty but no entry resolves to an allowed and available model, enforcement is skipped with a warning visible only under `--debug`. Keep at least one guaranteed-available entry in the list to avoid this.
 
 Deploy both keys together in the highest-ranked managed source you deliver. By default Claude Code reads only that source, so a pair placed in a managed settings file is ignored when the admin console delivers any settings; under the opt-in merge in [how Claude Code combines managed sources](/docs/en/managed-settings#how-claude-code-combines-managed-sources), Claude Code still ignores a `modelOverrides` map from a source ranked below the one that sets `availableModels`.
 
 ### Control the model users run on
 
-The `model` setting is an initial selection, not enforcement. It sets which model is active when a session starts, but users can still open `/model` and pick Default, which resolves to the system's [runtime default](#default-model-setting) regardless of what `model` is set to, unless [`enforceAvailableModels`](#enforce-the-allowlist-for-the-default-model) redirects it.
+The `model` setting is an initial selection, not enforcement. It sets which model is active when a session starts, but users can still open `/model` and pick Default, which resolves to the system's [runtime default](#default-model-setting) regardless of what `model` is set to, unless [`enforceAvailableModels`](#enforce-the-allowlist-for-the-default-model) or the [keys that block specific versions](#block-specific-models-or-versions) apply to it.
 
 To fully control the model experience, combine these settings:
 
 * **`availableModels`**: restricts which named models users can switch to
 * **`enforceAvailableModels`**: extends the `availableModels` allowlist to the Default option, so Default cannot resolve to a model outside the list
+* **`deniedModels`** and **`availableModelsMatch`**: [block specific versions](#block-specific-models-or-versions) that an `availableModels` entry would otherwise permit
 * **`model`**: sets the initial model selection when a session starts
 * **`ANTHROPIC_DEFAULT_SONNET_MODEL`** / **`ANTHROPIC_DEFAULT_OPUS_MODEL`** / **`ANTHROPIC_DEFAULT_HAIKU_MODEL`** / **`ANTHROPIC_DEFAULT_FABLE_MODEL`**: control what the `sonnet`, `opus`, `haiku`, and `fable` aliases resolve to, and which version the [account-type default](#default-model-setting) uses
 
@@ -341,6 +342,36 @@ Within the effective list, an entry naming a specific model in a family, whether
 ### Mantle model IDs
 
 When the [Amazon Bedrock Mantle endpoint](/docs/en/amazon-bedrock#use-the-mantle-endpoint) is enabled, entries in `availableModels` that start with `anthropic.` are added to the `/model` picker as custom options and routed to the Mantle endpoint. This is an exception to the alias matching described in [Pin models for third-party deployments](#pin-models-for-third-party-deployments). The setting still restricts the picker to listed entries, and a Mantle ID embeds a family name, so it counts as a specific entry and disables that family's wildcard: alongside any Mantle IDs, list the version prefixes or full IDs you want to keep selectable. See [Merge behavior](#merge-behavior).
+
+### Block specific models or versions
+
+An `availableModels` entry such as `claude-opus-5` also permits later releases that extend it, such as Opus 5.5, as soon as Claude Code supports them. Two managed settings let you hold a release back, and both require Claude Code v2.1.283 or later:
+
+* [`deniedModels`](/docs/en/settings-reference#deniedmodels): list the models to block. A listed model is blocked even when `availableModels` permits it, and the key also works with no allowlist at all. A release that no entry blocks stays permitted
+* [`availableModelsMatch`](/docs/en/settings-reference#availablemodelsmatch): set it to `"exact"` so that each model ID in `availableModels` permits only the version it names. A newer version of a listed model ID then stays blocked until you add it to the list
+
+Earlier versions ignore both keys, so also set [`requiredMinimumVersion`](/docs/en/settings-reference#requiredminimumversion) to keep those versions from starting.
+
+This example permits Opus and Sonnet models and blocks Opus 5.5 in every spelling, including dated and provider-specific IDs:
+
+```json theme={null}
+{
+  "availableModels": ["opus", "sonnet"],
+  "deniedModels": ["claude-opus-5-5"]
+}
+```
+
+A blocked model, whether `deniedModels` names it or an `"exact"` list omits it, is treated as a blocked selection everywhere [the allowlist applies](#restrict-model-selection). It is hidden from the `/model` picker, and `/model <name>` rejects it. If you name a blocked model ID with `--model`, `ANTHROPIC_MODEL`, or the `model` setting, Claude Code drops it at startup and resolves the Default option instead. If a [hook](/docs/en/hooks) or background request names a model that `deniedModels` blocks, such as an agent hook's `model` field, that request runs on the session's model instead.
+
+The Default option follows both keys too, whether or not you set [`enforceAvailableModels`](#enforce-the-allowlist-for-the-default-model). If you set it with a non-empty `availableModels`, a blocked default counts as a model outside the allowlist. Otherwise, a Default option that would resolve to a blocked model steps down in this order:
+
+1. The newest permitted version of the same family
+2. The newest permitted model of each lower-cost family in turn: Sonnet, then Haiku
+3. The first `availableModels` entry that names a permitted model
+
+If none of those is permitted, a session starting on the Default option [refuses to start](/docs/en/errors#managed-settings-block-the-default-model) with an error that names the key to fix. An `"exact"` list affects the Default option only when the managed `availableModels` list names at least one model or family.
+
+Claude Code reads both keys from managed settings only. If you set either one in user, project, or local settings or with `--settings`, Claude Code ignores it with a warning.
 
 ### Organization model restrictions
 
@@ -385,8 +416,9 @@ When the organization default doesn't override user selection, the first interac
 
 The organization default passes through these restriction checks before it is adopted:
 
-* [`availableModels`](#restrict-model-selection) on its own doesn't apply to the organization default, so an organization default outside the allowlist still applies. When [`enforceAvailableModels`](#enforce-the-allowlist-for-the-default-model) is also set, an organization default outside the allowlist is remapped to the first allowlist entry, like any other Default
+* With the default prefix matching, [`availableModels`](#restrict-model-selection) on its own doesn't apply to the organization default, so an organization default outside the allowlist still applies. When [`enforceAvailableModels`](#enforce-the-allowlist-for-the-default-model) is also set, an organization default outside the allowlist is remapped to the first allowlist entry as well
 * an organization default that [organization model restrictions](#organization-model-restrictions) deny for your account is replaced by the newest allowed model in its family, or a lower-cost family when every version of it is restricted
+* for an organization default that `deniedModels` or an `"exact"` list blocks, see [Block specific models or versions](#block-specific-models-or-versions)
 * an organization default that isn't available to your account at all is skipped, and the Default option resolves as it would [without an organization default](#default-model-setting)
 
 As of v2.1.199, when the organization default is a different model family from your account type's usual default, the `/model` picker keeps a separate row for that usual family, so you can still switch to it for a session. In v2.1.196 through v2.1.198 that row is missing from the picker.
@@ -594,6 +626,8 @@ Each level trades token spend against capability. The default suits most coding 
 
 The effort scale is calibrated per model, so the same level name does not represent the same underlying value across models.
 
+Opus 5.5 [defaults to `medium`](#adjust-effort-level), one level below Opus 5's default of `high`. In Anthropic's testing, Opus 5.5 at `medium` matches or exceeds Opus 5 at `high` on coding and knowledge-work evaluations. At a given level, Opus 5.5 tends to think more per turn than Opus 5. When you move from Opus 5 to Opus 5.5, start at `medium` rather than carrying over the level you used on Opus 5. To test levels against your own work, see [Calibrate effort](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5#calibrate-effort) in the Opus 5.5 prompting guide.
+
 #### Use ultrathink for one-off deep reasoning
 
 Include `ultrathink` anywhere in your prompt to request deeper reasoning on that turn without changing your session effort setting. Claude Code recognizes the keyword and adds an in-context instruction. The effort level sent to the API is unchanged. Claude Code passes other phrases such as "think", "think hard", and "think more" through as ordinary prompt text and doesn't recognize them as keywords.
@@ -779,6 +813,8 @@ Use the following environment variables to control the model names that the alia
 | `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | The model to use for `haiku`, or [background functionality](/docs/en/costs#background-token-usage)                                                                                                                                                                                                                                                                                                                                                                                         |
 | `CLAUDE_CODE_SUBAGENT_MODEL`     | The default model for [subagents](/docs/en/sub-agents#choose-a-model), [agent team](/docs/en/agent-teams#specify-teammates-and-models) teammates, and [workflow](/docs/en/workflows) agents that aren't assigned a model another way. Accepts an alias such as `haiku` or a full model name. A per-invocation model or a definition's `model` field, including `inherit`, takes precedence. To change that, set [`CLAUDE_CODE_SUBAGENT_MODEL_FORCE`](/docs/en/sub-agents#run-every-subagent-on-one-model) |
 
+On third-party providers, [Customize pinned model display and capabilities](#customize-pinned-model-display-and-capabilities) describes what a pinned model's row in the `/model` picker shows.
+
 Note: `ANTHROPIC_SMALL_FAST_MODEL` is deprecated in favor of
 `ANTHROPIC_DEFAULT_HAIKU_MODEL`.
 
@@ -903,12 +939,12 @@ When `availableModels` is set in [managed settings](/docs/en/managed-settings), 
 
 Claude Code automatically uses [prompt caching](/docs/en/prompt-caching) to optimize performance and reduce costs. You can disable prompt caching globally or for specific model tiers:
 
-| Environment variable            | Description                                                                                       |
-| ------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `DISABLE_PROMPT_CACHING`        | Set to `1` to disable prompt caching for all models. Takes precedence over the per-model settings |
-| `DISABLE_PROMPT_CACHING_HAIKU`  | Set to `1` to disable prompt caching for Haiku models only                                        |
-| `DISABLE_PROMPT_CACHING_SONNET` | Set to `1` to disable prompt caching for Sonnet models only                                       |
-| `DISABLE_PROMPT_CACHING_OPUS`   | Set to `1` to disable prompt caching for Opus models only                                         |
-| `DISABLE_PROMPT_CACHING_FABLE`  | Set to `1` to disable prompt caching for Fable models only                                        |
+| Environment variable            | Description                                                                                                   |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `DISABLE_PROMPT_CACHING`        | Set to `1` to disable prompt caching for all models. Takes precedence over the per-model settings             |
+| `DISABLE_PROMPT_CACHING_HAIKU`  | Set to `1` to disable prompt caching for the [default Haiku model](/docs/en/prompt-caching#disable-prompt-caching) |
+| `DISABLE_PROMPT_CACHING_SONNET` | Set to `1` to disable prompt caching for Sonnet models only                                                   |
+| `DISABLE_PROMPT_CACHING_OPUS`   | Set to `1` to disable prompt caching for Opus models only                                                     |
+| `DISABLE_PROMPT_CACHING_FABLE`  | Set to `1` to disable prompt caching for Fable models only                                                    |
 
 To choose the cache TTL for the main conversation and for subagents separately, see [choose the TTL yourself](/docs/en/prompt-caching#choose-the-ttl-yourself). For what triggers a cache miss, see [How Claude Code uses prompt caching](/docs/en/prompt-caching).

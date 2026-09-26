@@ -68,9 +68,9 @@ Restoring plan mode on the non-interactive and VS Code paths requires Claude Cod
   Resume in plan mode with `-p`
 </h5>
 
-A `claude -p --resume` or `claude -p --continue` run resumes in plan mode only when all four conditions hold:
+A `claude -p --resume` or `claude -p --continue` run resumes in plan mode only when all of these conditions hold:
 
-* You pass [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags), so that Claude Code can present the plan for approval
+* You pass [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags) and don't pass [`--permission-prompts none`](/docs/en/headless#turn-off-permission-prompts-in-unattended-runs), so that Claude Code can present the plan for approval
 * You don't pass `--permission-mode` or `--dangerously-skip-permissions`
 * You don't pass `--fork-session`
 * The run isn't started through [channels](/docs/en/channels)

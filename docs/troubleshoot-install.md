@@ -39,6 +39,7 @@ Match the error message or symptom you're seeing to a fix:
 | `running scripts is disabled on this system` or `PSSecurityException`                                      | [Allow the npm shims to run](#running-scripts-is-disabled-on-this-system)                                                                     |
 | `Error: claude native binary not installed`                                                                | [Complete the npm install](#native-binary-not-found-after-npm-install)                                                                        |
 | `npm error code ENOTEMPTY` during update or reinstall                                                      | [Remove the leftover package directory](#npm-enotempty-during-update-or-reinstall)                                                            |
+| `'claude' is not recognized` right after an update on Windows                                              | [Restore `claude.exe` from its backup](#claude-exe-missing-after-an-update-on-windows)                                                        |
 | On Windows, the install command prints script text and nothing installs                                    | [Run the complete install command](#wrong-install-command-on-windows)                                                                         |
 | `App unavailable in region`                                                                                | Claude Code is not available in your country. See [supported countries](https://www.anthropic.com/supported-countries).                       |
 | `unable to get local issuer certificate`                                                                   | [Configure corporate CA certificates](#tls-or-ssl-connection-errors)                                                                          |
@@ -568,6 +569,28 @@ Close any other PowerShell windows running the installer and wait for antivirus 
 Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\downloads"
 irm https://claude.ai/install.ps1 | iex
 ```
+
+<h3 id="claude-exe-missing-after-an-update-on-windows">
+  `claude.exe` missing after an update on Windows
+</h3>
+
+If your terminal reports `'claude' is not recognized` right after Claude Code updated on Windows, check whether `%USERPROFILE%\.local\bin` still contains `claude.exe`. If that directory isn't on your PATH at all, see [Fix your PATH](#command-not-found-claude-after-installation) instead. To update on Windows, Claude Code renames the existing `claude.exe` aside to a backup and moves the new version into its place. If moving the new version into place fails and Claude Code can't rename the backup back either, the directory keeps the backup but has no `claude.exe`.
+
+The backup is a file in the same directory whose name begins with `claude.exe.old.` followed by a numeric timestamp. Run the following in PowerShell to rename the newest backup back to `claude.exe`:
+
+```powershell theme={null}
+Get-ChildItem "$env:USERPROFILE\.local\bin\claude.exe.old.*" | Sort-Object Name | Select-Object -Last 1 | Rename-Item -NewName claude.exe
+```
+
+Then run `claude --version` to confirm the fix. A restored `claude.exe` prints a version number.
+
+If there's no `claude.exe.old.*` file, or `claude` still fails after the rename, reinstall instead:
+
+```powershell theme={null}
+irm https://claude.ai/install.ps1 | iex
+```
+
+Before v2.1.281, Claude Code could delete the backup while `claude.exe` was still missing.
 
 ### Install killed on low-memory Linux servers
 

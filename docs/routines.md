@@ -55,7 +55,8 @@ What a routine can reach is determined by the repositories you select, the [envi
 When the routine's schedule or **Run now** starts a run, Claude republishes an existing artifact without asking only when all of these hold:
 
 * You can edit the artifact and it belongs to your own organization
-* The artifact isn't shared publicly, and isn't shared with specific people or your organization with the latest version chosen as the version viewers see
+* The artifact isn't shared publicly
+* If the artifact is shared with specific people or your organization, its viewers don't automatically see each new version
 * The publish carries only the page, with no supporting files or anything else added, and doesn't force over a newer version
 * The page holds no grant that reaches beyond the page, such as [connector calls](/docs/en/artifacts#pull-live-data-with-mcp-connectors)
 

@@ -1589,24 +1589,24 @@ type SDKStartupFailureReason =
 
 Each value names one refusal:
 
-| Value                                  | What stopped the session                                                                                                                                                                                 |
-| :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `org_pin_api_key_conflict`             | Managed settings [require a first-party or Cloud gateway sign-in](/docs/en/authentication#restrict-login-to-your-organization), and an Anthropic API key, auth token, or `apiKeyHelper` is configured instead |
-| `org_verify_failed`                    | The sign-in's organization couldn't be verified against the pin, for example because of a network failure or a revoked token                                                                             |
-| `org_pin_mismatch`                     | The sign-in belongs to an organization the pin doesn't allow                                                                                                                                             |
-| `managed_settings_invalid`             | Managed policy settings couldn't be read, or the pin names no organization                                                                                                                               |
-| `remote_settings_required_unavailable` | Managed settings that the organization requires couldn't be loaded                                                                                                                                       |
-| `gateway_signin_required`              | The [Cloud gateway](/docs/en/claude-apps-gateway) ended this sign-in                                                                                                                                          |
-| `gateway_access_denied`                | The managed settings request to the Cloud gateway came back with a 403, which the gateway's [troubleshooting table](/docs/en/claude-apps-gateway-deploy#troubleshooting) covers                               |
-| `proxy_invalid`                        | A proxy setting isn't a complete URL                                                                                                                                                                     |
-| `temp_dir_unusable`                    | The per-user temporary directory is unsafe or couldn't be created                                                                                                                                        |
-| `cwd_unavailable`                      | The working directory was deleted, moved, or can't be read                                                                                                                                               |
-| `shell_tool_missing`                   | On Windows, no shell tool is available: Git Bash is missing, and PowerShell is missing or turned off with `CLAUDE_CODE_USE_POWERSHELL_TOOL`                                                              |
-| `session_held_by_background`           | The conversation to resume or continue is running as a [background session](/docs/en/agent-view)                                                                                                              |
-| `worktree_resume_refused`              | The session's worktree failed its safety checks, or the resume was launched from inside it. `errors` says whether running the same resume again continues without the worktree                           |
-| `worktree_unverified`                  | The session's worktree couldn't be verified right now, and retrying may succeed                                                                                                                          |
-| `cli_version_too_old`                  | This Claude Code version is below the minimum Anthropic requires                                                                                                                                         |
-| `bypass_root`                          | Bypass permissions mode was requested while running as root                                                                                                                                              |
+| Value                                  | What stopped the session                                                                                                                                                                                      |
+| :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `org_pin_api_key_conflict`             | Managed settings [require a first-party or Cloud gateway sign-in](/docs/en/authentication#restrict-login-to-your-organization), and an Anthropic API key, auth token, or `apiKeyHelper` is configured instead      |
+| `org_verify_failed`                    | The sign-in's organization couldn't be verified against the pin, for example because of a network failure or a revoked token                                                                                  |
+| `org_pin_mismatch`                     | The sign-in belongs to an organization the pin doesn't allow                                                                                                                                                  |
+| `managed_settings_invalid`             | Managed policy settings couldn't be read, the pin names no organization, or [managed model restrictions](/docs/en/errors#managed-settings-block-the-default-model) leave no permitted model for the Default option |
+| `remote_settings_required_unavailable` | Managed settings that the organization requires couldn't be loaded                                                                                                                                            |
+| `gateway_signin_required`              | The [Cloud gateway](/docs/en/claude-apps-gateway) ended this sign-in                                                                                                                                               |
+| `gateway_access_denied`                | The managed settings request to the Cloud gateway came back with a 403, which the gateway's [troubleshooting table](/docs/en/claude-apps-gateway-deploy#troubleshooting) covers                                    |
+| `proxy_invalid`                        | A proxy setting isn't a complete URL                                                                                                                                                                          |
+| `temp_dir_unusable`                    | The per-user temporary directory is unsafe or couldn't be created                                                                                                                                             |
+| `cwd_unavailable`                      | The working directory was deleted, moved, or can't be read                                                                                                                                                    |
+| `shell_tool_missing`                   | On Windows, no shell tool is available: Git Bash is missing, and PowerShell is missing or turned off with `CLAUDE_CODE_USE_POWERSHELL_TOOL`                                                                   |
+| `session_held_by_background`           | The conversation to resume or continue is running as a [background session](/docs/en/agent-view)                                                                                                                   |
+| `worktree_resume_refused`              | The session's worktree failed its safety checks, or the resume was launched from inside it. `errors` says whether running the same resume again continues without the worktree                                |
+| `worktree_unverified`                  | The session's worktree couldn't be verified right now, and retrying may succeed                                                                                                                               |
+| `cli_version_too_old`                  | This Claude Code version is below the minimum Anthropic requires                                                                                                                                              |
+| `bypass_root`                          | Bypass permissions mode was requested while running as root                                                                                                                                                   |
 
 ### `SDKSystemMessage`
 
@@ -1636,6 +1636,12 @@ type SDKSystemMessage = {
   output_style: string;
   skills: string[];
   plugins: { name: string; path: string }[];
+  plugin_errors?: {
+    plugin: string;
+    type: string;
+    message: string;
+    path?: string;
+  }[];
   fast_mode_state?: FastModeState;
   fast_mode_disabled_reason?: FastModeDisabledReason;
   effort?: "low" | "medium" | "high" | "xhigh" | "max" | null;
@@ -1656,6 +1662,19 @@ The `capabilities` array names the protocol behaviors this CLI implements, so yo
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `interrupt_receipt_v1`       | [`interrupt()`](#query-object) resolves with an [`SDKControlInterruptResponse`](#sdkcontrolinterruptresponse) receipt listing the messages that were pending when the interrupt arrived                                                                                                           |
 | `interrupt_cancel_queued_v1` | The `interrupt` control request honors `cancel_queued: true`, cancelling the messages the receipt would otherwise list under `still_queued` and listing them under `cancelled` instead. See [`SDKControlInterruptResponse`](#sdkcontrolinterruptresponse). Requires Claude Code v2.1.219 or later |
+
+The `plugin_errors` array lists plugin load failures. An entry describes either a plugin that didn't load and is absent from `plugins`, or a plugin that loaded without one of its parts, such as its hooks file. The key is omitted when nothing failed. `SDKSystemMessage` declares `plugin_errors` in Agent SDK v0.3.283 or later.
+
+When a directory or archive from your [`plugins` option](#options) itself fails to load, the entry's `plugin` field holds a positional tag such as `inline[0]` instead of a plugin name. This happens, for example, when the path doesn't exist or the manifest is invalid. Match such an entry to your option by its `path` field.
+
+The table below lists the fields of each `plugin_errors` entry.
+
+| Field     | Type     | Description                                                                                                                                                                               |
+| --------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugin`  | `string` | The failing plugin's ID, or a positional tag such as `inline[0]` when the plugin directory or archive itself failed to load                                                               |
+| `type`    | `string` | Error category from an open set, such as `path-not-found` or `manifest-validation-error`. Treat a value you don't recognize as a generic failure                                          |
+| `message` | `string` | Display text describing the failure                                                                                                                                                       |
+| `path`    | `string` | Present only when the plugin directory or archive itself failed to load. Its absolute path, with a relative path from your `plugins` option resolved against the [`cwd`](#options) option |
 
 ### `SDKPartialAssistantMessage`
 
@@ -1695,7 +1714,11 @@ type SDKCompactBoundaryMessage = {
 
 ### `SDKInformationalMessage`
 
-Generic text banner emitted by the loop. Carries non-error status lines, hook feedback such as a `UserPromptSubmit` hook's block reason, and command output. On Claude Code v2.1.227 or later, a hook's [`systemMessage`](/docs/en/hooks#json-output) can arrive as this message, with each line prefixed by the hook's name, such as `PostToolUse:Bash says:`. Whether a hook's `systemMessage` arrives as this message depends on the event. Each [event's section](/docs/en/hooks#hook-events) on the hooks page says how output surfaces. Render `content` as plaintext at the given `level`.
+Generic text banner emitted by the loop. Carries warnings, notices, and other non-error status lines Claude Code raises, and hook feedback such as a `UserPromptSubmit` hook's block reason.
+
+On Claude Code v2.1.227 or later, a hook's [`systemMessage`](/docs/en/hooks#json-output) can arrive as this message, with each line prefixed by the hook's name, such as `PostToolUse:Bash says:`. Each [event's section](/docs/en/hooks#hook-events) on the hooks page says how output surfaces.
+
+Render `content` as plaintext at the given `level`.
 
 ```typescript theme={null}
 type SDKInformationalMessage = {
@@ -5101,7 +5124,9 @@ A [resumed subagent](/docs/en/agent-sdk/subagents#resume-subagents) always repor
 
 ### `SDKTaskProgressMessage`
 
-Emitted periodically while a subagent or background task is running. The `summary` field is populated only when [`agentProgressSummaries`](#options) is enabled.
+Emitted periodically while a subagent or background task is running.
+
+For a subagent task, the `summary` field carries a model-generated progress summary and is populated only when [`agentProgressSummaries`](#options) is enabled. For a [backgrounded MCP tool call](/docs/en/mcp#automatic-backgrounding-of-long-tool-calls), `summary` carries the MCP server's latest reported progress and doesn't depend on that option.
 
 ```typescript theme={null}
 type SDKTaskProgressMessage = {
