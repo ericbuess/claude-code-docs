@@ -29,19 +29,19 @@ To install Claude Code, open a terminal and run the command for your system. If 
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash theme={null}
+    ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch theme={null}
+    ```batch theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
@@ -59,7 +59,7 @@ To install Claude Code, open a terminal and run the command for your system. If 
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash theme={null}
+    ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     brew install --cask claude-code
     ```
 
@@ -71,7 +71,7 @@ To install Claude Code, open a terminal and run the command for your system. If 
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell theme={null}
+    ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -177,7 +177,7 @@ add a hello world function to the main file
 
 Claude Code finds the appropriate file and shows you the change. If it asks before making the change, select **Yes** to approve.
 
-Auto mode is the [built-in starting permission mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) for interactive terminal sessions on Pro, Max, and Team plans: a classifier reviews actions instead of you, and Claude edits most files and runs most commands without asking you. On other plans, Manual mode is the built-in starting permission mode. For the session you start right after installing, see [First session after an install or upgrade](/docs/en/env-vars#first-session-after-an-install-or-upgrade).
+With Claude Code v2.1.283 or later, auto mode is the [built-in starting permission mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) for interactive terminal sessions: a classifier reviews actions instead of you, and Claude edits most files and runs most commands without asking you. On earlier versions, auto mode is the built-in starting permission mode only on Pro, Max, and Team plans. For the session you start right after installing, see [First session after an install or upgrade](/docs/en/env-vars#first-session-after-an-install-or-upgrade).
 
 <Note>
   Your settings or your organization can set a different starting permission mode. [Which permission mode a session starts in](/docs/en/permission-modes#which-mode-a-session-starts-in) lists what does. Press `Shift+Tab` at any time to switch the permission mode of the session you're in.

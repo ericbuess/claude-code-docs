@@ -104,10 +104,11 @@ When you use [cloud sessions](/docs/en/claude-code-on-the-web), additional secur
 
 * **Isolated virtual machines**: Each cloud session runs in an isolated, Anthropic-managed VM
 * **Network access controls**: Network access is limited by default and can be configured to be disabled or allow only specific domains
-* **Credential protection**: Authentication is handled through a secure proxy that uses a scoped credential inside the sandbox, which is then translated to your actual GitHub authentication token
+* **Credential protection**: GitHub credentials are stored encrypted on Anthropic's servers and never enter the session VM. The VM holds a short-lived credential scoped to that session, and GitHub traffic goes through an [Anthropic proxy](/docs/en/cloud-environments#github-proxy) that attaches the GitHub credential on the server side. See [GitHub authentication options](/docs/en/claude-code-on-the-web#github-authentication-options) for how you grant access
 * **Branch restrictions**: Git push operations are restricted to the current working branch
 * **Audit logging**: All operations in cloud sessions are logged for compliance and audit purposes
 * **Automatic cleanup**: Session VMs are reclaimed after a period of inactivity
+* **Deletion**: You can [delete a session](/docs/en/claude-code-on-the-web#delete-sessions) at any time. See [Cloud execution data flow](/docs/en/data-usage#cloud-execution-data-flow-and-dependencies) for what Anthropic stores for a cloud session
 
 For more details on cloud execution, see [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web); to configure network access for cloud sessions, see [Configure cloud environments](/docs/en/cloud-environments#network-access).
 

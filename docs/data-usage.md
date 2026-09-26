@@ -92,8 +92,8 @@ Claude Code is built on Anthropic's APIs. For details on API security controls, 
 
 [Cloud sessions](/docs/en/claude-code-on-the-web) run in Anthropic-managed virtual machines by default instead of locally. Sessions your organization routes to a [self-hosted environment](/docs/en/self-hosted-environments) run on infrastructure you control; for what stays on your machines and what still goes to Anthropic, see [What stays on your infrastructure](/docs/en/self-hosted-environments#what-stays-on-your-infrastructure). In Anthropic-hosted cloud sessions:
 
-* **Code and data storage:** Your repository is cloned to an isolated VM. Code and session data are subject to the retention and usage policies for your account type (see Data retention section above)
-* **Credentials:** GitHub authentication is handled through a secure proxy; your GitHub credentials never enter the sandbox
+* **Code and data storage:** Your repository is cloned into the session's isolated VM. Anthropic stores the session transcript so you can return to the session later. Code and session data are subject to the [retention and usage policies](#data-retention) for your account type
+* **Credentials:** GitHub credentials are stored encrypted on Anthropic's servers and never enter the VM. GitHub traffic from the VM goes through an Anthropic proxy that attaches them on the server side
 * **Network traffic:** All outbound traffic goes through a security proxy for audit logging and abuse prevention
 * **Session data:** Prompts, code changes, and outputs follow the same data policies as local Claude Code usage
 
