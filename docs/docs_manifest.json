@@ -430,8 +430,8 @@
     "cross-session-messaging.md": {
       "original_url": "https://code.claude.com/docs/en/cross-session-messaging",
       "original_md_url": "https://code.claude.com/docs/en/cross-session-messaging.md",
-      "hash": "61beb9bc9013e9939a745a599f18d1eaa72b407afd51dc5f120a65c03abbc5f5",
-      "last_updated": "2026-09-15T23:16:24.063130"
+      "hash": "a8ccea79027e86d6406e96239afffff80fd999b1c118b13300eba7019c9e9957",
+      "last_updated": "2026-09-26T18:09:16.223183"
     },
     "data-usage.md": {
       "original_url": "https://code.claude.com/docs/en/data-usage",
@@ -1257,8 +1257,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-09-26T13:29:01.449994",
-    "fetch_duration_seconds": 140.762183,
+    "last_fetch_completed": "2026-09-26T18:10:46.676091",
+    "fetch_duration_seconds": 139.385684,
     "total_pages_discovered": 209,
     "pages_fetched_successfully": 210,
     "pages_failed": 0,
@@ -1268,7 +1268,7 @@
     "total_files": 209,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-09-26T13:29:01.450028",
+  "last_updated": "2026-09-26T18:10:46.676122",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
