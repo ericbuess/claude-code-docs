@@ -502,8 +502,8 @@
     "errors.md": {
       "original_url": "https://code.claude.com/docs/en/errors",
       "original_md_url": "https://code.claude.com/docs/en/errors.md",
-      "hash": "40cd32d0d674a03f15f1462fb897b905264f425f97ba1631837ade095f01ccd0",
-      "last_updated": "2026-09-26T08:04:34.434525"
+      "hash": "cacd5dfa52268a425aa1a6d968ae34e3d30a44b68b273770b6d09a006666c5fd",
+      "last_updated": "2026-09-27T18:45:27.715865"
     },
     "fast-mode.md": {
       "original_url": "https://code.claude.com/docs/en/fast-mode",
@@ -586,14 +586,14 @@
     "hooks.md": {
       "original_url": "https://code.claude.com/docs/en/hooks",
       "original_md_url": "https://code.claude.com/docs/en/hooks.md",
-      "hash": "d0148a9023a7cea82ba48755e83101c9f839e46d10a8dd20b431c6eba0f8e6ca",
-      "last_updated": "2026-09-26T02:21:22.351909"
+      "hash": "366c11e0a5f7286eaba39223bd39c6006b746c8f12e95563819190a6f860c1b6",
+      "last_updated": "2026-09-27T18:45:37.100847"
     },
     "hooks-guide.md": {
       "original_url": "https://code.claude.com/docs/en/hooks-guide",
       "original_md_url": "https://code.claude.com/docs/en/hooks-guide.md",
-      "hash": "658b953245f6bbe793186ffd18efd0aef6d8c689dea1e796eec24786e2c3f332",
-      "last_updated": "2026-09-25T02:16:04.651635"
+      "hash": "4fc4171c12764e34e7ad194899e330cde63d2a026aaa99080498eb4bd8b51708",
+      "last_updated": "2026-09-27T18:45:37.832766"
     },
     "how-claude-code-works.md": {
       "original_url": "https://code.claude.com/docs/en/how-claude-code-works",
@@ -766,8 +766,8 @@
     "plugins__cli-reference.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/cli-reference",
       "original_md_url": "https://code.claude.com/docs/en/plugins/cli-reference.md",
-      "hash": "e186df7f73f0425b9563e89af2335779afd9ea1e9555c46b90ec38915b3edb15",
-      "last_updated": "2026-09-25T02:16:21.146274"
+      "hash": "8d3991e30284b7c2bb16bc160773d790d6e33c40ad80283dbb6cc180cfd06bac",
+      "last_updated": "2026-09-27T18:45:57.531966"
     },
     "plugins__code-intelligence.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/code-intelligence",
@@ -784,8 +784,8 @@
     "plugins__create.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/create",
       "original_md_url": "https://code.claude.com/docs/en/plugins/create.md",
-      "hash": "b35ff771afdca5fd0b32ed80077a1faf33cbb1c127c537af984c8ceeab5e2239",
-      "last_updated": "2026-09-26T02:21:41.510827"
+      "hash": "89d9dba2c83b14b9cc64f0c675ac03276c96e5f3f0852093eef4a68e62d3f1d4",
+      "last_updated": "2026-09-27T18:45:59.509510"
     },
     "plugins__create-marketplace.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/create-marketplace",
@@ -814,20 +814,20 @@
     "plugins__loading.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/loading",
       "original_md_url": "https://code.claude.com/docs/en/plugins/loading.md",
-      "hash": "fd10c415a2ef99b4d11de49a9c2baa623de62f081cb28939e4bbae8b5721ea00",
-      "last_updated": "2026-09-25T19:01:10.514733"
+      "hash": "10fe9d802fbf241b07aff33a5fdd53980ffc5c39ec9760d51d41a045aaa4eff7",
+      "last_updated": "2026-09-27T18:46:02.890988"
     },
     "plugins__manifest-reference.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/manifest-reference",
       "original_md_url": "https://code.claude.com/docs/en/plugins/manifest-reference.md",
-      "hash": "b1f317e9ffaea5a6bfb9ebc1d509b6163e6b120b6dc5e050d772e898550bff60",
-      "last_updated": "2026-09-25T23:41:41.267423"
+      "hash": "ab545fd22366b656f4de1f3821ba6c2ac69e56a302906691f2c265bea0eeb795",
+      "last_updated": "2026-09-27T18:46:03.562735"
     },
     "plugins__marketplace-reference.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/marketplace-reference",
       "original_md_url": "https://code.claude.com/docs/en/plugins/marketplace-reference.md",
-      "hash": "c88ef93862ac6432e9b10a56ec10fa393ce7549e4057747f9adf6dccc64d90e9",
-      "last_updated": "2026-09-25T02:16:26.843904"
+      "hash": "566da5d55a3006f69cbeeb04509cbaa011401bc029b2747402b5c43c2cdd21ef",
+      "last_updated": "2026-09-27T18:46:04.222248"
     },
     "plugins__measure.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/measure",
@@ -862,14 +862,14 @@
     "plugins__security.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/security",
       "original_md_url": "https://code.claude.com/docs/en/plugins/security.md",
-      "hash": "16e63b984b2c149a69ac42f75104d6c14a4a44eb35b2549e163905cb86583390",
-      "last_updated": "2026-09-25T02:16:30.257995"
+      "hash": "70ab35064eb88f74f3aeb3b1dfe4fb851684d793373c1e1600150358be5bfb00",
+      "last_updated": "2026-09-27T18:46:08.211409"
     },
     "plugins__troubleshooting.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/troubleshooting",
       "original_md_url": "https://code.claude.com/docs/en/plugins/troubleshooting.md",
-      "hash": "0bdb4ad4a6abe7740c49e79b2d92589606e2f27b7139c35122e160e1f04e3e8c",
-      "last_updated": "2026-09-25T02:16:30.823983"
+      "hash": "0b4e274f576ca8bb08981acef00bf8e0cadfdef14a944b29df92f8c8dc23fca5",
+      "last_updated": "2026-09-27T18:46:08.879912"
     },
     "prompt-caching.md": {
       "original_url": "https://code.claude.com/docs/en/prompt-caching",
@@ -1257,8 +1257,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-09-27T14:24:19.450529",
-    "fetch_duration_seconds": 125.630462,
+    "last_fetch_completed": "2026-09-27T18:46:52.125308",
+    "fetch_duration_seconds": 141.407374,
     "total_pages_discovered": 209,
     "pages_fetched_successfully": 210,
     "pages_failed": 0,
@@ -1268,7 +1268,7 @@
     "total_files": 209,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-09-27T14:24:19.450560",
+  "last_updated": "2026-09-27T18:46:52.125354",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

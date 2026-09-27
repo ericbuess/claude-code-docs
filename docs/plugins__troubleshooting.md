@@ -668,7 +668,7 @@ If your organization pre-installs plugins for you, it does so through managed se
   `Failed to load hooks from <path>` and hooks that don't fire
 </h3>
 
-A plugin's hooks don't run. Either the **Errors** tab shows a load failure for them, the hooks load and you see `<Event> hook error` notices in the transcript, or a hook loads without error and never fires.
+A plugin's hooks don't run, or one blocks an action. Either the **Errors** tab shows a load failure for them, the hooks load and you see `<Event> hook error` notices or a blocking error in the transcript, or a hook loads without error and never fires.
 
 #### Hooks fail to load
 
@@ -681,7 +681,15 @@ The **Errors** tab shows one of these messages:
 
 A notice of the form `... hook error: Failed with non-blocking status code: <stderr>` means the hook ran and its command failed. For example, `Stop hook error: Failed with non-blocking status code: /bin/sh: node: command not found` means the shell Claude Code spawned couldn't find `node`. Install it, or make sure it's on the `PATH` of the terminal you start `claude` from.
 
+If the stderr shows the plugin's path cut off at a space, the hook's shell-form command uses `${CLAUDE_PLUGIN_ROOT}` outside quotes and the install path contains a space. Wrap the variable in double quotes or use [exec form](/docs/en/hooks#exec-form-and-shell-form). To find the unquoted variable, run `claude plugin validate` on the plugin's directory and look for its [quoting warning](/docs/en/plugins/manifest-reference#quoting-and-path-separators).
+
 For any other error, run the hook's command yourself from the plugin directory to see the full output, or capture the full stderr with [debug logging](/docs/en/hooks#debug-hooks).
+
+#### A plugin hook blocks a tool call or prompt
+
+A hook that exits with code 2 [blocks the action it ran for](/docs/en/hooks#exit-code-2). When a plugin's hook blocks this way and its stderr is the blocking message, the error ends with `This hook comes from the <plugin> plugin.` so that you know which plugin to disable or fix. Before v2.1.281, the error didn't name the plugin.
+
+If that message shows the plugin's path cut off at a space, apply the [unquoted `${CLAUDE_PLUGIN_ROOT}` fix](#hook-error-notices-in-the-transcript).
 
 #### Hook loads but never fires
 

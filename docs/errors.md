@@ -233,6 +233,8 @@ Match the message you see to a section below.
 | `Output styles are saved to local settings (.claude/settings.local.json), which this session doesn't load`                                                                                                                                                           | [Command-line errors](#output-styles-are-saved-to-local-settings-which-this-session-doesnt-load)                              |
 | `` `plugin eval` is currently in early access `` / `` `plugin eval` is currently unavailable ``                                                                                                                                                                      | [Plugin errors](#plugin-eval-is-currently-in-early-access)                                                                    |
 | `Marketplace "<name>" is registered from an untrusted source`                                                                                                                                                                                                        | [Plugin errors](#marketplace-is-registered-from-an-untrusted-source)                                                          |
+| `Claude Code refuses the marketplace name "<name>"`                                                                                                                                                                                                                  | [Plugin errors](#claude-code-refuses-the-marketplace-name)                                                                    |
+| `Marketplace name impersonates an official Anthropic/Claude marketplace`                                                                                                                                                                                             | [Plugin errors](#claude-code-refuses-the-marketplace-name)                                                                    |
 | `Marketplace "<name>" is already added from a different source`                                                                                                                                                                                                      | [Plugin errors](#marketplace-is-already-added-from-a-different-source)                                                        |
 | `"<name>" is another spelling of "<reserved>", a reserved marketplace name`                                                                                                                                                                                          | [Plugin errors](#marketplace-name-is-another-spelling-of-a-reserved-name)                                                     |
 | `references ${user_config.*} in a shell-form command`                                                                                                                                                                                                                | [Plugin errors](#plugin-command-references-user-config)                                                                       |
@@ -246,6 +248,8 @@ Match the message you see to a section below.
 | `Failed to load marketplace configuration`                                                                                                                                                                                                                           | [Plugin errors](#failed-to-load-marketplace-configuration)                                                                    |
 | `Marketplace configuration file is corrupted`                                                                                                                                                                                                                        | [Plugin errors](#failed-to-load-marketplace-configuration)                                                                    |
 | `Plugin "<name>@synced" is required by your organization and can't be disabled here`                                                                                                                                                                                 | [Plugin errors](#plugin-is-required-by-your-organization)                                                                     |
+| `"<plugin>" was not uninstalled: it is still switched on in <file>`                                                                                                                                                                                                  | [Plugin errors](#plugin-was-not-uninstalled)                                                                                  |
+| `"<plugin>" was not uninstalled: <file> is there and could not be read`                                                                                                                                                                                              | [Plugin errors](#plugin-was-not-uninstalled)                                                                                  |
 | `would be spawned with zero tools — refusing`                                                                                                                                                                                                                        | [Tool errors](#agent-would-be-spawned-with-zero-tools)                                                                        |
 | `File is covered by a Read deny rule in your permission settings`                                                                                                                                                                                                    | [Tool errors](#file-is-covered-by-a-read-deny-rule)                                                                           |
 | `cannot contain null bytes (\0)`                                                                                                                                                                                                                                     | [Tool errors](#path-cannot-contain-null-bytes)                                                                                |
@@ -3439,6 +3443,28 @@ When the name would need shell quoting, the add-time refusal reads `This marketp
 * Rename the marketplace to a name that doesn't spell a reserved name and add it again
 * For the ignored-entry warning, run the `claude plugin marketplace remove` command it gives, or remove the entry from `~/.claude/plugins/known_marketplaces.json`
 
+<h3 id="claude-code-refuses-the-marketplace-name">
+  Claude Code refuses the marketplace name
+</h3>
+
+A registered marketplace's name [impersonates an official Anthropic marketplace](/docs/en/plugins/marketplace-reference#reserved-names) under the rules that section lists.
+
+If a marketplace was registered under such a name before the check blocked it, the marketplace and the plugins installed from it stop loading, because Claude Code checks the name every time it reads the marketplace's catalog. When the name imitates an official one, `claude plugin list` and the `/plugin` **Errors** tab report each affected plugin with a message that begins:
+
+```text theme={null}
+Claude Code refuses the marketplace name "anthropic-plugins-v2"
+```
+
+For an imitating name, the marketplace's own error reads `Claude Code refuses this marketplace's name: it looks like one of Anthropic's own` instead. `claude plugin marketplace add` refuses any impersonating name with `Marketplace name impersonates an official Anthropic/Claude marketplace`.
+
+Before v2.1.282, `claude plugin list` and `/plugin` reported the plugins of an imitating name as failed to load too, without naming the marketplace's name as the cause.
+
+**What to do:**
+
+* Run `claude plugin marketplace remove <name>`. This also uninstalls the plugins installed from the marketplace and deletes their saved data
+* To keep the marketplace instead, wait until its maintainer renames it, then run `claude plugin marketplace update <name>`
+* If you publish the marketplace, rename it in your `marketplace.json`; users then update the marketplace instead of removing it
+
 ### Marketplace is already added from a different source
 
 You confirmed adding a marketplace through [`/plugin install <plugin> --marketplace <source>`](/docs/en/plugins/install#add-a-marketplace-and-install-in-one-command), and the catalog Claude Code fetched from that source names itself the same as a marketplace you already added from a different source. Claude Code keeps the existing marketplace instead of replacing it, and the plugin isn't installed.
@@ -3628,6 +3654,31 @@ When you try to disable a plugin that a required plugin depends on, Claude Code 
 **What to do:**
 
 * Ask an admin of your claude.ai organization to change the plugin's required status on claude.ai
+
+<h3 id="plugin-was-not-uninstalled">
+  Plugin was not uninstalled
+</h3>
+
+You ran [`claude plugin uninstall`](/docs/en/plugins/cli-reference#plugin-uninstall), or chose **Uninstall** in the `/plugin` **Installed** tab, and the uninstall stopped with a message starting `"<plugin>" was not uninstalled:`.
+
+When Claude Code removed the plugin's entry from `enabledPlugins` and read that scope's settings files back, either the plugin was still switched on there, or a file that could switch it on couldn't be read or checked. Deleting the plugin's saved options, secrets, and data while a settings entry could switch it back on would lose them, so the uninstall stops instead: the plugin stays installed and nothing it saved is deleted.
+
+```text theme={null}
+✘ Failed to uninstall plugin "formatter": "formatter" was not uninstalled: it is still switched on in /home/user/project/.claude/settings.local.json, although the settings change reported no error. It is still installed. Take it out of "enabledPlugins" in that file yourself, then uninstall it again.
+```
+
+The middle of the message names the file and the cause:
+
+* `it is still switched on in <file>, although the settings change reported no error`: the settings write reported success but the entry is still there when the file is read back
+* `it is still switched on in <file>, and the settings change failed (<error>)`: the file couldn't be saved, for the reason in parentheses
+* `<file> is there and could not be read`: the file exists but couldn't be read as settings, for example because it isn't valid JSON, so it may still enable the plugin
+* `<file> (not read: it is on a network path or is a link to one, or could not be checked)`: Claude Code didn't read the project or local settings file because the file, or the `.claude` folder that holds it, is a link that leads to a network location, or because it couldn't examine that path
+
+`claude plugin uninstall` exits 1, and with `--json` the result carries `failureCode: "settings_still_on"`. `/plugin` shows the same message.
+
+**What to do:**
+
+* Follow the last sentence of the message: repair or replace the settings file it names, or remove the plugin's entry from `enabledPlugins` in that file yourself, then run the uninstall again
 
 ## Tool errors
 
