@@ -318,7 +318,7 @@ This example combines text and tool streaming into a cohesive UI. It tracks whet
 
 ## Known limitations
 
-* **Structured output**: the JSON result appears only in the final `ResultMessage.structured_output`, not as streaming deltas. See [structured outputs](/docs/en/agent-sdk/structured-outputs) for details.
+* **Structured output**: with partial messages enabled, the JSON streams as a tool call's unvalidated `input_json_delta` chunks, and only the validated result reaches the final `ResultMessage.structured_output`. See [structured outputs](/docs/en/agent-sdk/structured-outputs) for details.
 
 ## Next steps
 

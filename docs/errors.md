@@ -269,6 +269,7 @@ Match the message you see to a section below.
 | `Refusing to read <path>: its symlink resolution changed after permission was checked (<reason>)` / `Refusing to search <path>: its symlink resolution changed after permission was checked`                                                                         | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `Refusing to write <path>: its parent-directory symlink resolution changed after permission was checked` / `Refusing to write <path>: it is a symbolic link. Write to the link's target path instead`                                                                | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `Refusing to write through symlink: <path>` / `Refusing to write into symlinked directory: <path>`                                                                                                                                                                   | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
+| `Refusing to write <path>: where it leads on disk could not be determined` / `Refusing to read <path>: where it leads on disk could not be determined`                                                                                                               | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `Refusing to search <path>: a path one of its Read deny rules is written through changed while the search was being prepared` / `Refusing to search <path>: it could not be opened`                                                                                  | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `its permission check expired before it ran (too many concurrent file operations)` / `ripgrep was found only by name on PATH`                                                                                                                                        | [Tool errors](#refusing-after-a-symlink-changed)                                                                              |
 | `task output swap refused (tasks dir moved or linked)`                                                                                                                                                                                                               | [Tool errors](#task-output-swap-refused)                                                                                      |
@@ -1277,7 +1278,7 @@ Not signed in to the Cloud gateway — run /login.
 
 Model requests fail with this message when the session has no gateway sign-in, for example because you haven't run `/login` since the policy reached the machine.
 
-If you also have an `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper` credential configured and the managed settings set `forceLoginMethod`, Claude Code exits at startup instead with a message that begins:
+If the machine also holds an Anthropic-issued credential and the managed settings set `forceLoginMethod` or `forceLoginOrgUUID`, Claude Code exits at startup instead. That credential can be an `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` variable, an `apiKeyHelper` setting, or an API key saved by an earlier Claude Console login. The message begins:
 
 ```text theme={null}
 Administrator policy requires a Cloud gateway sign-in on this machine; the
@@ -1288,7 +1289,7 @@ ANTHROPIC_AUTH_TOKEN, or apiKeyHelper) is not used.
 **What to do:**
 
 * Run `/login` and complete the sign-in on the **Cloud gateway** screen
-* For the startup message, remove the `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper` setting you configured, then start `claude` and run `/login`
+* For the startup message, remove the `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper` setting you configured. To remove a saved Console API key, run `claude auth logout`, which also removes a saved claude.ai login. If you select a cloud provider with `CLAUDE_CODE_USE_*`, the session then starts with no sign-in. Otherwise start `claude` and run `/login`
 * If you believe the machine shouldn't require the gateway, ask the administrator who manages it to remove `forceLoginMethod` and `forceLoginGatewayUrl` from its managed settings
 
 On v2.1.265, a regression also showed the first message in some LLM-gateway and proxy configurations that authenticate with an API key, `apiKeyHelper`, or custom headers, even with no administrator requirement on the machine. Update to v2.1.266 or later. You don't need to change your configuration.
@@ -3911,7 +3912,8 @@ Each refusal names its reason:
 
 * `its symlink resolution changed after permission was checked`: a symlink along the path, or at a Grep or Glob search root, was replaced between the permission check and the operation. In a read refusal, the parenthesized phrase names which comparison failed.
 * `its parent-directory symlink resolution changed after permission was checked`: a directory the write path passes through no longer resolves to the approved location
-* `it is a symbolic link. Write to the link's target path instead`: a symbolic link sits at the approved write location itself, for example a `CLAUDE.md` that is a symlink to `AGENTS.md`; the message directs Claude to the link's target
+* `where it leads on disk could not be determined (a link on the way could not be examined, or the links do not resolve)`: Claude Code couldn't follow the path to a final location on disk, for example because symlinks on it form a loop
+* `it is a symbolic link. Write to the link's target path instead`: a symbolic link sits at the requested write location itself, for example a `CLAUDE.md` that is a symlink to `AGENTS.md`; the message directs Claude to the link's target
 * `Refusing to write through symlink: <path>. Resolve the symlink and pass the real target path explicitly.`: the same condition caught when another writer opens the file, such as a write to a symlinked `.mcp.json`
 * `Refusing to write into symlinked directory: <path>`: the directory that holds the file is itself a symbolic link, for example a project's `.claude/` directory linked to another location
 * `a path one of its Read deny rules is written through changed while the search was being prepared. Retry.`: a `Read` deny rule for the search names a path that passes through a symlink, and that link changed while Claude Code was preparing the search
@@ -3928,6 +3930,8 @@ Each refusal names its reason:
 * For the ripgrep refusal, install ripgrep with your package manager so `rg` resolves to an absolute path on `PATH`, or keep searches under the working directory
 
 Before v2.1.251, Claude Code re-checked a path's resolution only for file writes, so a link replaced after the permission check could redirect a read or search to a different location without a message. Of these, only the parent-directory, through-symlink, and symlinked-directory write refusals appear on earlier versions.
+
+Before v2.1.280, the `where it leads on disk could not be determined` refusal didn't appear.
 
 <h3 id="task-output-swap-refused">
   Task output swap refused

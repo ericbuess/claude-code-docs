@@ -190,7 +190,7 @@ Deliver the variables through the `env` block of a [managed settings file](/docs
 
 Add the conditional variables from the table to the same `env` block. A managed `ANTHROPIC_BASE_URL` is enforced and cannot be overridden by a developer's shell export, since Claude Code applies it over the process environment and lower-precedence settings.
 
-Don't include `forceLoginMethod` or `forceLoginOrgUUID` in managed settings alongside a gateway credential. Either key, with any value, blocks `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, and `apiKeyHelper` at startup, and developers can't proceed. They see `This machine's managed settings require a first-party login`, or [`Administrator policy requires a Cloud gateway sign-in`](/docs/en/errors#administrator-policy-requires-a-cloud-gateway-sign-in) under a `"gateway"` value.
+Don't include `forceLoginMethod`, `forceLoginOrgUUID`, or `forceLoginGatewayUrl` in managed settings alongside a gateway credential. `forceLoginMethod` or `forceLoginOrgUUID`, with any value, blocks `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, and `apiKeyHelper` at startup, and developers can't proceed. They see `This machine's managed settings require a first-party login`, or [`Administrator policy requires a Cloud gateway sign-in`](/docs/en/errors#administrator-policy-requires-a-cloud-gateway-sign-in) when the file sets `forceLoginMethod` to `"gateway"` or sets `forceLoginGatewayUrl`.
 
 [Server-managed settings](/docs/en/server-managed-settings#platform-availability) delivery requires a direct connection to `api.anthropic.com`, so it does not reach gateway-routed sessions. Gateway deployments use this file-based managed settings path, which enforces the same keys.
 

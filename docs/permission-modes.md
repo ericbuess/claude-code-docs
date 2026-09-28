@@ -223,7 +223,9 @@ Each interface has its own control for switching permission modes during a sessi
 
 `acceptEdits` mode lets Claude create and edit files in your working directory without prompting. The status bar shows `⏵⏵ accept edits on` while this mode is active.
 
-In addition to file edits, `acceptEdits` mode auto-approves common filesystem Bash commands: `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`. These commands are also auto-approved when prefixed with safe environment variables such as `LANG=C` or `NO_COLOR=1`, or process wrappers such as `timeout`, `nice`, or `nohup`. Like file edits, auto-approval applies only to paths inside your working directory or `additionalDirectories`. Paths outside that scope, writes to [protected paths](#protected-paths), `rm` and `rmdir` removals targeting a [critical path](#critical-paths), and all other Bash commands except the [built-in read-only set](/docs/en/permissions#read-only-commands) still prompt.
+In addition to file edits, `acceptEdits` mode auto-approves common filesystem Bash commands: `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`. These commands are also auto-approved when prefixed with safe environment variables such as `LANG=C` or `NO_COLOR=1`, or process wrappers such as `timeout`, `nice`, or `nohup`. Like file edits, auto-approval applies only to paths inside your working directory or `additionalDirectories`.
+
+Each path also goes through the [symlink check](/docs/en/permissions#symlinks), so a write that resolves outside that scope isn't auto-approved either. Paths outside that scope, writes to [protected paths](#protected-paths), `rm` and `rmdir` removals targeting a [critical path](#critical-paths), and all other Bash commands except the [built-in read-only set](/docs/en/permissions#read-only-commands) still prompt.
 
 When the [PowerShell tool](/docs/en/tools-reference#powershell-tool) is enabled, `acceptEdits` mode also auto-approves `Set-Content`, `Add-Content`, `Clear-Content`, and `Remove-Item` on in-scope paths, along with their common aliases. The same scope and protected-path rules apply, and `Remove-Item` gets [its own check](#remove-item-in-powershell). A positional argument that contains a quote character, such as the apostrophe in `Set-Content .\notes.txt "It's done"`, still prompts even on in-scope paths, because Claude Code can't statically validate an argument whose quoted and unquoted readings differ. Pass the content through a named parameter such as `-Value` to avoid the prompt.
 
@@ -480,8 +482,10 @@ Repeated blocks usually mean the classifier is missing context about your infras
        * MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool) prompt you directly even when an allow rule matches, and so do connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code
        * A shell command that carries [per-command allowed domains](/docs/en/sandboxing#per-command-allowed-domains-in-auto-mode) also routes to the classifier even when an allow rule matches, because a rule approves the command, not its hosts
        * Ask rules that match on a command's content, such as `Bash(git push *)`, fall back to a permission prompt
+       * A write that the [symlink check](/docs/en/permissions#symlinks) resolves to a protected path prompts you when the path Claude requested isn't itself protected
     2. Read-only actions and file edits in your working directory are auto-approved, except writes to [protected paths](#protected-paths) and [the first read outside the working directories](#first-read-outside-the-working-directories), which prompts you
        * In a session with [server-side classifier review](#server-side-classifier-review), read-only and [sandboxed](/docs/en/sandboxing#sandbox-modes) shell commands wait for that review and are blocked if it flags them
+       * A write inside your working directory that the [symlink check](/docs/en/permissions#symlinks) resolves to a location outside it prompts you
     3. Everything else goes to the classifier, apart from [critical-path removals](#critical-paths) under their default handling. The connector tools and `requiresUserInteraction` MCP tools that prompt you directly in step 1 never reach the classifier either, so neither an org-required approval nor a consent step is auto-approved
     4. If the classifier blocks, Claude receives the reason and tries an alternative. In most sessions the reason names the rule the classifier matched, such as `[Data Exfiltration]`, rather than giving a written explanation; see [Review denials](/docs/en/auto-mode-config#review-denials)
 
@@ -597,6 +601,8 @@ Writes to a small set of paths are never auto-approved, except in `bypassPermiss
 | `bypassPermissions`      | Allowed                                                                                                                                                                                                                                                                      |
 
 In a session started with [`--restricted`](/docs/en/cli-reference#cli-flags), which requires Claude Code v2.1.248 or later, the classifier can't approve protected-path writes.
+
+In the modes that route protected-path writes to the classifier, a write that the [symlink check](/docs/en/permissions#symlinks) resolves to a protected path prompts you instead when the path Claude requested isn't itself protected.
 
 [`permissions.allow`](/docs/en/permissions#manage-permissions) rules in settings files do not pre-approve protected-path writes. The safety check runs before Claude Code evaluates allow rules from settings, so an entry such as `Edit(.claude/**)` in `~/.claude/settings.json` or `.claude/settings.json` does not change the per-mode outcome in the table above. In permission modes that prompt, the prompt for a write to the project's `.claude/` folder or to `~/.claude/` can offer one of these session-scoped options:
 

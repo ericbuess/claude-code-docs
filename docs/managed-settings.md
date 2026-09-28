@@ -302,7 +302,7 @@ When the policy isn't applying, the `Setting sources` line tells you which of tw
 
 ### Find entries Claude Code dropped
 
-When a managed settings file, MDM profile, registry value, or server-managed payload fails schema validation, Claude Code first skips the individual entries it can repair, such as one invalid permission rule, with a warning for each, then drops any top-level key whose value still fails and keeps enforcing every remaining valid key.
+If your managed settings file, MDM profile, registry value, or server-managed payload fails schema validation, Claude Code first skips each individual entry it can repair, such as one invalid permission rule, and warns about each one. Claude Code then drops any value that still fails, unless the value belongs to one of the keys that [fail closed](#keys-that-fail-closed) instead.
 
 Claude Code is stricter with the `managedSettings` a [`policyHelper`](/docs/en/settings-reference#policyhelper) emits: it makes the same entry repairs, but any schema violation that survives fails the whole helper run, and at startup Claude Code refuses to start, the same as for a helper that exits non-zero.
 
@@ -351,6 +351,7 @@ A few enforcement keys aren't dropped when invalid. Claude Code enforces a stric
 | `deniedMcpServers`                                                    | An individual invalid entry is stripped and the valid subset is enforced. A wholly invalid value is dropped with a warning, since denying every server would block servers the policy never named.                                                                                                                                                                                                                                                         |
 | [`deniedModels`](/docs/en/settings-reference#deniedmodels)                 | A non-string entry is stripped and the rest of the list is enforced. A wholly invalid value is dropped with a warning and blocks no models until it is fixed.                                                                                                                                                                                                                                                                                              |
 | `blockedMarketplaces`                                                 | An individual invalid entry is stripped and the valid subset is enforced. An entry that parses but can never match, such as a `hostPattern` regex that doesn't compile, is kept with a warning. It blocks nothing until fixed, but [marketplace restrictions](/docs/en/plugins/org#restrict-what-users-can-install) stay active. A wholly invalid value is dropped with a warning, since blocking every marketplace would block sources the policy never named. |
+| `sandbox`                                                             | When one value inside the block is invalid, Claude Code doesn't drop the whole block. For what happens to each kind of invalid field, see [Invalid values inside `sandbox`](#invalid-values-inside-sandbox).                                                                                                                                                                                                                                               |
 | `sandbox.credentials`                                                 | A recoverable invalid entry is degraded to `mode: "deny"` with a warning; an unrecoverable one is stripped; valid entries stay enforced. See [invalid credential entries](/docs/en/settings-reference#invalid-credential-entries-in-managed-settings)                                                                                                                                                                                                           |
 
 `allowedHttpHookUrls` and `httpHookAllowedEnvVars` merge across settings files, so entries in your user, project, or local settings still apply while the managed list is empty.
@@ -360,6 +361,19 @@ The fallbacks for those two keys and for `allowedChannelPlugins` require Claude 
 `requiredMinimumVersion` and `requiredMaximumVersion` fail open by design: an invalid value is dropped rather than enforced.
 
 This tolerance applies only to managed settings. User, project, and local settings files remain strict: a file whose JSON or top-level shape fails validation is rejected as a whole and reported, and an individual entry that fails, such as a malformed permission rule, is skipped with a warning while the rest of the file applies.
+
+#### Invalid values inside `sandbox`
+
+When one value in your managed `sandbox` block is invalid, Claude Code doesn't drop the whole block, because it validates each field on its own. This per-field handling requires Claude Code v2.1.283 or later. On versions before v2.1.283, Claude Code drops every `sandbox` field except [`credentials`](/docs/en/settings-reference#invalid-credential-entries-in-managed-settings) when a value outside `credentials` is invalid.
+
+The warning you get for an invalid field names the field and tells you what happens to it. What happens depends on what the field controls:
+
+* If you set a Boolean key to a quoted `"true"` or `"false"`, the value counts as that Boolean. Instead of a warning, `/status` shows a notice asking you to remove the quotes.
+* If `failIfUnavailable` is invalid, Claude Code drops the value rather than treating it as `true`, so an unreadable value never stops sessions from starting across your fleet.
+* Claude Code treats every other invalid Boolean as the value that keeps the sandbox strictest until you fix it. A key that turns the sandbox or one of its restrictions on, such as `enabled` or `network.allowManagedDomainsOnly`, counts as `true`. A key that loosens it, such as `allowUnsandboxedCommands`, counts as `false`.
+* In a list outside `credentials`, such as `excludedCommands` or `network.allowedDomains`, Claude Code drops an invalid entry and keeps the rest of the list. A list that isn't an array, or that has no valid entry, doesn't apply at all.
+* While `network.deniedDomains` or any entry in it is invalid, Claude Code also withholds `network.allowedDomains`, so the managed allowlist grants nothing until you fix the deny list.
+* While `filesystem.denyRead`, `filesystem.denyWrite`, or any entry in either is invalid, Claude Code also withholds both `filesystem.allowRead` and `filesystem.allowWrite` until you fix the deny list.
 
 <span id="managed-only-settings" />
 

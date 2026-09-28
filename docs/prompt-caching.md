@@ -215,7 +215,7 @@ These actions either append to the end of the conversation or don't touch the re
 
 ### Editing files in your repository
 
-File contents enter context only when Claude reads them, and reads append to the conversation. Editing a file Claude previously read does not retroactively change the earlier read in history. Instead, Claude Code appends a `<system-reminder>` noting the file changed, and Claude re-reads it if needed.
+File contents enter context only when Claude reads them, and reads append to the conversation. Editing a file Claude previously read does not retroactively change the earlier read in history. Instead, Claude Code appends a [`<system-reminder>`](/docs/en/glossary#system-reminder) noting the file changed, and Claude re-reads it if needed.
 
 ### Editing CLAUDE.md mid-session
 

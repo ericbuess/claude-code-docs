@@ -388,6 +388,112 @@ Outside of [cloud sessions](/docs/en/cloud-environments), if you start Claude Co
 
 Recording an `append` or custom prompt by default requires Claude Code v2.1.265 or later, which the TypeScript Agent SDK bundles from v0.3.265 and the Python Agent SDK from v0.2.153. Before Claude Code v2.1.268, sessions that don't [fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching), including sessions on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, rebuilt the prompt on every request and `snapshot` had no effect.
 
+## Context Claude Code adds outside the system prompt
+
+System reminders are messages Claude Code adds to the conversation during a session to give Claude context, such as the contents of your CLAUDE.md files or a note that a file changed on disk. Claude Code sends them in the conversation, not in the system prompt, so they reach Claude whether you use the `claude_code` preset or pass your own string as `systemPrompt`.
+
+This section covers the [reminders most likely to change how your agent behaves](#reminders-claude-code-adds-to-the-conversation), how to [turn off the ones your agent replaces](#turn-off-the-context-your-agent-replaces), and how to [see what Claude received](#see-what-claude-received) in a specific request.
+
+### Reminders Claude Code adds to the conversation
+
+System reminders are text Claude Code adds to the conversation alongside the prompts your code sends. The following reminders are the ones most likely to change how your agent behaves:
+
+* **Project instructions**: the CLAUDE.md files that your [`settingSources`](#claude-md-files-for-project-level-instructions) option loads
+* **Output style instructions**: the instructions of the active [output style](#output-styles-for-persistent-configurations), in the main conversation
+* **Commit and pull request attribution**: the `Co-Authored-By` trailer and pull request footer from the [`attribution`](/docs/en/settings-reference#attribution) setting
+* **Hook output**: text your [hooks](/docs/en/agent-sdk/hooks#outputs) return as `additionalContext`
+* **Available skills**: the names and descriptions of the [skills](/docs/en/agent-sdk/skills) Claude can call
+* **Available subagents**: the names and descriptions of the [subagents](/docs/en/agent-sdk/subagents) Claude can start
+* **Task list nudges**: in a [session that has the task-tracking tools](/docs/en/agent-sdk/todo-tracking#model-availability), a prompt to update the task list when Claude hasn't touched it for several turns
+* **File-changed notes**: a note that a file Claude read earlier has changed on disk
+
+Claude Code introduces your CLAUDE.md files with a line telling Claude that the instructions override default behavior.
+
+If you pass your own string as `systemPrompt`, add a sentence to it that says what a system reminder is. The `claude_code` preset has one, and your string replaces the whole preset. Without it, nothing in your prompt tells Claude that reminders such as CLAUDE.md content and hook output come from the application rather than the user. For example:
+
+```text theme={null}
+The application adds system reminders to this conversation. Treat them as context from the application, not as messages from the user.
+```
+
+### Turn off the context your agent replaces
+
+Turn off a piece of built-in context when your agent supplies its own version of the same guidance. For example, if your prompt tells Claude to write commit messages as `PROJ-142: fix login redirect` with no trailers, Claude Code still tells Claude to end each commit message with a `Co-Authored-By` trailer, so Claude receives two conflicting instructions for the same commit.
+
+Pass settings keys through the [`settings`](/docs/en/agent-sdk/typescript#options) option in TypeScript or [`settings`](/docs/en/agent-sdk/python#claudeagentoptions) in Python, and environment variables through the `env` option. In TypeScript, [`env`](/docs/en/agent-sdk/typescript#options) replaces the inherited environment, so spread `process.env` into it.
+
+| Built-in context                                                              | How to turn it off                                                                                                                                                                       |
+| :---------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The built-in commit and pull request instructions and the git status snapshot | Set [`includeGitInstructions`](/docs/en/settings-reference#includegitinstructions) to `false`, or `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS=1`                                                    |
+| The `Co-Authored-By` trailer and the pull request footer                      | Set [`attribution.commit`](/docs/en/settings-reference#attribution-commit) and [`attribution.pr`](/docs/en/settings-reference#attribution-pr) to your own text, or to empty strings to remove them |
+| The user or project settings source, including its CLAUDE.md                  | Leave `'user'` or `'project'` out of [`settingSources`](/docs/en/agent-sdk/claude-code-features#control-filesystem-settings-with-settingsources)                                              |
+| Every CLAUDE.md file                                                          | Set `CLAUDE_CODE_DISABLE_CLAUDE_MDS=1`                                                                                                                                                   |
+| Task list nudges, file-changed notes, and the skill list                      | Set `CLAUDE_CODE_DISABLE_ATTACHMENTS=1`                                                                                                                                                  |
+
+Claude Code's built-in commit and pull request instructions aren't a reminder. They are part of the Bash tool's description, so they also reach Claude when you pass a custom `systemPrompt`.
+
+If you set `CLAUDE_CODE_DISABLE_ATTACHMENTS`, Claude Code also sends `@` file mentions as plain text instead of expanding them into file content. The list of available subagents and background task notifications still arrive.
+
+The following example is for an agent that carries its own commit rules in `append`. It sets both `attribution` keys to empty strings to remove the trailer and footer, and turns off `includeGitInstructions` so Claude Code's own commit workflow instructions don't compete with yours:
+
+<CodeGroup>
+  ```typescript TypeScript theme={null}
+  import { query } from "@anthropic-ai/claude-agent-sdk";
+
+  for await (const message of query({
+    prompt: "Commit the staged changes for ticket PROJ-142",
+    options: {
+      systemPrompt: {
+        type: "preset",
+        preset: "claude_code",
+        append: "Write commit messages as: <ticket id>: <summary>. Add no trailers."
+      },
+      settings: {
+        includeGitInstructions: false,
+        attribution: { commit: "", pr: "" }
+      },
+      allowedTools: ["Bash(git *)"]
+    }
+  })) {
+    if (message.type === "result") console.log(message.subtype);
+  }
+  ```
+
+  ```python Python theme={null}
+  import asyncio
+  from claude_agent_sdk import query, ClaudeAgentOptions
+
+
+  async def main():
+      async for message in query(
+          prompt="Commit the staged changes for ticket PROJ-142",
+          options=ClaudeAgentOptions(
+              system_prompt={
+                  "type": "preset",
+                  "preset": "claude_code",
+                  "append": "Write commit messages as: <ticket id>: <summary>. Add no trailers.",
+              },
+              settings='{"includeGitInstructions": false, "attribution": {"commit": "", "pr": ""}}',
+              allowed_tools=["Bash(git *)"],
+          ),
+      ):
+          print(message)
+
+
+  asyncio.run(main())
+  ```
+</CodeGroup>
+
+To confirm the change, run the example in a repository with staged changes and check the new commit with `git log -1`. The message ends without a `Co-Authored-By` trailer.
+
+### See what Claude received
+
+The SDK message stream doesn't include system reminders, so reading the messages your code receives won't show you what Claude saw. To see them, log the requests Claude Code sends:
+
+* **Raw request logging**: set [`OTEL_LOG_RAW_API_BODIES`](/docs/en/monitoring-usage#api-request-body-event) to `file:<dir>`. Claude Code writes each request body to that directory.
+* **A gateway you control**: point [`ANTHROPIC_BASE_URL`](/docs/en/llm-gateway) at a proxy that logs request bodies.
+
+In a logged request, look in the `messages` array. A reminder appears inside a user message wrapped in `<system-reminder>` tags or, on some models, as a separate message with the `system` role.
+
 ## Compare the four approaches
 
 The four customization methods differ in where they live, how they're shared, and what they preserve from the `claude_code` preset.

@@ -152,6 +152,7 @@ The `store` block points the gateway at its PostgreSQL database, which holds dev
 | `password`                | No       | Database credential. Set it here rather than in `postgres_url` so the credential stays out of the URL. Accepts any characters and takes precedence over URL credentials.                                                                                                                                                                                                                                                           |
 | `max_connections`         | No       | Postgres connection-pool size per replica. Default `5`, which is conservative and friendly to shared databases. With [spend limits](#admin) enabled, the hot path does a few operations per inference request, so raise it for a dedicated database under load, and keep replicas × this below the database's `max_connections`.                                                                                                   |
 | `connect_timeout_seconds` | No       | Seconds the gateway waits when it opens a Postgres connection. A whole number from `1` to `60`, default `5`. Raise it if connection attempts time out when a new gateway instance starts. Requires Claude Code v2.1.274 or later on the gateway server. Earlier versions refuse to start when the key is set.                                                                                                                      |
+| `readiness_grace_seconds` | No       | How many seconds `/readyz` keeps reporting ready after Postgres stops answering. A whole number from `0` to `3600`, default `0`. See [Outage behavior](/docs/en/claude-apps-gateway-deploy#outage-behavior) for how to pick a value. Requires Claude Code v2.1.282 or later on the gateway server. Earlier versions refuse to start when the key is set.                                                                                |
 
 For local development, point `postgres_url` at a throwaway Postgres container, for example `docker run --rm -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres`.
 
@@ -1070,6 +1071,7 @@ store:
   postgres_url: ${GATEWAY_POSTGRES_URL}
   # max_connections: 5
   # connect_timeout_seconds: 5
+  # readiness_grace_seconds: 300   # keep passing the readiness check through a database failover
 
 # Enables /v1/organizations/spend_limits (mirrors the Anthropic Admin API)
 # and per-developer spend enforcement on /v1/messages. Omit to disable.
@@ -1195,7 +1197,9 @@ By default, a registry policy on Windows or a managed-preferences plist on macOS
 
 For Claude Desktop, set the `bootstrapUrl` key in Claude Desktop's own [managed configuration](https://claude.com/docs/third-party/claude-desktop/configuration) to `<listen.public_url>/user/bootstrap`. The sign-in flow and per-group policy then match the CLI's once a policy opts in server-side with a `desktop` key; without the opt-in, `/user/bootstrap` returns 404. See [Claude Desktop overlay](#claude-desktop-overlay) for the server-side half.
 
-Claude Code honors [`forceLoginGatewayUrl`](/docs/en/settings-reference#forcelogingatewayurl), [`gatewayInternalNetworks`](/docs/en/settings-reference#gatewayinternalnetworks), and the `"gateway"` value of [`forceLoginMethod`](/docs/en/settings-reference#forceloginmethod) only from a managed source on the machine: `managed-settings.json`, the macOS plist or Windows HKLM registry, or a policy helper. A developer setting them in their own `~/.claude/settings.json` has no effect, and neither does setting them in the gateway payload.
+Claude Code honors [`forceLoginGatewayUrl`](/docs/en/settings-reference#forcelogingatewayurl), [`gatewayInternalNetworks`](/docs/en/settings-reference#gatewayinternalnetworks), and the `"gateway"` value of [`forceLoginMethod`](/docs/en/settings-reference#forceloginmethod) only from a managed source on the machine: `managed-settings.json`, the macOS plist or Windows HKLM registry, or a policy helper. Setting them in a developer's own `~/.claude/settings.json` or in the gateway payload doesn't configure the gateway sign-in.
+
+Leave `forceLoginMethod` and `forceLoginOrgUUID` out of the payload. Claude Code still reads both keys from the payload for its startup credential check, so a developer who keeps an Anthropic-issued credential on the machine gets the startup exit described under [Administrator policy requires a Cloud gateway sign-in](/docs/en/errors#administrator-policy-requires-a-cloud-gateway-sign-in) even after they sign in.
 
 ## Related
 

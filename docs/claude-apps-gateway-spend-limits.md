@@ -76,6 +76,8 @@ Client aborts are billed too. When a stream ends without the upstream's final us
 
 The pre-check queries Postgres with a two-second timeout. If the store is unreachable or times out, enforcement fails open by default: the request proceeds, the gateway logs a warning, and the response carries no `anthropic-ratelimit-unified-*` headers. Set [`enforcement.fail_closed_on_error: true`](/docs/en/claude-apps-gateway-config#enforcement) to fail closed instead, which returns the same `429 billing_error` but with the message `spend limit unavailable` and no period, reset time, or `retry-after` header. Fail-open keeps a store outage from becoming an inference outage; fail-closed guarantees no unmetered spend.
 
+Fail-open only helps while your load balancer or orchestrator still routes traffic to the gateway. See [Outage behavior](/docs/en/claude-apps-gateway-deploy#outage-behavior) for `store.readiness_grace_seconds`, which keeps replicas passing their readiness check through a short outage.
+
 ### Usage warnings in Claude Code
 
 Claude Code warns a developer as they approach their cap: once utilization passes 75%, and again past 95% of their most-consumed cap. When the gateway blocks a request, Claude Code shows the gateway's `429` message as is, including your `admin.blocked_message`.

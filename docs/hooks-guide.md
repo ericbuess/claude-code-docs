@@ -949,7 +949,7 @@ For full configuration options and response handling, see [HTTP hooks](/docs/en/
 
 Keep these constraints in mind when designing hooks:
 
-* Command hooks communicate through stdout, stderr, and exit codes only. They can't trigger `/` commands or tool calls. Text returned via `additionalContext` is injected as a system reminder that Claude reads as plain text. HTTP hooks communicate through the response body instead.
+* Command hooks communicate through stdout, stderr, and exit codes only. They can't trigger `/` commands or tool calls. Text returned via `additionalContext` is injected as a [system reminder](/docs/en/glossary#system-reminder) that Claude reads as plain text. HTTP hooks communicate through the response body instead.
 * Hook timeouts vary by type. Override per hook with the `timeout` field in seconds.
   * `command`, `http`, `mcp_tool`: 10 minutes. Claude Code lowers this default to 30 seconds for `UserPromptSubmit`, `PreModelSwitch`, and `PostModelSwitch` hooks, and to 10 seconds for `MessageDisplay`.
   * `prompt`: 30 seconds.

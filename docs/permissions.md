@@ -423,16 +423,35 @@ Two limits narrow what a `!` pattern can carve out:
 * Claude Code reads a `!` pattern relative to the current directory even when `/`, `~/`, or `//` follows the `!`, so the pattern can't reach a rule anchored with one of those prefixes. `Read(!~/notes/public/**)` carves nothing out of `Read(~/notes/**)`.
 * A carve-out can't reopen a file inside a directory that a rule blocks as a whole. With `Read(secrets/**)` and `Read(!secrets/public/**)`, Claude Code still blocks `secrets/public` along with the rest of `secrets`.
 
-When Claude accesses a symlink, permission rules check two paths: the symlink itself and the file it resolves to. Allow and deny rules treat that pair differently: allow rules fall back to prompting you, while deny rules block outright.
+#### Symlinks
 
-* **Allow rules**: apply only when both the symlink path and its target match. A symlink inside an allowed directory that points outside it still prompts you.
-* **Deny rules**: apply when either the symlink path or its target matches. A symlink that points to a denied file is itself denied. For example, with `Read(./project/**)` allowed and `Read(~/.ssh/**)` denied, a symlink at `./project/key` pointing to `~/.ssh/id_rsa` is blocked: the target fails the allow rule and matches the deny rule.
+When a file path Claude requests goes through a symlink, the permission check covers two paths: the one Claude requested and the file it resolves to. This applies to symbolic links on macOS, Linux, and Windows, and to directory junctions on Windows.
+
+##### How rules match a symlinked path
+
+Allow and deny rules treat the requested path and the file it resolves to differently:
+
+* **Allow rules**: apply only when both the requested path and the file it resolves to match. A read through a symlink inside an allowed directory that points outside it doesn't match the rule.
+* **Deny rules**: apply when either the requested path or the file it resolves to matches. A symlink that points to a denied file is itself denied. For example, with `Read(./project/**)` allowed and `Read(~/.ssh/**)` denied, a symlink at `./project/key` pointing to `~/.ssh/id_rsa` is blocked: the target fails the allow rule and matches the deny rule.
 
 On macOS and Linux, a deny or ask rule written through a symlinked directory with a `//`, `~/`, or `/` pattern also applies at the directory's real location. For example, on macOS, where `/etc` resolves to `/private/etc`, `Read(//etc/**)` blocks `/private/etc/hosts` too. Before v2.1.268, a deny or ask rule written through a symlinked directory didn't apply to a path given by its real location.
 
-When a tool opens an approved file, Claude Code [confirms the path still resolves to the location the permission check approved](/docs/en/errors#refusing-after-a-symlink-changed).
-
 Grep and Glob search the directory the `path` argument resolves to. Claude Code applies `Read` deny rules to that directory.
+
+##### Writes through a symlink
+
+If the path Claude asks to edit or write is itself a symlink, the Edit and Write tools [refuse the write and direct Claude to the link's target](/docs/en/errors#refusing-after-a-symlink-changed).
+
+A write can still pass through a symlink when a directory on the way to the file is a symlink, or when a Bash or PowerShell command does the writing. For those writes, what happens depends on where the file the write resolves to sits relative to your [working directories](#working-directories) and the [protected paths](/docs/en/permission-modes#protected-paths):
+
+* **Resolves outside the working directories**: when the requested path is inside your working directories and the file it resolves to isn't, the write isn't auto-approved in [`acceptEdits` mode](/docs/en/permission-modes#auto-approve-file-edits-with-acceptedits-mode). In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), unless an allow rule approves the write, you're prompted for it instead of the classifier deciding. The prompt names the path the write resolves to.
+* **Resolves to a protected path that the requested path doesn't name**: the [protected paths table](/docs/en/permission-modes#protected-paths) gives the outcome for each permission mode, except that where the table routes the write to the classifier, this write prompts you instead.
+
+##### Paths that can't be resolved or that change
+
+When Claude Code can't determine where a path leads on disk, for example because symlinks on it form a loop, the Read, Edit, and Write tools [refuse the operation](/docs/en/errors#refusing-after-a-symlink-changed).
+
+When a tool then opens the approved file, it [confirms that the path still resolves to the location the permission check approved](/docs/en/errors#refusing-after-a-symlink-changed).
 
 ### WebFetch
 

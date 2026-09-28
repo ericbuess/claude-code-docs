@@ -173,6 +173,8 @@ The steps below provision the full deployment with `gcloud` commands.
 
     store:
       postgres_url: ${GATEWAY_POSTGRES_URL}          # GKE: ${file:/secrets/postgres-url}
+      # readiness_grace_seconds: 300                 # keep passing the readiness probe
+                                                     # through a Cloud SQL failover
 
     upstreams:
       - provider: vertex

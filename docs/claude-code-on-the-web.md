@@ -125,7 +125,7 @@ When a session completes, you can create a PR from claude.ai/code or [teleport](
 
 When you run `claude --cloud` from a repository that has no git remote, or from a github.com repository that the Claude GitHub App isn't installed on, Claude Code bundles your local repository and uploads it directly to the cloud session. This applies even if you connected GitHub with `/web-setup`. The bundle includes your full repository history across all branches, plus uncommitted changes to tracked files.
 
-On macOS, Linux, and WSL, Claude Code leaves uncommitted changes to files named like credentials or keys out of the upload and names the files it left out. This covers `.env` files, Terraform `*.tfvars` files, and key files such as `id_rsa` and `*.pem`. The session starts with the committed version of each, or without the file if none is committed. In a linked worktree, submodule, or similar layout, Claude Code uploads these changes with the rest and names the files it uploads.
+On macOS, Linux, and WSL, Claude Code leaves uncommitted changes to files named like credentials or keys out of the upload and names the files it left out. This covers `.env` files, Terraform `*.tfvars` files, and key files such as `id_rsa` and `*.pem`. The session starts with the committed version of each, or without the file if none is committed.
 
 To upload a bundle even when Claude Code would otherwise clone from the remote, set `CCR_FORCE_BUNDLE=1`:
 
