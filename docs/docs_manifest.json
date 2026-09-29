@@ -249,8 +249,8 @@
     "authentication.md": {
       "original_url": "https://code.claude.com/docs/en/authentication",
       "original_md_url": "https://code.claude.com/docs/en/authentication.md",
-      "hash": "265ebd5df6ffc6bfc0e0e7c904cd113ab5de8c55d290956b6f996657d8c6aa94",
-      "last_updated": "2026-09-29T00:42:52.387341"
+      "hash": "bbe9415eba2aee489d5dfab25fcca10bcc1f3465ffba6dd59fe20ede952b9a25",
+      "last_updated": "2026-09-29T09:11:52.509677"
     },
     "auto-mode-config.md": {
       "original_url": "https://code.claude.com/docs/en/auto-mode-config",
@@ -886,8 +886,8 @@
     "quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/quickstart",
       "original_md_url": "https://code.claude.com/docs/en/quickstart.md",
-      "hash": "81a5e238fbb4d93bdd2a2a6cede0a6bb01c9e34e026c19ca010c70a6954d27fe",
-      "last_updated": "2026-09-29T00:44:00.618577"
+      "hash": "744bda8fa5213cbc3d08b3e5e5afb22a2c88f9925d1b8df0b1e79b6125e23f8f",
+      "last_updated": "2026-09-29T09:13:02.012569"
     },
     "remote-control.md": {
       "original_url": "https://code.claude.com/docs/en/remote-control",
@@ -1257,8 +1257,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-09-29T00:44:40.019813",
-    "fetch_duration_seconds": 135.342416,
+    "last_fetch_completed": "2026-09-29T09:13:41.290665",
+    "fetch_duration_seconds": 136.588003,
     "total_pages_discovered": 209,
     "pages_fetched_successfully": 210,
     "pages_failed": 0,
@@ -1268,7 +1268,7 @@
     "total_files": 209,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-09-29T00:44:40.019836",
+  "last_updated": "2026-09-29T09:13:41.290689",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
