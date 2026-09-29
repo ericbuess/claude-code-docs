@@ -36,9 +36,9 @@
   <div className="digest-wins-grid">
     <div><a href="/docs/en/costs#track-your-costs"><code>/usage</code></a> now shows a per-category breakdown of what's driving your plan limits, attributing recent usage to skills, subagents, plugins, and individual MCP servers</div>
     <div>"Extra usage" is renamed to "usage credits" across the CLI, and <code>/extra-usage</code> is now <code>/usage-credits</code>. The old name still works. The command requires signing in with your claude.ai subscription through <code>/login</code> and isn't available with API key authentication.</div>
-    <div>New <a href="/docs/en/code-review"><code>/code-review</code></a> command reports correctness bugs at a chosen effort level such as <code>/code-review high</code>, and <code>--comment</code> posts findings as inline GitHub PR comments. <code>/simplify</code> remains as a separate cleanup-only review.</div>
+    <div>New <a href="/docs/en/code-review"><code>/code-review</code></a> command reports correctness bugs at a chosen effort level such as <code>/code-review high</code>, and `--comment` posts findings as inline GitHub PR comments. <code>/simplify</code> remains as a separate cleanup-only review.</div>
     <div>Background sessions now appear in <code>/resume</code> alongside interactive ones, marked with <code>bg</code>, and sessions pinned with <code>Ctrl+T</code> in <code>claude agents</code> stay alive when idle</div>
-    <div><code>claude agents --json</code> lists live sessions as JSON for scripting, such as status bars and session pickers</div>
+    <div>`claude agents --json` lists live sessions as JSON for scripting, such as status bars and session pickers</div>
     <div>The PowerShell tool is now enabled by default on Windows for Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry users; opt out with <code>CLAUDE\_CODE\_USE\_POWERSHELL\_TOOL=0</code></div>
     <div><code>claude plugin disable</code> now refuses when another enabled plugin depends on the target, and <code>claude plugin enable</code> force-enables transitive dependencies</div>
     <div>The <code>/plugin</code> marketplace browse pane shows projected context cost, and the Discover and Browse screens list a plugin's commands, agents, skills, hooks, and MCP/LSP servers before installation</div>

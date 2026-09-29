@@ -687,7 +687,9 @@ Anything beyond the read-only set needs your grant, such as `--allow-tools Bash 
 
 The default `--threshold` is 1.0, so the command exits 1 when any case scores below perfect. Set a threshold that matches the score you require. Exit 1 also covers a case file that failed to load, which is reported on stderr above the table.
 
-### "--json output path must end in .json"
+<h3 id="json-output-path-must-end-in-json">
+  `--json output path must end in .json`
+</h3>
 
 You put the target after `--json`, so it was read as the output path. Put the target first, as in `claude plugin eval . --json`, or give `--json` an explicit `.json` path.
 

@@ -78,7 +78,7 @@
   <p className="digest-wins-title">Other wins</p>
 
   <div className="digest-wins-grid">
-    <div><code>claude agents</code> gained dispatch flags (<code>--add-dir</code>, <code>--settings</code>, <code>--mcp-config</code>, <code>--plugin-dir</code>, <code>--permission-mode</code>, <code>--model</code>, <code>--effort</code>, <code>--dangerously-skip-permissions</code>) to configure background sessions, and <code>claude agents --cwd \<path></code> scopes the session list to a directory</div>
+    <div><code>claude agents</code> gained dispatch flags (`--add-dir`, `--settings`, `--mcp-config`, `--plugin-dir`, `--permission-mode`, `--model`, `--effort`, `--dangerously-skip-permissions`) to configure background sessions, and `claude agents --cwd <path>` scopes the session list to a directory</div>
     <div>New hook <code>args: string\[]</code> exec form spawns the command directly without a shell, so path placeholders never need quoting</div>
     <div>New <code>continueOnBlock</code> config option for <code>PostToolUse</code> hooks feeds the hook's rejection reason back to Claude and continues the turn instead of ending it</div>
     <div>New <code>terminalSequence</code> field in hook JSON output lets hooks emit desktop notifications, window titles, and bells without a controlling terminal</div>

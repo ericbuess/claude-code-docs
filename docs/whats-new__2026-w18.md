@@ -96,11 +96,11 @@
 
   <div className="digest-wins-grid">
     <div>MCP servers can opt out of tool-search deferral with <code>alwaysLoad: true</code> in their config so all of that server's tools are always available</div>
-    <div>New <code>claude plugin prune</code> removes orphaned auto-installed plugin dependencies, and <code>plugin uninstall --prune</code> cascades</div>
+    <div>New <code>claude plugin prune</code> removes orphaned auto-installed plugin dependencies, and `plugin uninstall --prune` cascades</div>
     <div><code>/skills</code> now has a type-to-filter search box so you can find a skill in a long list without scrolling</div>
     <div><code>PostToolUse</code> hooks can replace tool output for any tool via <code>hookSpecificOutput.updatedToolOutput</code>, not only MCP tools</div>
-    <div>New <a href="/docs/en/ultrareview"><code>claude ultrareview</code></a> subcommand runs <code>/ultrareview</code> non-interactively from CI or scripts: prints findings to stdout (<code>--json</code> for raw output) and exits 0 on completion or 1 on failure</div>
-    <div><code>--dangerously-skip-permissions</code> now bypasses prompts for writes to <code>.claude/</code>, <code>.git/</code>, <code>.vscode/</code>, shell config files, and other previously protected paths, while catastrophic removal commands still prompt as a safety net</div>
+    <div>New <a href="/docs/en/ultrareview"><code>claude ultrareview</code></a> subcommand runs <code>/ultrareview</code> non-interactively from CI or scripts: prints findings to stdout (`--json` for raw output) and exits 0 on completion or 1 on failure</div>
+    <div>`--dangerously-skip-permissions` now bypasses prompts for writes to <code>.claude/</code>, <code>.git/</code>, <code>.vscode/</code>, shell config files, and other previously protected paths, while catastrophic removal commands still prompt as a safety net</div>
     <div>The <code>/model</code> picker can list models from your gateway's <code>/v1/models</code> endpoint when <code>ANTHROPIC\_BASE\_URL</code> points at an Anthropic-compatible gateway; opt in with <code>CLAUDE\_CODE\_ENABLE\_GATEWAY\_MODEL\_DISCOVERY=1</code> since v2.1.129</div>
     <div>MCP servers that hit a transient error during startup now auto-retry up to 3 times instead of staying disconnected</div>
     <div><code>ANTHROPIC\_BEDROCK\_SERVICE\_TIER</code> selects an Amazon Bedrock service tier: <code>default</code>, <code>flex</code>, or <code>priority</code></div>

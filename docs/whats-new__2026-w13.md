@@ -17,7 +17,7 @@
     <span className="digest-feature-pill">research preview</span>
   </div>
 
-  <p className="digest-feature-lede">Auto mode hands your permission prompts to a classifier. Safe edits and commands run without interrupting you; anything destructive or suspicious gets blocked and surfaced. It's the middle ground between approving every file write and running with <code>--dangerously-skip-permissions</code>.</p>
+  <p className="digest-feature-lede">Auto mode hands your permission prompts to a classifier. Safe edits and commands run without interrupting you; anything destructive or suspicious gets blocked and surfaced. It's the middle ground between approving every file write and running with `--dangerously-skip-permissions`.</p>
 
   <Frame>
     <img src="https://mintcdn.com/claude-code/CfffsX01JHFnIKvD/images/whats-new/auto-mode.png?fit=max&auto=format&n=CfffsX01JHFnIKvD&q=85&s=367c9e9d4ba5bc57ec4b935154bf1fbb" alt="Claude Code prompt footer showing 'auto mode on (shift+tab to cycle)' indicator in yellow" width="2400" height="691" data-path="images/whats-new/auto-mode.png" />

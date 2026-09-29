@@ -102,7 +102,7 @@
     <div><a href="/docs/en/sub-agents#fork-the-current-conversation">Forked subagents</a> can be enabled on external builds with <code>CLAUDE\_CODE\_FORK\_SUBAGENT=1</code>: a fork inherits your full conversation context instead of starting fresh</div>
     <div>Default <a href="/docs/en/model-config#adjust-effort-level">effort level</a> for Pro and Max subscribers on Opus 4.6 and Sonnet 4.6 is now <code>high</code> (was <code>medium</code>)</div>
     <div>Native macOS and Linux builds replace the <code>Glob</code> and <code>Grep</code> tools with embedded <code>bfs</code> and <code>ugrep</code> available through Bash, for faster searches without a separate tool round-trip</div>
-    <div><code>--from-pr</code> now accepts GitLab merge request, Bitbucket pull request, and GitHub Enterprise PR URLs in addition to github.com</div>
+    <div>`--from-pr` now accepts GitLab merge request, Bitbucket pull request, and GitHub Enterprise PR URLs in addition to github.com</div>
     <div>Auto mode: include <code>"\$defaults"</code> in <a href="/docs/en/auto-mode-config"><code>autoMode.allow</code>, <code>soft\_deny</code>, or <code>environment</code></a> to add custom rules alongside the built-in list instead of replacing it</div>
     <div>New <a href="/docs/en/plugins/dependencies#tag-plugin-releases-for-version-resolution"><code>claude plugin tag</code></a> command creates release git tags for plugins with version validation</div>
     <div>Opus 4.7 sessions now compute against the model's native 1M context window, fixing inflated <code>/context</code> percentages and premature autocompaction</div>

@@ -144,7 +144,7 @@ The following environment variables control which attributes are included in met
 
 | Environment Variable | Description | Default Value | Example to Disable |
 | - | - | - | - |
-| `OTEL_METRICS_INCLUDE_SESSION_ID` | Include session.id attribute in metrics | `true` | `false` |
+| `OTEL_METRICS_INCLUDE_SESSION_ID` | Include session.id and, on cloud sessions, ccr.session.id attributes in metrics | `true` | `false` |
 | `OTEL_METRICS_INCLUDE_VERSION` | Include app.version attribute in metrics | `false` | `true` |
 | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | Include user.account\_uuid and user.account\_id attributes in metrics | `true` | `false` |
 | `OTEL_METRICS_INCLUDE_ENTRYPOINT` | Include app.entrypoint attribute in metrics | `false` | `true` |
@@ -493,6 +493,34 @@ export OTEL_EXPORTER_OTLP_PROTOCOL=grpc
 export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 ```
 
+## Telemetry from cloud sessions and Claude Tag
+
+[Cloud sessions](/docs/en/claude-code-on-the-web), including [Claude Tag](https://claude.com/docs/claude-tag/overview) channel sessions, run in [cloud environments](/docs/en/cloud-environments) rather than on your users' devices, so a managed settings file or shell profile on those devices doesn't configure their telemetry. For sessions in Anthropic-hosted environments, this section covers where to set the telemetry variables, how to make your collector reachable from the environment, and how to tell cloud and Claude Tag sessions apart in the exported data.
+
+To export telemetry from those sessions, set `CLAUDE_CODE_ENABLE_TELEMETRY` and the `OTEL_*` variables, using the same keys as the [administrator configuration](#administrator-configuration) example, in one of two places:
+
+* **Server-managed settings**: add them to the `env` block of your organization's [server-managed settings](/docs/en/server-managed-settings). Claude Code fetches those settings at startup wherever [server-managed settings apply](/docs/en/model-config#surface-coverage), which includes your users' machines and cloud sessions other than Claude Tag channel sessions. Claude Tag sessions don't receive your server-managed settings, so this route doesn't configure them.
+* **The environment's variables**: add them to a cloud environment's [environment variables](/docs/en/cloud-environments#set-environment-variables) to configure only the sessions that run in that environment. This is the route that reaches Claude Tag sessions.
+
+Anyone who uses an environment can read its variables, so don't put a credential there, such as a collector token in `OTEL_EXPORTER_OTLP_HEADERS`. An [API credential](/docs/en/cloud-environments#add-api-credentials) on the environment doesn't help either, because Claude Code's own telemetry export is one of the [requests that never get the credential](/docs/en/cloud-environments#requests-that-never-get-the-credential). If your collector requires a credential, configure the whole export through server-managed settings instead, because when you set a credential there, [Claude Code removes endpoint variables set outside managed settings](#how-managed-settings-lock-the-otlp-destination).
+
+Keep these constraints in mind when you configure telemetry for cloud sessions:
+
+* **Let sessions reach the collector**: Claude Code sends the export through the session's network, so whether it reaches the host in your `OTEL_EXPORTER_OTLP_ENDPOINT` depends on the environment's [network access level](/docs/en/cloud-environments#access-levels). If sessions can't reach the collector's domain at the level you chose, [add the domain to the environment's allowlist](/docs/en/cloud-environments#allow-specific-domains), because no server-managed setting adds domains to an environment's network allowlist.
+* **Claude Tag channels use organization-level environments**: channel sessions run in organization-level environments rather than members' personal ones, so make the allowlist and any environment-variable changes on the [shared environment](/docs/en/cloud-environments#organization-shared-environments) set as your organization's default or pinned to the channel.
+* **Cowork is configured separately**: Cowork sessions don't receive server-managed settings, as the [surface coverage table](/docs/en/model-config#surface-coverage) shows, so the server-managed `env` block doesn't configure their telemetry.
+
+### Attribute telemetry to cloud sessions
+
+By default, metrics and events from a cloud session carry the [standard attributes](#standard-attributes), including `session.id`, `ccr.session.id`, and `organization.id`, so you can filter by session or organization without extra configuration. The `ccr.session.id` value is the session's `CLAUDE_CODE_REMOTE_SESSION_ID`. To turn it into the session's transcript URL, see [Link output back to the session](/docs/en/cloud-environments#link-output-back-to-the-session).
+
+To attribute telemetry in more detail, use these options:
+
+* **Identify Claude Tag sessions**: set `OTEL_METRICS_INCLUDE_ENTRYPOINT=true`, as described under [Metrics cardinality control](#metrics-cardinality-control). Metrics then carry `app.entrypoint`, whose value is `claude-in-slack` for Claude Tag sessions.
+* **Add custom attributes**: set [`OTEL_RESOURCE_ATTRIBUTES`](#multi-team-organization-support) in the same place you set the other `OTEL_*` variables for those sessions. If you `export` it in the environment's [setup script](/docs/en/cloud-environments#setup-scripts) instead, the value doesn't reach Claude Code: the setup script is a separate Bash script that runs before Claude Code launches, and variables it exports end with it.
+
+In Claude Tag channel sessions, Claude works as your organization's [shared identity](/docs/en/cloud-environments#set-the-environment-a-claude-tag-channel-uses) rather than as any member, so don't rely on the `user.*` attributes to identify who tagged Claude.
+
 ## Available metrics and events
 
 ### Standard attributes
@@ -502,8 +530,9 @@ All metrics and events share these standard attributes:
 | Attribute | Description | Controlled By |
 | - | - | - |
 | `session.id` | Unique session identifier | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true) |
+| `ccr.session.id` | Cloud session identifier, the value of `CLAUDE_CODE_REMOTE_SESSION_ID`, on sessions that run in a [cloud environment](/docs/en/cloud-environments) | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true) |
 | `app.version` | Current Claude Code version | `OTEL_METRICS_INCLUDE_VERSION` (default: false) |
-| `app.entrypoint` | How the session was launched, such as `cli`, `sdk-cli`, `sdk-ts`, `sdk-py`, or `claude-vscode` | `OTEL_METRICS_INCLUDE_ENTRYPOINT` (default: false) |
+| `app.entrypoint` | How the session was launched, such as `cli`, `sdk-cli`, `sdk-ts`, `sdk-py`, `claude-vscode`, or `claude-in-slack` for Claude Tag sessions | `OTEL_METRICS_INCLUDE_ENTRYPOINT` (default: false) |
 | `organization.id` | Organization UUID (when authenticated) | Always included when available |
 | `user.account_uuid` | Account UUID (when authenticated) | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
 | `user.account_id` | Account ID in tagged format matching Anthropic admin APIs (when authenticated), such as `user_01BWBeN28...` | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
@@ -1377,7 +1406,7 @@ OpenTelemetry events are the audit data source for Claude Code activity. Every e
 
 The [standard attributes](#standard-attributes) on each event include the authenticated user's identity: `user.email`, `user.account_uuid`, `user.account_id`, and `organization.id` when signed in with a Claude account or, in a [cloud session](/docs/en/claude-code-on-the-web), when the session's own credentials carry them, plus `user.id` and the per-session `session.id`. `user.id` is an installation-scoped identifier, except on [Claude apps gateway](/docs/en/claude-apps-gateway) sessions, where it is the IdP subject from the gateway-issued token.
 
-MCP tool calls, Bash commands, and file edits are therefore attributed to the developer who started the session. Claude Code doesn't act under a separate service account; the identity recorded on each event is the developer's own Claude account, or the developer's IdP identity on a [Claude apps gateway](/docs/en/claude-apps-gateway) session.
+In a session a developer starts, MCP tool calls, Bash commands, and file edits are therefore attributed to that developer. Claude Code doesn't act under a separate service account there; the identity recorded on each event is the developer's own Claude account, or the developer's IdP identity on a [Claude apps gateway](/docs/en/claude-apps-gateway) session. In Claude Tag channel sessions, Claude works as your organization's [shared identity](/docs/en/cloud-environments#set-the-environment-a-claude-tag-channel-uses) instead.
 
 When Claude Code authenticates with a direct API key, or against Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, there is no Claude account in the session and only `user.id` and `session.id` are populated. In these deployments, attach user identity yourself with `OTEL_RESOURCE_ATTRIBUTES`, set per user through the [managed settings](#administrator-configuration) file or a launch wrapper. Claude apps gateway sessions need none of this: the CLI stamps the IdP identity automatically, as described in [Standard attributes](#standard-attributes).
 

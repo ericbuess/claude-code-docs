@@ -53,7 +53,7 @@
     <span className="digest-feature-pill">v2.1.232</span>
   </div>
 
-  <p className="digest-feature-lede">Plugin marketplaces clone bare <code>gitlab.com</code> URLs, including nested subgroups. On v2.1.233 or later, pass a GitLab merge request URL to <code>--worktree</code> to branch from it, and the <code>claude agents</code> view labels sessions linked to a merge request as <code>!N</code>. Claude Code also redacts GitLab token families such as <code>glpat-</code> and <code>glrt-</code>, and protects the <code>glab</code> CLI's config store the same way it protects <code>gh</code>.</p>
+  <p className="digest-feature-lede">Plugin marketplaces clone bare <code>gitlab.com</code> URLs, including nested subgroups. On v2.1.233 or later, pass a GitLab merge request URL to `--worktree` to branch from it, and the <code>claude agents</code> view labels sessions linked to a merge request as <code>!N</code>. Claude Code also redacts GitLab token families such as <code>glpat-</code> and <code>glrt-</code>, and protects the <code>glab</code> CLI's config store the same way it protects <code>gh</code>.</p>
 
   <p className="digest-feature-try">Start a session in a worktree branched from a merge request:</p>
 

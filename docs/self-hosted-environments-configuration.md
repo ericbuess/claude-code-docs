@@ -202,8 +202,8 @@ The orchestrator runs `${hooks-dir}/spawn-runner` once per spawn request. The ho
 | Variable | Description |
 | :- | :- |
 | `CLAUDE_RUNNER_WORK_ORDER_FILE` | Path to a temp file containing the signed work-order JWT the new runner registers with. Deleted after the hook exits. Don't log the file's contents. |
-| `CLAUDE_RUNNER_ORDER_ID` | Opaque idempotency key, unique per spawn request and safe for Kubernetes resource names. Use it as your provisioner's dedup key. |
-| `CLAUDE_RUNNER_SESSION_ID` | The session this request is for. Empty for pre-warming requests, which boot a standby runner ahead of any specific session when [`--min-idle`](/docs/en/self-hosted-environments-reference#orchestrator-cli-flags) is set, so don't assume the variable is set. |
+| `CLAUDE_RUNNER_ORDER_ID` | Opaque idempotency key, unique per spawn request and safe for Kubernetes resource names. Use only the order ID as your provisioner's dedup key. |
+| `CLAUDE_RUNNER_SESSION_ID` | The session this request is for. It repeats on every re-request for the session, so use it for logging and routing, not as a dedup key. Empty for pre-warming requests, which boot a standby runner ahead of any specific session when [`--min-idle`](/docs/en/self-hosted-environments-reference#orchestrator-cli-flags) is set, so don't assume the variable is set. |
 | `CLAUDE_RUNNER_SESSION_UUID` | The same session ID in canonical UUID form. Empty for pre-warming requests. |
 | `CLAUDE_RUNNER_ATTEMPT` | How many spawn requests this session has had. `0` for pre-warming requests. |
 | `CLAUDE_RUNNER_ORDER_SERVER_TIME` | Server time from the poll response's HTTP `Date` header. When the hook verifies the work-order JWT's `exp`, compare against this value instead of the local clock to tolerate skew. Empty when the gateway omitted the header. |
@@ -225,12 +225,14 @@ The spawned runner registers with the work order in place of the environment sec
 
 The contract has four provisioner-agnostic rules:
 
-1. **Be idempotent on `CLAUDE_RUNNER_ORDER_ID`.** Redelivery of the same request must spawn at most one runner. Derive a deterministic resource name from the ID and let your platform reject the duplicate.
+1. **Be idempotent on `CLAUDE_RUNNER_ORDER_ID`.** Redelivery of the same request must spawn at most one runner. Derive a deterministic resource name from the order ID and let your platform reject the duplicate. Don't key on `CLAUDE_RUNNER_SESSION_ID` instead. Every re-request for a session carries the same session ID with a new order ID, so a workload named or deduplicated by the session ID is created once and never again for that session.
 2. **Don't retry the workload.** One order ID means at most one created workload. If the runner never registers, Anthropic re-requests with a fresh order ID after `--expected-spawn-seconds`.
 3. **Use the exit-code contract.** Exit 0 means submitted. Exit 1 means retryable failure; the session backs off and is re-offered. Exit 2 or higher means non-retryable; the session is blocked from spawning again until an [Owner](/docs/en/cloud-environments#organization-shared-environments) selects **Retry** on it in the environment's **Activity** tab. On non-zero exit, the tail of the hook's stderr appears there as the failure reason, so write the actionable error to stderr and never secrets. For a pre-warming request there is no session to fail: the orchestrator logs a non-zero exit locally only, and the server re-requests the spawn after the lease.
 4. **Set `--expected-spawn-seconds` to at least your p99 boot time.** This is the server-side lease. All orchestrator replicas must use the same value.
 
 Everything the hook writes to stdout or stderr appears in the orchestrator's log with credentials automatically redacted. If sessions stay queued, check the orchestrator's `/healthz` body for queue counts, then open your environment's **Activity** tab on the [**Cloud environments** admin page](https://claude.ai/admin-settings/cloud-environments): expand a failed session there for its spawn error, and select **Retry** to re-request it.
+
+A session that stays queued with no spawn error in the **Activity** tab can mean the hook is keyed on the session ID. To confirm, check whether your platform has a workload for that session's first spawn request and none for the re-requests. If so, key the workload on `CLAUDE_RUNNER_ORDER_ID` instead.
 
 ## MCP servers
 
@@ -254,6 +256,30 @@ When connector delivery is enabled for your organization, Anthropic's control pl
 `settings.json` doesn't carry MCP server definitions, and there is no top-level `mcpServers` field in the settings schema. In managed settings, provide servers with the [`managedMcpServers`](/docs/en/settings-reference#managedmcpservers) key instead.
 
 Sessions inherit the runner's environment, so set [`ENABLE_TOOL_SEARCH`](/docs/en/mcp#scale-with-mcp-tool-search) there to control MCP tool search for every session a runner spawns; the MCP page covers the values.
+
+### Turn off built-in session tools
+
+Anthropic's control plane attaches its own MCP server, named Claude Code Remote, to cloud sessions. Claude uses the server's tools to schedule [routines](/docs/en/routines), start and steer other cloud sessions, attach more repositories, and follow pull request activity.
+
+To turn off the whole server, add a [server-level deny rule](/docs/en/permissions#mcp) to your settings. The control plane registers the server under one of three names, depending on how the session was created. Claude Code matches the name in a rule exactly, including case, so write the rule once per name as shown:
+
+```json theme={null}
+{
+  "permissions": {
+    "deny": [
+      "mcp__Claude_Code_Remote",
+      "mcp__claude-code-remote",
+      "mcp__bf7c680d-5fdc-5ef4-b4a0-abadb619bf0a"
+    ]
+  }
+}
+```
+
+A rule that names the whole server covers tools the server gains later too. To turn off one tool and keep the rest, append two more underscores and the tool name to each rule, as in `mcp__Claude_Code_Remote__add_repo`. To block the server from connecting at all rather than removing its tools, add the three names without the `mcp__` prefix as `serverName` entries under [`deniedMcpServers`](/docs/en/managed-mcp#policy-based-control-with-allowlists-and-denylists) instead.
+
+Put the rules in [server-managed settings](/docs/en/server-managed-settings) to reach every session with no change to the runner, or in `~/.claude/settings.json` on the runner. [Permissions and tool approval](#permissions-and-tool-approval) explains how settings on the runner reach sessions.
+
+To confirm the rules took effect, start a session on the environment and ask Claude to list its MCP tools. Claude Code removes a denied tool from Claude's context, so the denied tools are absent from its answer.
 
 ## Prompt sessions to push their work
 

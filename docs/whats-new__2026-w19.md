@@ -42,14 +42,14 @@
   <p className="digest-wins-title">Other wins</p>
 
   <div className="digest-wins-grid">
-    <div>New <code>worktree.baseRef</code> setting (<code>fresh</code> | <code>head</code>) controls whether <code>--worktree</code>, the <code>EnterWorktree</code> tool, and agent-isolation worktrees branch from the remote default branch or local <code>HEAD</code>; the default <code>fresh</code> keeps unpushed commits out of new worktrees</div>
+    <div>New <code>worktree.baseRef</code> setting (<code>fresh</code> | <code>head</code>) controls whether `--worktree`, the <code>EnterWorktree</code> tool, and agent-isolation worktrees branch from the remote default branch or local <code>HEAD</code>; the default <code>fresh</code> keeps unpushed commits out of new worktrees</div>
     <div>New <code>settings.autoMode.hard\_deny</code> rules block matching actions unconditionally in auto mode, regardless of allow exceptions, for actions that should never run automatically even when broader allow rules apply</div>
     <div>Hooks now receive the active effort level via the `effort.level` JSON input field and the `$CLAUDE_EFFORT` environment variable, and Bash tool commands can read <code>\$CLAUDE\_EFFORT</code></div>
     <div><code>CLAUDE\_CODE\_DISABLE\_ALTERNATE\_SCREEN=1</code> opts out of the fullscreen alternate-screen renderer and keeps the conversation in the terminal's native scrollback</div>
     <div><code>CLAUDE\_CODE\_PACKAGE\_MANAGER\_AUTO\_UPDATE</code> lets Homebrew or WinGet installations run the upgrade in the background and prompt to restart</div>
     <div><code>CLAUDE\_CODE\_SESSION\_ID</code> is now in the Bash tool subprocess environment, matching the <code>session\_id</code> passed to hooks</div>
     <div><code>/mcp</code> now shows the tool count for connected servers and flags servers that connected with 0 tools</div>
-    <div><code>--channels</code> now works with console (API key) authentication</div>
+    <div>`--channels` now works with console (API key) authentication</div>
     <div>Subprocesses such as Bash, hooks, MCP, and LSP no longer inherit <code>OTEL\_\*</code> environment variables, so OTEL-instrumented apps run via the Bash tool no longer pick up the CLI's own OTLP endpoint</div>
     <div>Sub-agent progress summaries now hit the prompt cache, cutting <code>cache\_creation</code> token cost by roughly 3x</div>
     <div>Several OAuth and credential reliability fixes: parallel sessions no longer dead-end at 401 after a refresh-token race, MCP OAuth refresh tokens are no longer lost when multiple servers refresh concurrently, and a rare login loop from a concurrent credential write is fixed</div>
