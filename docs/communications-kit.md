@@ -63,7 +63,7 @@ Use this as your standard org-wide rollout message. It covers what Claude Code i
 
     Where your code goes: Claude Code runs in your terminal and talks directly
     to Anthropic's API, with no third-party servers in the loop. It asks before
-    editing files or running commands. Under our Enterprise agreement, Anthropic
+    editing files or running commands. On our Team or Enterprise plan, Anthropic
     does not use your code or prompts to train its models.
     Details: https://code.claude.com/docs/en/data-usage
              https://code.claude.com/docs/en/security
@@ -90,8 +90,8 @@ Use this as your standard org-wide rollout message. It covers what Claude Code i
     *First thing to try* → run `/init`, then: "the test in [file] is flaky,
     figure out why and fix it."
 
-    🔒 Runs in your terminal, talks only to Anthropic's API. Under our
-    Enterprise plan your code and prompts are not used to train models.
+    🔒 Runs in your terminal, talks only to Anthropic's API. On our Team or
+    Enterprise plan, your code and prompts are not used to train models.
     Data usage → https://code.claude.com/docs/en/data-usage
 
     📚 Quickstart · VS Code · Free 1-hr course
@@ -468,7 +468,7 @@ Here's the short version you can paste.
 Permission-first by design. Every file edit, shell command, and external
 call is gated by your approval. The CLI runs in your terminal and talks
 directly to Anthropic's API, with no third-party servers, and supports
-optional OS-level sandboxing for shell commands. Under our Enterprise plan,
+optional OS-level sandboxing for shell commands. On a Team or Enterprise plan,
 Anthropic does not use your code or prompts to train its models.
 
 *Try it now:* save these two links for the next time the question comes up.
@@ -508,7 +508,7 @@ One-line replies for the questions you will be asked most.
 | - | - |
 | "Does it work in VS Code?" | Yes. There is a VS Code extension and a JetBrains plugin with the same features, embedded in your editor. [VS Code →](/docs/en/vs-code) |
 | "Do I have to configure anything first?" | No. Install, then run `claude` in any repo. Run `/init` once and you're set. [Quickstart →](/docs/en/quickstart) |
-| "Where does my code go?" | The CLI runs in your terminal and sends context to Anthropic's API for inference, with no third-party servers. Under your Enterprise plan, your code and prompts are not used to train models. [Data usage →](/docs/en/data-usage) |
+| "Where does my code go?" | The CLI runs in your terminal and sends context to Anthropic's API for inference, with no third-party servers. On a Team or Enterprise plan, your code and prompts are not used to train models. [Data usage →](/docs/en/data-usage) |
 | "Can it see my whole repo?" | It reads what you give it access to. File reads inside your working directory don't prompt; permission prompts gate edits, non-read-only shell commands, and file-tool reads outside that directory. A built-in set of read-only shell commands such as `ls` and `cat` runs without prompting; restrict it with [sandbox `denyRead` rules](/docs/en/sandboxing#filesystem-isolation). [Permissions →](/docs/en/permissions) |
 | "How is this different from Copilot?" | Copilot autocompletes lines. Claude Code is an agent that reads files, runs commands, and makes multi-file edits. [Overview →](/docs/en/overview) |
 | "What should I try first?" | A bug you've been putting off because it's tedious. "The test in \[file] is flaky, figure out why." [Quickstart →](/docs/en/quickstart) |

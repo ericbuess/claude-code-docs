@@ -241,7 +241,7 @@ Allowlists and denylists filter which configured servers are allowed to load. Th
 
 Servers your organization delivers through `managedMcpServers` load without an allowlist entry, and [How a server is evaluated](#how-a-server-is-evaluated) covers `managed-mcp.json` servers. The denylist applies to every server regardless of where it came from, other than in-process `type: "sdk"` entries.
 
-To deploy servers to users, use [`managed-mcp.json`](#exclusive-control-with-managed-mcp-json) or [`managedMcpServers`](#provide-servers-through-managed-settings). Both lists also filter servers passed with the [`--mcp-config` CLI flag](/docs/en/cli-reference#cli-flags), other than in-process `type: "sdk"` entries; `--strict-mcp-config` limits which configuration files load and doesn't bypass either list.
+To deploy servers to users, use [`managed-mcp.json`](#exclusive-control-with-managed-mcp-json) or [`managedMcpServers`](#provide-servers-through-managed-settings). Both lists also filter servers a user passes with the [`--mcp-config` CLI flag](/docs/en/cli-reference#cli-flags), other than in-process `type: "sdk"` entries; `--strict-mcp-config` limits which configuration files load and doesn't bypass either list.
 
 To make the allowlist authoritative, set `allowedMcpServers` and `allowManagedMcpServersOnly: true` together in a [managed settings source](/docs/en/admin-setup#decide-how-settings-reach-devices), such as server-managed settings or a deployed `managed-settings.json` file.
 
@@ -269,7 +269,7 @@ Leaving `allowedMcpServers` unset is different from setting it to an empty array
 
 | Setting | Unset (default) | Empty array `[]` | Populated |
 | :- | :- | :- | :- |
-| `allowedMcpServers` | All servers allowed | No servers allowed, apart from [the organization's own](#how-a-server-is-evaluated) | Only matching servers allowed, apart from [the organization's own](#how-a-server-is-evaluated) |
+| `allowedMcpServers` | All servers allowed | No servers allowed, apart from [those that skip the allowlist check](#how-a-server-is-evaluated) | Only matching servers allowed, apart from [those that skip the allowlist check](#how-a-server-is-evaluated) |
 | `deniedMcpServers` | No servers blocked | No servers blocked | Matching servers blocked |
 
 See [Invalid entries in managed settings](/docs/en/managed-settings#invalid-entries-in-managed-settings) for what happens when an entry fails schema validation.
@@ -293,9 +293,13 @@ Before loading a server, including one from `managed-mcp.json`, Claude Code runs
 2. **Check the denylist.** A server that matches any denylist entry, by URL, command, or name, is blocked. Nothing overrides a denylist match.
 3. **Check the allowlist.** If `allowedMcpServers` isn't set anywhere, every server that passed the denylist loads. If it is set, what the server must match depends on its type, shown in the table below.
 
-   The organization's own servers skip this check: every `managedMcpServers` entry, and any `managed-mcp.json` entry whose values use no `${VAR}` expansion. Built-in servers skip it too, such as Claude in Chrome, the `ide` server Claude Code connects to in a running VS Code or JetBrains IDE, and servers the CLI itself configures.
+   Three groups of servers skip this check:
 
-   A `managed-mcp.json` server that uses `${VAR}` expansion in its command, arguments, `env`, URL, or headers is still checked, as is every server a user, a plugin, `--mcp-config`, or claude.ai adds.
+   * The organization's own servers: every `managedMcpServers` entry, and any `managed-mcp.json` entry whose values use no `${VAR}` expansion.
+   * Built-in servers, such as Claude in Chrome, the `ide` server Claude Code connects to in a running VS Code or JetBrains IDE, and servers the CLI itself configures.
+   * A [Claude Tag](/docs/en/claude-tag) session's Slack tools: the servers it uses to read the thread and post its replies load without an allowlist entry.
+
+   A `managed-mcp.json` server that uses `${VAR}` expansion in its command, arguments, `env`, URL, or headers is still checked. So is every server a user, a plugin, or claude.ai adds, and every server a user passes with `--mcp-config`.
 
 | Server type | Allowed when it matches |
 | :- | :- |

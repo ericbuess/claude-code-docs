@@ -45,16 +45,11 @@ Make an artifact that walks through this PR with the diff annotated inline.
 Build a dashboard artifact of last week's deploy failures by service and keep it updated as you investigate.
 ```
 
-Unless you name a location, Claude writes the page to an HTML or Markdown file in a temporary directory outside your project, then publishes it. Publishing a new artifact goes through your session's [permission mode](/docs/en/permission-modes):
+Unless you name a location, Claude writes the page to an HTML or Markdown file in a temporary directory outside your project, then publishes it. Outside [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), a new artifact that Claude publishes in response to a prompt you type goes through without a permission prompt or classifier review, unless that publish declares runtime capabilities for the page, such as [connector calls](#pull-live-data-with-mcp-connectors) or [file downloads](#offer-a-file-download). In plan mode, Claude Code asks you before the first publish of each artifact.
 
-* **Auto mode**: the classifier reviews the publish instead of prompting you, so Claude can publish a page without you seeing a prompt. Which mode your sessions start in depends on your plan; see [the starting permission mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode).
-* **Manual and Accept edits modes**: Claude Code asks for permission; it might say something like `Claude wants to publish deploy-failures.html, uploading it to claude.ai (Anthropic's servers) to host as the page "Deploy failures by service", private to you until you share it`. Select **Yes** to publish.
+The artifact stays private to you until you [share it](#share-an-artifact). After you share it publicly, Claude Code asks for your approval once per conversation before changing it, or in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) has the classifier review the change.
 
-After you approve an artifact once, Claude Code republishes it without asking, and asks again in some cases, including when:
-
-* Claude declares a runtime capability for the page, such as [connector calls](#pull-live-data-with-mcp-connectors) or [file downloads](#offer-a-file-download)
-* You have since [shared it publicly](#share-an-artifact)
-* You have since shared it with specific people or your organization with the latest version chosen as the version viewers see
+If you turned [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) off, Claude Code asks before the first publish of each artifact, or in auto mode has the classifier review it.
 
 After the first publish, Claude prints the URL, and your browser opens to the new page. If you sent the prompt through [Remote Control](/docs/en/remote-control) from claude.ai, Claude Desktop, or the Claude mobile app, no tab opens on the machine running the session. The browser opens there the next time Claude publishes the artifact from a prompt you type at the terminal. Press `Ctrl+]` at any time to reopen the session's most recent artifact.
 

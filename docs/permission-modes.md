@@ -207,7 +207,7 @@ Each interface has its own control for switching permission modes during a sessi
 
     * **[Cloud sessions](/docs/en/claude-code-on-the-web)**: Accept edits, Plan, and Auto. Accept edits corresponds to `default` mode: cloud sessions pre-approve file edits regardless of mode, so the dropdown shows Accept edits instead of Manual. Cloud sessions still honor `defaultMode: "acceptEdits"` from settings. Auto mode appears only when your organization allows it and the selected model supports it. Bypass permissions isn't available.
     * **[Remote Control](/docs/en/remote-control) sessions** on your local machine: Manual, Accept edits, and Plan for a session you started yourself, and you can't select Auto or Bypass permissions from the app. For a project thread running on your computer, see [Run a thread on your own computer](/docs/en/claude-projects#run-a-thread-on-your-own-computer).
-      * Except for Bypass permissions, the dropdown shows the permission mode the local session is in, including one set from the terminal. It updates when the permission mode changes in the app or in the terminal. The session never reports Bypass permissions to claude.ai, so switching into it from the terminal doesn't change what the dropdown shows.
+      * Except for Bypass permissions, the dropdown shows the permission mode the local session is in, including one set from the terminal. It updates when the permission mode changes in the app or in the terminal.
       * Sessions hosted by the [desktop app](/docs/en/desktop) or the [VS Code extension](/docs/en/vs-code) report permission mode changes to claude.ai as they happen, the same as sessions hosted in a terminal.
       * Before v2.1.202, sessions connected with `/remote-control` or `claude --remote-control` didn't report their permission mode at all, so claude.ai and the mobile app could show a permission mode the session wasn't in. The mismatch affected only the label. Claude Code generated permission prompts from the session's actual permission mode, and they still appeared in the app for approval.
 
@@ -463,13 +463,23 @@ If you tell Claude that a blocked action is allowed, the classifier reads that a
 
 When auto mode can't approve your session's actions, what happens depends on the case:
 
-* **A blocked action**: Claude Code shows a notification and lists the action in `/permissions` under the **Recently denied** tab, where you can press `r` to retry it with a manual approval. When the classifier produces [no verdict on the action](/docs/en/errors#auto-mode-cannot-determine-the-safety-of-an-action), because a safety check separate from auto mode refused the classifier's own request or its response didn't parse, Claude Code denies the action without the notification or the **Recently denied** entry.
-* **Repeated blocks**: if the classifier blocks an action 3 times in a row or 20 times total, auto mode pauses and Claude Code resumes prompting. Approving the prompted action resumes auto mode. These thresholds are not configurable. Any allowed action resets the consecutive counter, while the total counter persists for the session and resets only when its own limit triggers a fallback. Claude Code doesn't count a denial toward either threshold when [a safety check separate from auto mode refuses the classifier's own request](/docs/en/errors#auto-mode-cannot-determine-the-safety-of-an-action); the linked entry covers how Claude Code handles those denials.
-* **Sessions that can't prompt**: a [non-interactive](/docs/en/headless) `-p` run without a [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags) has no prompt to fall back to. When repeated blocks reach a threshold, the action doesn't run and Claude keeps working. The same applies when [a safety check separate from auto mode refuses the classifier's request](/docs/en/errors#auto-mode-cannot-determine-the-safety-of-an-action). Claude Code doesn't stop the run in either case.
+* **A blocked action**: Claude Code shows a notification and lists the action in `/permissions` under the **Recently denied** tab, where you can press `r` to retry it with a manual approval.
+* **Repeated blocks**: if the classifier blocks an action 3 times in a row or 20 times total, auto mode pauses and Claude Code resumes prompting. Approving the prompted action resumes auto mode. See [Repeated-block thresholds](#repeated-block-thresholds) for how the blocks are counted.
+* **No verdict from the classifier**: when a safety check separate from auto mode refuses the classifier's own request, or the classifier's response doesn't parse, Claude Code denies the action without the notification or the **Recently denied** entry. See [Auto mode cannot determine the safety of an action](/docs/en/errors#auto-mode-cannot-determine-the-safety-of-an-action) for the message each case shows and what to do.
 * **No verdict from the server**: under [server-side classifier review](#server-side-classifier-review), Claude Code denies an action the server gives no verdict for, and stops the turn after ten responses in a row with no verdict. See [The server returned no safety verdict](/docs/en/errors#the-server-returned-no-safety-verdict).
-* **A mode switch during a check**: if you switch permission modes while a classifier check is pending, Claude Code discards a verdict the new mode wouldn't have requested rather than applying it: you're prompted for approval instead, or the action is auto-denied in [`dontAsk` mode](#allow-only-pre-approved-tools-with-dontask-mode).
+* **A mode switch during a check**: if you switch permission modes while a classifier check is pending, Claude Code discards a verdict the new mode wouldn't have requested. You're prompted for approval instead, or the action is auto-denied in [`dontAsk` mode](#allow-only-pre-approved-tools-with-dontask-mode).
+
+#### Repeated-block thresholds
+
+The thresholds of 3 blocks in a row and 20 blocks total are not configurable. The total counter persists for the session and resets only when its own limit triggers a fallback. Claude Code doesn't count a denial toward either threshold when a safety check separate from auto mode refuses the classifier's own request.
+
+A [non-interactive](/docs/en/headless) `-p` run without a [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags) has no prompt to fall back to. When repeated blocks reach a threshold, the action doesn't run and Claude keeps working. Claude Code doesn't stop the run.
 
 Repeated blocks usually mean the classifier is missing context about your infrastructure. Use `/feedback` to report false positives, or have an administrator [configure trusted infrastructure](/docs/en/auto-mode-config).
+
+### How auto mode evaluates actions
+
+The following sections cover the order Claude Code evaluates an action in, how the classifier reviews subagent work, and what classifier calls add in cost and latency.
 
 <span id="how-the-classifier-evaluates-actions" />
 
@@ -488,7 +498,7 @@ Repeated blocks usually mean the classifier is missing context about your infras
        * In a session with [server-side classifier review](#server-side-classifier-review), read-only and [sandboxed](/docs/en/sandboxing#sandbox-modes) shell commands wait for that review and are blocked if it flags them
        * A write inside your working directory that the [symlink check](/docs/en/permissions#symlinks) resolves to a location outside it prompts you
     3. Everything else goes to the classifier, apart from [critical-path removals](#critical-paths) under their default handling. The connector tools and `requiresUserInteraction` MCP tools that prompt you directly in step 1 never reach the classifier either, so neither an org-required approval nor a consent step is auto-approved
-    4. If the classifier blocks, Claude receives the reason and tries an alternative. In most sessions the reason names the rule the classifier matched, such as `[Data Exfiltration]`, rather than giving a written explanation; see [Review denials](/docs/en/auto-mode-config#review-denials)
+    4. If the classifier blocks, Claude receives the reason. In most sessions the reason names the rule the classifier matched, such as `[Data Exfiltration]`, rather than giving a written explanation; see [Review denials](/docs/en/auto-mode-config#review-denials)
 
     On entering auto mode, broad allow rules that grant arbitrary code execution are dropped:
 
@@ -573,7 +583,12 @@ The `--dangerously-skip-permissions` flag is equivalent.
 
 Claude Code refuses `bypassPermissions` in a session you start with [`--restricted`](/docs/en/cli-reference#cli-flags). `--restricted` requires Claude Code v2.1.248 or later.
 
-The first time you start an interactive session with this mode enabled, Claude Code shows a warning dialog asking you to accept responsibility for actions taken without permission checks. Claude Code saves your acceptance to user settings, so the dialog appears only once. If you decline, Claude Code exits. In [non-interactive mode](/docs/en/headless) no dialog is shown, and a [background session](/docs/en/agent-view) started with `--bg` is refused until you've accepted the dialog in an interactive session.
+The first time you start an interactive session with this mode enabled, Claude Code shows a warning dialog asking you to accept responsibility for actions taken without permission checks:
+
+* **If you accept**: Claude Code sets `skipDangerousModePermissionPrompt` to `true` in `~/.claude/settings.json`, so later sessions skip the dialog. To see the dialog again, remove the key from that file or set it to `false`. The [`skipDangerousModePermissionPrompt` reference](/docs/en/settings-reference#skipdangerousmodepermissionprompt) lists the other settings files where you or your organization can set it.
+* **If you decline**: Claude Code exits.
+
+In [non-interactive mode](/docs/en/headless) no dialog is shown, and a [background session](/docs/en/agent-view) started with `--bg` is refused until you've accepted the dialog in an interactive session.
 
 On Linux and macOS, Claude Code refuses to start in this mode when running as root or under `sudo`:
 
@@ -637,29 +652,13 @@ Protected files:
 
 ## Critical paths
 
+Critical paths are the directories Claude Code protects from `rm` and `rmdir` commands, such as the filesystem root, your home directory, and your working directory.
+
 Claude Code never lets a [`permissions.allow`](/docs/en/permissions#manage-permissions) rule or a [`PreToolUse` hook](/docs/en/permissions#extend-permissions-with-hooks) that returns `"allow"` approve an `rm` or `rmdir` command that targets a critical path, even in modes that skip other prompts. This circuit breaker guards against model error. A matching deny rule still blocks the command outright.
 
-What happens instead depends on your permission mode:
+What happens instead [depends on your permission mode](#critical-path-removals-in-each-permission-mode). `Remove-Item` and the `cmd` removal built-ins have their own checks, covered in [Remove-Item in PowerShell](#remove-item-in-powershell).
 
-| Mode | What Claude Code does with a critical-path removal |
-| :- | :- |
-| `default`, `acceptEdits` | Asks you to approve it |
-| `plan` | Asks you to approve it. When [the classifier reviews commands during planning](#analyze-before-you-edit-with-plan-mode) and no bypass permissions are available, handles it as in `auto` mode |
-| `auto` | Asks you to approve it in the terminal, with a time limit. Elsewhere, denies it |
-| `dontAsk` | Denies it |
-| `bypassPermissions` | Asks you to approve it, with a time limit in the terminal |
-
-If an explicit [ask rule](/docs/en/permissions#manage-permissions) matches the command, Claude Code asks you instead, even in `auto` mode and without a time limit. In modes that ask, a [`PermissionRequest` hook](/docs/en/hooks#permissionrequest) can answer the prompt.
-
-The `auto` and `bypassPermissions` handling requires Claude Code v2.1.281 or later. To turn it off, set [`CLAUDE_CODE_DISABLE_DANGEROUS_RM_TIMEOUT=1`](/docs/en/env-vars#variables) in the environment that launches Claude Code. In `auto` mode, critical-path removals then go to the classifier instead, and in `bypassPermissions` mode the prompt has no time limit.
-
-In `auto` and `bypassPermissions` modes, the terminal prompt shows a two-minute countdown:
-
-* If the countdown runs out before you answer, Claude Code denies the command and tells Claude what to do instead, so an unattended session keeps working.
-* Press any key while the prompt is open to stop the countdown and keep the prompt waiting for your answer.
-* After three of these prompts run out unanswered in a session, Claude Code stops showing them and denies further critical-path removals immediately. Sending a new message starts the count over.
-
-In `auto` mode, wherever Claude Code can't show you a terminal prompt, it denies the command immediately, for example in [non-interactive runs](/docs/en/headless) with `-p`, in [Agent SDK](/docs/en/agent-sdk/permissions) sessions, and in the VS Code extension's chat panel and the Desktop app. The denial tells Claude to report what it wanted to delete and leave the removal to you.
+### Which paths are critical
 
 Claude Code treats an `rm` or `rmdir` target as a critical path when it is any of the following:
 
@@ -670,25 +669,67 @@ Claude Code treats an `rm` or `rmdir` target as a critical path when it is any o
 * Your working directory and its parents
 * Your additional working directories and their parents, but only when the removal is a glob under one of them, such as `rm -rf <dir>/*`. `rm -rf <dir>` on the directory itself doesn't trigger this check
 
-Claude Code also treats a glob or trailing slash directly under a shell variable, such as `rm -rf "$DIR"/*`, as a critical-path removal, because the command becomes a removal from the filesystem root when the variable is empty.
+### Other targets that count as critical paths
 
-The prompt for this variable case names the flagged `rm` and says how to rewrite it so the check passes:
+Claude Code also treats the following `rm` and `rmdir` targets as critical paths. The last column says why each one counts.
 
-* For a variable such as `$DIR`, guard each expansion so the shell stops with an error when the variable is unset or empty, as in `rm -rf "${DIR:?}"/*`, or use a literal path
-* For a variable that is normally set, such as `$HOME`, use a literal path
+| Target | Example | Why it counts |
+| :- | :- | :- |
+| A glob or trailing slash directly under a shell variable | `rm -rf "$DIR"/*` | The command becomes a removal from the filesystem root when the variable is empty |
+| The same form under a positional parameter such as `$1` or `$@`, when nothing in the command gives it a value | `rm -rf "$1"/*` | The command expands to a removal from the root |
+| A shell variable followed by one common top-level directory name, such as `mnt`, `tmp`, `usr`, or `Users` | `rm -rf "$TMPDIR/mnt"` | When the variable expands empty, the command removes `/mnt` |
+| A variable that the same command assigns from a directory-printing substitution, such as `$(pwd)` or `$(git rev-parse --show-toplevel)` | `D=$(pwd); rm -rf "$D"` | The value can name your working directory or repository root |
+| A target that is only the output of a command substitution, when the `rm` is recursive | `rm -rf "$(pwd)"` | Claude Code can't check the target before the command runs |
+| A trailing command substitution after a critical path | `rm -rf ~/$(cmd)` | Claude Code checks the path that would remain if the substitution expanded empty, here your home directory |
+| A target that is only backslashes | `rm -rf "\\"` | Git Bash on Windows reads a lone backslash as the current drive's root, so the check applies on every platform |
 
-A removal whose expansions are all guarded that way passes this check, so in `bypassPermissions` mode it runs without a prompt unless another check in this section flags it.
+To turn off the check on a target that is only command substitution output, set [`CLAUDE_CODE_DISABLE_SUBSTITUTION_RM_PROMPT=1`](/docs/en/env-vars#variables) in the environment that launches Claude Code.
 
-Claude Code also treats these targets as critical paths:
+### Removals inside nested commands and inline scripts
 
-* **A shell variable followed by one top-level directory name**, such as `rm -rf "$TMPDIR/mnt"`: when the variable expands empty, the command removes `/mnt`. This covers common top-level names such as `mnt`, `tmp`, `usr`, and `Users`.
-* **A variable that the same command assigns from a directory-printing substitution**, such as `D=$(pwd); rm -rf "$D"` or an assignment from `$(git rev-parse --show-toplevel)`: the value can name your working directory or repository root. A `"${D:?}"` guard doesn't clear this check, because the variable isn't empty; use a literal path instead.
-* **A backslash-only target**, such as `rm -rf "\\"`: Git Bash on Windows reads a lone backslash as the current drive's root, so the check applies on every platform.
-* **Only the output of a command substitution**, such as `rm -rf "$(pwd)"`, when the `rm` is recursive: Claude Code can't check the target before the command runs, so the prompt tells Claude to run the substitution on its own first and then remove the literal paths it prints. To turn off this one check, set [`CLAUDE_CODE_DISABLE_SUBSTITUTION_RM_PROMPT=1`](/docs/en/env-vars#variables) in the environment that launches Claude Code.
+Claude Code also looks inside these constructs:
 
-When a trailing command substitution can expand empty, as in `rm -rf ~/$(cmd)`, Claude Code checks the path that would remain, your home directory in this example.
+* **Nested commands**: a subshell with `(...)`, a brace group with `{ ...; }`, command substitution with `$(...)` or backticks, or process substitution with `<(...)`. Claude Code finds a critical-path removal whether it sits inside the nested form, as in `(rm -rf ~)` or `echo "$(rm -rf ~)"`, or elsewhere in the same command.
+* **Inline scripts**: Claude Code checks a script passed to a shell such as `sh -c` or `bash -c` for the shell variable and positional parameter [targets](#other-targets-that-count-as-critical-paths).
+  * When the script is double-quoted, the invoking shell expands its variables before the inner shell receives the script. In `find . -name '*.tmp' -exec sh -c "rm -rf \"$1\"/*" _ {} \;`, the command expands to a removal from the filesystem root once per match, and Claude Code treats it as a critical-path removal.
+  * A single-quoted script that binds `$1` to a real value, as `sh -c 'rm -rf "$1"/*' _ {}` does, isn't flagged.
 
-Hiding the removal inside a subshell with `(...)`, a brace group with `{ ...; }`, command substitution with `$(...)` or backticks, or process substitution with `<(...)`, doesn't skip the check. Claude Code finds a critical-path removal whether it sits inside the nested form, as in `(rm -rf ~)` or `echo "$(rm -rf ~)"`, or elsewhere in the same command.
+### Rewrite a flagged command
+
+How to rewrite a command so it passes the check depends on which of the [other targets](#other-targets-that-count-as-critical-paths) it uses:
+
+* **A glob or trailing slash under a variable such as `$DIR`**: guard each expansion so the shell stops with an error when the variable is unset or empty, as in `rm -rf "${DIR:?}"/*`, or use a literal path. A removal whose expansions are all guarded that way passes this check, so in `bypassPermissions` mode it runs without a prompt unless another [critical-path](#critical-paths) check flags it.
+* **A glob or trailing slash under a variable that is normally set, such as `$HOME`**: use a literal path.
+* **A variable assigned from a directory-printing substitution**: use a literal path. A `"${D:?}"` guard doesn't clear this check, because the variable isn't empty.
+* **A target that is only command substitution output**: run the substitution on its own first, then remove the literal paths it prints. The prompt tells Claude to do the same.
+
+For a glob or trailing slash under a variable, the prompt names the flagged `rm` and says how to rewrite it so the check passes.
+
+### Critical-path removals in each permission mode
+
+What Claude Code does with a critical-path removal depends on your permission mode:
+
+| Mode | Outcome |
+| :- | :- |
+| `default`, `acceptEdits` | Asks you to approve it |
+| `plan` | Asks you to approve it. When [the classifier reviews commands during planning](#analyze-before-you-edit-with-plan-mode) and no bypass permissions are available, handles it as in `auto` mode |
+| `auto` | Asks you to approve it in the terminal, with a [time limit](#time-limits-and-denials-in-auto-and-bypasspermissions-modes). Elsewhere, denies it |
+| `dontAsk` | Denies it |
+| `bypassPermissions` | Asks you to approve it, with a time limit in the terminal |
+
+If an explicit [ask rule](/docs/en/permissions#manage-permissions) matches the command, Claude Code asks you instead, even in `auto` mode and without a time limit. In modes that ask, a [`PermissionRequest` hook](/docs/en/hooks#permissionrequest) can answer the prompt.
+
+### Time limits and denials in auto and bypassPermissions modes
+
+In `auto` and `bypassPermissions` modes, the terminal prompt for a critical-path removal shows a two-minute countdown:
+
+* If the countdown runs out before you answer, Claude Code denies the command and tells Claude what to do instead, so an unattended session keeps working.
+* Press any key while the prompt is open to stop the countdown and keep the prompt waiting for your answer.
+* After three of these prompts run out unanswered in a session, Claude Code stops showing them and denies further critical-path removals immediately. Sending a new message starts the count over.
+
+In `auto` mode, wherever Claude Code can't show you a terminal prompt, it denies the command immediately, for example in [non-interactive runs](/docs/en/headless) with `-p`, in [Agent SDK](/docs/en/agent-sdk/permissions) sessions, and in the VS Code extension's chat panel and the Desktop app. The denial tells Claude to report what it wanted to delete and leave the removal to you.
+
+The `auto` and `bypassPermissions` handling requires Claude Code v2.1.281 or later. To turn it off, set [`CLAUDE_CODE_DISABLE_DANGEROUS_RM_TIMEOUT=1`](/docs/en/env-vars#variables) in the environment that launches Claude Code. In `auto` mode, critical-path removals then go to the classifier instead, and in `bypassPermissions` mode the prompt has no time limit.
 
 ### Remove-Item in PowerShell
 

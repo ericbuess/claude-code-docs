@@ -1136,7 +1136,7 @@ Community projects like [ccstatusline](https://github.com/sirmalloc/ccstatusline
 **Context percentage shows unexpected values**
 
 * Use `used_percentage` for the simplest accurate context state
-* Context percentage may differ from `/context` output due to when each is calculated
+* The status line reports the counts from the last API response, while `/context` adds an estimate for messages added since that response, so `/context` can read higher until the next response
 
 **OSC 8 links not clickable**
 

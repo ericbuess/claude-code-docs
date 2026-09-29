@@ -44,7 +44,7 @@ Each finding is tagged with a severity level:
 | 🟡 | Nit | A minor issue, worth fixing but not blocking |
 | 🟣 | Pre-existing | A bug that exists in the codebase but was not introduced by this PR |
 
-Findings include a collapsible extended reasoning section you can expand to understand why Claude flagged the issue and how it verified the problem.
+Findings include a collapsed **Why this was flagged** section that you can expand to read why Claude flagged the issue and how it verified the problem.
 
 ### Rate and reply to findings
 

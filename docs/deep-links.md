@@ -40,7 +40,7 @@ When the session opens, a warning line below the input box reads `Prompt from an
 
 ## Build a link
 
-Every deep link starts with `claude-cli://open`, which is the only path the handler accepts, followed by optional query parameters. The minimal form opens Claude Code in your home directory with an empty prompt:
+A deep link starts with `claude-cli://open`, followed by optional query parameters. The minimal form opens Claude Code in your home directory with an empty prompt:
 
 ```text theme={null}
 claude-cli://open

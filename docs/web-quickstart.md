@@ -211,9 +211,9 @@ If you connected with `/web-setup`, sessions reach every repository your `gh` to
 
 Cloud sessions require a connected GitHub account. Connect via the browser flow above, or run `/web-setup` from your terminal if you use the GitHub CLI. If you'd rather not connect GitHub at all, see [Remote Control](/docs/en/remote-control) to run Claude Code on your own machine and monitor it from your browser or phone.
 
-### "Not available for the selected organization"
+### "Claude Code isn't available on your account"
 
-Enterprise organizations may need an Owner to enable cloud sessions. Contact your Anthropic account team.
+Your seat in the selected organization doesn't include Claude Code. If you belong to another organization, click **Switch organization** on that page. Otherwise, ask an Owner of the organization to assign you a [seat that includes Claude Code](https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan).
 
 ### `/web-setup` says "Not signed in to Claude"
 

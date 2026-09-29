@@ -150,6 +150,8 @@ Whichever mechanism you configure must work without a prompt, because the runner
 
 If your git host rejects the credential, or you didn't configure one, the runner retries a few times and then fails repository preparation when the repository is the one the session pushes results to. For a repository the session only reads from, [Troubleshooting](#troubleshooting) covers when the runner skips it instead. The runner doesn't pass these settings into the session's environment.
 
+Keep any program you name in `GIT_SSH_COMMAND` or `GIT_ASKPASS` where sessions can't write to it, the way the [hardening checklist](#harden-your-deployment) asks for the hooks directory and the wrapper script. The same goes for any key or file on that program's command line. The runner's own git runs that program when it clones or fetches.
+
 If checkout directories are owned by a different uid than the runner process, git refuses to operate on them; add `safe.directory`:
 
 ```dockerfile theme={null}
@@ -162,7 +164,36 @@ Start the runner with `--use-anthropic-git-proxy`, or set `CLAUDE_RUNNER_USE_GIT
 
 The proxy requires `--capacity 1` because the proxy URL is per-session, and git 2.32 or later because older git ignores the configuration mechanism the proxy uses to isolate sessions from each other. The runner refuses to start if either requirement is unmet. Because the proxy fetches from Anthropic's side, your git host must be reachable from Anthropic infrastructure, the same requirement Anthropic-hosted sessions have; for a git host that's only routable inside your network, use a [`checkout` lifecycle hook](/docs/en/self-hosted-environments-configuration#checkout) instead. Each runner process handles one session at a time, so run more replicas for parallelism. When the proxy is enabled, `--git-host-rewrite` and `--git-ssh-rewrite` have no effect: the proxy URL points at `api.anthropic.com`, not your git host.
 
+<Warning>
+  The [Kubernetes](#kubernetes) and [Docker Compose](#docker-compose) recipes on this page use `--capacity 4`. If you add `--use-anthropic-git-proxy` or `CLAUDE_RUNNER_USE_GIT_PROXY=1` to one of them without changing the capacity to `1`, the runner exits at startup every time your orchestrator restarts it. Set `--capacity 1` and run more replicas for parallelism. [When the runner exits](#when-the-runner-exits) shows the line the runner prints.
+</Warning>
+
 The runner also reports the opt-in to Anthropic when it registers, printing `Registering as opted in to Anthropic-managed git (--use-anthropic-git-proxy)` at startup. Reporting the opt-in requires Claude Code v2.1.267 or later, and earlier versions accept the flag without reporting it or printing that line. Each session on an opted-in runner then uses either Anthropic-managed git or the per-session proxy URL. When a session uses the per-session proxy URL, the runner logs one `[runner:warn]` line saying so.
+
+#### Trust a private certificate authority with Anthropic-managed git
+
+This section applies if you set `GIT_SSL_CAINFO` or `GIT_SSL_NO_VERIFY` in the environment of a runner whose sessions use Anthropic-managed git. The handling it describes requires the runner to run Claude Code v2.1.283 or later.
+
+When git on the runner must trust a private certificate authority (CA), such as the one a TLS-inspecting proxy signs with, the usual approaches work out as follows:
+
+* **System certificate store**: install your CA in the runner host's system certificate store, and git trusts it without either variable.
+* **`GIT_SSL_CAINFO`**: set it to a PEM file of your CAs, for example `GIT_SSL_CAINFO=/etc/ssl/corp-ca.pem`.
+* **`GIT_SSL_NO_VERIFY`**: doesn't help behind a re-signing proxy. The runner's own clone through Anthropic-managed git checks certificates even when the variable is set, so that clone fails until git trusts your CA through one of the other two approaches.
+
+For git connections that carry a session's token to Anthropic-managed git, the runner applies the two variables as follows. A [`command` hook](/docs/en/self-hosted-environments-configuration#command) starts with the session's environment, so it gets what git inside the session gets:
+
+* **`GIT_SSL_CAINFO`**: what git checks Anthropic-managed git against depends on where git runs:
+  * **Runner's own clone and fetches**: run without the variable and check Anthropic-managed git against a per-session certificate file the runner writes. That file holds the runner host's system CA bundle plus the certificates from your file.
+  * **Git inside the session**: gets `http.sslCAInfo` configuration naming your file in place of the variable, plus `http.<url>.sslCAInfo` entries that check Anthropic-managed git against the per-session file.
+  * **`checkout` and `post-session` hooks**: inherit the variable unchanged.
+* **`GIT_SSL_NO_VERIFY`**: which certificate checks stay off depends on where git runs:
+  * **Runner's own clone and fetches**: run without the variable and check the certificate they're presented.
+  * **Git inside the session**: gets `http.sslVerify=false` configuration in place of the variable, so checks stay off for other hosts. It also gets `http.<url>.sslVerify=true` entries that keep checks on for Anthropic-managed git.
+  * **`checkout` and `post-session` hooks**: when the session has a repository on Anthropic-managed git, get `http.sslVerify=false` configuration in place of the variable. They also get `http.<url>.sslVerify=true` entries that keep checks on for Anthropic-managed git.
+
+The per-session certificate file needs a system CA bundle at `/etc/ssl/certs/ca-certificates.crt` or `/etc/pki/tls/certs/ca-bundle.crt` on the runner host. It also needs a `GIT_SSL_CAINFO` file that the runner's user can read, that holds PEM `CERTIFICATE` blocks, and that is at most 1 MiB. When the runner can't build the per-session file, it logs a `[runner:warn]` line containing `did not build the certificate file` and the reason. Git then uses your file as it is for Anthropic-managed git. Fix what the line names.
+
+For each session that uses Anthropic-managed git, the runner also logs a `[runner:warn]` line that begins `governed git: GIT_SSL_CAINFO is set` or `governed git: GIT_SSL_NO_VERIFY is set`. The line says what the runner did with that variable for its own git, for git inside the session, and for your lifecycle hooks. It ends with whether you need to change anything.
 
 ### Rewrite git URLs for private networks
 
@@ -177,7 +208,7 @@ Host rewriting runs first, so list the internal hostname in `--git-ssh-rewrite` 
 
 Anthropic doesn't publish a pre-built runner image. Build your own around the `claude` binary, layering in whatever toolchain your repositories need: language runtimes, compilers, package managers, and [MCP](/docs/en/mcp) sidecars.
 
-The recipes below use `--capacity 4`, so one container serves up to four concurrent sessions from the same locked owner. That doesn't provide the per-session container isolation in the [hardening section](#harden-your-deployment): before connecting an environment to production systems, either run the recipes at `--capacity 1` with one container per session, or use [on-demand runners](/docs/en/self-hosted-environments-configuration#on-demand-runners), which also keep the environment secret off session-running hosts.
+The recipes below use `--capacity 4`, so one container serves up to four concurrent sessions from the same locked owner. That doesn't provide the per-session container isolation in the [hardening section](#harden-your-deployment): before connecting an environment to production systems, either run the recipes at `--capacity 1` with one container per session, or use [on-demand runners](/docs/en/self-hosted-environments-configuration#on-demand-runners), which also keep the environment secret off session-running hosts. If you add the [Anthropic git proxy](#use-the-anthropic-git-proxy) to one of these recipes, also change `--capacity` to `1`.
 
 This Dockerfile is a minimal starting point:
 
@@ -306,6 +337,8 @@ kubectl create secret generic claude-runner-environment-secret -n claude-runners
 
 The Compose service below restarts the runner whenever it exits, which covers both crashes and the normal exit after draining. A Docker restart policy restarts the same container with its writable layer intact, so the runner comes back on a reused filesystem rather than the fresh one the [hardening posture](#harden-your-deployment) recommends; use this recipe for evaluation, and for production either recreate the container per run or use an orchestrator that does.
 
+Docker waits longer before each restart of a container that keeps exiting, up to a ceiling, so a runner that can't start doesn't keep restarting in a tight loop under this recipe. [When the runner exits](#when-the-runner-exits) describes what to check when that happens.
+
 ```yaml theme={null}
 services:
   claude-runner:
@@ -403,6 +436,8 @@ What the reuse path does and doesn't guarantee:
 
 Each session's child Claude Code process runs the runner's own binary, and the runner turns off auto-update inside the sessions it spawns, so every session runs the version you installed on the host or built into the image. A host-level update takes effect the next time the runner starts.
 
+A model your sessions use can require a newer Claude Code version than the one they run. The server then rejects requests for that model with [Claude Code does not support this model](/docs/en/errors#claude-code-does-not-support-this-model). Before you pin a version, check [the Claude Code versions that models require](/docs/en/model-config#available-models) for every model your sessions use.
+
 * **To hold a fleet on one version**: build the image with a pinned version, or on a bare host install a specific version and [disable auto-updates](/docs/en/setup#disable-auto-updates)
 * **To upgrade**: install the newer version or rebuild the image, then restart the runners
 * **Plugins**: plugin marketplaces don't auto-update either; set `FORCE_AUTOUPDATE_PLUGINS=1` in the runner's environment to let plugins auto-update while the binary stays pinned
@@ -491,6 +526,68 @@ Common issues:
 Once logging is initialized, the runner writes its lifecycle log, including `[runner:fatal]` lines, to stdout, and debug output to stderr, all as plain-text lines rather than JSON. The startup failures described in the troubleshooting entries above print to stderr before that point. Capture both streams with `--log-file`, which also lets `self-hosted-runner doctor` tail them, or with your platform's log collection.
 
 Each session's child process writes a separate debug log. On failure the runner surfaces the log's tail alongside the session in claude.ai/code. Unless you started the runner with [`--remove-session-state`](/docs/en/self-hosted-environments-reference#runner-cli-flags), it also keeps a failed session's log on disk and prints its path in the runner log.
+
+### When the runner exits
+
+Don't restart an [on-demand runner](/docs/en/self-hosted-environments-configuration#on-demand-runners), because its work order is single-use. A runner that exits right after it starts needs different handling from one that exits for any other reason.
+
+* **A normal exit**: the runner finished its sessions and drained, reached its retire time, or was told to stop. Restart it so the environment has capacity again. [Runner lifecycle](/docs/en/self-hosted-environments#runner-lifecycle) describes these exits.
+* **A failed start**: the runner can't start with the configuration or host it was given, so it exits seconds after it starts, and it exits the same way every time you restart it. Restarting it faster doesn't help. Someone needs to read its output and fix the cause.
+
+Configure your supervisor to restart the runner whenever it exits, to wait longer between restarts when the runner keeps exiting right after it starts, and to tell someone when that keeps happening.
+
+#### Recognize a failed start
+
+When the runner can't start, it prints a line that says why, and then it exits. For most causes the line contains `[runner:fatal]`. For some causes the line begins with `error:` instead, including when the runner can't parse its flags, can't read the environment secret, or can't create or write to the base directory. The next line then points to `--help`.
+
+Most log lines start with a timestamp and `[self-hosted-runner]`, which the sample below leaves out. For example, a runner started with the Anthropic git proxy and a capacity above one prints a line like this one:
+
+```text theme={null}
+[runner:fatal] --use-anthropic-git-proxy requires --capacity 1 (the proxy URL is per-session and linked worktrees share origin). Omit --use-anthropic-git-proxy or set --capacity 1.
+```
+
+Look for the line in the runner's standard output and standard error, in your platform's container logs, or in the file you set with [`--log-file`](/docs/en/self-hosted-environments-reference#runner-cli-flags). The runner prints an `error:` line before it opens the log file, so look for it in the terminal or your container logs, as [Troubleshooting](#troubleshooting) notes.
+
+These also help when you read a failed start:
+
+* **No line at all**: a runner that the host kills prints neither. If the output ends with no `[runner:fatal]` line and no `error:` line, check whether the host or your orchestrator stopped the process, for example for exceeding a memory limit.
+* **The exit code**: the runner doesn't set aside an exit code for errors that repeat on every start. It exits with the same code for a configuration error, such as an unsupported combination of flags, and for a failure that can clear by itself, such as the API staying unreachable through the runner's own retries. Base the decision to wait longer on how soon the runner exited, and read the runner's output to learn why.
+* **An environment that looks healthy**: some startup steps run after the runner registers with your environment, such as [`--configure-git`](#let-the-runner-configure-git) and the Anthropic git proxy's credential setup. If one of those steps fails, the environment can go on listing that runner for a few minutes after the process has exited, and the **Cloud environments** page can read **Healthy** while no runner is picking up work. If sessions stay queued in an environment that looks healthy, check whether your supervisor is restarting the runner.
+
+#### Restart with a wait that grows
+
+How you get a growing wait depends on your supervisor.
+
+* **Kubernetes**: the [Deployment](#kubernetes) on this page needs no change. After a container exits, the kubelet by default waits before it restarts the container, and the wait grows on each restart up to a ceiling. The wait starts over once the container has run for a while without exiting.
+
+  The kubelet applies the same wait after a normal exit when the container ran only briefly. A runner that drains often can therefore show the `CrashLoopBackOff` status too, so read the output before you conclude that the runner can't start. The command below reads the last run's output from one pod of the Deployment:
+
+  ```bash theme={null}
+  kubectl logs --previous -n claude-runners deploy/claude-runner
+  ```
+
+  When the last run was a failed start, the `[runner:fatal]` or `error:` line is among the last lines of the output. To read another pod's last run, name that pod in place of `deploy/claude-runner`.
+* **Docker and Docker Compose**: the [Compose recipe](#docker-compose) on this page needs no change. With `restart: always`, Docker waits longer before each restart of a container that keeps exiting, up to a ceiling. Replace `<container>` with the container's name in the command below, which reads how many times Docker has restarted the container:
+
+  ```bash theme={null}
+  docker inspect --format '{{.RestartCount}}' <container>
+  ```
+
+  The command prints a number. A number that keeps climbing means Docker keeps restarting the runner.
+* **A systemd unit**: by default systemd waits the same `RestartSec` before every restart and doesn't lengthen it, so a unit with `Restart=always` restarts a runner that can't start at that same interval each time. When the starts come fast enough to reach the unit's start rate limit, five starts in 10 seconds by default, systemd stops restarting the unit. The unit stays stopped until someone starts it again, which systemd allows once the rate limit's interval has passed or after `systemctl reset-failed`. Because `RestartSec` applies to every restart, a longer value also delays the restart after a normal exit. Choose a value that balances the two, and alert on the unit's restart count.
+* **A shell loop or your own supervisor**: apply the same rule yourself. Start with a wait of five seconds. After each run that ended within a minute, double the wait for the next restart, up to five minutes. After a run that lasted a minute or more, go back to five seconds.
+
+#### Check why the runner keeps exiting
+
+When the runner has exited right after starting several times in a row, stop and check these before restarting it again.
+
+* **The last `[runner:fatal]` or `error:` line**: it says why the runner stopped. [Troubleshooting](#troubleshooting) lists the common causes.
+* **The combination of flags**: the [Anthropic git proxy](#use-the-anthropic-git-proxy) requires `--capacity 1`. The recipes on this page use a higher capacity, so lower it when you add the proxy to one of them.
+* **What the service's environment can reach**: if the runner starts by hand and fails under your supervisor, compare the user, the home directory, the `PATH`, and the memory limit. `--configure-git` and the Anthropic git proxy need git on the `PATH` and a writable `~/.gitconfig`.
+* **The environment secret**: if you revoked the secret or mistyped it, the runner prints a line that contains `RegisterRunner auth failed`.
+* **The environment's Activity tab**: open the environment and select **Activity**. If new runners keep appearing there and none picks up work, your supervisor is restarting the runner.
+
+For guided diagnosis on the runner host, run the [doctor subcommand](#troubleshooting).
 
 ## What's next
 

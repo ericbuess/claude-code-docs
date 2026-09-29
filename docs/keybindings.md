@@ -20,7 +20,7 @@ The keybindings configuration file is an object with a `bindings` array. Each bl
 | `$docs` | Optional documentation URL |
 | `bindings` | Array of binding blocks by context |
 
-This example binds `Ctrl+E` to open an external editor in the chat context, and unbinds `Ctrl+U`:
+This example binds `Ctrl+E` to open an external editor in the chat context, and unbinds `Ctrl+S`:
 
 ```json theme={null}
 {
@@ -31,7 +31,7 @@ This example binds `Ctrl+E` to open an external editor in the chat context, and 
       "context": "Chat",
       "bindings": {
         "ctrl+e": "chat:externalEditor",
-        "ctrl+u": null
+        "ctrl+s": null
       }
     }
   ]
@@ -53,7 +53,7 @@ Each binding block specifies a **context** where the bindings apply:
 | `Help` | Help menu is visible |
 | `Transcript` | Transcript viewer |
 | `HistorySearch` | History search mode (Ctrl+R) |
-| `Task` | Background task is running |
+| `Task` | A task is running in the foreground |
 | `ThemePicker` | Theme picker dialog |
 | `Attachments` | Image attachment navigation in select dialogs |
 | `Footer` | Footer indicator navigation (tasks, teams, diff, artifacts) |
@@ -609,7 +609,7 @@ When vim mode is enabled via `/config` → Editor mode, keybindings and vim mode
 
 ## Validation
 
-Claude Code validates your keybindings and shows warnings for:
+Claude Code validates your keybindings and writes a warning to the debug log for:
 
 * Parse errors (invalid JSON or structure)
 * Invalid context names
@@ -618,4 +618,4 @@ Claude Code validates your keybindings and shows warnings for:
 * Reserved shortcut conflicts
 * Duplicate bindings in the same context
 
-Claude Code reports warnings when the file loads and writes each one to the debug log. Start Claude Code with [`--debug`](/docs/en/cli-reference#cli-flags) to see the details.
+Start Claude Code with [`--debug`](/docs/en/cli-reference#cli-flags) to see the details.

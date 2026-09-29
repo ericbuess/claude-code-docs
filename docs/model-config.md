@@ -61,7 +61,7 @@ Earlier versions resolve these aliases to older models. For the version at which
 Aliases point to the recommended version for your provider and update over time. To pin to a specific version, use the full model name, for example `claude-opus-5-5`, or set the corresponding environment variable like `ANTHROPIC_DEFAULT_OPUS_MODEL`.
 
 <Note>
-  Sonnet 5.5 requires Claude Code v2.1.284 or later, and Opus 5.5 requires v2.1.280 or later. Run `claude update` to upgrade.
+  Sonnet 5.5 requires Claude Code v2.1.284 or later, and Opus 5.5 requires v2.1.280 or later. If a request for one of them from an older version fails, see [Claude Code does not support this model](/docs/en/errors#claude-code-does-not-support-this-model). Run `claude update` to upgrade.
 </Note>
 
 ### Work with Fable
@@ -154,16 +154,14 @@ If you or your organization configure [PreModelSwitch hooks](/docs/en/hooks#prem
 
 When Claude Code can't tell which PreModelSwitch hooks your organization's [managed plugins](/docs/en/settings-reference#enabledplugins) deliver, for example because a managed plugin failed to load, it refuses the switch rather than apply it unchecked, and it checks again on each new attempt. See [Model switch was blocked by a PreModelSwitch hook](/docs/en/errors#model-switch-was-blocked-by-a-premodelswitch-hook) for the message and recovery.
 
-When you switch models through the [Agent SDK](/docs/en/agent-sdk/overview) `setModel()` method or from a device connected through [Remote Control](/docs/en/remote-control), or an app such as the [Desktop app](/docs/en/desktop) that runs the Claude Code CLI switches for you, Claude Code checks that the string is one it recognizes before saving it. This check requires Claude Code v2.1.200 or later. Checking a Remote Control pick requires Claude Code v2.1.260 or later on your machine. On the Anthropic API, Claude Code recognizes:
+When you switch models through the [Agent SDK](/docs/en/agent-sdk/overview) `setModel()` method, through an app such as the [Desktop app](/docs/en/desktop), or from a device connected through [Remote Control](/docs/en/remote-control), Claude Code checks the value at the switch:
 
-* a model alias
-* an entry from the `/model` picker
-* any name that starts with `claude-`
-* a value you configured yourself as a [custom model option](#add-a-custom-model-option) or in [`modelOverrides`](#override-model-ids-per-version)
+* **Agent SDK or an app**: with Claude Code v2.1.268 or later, unless Claude Code accepts a model ID locally, as it does for your [custom model option](#add-a-custom-model-option), it confirms the ID with your provider the first time the session switches to it. The confirmation runs on every provider, and an ID your provider doesn't offer is refused at the switch instead of failing on your next request.
+* **Remote Control**: on the Anthropic API, Claude Code checks the value locally and sends no request.
 
-Claude Code rejects an unrecognized string with `Model "<name>" is not a recognized model id.` and the session keeps its current model, instead of saving the string and failing on the next request. See [the error reference](/docs/en/errors#model-is-not-a-recognized-model-id) for recovery steps.
+See [Model is not a recognized model id](/docs/en/errors#model-is-not-a-recognized-model-id) and [Model not found](/docs/en/errors#model-not-found) for the messages.
 
-The check runs only on the Anthropic API. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, [Claude Platform on AWS](/docs/en/claude-platform-on-aws), and behind an [LLM gateway](/docs/en/llm-gateway) or a custom `ANTHROPIC_BASE_URL`, your provider or gateway defines the model names, so Claude Code passes any string through without checking it. The check also doesn't cover the `--model` flag, the `ANTHROPIC_MODEL` environment variable, or the `model` setting; a mistyped value there produces [There's an issue with the selected model](/docs/en/errors#theres-an-issue-with-the-selected-model) on the first request instead. Claude Code can still write the [unrecognized-model diagnostic line](/docs/en/errors#unrecognized-model-id-on-a-request) at request time, on every provider.
+If you set the model with the `--model` flag, the `ANTHROPIC_MODEL` environment variable, or the `model` setting, Claude Code doesn't check it up front, and a mistyped value produces [There's an issue with the selected model](/docs/en/errors#theres-an-issue-with-the-selected-model) on the first request.
 
 When the requested model has a scheduled retirement date or is automatically remapped to a newer version, Claude Code shows a warning that names the requested model. Interactive sessions show it as a startup notice. From v2.1.182, the same warning is written to stderr in [non-interactive mode](/docs/en/headless) when using the default text output format. The check also covers a `model` set in [subagent frontmatter](/docs/en/sub-agents). The stderr warning is suppressed for `--output-format json` and `stream-json`; read the actual model from the `modelUsage` field of the [result message](/docs/en/headless#get-structured-output) instead.
 
@@ -225,7 +223,7 @@ When you pick a model with `/model` and your next session starts on something el
 
 ## Restrict model selection
 
-Enterprise administrators can use `availableModels` in [managed or policy settings](/docs/en/managed-settings) to restrict which models users can select. Entries match a model family such as `sonnet`, a version prefix such as `claude-sonnet-4-5`, or a full model ID such as `claude-sonnet-4-5-20250929`. A version prefix also matches later model IDs that extend it with another segment, so `claude-fable-5` permits both Fable 5 and Fable 5.1, while `claude-fable-5-1` permits Fable 5.1 only. To block a model the list permits, or to make each model ID entry permit only the version it names, see [Block specific models or versions](#block-specific-models-or-versions).
+Administrators can use `availableModels` in [managed or policy settings](/docs/en/managed-settings) to restrict which models users can select. Entries match a model family such as `sonnet`, a version prefix such as `claude-sonnet-4-5`, or a full model ID such as `claude-sonnet-4-5-20250929`. A version prefix also matches later model IDs that extend it with another segment, so `claude-fable-5` permits both Fable 5 and Fable 5.1, while `claude-fable-5-1` permits Fable 5.1 only. To block a model the list permits, or to make each model ID entry permit only the version it names, see [Block specific models or versions](#block-specific-models-or-versions).
 
 On platforms that embed Claude Code and set [`CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`](/docs/en/env-vars), the host's model configuration takes precedence over managed model settings, while a managed `availableModels` allowlist stays in force unless the host supplies its own; [Exceptions to managed settings precedence](/docs/en/settings#exceptions-to-managed-settings-precedence) says which keys and variables the host overrides.
 
@@ -685,9 +683,11 @@ Extended thinking is the reasoning Claude emits before responding. On models tha
 | Set the global default | Run `/config` and toggle thinking mode. Saved as `alwaysThinkingEnabled` in `~/.claude/settings.json` |
 | Disable through an environment variable | Set [`MAX_THINKING_TOKENS=0`](/docs/en/env-vars), which turns thinking off on the Anthropic API except on Opus 5.5, Sonnet 5.5, and Fable models. On [third-party providers](/docs/en/third-party-integrations), Claude Code omits the `thinking` parameter instead, and adaptive-reasoning models may still think. Other values apply only with a [fixed thinking budget](#adaptive-reasoning-and-fixed-thinking-budgets) |
 
-You can't turn thinking off on Opus 5.5, Sonnet 5.5, or the Fable models. The session toggle, `alwaysThinkingEnabled`, and `MAX_THINKING_TOKENS=0` have no effect there, and the model decides per step how much to think based on the effort level.
+You can't turn thinking off on Opus 5.5, Sonnet 5.5, or the Fable models. The session toggle and the `/config` row show `Thinking can't be turned off` for these models instead of offering the switch, and a saved `alwaysThinkingEnabled: false` or `MAX_THINKING_TOKENS=0` has no effect there. On these models, the model decides per step how much to think based on the effort level. The saved setting applies again when you switch to a model that accepts it.
 
 Claude Code collapses thinking output by default. Press `Ctrl+O` to toggle verbose mode and see the reasoning as gray italic text. Interactive sessions on the Anthropic API receive redacted thinking blocks by default, so set `showThinkingSummaries: true` in [settings](/docs/en/settings) if you want the full summaries available when you expand. You are charged for all thinking tokens generated, even when collapsed or redacted.
+
+<a id="extended-context-with-1m" />
 
 ### Extended context
 

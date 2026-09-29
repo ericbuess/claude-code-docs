@@ -820,7 +820,7 @@ Artifacts can also load JavaScript libraries, such as React or a charting packag
 
 ### Authentication and SSO
 
-Enterprise organizations can require SSO for all users. See [authentication](/docs/en/authentication) for plan-level details and [Setting up SSO](https://support.claude.com/en/articles/13132885-setting-up-single-sign-on-sso) for SAML configuration; OIDC setup is covered in the [Claude Enterprise Administrator Guide](https://claude.com/resources/tutorials/claude-enterprise-administrator-guide).
+Team and Enterprise organizations can require SSO for all users. See [authentication](/docs/en/authentication) for plan-level details and [Setting up SSO](https://support.claude.com/en/articles/13132885-setting-up-single-sign-on-sso) for SAML configuration; OIDC setup is covered in the [Claude Enterprise Administrator Guide](https://claude.com/resources/tutorials/claude-enterprise-administrator-guide).
 
 ### Data handling
 
@@ -843,7 +843,15 @@ If you already use the Claude Code CLI, Desktop runs the same underlying engine 
 
 To move a CLI session into Desktop, run `/desktop` in the terminal. Claude saves your session and opens it in the desktop app, then exits the CLI. This command is available on macOS and x64 Windows when you are signed in with a Claude subscription. It is not available with API key authentication or on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry.
 
-To pick up a CLI session from inside Desktop instead, type `/resume` in the prompt box. Desktop lists the sessions you started from the CLI, and you can search them by title, folder, or branch and preview where each one left off. Select a session and it continues in the app with its full conversation and context.
+You can also pick up a CLI session from inside Desktop with `/resume`. The command is available in local sessions, not in SSH, WSL, or cloud sessions.
+
+To continue a terminal session in Desktop:
+
+1. Close the session in the terminal.
+2. In the Desktop prompt box, type `/resume`. Desktop lists the sessions you started from the CLI on this computer. Search by title, folder, or branch, and preview where each one left off.
+3. Select the session. It continues in the app with its full conversation and context.
+
+Desktop continues the same session rather than a copy, so `claude --resume` in the terminal still finds it afterwards.
 
 <Tip>
   When to use Desktop vs CLI: use Desktop when you want to manage parallel sessions in one window, arrange panes side by side, or review changes visually. Use the CLI when you need scripting, automation, or prefer a terminal workflow.

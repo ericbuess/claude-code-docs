@@ -8,7 +8,7 @@
 
 A session is a saved conversation tied to a project directory. Claude Code stores it locally as you work, so you can resume where you left off, branch to try a different approach, or switch between tasks.
 
-The [desktop app](/docs/en/desktop#work-in-parallel-with-sessions), [claude.ai/code](/docs/en/claude-code-on-the-web), and the [VS Code extension](/docs/en/vs-code#resume-past-conversations) each maintain their own session history. This page covers the CLI.
+The [desktop app](/docs/en/desktop#work-in-parallel-with-sessions), [claude.ai/code](/docs/en/claude-code-on-the-web), and the [VS Code extension](/docs/en/vs-code#resume-past-conversations) each keep their own session list, and the desktop app can also [resume a CLI session](/docs/en/desktop#coming-from-the-cli). This page covers the CLI.
 
 ## Resume a session
 
@@ -123,7 +123,7 @@ Give sessions descriptive names so they're findable in the session picker and re
 | From claude.ai or the Claude app | Rename a [Remote Control session](/docs/en/remote-control#connect-from-another-device); Claude Code applies the same name in the CLI. Requires Claude Code v2.1.221 or later |
 | From the desktop app | Rename a session in the [desktop app](/docs/en/desktop#work-in-parallel-with-sessions) |
 
-Once you name a session through a CLI route or from claude.ai, return to it with `claude --resume <name>` or `/resume <name>`; a desktop-app session resumes in the app, which keeps its own session history. See [Resume a session](#resume-a-session) for how name resolution behaves across worktrees.
+Once you name a session through a CLI route or from claude.ai, return to it with `claude --resume <name>` or `/resume <name>`; a desktop-app session resumes in the [desktop app](/docs/en/desktop#work-in-parallel-with-sessions). See [Resume a session](#resume-a-session) for how name resolution behaves across worktrees.
 
 When you start or resume an interactive session with a name that another live session on this machine already uses, or rename a session into such a name, Claude Code leaves the name with the session that already has it, renames yours to a variant with a two-word suffix, such as `auth-refactor-graceful-unicorn`, and tells you. Run `/rename` with a new name if you'd rather pick one yourself. Before v2.1.232, both sessions kept the name.
 

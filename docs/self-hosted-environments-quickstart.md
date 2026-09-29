@@ -95,7 +95,7 @@ To set up manually instead:
   </Step>
 </Steps>
 
-The runner exits by design once its active sessions finish; see [Runner lifecycle](/docs/en/self-hosted-environments#runner-lifecycle). For production, deploy it under an orchestrator that restarts it on exit. See [Deploy to production](/docs/en/self-hosted-environments-deploy).
+The runner exits by design once its active sessions finish; see [Runner lifecycle](/docs/en/self-hosted-environments#runner-lifecycle). For production, deploy it under an orchestrator that restarts it on exit and waits longer between restarts when the runner keeps exiting right after it starts. See [Deploy to production](/docs/en/self-hosted-environments-deploy) and [When the runner exits](/docs/en/self-hosted-environments-deploy#when-the-runner-exits).
 
 ## Send a follow-up message to a running session
 

@@ -66,6 +66,8 @@ Fast mode works in [cloud sessions](/docs/en/claude-code-on-the-web) when it's a
 
 Type `/fast on` in the session to turn fast mode on. It stays on for that session only and isn't saved as your default. The [requirements](#requirements) apply in cloud sessions too.
 
+In the browser at [claude.ai/code](https://claude.ai/code), you can also turn fast mode on and off from the model menu on the message box. The menu shows the switch when your plan includes fast mode and the selected model supports it.
+
 ## Understand the cost tradeoff
 
 Fast mode has higher per-token pricing than standard Opus:
