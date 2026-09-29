@@ -146,14 +146,14 @@ Each kind of [component](/docs/en/plugins/components), such as skills, agents, h
 
 The table lists the directories most plugins start with, and the [full layout](/docs/en/plugins/manifest-reference#standard-layout) lists the rest.
 
-| Location                     | Contents                                                                                                                          |
-| :--------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| Location | Contents |
+| :- | :- |
 | `.claude-plugin/plugin.json` | The manifest. When you load a plugin with `--plugin-dir` and it has no manifest, Claude Code names the plugin after its directory |
-| `skills/`                    | One `<name>/SKILL.md` directory per skill                                                                                         |
-| `commands/`                  | Flat Markdown files, the older form of skills. Use `skills/` for new plugins                                                      |
-| `agents/`                    | One Markdown file per subagent                                                                                                    |
-| `hooks/hooks.json`           | Hook configuration: a top-level `"hooks"` key whose value has the same shape as `hooks` in a settings file                        |
-| `.mcp.json`                  | MCP server definitions                                                                                                            |
+| `skills/` | One `<name>/SKILL.md` directory per skill |
+| `commands/` | Flat Markdown files, the older form of skills. Use `skills/` for new plugins |
+| `agents/` | One Markdown file per subagent |
+| `hooks/hooks.json` | Hook configuration: a top-level `"hooks"` key whose value has the same shape as `hooks` in a settings file |
+| `.mcp.json` | MCP server definitions |
 
 <Warning>
   Only `plugin.json` goes inside `.claude-plugin/`. Components saved there don't load.

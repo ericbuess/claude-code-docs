@@ -77,9 +77,9 @@ Older clients still load a marketplace that uses `relevance` fields they don't r
 
 ### `relevance`
 
-| Field     | Type   | Description                                                                                                                                                             |
-| :-------- | :----- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `topic`   | string | Optional. The phrase that fills "Working with *topic*?" in the spinner tip. Defaults to the plugin name with each hyphen segment capitalized. Maximum 64 characters.    |
+| Field | Type | Description |
+| :- | :- | :- |
+| `topic` | string | Optional. The phrase that fills "Working with *topic*?" in the spinner tip. Defaults to the plugin name with each hyphen segment capitalized. Maximum 64 characters. |
 | `signals` | object | Matchers that determine when the plugin is relevant. Claude Code suggests the plugin only if at least one signal is set. See [`relevance.signals`](#relevance-signals). |
 
 The `topic` is often the product name, for example `Terraform`. Use a domain such as `design` when the plugin name doesn't sound natural as a topic.
@@ -88,12 +88,12 @@ The `topic` is often the product name, for example `Terraform`. Use a domain suc
 
 The `signals` object accepts the following fields.
 
-| Field          | Type             | Description                                                                                                                                                                                                                                 | Limit                                                                                        |
-| :------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------- |
-| `cwd`          | array of strings | Glob patterns matched against the session's working directory. See [working directory matching](#working-directory-matching).                                                                                                               | 10 patterns of 256 characters each                                                           |
-| `cli`          | array of strings | Command names from shell commands Claude has run this session, for example `["terraform"]`. Exact match. See [command name matching](#command-name-matching).                                                                               | 10 entries of 64 characters each                                                             |
-| `hosts`        | array of strings | Hostnames seen in `http://` or `https://` URLs in Bash commands this session, for example `["registry.terraform.io"]`. Bare lowercase hostname only: no scheme, port, or path. Exact case-insensitive match.                                | 20 entries of 128 characters each                                                            |
-| `filesRead`    | array of strings | Glob patterns matched against the paths of files Claude has read this session, for example `["**/*.tf"]`. Forward-slash normalized and case-insensitive.                                                                                    | 10 patterns of 256 characters each                                                           |
+| Field | Type | Description | Limit |
+| :- | :- | :- | :- |
+| `cwd` | array of strings | Glob patterns matched against the session's working directory. See [working directory matching](#working-directory-matching). | 10 patterns of 256 characters each |
+| `cli` | array of strings | Command names from shell commands Claude has run this session, for example `["terraform"]`. Exact match. See [command name matching](#command-name-matching). | 10 entries of 64 characters each |
+| `hosts` | array of strings | Hostnames seen in `http://` or `https://` URLs in Bash commands this session, for example `["registry.terraform.io"]`. Bare lowercase hostname only: no scheme, port, or path. Exact case-insensitive match. | 20 entries of 128 characters each |
+| `filesRead` | array of strings | Glob patterns matched against the paths of files Claude has read this session, for example `["**/*.tf"]`. Forward-slash normalized and case-insensitive. | 10 patterns of 256 characters each |
 | `manifestDeps` | array of objects | Dependencies declared in package manifests Claude has read this session. Each entry is `{ "file": "...", "pattern": "..." }`, where both values are regular expressions. See [manifest dependency matching](#manifest-dependency-matching). | 10 entries, each value at most 256 characters. Manifest files larger than 512 KB are skipped |
 
 The `filesRead` and `manifestDeps` signals also match against files Claude has written or edited this session and against the project's auto-loaded `CLAUDE.md` memory files.

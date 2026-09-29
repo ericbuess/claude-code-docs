@@ -49,11 +49,11 @@ A marketplace's name places it in one of three tiers: official, community, or th
 
 The table lists which names fall in each tier:
 
-| Tier        | Which marketplaces                                                                               |
-| :---------- | :----------------------------------------------------------------------------------------------- |
-| Official    | The [official marketplace names](#official-marketplace-names), such as `claude-plugins-official` |
-| Community   | `claude-community`, `claude-plugins-community`, and `healthcare`                                 |
-| Third-party | Every other marketplace                                                                          |
+| Tier | Which marketplaces |
+| :- | :- |
+| Official | The [official marketplace names](#official-marketplace-names), such as `claude-plugins-official` |
+| Community | `claude-community`, `claude-plugins-community`, and `healthcare` |
+| Third-party | Every other marketplace |
 
 Where the `claude-community` catalog pins a plugin to a commit SHA, which it does for nearly every entry, Claude Code refuses to install a different commit.
 

@@ -28,12 +28,12 @@ This integration is built on the existing Claude for Slack app but adds intellig
 
 Before using Claude Code in Slack, ensure you have the following:
 
-| Requirement          | Details                                                                                           |
-| :------------------- | :------------------------------------------------------------------------------------------------ |
-| Claude Plan          | Pro, Max, Team, or Enterprise with Claude Code access (premium seats or Chat + Claude Code seats) |
-| Cloud sessions       | [Cloud sessions](/docs/en/claude-code-on-the-web) are enabled for your account                         |
-| GitHub Account       | Connected at [claude.ai/code](https://claude.ai/code) with at least one repository authenticated  |
-| Slack Authentication | Your Slack account linked to your Claude account via the Claude app                               |
+| Requirement | Details |
+| :- | :- |
+| Claude Plan | Pro, Max, Team, or Enterprise with Claude Code access (premium seats or Chat + Claude Code seats) |
+| Cloud sessions | [Cloud sessions](/docs/en/claude-code-on-the-web) are enabled for your account |
+| GitHub Account | Connected at [claude.ai/code](https://claude.ai/code) with at least one repository authenticated |
+| Slack Authentication | Your Slack account linked to your Claude account via the Claude app |
 
 ## Setting up Claude Code in Slack
 
@@ -62,9 +62,9 @@ Before using Claude Code in Slack, ensure you have the following:
   <Step title="Choose your routing mode">
     After connecting your accounts, configure how Claude handles your messages in Slack. Open the Claude App Home in Slack to find the **Routing Mode** setting.
 
-    | Mode            | Behavior                                                                                                                                                                                                                                 |
-    | :-------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | **Code only**   | Claude routes all @mentions to Claude Code sessions. Best for teams using Claude in Slack exclusively for development tasks.                                                                                                             |
+    | Mode | Behavior |
+    | :- | :- |
+    | **Code only** | Claude routes all @mentions to Claude Code sessions. Best for teams using Claude in Slack exclusively for development tasks. |
     | **Code + Chat** | Claude analyzes each message and intelligently routes between Claude Code (for coding tasks) and Claude Chat (for writing, analysis, and general questions). Best for teams who want a single @Claude entry point for all types of work. |
 
     <Note>
@@ -127,22 +127,22 @@ Claude automatically selects a repository based on context from your Slack conve
 
 ### User-level access
 
-| Access Type          | Requirement                                                     |
-| :------------------- | :-------------------------------------------------------------- |
-| Claude Code Sessions | Each user runs sessions under their own Claude account          |
-| Usage & Rate Limits  | Sessions count against the individual user's plan limits        |
-| Repository Access    | Users can only access repositories they've personally connected |
-| Session History      | Sessions appear in your Claude Code history on claude.ai/code   |
+| Access Type | Requirement |
+| :- | :- |
+| Claude Code Sessions | Each user runs sessions under their own Claude account |
+| Usage & Rate Limits | Sessions count against the individual user's plan limits |
+| Repository Access | Users can only access repositories they've personally connected |
+| Session History | Sessions appear in your Claude Code history on claude.ai/code |
 
 ### Workspace-level access
 
 Slack workspace administrators control whether the Claude app is available in their workspace:
 
-| Control                      | Description                                                                                                       |
-| :--------------------------- | :---------------------------------------------------------------------------------------------------------------- |
-| App installation             | Workspace admins decide whether to install the Claude app from the Slack App Marketplace                          |
+| Control | Description |
+| :- | :- |
+| App installation | Workspace admins decide whether to install the Claude app from the Slack App Marketplace |
 | Enterprise Grid distribution | For Enterprise Grid organizations, organization admins can control which workspaces have access to the Claude app |
-| App removal                  | Removing the app from a workspace immediately revokes access for all users in that workspace                      |
+| App removal | Removing the app from a workspace immediately revokes access for all users in that workspace |
 
 ### Channel-based access control
 

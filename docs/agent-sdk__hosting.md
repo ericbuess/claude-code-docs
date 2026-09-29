@@ -58,11 +58,11 @@ The TypeScript examples on this page use top-level `await`, so save them as `.mt
 
 Three kinds of agent state live on the container's filesystem by default. None of them survive a container restart, a scale-down, or a move to a different node.
 
-| State                       | Default location                                                                                 |
-| --------------------------- | ------------------------------------------------------------------------------------------------ |
-| Session transcripts         | `~/.claude/projects/`, or the `projects/` directory under `CLAUDE_CONFIG_DIR` if set             |
-| `CLAUDE.md` memory files    | `~/.claude/CLAUDE.md` for the user tier and the session's working directory for the project tier |
-| Working-directory artifacts | The session's working directory                                                                  |
+| State | Default location |
+| - | - |
+| Session transcripts | `~/.claude/projects/`, or the `projects/` directory under `CLAUDE_CONFIG_DIR` if set |
+| `CLAUDE.md` memory files | `~/.claude/CLAUDE.md` for the user tier and the session's working directory for the project tier |
+| Working-directory artifacts | The session's working directory |
 
 To persist transcripts across hosts, configure a [`SessionStore` adapter](/docs/en/agent-sdk/session-storage). Memory files and other working-directory artifacts need their own storage strategy, such as a mounted volume or an object-store sync.
 
@@ -343,12 +343,12 @@ The example below applies the settings, auto memory, config directory, and worki
 
 Plan around these in your deployment design.
 
-| Limitation                                          | What to do                                                                                                                                                                                                                               |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| No top-level session timeout                        | A session does not time out on its own. Set `maxTurns` in TypeScript or `max_turns` in Python to bound how many tool-use round trips the agent takes before stopping.                                                                    |
-| Memory growth over long sessions                    | Cap session length or recycle subprocesses periodically. See [Scaling and concurrency](#scaling-and-concurrency).                                                                                                                        |
-| Large parallel-subagent fanouts can hit rate limits | Break work into smaller batches rather than issuing one wide dispatch.                                                                                                                                                                   |
-| No per-subagent wall-clock deadline                 | Cap each [subagent](/docs/en/agent-sdk/subagents) with `maxTurns` in its `AgentDefinition`. `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS` sets a stall watchdog that fires when a subagent stops producing output; it isn't a total-runtime deadline. |
+| Limitation | What to do |
+| - | - |
+| No top-level session timeout | A session does not time out on its own. Set `maxTurns` in TypeScript or `max_turns` in Python to bound how many tool-use round trips the agent takes before stopping. |
+| Memory growth over long sessions | Cap session length or recycle subprocesses periodically. See [Scaling and concurrency](#scaling-and-concurrency). |
+| Large parallel-subagent fanouts can hit rate limits | Break work into smaller batches rather than issuing one wide dispatch. |
+| No per-subagent wall-clock deadline | Cap each [subagent](/docs/en/agent-sdk/subagents) with `maxTurns` in its `AgentDefinition`. `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS` sets a stall watchdog that fires when a subagent stops producing output; it isn't a total-runtime deadline. |
 
 ## Troubleshoot deployment failures
 

@@ -22,11 +22,11 @@ The API caches by matching the start of each request, called the prefix, against
 
 To get the most out of prefix matching, Claude Code orders each request so content that rarely changes between turns comes first:
 
-| Layer           | Content                                         | Changes when                                    |
-| --------------- | ----------------------------------------------- | ----------------------------------------------- |
-| System prompt   | Core instructions, tool definitions             | The set of loaded tool definitions changes      |
-| Project context | CLAUDE.md, auto memory, unscoped rules          | Session starts, or after `/clear` or `/compact` |
-| Conversation    | Your messages, Claude's responses, tool results | Every turn                                      |
+| Layer | Content | Changes when |
+| - | - | - |
+| System prompt | Core instructions, tool definitions | The set of loaded tool definitions changes |
+| Project context | CLAUDE.md, auto memory, unscoped rules | Session starts, or after `/clear` or `/compact` |
+| Conversation | Your messages, Claude's responses, tool results | Every turn |
 
 A change to the conversation layer leaves the system prompt and project context cached. A change to the system prompt invalidates everything, because all later content now sits behind a different prefix. The third column gives common triggers rather than an exhaustive list, and the sections below cover the full set.
 
@@ -108,19 +108,19 @@ The cost applies once per conversation. After the first fast mode turn, Claude C
 
 ### Connecting or removing an MCP server
 
-Tool definitions sit in the system prompt layer, so the cache invalidates when the set of tool definitions in the request changes between turns. Toggling the [advisor tool](/docs/en/advisor) is an exception: its definition sits after the cache breakpoint, so enabling or disabling `/advisor` keeps the cached prefix intact. Whether an [MCP server](/docs/en/mcp) change does this depends on whether its tools are deferred by [tool search](/docs/en/mcp#scale-with-mcp-tool-search) or loaded into the prefix:
+Tool definitions sit in the system prompt layer, so the cache invalidates when the set of tool definitions in the request changes between turns. Toggling the [advisor tool](/docs/en/advisor) is an exception: its definition sits after the cache breakpoint, so enabling or disabling `/advisor` keeps the cached prefix intact. Whether an [MCP server](/docs/en/mcp) change does this depends on whether [tool search](/docs/en/mcp#scale-with-mcp-tool-search) defers the session's MCP tools, the default on supported models:
 
-* **Deferred tools**, the default on supported models: a server connecting, disconnecting, or changing its tool list only appends new content and doesn't disturb anything already cached.
-* **Tools loaded into the prefix**: adding a definition invalidates the cache, and so does removing one on purpose. This is the case when [tool search is unavailable or disabled](/docs/en/mcp#configure-tool-search), such as on Google Cloud's Agent Platform models earlier than the Claude 4.5 generation, with a custom `ANTHROPIC_BASE_URL` gateway, or on a Microsoft Foundry [deployment hosted on Azure](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options) once Claude Code detects that the deployment rejects tool search.
+* **Tools deferred**: Claude Code keeps the tool list from the conversation's first request for the whole conversation, so a server connecting or disconnecting mid-session doesn't disturb anything already cached. A server that finishes connecting after the first request supplies its tools as deferred definitions that Claude loads on demand.
+* **Tools loaded upfront**: adding a definition invalidates the cache, and so does removing one on purpose. This applies when tool search is [below its `auto` threshold, disabled, or unavailable](/docs/en/mcp#configure-tool-search), such as on Google Cloud's Agent Platform models earlier than the Claude 4.5 generation, with a custom `ANTHROPIC_BASE_URL` gateway, or on a Microsoft Foundry [deployment hosted on Azure](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options) once Claude Code detects that the deployment rejects tool search.
 
 Without tool search, whether a mid-session server change invalidates the cache depends on what changed. For each change, this table gives whether the cache is kept and what happens to the tool definitions in the next request.
 
-| Mid-session change                                                                                                     | Cache                                                                                                                       | Tool definitions in the next request                                                                                                                                                                                        |
-| ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A server connects, or a [dynamic tool update](/docs/en/mcp#dynamic-tool-updates) adds tools                                 | Invalidated                                                                                                                 | The new definitions are added                                                                                                                                                                                               |
-| A server drops out with no action on your part, such as a stdio server's process exiting                               | Kept                                                                                                                        | The server's definitions stay unchanged. A call to one of its tools returns an error instead of running                                                                                                                     |
-| A remote server [reconnects automatically](/docs/en/mcp#automatic-reconnection) after its connection drops                  | Kept, unless a request sent while the server reconnects adds the `WaitForMcpServers` tool, which invalidates the cache once | The server's definitions stay unchanged. A request sent while the server reconnects can add `WaitForMcpServers` when the conversation hasn't listed it yet, and the tool then stays listed for the rest of the conversation |
-| You remove a tool on purpose, such as with a [deny rule](#denying-an-entire-tool) or by disabling its server in `/mcp` | Invalidated                                                                                                                 | The definition is removed                                                                                                                                                                                                   |
+| Mid-session change | Cache | Tool definitions in the next request |
+| - | - | - |
+| A server connects, or a [dynamic tool update](/docs/en/mcp#dynamic-tool-updates) adds tools | Invalidated | The new definitions are added |
+| A server drops out with no action on your part, such as a stdio server's process exiting | Kept | The server's definitions stay unchanged. A call to one of its tools returns an error instead of running |
+| A remote server [reconnects automatically](/docs/en/mcp#automatic-reconnection) after its connection drops | Kept, unless a request sent while the server reconnects adds the `WaitForMcpServers` tool, which invalidates the cache once | The server's definitions stay unchanged. A request sent while the server reconnects can add `WaitForMcpServers` when the conversation hasn't listed it yet, and the tool then stays listed for the rest of the conversation |
+| You remove a tool on purpose, such as with a [deny rule](#denying-an-entire-tool) or by disabling its server in `/mcp` | Invalidated | The definition is removed |
 
 When you resume a conversation whose tools load into the prefix, one of its MCP servers can still be connecting as the first request goes out. If the transcript recorded that server's tool definitions, that request includes them as recorded, so it doesn't change when the server finishes connecting with the same tools.
 
@@ -136,10 +136,7 @@ Claude Code never invalidates the cache for a plugin's skills, commands, agents,
 
 #### Plugins that provide MCP servers
 
-When you enable or disable a plugin that provides [MCP servers](/docs/en/plugins/components#mcp-servers), Claude Code follows the same rules as when you [connect or remove an MCP server](#connecting-or-removing-an-mcp-server):
-
-* If Claude Code defers the server's tools, it keeps the cache.
-* If Claude Code loads them into the prefix, the next request re-reads the entire conversation.
+When you enable or disable a plugin that provides [MCP servers](/docs/en/plugins/components#mcp-servers), Claude Code follows the same rules as when you [connect or remove an MCP server](#connecting-or-removing-an-mcp-server).
 
 #### Code intelligence plugins
 
@@ -270,10 +267,10 @@ Claude Code decides the TTL per request, and every request falls in one of two f
 
 Unless you choose a TTL yourself, Claude Code requests the one-hour TTL only on a Claude subscription within your plan's included usage. There it requests the hour for the main conversation, plus a small set of helper requests that Anthropic controls server-side. This table gives each bucket's default TTL under both kinds of billing.
 
-| Request bucket    | Claude subscription, within plan usage                                         | Usage credits, API key, or cloud provider |
-| ----------------- | ------------------------------------------------------------------------------ | ----------------------------------------- |
-| Main conversation | One hour                                                                       | Five minutes                              |
-| Everything else   | Five minutes, except the server-controlled helper requests, which get one hour | Five minutes                              |
+| Request bucket | Claude subscription, within plan usage | Usage credits, API key, or cloud provider |
+| - | - | - |
+| Main conversation | One hour | Five minutes |
+| Everything else | Five minutes, except the server-controlled helper requests, which get one hour | Five minutes |
 
 Once you go over your plan's usage limit and Claude Code draws on [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans), you are billed for that usage, so Claude Code drops the main conversation to the cheaper five-minute TTL. To keep the one-hour TTL there, [choose the TTL yourself](#choose-the-ttl-yourself).
 
@@ -303,20 +300,20 @@ Through an LLM gateway you set with `ANTHROPIC_BASE_URL`, part of the one-hour r
 
 ## Cache scope
 
-In Claude Code, the cache is effectively scoped to one machine and directory. Each conversation carries the working directory, platform, shell, and OS version, and the system prompt names your auto memory paths, so two sessions in different directories build different prefixes and miss each other's cache. That includes worktrees of the same repository, since each worktree has its own working directory.
+In Claude Code, the cache is effectively scoped to one machine and directory. The system prompt embeds your auto memory paths, and the conversation opens with an announcement of the working directory, platform, shell, and OS version. Two sessions in different directories therefore build different prefixes and miss each other's cache.
 
 Sessions you run in parallel in the same directory build matching prefixes and read each other's cache. Sequential sessions share the prefix only when the git status snapshot taken at startup matches, since each conversation also carries the branch and recent commits from that snapshot.
 
-The underlying API cache is broader. Caches are isolated between organizations, and on some providers, [between workspaces within an organization](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#cache-storage-and-sharing). Within those boundaries, any two requests with the same model and prefix read the same cache. For Agent SDK callers running fleets of automated processes, see [improve prompt caching across users and machines](/docs/en/agent-sdk/modifying-system-prompts#improve-prompt-caching-across-users-and-machines) to suppress the per-machine sections of the system prompt and share the cache across machines.
+The underlying API cache is broader. Caches are isolated between organizations, and on some providers, [between workspaces within an organization](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#cache-storage-and-sharing). Within those boundaries, any two requests with the same model and prefix read the same cache. For Agent SDK callers running fleets of automated processes, see [improve prompt caching across users and machines](/docs/en/agent-sdk/modifying-system-prompts#improve-prompt-caching-across-users-and-machines) to move the auto memory location out of the system prompt and share the system prompt's cache entry across users and machines.
 
 ## Check cache performance
 
 Cache performance shows up as two token counts the API reports on every response. The most direct way to watch them live is a [statusline script](/docs/en/statusline) that reads the `current_usage` object:
 
-| Field                         | Meaning                                                                                                                                                                   |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cache_creation_input_tokens` | Tokens written to the cache on this turn, billed at the cache write rate                                                                                                  |
-| `cache_read_input_tokens`     | Tokens served from cache on this turn, billed at the model's [cached token rate](https://platform.claude.com/docs/en/about-claude/pricing), below the standard input rate |
+| Field | Meaning |
+| - | - |
+| `cache_creation_input_tokens` | Tokens written to the cache on this turn, billed at the cache write rate |
+| `cache_read_input_tokens` | Tokens served from cache on this turn, billed at the model's [cached token rate](https://platform.claude.com/docs/en/about-claude/pricing), below the standard input rate |
 
 A high read-to-creation ratio means caching is working well. If creation stays high turn after turn, something is changing in your prefix. The [actions that invalidate the cache](#actions-that-invalidate-the-cache) section lists the usual causes.
 
@@ -345,13 +342,13 @@ Other requests can also read a prefix that an earlier request cached:
 
 Disabling caching is occasionally useful when debugging caching behavior with a specific model or provider. To turn it off, set one of these environment variables to `1`:
 
-| Variable                        | Effect                              |
-| ------------------------------- | ----------------------------------- |
-| `DISABLE_PROMPT_CACHING`        | Disable for all models              |
-| `DISABLE_PROMPT_CACHING_HAIKU`  | Disable for the default Haiku model |
-| `DISABLE_PROMPT_CACHING_SONNET` | Disable for Sonnet only             |
-| `DISABLE_PROMPT_CACHING_OPUS`   | Disable for Opus only               |
-| `DISABLE_PROMPT_CACHING_FABLE`  | Disable for Fable only              |
+| Variable | Effect |
+| - | - |
+| `DISABLE_PROMPT_CACHING` | Disable for all models |
+| `DISABLE_PROMPT_CACHING_HAIKU` | Disable for the default Haiku model |
+| `DISABLE_PROMPT_CACHING_SONNET` | Disable for Sonnet only |
+| `DISABLE_PROMPT_CACHING_OPUS` | Disable for Opus only |
+| `DISABLE_PROMPT_CACHING_FABLE` | Disable for Fable only |
 
 `DISABLE_PROMPT_CACHING_HAIKU` applies to the default Haiku model, the model the `haiku` alias resolves to. It disables caching wherever that model runs, including the main conversation when it is your main model. Covering the main conversation requires Claude Code v2.1.283 or later.
 

@@ -35,18 +35,18 @@ Extensions plug into different parts of the agentic loop:
 
 Features range from always-on context that Claude sees every session, to on-demand capabilities you or Claude can invoke, to background automation that runs on specific events. The table below shows what's available and when each one makes sense.
 
-| Feature                                                        | What it does                                                                       | When to use it                                                                                                       | Example                                                                                                           |
-| -------------------------------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| **CLAUDE.md**                                                  | Persistent context loaded every conversation                                       | Project conventions, "always do X" rules                                                                             | "Use pnpm, not npm. Run tests before committing."                                                                 |
-| **[Output style](/docs/en/output-styles)**                          | Instructions that set Claude's role, tone, and response format for a whole session | A voice, length, or format you want in every response, or Claude working as something other than a software engineer | The built-in Concise style for shorter responses; a custom style that answers every question with a diagram first |
-| **Skill**                                                      | Instructions, knowledge, and workflows Claude can use                              | Reusable content, reference docs, repeatable tasks                                                                   | `/deploy` runs your deployment checklist; API docs skill with endpoint patterns                                   |
-| **Subagent**                                                   | Isolated execution context that returns summarized results                         | Context isolation, parallel tasks, specialized workers                                                               | Research task that reads many files but returns only key findings                                                 |
-| **[Dynamic workflow](/docs/en/workflows)**                          | Script Claude writes that runs many subagents in the background                    | Work that outgrows a handful of subagents, or findings you want cross-checked                                        | Audit a whole codebase, with a second set of agents verifying each finding                                        |
-| **[Cross-session messaging](/docs/en/cross-session-messaging)**     | Claude delivers a message from one of your sessions to another                     | Sessions you run yourself that need each other's findings mid-task                                                   | One session warns another that a change it made breaks what the other is building on                              |
-| **[Code intelligence](/docs/en/tools-reference#lsp-tool-behavior)** | Language-server navigation and diagnostics                                         | Typed languages, large codebases where grep is slow or imprecise                                                     | Jump to a symbol's definition instead of reading the whole file                                                   |
-| **MCP**                                                        | Connect to external services                                                       | External data or actions                                                                                             | Query your database, post to Slack, control a browser                                                             |
-| **Hook**                                                       | Script, HTTP request, MCP tool call, prompt, or subagent triggered by events       | Automation that must run on every matching event                                                                     | Run ESLint after every file edit                                                                                  |
-| **[Artifact](/docs/en/artifacts)**                                  | Publish session output as a private, interactive web page                          | Output you want to see or share visually rather than as terminal text                                                | An incident timeline that updates as Claude investigates                                                          |
+| Feature | What it does | When to use it | Example |
+| - | - | - | - |
+| **CLAUDE.md** | Persistent context loaded every conversation | Project conventions, "always do X" rules | "Use pnpm, not npm. Run tests before committing." |
+| **[Output style](/docs/en/output-styles)** | Instructions that set Claude's role, tone, and response format for a whole session | A voice, length, or format you want in every response, or Claude working as something other than a software engineer | The built-in Concise style for shorter responses; a custom style that answers every question with a diagram first |
+| **Skill** | Instructions, knowledge, and workflows Claude can use | Reusable content, reference docs, repeatable tasks | `/deploy` runs your deployment checklist; API docs skill with endpoint patterns |
+| **Subagent** | Isolated execution context that returns summarized results | Context isolation, parallel tasks, specialized workers | Research task that reads many files but returns only key findings |
+| **[Dynamic workflow](/docs/en/workflows)** | Script Claude writes that runs many subagents in the background | Work that outgrows a handful of subagents, or findings you want cross-checked | Audit a whole codebase, with a second set of agents verifying each finding |
+| **[Cross-session messaging](/docs/en/cross-session-messaging)** | Claude delivers a message from one of your sessions to another | Sessions you run yourself that need each other's findings mid-task | One session warns another that a change it made breaks what the other is building on |
+| **[Code intelligence](/docs/en/tools-reference#lsp-tool-behavior)** | Language-server navigation and diagnostics | Typed languages, large codebases where grep is slow or imprecise | Jump to a symbol's definition instead of reading the whole file |
+| **MCP** | Connect to external services | External data or actions | Query your database, post to Slack, control a browser |
+| **Hook** | Script, HTTP request, MCP tool call, prompt, or subagent triggered by events | Automation that must run on every matching event | Run ESLint after every file edit |
+| **[Artifact](/docs/en/artifacts)** | Publish session output as a private, interactive web page | Output you want to see or share visually rather than as terminal text | An incident timeline that updates as Claude investigates |
 
 **[Plugins](/docs/en/plugins/overview)** are the packaging layer. A plugin bundles skills, hooks, subagents, and MCP servers into a single installable unit. Plugin skills are namespaced (like `/my-plugin:review`) so multiple plugins can coexist. Use plugins when you want to reuse the same setup across multiple repositories or distribute to others via a **[marketplace](/docs/en/plugins/overview)**.
 
@@ -54,17 +54,17 @@ Features range from always-on context that Claude sees every session, to on-dema
 
 You don't need to configure everything up front. Each feature has a recognizable trigger, and most teams add them in roughly this order:
 
-| Trigger                                                                          | Add                                                                                   |
-| :------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
-| Claude gets a convention or command wrong twice                                  | Add it to [CLAUDE.md](/docs/en/memory)                                                     |
-| You keep asking Claude to be shorter, explain more, or answer in the same format | Set an [output style](/docs/en/output-styles)                                              |
-| You keep typing the same prompt to start a task                                  | Save it as a user-invocable [skill](/docs/en/skills)                                       |
-| You paste the same playbook or multi-step procedure into chat for the third time | Capture it as a [skill](/docs/en/skills)                                                   |
-| You keep copying data from a browser tab Claude can't see                        | Connect that system as an [MCP server](/docs/en/mcp)                                       |
-| Claude reads many files to find where a symbol is defined or used                | Install a [code intelligence plugin](/docs/en/plugins/code-intelligence) for your language |
-| A side task floods your conversation with output you won't reference again       | Route it through a [subagent](/docs/en/sub-agents)                                         |
-| You want something to happen every time without asking                           | Write a [hook](/docs/en/hooks-guide)                                                       |
-| A second repository needs the same setup                                         | Package it as a [plugin](/docs/en/plugins/overview)                                        |
+| Trigger | Add |
+| :- | :- |
+| Claude gets a convention or command wrong twice | Add it to [CLAUDE.md](/docs/en/memory) |
+| You keep asking Claude to be shorter, explain more, or answer in the same format | Set an [output style](/docs/en/output-styles) |
+| You keep typing the same prompt to start a task | Save it as a user-invocable [skill](/docs/en/skills) |
+| You paste the same playbook or multi-step procedure into chat for the third time | Capture it as a [skill](/docs/en/skills) |
+| You keep copying data from a browser tab Claude can't see | Connect that system as an [MCP server](/docs/en/mcp) |
+| Claude reads many files to find where a symbol is defined or used | Install a [code intelligence plugin](/docs/en/plugins/code-intelligence) for your language |
+| A side task floods your conversation with output you won't reference again | Route it through a [subagent](/docs/en/sub-agents) |
+| You want something to happen every time without asking | Write a [hook](/docs/en/hooks-guide) |
+| A second repository needs the same setup | Package it as a [plugin](/docs/en/plugins/overview) |
 
 The same triggers tell you when to update what you already have. A repeated mistake or a recurring review comment is a CLAUDE.md edit, not a one-off correction in chat. A workflow you keep tweaking by hand is a skill that needs another revision.
 
@@ -79,12 +79,12 @@ Some features can seem similar. For a deeper walkthrough of choosing between the
     * **Skills** are reusable content you can load into any context
     * **Subagents** are isolated workers that run separately from your main conversation
 
-    | Aspect                                          | Skill                                          | Subagent                                                         |
-    | ----------------------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------- |
-    | **What it is**                                  | Reusable instructions, knowledge, or workflows | Isolated worker with its own context                             |
-    | **Key benefit**                                 | Share content across contexts                  | Context isolation. Work happens separately, only summary returns |
-    | **[Context window](/docs/en/context-window) impact** | Adds to your main window                       | Uses a separate window with its own input and output tokens      |
-    | **Best for**                                    | Reference material, invocable workflows        | Tasks that read many files, parallel work, specialized workers   |
+    | Aspect | Skill | Subagent |
+    | - | - | - |
+    | **What it is** | Reusable instructions, knowledge, or workflows | Isolated worker with its own context |
+    | **Key benefit** | Share content across contexts | Context isolation. Work happens separately, only summary returns |
+    | **[Context window](/docs/en/context-window) impact** | Adds to your main window | Uses a separate window with its own input and output tokens |
+    | **Best for** | Reference material, invocable workflows | Tasks that read many files, parallel work, specialized workers |
 
     **Skills can be reference or action.** Reference skills provide knowledge Claude uses throughout your session (like your API style guide). Action skills tell Claude to do something specific (like `/deploy` that runs your deployment workflow).
 
@@ -96,12 +96,12 @@ Some features can seem similar. For a deeper walkthrough of choosing between the
   <Tab title="CLAUDE.md vs Skill">
     Both store instructions, but they load differently and serve different purposes.
 
-    | Aspect                    | CLAUDE.md                    | Skill                                   |
-    | ------------------------- | ---------------------------- | --------------------------------------- |
-    | **Loads**                 | Every session, automatically | On demand                               |
-    | **Can include files**     | Yes, with `@path` imports    | Yes, with `@path` imports               |
-    | **Can trigger workflows** | No                           | Yes, with `/<name>`                     |
-    | **Best for**              | "Always do X" rules          | Reference material, invocable workflows |
+    | Aspect | CLAUDE.md | Skill |
+    | - | - | - |
+    | **Loads** | Every session, automatically | On demand |
+    | **Can include files** | Yes, with `@path` imports | Yes, with `@path` imports |
+    | **Can trigger workflows** | No | Yes, with `/<name>` |
+    | **Best for** | "Always do X" rules | Reference material, invocable workflows |
 
     **Put it in CLAUDE.md** if Claude should always know it: coding conventions, build commands, project structure, "never do X" rules.
 
@@ -113,11 +113,11 @@ Some features can seem similar. For a deeper walkthrough of choosing between the
   <Tab title="CLAUDE.md vs Output style">
     Both give Claude standing instructions. CLAUDE.md carries what Claude should know, and an output style sets how Claude responds.
 
-    | Aspect        | CLAUDE.md                                       | Output style                                                                                        |
-    | ------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-    | **Holds**     | Facts and rules about your project              | A role, tone, and response format                                                                   |
-    | **Switching** | Always loaded                                   | One active at a time; [switch styles](/docs/en/output-styles#change-your-output-style) whenever you want |
-    | **Best for**  | Build commands, conventions, "never do X" rules | Shorter responses, explanations alongside code, a non-engineering role                              |
+    | Aspect | CLAUDE.md | Output style |
+    | - | - | - |
+    | **Holds** | Facts and rules about your project | A role, tone, and response format |
+    | **Switching** | Always loaded | One active at a time; [switch styles](/docs/en/output-styles#change-your-output-style) whenever you want |
+    | **Best for** | Build commands, conventions, "never do X" rules | Shorter responses, explanations alongside code, a non-engineering role |
 
     **Put it in CLAUDE.md** if it's true of the project whatever style you're in: coding conventions, build commands, project structure.
 
@@ -129,10 +129,10 @@ Some features can seem similar. For a deeper walkthrough of choosing between the
   <Tab title="CLAUDE.md vs Rules vs Skills">
     All three store instructions, but they load differently:
 
-    | Aspect       | CLAUDE.md                           | `.claude/rules/`                                   | Skill                                    |
-    | ------------ | ----------------------------------- | -------------------------------------------------- | ---------------------------------------- |
-    | **Loads**    | Every session                       | Every session, or when matching files are opened   | On demand, when invoked or relevant      |
-    | **Scope**    | Whole project                       | Can be scoped to file paths                        | Task-specific                            |
+    | Aspect | CLAUDE.md | `.claude/rules/` | Skill |
+    | - | - | - | - |
+    | **Loads** | Every session | Every session, or when matching files are opened | On demand, when invoked or relevant |
+    | **Scope** | Whole project | Can be scoped to file paths | Task-specific |
     | **Best for** | Core conventions and build commands | Language-specific or directory-specific guidelines | Reference material, repeatable workflows |
 
     **Use CLAUDE.md** for instructions every session needs: build commands, test conventions, project architecture.
@@ -158,11 +158,11 @@ Some features can seem similar. For a deeper walkthrough of choosing between the
   <Tab title="MCP vs Skill">
     MCP connects Claude to external services. Skills extend what Claude knows, including how to use those services effectively.
 
-    | Aspect         | MCP                                                  | Skill                                                   |
-    | -------------- | ---------------------------------------------------- | ------------------------------------------------------- |
-    | **What it is** | Protocol for connecting to external services         | Knowledge, workflows, and reference material            |
-    | **Provides**   | Tools and data access                                | Knowledge, workflows, reference material                |
-    | **Examples**   | Slack integration, database queries, browser control | Code review checklist, deploy workflow, API style guide |
+    | Aspect | MCP | Skill |
+    | - | - | - |
+    | **What it is** | Protocol for connecting to external services | Knowledge, workflows, and reference material |
+    | **Provides** | Tools and data access | Knowledge, workflows, reference material |
+    | **Examples** | Slack integration, database queries, browser control | Code review checklist, deploy workflow, API style guide |
 
     These solve different problems and work well together:
 
@@ -174,13 +174,13 @@ Some features can seem similar. For a deeper walkthrough of choosing between the
   <Tab title="Hook vs Skill">
     Claude Code runs a hook at a lifecycle event; it loads a skill into context for Claude to apply.
 
-    | Aspect           | Hook                                                                              | Skill                                                                 |
-    | ---------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-    | **Runs**         | A shell command, HTTP request, MCP tool call, LLM prompt, or subagent             | Instructions Claude reads and follows                                 |
+    | Aspect | Hook | Skill |
+    | - | - | - |
+    | **Runs** | A shell command, HTTP request, MCP tool call, LLM prompt, or subagent | Instructions Claude reads and follows |
     | **Triggered by** | [Lifecycle events](/docs/en/hooks#hook-events) such as `PostToolUse` or `SessionStart` | You typing `/<name>`, or Claude matching the description to your task |
-    | **Determinism**  | Always fires on its event; the trigger is guaranteed                              | Claude interprets the instructions; outcome can vary                  |
-    | **Context cost** | Zero unless the hook returns output                                               | Description loads each session; full content loads when used          |
-    | **Best for**     | Linting after edits, blocking unsafe commands, logging, notifications             | Workflows that need reasoning, reference material, multi-step tasks   |
+    | **Determinism** | Always fires on its event; the trigger is guaranteed | Claude interprets the instructions; outcome can vary |
+    | **Context cost** | Zero unless the hook returns output | Description loads each session; full content loads when used |
+    | **Best for** | Linting after edits, blocking unsafe commands, logging, notifications | Workflows that need reasoning, reference material, multi-step tasks |
 
     **Use a hook** when the action must happen the same way every time and doesn't need Claude to think. For example: format on save, reject `rm -rf /`, post a Slack message when a session ends.
 
@@ -207,12 +207,12 @@ Each extension solves a different problem: CLAUDE.md handles always-on context, 
 
 For example, you might use CLAUDE.md for project conventions, a skill for your deployment workflow, MCP to connect to your database, and a hook to run linting after every edit. Each feature handles what it's best at.
 
-| Pattern                | How it works                                                                     | Example                                                                                           |
-| ---------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| **Skill + MCP**        | MCP provides the connection; a skill teaches Claude how to use it well           | MCP connects to your database, a skill documents your schema and query patterns                   |
-| **Skill + Subagent**   | A skill spawns subagents for parallel work                                       | `/audit` skill kicks off security, performance, and style subagents that work in isolated context |
-| **CLAUDE.md + Skills** | CLAUDE.md holds always-on rules; skills hold reference material loaded on demand | CLAUDE.md says "follow our API conventions," a skill contains the full API style guide            |
-| **Hook + MCP**         | A hook triggers external actions through MCP                                     | Post-edit hook sends a Slack notification when Claude modifies critical files                     |
+| Pattern | How it works | Example |
+| - | - | - |
+| **Skill + MCP** | MCP provides the connection; a skill teaches Claude how to use it well | MCP connects to your database, a skill documents your schema and query patterns |
+| **Skill + Subagent** | A skill spawns subagents for parallel work | `/audit` skill kicks off security, performance, and style subagents that work in isolated context |
+| **CLAUDE.md + Skills** | CLAUDE.md holds always-on rules; skills hold reference material loaded on demand | CLAUDE.md says "follow our API conventions," a skill contains the full API style guide |
+| **Hook + MCP** | A hook triggers external actions through MCP | Post-edit hook sends a Slack notification when Claude modifies critical files |
 
 ## Understand context costs
 
@@ -222,15 +222,15 @@ Every feature you add consumes some of Claude's context. Too much can fill up yo
 
 Each feature has a different loading strategy and context cost:
 
-| Feature               | When it loads                                   | What loads                                                                                                                 | Context cost                                 |
-| --------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| **CLAUDE.md**         | Session start                                   | Full content                                                                                                               | Every request                                |
-| **Output styles**     | Session start, and again when you switch styles | The active style's full instructions; nothing for the Default style                                                        | Every request                                |
-| **Skills**            | Session start + when used                       | Descriptions at start, full content when used                                                                              | Low (descriptions every request)\*           |
-| **MCP servers**       | Session start                                   | Tool names; full schemas on demand                                                                                         | Low until a tool is used                     |
-| **Code intelligence** | After file edits and on demand                  | Diagnostics after edits; symbol locations on lookup                                                                        | Low; reduces file reads elsewhere            |
-| **Subagents**         | When spawned                                    | Fresh context with specified skills, or the parent conversation for a [fork](/docs/en/sub-agents#fork-the-current-conversation) | Isolated from main session                   |
-| **Hooks**             | On trigger                                      | Nothing (runs externally)                                                                                                  | Zero, unless hook returns additional context |
+| Feature | When it loads | What loads | Context cost |
+| - | - | - | - |
+| **CLAUDE.md** | Session start | Full content | Every request |
+| **Output styles** | Session start, and again when you switch styles | The active style's full instructions; nothing for the Default style | Every request |
+| **Skills** | Session start + when used | Descriptions at start, full content when used | Low (descriptions every request)\* |
+| **MCP servers** | Session start | Tool names; full schemas on demand | Low until a tool is used |
+| **Code intelligence** | After file edits and on demand | Diagnostics after edits; symbol locations on lookup | Low; reduces file reads elsewhere |
+| **Subagents** | When spawned | Fresh context with specified skills, or the parent conversation for a [fork](/docs/en/sub-agents#fork-the-current-conversation) | Isolated from main session |
+| **Hooks** | On trigger | Nothing (runs externally) | Zero, unless hook returns additional context |
 
 \*By default, skill descriptions load at session start so Claude can decide when to use them. Set `disable-model-invocation: true` in a skill's frontmatter to hide it from Claude entirely until you invoke it manually. For a skill you didn't write, set [`skillOverrides`](/docs/en/skills#override-skill-visibility-from-settings) in settings to do the same without editing its file.
 

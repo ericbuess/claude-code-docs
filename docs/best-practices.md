@@ -34,11 +34,11 @@ Claude stops when the work looks done. Without a check it can run, "looks done" 
 
 The check is anything that returns a signal Claude can read in the conversation: a test suite, a build exit code, a linter, a script that diffs output against a fixture, or a [browser screenshot](/docs/en/chrome) compared against a design. Run [`/verify`](/docs/en/skills#run-and-verify-your-app) yourself after Claude's check passes to confirm the change against the running app.
 
-| Strategy                              | Before                                                  | After                                                                                                                                                                                                   |
-| ------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Provide verification criteria**     | *"implement a function that validates email addresses"* | *"write a validateEmail function. example test cases: [user@example.com](mailto:user@example.com) is true, invalid is false, [user@.com](mailto:user@.com) is false. run the tests after implementing"* |
-| **Verify UI changes visually**        | *"make the dashboard look better"*                      | *"\[paste screenshot] implement this design. take a screenshot of the result and compare it to the original. list differences and fix them"*                                                            |
-| **Address root causes, not symptoms** | *"the build is failing"*                                | *"the build fails with this error: \[paste error]. fix it and verify the build succeeds. address the root cause, don't suppress the error"*                                                             |
+| Strategy | Before | After |
+| - | - | - |
+| **Provide verification criteria** | *"implement a function that validates email addresses"* | *"write a validateEmail function. example test cases: [user@example.com](mailto:user@example.com) is true, invalid is false, [user@.com](mailto:user@.com) is false. run the tests after implementing"* |
+| **Verify UI changes visually** | *"make the dashboard look better"* | *"\[paste screenshot] implement this design. take a screenshot of the result and compare it to the original. list differences and fix them"* |
+| **Address root causes, not symptoms** | *"the build is failing"* | *"the build fails with this error: \[paste error]. fix it and verify the build succeeds. address the root cause, don't suppress the error"* |
 
 Once the check exists, decide how hard it gates the stop:
 
@@ -120,12 +120,12 @@ The recommended workflow has four phases:
 
 Claude can infer intent, but it can't read your mind. Reference specific files, mention constraints, and point to example patterns.
 
-| Strategy                                                                                         | Before                                               | After                                                                                                                                                                                                                                                                                                                                                            |
-| ------------------------------------------------------------------------------------------------ | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Scope the task.** Specify which file, what scenario, and testing preferences.                  | *"add tests for foo.py"*                             | *"write a test for foo.py covering the edge case where the user is logged out. avoid mocks."*                                                                                                                                                                                                                                                                    |
-| **Point to sources.** Direct Claude to the source that can answer a question.                    | *"why does ExecutionFactory have such a weird api?"* | *"look through ExecutionFactory's git history and summarize how its api came to be"*                                                                                                                                                                                                                                                                             |
-| **Reference existing patterns.** Point Claude to patterns in your codebase.                      | *"add a calendar widget"*                            | *"look at how existing widgets are implemented on the home page to understand the patterns. HotDogWidget.php is a good example. follow the pattern to implement a new calendar widget that lets the user select a month and paginate forwards/backwards to pick a year. build from scratch without libraries other than the ones already used in the codebase."* |
-| **Describe the symptom.** Provide the symptom, the likely location, and what "fixed" looks like. | *"fix the login bug"*                                | *"users report that login fails after session timeout. check the auth flow in src/auth/, especially token refresh. write a failing test that reproduces the issue, then fix it"*                                                                                                                                                                                 |
+| Strategy | Before | After |
+| - | - | - |
+| **Scope the task.** Specify which file, what scenario, and testing preferences. | *"add tests for foo.py"* | *"write a test for foo.py covering the edge case where the user is logged out. avoid mocks."* |
+| **Point to sources.** Direct Claude to the source that can answer a question. | *"why does ExecutionFactory have such a weird api?"* | *"look through ExecutionFactory's git history and summarize how its api came to be"* |
+| **Reference existing patterns.** Point Claude to patterns in your codebase. | *"add a calendar widget"* | *"look at how existing widgets are implemented on the home page to understand the patterns. HotDogWidget.php is a good example. follow the pattern to implement a new calendar widget that lets the user select a month and paginate forwards/backwards to pick a year. build from scratch without libraries other than the ones already used in the codebase."* |
+| **Describe the symptom.** Provide the symptom, the likely location, and what "fixed" looks like. | *"fix the login bug"* | *"users report that login fails after session timeout. check the auth flow in src/auth/, especially token refresh. write a failing test that reproduces the issue, then fix it"* |
 
 Vague prompts can be useful when you're exploring and can afford to course-correct. A prompt like `"what would you improve in this file?"` can surface things you wouldn't have thought to ask about.
 
@@ -173,15 +173,15 @@ Run `/context` to confirm Claude loaded the file. CLAUDE.md is loaded every sess
 
 Keep it concise. For each line, ask: *"Would removing this cause Claude to make mistakes?"* If not, cut it. Bloated CLAUDE.md files cause Claude to ignore your actual instructions!
 
-| ✅ Include                                            | ❌ Exclude                                          |
-| ---------------------------------------------------- | -------------------------------------------------- |
-| Bash commands Claude can't guess                     | Anything Claude can figure out by reading code     |
-| Code style rules that differ from defaults           | Standard language conventions Claude already knows |
-| Testing instructions and preferred test runners      | Detailed API documentation (link to docs instead)  |
-| Repository etiquette (branch naming, PR conventions) | Information that changes frequently                |
-| Architectural decisions specific to your project     | Long explanations or tutorials                     |
-| Developer environment quirks (required env vars)     | File-by-file descriptions of the codebase          |
-| Common gotchas or non-obvious behaviors              | Self-evident practices like "write clean code"     |
+| ✅ Include | ❌ Exclude |
+| - | - |
+| Bash commands Claude can't guess | Anything Claude can figure out by reading code |
+| Code style rules that differ from defaults | Standard language conventions Claude already knows |
+| Testing instructions and preferred test runners | Detailed API documentation (link to docs instead) |
+| Repository etiquette (branch naming, PR conventions) | Information that changes frequently |
+| Architectural decisions specific to your project | Long explanations or tutorials |
+| Developer environment quirks (required env vars) | File-by-file descriptions of the codebase |
+| Common gotchas or non-obvious behaviors | Self-evident practices like "write clean code" |
 
 If Claude keeps doing something you don't want despite having a rule against it, the file is probably too long and the rule is getting lost. If Claude asks you questions that are answered in CLAUDE.md, the phrasing might be ambiguous. Treat CLAUDE.md like code: review it when things go wrong, prune it regularly, and test changes by observing whether Claude's behavior actually shifts. For a checked-in CLAUDE.md, run [`/doctor`](/docs/en/commands#all-commands) and Claude proposes cuts for content it can derive from the codebase.
 
@@ -475,11 +475,11 @@ Beyond parallelizing work, multiple sessions enable quality-focused workflows. A
 
 For example, use a Writer/Reviewer pattern:
 
-| Session A (Writer)                                                      | Session B (Reviewer)                                                                                                                                                     |
-| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Implement a rate limiter for our API endpoints`                        |                                                                                                                                                                          |
-|                                                                         | `Review the rate limiter implementation in @src/middleware/rateLimiter.ts. Look for edge cases, race conditions, and consistency with our existing middleware patterns.` |
-| `Here's the review feedback: [Session B output]. Address these issues.` |                                                                                                                                                                          |
+| Session A (Writer) | Session B (Reviewer) |
+| - | - |
+| `Implement a rate limiter for our API endpoints` | |
+| | `Review the rate limiter implementation in @src/middleware/rateLimiter.ts. Look for edge cases, race conditions, and consistency with our existing middleware patterns.` |
+| `Here's the review feedback: [Session B output]. Address these issues.` | |
 
 You can do something similar with tests: have one Claude write tests, then another write code to pass them.
 

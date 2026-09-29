@@ -27,12 +27,12 @@ Claude Code starts in the [**Default**](#default) style, its standard instructio
 
 This table shows what each style changes about a session and when it fits:
 
-| Style                       | What changes                                                                                              | Use it when                                                                                                    |
-| :-------------------------- | :-------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
-| [Proactive](#proactive)     | Claude starts work right away and makes reasonable assumptions rather than asking about routine decisions | You want Claude to keep working through routine decisions, and you'll correct course if an assumption is wrong |
-| [Concise](#concise)         | Responses lead with the result and leave out preamble, narration, and recaps                              | Default responses are longer than you want                                                                     |
-| [Explanatory](#explanatory) | Claude adds short `Insight` blocks that explain the choices behind the code it writes                     | You're getting to know a codebase or want the reasoning along with the change                                  |
-| [Learning](#learning)       | Claude explains its choices and leaves small pieces of code for you to write yourself                     | You want hands-on coding practice while the task still gets done                                               |
+| Style | What changes | Use it when |
+| :- | :- | :- |
+| [Proactive](#proactive) | Claude starts work right away and makes reasonable assumptions rather than asking about routine decisions | You want Claude to keep working through routine decisions, and you'll correct course if an assumption is wrong |
+| [Concise](#concise) | Responses lead with the result and leave out preamble, narration, and recaps | Default responses are longer than you want |
+| [Explanatory](#explanatory) | Claude adds short `Insight` blocks that explain the choices behind the code it writes | You're getting to know a codebase or want the reasoning along with the change |
+| [Learning](#learning) | Claude explains its choices and leaves small pieces of code for you to write yourself | You want hands-on coding practice while the task still gets done |
 
 ### Default
 
@@ -163,12 +163,12 @@ In the VS Code extension, you can also create the file from the [**Output styles
 
 Configure an output style with YAML [frontmatter](/docs/en/glossary#frontmatter) between `---` markers at the top of the file. All fields are optional, and field names use lowercase words separated by hyphens. A misspelled field is ignored without an error. If the YAML doesn't parse, the style still loads under its file name with no fields set; run `claude --debug` to see the parse error.
 
-| Field                      | Required | Description                                                                                                                                                                                                                                                                                |
-| :------------------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                     | No       | Name of the output style, shown in the `/config` picker. Default: the file name                                                                                                                                                                                                            |
-| `description`              | No       | Description of the output style, shown in the `/config` picker                                                                                                                                                                                                                             |
-| `keep-coding-instructions` | No       | Set to `true` to keep Claude Code's built-in software engineering instructions alongside your style. Default: `false`                                                                                                                                                                      |
-| `force-for-plugin`         | No       | Plugin output styles only. Set to `true` to apply this style automatically whenever the plugin is enabled, without requiring users to select it. Overrides the user's `outputStyle` setting. If multiple enabled plugins set this, Claude Code uses the first one loaded. Default: `false` |
+| Field | Required | Description |
+| :- | :- | :- |
+| `name` | No | Name of the output style, shown in the `/config` picker. Default: the file name |
+| `description` | No | Description of the output style, shown in the `/config` picker |
+| `keep-coding-instructions` | No | Set to `true` to keep Claude Code's built-in software engineering instructions alongside your style. Default: `false` |
+| `force-for-plugin` | No | Plugin output styles only. Set to `true` to apply this style automatically whenever the plugin is enabled, without requiring users to select it. Overrides the user's `outputStyle` setting. If multiple enabled plugins set this, Claude Code uses the first one loaded. Default: `false` |
 
 <span id="comparisons-to-related-features" />
 
@@ -178,14 +178,14 @@ An output style applies to every response in a session. It's an instruction Clau
 
 This table matches what you want to the feature that does it:
 
-| You want                                                                                                   | Use                                                               | Why it fits                                                                                                  |
-| :--------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
-| Every response in a certain voice, length, or format, or Claude in a different role                        | An output style                                                   | It applies to the whole session, and you switch styles with one command                                      |
-| Claude to know your project's conventions, commands, and structure                                         | [CLAUDE.md](/docs/en/memory)                                           | It holds what Claude should know about the codebase, and it stays loaded whichever style you pick            |
-| Instructions for one kind of task, such as a release checklist or a review procedure                       | A [skill](/docs/en/skills)                                             | Claude loads it only when you invoke it or the task matches, so it doesn't shape unrelated responses         |
-| Something to happen every time without exception, such as formatting after each edit or blocking a command | A [hook](/docs/en/hooks-guide)                                         | Claude Code runs a hook itself at a lifecycle event, so it doesn't depend on Claude following an instruction |
-| A helper with its own instructions, model, and tools for a focused task                                    | A [subagent](/docs/en/sub-agents)                                      | It runs in a separate context with its own system prompt and returns a summary to your conversation          |
-| An addition to Claude's instructions that you pass when you start Claude Code                              | [`--append-system-prompt`](/docs/en/cli-reference#system-prompt-flags) | It appends to the system prompt without removing anything                                                    |
+| You want | Use | Why it fits |
+| :- | :- | :- |
+| Every response in a certain voice, length, or format, or Claude in a different role | An output style | It applies to the whole session, and you switch styles with one command |
+| Claude to know your project's conventions, commands, and structure | [CLAUDE.md](/docs/en/memory) | It holds what Claude should know about the codebase, and it stays loaded whichever style you pick |
+| Instructions for one kind of task, such as a release checklist or a review procedure | A [skill](/docs/en/skills) | Claude loads it only when you invoke it or the task matches, so it doesn't shape unrelated responses |
+| Something to happen every time without exception, such as formatting after each edit or blocking a command | A [hook](/docs/en/hooks-guide) | Claude Code runs a hook itself at a lifecycle event, so it doesn't depend on Claude following an instruction |
+| A helper with its own instructions, model, and tools for a focused task | A [subagent](/docs/en/sub-agents) | It runs in a separate context with its own system prompt and returns a summary to your conversation |
+| An addition to Claude's instructions that you pass when you start Claude Code | [`--append-system-prompt`](/docs/en/cli-reference#system-prompt-flags) | It appends to the system prompt without removing anything |
 
 These features combine. For example, you can use CLAUDE.md for what Claude should know, an output style for how it responds, and a hook for anything that has to be guaranteed. [Extend Claude Code](/docs/en/features-overview) compares the rest of the extension features.
 

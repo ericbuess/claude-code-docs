@@ -23,11 +23,11 @@ Start with [Choose how to distribute](#choose-how-to-distribute) to compare the 
 
 Choose a distribution option based on who needs to install the plugin:
 
-| Route                                                         | Who can install                                                                                                                                     | What you need                                                                                  | Do users get your updates automatically?     |
-| :------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- | :------------------------------------------- |
-| [No marketplace](#share-a-plugin-without-a-marketplace)       | The people you send the plugin folder or a `.zip` of it                                                                                             | The plugin's folder                                                                            | None. They load the copy you sent            |
-| [Your own marketplace](#publish-through-your-own-marketplace) | Anyone who can reach the repository, which can be a private one your team can clone                                                                 | A git repository or other host with a `.claude-plugin/marketplace.json` that lists your plugin | Off                                          |
-| [Anthropic's directory](#submit-to-anthropics-directory)      | People who add it on claude.ai or in Cowork. It also loads in their Claude Code sessions through [account sync](/docs/en/plugins/loading#synced-plugins) | A GitHub repository holding the plugin and a paid claude.ai plan to submit from                | Yes, after the version you push is published |
+| Route | Who can install | What you need | Do users get your updates automatically? |
+| :- | :- | :- | :- |
+| [No marketplace](#share-a-plugin-without-a-marketplace) | The people you send the plugin folder or a `.zip` of it | The plugin's folder | None. They load the copy you sent |
+| [Your own marketplace](#publish-through-your-own-marketplace) | Anyone who can reach the repository, which can be a private one your team can clone | A git repository or other host with a `.claude-plugin/marketplace.json` that lists your plugin | Off |
+| [Anthropic's directory](#submit-to-anthropics-directory) | People who add it on claude.ai or in Cowork. It also loads in their Claude Code sessions through [account sync](/docs/en/plugins/loading#synced-plugins) | A GitHub repository holding the plugin and a paid claude.ai plan to submit from | Yes, after the version you push is published |
 
 Auto-update is a per-marketplace setting on the user's side that fetches new versions in the background.
 

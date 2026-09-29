@@ -230,9 +230,9 @@ For current and legacy model IDs, see [Models overview](https://platform.claude.
 
 Claude Code uses these default models when no pinning variables are set:
 
-| Model type       | Default value                |
-| :--------------- | :--------------------------- |
-| Primary model    | `claude-opus-5-5`            |
+| Model type | Default value |
+| :- | :- |
+| Primary model | `claude-opus-5-5` |
 | Small/fast model | `claude-sonnet-4-5@20250929` |
 
 Background tasks such as session title generation use the small/fast model, normally a Haiku-class model. On Google Cloud's Agent Platform, Claude Code uses the default Sonnet model for background tasks because Haiku may not be enabled in every project or region. Two selections change which model carries them:

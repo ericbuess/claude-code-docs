@@ -144,9 +144,9 @@ The following example shows the complete flow: enable checkpointing, capture the
   <Step title="Enable checkpointing">
     Configure your SDK options to enable checkpointing and receive checkpoint UUIDs:
 
-    | Option                   | Python                                      | TypeScript                                    | Description                                      |
-    | ------------------------ | ------------------------------------------- | --------------------------------------------- | ------------------------------------------------ |
-    | Enable checkpointing     | `enable_file_checkpointing=True`            | `enableFileCheckpointing: true`               | Tracks file changes for rewinding                |
+    | Option | Python | TypeScript | Description |
+    | - | - | - | - |
+    | Enable checkpointing | `enable_file_checkpointing=True` | `enableFileCheckpointing: true` | Tracks file changes for rewinding |
     | Receive checkpoint UUIDs | `extra_args={"replay-user-messages": None}` | `extraArgs: { 'replay-user-messages': null }` | Required to get user message UUIDs in the stream |
 
     <CodeGroup>
@@ -703,13 +703,13 @@ Before you begin, make sure you have the [Claude Agent SDK installed](/docs/en/a
 
 File checkpointing has the following limitations:
 
-| Limitation                         | Description                                                                                                                                                                      |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Write/Edit/NotebookEdit tools only | Changes made through Bash commands are not tracked                                                                                                                               |
-| Subagent edits                     | Edits a [subagent](/docs/en/agent-sdk/subagents) applies aren't tracked or restored, except a skill with `context: fork` running in the foreground; use git to revert untracked edits |
-| Same session                       | Checkpoints are tied to the session that created them                                                                                                                            |
-| File content only                  | Creating, moving, or deleting directories is not undone by rewinding                                                                                                             |
-| Local files                        | Remote or network files are not tracked                                                                                                                                          |
+| Limitation | Description |
+| - | - |
+| Write/Edit/NotebookEdit tools only | Changes made through Bash commands are not tracked |
+| Subagent edits | Edits a [subagent](/docs/en/agent-sdk/subagents) applies aren't tracked or restored, except a skill with `context: fork` running in the foreground; use git to revert untracked edits |
+| Same session | Checkpoints are tied to the session that created them |
+| File content only | Creating, moving, or deleting directories is not undone by rewinding |
+| Local files | Remote or network files are not tracked |
 
 ## Troubleshooting
 

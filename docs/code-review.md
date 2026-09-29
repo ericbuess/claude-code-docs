@@ -38,11 +38,11 @@ Reviews scale in cost with PR size and complexity, completing in 20 minutes on a
 
 Each finding is tagged with a severity level:
 
-| Marker | Severity     | Meaning                                                             |
-| :----- | :----------- | :------------------------------------------------------------------ |
-| 🔴     | Important    | A bug that should be fixed before merging                           |
-| 🟡     | Nit          | A minor issue, worth fixing but not blocking                        |
-| 🟣     | Pre-existing | A bug that exists in the codebase but was not introduced by this PR |
+| Marker | Severity | Meaning |
+| :- | :- | :- |
+| 🔴 | Important | A bug that should be fixed before merging |
+| 🟡 | Nit | A minor issue, worth fixing but not blocking |
+| 🟣 | Pre-existing | A bug that exists in the codebase but was not introduced by this PR |
 
 Findings include a collapsible extended reasoning section you can expand to understand why Claude flagged the issue and how it verified the problem.
 
@@ -58,10 +58,10 @@ To dismiss a finding without a code change, resolve its thread; replying doesn't
 
 Beyond the inline review comments, each review populates the **Claude Code Review** check run that appears alongside your CI checks. Expand its **Details** link to see a summary of every finding in one place, sorted by severity:
 
-| Severity     | File:Line                 | Issue                                                          |
-| ------------ | ------------------------- | -------------------------------------------------------------- |
+| Severity | File:Line | Issue |
+| - | - | - |
 | 🔴 Important | `src/auth/session.ts:142` | Token refresh races with logout, leaving stale sessions active |
-| 🟡 Nit       | `src/auth/session.ts:88`  | `parseExpiry` silently returns 0 on malformed input            |
+| 🟡 Nit | `src/auth/session.ts:88` | `parseExpiry` silently returns 0 on malformed input |
 
 Each finding also appears as an annotation in the **Files changed** tab, marked directly on the relevant diff lines. Important findings render with a red marker, nits with a yellow warning, and pre-existing bugs with a gray notice. Annotations and the severity table are written to the check run independently of inline review comments, so they remain available even if GitHub rejects an inline comment on a line that moved.
 
@@ -122,11 +122,11 @@ To verify setup, open a test PR. If you chose an automatic trigger, a check run 
 
 Comment commands start a review on demand. They work regardless of the repository's configured trigger, so you can use them to opt specific PRs into review in Manual mode or to get an immediate re-review in other modes.
 
-| Command                 | What it does                                                                  |
-| :---------------------- | :---------------------------------------------------------------------------- |
-| `@claude review`        | Starts a single review without subscribing the PR to future pushes            |
+| Command | What it does |
+| :- | :- |
+| `@claude review` | Starts a single review without subscribing the PR to future pushes |
 | `@claude review always` | Starts a review and subscribes the PR to push-triggered reviews going forward |
-| `@claude review once`   | Same as `@claude review`: starts a single review without subscribing          |
+| `@claude review once` | Same as `@claude review`: starts a single review without subscribing |
 
 Use `@claude review always` when you want every subsequent push to the PR to start a fresh review, such as on a high-priority PR in a repository set to Manual mode. Because the bare command doesn't subscribe the PR, you can request a one-off second opinion without changing whether later pushes trigger reviews.
 
@@ -238,12 +238,12 @@ Length has a cost: a long `REVIEW.md` dilutes the rules that matter most. Keep i
 
 Go to [claude.ai/analytics/code-review](https://claude.ai/analytics/code-review) to see Code Review activity across your organization. The dashboard shows:
 
-| Section              | What it shows                                                                            |
-| :------------------- | :--------------------------------------------------------------------------------------- |
-| PRs reviewed         | Daily count of pull requests reviewed over the selected time range                       |
-| Cost weekly          | Weekly spend on Code Review                                                              |
-| Feedback             | Count of review comments that were auto-resolved because a developer addressed the issue |
-| Repository breakdown | Per-repo counts of PRs reviewed and comments resolved                                    |
+| Section | What it shows |
+| :- | :- |
+| PRs reviewed | Daily count of pull requests reviewed over the selected time range |
+| Cost weekly | Weekly spend on Code Review |
+| Feedback | Count of review comments that were auto-resolved because a developer addressed the issue |
+| Repository breakdown | Per-repo counts of PRs reviewed and comments resolved |
 
 Dashboard cost figures are estimates for monitoring activity. For invoice-accurate spend, refer to your Anthropic bill.
 

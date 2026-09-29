@@ -156,11 +156,11 @@ When the two names differ and someone installs by the manifest name, Claude Code
 
 Each plugin entry in `marketplace.json` has a `source` that tells Claude Code where to fetch that one plugin. Pick the source by where the plugin's files are stored. The table lists the sources most marketplace owners use.
 
-| Source        | Use it when                                                               | Minimal `source` value                                                                    |
-| :------------ | :------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------- |
-| Relative path | The plugin's files are inside the marketplace directory itself            | `"./plugins/my-first-plugin"`                                                             |
-| `github`      | The plugin is a GitHub repository of its own                              | `{ "source": "github", "repo": "your-org/my-first-plugin" }`                              |
-| `git-subdir`  | The plugin is a subdirectory of some other repository, such as a monorepo | `{ "source": "git-subdir", "url": "your-org/monorepo", "path": "tools/my-first-plugin" }` |
+| Source | Use it when | Minimal `source` value |
+| :- | :- | :- |
+| Relative path | The plugin's files are inside the marketplace directory itself | `"./plugins/my-first-plugin"` |
+| `github` | The plugin is a GitHub repository of its own | `{ "source": "github", "repo": "your-org/my-first-plugin" }` |
+| `git-subdir` | The plugin is a subdirectory of some other repository, such as a monorepo | `{ "source": "git-subdir", "url": "your-org/monorepo", "path": "tools/my-first-plugin" }` |
 
 In a `git-subdir` source, `url` takes a git URL or an `owner/repo` GitHub shorthand.
 

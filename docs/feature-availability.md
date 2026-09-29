@@ -289,23 +289,23 @@ Each tab lists what is unavailable or partially supported on that provider, with
 
 If you authenticate through Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or an Anthropic Console API key, this section does not apply to you. When you sign in with a claude.ai account, your plan determines which of the features below are available.
 
-| Feature                                                                     | Pro | Max | Team          | Enterprise                        |
-| :-------------------------------------------------------------------------- | :-- | :-- | :------------ | :-------------------------------- |
-| [Cloud sessions](/docs/en/claude-code-on-the-web)                                | ✓   | ✓   | ✓             | ✓ <sup><a href="#fn6">6</a></sup> |
-| [Routines](/docs/en/routines)                                                    | ✓   | ✓   | ✓             | ✓                                 |
-| [Remote Control](/docs/en/remote-control)                                        | ✓   | ✓   | Admin-enabled | Admin-enabled                     |
-| [Channels](/docs/en/channels)                                                    | ✓   | ✓   | Admin-enabled | Admin-enabled                     |
-| [Computer use](/docs/en/computer-use)                                            | ✓   | ✓   | ✗             | ✗                                 |
-| Dispatch ([Desktop](/docs/en/desktop#sessions-from-dispatch))                    | ✓   | ✓   | ✗             | ✗                                 |
-| [Code Review](/docs/en/code-review)                                              | ✗   | ✗   | ✓             | ✓                                 |
-| [Artifacts](/docs/en/artifacts)                                                  | ✓   | ✓   | ✓             | Admin-enabled                     |
-| [Analytics dashboard and contribution metrics](/docs/en/analytics)               | ✗   | ✗   | ✓             | ✓                                 |
-| [Enterprise Analytics API](/docs/en/analytics#access-data-programmatically)      | ✗   | ✗   | ✗             | ✓                                 |
-| [Server-managed settings](/docs/en/server-managed-settings)                      | ✗   | ✗   | ✓             | ✓                                 |
-| [SSO](https://support.claude.com/en/articles/9266767-what-is-the-team-plan) | ✗   | ✗   | ✓             | ✓                                 |
-| SCIM                                                                        | ✗   | ✗   | ✗             | ✓                                 |
-| [Compliance API](https://platform.claude.com/docs/en/api/compliance)        | ✗   | ✗   | ✗             | ✓                                 |
-| [Zero Data Retention](/docs/en/zero-data-retention)                              | ✗   | ✗   | ✗             | ✓ <sup><a href="#fn7">7</a></sup> |
+| Feature | Pro | Max | Team | Enterprise |
+| :- | :- | :- | :- | :- |
+| [Cloud sessions](/docs/en/claude-code-on-the-web) | ✓ | ✓ | ✓ | ✓ <sup><a href="#fn6">6</a></sup> |
+| [Routines](/docs/en/routines) | ✓ | ✓ | ✓ | ✓ |
+| [Remote Control](/docs/en/remote-control) | ✓ | ✓ | Admin-enabled | Admin-enabled |
+| [Channels](/docs/en/channels) | ✓ | ✓ | Admin-enabled | Admin-enabled |
+| [Computer use](/docs/en/computer-use) | ✓ | ✓ | ✗ | ✗ |
+| Dispatch ([Desktop](/docs/en/desktop#sessions-from-dispatch)) | ✓ | ✓ | ✗ | ✗ |
+| [Code Review](/docs/en/code-review) | ✗ | ✗ | ✓ | ✓ |
+| [Artifacts](/docs/en/artifacts) | ✓ | ✓ | ✓ | Admin-enabled |
+| [Analytics dashboard and contribution metrics](/docs/en/analytics) | ✗ | ✗ | ✓ | ✓ |
+| [Enterprise Analytics API](/docs/en/analytics#access-data-programmatically) | ✗ | ✗ | ✗ | ✓ |
+| [Server-managed settings](/docs/en/server-managed-settings) | ✗ | ✗ | ✓ | ✓ |
+| [SSO](https://support.claude.com/en/articles/9266767-what-is-the-team-plan) | ✗ | ✗ | ✓ | ✓ |
+| SCIM | ✗ | ✗ | ✗ | ✓ |
+| [Compliance API](https://platform.claude.com/docs/en/api/compliance) | ✗ | ✗ | ✗ | ✓ |
+| [Zero Data Retention](/docs/en/zero-data-retention) | ✗ | ✗ | ✗ | ✓ <sup><a href="#fn7">7</a></sup> |
 
 <span id="fn6" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>6</sup> On Enterprise, requires a premium seat or a Chat + Claude Code seat. See [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web).<br />
 <span id="fn7" style={{display: 'block', position: 'relative', top: '-120px'}} /><sup>7</sup> Not included in the standard Enterprise plan. Requires separate enablement by Anthropic for qualified accounts. See [Zero Data Retention](/docs/en/zero-data-retention).

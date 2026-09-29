@@ -14,17 +14,17 @@ Tasks are session-scoped: they live in the current conversation and stop when yo
 
 Claude Code offers three ways to schedule recurring or one-off work:
 
-|                            | [Cloud](/docs/en/routines)               | [Desktop](/docs/en/desktop-scheduled-tasks) | [`/loop`](/docs/en/scheduled-tasks)                                             |
-| :------------------------- | :---------------------------------- | :------------------------------------- | :------------------------------------------------------------------------- |
-| Runs on                    | Cloud, Anthropic-managed by default | Your machine                           | Your machine                                                               |
-| Requires machine on        | No                                  | Yes                                    | Yes                                                                        |
-| Requires open session      | No                                  | No                                     | Yes                                                                        |
-| Persistent across restarts | Yes                                 | Yes                                    | Restored on `--resume`, with [exceptions](/docs/en/scheduled-tasks#limitations) |
-| Access to local files      | No (fresh clone)                    | Yes                                    | Yes                                                                        |
-| MCP servers                | Connectors configured per task      | [Config files](/docs/en/mcp) and connectors | Inherits from session                                                      |
-| Permission prompts         | No (runs autonomously)              | Configurable per task                  | Inherits from session                                                      |
-| Customizable schedule      | Via `/schedule` in the CLI          | Yes                                    | Yes                                                                        |
-| Minimum interval           | 1 hour                              | 1 minute                               | 1 minute                                                                   |
+| | [Cloud](/docs/en/routines) | [Desktop](/docs/en/desktop-scheduled-tasks) | [`/loop`](/docs/en/scheduled-tasks) |
+| :- | :- | :- | :- |
+| Runs on | Cloud, Anthropic-managed by default | Your machine | Your machine |
+| Requires machine on | No | Yes | Yes |
+| Requires open session | No | No | Yes |
+| Persistent across restarts | Yes | Yes | Restored on `--resume`, with [exceptions](/docs/en/scheduled-tasks#limitations) |
+| Access to local files | No (fresh clone) | Yes | Yes |
+| MCP servers | Connectors configured per task | [Config files](/docs/en/mcp) and connectors | Inherits from session |
+| Permission prompts | No (runs autonomously) | Configurable per task | Inherits from session |
+| Customizable schedule | Via `/schedule` in the CLI | Yes | Yes |
+| Minimum interval | 1 hour | 1 minute | 1 minute |
 
 <Tip>
   Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
@@ -34,11 +34,11 @@ Claude Code offers three ways to schedule recurring or one-off work:
 
 The `/loop` [bundled skill](/docs/en/commands) is the quickest way to run a prompt on repeat while the session stays open. Both the interval and the prompt are optional, and what you provide determines how the loop behaves.
 
-| What you provide          | Example                     | What happens                                                                                                  |
-| :------------------------ | :-------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| Interval and prompt       | `/loop 5m check the deploy` | Your prompt runs on a [fixed schedule](#run-on-a-fixed-interval)                                              |
-| Prompt only               | `/loop check the deploy`    | Your prompt runs at an [interval Claude chooses](#let-claude-choose-the-interval) each iteration              |
-| Interval only, or nothing | `/loop`                     | The [built-in maintenance prompt](#run-the-built-in-maintenance-prompt) runs, or your `loop.md` if one exists |
+| What you provide | Example | What happens |
+| :- | :- | :- |
+| Interval and prompt | `/loop 5m check the deploy` | Your prompt runs on a [fixed schedule](#run-on-a-fixed-interval) |
+| Prompt only | `/loop check the deploy` | Your prompt runs at an [interval Claude chooses](#let-claude-choose-the-interval) each iteration |
+| Interval only, or nothing | `/loop` | The [built-in maintenance prompt](#run-the-built-in-maintenance-prompt) runs, or your `loop.md` if one exists |
 
 You can also pass a skill as the prompt, for example `/loop 20m /review-pr 1234`, to re-run that skill each iteration. A scheduled fire only runs skills that Claude is [allowed to invoke on its own](/docs/en/skills#control-who-invokes-a-skill). The following reach Claude as plain text instead of executing:
 
@@ -101,9 +101,9 @@ Create a `loop.md` file to replace the [built-in maintenance prompt](#run-the-bu
 
 Claude looks for the file in two locations and uses the first one it finds.
 
-| Path                | Scope                                                            |
-| :------------------ | :--------------------------------------------------------------- |
-| `.claude/loop.md`   | Project-level. Takes precedence when both files exist.           |
+| Path | Scope |
+| :- | :- |
+| `.claude/loop.md` | Project-level. Takes precedence when both files exist. |
 | `~/.claude/loop.md` | User-level. Applies in any project that does not define its own. |
 
 The file is plain Markdown with no required structure. Write it as if you were typing the `/loop` prompt directly. The following example keeps a release branch healthy:
@@ -153,11 +153,11 @@ cancel the deploy check job
 
 These are the underlying tools Claude uses:
 
-| Tool         | Purpose                                                                                                         |
-| :----------- | :-------------------------------------------------------------------------------------------------------------- |
+| Tool | Purpose |
+| :- | :- |
 | `CronCreate` | Schedule a new task. Accepts a 5-field cron expression, the prompt to run, and whether it recurs or fires once. |
-| `CronList`   | List all scheduled tasks with their IDs, schedules, and prompts.                                                |
-| `CronDelete` | Cancel a task by ID.                                                                                            |
+| `CronList` | List all scheduled tasks with their IDs, schedules, and prompts. |
+| `CronDelete` | Cancel a task by ID. |
 
 Each scheduled task has an 8-character ID you can pass to `CronDelete`. A session can hold up to 50 scheduled tasks at once.
 
@@ -184,14 +184,14 @@ Recurring tasks automatically expire 7 days after creation. The task fires one f
 
 `CronCreate` accepts standard 5-field cron expressions: `minute hour day-of-month month day-of-week`. All fields support wildcards (`*`), single values (`5`), steps (`*/15`), ranges (`1-5`), and comma-separated lists (`1,15,30`).
 
-| Example        | Meaning                      |
-| :------------- | :--------------------------- |
-| `*/5 * * * *`  | Every 5 minutes              |
-| `0 * * * *`    | Every hour on the hour       |
-| `7 * * * *`    | Every hour at 7 minutes past |
-| `0 9 * * *`    | Every day at 9am local       |
-| `0 9 * * 1-5`  | Weekdays at 9am local        |
-| `30 14 15 3 *` | March 15 at 2:30pm local     |
+| Example | Meaning |
+| :- | :- |
+| `*/5 * * * *` | Every 5 minutes |
+| `0 * * * *` | Every hour on the hour |
+| `7 * * * *` | Every hour at 7 minutes past |
+| `0 9 * * *` | Every day at 9am local |
+| `0 9 * * 1-5` | Weekdays at 9am local |
+| `30 14 15 3 *` | March 15 at 2:30pm local |
 
 Day-of-week uses `0` or `7` for Sunday through `6` for Saturday. Extended syntax like `L`, `W`, `?`, and name aliases such as `MON` or `JAN` is not supported.
 

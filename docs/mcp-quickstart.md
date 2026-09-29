@@ -56,15 +56,15 @@ The steps are the same for any server: add it, check the connection status, then
 
     The server appears with a status indicator:
 
-    | Status                                             | Meaning                                                                                                                                                                       |
-    | :------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | `✔ Connected`                                      | Ready to use. This is what you should see for `claude-code-docs`                                                                                                              |
-    | `! Connected · tools fetch failed`                 | The server connected but couldn't list its tools. Run `claude mcp get <name>` for the error detail                                                                            |
-    | `! Needs authentication`                           | The server is reachable but needs a browser sign-in, or a token passed with `--header`. See [Connect a server that requires sign-in](#connect-a-server-that-requires-sign-in) |
-    | `✘ Failed to connect`                              | Server didn't respond. See [Troubleshooting](#troubleshooting)                                                                                                                |
-    | `✘ Connection error`                               | The connection attempt threw an error. See [Troubleshooting](#troubleshooting)                                                                                                |
-    | ``⏸ Pending approval (run `claude` to approve)``   | A project-scoped server you haven't approved yet. See [Edit .mcp.json directly](#edit-mcp-json-directly)                                                                      |
-    | `⊘ Disabled for this project (re-enable via /mcp)` | A server turned off for this project by the project's `disabledMcpServers` list. See [Disable a server without removing it](/docs/en/mcp#disable-a-server-without-removing-it)     |
+    | Status | Meaning |
+    | :- | :- |
+    | `✔ Connected` | Ready to use. This is what you should see for `claude-code-docs` |
+    | `! Connected · tools fetch failed` | The server connected but couldn't list its tools. Run `claude mcp get <name>` for the error detail |
+    | `! Needs authentication` | The server is reachable but needs a browser sign-in, or a token passed with `--header`. See [Connect a server that requires sign-in](#connect-a-server-that-requires-sign-in) |
+    | `✘ Failed to connect` | Server didn't respond. See [Troubleshooting](#troubleshooting) |
+    | `✘ Connection error` | The connection attempt threw an error. See [Troubleshooting](#troubleshooting) |
+    | ``⏸ Pending approval (run `claude` to approve)`` | A project-scoped server you haven't approved yet. See [Edit .mcp.json directly](#edit-mcp-json-directly) |
+    | `⊘ Disabled for this project (re-enable via /mcp)` | A server turned off for this project by the project's `disabledMcpServers` list. See [Disable a server without removing it](/docs/en/mcp#disable-a-server-without-removing-it) |
 
     Some legacy Windows consoles, such as the default console on Windows 10, don't support these Unicode glyphs and show `√` and `×` in place of `✔` and `✘`.
   </Step>
@@ -120,11 +120,11 @@ There are other ways to add a server, each with its own section:
 
 The `claude mcp add` command writes the server to one of three scopes, stored across two files, depending on the `--scope` flag. You don't need to edit these files directly, but knowing where they are helps with debugging and version control.
 
-| Scope     | File                                                   | Available to                             |
-| :-------- | :----------------------------------------------------- | :--------------------------------------- |
-| `local`   | `~/.claude.json`, under the entry for this project     | Only you, only this project. The default |
-| `project` | `.mcp.json` in your project root                       | Everyone who clones the project          |
-| `user`    | `~/.claude.json`, under the top-level `mcpServers` key | Only you, all projects                   |
+| Scope | File | Available to |
+| :- | :- | :- |
+| `local` | `~/.claude.json`, under the entry for this project | Only you, only this project. The default |
+| `project` | `.mcp.json` in your project root | Everyone who clones the project |
+| `user` | `~/.claude.json`, under the top-level `mcpServers` key | Only you, all projects |
 
 On Windows, `~/.claude.json` resolves to `%USERPROFILE%\.claude.json`, typically `C:\Users\YourName\.claude.json`. If you've set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars), Claude Code reads `.claude.json` from inside that directory instead.
 

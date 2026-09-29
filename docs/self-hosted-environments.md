@@ -65,12 +65,12 @@ Environments are managed on the **Cloud environments** page in claude.ai admin s
 
 These terms appear throughout the self-hosted pages:
 
-| Term               | What it is                                                                                                                                                                                              |
-| :----------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Environment        | A named group of your runners, created in claude.ai settings. Sessions are routed to an environment, not to an individual runner.                                                                       |
-| Environment secret | The single shared credential runners use to authenticate and register with the environment. Shown once at environment creation, labeled **environment key** in the admin UI.                            |
-| Runner             | The long-lived process you deploy. A runner registers with the environment, receives a runner token, and polls for sessions.                                                                            |
-| Session            | One Claude Code task, started from claude.ai, the mobile app, or another Anthropic surface such as a scheduled routine or an agent. Each session runs as a child Claude Code process the runner spawns. |
+| Term | What it is |
+| :- | :- |
+| Environment | A named group of your runners, created in claude.ai settings. Sessions are routed to an environment, not to an individual runner. |
+| Environment secret | The single shared credential runners use to authenticate and register with the environment. Shown once at environment creation, labeled **environment key** in the admin UI. |
+| Runner | The long-lived process you deploy. A runner registers with the environment, receives a runner token, and polls for sessions. |
+| Session | One Claude Code task, started from claude.ai, the mobile app, or another Anthropic surface such as a scheduled routine or an agent. Each session runs as a child Claude Code process the runner spawns. |
 
 In API fields, token claims, and metric names, the environment appears as `pool`, and the environment ID is the `pool_id`. The [reference](/docs/en/self-hosted-environments-reference) maps the two spellings, including the deprecated `pool` flag names.
 

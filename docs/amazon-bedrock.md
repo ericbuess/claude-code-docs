@@ -281,18 +281,18 @@ These IDs use the `us.` cross-region inference profile prefix. If you use a diff
 
 To keep the built-in default models and change only their preferred prefix, set [`ANTHROPIC_BEDROCK_REGION_PREFIX`](#cross-region-inference-profile-prefixes) instead of pinning. The difference shows in what the `opus` alias resolves to:
 
-| You set                                                       | The `opus` alias resolves to                                                    |
-| :------------------------------------------------------------ | :------------------------------------------------------------------------------ |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL='us.anthropic.claude-opus-4-8'` | `us.anthropic.claude-opus-4-8`, the exact ID you pinned                         |
-| `ANTHROPIC_BEDROCK_REGION_PREFIX=eu`                          | `eu.anthropic.claude-opus-5-5`, the built-in default with your preferred prefix |
+| You set | The `opus` alias resolves to |
+| :- | :- |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL='us.anthropic.claude-opus-4-8'` | `us.anthropic.claude-opus-4-8`, the exact ID you pinned |
+| `ANTHROPIC_BEDROCK_REGION_PREFIX=eu` | `eu.anthropic.claude-opus-5-5`, the built-in default with your preferred prefix |
 
 For current and legacy model IDs, see [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview). For the full list of pinning environment variables, see [Model configuration](/docs/en/model-config#pin-models-for-third-party-deployments).
 
 Claude Code uses these default models when no pinning variables are set:
 
-| Model type       | Default model                                                                             |
-| :--------------- | :---------------------------------------------------------------------------------------- |
-| Primary model    | Opus 5.5, for example `us.anthropic.claude-opus-5-5` in a `us-*` region                   |
+| Model type | Default model |
+| :- | :- |
+| Primary model | Opus 5.5, for example `us.anthropic.claude-opus-5-5` in a `us-*` region |
 | Small/fast model | Sonnet 4.5, for example `us.anthropic.claude-sonnet-4-5-20250929-v1:0` in a `us-*` region |
 
 Background tasks such as session title generation use the small/fast model, normally a Haiku-class model. On Amazon Bedrock, Claude Code uses the default Sonnet model for background tasks because Haiku may not be enabled in every account or region. Two selections change which model carries them:
@@ -362,13 +362,13 @@ Model aliases such as `opus` don't act as pins, and neither does a model ID Clau
 
 On the Amazon Bedrock [Invoke API](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_InvokeModelWithResponseStream.html), Claude Code resolves its built-in default models to [cross-region inference profile](https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-support.html) IDs; to route model versions through your own inference profiles instead, see [Map each model version to an inference profile](#map-each-model-version-to-an-inference-profile). This table shows the prefix Claude Code prefers for each resolved AWS region:
 
-| AWS region                | Prefix    |
-| :------------------------ | :-------- |
+| AWS region | Prefix |
+| :- | :- |
 | `us-gov-*` (AWS GovCloud) | `us-gov.` |
-| `us-*`                    | `us.`     |
-| `eu-*`                    | `eu.`     |
-| `ap-*`                    | `apac.`   |
-| All other regions         | `global.` |
+| `us-*` | `us.` |
+| `eu-*` | `eu.` |
+| `ap-*` | `apac.` |
+| All other regions | `global.` |
 
 Set `ANTHROPIC_BEDROCK_REGION_PREFIX` to choose the prefix Claude Code tries first; when Claude Code can check profile availability and finds no matching profile for a model, it falls back as described in the resolution order below. Valid values are `us`, `eu`, `apac`, `jp`, `au`, and `global`. For example, set it to `global` when your account has `global.` profiles enabled but Claude Code would derive a geography-specific one from your AWS region. Requires Claude Code v2.1.224 or later.
 
@@ -542,11 +542,11 @@ export ANTHROPIC_BEDROCK_MANTLE_BASE_URL=https://your-gateway.example.com
 
 These variables are specific to the Mantle endpoint. See [Environment variables](/docs/en/env-vars) for the full list.
 
-| Variable                                | Purpose                                                                    |
-| :-------------------------------------- | :------------------------------------------------------------------------- |
-| `CLAUDE_CODE_USE_MANTLE`                | Enable the Mantle endpoint. Set to `1` or `true`.                          |
-| `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`     | Override the default Mantle endpoint URL                                   |
-| `CLAUDE_CODE_SKIP_MANTLE_AUTH`          | Skip client-side authentication for proxy setups                           |
+| Variable | Purpose |
+| :- | :- |
+| `CLAUDE_CODE_USE_MANTLE` | Enable the Mantle endpoint. Set to `1` or `true`. |
+| `ANTHROPIC_BEDROCK_MANTLE_BASE_URL` | Override the default Mantle endpoint URL |
+| `CLAUDE_CODE_SKIP_MANTLE_AUTH` | Skip client-side authentication for proxy setups |
 | `ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION` | Override AWS region for the Haiku-class model (shared with Amazon Bedrock) |
 
 ## Troubleshooting

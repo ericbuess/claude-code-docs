@@ -144,11 +144,11 @@ The steps below provision the full deployment with `gcloud` commands.
 
     Set `trusted_proxies` to match your front end. An external GKE Ingress of class `gce` isn't listed: it provisions a public forwarding-rule address, which the `/login` [private-network check](/docs/en/claude-apps-gateway#prerequisites) rejects.
 
-    | Front end                                                | `trusted_proxies`                                   |
-    | -------------------------------------------------------- | --------------------------------------------------- |
-    | Cloud Run reached directly, no load balancer             | `[169.254.0.0/16]`                                  |
+    | Front end | `trusted_proxies` |
+    | - | - |
+    | Cloud Run reached directly, no load balancer | `[169.254.0.0/16]` |
     | Internal Application Load Balancer in front of Cloud Run | `169.254.0.0/16` plus your proxy-only subnet's CIDR |
-    | GKE internal Ingress, class `gce-internal`               | Your proxy-only subnet's CIDR                       |
+    | GKE internal Ingress, class `gce-internal` | Your proxy-only subnet's CIDR |
 
     The example below uses the internal-load-balancer-in-front-of-Cloud-Run values.
 
@@ -191,12 +191,12 @@ The steps below provision the full deployment with `gcloud` commands.
   <Step title="Store secrets in Secret Manager">
     Create four secrets and grant `roles/secretmanager.secretAccessor` to the `claude-gateway` service account:
 
-    | Secret                       | Source                                          |
-    | ---------------------------- | ----------------------------------------------- |
-    | `gateway-jwt-secret`         | `openssl rand -base64 32`                       |
-    | `gateway-oidc-client-secret` | Google Cloud Console → OAuth client             |
-    | `gateway-postgres-url`       | `$GATEWAY_POSTGRES_URL` from the Cloud SQL step |
-    | `gateway-config`             | the full `gateway.yaml` from the previous step  |
+    | Secret | Source |
+    | - | - |
+    | `gateway-jwt-secret` | `openssl rand -base64 32` |
+    | `gateway-oidc-client-secret` | Google Cloud Console → OAuth client |
+    | `gateway-postgres-url` | `$GATEWAY_POSTGRES_URL` from the Cloud SQL step |
+    | `gateway-config` | the full `gateway.yaml` from the previous step |
 
     How the secrets reach the container differs by track:
 
@@ -305,14 +305,14 @@ The assets are provided as working examples, not as a supported production artif
 
 For gateway boot and login errors, see the platform-agnostic [troubleshooting table](/docs/en/claude-apps-gateway-deploy#troubleshooting). The entries below are specific to Google Cloud.
 
-| Symptom                                                                                  | Cause                                                                                                                               | Fix                                                                                                                                                                                                                         |
-| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Cloud Run returns `403 Forbidden` before reaching the container                          | The invoker IAM check is still enabled                                                                                              | Deploy with `--no-invoker-iam-check`, or grant `allUsers` the `run.invoker` role with `--allow-unauthenticated`                                                                                                             |
-| `--no-invoker-iam-check` rejected with `invoker_iam_disabled is not currently available` | Blocked by `constraints/run.managed.requireInvokerIam`                                                                              | Use `--allow-unauthenticated`. If Domain Restricted Sharing via `constraints/iam.allowedPolicyMemberDomains` blocks that too, use the GKE track, which exposes the gateway at the network layer with no `allUsers` binding. |
-| `Container manifest type … must support amd64/linux` at deploy                           | Image was built on a non-amd64 host, or buildx emitted an OCI image index                                                           | Build with `--platform=linux/amd64 --provenance=false`                                                                                                                                                                      |
-| Gateway boot exits with a Postgres connection-timeout error on Cloud Run                 | Service isn't attached to the VPC, or Cloud SQL has no private IP on that VPC                                                       | Deploy with `--network` and `--subnet` for Direct VPC egress, and create the Cloud SQL instance with `--no-assign-ip` and `--network` pointing at the same VPC                                                              |
-| Google Cloud's Agent Platform requests return `403 PERMISSION_DENIED`                    | Runtime isn't using the `claude-gateway` service account, or the model isn't enabled in Model Garden for the project                | Set `--service-account` on Cloud Run or bind Workload Identity on GKE, and enable each Claude model in Model Garden for the target region                                                                                   |
-| Streaming responses cut off after a fixed duration                                       | Front-end request timeout: the load balancer backend service behind GKE Ingress defaults to 30 seconds and Cloud Run to 300 seconds | Attach a BackendConfig with a raised `timeoutSec` on GKE, or deploy with `--timeout=3600` on Cloud Run                                                                                                                      |
+| Symptom | Cause | Fix |
+| - | - | - |
+| Cloud Run returns `403 Forbidden` before reaching the container | The invoker IAM check is still enabled | Deploy with `--no-invoker-iam-check`, or grant `allUsers` the `run.invoker` role with `--allow-unauthenticated` |
+| `--no-invoker-iam-check` rejected with `invoker_iam_disabled is not currently available` | Blocked by `constraints/run.managed.requireInvokerIam` | Use `--allow-unauthenticated`. If Domain Restricted Sharing via `constraints/iam.allowedPolicyMemberDomains` blocks that too, use the GKE track, which exposes the gateway at the network layer with no `allUsers` binding. |
+| `Container manifest type … must support amd64/linux` at deploy | Image was built on a non-amd64 host, or buildx emitted an OCI image index | Build with `--platform=linux/amd64 --provenance=false` |
+| Gateway boot exits with a Postgres connection-timeout error on Cloud Run | Service isn't attached to the VPC, or Cloud SQL has no private IP on that VPC | Deploy with `--network` and `--subnet` for Direct VPC egress, and create the Cloud SQL instance with `--no-assign-ip` and `--network` pointing at the same VPC |
+| Google Cloud's Agent Platform requests return `403 PERMISSION_DENIED` | Runtime isn't using the `claude-gateway` service account, or the model isn't enabled in Model Garden for the project | Set `--service-account` on Cloud Run or bind Workload Identity on GKE, and enable each Claude model in Model Garden for the target region |
+| Streaming responses cut off after a fixed duration | Front-end request timeout: the load balancer backend service behind GKE Ingress defaults to 30 seconds and Cloud Run to 300 seconds | Attach a BackendConfig with a raised `timeoutSec` on GKE, or deploy with `--timeout=3600` on Cloud Run |
 
 ## Next steps
 

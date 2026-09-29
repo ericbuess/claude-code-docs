@@ -178,11 +178,11 @@ To use this configuration with your own project, copy the `.devcontainer/` direc
 
 The reference configuration consists of three files. None of them are required when you add Claude Code to your own dev container through the feature, but they show one way to combine the pieces.
 
-| File                                                                                                       | Purpose                                                                       |
-| ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| File | Purpose |
+| - | - |
 | [`devcontainer.json`](https://github.com/anthropics/claude-code/blob/main/.devcontainer/devcontainer.json) | Volume mounts, `runArgs` capabilities, VS Code extensions, and `containerEnv` |
-| [`Dockerfile`](https://github.com/anthropics/claude-code/blob/main/.devcontainer/Dockerfile)               | Base image, development tools, and the Claude Code install                    |
-| [`init-firewall.sh`](https://github.com/anthropics/claude-code/blob/main/.devcontainer/init-firewall.sh)   | Limits outbound network traffic to the destinations the script allows         |
+| [`Dockerfile`](https://github.com/anthropics/claude-code/blob/main/.devcontainer/Dockerfile) | Base image, development tools, and the Claude Code install |
+| [`init-firewall.sh`](https://github.com/anthropics/claude-code/blob/main/.devcontainer/init-firewall.sh) | Limits outbound network traffic to the destinations the script allows |
 
 ## Next steps
 

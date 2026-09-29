@@ -30,6 +30,14 @@ Admins can direct which login method developers use and require claude.ai logins
 
 To log out and re-authenticate, type `/logout` at the Claude Code prompt. Logging out also resets your first-launch setup state, so the next time you run `claude` it walks you through login and setup again.
 
+To stay signed in to multiple accounts at once, such as work and personal accounts, give each account its own configuration directory. When you start `claude`, set the [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars#variables) environment variable to the directory for the account you want to use. Each directory has its own settings, session history, and claude.ai login or API key. For example, in Bash or Zsh, add this alias to `~/.bashrc` or `~/.zshrc` so that `claude-work` uses your work account while `claude` keeps your personal one:
+
+```bash theme={null}
+alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'
+```
+
+After you open a new terminal and run `claude-work` for the first time, Claude Code walks you through login and setup for the new directory. Separate directories don't keep two Claude Console sign-ins [without an API key](#sign-in-without-an-api-key) apart, because Claude Code stores that kind of sign-in outside the configuration directory.
+
 If you're having trouble logging in, see [authentication troubleshooting](/docs/en/troubleshoot-install#login-and-authentication).
 
 ## Set up team authentication
@@ -228,11 +236,11 @@ Claude Code doesn't read profiles or federation variables in [bare mode](/docs/e
 
 Claude Code checks three sources in this order and stops at the first one that is set. The table shows what sets each source and where it ranks against your `/login` credential.
 
-| Source               | Set by                                                                                                                                                                   | Rank against `/login`                                                                                                 |
-| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
-| Named profile        | `ANTHROPIC_PROFILE`                                                                                                                                                      | Above, whichever auth mode the profile has                                                                            |
-| Federation variables | `ANTHROPIC_FEDERATION_RULE_ID` and `ANTHROPIC_ORGANIZATION_ID`, both set                                                                                                 | Above                                                                                                                 |
-| Active profile       | The [`active_config` file](https://platform.claude.com/docs/en/manage-claude/wif-reference#active-profile) in your configuration directory, or a profile named `default` | Above when its auth mode is `oidc_federation`; below a working `/login` credential when its auth mode is `user_oauth` |
+| Source | Set by | Rank against `/login` |
+| :- | :- | :- |
+| Named profile | `ANTHROPIC_PROFILE` | Above, whichever auth mode the profile has |
+| Federation variables | `ANTHROPIC_FEDERATION_RULE_ID` and `ANTHROPIC_ORGANIZATION_ID`, both set | Above |
+| Active profile | The [`active_config` file](https://platform.claude.com/docs/en/manage-claude/wif-reference#active-profile) in your configuration directory, or a profile named `default` | Above when its auth mode is `oidc_federation`; below a working `/login` credential when its auth mode is `user_oauth` |
 
 The `user_oauth` rule keeps a leftover `ant auth login` profile from moving your requests off the account you signed in to with `/login`. For the federation variables, Claude Code also reads the other variables in the [WIF reference](https://platform.claude.com/docs/en/manage-claude/wif-reference#environment-variables), such as `ANTHROPIC_IDENTITY_TOKEN_FILE`, when it exchanges your identity token. For the profile file format, see the [WIF reference](https://platform.claude.com/docs/en/manage-claude/wif-reference#profile-configuration-file).
 

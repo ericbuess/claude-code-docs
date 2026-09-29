@@ -14,14 +14,14 @@ The [desktop app](/docs/en/desktop#work-in-parallel-with-sessions), [claude.ai/c
 
 Sessions are saved continuously to [local transcript files](#export-and-locate-session-data) as you work, so you can return to one after exiting or running `/clear`. Use these entry points:
 
-| Command                             | What it does                                                                                                           |
-| :---------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| `claude --continue`                 | Reopens the most recent conversation in the current directory                                                          |
-| `claude --resume`                   | Opens the [session picker](#use-the-session-picker)                                                                    |
-| `claude --resume <name>`            | Resumes the named session directly                                                                                     |
+| Command | What it does |
+| :- | :- |
+| `claude --continue` | Reopens the most recent conversation in the current directory |
+| `claude --resume` | Opens the [session picker](#use-the-session-picker) |
+| `claude --resume <name>` | Resumes the named session directly |
 | `claude --resume <transcript-path>` | Resumes the conversation stored in the `.jsonl` [transcript file](#where-transcripts-are-stored) at that absolute path |
-| `claude --from-pr <number>`         | Opens the session picker filtered to sessions linked to that pull request                                              |
-| `/resume`                           | Switches to a different conversation from inside an active session                                                     |
+| `claude --from-pr <number>` | Opens the session picker filtered to sessions linked to that pull request |
+| `/resume` | Switches to a different conversation from inside an active session |
 
 Claude Code leaves sessions created with [`claude -p`](/docs/en/headless) or the [Agent SDK](/docs/en/agent-sdk/overview) out of the session picker and out of `claude --continue`. You can still resume one by passing its session ID to `claude --resume <session-id>`. With `claude --continue`, Claude Code also skips [sessions whose first prompt was `/loop`](#where-the-session-picker-looks). When you run [`claude -p --continue`](/docs/en/headless#continue-conversations), Claude Code includes `-p`, SDK, and `/loop` sessions.
 
@@ -55,15 +55,15 @@ Which permission mode Claude Code starts a resumed session in depends on how you
 
 Restoring plan mode on the non-interactive and VS Code paths requires Claude Code v2.1.246 or later. Each row names the permission mode the session ended in, which of the terminal, non-interactive, and VS Code paths you resume it by, and the permission mode Claude Code starts the resumed session in.
 
-| Session ended in    | How you resume                                                             | Permission mode after you resume                                                                                                                                                                                                                                                                                                                   |
-| :------------------ | :------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bypassPermissions` | Terminal                                                                   | The permission mode a new session would start in. To [bypass permissions](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) again, enable it at launch with one of its launch flags or `permissions.defaultMode: "bypassPermissions"` in [user, `--settings`, or managed settings](/docs/en/settings-reference#permissions-defaultmode) |
-| `plan`              | Terminal                                                                   | The permission mode a new session would start in                                                                                                                                                                                                                                                                                                   |
-| `auto`              | Terminal                                                                   | `auto`, only when your account still meets the [auto mode requirements](/docs/en/permission-modes#eliminate-prompts-with-auto-mode)                                                                                                                                                                                                                     |
-| Manual              | Terminal                                                                   | Manual when a new session would start in auto mode from the [built-in default](/docs/en/permission-modes#which-mode-a-session-starts-in). When a `defaultMode` from a settings file [takes effect](/docs/en/permission-modes#which-mode-a-session-starts-in), Claude Code starts the resumed session in that mode instead                                    |
-| `plan`              | Non-interactive, under the [conditions below](#resume-in-plan-mode-with-p) | Plan mode                                                                                                                                                                                                                                                                                                                                          |
-| Any mode            | Non-interactive, in any other case                                         | The permission mode a new `claude -p` run would start in                                                                                                                                                                                                                                                                                           |
-| `plan`              | VS Code                                                                    | Plan mode, with [the exceptions on the VS Code page](/docs/en/vs-code#resume-past-conversations)                                                                                                                                                                                                                                                        |
+| Session ended in | How you resume | Permission mode after you resume |
+| :- | :- | :- |
+| `bypassPermissions` | Terminal | The permission mode a new session would start in. To [bypass permissions](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) again, enable it at launch with one of its launch flags or `permissions.defaultMode: "bypassPermissions"` in [user, `--settings`, or managed settings](/docs/en/settings-reference#permissions-defaultmode) |
+| `plan` | Terminal | The permission mode a new session would start in |
+| `auto` | Terminal | `auto`, only when your account still meets the [auto mode requirements](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) |
+| Manual | Terminal | Manual when a new session would start in auto mode from the [built-in default](/docs/en/permission-modes#which-mode-a-session-starts-in). When a `defaultMode` from a settings file [takes effect](/docs/en/permission-modes#which-mode-a-session-starts-in), Claude Code starts the resumed session in that mode instead |
+| `plan` | Non-interactive, under the [conditions below](#resume-in-plan-mode-with-p) | Plan mode |
+| Any mode | Non-interactive, in any other case | The permission mode a new `claude -p` run would start in |
+| `plan` | VS Code | Plan mode, with [the exceptions on the VS Code page](/docs/en/vs-code#resume-past-conversations) |
 
 <h5 id="resume-in-plan-mode-with-p">
   Resume in plan mode with `-p`
@@ -105,23 +105,23 @@ When you select a session from another worktree of the same repository, Claude C
 
 Resuming by name resolves across the current repository and its worktrees. Both forms look for an exact match and resume it directly even if it lives in a different worktree:
 
-| Command                  | Exact match      | Ambiguous name                                                              |
-| :----------------------- | :--------------- | :-------------------------------------------------------------------------- |
-| `claude --resume <name>` | Resumes directly | Opens the session picker with the name pre-filled as a search term          |
-| `/resume <name>`         | Resumes directly | Reports an error; run `/resume` with no argument to open the session picker |
+| Command | Exact match | Ambiguous name |
+| :- | :- | :- |
+| `claude --resume <name>` | Resumes directly | Opens the session picker with the name pre-filled as a search term |
+| `/resume <name>` | Resumes directly | Reports an error; run `/resume` with no argument to open the session picker |
 
 ## Name your sessions
 
 Give sessions descriptive names so they're findable in the session picker and resumable by name. This matters most when you're working on several tasks in parallel.
 
-| When                             | How to set the name                                                                                                                                                               |
-| :------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| At startup                       | `claude -n auth-refactor`                                                                                                                                                         |
-| During a session                 | `/rename auth-refactor`. The name also appears on the prompt bar                                                                                                                  |
-| From the session picker          | Highlight a session and press `Ctrl+R`                                                                                                                                            |
-| On plan accept                   | Accepting a plan in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) gives the session a generated title based on the plan unless you've already named it |
-| From claude.ai or the Claude app | Rename a [Remote Control session](/docs/en/remote-control#connect-from-another-device); Claude Code applies the same name in the CLI. Requires Claude Code v2.1.221 or later           |
-| From the desktop app             | Rename a session in the [desktop app](/docs/en/desktop#work-in-parallel-with-sessions)                                                                                                 |
+| When | How to set the name |
+| :- | :- |
+| At startup | `claude -n auth-refactor` |
+| During a session | `/rename auth-refactor`. The name also appears on the prompt bar |
+| From the session picker | Highlight a session and press `Ctrl+R` |
+| On plan accept | Accepting a plan in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) gives the session a generated title based on the plan unless you've already named it |
+| From claude.ai or the Claude app | Rename a [Remote Control session](/docs/en/remote-control#connect-from-another-device); Claude Code applies the same name in the CLI. Requires Claude Code v2.1.221 or later |
+| From the desktop app | Rename a session in the [desktop app](/docs/en/desktop#work-in-parallel-with-sessions) |
 
 Once you name a session through a CLI route or from claude.ai, return to it with `claude --resume <name>` or `/resume <name>`; a desktop-app session resumes in the app, which keeps its own session history. See [Resume a session](#resume-a-session) for how name resolution behaves across worktrees.
 
@@ -148,18 +148,18 @@ Sessions you don't name still get two labels that Claude Code assigns. Only the 
 
 Run `/resume` inside a session, or `claude --resume` with no arguments, to open the interactive session picker. Use these keyboard shortcuts to navigate, search, and widen the list:
 
-| Shortcut                                          | Action                                                                                                                                                       |
-| :------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `↑` / `↓`                                         | Navigate between sessions                                                                                                                                    |
-| `→` / `←`                                         | Expand or collapse grouped sessions                                                                                                                          |
-| `Enter`                                           | Resume the highlighted session                                                                                                                               |
-| `Space`                                           | Preview the session content. `Ctrl+V` also works on terminals that don't capture it as paste                                                                 |
-| `Ctrl+R`                                          | Rename the highlighted session                                                                                                                               |
+| Shortcut | Action |
+| :- | :- |
+| `↑` / `↓` | Navigate between sessions |
+| `→` / `←` | Expand or collapse grouped sessions |
+| `Enter` | Resume the highlighted session |
+| `Space` | Preview the session content. `Ctrl+V` also works on terminals that don't capture it as paste |
+| `Ctrl+R` | Rename the highlighted session |
 | `/` or any printable character other than `Space` | Enter search mode and filter sessions. Paste a GitHub, GitHub Enterprise, GitLab, or Bitbucket pull or merge request URL to find the session that created it |
-| `Ctrl+A`                                          | Show sessions from all projects on this machine. Press again to return to the current repository                                                             |
-| `Ctrl+W`                                          | Show sessions from all worktrees of the current repository. Press again to return to the current worktree. Only shown in multi-worktree repositories         |
-| `Ctrl+B`                                          | Filter to sessions from the current git branch. Press again to show all branches                                                                             |
-| `Esc`                                             | Exit the session picker or search mode                                                                                                                       |
+| `Ctrl+A` | Show sessions from all projects on this machine. Press again to return to the current repository |
+| `Ctrl+W` | Show sessions from all worktrees of the current repository. Press again to return to the current worktree. Only shown in multi-worktree repositories |
+| `Ctrl+B` | Filter to sessions from the current git branch. Press again to show all branches |
+| `Esc` | Exit the session picker or search mode |
 
 Each row shows the session name if you set one, otherwise the AI-generated session title, conversation summary, or first prompt, along with time since last activity, git branch, and file size. Widen to all projects with `Ctrl+A` to also see each session's project path.
 
@@ -189,12 +189,12 @@ The `/branch` confirmation prints two session IDs: the new branch you are now in
 
 `/branch` copies the transcript and switches the running Claude Code process to write to it. That distinction determines what the branch inherits:
 
-| State                                                                                                                                                                    | After `/branch`                                                                                                                                                                                                 |
-| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Conversation history                                                                                                                                                     | Copied into the branch up to the point you ran `/branch`                                                                                                                                                        |
-| "Allow for this session" permission grants                                                                                                                               | Carried over; the branch runs in the same process, so your existing grants still apply. If you fork into a separate process with `--fork-session`, the new process starts without them and you re-approve there |
-| In-flight [background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) and [background Bash commands](/docs/en/interactive-mode#background-bash-commands) | Keep running. Their output appears in the new branch you switched into, not in the original session                                                                                                             |
-| [Remote Control](/docs/en/remote-control) connection                                                                                                                          | Stays connected. A phone or browser connected to the session follows you into the branch and keeps receiving new messages there                                                                                 |
+| State | After `/branch` |
+| :- | :- |
+| Conversation history | Copied into the branch up to the point you ran `/branch` |
+| "Allow for this session" permission grants | Carried over; the branch runs in the same process, so your existing grants still apply. If you fork into a separate process with `--fork-session`, the new process starts without them and you re-approve there |
+| In-flight [background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) and [background Bash commands](/docs/en/interactive-mode#background-bash-commands) | Keep running. Their output appears in the new branch you switched into, not in the original session |
+| [Remote Control](/docs/en/remote-control) connection | Stays connected. A phone or browser connected to the session follows you into the branch and keeps receiving new messages there |
 
 If you resume the same session in two terminals without forking, messages from both interleave into one transcript. For checkpoint-based rewind within a single session, see [Checkpointing](/docs/en/checkpointing).
 
@@ -235,14 +235,14 @@ Each line is a JSON object for a message, tool use, or metadata entry. The entry
 
 The location, retention, and write behavior are configurable:
 
-| To                                                                                                          | Set                                                                                         | Where                                            |
-| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| Move storage off `~/.claude`                                                                                | [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars)                                                         | Environment variable                             |
-| [Name the `<project>` directory yourself](#name-the-project-directory-yourself)                             | [`CLAUDE_CODE_PROJECT_DIR_NAME`](/docs/en/env-vars)                                              | Environment variable                             |
-| Change the 30-day retention                                                                                 | [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays)                             | `settings.json`                                  |
+| To | Set | Where |
+| - | - | - |
+| Move storage off `~/.claude` | [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) | Environment variable |
+| [Name the `<project>` directory yourself](#name-the-project-directory-yourself) | [`CLAUDE_CODE_PROJECT_DIR_NAME`](/docs/en/env-vars) | Environment variable |
+| Change the 30-day retention | [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays) | `settings.json` |
 | Set an age limit for [Claude Desktop and Cowork transcripts](/docs/en/claude-directory#cleaned-up-automatically) | [`desktopSessionCleanupPeriodDays`](/docs/en/settings-reference#desktopsessioncleanupperioddays) | User settings, managed settings, or `--settings` |
-| Suppress transcript writes in all modes                                                                     | [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/docs/en/env-vars)                                           | Environment variable                             |
-| Suppress writes for one non-interactive run                                                                 | [`--no-session-persistence`](/docs/en/cli-reference)                                             | CLI flag with `claude -p`                        |
+| Suppress transcript writes in all modes | [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/docs/en/env-vars) | Environment variable |
+| Suppress writes for one non-interactive run | [`--no-session-persistence`](/docs/en/cli-reference) | CLI flag with `claude -p` |
 
 ### Delete session data
 

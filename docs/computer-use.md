@@ -82,11 +82,11 @@ Choose **Allow for this session** or **Deny**. Approvals last for the current se
 
 Apps with broad reach show an extra warning in the prompt so you know what approving them grants:
 
-| Warning                    | Applies to                                                   |
-| :------------------------- | :----------------------------------------------------------- |
+| Warning | Applies to |
+| :- | :- |
 | Equivalent to shell access | Terminal, iTerm, VS Code, Warp, and other terminals and IDEs |
-| Can read or write any file | Finder                                                       |
-| Can change system settings | System Settings                                              |
+| Can read or write any file | Finder |
+| Can change system settings | System Settings |
 
 These apps aren't blocked. The warning lets you decide whether the task warrants that level of access.
 
@@ -177,13 +177,13 @@ Claude controls the simulator the same way you would with a mouse. This flow app
 
 The CLI and Desktop surfaces share the same computer use engine, with a few differences:
 
-| Feature              | Desktop                                                  | CLI                             |
-| :------------------- | :------------------------------------------------------- | :------------------------------ |
-| Platforms            | macOS and Windows                                        | macOS only                      |
-| Enable               | Toggle in **Settings > General** (under **Desktop app**) | Enable `computer-use` in `/mcp` |
-| Denied apps list     | Configurable in Settings                                 | Not yet available               |
-| Auto-unhide toggle   | Optional                                                 | Always on                       |
-| Dispatch integration | Dispatch-spawned sessions can use computer use           | Not applicable                  |
+| Feature | Desktop | CLI |
+| :- | :- | :- |
+| Platforms | macOS and Windows | macOS only |
+| Enable | Toggle in **Settings > General** (under **Desktop app**) | Enable `computer-use` in `/mcp` |
+| Denied apps list | Configurable in Settings | Not yet available |
+| Auto-unhide toggle | Optional | Always on |
+| Dispatch integration | Dispatch-spawned sessions can use computer use | Not applicable |
 
 ## Troubleshooting
 

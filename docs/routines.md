@@ -264,25 +264,25 @@ The Claude GitHub App must be installed on the repository you want to subscribe 
 
 GitHub triggers can subscribe to either of the following event categories. Within each category you can pick a specific action, such as `pull_request.opened`, or react to all actions in the category.
 
-| Event        | Triggers when                                                                 |
-| :----------- | :---------------------------------------------------------------------------- |
+| Event | Triggers when |
+| :- | :- |
 | Pull request | A PR is opened, closed, assigned, labeled, synchronized, or otherwise updated |
-| Release      | A release is created, published, edited, or deleted                           |
+| Release | A release is created, published, edited, or deleted |
 
 #### Filter pull requests
 
 Use filters to narrow which pull requests start a new session. All filter conditions must match for the routine to trigger. The available filter fields are:
 
-| Filter      | Matches                          |
-| :---------- | :------------------------------- |
-| Author      | PR author's GitHub username      |
-| Title       | PR title text                    |
-| Body        | PR description text              |
-| Base branch | Branch the PR targets            |
-| Head branch | Branch the PR comes from         |
-| Labels      | Labels applied to the PR         |
-| Is draft    | Whether the PR is in draft state |
-| Is merged   | Whether the PR has been merged   |
+| Filter | Matches |
+| :- | :- |
+| Author | PR author's GitHub username |
+| Title | PR title text |
+| Body | PR description text |
+| Base branch | Branch the PR targets |
+| Head branch | Branch the PR comes from |
+| Labels | Labels applied to the PR |
+| Is draft | Whether the PR is in draft state |
+| Is merged | Whether the PR has been merged |
 
 Each filter pairs a field with an operator: equals, contains, starts with, is one of, is not one of, or matches regex.
 

@@ -32,17 +32,17 @@ Reverse whichever method turned the mode on: start without the flag, unset the e
 
 The table lists each accessibility option, whether you set it as a flag, an environment variable, or a setting, and what it changes.
 
-| Option                                                                  | Type                 | What it changes                                                                                                                                                                                                                                          |
-| :---------------------------------------------------------------------- | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`--ax-screen-reader`](/docs/en/cli-reference#cli-flags)                     | Flag                 | Screen reader mode for one session.                                                                                                                                                                                                                      |
-| [`CLAUDE_AX_SCREEN_READER`](/docs/en/env-vars#variables)                     | Environment variable | Screen reader mode for sessions started from the shell where you set it.                                                                                                                                                                                 |
-| [`axScreenReader`](/docs/en/settings-reference#axscreenreader)               | Setting              | Screen reader mode for every session when `true`.                                                                                                                                                                                                        |
-| [`CLAUDE_AX_STARTUP_QUIET_MS`](/docs/en/env-vars#variables)                  | Environment variable | How long Claude Code waits after the confirmation line before it draws the first prompt in screen reader mode. Requires Claude Code v2.1.217 or later.                                                                                                   |
-| [`CLAUDE_AX_PREPARK_MS`](/docs/en/env-vars#variables)                        | Environment variable | How long Claude Code waits, with the cursor at the start of the line, before it writes a new or changed line in screen reader mode. Requires Claude Code v2.1.233 or later.                                                                              |
-| [`CLAUDE_CODE_ACCESSIBILITY`](/docs/en/env-vars#variables)                   | Environment variable | A terminal cursor that stays visible for screen magnifiers such as macOS Zoom when you set it to `1`. The cursor follows the input caret and, on Claude Code v2.1.218 or later, the highlighted row in menus and panels such as `/config` and `/plugin`. |
-| [`prefersReducedMotion`](/docs/en/settings-reference#prefersreducedmotion)   | Setting              | Reduced or no spinners, shimmer, and other animations when `true`.                                                                                                                                                                                       |
-| [`theme`](/docs/en/settings-reference#theme)                                 | Setting              | The interface colors, including the colorblind-friendly `dark-daltonized` and `light-daltonized` themes. You can also pick one with [`/theme`](/docs/en/commands#all-commands).                                                                               |
-| [`preferredNotifChannel`](/docs/en/settings-reference#preferrednotifchannel) | Setting              | With the value `"terminal_bell"`, a terminal bell outside screen reader mode when Claude is waiting on you.                                                                                                                                              |
+| Option | Type | What it changes |
+| :- | :- | :- |
+| [`--ax-screen-reader`](/docs/en/cli-reference#cli-flags) | Flag | Screen reader mode for one session. |
+| [`CLAUDE_AX_SCREEN_READER`](/docs/en/env-vars#variables) | Environment variable | Screen reader mode for sessions started from the shell where you set it. |
+| [`axScreenReader`](/docs/en/settings-reference#axscreenreader) | Setting | Screen reader mode for every session when `true`. |
+| [`CLAUDE_AX_STARTUP_QUIET_MS`](/docs/en/env-vars#variables) | Environment variable | How long Claude Code waits after the confirmation line before it draws the first prompt in screen reader mode. Requires Claude Code v2.1.217 or later. |
+| [`CLAUDE_AX_PREPARK_MS`](/docs/en/env-vars#variables) | Environment variable | How long Claude Code waits, with the cursor at the start of the line, before it writes a new or changed line in screen reader mode. Requires Claude Code v2.1.233 or later. |
+| [`CLAUDE_CODE_ACCESSIBILITY`](/docs/en/env-vars#variables) | Environment variable | A terminal cursor that stays visible for screen magnifiers such as macOS Zoom when you set it to `1`. The cursor follows the input caret and, on Claude Code v2.1.218 or later, the highlighted row in menus and panels such as `/config` and `/plugin`. |
+| [`prefersReducedMotion`](/docs/en/settings-reference#prefersreducedmotion) | Setting | Reduced or no spinners, shimmer, and other animations when `true`. |
+| [`theme`](/docs/en/settings-reference#theme) | Setting | The interface colors, including the colorblind-friendly `dark-daltonized` and `light-daltonized` themes. You can also pick one with [`/theme`](/docs/en/commands#all-commands). |
+| [`preferredNotifChannel`](/docs/en/settings-reference#preferrednotifchannel) | Setting | With the value `"terminal_bell"`, a terminal bell outside screen reader mode when Claude is waiting on you. |
 
 ## What your screen reader hears
 
@@ -62,17 +62,17 @@ Claude Code also waits at two points so your screen reader can keep up:
 
 Each message in the transcript starts with a label your screen reader announces, naming what it is: your messages, Claude's replies and thinking, tool activity, errors and warnings, and prompts. The labels are also searchable, so you can jump between sections of the transcript by searching your terminal's scrollback:
 
-| Label                  | Meaning                                                                                   |
-| :--------------------- | :---------------------------------------------------------------------------------------- |
-| `you:`                 | Your messages                                                                             |
-| `claude:`              | Claude's replies                                                                          |
-| `thinking:`            | Claude's thinking                                                                         |
-| `tool:`                | Tool activity, such as a file edit or a command run                                       |
-| `tool error:`          | A tool that failed                                                                        |
-| `error:`               | An error in the conversation, such as a failed API request                                |
-| `warning:`             | A warning from Claude Code, such as a switch to a fallback model                          |
-| `Permission Required:` | A permission prompt waiting for your answer                                               |
-| `Cost:`                | The session cost summary when Claude Code exits, if your account [shows costs](/docs/en/costs) |
+| Label | Meaning |
+| :- | :- |
+| `you:` | Your messages |
+| `claude:` | Claude's replies |
+| `thinking:` | Claude's thinking |
+| `tool:` | Tool activity, such as a file edit or a command run |
+| `tool error:` | A tool that failed |
+| `error:` | An error in the conversation, such as a failed API request |
+| `warning:` | A warning from Claude Code, such as a switch to a fallback model |
+| `Permission Required:` | A permission prompt waiting for your answer |
+| `Cost:` | The session cost summary when Claude Code exits, if your account [shows costs](/docs/en/costs) |
 
 Claude Code keeps the terminal cursor on the input caret, so your screen reader's read-current-line command reads the prompt you're editing.
 

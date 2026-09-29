@@ -24,12 +24,12 @@ Pressing Enter submits your message. To add a line break without submitting, pre
 
 In most terminals you can also press Shift+Enter, but support varies by terminal emulator:
 
-| Terminal                                                                                           | Shift+Enter for newline                                     |
-| :------------------------------------------------------------------------------------------------- | :---------------------------------------------------------- |
-| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal                            | Works without setup                                         |
+| Terminal | Shift+Enter for newline |
+| :- | :- |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal | Works without setup |
 | Other terminals that support the kitty keyboard protocol, such as foot and Alacritty 0.16 or later | Works without setup. Requires Claude Code v2.1.269 or later |
-| VS Code, Cursor, Devin Desktop, Alacritty before 0.16, Zed                                         | Run `/terminal-setup` once                                  |
-| gnome-terminal, JetBrains IDEs such as PyCharm and Android Studio                                  | Not available; use Ctrl+J or `\` then Enter                 |
+| VS Code, Cursor, Devin Desktop, Alacritty before 0.16, Zed | Run `/terminal-setup` once |
+| gnome-terminal, JetBrains IDEs such as PyCharm and Android Studio | Not available; use Ctrl+J or `\` then Enter |
 
 For VS Code, Cursor, Devin Desktop, Alacritty before 0.16, and Zed, `/terminal-setup` writes a Shift+Enter keybinding into the terminal's configuration file. On the first run you see a confirmation such as `Installed VSCode terminal Shift+Enter key binding`. Existing bindings are left in place; if you see a message such as `VSCode terminal Shift+Enter key binding already configured`, no change was made. Run `/terminal-setup` directly in the host terminal rather than inside tmux or screen, since it needs to write to the host terminal's configuration.
 
@@ -144,11 +144,11 @@ In addition to the built-in presets, `/theme` lists any custom themes you have d
 
 Each custom theme is a JSON file in `~/.claude/themes/`. The filename without the `.json` extension is the theme's slug, and selecting the theme stores `custom:<slug>` as your theme preference. The file has three optional fields:
 
-| Field       | Type   | Description                                                                                                                                     |
-| :---------- | :----- | :---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`      | string | Display label shown in `/theme`. Defaults to the filename slug                                                                                  |
-| `base`      | string | Built-in preset the theme starts from: `dark`, `light`, `dark-daltonized`, `light-daltonized`, `dark-ansi`, or `light-ansi`. Defaults to `dark` |
-| `overrides` | object | Map of color token names to color values. Tokens not listed here fall through to the base preset                                                |
+| Field | Type | Description |
+| :- | :- | :- |
+| `name` | string | Display label shown in `/theme`. Defaults to the filename slug |
+| `base` | string | Built-in preset the theme starts from: `dark`, `light`, `dark-daltonized`, `light-daltonized`, `dark-ansi`, or `light-ansi`. Defaults to `dark` |
+| `overrides` | object | Map of color token names to color values. Tokens not listed here fall through to the base preset |
 
 Color values accept `#rrggbb`, `#rgb`, `rgb(r,g,b)`, `ansi256(n)`, or `ansi:<name>` where `<name>` is one of the 16 standard ANSI color names such as `red` or `cyanBright`. Unknown tokens and invalid color values are ignored, so a typo cannot break rendering.
 
@@ -191,76 +191,76 @@ The reference below covers the tokens you can set in `overrides`. The interactiv
 
   Control the primary brand accent and the foreground text shades used throughout the interface.
 
-  | Token         | Controls                                                         |
-  | :------------ | :--------------------------------------------------------------- |
-  | `claude`      | Primary brand accent, used for the spinner and assistant label   |
-  | `text`        | Default foreground text                                          |
+  | Token | Controls |
+  | :- | :- |
+  | `claude` | Primary brand accent, used for the spinner and assistant label |
+  | `text` | Default foreground text |
   | `inverseText` | Text drawn on top of a colored background, such as status badges |
-  | `inactive`    | Secondary text such as hints, timestamps, and disabled items     |
-  | `subtle`      | Faint borders and de-emphasized secondary text                   |
-  | `suggestion`  | Autocomplete suggestions and selection highlight in pickers      |
-  | `permission`  | Dialog borders, including permission prompts and pickers         |
-  | `remember`    | Memory and `CLAUDE.md` indicators                                |
+  | `inactive` | Secondary text such as hints, timestamps, and disabled items |
+  | `subtle` | Faint borders and de-emphasized secondary text |
+  | `suggestion` | Autocomplete suggestions and selection highlight in pickers |
+  | `permission` | Dialog borders, including permission prompts and pickers |
+  | `remember` | Memory and `CLAUDE.md` indicators |
 
   #### Status colors
 
   Signal success, failure, and warning states across messages and indicators.
 
-  | Token     | Controls                                                |
-  | :-------- | :------------------------------------------------------ |
-  | `success` | Success messages and passing checks                     |
-  | `error`   | Error messages and failures                             |
+  | Token | Controls |
+  | :- | :- |
+  | `success` | Success messages and passing checks |
+  | `error` | Error messages and failures |
   | `warning` | Warnings, caution messages, and the auto mode indicator |
-  | `merged`  | Merged pull request status                              |
+  | `merged` | Merged pull request status |
 
   #### Input box and mode indicators
 
   Set the input box border color and the accent shown while a permission mode or indicator is active.
 
-  | Token          | Controls                                                                                                                                                                             |
-  | :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-  | `promptBorder` | Input box border                                                                                                                                                                     |
-  | `planMode`     | Plan mode accent, plan messages, and plan-mode dialogs                                                                                                                               |
-  | `autoAccept`   | Accept-edits mode accent                                                                                                                                                             |
-  | `bashBorder`   | Input box border when entering a `!` shell command                                                                                                                                   |
-  | `ide`          | IDE connection indicator                                                                                                                                                             |
-  | `fastMode`     | Fast mode indicator                                                                                                                                                                  |
-  | `effortUltra`  | The `ultracode` tag on the input box border while [ultracode](/docs/en/model-config#adjust-effort-level) is on. Your override of this color takes effect on Claude Code v2.1.239 or later |
+  | Token | Controls |
+  | :- | :- |
+  | `promptBorder` | Input box border |
+  | `planMode` | Plan mode accent, plan messages, and plan-mode dialogs |
+  | `autoAccept` | Accept-edits mode accent |
+  | `bashBorder` | Input box border when entering a `!` shell command |
+  | `ide` | IDE connection indicator |
+  | `fastMode` | Fast mode indicator |
+  | `effortUltra` | The `ultracode` tag on the input box border while [ultracode](/docs/en/model-config#adjust-effort-level) is on. Your override of this color takes effect on Claude Code v2.1.239 or later |
 
   #### Diff rendering
 
   Color added and removed code in file edits and reviews.
 
-  | Token               | Controls                                                                      |
-  | :------------------ | :---------------------------------------------------------------------------- |
-  | `diffAdded`         | Background of added lines                                                     |
-  | `diffRemoved`       | Background of removed lines                                                   |
-  | `diffAddedDimmed`   | Background of added lines in the dimmed diff shown after you reject an edit   |
+  | Token | Controls |
+  | :- | :- |
+  | `diffAdded` | Background of added lines |
+  | `diffRemoved` | Background of removed lines |
+  | `diffAddedDimmed` | Background of added lines in the dimmed diff shown after you reject an edit |
   | `diffRemovedDimmed` | Background of removed lines in the dimmed diff shown after you reject an edit |
-  | `diffAddedWord`     | Word-level highlight within an added line                                     |
-  | `diffRemovedWord`   | Word-level highlight within a removed line                                    |
+  | `diffAddedWord` | Word-level highlight within an added line |
+  | `diffRemovedWord` | Word-level highlight within a removed line |
 
   #### Fullscreen mode
 
   Claude Code paints `userMessageBackground`, `bashMessageBackgroundColor`, and `memoryBackgroundColor` in both the default and fullscreen renderers. It uses `userMessageBackgroundHover` and `selectionBg` only in [fullscreen rendering mode](/docs/en/fullscreen).
 
-  | Token                        | Controls                                                      |
-  | :--------------------------- | :------------------------------------------------------------ |
-  | `userMessageBackground`      | Background behind your messages in the transcript             |
-  | `userMessageBackgroundHover` | Background behind a message while hovered or expanded         |
+  | Token | Controls |
+  | :- | :- |
+  | `userMessageBackground` | Background behind your messages in the transcript |
+  | `userMessageBackgroundHover` | Background behind a message while hovered or expanded |
   | `bashMessageBackgroundColor` | Background behind `!` shell command entries in the transcript |
-  | `memoryBackgroundColor`      | Background behind `#` memory entries in the transcript        |
-  | `selectionBg`                | Background of text selected with the mouse                    |
+  | `memoryBackgroundColor` | Background behind `#` memory entries in the transcript |
+  | `selectionBg` | Background of text selected with the mouse |
 
   #### Usage meter and speaker labels
 
   Adjust the bar shown in the `/usage` view and the labels that distinguish your messages from Claude's.
 
-  | Token              | Controls                                          |
-  | :----------------- | :------------------------------------------------ |
-  | `rate_limit_fill`  | Filled portion of the usage meter                 |
-  | `rate_limit_empty` | Unfilled portion of the usage meter               |
-  | `briefLabelYou`    | Color of the `You` label on your messages         |
+  | Token | Controls |
+  | :- | :- |
+  | `rate_limit_fill` | Filled portion of the usage meter |
+  | `rate_limit_empty` | Unfilled portion of the usage meter |
+  | `briefLabelYou` | Color of the `You` label on your messages |
   | `briefLabelClaude` | Color of the `Claude` label on assistant messages |
 
   #### Shimmer variants and subagent colors

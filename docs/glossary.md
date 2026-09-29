@@ -379,9 +379,9 @@ Learn more: [Run parallel sessions with git worktrees](/docs/en/worktrees)
 
 These terms appear in older docs, blog posts, and community content. Use the current name when searching this site.
 
-| Old term                                                                | Now called                                    | Notes                                                                         |
-| ----------------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------- |
-| Headless mode                                                           | [Non-interactive mode](#non-interactive-mode) | Same `-p` flag, same behavior                                                 |
-| Web session; "Claude Code on the web" as the name for any cloud session | [Cloud session](#cloud-session)               | "Claude Code on the web" now names only the browser surface at claude.ai/code |
-| Custom commands                                                         | [Skills](#skill)                              | `.claude/commands/` files still work                                          |
-| Slash commands                                                          | Commands                                      | "Slash" dropped from product copy                                             |
+| Old term | Now called | Notes |
+| - | - | - |
+| Headless mode | [Non-interactive mode](#non-interactive-mode) | Same `-p` flag, same behavior |
+| Web session; "Claude Code on the web" as the name for any cloud session | [Cloud session](#cloud-session) | "Claude Code on the web" now names only the browser surface at claude.ai/code |
+| Custom commands | [Skills](#skill) | `.claude/commands/` files still work |
+| Slash commands | Commands | "Slash" dropped from product copy |

@@ -14,22 +14,22 @@ Adoption of a developer tool rarely happens because of a rollout announcement. I
 
 The role consists of three behaviors that reinforce one another.
 
-| Behavior                 | What it looks like in practice                                                                                                                                                           | Why it matters                                                                                                                                                                          |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Share what you discover  | Post the prompts, screenshots, and small wins from your own work in the places your team already reads, such as an engineering channel, a standup thread, or a pull-request description. | Examples drawn from your own codebase are more persuasive than any external documentation, because colleagues can see exactly how the tool applies to the problems they share with you. |
-| Be the person people ask | When a colleague asks how you accomplished something, respond with the actual prompt you used so they can apply it directly to their own task.                                           | A concrete, runnable example removes the gap between curiosity and a first successful use, which is where most adoption efforts stall.                                                  |
-| Grow the circle          | Establish a small number of lightweight, recurring habits, such as a dedicated channel or a weekly thread, so that momentum continues even when your attention is elsewhere.             | Adoption that depends on a single person is fragile. Adoption that is carried by shared habits continues to compound on its own.                                                        |
+| Behavior | What it looks like in practice | Why it matters |
+| - | - | - |
+| Share what you discover | Post the prompts, screenshots, and small wins from your own work in the places your team already reads, such as an engineering channel, a standup thread, or a pull-request description. | Examples drawn from your own codebase are more persuasive than any external documentation, because colleagues can see exactly how the tool applies to the problems they share with you. |
+| Be the person people ask | When a colleague asks how you accomplished something, respond with the actual prompt you used so they can apply it directly to their own task. | A concrete, runnable example removes the gap between curiosity and a first successful use, which is where most adoption efforts stall. |
+| Grow the circle | Establish a small number of lightweight, recurring habits, such as a dedicated channel or a weekly thread, so that momentum continues even when your attention is elsewhere. | Adoption that depends on a single person is fragile. Adoption that is carried by shared habits continues to compound on its own. |
 
 ### What this should cost you
 
 Set expectations with yourself and with your lead. The activities below are intended to fit inside a normal working week, and the role should remain a multiplier on your existing work rather than an additional support responsibility.
 
-| Activity                                | Time per week    | Guidance                                                                                                             |
-| --------------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Posting wins and prompts                | About 15 minutes | Capture these in the moment with a screenshot and one or two sentences; avoid turning them into formal write-ups.    |
-| Answering questions in a shared channel | About 20 minutes | Answer publicly once, then link back to that answer when the question recurs.                                        |
-| Hosting a weekly show-and-tell thread   | About 5 minutes  | You post the opening prompt; the team supplies the content.                                                          |
-| Optional pairing or walkthroughs        | 0 to 30 minutes  | Reserve this for colleagues who are blocked, and offer the [Quickstart](/docs/en/quickstart) link before scheduling time. |
+| Activity | Time per week | Guidance |
+| - | - | - |
+| Posting wins and prompts | About 15 minutes | Capture these in the moment with a screenshot and one or two sentences; avoid turning them into formal write-ups. |
+| Answering questions in a shared channel | About 20 minutes | Answer publicly once, then link back to that answer when the question recurs. |
+| Hosting a weekly show-and-tell thread | About 5 minutes | You post the opening prompt; the team supplies the content. |
+| Optional pairing or walkthroughs | 0 to 30 minutes | Reserve this for colleagues who are blocked, and offer the [Quickstart](/docs/en/quickstart) link before scheduling time. |
 
 ## Share what you discover
 
@@ -50,12 +50,12 @@ Examples of reusable techniques:
 
 Post wherever your team already reads. The goal is to place examples in the path of normal work rather than to create a destination.
 
-| Location                                        | Best suited for                                                            | Recommended format                                                                          |
-| ----------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| A `#claude-code` or general engineering channel | Discoveries, prompts, and "today I learned" moments                        | A screenshot accompanied by one or two sentences of context                                 |
-| Pull-request descriptions                       | Demonstrating the approach on real code that reviewers are already reading | A single line such as "Claude and I did this refactor; happy to walk through the approach." |
-| Standups or weekly written updates              | Normalizing usage with leads and skip-level managers                       | One sentence describing one concrete outcome                                                |
-| Team wiki or internal documentation             | Durable patterns, custom skills, and `CLAUDE.md` examples                  | A short page, linked from the channel topic so it remains discoverable                      |
+| Location | Best suited for | Recommended format |
+| - | - | - |
+| A `#claude-code` or general engineering channel | Discoveries, prompts, and "today I learned" moments | A screenshot accompanied by one or two sentences of context |
+| Pull-request descriptions | Demonstrating the approach on real code that reviewers are already reading | A single line such as "Claude and I did this refactor; happy to walk through the approach." |
+| Standups or weekly written updates | Normalizing usage with leads and skip-level managers | One sentence describing one concrete outcome |
+| Team wiki or internal documentation | Durable patterns, custom skills, and `CLAUDE.md` examples | A short page, linked from the channel topic so it remains discoverable |
 
 ### The format that works
 
@@ -103,15 +103,15 @@ A response such as "Try plan mode, press `Shift+Tab` until you see it" is more u
 
 ### Questions you are likely to hear
 
-| Question                                           | Suggested response                                                                                                                                                                                                           | Follow-up resource                                      |
-| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| "What should I try it on first?"                   | Recommend a real but contained task, ideally a bug or chore the person has been postponing because it is tedious rather than difficult.                                                                                      | [Common workflows](/docs/en/common-workflows)                |
-| "How do I trust it with my code?"                  | Introduce plan mode: pressing `Shift+Tab` cycles into it, Claude proposes exactly what it intends to change, and nothing is modified until the user approves.                                                                | [Permissions](/docs/en/permissions)                          |
-| "Is the setup worth the effort?"                   | Installation takes roughly two minutes, runs in the terminal, and requires no IDE extension. Running `/init` once is sufficient to begin working.                                                                            | [Quickstart](/docs/en/quickstart)                            |
-| "It produced an incorrect result."                 | Encourage them to provide the failure back to Claude. Pasting the error message or failing test is far more effective than rephrasing the original request.                                                                  | [Common workflows](/docs/en/common-workflows)                |
-| "It does not understand our codebase conventions." | Suggest running `/init` to generate a `CLAUDE.md` file, then adding the team's conventions, test commands, and any directories that should be avoided.                                                                       | [Memory](/docs/en/memory)                                    |
-| "Is this just autocomplete?"                       | Offer a brief demonstration in which Claude explains an unfamiliar file, traces a bug across services, or drafts a migration plan. These tasks require reasoning across the repository rather than completing a single line. | A two-minute live demonstration                         |
-| "What about security and data handling?"           | Refer this question to your administrator. Your organization's deployment and data-handling policy is already configured, and champions should not improvise this answer.                                                    | [Security](/docs/en/security) · [Data usage](/docs/en/data-usage) |
+| Question | Suggested response | Follow-up resource |
+| - | - | - |
+| "What should I try it on first?" | Recommend a real but contained task, ideally a bug or chore the person has been postponing because it is tedious rather than difficult. | [Common workflows](/docs/en/common-workflows) |
+| "How do I trust it with my code?" | Introduce plan mode: pressing `Shift+Tab` cycles into it, Claude proposes exactly what it intends to change, and nothing is modified until the user approves. | [Permissions](/docs/en/permissions) |
+| "Is the setup worth the effort?" | Installation takes roughly two minutes, runs in the terminal, and requires no IDE extension. Running `/init` once is sufficient to begin working. | [Quickstart](/docs/en/quickstart) |
+| "It produced an incorrect result." | Encourage them to provide the failure back to Claude. Pasting the error message or failing test is far more effective than rephrasing the original request. | [Common workflows](/docs/en/common-workflows) |
+| "It does not understand our codebase conventions." | Suggest running `/init` to generate a `CLAUDE.md` file, then adding the team's conventions, test commands, and any directories that should be avoided. | [Memory](/docs/en/memory) |
+| "Is this just autocomplete?" | Offer a brief demonstration in which Claude explains an unfamiliar file, traces a bug across services, or drafts a migration plan. These tasks require reasoning across the repository rather than completing a single line. | A two-minute live demonstration |
+| "What about security and data handling?" | Refer this question to your administrator. Your organization's deployment and data-handling policy is already configured, and champions should not improvise this answer. | [Security](/docs/en/security) · [Data usage](/docs/en/data-usage) |
 
 ## Grow the circle
 
@@ -119,14 +119,14 @@ The objective is to establish a small number of lightweight habits that allow mo
 
 ### Patterns that tend to work
 
-| Pattern                                    | How to run it                                                                                                                                                                                                                                     | Effort required                            |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| A dedicated channel                        | Create a `#claude-code` channel (or a recurring thread in an existing one), pin the [Quickstart](/docs/en/quickstart) link and one strong example, and answer questions publicly so each answer benefits everyone watching.                            | About five minutes to set up, then ambient |
-| A weekly show-and-tell thread              | Each Friday, post "What did Claude help you with this week?" No preparation, slides, or meeting are required; screenshots and short descriptions are sufficient.                                                                                  | About two minutes per week                 |
-| Share a custom skill                       | Post your most useful `.claude/skills/<name>/SKILL.md` file, for example a `/ship` skill that runs tests and lint before committing, with a one-line description. Because skills are plain Markdown, colleagues can adopt them immediately.       | About five minutes per skill               |
-| Generate a setup guide from your own usage | Run `/team-onboarding` in a project you have spent real time in. Claude scans your recent sessions, commands, and MCP servers, then produces a guide a new teammate can paste as their first message to replay your setup. Pin it in the channel. | About two minutes                          |
-| Pair on a first task                       | Offer a single fifteen-minute pairing session to anyone getting started. One successful outcome on their own code is more persuasive than any presentation.                                                                                       | About fifteen minutes per person           |
-| Identify the next champion                 | The colleague who asks you the most questions is usually ready to take on this role. Forward them this page and divide the channel responsibilities between you.                                                                                  | Negligible                                 |
+| Pattern | How to run it | Effort required |
+| - | - | - |
+| A dedicated channel | Create a `#claude-code` channel (or a recurring thread in an existing one), pin the [Quickstart](/docs/en/quickstart) link and one strong example, and answer questions publicly so each answer benefits everyone watching. | About five minutes to set up, then ambient |
+| A weekly show-and-tell thread | Each Friday, post "What did Claude help you with this week?" No preparation, slides, or meeting are required; screenshots and short descriptions are sufficient. | About two minutes per week |
+| Share a custom skill | Post your most useful `.claude/skills/<name>/SKILL.md` file, for example a `/ship` skill that runs tests and lint before committing, with a one-line description. Because skills are plain Markdown, colleagues can adopt them immediately. | About five minutes per skill |
+| Generate a setup guide from your own usage | Run `/team-onboarding` in a project you have spent real time in. Claude scans your recent sessions, commands, and MCP servers, then produces a guide a new teammate can paste as their first message to replay your setup. Pin it in the channel. | About two minutes |
+| Pair on a first task | Offer a single fifteen-minute pairing session to anyone getting started. One successful outcome on their own code is more persuasive than any presentation. | About fifteen minutes per person |
+| Identify the next champion | The colleague who asks you the most questions is usually ready to take on this role. Forward them this page and divide the channel responsibilities between you. | Negligible |
 
 ### Thirty-day playbook
 
@@ -166,27 +166,27 @@ You are the warm introduction rather than the onboarding program. When a colleag
 
 Healthy skepticism is expected; engineers should be cautious about tools that touch their code. The most effective response is rarely to argue the general case. Instead, acknowledge the concern, offer a brief reframe, and propose one concrete demonstration on the person's own code. Most concerns are resolved by a single successful experience.
 
-| Concern                                       | Suggested response                                                                                                                                                                           | Evidence to offer                                         |
-| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| "I am faster without it."                     | That is likely true for code the person writes routinely. Suggest trying it on the work they tend to avoid: legacy files, unfamiliar services, or test scaffolding, where it helps the most. | Time one tedious task both ways and compare.              |
-| "I do not trust AI to touch production code." | Agree that no change should land unread. Plan mode combined with normal diff review means nothing is applied that the engineer has not inspected, the same standard as any pull request.     | Demonstrate plan mode on a real file.                     |
-| "It will make junior engineers weaker."       | Used well, it is an effective explainer. Encourage junior engineers to ask Claude to explain a file and its call sites before asking it to change anything.                                  | Run "Explain @file and where it is called from" together. |
-| "I tried it once and it hallucinated."        | This is usually a context problem rather than a model problem. @-mentioning the relevant files, running `/init`, and providing the actual error output typically resolves it.                | Re-run their original prompt with proper `@`-context.     |
-| "We do not have time to learn another tool."  | Claude Code is a terminal command rather than a platform. If it does not return value within the first session, it is reasonable to set it aside.                                            | A two-minute install followed by one real bug.            |
+| Concern | Suggested response | Evidence to offer |
+| - | - | - |
+| "I am faster without it." | That is likely true for code the person writes routinely. Suggest trying it on the work they tend to avoid: legacy files, unfamiliar services, or test scaffolding, where it helps the most. | Time one tedious task both ways and compare. |
+| "I do not trust AI to touch production code." | Agree that no change should land unread. Plan mode combined with normal diff review means nothing is applied that the engineer has not inspected, the same standard as any pull request. | Demonstrate plan mode on a real file. |
+| "It will make junior engineers weaker." | Used well, it is an effective explainer. Encourage junior engineers to ask Claude to explain a file and its call sites before asking it to change anything. | Run "Explain @file and where it is called from" together. |
+| "I tried it once and it hallucinated." | This is usually a context problem rather than a model problem. @-mentioning the relevant files, running `/init`, and providing the actual error output typically resolves it. | Re-run their original prompt with proper `@`-context. |
+| "We do not have time to learn another tool." | Claude Code is a terminal command rather than a platform. If it does not return value within the first session, it is reasonable to set it aside. | A two-minute install followed by one real bug. |
 
 ## Quick-reference sheet
 
 The techniques below are the ones that most reliably move someone from a first trial to daily use. Pin this table in a channel or share it on its own.
 
-| Technique                        | How to apply it                                                                                                                                                  |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Provide the right context        | Use `@file` or `@directory/` references, or paste the error or log output directly. Supplying relevant context is more effective than elaborate prompting.       |
-| Review the plan before the edit  | Press `Shift+Tab` to enter plan mode. Claude will describe the intended changes for your approval before executing them.                                         |
-| Teach it your repository         | Run `/init` to generate a `CLAUDE.md` file, then add your conventions, test commands, and any directories that should not be modified. See [Memory](/docs/en/memory). |
-| Reuse a workflow                 | Save a `SKILL.md` file in `.claude/skills/<name>/` to create a `/name` skill that the entire team can use. See [Skills](/docs/en/skills).                             |
-| Stay informed during long tasks  | Configure a Stop hook to receive a desktop notification when a long-running task completes. See [Hooks](/docs/en/hooks-guide).                                        |
-| Recover from an incorrect result | Rather than rephrasing the request, paste the failing test or stack trace back to Claude and ask it to address that specific failure.                            |
-| Keep edits surgical              | Ask for a diff, or specify "only change X." Claude respects scope when scope is stated.                                                                          |
+| Technique | How to apply it |
+| - | - |
+| Provide the right context | Use `@file` or `@directory/` references, or paste the error or log output directly. Supplying relevant context is more effective than elaborate prompting. |
+| Review the plan before the edit | Press `Shift+Tab` to enter plan mode. Claude will describe the intended changes for your approval before executing them. |
+| Teach it your repository | Run `/init` to generate a `CLAUDE.md` file, then add your conventions, test commands, and any directories that should not be modified. See [Memory](/docs/en/memory). |
+| Reuse a workflow | Save a `SKILL.md` file in `.claude/skills/<name>/` to create a `/name` skill that the entire team can use. See [Skills](/docs/en/skills). |
+| Stay informed during long tasks | Configure a Stop hook to receive a desktop notification when a long-running task completes. See [Hooks](/docs/en/hooks-guide). |
+| Recover from an incorrect result | Rather than rephrasing the request, paste the failing test or stack trace back to Claude and ask it to address that specific failure. |
+| Keep edits surgical | Ask for a diff, or specify "only change X." Claude respects scope when scope is stated. |
 
 <Tip>
   Claude Code is updated frequently. Verify version-specific details against the [documentation home page](/docs/en/overview) before distributing this material internally.

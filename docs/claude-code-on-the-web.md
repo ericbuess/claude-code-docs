@@ -48,10 +48,10 @@ See [Configure cloud environments](/docs/en/cloud-environments) to change what a
 
 Cloud sessions need access to your GitHub repositories to clone code and push branches. You can grant access in two ways:
 
-| Method           | How you connect                                                                            | Repositories sessions can reach                                                              | Best for                                                                |
-| :--------------- | :----------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| **GitHub App**   | Authorize the Claude GitHub App during [web onboarding](/docs/en/web-quickstart)                | Any public repository, and private repositories that the Claude GitHub App is installed on   | Browser onboarding; teams that want [Auto-fix](#auto-fix-pull-requests) |
-| **`/web-setup`** | Run `/web-setup` in your terminal to send your local `gh` CLI token to your Claude account | Any repository your `gh` token can access, whether or not the Claude GitHub App is installed | Individual developers who already use `gh`                              |
+| Method | How you connect | Repositories sessions can reach | Best for |
+| :- | :- | :- | :- |
+| **GitHub App** | Authorize the Claude GitHub App during [web onboarding](/docs/en/web-quickstart) | Any public repository, and private repositories that the Claude GitHub App is installed on | Browser onboarding; teams that want [Auto-fix](#auto-fix-pull-requests) |
+| **`/web-setup`** | Run `/web-setup` in your terminal to send your local `gh` CLI token to your Claude account | Any repository your `gh` token can access, whether or not the Claude GitHub App is installed | Individual developers who already use `gh` |
 
 Installing the Claude GitHub App on a repository also enables [Auto-fix](#auto-fix-pull-requests) for pull requests in it.
 
@@ -172,14 +172,14 @@ Pass `--output-format json` for a machine-readable result: `{ok, session_id, url
 
 The CLI prefixes errors with `Error: `. A failed delivery is wrapped as `failed to send message to cloud session <id>: <reason>`.
 
-| Message                                                                                                                     | What it means                                                                                                                                                                                                                                                                                                                       |
-| --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Message | What it means |
+| - | - |
 | `Cloud sessions aren't available with <provider>. They run on Anthropic's infrastructure and require an Anthropic account.` | Claude Code is configured for a third-party provider. The message names the provider with the label your configuration uses, such as `Amazon Bedrock` or `Google Vertex AI`. Remove that provider's configuration, for example by unsetting `CLAUDE_CODE_USE_BEDROCK`, and sign in with an Anthropic account (`claude auth login`). |
-| `Cloud sessions are disabled by your organization's policy. Contact your organization admin to enable them.`                | The `allow_remote_sessions` organization policy is off.                                                                                                                                                                                                                                                                             |
-| `Couldn't verify your organization's policy for cloud sessions. Check your network connection and try again.`               | Claude Code couldn't fetch your organization's policy, so it refuses the send rather than assume cloud sessions are allowed. Check your network connection and retry.                                                                                                                                                               |
-| `Attaching to an existing cloud session is not enabled for your account.`                                                   | You ran `--cloud <session-id>` without `-p`. Send the message with `claude -p "your message" --cloud <session-id>`.                                                                                                                                                                                                                 |
-| `Session not found: <id>`                                                                                                   | The ID or URL doesn't match a session you can access. Check it against the session's claude.ai/code URL.                                                                                                                                                                                                                            |
-| `cloud session <id> is archived and cannot accept new messages`                                                             | The session has been archived. Start a new session instead.                                                                                                                                                                                                                                                                         |
+| `Cloud sessions are disabled by your organization's policy. Contact your organization admin to enable them.` | The `allow_remote_sessions` organization policy is off. |
+| `Couldn't verify your organization's policy for cloud sessions. Check your network connection and try again.` | Claude Code couldn't fetch your organization's policy, so it refuses the send rather than assume cloud sessions are allowed. Check your network connection and retry. |
+| `Attaching to an existing cloud session is not enabled for your account.` | You ran `--cloud <session-id>` without `-p`. Send the message with `claude -p "your message" --cloud <session-id>`. |
+| `Session not found: <id>` | The ID or URL doesn't match a session you can access. Check it against the session's claude.ai/code URL. |
+| `cloud session <id> is archived and cannot accept new messages` | The session has been archived. Start a new session instead. |
 
 ### From cloud to terminal
 
@@ -199,12 +199,12 @@ When you teleport a session, Claude verifies you're in the correct repository, f
 
 Teleport checks these requirements before resuming a session. If any requirement isn't met, you'll see an error or be prompted to resolve the issue.
 
-| Requirement        | Details                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Clean git state    | Your working directory must have no uncommitted changes. Teleport prompts you to stash changes if needed.                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Requirement | Details |
+| - | - |
+| Clean git state | Your working directory must have no uncommitted changes. Teleport prompts you to stash changes if needed. |
 | Correct repository | You must run `--teleport` from a checkout of the same repository, not a fork. If you run it from a checkout of a different repository, Claude Code shows an error that names both the session's repository and your checkout's. Before v2.1.219, the error didn't name your checkout's repository. If Claude Code can't parse your remote into a hostname, for example an SSH host alias like `git@work:owner/repo.git`, it asks you to confirm, and accepts the checkout when the remote's owner and repository name match the session's repository. |
-| Branch available   | The branch from the cloud session must have been pushed to the remote. Teleport automatically fetches and checks it out.                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| Same account       | You must be authenticated to the same claude.ai account used in the cloud session.                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Branch available | The branch from the cloud session must have been pushed to the remote. Teleport automatically fetches and checks it out. |
+| Same account | You must be authenticated to the same claude.ai account used in the cloud session. |
 
 #### `--teleport` is unavailable
 
@@ -230,11 +230,11 @@ Cloud sessions support [built-in commands](/docs/en/commands) that produce text 
 
 For context management specifically:
 
-| Command    | Works in cloud sessions | Notes                                                                                                                    |
-| :--------- | :---------------------- | :----------------------------------------------------------------------------------------------------------------------- |
-| `/compact` | Yes                     | Summarizes the conversation to free up context. Accepts optional focus instructions like `/compact keep the test output` |
-| `/context` | Yes                     | Shows what's currently in the context window                                                                             |
-| `/clear`   | No                      | Start a new session from the sidebar instead                                                                             |
+| Command | Works in cloud sessions | Notes |
+| :- | :- | :- |
+| `/compact` | Yes | Summarizes the conversation to free up context. Accepts optional focus instructions like `/compact keep the test output` |
+| `/context` | Yes | Shows what's currently in the context window |
+| `/clear` | No | Start a new session from the sidebar instead |
 
 Auto-compaction runs automatically when the context window approaches capacity. Cloud sessions set [`CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`](/docs/en/env-vars) themselves, so compaction triggers partway through the [auto-compact window](/docs/en/model-config#set-the-auto-compact-window) rather than when the window fills. That value overrides one you add in your [environment variables](/docs/en/cloud-environments#set-environment-variables), so adding the variable there doesn't change when compaction triggers.
 

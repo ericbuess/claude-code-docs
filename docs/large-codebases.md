@@ -18,16 +18,16 @@ The [table below](#settings-on-this-page) lists each setting and what it accompl
 
 Each setting below is independent. They layer rather than replace each other, so apply whichever fit your repository. [Choose where to start Claude](#choose-where-to-start-claude) determines where your settings files live, so read it first. [Put it together](#put-it-together) shows all of them combined.
 
-| I want to                                                                                           | Use                                                                                        |
-| :-------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
-| Load only the conventions for the code you touch, instead of one root file covering every subsystem | Per-directory [CLAUDE.md files](#layer-claude-md-files-by-directory)                       |
-| Exclude CLAUDE.md files for packages you never work in                                              | [`claudeMdExcludes`](#exclude-irrelevant-claude-md-files)                                  |
-| Block Claude from opening build output, generated code, and vendored dependencies                   | [`Read` deny rules](#block-reads-of-generated-and-vendored-code) in `permissions.deny`     |
-| Find a symbol's definition or callers through the language server instead of scanning files         | A [code intelligence plugin](#reduce-file-reads-with-code-intelligence)                    |
-| Check out only the directories a task needs when Claude creates a worktree                          | [`worktree.sparsePaths`](#check-out-only-the-directories-you-need)                         |
-| Read and edit a sibling package or another repository from the same session                         | [`--add-dir`](#grant-access-across-packages-or-repositories) or `additionalDirectories`    |
-| Give Claude procedures specific to one area that load only when relevant                            | Per-directory [skills](#add-per-directory-skills)                                          |
-| Replace many per-directory CLAUDE.md files with one set of conventions everyone installs            | A [plugin](#centralize-conventions-when-layering-stops-scaling) in an internal marketplace |
+| I want to | Use |
+| :- | :- |
+| Load only the conventions for the code you touch, instead of one root file covering every subsystem | Per-directory [CLAUDE.md files](#layer-claude-md-files-by-directory) |
+| Exclude CLAUDE.md files for packages you never work in | [`claudeMdExcludes`](#exclude-irrelevant-claude-md-files) |
+| Block Claude from opening build output, generated code, and vendored dependencies | [`Read` deny rules](#block-reads-of-generated-and-vendored-code) in `permissions.deny` |
+| Find a symbol's definition or callers through the language server instead of scanning files | A [code intelligence plugin](#reduce-file-reads-with-code-intelligence) |
+| Check out only the directories a task needs when Claude creates a worktree | [`worktree.sparsePaths`](#check-out-only-the-directories-you-need) |
+| Read and edit a sibling package or another repository from the same session | [`--add-dir`](#grant-access-across-packages-or-repositories) or `additionalDirectories` |
+| Give Claude procedures specific to one area that load only when relevant | Per-directory [skills](#add-per-directory-skills) |
+| Replace many per-directory CLAUDE.md files with one set of conventions everyone installs | A [plugin](#centralize-conventions-when-layering-stops-scaling) in an internal marketplace |
 
 <Tip>
   For workflow techniques that keep context small in any repository, such as [running exploration in a subagent](/docs/en/best-practices#use-subagents-for-investigation) so file reads stay out of the main conversation, see [Best practices for Claude Code](/docs/en/best-practices). To roll out a baseline configuration to every developer in your organization, see [Set up Claude Code for your organization](/docs/en/admin-setup).
@@ -58,10 +58,10 @@ monorepo/
 
 Where you launch `claude` determines which files Claude can read and edit without an additional permission grant, which CLAUDE.md files load into context at startup, and which project settings apply.
 
-| Start from      | File access                             | CLAUDE.md loaded at launch                                           | Use when                                   |
-| :-------------- | :-------------------------------------- | :------------------------------------------------------------------- | :----------------------------------------- |
-| Repository root | Every file                              | Root only; subdirectory files load on demand when Claude reads there | Tasks span multiple packages or subsystems |
-| A subdirectory  | That subtree only, until you grant more | That directory's plus every ancestor's                               | Work is scoped to one package or subsystem |
+| Start from | File access | CLAUDE.md loaded at launch | Use when |
+| :- | :- | :- | :- |
+| Repository root | Every file | Root only; subdirectory files load on demand when Claude reads there | Tasks span multiple packages or subsystems |
+| A subdirectory | That subtree only, until you grant more | That directory's plus every ancestor's | Work is scoped to one package or subsystem |
 
 Project settings in `.claude/settings.json` aren't inherited from parent directories the way CLAUDE.md files are. For which directory's `.claude/settings.json` a session reads, see [where Claude Code looks for each file](/docs/en/settings#where-claude-code-looks-for-each-file).
 
@@ -110,10 +110,10 @@ For more on how CLAUDE.md files load and interact, see [Memory and project instr
 
 Per-directory `CLAUDE.md` files and [path-scoped rules](/docs/en/memory#path-specific-rules) under `.claude/rules/` both let you target instructions to part of the tree. They differ in where the file lives and when it loads.
 
-| Approach                             | File location                            | Loads when                                                                              | Use when                                                                                  |
-| :----------------------------------- | :--------------------------------------- | :-------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| Per-directory `CLAUDE.md`            | Inside the directory, alongside its code | At launch when started from that directory, or on demand when Claude reads a file there | Directory owners maintain their own conventions; instructions are versioned with the code |
-| Path-scoped rule in `.claude/rules/` | Central `.claude/` at the repo root      | When Claude works with a file matching the rule's `paths:` glob                         | You want all conventions in one place, or the same rule applies to many scattered paths   |
+| Approach | File location | Loads when | Use when |
+| :- | :- | :- | :- |
+| Per-directory `CLAUDE.md` | Inside the directory, alongside its code | At launch when started from that directory, or on demand when Claude reads a file there | Directory owners maintain their own conventions; instructions are versioned with the code |
+| Path-scoped rule in `.claude/rules/` | Central `.claude/` at the repo root | When Claude works with a file matching the rule's `paths:` glob | You want all conventions in one place, or the same rule applies to many scattered paths |
 
 For a comparison that also covers skills, see [Compare similar features](/docs/en/features-overview#compare-similar-features).
 
@@ -289,10 +289,10 @@ claude --add-dir ../shared
 
 However you add a directory, Claude can read and edit files in it. Whether the directory's CLAUDE.md, `.claude/rules/` files, and skills also load depends on how you added it:
 
-| Added with                             | Loads CLAUDE.md and rules                | Loads skills |
-| :------------------------------------- | :--------------------------------------- | :----------- |
-| `additionalDirectories` setting        | Never                                    | Never        |
-| `--add-dir` flag or `/add-dir` command | Only with the environment variable below | Yes          |
+| Added with | Loads CLAUDE.md and rules | Loads skills |
+| :- | :- | :- |
+| `additionalDirectories` setting | Never | Never |
+| `--add-dir` flag or `/add-dir` command | Only with the environment variable below | Yes |
 
 To load CLAUDE.md and rules files from a directory added with `--add-dir` or `/add-dir`, set the `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` environment variable:
 

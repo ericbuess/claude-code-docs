@@ -52,17 +52,17 @@ For how the [`tui`](/docs/en/settings-reference#tui) setting and the variable co
 
 Attached [background sessions](/docs/en/agent-view) render fullscreen, and other sessions in [screen reader mode](/docs/en/accessibility) use the classic renderer. Otherwise, Claude Code starts you in the renderer from the first row of this table that matches your setup:
 
-| Your situation                                                                                                                                                                            | Renderer you start in          |
-| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------- |
-| You set [`CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1`](/docs/en/env-vars) or `CLAUDE_CODE_NO_FLICKER=0`                                                                                            | Classic                        |
-| You set `CLAUDE_CODE_NO_FLICKER=1`                                                                                                                                                        | Fullscreen                     |
-| Claude Code [turned fullscreen off after a failed fullscreen start](#fullscreen-renderer-didnt-finish-starting) on this machine                                                           | Classic                        |
-| You're in iTerm2's [`tmux -CC` integration mode](#use-with-tmux), or you're connected over SSH to Claude Code running on Windows                                                          | Classic                        |
-| You saved a [`tui` setting](/docs/en/settings-reference#tui)                                                                                                                                   | The renderer the setting names |
-| Your session doesn't [fetch feature flags from Anthropic](/docs/en/env-vars#features-that-need-feature-flag-fetching), and Claude Code has stopped offering the startup dialog on this machine | Classic                        |
-| Your session doesn't fetch feature flags from Anthropic, and this machine's first Claude Code launch ran v2.1.239 or later                                                                | Fullscreen                     |
-| Your session fetches feature flags from Anthropic, and you first used Claude Code on or after May 6, 2026                                                                                 | Fullscreen                     |
-| Anything else                                                                                                                                                                             | Classic                        |
+| Your situation | Renderer you start in |
+| :- | :- |
+| You set [`CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1`](/docs/en/env-vars) or `CLAUDE_CODE_NO_FLICKER=0` | Classic |
+| You set `CLAUDE_CODE_NO_FLICKER=1` | Fullscreen |
+| Claude Code [turned fullscreen off after a failed fullscreen start](#fullscreen-renderer-didnt-finish-starting) on this machine | Classic |
+| You're in iTerm2's [`tmux -CC` integration mode](#use-with-tmux), or you're connected over SSH to Claude Code running on Windows | Classic |
+| You saved a [`tui` setting](/docs/en/settings-reference#tui) | The renderer the setting names |
+| Your session doesn't [fetch feature flags from Anthropic](/docs/en/env-vars#features-that-need-feature-flag-fetching), and Claude Code has stopped offering the startup dialog on this machine | Classic |
+| Your session doesn't fetch feature flags from Anthropic, and this machine's first Claude Code launch ran v2.1.239 or later | Fullscreen |
+| Your session fetches feature flags from Anthropic, and you first used Claude Code on or after May 6, 2026 | Fullscreen |
+| Anything else | Classic |
 
 Sessions that don't fetch feature flags include those through [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or [Microsoft Foundry](/docs/en/microsoft-foundry), and those with telemetry turned off.
 
@@ -78,11 +78,11 @@ Fullscreen rendering changes how the CLI draws to your terminal. The input box s
 
 Because the conversation lives in the alternate screen buffer instead of your terminal's scrollback, a few things work differently:
 
-| Before                                              | Now                                                                            | Details                                                                   |
-| :-------------------------------------------------- | :----------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `Cmd+f` or tmux search to find text                 | `Ctrl+o` for transcript mode, then `/` to search or `[` to write to scrollback | [Search and review the conversation](#search-and-review-the-conversation) |
-| Terminal's native click-and-drag to select and copy | In-app selection, copies automatically on mouse release                        | [Use the mouse](#use-the-mouse)                                           |
-| `Cmd`-click to open a URL                           | `Cmd`-click on macOS, `Ctrl`-click elsewhere                                   | [Use the mouse](#use-the-mouse)                                           |
+| Before | Now | Details |
+| :- | :- | :- |
+| `Cmd+f` or tmux search to find text | `Ctrl+o` for transcript mode, then `/` to search or `[` to write to scrollback | [Search and review the conversation](#search-and-review-the-conversation) |
+| Terminal's native click-and-drag to select and copy | In-app selection, copies automatically on mouse release | [Use the mouse](#use-the-mouse) |
+| `Cmd`-click to open a URL | `Cmd`-click on macOS, `Ctrl`-click elsewhere | [Use the mouse](#use-the-mouse) |
 
 If mouse capture interferes with your workflow, you can [turn it off](#keep-native-text-selection) while keeping the flicker-free rendering.
 
@@ -126,12 +126,12 @@ In [transcript mode](#search-and-review-the-conversation), the navigation and se
 
 Fullscreen rendering handles scrolling inside the app. Use these shortcuts to navigate:
 
-| Shortcut        | Action                                               |
-| :-------------- | :--------------------------------------------------- |
-| `PgUp` / `PgDn` | Scroll up or down by half a screen                   |
-| `Ctrl+Home`     | Jump to the start of the conversation                |
-| `Ctrl+End`      | Jump to the latest message and re-enable auto-follow |
-| Mouse wheel     | Scroll a few lines at a time                         |
+| Shortcut | Action |
+| :- | :- |
+| `PgUp` / `PgDn` | Scroll up or down by half a screen |
+| `Ctrl+Home` | Jump to the start of the conversation |
+| `Ctrl+End` | Jump to the latest message and re-enable auto-follow |
+| Mouse wheel | Scroll a few lines at a time |
 
 You can scroll back to the start of the session even after [compaction](/docs/en/context-window#what-survives-compaction). Claude continues working from the compaction summary, but Claude Code keeps every earlier message in the fullscreen scrollback across repeated compactions.
 
@@ -191,16 +191,16 @@ For a quieter view that shows only your last prompt, a one-line summary of tool 
 
 Transcript mode gains `less`-style navigation and search:
 
-| Key                                  | Action                                                                                                 |
-| :----------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| `/`                                  | Open search. Type to find matches, `Enter` to accept, `Esc` to cancel and restore your scroll position |
-| `n` / `N`                            | Jump to next or previous match. Works after you've closed the search bar                               |
-| `j` / `k` or `↑` / `↓`               | Scroll one line                                                                                        |
-| `g` / `G` or `Home` / `End`          | Jump to top or bottom                                                                                  |
-| `{` / `}`                            | Jump to the previous or next prompt                                                                    |
-| `Ctrl+u` / `Ctrl+d`                  | Scroll half a page                                                                                     |
-| `Ctrl+b` / `Ctrl+f` or `Space` / `b` | Scroll a full page                                                                                     |
-| `Ctrl+o`, `Esc`, or `q`              | Exit transcript mode and return to the prompt                                                          |
+| Key | Action |
+| :- | :- |
+| `/` | Open search. Type to find matches, `Enter` to accept, `Esc` to cancel and restore your scroll position |
+| `n` / `N` | Jump to next or previous match. Works after you've closed the search bar |
+| `j` / `k` or `↑` / `↓` | Scroll one line |
+| `g` / `G` or `Home` / `End` | Jump to top or bottom |
+| `{` / `}` | Jump to the previous or next prompt |
+| `Ctrl+u` / `Ctrl+d` | Scroll half a page |
+| `Ctrl+b` / `Ctrl+f` or `Space` / `b` | Scroll a full page |
+| `Ctrl+o`, `Esc`, or `q` | Exit transcript mode and return to the prompt |
 
 Your terminal's `Cmd+f` and tmux search don't see the conversation because it lives in the alternate screen buffer, not the native scrollback. To hand the content back to your terminal, press `Ctrl+o` to enter transcript mode first, then:
 

@@ -1593,20 +1593,20 @@ The session walks through a realistic flow with representative token counts:
 
 When a long session compacts, Claude Code summarizes the conversation history to fit the context window. As of v2.1.198, the summarization request inherits your session's [extended thinking](/docs/en/model-config#extended-thinking) configuration, so it reasons with thinking enabled when your session has it enabled and stays off otherwise. Thinking affects only how the summary is produced; your session settings are unchanged afterward. What happens to each kind of content depends on how it was loaded:
 
-| Mechanism                                                                                                                                                 | After compaction                                                                                      |
-| :-------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
-| System prompt and output style                                                                                                                            | Both still apply                                                                                      |
-| Project-root CLAUDE.md and unscoped rules                                                                                                                 | Re-injected from disk                                                                                 |
-| Auto memory                                                                                                                                               | Re-injected from disk                                                                                 |
-| [Git status snapshot](/docs/en/settings-reference#includegitinstructions)                                                                                      | Claude Code reads a fresh one from your repository                                                    |
-| The plan Claude wrote in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode)                                                         | Re-injected from disk                                                                                 |
-| Rules with `paths:` frontmatter                                                                                                                           | Claude Code reloads them as Claude reads files they match                                             |
-| Nested CLAUDE.md in subdirectories                                                                                                                        | Claude Code reloads them as Claude reads files in that subdirectory                                   |
-| Files Claude read or edited                                                                                                                               | Claude Code re-reads up to five, most recently modified first                                         |
-| Invoked skill bodies                                                                                                                                      | Re-injected, capped at 5,000 tokens per skill and 25,000 tokens total; oldest dropped first           |
+| Mechanism | After compaction |
+| :- | :- |
+| System prompt and output style | Both still apply |
+| Project-root CLAUDE.md and unscoped rules | Re-injected from disk |
+| Auto memory | Re-injected from disk |
+| [Git status snapshot](/docs/en/settings-reference#includegitinstructions) | Claude Code reads a fresh one from your repository |
+| The plan Claude wrote in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) | Re-injected from disk |
+| Rules with `paths:` frontmatter | Claude Code reloads them as Claude reads files they match |
+| Nested CLAUDE.md in subdirectories | Claude Code reloads them as Claude reads files in that subdirectory |
+| Files Claude read or edited | Claude Code re-reads up to five, most recently modified first |
+| Invoked skill bodies | Re-injected, capped at 5,000 tokens per skill and 25,000 tokens total; oldest dropped first |
 | [Background commands](/docs/en/interactive-mode#background-bash-commands) and background [subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) | Keep running. Claude Code reminds Claude which ones are still running so it doesn't start a duplicate |
-| Context that hooks added earlier                                                                                                                          | Summarized with the rest of the conversation                                                          |
-| [SessionStart hooks](/docs/en/hooks-guide#re-inject-context-after-compaction) that match the `compact` source                                                  | Claude Code runs them and adds their output to the compacted context                                  |
+| Context that hooks added earlier | Summarized with the rest of the conversation |
+| [SessionStart hooks](/docs/en/hooks-guide#re-inject-context-after-compaction) that match the `compact` source | Claude Code runs them and adds their output to the compacted context |
 
 Right after compaction, Claude Code re-reads up to five of the files Claude has read or edited in the session, choosing the ones modified most recently. A file over 5,000 tokens comes back as a path reference without its content, shown as `Referenced file` instead of `Read`.
 

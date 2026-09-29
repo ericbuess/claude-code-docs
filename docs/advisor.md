@@ -87,16 +87,16 @@ If you start a [background session](/docs/en/agent-view) with `--advisor` and on
 
 The advisor must be at least as capable as the main model. The accepted advisors for each main model are:
 
-| Main model             | Accepted advisors                           | Notes                                                                                          |
-| ---------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| Haiku 4.5              | Fable, Opus, Sonnet                         | Haiku can call the advisor but cannot act as one                                               |
-| Sonnet 4.6             | Fable, Opus, Sonnet                         |                                                                                                |
-| Sonnet 5.5 or Sonnet 5 | Fable, Opus 4.7 or later, Sonnet 5 or later | A Sonnet 4.6 advisor is rejected, and the API refuses an Opus 4.6 advisor                      |
-| Opus 4.6               | Fable, Opus, Sonnet 5 or later              | A Sonnet 4.6 advisor is rejected                                                               |
-| Opus 4.7 or Opus 4.8   | Fable, and Opus 4.7 or later                | An Opus 4.6 or Sonnet advisor is rejected                                                      |
-| Opus 5.5 or Opus 5     | Fable, and Opus 5 or later                  | An Opus 4.6 or Sonnet advisor is rejected, and the API refuses an Opus 4.7 or Opus 4.8 advisor |
-| Fable 5                | Fable 5.1 or Fable 5                        | An Opus or Sonnet advisor is rejected                                                          |
-| Fable 5.1              | Fable 5.1                                   | An Opus or Sonnet advisor is rejected, and the API refuses a Fable 5 advisor                   |
+| Main model | Accepted advisors | Notes |
+| - | - | - |
+| Haiku 4.5 | Fable, Opus, Sonnet | Haiku can call the advisor but cannot act as one |
+| Sonnet 4.6 | Fable, Opus, Sonnet | |
+| Sonnet 5.5 or Sonnet 5 | Fable, Opus 4.7 or later, Sonnet 5 or later | A Sonnet 4.6 advisor is rejected, and the API refuses an Opus 4.6 advisor |
+| Opus 4.6 | Fable, Opus, Sonnet 5 or later | A Sonnet 4.6 advisor is rejected |
+| Opus 4.7 or Opus 4.8 | Fable, and Opus 4.7 or later | An Opus 4.6 or Sonnet advisor is rejected |
+| Opus 5.5 or Opus 5 | Fable, and Opus 5 or later | An Opus 4.6 or Sonnet advisor is rejected, and the API refuses an Opus 4.7 or Opus 4.8 advisor |
+| Fable 5 | Fable 5.1 or Fable 5 | An Opus or Sonnet advisor is rejected |
+| Fable 5.1 | Fable 5.1 | An Opus or Sonnet advisor is rejected, and the API refuses a Fable 5 advisor |
 
 Fable 5.1 requires Claude Code v2.1.257 or later. Both Fable models require [Fable access](/docs/en/model-config#work-with-fable).
 
@@ -122,14 +122,14 @@ To accept the consent, run `/model fable` and choose to continue on Fable. Claud
 
 Any accepted pairing works. These combinations balance cost against capability in different ways:
 
-| Pairing                      | When to use                                                                                                                                |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Sonnet main + Opus advisor   | Sonnet handles routine work and escalates planning, ambiguous failures, and completion checks to Opus                                      |
-| Sonnet main + Fable advisor  | Fable guidance at decision points without running Fable throughout. Requires Fable access                                                  |
-| Haiku main + Opus advisor    | Lowest-cost main model with strong planning. Expect higher cost than Haiku alone but lower than switching the main model to Sonnet or Opus |
-| Opus main + Opus advisor     | A second Opus reviews the first. Useful for high-stakes tasks where an independent check matters more than cost                            |
-| Fable main + Fable advisor   | Highest-capability pairing when Fable is available. Claude Code doesn't apply an Opus or Sonnet advisor to a Fable main model              |
-| Sonnet main + Sonnet advisor | A lower-cost second opinion for catching routine oversights                                                                                |
+| Pairing | When to use |
+| - | - |
+| Sonnet main + Opus advisor | Sonnet handles routine work and escalates planning, ambiguous failures, and completion checks to Opus |
+| Sonnet main + Fable advisor | Fable guidance at decision points without running Fable throughout. Requires Fable access |
+| Haiku main + Opus advisor | Lowest-cost main model with strong planning. Expect higher cost than Haiku alone but lower than switching the main model to Sonnet or Opus |
+| Opus main + Opus advisor | A second Opus reviews the first. Useful for high-stakes tasks where an independent check matters more than cost |
+| Fable main + Fable advisor | Highest-capability pairing when Fable is available. Claude Code doesn't apply an Opus or Sonnet advisor to a Fable main model |
+| Sonnet main + Sonnet advisor | A lower-cost second opinion for catching routine oversights |
 
 ## When Claude consults the advisor
 
@@ -190,12 +190,12 @@ To disable the advisor tool entirely, set `CLAUDE_CODE_DISABLE_ADVISOR_TOOL=1`. 
 
 The advisor is one of several ways to combine model strengths. Pick based on when you want a second model involved.
 
-| Approach                                                    | When the stronger model runs                                                                                                           | How it starts                                |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| Advisor tool                                                | At decision points mid-task                                                                                                            | Claude calls it when it needs guidance       |
-| [`opusplan`](/docs/en/model-config#opusplan-model-setting)       | During plan mode when [allowed by `availableModels`](/docs/en/model-config#restrict-model-selection), then switches to Sonnet for execution | You enter plan mode                          |
-| [Subagents](/docs/en/sub-agents#choose-a-model) with `model` set | For the entire delegated subtask                                                                                                       | Claude delegates, or you invoke the subagent |
-| [`/model`](/docs/en/model-config#setting-your-model)             | From the next request onward                                                                                                           | You switch models                            |
+| Approach | When the stronger model runs | How it starts |
+| - | - | - |
+| Advisor tool | At decision points mid-task | Claude calls it when it needs guidance |
+| [`opusplan`](/docs/en/model-config#opusplan-model-setting) | During plan mode when [allowed by `availableModels`](/docs/en/model-config#restrict-model-selection), then switches to Sonnet for execution | You enter plan mode |
+| [Subagents](/docs/en/sub-agents#choose-a-model) with `model` set | For the entire delegated subtask | Claude delegates, or you invoke the subagent |
+| [`/model`](/docs/en/model-config#setting-your-model) | From the next request onward | You switch models |
 
 ## See also
 

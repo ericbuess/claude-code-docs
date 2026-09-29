@@ -193,14 +193,14 @@ In the desktop app, you also get a desktop notification when Claude posts in the
 
 The pane's **Threads** tab groups threads by state:
 
-| Group                | What's in it                                                                                                                                                                                                           |
-| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Ready for review** | Threads whose pull request is open and awaiting review                                                                                                                                                                 |
-| **Waiting on you**   | Threads that need your reply or approval, or that failed                                                                                                                                                               |
-| **Working**          | Threads still running                                                                                                                                                                                                  |
-| **Landing**          | Threads whose pull request is approved or queued to merge                                                                                                                                                              |
-| **Idle**             | Threads that finished and aren't waiting on anything                                                                                                                                                                   |
-| **Resolved**         | Threads marked done: by you from the thread's menu, by Claude once you've taken the last step, such as merging its pull request, or automatically after a week with no activity. You can reopen one from the same menu |
+| Group | What's in it |
+| :- | :- |
+| **Ready for review** | Threads whose pull request is open and awaiting review |
+| **Waiting on you** | Threads that need your reply or approval, or that failed |
+| **Working** | Threads still running |
+| **Landing** | Threads whose pull request is approved or queued to merge |
+| **Idle** | Threads that finished and aren't waiting on anything |
+| **Resolved** | Threads marked done: by you from the thread's menu, by Claude once you've taken the last step, such as merging its pull request, or automatically after a week with no activity. You can reopen one from the same menu |
 
 The pane's other tabs are **Library** for the files and folders you added and the files threads produced, **Pull requests** once threads have opened any, and **Routines** for the [routines](/docs/en/routines) Claude set up from this project.
 
@@ -278,11 +278,11 @@ A project can't run a thread on your computer while [**Require trusted devices**
 
 Project memory, project instructions, and the project's repositories, files, and environment carry context across threads. You set each one once.
 
-| Context                              | What it carries                                                                                                                                                                                                       | How you set it                                                                                                                                                                                                  |
-| :----------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Project memory                       | Notes Claude keeps about the project, such as requirements, decisions, and pitfalls, stored as files. Every cloud thread reads the index file `MEMORY.md` when it starts and opens the other files when it needs them | Ask Claude in the project conversation or any cloud thread to remember a requirement, a decision, or a pitfall, or to forget one. Read, edit, and delete the files in **Project settings > Memory**             |
-| Project instructions                 | Text sent to each new thread and to Claude in the project conversation, up to 16,000 characters. [Write project instructions](#write-project-instructions) covers what to put in it                                   | **Project settings > Memory > Project instructions**, or ask Claude to change the instructions                                                                                                                  |
-| Repositories, files, and environment | The repositories every cloud thread clones, the folders and files it can read under `/mnt/project-files`, and the cloud environment it runs in                                                                        | Repositories and environment in **Project settings > Environment**, or ask Claude in the conversation to add a repository to the project. Files and folders from **Add** on the **Library** tab in **Overview** |
+| Context | What it carries | How you set it |
+| :- | :- | :- |
+| Project memory | Notes Claude keeps about the project, such as requirements, decisions, and pitfalls, stored as files. Every cloud thread reads the index file `MEMORY.md` when it starts and opens the other files when it needs them | Ask Claude in the project conversation or any cloud thread to remember a requirement, a decision, or a pitfall, or to forget one. Read, edit, and delete the files in **Project settings > Memory** |
+| Project instructions | Text sent to each new thread and to Claude in the project conversation, up to 16,000 characters. [Write project instructions](#write-project-instructions) covers what to put in it | **Project settings > Memory > Project instructions**, or ask Claude to change the instructions |
+| Repositories, files, and environment | The repositories every cloud thread clones, the folders and files it can read under `/mnt/project-files`, and the cloud environment it runs in | Repositories and environment in **Project settings > Environment**, or ask Claude in the conversation to add a repository to the project. Files and folders from **Add** on the **Library** tab in **Overview** |
 
 **Project settings > Memory** lists these files under **Auto memory**, because Claude writes them itself as it works in the project. They're separate from the [auto memory](/docs/en/memory) Claude Code keeps on your machine, even though both use a `MEMORY.md` index. Project memory is also separate from the `CLAUDE.md` files in the project's repositories. Each cloud thread still reads those `CLAUDE.md` files from its clone when it starts, so put instructions about a repository in its `CLAUDE.md` and notes about the project in project memory.
 
@@ -326,12 +326,12 @@ For a project that spans many repositories, such as one feature with server, web
 
 Each cloud thread clones every repository in the project and loads `CLAUDE.md` and skills from all of them. Permission rules, hooks, and `env` come only from the `.claude/settings.json` in the directory the thread starts in: inside the repository when the project has one, and above the clones when it has several, where no repository's file is read for them.
 
-| In each repository                                                    | One repository                                                                                                                      | Several repositories                                                 |
-| :-------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- |
-| `CLAUDE.md`                                                           | Loaded when the thread starts                                                                                                       | Loaded from every repository when the thread starts                  |
-| Skills, agents, and commands under `.claude/`                         | Loaded                                                                                                                              | Loaded from every repository                                         |
-| Plugins enabled in `.claude/settings.json`                            | Not loaded. Add the plugin in **Project settings > Plugins** instead                                                                | Not loaded. Add the plugin in **Project settings > Plugins** instead |
-| Permission rules, hooks, and `env` defined in `.claude/settings.json` | Apply to the thread, except the `env` keys that [no cloud session honors](/docs/en/cloud-environments#what-carries-over-from-your-setup) | Don't apply                                                          |
+| In each repository | One repository | Several repositories |
+| :- | :- | :- |
+| `CLAUDE.md` | Loaded when the thread starts | Loaded from every repository when the thread starts |
+| Skills, agents, and commands under `.claude/` | Loaded | Loaded from every repository |
+| Plugins enabled in `.claude/settings.json` | Not loaded. Add the plugin in **Project settings > Plugins** instead | Not loaded. Add the plugin in **Project settings > Plugins** instead |
+| Permission rules, hooks, and `env` defined in `.claude/settings.json` | Apply to the thread, except the `env` keys that [no cloud session honors](/docs/en/cloud-environments#what-carries-over-from-your-setup) | Don't apply |
 
 In a project with several repositories, each clone is attached to the thread as an [additional directory](/docs/en/memory#load-from-additional-directories) with `CLAUDE.md` loading turned on, which is why every repository's `CLAUDE.md` and skills load at start even though the thread starts above them. In such a project, put standing rules in project instructions and give threads environment variables through the [cloud environment](#choose-an-environment-for-threads).
 
@@ -358,20 +358,20 @@ You change project settings at claude.ai/code or in the desktop app, not in `set
 
 Settings save as you change them; a text field you're editing, such as the goal or instructions, shows **Save changes** and **Discard** until you leave it. Changes to instructions, repositories, plugins, and environment in **Project settings** reach new threads, not threads already running.
 
-| Setting                      | Section     | What it controls                                                                                                    |
-| :--------------------------- | :---------- | :------------------------------------------------------------------------------------------------------------------ |
-| Name, icon, and goal         | General     | The project's name and icon in the sidebar, and its one-line goal                                                   |
-| Coordinator model and effort | General     | The model and [effort level](/docs/en/model-config#adjust-effort-level) for Claude in the project conversation           |
-| Thread model and effort      | General     | The model and effort level for threads                                                                              |
-| Project instructions         | Memory      | [Standing rules](#give-a-project-standing-context) every new thread receives                                        |
-| Project repositories         | Environment | The repositories new cloud threads clone                                                                            |
-| Cloud environment            | Environment | The [cloud environment](#choose-an-environment-for-threads) new cloud threads run in                                |
-| Connectors                   | Environment | A link to manage the claude.ai connectors cloud threads get                                                         |
-| Plugins                      | Plugins     | The plugins that load into each new cloud thread                                                                    |
-| Usage                        | Usage       | [Token use](#usage-and-cost) by thread and by model                                                                 |
-| Memory                       | Memory      | The project's [memory files](#give-a-project-standing-context)                                                      |
-| Restart Claude               | General     | Restarts the project conversation when [Claude stops responding there](#claude-hasnt-responded)                     |
-| Pause, Archive, Delete       | General     | Stops, hides, or removes the project; see [Pause, archive, or delete a project](#pause-archive-or-delete-a-project) |
+| Setting | Section | What it controls |
+| :- | :- | :- |
+| Name, icon, and goal | General | The project's name and icon in the sidebar, and its one-line goal |
+| Coordinator model and effort | General | The model and [effort level](/docs/en/model-config#adjust-effort-level) for Claude in the project conversation |
+| Thread model and effort | General | The model and effort level for threads |
+| Project instructions | Memory | [Standing rules](#give-a-project-standing-context) every new thread receives |
+| Project repositories | Environment | The repositories new cloud threads clone |
+| Cloud environment | Environment | The [cloud environment](#choose-an-environment-for-threads) new cloud threads run in |
+| Connectors | Environment | A link to manage the claude.ai connectors cloud threads get |
+| Plugins | Plugins | The plugins that load into each new cloud thread |
+| Usage | Usage | [Token use](#usage-and-cost) by thread and by model |
+| Memory | Memory | The project's [memory files](#give-a-project-standing-context) |
+| Restart Claude | General | Restarts the project conversation when [Claude stops responding there](#claude-hasnt-responded) |
+| Pause, Archive, Delete | General | Stops, hides, or removes the project; see [Pause, archive, or delete a project](#pause-archive-or-delete-a-project) |
 
 ### Pause, archive, or delete a project
 
@@ -489,17 +489,17 @@ A thread running on your computer shows this when the Claude Code session there 
 
 These messages name their own cause. The table gives the next step for each.
 
-| Message                                                                                        | What to do                                                                                                                                                                                                                |
-| :--------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| "Unable to connect to repository" with "Claude couldn't reach GitHub to fetch your repository" | Wait a moment, then send another message to retry                                                                                                                                                                         |
-| "Unable to connect to repository" with "Claude couldn't access your repository or environment" | Your GitHub account needs push access to the repository, and the environment must still exist. Check both in **Project settings > Environment**, then retry                                                               |
-| "Couldn't show the setup proposal"                                                             | The app you have open is older than the **Setup recommendations** Claude sent. Refresh the page or restart the desktop app, or ask Claude to propose the setup again                                                      |
-| "The project's environment was removed"                                                        | Choose a different environment in **Project settings > Environment**; the change applies to new threads                                                                                                                   |
-| "Setup script failed"                                                                          | Click **Edit setup script** on the error, fix the script in the environment, then send another message. [Setup script failed](/docs/en/web-quickstart#setup-script-failed) lists common causes                                 |
-| "Claude ran out of context on this turn"                                                       | The thread filled its context window. If the message says the thread continues in a fresh session, it carries on by itself; otherwise ask Claude in the project conversation to start a new thread for the remaining work |
-| "Couldn't start in" followed by your folder's name                                             | You allowed a thread to run on your computer, but the session couldn't start there. When a line under the message gives the reason, fix that, then ask Claude to run the task again                                       |
-| "Claude is out of date on your device"                                                         | The computer you picked to run a thread has a Claude Code version older than v2.1.280. Update Claude Code there, or update the desktop app if that's what connects the folder, then ask Claude to run the task again      |
-| "Reached the turn limit"                                                                       | The thread reached the cap on agentic turns that [`CLAUDE_CODE_MAX_TURNS`](/docs/en/env-vars) sets. Send another message to continue, or raise or remove that variable where it's set                                          |
+| Message | What to do |
+| :- | :- |
+| "Unable to connect to repository" with "Claude couldn't reach GitHub to fetch your repository" | Wait a moment, then send another message to retry |
+| "Unable to connect to repository" with "Claude couldn't access your repository or environment" | Your GitHub account needs push access to the repository, and the environment must still exist. Check both in **Project settings > Environment**, then retry |
+| "Couldn't show the setup proposal" | The app you have open is older than the **Setup recommendations** Claude sent. Refresh the page or restart the desktop app, or ask Claude to propose the setup again |
+| "The project's environment was removed" | Choose a different environment in **Project settings > Environment**; the change applies to new threads |
+| "Setup script failed" | Click **Edit setup script** on the error, fix the script in the environment, then send another message. [Setup script failed](/docs/en/web-quickstart#setup-script-failed) lists common causes |
+| "Claude ran out of context on this turn" | The thread filled its context window. If the message says the thread continues in a fresh session, it carries on by itself; otherwise ask Claude in the project conversation to start a new thread for the remaining work |
+| "Couldn't start in" followed by your folder's name | You allowed a thread to run on your computer, but the session couldn't start there. When a line under the message gives the reason, fix that, then ask Claude to run the task again |
+| "Claude is out of date on your device" | The computer you picked to run a thread has a Claude Code version older than v2.1.280. Update Claude Code there, or update the desktop app if that's what connects the folder, then ask Claude to run the task again |
+| "Reached the turn limit" | The thread reached the cap on agentic turns that [`CLAUDE_CODE_MAX_TURNS`](/docs/en/env-vars) sets. Send another message to continue, or raise or remove that variable where it's set |
 
 ## Related resources
 

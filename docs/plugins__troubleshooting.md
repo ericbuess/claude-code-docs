@@ -93,13 +93,13 @@ You typed a plugin command you saw somewhere and got `Unknown command: /<name>` 
 
 Several command spellings are in use that Claude Code doesn't have. The table below maps each one to the real command. The [plugin commands reference](/docs/en/plugins/cli-reference) lists every subcommand and flag.
 
-| You typed                                  | What Claude Code says                                                        | Use instead                                                                                                                          |
-| :----------------------------------------- | :--------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
-| `claude plugin add <source>`               | `error: unknown command 'add'`                                               | `claude plugin marketplace add <source>` to add a marketplace, or `claude plugin install <plugin>@<marketplace>` to install a plugin |
-| `claude plugin install <plugin> --project` | `error: unknown option '--project'`                                          | `claude plugin install <plugin>@<marketplace> --scope project`                                                                       |
-| `/install <plugin>`                        | `Unknown command: /install`                                                  | `/plugin install <plugin>@<marketplace>`                                                                                             |
-| `/plugin add <source>`                     | The `/plugin` panel opens on the **Discover** tab                            | `/plugin marketplace add <source>`                                                                                                   |
-| `marketplace.anthropic.com` as a source    | `Invalid marketplace source format. Try: owner/repo, https://..., or ./path` | `anthropics/claude-plugins-official` for the official marketplace                                                                    |
+| You typed | What Claude Code says | Use instead |
+| :- | :- | :- |
+| `claude plugin add <source>` | `error: unknown command 'add'` | `claude plugin marketplace add <source>` to add a marketplace, or `claude plugin install <plugin>@<marketplace>` to install a plugin |
+| `claude plugin install <plugin> --project` | `error: unknown option '--project'` | `claude plugin install <plugin>@<marketplace> --scope project` |
+| `/install <plugin>` | `Unknown command: /install` | `/plugin install <plugin>@<marketplace>` |
+| `/plugin add <source>` | The `/plugin` panel opens on the **Discover** tab | `/plugin marketplace add <source>` |
+| `marketplace.anthropic.com` as a source | `Invalid marketplace source format. Try: owner/repo, https://..., or ./path` | `anthropics/claude-plugins-official` for the official marketplace |
 
 These spellings look wrong but work:
 
@@ -562,15 +562,15 @@ A plugin that declares dependencies can fail to install, or install and stay dis
 
 The table lists each message and its fix. To declare dependencies as an author, see [Plugin dependencies](/docs/en/plugins/dependencies).
 
-| Message                                                                                         | Meaning                                                                                           | How to resolve                                                                                                                                                                                                                                                      |
-| :---------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Dependency "<dep>" is not installed`                                                           | A declared dependency isn't installed.                                                            | Install it in your shell with `claude plugin install <dep>@<marketplace>`, or uninstall the plugin. If the dependency's marketplace isn't registered yet, add it and run `/reload-plugins` in your session, which installs the missing dependencies it can resolve. |
-| `Dependency "<dep>" is disabled`                                                                | The dependency is installed but turned off.                                                       | Enable the dependency, or uninstall the plugin that needs it.                                                                                                                                                                                                       |
-| `Requires "<dep>" <range>, installed <version>`                                                 | The installed dependency's version is outside the plugin's declared range.                        | Update the dependency to a version in the range, or uninstall the plugin.                                                                                                                                                                                           |
-| `<Plugin or Dependency> "<name>" has conflicting version requirements`                          | No version satisfies every range that pins it. The message lists the ranges.                      | Uninstall or update one of the conflicting plugins, or ask the upstream author to widen its constraint.                                                                                                                                                             |
-| `... has version requirements too complex to intersect` or `has an invalid version requirement` | A range isn't valid semver, or the combined ranges can't be intersected.                          | Fix the invalid range or simplify long `\|\|` chains.                                                                                                                                                                                                               |
-| `... has no git tag satisfying <range>`                                                         | The dependency's repository has no `<name>--v*` tag in the range.                                 | Check that the upstream tags releases with that convention, or relax the range.                                                                                                                                                                                     |
-| `Dependency "<dep>" (required by <plugin>) is in <marketplace>, which is not in the allowlist`  | The dependency is in a different marketplace, and cross-marketplace resolution is off by default. | Install the dependency yourself at the same scope, in your shell with `claude plugin install <dep>@<marketplace>` plus the `--scope` you're installing the plugin at, then retry.                                                                                   |
+| Message | Meaning | How to resolve |
+| :- | :- | :- |
+| `Dependency "<dep>" is not installed` | A declared dependency isn't installed. | Install it in your shell with `claude plugin install <dep>@<marketplace>`, or uninstall the plugin. If the dependency's marketplace isn't registered yet, add it and run `/reload-plugins` in your session, which installs the missing dependencies it can resolve. |
+| `Dependency "<dep>" is disabled` | The dependency is installed but turned off. | Enable the dependency, or uninstall the plugin that needs it. |
+| `Requires "<dep>" <range>, installed <version>` | The installed dependency's version is outside the plugin's declared range. | Update the dependency to a version in the range, or uninstall the plugin. |
+| `<Plugin or Dependency> "<name>" has conflicting version requirements` | No version satisfies every range that pins it. The message lists the ranges. | Uninstall or update one of the conflicting plugins, or ask the upstream author to widen its constraint. |
+| `... has version requirements too complex to intersect` or `has an invalid version requirement` | A range isn't valid semver, or the combined ranges can't be intersected. | Fix the invalid range or simplify long `\|\|` chains. |
+| `... has no git tag satisfying <range>` | The dependency's repository has no `<name>--v*` tag in the range. | Check that the upstream tags releases with that convention, or relax the range. |
+| `Dependency "<dep>" (required by <plugin>) is in <marketplace>, which is not in the allowlist` | The dependency is in a different marketplace, and cross-marketplace resolution is off by default. | Install the dependency yourself at the same scope, in your shell with `claude plugin install <dep>@<marketplace>` plus the `--scope` you're installing the plugin at, then retry. |
 
 To see these programmatically, run `claude plugin list --json` in your shell. Plugins with problems carry an `errors` field with the messages and an `errorDetails` field with a `type` for each: the first two rows are `dependency-unsatisfied` and the third is `dependency-version-unsatisfied`.
 
@@ -884,16 +884,16 @@ The validator reads the manifest at the path you give it: `.claude-plugin/plugin
 
 The table covers the messages that stop validation and two warnings, `No frontmatter block found` and `Unknown field '<key>'`, which stop it only when you pass `--strict`. Other warnings, such as a missing description, aren't listed.
 
-| Message                                                                                                  | Cause                                                                    | Fix                                                                                                        |
-| :------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
-| `File not found: <path>`                                                                                 | The path has no manifest, or doesn't exist.                              | Run the command against the plugin or marketplace root, the directory that contains `.claude-plugin/`.     |
-| `No manifest found in directory. Expected .claude-plugin/marketplace.json or .claude-plugin/plugin.json` | The directory has no `.claude-plugin/` manifest.                         | Create the manifest, or point at the right directory.                                                      |
-| `Invalid JSON syntax: <parse error>`                                                                     | The manifest, or `hooks/hooks.json`, isn't valid JSON.                   | Fix the JSON. Until you fix `hooks/hooks.json`, a session loads the plugin without the hooks in that file. |
-| `Path not found: <path>. The runtime loader will report this as a load failure.`                         | A component path in the manifest doesn't exist.                          | Fix the path or create the directory.                                                                      |
-| `Path contains ".." which could be a path traversal attempt: <path>`                                     | A component path escapes the plugin directory.                           | Use paths inside the plugin root.                                                                          |
-| `Path is a file; skills entries must be directories containing SKILL.md`                                 | A `skills` entry points at `SKILL.md` instead of its directory.          | Point at the parent directory, or `.` for a root-level `SKILL.md`.                                         |
-| `No frontmatter block found` or `YAML frontmatter failed to parse: <error>`                              | A skill, agent, or command file has missing or invalid YAML frontmatter. | Add or fix the frontmatter between `---` delimiters. Reported when validating a plugin directory.          |
-| `Unknown field '<key>'`                                                                                  | The manifest has a field the schema doesn't define.                      | Remove it, or use the name the message suggests. Claude Code ignores unknown fields at load time.          |
+| Message | Cause | Fix |
+| :- | :- | :- |
+| `File not found: <path>` | The path has no manifest, or doesn't exist. | Run the command against the plugin or marketplace root, the directory that contains `.claude-plugin/`. |
+| `No manifest found in directory. Expected .claude-plugin/marketplace.json or .claude-plugin/plugin.json` | The directory has no `.claude-plugin/` manifest. | Create the manifest, or point at the right directory. |
+| `Invalid JSON syntax: <parse error>` | The manifest, or `hooks/hooks.json`, isn't valid JSON. | Fix the JSON. Until you fix `hooks/hooks.json`, a session loads the plugin without the hooks in that file. |
+| `Path not found: <path>. The runtime loader will report this as a load failure.` | A component path in the manifest doesn't exist. | Fix the path or create the directory. |
+| `Path contains ".." which could be a path traversal attempt: <path>` | A component path escapes the plugin directory. | Use paths inside the plugin root. |
+| `Path is a file; skills entries must be directories containing SKILL.md` | A `skills` entry points at `SKILL.md` instead of its directory. | Point at the parent directory, or `.` for a root-level `SKILL.md`. |
+| `No frontmatter block found` or `YAML frontmatter failed to parse: <error>` | A skill, agent, or command file has missing or invalid YAML frontmatter. | Add or fix the frontmatter between `---` delimiters. Reported when validating a plugin directory. |
+| `Unknown field '<key>'` | The manifest has a field the schema doesn't define. | Remove it, or use the name the message suggests. Claude Code ignores unknown fields at load time. |
 
 Run the command again after each fix until it prints no errors.
 
@@ -943,18 +943,18 @@ You ran `claude plugin validate .` from your marketplace directory and it report
 
 The table lists the marketplace-level messages. Entry-level messages are the plugin messages under [`claude plugin validate` reports errors](#claude-plugin-validate-reports-errors), prefixed with `plugins[N] plugin.json →`.
 
-| Message                                                                                                                   | Kind    | Fix                                                                                                                                 |
-| :------------------------------------------------------------------------------------------------------------------------ | :------ | :---------------------------------------------------------------------------------------------------------------------------------- |
-| `Duplicate plugin name "<name>" found in marketplace`                                                                     | Error   | Give each plugin a unique `name`.                                                                                                   |
-| `Path contains "..": <path>` under `plugins[N].source`                                                                    | Error   | Use paths relative to the marketplace root without `..` segments.                                                                   |
-| `Marketplace name cannot contain control or bidirectional-formatting characters`                                          | Error   | Remove the character from the name, such as an escape or a newline.                                                                 |
-| `Plugin name cannot contain control or bidirectional-formatting characters`                                               | Error   | Remove the character from the plugin `name`.                                                                                        |
-| `Marketplace has no plugins defined`                                                                                      | Warning | Add at least one entry to `plugins`.                                                                                                |
-| `No marketplace description provided`                                                                                     | Warning | Add a top-level `description`.                                                                                                      |
-| `Plugin name "<name>" is not kebab-case` under `plugins[N] plugin.json → name`                                            | Warning | Rename to lowercase letters, digits, and hyphens. Claude Code accepts other forms, but the claude.ai marketplace sync rejects them. |
-| `Entry declares version "<a>" but <path>/plugin.json says "<b>"`                                                          | Warning | Update the entry to match `plugin.json`, which is authoritative at install time.                                                    |
-| `Marketplace name "<name>" is reserved in Claude Desktop`                                                                 | Warning | Rename the marketplace. Claude Desktop's managed marketplace sync rejects `org`, `org-provisioned`, and `unknown` in any casing.    |
-| `Marketplace name "<name>" is not accepted by Claude Desktop` or `Plugin name "<name>" is not accepted by Claude Desktop` | Warning | Rename to at most 128 characters of letters, digits, `.`, `_`, and `-`, starting with a letter or digit.                            |
+| Message | Kind | Fix |
+| :- | :- | :- |
+| `Duplicate plugin name "<name>" found in marketplace` | Error | Give each plugin a unique `name`. |
+| `Path contains "..": <path>` under `plugins[N].source` | Error | Use paths relative to the marketplace root without `..` segments. |
+| `Marketplace name cannot contain control or bidirectional-formatting characters` | Error | Remove the character from the name, such as an escape or a newline. |
+| `Plugin name cannot contain control or bidirectional-formatting characters` | Error | Remove the character from the plugin `name`. |
+| `Marketplace has no plugins defined` | Warning | Add at least one entry to `plugins`. |
+| `No marketplace description provided` | Warning | Add a top-level `description`. |
+| `Plugin name "<name>" is not kebab-case` under `plugins[N] plugin.json → name` | Warning | Rename to lowercase letters, digits, and hyphens. Claude Code accepts other forms, but the claude.ai marketplace sync rejects them. |
+| `Entry declares version "<a>" but <path>/plugin.json says "<b>"` | Warning | Update the entry to match `plugin.json`, which is authoritative at install time. |
+| `Marketplace name "<name>" is reserved in Claude Desktop` | Warning | Rename the marketplace. Claude Desktop's managed marketplace sync rejects `org`, `org-provisioned`, and `unknown` in any casing. |
+| `Marketplace name "<name>" is not accepted by Claude Desktop` or `Plugin name "<name>" is not accepted by Claude Desktop` | Warning | Rename to at most 128 characters of letters, digits, `.`, `_`, and `-`, starting with a letter or digit. |
 
 Before v2.1.247, a marketplace name containing control or bidirectional-formatting characters was reported only as `Marketplace name impersonates an official Anthropic/Claude marketplace`.
 

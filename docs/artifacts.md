@@ -305,14 +305,14 @@ To turn the connector off, add `claude.ai Claude Docs` to `deniedMcpServers` or 
 
 Each artifact is one self-contained page. Claude Code wraps the file you publish in an HTML document shell and serves it under a strict Content Security Policy (CSP), which shapes what the page can do.
 
-| Constraint        | Effect                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| :---------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Constraint | Effect |
+| :- | :- |
 | External requests | The page can load typefaces from Google Fonts, and scripts from [five public CDN hosts](#allowlist-the-viewer-domain): cdnjs, unpkg, the Tailwind and jQuery CDNs, and selected paths on jsDelivr such as `/npm/`. The CSP blocks every external image and all other external scripts, stylesheets, and fonts, and lets `fetch`, XHR, and WebSocket calls reach only the page's own origin and the Google Fonts hosts. Claude therefore loads any library the page needs from one of those CDNs, inlines all other CSS and JavaScript, and embeds images as data URIs. [Connector calls](#pull-live-data-with-mcp-connectors) go through claude.ai, which makes the network call itself. |
-| No backend        | An artifact is a static page. It can't authenticate viewers itself.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| Downloads         | The page can't start a download itself. To let viewers save a file the page generates, Claude declares the downloads capability. See [Offer a file download](#offer-a-file-download).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| Single page       | Relative links do not resolve, because nothing is deployed alongside the page. For multi-section content, Claude uses in-page anchors rather than separate files.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| Source file types | The published file must be `.html`, `.htm`, or `.md`, and must decode as UTF-8, or as little-endian UTF-16 by its byte-order mark. Markdown files render as styled document pages with syntax-highlighted code. A file that doesn't decode, or that contains the replacement character `U+FFFD`, is [refused with the line and column to fix](/docs/en/errors#the-source-file-is-not-valid-utf-8-text).                                                                                                                                                                                                                                                                                       |
-| Rendered size     | The rendered page must be 16 MiB or smaller. Large embedded images are the usual cause when a publish fails for size.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| No backend | An artifact is a static page. It can't authenticate viewers itself. |
+| Downloads | The page can't start a download itself. To let viewers save a file the page generates, Claude declares the downloads capability. See [Offer a file download](#offer-a-file-download). |
+| Single page | Relative links do not resolve, because nothing is deployed alongside the page. For multi-section content, Claude uses in-page anchors rather than separate files. |
+| Source file types | The published file must be `.html`, `.htm`, or `.md`, and must decode as UTF-8, or as little-endian UTF-16 by its byte-order mark. Markdown files render as styled document pages with syntax-highlighted code. A file that doesn't decode, or that contains the replacement character `U+FFFD`, is [refused with the line and column to fix](/docs/en/errors#the-source-file-is-not-valid-utf-8-text). |
+| Rendered size | The rendered page must be 16 MiB or smaller. Large embedded images are the usual cause when a publish fails for size. |
 
 Generating an artifact uses output tokens like any other response, and a styled page is more token-intensive than the same content as terminal text. Inline CSS, JavaScript for interactive controls, and especially images embedded as data URIs are the main contributors. To reduce an artifact's token cost:
 
@@ -324,13 +324,13 @@ Generating an artifact uses output tokens like any other response, and a styled 
 
 Artifacts require every condition below. When one is not met, Claude writes a local HTML file or says it cannot publish instead.
 
-| Requirement         | Available when                                                                                                                                                                                                                                                                                                                                                                                                       |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Plan                | Pro, Max, Team, or Enterprise. On Pro and Max plans, artifacts are private to you until you share them, and no admin management applies. On Team plans, artifacts are on by default. On Enterprise plans, an Owner [enables them](#manage-artifacts-for-your-organization) in claude.ai admin settings.                                                                                                              |
-| Authentication      | The session is backed by a claude.ai account: sign in with `/login` in the CLI or desktop app. Claude Tag sessions are signed in through the agent's identity, so no step is needed there. Sessions using an API key, [gateway token](/docs/en/llm-gateway), or cloud-provider credential cannot publish.                                                                                                                 |
-| Model provider      | Anthropic API. Not available on [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or [Microsoft Foundry](/docs/en/microsoft-foundry).                                                                                                                                                                                                                                          |
-| Organization policy | Customer-managed encryption keys (CMEK), HIPAA, and [Zero Data Retention](/docs/en/zero-data-retention) are not enabled for the organization.                                                                                                                                                                                                                                                                             |
-| Surface             | Claude Code CLI, or the Claude desktop app version 1.13576.0 or later. [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions can also publish artifacts when both Claude Tag and artifacts are enabled for the organization. Off by default in [Agent SDK](/docs/en/agent-sdk/overview), GitHub Action, and MCP-server contexts, and when [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars) is set. |
+| Requirement | Available when |
+| :- | :- |
+| Plan | Pro, Max, Team, or Enterprise. On Pro and Max plans, artifacts are private to you until you share them, and no admin management applies. On Team plans, artifacts are on by default. On Enterprise plans, an Owner [enables them](#manage-artifacts-for-your-organization) in claude.ai admin settings. |
+| Authentication | The session is backed by a claude.ai account: sign in with `/login` in the CLI or desktop app. Claude Tag sessions are signed in through the agent's identity, so no step is needed there. Sessions using an API key, [gateway token](/docs/en/llm-gateway), or cloud-provider credential cannot publish. |
+| Model provider | Anthropic API. Not available on [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or [Microsoft Foundry](/docs/en/microsoft-foundry). |
+| Organization policy | Customer-managed encryption keys (CMEK), HIPAA, and [Zero Data Retention](/docs/en/zero-data-retention) are not enabled for the organization. |
+| Surface | Claude Code CLI, or the Claude desktop app version 1.13576.0 or later. [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions can also publish artifacts when both Claude Tag and artifacts are enabled for the organization. Off by default in [Agent SDK](/docs/en/agent-sdk/overview), GitHub Action, and MCP-server contexts, and when [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars) is set. |
 
 Whether artifacts are allowed for your organization comes from your organization's policy, which Claude Code loads from `api.anthropic.com`. When Claude Code can't load the policy, artifacts are unavailable. When you ask for one, Claude says why.
 
@@ -340,12 +340,12 @@ If a proxy, VPN, or web filter is involved, ask your IT admin to let `api.anthro
 
 To turn artifacts off for your own sessions regardless of your organization's setting, use any of:
 
-| Where                                | What to do                                                                                                                            |
-| :----------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| [`/config`](/docs/en/commands)            | Turn the **Artifacts** row off, which writes [`"enableArtifact": false`](/docs/en/settings-reference#enableartifact) to your user settings |
-| [Settings file](/docs/en/settings)        | Set `"enableArtifact": false`. The deprecated `"disableArtifact": true` also turns artifacts off                                      |
-| [Environment variable](/docs/en/env-vars) | Set `CLAUDE_CODE_DISABLE_ARTIFACT=1`                                                                                                  |
-| [Permission rule](/docs/en/permissions)   | Add `Artifact` to `permissions.deny`                                                                                                  |
+| Where | What to do |
+| :- | :- |
+| [`/config`](/docs/en/commands) | Turn the **Artifacts** row off, which writes [`"enableArtifact": false`](/docs/en/settings-reference#enableartifact) to your user settings |
+| [Settings file](/docs/en/settings) | Set `"enableArtifact": false`. The deprecated `"disableArtifact": true` also turns artifacts off |
+| [Environment variable](/docs/en/env-vars) | Set `CLAUDE_CODE_DISABLE_ARTIFACT=1` |
+| [Permission rule](/docs/en/permissions) | Add `Artifact` to `permissions.deny` |
 
 Once you turn artifacts off in a [`--settings`](/docs/en/cli-reference#cli-flags) file or with `CLAUDE_CODE_DISABLE_ARTIFACT`, or your administrator turns them off in [managed settings](/docs/en/server-managed-settings), no settings file turns them back on. Before v2.1.242, a file higher in the [precedence stack](/docs/en/settings#settings-precedence) could turn artifacts back on even when a lower-precedence file set `"enableArtifact": false`.
 
@@ -389,11 +389,11 @@ Artifacts can also load JavaScript libraries, such as React or a charting packag
 
 The [Compliance API](https://docs.claude.com/en/api/compliance) provides endpoints to list an organization's artifacts, retrieve a specific version's content, and delete an artifact:
 
-| Method   | Endpoint                                                            |
-| :------- | :------------------------------------------------------------------ |
-| `GET`    | `/v1/compliance/code/artifacts`                                     |
-| `GET`    | `/v1/compliance/code/artifacts/{artifact_id}/versions/{version_id}` |
-| `DELETE` | `/v1/compliance/code/artifacts/{artifact_id}`                       |
+| Method | Endpoint |
+| :- | :- |
+| `GET` | `/v1/compliance/code/artifacts` |
+| `GET` | `/v1/compliance/code/artifacts/{artifact_id}/versions/{version_id}` |
+| `DELETE` | `/v1/compliance/code/artifacts/{artifact_id}` |
 
 For the request and response schemas, see the [Compliance API reference](https://docs.claude.com/en/api/compliance/code/artifacts).
 

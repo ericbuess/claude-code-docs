@@ -215,9 +215,9 @@ To exclude a sensitive file such as `.env`, add a [`Read` deny rule](/docs/en/pe
 
 **Tools exposed to the model.** The server hosts several tools, but only one is visible to the model. The rest are internal RPC the CLI uses for its own UI, such as opening diffs and reading selections, and are filtered out before the tool list reaches Claude.
 
-| Tool name (as seen by hooks) | What it does                                                                                                                                                                                                  | Read-only |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| `mcp__ide__getDiagnostics`   | Returns the IDE's inspection diagnostics, the errors and warnings shown in the editor. Each call covers one file: the file Claude specifies, or the file in your active editor if Claude doesn't specify one. | Yes       |
+| Tool name (as seen by hooks) | What it does | Read-only |
+| - | - | - |
+| `mcp__ide__getDiagnostics` | Returns the IDE's inspection diagnostics, the errors and warnings shown in the editor. Each call covers one file: the file Claude specifies, or the file in your active editor if Claude doesn't specify one. | Yes |
 
 The JetBrains plugin does not expose a code-execution tool to the model.
 

@@ -914,10 +914,10 @@ For the `subagentStatusLine` shape, see [subagent status lines](/docs/en/statusl
 
 A plugin can include color themes and output styles. Both appear in the same pickers as the user's own. For either one, setting the manifest key replaces the folder scan.
 
-| Component    | Save as                   | Format                                                                                                                      | Appears in                            | Manifest key          |
-| :----------- | :------------------------ | :-------------------------------------------------------------------------------------------------------------------------- | :------------------------------------ | :-------------------- |
-| Theme        | `themes/<slug>.json`      | The [custom theme file](/docs/en/terminal-config#create-a-custom-theme) format users write in `~/.claude/themes/`                | `/theme`, under the file's `name`     | `experimental.themes` |
-| Output style | `output-styles/<name>.md` | The [custom output style](/docs/en/output-styles#create-a-custom-output-style) format, with `name` and `description` frontmatter | `/output-style`, as `<plugin>:<name>` | `outputStyles`        |
+| Component | Save as | Format | Appears in | Manifest key |
+| :- | :- | :- | :- | :- |
+| Theme | `themes/<slug>.json` | The [custom theme file](/docs/en/terminal-config#create-a-custom-theme) format users write in `~/.claude/themes/` | `/theme`, under the file's `name` | `experimental.themes` |
+| Output style | `output-styles/<name>.md` | The [custom output style](/docs/en/output-styles#create-a-custom-output-style) format, with `name` and `description` frontmatter | `/output-style`, as `<plugin>:<name>` | `outputStyles` |
 
 Plugin themes are read-only, so when a user edits one in `/theme`, the edit is saved as a copy in their own themes directory.
 
