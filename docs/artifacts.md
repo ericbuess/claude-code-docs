@@ -88,7 +88,7 @@ Viewers in your organization can see who published the page: on an artifact shar
 Who you can share with depends on your plan:
 
 * **Within your organization**: on Team and Enterprise plans, grant access to specific people in your organization, or to everyone in it. Viewers sign in to claude.ai as members of your organization to see the page.
-* **Publicly**: share a link that anyone on the internet can open, with no claude.ai sign-in required. On Pro and Max plans, a public link is the only way to share an artifact. On Team and Enterprise plans, public sharing is off until an Owner [enables it for the organization](#control-public-sharing).
+* **Publicly**: share a link that anyone on the internet can open, with no claude.ai sign-in required. On Team and Enterprise plans, public sharing is off until an Owner [enables it for the organization](#control-public-sharing).
 
 ### Let someone edit with you
 
@@ -104,14 +104,14 @@ Claude reads a page someone else wrote the way it reads a web page with [WebFetc
 
 ## Collect comments on an artifact
 
-When you share an artifact within your organization, the people you share it with can leave comments on the page, and you can have Claude read those comments and reply to them. You need Claude Code v2.1.221 or later and a Team or Enterprise plan, because only an artifact you [share within your organization](#share-an-artifact) takes comments. Claude reads the comments in two cases:
+When you share an artifact within your organization, the people you share it with can leave comments on the page, and you can have Claude read those comments and reply to them. You need Claude Code v2.1.221 or later. Claude reads the comments in two cases:
 
 * **You ask Claude to read them**: give Claude the artifact's URL and ask for the comments. Claude lists each thread and marks the comments someone who can edit the artifact sent to it.
 * **Someone who can edit the artifact sends a comment to Claude**: in a thread on the page, they send a comment with **Send to Claude**, or mention `@claude` in one. Either way, they activate the thread.
 
 Claude can reply to or resolve only an activated thread. Other threads stay open until a person resolves them on the page. Viewers see each reply attributed to Claude, via you.
 
-If you share an artifact publicly, viewers can't comment on it: the page says `Comments aren't available while this Artifact is shared publicly.` To switch an artifact that already has comment threads to a public link, delete the threads first.
+If you share an artifact publicly, people whose only access is the public link don't see its comments and can't add any. Existing comment threads stay on the artifact, and you and its editors can still read and reply to them.
 
 To ask for the comments yourself, give Claude the URL:
 
@@ -171,11 +171,11 @@ When a published page calls a connector, the call uses the account of the person
 
 When you plan to share a connector-backed page, ask Claude to include a fallback message in each live section that names the connector it needs. A viewer who's missing the connection then sees what to connect instead of an empty section.
 
-An artifact that calls connectors can't be shared to a public link on any plan. On Team and Enterprise plans, you can keep it private or [share it within your organization](#share-an-artifact). On Pro and Max plans, where a public link is the only way to share, a connector-backed artifact stays private to you.
+You can [share a connector-backed page](#share-an-artifact) within your organization or publicly, as your plan and organization settings allow. Connector calls don't run for a viewer who opens the public link without signing in to claude.ai, or from outside your organization. That viewer sees the page without its live sections.
 
 ### The page shows no live data for a viewer
 
-When a connector-backed page renders but its live sections stay empty for someone you shared it with, work through these causes:
+When a connector-backed page renders but its live sections stay empty for a viewer in your organization, work through these causes:
 
 * **The viewer hasn't connected the connector**: connectors are per-account, so each viewer needs their own connection to every connector the page calls. They can add one under **Settings > Connectors** on claude.ai, then reload the page.
 * **The viewer declined the permission ask**: a denial lasts for the rest of that page load. Reloading the page brings the permission ask back.
@@ -321,7 +321,7 @@ Artifacts require every condition below. When one is not met, Claude writes a lo
 
 | Requirement | Available when |
 | :- | :- |
-| Plan | Pro, Max, Team, or Enterprise. On Pro and Max plans, artifacts are private to you until you share them, and no admin management applies. On Team plans, artifacts are on by default. On Enterprise plans, an Owner [enables them](#manage-artifacts-for-your-organization) in claude.ai admin settings. |
+| Plan | Pro, Max, Team, or Enterprise. On Pro and Max plans, artifacts are private to you until you share them, and no admin management applies. On Team and Enterprise plans, artifacts are on by default, and an Owner can [turn them off for the organization](#manage-artifacts-for-your-organization) in claude.ai admin settings. |
 | Authentication | The session is backed by a claude.ai account: sign in with `/login` in the CLI or desktop app. Claude Tag sessions are signed in through the agent's identity, so no step is needed there. Sessions using an API key, [gateway token](/docs/en/llm-gateway), or cloud-provider credential cannot publish. |
 | Model provider | Anthropic API. Not available on [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or [Microsoft Foundry](/docs/en/microsoft-foundry). |
 | Organization policy | Customer-managed encryption keys (CMEK), HIPAA, and [Zero Data Retention](/docs/en/zero-data-retention) are not enabled for the organization. |
@@ -350,23 +350,23 @@ If you add a `WebFetch` deny or ask rule with no `domain:` part, it doesn't turn
 
 ## Manage artifacts for your organization
 
-Owners on Team and Enterprise plans control artifacts from [claude.ai admin settings](https://claude.ai/admin-settings/claude-code). Artifact content is stored on Anthropic-operated infrastructure and is visible only to authenticated members of the publishing organization, unless the artifact is [shared publicly](#control-public-sharing).
+Owners on Team and Enterprise plans control artifacts from [claude.ai admin settings](https://claude.ai/admin-settings/artifacts). Artifact content is stored on Anthropic-operated infrastructure and is visible only to authenticated members of the publishing organization and the people they share it with, unless the artifact is [shared publicly](#control-public-sharing).
 
 ### Enable or disable artifacts
 
-To enable or disable artifacts for the whole organization, go to [**Settings > Claude Code > Capabilities**](https://claude.ai/admin-settings/claude-code) and use the **Artifacts** toggle. On Enterprise plans with role-based access control, you can additionally scope artifacts to specific roles: go to [**Settings > Roles**](https://claude.ai/admin-settings/roles), edit a role, and set the **Artifacts** permission under the **Claude Code** group.
+To enable or disable artifacts for the whole organization, go to [**Organization settings > Artifacts**](https://claude.ai/admin-settings/artifacts) and use the **Artifacts** toggle. On Enterprise plans with role-based access control, you can additionally scope artifacts to specific roles: go to [**Organization settings > Roles**](https://claude.ai/admin-settings/roles), edit a role, and set the **Artifacts** permission.
 
 ### Control connector calls from artifacts
 
-[Connector calls from artifacts](#pull-live-data-with-mcp-connectors) have their own toggle, separate from the **Artifacts** toggle that turns artifacts on or off. Go to [**Settings > Capabilities**](https://claude.ai/admin-settings/capabilities) and use the **Enable artifact connectors** toggle. The same toggle governs connector calls from artifacts created in claude.ai conversations, which is why it sits under **Settings > Capabilities** rather than **Settings > Claude Code**.
+[Connector calls from artifacts](#pull-live-data-with-mcp-connectors) have their own toggle, separate from the **Artifacts** toggle that turns artifacts on or off. Go to [**Organization settings > Capabilities**](https://claude.ai/admin-settings/capabilities) and use the **Enable artifact connectors** toggle. The same toggle governs connector calls from artifacts created in claude.ai conversations.
 
 ### Control public sharing
 
-Public sharing is off by default on Team and Enterprise plans, so members can share artifacts only within the organization until an Owner turns it on. To let members publish artifacts to public links that anyone can view without signing in, go to **Settings > Claude Code > Capabilities** and turn on **External sharing** under the **Artifacts** toggle. Turning it back off blocks access through existing public links without changing each artifact's audience; access resumes if you re-enable it.
+Public sharing is off by default on Team and Enterprise plans. To let members publish artifacts to public links that anyone can view without signing in, go to [**Organization settings > Artifacts**](https://claude.ai/admin-settings/artifacts) and turn on **External sharing** under the **Artifacts** toggle. Turning it back off blocks access through existing public links without changing each artifact's audience; access resumes if you re-enable it.
 
 ### Set a retention policy
 
-To set how long artifacts are kept before automatic deletion, go to [**Settings > Data & privacy controls**](https://claude.ai/admin-settings/data-privacy-controls). You can set separate retention periods for artifacts that are still private to their author and artifacts that have been shared.
+To set how long artifacts are kept before automatic deletion, go to [**Organization settings > Data and privacy**](https://claude.ai/admin-settings/data-privacy-controls). You can set separate retention periods for artifacts that are still private to their author and artifacts that have been shared.
 
 ### Review the audit log
 

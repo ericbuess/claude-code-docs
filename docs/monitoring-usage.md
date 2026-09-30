@@ -60,6 +60,8 @@ Example managed settings configuration:
 }
 ```
 
+In the Claude Desktop app, Code tab sessions read these managed settings from the sources that [reach each kind of Desktop session](/docs/en/desktop#managed-settings). The OpenTelemetry form for Cowork under **Monitoring** in the admin console's [Data and privacy settings](https://claude.ai/admin-settings/data-privacy-controls) applies to Cowork sessions only, so neither the terminal CLI nor the Code tab exports to a collector you set there.
+
 Claude Code ignores the [OpenTelemetry exporter variables](/docs/en/settings-reference#variables-claude-code-ignores-in-env) in a repository's `.claude/settings.json` and `.claude/settings.local.json`, so a repository can't use them to turn telemetry on, choose where it goes, or capture content. Set them in managed settings, or have each developer set them in their shell or `~/.claude/settings.json`. A repository can still turn a signal off by setting its exporter selector, such as `OTEL_LOGS_EXPORTER`, to `none`, unless managed settings, a `--settings` file, or the environment you start Claude Code from sets that variable.
 
 Claude Code doesn't pass `OTEL_*` environment variables to the subprocesses it spawns, including the Bash tool, hooks, MCP servers, and language servers. An OpenTelemetry-instrumented application that you run through the Bash tool doesn't inherit Claude Code's exporter endpoint or headers, so set those variables directly in the command if that application needs to export its own telemetry.

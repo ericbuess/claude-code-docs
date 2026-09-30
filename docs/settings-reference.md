@@ -593,6 +593,7 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`agent`](#agent) | Start every session as a named [subagent](/docs/en/sub-agents) with its prompt, tools, and model | Agents, sessions, and worktrees | Any file |
 | [`agentPushNotifEnabled`](#agentpushnotifenabled) | Let Claude send a [push notification to your phone](/docs/en/remote-control#mobile-push-notifications) when it decides to | Remote, desktop, and notifications | Any file |
 | [`allowAllClaudeAiMcps`](#allowallclaudeaimcps) | Load the [claude.ai connectors](/docs/en/mcp) Claude Code fetches itself alongside a deployed [`managed-mcp.json`](/docs/en/managed-mcp#exclusive-control-with-managed-mcp-json) | MCP | Managed |
+| [`allowClaudeInChromeWithManagedMcp`](#allowclaudeinchromewithmanagedmcp) | Let the built-in [Claude in Chrome](/docs/en/chrome) server run alongside a deployed [`managed-mcp.json`](/docs/en/managed-mcp#exclusive-control-with-managed-mcp-json) | MCP | Managed |
 | [`allowedChannelPlugins`](#allowedchannelplugins) | Replace the default allowlist of [channel plugins](/docs/en/channels#restrict-which-channel-plugins-can-run) that can push messages | Plugins and skills | Managed |
 | [`allowedHttpHookUrls`](#allowedhttphookurls) | Limit which URLs [HTTP hooks](/docs/en/hooks) can target | Hooks and automation | Any file |
 | [`allowedMcpServers`](#allowedmcpservers) | Allowlist which [MCP servers](/docs/en/mcp) users can add | MCP | Any file |
@@ -4761,6 +4762,24 @@ Load the [claude.ai connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) Cla
 ```
 
 [`allowedMcpServers`](#allowedmcpservers) and [`deniedMcpServers`](#deniedmcpservers) still apply to the connectors this key loads. Connectors delivered to a [cloud session](/docs/en/claude-code-on-the-web) whose host carries a `managed-mcp.json`, such as a self-hosted runner, stay suppressed. See [Allow claude.ai connectors alongside the managed set](/docs/en/managed-mcp#allow-claude-ai-connectors-alongside-the-managed-set).
+
+### `allowClaudeInChromeWithManagedMcp`
+
+Let the built-in [Claude in Chrome](/docs/en/chrome) server run alongside a deployed `managed-mcp.json`. Without this key, a deployed `managed-mcp.json` blocks Claude in Chrome in terminal sessions. Requires Claude Code v2.1.282 or later.
+
+* **Scope**: [`Managed`](#scopes), from the device's own managed settings only: an MDM-deployed plist or HKLM registry key, or a system `managed-settings.json` file. Claude Code ignores it in server-managed settings, in the user-writable HKCU registry, and in user or project settings.
+* **Type**: Boolean
+  * `true`: the built-in Claude in Chrome server can run alongside a deployed `managed-mcp.json`
+  * `false`: a deployed `managed-mcp.json` blocks Claude in Chrome in terminal sessions
+* **Default**: `false`, so a deployed `managed-mcp.json` blocks Claude in Chrome in terminal sessions
+
+```json managed-settings.json theme={null}
+{
+  "allowClaudeInChromeWithManagedMcp": true
+}
+```
+
+A [`deniedMcpServers`](#deniedmcpservers) entry for `claude-in-chrome` still blocks the server with this key on. See [Allow Claude in Chrome alongside the managed set](/docs/en/managed-mcp#allow-claude-in-chrome-alongside-the-managed-set).
 
 ### `allowedMcpServers`
 

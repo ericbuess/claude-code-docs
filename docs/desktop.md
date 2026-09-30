@@ -730,6 +730,12 @@ These settings are configured through the [admin settings console](https://claud
 * **Remote Control**: enable or disable [Remote Control](/docs/en/remote-control) for your organization
 * **Disable Bypass permissions mode**: prevent users in your organization from enabling bypass permissions mode
 
+<Note>
+  The OpenTelemetry form for Cowork under **Monitoring** in the admin console's [Data and privacy settings](https://claude.ai/admin-settings/data-privacy-controls) applies to Cowork sessions only. In a Cowork session on this machine, the desktop app passes that collector to Claude Code as `OTEL_*` environment variables, so the form takes effect even though Claude Code in that session [never fetches admin-console settings](#managed-settings).
+
+  To export telemetry from Code tab sessions, set `CLAUDE_CODE_ENABLE_TELEMETRY` and the `OTEL_*` variables in the `env` block of your Claude Code managed settings, as shown in [administrator configuration for monitoring](/docs/en/monitoring-usage#administrator-configuration). Local, cloud, and SSH sessions each read [managed settings from different sources](#managed-settings). For the hosts a cloud session can reach, see [network access](/docs/en/cloud-environments#network-access). For the `service.name` that Code tab sessions report, see [service information](/docs/en/monitoring-usage#service-information).
+</Note>
+
 ### Managed settings
 
 Managed settings override project and user settings and apply to Claude Code sessions in Desktop. You can set these keys in your organization's [managed settings](/docs/en/managed-settings) file or push them remotely through the admin console.

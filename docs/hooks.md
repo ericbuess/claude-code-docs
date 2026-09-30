@@ -1117,7 +1117,7 @@ The matcher value corresponds to how the session was initiated:
 | `resume` | `--resume`, `--continue`, or `/resume` |
 | `clear` | `/clear` |
 | `compact` | Auto or manual compaction |
-| `fork` | A new session forked from an existing one: `--fork-session` with `--resume` or `--continue`, the `/fork` background copy, or `/branch` |
+| `fork` | A new session forked from an existing one: `--fork-session` with `--resume` or `--continue`, the `/fork` background copy, `/branch`, or a conversation you [move to the background](/docs/en/agent-view#from-inside-a-session) |
 
 Before v2.1.214, forked sessions reported source `"resume"`.
 

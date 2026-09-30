@@ -188,7 +188,7 @@ Remote Control only activates when you explicitly run `claude remote-control`, `
 
 The same toggle appears outside the CLI:
 
-* **Desktop app**: **Settings > Claude Code > Enable remote control by default**.
+* **Desktop app**: **Settings > Claude Code > Connect new sessions to Remote Control**.
 * **VS Code extension**: **Enable Remote Control for all sessions** in the [command menu's](/docs/en/vs-code#use-the-prompt-box) Settings section.
 
 To turn auto-connect on from a settings file instead, set [`remoteControlAtStartup`](/docs/en/settings-reference#remotecontrolatstartup) to `true` in your user `~/.claude/settings.json` or in [managed settings](/docs/en/managed-settings). In project or local settings (`.claude/settings.json`, `.claude/settings.local.json`), Claude Code honors a `false` and turns auto-connect off for that repository, but ignores a `true`, so a checked-in file can't turn on Remote Control for everyone who opens the repository.

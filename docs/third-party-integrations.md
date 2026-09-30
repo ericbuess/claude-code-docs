@@ -120,7 +120,7 @@ If your organization has specific infrastructure requirements, compare the optio
 
     <tr>
       <td>Billing</td>
-      <td><strong>Teams:</strong> \$150/seat (Premium) with PAYG available<br /><strong>Enterprise:</strong> <a href="https://claude.com/contact-sales?utm_source=claude_code&utm_medium=docs&utm_content=third_party_enterprise">Contact Sales</a></td>
+      <td><strong>Teams:</strong> per-seat subscription with PAYG available, see <a href="https://claude.com/pricing?utm_source=claude_code&utm_medium=docs&utm_content=third_party_pricing#team-&-enterprise">pricing</a><br /><strong>Enterprise:</strong> <a href="https://claude.com/contact-sales?utm_source=claude_code&utm_medium=docs&utm_content=third_party_enterprise">Contact Sales</a></td>
       <td>PAYG</td>
       <td>PAYG through AWS</td>
       <td>PAYG through AWS Marketplace</td>
