@@ -95,6 +95,7 @@ Match the message you see to a section below.
 | `MCP server "<name>" needs additional permissions (scope: "<scope>") — run /mcp to re-authenticate` | [Authentication](#mcp-server-needs-you-to-sign-in-again) |
 | `MCP server "<name>" requires re-authorization (token expired)` | [Authentication](#mcp-server-needs-you-to-sign-in-again) |
 | `Issuer mismatch in authorization response (RFC 9207)` | [Authentication](#issuer-mismatch-in-authorization-response) |
+| `Refusing to send credentials to non-https token endpoint` / `<short-name> from the MCP SDK for <server-url>` | [Authentication](#refusing-to-send-credentials-to-non-https-token-endpoint) |
 | `Cloud gateway session expired — run /login to reconnect.` | [Authentication](#cloud-gateway-session-expired) |
 | `Cloud gateway <url> no longer accepts this session` | [Authentication](#cloud-gateway-session-expired) |
 | `Sign-in timed out while waiting for you to continue. Try again.` | [Authentication](#sign-in-timed-out-while-waiting-for-you-to-continue) |
@@ -1436,6 +1437,23 @@ Issuer mismatch in authorization response (RFC 9207): expected "https://auth.exa
 * To connect while the server is being fixed, start Claude Code with [`MCP_SDK_GENERATION=v1`](/docs/en/env-vars), whose [runtime](/docs/en/mcp#mcp-client-runtimes) doesn't run this check. This removes a protection against mix-up attacks, so prefer the server-side fix
 
 Before v2.1.232, Claude Code used the v2 runtime only in a gradual rollout or when you set `MCP_SDK_GENERATION=v2`.
+
+### Refusing to send credentials to non-https token endpoint
+
+On the [v2 runtime](/docs/en/mcp#mcp-client-runtimes), Claude Code sends an [MCP OAuth](/docs/en/mcp#authenticate-with-remote-mcp-servers) token request only to a token endpoint served over HTTPS or at `localhost`, `127.0.0.1`, or `::1`. This message means the server's token endpoint is neither, so Claude Code stopped before sending the request. That happens after the browser sign-in, so the browser step succeeds first, and again whenever Claude Code refreshes the server's token.
+
+In its full form, the message comes from the MCP SDK and quotes the token endpoint it refused. In the debug log, it follows `Error during auth completion:` for a sign-in or `Token refresh failed:` for a refresh. In your shell, `claude mcp login <name>` prints it after `Couldn't complete authentication for "<name>":`, and in a session, `/mcp` shows it under the server's menu:
+
+```text theme={null}
+Refusing to send credentials to non-https token endpoint 'http://192.168.1.50:8123/oauth/token'. OAuth token requests MUST use TLS (localhost / 127.0.0.1 / ::1 are exempt).
+```
+
+Claude Code treats a server URL that has a query string or a long random-looking path segment as possibly secret. For such a server, it redacts the sign-in errors the MCP SDK raises before it shows or logs them. This error then reads as a short name that can change between releases, such as `io`, followed by `from the MCP SDK for` and the redacted server URL. Other errors from the MCP SDK take the same shape there. The redacted message can be this error only when the server's token endpoint is plain `http://` at an address other than `localhost`, `127.0.0.1`, or `::1`.
+
+**What to do:**
+
+* Serve that token endpoint over HTTPS, for example by putting the server behind a reverse proxy or tunnel that terminates TLS and configuring the server to advertise the `https://` address
+* To connect without changing the server, start Claude Code with [`MCP_SDK_GENERATION=v1`](/docs/en/env-vars), whose [runtime](/docs/en/mcp#mcp-client-runtimes) doesn't apply this rule and sends the token request over plain HTTP. That choice lasts until you exit and applies to every server. The v1 runtime also skips the [issuer check](#issuer-mismatch-in-authorization-response), so prefer serving the endpoint over HTTPS
 
 ### AWS credentials expired or invalid
 

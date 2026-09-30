@@ -266,7 +266,7 @@ function listSessions(options?: ListSessionsOptions): Promise<SDKSessionInfo[]>;
 | `summary` | `string` | Display title: custom title, most recent prompt, auto-generated summary, or first prompt |
 | `lastModified` | `number` | Last modified time in milliseconds since epoch |
 | `fileSize` | `number \| undefined` | Session file size in bytes. Only populated for local JSONL storage |
-| `customTitle` | `string \| undefined` | User-set session title (via `/rename`) |
+| `customTitle` | `string \| undefined` | The session's custom title when one is set, for example with `--name`, `/rename`, a hook's `sessionTitle` output, or [`renameSession()`](#renamesession). Otherwise the AI-generated session title, if the session has one |
 | `firstPrompt` | `string \| undefined` | First meaningful user prompt in the session |
 | `gitBranch` | `string \| undefined` | Git branch at the end of the session |
 | `cwd` | `string \| undefined` | Working directory for the session |
@@ -1151,7 +1151,7 @@ type PermissionMode =
   | "bypassPermissions" // Bypass permission checks; explicit ask rules still prompt
   | "plan" // Planning mode - explore without editing
   | "dontAsk" // Don't prompt for permissions, deny if not pre-approved
-  | "auto"; // Model classifier approves or denies permission prompts
+  | "auto"; // A model classifier reviews actions such as shell commands and network requests
 ```
 
 ### `CanUseTool`
