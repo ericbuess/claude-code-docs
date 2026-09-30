@@ -348,10 +348,6 @@ Plugins can declare monitors that start automatically when the plugin is active,
 
 ### WebSocket source
 
-<Note>
-  The WebSocket source requires Claude Code v2.1.195 or later.
-</Note>
-
 When a server already pushes events over a WebSocket, Claude can connect to it directly instead of writing a polling script. Each kind of socket activity either becomes an event or ends the watch:
 
 * **Text messages**: each one becomes one event, even when the message spans multiple lines.

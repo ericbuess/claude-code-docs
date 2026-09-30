@@ -62,9 +62,33 @@ This walkthrough covers the core agent view loop: dispatch a task, watch its row
   </Step>
 </Steps>
 
-You can use `claude agents` as your primary entry point instead of `claude`: dispatch every task from agent view, attach when you want the full conversation, and press `←` to return to the table.
-
 Inside a regular `claude` session, the prompt footer's `←` hint counts the background agents that are waiting on you, such as `← 2 agents`, and returns to `← for agents` when none need input. Counts above 99 show as `99+`. The count refreshes about every ten seconds while the terminal is focused and immediately when focus returns. It briefly changes color when it moves and when an agent completes, and when a background session finishes while none need your input it briefly shows the number completed, such as `← 2 done`. Both flashes are off when the [`prefersReducedMotion` setting](/docs/en/settings-reference#prefersreducedmotion) is on, and the hint is hidden in [screen reader mode](/docs/en/accessibility).
+
+### Open agent view by default
+
+To have `claude` with no arguments open agent view instead of a new conversation, turn on a `/config` setting.
+
+<Steps>
+  <Step title="Turn on the setting">
+    In a regular `claude` session, run `/config` and turn on **Open agents view by default**. To skip the menu, set the [`defaultToAgentsView`](/docs/en/settings-reference#defaulttoagentsview) key directly:
+
+    ```text theme={null}
+    /config defaultToAgentsView=true
+    ```
+  </Step>
+
+  <Step title="Start Claude Code">
+    Exit the session, then run `claude` with no arguments:
+
+    ```bash theme={null}
+    claude
+    ```
+
+    Agent view opens in place of a new conversation.
+  </Step>
+</Steps>
+
+To start a regular session while the setting is on, pass a prompt: `claude "fix the login test"`. To turn the setting off, run `/config defaultToAgentsView=false` in a regular session or in one you attach to from agent view.
 
 ## Monitor sessions with agent view
 

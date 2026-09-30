@@ -124,8 +124,8 @@ The runtime blocks the highest-risk writes without any configuration from you:
 * At the project root, the runtime denies `.git/hooks`, denies `.git/config` unless you set `filesystem.allowGitConfig: true`, and denies `.mcp.json`, `.claude/commands`, `.claude/agents`, and shell startup files.
 * On macOS, these denies are checked when a write happens, so they also cover nested files and repositories created during the session.
 * On Linux and WSL2, the runtime builds the deny list once at launch. It reliably covers the project root, makes a best-effort shallow scan for nested copies that exist at that point, and does not cover anything the session creates later, such as `git init`, `git clone`, or scaffolding. The README's `mandatoryDenySearchDepth` section describes the scan's exact semantics.
-* Without a valid `~/.srt-settings.json`, the runtime starts anyway, blocks network access, and confines writes to built-in runtime paths such as `/tmp/claude`, `~/.npm/_logs`, and `~/.claude/debug`. Don't take a clean start as proof your settings loaded.
-* When you pass `--settings`, the runtime refuses to start if the file fails to load.
+* If `~/.srt-settings.json` doesn't exist and you don't pass `--settings`, the runtime starts anyway. It blocks network access and confines writes to built-in runtime paths such as `/tmp/claude`, `~/.npm/_logs`, and `~/.claude/debug`. Don't take a clean start as proof your settings loaded.
+* If the settings file exists but is empty, unreadable, or invalid, the runtime refuses to start, whether it's `~/.srt-settings.json` or a file you pass with `--settings`. It also refuses to start if the `--settings` file doesn't exist.
 
 Your write grants still include other paths Claude Code loads configuration from, so deny those with `denyWrite`. A sandboxed session that can write them can persist hooks, permission rules, or MCP servers that run unsandboxed the next time you launch Claude Code.
 

@@ -96,7 +96,7 @@ Depending on your plan and seat tier, Fable usage can bill to [usage credits](ht
 
 In interactive sessions, Claude Code shows a consent prompt before a Fable request bills usage credits. Members of Enterprise plans with organization billing don't see the prompt. You can continue on Fable using usage credits or switch to your default model. You can also dismiss the prompt:
 
-* In the `/model` picker, you keep your current model.
+* When you select a Fable model with `/model`, you keep your current model.
 * Mid-session, Claude Code continues the turn on your default model.
 
 After you choose to continue on Fable using usage credits, Claude Code doesn't show the prompt again.
@@ -109,7 +109,9 @@ What you can do while the prompt is waiting depends on the session:
 * In a background session, answer before the deadline.
 * If you send a new message from the remote client before anyone has typed at the terminal, Claude Code ends the turn the same way, and your new message starts the next turn. After someone types at the terminal, Claude Code keeps waiting for the answer and queues your new message behind it.
 
-In [non-interactive mode](/docs/en/headless) with the `-p` flag and through the Agent SDK, Claude Code never shows the consent prompt. When a Fable request there would bill to usage credits, Claude Code bills it without asking.
+In a session another application hosts through the [Agent SDK](/docs/en/agent-sdk/overview), whether the prompt appears is up to that application. If it appears and nobody answers before the same [`dialogExpiry`](/docs/en/settings-reference#dialogexpiry) deadline, Claude Code ends the turn without sending the request.
+
+In [non-interactive mode](/docs/en/headless) with the `-p` flag, and in an Agent SDK application that doesn't show the prompt, Claude Code never asks for consent. When a Fable request there would bill to usage credits, Claude Code bills it without asking.
 
 ### Setting your model
 
@@ -277,12 +279,12 @@ Every surface enforces the allowlist it receives. Which delivery mechanism reach
 
 | Delivery mechanism | CLI and IDE | Desktop local sessions | Web, mobile, and cloud sessions | Agent SDK and non-interactive | Cowork |
 | :- | :- | :- | :- | :- | :- |
-| [Server-managed settings](/docs/en/server-managed-settings) from the admin console | Enforced | Enforced | Enforced, except in [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions | Enforced | Not delivered |
+| [Server-managed settings](/docs/en/server-managed-settings) from the admin console | Enforced | Enforced | Enforced, except in [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions | Enforced | Remote Cowork sessions: the server checks the model. On the user's machine: not delivered. |
 | [MDM or managed settings files](/docs/en/managed-settings#delivery-mechanisms) | Enforced | Enforced | Not delivered in Anthropic-hosted environments; in [self-hosted environments](/docs/en/self-hosted-environments), enforced from the runner image per [how Claude Code combines managed sources](/docs/en/managed-settings#how-claude-code-combines-managed-sources) | Enforced | Enforced where deployed |
 
 * [Cloud sessions](/docs/en/claude-code-on-the-web), including those you start from the Desktop app, run on Anthropic-managed VMs by default: settings deployed to your device do not reach them, so deliver the allowlist through server-managed settings. Sessions your organization routes to a [self-hosted environment](/docs/en/self-hosted-environments) run on your own compute and also read the managed settings file in the runner image. [How Claude Code combines managed sources](/docs/en/managed-settings#how-claude-code-combines-managed-sources) says when that file applies. A mid-session model switch in a cloud session is rejected when the requested model is excluded by the allowlist. When the `availableModels` list in your server-managed settings is non-empty, the server rejects a request to start a cloud session at claude.ai/code or from the Desktop app on a model the list excludes.
 * [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions run in cloud environments but don't receive server-managed settings; in a [self-hosted environment](/docs/en/self-hosted-environments), they still read the managed settings file in the runner image. To set the model for those sessions, see [Choose the model for a scope](https://claude.com/docs/claude-tag/admins/customize#choose-the-model-for-a-scope) in the Claude Tag admin guide.
-* Cowork, the agentic-work tab in the Claude Desktop app, runs its sessions on Claude Code but, by design, does not receive server-managed settings from the claude.ai admin console. A managed settings file applies to Cowork sessions when it is present where the session runs; remote Cowork sessions run on Anthropic-managed VMs, where a device-deployed file is not present.
+* Cowork, the agentic-work tab in the Claude Desktop app, runs its sessions on Claude Code but, by design, does not receive server-managed settings from the claude.ai admin console. When the `availableModels` list in your server-managed settings is non-empty and a user picks a model outside it, the server rejects that model for a remote Cowork session. A managed settings file applies to Cowork sessions when it is present where the session runs; remote Cowork sessions run on Anthropic-managed VMs, where a device-deployed file is not present.
 * Sessions on [third-party providers](/docs/en/server-managed-settings#platform-availability) such as Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and [Claude Platform on AWS](/docs/en/claude-platform-on-aws) do not receive server-managed settings, so deliver the allowlist through MDM or managed settings files there.
 * Server-managed delivery also requires the session to authenticate with an [eligible login or key](/docs/en/server-managed-settings#platform-availability). Fleets that generate keys only through an [`apiKeyHelper`](/docs/en/settings-reference#apikeyhelper) script should deliver the allowlist through MDM or managed settings files.
 * The Desktop Code tab also hosts [SSH sessions](/docs/en/desktop#ssh-sessions), which read the managed settings file from the remote host they run on. See [Desktop managed settings](/docs/en/desktop#managed-settings).
@@ -714,7 +716,7 @@ Before v2.1.223, Claude Code held only Sonnet 5, Opus 4.8, and Opus 5 sessions t
 
 The 1M context window uses standard model pricing with no premium for tokens beyond 200K. For plans where extended context is included with your subscription, usage remains covered by your subscription. For plans that access extended context through usage credits, tokens are billed to usage credits.
 
-If your account supports 1M context, the option appears in the `/model` picker in the latest versions of Claude Code. If you don't see it, try restarting your session.
+If your account supports 1M context, the option appears in the `/model` picker in the latest versions of Claude Code. If you don't see it, restart your session, and on a third-party provider check whether your deployment [pinned the model](#pin-models-for-third-party-deployments) with an `ANTHROPIC_DEFAULT_*_MODEL` variable.
 
 You can also use the `[1m]` suffix with model aliases or full model names:
 
@@ -869,6 +871,8 @@ With the `[1m]` suffix, the 1M context window applies to all usage of the pinned
 * Only append `[1m]` when the underlying model [supports 1M context](https://platform.claude.com/docs/en/build-with-claude/context-windows#context-window-sizes-by-model).
 * The suffix is read per variable, not per model. On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, a model ID without `[1m]` in one variable uses 200K context even if another variable sets the same model with the suffix. Sonnet 5 always runs with the 1M window on these providers and never needs the suffix.
 
+When you set an `ANTHROPIC_DEFAULT_*_MODEL` variable, the `/model` picker shows one row for that model in place of the family's built-in rows, including any 1M context rows. To reach the 1M window without adding the suffix to that variable, your users run `/model opus[1m]`, and Claude Code applies the suffix to the model the variable names. `/model sonnet[1m]` works the same way.
+
 <Note>
   An `availableModels` allowlist delivered through [MDM or a managed settings file](/docs/en/managed-settings#delivery-mechanisms) still applies when using third-party providers; [server-managed settings are not delivered there](/docs/en/server-managed-settings#platform-availability).
 
@@ -960,8 +964,8 @@ Claude Code automatically uses [prompt caching](/docs/en/prompt-caching) to opti
 | - | - |
 | `DISABLE_PROMPT_CACHING` | Set to `1` to disable prompt caching for all models. Takes precedence over the per-model settings |
 | `DISABLE_PROMPT_CACHING_HAIKU` | Set to `1` to disable prompt caching for the [default Haiku model](/docs/en/prompt-caching#disable-prompt-caching) |
-| `DISABLE_PROMPT_CACHING_SONNET` | Set to `1` to disable prompt caching for Sonnet models only |
-| `DISABLE_PROMPT_CACHING_OPUS` | Set to `1` to disable prompt caching for Opus models only |
+| `DISABLE_PROMPT_CACHING_SONNET` | Set to `1` to disable prompt caching for the [default Sonnet model](/docs/en/prompt-caching#disable-prompt-caching) |
+| `DISABLE_PROMPT_CACHING_OPUS` | Set to `1` to disable prompt caching for the [default Opus model](/docs/en/prompt-caching#disable-prompt-caching) |
 | `DISABLE_PROMPT_CACHING_FABLE` | Set to `1` to disable prompt caching for Fable models only |
 
 To choose the cache TTL for the main conversation and for subagents separately, see [choose the TTL yourself](/docs/en/prompt-caching#choose-the-ttl-yourself). For what triggers a cache miss, see [How Claude Code uses prompt caching](/docs/en/prompt-caching).

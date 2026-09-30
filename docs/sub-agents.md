@@ -806,8 +806,6 @@ This example runs a setup script only when the `db-agent` subagent starts, and a
 }
 ```
 
-A hyphenated matcher like `db-agent` matches exactly on Claude Code v2.1.195 or later. On earlier versions it is evaluated as an unanchored regular expression and also fires for any agent type that contains it, such as `prod-db-agent`; anchor it as `^db-agent$` on those versions.
-
 See [Hooks](/docs/en/hooks) for the complete hook configuration format.
 
 ## Work with subagents

@@ -267,7 +267,7 @@ This section answers the questions a security review asks: what data flows throu
 | - | - | - |
 | Inference (prompts, completions) | CLI → gateway → your upstream | Only if the Anthropic API is a configured upstream |
 | Telemetry (OTLP metrics, plus [opt-in logs and traces](/docs/en/claude-apps-gateway-config#telemetry)) | CLI → gateway → your collector | Never |
-| Identity (email, groups, sub) | IdP → gateway → JWT → CLI; the CLI stamps it on OTLP exports. If you turn on [`forward_user_identity`](/docs/en/claude-apps-gateway-config#per-user-identity-headers-for-a-proxy-you-run), the gateway also sends the developer's email and IdP subject as headers to your proxy | Never |
+| Identity (email, groups, sub) | IdP → gateway → CLI; the CLI stamps it on OTLP exports. If you turn on [`forward_user_identity`](/docs/en/claude-apps-gateway-config#per-user-identity-headers-for-a-proxy-you-run), the gateway also sends the developer's email and IdP subject as headers to your proxy | Never |
 | Managed settings | Your gateway YAML → CLI | Never |
 | Audit log | Gateway stderr → your aggregator | Never |
 

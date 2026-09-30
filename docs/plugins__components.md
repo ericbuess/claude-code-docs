@@ -670,6 +670,8 @@ You can also place skills outside the default `skills/` directory:
 
 To include instructions in a plugin, write them as a skill. Claude Code doesn't load a `CLAUDE.md` at the plugin root, and `claude plugin validate` warns `CLAUDE.md at the plugin root is not loaded as project context`.
 
+If a rule must hold every time, such as [blocking edits to protected files](/docs/en/hooks-guide#block-edits-to-protected-files), add it to the plugin as a [hook](#hooks) rather than a skill. To choose between the two, see the Hook vs Skill tab under [Compare similar features](/docs/en/features-overview#compare-similar-features).
+
 For frontmatter fields and supporting files, see [Skills](/docs/en/skills).
 
 ### Commands

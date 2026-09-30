@@ -44,7 +44,7 @@ You can't give your marketplace any of the following names:
 * **Community marketplace names**: `claude-community`, `claude-plugins-community`, and `healthcare`. Reserved under the same rule as the official names.
 * **Plugin directory names**: `anthropic-plugin-directory` and `claude-plugin-directory`. Reserved under the same rule as the official names.
 * **Names that impersonate an official marketplace**: names such as `official-claude-plugins` or `claude-plugins-v2`, and any name containing a non-ASCII character. The error is `Marketplace name impersonates an official Anthropic/Claude marketplace`. A control or bidirectional-formatting character in a name also reports `Marketplace name cannot contain control or bidirectional-formatting characters`. A marketplace already registered under such a name stops loading, along with its plugins.
-* <span id="reserved-name-spellings" />**Another spelling of a reserved name**: a name that differs from a reserved name only by a trailing dot, or by a symbol other than an underscore in place of a hyphen, so `claude.code.plugins` counts as `claude-code-plugins`. `claude plugin validate` accepts such a name; adding the marketplace fails with [`is another spelling of "<reserved>", a reserved marketplace name`](/docs/en/errors#marketplace-name-is-another-spelling-of-a-reserved-name), and a marketplace already registered under one stops loading. This check requires Claude Code v2.1.280 or later.
+* <span id="reserved-name-spellings" />**Another spelling of a reserved name**: a name that differs from a reserved name only by a trailing dot, or by a symbol other than an underscore in place of a hyphen, so `claude.code.plugins` counts as `claude-code-plugins`. Adding the marketplace fails with [`is another spelling of "<reserved>", a reserved marketplace name`](/docs/en/errors#marketplace-name-is-another-spelling-of-a-reserved-name), and a marketplace already registered under one stops loading. This check requires Claude Code v2.1.280 or later.
 * **Names Claude Code uses for plugins that don't come from a marketplace**: `inline` for plugins loaded with [`--plugin-dir`](/docs/en/cli-reference), `builtin` for built-in plugins, `skills-dir` for plugins auto-loaded from [`.claude/skills/`](/docs/en/skills), and `synced` for plugins synced from your claude.ai account. `claude-plugin-test` is also reserved. `skills-dir` also appears as `{"source": "skills-dir"}` in `strictKnownMarketplaces` and `blockedMarketplaces`, described under [Source values valid only in policy lists](#source-values-valid-only-in-policy-lists).
 * **`npm`, `pip`, `uv`, `cargo`, `github`, and `gh`**: reserved in any casing. This check requires Claude Code v2.1.275 or later.
 * **Names starting with `claudeai-`**: reserved for marketplaces hosted on claude.ai. `claude plugin marketplace add` refuses any other marketplace that uses one with `Cannot add marketplace "<name>": names starting with "claudeai-" are reserved for marketplaces hosted on claude.ai`.
@@ -57,7 +57,7 @@ The table lists every key Claude Code reads from `marketplace.json`. `name`, `ow
 
 | Field | Type | Description |
 | :- | :- | :- |
-| `name` | string | Marketplace identifier. No spaces, control characters, or bidirectional-formatting characters, no `/` or `\`, no `..`, and not `.`. See [Reserved names](#reserved-names). Users type it after `@` when they install a plugin |
+| `name` | string | Marketplace identifier: letters, digits, `.`, `_`, and `-`, starting with a letter or digit, and no `..`. It forms the half after `@` of every [plugin id](/docs/en/plugins/loading#find-where-a-plugin-came-from) installed from the marketplace, so `claude plugin validate` fails other names. See [Reserved names](#reserved-names) |
 | `owner` | object | Maintainer information. `name` is required; `email` and `url` are optional |
 | `plugins` | array | [Plugin entries](#plugin-entries). Each entry is validated on its own, so one invalid entry doesn't fail the marketplace |
 | `$schema` | string | JSON Schema URL for editor autocomplete. Ignored at load time |
@@ -79,7 +79,7 @@ The table lists the entry's own fields and the manifest fields whose meaning cha
 
 | Field | Type | Description |
 | :- | :- | :- |
-| `name` | string | Plugin identifier, with no spaces, control characters, or bidirectional-formatting characters. Users type it before `@` when they install, even when the plugin's own `plugin.json` sets a different `name` |
+| `name` | string | Plugin identifier: letters, digits, `.`, `_`, and `-`, starting with a letter or digit. `claude plugin validate` fails other names, which Claude Code can't install. Users type it before `@` when they install, even when the plugin's own `plugin.json` sets a different `name` |
 | `source` | string or object | Where to fetch the plugin. See [Plugin sources](#plugin-sources) |
 | `description` | string | Shown in [`/plugin`](/docs/en/plugins/install) listings and details |
 | `version` | string | Version string for the plugin. When `plugin.json` also sets `version`, `plugin.json` takes precedence and `claude plugin validate` warns. See [Plugin loading reference](/docs/en/plugins/loading) |
@@ -250,7 +250,7 @@ Claude Code fetches the package with your npm client. The package's install scri
 
 ### archive plugin source
 
-`url` must use `https://` and can't point at a loopback, link-local, or cloud-metadata host.
+`url` must use `https://` and can't point at a loopback, link-local, or cloud-metadata host. For the size, timeout, redirect, and extraction limits on the download, see [Stay within the download limits for hosted files](/docs/en/plugins/host-marketplace#stay-within-the-download-limits-for-hosted-files).
 
 The plugin root may be at the top of the zip or one directory down.
 
@@ -345,7 +345,7 @@ The table lists every marketplace source type with its fields, the `claude plugi
 | :- | :- | :- | :- | :- | :- |
 | `url` | `url`, `headers`, `headersHelper` | An `http://` or `https://` URL that doesn't match a git form | Loads | Allows the same URL | Blocks the same URL |
 | `github` | `repo`, `ref`, `path`, `sparsePaths` | `owner/repo`, `owner/repo@ref`, or `owner/repo#ref` | Loads | Allows the same `repo`, `ref`, and `path`. `repo` may be `owner/*` | Blocks the same, and a `git` URL to the same repository |
-| `git` | `url`, `ref`, `path`, `sparsePaths` | A `user@host:path` URL, or an `https://` URL that ends in `.git`, contains `/_git/`, or names a github.com or gitlab.com repository. `#ref` pins a ref | Loads | Allows the same URL, `ref`, and `path` | Blocks the same, and other spellings of the same github.com repository |
+| `git` | `url`, `ref`, `path`, `sparsePaths` | A `user@host:path` URL, or an `http://` or `https://` URL that ends in `.git`, contains `/_git/`, or names a github.com or gitlab.com repository. `#ref` pins a ref | Loads | Allows the same URL, `ref`, and `path` | Blocks the same, and other spellings of the same github.com repository |
 | `npm` | `package` | Not produced | Fails to load: `NPM marketplace sources not yet implemented` | Parses but matches nothing, because nothing registers an `npm` marketplace | Parses but matches nothing |
 | `file` | `path` | A path to a `.json` file | Loads | Allows the same path | Blocks the same path |
 | `directory` | `path` | A path to a directory | Loads | Allows the same path | Blocks the same path |
@@ -360,7 +360,7 @@ The table lists each marketplace source field that has a default, a constraint, 
 
 | Field | Types | Description |
 | :- | :- | :- |
-| `url` | `url` | Link to the `marketplace.json` file. Claude Code downloads only that file, so the marketplace's plugins can't use [relative-path sources](#relative-path-plugin-source) |
+| `url` | `url` | Link to the `marketplace.json` file. Claude Code downloads only that file, so the marketplace's plugins can't use [relative-path sources](#relative-path-plugin-source). See [Stay within the download limits for hosted files](/docs/en/plugins/host-marketplace#stay-within-the-download-limits-for-hosted-files) for the size, timeout, and redirect limits |
 | `url` | `git` | The git repository to clone |
 | `headers` | `url` | Map of HTTP headers Claude Code sends with the fetch, for authenticated hosts |
 | `headersHelper` | `url` | Command that prints headers whose values are too short-lived to list in `headers`. Requires Claude Code v2.1.238 or later. See [Authenticate archive downloads](/docs/en/plugins/host-marketplace#authenticate-archive-downloads) |
@@ -421,7 +421,7 @@ A message names a plugin entry by its index, written as `plugins.1.source` or `p
 
 A message prefixed with an entry index and `plugin.json →`, such as `plugins[2] plugin.json →`, is about that plugin's own files. [`claude plugin validate` reports errors](/docs/en/plugins/troubleshooting#claude-plugin-validate-reports-errors) lists those messages with their fixes.
 
-Warnings that mention Claude Desktop flag names that Claude Code accepts but Claude Desktop rejects, because Claude Desktop's name rules are stricter.
+Warnings that mention Claude Desktop flag names that Claude Desktop rejects.
 
 The table maps marketplace-level messages to the field each is about.
 
@@ -436,6 +436,8 @@ The table maps marketplace-level messages to the field each is about.
 | `Author name cannot be empty` | Error | `owner.name` |
 | `Plugin name cannot contain spaces. Use kebab-case (e.g., "my-plugin")` | Error | `plugins[i].name` |
 | `Plugin name cannot contain control or bidirectional-formatting characters` | Error | `plugins[i].name` |
+| `Claude Code cannot install plugins from marketplace "x". Each part of a plugin id (plugin@marketplace) may use only the letters a-z and A-Z, digits, ".", "_" and "-", and must start with a letter or digit. Change the marketplace's "name".` | Error | `name` |
+| `Claude Code cannot install plugin "x". Each part of a plugin id (plugin@marketplace) may use only the letters a-z and A-Z, digits, ".", "_" and "-", and must start with a letter or digit. Change this entry's "name".` | Error | `plugins[i].name` |
 | `Duplicate plugin name "x" found in marketplace` | Error | Two entries share a `name` |
 | `plugins.i.source: Invalid input` | Error | The entry's `source` matches no type. See [Invalid input on a source](#invalid-input-on-a-source) |
 | `plugins[i].source: Path contains "..": <path>` | Error | A relative `source` that escapes the marketplace root |

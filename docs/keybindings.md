@@ -267,7 +267,7 @@ Actions available in the `Footer` context:
 | `footer:down` | Down | Navigate down in footer |
 | `footer:openSelected` | Enter | Open selected footer item |
 | `footer:clearSelection` | Escape | Clear footer selection |
-| `footer:dismiss` | (unbound) | Removed in v2.1.281. A `keybindings.json` that still names the action remains valid, and the binding does nothing. Before v2.1.281, Backspace and Delete dismissed the selected artifact link from the footer |
+| `footer:dismiss` | (unbound) | Binding a key to this action has no effect, and a `keybindings.json` that names it remains valid. Before v2.1.281, Backspace and Delete were bound to it and dismissed the selected artifact link from the footer. |
 
 While a footer item is selected, such as a row in the agent panel below the prompt, `Enter` opens it even when you rebind `Enter` in the `Chat` context to `chat:queueSubmit` or `chat:newline`.
 
@@ -371,9 +371,11 @@ Actions available in the `Select` context:
 | `select:accept` | Enter | Accept selection |
 | `select:cancel` | Escape | Cancel selection |
 
-In list panels such as `/skills` and `/mcp`, Claude Code applies your `select:pageUp`, `select:pageDown`, `select:first`, and `select:last` bindings. In most other lists, such as the `/model` picker, your `select:first` and `select:last` bindings apply. PageUp and PageDown page through the options in those lists regardless of your bindings.
+In list panels such as `/skills`, `/mcp`, and `/tasks`, Claude Code applies your `select:pageUp`, `select:pageDown`, `select:first`, and `select:last` bindings. In most other lists, such as the `/model` picker, your `select:first` and `select:last` bindings apply. PageUp and PageDown page through the options in those lists regardless of your bindings.
 
 Before v2.1.280, those other lists ignored Home, End, and your `select:first` and `select:last` bindings.
+
+Before v2.1.283, the `/mcp` tool list paged with fixed PageUp and PageDown keys regardless of your bindings.
 
 ### Plugin actions
 
@@ -612,6 +614,7 @@ When vim mode is enabled via `/config` → Editor mode, keybindings and vim mode
 Claude Code validates your keybindings and writes a warning to the debug log for:
 
 * Parse errors (invalid JSON or structure)
+* Misspelled modifiers, such as `ctl+k`. Claude Code drops the part it doesn't recognize and applies the binding to the keystroke that remains, `k` in this example.
 * Invalid context names
 * Invalid action values, such as an action that isn't a string or `null`
 * Unknown action names, such as a typo of a registered action. Claude Code skips the binding and keeps any default binding for that key in effect. Before v2.1.246, a binding with an unknown action name silently disabled that key

@@ -74,17 +74,19 @@ The `self-hosted-runner orchestrator` subcommand, which spawns [on-demand runner
 
 ### SCM connector flags
 
-The orchestrator can hold a standing WebSocket connection to Anthropic's control plane so that hosted pre-session flows, such as the repository picker and the branch or ref resolver, can reach a GitHub Enterprise Server host that's only routable from inside your network. The connector stays off unless you set `--scm-connector-host`.
+The SCM connector isn't available, so leave the flags in this section unset. If you set `--scm-connector-host`, the connection doesn't open, and the orchestrator keeps retrying it. Runners still start as sessions queue.
+
+The connector is a standing WebSocket connection from the orchestrator to Anthropic's control plane. It's designed to let hosted pre-session flows, such as the repository picker and the branch or ref resolver, reach a GitHub Enterprise Server host that's only routable from inside your network. See [Network requirements](/docs/en/github-enterprise-server#network-requirements) on the GitHub Enterprise Server page for what those flows need.
 
 | Flag | Default | Description |
 | :- | :- | :- |
-| `--scm-connector-host <host[:port]>` | unset | GitHub Enterprise Server hostname to forward requests to. Port defaults to `443`. Setting this flag enables the connector. |
-| `--scm-connector-id <n>` | required with `--scm-connector-host` | The numeric ID of your organization's GitHub Enterprise Server connection. Contact your Anthropic account team for the value when you enable the connector. |
+| `--scm-connector-host <host[:port]>` | unset | GitHub Enterprise Server hostname to forward requests to. Port defaults to `443`. |
+| `--scm-connector-id <n>` | required with `--scm-connector-host` | The numeric ID of your organization's GitHub Enterprise Server connection. |
 | `--scm-connector-provider <slug>` | `ghe` | Path segment identifying the provider, matching `^[a-z0-9-]{1,32}$`. |
 | `--scm-connector-ca-file <path>` | unset | Extra CA bundle, in PEM format, for TLS connections to the GitHub Enterprise Server host. |
 | `--scm-connector-host-rewrite <from>=<to_host:to_port>` | unset | For end-to-end testing only: redirects the TCP connection while keeping the Host header and TLS SNI as `--scm-connector-host`. |
 
-The connector authenticates with the orchestrator's existing environment secret and reconnects automatically: with exponential backoff on a dropped connection, or a fixed 30-second delay when the control plane closes the connection because another orchestrator replica already holds it.
+On each connection attempt the orchestrator sends its existing environment secret, and it retries automatically with exponential backoff, capped at 30 seconds plus jitter.
 
 ## Environment-variable-only settings
 

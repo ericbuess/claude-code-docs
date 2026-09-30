@@ -44,6 +44,24 @@ To share the marketplace with everyone who works in one repository, run `claude 
 
 When users add your marketplace as a bare `marketplace.json` URL, Claude Code downloads only that file. An entry in your `plugins` array whose `source` is a relative path such as `./plugins/formatter` then fails at install with [`its marketplace entry path does not stay inside the marketplace directory`](/docs/en/plugins/troubleshooting#plugins-with-relative-paths-fail-in-url-based-marketplaces). Give every entry a source that can be fetched on its own, such as a `github` repository or an `archive` URL, or host the marketplace in a git repository so Claude Code clones the whole tree.
 
+### Stay within the download limits for hosted files
+
+When users add your marketplace as a `marketplace.json` URL, or install an entry with an [`archive`](/docs/en/plugins/marketplace-reference#archive-plugin-source) source, Claude Code downloads the file from your server. The download fails past the limits in this table, so size your files and configure your server to stay inside them.
+
+| File | Largest download | Time for your server to respond | Redirects |
+| :- | :- | :- | :- |
+| `marketplace.json` from a `url` marketplace source | 5 MiB | 10 seconds | A redirect to a different origin must use `https://` and can't point at a loopback, link-local, or cloud-metadata host, so a redirect from `https://` to `http://` fails |
+| Zip from an `archive` plugin source | 256 MiB | 120 seconds | At most five. Every redirect target must use `https://` and can't point at a loopback, link-local, or cloud-metadata host |
+
+A request that a redirect sends to a different origin carries none of the headers you configured on the marketplace source or the plugin entry.
+
+After an archive downloads, the install fails when the zip exceeds any of these extraction limits:
+
+* **Entries**: 100,000 files and directories
+* **File size**: 512 MiB for any one file, uncompressed
+* **Total size**: 1 GiB uncompressed
+* **Compression ratio**: uncompressed content 50 times the size of the zip
+
 ### Edit plugins in place on a shared directory
 
 When users add your marketplace from a shared directory, Claude Code reads plugins with relative-path sources directly from that directory instead of copying them. Users see your edits when they next start a session or run `/reload-plugins`, without an update step or a version bump.

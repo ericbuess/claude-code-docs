@@ -47,9 +47,9 @@ In model calls, a suite makes roughly cases × runs agent runs with the plugin a
 
 ### The no-plugin baseline
 
-A high score on its own doesn't tell you the plugin helped, because Claude might do as well without it. To separate the two, each case's runs are repeated with no plugin loaded by default, and you get two scores, `WITH` and `W/OUT`. Their difference, `Δ`, is what the plugin contributed. If a case scores 1.0 both with and without the plugin, the plugin isn't what made it pass.
+A high score on its own doesn't tell you the plugin helped, because Claude might do as well without it. To separate the two, a case's runs are repeated with no plugin loaded, and you get two scores, `WITH` and `W/OUT`. Their difference, `Δ`, is what the plugin contributed. If a case scores 1.0 both with and without the plugin, the plugin isn't what made it pass.
 
-The two sets of runs are called the with-arm and the without-arm; [Score against the no-plugin baseline](#compare-against-a-no-plugin-baseline) covers how graders are scored across them and how to turn the baseline off.
+The two sets of runs are called the with-arm and the without-arm; [Score against the no-plugin baseline](#compare-against-a-no-plugin-baseline) covers which cases run the with-arm only and how graders are scored across the two arms.
 
 ## Create your first eval suite
 
@@ -124,7 +124,7 @@ This walkthrough writes one case for your own plugin, runs it, and reads the res
   Write and refine cases
 </h2>
 
-The cases `claude plugin eval init` writes are plain files you can open, change, and add to. A case is a directory under the plugin's eval directory that contains a `prompt.md`, a `case.yaml`, or both. To group cases, nest them under a directory that isn't itself a case; anything inside a case directory, such as `graders/` and fixture files, belongs to that case.
+The cases `claude plugin eval init` writes are plain files you can open, change, and add to. A case is a directory under the plugin's eval directory that contains a `prompt.md`, a `case.yaml`, or both. Give each case at least one grader, as a `graders/<name>.md` file or a `graders:` entry in `case.yaml`, because a case without one fails to load. To group cases, nest them under a directory that isn't itself a case; anything inside a case directory, such as `graders/` and fixture files, belongs to that case.
 
 This is the layout `claude plugin eval init` writes and the one to use for new suites. The [eval suite reference](#eval-suite-reference) has the complete tree, including mocks and results:
 
@@ -234,9 +234,13 @@ An `llm` grader asks a model for a verdict, so its answer can differ between run
   Score against the no-plugin baseline
 </h3>
 
-When a plugin is under test, each case runs in two arms by default. The with-arm is its runs with the plugin loaded, and the without-arm is the same number of runs with no plugin at all. The summary and report show both scores and `Δ`, the with-arm score minus the without-arm score.
+When a plugin is under test, a case normally runs in two arms. The with-arm is its runs with the plugin loaded, and the without-arm is the same number of runs with no plugin at all. The summary and report show both scores and `Δ`, the with-arm score minus the without-arm score.
 
-Pass `--ablation none` to run only the with-arm, which halves the cost when you don't need the comparison, such as while iterating on graders.
+In these situations a case runs the with-arm only, so it gets no `W/OUT` score or `Δ`:
+
+* **You pass `--ablation none`**: every case runs one arm, which halves the cost when you don't need the comparison, such as while iterating on graders.
+* **The case resumes a transcript and the target is a path**: with a [target](#choose-what-to-evaluate) such as `.` rather than an installed plugin's name, a [`context.history_file`](#add-setup-or-history-with-case-yaml) case runs one arm by default, on the assumption that the recorded conversation already reflects the plugin. The run prints a `single-arm (no Δ)` notice on stderr naming these cases. To compare the resumed turn with and without the plugin, pass `--ablation with-without`.
+* **No plugin was found for the case**: when the target is a path, a case whose plugin Claude Code couldn't locate also runs one arm by default. See [the baseline arm shows no plugin](#the-baseline-arm-shows-no-plugin-or-delta-is-zero) to fix it.
 
 In a two-arm run, some graders are reported with `scored: false`. A check like "the skill was invoked" can never pass without the plugin, so counting it would push the without-arm toward zero and inflate `Δ`. To keep the two arms comparable, Claude Code excludes such graders from the score in both arms and reports them in the with-arm as pass/fail indicators only. That includes:
 
@@ -270,7 +274,7 @@ A case can need more than a prompt: files or a git repository in the workspace, 
 Each run starts in an empty workspace. When a case needs more than the prompt, add a `case.yaml` beside `prompt.md` with a `context` block:
 
 * **Fixture files or a git repository**: write a Bash script in the case directory and name it in `context.scaffold_script`. The script runs as you, outside the agent's sandbox, and only when you pass `--scaffold`, so pass that flag only for suites you or your organization wrote.
-* **An earlier conversation to continue**: save the transcript as a `.jsonl` file and name it in `context.history_file`, and the case's prompt becomes the next user turn.
+* **An earlier conversation to continue**: save the transcript as a `.jsonl` file and name it in `context.history_file`, and the case's prompt becomes the next user turn. When the target is a path, such a case runs [without a baseline arm](#compare-against-a-no-plugin-baseline) by default.
 * **Fixture directories Claude can read during the run**: list them in `context.add_dirs`.
 
 A `case.yaml` also needs `schema_version: "1.1"` and `name`; the [case.yaml fields](#case-yaml-fields) reference has the full list.
@@ -285,6 +289,8 @@ context:
   scaffold_script: fixture.sh
   add_dirs: [resources]
 ```
+
+A scaffold script starts in the empty workspace with a small fixed environment: your shell's `PATH`, `HOME` set to the run's temporary home directory, `TMPDIR`, and a few constants such as `TERM=dumb`. Nothing else from your shell reaches it, and neither do the case's `EVAL_*` variables. If the script exits non-zero or runs longer than 120 seconds, that run scores 0 with a `scaffold failed` error. Use the script for files and git state only, since project configuration it writes [isn't loaded](#how-runs-are-isolated).
 
 <h3 id="mock-mcp-servers">
   Mock MCP servers
@@ -372,7 +378,7 @@ This table covers the options for run count, models, scoring, cost, tool grants,
 | `-j`, `--concurrency <n>` | `1` | Run up to this many agent runs at once, from 1 to 8. They share your account's rate limit, so this shortens wall-clock time rather than raising throughput past that limit. Results keep case order |
 | `--model <model>` | Each case's `model`, else `ANTHROPIC_MODEL` if set, else Claude Code's default | Model for the agent under test. Pin it in CI so a model rollout isn't mistaken for a plugin regression |
 | `--judge-model <model>` | A small fast model | Model for `llm` and `baseline` graders |
-| `--ablation <mode>` | `with-without` when a plugin resolves, else `none` | Whether to also run each case without the plugin to measure what it adds. `none` runs one arm; `with-without` adds the no-plugin baseline |
+| `--ablation <mode>` | Decided per case; see [Score against the no-plugin baseline](#compare-against-a-no-plugin-baseline) | Whether to also run each case without the plugin to measure what it adds. `none` runs one arm; `with-without` adds the no-plugin baseline |
 | `--threshold <0..1>` | `1.0` | A case passes when its with-arm score is at least this. Any case below it makes the command exit 1 |
 | `--max-cost-usd <usd>` | No ceiling | A ceiling on the run's list-price cost estimate, not on plan usage. Checked before each run starts. Once spent, nothing further starts; runs that already started finish, so spend can pass the ceiling by those runs. If any run is left unstarted, the command exits 2 with partial results |
 | `--allow-tools <tools...>` | None | Grant tools beyond the read-only set. See [Grant tools](#grant-tools) |
@@ -460,7 +466,7 @@ These are the fields a gating script usually reads. The document also carries th
 | `aggregates.meanDelta` | Mean `Δ` across cases, under the two-arm mode |
 | `cases[].name` | Case name |
 | `cases[].aggregates.score` | Mean with-arm run score for the case |
-| `cases[].aggregates.delta` | With-arm score minus without-arm score. Omitted when the arms aren't comparable |
+| `cases[].aggregates.delta` | With-arm score minus without-arm score. Omitted when the case ran one arm or the arms aren't comparable |
 | `cases[].arms.with[].error` | `null`, or why a run ended abnormally, such as `timed out after 300s`. A run that started but ended badly is still graded on what it produced, so a non-null error doesn't imply score 0 |
 | `cases[].arms.with[].aborted` | Present when a [mock](#mock-mcp-servers)'s `expect:` or `abort_when` stopped the run, with `server`, `tool`, and `reason`. The run scores 0 and `error` stays `null` |
 | `cases[].arms.with[].skippedPaidGraders` | `true` when the cost ceiling skipped this run's judge graders, so its score isn't comparable |
@@ -476,7 +482,7 @@ The isolation described in this section limits what the agent under test can rea
 
 ### Trust the plugin directory
 
-The first time you run `claude plugin eval` against a directory, Claude Code asks `Trust this plugin directory?` before it loads anything from it, unless you already accepted the trust prompt there in an interactive `claude` session. Inside a git repository, answering yes trusts the whole repository, for interactive sessions too. When stdin or stdout isn't a terminal, under `--json`, or when the `CI` environment variable is set to a true value such as `true`, the run can't ask and is refused with exit 1; pass `--trust-plugin` to assert the trust yourself, only for a plugin you'd run on your own machine. A target you name rather than give as a path, meaning an installed plugin or a skills-directory plugin, skips the prompt.
+The first time you run `claude plugin eval` against a directory, Claude Code asks `Trust this plugin directory?` before it loads anything from it, unless you already accepted the trust prompt there in an interactive `claude` session. Inside a git repository, answering yes trusts the whole repository, for interactive sessions too. When stdin or stdout isn't a terminal, or under `--json`, the run can't ask and is refused with exit 1; pass `--trust-plugin` to assert the trust yourself, only for a plugin you'd run on your own machine. A target you name rather than give as a path, meaning an installed plugin or a skills-directory plugin, skips the prompt.
 
 Some parts of the plugin and suite run only when you pass their flag for that run:
 
@@ -494,7 +500,7 @@ When the plugin includes hooks you didn't write, or you start its real MCP serve
 
 Each run gets a temporary home directory, working directory, and Claude Code configuration, and the agent under test runs there as a `claude -p` child process with only your plugin loaded. Keep these consequences in mind when you write cases:
 
-* **Nothing personal or project-level loads.** Your user settings, hooks, `CLAUDE.md` files, MCP servers, other installed plugins, memory, and skills are absent, and no project-scoped `.claude/` or `.mcp.json` above the sandbox is read. Most of your shell environment is withheld too; only an [allowlist](#prompt-md-fields) and `EVAL_*` variables reach the run. If the plugin needs setup, ship it in the plugin, create it in a `scaffold_script`, or pass `EVAL_*` variables.
+* **Nothing personal or project-level loads.** Your user settings, hooks, `CLAUDE.md` files, MCP servers, other installed plugins, memory, and skills are absent. Project-scoped configuration isn't read anywhere either: no `.claude/` directory, `CLAUDE.md`, or `.mcp.json` loads from above the workspace or inside it, even one a `scaffold_script` wrote, and `add_dirs` directories grant read access only. Most of your shell environment is withheld too; only an [allowlist](#prompt-md-fields) and `EVAL_*` variables reach the run. Ship any skills, agents, hooks, or MCP servers a case depends on in the plugin under test, since a [`scaffold_script`](#add-setup-or-history-with-case-yaml) can supply only files and git state.
 * **Managed policy can still restrict a run.** Restrictions in [managed settings](/docs/en/managed-settings) an administrator deployed to the machine apply inside a run, so results on a managed machine can differ from an unmanaged one by that policy.
 * **The Artifact tool is off.** A skill that publishes an [artifact](/docs/en/artifacts) can be graded only on what it produces before that step.
 * **The case definitions are hidden from the agent.** A run can't read the eval directory, so Claude can't see the case's prompt, its graders, or sibling cases.
@@ -502,7 +508,7 @@ Each run gets a temporary home directory, working directory, and Claude Code con
 
 ## Eval suite reference
 
-Everything an eval suite can contain lives under the plugin's eval directory, `evals/` unless you [configured another](#use-a-different-eval-directory). This tree shows every file `claude plugin eval` reads or writes there; only `prompt.md` or `case.yaml` is required for a case to exist:
+Everything an eval suite can contain lives under the plugin's eval directory, `evals/` unless you [configured another](#use-a-different-eval-directory). A directory counts as a case when it holds a `prompt.md` or a `case.yaml`, and a case without at least one grader fails to load with an `invalid case.yaml` error that names `graders`. This tree shows every file `claude plugin eval` reads or writes in the eval directory:
 
 ```text theme={null}
 evals/
@@ -558,7 +564,7 @@ These fields exist only in `case.yaml`:
 
 | Field | Purpose |
 | :- | :- |
-| `context.scaffold_script` | A Bash script in the case directory that runs in the empty workspace before Claude starts, to create fixture files or a git repository. It runs only when you pass [`--scaffold`](#add-setup-or-history-with-case-yaml) |
+| `context.scaffold_script` | A Bash script in the case directory that runs in the empty workspace before Claude starts, to create fixture files or a git repository. It runs only when you pass [`--scaffold`](#add-setup-or-history-with-case-yaml), with a minimal environment and a 120-second limit, and a non-zero exit fails the run |
 | `context.history_file` | A `.jsonl` transcript in the case directory to resume. The case's prompt becomes the next user turn |
 | `context.add_dirs` | Directories inside the case directory that Claude may read during the run, granted read-only |
 | `execution.prompt` | The prompt, when you keep the whole case in `case.yaml` and omit `prompt.md` |
@@ -633,7 +639,7 @@ Anthropic has switched the command off server-side. Nothing on your machine turn
 
 ### "is not a trusted plugin directory, and this run cannot stop to ask you about it"
 
-This is the first run against a directory Claude Code doesn't trust yet, and it can't ask you because stdin or stdout isn't a terminal, you passed `--json`, or the `CI` environment variable is set to a true value such as `true`. Run `claude plugin eval <dir>` once in a terminal and answer the prompt, or pass `--trust-plugin` if you trust the plugin's code and suite. See [What a run can access](#security).
+This is the first run against a directory Claude Code doesn't trust yet, and it can't ask you because stdin or stdout isn't a terminal or you passed `--json`. Run `claude plugin eval <dir>` once in a terminal and answer the prompt, or pass `--trust-plugin` if you trust the plugin's code and suite. See [What a run can access](#security).
 
 <h3 id="git-is-too-old-for-claude-plugin-eval">
   "is too old for claude plugin eval"
@@ -655,7 +661,7 @@ No `<case>/prompt.md` or `<case>/case.yaml` exists beneath the eval directory in
 
 ### The baseline arm shows no plugin, or delta is zero
 
-If the summary has no `W/OUT` column, or the case fails with "ablation requested but no plugin resolved", no plugin was found for the case. Add `plugins: ["../.."]` to the case, giving the path from the case directory to the plugin directory.
+If the summary has no `W/OUT` column, or a case fails with "ablation requested but no plugin resolved", the usual cause is that no plugin was found for the case. If every case resumes a transcript through `context.history_file`, the missing column is expected instead, because those cases run [one arm by default](#compare-against-a-no-plugin-baseline). Otherwise, add `plugins: ["../.."]` to the case, giving the path from the case directory to the plugin directory.
 
 If the plugin did load and `Δ` is still near zero with your `tool_used: Skill` grader failing, that's usually a real finding, meaning the skill's `description` doesn't trigger on the prompt's phrasing. Adjust the description and re-run the same suite.
 

@@ -350,9 +350,6 @@ The classifier trusts your working directory and the remotes that were configure
 * `git commit --amend` when the commit at HEAD was not created in this session
 * From v2.1.198, `git commit --amend` when the commit at HEAD has already been pushed. A message-only reword is not blocked: `--amend -m` with nothing newly staged, on a commit that Claude created during this session
 * `terraform destroy`, `pulumi destroy`, `cdk destroy`, or `terragrunt destroy`, and applying a plan that destroys resources
-
-Claude Code v2.1.195 and later block more categories by default. Several depend on [environment](/docs/en/auto-mode-config#define-trusted-infrastructure) entries, such as sensitive remote targets and protected IaC scopes, that you can narrow to concrete names.
-
 * Writing to a secret manager, or changing DNS records or TLS certificates
 * Merging a pull request no human has approved, approving Claude's own pull request, or disabling CI checks
 * Posting a comment that is itself a command to automation, such as `atlantis apply` or a bot's `/deploy` or `/merge`
@@ -368,6 +365,8 @@ Claude Code v2.1.195 and later block more categories by default. Several depend 
 * Running a command with a flag that disarms a safety guard, like `--insecure`
 * Launching an autonomous agent loop that runs without human approval or a sandbox, such as one started with `--dangerously-skip-permissions` or `--no-sandbox`. As of v2.1.198 this also covers running a third-party agent or eval harness with isolation and per-action approval disabled, such as a runner started with `--yes-always`
 * [Claude in Chrome](/docs/en/chrome) browser actions that could send page content, cookies, or credentials off-origin
+
+Several of these categories depend on [environment](/docs/en/auto-mode-config#define-trusted-infrastructure) entries, such as sensitive remote targets and protected IaC scopes, that you can narrow to concrete names.
 
 Claude Code v2.1.198 and later also block these by default:
 
@@ -415,9 +414,6 @@ Claude Code v2.1.261 and later also block these by default:
 * Reading `.env` and sending credentials to their matching API
 * Read-only HTTP requests
 * Pushing to any branch of the repository you're working in, including the default branch. A non-default branch whose name marks it as a deploy or publication target, such as `production` or `gh-pages`, isn't covered: the classifier judges a push there on its own terms. The push's content is still checked against the other rules, [`permissions.deny` rules](/docs/en/permissions#manage-permissions) can still block push commands [as written](/docs/en/permissions#bash-rule-limits) in every mode, and the remote's own branch protection still applies. Before v2.1.211, only pushes to the branch you started on, branches Claude created, and routine pushes to the default branch were allowed by default, and before v2.1.203 any direct push to the default branch was blocked
-
-Claude Code v2.1.195 and later also allow these by default:
-
 * Deleting the exact jobs Claude created earlier in the same session
 * Reading, reviewing, or writing security-related code, configs, and threat models as part of your task
 * Messages between agents working together in the same multi-agent session

@@ -8,7 +8,7 @@
 
 The Claude Security plugin runs a multi-agent vulnerability scan of your codebase inside a Claude Code session. A team of Claude agents maps your architecture, builds a threat model, hunts for vulnerabilities, and independently reviews every finding before writing the report. Use the plugin to scan a whole repository or [only a set of changes](#scan-only-your-changes), such as a branch's diff, a pull request's diff, or a single commit, then turn the findings you choose into patches that you review and apply yourself.
 
-The plugin runs locally in your session, uses whichever models you have access to in Claude Code, and each scan counts against your plan's usage limits. If you want a managed service that monitors your repositories, or want to run scans on [Claude Mythos 5](https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5), see the [Claude Security](https://claude.com/product/claude-security) product, available on the Enterprise plan. The plugin reaches code the managed product can't reach, such as repositories hosted on GitLab or Bitbucket, or on networks that don't allow inbound connections.
+The plugin runs locally in your session, uses [whichever models you have access to in Claude Code](#models-and-providers), and each scan counts toward your [usage](/docs/en/costs). If you want a managed service that monitors your repositories, or want to run scans on [Claude Mythos](https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5), see the [Claude Security](https://claude.com/product/claude-security) product, available on the Enterprise plan. The plugin reaches code the managed product can't reach, such as repositories hosted on GitLab or Bitbucket, or on networks that don't allow inbound connections.
 
 The plugin is also distinct from the review tools already in Claude Code: the [security guidance plugin](/docs/en/security-guidance) reviews code as Claude writes it, [`/security-review`](/docs/en/commands#all-commands) runs a single pass over your branch, and [Code Review](/docs/en/code-review) reviews pull requests. For how the layers stack, see [How the plugin fits with other security tools](#how-the-plugin-fits-with-other-security-tools).
 
@@ -16,10 +16,21 @@ The plugin is also distinct from the review tools already in Claude Code: the [s
 
 To run the plugin, you need:
 
-* A paid plan, for the [dynamic workflows](/docs/en/workflows) the scan uses to orchestrate its agents. On Pro, turn them on from the Dynamic workflows row in `/config`.
+* A paid plan, Anthropic API access, or a [third-party provider](#models-and-providers), for the [dynamic workflows](/docs/en/workflows) the scan uses to orchestrate its agents. On Pro, turn them on from the Dynamic workflows row in `/config`.
 * Python 3.9 or later available on your `PATH` as `python3`. Check with `python3 --version`. The plugin's tooling uses only the Python standard library, so nothing is installed.
 * Linux, macOS, or Windows.
 * Git, for change scans and for turning findings into patches; those jobs don't support other version control systems. A full scan works in any directory, with or without version control.
+
+## Models and providers
+
+A scan runs inside your Claude Code session. The plugin makes no model calls of its own, so there's no separate API key or provider setting to configure.
+
+* **Model**: the agents that hunt for vulnerabilities, verify findings, and write and review patches run on [your session's model](/docs/en/sub-agents#choose-a-model). To change it, run [`/model`](/docs/en/model-config#setting-your-model) in your session before you start a scan. A few supporting steps, such as mapping the repository, use the [`sonnet` alias](/docs/en/model-config#model-aliases) instead.
+* **Provider**: scans run on a paid plan, with Anthropic API access, or on a [third-party provider](/docs/en/third-party-integrations) such as [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or [Microsoft Foundry](/docs/en/microsoft-foundry).
+
+On a third-party provider, the `sonnet` alias can resolve to a different version than it does on the Anthropic API. If your account can't use that version, [pin your model versions](/docs/en/model-config#pin-models-for-third-party-deployments), including `ANTHROPIC_DEFAULT_SONNET_MODEL`.
+
+[Automatic model fallback](/docs/en/model-config#automatic-model-fallback) re-runs a request that a model's safeguards flag. On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, the request can end with a refusal message instead, depending on [how your deployment is set up](/docs/en/model-config#enable-fallback-on-bedrock-agent-platform-and-foundry).
 
 ## Install the plugin
 
@@ -134,7 +145,7 @@ The plugin doesn't replace your existing source-code security tools. Run it alon
 
 **The `/claude-security` menu opens with a Python warning.** The plugin needs `python3` 3.9 or later on your `PATH`. When it can't find `python3` at all, the menu warns that Claude Security won't work until one is installed; when the first `python3` on your `PATH` is older, the warning names the version it found. Install Python 3, or put a newer `python3` first on your `PATH`, then start a new session.
 
-**You may see a "safeguards flagged this message" notice when scanning on a Fable model.** The message names the model, for example "Fable 5.1's safeguards flagged this message". Fable's cybersecurity safety classifiers flag certain requests, and Claude Code re-runs a flagged request on an Opus model through [automatic model fallback](/docs/en/model-config#automatic-model-fallback). This is expected, and the scan should still complete successfully.
+**You may see a "safeguards flagged this message" notice when scanning on a Fable model.** The message names the model you're running. Fable's cybersecurity safety classifiers flag certain requests, and Claude Code re-runs a flagged request on an Opus model through [automatic model fallback](/docs/en/model-config#automatic-model-fallback). This is expected. When the request re-runs, the scan should still complete successfully.
 
 ## Related resources
 
