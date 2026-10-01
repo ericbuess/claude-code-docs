@@ -396,6 +396,8 @@ This example blocks writes to the `/etc` directory and explains why to both the 
   ```
 </CodeGroup>
 
+To confirm the block, register the callback under `PreToolUse` with a `Write|Edit` matcher and ask the agent to create a file under `/etc`: the Write tool's result in the message stream contains `Writing to /etc is not allowed`, and no file is created.
+
 ### Auto-approve specific tools
 
 By default, the agent may prompt for permission before using certain tools. This example auto-approves read-only filesystem tools (Read, Glob, Grep) by returning `permissionDecision: 'allow'`, letting them run without user confirmation while leaving all other tools subject to normal permission checks:
@@ -442,7 +444,7 @@ By default, the agent may prompt for permission before using certain tools. This
 
 When an event fires, all matching hooks run in parallel. For permission decisions, the most restrictive result applies: a single `deny` blocks the tool call regardless of what the other hooks return. Because completion order is non-deterministic, write each hook to act independently rather than relying on another hook having run first.
 
-The example below registers three independent checks for every tool call:
+The example below registers three independent checks for every tool call. The hook names in it, such as `audit_logger` in Python or `auditLogger` in TypeScript, stand in for callbacks you define:
 
 <CodeGroup>
   ```python Python theme={null}
@@ -472,7 +474,7 @@ The example below registers three independent checks for every tool call:
 
 ### Filter with multi-tool matchers
 
-Use multi-tool matchers to share one callback across related tools. This example registers three matchers with different scopes:
+Use multi-tool matchers to share one callback across related tools. This example registers three matchers with different scopes, and each hook it names stands in for a callback you define:
 
 * A pipe-separated exact list (`Write|Edit|NotebookEdit`) triggers `file_security_hook` only for file modification tools.
 * A regex (`^mcp__`) triggers `mcp_audit_hook` for any MCP tool whose name starts with `mcp__`.
@@ -554,6 +556,8 @@ Use `SubagentStop` hooks to monitor when subagents finish their work. See the fu
   };
   ```
 </CodeGroup>
+
+To confirm the hook fires, register the callback and ask the agent to delegate a small task to a subagent, such as listing the files in the current directory: when the subagent finishes, the callback prints the `[SUBAGENT] Completed:` lines with the subagent's ID and transcript path.
 
 ### Make HTTP requests from hooks
 

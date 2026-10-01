@@ -52,7 +52,7 @@ Set the variable before launching `claude`:
   </Tab>
 </Tabs>
 
-The assignment line prints nothing on success, so confirm the variable is set by printing it in the same shell before you run `claude`:
+The assignment line prints nothing on success. To confirm the variable is set, print it in the same shell:
 
 <Tabs>
   <Tab title="macOS, Linux, WSL">
@@ -117,7 +117,7 @@ Claude Code reads shell environment variables at startup, so changes to them tak
 Numeric variables such as timeouts, token budgets, and retry counts accept scientific notation and digit-separator spellings in addition to plain digits, except where a variable's row notes it takes plain digits only. For example, Claude Code reads `2e3` as 2000 and `64_000` as 64000. Before v2.1.211, these spellings could silently set a much smaller value, such as `1e6` setting a timeout to 1.
 
 <Note>
-  For variables that turn a behavior on or off, set `1` or `true` to turn it on and `0` or `false` to turn it off, in any casing.
+  For variables that turn a behavior on or off, set `1`, `true`, `yes`, or `on` to turn it on and `0`, `false`, `no`, or `off` to turn it off, in any casing.
 
   Some variables read only whether you set them at all, so any non-empty value including `0` turns the behavior on, and you turn the behavior off by unsetting the variable or setting it to an empty value. These variables work that way:
 
@@ -253,6 +253,7 @@ Numeric variables such as timeouts, token budgets, and retry counts accept scien
 | `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING` | Set to `1` to disable file [checkpointing](/docs/en/checkpointing). The `/rewind` command will not be able to restore code changes. Overrides the [`fileCheckpointingEnabled`](/docs/en/settings-reference#filecheckpointingenabled) setting |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Set to `1` to remove built-in commit and PR workflow instructions and the git status snapshot from Claude's context. Useful when using your own git workflow skills. Takes precedence over the [`includeGitInstructions`](/docs/en/settings-reference#includegitinstructions) setting when set |
 | `CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP` | Set to `1` to prevent automatic remapping of Opus 4.0 and 4.1 to the current Opus version on the Anthropic API. Use when you intentionally want to pin an older model. The remap does not run on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry |
+| `CLAUDE_CODE_DISABLE_MODEL_ACCESS_FALLBACK` | Set to `1` to stop Claude Code on [Amazon Bedrock](/docs/en/amazon-bedrock#when-a-model-is-disabled-mid-session) and [Google Cloud's Agent Platform](/docs/en/google-vertex-ai#when-a-model-is-disabled-mid-session) from switching to an older model when your account loses access to a session's model mid-session; the refused request fails at once instead. A [fallback model chain](/docs/en/model-config#fallback-model-chains) you configure still switches on that refusal, and the [startup model checks](/docs/en/amazon-bedrock#startup-model-checks) still fall back at launch. Requires Claude Code v2.1.285 or later |
 | `CLAUDE_CODE_DISABLE_MOUSE` | Set to `1` to disable mouse tracking in [fullscreen rendering](/docs/en/fullscreen). Keyboard scrolling with `PgUp` and `PgDn` still works. Use this to keep your terminal's native copy-on-select behavior |
 | `CLAUDE_CODE_DISABLE_MOUSE_CLICKS` | Set to `1` to disable click, drag, and hover handling in [fullscreen rendering](/docs/en/fullscreen) while keeping mouse-wheel scrolling. Use this when you want wheel scroll to work inside Claude Code but don't want clicks to position the cursor, expand tool output, or open links. `CLAUDE_CODE_DISABLE_MOUSE` takes precedence when both are set. Requires Claude Code v2.1.195 or later |
 | `CLAUDE_CODE_DISABLE_MTLS_RELOAD_ON_STALE_CONNECTION` | Set to `1` to stop Claude Code from re-reading the [mTLS client certificate and key](/docs/en/network-config#mtls-authentication) when an API request fails with a connection-level error, such as a connection reset or a TLS handshake error. With the reload disabled, Claude Code loads rotated files only when it next applies settings or at the next startup. Requires Claude Code v2.1.232 or later |
@@ -371,6 +372,7 @@ Numeric variables such as timeouts, token budgets, and retry counts accept scien
 | `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` | Set to `1` to skip the client-side [fast mode](/docs/en/fast-mode#use-fast-mode-behind-proxies-and-llm-gateways) availability check, for proxies that intercept the check's request rather than refuse it. The API still rejects fast mode requests when your organization has fast mode disabled |
 | `CLAUDE_CODE_SKIP_FOUNDRY_AUTH` | Skip Azure authentication for Microsoft Foundry, for a proxy or gateway that injects its own `Authorization` header. Claude Code sends requests without an Azure credential and preserves the `Authorization` header you supply, for example through `ANTHROPIC_CUSTOM_HEADERS`. Ignored when `ANTHROPIC_FOUNDRY_API_KEY` or `ANTHROPIC_FOUNDRY_AUTH_TOKEN` is set. Before v2.1.203, this variable left the Microsoft Foundry client unable to send requests unless an API key was also set |
 | `CLAUDE_CODE_SKIP_MANTLE_AUTH` | Skip AWS authentication for Amazon Bedrock Mantle (for example, when using an LLM gateway) |
+| `CLAUDE_CODE_SKIP_MODEL_ACCESS_MEMORY` | The [startup model checks](/docs/en/amazon-bedrock#startup-model-checks) on [Amazon Bedrock](/docs/en/amazon-bedrock) and [Google Cloud's Agent Platform](/docs/en/google-vertex-ai) remember on this machine which models they found your account can't invoke, for up to a day. Set to `1` to turn that memory off. Requires Claude Code v2.1.285 or later |
 | `CLAUDE_CODE_SKIP_PROMPT_HISTORY` | Set to `1` to skip writing prompt history and session transcripts to disk. Sessions started with this variable set do not appear in `--resume`, `--continue`, or up-arrow history. Useful for ephemeral scripted sessions |
 | `CLAUDE_CODE_SKIP_VERTEX_AUTH` | Skip Google authentication for Google Cloud's Agent Platform (for example, when using an LLM gateway) |
 | `CLAUDE_CODE_STARTUP_FAILURE_RESULTS` | Set to `1` to have a session started with `--output-format stream-json` write a [result message naming why Claude Code refused to start](/docs/en/agent-sdk/typescript#startup_failure_reason) for startup failures that otherwise end with stderr alone. Requires Claude Code v2.1.274 or later |

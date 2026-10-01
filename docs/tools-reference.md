@@ -234,7 +234,6 @@ Claude Code can also count other kinds of processes it starts against the same l
 Whatever you list, these rules apply:
 
 * **Unknown names**: Claude Code ignores names it doesn't recognize
-* **Bash, PowerShell, and Monitor**: Claude Code keeps Bash, PowerShell, and Monitor tool commands under the cap whatever you list
 * **Variable unset**: Claude Code takes the set of other capped kinds from configuration Anthropic delivers from the server, and that set can change over time, so set the variable when you need a set that doesn't change
 * **Permission-gating hooks**: even with every kind capped, Claude Code excludes from the cap a hook that can block or change the outcome of an action, and any MCP server that such a hook calls, so the kernel killing a permission-gating hook can't allow the action it was blocking
 

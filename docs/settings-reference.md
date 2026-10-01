@@ -3412,7 +3412,7 @@ While Claude works, the spinner line rotates through short tips about Claude Cod
 
 ### `spinnerTipsOverride`
 
-Add your own tips to the [spinner tips](#spinnertipsenabled) that Claude Code shows while Claude works, or replace the built-in tips with yours. Claude Code puts your tips in the same rotation as the built-in ones: it picks the tip that has gone unshown the longest, skips tips still in their cooldown, and breaks ties by priority.
+Add your own tips to the [spinner tips](#spinnertipsenabled) that Claude Code shows while Claude works, or replace the built-in tips with yours. Claude Code puts your tips in the same rotation as the built-in ones.
 
 If you set [`spinnerTipsEnabled`](#spinnertipsenabled) to `false`, Claude Code hides all tips, yours included.
 
@@ -3420,7 +3420,7 @@ If you set [`spinnerTipsEnabled`](#spinnertipsenabled) to `false`, Claude Code h
 * **Type**: object with `tips`, `tipsFile`, `label`, and `excludeDefault` fields, each optional
 * **Default**: unset, so Claude Code shows only the built-in tips
 
-Tip objects, `tipsFile`, `label`, and the Scope line's rule that project and local settings contribute plain strings only require Claude Code v2.1.247 or later. On earlier versions, a project or local file's `excludeDefault` applies too.
+Tip objects, `tipsFile`, `label`, and the Scope line's rule that project and local settings contribute plain strings only require Claude Code v2.1.247 or later.
 
 Each `tips` entry is a plain string or an object with these fields:
 
@@ -5208,7 +5208,7 @@ Use [`enableArtifact`](#enableartifact) instead to turn off the [Artifact](/docs
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: Boolean
-  * `true`: Claude Code turns the Artifact tool off for every session the file applies to, and no other file turns it back on. Before v2.1.242, a higher-precedence file could override a lower file's `true` rather than the key acting as a lock
+  * `true`: Claude Code turns the Artifact tool off for every session the file applies to, and no other file turns it back on
   * `false`: ignored; to leave the tool on, remove the key
 * **Default**: unset, so the tool follows your account's [availability](/docs/en/artifacts#availability)
 * **Per-session overrides**: [`CLAUDE_CODE_DISABLE_ARTIFACT`](/docs/en/env-vars) set to `1` turns the tool off for one session
@@ -5287,7 +5287,7 @@ Turn off the [Artifact](/docs/en/artifacts) tool, which publishes session output
 }
 ```
 
-While a source other than your own user settings keeps the tool turned off, Claude Code hides the **Artifacts** row in `/config`, because turning it on there wouldn't change anything. [Disable artifacts](/docs/en/artifacts#disable-artifacts) lists every way to turn the tool off. Before v2.1.242, Claude Code ignored this key in project and local settings, and a file higher in the [precedence stack](/docs/en/settings#settings-precedence) could turn the tool back on over a lower file's off.
+While a source other than your own user settings keeps the tool turned off, Claude Code hides the **Artifacts** row in `/config`, because turning it on there wouldn't change anything. [Disable artifacts](/docs/en/artifacts#disable-artifacts) lists every way to turn the tool off.
 
 ### `inputNeededNotifEnabled`
 

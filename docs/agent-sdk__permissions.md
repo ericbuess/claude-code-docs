@@ -115,6 +115,15 @@ You can also configure allow, deny, and ask rules declaratively in `.claude/sett
 
 Permission modes provide global control over how Claude uses tools. You can set the permission mode when calling `query()` or change it dynamically during streaming sessions.
 
+If you don't set one, Claude Code picks the starting permission mode by the rules in [Which mode a session starts in](/docs/en/permission-modes#which-mode-a-session-starts-in):
+
+* A `permissions.defaultMode` from the session's [settings files](/docs/en/settings#where-settings-live) when one applies
+* Otherwise the built-in default, which can be [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode)
+
+A session that starts in auto mode drops broad allow rules such as a bare `Bash` entry, as [How auto mode evaluates actions](/docs/en/permission-modes#how-auto-mode-evaluates-actions) describes. If your application relies on the `default` mode or on such a rule, pass `default` explicitly.
+
+Before TypeScript Agent SDK v0.3.286, omitting `permissionMode` was the same as passing `default`.
+
 ### Available modes
 
 The SDK supports these permission modes:

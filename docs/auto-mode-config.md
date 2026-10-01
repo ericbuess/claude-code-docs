@@ -273,13 +273,9 @@ Only omit `"$defaults"` when you intend to take full ownership of the list. To d
   Edit rules from `/permissions`
 </h2>
 
-To view and edit classifier rules without opening a settings file, run [`/permissions`](/docs/en/permissions#manage-permissions) and select the **Auto mode** tab. The tab requires Claude Code v2.1.246 or later, and it appears only when [auto mode is available](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) to your session.
+To view and edit classifier rules and `environment` entries without opening a settings file, run [`/permissions`](/docs/en/permissions#manage-permissions) and select the **Auto mode** tab. The tab requires Claude Code v2.1.246 or later, and it appears only when [auto mode is available](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) to your session.
 
-The tab lists the `allow`, `soft_deny`, `hard_deny`, and `environment` entries from each of the [scopes the classifier reads](#where-the-classifier-reads-configuration), and shows whether the built-in rules are in effect for each section. Claude Code shows entries from [managed settings](/docs/en/server-managed-settings) or the `--settings` flag as read-only, and saves every change you make on the tab to `~/.claude/settings.json`. From the tab you can:
-
-* Add, edit, or delete rules in the `allow`, `soft_deny`, and `hard_deny` sections. When you add the first rule to a section, Claude Code also inserts `"$defaults"` so the [built-in rules](#override-the-block-and-allow-rules) stay in effect.
-* Turn the built-in rules for `allow`, `soft_deny`, or `hard_deny` off or back on. Claude Code records the choice by adding or removing `"$defaults"` in your list for that section, so a section needs at least one rule of your own before you can turn its built-in rules off.
-* Edit the `environment` entries as one document in your editor. If you haven't configured any `environment` entries yet, Claude Code first asks whether to replace the built-in environment, then opens the editor on the full built-in text. When you save, Claude Code replaces your `autoMode.environment` array with the document. Include the `"$defaults"` line to [keep the built-in entries](#define-trusted-infrastructure).
+Claude Code shows entries from [managed settings](/docs/en/server-managed-settings) or the `--settings` flag as read-only, and saves every change you make on the tab to `~/.claude/settings.json`.
 
 ## Route all shell commands through the classifier
 

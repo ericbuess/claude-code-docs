@@ -481,8 +481,6 @@ How Claude Code matches the key you press to a binding depends on the kind of la
 * Under a non-Latin layout such as Cyrillic, Claude Code matches Ctrl shortcuts by the key's US-layout position when the terminal uses the Kitty keyboard protocol and reports that position. In such a terminal, with a Russian layout active, pressing Ctrl and the physical W key triggers `ctrl+w`. In a terminal that doesn't report the position, Claude Code matches whatever the terminal sends for the keypress: an ASCII control code triggers the Latin shortcut, and a keypress that arrives as the Cyrillic character matches no binding
 * Under layouts that rearrange Latin letters, such as AZERTY, Claude Code matches the letter that the key types, so pressing Ctrl and the key labeled A triggers `ctrl+a`
 
-Before v2.1.247, pressing a Ctrl shortcut under a non-Latin layout didn't trigger its binding in terminals that use the Kitty keyboard protocol, such as Ghostty, Kitty, WezTerm, and iTerm2.
-
 ### Chords
 
 Chords are sequences of keystrokes separated by spaces:
@@ -617,7 +615,7 @@ Claude Code validates your keybindings and writes a warning to the debug log for
 * Misspelled modifiers, such as `ctl+k`. Claude Code drops the part it doesn't recognize and applies the binding to the keystroke that remains, `k` in this example.
 * Invalid context names
 * Invalid action values, such as an action that isn't a string or `null`
-* Unknown action names, such as a typo of a registered action. Claude Code skips the binding and keeps any default binding for that key in effect. Before v2.1.246, a binding with an unknown action name silently disabled that key
+* Unknown action names, such as a typo of a registered action. Claude Code skips the binding and keeps any default binding for that key in effect.
 * Reserved shortcut conflicts
 * Duplicate bindings in the same context
 
