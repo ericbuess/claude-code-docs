@@ -72,6 +72,11 @@ To recover:
 3. Move the large-file work to a [subagent](/docs/en/sub-agents) so it runs in a separate context window
 4. Run `/clear` if the earlier conversation is no longer needed
 
+If the error comes back after a `/clear`, run [`/context`](/docs/en/debug-your-config) and compare the `Messages` row with the rows above it:
+
+* **`Messages` is the largest row**: a file or tool output in the new conversation is refilling the window, so work through steps 1 to 3 again
+* **The other rows together are larger**: what loads at session start leaves too little room to work in, so [trim what loads at startup](/docs/en/errors#prompt-is-too-long)
+
 ### Command hangs or freezes
 
 If Claude Code seems unresponsive:

@@ -1545,6 +1545,7 @@ Claude Code deletes the files in the paths below once they're older than [`clean
 | `paste-cache/` | Contents of large pastes |
 | `image-cache/<session>/` | Attached images saved by Claude Code v2.1.274 and earlier. Later versions save pasted and attached images outside `~/.claude`, in an `images/` directory for each session under the temp directory that [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) controls. The sweep removes other sessions' leftover directories here, whatever their age. |
 | `uploads/<session>/` | Files you attach from the web or mobile app, and photos you attach from the mobile app, when messaging a [Remote Control](/docs/en/remote-control) session. An attachment to a [cloud session](/docs/en/claude-code-on-the-web) is saved in that session's own cloud environment instead, not on your machine. |
+| `dev-mods/<session>/` | [Mods that Claude wrote](/docs/en/plugins/mods/create#ask-claude-for-a-mod) during the session |
 | `session-env/` | Per-session environment metadata |
 | `tasks/` | Task lists written by the task tools, one directory per list |
 | `shell-snapshots/` | Aliases, functions, and shell options captured at startup and applied by the [Bash tool](/docs/en/tools-reference#bash-tool-behavior) to each command. Removed on clean exit. The sweep clears any left after a crash. |

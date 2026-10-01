@@ -657,7 +657,7 @@ Your administrator can turn off local sessions with the [`disableDesktopLocalSes
 
 Cloud sessions continue in the background even if you close the app. Usage counts toward your [subscription plan limits](/docs/en/costs) with no separate compute charges.
 
-You can create custom cloud environments with different network access levels and environment variables. When you start a cloud session, open the environment dropdown in the prompt box to manage them:
+You can create custom cloud environments with different network access levels and environment variables. To manage them, open the environment dropdown in the prompt box and select **Cloud**:
 
 * **Add an environment**: select **Add cloud environment**
 * **Edit or archive one of your own environments**: hover over it and click the gear icon

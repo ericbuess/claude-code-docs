@@ -150,7 +150,15 @@ Claude Code provides five flags for customizing the system prompt. Four set its 
 | `--append-system-prompt-file` | Appends file contents to the default prompt | `claude --append-system-prompt-file ./style-rules.txt` |
 | `--system-prompt-snapshot` | With `off`, rebuilds the prompt on every request. With `on`, the default, reuses a recorded prompt where [recording applies](#system-prompt-flags-in-resumed-conversations) | `claude --append-system-prompt "Draft rules" --system-prompt-snapshot off` |
 
-`--system-prompt` and `--system-prompt-file` are mutually exclusive. The append flags can be combined with either replacement flag.
+You can combine these flags. To replace the default prompt and still append your own text, pass `--append-system-prompt` or `--append-system-prompt-file` together with `--system-prompt` or `--system-prompt-file`. With Claude Code v2.1.283 or later, you can also pass a flag together with its own file form, such as `--append-system-prompt` with `--append-system-prompt-file`, and Claude Code uses both.
+
+For example, run the following in your shell to append both a style guide from a file and one extra instruction:
+
+```bash theme={null}
+claude -p --append-system-prompt-file ./style.md --append-system-prompt "Always reply in French" "Summarize README.md"
+```
+
+Claude receives the default system prompt followed by the contents of `style.md`, a blank line, and then `Always reply in French`. The file's contents come first even if you pass `--append-system-prompt` before `--append-system-prompt-file`.
 
 When the replacement text combines instructions that are the same on every run with context that changes per run, add a line containing only `__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__` between the instructions and the context. Claude Code splits the prompt at the first such line and removes that line, so the part above it stays cached while the part below changes. Requires Claude Code v2.1.275 or later. [Cache the static part of a custom prompt](/docs/en/agent-sdk/modifying-system-prompts#cache-the-static-part-of-a-custom-prompt) lists the configurations where the split applies.
 

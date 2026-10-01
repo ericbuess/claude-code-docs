@@ -27,6 +27,7 @@ Start with [what a plugin can do](#understand-what-a-plugin-can-do) and [which m
 A plugin can carry content that runs code on your machine with your user privileges and content that enters Claude's context as instructions, so [review a plugin before you install it](#review-a-plugin-before-you-install). Here's what an installed plugin can do:
 
 * **Hooks**: a plugin's [hooks](/docs/en/hooks) run as shell commands at points in Claude Code's lifecycle, such as before or after a tool call.
+* **Mods**: a plugin's [mod](/docs/en/plugins/mods/overview) runs JavaScript inside Claude Code with your permissions. To list what a mod does before you install it, see [Decide whether to trust a mod](/docs/en/plugins/mods/overview#decide-whether-to-trust-a-mod).
 * **MCP and LSP servers**: Claude Code connects to the [MCP servers](/docs/en/mcp) an enabled plugin declares and gives Claude their tools. A stdio MCP server runs as a process that Claude Code starts on your machine. Claude Code also starts the language servers the plugin declares.
 * **`bin/` directory**: Claude Code adds each enabled plugin's `bin/` directory to the `PATH` of the Bash tool's shell, so Claude's Bash commands can run any executable there.
 * **Skills, commands, and agents**: these enter Claude's context as instructions, so they influence what Claude does with the tools it already has.
@@ -35,7 +36,7 @@ A plugin can carry content that runs code on your machine with your user privile
 Claude Code's [permission rules](/docs/en/permissions) and [sandbox](/docs/en/sandboxing) cover the tool calls Claude makes, not the code a plugin runs by itself:
 
 * **Hooks and server processes**: command hooks execute shell commands with your full user permissions. Claude Code runs hooks and MCP servers outside the sandbox.
-* **Claude's tool calls**: a call to one of the plugin's MCP tools, and a Bash command that runs an executable from the plugin's `bin/`, are tool calls, so your permission rules apply to them.
+* **Claude's tool calls**: a call to one of the plugin's MCP tools, and a Bash command that runs an executable from the plugin's `bin/`, are tool calls, so your permission rules apply to them. For what a mod can do to a tool call, see [Decide whether to trust a mod](/docs/en/plugins/mods/overview#decide-whether-to-trust-a-mod).
 
 Installing a plugin also enables it, unless its manifest or marketplace entry sets [`defaultEnabled: false`](/docs/en/plugins/install#choose-an-install-scope) and you haven't enabled it yourself.
 

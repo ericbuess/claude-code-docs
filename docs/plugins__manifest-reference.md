@@ -138,6 +138,7 @@ For component keys such as `commands` and `hooks`, [Component path forms](#compo
 | [`dependencies`](#dependencies) | Array of strings or objects | Plugins that must be enabled for this one to work |
 | [`settings`](#settings) | Object | Settings Claude Code applies while the plugin is enabled. Only `agent` and `subagentStatusLine` take effect |
 | [`userConfig`](#user-configuration) | Object | Values Claude Code prompts the user for when the plugin is enabled |
+| `types` | Path | A `.d.ts` file that declares the `$.state` values and `$` nouns of a [mod](/docs/en/plugins/mods/reference#files) |
 | [`channels`](#channels) | Array of objects | Message channels the plugin provides, each bound to one of its MCP servers |
 | `skills` | Path, or array of paths | Directories to scan for skills, each a directory of `<name>/SKILL.md` folders or one folder holding `SKILL.md` directly. `"."` names the plugin root. Adds to the default `skills/` scan |
 | [`commands`](#commands) | Path, array of paths, or object | Flat `.md` command files, directories of them, or an object map of command name to `source` or `content`. Replaces the default `commands/` scan |
@@ -159,6 +160,17 @@ In the Type column, a path is a string relative to the plugin root, such as `"./
 The plugin identifier. It must be non-empty, with no spaces, `@`, `:`, path separators, control characters, or bidirectional-formatting characters; use kebab-case.
 
 Claude Code namespaces every component under it, so an agent `reviewer` in plugin `deploy-tools` appears as `deploy-tools:reviewer`.
+
+`claude plugin validate` also checks that the name doesn't pass as one of Anthropic's own plugins. The check ignores case and treats any run of separators as one:
+
+| Name | Result |
+| :- | :- |
+| Starts with `claude-`, `anthropic-`, `anthropics-`, or `cc-plugin-` | Error |
+| Is `claude`, `anthropic`, `anthropics`, `claude-code`, or `claude-mods` | Error |
+| Puts `official` beside `claude` or `anthropic`, such as `official-claude-tools` | Error |
+| Has `claude`, `anthropic`, or `anthropics` as a whole word anywhere else, such as `mcp-for-claude` | Warning |
+
+The error reads `Plugin name "<name>" is reserved: it passes as one of Anthropic's own`, and the warning reads `Plugin name "<name>" reads as one of Anthropic's own`. `claude plugin init` and `claude plugin tag` refuse a name that draws the error. Only these commands check the name. Claude Code still installs and loads a plugin whose name they refuse.
 
 ### `displayName`
 

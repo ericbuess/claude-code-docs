@@ -436,6 +436,8 @@ The table maps marketplace-level messages to the field each is about.
 | `Author name cannot be empty` | Error | `owner.name` |
 | `Plugin name cannot contain spaces. Use kebab-case (e.g., "my-plugin")` | Error | `plugins[i].name` |
 | `Plugin name cannot contain control or bidirectional-formatting characters` | Error | `plugins[i].name` |
+| `Plugin name "x" is reserved: it passes as one of Anthropic's own` | Error | `plugins[i].name`. See the manifest's [`name`](/docs/en/plugins/manifest-reference#name) for the reserved names |
+| `Plugin name "x" reads as one of Anthropic's own` | Warning | `plugins[i].name` |
 | `Claude Code cannot install plugins from marketplace "x". Each part of a plugin id (plugin@marketplace) may use only the letters a-z and A-Z, digits, ".", "_" and "-", and must start with a letter or digit. Change the marketplace's "name".` | Error | `name` |
 | `Claude Code cannot install plugin "x". Each part of a plugin id (plugin@marketplace) may use only the letters a-z and A-Z, digits, ".", "_" and "-", and must start with a letter or digit. Change this entry's "name".` | Error | `plugins[i].name` |
 | `Duplicate plugin name "x" found in marketplace` | Error | Two entries share a `name` |

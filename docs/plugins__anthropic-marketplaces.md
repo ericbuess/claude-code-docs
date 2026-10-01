@@ -39,13 +39,13 @@ If you wrote a plugin and want other people to install it, see [Publish a plugin
 
 ### The demo marketplace in `anthropics/claude-code`
 
-If a tutorial or an older set of instructions tells you to run `/plugin marketplace add anthropics/claude-code`, that adds the demo marketplace, named `claude-code-plugins`. It isn't the official marketplace, which Claude Code already added for you.
+If a tutorial or an older set of instructions tells you to run `/plugin marketplace add anthropics/claude-code`, that adds the demo marketplace, named `claude-code-plugins`. It isn't the official marketplace.
 
 Most of the demo marketplace's plugins are also in the official marketplace under the same names. For example, `code-review`, `feature-dev`, `commit-commands`, and `security-guidance` are in both. Install those from `claude-plugins-official` so you don't have two copies installed.
 
 ## Find plugins in the official marketplace
 
-The official marketplace, `claude-plugins-official`, is the one Claude Code adds for you. Most of what it lists comes from partners and other authors rather than from Anthropic: tool vendors publish plugins that connect Claude Code to their services, and Anthropic maintains a smaller set of its own, such as `commit-commands`, `code-review`, `feature-dev`, and the [language server plugins](/docs/en/plugins/code-intelligence). The catalog changes often, so this page doesn't list it.
+By default, Claude Code adds the official marketplace, `claude-plugins-official`, for you. Most of what it lists comes from partners and other authors rather than from Anthropic: tool vendors publish plugins that connect Claude Code to their services, and Anthropic maintains a smaller set of its own, such as `commit-commands`, `code-review`, `feature-dev`, and the [language server plugins](/docs/en/plugins/code-intelligence). The catalog changes often, so this page doesn't list it.
 
 To see what's in it, use the **Discover** tab of `/plugin` in a Claude Code session, which you can search, or browse [Claude Marketplace](https://claude.com/marketplace/plugins) on the web.
 
@@ -53,12 +53,12 @@ To see what's in it, use the **Discover** tab of `/plugin` in a Claude Code sess
 
 You can search Anthropic's marketplaces for a plugin in Claude Code, on the web, or on GitHub:
 
-* **In Claude Code, by browsing**: run `/plugin` in an interactive session. Its **Discover** tab lists the plugins from the marketplaces you've added.
-* **In Claude Code, by name**: run `/plugin install <name>` in a session, which looks the name up in the marketplaces you've added. If the plugin is in one of them, its details open in the `/plugin` panel, and nothing installs until you choose an [installation scope](/docs/en/plugins/install#install-a-plugin) and confirm there. If it isn't, you see `Plugin "<name>" not found in any marketplace`.
+* **In Claude Code, by browsing**: run `/plugin` in an interactive session. Its **Discover** tab lists the plugins from your marketplaces.
+* **In Claude Code, by name**: run `/plugin install <name>` in a session, which looks the name up in your marketplaces. If the plugin is in one of them, its details open in the `/plugin` panel, and nothing installs until you choose an [installation scope](/docs/en/plugins/install#install-a-plugin) and confirm there. If it isn't, you see `Plugin "<name>" not found in any marketplace`.
 * **On the web**: search the full catalog on [Claude Marketplace](https://claude.com/marketplace/plugins), which shows install counts and marks some plugins **Anthropic verified**.
 * **On GitHub**: open `.claude-plugin/marketplace.json` in the marketplace's repository, such as [`anthropics/claude-plugins-official`](https://github.com/anthropics/claude-plugins-official). That file is the catalog itself.
 
-Anthropic's directory is separate from these marketplaces. The directory is the catalog on claude.ai, and `/plugin` doesn't list it. A plugin you add from the directory on claude.ai reaches Claude Code through [account sync](/docs/en/plugins/loading#synced-plugins). To list your own plugin there, see [Submit to Anthropic's directory](/docs/en/plugins/publish#submit-to-anthropics-directory).
+Anthropic's directory is separate from these marketplaces. The directory is the catalog on claude.ai. A plugin you add from the directory on claude.ai reaches Claude Code through [account sync](/docs/en/plugins/loading#synced-plugins). To list your own plugin there, see [Submit to Anthropic's directory](/docs/en/plugins/publish#submit-to-anthropics-directory).
 
 To install from the desktop app or from a script, or to see what a cloud session loads, see [Install plugins](/docs/en/plugins/install).
 

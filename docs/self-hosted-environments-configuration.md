@@ -57,6 +57,17 @@ wait "$CHILD"
 
 Don't close or reuse file descriptor 3 in the wrapper. Redirecting the child's stdout and stderr is fine.
 
+### Pass the system prompt flags through
+
+The system prompt and appended system prompt that Anthropic's control plane sends for a session reach your wrapper as file paths, not as inline text. The runner writes each prompt to a file in the session's config directory, `CLAUDE_CONFIG_DIR`, and passes its path in the arguments your wrapper receives, as [`--system-prompt-file <path>` or `--append-system-prompt-file <path>`](/docs/en/cli-reference#system-prompt-flags).
+
+Runners on Claude Code v2.1.281 or later deliver the prompts as files. Before v2.1.281, the runner passed them as `--system-prompt <text>` and `--append-system-prompt <text>`.
+
+In your wrapper script or [`command` hook](#command), handle these flags as follows:
+
+* **Pass them through**: end the wrapper with `exec "$CLAUDE_RUNNER_CLAUDE_BIN" "$@"`, which forwards the file flags along with every other argument. Don't drop or rewrite them. If a session loses a prompt file flag, it runs without the instructions the control plane sent for it.
+* **On a runner at v2.1.281 or later, a file flag you append replaces the server's, never adds to it**: each prompt file flag takes a single value and Claude Code keeps the last occurrence, so if you append `--append-system-prompt-file <path>` after `"$@"`, your file's contents replace the server's appended instructions. To add instructions on top of the server's, put them in the runner image's `CLAUDE.md`, which the runner [seeds into every session's user-level config](#how-each-session’s-config-is-assembled).
+
 ### Provision credentials scoped to the session creator
 
 Use the `decode-token` subcommand to read claims from the session JWT. It reads the token from an argument, from `CLAUDE_CODE_SESSION_ACCESS_TOKEN`, or from stdin, in that order; see [Verify the token inside the session](/docs/en/self-hosted-environments-identity#verify-the-token-inside-the-session) for what it checks. The example below decodes the creator identity, exchanges it for short-lived AWS credentials, and execs into Claude Code:
@@ -416,6 +427,10 @@ When Anthropic's control plane supplies a session with [Claude Code hooks](/docs
 * **Where they land**: the runner writes each supplied hook script to a reserved `hooks/.ccr-launcher/` subdirectory of the session's config directory and registers the scripts in a separate settings file it passes to the session with `--settings`, leaving the seeded `settings.json` and your own scripts at `hooks/<name>` untouched. The runner recreates the reserved subdirectory for each session and doesn't seed host content at `~/.claude/hooks/.ccr-launcher/` into sessions.
 * **Who authors them**: the control plane populates the scripts from fixed constants in its own deployment, never from per-session or third-party input.
 * **What still governs them**: hooks delivered through `--settings` enter the ordinary merged hook configuration, not the managed tier, so your managed settings still apply. `disableAllHooks` disables them, and they are not among the categories [`allowManagedHooksOnly`](/docs/en/settings-reference#allowmanagedhooksonly) keeps loaded.
+
+Outside [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions, a session in a self-hosted environment runs with [auto memory](/docs/en/memory#auto-memory) off by default. For instructions that should carry across sessions, use the `CLAUDE.md` in your runner image or in the repository.
+
+The runner's snapshot of the host's `~/.claude/` leaves out the `projects/` directory. Auto memory's default storage location is under that directory. If you put memory files there, the runner doesn't seed them into sessions, and they don't turn auto memory on.
 
 ### Repository-committed permission rules
 

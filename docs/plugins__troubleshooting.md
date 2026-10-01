@@ -974,6 +974,7 @@ The table covers the messages that stop validation and two warnings, `No frontma
 | `Path contains ".." which could be a path traversal attempt: <path>` | A component path escapes the plugin directory. | Use paths inside the plugin root. |
 | `Path is a file; skills entries must be directories containing SKILL.md` | A `skills` entry points at `SKILL.md` instead of its directory. | Point at the parent directory, or `.` for a root-level `SKILL.md`. |
 | `No frontmatter block found` or `YAML frontmatter failed to parse: <error>` | A skill, agent, or command file has missing or invalid YAML frontmatter. | Add or fix the frontmatter between `---` delimiters. Reported when validating a plugin directory. |
+| `Plugin name "<name>" is reserved: it passes as one of Anthropic's own` | The plugin's `name` is one of the [reserved names](/docs/en/plugins/manifest-reference#name). | Rename the plugin for what it does. |
 | `Unknown field '<key>'` | The manifest has a field the schema doesn't define. | Remove it, or use the name the message suggests. Claude Code ignores unknown fields at load time. |
 
 Run the command again after each fix until it prints no errors.

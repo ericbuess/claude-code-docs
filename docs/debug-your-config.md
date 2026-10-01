@@ -57,13 +57,15 @@ For configuration locations and scope rules, see [MCP](/docs/en/mcp).
 
 ## Check hooks
 
-Run `/hooks` to list every hook registered for the current session, grouped by event. If a hook you defined doesn't appear, it isn't being read: hooks go under the `"hooks"` key in a settings file, not in a standalone file.
+Run `/hooks` to list every hook registered for the current session, grouped by event. If a hook you defined doesn't appear, Claude Code didn't load it. Check for these causes:
+
+* The hook is defined in a standalone file. Hooks go under the `"hooks"` key in a [settings file](/docs/en/settings#settings-files).
+* The `matcher` value is an array instead of a single string. Claude Code lists the entry as an invalid setting when you start an interactive session and in `claude doctor`. If the array is under `PreToolUse` or `PermissionRequest`, none of that file's other hooks load either.
 
 If the hook appears but doesn't fire, the matcher is the usual cause. Check it for these mistakes:
 
 * The `matcher` field is a single string that uses `|` to match multiple tool names, for example `"Edit|Write"`. A `,` separator is equivalent, so `"Edit,Write"` matches the same tools. Before v2.1.191, a comma fell through to regex evaluation and the matcher never matched, so use `|` if you aren't on v2.1.191 yet.
 * A misspelled tool name produces a matcher that matches nothing, so the hook fails silently.
-* An array value is a schema error: Claude Code shows a settings error notice and rejects the whole user, project, or local settings file, `claude doctor` reports the validation failure, and no hook from that file appears in `/hooks`. In [managed settings](/docs/en/managed-settings), Claude Code drops the whole `hooks` key from the file that contains the array, so none of that file's hooks apply. The file's other settings still apply, and `claude doctor` lists the dropped key.
 
 When you edit `settings.json`, the change takes effect in the running session after a brief file-stability delay, even if you create the file or the project's `.claude/` folder itself after the session started. You don't need to restart. Before v2.1.257, Claude Code didn't detect edits in a `.claude/` folder created after the session started.
 
