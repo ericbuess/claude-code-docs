@@ -445,6 +445,7 @@ class ClaudeSDKClient:
     async def set_model(self, model: str | None = None) -> None
     async def rewind_files(self, user_message_id: str) -> None
     async def get_mcp_status(self) -> McpStatusResponse
+    async def get_context_usage(self) -> ContextUsageResponse
     async def reconnect_mcp_server(self, server_name: str) -> None
     async def toggle_mcp_server(self, server_name: str, enabled: bool) -> None
     async def stop_task(self, task_id: str) -> None
@@ -466,6 +467,7 @@ class ClaudeSDKClient:
 | `set_model(model)` | Change the model for the current session. Pass `None` to reset to [Claude Code's default model](/docs/en/model-config) |
 | `rewind_files(user_message_id)` | Restore files to their state at the specified user message. Requires `enable_file_checkpointing=True`. See [File checkpointing](/docs/en/agent-sdk/file-checkpointing) |
 | `get_mcp_status()` | Get the status of all configured MCP servers. Returns [`McpStatusResponse`](#mcpstatusresponse) |
+| `get_context_usage()` | Get a breakdown of context window usage by category, skill, and tool. The same data `/context` shows in an interactive session. Returns [`ContextUsageResponse`](#contextusageresponse). To compute the breakdown, Claude Code makes several token-counting API requests that don't appear in the message stream; see [how these requests are handled](#contextusageresponse) |
 | `reconnect_mcp_server(server_name)` | Retry connecting to an MCP server that failed or was disconnected |
 | `toggle_mcp_server(server_name, enabled)` | Enable or disable an MCP server mid-session. Disabling a stdio, SSE, or HTTP server removes its tools |
 | `stop_task(task_id)` | Stop a running background task. A [`TaskNotificationMessage`](#tasknotificationmessage) with status `"stopped"` follows in the message stream |
@@ -1449,6 +1451,37 @@ class McpServerStatus(TypedDict):
 | `config` | [`McpServerStatusConfig`](#mcpserverstatusconfig) (optional) | Server configuration. Same shape as [`McpServerConfig`](#mcpserverconfig) (stdio, SSE, HTTP, or SDK), plus a `claudeai-proxy` variant for servers connected through claude.ai |
 | `scope` | `str` (optional) | Configuration scope |
 | `tools` | `list` (optional) | Tools provided by this server, each with `name`, `description`, and `annotations` fields |
+
+### `ContextUsageResponse`
+
+Response from [`ClaudeSDKClient.get_context_usage()`](#methods). This is the same payload Claude Code renders for the `/context` command in an interactive session, so alongside the token counts it carries display fields such as `color` and `gridRows` that Claude Code uses to draw the `/context` usage grid.
+
+Claude Code builds this payload by sending several requests to the [token-counting](https://platform.claude.com/docs/en/build-with-claude/token-counting) API. These requests don't appear in the message stream, so cost tracking that reads the stream won't see them. On the Anthropic API, token counting isn't billed.
+
+```python theme={null}
+class ContextUsageResponse(TypedDict):
+    categories: list[ContextUsageCategory]
+    totalTokens: int
+    maxTokens: int
+    rawMaxTokens: int
+    percentage: float
+    model: str
+    isAutoCompactEnabled: bool
+    memoryFiles: list[dict[str, Any]]
+    mcpTools: list[dict[str, Any]]
+    agents: list[dict[str, Any]]
+    gridRows: list[list[dict[str, Any]]]
+    autoCompactThreshold: NotRequired[int]
+    deferredBuiltinTools: NotRequired[list[dict[str, Any]]]
+    systemTools: NotRequired[list[dict[str, Any]]]
+    systemPromptSections: NotRequired[list[dict[str, Any]]]
+    slashCommands: NotRequired[dict[str, Any]]
+    skills: NotRequired[dict[str, Any]]  # skill usage with frontmatter breakdown
+    messageBreakdown: NotRequired[dict[str, Any]]  # message tokens by type
+    apiUsage: NotRequired[dict[str, Any] | None]
+```
+
+Each `ContextUsageCategory` entry carries `name`, `tokens`, `color`, and an optional `isDeferred` flag. `totalTokens` is the session's current context usage, and `maxTokens` is the window that usage is measured against. That window is the model's context window, or the lower auto-compaction window when one applies, and `rawMaxTokens` carries the same value as `maxTokens`. `apiUsage` holds the usage from the latest API response, not a running total for the session. Claude Code leaves the optional `deferredBuiltinTools`, `systemTools`, and `systemPromptSections` keys unset, so expect them to be absent even though the type declares them.
 
 ### `SdkPluginConfig`
 
