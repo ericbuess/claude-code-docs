@@ -1309,7 +1309,8 @@ In an interactive session in a folder you haven't [trusted](/docs/en/permissions
 * `managed_settings.trigger`: `"startup"` for the session-start event, `"change"` when the managed settings or the policy helper's state changed later in the session, or `"refused"` when a managed settings policy stopped the session. Claude Code sends a `change` event only when an attribute differs from the last event it sent, and a changed setting value counts even when `OTEL_LOG_MANAGED_SETTINGS` is off
 * `error.type`: why Claude Code stopped the session. Present only on `refused` events:
   * `"helper_failed"`: a [policy helper run failed](/docs/en/settings-reference#helper-failures)
-  * `"policy_invalid"`: the managed settings contain an error that stops Claude Code from starting, or an admin source failed to load, so Claude Code can't check organization login enforcement
+  * `"policy_invalid"`: the managed settings contain an error that stops Claude Code from starting, or an admin source failed to load for a reason other than a denied read, so Claude Code can't check organization login or provider enforcement
+  * `"provider_not_allowed"`: the session would use an API provider, or send a provider's traffic to a host, that the managed [`allowedProviders`](/docs/en/settings-reference#allowedproviders) list doesn't allow. Requires Claude Code v2.1.285 or later
   * `"consent_rejected"`: the user rejected the [security approval dialog](/docs/en/server-managed-settings#security-approval-dialogs) for server-managed settings
   * `"force_refresh_failed"`: the settings fetch that [`forceRemoteSettingsRefresh`](/docs/en/settings-reference#forceremotesettingsrefresh) requires failed
   * `"gateway_rejected"`: a [Claude apps gateway](/docs/en/claude-apps-gateway) answered the managed settings load with HTTP 403

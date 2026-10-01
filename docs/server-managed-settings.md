@@ -143,7 +143,7 @@ If you clear your server-managed configuration in the admin console with the int
 
 ### Per-key exceptions across managed sources
 
-Three kinds of keys are exceptions to the no-merge rule:
+These keys are exceptions to the no-merge rule:
 
 * **Cross-source lock keys**: a small set of keys, such as the sandbox allowlist locks, [listed on the managed settings page](/docs/en/managed-settings#precedence-within-the-managed-tier). Claude Code honors them when any admin-controlled managed source sets them; the user-writable HKCU registry tier is excluded.
 
@@ -151,6 +151,7 @@ Three kinds of keys are exceptions to the no-merge rule:
 * **The `env` block**: apart from the telemetry unit and routing variables paired with a credential key, both covered below, it merges per key across the admin-controlled sources. For each environment variable, the highest-priority source defining it wins, and lower admin sources fill in variables the higher sources leave unset. An endpoint-managed `env` entry therefore applies whenever the server-managed configuration leaves that variable unset, or while a cached server value for it is [withheld pending server confirmation](#fetch-and-caching-behavior). Requires Claude Code v2.1.223 or later. Before v2.1.223, Claude Code applies the selected source's whole `env` block only.
   * **Telemetry unit**: the `OTEL_EXPORTER_OTLP_*` exporter keys, the `OTEL_LOG_*` content-capture toggles, `OTEL_LOGS_EXPORTER`, and the beta tracing variables `ENABLE_BETA_TRACING_DETAILED` and `BETA_TRACING_ENDPOINT` follow the highest source that sets any of them as a unit. A source that delivers the `otelHeadersHelper` credential key claims the unit too, but lands these variables only when it is the selected source: a source that isn't selected but delivers the key contributes none of them and still blocks lower sources from filling them in. Either way, an exporter endpoint from one source can never pair with credentials from another.
   * **Credential-paired routing**: a source that pairs routing variables with a selected-source-only credential key, such as `apiKeyHelper` or `otelHeadersHelper`, contributes those routing variables only when it wins the slot.
+* **`allowedProviders`**: a list set on the machine and a server-managed list combine as [its entry's Scope note](/docs/en/settings-reference#allowedproviders) states. Requires Claude Code v2.1.285 or later
 * **Gateway sign-in keys**: Claude Code never reads [`forceLoginGatewayUrl`](/docs/en/settings-reference#forcelogingatewayurl), [`gatewayInternalNetworks`](/docs/en/settings-reference#gatewayinternalnetworks), or the `"gateway"` value of [`forceLoginMethod`](/docs/en/settings-reference#forceloginmethod) from server-managed settings, so a value there neither applies nor hides one set in an MDM policy or managed settings file. The [`managedSourcesBehavior` entry](/docs/en/settings-reference#managedsourcesbehavior) says which admin source on the machine supplies them.
 
 ### Fetch and caching behavior

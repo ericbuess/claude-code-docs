@@ -849,6 +849,14 @@ If you already use the Claude Code CLI, Desktop runs the same underlying engine 
 
 To move a CLI session into Desktop, run `/desktop` in the terminal. Claude saves your session and opens it in the desktop app, then exits the CLI. This command is available on macOS and x64 Windows when you are signed in with a Claude subscription. It is not available with API key authentication or on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry.
 
+From your shell, [`claude --desktop`](/docs/en/cli-reference#cli-flags) opens Desktop directly without starting a terminal session. It requires Claude Code v2.1.285 or later and has the same platform and sign-in requirements as `/desktop`. With no other arguments, it opens Desktop on the current directory. To open an existing CLI session in Desktop, add `--continue` for the most recent conversation in this directory, or `--resume` with the session ID that `/status` shows:
+
+```bash theme={null}
+claude --desktop --resume <session-id>
+```
+
+Claude Code prints `Opening session <session-id> in Claude Desktop`, the session opens in the app, and the command exits. A session name doesn't work in place of the ID. Claude Code doesn't move a session that is open in another terminal or still running in the background. If Claude Desktop isn't installed, the command prints a download link and exits.
+
 You can also pick up a CLI session from inside Desktop with `/resume`. The command is available in local sessions, not in SSH, WSL, or cloud sessions.
 
 To continue a terminal session in Desktop:

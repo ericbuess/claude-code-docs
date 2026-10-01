@@ -329,9 +329,12 @@ Match the message you see to a section below.
 | `Remote managed settings failed to load (<cause>)` | [Configuration warnings](#remote-managed-settings-failed-to-load) |
 | `Managed settings were not approved; exiting without applying them.` | [Configuration warnings](#managed-settings-were-not-approved) |
 | `Claude Code can't start: your organization's managed settings block the default model` / `Claude Code can't start: your organization allows only the models listed in "availableModels"` | [Configuration warnings](#managed-settings-block-the-default-model) |
+| `Your organization's managed settings allow Claude Code to use: <providers>` | [Configuration warnings](#managed-settings-dont-allow-this-api-provider) |
+| `Your organization's managed settings allow Claude Code to use no API provider at all` | [Configuration warnings](#managed-settings-dont-allow-this-api-provider) |
 | `MCP server <name> is blocked by enterprise managed policy` | [Configuration warnings](#mcp-server-is-blocked-by-enterprise-managed-policy) |
 | `Managed settings document could not be parsed as a JSON object; none of its settings are in effect. Fix or remove it.` | [Configuration warnings](#managed-settings-document-could-not-be-parsed) |
 | `Managed settings drop-in directory could not be read` | [Configuration warnings](#managed-settings-document-could-not-be-parsed) |
+| `Unable to read managed policy settings` | [Configuration warnings](#unable-to-read-managed-policy-settings) |
 | `otelHeadersHelper failed; telemetry is not being exported. See /status: ...` | [Configuration warnings](#otelheadershelper-failed) |
 | `"crossSessionInbound" must be one of "accept", "hold", "refuse"` | [Configuration warnings](#crosssessioninbound-must-be-one-of-accept-hold-refuse) |
 | `headersHelper not run — this workspace has no persisted trust` | [Configuration warnings](#headershelper-not-run) |
@@ -3447,18 +3450,20 @@ Each reason the message can show in parentheses:
   Couldn't open Claude Desktop
 </h3>
 
-You ran [`/desktop`](/docs/en/desktop#coming-from-the-cli), or its alias `/app`, and the system command Claude Code uses to open Claude Desktop failed. The session stays in the terminal.
+You ran [`/desktop`](/docs/en/desktop#coming-from-the-cli) or its alias `/app` in a session, or [`claude --desktop`](/docs/en/cli-reference#cli-flags) in your shell, and the system command Claude Code uses to open Claude Desktop failed. After `/desktop`, the session stays in the terminal; `claude --desktop` prints the message without the `Error:` prefix and exits with status 1.
+
+The text in parentheses names the command that failed, with its exit status and the first line of its error output when it produced them. On macOS that command is `open`, as in this example; on Windows it is `rundll32`:
 
 ```text theme={null}
-Error: Couldn't open Claude Desktop (`open` exited 1: LSOpenURLsWithRole() failed for the URL claude://resume?session=<session-id> with error -10814). Open Claude Desktop and run /desktop again.
+Error: Couldn't open Claude Desktop (`open` exited 1: LSOpenURLsWithRole() failed for the URL claude://resume?session=<session-id> with error -10814). Open Claude Desktop and try again.
 ```
 
 **What to do:**
 
-* Open Claude Desktop yourself, then run `/desktop` again
-* To read that command's full error output, turn on debug logging with `/debug`, run `/desktop` again, and check the debug log
+* Open Claude Desktop yourself, then run `/desktop` or `claude --desktop` again
+* To read the failed command's full error output, turn on debug logging with `/debug` and run `/desktop` again, or run `claude --desktop --debug-file <path>`, then check the debug log
 
-Before v2.1.275, the message was `Failed to open Claude Desktop. Please try opening it manually.` and didn't say what failed.
+Before v2.1.285, the message ended `Open Claude Desktop and run /desktop again.` Before v2.1.275, it was `Failed to open Claude Desktop. Please try opening it manually.` and didn't say what failed.
 
 <h3 id="terminal-setup-left-your-zed-keymap-unchanged">
   /terminal-setup left your Zed keymap unchanged
@@ -4905,6 +4910,29 @@ Claude Code can't start: your organization allows only the models listed in "ava
 * If you administer the settings, add a model your users can run to `availableModels`, or narrow the `deniedModels` entries that block every fallback. [Block specific models or versions](/docs/en/model-config#block-specific-models-or-versions) describes how the Default option steps down
 * If you don't administer them, send the message to your administrator. Your own settings files can't widen a managed `availableModels` or `deniedModels` list
 
+<h3 id="managed-settings-dont-allow-this-api-provider">
+  Managed settings don't allow this API provider
+</h3>
+
+Your organization's [managed settings](/docs/en/managed-settings) set an [`allowedProviders`](/docs/en/settings-reference#allowedproviders) list, and the session's API provider isn't on it or the session uses an endpoint that isn't pinned the way that entry requires. Claude Code refuses at startup, before a login, or when the session next contacts the API. The message begins with the permitted providers:
+
+```text theme={null}
+Your organization's managed settings allow Claude Code to use: Anthropic API, Amazon Bedrock.
+```
+
+When the list is empty, the message reads instead:
+
+```text theme={null}
+Your organization's managed settings allow Claude Code to use no API provider at all (allowedProviders is an empty list), so it cannot start on this machine.
+```
+
+When every entry is unrecognized, the parenthetical reads `(allowedProviders lists only unrecognized entries)` instead.
+
+**What to do:**
+
+* Follow the message's `To continue:` steps
+* If you administer the settings, the message's lines starting `Admins:` name the entry to add or the value to pin, and the [`allowedProviders`](/docs/en/settings-reference#allowedproviders) entry says which source's `env` block can pin it
+
 <h3 id="mcp-server-is-blocked-by-enterprise-managed-policy">
   MCP server is blocked by enterprise managed policy
 </h3>
@@ -4957,6 +4985,31 @@ When a `managed-settings.d/` directory exists but can't be listed, Claude Code r
 
 * If you administer the machine, fix the named document so it parses as a JSON object, or remove the file, profile, or registry value. An empty `managed-settings.json` counts as `{}` and doesn't block launch.
 * If you don't, ask your administrator to fix the deployed document. Nothing in your own settings files causes or clears this error.
+
+<h3 id="unable-to-read-managed-policy-settings">
+  Unable to read managed policy settings
+</h3>
+
+Your organization deploys [managed settings](/docs/en/managed-settings), and one of the deployed sources exists but couldn't be read, for a reason such as an I/O error rather than the operating system denying the read. With no other admin source supplying a policy, Claude Code exits at startup rather than run without the policy the source may carry:
+
+```text theme={null}
+Unable to read managed policy settings.
+This machine may require organization login enforcement, but the policy file failed to load.
+Contact your administrator.
+
+Detail: <source>: <reason>
+```
+
+In the same state, sign-in flows, API requests from a session that is already running, and the [`claude gateway`](/docs/en/claude-apps-gateway) server are refused with a variant of the first line that names [`allowedProviders`](/docs/en/settings-reference#allowedproviders).
+
+A read that the operating system denied, such as on a root-only file, doesn't produce this exit: [the session starts without that source's policies](/docs/en/managed-settings#find-entries-claude-code-dropped). For a source that can't be parsed, Claude Code exits with [a different message naming the source](#managed-settings-document-could-not-be-parsed).
+
+**What to do:**
+
+* If you administer the machine, fix the problem the `Detail:` line names so the deployed source can be read, or remove the source
+* If you don't, send the message to your administrator. Nothing in your own settings files causes or clears this error
+
+Before v2.1.285, only sessions signed in with claude.ai or Claude Console credentials exited with this message, and a read that the operating system denied produced it too.
 
 <h3 id="otelheadershelper-failed">
   otelHeadersHelper failed

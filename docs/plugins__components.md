@@ -838,6 +838,13 @@ The `mcpServers` key also accepts a packaged server as an [MCPB file](https://gi
 
 The server takes its name from the `name` in the bundle's manifest.
 
+A bundle's own manifest can declare settings the server needs from the user in a `user_config` block. A bundled server with a required setting that has no saved value doesn't start. The `/plugin` **Errors** tab shows `Bundled MCP server "<name>" was not started: it needs configuration`.
+
+Users supply the values in one of two ways:
+
+* **In `/plugin`**: select the plugin on the **Installed** tab and choose **Configure**
+* **At install, from the shell**: pass [`--config <server>.<key>=<value>`](/docs/en/plugins/cli-reference#plugin-install) to `claude plugin install`. Requires Claude Code v2.1.285 or later, and works only for a bundle packaged inside the plugin.
+
 For transports and authentication, see [MCP](/docs/en/mcp#plugin-provided-mcp-servers).
 
 ### LSP servers
@@ -1027,7 +1034,7 @@ This manifest asks for an endpoint and a token:
 
 ### When the configuration dialog appears
 
-The dialog appears only in the interactive `/plugin` interface. It opens for any option that isn't set yet when the user does any of the following:
+The dialog is part of the interactive `/plugin` interface. When the user does any of the following, it opens for any option that isn't set yet:
 
 * Installs the plugin in `/plugin`
 * Runs `/plugin install <plugin>@<marketplace>` inside a session
@@ -1035,7 +1042,11 @@ The dialog appears only in the interactive `/plugin` interface. It opens for any
 
 To open the same dialog at any time, the user runs `/plugin configure <plugin>@<marketplace>`.
 
-The `claude plugin install` shell command never prompts for `userConfig` values. To set values from the shell, pass each one as `--config KEY=VALUE`. When options remain unset, the command prints a `userConfig options not yet set` line that names both ways to set them. [The `userConfig` dialog never appears](/docs/en/plugins/troubleshooting#the-userconfig-dialog-never-appears) quotes the line.
+The VS Code extension's [Manage plugins dialog](/docs/en/vs-code#install-plugins) asks for unset options as a form after an install, and a gear icon on the plugin's row opens the form again with every option.
+
+The `claude plugin install` shell command never prompts for `userConfig` values. To set values from the shell, pass each one as `--config KEY=VALUE` when you install, or pipe a JSON object to [`claude plugin configure --values-stdin`](/docs/en/plugins/cli-reference#plugin-configure) afterward.
+
+When options remain unset, `claude plugin install` prints a `userConfig options not yet set` line. For the line's exact text, see [The `userConfig` dialog never appears](/docs/en/plugins/troubleshooting#the-userconfig-dialog-never-appears).
 
 For the option fields, where each value is stored, how a component references a saved value, and which fields reject `${user_config.*}`, see [User configuration](/docs/en/plugins/manifest-reference#user-configuration).
 

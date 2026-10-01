@@ -264,14 +264,14 @@ When [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/docs/en/env-vars) is set, Claude Code 
 
 ### Auto-approve tools
 
-Use `--allowedTools` to let Claude use certain tools without prompting. This example runs a test suite and fixes failures, allowing Claude to execute Bash commands and read/edit files without asking for permission:
+Use `--allowedTools` to let Claude use certain tools without prompting. Listing `Read` and `Edit` lets Claude read and edit files without asking for permission. Listing `Bash` does the same for shell commands, except in a run that starts in [auto mode](/docs/en/permission-modes#how-auto-mode-evaluates-actions), where Claude Code drops a bare `Bash` entry as a broad allow rule and auto mode evaluates each command instead. This example runs a test suite and fixes failures with those three tools listed:
 
 ```bash theme={null}
 claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
 ```
 
-To set a baseline for the whole session instead of listing individual tools, pass a [permission mode](/docs/en/permission-modes). For `-p`, the [built-in starting permission mode](/docs/en/permission-modes#which-mode-a-session-starts-in) is Manual on every plan, so pass the permission mode you want:
+To set a baseline for the whole session instead of listing individual tools, pass a [permission mode](/docs/en/permission-modes). A run where nothing sets a permission mode takes the [built-in starting permission mode](/docs/en/permission-modes#which-mode-a-session-starts-in), which can be `auto`, so pass the one you want:
 
 * **`auto`**: pass `--permission-mode auto` to have a classifier review most actions instead of you
 * **`dontAsk`**: Claude Code denies every call that would otherwise prompt, which is useful for locked-down CI runs. Actions that need no approval in Manual mode still run, such as file reads in your working directories and the [read-only command set](/docs/en/permissions#read-only-commands), and so do actions your `--allowedTools` entries or `permissions.allow` rules cover. `AskUserQuestion`, connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), and MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool) are denied even when an allow rule matches

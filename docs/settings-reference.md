@@ -597,6 +597,7 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`allowedChannelPlugins`](#allowedchannelplugins) | Replace the default allowlist of [channel plugins](/docs/en/channels#restrict-which-channel-plugins-can-run) that can push messages | Plugins and skills | Managed |
 | [`allowedHttpHookUrls`](#allowedhttphookurls) | Limit which URLs [HTTP hooks](/docs/en/hooks) can target | Hooks and automation | Any file |
 | [`allowedMcpServers`](#allowedmcpservers) | Allowlist which [MCP servers](/docs/en/mcp) users can add | MCP | Any file |
+| [`allowedProviders`](#allowedproviders) | Limit which [API providers](/docs/en/third-party-integrations) a machine may use | Authentication and providers | Managed |
 | [`allowManagedHooksOnly`](#allowmanagedhooksonly) | Run only the [hooks](/docs/en/hooks) your organization deploys | Hooks and automation | Managed |
 | [`allowManagedMcpServersOnly`](#allowmanagedmcpserversonly) | Make the managed [MCP](/docs/en/mcp) allowlist the only one that applies | MCP | Managed |
 | [`allowManagedPermissionRulesOnly`](#allowmanagedpermissionrulesonly) | Make [managed settings](/docs/en/managed-settings) the only settings source of [permission rules](/docs/en/permissions#managed-settings) | Permission settings | Managed |
@@ -5411,6 +5412,47 @@ This example allows `devboxes.example.com` and its subdomains, plus the exact ho
 
 Supply credentials through helper scripts and, for organizations, force a login method or organization. See [Authentication](/docs/en/authentication).
 
+### `allowedProviders`
+
+List the services a machine may reach Claude through, such as the Anthropic API, Amazon Bedrock, or an LLM gateway. A session on a provider that isn't listed is refused at startup, at login, and when it next contacts the API, so switching to an unlisted provider mid-session is refused too. The [refusal message](/docs/en/errors#managed-settings-dont-allow-this-api-provider) names what selected the provider and the steps to continue. Requires Claude Code v2.1.285 or later.
+
+* **Scope**: [`Managed`](#scopes). A list that the machine's own admin sources set, MDM policies and managed settings files, keeps applying when server-managed settings also deliver one: a session may then use only the providers on both lists, so a server-managed list can narrow what the machine allows but never widen it. Which machine source's `allowedProviders` counts follows [how Claude Code combines managed sources](/docs/en/managed-settings#how-claude-code-combines-managed-sources). A list delivered through server-managed settings alone reaches only the sessions that [fetch server-managed settings](/docs/en/server-managed-settings#platform-availability).
+* **Type**: array of strings, each one of:
+  * `"anthropic"`: the Anthropic API on Anthropic's own host, through a claude.ai or Console sign-in or an API key. Pair it with [`forceLoginMethod`](#forceloginmethod) or [`forceLoginOrgUUID`](#forceloginorguuid) to also restrict the sign-in
+  * `"bedrock"`: [Amazon Bedrock](/docs/en/amazon-bedrock)
+  * `"vertex"`: [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), formerly Vertex AI
+  * `"foundry"`: [Microsoft Foundry](/docs/en/microsoft-foundry)
+  * `"anthropicAws"`: [Claude Platform on AWS](/docs/en/claude-platform-on-aws)
+  * `"mantle"`: the Amazon Bedrock [Mantle endpoint](/docs/en/amazon-bedrock#use-the-mantle-endpoint). A session that [runs Mantle alongside the Invoke API](/docs/en/amazon-bedrock#run-mantle-alongside-the-invoke-api) uses both providers, so list `"bedrock"` and `"mantle"` together for it
+  * `"customEndpoint"`: the Anthropic API or a cloud provider's API sent to another host, such as an [LLM gateway](/docs/en/llm-gateway) named by `ANTHROPIC_BASE_URL`, a provider's `ANTHROPIC_*_BASE_URL` variable, or an `ANTHROPIC_FOUNDRY_RESOURCE` value that isn't a bare resource name. Claude Code admits it only for the exact value a managed [`env`](#env) block pins
+  * `"gateway"`: a [Cloud gateway](/docs/en/claude-apps-gateway) sign-in
+* **Default**: unset, so any provider can be used
+
+```json managed-settings.json theme={null}
+{
+  "allowedProviders": ["anthropic", "bedrock"]
+}
+```
+
+Each cloud provider's entry means that provider's own service, including its regional, FIPS, and private endpoints.
+
+An entry Claude Code doesn't recognize as a provider name is dropped and reported, and the rest of the list stays enforced. With an empty list, or one whose every entry is unrecognized, Claude Code refuses every provider and doesn't start on the machine.
+
+#### Endpoints that need a pin in managed `env`
+
+A pin is an endpoint variable's value set in a managed [`env`](#env) block. When a session sends a provider's traffic somewhere other than that provider's own service, Claude Code admits it only if the session's value is the same as the pin. These endpoints need one:
+
+* **`"customEndpoint"` sessions**: the variable that names the host, such as `ANTHROPIC_BASE_URL`
+* **Amazon Bedrock**: the AWS SDK's `AWS_ENDPOINT_URL`, `AWS_ENDPOINT_URL_BEDROCK`, and `AWS_ENDPOINT_URL_BEDROCK_RUNTIME` variables when they point outside Bedrock's own service. The session stays under `"bedrock"` rather than `"customEndpoint"`
+* **A gateway sign-in's URL**: the session stays under `"gateway"`, and [`forceLoginGatewayUrl`](#forcelogingatewayurl) also counts as the pin
+
+Which `env` blocks count as pins depends on where the list is set:
+
+* **An administrator source on the machine sets a list**: only the `env` blocks of the machine's own administrator sources count
+* **Only server-managed settings set a list**: an `env` value in those server-managed settings counts too
+
+The list doesn't judge a cloud provider's credential and tenancy variables or the network path, such as `HTTPS_PROXY` and certificate settings. Set those for the fleet in the managed `env` block.
+
 ### `apiKeyHelper`
 
 Run your own command to produce the credential Claude Code sends with model requests. Claude Code runs the command through the system shell, `/bin/sh` on macOS and Linux and `cmd` on Windows, and sends its output as both the `X-Api-Key` and `Authorization: Bearer` headers. Use it for dynamic or rotating credentials, such as short-lived tokens fetched from a vault.
@@ -5877,7 +5919,7 @@ Under `"merge"`, Claude Code combines each key by its kind. This table gives the
 | :- | :- | :- |
 | Lists | Combines entries from every source | [`permissions.allow`](#permissions-allow), [`sandbox.network.allowedDomains`](#sandbox-network-alloweddomains), and other list keys |
 | Locks | Applies the strictest value any source sets. When no source sets a strict value, applies a looser value only from the highest source | [`allowManagedPermissionRulesOnly`](#allowmanagedpermissionrulesonly), [`permissions.disableBypassPermissionsMode`](#permissions-disablebypasspermissionsmode), and other boolean or enum locks |
-| Restriction allowlists | Takes the list whole from the highest source that sets it, without adding entries from lower sources. When the highest source doesn't set one, takes it whole from the next source down | [`availableModels`](#availablemodels), [`allowedMcpServers`](#allowedmcpservers), [`strictKnownMarketplaces`](#strictknownmarketplaces), [`allowedChannelPlugins`](#allowedchannelplugins), and the [`fallbackModel`](#fallbackmodel) chain |
+| Restriction allowlists | Takes the list whole from the highest source that sets it, without adding entries from lower sources. When the highest source doesn't set one, takes it whole from the next source down | [`availableModels`](#availablemodels), [`allowedMcpServers`](#allowedmcpservers), [`allowedProviders`](#allowedproviders), [`strictKnownMarketplaces`](#strictknownmarketplaces), [`allowedChannelPlugins`](#allowedchannelplugins), and the [`fallbackModel`](#fallbackmodel) chain |
 | Values taken whole | Takes the value whole from the highest source that sets it, without combining entries or fields from lower sources. When the highest source doesn't set it, takes it whole from the next source down | [`sandbox.credentials.awsPairs`](#sandbox-credentials-awspairs), [`sandbox.ripgrep`](#sandbox-ripgrep) |
 | Provided MCP servers | Combines the server names from every source. When two sources set the same name, applies the higher source's whole entry | [`managedMcpServers`](#managedmcpservers) |
 | Read from the highest-priority source only | Reads the key only from the highest-priority source that carries a policy key, so a lower source's value is ignored even when the highest source sets none | [`apiKeyHelper`](#apikeyhelper), [`awsAuthRefresh`](#awsauthrefresh), [`awsCredentialExport`](#awscredentialexport), [`gcpAuthRefresh`](#gcpauthrefresh), [`otelHeadersHelper`](#otelheadershelper), `proxyAuthHelper`, [`forceLoginOrgUUID`](#forceloginorguuid), the `"claudeai"` and `"console"` values of [`forceLoginMethod`](#forceloginmethod), [`parentSettingsBehavior`](#parentsettingsbehavior), [`modelPicker`](#modelpicker), [`policyHelper`](#policyhelper), [`permissions.defaultMode`](#permissions-defaultmode) |
@@ -5891,6 +5933,7 @@ A few keys add a condition that the table doesn't show:
 * **[`policyHelper`](#policyhelper)**: Claude Code honors it only when the highest source that carries a policy key is an MDM policy or a managed settings file, so under server-managed settings it doesn't apply.
 * **[`modelOverrides`](#modeloverrides)**: pairs with `availableModels`. Claude Code takes `modelOverrides` from the highest source that sets it, unless a higher source sets `availableModels` without `modelOverrides`. In that case it ignores `modelOverrides` from every source.
 * **[`forceLoginGatewayUrl`](#forcelogingatewayurl), [`gatewayInternalNetworks`](#gatewayinternalnetworks), and the `"gateway"` value of [`forceLoginMethod`](#forceloginmethod)**: Claude Code never reads any of them from server-managed settings, so a value there neither applies nor hides one set in an MDM policy or managed settings file. Among the admin sources on the machine, only the highest-ranked one that carries a policy key supplies them, whether or not server-managed settings are also present.
+* **[`allowedProviders`](#allowedproviders)**: after the table's rule, the machine's own list still limits the result, as its entry's Scope note states.
 
 To confirm which sources combined on a machine, run `/status` and [read the `Setting sources` line](/docs/en/managed-settings#read-the-source-in-/status).
 

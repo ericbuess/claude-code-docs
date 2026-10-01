@@ -304,7 +304,7 @@ To run commands in the background, you can either:
 * Prompt Claude Code to run a command in the background
 * Press `Ctrl+B` to move a regular Bash tool invocation to the background. Tmux users must press `Ctrl+B` twice due to tmux's prefix key.
 
-When a command reaches its timeout before it finishes, Claude Code automatically [moves it to the background](/docs/en/tools-reference#background-commands) instead of stopping it, unless the command starts with `sleep`. To change how long commands run before that happens, set the [Bash timeout environment variables](/docs/en/tools-reference#timeout-and-output-limits).
+When a command reaches its timeout before it finishes, Claude Code automatically [moves it to the background](/docs/en/tools-reference#foreground-commands-that-move-to-the-background) instead of stopping it, unless the command starts with `sleep`. To change how long commands run before that happens, set the [Bash timeout environment variables](/docs/en/tools-reference#timeout-and-output-limits).
 
 **Key features:**
 
@@ -316,10 +316,8 @@ When a command reaches its timeout before it finishes, Claude Code automatically
 * On macOS and Linux, Claude Code stops your running background tasks when the operating system reports critical memory pressure, provided the session has been idle for at least 30 minutes and no turn or subagent is running. Requires Claude Code v2.1.193 or later
   * The [debug log](/docs/en/debug-your-config) says why tasks were stopped, or why a pressure event left them running
   * Set [`CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP`](/docs/en/env-vars) to `1` to turn off memory-pressure stops
-* Background Bash and PowerShell commands have a time limit, counted from the moment the command enters the background: 30 minutes, or the `timeout` Claude asks for when it starts a command in the background, up to a maximum of 2 hours. A command that moves to the background while it runs, for example with `Ctrl+B`, gets 30 minutes from the move. When a command reaches its limit, Claude Code stops it and tells Claude why, and Claude can start it again with a longer `timeout` if the work still needs it. Two environment variables raise the limits, in milliseconds, and neither can shorten them:
-  * Set [`BASH_DEFAULT_TIMEOUT_MS`](/docs/en/env-vars) above `1800000` to replace the 30-minute default with that value, for moved commands as well
-  * Set [`BASH_MAX_TIMEOUT_MS`](/docs/en/env-vars) above `7200000` to raise the 2-hour maximum. Setting `BASH_DEFAULT_TIMEOUT_MS` above `7200000` raises it the same way
-* A background command that a foreground [subagent](/docs/en/sub-agents#run-subagents-in-foreground-or-background) started ends when that subagent's run ends, whether it finished, failed, or was interrupted; see [Background commands](/docs/en/tools-reference#background-commands) in the tools reference
+* Background Bash and PowerShell commands have a time limit, counted from the moment the command enters the background: 30 minutes, or the `timeout` Claude asks for when it starts a command in the background, up to a maximum of 2 hours. A command that moves to the background while it runs, for example with `Ctrl+B`, gets 30 minutes from the move. When a command reaches its limit, Claude Code stops it and tells Claude why, and Claude can start it again with a longer `timeout` if the work still needs it. To lengthen the limits, see [Raise the time limit for background commands](/docs/en/tools-reference#raise-the-time-limit-for-background-commands) in the tools reference
+* A background command that a foreground [subagent](/docs/en/sub-agents#run-subagents-in-foreground-or-background) started ends when that subagent's run ends, whether it finished, failed, or was interrupted; see [When a background command stops](/docs/en/tools-reference#when-a-background-command-stops) in the tools reference
 
 To disable all background task functionality, set the `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` environment variable to `1`. See [Environment variables](/docs/en/env-vars) for details.
 

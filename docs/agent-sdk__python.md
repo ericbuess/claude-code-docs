@@ -2621,7 +2621,7 @@ Asks the user clarifying questions during execution. See [Handle approvals and u
 
 **Tool name:** `Bash`
 
-For what sets the foreground ceiling, see [Timeout and output limits](/docs/en/tools-reference#timeout-and-output-limits). For the background time limit, see [Background commands](/docs/en/tools-reference#background-commands).
+For what sets the foreground ceiling, see [Timeout and output limits](/docs/en/tools-reference#timeout-and-output-limits). For the background time limit, see [Time limit for background commands](/docs/en/tools-reference#time-limit-for-background-commands).
 
 **Input:**
 

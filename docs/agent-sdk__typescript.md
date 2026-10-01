@@ -1655,6 +1655,7 @@ Set `CLAUDE_CODE_STARTUP_FAILURE_RESULTS` to `1` in [`env`](#options) to receive
 ```typescript theme={null}
 type SDKStartupFailureReason =
   | "org_pin_api_key_conflict"
+  | "provider_not_allowed"
   | "org_verify_failed"
   | "org_pin_mismatch"
   | "managed_settings_invalid"
@@ -1677,6 +1678,7 @@ Each value names one refusal:
 | Value | What stopped the session |
 | :- | :- |
 | `org_pin_api_key_conflict` | Managed settings [require a first-party or Cloud gateway sign-in](/docs/en/authentication#restrict-login-to-your-organization), and an Anthropic API key, auth token, or `apiKeyHelper` is configured instead |
+| `provider_not_allowed` | Managed settings [list the API providers this machine may use](/docs/en/settings-reference#allowedproviders), and the session is set up for a provider that isn't listed, or for an endpoint the settings don't pin. Requires Claude Code v2.1.285 or later |
 | `org_verify_failed` | The sign-in's organization couldn't be verified against the pin, for example because of a network failure or a revoked token |
 | `org_pin_mismatch` | The sign-in belongs to an organization the pin doesn't allow |
 | `managed_settings_invalid` | Managed policy settings couldn't be read, the pin names no organization, or [managed model restrictions](/docs/en/errors#managed-settings-block-the-default-model) leave no permitted model for the Default option |
@@ -2897,7 +2899,7 @@ type BashInput = {
 };
 ```
 
-Executes Bash commands with optional timeout and background execution. The working directory persists between commands, including commands run in later turns of a multi-turn session; shell state such as exported environment variables doesn't. For the limits on which directory changes carry over, see [What persists between commands](/docs/en/tools-reference#what-persists-between-commands). For what sets the foreground ceiling, see [Timeout and output limits](/docs/en/tools-reference#timeout-and-output-limits). For the background time limit, see [Background commands](/docs/en/tools-reference#background-commands).
+Executes Bash commands with optional timeout and background execution. The working directory persists between commands, including commands run in later turns of a multi-turn session; shell state such as exported environment variables doesn't. For the limits on which directory changes carry over, see [What persists between commands](/docs/en/tools-reference#what-persists-between-commands). For what sets the foreground ceiling, see [Timeout and output limits](/docs/en/tools-reference#timeout-and-output-limits). For the background time limit, see [Time limit for background commands](/docs/en/tools-reference#time-limit-for-background-commands).
 
 ### Monitor
 
@@ -3717,7 +3719,7 @@ The `stdout`, `stderr`, and `backgroundTaskId` fields carry:
 
 `timedOutAfterMs` is the timeout in milliseconds, set when the command reached its timeout and moved to the background rather than starting there explicitly. `backgroundCwdHint` is set when the backgrounded command contained a directory-change builtin such as `cd`, `pushd`, `popd`, or `chdir`, and notes that the session working directory didn't change. Both fields require Claude Code v2.1.210 or later.
 
-When a subagent running in the foreground owns a backgrounded command, the command [ends when that subagent's run ends](/docs/en/tools-reference#background-commands). Claude Code sets `backgroundEndsWithFinalResponse` to `true` on such commands, and omits the field when the command survives the turn, as commands started by the main conversation or by background subagents do. The field requires Claude Code v2.1.227 or later.
+When a subagent running in the foreground owns a backgrounded command, the command [ends when that subagent's run ends](/docs/en/tools-reference#when-a-background-command-stops). Claude Code sets `backgroundEndsWithFinalResponse` to `true` on such commands, and omits the field when the command survives the turn, as commands started by the main conversation or by background subagents do. The field requires Claude Code v2.1.227 or later.
 
 Claude Code sets `gitOperation.commit.branch` to the branch named in git's commit summary line, and omits it for a commit made on a detached HEAD. The field requires Agent SDK v0.3.227 or later. Claude Code reports a `gh pr reopen` command as the `reopened` PR action, which requires Agent SDK v0.3.234 or later.
 

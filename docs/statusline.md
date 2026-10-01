@@ -20,7 +20,7 @@ The status line renders in its own row above the built-in footer badges and does
 Here's an example of a [multi-line status line](#display-multiple-lines) that displays git info on the first line and a color-coded context bar on the second.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-multiline.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=60f11387658acc9ff75158ae85f2ac87" alt="A multi-line status line showing model name, directory, git branch on the first line, and a context usage progress bar with cost and duration on the second line" width="776" height="212" data-path="images/statusline-multiline.png" />
+  <img src="https://mintcdn.com/claude-code/HDAmBwgbrZVk0pOt/images/statusline-multiline.png?fit=max&auto=format&n=HDAmBwgbrZVk0pOt&q=85&s=a9d0a2fe8e446d80b1abc46da3f93270" alt="A multi-line status line showing model name, directory, git branch on the first line, and a context usage progress bar with cost and duration on the second line" width="1224" height="262" data-path="images/statusline-multiline.png" />
 </Frame>
 
 This page walks through [setting up a basic status line](#set-up-a-status-line), explains [how the data flows](#how-status-lines-work) from Claude Code to your script, lists [all the fields you can display](#available-data), and provides [ready-to-use examples](#examples) for common patterns like git status, cost tracking, and progress bars.
@@ -83,7 +83,7 @@ This walkthrough shows what `/statusline` sets up for you by manually creating a
 These examples use Bash scripts, which work on macOS and Linux. On Windows, see [Windows configuration](#windows-configuration) for PowerShell and Git Bash examples.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-quickstart.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=696445e59ca0059213250651ad23db6b" alt="A status line showing model name, directory, and context percentage" width="726" height="164" data-path="images/statusline-quickstart.png" />
+  <img src="https://mintcdn.com/claude-code/HDAmBwgbrZVk0pOt/images/statusline-quickstart.png?fit=max&auto=format&n=HDAmBwgbrZVk0pOt&q=85&s=88a7eab9c1038dd098ee8e284d96b7e6" alt="A status line showing model name, directory, and context percentage" width="1224" height="224" data-path="images/statusline-quickstart.png" />
 </Frame>
 
 <Steps>
@@ -422,7 +422,7 @@ The Bash examples use [`jq`](https://jqlang.org/) to parse JSON. Python and Node
 Display the current model and context window usage with a visual progress bar. Each script reads JSON from stdin, extracts the `used_percentage` field, and builds a 10-character bar where filled blocks (▓) represent usage:
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-context-window-usage.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=15b58ab3602f036939145dde3165c6f7" alt="A status line showing model name and a progress bar with percentage" width="448" height="152" data-path="images/statusline-context-window-usage.png" />
+  <img src="https://mintcdn.com/claude-code/HDAmBwgbrZVk0pOt/images/statusline-context-window-usage.png?fit=max&auto=format&n=HDAmBwgbrZVk0pOt&q=85&s=f3918a549912dc47e90f2b69e68bc847" alt="A status line showing model name and a progress bar with percentage" width="1224" height="224" data-path="images/statusline-context-window-usage.png" />
 </Frame>
 
 <CodeGroup>
@@ -489,7 +489,7 @@ Display the current model and context window usage with a visual progress bar. E
 Show git branch with color-coded indicators for staged and modified files. This script uses [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors) for terminal colors: `\033[32m` is green, `\033[33m` is yellow, and `\033[0m` resets to default.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-git-context.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=e656f34f90d1d9a1d0e220988914345f" alt="A status line showing model, directory, git branch, and colored indicators for staged and modified files" width="742" height="178" data-path="images/statusline-git-context.png" />
+  <img src="https://mintcdn.com/claude-code/HDAmBwgbrZVk0pOt/images/statusline-git-context.png?fit=max&auto=format&n=HDAmBwgbrZVk0pOt&q=85&s=f13c190724d9ec7188c17cd2f98b7bf4" alt="A status line showing model, directory, git branch, and colored indicators for staged and modified files" width="1224" height="224" data-path="images/statusline-git-context.png" />
 </Frame>
 
 Each script checks if the current directory is a git repository, counts staged and modified files, and displays color-coded indicators:
@@ -585,7 +585,7 @@ Track your session's API costs and elapsed time. The `cost.total_cost_usd` field
 Each script formats cost as currency and converts milliseconds to minutes and seconds:
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-cost-tracking.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=e3444a51fe6f3440c134bd5f1f08ad29" alt="A status line showing model name, session cost, and duration" width="588" height="180" data-path="images/statusline-cost-tracking.png" />
+  <img src="https://mintcdn.com/claude-code/HDAmBwgbrZVk0pOt/images/statusline-cost-tracking.png?fit=max&auto=format&n=HDAmBwgbrZVk0pOt&q=85&s=925f7024c3b38be0f0eca63564bfb52f" alt="A status line showing model name, session cost, and duration" width="1224" height="224" data-path="images/statusline-cost-tracking.png" />
 </Frame>
 
 <CodeGroup>
@@ -644,7 +644,7 @@ Each script formats cost as currency and converts milliseconds to minutes and se
 Your script can output multiple lines to create a richer display.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-multiline.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=60f11387658acc9ff75158ae85f2ac87" alt="A multi-line status line showing model name, directory, git branch on the first line, and a context usage progress bar with cost and duration on the second line" width="776" height="212" data-path="images/statusline-multiline.png" />
+  <img src="https://mintcdn.com/claude-code/HDAmBwgbrZVk0pOt/images/statusline-multiline.png?fit=max&auto=format&n=HDAmBwgbrZVk0pOt&q=85&s=a9d0a2fe8e446d80b1abc46da3f93270" alt="A multi-line status line showing model name, directory, git branch on the first line, and a context usage progress bar with cost and duration on the second line" width="1224" height="262" data-path="images/statusline-multiline.png" />
 </Frame>
 
 This example combines several techniques: threshold-based colors (green under 70%, yellow 70-89%, red 90%+), a progress bar, and git branch info. Each `print` or `echo` statement creates a separate row:
@@ -751,7 +751,7 @@ This example combines several techniques: threshold-based colors (green under 70
 This example creates a clickable link to your GitHub repository. Hold Cmd (macOS) or Ctrl (Windows/Linux) and click to open the link in your browser.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-links.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=4bcc6e7deb7cf52f41ab85a219b52661" alt="A status line showing a clickable link to a GitHub repository" width="726" height="198" data-path="images/statusline-links.png" />
+  <img src="https://mintcdn.com/claude-code/HDAmBwgbrZVk0pOt/images/statusline-links.png?fit=max&auto=format&n=HDAmBwgbrZVk0pOt&q=85&s=4778a144a28cb498c99d5fa018bb374a" alt="A status line showing a clickable link to a GitHub repository" width="1224" height="224" data-path="images/statusline-links.png" />
 </Frame>
 
 Each script gets the git remote URL, converts SSH format to HTTPS, and wraps the repo name in OSC 8 escape codes. The Bash version uses `printf '%b'` which interprets backslash escapes more reliably than `echo -e` across different shells:

@@ -27,11 +27,29 @@ Claude Code leaves sessions created with [`claude -p`](/docs/en/headless) or the
 
 `claude --continue` opens a [background session](/docs/en/agent-view) that has finished, but not one that is still running; opening finished background sessions requires Claude Code v2.1.257 or later. If your most recent conversation is one you [moved to the background](/docs/en/agent-view#send-the-session-to-the-background) and it is still running there, Claude Code exits with `Your most recent conversation is running in the background` and that session's ID. Attach to the session from [`claude agents`](/docs/en/agent-view#attach-to-a-session), or run `claude --resume` to pick another one.
 
+<span id="resume-a-running-background-session" />
+
+When the conversation you resume with `claude --resume` or `/resume` belongs to a [background session](/docs/en/agent-view) that is still running, Claude Code opens the running session itself. With `--bg` on the command line, the resume is a [background dispatch](/docs/en/agent-view#from-your-shell) instead. Before v2.1.285, Claude Code refused and told you to open the session with `claude attach <id>`, or to stop it with `claude stop <id>` first.
+
+* **From your shell**: `claude --resume <session>` runs [`claude attach`](/docs/en/agent-view#attach-to-a-session) on that session in the same terminal instead of loading the transcript itself. A prompt you pass on the command line, as in `claude --resume <session> "check the tests too"`, goes to the session as its next turn first, and Claude Code prints `Sent your prompt to the background session (<id>); opening it…` before attaching. `claude -p --resume <session> "prompt"` typed at a terminal does the same, so `-p` doesn't keep that run non-interactive.
+
+  Claude Code doesn't open the session when the command line has any of these:
+
+  * Piped or redirected input or output
+  * Flags that configure the session, such as `--permission-mode`, `--model`, or `--settings`
+  * Flags that read the output, such as `--output-format json` or `--json-schema`
+  * Flags that limit or rewind the run, such as `--max-turns` or `--max-budget-usd`
+
+  With any of these, or when [agent view is turned off](/docs/en/agent-view#turn-off-agent-view), Claude Code sends nothing and exits with status 1, printing that the session is running in the background along with the `claude attach <id>` command that opens it, or telling you to find it in `claude agents` when it can't determine the ID. Add `--fork-session` to resume a copy of the conversation instead. To continue the conversation itself in a session of your own, with your flags applied, run `claude stop <id>` and then repeat the command.
+
+  A prompt that starts with `/` or `!` isn't sent, and neither is any prompt while the session waits on your answer to a question. In both cases Claude Code doesn't open the session, and the message includes `Your prompt was not sent to it` with the reason.
+* **From inside a session**: `/resume` moves your current conversation to the background and attaches this terminal to the running session, printing `Opening "<title>", running in the background (<id>)`. Press `←` on an empty prompt to return to agent view, which also lists the conversation you left. When the current conversation can't move to the background, for example because you're already attached to a background session or session persistence is off, `/resume` prints the `claude attach` command to run instead.
+
 You can run `claude --resume <session-id>` from any directory: Claude Code looks for the ID in the current project directory and its git worktrees first, then in every other project on this machine, so it finds a session that started elsewhere or moved with [`/cd`](/docs/en/commands). The cross-project search resolves the ID only when exactly one other project holds a transcript with messages for it, so a hand-copied duplicate makes Claude Code report not-found rather than resume an arbitrary copy. If no stored session matches the ID, Claude Code reports `No conversation found with session ID: <session-id>`. Before v2.1.223, the lookup stopped at the current project directory and its git worktrees, so you had to resume from the directory the session last worked in.
 
 ### What a resumed session restores
 
-A resumed session restores the conversation along with the state saved in it:
+When Claude Code loads a conversation from its transcript, the resumed session restores the conversation along with the state saved in it:
 
 * Conversation history: the full history, including tool calls and results. A tool that was still running when the previous process ended, for example in a crash, doesn't finish or run again when you resume. Claude sees the call marked as cut off before its result was recorded and is told to check whether it took effect before running it again, unless [`CLAUDE_CODE_RESUME_INTERRUPTED_TURN`](/docs/en/env-vars#variables) is set. Before v2.1.281, Claude Code dropped the cut-off call from the conversation or showed it to Claude as one you interrupted.
 * Model: the session continues on the model it was using. The model isn't restored when it has been retired or isn't allowed by `availableModels`, when a `--model` flag or `ANTHROPIC_MODEL`-family environment variable picks one at launch, or on providers that use provider-specific deployment IDs, such as [Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry](/docs/en/third-party-integrations); see [model configuration](/docs/en/model-config#setting-your-model) for the resolution order.
@@ -45,7 +63,7 @@ Not every configuration flag from the original launch is restored. If the sessio
 
 #### Permission mode on resume
 
-Which permission mode Claude Code starts a resumed session in depends on how you resume:
+Which permission mode Claude Code starts a resumed session in depends on how you resume. The cases below apply when Claude Code loads the conversation from its transcript; when you [open a background session that is still running](#resume-a-running-background-session) instead, that session keeps the permission mode it is in.
 
 * Terminal: `claude --continue`, `claude --resume <session-id>`, or `claude --resume <name>` when the name matches one session, without `-p`. Claude Code restores the permission mode the session was in, except in the cases in the table. Pass `--permission-mode` or `--dangerously-skip-permissions` to override the restored mode.
 * Non-interactive: `claude -p --resume` or `claude -p --continue`. Claude Code starts the run in the permission mode a new `claude -p` run would start in, except that a session that ended in plan mode resumes in plan mode under the [conditions below](#resume-in-plan-mode-with-p).

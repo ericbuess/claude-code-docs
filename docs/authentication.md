@@ -178,6 +178,24 @@ The keys also decide whether a session that doesn't use a login credential can s
 * **Cloud provider sessions such as Amazon Bedrock**: blocked only while an `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper` credential, or an API key saved by an earlier Claude Console login, is still present on the machine. Remove it and the session starts. These sessions authenticate against your cloud provider, whose access policies govern them
 * **[Anthropic profile or federation credentials](#anthropic-profiles-and-federation-credentials)**: not blocked unless an `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper` credential, or an API key saved by an earlier Claude Console login, is also present on the machine. The keys don't check which organization the profile belongs to
 
+### Restrict which API providers a machine may use
+
+[`allowedProviders`](/docs/en/settings-reference#allowedproviders) in [managed settings](/docs/en/managed-settings) lists which services a managed machine may reach Claude through, such as the Anthropic API, Amazon Bedrock, or an LLM gateway. It complements `forceLoginMethod` and `forceLoginOrgUUID`, which govern which account a session uses when it talks to Anthropic. Requires Claude Code v2.1.285 or later.
+
+```json managed-settings.json theme={null}
+{
+  "forceLoginMethod": "claudeai",
+  "forceLoginOrgUUID": ["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"],
+  "allowedProviders": ["anthropic", "bedrock"]
+}
+```
+
+With this file, a developer signed in to your claude.ai organization or configured for Amazon Bedrock starts normally. A session set up for any other provider is refused at startup, and a running session that switches to one is refused on its next request. [Managed settings don't allow this API provider](/docs/en/errors#managed-settings-dont-allow-this-api-provider) shows each message.
+
+* **Allow an LLM gateway or proxy**: list `"customEndpoint"` and set the gateway's URL in the managed `env` block of the same source. The [settings reference](/docs/en/settings-reference#allowedproviders) lists every value and says which endpoint variables need a managed `env` pin.
+* **Deploy on managed machines**: put the list in the managed source that carries the rest of your policy. The entry's [Scope note](/docs/en/settings-reference#allowedproviders) says how a server-managed list combines with it.
+* **Server-managed settings only**: a list you set only in [server-managed settings](/docs/en/server-managed-settings) reaches only sessions that fetch your organization's settings, so treat it as a convenience for machines you can't reach with device management, not as enforcement. [Platform availability](/docs/en/server-managed-settings#platform-availability) lists which sessions fetch them.
+
 ## Credential management
 
 Claude Code securely manages your authentication credentials:

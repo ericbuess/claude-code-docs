@@ -1301,6 +1301,8 @@ For the CLI, set these keys in the per-OS `managed-settings.json`. The two login
 
 `parentSettingsBehavior: "merge"` keeps Claude Desktop's delivery of the egress allowlist to its embedded Claude Code sessions working; [Deliver policy to Claude Desktop sessions](/docs/en/claude-apps-gateway#deliver-policy-to-claude-desktop-sessions) explains the mechanism and where the opt-in must sit.
 
+To stop developers from bypassing the gateway with a cloud provider variable or an `ANTHROPIC_BASE_URL` of their own, add `"allowedProviders": ["gateway"]` to the same file. Claude Code then refuses every session on the machine that isn't set up for a Cloud gateway, and admits a gateway only when it is the one `forceLoginGatewayUrl` names or one whose URL the file's `env` block sets as `ANTHROPIC_BASE_URL`. `claude gateway` refuses to run on a machine that sets the list, so keep the key off the gateway host. See the [`allowedProviders`](/docs/en/settings-reference#allowedproviders) entry in the settings reference. Requires Claude Code v2.1.285 or later.
+
 Deploy the `managed-settings.json` file to each device, typically via your MDM platform. The file path differs by platform. See [where each mechanism stores the policy](/docs/en/managed-settings#where-each-mechanism-stores-the-policy).
 
 By default, a registry policy on Windows or a managed-preferences plist on macOS replaces the `managed-settings.json` file rather than merging with it, apart from the [exception keys and cross-source checks above](#precedence-with-other-managed-sources). All three keys in this snippet follow the highest-priority-source rule, so fleets that deliver policy through Group Policy or configuration profiles must put all three in that mechanism instead.

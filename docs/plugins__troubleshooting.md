@@ -197,6 +197,18 @@ For example, to add the official marketplace by its clone URL, in a session:
 
 A successful add prints `Successfully added marketplace: <name>`.
 
+<h3 id="invalid-git-url">
+  `Invalid git URL`
+</h3>
+
+You added a marketplace, installed a plugin, or ran an update from a git address, and the command failed with `Invalid git URL` in its message.
+
+Claude Code checks every git address before running git. It refuses an address whose protocol it doesn't support. It also refuses an address that git could read as naming a different server or folder than the one the address shows.
+
+The text after the address names what to change. Rewrite the address as the message says and run the command again.
+
+A refusal that instead says `is blocked by enterprise policy` comes from your organization's settings. See [Marketplace source is blocked by enterprise policy](#marketplace-source-is-blocked-by-enterprise-policy).
+
 <h3 id="path-does-not-exist">
   `Path does not exist: <path>`
 </h3>
@@ -403,6 +415,19 @@ The plugin is already available in every project, so there's nothing to add. To 
 A plugin installed only at project or local scope doesn't trigger this message. Claude Code lets you install it at user scope as well, so it's available in other projects.
 
 `claude plugin install` in your shell prints a different message. For a plugin already installed at the target scope, it prints `Plugin "<name>@<marketplace>" is already installed (scope: user)` and exits 0. If its cache directory is missing, the same command re-downloads it.
+
+<h3 id="plugin-would-share-its-folder">
+  `"<plugin>" was not installed: it would share its folder with "<other>"`
+</h3>
+
+You installed a plugin through `claude plugin install`, `/plugin`, or an install suggestion in a session, and Claude Code refused it with this line, or with `would share its saved data with`.
+
+The refused plugin's id and an installed plugin's id map to the same folder on disk: they are the same once `.` and `@` are written as `-`. On macOS and Windows, ids that differ only in capitals map to the same folder too. Installing both would put one plugin's files in the other's folder, so Claude Code refuses and the installed plugin keeps its files.
+
+The message names the way out:
+
+* **The other plugin is installed**: the message says `Only one of the two can be installed.` and names the `claude plugin uninstall` command, or the uninstall step in `/plugin`, that removes the other plugin. Run it, then install again. For what the uninstall removes, see [What an uninstall deletes and keeps](/docs/en/plugins/cli-reference#what-an-uninstall-deletes-and-keeps).
+* **Both ids arrive in one install**, such as a plugin and a dependency it needs: no install order helps. Only a maintainer of the marketplace that lists the two plugins can fix it, by renaming one of them. When the two come from different marketplaces, a maintainer of either one can.
 
 <h3 id="this-plugin-uses-a-source-type-your-claude-code-version-does-not-suppo">
   `This plugin uses a source type your Claude Code version does not support`
@@ -772,6 +797,12 @@ The server's configuration passes the schema check, but Claude Code can't resolv
 * **`URL is unset or invalid`**: a `${user_config.*}` option that the URL uses isn't set. Run `/plugin configure <plugin>` to set it
 * **`has an invalid MCP url`** or **`headersHelper for MCP server '<server>' references ${user_config.*}`**: the plugin's own configuration is at fault. Fix the `url` or `headersHelper` in your plugin's MCP configuration, or report it to the plugin's author if the plugin isn't yours. The `headersHelper` case has its own entry under [plugin command references user\_config](/docs/en/errors#plugin-command-references-user-config)
 
+#### `Bundled MCP server "<name>" was not started: it needs configuration`
+
+The plugin includes the server as an [MCPB bundle](/docs/en/plugins/components#include-a-packaged-mcpb-server) that declares `user_config`, and a required setting has no saved value yet or a saved value fails the bundle's own validation, so Claude Code skips starting the server. The rest of the plugin works.
+
+Select the plugin on `/plugin`'s **Installed** tab and choose **Configure** to supply the values. After you save, `/plugin` shows `Configuration saved.` and closes, and Claude Code reloads plugins as described under [Manage installed plugins](/docs/en/plugins/install#manage-installed-plugins). The server starts once that reload applies. Before v2.1.285, Claude Code skipped the server without showing this line.
+
 #### Server is configured but never connects
 
 Run `/mcp` to see the server's status. When the server is healthy, `/mcp` lists it as connected.
@@ -904,9 +935,10 @@ Change to the plugin's root, the directory that holds `.claude-plugin/plugin.jso
 
 Your plugin declares `userConfig` options, but no configuration dialog appears when you install it.
 
-The interactive install shows the dialog, and the shell command takes the values as flags instead:
+Whether the install asks for the values depends on where you run it:
 
 * **`/plugin install` in a session, or the Discover tab in `/plugin`**: the dialog is part of this interactive install
+* **The VS Code extension's Manage plugins dialog**: asks for unset options as a form after the install. Before v2.1.285, installing there showed no options form, so set the values from a terminal session with `/plugin configure <plugin>@<marketplace>`
 * **`claude plugin install` in your shell**: never prompts for `userConfig` values. It saves any `--config KEY=VALUE` values you pass, and when options remain unset it prints `N userConfig options not yet set — run /plugin configure <plugin>@<marketplace> in Claude Code, or pass --config KEY=VALUE.` When any of the unset options is required, `(M required)` follows `not yet set`.
 
 If you installed from the shell, pass the values with `--config`, one flag per option:
@@ -915,9 +947,13 @@ If you installed from the shell, pass the values with `--config`, one flag per o
 claude plugin install my-plugin@my-marketplace --config api_url=https://example.com
 ```
 
-When every option is set, the install output carries no `not yet set` line. To open the dialog afterwards instead, run `/plugin configure my-plugin@my-marketplace` in a session.
+When every option is set, the install output carries no `not yet set` line.
+
+To open the dialog afterwards instead, run `/plugin configure my-plugin@my-marketplace` in a session. From the shell, [`claude plugin configure`](/docs/en/plugins/cli-reference#plugin-configure) shows which options are still unset and saves values piped in on stdin. It requires Claude Code v2.1.285 or later.
 
 If you pass a `--config` key the manifest doesn't declare, the plugin still installs, and the command prints `⚠ Installed, but --config not applied: --config key "<key>" isn't declared in this plugin's userConfig.` followed by the keys the plugin does declare.
+
+For a plugin that ships an [MCPB bundle file](/docs/en/plugins/components#include-a-packaged-mcpb-server) declaring `user_config` of its own, the message reads `isn't declared in this plugin's userConfig or by its bundled MCP servers.` instead, and the known keys include that server's keys, written `<server>.<key>`. A bundle the manifest references by URL isn't read at install time, so its keys aren't listed and the message says to configure it in `/plugin`. Setting `<server>.<key>` keys requires Claude Code v2.1.285 or later.
 
 <h3 id="claude-plugin-validate-reports-errors">
   `claude plugin validate` reports errors

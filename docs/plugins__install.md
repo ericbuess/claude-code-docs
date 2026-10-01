@@ -70,6 +70,7 @@ Pick the tab for where you run Claude Code.
         The last sentence of the summary tells you whether the plugin is usable in this session yet:
 
         * **Active now**: `Plugin is now active.` No reload is needed.
+        * **Active, but a server needs setup**: `Plugin is now active.` is followed by `Its bundled MCP server needs configuration before it can start`. The plugin's [bundled MCP server](/docs/en/plugins/components#include-a-packaged-mcpb-server) can't start until you set its options. Select the plugin on the **Installed** tab in `/plugin` and choose **Configure** to set the server's options.
         * **Reload needed**: `Run /reload-plugins to activate.` The panel closes and Claude Code runs that reload for you. If the reload would [invalidate the prompt cache](/docs/en/prompt-caching#enabling-or-disabling-a-plugin), it warns and leaves the plugin pending instead. Run `/reload-plugins --force` to activate it anyway, which costs one uncached request.
         * **Load failed**: `The plugin couldn't be loaded`. Open the **Errors** tab in `/plugin` for the reason, then see [After install: plugin not working](/docs/en/plugins/troubleshooting#plugin-installed-but-not-working).
       </Step>
@@ -236,7 +237,7 @@ If you haven't added that marketplace yet, Claude Code shows the source it resol
 A private marketplace is one in a repository you need credentials to clone, on GitHub or any other git host. You add it with the same `/plugin marketplace add` or `claude plugin marketplace add` command as a public one. Claude Code clones it with the git credentials already on your machine and never prompts, so each way of connecting has a requirement:
 
 * **HTTPS**: your git credential helpers apply, so access you set up with `gh auth login`, the macOS Keychain, or `git-credential-store` works. Interactive prompts are suppressed, so a host you have never authenticated to fails instead of asking for a password.
-* **SSH**: the host must already be in your `known_hosts` file and the key must work without a passphrase prompt, because the host-fingerprint and passphrase prompts are suppressed too.
+* **SSH**: the host must already be in your `known_hosts` file and the key must work without a passphrase prompt. If your git setup names an SSH program in `GIT_SSH_COMMAND`, `GIT_SSH`, or your git config's `core.sshCommand`, Claude Code runs that program.
 * **GitHub `owner/repo` shorthand**: Claude Code checks whether your SSH key authenticates to `github.com`, then clones over SSH if it does and over HTTPS if it doesn't. Set [`CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1`](/docs/en/env-vars#variables) to skip that check and always clone over HTTPS.
 
 The same credentials apply when you run `/plugin install`, `/plugin marketplace update`, and `claude plugin update`.
@@ -274,7 +275,12 @@ The **Installed** tab in `/plugin` lists your plugins with actions to enable, di
 
 * Type to filter by name or description.
 * Press **Space** to enable or disable the selected plugin, and **f** to favorite it.
-* Press **Enter** to open a plugin's details. The menu there offers **Disable plugin** or **Enable plugin**, **Update now**, and **Uninstall**. Plugins that take settings also offer **Configure options**.
+* Press **Enter** to open a plugin's details.
+
+A plugin's details menu offers **Disable plugin** or **Enable plugin**, **Update now**, and **Uninstall**. Two more items appear for plugins that take settings, and a plugin can show both:
+
+* **Configure options**: shown when the plugin's manifest declares [`userConfig` options](/docs/en/plugins/manifest-reference#user-configuration). Opens the dialog for those options
+* **Configure**: shown when the plugin includes a [bundled MCP server](/docs/en/plugins/components#include-a-packaged-mcpb-server). Sets that server's own `user_config` settings
 
 The tab can also show plugins at **Managed** scope. Your organization installed those through [managed settings](/docs/en/settings#settings-files), and you can't enable, disable, or uninstall them here.
 
