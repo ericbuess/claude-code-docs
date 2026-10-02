@@ -623,7 +623,7 @@ Reference terminal output in your prompts using `@terminal:name` where `name` is
 
 When Claude is waiting on a command or a [subagent](/docs/en/sub-agents) that is taking longer than you want, click **Run in background** below its tool call in the conversation. The action appears once a command has been running for about two seconds, or as soon as a subagent starts. Claude stops waiting and continues the turn, while the command or subagent keeps running as a [background task](/docs/en/tools-reference#background-commands) that notifies Claude when it finishes. Requires Claude Code v2.1.287 or later.
 
-To check on the task or stop it in the meantime, type `/tasks` in the prompt box to open the [agent map](#use-the-prompt-box). A subagent keeps its place in the tree of agents there, and a command is listed below the agents with its [latest output on its card](#monitor-background-processes). A command you move to the background this way is subject to the [time limit for background commands](/docs/en/tools-reference#time-limit-for-background-commands).
+To check on the task or stop it in the meantime, type `/tasks` in the prompt box to open the [agent map](#use-the-prompt-box). A subagent keeps its place in the tree of agents there, and a command is listed below the agents with its [latest output on its card](#monitor-background-processes).
 
 ### Monitor background processes
 
