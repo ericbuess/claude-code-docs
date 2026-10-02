@@ -251,21 +251,29 @@ claude plugin update <plugin> [options]
 | `--accept-command <sha256>` | Accept the marketplace-declared command whose `sha256` a previous [`--json` run](#plugin-json-result) reported in `shownCommand`, in place of `-y`. Can't be combined with `-y`. Requires Claude Code v2.1.271 or later |
 | `--json` | Print the result as one JSON object on the last line of stdout, in the [same format as `plugin install --json`](#plugin-json-result). Requires Claude Code v2.1.268 or later |
 
-If you omit `--scope`, the command updates the plugin at the most specific scope it's installed at for your current project, checking local, project, user, then managed.
-
-Before v2.1.281, the command used `user` when you omitted `--scope`, so updating a plugin installed only at project or local scope failed with `Plugin "<name>" is not installed at scope user`. On those versions, pass `--scope`.
-
-`managed` is the one scope you can update but not install to. For admin-installed plugins, see [Manage plugins for your organization](/docs/en/plugins/org).
-
 Update a plugin:
 
 ```bash theme={null}
 claude plugin update formatter@my-marketplace
 ```
 
-Claude Code prints `Checking for updates for plugin "formatter@my-marketplace"…`, then the result. When nothing is newer, it prints `formatter is already at the latest version (1.0.0).` and exits `0`.
+Claude Code prints `Checking for updates for plugin "formatter@my-marketplace"…`, then the result. When nothing is newer, it prints `formatter is already at the latest version (1.0.0).` and exits `0`, unless it [retries the plugin's dependency install](#retry-an-unfinished-dependency-install) and that install fails.
+
+#### Which scope the command updates
+
+If you omit `--scope`, the command updates the plugin at the most specific scope it's installed at for your current project, checking local, project, user, then managed.
+
+Before v2.1.281, the command used `user` when you omitted `--scope`, so updating a plugin installed only at project or local scope failed with `Plugin "<name>" is not installed at scope user`. On those versions, pass `--scope`.
+
+`managed` is the one scope you can update but not install to. For admin-installed plugins, see [Manage plugins for your organization](/docs/en/plugins/org).
+
+#### Update by bare name
 
 You can pass a bare plugin name, which the command matches against your installed plugins. When installed plugins from different marketplaces share the name, the command refuses the update and lists the qualified `plugin-name@marketplace-name` commands to run instead. Updating by bare name requires Claude Code v2.1.246 or later.
+
+#### Retry an unfinished dependency install
+
+When the plugin is already at its latest version, the command can also retry an unfinished dependency install in its cached copy. For the cases where that retry runs or is skipped, see [The packages it lists are not installed](/docs/en/plugins/troubleshooting#the-packages-it-lists-are-not-installed). If the retry fails, the output is `Failed to update plugin "formatter@my-marketplace"` with the reason and the exit code is `1`. Before v2.1.287, the command reported the plugin at its latest version without retrying the install.
 
 ### plugin list
 
@@ -306,7 +314,7 @@ With `--json`, Claude Code prints an array with one object per installation. Eac
 | `projectPath` | string | Project the install belongs to. `project` and `local` scope only |
 | `mcpServers` | object | The plugin's MCP server definitions, when a marketplace-installed plugin has any |
 | `errors` | array of strings | Load errors, when the plugin failed to load |
-| `notes` | array of strings | Authoring warnings for a plugin that loaded and works |
+| `notes` | array of strings | Warnings that aren't load errors, such as authoring issues or [packages that aren't installed](/docs/en/plugins/loading#when-the-dependency-install-fails-or-is-skipped) |
 | `errorDetails` | array of objects | One object per `errors` entry, giving its diagnostic `type` and the names it refers to, such as the plugin, marketplace, server, or file. Requires Claude Code v2.1.268 or later |
 | `noteDetails` | array of objects | The same detail objects for each `notes` entry. Requires Claude Code v2.1.268 or later |
 | `hasUserConfig` | boolean | Present and `true` when the plugin loaded and its manifest declares [`userConfig` options](/docs/en/plugins/manifest-reference#user-configuration). Absent for a plugin that failed to load, whatever its manifest declares. Saved values are never included. Requires Claude Code v2.1.285 or later |
@@ -443,7 +451,7 @@ This table lists the options most runs use. Run `claude plugin eval --help` for 
 | `--runs <n>` | Runs per case in each [arm](/docs/en/plugin-evals#compare-against-a-no-plugin-baseline) | Each case's `runs`, else 3 |
 | `-j, --concurrency <n>` | Agent sessions to run at once, 1 to 8. They share your rate limit | `1` |
 | `--model <model>` | Model for the agent under test | Each case's `model`, else `ANTHROPIC_MODEL` if set, else Claude Code's default |
-| `--judge-model <model>` | Model for `llm` and `baseline` graders | A small fast model |
+| `--judge-model <model>` | Model for `llm` and `baseline` graders | The model for [background tasks](/docs/en/plugin-evals#grade-the-result) |
 | `--ablation <mode>` | `none` or `with-without`. See [Score against the no-plugin baseline](/docs/en/plugin-evals#compare-against-a-no-plugin-baseline) | Decided per case, as that section describes |
 | `--threshold <0..1>` | Exit 1 if any case scores below this | `1.0` |
 | `--max-cost-usd <usd>` | Stop before the next run once spend reaches this, exit 2, and report partial results | No limit |

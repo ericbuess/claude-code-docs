@@ -634,7 +634,7 @@ interface Query extends AsyncGenerator<SDKMessage, void> {
 | `reloadOutputStyles()` | Re-reads [output styles](/docs/en/output-styles) from disk, so a style file you add or edit mid-session becomes available to the running session. Resolves with an [`SDKControlReloadOutputStylesResponse`](#sdkcontrolreloadoutputstylesresponse) listing the style names available after the reload. Requires Agent SDK v0.3.261 or later |
 | `accountInfo()` | Returns account information |
 | `reconnectMcpServer(serverName)` | Reconnect an MCP server by name. If the name also matches an entry in a settings file such as `.mcp.json` or `~/.claude.json`, Claude Code reconnects the server you configured through [`mcpServers`](#options) or `setMcpServers()`, not the settings-file entry. That resolution order requires Claude Code v2.1.257 or later |
-| `toggleMcpServer(serverName, enabled)` | Enable or disable an MCP server by name, with the same name resolution as `reconnectMcpServer()`. Disabling a stdio, SSE, or HTTP server disconnects it and removes its tools; for a server you added mid-session with `setMcpServers()`, tool removal requires Claude Code v2.1.285 or later |
+| `toggleMcpServer(serverName, enabled)` | Enable or disable an MCP server by name, with the same name resolution as `reconnectMcpServer()`. Disabling a server disconnects it and removes its tools. See [`toggleMcpServer()`](#togglemcpserver) for the Claude Code version this needs for each kind of server |
 | `setMcpServers(servers)` | Dynamically replace the set of MCP servers for this session. Resolves with an [`McpSetServersResult`](#mcpsetserversresult) naming which servers were added and removed, and any errors |
 | `readMcpResource(serverName, uri)` | *Alpha.* Reads one MCP Apps `ui://` resource from a connected MCP server so your application can render a tool's widget. Resolves with an [`SDKControlMcpReadResourceResponse`](#sdkcontrolmcpreadresourceresponse). Requires TypeScript Agent SDK v0.3.280 or later |
 | `streamInput(stream)` | Stream input messages to the query for multi-turn conversations |
@@ -693,6 +693,13 @@ Writes one allowlisted key to a settings file on disk, so the value persists for
 * **`"userSettings"`**: accepts `effortLevel` and saves it as the default [effort level](/docs/en/model-config#adjust-effort-level) for the session's current model, under [`modelSettings`](/docs/en/settings-reference#modelsettings) in your user settings file. Passing `max` writes nothing, because `max` is session-only. The running session keeps its current effort level either way, so call [`applyFlagSettings()`](#applyflagsettings) when you also want to change that. This source requires TypeScript SDK v0.3.277 or later, which bundles Claude Code v2.1.277.
 
 The call rejects when the request carries any other key, when the session runs over a remote transport, and when the session's [`settingSources`](#options) exclude the source you name. Deleting a key isn't supported.
+
+#### `toggleMcpServer()`
+
+Disabling a server disconnects it and removes its tools from the session. For servers you added mid-session and for in-process servers, this depends on your Claude Code version:
+
+* A stdio, SSE, or HTTP server you added mid-session with `setMcpServers()`: removing its tools requires Claude Code v2.1.285 or later.
+* An in-process server you created with [`createSdkMcpServer()`](#createsdkmcpserver), whether you passed it in `mcpServers` or with `setMcpServers()`: disconnecting it and removing its tools requires Claude Code v2.1.286 or later. Disabling one also fails its tool calls that are still running, so Claude receives an error result for each of them immediately, without waiting for your handler to return.
 
 ### `WarmQuery`
 
@@ -1430,6 +1437,7 @@ type SDKUserMessage = {
   shouldQuery?: boolean;
   client_composed?: true;
   tool_use_result?: unknown;
+  priority?: "now" | "next" | "later";
   origin?: SDKMessageOrigin;
   inline_pastes?: string[];
 };
@@ -1437,18 +1445,37 @@ type SDKUserMessage = {
 
 Set `pasted_content` to send content the user pasted into your prompt UI rather than typed, one entry per paste, each a string or an array of content blocks. Claude Code appends each entry's text after the typed text, in order, and may wrap each paste in `<pasted_content>` tags. Blocks other than text are ignored, so send images and documents in `message.content`. Requires Agent SDK v0.3.277 or later.
 
-Set `shouldQuery` or `client_composed` to change how Claude Code handles a message you send:
+Set `inline_pastes` to tell Claude Code which parts of `message.content` the user pasted rather than typed, one string per paste. The prompt text stays where the user put it. Claude Code may wrap each listed paste in `<pasted_content>` tags where it stands, so Claude can tell pasted material from the user's own words. Only pastes in the prompt's last text block are wrapped. Requires TypeScript Agent SDK v0.3.280 or later.
+
+Set `shouldQuery`, `client_composed`, or `priority` to change how Claude Code handles a message you send:
 
 * `shouldQuery`: set it to `false` to append the message to the transcript without triggering an assistant turn. The message is held and merged into the next user message that does trigger a turn. Use this to inject context, such as the output of a command you ran out of band, without spending a model call on it.
 * `client_composed`: set it to `true` to have Claude Code deliver the message text as written. Claude Code then doesn't expand `@path` or [`@server:resource`](/docs/en/mcp#use-mcp-resources) mentions, and doesn't run text that starts with `/` as a command. While the [`verbatimPrompts`](#options) option is on, the SDK sets the field on every message. Requires TypeScript Agent SDK v0.3.280 or later and Claude Code v2.1.248 or later.
+* `priority`: controls when a message you send during a running turn reaches Claude:
+  * `'next'`, or no `priority` field: Claude reads the message in the same turn, as soon as the tool calls it is running finish. If the turn ends first, the message starts the next turn.
+  * `'later'`: Claude Code holds the message until the turn ends and sends it as a new turn.
+  * `'now'` with [`origin: { kind: "human" }`](#sdkmessageorigin): on Claude Code v2.1.286 or later, work that can continue in the background moves there, and Claude reads the message in the same turn. Work that can move includes shell commands, subagents, and MCP tool calls. On v2.1.287 or later it also includes WebFetch and WebSearch calls. When Claude is only writing a response, or the work it is running can't move, Claude Code interrupts the turn instead and Claude reads the message next.
+  * `'now'` without that origin: Claude Code interrupts the turn and Claude reads the message next.
 
-On a message that carries a `tool_result` block, `tool_use_result` is the tool's structured output object rather than the text sent to the model. Its shape depends on the tool named by the matching `tool_use` block, so the field is typed `unknown`; the built-in shapes are listed under [Tool Output Types](#tool-output-types).
+This message, sent while a turn is running, asks Claude to change course without losing a shell command that is still running:
 
-For the `Agent` tool, `tool_use_result` is [`AgentOutput`](#agent-2). Render from it rather than parsing the `tool_result` text. A `completed` result's `content` holds the subagent's report, or, for a subagent whose report goes through a `SubagentHandback` tool call, a short note about that hand-back in place of the report. In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) on Claude Code v2.1.271 or later, every subagent that produces a `completed` result reports that way unless it is a [fork](/docs/en/sub-agents#fork-the-current-conversation), and Claude receives the report as a separate message from the subagent.
+```typescript theme={null}
+const message: SDKUserMessage = {
+  type: "user",
+  message: { role: "user", content: "Skip the integration tests and summarize what you have so far" },
+  parent_tool_use_id: null,
+  priority: "now",
+  origin: { kind: "human" },
+};
+```
 
-For an MCP tool whose result contains `resource_link` blocks, `tool_use_result` is an object with a `resourceLinks` array of [`SDKMcpResourceLink`](#sdkmcpresourcelink) entries. Claude receives each link as a line of text in the `tool_result` block, so read `resourceLinks` to render the files the server returned instead of parsing that text. Claude Code omits `resourceLinks` when the result has no links and on results from subagents, keeps at most 50 links per result, and stops adding links once the array reaches 64 KiB of serialized JSON. `resourceLinks` requires Agent SDK v0.3.257 or later.
+On a message that carries a `tool_result` block, `tool_use_result` is the tool's structured output object rather than the text sent to the model. Its shape depends on the tool named by the matching `tool_use` block, so the field is typed `unknown`; the built-in shapes are listed under [Tool Output Types](#tool-output-types). These results need handling beyond their listed shape:
 
-Set `inline_pastes` to tell Claude Code which parts of `message.content` the user pasted rather than typed, one string per paste. The prompt text stays where the user put it. Claude Code may wrap each listed paste in `<pasted_content>` tags where it stands, so Claude can tell pasted material from the user's own words. Only pastes in the prompt's last text block are wrapped. Requires TypeScript Agent SDK v0.3.280 or later.
+* The `Agent` tool: `tool_use_result` is [`AgentOutput`](#agent-2). Render from it rather than parsing the `tool_result` text. A `completed` result's `content` holds the subagent's report, or, for a subagent whose report goes through a `SubagentHandback` tool call, a short note about that hand-back in place of the report. In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) on Claude Code v2.1.271 or later, every subagent that produces a `completed` result reports that way unless it is a [fork](/docs/en/sub-agents#fork-the-current-conversation), and Claude receives the report as a separate message from the subagent.
+* A WebFetch or WebSearch call that Claude Code moved to the background to deliver a `'now'` message: the user message carrying that call's `tool_result` has `tool_use_result` set to `{ detachedToolCall: true }`. The call is still running, and Claude receives its result once it finishes. No second `tool_result` for that `tool_use_id` follows, so if your application draws a row for each tool call, mark this row as moved to the background when this message arrives. Requires Claude Code v2.1.287 or later.
+* An MCP tool whose result contains `resource_link` blocks: `tool_use_result` is an object with a `resourceLinks` array of [`SDKMcpResourceLink`](#sdkmcpresourcelink) entries. Claude receives each link as a line of text in the `tool_result` block, so read `resourceLinks` to render the files the server returned instead of parsing that text. Claude Code omits `resourceLinks` when the result has no links and on results from subagents, keeps at most 50 links per result, and stops adding links once the array reaches 64 KiB of serialized JSON. `resourceLinks` requires Agent SDK v0.3.257 or later.
+* An MCP tool that returns [`structuredContent`](#calltoolresult): `tool_use_result` is an object whose `structuredContent` member holds what the server sent and whose `content` member holds the [`McpOutput`](#mcpoutput) value. Results from subagents don't carry `structuredContent`.
+* An MCP tool whose `structuredContent` serializes to more than 1,048,576 characters of JSON: Claude Code leaves `structuredContent` off `tool_use_result` and sets `structuredContentOmitted: true` in its place, so your application can tell a dropped object from a tool that sent none. The other members, such as `content` and `resourceLinks`, stay, and what Claude receives doesn't change. Tools from [in-process SDK servers](/docs/en/agent-sdk/custom-tools) and tools whose `tools/list` entry declares an [MCP Apps `_meta.ui` resource](#mcpserverstatus) are exempt and deliver the object whole. Claude Code v2.1.287 or later applies this cap.
 
 ### `SDKUserMessageReplay`
 
@@ -1499,7 +1526,13 @@ type SDKResultMessage =
       first_content_frame_ms?: number;
       first_stream_post_ms?: number;
       first_stream_post_ack_ms?: number;
+      first_stream_post_queue_wait_ms?: number;
+      first_stream_post_queued_behind?: "durable_post" | "ephemeral_post" | "retry_backoff" | "hold" | "none";
       first_stream_post_wall_ms?: number;
+      first_text_post_ms?: number;
+      first_text_post_queue_wait_ms?: number;
+      first_text_post_queued_behind?: "durable_post" | "ephemeral_post" | "retry_backoff" | "hold" | "none";
+      first_text_post_wall_ms?: number;
       total_cost_usd: number;
       usage: NonNullableUsage;
       modelUsage: { [modelName: string]: ModelUsage };
@@ -4524,7 +4557,7 @@ type McpOutput =
     };
 ```
 
-MCP tool results are returned as a string or an array of content blocks, depending on the server. The trailing plain-object branch in the exported type is a schema-generation artifact: the SDK doesn't return a bare object, because a server's structured output is serialized to a JSON string before being returned. At runtime the value may also be `undefined`, although the exported type doesn't model this.
+MCP tool results are returned as a string or an array of content blocks, depending on the server. The trailing plain-object branch in the exported type is a schema-generation artifact. For a result that also carries `structuredContent` or resource links, see [`tool_use_result`](#sdkusermessage), which holds this value in its `content` member. At runtime the value may also be `undefined`, although the exported type doesn't model this.
 
 ## Permission Types
 

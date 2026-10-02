@@ -302,12 +302,25 @@ The gateway applies per-IP rate limits on the device-grant endpoints, configurab
 * **Host-process traffic**: the host process is the Claude Code CLI. `claude gateway` runs under the same third-party rules as Amazon Bedrock and Google Cloud's Agent Platform deployments and sends nothing to Anthropic. Before v2.1.227, the host process sent startup telemetry such as product version and platform, which setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1` in the container environment turned off. Those releases also sent one `HEAD` request at boot, with no body or credentials, to `/api/hello` on `https://api.anthropic.com`, or on `ANTHROPIC_BASE_URL` when the environment set it, unless the environment also set a proxy variable such as `HTTPS_PROXY` or an mTLS client certificate. They ignored the response, so blocking that request at the egress firewall didn't affect the gateway.
 * **Client analytics**: the CLI disables its own usage analytics and error reporting while signed in to a gateway. Before the first sign-in, the CLI still sends startup events to Anthropic, including on machines whose managed settings force gateway sign-in. To keep those off too, deliver [`DISABLE_TELEMETRY`](/docs/en/managed-settings#turn-telemetry-off-for-your-organization) in the same [client-side managed settings](/docs/en/claude-apps-gateway-config#client-side-managed-settings) that force gateway sign-in.
 * **Error reporting**: the CLI turns error reporting off whenever its model requests go to any endpoint other than Anthropic's first-party API, such as Amazon Bedrock or a custom `ANTHROPIC_BASE_URL`.
-* **Client machines**: developers' CLIs still send WebFetch hostname checks and version checks to Anthropic unless `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1` and `skipWebFetchPreflight: true` are set. See [data usage](/docs/en/data-usage).
+* **Client machines**: developers' CLIs still send WebFetch hostname checks and version checks to Anthropic unless `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1` and `skipWebFetchPreflight: true` are set. [Plugin marketplace requests](#plugin-marketplace-requests) have their own off switches. See [data usage](/docs/en/data-usage).
 * **Survey ratings**: while signed in to a gateway, the CLI disables the Anthropic-bound rating upload together with the analytics streams, so it doesn't send ratings to Anthropic.
 * **Transcript sharing**: choosing Yes on a survey's transcript-share prompt writes a local file under `~/.claude/feedback-bundles/` instead of uploading to Anthropic.
 * **Client updates**: update checks are separate from gateway traffic. Pin versions through your own distribution and set `DISABLE_UPDATES` if laptops must not fetch releases. `DISABLE_AUTOUPDATER` stops only background updates while `claude update` still works.
 * **TLS**: serve `public_url` over HTTPS in production, either from the gateway's own listener via `listen.tls` or from a TLS-terminating ingress in front of plain-HTTP replicas, with `listen.public_url` set in both cases. The gateway doesn't refuse plain HTTP. The IdP must serve HTTPS in production, and Postgres supports `?sslmode=require`. Set `Strict-Transport-Security` at your ingress.
 * **Vulnerability disclosure**: follow [Reporting security issues](/docs/en/security#reporting-security-issues)
+
+### Plugin marketplace requests
+
+Claude Code fetches plugin marketplaces directly from each developer's machine, not through the gateway. [Network access requirements](/docs/en/network-config#network-access-requirements) lists the hosts.
+
+The first time a developer starts an interactive terminal session, Claude Code registers the official marketplace, `claude-plugins-official`. It downloads the catalog from `downloads.claude.ai` and, if that fails, clones it from `github.com`. [Which marketplaces and plugins auto-update](/docs/en/plugins/loading#which-marketplaces-and-plugins-auto-update) covers later refreshes.
+
+`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1` doesn't stop the first registration. Either of these managed settings does:
+
+* **A marketplace list**: a [`strictKnownMarketplaces`](/docs/en/plugins/org#allowlist-with-strictknownmarketplaces) allowlist that leaves the marketplace out, or a [`blockedMarketplaces`](/docs/en/plugins/org#blocklist-with-blockedmarketplaces) entry that names it
+* **An environment variable**: `CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL` set to `"1"` in the managed [`env` block](/docs/en/plugins/org#turn-updates-off-for-the-whole-fleet)
+
+The first registration can run before the developer signs in to the gateway, when no gateway policy has arrived. To cover that first start, deliver your choice in [client-side managed settings](/docs/en/claude-apps-gateway-config#client-side-managed-settings) as well as in the gateway policy's [`cli` block](/docs/en/claude-apps-gateway-config#what-goes-in-cli).
 
 ## Troubleshooting
 

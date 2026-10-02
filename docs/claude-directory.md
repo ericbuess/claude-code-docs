@@ -1600,9 +1600,11 @@ The retention cleanup sweep doesn't remove the paths below. Claude Code keeps th
 | `cache/changelog.md` | Cached copy of the Claude Code changelog, shown by `/release-notes`. Refreshed in the background. |
 | `policy-limits.json` | Cached feature policy settings for your organization. Only present for some account types. Refreshed automatically. A `policy-limits.json.stamp.json` sidecar records which account or API key the cache belongs to. Claude Code deletes both files when you log out. |
 
-<span id="state-files-to-keep" />
+<h4 id="state-files-to-keep">
+  State files to keep
+</h4>
 
-Other files appear depending on which features you use. Caches and lock files are safe to delete. Keep these state files:
+Depending on which features you use, `~/.claude/` also holds files that the tables under [Application data](#application-data) don't list. Of those, caches and lock files are safe to delete. Keep these state files:
 
 * `.credentials.json`: your [login credentials](/docs/en/authentication#credential-management)
 * `agent-memory/`: [subagent memory](/docs/en/sub-agents#enable-persistent-memory)

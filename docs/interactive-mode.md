@@ -360,7 +360,7 @@ Type a message and press `Enter` while Claude is working. Claude Code queues the
 
 Sent and queued messages show in gray until Claude starts responding to them, so you can tell which messages Claude hasn't started on yet.
 
-If you queue a message with a selection attached from a [connected IDE](/docs/en/vs-code#the-built-in-ide-mcp-server) or the [diff panel](#diff-panel), it keeps the selection you had when you pressed `Enter`, whatever you select afterward.
+If you queue a message with a selection attached from a [connected IDE](/docs/en/vs-code#the-built-in-ide-mcp-server), it keeps the selection you had when you pressed `Enter`, whatever you select afterward.
 
 ### When Claude Code sends what you queued
 
@@ -545,53 +545,54 @@ Pasted text can carry Unicode characters that a terminal draws as nothing at all
 
 If Claude Code removed anything, that Enter sends nothing. The cleaned prompt goes back into the input box with a notice such as `Removed 3 invisible characters · review and press Enter to send`, and pressing Enter again sends the text as shown.
 
-When you pass a prompt on the command line, as in `claude "fix the login bug"`, or pipe one into an interactive session, Claude Code doesn't wait for a second Enter. It removes the characters, shows a notice, and sends the cleaned prompt. If the cleaned prompt would begin with `/`, Claude Code puts it in the input box for you to review and send instead.
+When you pass a prompt on the command line, as in `claude "fix the login bug"`, Claude Code doesn't wait for a second Enter. It removes the characters, shows a notice, and sends the cleaned prompt. If the cleaned prompt would begin with `/`, Claude Code puts it in the input box for you to review and send instead.
 
 ## Review changes with /diff
 
-Run `/diff` to look over the changes in your working tree without leaving Claude Code. You see the edits Claude has made so far alongside anything else you haven't committed.
+Run `/diff` to look over the changes in your working tree without leaving Claude Code. You see the edits Claude has made so far alongside anything else you haven't committed. What `/diff` opens depends on which renderer is active:
 
-In the changes `/diff` reads from git, a submodule appears as a single entry, and only when the commit it points to changes; edits to files inside the submodule don't appear there.
+* **[Fullscreen rendering](/docs/en/fullscreen)**: the [diff panel](#diff-panel) opens beside the conversation. It stays open and updates while you keep working.
+* **Classic renderer**: the [diff dialog](#diff-dialog) opens above the prompt, and you close it when you're done reading.
 
-In [fullscreen rendering](/docs/en/fullscreen), `/diff` opens the [diff panel](#diff-panel) beside the conversation, which stays open and updates while you keep working. In the classic renderer, `/diff` opens the [diff viewer](#diff-viewer) in place of the prompt, and you close it when you're done reading.
+The panel and the dialog both come from `cc-plugin-diff`, one of the [mods built into Claude Code](/docs/en/plugins/mods/overview#mods-built-into-claude-code). If you disable that mod in `/plugin`, `/diff` opens Claude Code's earlier panel and [diff viewer](/docs/en/keybindings#diff-actions) instead.
+
+In the changes `/diff` reads from git, a submodule appears as a single entry, and only when the commit it points to changes; edits to files inside the submodule don't appear there. The panel and the dialog also offer a view of each turn's edits once Claude has edited files. These turn views come from Claude's file edits rather than from git, so a change Claude makes through a shell command appears only under `Current`, the working-tree view.
 
 ### Diff panel
 
-The diff panel lists the changed files with their added and removed line counts, and shows each file's diff under the list. Claude Code refreshes it each time Claude edits a file or runs a shell command. To close it, run `/diff` again or click the `✕` in its header.
+The diff panel lists the changed files with their added and removed line counts, and shows each file's diff under the list. Claude Code refreshes it each time Claude edits a file or runs a shell command. To close the panel, run `/diff` again or click the `✕` in its header.
 
 To use the panel you need:
 
 * [Fullscreen rendering](/docs/en/fullscreen)
 * A git repository
 * A terminal at least 110 columns wide
-* Claude Code v2.1.260 or later
-
-When the panel can't open, `/diff` opens the diff viewer instead or tells you why.
+* Claude Code v2.1.287 or later
 
 The panel also opens on its own once Claude starts editing files, if your terminal is at least 144 columns wide. After you've opened it yourself with `/diff`, later sessions open it as soon as Claude edits a file in any terminal wide enough to fit it. Close the panel and it stays closed, in this session and later ones, until you run `/diff` again.
 
 While the panel is open, you can:
 
 * **Jump to a file**: click its row in the list. Scroll the panel with the mouse wheel. When the file list itself is too long to fit, scroll it with `Alt+Up` and `Alt+Down`, or `Ctrl+Up` and `Ctrl+Down`.
-* **Ask Claude about specific lines**: select them in the panel with the mouse. Claude Code attaches the selection to your next prompt and shows a line count in the input until you send it.
-  * To send the prompt without the selection, move the cursor to just after the line-count indicator and press `Backspace` to delete it. Requires Claude Code v2.1.271 or later.
+* **Ask Claude about a file's changes**: click `ask`, at the right of the file's name above its diff. Claude Code attaches that file's diff to your next prompt, and the button reads `asked ✓` until you send that prompt. Asking on a second file replaces the first.
+* **Show one turn's edits**: click the `source` picker in the panel's header, then choose a turn with `Up` and `Down` and press `Enter`. Turns are labeled `T1`, `T2`, and so on. The picker appears once Claude has edited files, and `Current` returns you to the working tree.
 * **Show the files the panel leaves out**: the list skips test files and generated files, and collapses changes from before this session into one line at the bottom. Click either count line to expand it.
-* **Change what the panel compares against**: press `Ctrl+X B` to cycle from this session's changes, to your uncommitted changes as one list, to everything since your branch split from the default branch. Claude Code remembers the choice for each project.
+* **Change what the panel compares against**: press `Ctrl+X B` to cycle from this session's changes, to your uncommitted changes as one list, to everything since your branch split from the default branch. Claude Code remembers the choice for each repository.
 
-To bind keys to these actions, see [Diff panel actions](/docs/en/keybindings#diff-panel-actions).
+To rebind the keys that scroll the file list or change the comparison, see [Diff panel actions](/docs/en/keybindings#diff-panel-actions).
 
-### Diff viewer
+### Diff dialog
 
-The diff viewer takes the place of the prompt until you close it. Its **Current** view shows your uncommitted changes from git, or, when there are none, what your branch adds on top of the default branch. The viewer also has a turn view for each prompt after which Claude edited files, showing just those edits. Claude Code builds the turn views from Claude's file edits rather than from git, so a change Claude makes through a shell command appears only under Current.
+The diff dialog opens as a bordered block above the prompt and lists your changed files with their added and removed line counts. It compares them against `HEAD`, or against whatever you last [chose in the diff panel](#diff-panel) for this repository.
 
-Use these keys in the viewer:
+Once Claude has edited files, a `source` picker appears above the list. It offers one turn view, labeled `T1`, `T2`, and so on, for each of your prompts that led Claude to edit files. A turn view shows only that turn's edits, and `Current` returns you to the working tree.
 
-* **Left and Right**: move between Current and the turn views.
+Use these keys in the dialog:
+
 * **Up and Down**: select a file.
 * **Enter**: open the selected file's diff. Scroll it with Up and Down, or PageUp and PageDown.
-* **Esc**: return from a file's diff to the list, or close the viewer from the list.
-
-To rebind these keys, see [Diff actions](/docs/en/keybindings#diff-actions).
+* **Esc**: return from a file's diff to the list, or close the dialog from the list.
+* **Tab**: move to the `source` picker, then choose `Current` or a turn view with Up and Down and press Enter. In a file's diff, Tab moves to the `ask` button. Press Enter to attach that file's diff to your next prompt.
 
 ## Side questions with /btw
 
@@ -645,9 +646,9 @@ The list fills only in sessions that have the task-tracking tools, which Claude 
 
 When you return to the terminal after stepping away, Claude Code shows a one-line recap of what happened in the session so far. The recap generates in the background once at least three minutes have passed since the last completed turn and the terminal is unfocused, so it's ready when you switch back. Recaps only appear once the session has at least three turns, and never twice in a row.
 
-Run `/recap` to generate a summary on demand. Claude Code caps both automatic recaps and `/recap` output at 400 characters. To turn automatic recaps off, open `/config` and turn off **Session recap**.
+Run `/recap` to generate a summary on demand. It runs only when you ask for it yourself. When it arrives in a message relayed from a Slack, Teams, or project thread, or in a prompt a routine sent, you get a [notice](/docs/en/errors#recap-only-runs-when-you-ask-for-it-yourself) instead of a recap.
 
-Session recap is on by default for every plan and provider. The recap is always skipped in non-interactive mode.
+Session recap is on by default for every plan and provider. To turn automatic recaps off, open `/config` and turn off **Session recap**. The automatic recap never appears in non-interactive mode. Claude Code caps both automatic recaps and `/recap` output at 400 characters.
 
 ## Wait for a usage limit to reset
 

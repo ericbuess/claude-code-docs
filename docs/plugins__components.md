@@ -505,7 +505,7 @@ Each file is the smallest valid example of its format, there to show the shape r
   </Piece>
 
   <Piece id="monitors">
-    A monitor is a shell command that Claude Code starts in the background when the session starts and keeps running until it ends, using the [Monitor tool](/docs/en/tools-reference#monitor-tool). What it prints reaches Claude as notifications. A `when` field can instead start it the first time a named skill runs. This one tails an error log:
+    A monitor is a shell command that Claude Code starts in the background when the session starts and keeps running until it ends. What it prints reaches Claude as notifications. A `when` field can instead start it the first time a named skill runs. This one tails an error log:
 
     ```json theme={null}
     [
@@ -996,7 +996,7 @@ The command runs in a shell, in the working directory the session started in.
 
 A monitor's command is limited in where it starts and what it can reference:
 
-* **Interactive sessions only**: plugin monitors start in an interactive session and never in non-interactive mode with the `-p` flag. They also start only where the [Monitor tool](/docs/en/tools-reference#monitor-tool) is available
+* **Interactive sessions only**: plugin monitors start in an interactive session and never in non-interactive mode with the `-p` flag. They also don't start in sessions where the API provider or telemetry settings make the [Monitor tool](/docs/en/tools-reference#monitor-tool) unavailable
 * **No user configuration**: `command` gets the [path variables](#path-variables-and-persistent-data) and `${ENV_VAR}` from the environment, but never `${user_config.*}`. A monitor that references one doesn't start, and monitor processes don't receive `CLAUDE_PLUGIN_OPTION_<KEY>` either
 * **Disabling mid-session**: if you disable a plugin mid-session, Claude Code doesn't stop monitors that are already running. They stop when the session ends
 

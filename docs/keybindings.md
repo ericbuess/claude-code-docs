@@ -58,7 +58,7 @@ Each binding block specifies a **context** where the bindings apply:
 | `Attachments` | Image attachment navigation in select dialogs |
 | `Footer` | Footer indicator navigation (tasks, teams, diff, artifacts) |
 | `MessageSelector` | Rewind and summarize dialog message selection |
-| `DiffDialog` | Diff viewer navigation |
+| `DiffDialog` | [Diff viewer](#diff-actions) navigation |
 | `DiffPanel` | The [diff panel](/docs/en/interactive-mode#diff-panel) is open |
 | `ModelPicker` | Model picker effort level |
 | `EffortSlider` | Effort slider opened by `/effort` |
@@ -296,6 +296,8 @@ Before v2.1.283, this list ignored `Select` bindings and had its own actions: `m
 
 ### Diff actions
 
+These actions reach only Claude Code's earlier diff viewer, which `/diff` opens outside [fullscreen rendering](/docs/en/fullscreen) after you disable the [`cc-plugin-diff` mod](/docs/en/plugins/mods/overview#mods-built-into-claude-code) in `/plugin`. While that mod is enabled, `/diff` opens the [diff dialog](/docs/en/interactive-mode#diff-dialog) instead. A `keybindings.json` that names these actions loads without errors either way.
+
 Actions available in the `DiffDialog` context:
 
 | Action | Default | Description |
@@ -324,11 +326,13 @@ The diff detail view also binds pager-style keys to the standard [scroll actions
 
 ### Diff panel actions
 
-Actions for the [diff panel](/docs/en/interactive-mode#diff-panel) that `/diff` opens in fullscreen rendering. `app:cycleDiffBase` is in the `DiffPanel` context, which is active while the panel is open; the others are `Global`. The panel requires Claude Code v2.1.260 or later.
+Actions for the [diff panel](/docs/en/interactive-mode#diff-panel) that `/diff` opens in fullscreen rendering. `app:cycleDiffBase` is in the `DiffPanel` context, which is active while the panel is open; the others are `Global`.
+
+The built-in [`cc-plugin-diff` mod](/docs/en/plugins/mods/overview#mods-built-into-claude-code) draws this panel and handles `app:cycleDiffBase`, `app:diffFileListUp`, and `app:diffFileListDown`. `app:toggleReplTab`, `app:toggleDiffNoiseFilter`, and `app:toggleDiffPreSession` reach only Claude Code's earlier panel, which `/diff` opens after you disable `cc-plugin-diff` in `/plugin`.
 
 | Action | Default | Description |
 | :- | :- | :- |
-| `app:toggleReplTab` | (unbound) | Open or close the diff panel, the same as running `/diff` |
+| `app:toggleReplTab` | (unbound) | Open or close the diff panel |
 | `app:cycleDiffBase` | Ctrl+X B | Cycle the panel's comparison base: this session, uncommitted, then branch |
 | `app:diffFileListUp` | Ctrl+Up, Meta+Up | Scroll the panel's file list up when it overflows |
 | `app:diffFileListDown` | Ctrl+Down, Meta+Down | Scroll the panel's file list down when it overflows |

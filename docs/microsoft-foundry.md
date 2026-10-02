@@ -162,6 +162,8 @@ export ANTHROPIC_FOUNDRY_RESOURCE={resource}
 # export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic
 ```
 
+Set `ANTHROPIC_FOUNDRY_RESOURCE` to the resource name alone, such as `my-resource`. Claude Code [refuses a URL or host name](/docs/en/errors#anthropic-foundry-resource-must-be-a-foundry-resource-name) when you send a message.
+
 ### 4. Pin model versions
 
 <Warning>

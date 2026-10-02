@@ -258,7 +258,7 @@ By default, sandboxed commands can write to the current working directory, the p
 
 These paths are enforced at the OS level, so all commands running inside the sandbox, including their child processes, respect them. This is the recommended approach when a tool needs write access to a specific location, rather than excluding the tool from the sandbox entirely with `excludedCommands`.
 
-When you define the same filesystem array in multiple [settings scopes](/docs/en/settings#settings-precedence), Claude Code merges them, combining paths from every scope rather than replacing one scope's array with another's.
+When you define the same filesystem array in multiple [settings scopes](/docs/en/settings#settings-precedence), Claude Code merges them, combining the paths rather than replacing one scope's array with another's. Claude Code leaves an entry out of the merge when a lock under [Keep developers from widening the policy](#keep-developers-from-widening-the-policy) covers it.
 
 If you exclude a source with [`--setting-sources`](/docs/en/cli-reference) on the CLI or [`settingSources`](/docs/en/agent-sdk/claude-code-features#control-filesystem-settings-with-settingsources) in the Agent SDK, Claude Code ignores its `sandbox.filesystem` entries, its `Edit` permission rules, and its `Read` deny rules when building the sandbox configuration. Requires Claude Code v2.1.246 or later.
 
@@ -274,7 +274,7 @@ You can also deny write or read access using `sandbox.filesystem.denyWrite` and 
 | `"allowRead": ["~/"]` with `"denyRead": ["~/.env"]` | `~/.env` stays blocked and the rest of the home directory is readable. The deny holds inside a wider allow, so a broad allow can't silently re-expose a secret |
 | `"allowRead": ["~/"]` with `"denyRead": ["~/**/.env"]` | Every `.env` under the home directory stays blocked and the rest is readable. A [wildcard deny](/docs/en/settings-reference#sandbox-path-prefixes) holds inside a wider allow the same way an exact path does |
 
-The example below blocks reading from the entire home directory while still allowing reads from the current project. Place it in your project's `.claude/settings.json`, because the relative path `.` resolves to the project root only when the configuration lives in project settings:
+The example below blocks reading from the entire home directory while still allowing reads from the current project. Place it in your project's `.claude/settings.json`, because the relative path `.` resolves to the project root when the configuration lives in project settings:
 
 ```json theme={null}
 {
@@ -787,7 +787,7 @@ To direct sandboxed commands to your proxy, set the localhost ports it listens o
 
 If you set a port and also set `HTTPS_PROXY` or `HTTP_PROXY`, Claude Code doesn't forward what sandboxed commands send to your proxy on to the proxy those variables name. To reach a corporate proxy, configure your own proxy to forward to it.
 
-Which files can set a port depends on your other sandbox settings:
+Which files can set a port depends on your other sandbox settings. The first case that matches applies:
 
 * **`allowManagedDomainsOnly` is on**: managed settings only
 * **The sandbox is [admin-required](#repository-settings-under-an-admin-required-sandbox), or a [narrower network lock](#locks-that-apply-without-an-admin-required-sandbox) applies**: managed settings, `--settings`, and user settings

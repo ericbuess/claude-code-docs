@@ -127,7 +127,15 @@ Each interface has its own control for switching permission modes during a sessi
 
 <Tabs>
   <Tab title="CLI">
-    **During a session**: press `Shift+Tab` to cycle permission modes. From `auto`, the first press switches to `default`, and the cycle then runs `default` → `acceptEdits` → `plan` → back to `default`. Optional modes, described below, slot in after `plan`. The status bar shows the active mode as a gray `⏸ manual mode on` for `default`, or as `⏵⏵ accept edits on`, `⏸ plan mode on`, `⏵⏵ auto mode on`, `⏵⏵ don't ask on`, or `⏵⏵ bypass permissions on`.
+    **During a session**: press `Shift+Tab` to cycle permission modes. From `auto`, the first press switches to `default`, and the cycle then runs `default` → `acceptEdits` → `plan`. Optional modes slot in after `plan`. The status bar shows the active mode as a gray `⏸ manual mode on` for `default`, or as `⏵⏵ accept edits on`, `⏸ plan mode on`, `⏵⏵ auto mode on`, `⏵⏵ don't ask on`, or `⏵⏵ bypass permissions on`.
+
+    Watch the status bar in this clip of a session that started in auto mode. Each time you press `Shift+Tab`, it changes from `auto mode on` to `manual mode on`, `accept edits on`, `plan mode on`, and back to `auto mode on`.
+
+    <Frame>
+      <video autoPlay muted loop playsInline className="w-full dark:hidden" style={{aspectRatio: "1440 / 264"}} src="https://mintcdn.com/claude-code/oa7CKjMeIChox26S/images/permission-modes-cycle-light.mp4?fit=max&auto=format&n=oa7CKjMeIChox26S&q=85&s=198ca90aeb2e3675b3d01b7d686aab0b" aria-label="The status bar under the Claude Code prompt changes with each press of Shift+Tab: auto mode on, manual mode on, accept edits on, plan mode on, then auto mode on again." data-path="images/permission-modes-cycle-light.mp4" />
+
+      <video autoPlay muted loop playsInline className="w-full hidden dark:block" style={{aspectRatio: "1440 / 264"}} src="https://mintcdn.com/claude-code/oa7CKjMeIChox26S/images/permission-modes-cycle-dark.mp4?fit=max&auto=format&n=oa7CKjMeIChox26S&q=85&s=994cdeec4e99d2f474d236c1087d6e63" aria-label="The status bar under the Claude Code prompt changes with each press of Shift+Tab: auto mode on, manual mode on, accept edits on, plan mode on, then auto mode on again." data-path="images/permission-modes-cycle-dark.mp4" />
+    </Frame>
 
     Not every mode is in the default cycle:
 
@@ -360,19 +368,16 @@ The classifier trusts your working directory and the remotes that were configure
 * Interactive shells or port-forwards into a sensitive remote target
 * Opening a tunnel or reverse shell that makes a local service reachable from the public internet
 * Printing a live credential or token into the transcript or a file
-* Accessing a location listed as a sensitive data location in your [environment](/docs/en/auto-mode-config#define-trusted-infrastructure), or copying data out of one. As of v2.1.198 this also blocks sending data from one to an audience the entry excludes
-* Routing a package install around your internal package registry to a public registry. As of v2.1.198, this also applies when you've told Claude an internal registry or mirror exists in the conversation, not only when one is listed in your environment
+* Accessing a location listed as a sensitive data location in your [environment](/docs/en/auto-mode-config#define-trusted-infrastructure), copying data out of one, or sending data from one to an audience the entry excludes
+* Routing a package install around your internal package registry to a public registry. This applies when an internal registry or mirror is listed in your environment or when you've told Claude in the conversation that one exists
 * Running a command with a flag that disarms a safety guard, like `--insecure`
-* Launching an autonomous agent loop that runs without human approval or a sandbox, such as one started with `--dangerously-skip-permissions` or `--no-sandbox`. As of v2.1.198 this also covers running a third-party agent or eval harness with isolation and per-action approval disabled, such as a runner started with `--yes-always`
+* Launching an autonomous agent loop that runs without human approval or a sandbox, such as one started with `--dangerously-skip-permissions` or `--no-sandbox`. This includes running a third-party agent or eval harness with isolation and per-action approval disabled, such as a runner started with `--yes-always`
 * [Claude in Chrome](/docs/en/chrome) browser actions that could send page content, cookies, or credentials off-origin
-
-Several of these categories depend on [environment](/docs/en/auto-mode-config#define-trusted-infrastructure) entries, such as sensitive remote targets and protected IaC scopes, that you can narrow to concrete names.
-
-Claude Code v2.1.198 and later also block these by default:
-
 * Deleting files in `/tmp`, `$TMPDIR`, or another shared scratch or cache directory by wildcard, glob, or age filter rather than by a specific named path
 * Including sensitive details in content sent, uploaded, published, or written to other people or shared systems, when your own message didn't authorize those details for that recipient. PR and issue bodies, commit messages, and comments count as this kind of outbound content when the repository is outside the trust boundary or public, including your organization's own public repositories; internal file paths, code names, live API response data such as emails or account identifiers, and infrastructure identifiers count as sensitive details. The PR, issue, and commit-message scoping requires Claude Code v2.1.200 or later. Live personal data from an API response in a PR or issue body, such as an email address, an account or organization identifier, or a usage metric, requires you to name those details and the recipient regardless of the repository's visibility or trust boundary. That check requires Claude Code v2.1.203 or later
 * Sending keystrokes to Claude Code's own tmux pane to drive its own interface, which the classifier treats as Claude changing its own permissions or oversight
+
+Several of these categories depend on [environment](/docs/en/auto-mode-config#define-trusted-infrastructure) entries, such as sensitive remote targets and protected IaC scopes, that you can narrow to concrete names.
 
 Claude Code v2.1.200 and later also block these by default:
 
@@ -498,6 +503,8 @@ The following sections cover the order Claude Code evaluates an action in, how t
     4. If the classifier blocks, Claude receives the reason. In most sessions the reason names the rule the classifier matched, such as `[Data Exfiltration]`, rather than giving a written explanation; see [Review denials](/docs/en/auto-mode-config#review-denials)
 
     A [mod](/docs/en/plugins/mods/overview) you install that handles `tool.check` can approve an action before step 3, and the classifier doesn't check an action the mod approves. See [Extend permissions with hooks](/docs/en/permissions#extend-permissions-with-hooks).
+
+    In the VS Code extension, how [Claude in Chrome](/docs/en/chrome) browser actions get approved depends on how the session connected to the browser: see [Permission prompts in VS Code sessions](/docs/en/chrome#permission-prompts-in-vs-code-sessions).
 
     On entering auto mode, broad allow rules that grant arbitrary code execution are dropped:
 

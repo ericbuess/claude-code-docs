@@ -211,7 +211,7 @@ Your terminal's `Cmd+f` and tmux search don't see the conversation because it li
 
 ## Watch your changes in the diff panel
 
-In fullscreen rendering, [`/diff`](/docs/en/interactive-mode#review-changes-with-%2Fdiff) opens a panel beside the conversation rather than a viewer you have to close, so you can watch the changes accumulate while Claude works. In a wide terminal the panel can also open on its own once Claude starts editing files. [Diff panel](/docs/en/interactive-mode#diff-panel) covers what it shows, how to keep it closed, and how to change what it compares against.
+In fullscreen rendering, [`/diff`](/docs/en/interactive-mode#review-changes-with-%2Fdiff) opens a panel beside the conversation, so you can watch the changes accumulate while Claude works. [Diff panel](/docs/en/interactive-mode#diff-panel) covers what it shows, when it opens on its own, how to keep it closed, and how to change what it compares against.
 
 ## Clear the conversation
 

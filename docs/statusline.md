@@ -192,7 +192,8 @@ Claude Code sends the following JSON fields to your script via stdin:
 | `thinking.enabled` | Whether extended thinking is enabled for the session |
 | `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | Percentage of the 5-hour or 7-day rate limit consumed, from 0 to 100 |
 | `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at` | Unix epoch seconds when the 5-hour or 7-day rate limit window resets |
-| `rate_limits.spend_limit.used_percentage`, `rate_limits.spend_limit.resets_at` | Behind a [Claude apps gateway](/docs/en/claude-apps-gateway-spend-limits#usage-warnings-in-claude-code), the percentage used of the spend limit that applies to you, and the Unix epoch seconds when its period resets. The percentage runs from 0 to 100, or above 100 once you exceed the limit. Requires Claude Code v2.1.251 or later |
+| `rate_limits.spend_limit.used_percentage`, `rate_limits.spend_limit.resets_at` | Behind a Claude apps gateway, how much of your spend limit you have used and when its period resets. See [spend limit fields](#spend-limit-fields). Requires Claude Code v2.1.251 or later |
+| `rate_limits.spend_limit.used_usd`, `rate_limits.spend_limit.limit_usd`, `rate_limits.spend_limit.period` | Your estimated spend and your limit in US dollars, and the limit's period. These fields can be absent. See [spend limit fields](#spend-limit-fields). Requires v2.1.284 or later on both Claude Code and the gateway |
 | `prompt_cache` | The session's [prompt cache](/docs/en/prompt-caching) statistics for the main conversation: hit ratio, misses, and whether the cache is warm. See [prompt cache fields](#prompt-cache-fields) for every field. Absent until the main conversation's first API response. Requires Claude Code v2.1.251 or later |
 | `session_id` | Unique session identifier |
 | `session_name` | Session name. Uses the custom name set with the `--name` flag or `/rename` when one exists, otherwise the AI-generated session title. The [default display name](/docs/en/sessions#name-your-sessions), such as `my-app-3f`, doesn't populate this field. Absent when the session has neither a custom name nor an AI-generated title |
@@ -301,7 +302,10 @@ Claude Code sends the following JSON fields to your script via stdin:
       },
       "spend_limit": {
         "used_percentage": 62.8,
-        "resets_at": 1740787200
+        "resets_at": 1740787200,
+        "used_usd": 314.12,
+        "limit_usd": 500,
+        "period": "monthly"
       }
     },
     "vim": {
@@ -368,6 +372,15 @@ The `used_percentage` field is calculated from input tokens only: `input_tokens 
 If you calculate context percentage manually from `current_usage`, use the same input-only formula to match `used_percentage`.
 
 The `current_usage` object is `null` before the first API call in a session, and again immediately after `/compact` until the next API call repopulates it.
+
+### Spend limit fields
+
+Behind a [Claude apps gateway with spend limits](/docs/en/claude-apps-gateway-spend-limits#usage-warnings-in-claude-code), the `rate_limits.spend_limit` object describes the spend limit that applies to you. It appears after the session's first API response and requires Claude Code v2.1.251 or later. Your script receives its fields on separate schedules:
+
+* `used_percentage` and `resets_at`: come with every response, so they are present whenever `spend_limit` is. `used_percentage` runs from 0 to 100, or above 100 once you exceed the limit, and `resets_at` is the Unix epoch seconds when the limit's period resets.
+* `used_usd`, `limit_usd`, and `period`: your estimated spend so far and your limit in US dollars, and the period the limit covers, one of `daily`, `weekly`, or `monthly`. The gateway [computes `used_usd` from token counts](/docs/en/claude-apps-gateway-spend-limits#how-requests-are-priced), so it's an estimate and not a billed amount. Claude Code reads them from the gateway in a separate request, about every five minutes while you send requests. The dollar amounts can be about five minutes older than `used_percentage`, so the two may briefly disagree. Requires v2.1.284 or later on both Claude Code and the gateway.
+
+Treat `used_usd`, `limit_usd`, and `period` as optional even when `spend_limit` is present. Your script receives the percentage before them, and they stay absent if you set `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, which turns that request off. Read each with a fallback in your script, such as `jq -r '.rate_limits.spend_limit.used_usd // empty'`.
 
 ### Prompt cache fields
 
@@ -828,11 +841,9 @@ Each script gets the git remote URL, converts SSH format to HTTPS, and wraps the
 
 ### Rate limit usage
 
-Display claude.ai subscription rate limit usage in the status line. The `rate_limits` object contains a rolling `five_hour` window and a weekly `seven_day` window. Each window provides `used_percentage`, from 0 to 100, and `resets_at`, the Unix epoch seconds when the window resets.
+Display claude.ai subscription rate limit usage, or your spend against a Claude apps gateway spend limit, in the status line. For subscribers, the `rate_limits` object contains a rolling `five_hour` window and a weekly `seven_day` window. Each window provides `used_percentage`, from 0 to 100, and `resets_at`, the Unix epoch seconds when the window resets. Behind a gateway, read the `spend_limit` object, described under [spend limit fields](#spend-limit-fields).
 
-Behind a Claude apps gateway with spend limits, `rate_limits` carries `spend_limit` with the same two fields for the spend limit that applies to you, except that its `used_percentage` can go above 100 once you exceed the limit. Requires Claude Code v2.1.251 or later.
-
-The `rate_limits` object is only present for claude.ai Pro and Max subscribers, or behind a Claude apps gateway with spend limits, and only after the first API response. Each script handles the absent field gracefully:
+The `rate_limits` object is only present for claude.ai Pro and Max subscribers, or behind a Claude apps gateway with spend limits, and only after the first API response. Each script handles the absent fields gracefully, and behind a gateway prints `spend: $314.12 / $500`, or `spend: 63%` while the dollar fields are absent:
 
 <CodeGroup>
   ```bash Bash theme={null}
@@ -847,6 +858,11 @@ The `rate_limits` object is only present for claude.ai Pro and Max subscribers, 
   LIMITS=""
   [ -n "$FIVE_H" ] && LIMITS="5h: $(printf '%.0f' "$FIVE_H")%"
   [ -n "$WEEK" ] && LIMITS="${LIMITS:+$LIMITS }7d: $(printf '%.0f' "$WEEK")%"
+
+  # Behind a Claude apps gateway: dollars when the gateway reports them, else the percentage
+  SPEND_PCT=$(echo "$input" | jq -r '.rate_limits.spend_limit.used_percentage // empty')
+  SPEND_USD=$(echo "$input" | jq -r '.rate_limits.spend_limit | select(.used_usd != null) | "$\(.used_usd) / $\(.limit_usd)"')
+  [ -n "$SPEND_PCT" ] && LIMITS="${LIMITS:+$LIMITS }spend: ${SPEND_USD:-$(printf '%.0f' "$SPEND_PCT")%}"
 
   [ -n "$LIMITS" ] && echo "[$MODEL] | $LIMITS" || echo "[$MODEL]"
   ```
@@ -868,6 +884,14 @@ The `rate_limits` object is only present for claude.ai Pro and Max subscribers, 
   if week is not None:
       parts.append(f"7d: {week:.0f}%")
 
+  # Behind a Claude apps gateway: dollars when the gateway reports them, else the percentage
+  spend = rate.get('spend_limit', {})
+  if spend.get('used_percentage') is not None:
+      if spend.get('used_usd') is not None:
+          parts.append(f"spend: ${spend['used_usd']} / ${spend['limit_usd']}")
+      else:
+          parts.append(f"spend: {spend['used_percentage']:.0f}%")
+
   if parts:
       print(f"[{model}] | {' '.join(parts)}")
   else:
@@ -888,6 +912,14 @@ The `rate_limits` object is only present for claude.ai Pro and Max subscribers, 
 
       if (fiveH != null) parts.push(`5h: ${Math.round(fiveH)}%`);
       if (week != null) parts.push(`7d: ${Math.round(week)}%`);
+
+      // Behind a Claude apps gateway: dollars when the gateway reports them, else the percentage
+      const spend = data.rate_limits?.spend_limit;
+      if (spend?.used_percentage != null) {
+          parts.push(spend.used_usd != null
+              ? `spend: $${spend.used_usd} / $${spend.limit_usd}`
+              : `spend: ${Math.round(spend.used_percentage)}%`);
+      }
 
       console.log(parts.length ? `[${model}] | ${parts.join(' ')}` : `[${model}]`);
   });

@@ -140,7 +140,7 @@ You can provide rich data to Claude in several ways:
 * **Reference files with `@`** instead of describing where code lives. Claude reads the file before responding.
 * **Paste images directly**. Copy/paste or drag and drop images into the prompt.
 * **Give URLs** for documentation and API references. Use `/permissions` to allowlist frequently-used domains.
-* **Pipe in data** by running `cat error.log | claude` to send file contents directly.
+* **Pipe in data** by running `cat error.log | claude -p "explain this error"` to send file contents directly.
 * **Let Claude fetch what it needs**. Tell Claude to pull context itself using Bash commands, MCP tools, or by reading files.
 
 ***

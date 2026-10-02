@@ -25,9 +25,20 @@ Sessions are saved continuously to [local transcript files](#export-and-locate-s
 
 Claude Code leaves sessions created with [`claude -p`](/docs/en/headless) or the [Agent SDK](/docs/en/agent-sdk/overview) out of the session picker and out of `claude --continue`. You can still resume one by passing its session ID to `claude --resume <session-id>`. With `claude --continue`, Claude Code also skips [sessions whose first prompt was `/loop`](#where-the-session-picker-looks). When you run [`claude -p --continue`](/docs/en/headless#continue-conversations), Claude Code includes `-p`, SDK, and `/loop` sessions.
 
+You can run `claude --resume <session-id>` from any directory, so you can resume a session that started elsewhere or moved with [`/cd`](/docs/en/commands). Claude Code looks for the ID in this order:
+
+1. The current project directory and its git worktrees
+2. Every other project on this machine
+
+The cross-project search resolves the ID only when exactly one other project holds a transcript with messages for it, so a hand-copied duplicate makes Claude Code report not-found rather than resume an arbitrary copy. If no stored session matches the ID, Claude Code reports `No conversation found with session ID: <session-id>`.
+
+Before v2.1.223, the lookup stopped at the current project directory and its git worktrees, so you had to resume from the directory the session last worked in.
+
 `claude --continue` opens a [background session](/docs/en/agent-view) that has finished, but not one that is still running; opening finished background sessions requires Claude Code v2.1.257 or later. If your most recent conversation is one you [moved to the background](/docs/en/agent-view#send-the-session-to-the-background) and it is still running there, Claude Code exits with `Your most recent conversation is running in the background` and that session's ID. Attach to the session from [`claude agents`](/docs/en/agent-view#attach-to-a-session), or run `claude --resume` to pick another one.
 
-<span id="resume-a-running-background-session" />
+<h3 id="resume-a-running-background-session">
+  Resume a running background session
+</h3>
 
 When the conversation you resume with `claude --resume` or `/resume` belongs to a [background session](/docs/en/agent-view) that is still running, Claude Code opens the running session itself. With `--bg` on the command line, the resume is a [background dispatch](/docs/en/agent-view#from-your-shell) instead. Before v2.1.285, Claude Code refused and told you to open the session with `claude attach <id>`, or to stop it with `claude stop <id>` first.
 
@@ -44,8 +55,6 @@ When the conversation you resume with `claude --resume` or `/resume` belongs to 
 
   A prompt that starts with `/` or `!` isn't sent, and neither is any prompt while the session waits on your answer to a question. In both cases Claude Code doesn't open the session, and the message includes `Your prompt was not sent to it` with the reason.
 * **From inside a session**: `/resume` moves your current conversation to the background and attaches this terminal to the running session, printing `Opening "<title>", running in the background (<id>)`. Press `←` on an empty prompt to return to agent view, which also lists the conversation you left. When the current conversation can't move to the background, for example because you're already attached to a background session or session persistence is off, `/resume` prints the `claude attach` command to run instead.
-
-You can run `claude --resume <session-id>` from any directory: Claude Code looks for the ID in the current project directory and its git worktrees first, then in every other project on this machine, so it finds a session that started elsewhere or moved with [`/cd`](/docs/en/commands). The cross-project search resolves the ID only when exactly one other project holds a transcript with messages for it, so a hand-copied duplicate makes Claude Code report not-found rather than resume an arbitrary copy. If no stored session matches the ID, Claude Code reports `No conversation found with session ID: <session-id>`. Before v2.1.223, the lookup stopped at the current project directory and its git worktrees, so you had to resume from the directory the session last worked in.
 
 ### What a resumed session restores
 

@@ -851,6 +851,25 @@ If a developer declines, Claude Code exits that session rather than applying the
 
 The `cli` key was named `settings` in earlier releases. That spelling is still accepted as an alias, but new deployments should use `cli`.
 
+#### Context window in terminal sessions
+
+Terminal sessions signed in through `/login` use the 1M context window for Opus 4.7 and later, Sonnet 5 and later, and the Fable models. The model ID needs no `[1m]` suffix, and sessions compact at about 967K tokens. Before Claude Code v2.1.287 on the developer's machine, Claude Code treated the Opus and Fable models as having a 200K window unless the model ID ended in `[1m]`.
+
+To have terminal sessions compact at the 200K boundary instead, set the [auto-compact window](/docs/en/model-config#set-the-auto-compact-window) in the policy's `env`:
+
+```yaml theme={null}
+managed:
+  policies:
+    - match: {}
+      cli:
+        env:
+          CLAUDE_CODE_AUTO_COMPACT_WINDOW: "200000"
+```
+
+Claude Code applies this variable without showing the developer the approval dialog. The variable applies to every model, including model IDs that end in `[1m]`.
+
+To turn off 1M context instead, set [`CLAUDE_CODE_DISABLE_1M_CONTEXT: "1"`](/docs/en/model-config#extended-context) in the same `env` block. Claude Code then treats every model as having a 200K window. In interactive sessions, each developer approves this variable in the [approval dialog](#what-goes-in-cli) before it takes effect.
+
 #### MCP servers in a policy
 
 To provide MCP servers to the Claude Code clients a policy matches, set [`managedMcpServers`](/docs/en/managed-mcp#provide-servers-through-managed-settings) in that policy's `cli` block. You need Claude Code v2.1.259 or later on the gateway server and on clients.
@@ -871,7 +890,7 @@ If your organization also deploys [Claude Desktop](/docs/en/desktop), the same g
 
 The gateway derives much of the response from the matched policy's `cli` block and from top-level gateway config:
 
-* The model list, from `availableModels`
+* The model list, from `availableModels`. [Extended context in Claude Desktop](#extended-context-in-claude-desktop) covers each model's 1M context option
 * Disabled tools, from bare tool-name `permissions.deny` entries. If you set `disabledBuiltinTools` in the policy's `desktop` block, the gateway serves the union of your value and the derived list, so you can disable more tools this way but can't re-enable one you disabled through `permissions.deny`
 * The egress allowlist, from `sandbox.network.allowedDomains`. If you set `coworkEgressAllowedHosts` in the policy's `desktop` block, the gateway uses that value instead of the derived list
 * An OTLP endpoint that points at the gateway itself, and the signed-in user's identity attributes. The gateway relays the exports it receives at that endpoint to your `forward_to` destinations. It includes the endpoint and the attributes when you set both [`telemetry.forward_to`](#telemetry) and `listen.public_url`.
@@ -919,6 +938,44 @@ The gateway fills in keys a policy's `desktop` block doesn't set from the `match
 For every other key, if you set it in the role policy, the gateway uses the role policy's value. The gateway replaces an array or a nested object such as `banner` whole, so if you set `banner.text` in a role policy, the gateway drops the base's `banner.backgroundColor`.
 
 If you don't deploy Claude Desktop, leave `desktop` out of your policies entirely; the gateway then returns 404 from `/user/bootstrap` for every user.
+
+#### Extended context in Claude Desktop
+
+If you serve [Claude Desktop](#claude-desktop-overlay) from the gateway, its model picker offers a 1M context option for each listed model that can run with a 1M context window. These include Claude Opus 4.6 and later, Claude Sonnet 4.6 and later, and the Fable models. The option is the model's `[1m]` variant, which [Extended context](/docs/en/model-config#extended-context) describes. You need Claude Code v2.1.284 or later on the gateway server.
+
+A [`models`](#models) entry gets no 1M option when:
+
+* An upstream that can serve the entry maps it to a model without 1M support, including an upstream the gateway reaches only on failover
+* Neither its `id` nor any of its `upstream_model` values names a Claude model, such as a custom alias routed to an application inference profile ARN
+
+To change what the picker offers, use one of these:
+
+* **Start users on the 1M option**: set `modelPrefer1mContext: true` in the policy's `desktop` block. Users who haven't yet chosen a model start on the 1M option when the first listed model has one. Users who already chose a model keep their choice.
+* **Offer the option by hand**: do this if your gateway server runs a version older than v2.1.284, or an entry names no Claude model. List the model twice in `models`, once with its plain ID and once with `[1m]` appended, both with the same `upstream_model` map. Claude Desktop shows the pair as one model with a 1M option. The gateway serves a `[1m]` entry without checking it, so add one only for a model your upstreams serve at 1M.
+
+This example offers the option by hand for a custom alias routed to an application inference profile, and starts new users on it:
+
+```yaml theme={null}
+models:
+  - id: corp-sonnet
+    upstream_model:
+      bedrock: arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/sonnet-5-prod
+  - id: corp-sonnet[1m]
+    upstream_model:
+      bedrock: arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/sonnet-5-prod
+
+managed:
+  policies:
+    - match: {}
+      desktop:
+        modelPrefer1mContext: true
+```
+
+##### Remove the 1M option
+
+To remove the option from the picker, set `CLAUDE_CODE_DISABLE_1M_CONTEXT: "1"` in the `env` block under the policy's `cli` key. If you also listed an entry whose `id` ends in `[1m]`, the gateway still serves it, so delete that entry too.
+
+The variable also reaches the terminal sessions of developers the policy matches. For what it changes there, see [Extended context](/docs/en/model-config#extended-context).
 
 #### Precedence with other managed sources
 

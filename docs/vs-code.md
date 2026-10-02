@@ -112,7 +112,7 @@ The prompt box supports several features:
     * `/plan` with a task, such as `/plan fix the auth bug`: switches to plan mode and starts planning that task.
     * `/plan open`: when you're already in plan mode, opens the plan file in the editor.
   * **Edit automatically**: Claude makes edits without asking.
-* **Model**: select **Switch model…** from the command menu to change the model mid-session. You can also click the model name at the bottom of the prompt box to open the same picker.
+* **Model**: select **Switch model…** from the command menu to change the model mid-session. You can also click the model name at the bottom of the prompt box to open the same picker. With Claude Code v2.1.284 or later, typing `/model` on its own in the prompt box opens the picker too.
 
   When the current model supports [effort levels](/docs/en/model-config#adjust-effort-level), the picker also shows an **Effort** row and the model name button shows the selected level. When you pick a level other than `max`, Claude Code saves it for the current model as your default, under [`modelSettings`](/docs/en/settings-reference#modelsettings) in your user settings; `max` applies to the current session only. The model name button and the **Effort** row require Claude Code v2.1.257 or later.
 
@@ -425,6 +425,8 @@ You can also open the attachment menu to select specific browser tools like open
 
 Claude opens new tabs for browser tasks and shares your browser's login state, so it can access any site you're already signed into.
 
+To have each session connect to your browser as it starts, without typing `@browser`, see [Enable Chrome by default](/docs/en/chrome#enable-chrome-by-default). For when Claude Code asks you before a browser action in a session connected that way, see [Permission prompts in VS Code sessions](/docs/en/chrome#permission-prompts-in-vs-code-sessions).
+
 For setup instructions, the full list of capabilities, and troubleshooting, see [Use Claude Code with Chrome](/docs/en/chrome).
 
 ## VS Code commands and shortcuts
@@ -533,6 +535,7 @@ VS Code reads `initialPermissionMode` from your user settings and ignores worksp
 | `attachOpenFile` | `true` | Add the file that is open in the editor to your messages and show it in the prompt box. When off, only your selected text is added. Requires Claude Code v2.1.271 or later |
 | `useCtrlEnterToSend` | `false` | Use Ctrl/Cmd+Enter instead of Enter to send prompts |
 | `scrollToBottomOnSend` | `true` | Scroll the conversation to the bottom when you send a message. When off, the conversation stays where you left it. Requires Claude Code v2.1.275 or later |
+| `showMessageTimestamps` | `false` | Show when each message was sent. A date line marks where the day changes. Requires Claude Code v2.1.284 or later |
 | `enableNewConversationShortcut` | `false` | Enable Cmd/Ctrl+N to start a new conversation |
 | `enableReopenClosedSessionShortcut` | `true` | Use Cmd/Ctrl+Shift+T to reopen the most recently closed Claude session tab. When the last closed tab wasn't a Claude session, the shortcut runs VS Code's normal reopen-closed-editor command instead. |
 | `archiveInactiveSessions` | `14` | [Archive a session automatically](#resume-past-conversations) after this many days without activity: `1`, `2`, `7`, or `14`. Set `0` to turn it off. Requires Claude Code v2.1.265 or later |
@@ -541,7 +544,7 @@ VS Code reads `initialPermissionMode` from your user settings and ignores worksp
 | `focusView` | `false` | Hide tool calls, tool results, and thinking behind expandable rows, leaving your prompts and Claude's responses. Claude's latest to-do list stays visible; this requires Claude Code v2.1.225 or later. You can also toggle Focus view from the command menu. Requires Claude Code v2.1.221 or later |
 | `respectGitIgnore` | `true` | Exclude .gitignore patterns from file searches and from [selection context](#reference-files-and-folders) |
 | `usePythonEnvironment` | `true` | Activate the workspace's Python environment when running Claude. Requires the Python extension. |
-| `environmentVariables` | `[]` | Set environment variables for the Claude process. Use Claude Code settings instead for shared config. |
+| `environmentVariables` | `[]` | Set environment variables for the Claude process. Use Claude Code settings instead for shared config. A [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) entry applies only when its value is an absolute path; the extension doesn't expand `~` and ignores a relative value. |
 | `disableLoginPrompt` | `false` | Skip authentication prompts (for third-party provider setups) |
 | `allowDangerouslySkipPermissions` | `false` | Adds Bypass permissions to the mode selector. Use it only in sandboxes with no internet access. |
 | `claudeProcessWrapper` | - | Executable used to launch the Claude process. The bundled binary path is passed as an argument when present. Set this to a separately installed `claude` binary if the extension build doesn't include one for your platform. In a wrapped setup, conversations start in Manual mode unless you set `initialPermissionMode` or picked Manual, Edit automatically, or Auto in an earlier conversation, because the extension skips the settings and built-in-default steps there; see [Switch permission modes](/docs/en/permission-modes#switch-permission-modes). An "Unsupported platform" error at activation means no binary is bundled for your platform; see [which platforms have prebuilt binaries](/docs/en/troubleshoot-install#native-binary-not-found-after-npm-install). |
@@ -721,6 +724,25 @@ If you turn off the [Attach Open File setting](#extension-settings), the CLI rec
 | - | - | - |
 | `mcp__ide__getDiagnostics` | Returns language-server diagnostics: the errors and warnings in VS Code's Problems panel. Optionally scoped to one file. | Yes |
 | `mcp__ide__executeCode` | Runs Python code in the active Jupyter notebook's kernel. See confirmation flow below. | No |
+
+**Diagnostics in the chat panel.** In the chat panel, with Claude Code v2.1.285 or later, Claude reads VS Code's Problems panel through a separate built-in server named `claude-vscode`. Claude can ask it for the current errors and warnings in one file, or in every file VS Code has diagnostics for.
+
+Hooks and permission rules see the chat panel's diagnostics tool as `mcp__claude-vscode__getDiagnostics`. To cover diagnostics in both the CLI and the chat panel, name both `mcp__ide__getDiagnostics` and `mcp__claude-vscode__getDiagnostics` in your hook or rule.
+
+This `settings.json` example denies both tools:
+
+```json theme={null}
+{
+  "permissions": {
+    "deny": [
+      "mcp__ide__getDiagnostics",
+      "mcp__claude-vscode__getDiagnostics"
+    ]
+  }
+}
+```
+
+A `Read` deny rule covers neither tool, so block them by name with a [deny rule](/docs/en/permissions#mcp) as the example does.
 
 **Jupyter execution always asks first.** `mcp__ide__executeCode` can't run anything silently. On each call, the code is inserted as a new cell at the end of the active notebook, VS Code scrolls it into view, and a native Quick Pick asks you to **Execute** or **Cancel**. Cancelling, or dismissing the picker with `Esc`, returns an error to Claude and nothing runs. The tool also refuses outright when there's no active notebook, when the Jupyter extension (`ms-toolsai.jupyter`) isn't installed, or when the kernel isn't Python.
 

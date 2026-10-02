@@ -705,6 +705,22 @@ Before v2.1.268, an install that didn't activate during the install stayed pendi
 
 Before v2.1.246, the skills count in that summary included only a plugin's `commands/` entries, so a reload could load a plugin's `SKILL.md` skills and still report `0 skills`.
 
+<h3 id="the-packages-it-lists-are-not-installed">
+  `The packages it lists are not installed` or `were not installed, because ...`
+</h3>
+
+`/plugin` and `claude plugin list` show one of these notes on a plugin whose dependency install left no `node_modules` directory. The plugin loads, but the parts that need the missing packages may not work.
+
+* **`are not installed`**: the install can run for this plugin but didn't finish, for example because it failed or timed out. To retry the install, run the `claude plugin update` command that the note gives, in your shell, or update the plugin from `/plugin`
+
+  ```shell theme={null}
+  claude plugin update formatter@my-marketplace
+  ```
+
+  If the retry fails, the output gives the cause. While `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set, `claude plugin update` and `/plugin` skip the retry and report that the plugin is at its latest version.
+
+* **`were not installed, because ...`**: the install can't run for this plugin, and the note names the reason, such as a Yarn, pnpm, or `bun.lockb` lockfile, or a lockfile whose package manager isn't installed on this computer. Updating the plugin doesn't install the packages while that reason stands. If the reason is the lockfile, the plugin's author has to replace it. If it's a missing package manager, install it, then update the plugin
+
 <h3 id="plugin-not-cached-at">
   `Plugin "<name>" not cached at <path>`
 </h3>

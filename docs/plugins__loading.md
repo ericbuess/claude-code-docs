@@ -259,18 +259,17 @@ In restricted networks, see the [network access requirements](/docs/en/network-c
 
 #### When the dependency install fails or is skipped
 
-A failed or skipped install never blocks the plugin, which then loads without the dependencies. Each case leaves a different sign:
+If the install fails or is skipped, the plugin still loads, but the parts of it that need the missing packages may not work.
 
-* A failed install, or one skipped because of its lockfile or one of the [limits on the install](#limits-on-the-dependency-install), appears in the `claude --debug` output as a `Plugin dependency install warning` line that states the reason
-* A plugin with a `package.json` and no lockfile is skipped without a log entry
+`/plugin` and `claude plugin list` show a note on an enabled plugin whose cached copy has a lockfile and a `package.json` that lists runtime dependencies, but no `node_modules` directory. The note says whether the install didn't finish or can't run for this plugin. See [the troubleshooting entry](/docs/en/plugins/troubleshooting#the-packages-it-lists-are-not-installed) for what to do about each.
 
 When the automatic install can't provide a dependency, install it from a hook into the [persistent data directory](/docs/en/plugins/components#path-variables-and-persistent-data). That includes packages that need their lifecycle scripts to build, Python dependencies, plugins locked with Yarn or pnpm, and dependencies that aren't registry packages, such as git dependencies.
 
 ## Versions and updates
 
-If a plugin's author pushed new commits and `claude plugin update` prints `<name> is already at the latest version (<version>).`, the version Claude Code computes for the plugin is unchanged, so nothing changes on disk.
+If a plugin's author pushed new commits and `claude plugin update` prints `<name> is already at the latest version (<version>).`, the version Claude Code computes for the plugin is unchanged, so the plugin's files on disk don't change.
 
-Claude Code computes a version for every plugin it installs, and that version is how it detects an update. `claude plugin update` and background auto-update compute the version again and skip the plugin when it matches what `installed_plugins.json` records.
+Claude Code computes a version for every plugin it installs, and that version is how it detects an update. `claude plugin update` and background auto-update compute the version again and don't replace the cached copy when it matches what `installed_plugins.json` records. An update that you start can still [retry an unfinished dependency install](/docs/en/plugins/troubleshooting#the-packages-it-lists-are-not-installed) in that copy.
 
 The version also names the plugin's cache directory.
 
